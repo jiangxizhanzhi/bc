@@ -3,13 +3,13 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.List;
 
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BaseCrSceneUpdateHandler;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
@@ -49,7 +49,7 @@ public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 		checkPermission(roomId);
 		// get roles in room
 		List<CrRole> roleList = crRoleService.getRolesByRoom(roomId,
-				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+				BusinessType.RED_VS_BLUE.getCode());
 		List<CrRole> modified = Lists.newArrayList();
 		// 循环匹配，选出修改的role
 		for (CrRole role : roleList) {

@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.enums.TeamRoleGroup;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
@@ -30,7 +31,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionService;
@@ -103,7 +103,7 @@ public class TeamTrainTemplateController {
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
 		// set type
-		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		addReq.getBaseInfo().setType(BusinessType.TRAINING_TEAM.getCode());
 		// create team template
 		TeamTemplate teamTemplate = reqToTeamTemplate(addReq, new TeamTemplate());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -290,11 +290,11 @@ public class TeamTrainTemplateController {
 		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
 				BaseRole.class);
 		teamTrainTemplateRoleList
-				.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT.getCode()));
+				.forEach(role -> role.setRoleGroup(TeamRoleGroup.STUDENT.getCode()));
 
 		BaseRole baseRole = new BaseRole();
-		baseRole.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
-		baseRole.setRoleGroup(CrRole.TeamRoleGroup.TEACHER.getCode());
+		baseRole.setName(TeamRoleGroup.TEACHER.getDesc());
+		baseRole.setRoleGroup(TeamRoleGroup.TEACHER.getCode());
 
 		teamTrainTemplateRoleList.add(0, baseRole);
 

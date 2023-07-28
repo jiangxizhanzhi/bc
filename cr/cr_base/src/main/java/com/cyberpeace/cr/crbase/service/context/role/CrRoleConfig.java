@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.context.role;
 
 import java.io.Serializable;
 
+import com.cyberpeace.common.context.role.CrRoleNodesData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

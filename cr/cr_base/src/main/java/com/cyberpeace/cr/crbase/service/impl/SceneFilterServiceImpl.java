@@ -12,8 +12,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.google.common.collect.Sets;
 
 import lombok.Data;

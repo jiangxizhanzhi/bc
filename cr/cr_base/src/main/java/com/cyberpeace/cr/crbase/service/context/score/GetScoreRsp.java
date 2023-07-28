@@ -1,14 +1,14 @@
 package com.cyberpeace.cr.crbase.service.context.score;
 
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.UserData;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
+import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,7 +16,6 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

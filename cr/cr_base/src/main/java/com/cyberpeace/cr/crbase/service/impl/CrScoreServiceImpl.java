@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -24,8 +27,8 @@ import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.score.*;
 import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
@@ -281,11 +284,11 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		List<String> userIds = crRoles.stream().map(CrRole::getUserIdList)
 				.flatMap(Collection::stream).collect(Collectors.toList());
 		List<String> redUserIds = crRoles.stream()
-				.filter(a -> CrRole.RbRoleGroup.RED.getCode().equals(a.getRoleGroup()))
+				.filter(a -> RbRoleGroup.RED.getCode().equals(a.getRoleGroup()))
 				.map(CrRole::getUserIdList).flatMap(Collection::stream)
 				.collect(Collectors.toList());
 		List<String> blueUserIds = crRoles.stream()
-				.filter(a -> CrRole.RbRoleGroup.BLUE.getCode().equals(a.getRoleGroup()))
+				.filter(a -> RbRoleGroup.BLUE.getCode().equals(a.getRoleGroup()))
 				.map(CrRole::getUserIdList).flatMap(Collection::stream)
 				.collect(Collectors.toList());
 		Map<String, CrRole> userIdRoleMap = crRoles.stream()

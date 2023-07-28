@@ -7,6 +7,11 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +41,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
@@ -185,7 +190,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 					crRole.setUserIdList(users.get(index++).getUsers());
 					crRole.setRoomId(rbRoom.getResourceId());
-					crRole.setBusinessType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+					crRole.setBusinessType(BusinessType.RED_VS_BLUE.getCode());
 					// 创建房间时保存原始节点配置快照，用于动态更新场景后恢复
 					crRole.setNodesSnapshot(crRole.getNodes());
 				}
@@ -314,17 +319,17 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				dashboardUser.setSign("");
 				// dashboardUser.setRole(getFullRoleName(crRole));
 				if (crRole.isBlueStudent()) {
-					dashboardUser.setRoleType(CrRole.RbRoleGroup.BLUE.getEnglish());
-					dashboardUser.setRole(CrRole.RbRoleGroup.BLUE.getMsg());
-					dashboardUser.setRoleCode(CrRole.RbRoleGroup.BLUE.getCode());
+					dashboardUser.setRoleType(RbRoleGroup.BLUE.getEnglish());
+					dashboardUser.setRole(RbRoleGroup.BLUE.getMsg());
+					dashboardUser.setRoleCode(RbRoleGroup.BLUE.getCode());
 				}
 				if (crRole.isRedStudent()) {
-					dashboardUser.setRoleType(CrRole.RbRoleGroup.RED.getEnglish());
-					dashboardUser.setRole(CrRole.RbRoleGroup.RED.getMsg());
-					dashboardUser.setRoleCode(CrRole.RbRoleGroup.RED.getCode());
+					dashboardUser.setRoleType(RbRoleGroup.RED.getEnglish());
+					dashboardUser.setRole(RbRoleGroup.RED.getMsg());
+					dashboardUser.setRoleCode(RbRoleGroup.RED.getCode());
 				}
 				if(!crRole.isBlueStudent() && !crRole.isRedStudent()) {
-					dashboardUser.setRoleType(CrRole.RbRoleGroup.WHITE.getEnglish());
+					dashboardUser.setRoleType(RbRoleGroup.WHITE.getEnglish());
 					dashboardUser.setRole(crRole.getName());
 					// dashboardUser.setRoleCode(CrRole.RbRoleGroup.WHITE.getCode());
 				}
@@ -341,22 +346,22 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		List<DashboardGroup> groups = Lists.newArrayList();
 
-		DashboardGroup redGroup = new DashboardGroup(CrRole.RbRoleGroup.RED_GROUP.getMsg(),
-				CrRole.RbRoleGroup.RED.getCode(),
+		DashboardGroup redGroup = new DashboardGroup(RbRoleGroup.RED_GROUP.getMsg(),
+				RbRoleGroup.RED.getCode(),
 				confirmAvatarFile(CrCommonConstants.RED_GROUP_AVATAR, CrCommonConstants.RED_GROUP_JAR_AVATAR));
-		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroup.BLUE_GROUP.getMsg(),
-				CrRole.RbRoleGroup.BLUE.getCode(),
+		DashboardGroup blueGroup = new DashboardGroup(RbRoleGroup.BLUE_GROUP.getMsg(),
+				RbRoleGroup.BLUE.getCode(),
 				confirmAvatarFile(CrCommonConstants.BLUE_GROUP_AVATAR, CrCommonConstants.BLUE_GROUP_JAR_AVATAR));
-		DashboardGroup whiteGroup = new DashboardGroup(CrRole.RbRoleGroup.WHITE_GROUP.getMsg(),
-				CrRole.RbRoleGroup.WHITE.getCode(),
+		DashboardGroup whiteGroup = new DashboardGroup(RbRoleGroup.WHITE_GROUP.getMsg(),
+				RbRoleGroup.WHITE.getCode(),
 				confirmAvatarFile(CrCommonConstants.WHITE_GROUP_AVATAR, CrCommonConstants.WHITE_GROUP_JAR_AVATAR));
 
 		redGroup.setMembers(redMembers);
-		redGroup.setId(roomId + "_" + CrRole.RbRoleGroup.RED.getCode().toString());
+		redGroup.setId(roomId + "_" + RbRoleGroup.RED.getCode().toString());
 		blueGroup.setMembers(blueMembers);
-		blueGroup.setId(roomId + "_" + CrRole.RbRoleGroup.BLUE.getCode().toString());
+		blueGroup.setId(roomId + "_" + RbRoleGroup.BLUE.getCode().toString());
 		whiteGroup.setMembers(whiteMembers);
-		whiteGroup.setId(roomId + "_" + CrRole.RbRoleGroup.WHITE.getCode().toString());
+		whiteGroup.setId(roomId + "_" + RbRoleGroup.WHITE.getCode().toString());
 
 		// 自己不是红方，放入蓝方
 		if (!myRole.isRedStudent()) {
@@ -377,10 +382,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		if (myRole.isRvbStudent()) {
 			String groupRole = groups.get(0).getGroupname() + "/" + myRole.getName();
 			String groupAvatar = "";
-			if(groups.get(0).getGroupname().equals(CrRole.RbRoleGroup.RED_GROUP.getMsg())) {
+			if(groups.get(0).getGroupname().equals(RbRoleGroup.RED_GROUP.getMsg())) {
 				groupAvatar = confirmAvatarFile(CrCommonConstants.RED_GROUP_AVATAR, CrCommonConstants.RED_GROUP_JAR_AVATAR);
 			}
-			if(groups.get(0).getGroupname().equals(CrRole.RbRoleGroup.BLUE_GROUP.getMsg())) {
+			if(groups.get(0).getGroupname().equals(RbRoleGroup.BLUE_GROUP.getMsg())) {
 				groupAvatar = confirmAvatarFile(CrCommonConstants.BLUE_GROUP_AVATAR, CrCommonConstants.BLUE_GROUP_JAR_AVATAR);
 			}
 
@@ -447,17 +452,17 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	private String getFullRoleName(CrRole crRole) {
 		String roleName = EnumUtils.getEnumDescByCode(crRole.getRoleGroup(),
-				CrRole.RbRoleGroup.class);
+				RbRoleGroup.class);
 
 		if (crRole.isRedStudent() || crRole.isBlueStudent()) {
 			roleName = crRole.getName();
 		}
 
 		if (crRole.isBlueStudent()) {
-			roleName = CrRole.RbRoleGroup.BLUE.getDesc() + "/" + roleName;
+			roleName = RbRoleGroup.BLUE.getDesc() + "/" + roleName;
 		}
 		if (crRole.isRedStudent()) {
-			roleName = CrRole.RbRoleGroup.RED.getDesc() + "/" + roleName;
+			roleName = RbRoleGroup.RED.getDesc() + "/" + roleName;
 		}
 
 		return roleName;
@@ -533,7 +538,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		});
 	}
 
-	private void permissionCheck(String roomId, String userId, CrRole.RbRoleGroup roleGroup) {
+	private void permissionCheck(String roomId, String userId, RbRoleGroup roleGroup) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
 			log.error("failed to get RbRoom with Id [{}]", roomId);
@@ -550,12 +555,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Override
 	public void checkDirectorPermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.RbRoleGroup.DIRECTOR);
+		permissionCheck(roomId, userId, RbRoleGroup.DIRECTOR);
 	}
 
 	@Override
 	public void checkRefereePermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.RbRoleGroup.REFEREE);
+		permissionCheck(roomId, userId, RbRoleGroup.REFEREE);
 	}
 
 	@Override
@@ -604,7 +609,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Override
 	public List<CrRole> getStudentsRoles(String roomId) {
 		return crRoleService.getRolesByRoomAndGroups(roomId, Lists
-				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()));
+				.newArrayList(RbRoleGroup.RED.getCode(), RbRoleGroup.BLUE.getCode()));
 	}
 
 	@Override
@@ -918,16 +923,16 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			}
 		}
 		RbRoomRoleRes redRoleRes = new RbRoomRoleRes();
-		redRoleRes.setName(CrRole.RbRoleGroup.RED.getDesc());
+		redRoleRes.setName(RbRoleGroup.RED.getDesc());
 		redRoleRes.setResourceId("redResourceId");
-		redRoleRes.setRoleGroup(CrRole.RbRoleGroup.RED.getCode());
+		redRoleRes.setRoleGroup(RbRoleGroup.RED.getCode());
 		redRoleRes.setChildren(redRoles);
 		rbRoomRoleResList.add(redRoleRes);
 
 		RbRoomRoleRes blueRoleRes = new RbRoomRoleRes();
-		blueRoleRes.setName(CrRole.RbRoleGroup.BLUE.getDesc());
+		blueRoleRes.setName(RbRoleGroup.BLUE.getDesc());
 		blueRoleRes.setResourceId("blueResourceId");
-		blueRoleRes.setRoleGroup(CrRole.RbRoleGroup.BLUE.getCode());
+		blueRoleRes.setRoleGroup(RbRoleGroup.BLUE.getCode());
 		blueRoleRes.setChildren(blueRoles);
 		rbRoomRoleResList.add(blueRoleRes);
 
@@ -941,22 +946,22 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		// 获取红蓝的角色组
 		String roleString = rbTemplateData.getRoleConfig();
 
-		crRoleList.add(new CrRole(CrRole.RbRoleGroup.ADMIN));
-		crRoleList.add(new CrRole(CrRole.RbRoleGroup.DIRECTOR));
-		crRoleList.add(new CrRole(CrRole.RbRoleGroup.REFEREE));
+		crRoleList.add(new CrRole(RbRoleGroup.ADMIN));
+		crRoleList.add(new CrRole(RbRoleGroup.DIRECTOR));
+		crRoleList.add(new CrRole(RbRoleGroup.REFEREE));
 
 		// 获取红队的角色任务
 		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
 		JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");
 		for (int i = 0; i < redRoles.size(); i++) {
-			CrRole crRole = getRoleByJson(roomId, i, redRoles, CrRole.RbRoleGroup.RED);
+			CrRole crRole = getRoleByJson(roomId, i, redRoles, RbRoleGroup.RED);
 			crRoleList.add(crRole);
 		}
 
 		// 获取蓝队的角色任务
 		JSONArray blueRoles = (JSONArray) rolejsonObject.get("blue_roles");
 		for (int i = 0; i < blueRoles.size(); i++) {
-			CrRole crRole = getRoleByJson(roomId, i, blueRoles, CrRole.RbRoleGroup.BLUE);
+			CrRole crRole = getRoleByJson(roomId, i, blueRoles, RbRoleGroup.BLUE);
 			crRoleList.add(crRole);
 		}
 
@@ -964,7 +969,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles,
-			CrRole.RbRoleGroup roleGroup) {
+			RbRoleGroup roleGroup) {
 		JSONObject rolesJSONObject = redRoles.getJSONObject(index);
 
 		CrRoleNodesData nodesData = new CrRoleNodesData();

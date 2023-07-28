@@ -11,9 +11,9 @@ import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
 

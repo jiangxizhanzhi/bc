@@ -6,24 +6,18 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.cs.service.UtilService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
-import com.cyberpeace.cr.singletrain.controller.req.SingleTrainStatisticsDetailReq;
 import com.cyberpeace.cr.singletrain.service.SingleTrainStatisticsService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleOrganizationStatisticsBo;
 import com.cyberpeace.cr.singletrain.service.bo.SinglePersonalStatisticsBo;
-import com.cyberpeace.cr.singletrain.service.bo.SingleStatisticsDetailBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -85,7 +79,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         statusList.add(CrTask.SingleTaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null
+                statusList, BusinessType.TRAINING_SINGLE.getCode(), null
         );
 
         if (null != personalStatistics) {
@@ -139,7 +133,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         statusList.add(CrTask.SingleTaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null
+                statusList, BusinessType.TRAINING_SINGLE.getCode(), null
         );
 
         if (null != personalStatistics) {

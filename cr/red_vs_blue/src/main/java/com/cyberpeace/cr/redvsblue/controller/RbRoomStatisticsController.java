@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -17,7 +18,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
 import com.cyberpeace.cr.redvsblue.controller.rsp.TimeDataRsp;
@@ -221,7 +222,7 @@ public class RbRoomStatisticsController {
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		if (CrRole.RbRoleGroup.RED_BLUE.equals(role_type)) {
+		if (RbRoleGroup.RED_BLUE.equals(role_type)) {
 			return new BaseRsp(getRbScoreProgress_6(resource_id, role_type, userId));
 		}
 

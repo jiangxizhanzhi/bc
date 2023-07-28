@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
@@ -82,7 +84,7 @@ public interface MissionService extends IService<Mission> {
 	 * @param stage 阶段
 	 * @return 结果（布尔值）
 	 */
-	Boolean addDynamic(Mission mission, CrRole role, Integer stage,String afterMissionId);
+	Boolean addDynamic(Mission mission, CrRole role, Integer stage, String afterMissionId);
 
 	/**
 	 * 获取任务类别列表

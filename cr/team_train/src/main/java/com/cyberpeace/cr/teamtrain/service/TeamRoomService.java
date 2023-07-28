@@ -8,7 +8,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;

@@ -29,7 +29,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;

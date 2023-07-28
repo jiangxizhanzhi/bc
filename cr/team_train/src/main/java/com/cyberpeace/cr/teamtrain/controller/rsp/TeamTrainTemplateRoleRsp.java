@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNode;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

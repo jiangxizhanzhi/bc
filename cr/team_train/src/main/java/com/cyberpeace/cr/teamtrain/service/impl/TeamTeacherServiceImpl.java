@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
@@ -112,7 +113,7 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 
 	private List<String> getTeacherIdsByRoomId(String roomId) {
 		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,
-				Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
+				Lists.newArrayList(TeamRoleGroup.TEACHER.getCode()));
 		if (roles.isEmpty()) {
 			return Lists.newArrayList();
 		}

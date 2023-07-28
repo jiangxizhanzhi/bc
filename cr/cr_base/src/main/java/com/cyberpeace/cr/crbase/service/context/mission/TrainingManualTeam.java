@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.cyberpeace.cr.crbase.constant.TrainI18n;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 
 import lombok.Data;
 

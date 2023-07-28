@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.dao.entity;
+package com.cyberpeace.common.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,23 +6,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.enums.RoleGroup;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.constant.BaseI18n;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
-import com.google.common.collect.Lists;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.context.role.CrRoleSimple;
 
 import lombok.Data;
-import lombok.Getter;
 
 /**
  * @TableName cr_role
@@ -172,13 +172,6 @@ public class CrRole extends BaseTable {
 	}
 
 
-	public interface RoleGroup {
-		/**
-		 * 角色类型数字代码
-		 */
-		Integer getCode();
-	}
-
 	public void setRoleGroup(RoleGroup roleGroup) {
 		this.roleGroup = roleGroup.getCode();
 	}
@@ -188,48 +181,7 @@ public class CrRole extends BaseTable {
 	 */
 
 	public boolean isTeamRole() {
-		return BusinessTemplate.BusinessType.TRAINING_TEAM.getCode().equals(businessType);
-	}
-
-	public enum TeamRoleGroup implements GenericEnum, RoleGroup, BaseI18n {
-
-		/***/
-		TEACHER(1, "教员", "Teacher"),
-		STUDENT(2, "学员", "Student");
-
-		@Getter
-		private final Integer code;
-
-		@Getter
-		private final String chinese;
-
-		@Getter
-		private final String english;
-
-		TeamRoleGroup(Integer code, String chinese, String english) {
-			this.code = code;
-			this.chinese = chinese;
-			this.english = english;
-		}
-
-		public boolean equals(Integer roleGroupCode) {
-			return getCode().equals(roleGroupCode);
-		}
-
-		@Override
-		public String getChinese() {
-			return this.chinese;
-		}
-
-		@Override
-		public String getEnglish() {
-			return this.english;
-		}
-
-		@Override
-		public String getDesc() {
-			return this.getMsg();
-		}
+		return BusinessType.TRAINING_TEAM.getCode().equals(businessType);
 	}
 
 	public boolean isTeamStudent() {
@@ -245,59 +197,7 @@ public class CrRole extends BaseTable {
 	 */
 
 	public boolean isRvbRole() {
-		return BusinessTemplate.BusinessType.RED_VS_BLUE.getCode().equals(businessType);
-	}
-
-	public enum RbRoleGroup implements GenericEnum, BaseI18n, RoleGroup {
-		/***/
-		ADMIN(1, "管理员", "Administrator"),
-		DIRECTOR(2, "导演", "Director"),
-		REFEREE(3, "裁判", "Referee"),
-		RED(4, "红方", "Red"),
-		BLUE(5, "蓝方", "Blue"),
-		RED_BLUE(6, "红方蓝方", "RedBlue"),
-		WHITE(7, "白方", "White"),
-		TEAM(8, "团队", "Team"),
-		RED_GROUP(4, "红方群", "Red Group"),
-		BLUE_GROUP(5, "蓝方群", "Blue Group"),
-		WHITE_GROUP(7, "白方群", "White Group"),
-		TEAM_GROUP(8, "团队群", "Team Group"),
-		;
-
-		@Getter
-		private final Integer code;
-
-		@Getter
-		private final String chinese;
-
-		@Getter
-		private final String english;
-
-		@Override
-		public String getDesc() {
-			return getMsg();
-		}
-
-		RbRoleGroup(Integer code, String chinese, String english) {
-			this.code = code;
-			this.chinese = chinese;
-			this.english = english;
-		}
-
-		public boolean equals(Integer roleGroupCode) {
-			return getCode().equals(roleGroupCode);
-		}
-
-		public static boolean isRvbStudentRole(Integer roleGroupCode) {
-			return RED.equals(roleGroupCode) || BLUE.equals(roleGroupCode);
-		}
-
-		public static List<RbRoleGroup> studentRoleGroups() {
-			ArrayList<RbRoleGroup> rbRoleGroups = Lists.newArrayList();
-			rbRoleGroups.add(RED);
-			rbRoleGroups.add(BLUE);
-			return rbRoleGroups;
-		}
+		return BusinessType.RED_VS_BLUE.getCode().equals(businessType);
 	}
 
 

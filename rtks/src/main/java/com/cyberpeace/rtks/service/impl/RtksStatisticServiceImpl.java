@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -287,9 +287,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		handleRbStatus(rbs);
 		// collect available trainings
 		Map<String, List<TrainingRaw>> trainingMap = Maps.newHashMap();
-		mapTrainings(trainingMap, singles, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
-		mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-		mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		mapTrainings(trainingMap, singles, BusinessType.TRAINING_SINGLE.getCode());
+		mapTrainings(trainingMap, teams, BusinessType.TRAINING_TEAM.getCode());
+		mapTrainings(trainingMap, rbs, BusinessType.RED_VS_BLUE.getCode());
 		// 获取未创建与用户相关实例的团队和红蓝的BT id
 		// Set<String> unAvailableBtIds = Sets.newHashSet();
 		// for (String businessTemplateId : businessTemplateIds) {

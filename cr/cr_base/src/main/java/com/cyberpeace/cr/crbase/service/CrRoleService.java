@@ -6,7 +6,8 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.room.DashboardInfo;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RoleGroup;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -29,7 +30,7 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roleGroup 角色组
 	 * @return 角色相关数据
 	 */
-	CrRoleContext<MissionContext> getRoles(String roomId, CrRole.RoleGroup roleGroup);
+	CrRoleContext<MissionContext> getRoles(String roomId, RoleGroup roleGroup);
 
 	/**
 	 * 获取训练分组信息

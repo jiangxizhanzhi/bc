@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.context.MissionStageScheme;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -17,9 +18,10 @@ import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.RoleMissionRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
@@ -293,7 +295,7 @@ public class RbRoomDirectorController {
 		List<String> dynamics = Lists.newArrayList();
 
 		// 遍历学员角色组
-		for (CrRole.RbRoleGroup roleGroup : CrRole.RbRoleGroup.studentRoleGroups()) {
+		for (RbRoleGroup roleGroup : RbRoleGroup.studentRoleGroups()) {
 			Integer missionCount = 0;
 			Integer peopleCount = 0;
 
@@ -510,10 +512,10 @@ public class RbRoomDirectorController {
 		List<TrainTaskReleaseInfoContext> list = new ArrayList<>();
 		// 获取该房间的角色信息
 		List<TrainTaskReleaseInfoRsp> red = crRoleService.getTrainTaskReleaseInfoList(resource_id,
-				CrRole.RbRoleGroup.RED.getCode());
+				RbRoleGroup.RED.getCode());
 		list.add(new TrainTaskReleaseInfoContext("red", red));
 		List<TrainTaskReleaseInfoRsp> blue = crRoleService.getTrainTaskReleaseInfoList(resource_id,
-				CrRole.RbRoleGroup.BLUE.getCode());
+				RbRoleGroup.BLUE.getCode());
 		list.add(new TrainTaskReleaseInfoContext("blue", blue));
 		return new BaseRsp<>(list);
 	}

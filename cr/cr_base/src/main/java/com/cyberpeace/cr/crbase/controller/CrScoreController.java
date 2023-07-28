@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
@@ -327,7 +330,7 @@ public class CrScoreController {
 							trainingRecord.setRecord(crTask.getUserAnswer());
 							trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
 							if (crTask.getBusinessType()
-									  .equals(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode())){
+									  .equals(BusinessType.TRAINING_SINGLE.getCode())){
 								if (trainRecordMessage != null && trainRecordMessage.get(crTask.getMissionId()) != null) {
 									String time = ((JSONObject) trainRecordMessage.get(crTask.getMissionId())).get("time").toString();
 									if (StringUtils.isNotEmpty(time)) {

@@ -17,8 +17,8 @@ import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -450,7 +450,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<ClassroomBo> classroomBos = Lists.newArrayList();
 
 		List<String> rbIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
-				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+				BusinessType.RED_VS_BLUE.getCode());
 		if (CollectionUtils.isNotEmpty(rbIds)) {
 			List<RbRoom> rbRooms = rbRoomMapper.selectBatchIds(rbIds);
 			List<RbRoom> rooms = StreamApiUtils.filter(rbRooms,
@@ -460,7 +460,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		List<String> teamIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
-				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+				BusinessType.TRAINING_TEAM.getCode());
 		if (CollectionUtils.isNotEmpty(teamIds)) {
 			List<TeamRoom> teamRooms = teamRoomMapper.selectBatchIds(teamIds);
 			List<TeamRoom> filter = StreamApiUtils.filter(teamRooms,

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
@@ -364,9 +364,9 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		});
 		Map<String, TrainingRaw> btTrainingMap = Maps.newHashMap();
 		mapTrainings(btTrainingMap, singles,
-				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
-		mapTrainings(btTrainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-		mapTrainings(btTrainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+				BusinessType.TRAINING_SINGLE.getCode());
+		mapTrainings(btTrainingMap, teams, BusinessType.TRAINING_TEAM.getCode());
+		mapTrainings(btTrainingMap, rbs, BusinessType.RED_VS_BLUE.getCode());
 		String skillId;
 		for (SkillPagePath skill : result.getRecords()) {
 			skillId = skill.getResourceId();

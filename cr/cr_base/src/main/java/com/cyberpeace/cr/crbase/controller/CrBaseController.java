@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -23,7 +24,6 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.CurrentTimeRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
@@ -95,15 +95,15 @@ public class CrBaseController {
 		Set<String> permissions = UserInfoContext.getUserContext().getPermissions();
 		List<CodeNameRsp> rsp = Lists.newArrayList();
 		if (permissions.contains(MenuConstant.CMS_CR_SINGLE_TRAIN)) {
-			rsp.add(new CodeNameRsp(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+			rsp.add(new CodeNameRsp(BusinessType.TRAINING_SINGLE.getCode(),
 					BusinessCode.SINGLE_TRAINING.getDesc()));
 		}
 		if (permissions.contains(MenuConstant.CMS_CR_TEAM_TRAIN)) {
-			rsp.add(new CodeNameRsp(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
+			rsp.add(new CodeNameRsp(BusinessType.TRAINING_TEAM.getCode(),
 					BusinessCode.TEAM_TRAINING.getDesc()));
 		}
 		if (permissions.contains(MenuConstant.CMS_RED_VS_BLUE)) {
-			rsp.add(new CodeNameRsp(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
+			rsp.add(new CodeNameRsp(BusinessType.RED_VS_BLUE.getCode(),
 					BusinessCode.RED_VS_BLUE.getDesc()));
 		}
 		return new BaseRsp<>(rsp);

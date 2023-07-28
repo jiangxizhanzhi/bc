@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
@@ -36,7 +36,7 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
-				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+				BusinessType.RED_VS_BLUE.getCode());
 		if (roomIds.isEmpty()) {
 			return new TrainingCount();
 		}
@@ -46,7 +46,7 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	@Override
 	public List<TrainingData> getRelatedTraining(String userId) {
 		List<RoomRoleContext> roomRoleContexts = crRoleMapper.getRoomIdsAndRoleGroupByUserIdAndType(
-				userId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+				userId, BusinessType.RED_VS_BLUE.getCode());
 		if (roomRoleContexts.isEmpty()) {
 			return Lists.newArrayList();
 		}

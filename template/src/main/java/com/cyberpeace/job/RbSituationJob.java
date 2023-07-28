@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.ConnectionUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbSituationService;
 import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
@@ -117,7 +117,7 @@ public class RbSituationJob {
 
 	public void score(List<JSONObject> flowLogs) throws Exception {
 		String sceneId = rbSituationService.getSceneId();
-		JSONObject score = rbRoomScoreService.getAllRbScoreProgress(sceneId, CrRole.RbRoleGroup.RED_BLUE.getCode());
+		JSONObject score = rbRoomScoreService.getAllRbScoreProgress(sceneId, RbRoleGroup.RED_BLUE.getCode());
 		Integer redAttackCount = 0;
 		Integer blueAttackedCount = 0;
 		Map<String , String> nodeMap = rbSituationService.getNodeMap();

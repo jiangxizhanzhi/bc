@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.cr.crbase.service.context.scene.BaseSceneData;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.enums.SceneStatusEnum;
@@ -501,25 +502,25 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Override
 	public BusinessCode convertTypeToCode(Integer code) {
-		BusinessTemplate.BusinessType type = EnumUtils.getEnumByCode(code,
-				BusinessTemplate.BusinessType.class);
+		BusinessType type = EnumUtils.getEnumByCode(code,
+				BusinessType.class);
 
-		if (type.equals(BusinessTemplate.BusinessType.TRAINING_SINGLE)) {
+		if (type.equals(BusinessType.TRAINING_SINGLE)) {
 			return BusinessCode.SINGLE_TRAINING;
 		}
-		if (type.equals(BusinessTemplate.BusinessType.VULN_VALIDATE)) {
+		if (type.equals(BusinessType.VULN_VALIDATE)) {
 			return BusinessCode.LIVE_VULN;
 		}
-		if (type.equals(BusinessTemplate.BusinessType.TRAINING_TEAM)) {
+		if (type.equals(BusinessType.TRAINING_TEAM)) {
 			return BusinessCode.TEAM_TRAINING;
 		}
-		if (type.equals(BusinessTemplate.BusinessType.RED_VS_BLUE)) {
+		if (type.equals(BusinessType.RED_VS_BLUE)) {
 			return BusinessCode.RED_VS_BLUE;
 		}
-		if (type.equals(BusinessTemplate.BusinessType.WEAPON_ASSESS)) {
+		if (type.equals(BusinessType.WEAPON_ASSESS)) {
 			return BusinessCode.WEAPON_TEST;
 		}
-		if (type.equals(BusinessTemplate.BusinessType.SYSTEM_ASSESS)) {
+		if (type.equals(BusinessType.SYSTEM_ASSESS)) {
 			return BusinessCode.SYSTEM_TEST;
 		}
 		log.error("template type not supported, code [{}]", code);

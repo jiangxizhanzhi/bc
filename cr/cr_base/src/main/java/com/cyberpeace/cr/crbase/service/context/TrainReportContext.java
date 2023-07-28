@@ -3,7 +3,8 @@ package com.cyberpeace.cr.crbase.service.context;
 import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -12,9 +13,7 @@ import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.lang3.time.DateUtils;
 
-import java.time.Year;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -81,15 +80,15 @@ public class TrainReportContext {
 
 	public void initScoreTrends(List<StudentScoreTrend> scoreTrends) {
 		teamTrends = scoreTrends.stream()
-				.filter(a -> CrRole.TeamRoleGroup.STUDENT.getCode().equals(a.getRole()))
+				.filter(a -> TeamRoleGroup.STUDENT.getCode().equals(a.getRole()))
 				.sorted(Comparator.comparing(StudentScoreTrend::getScoreSum).reversed())
 				.collect(Collectors.toList());
 		redTrends = scoreTrends.stream()
-				.filter(a -> CrRole.RbRoleGroup.RED.getCode().equals(a.getRole()))
+				.filter(a -> RbRoleGroup.RED.getCode().equals(a.getRole()))
 				.sorted(Comparator.comparing(StudentScoreTrend::getScoreSum).reversed())
 				.collect(Collectors.toList());
 		blueTrends = scoreTrends.stream()
-				.filter(a -> CrRole.RbRoleGroup.BLUE.getCode().equals(a.getRole()))
+				.filter(a -> RbRoleGroup.BLUE.getCode().equals(a.getRole()))
 				.sorted(Comparator.comparing(StudentScoreTrend::getScoreSum).reversed())
 				.collect(Collectors.toList());
 		//得分趋势最后只展示前10名
@@ -136,10 +135,10 @@ public class TrainReportContext {
 
 	public void initRbGetScoreRsps(Boolean isRb) {
 		this.redGetScoreRsps = this.getScoreRsps.stream()
-				.filter(a -> CrRole.RbRoleGroup.RED.getCode().equals(a.getType()))
+				.filter(a -> RbRoleGroup.RED.getCode().equals(a.getType()))
 				.collect(Collectors.toList());
 		this.blueGetScoreRsps = this.getScoreRsps.stream()
-				.filter(a -> CrRole.RbRoleGroup.BLUE.getCode().equals(a.getType()))
+				.filter(a -> RbRoleGroup.BLUE.getCode().equals(a.getType()))
 				.collect(Collectors.toList());
 		AtomicReference<Integer> index = new AtomicReference<>(1);
 		if (isRb) {

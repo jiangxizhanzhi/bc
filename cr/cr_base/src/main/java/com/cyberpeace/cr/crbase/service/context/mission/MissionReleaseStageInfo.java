@@ -1,11 +1,10 @@
 package com.cyberpeace.cr.crbase.service.context.mission;
 
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.UserData;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

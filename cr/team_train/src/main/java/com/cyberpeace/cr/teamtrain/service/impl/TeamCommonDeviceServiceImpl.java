@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;

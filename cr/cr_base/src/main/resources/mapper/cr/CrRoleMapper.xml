@@ -15,7 +15,7 @@
         where room_id = #{roomId}
     </delete>
 
-    <select id="selectCrRoleByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+    <select id="selectCrRoleByRoomId" resultType="com.cyberpeace.common.entity.CrRole">
         select resource_id,
         `name`,
         room_id,
@@ -42,7 +42,7 @@
         where user_ids like #{userId}
     </select>
 
-    <select id="getCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+    <select id="getCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.common.entity.CrRole">
 
         <bind name="userId1" value="'%' + userId + '%'"/>
         select resource_id,
@@ -75,7 +75,7 @@
         where business_type = #{code}
         and user_ids like #{user_id}
     </select>
-    <select id="getRolesByRoom" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+    <select id="getRolesByRoom" resultType="com.cyberpeace.common.entity.CrRole">
         select resource_id,
                `name`,
                room_id,
@@ -91,7 +91,7 @@
         where room_id = #{roomId}
           and business_type = #{businessType}
     </select>
-    <select id="selectCrRoleByRoomIdAndRoleId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+    <select id="selectCrRoleByRoomIdAndRoleId" resultType="com.cyberpeace.common.entity.CrRole">
         select resource_id,
         `name`,
         room_id,
@@ -114,13 +114,13 @@
           )
       </if>
     </select>
-    <select id="selectByRoomIdAndMissionId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+    <select id="selectByRoomIdAndMissionId" resultType="com.cyberpeace.common.entity.CrRole">
         <bind name="mission_id" value="'%' + missionId + '%'"/>
         select * from cr_role
         where room_id = #{roomId}
         and mission_scheme like #{mission_id}
     </select>
-    <select id="selectByRoomIdAndGroups" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+    <select id="selectByRoomIdAndGroups" resultType="com.cyberpeace.common.entity.CrRole">
         select * from cr_role
         where room_id = #{roomId}
         and role_group in
@@ -128,12 +128,12 @@
             #{group}
         </foreach>
     </select>
-    <select id="getRolesByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+    <select id="getRolesByRoomId" resultType="com.cyberpeace.common.entity.CrRole">
         select *
         from cr_role
         where room_id = #{roomId}
     </select>
-    <select id="selectBatchByRoomIds" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+    <select id="selectBatchByRoomIds" resultType="com.cyberpeace.common.entity.CrRole">
         select * from cr_role
         where room_id in
         <foreach collection="roomIdList" separator="," item="roomId" open="(" close=")">

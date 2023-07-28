@@ -7,14 +7,12 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.cr.crbase.service.TrainStatisticsService;
 import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
-import com.cyberpeace.cr.singletrain.controller.req.SingleTrainStatisticsDetailReq;
 import com.cyberpeace.cr.singletrain.service.SingleTrainStatisticsService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleOrganizationStatisticsBo;
 import com.cyberpeace.cr.singletrain.service.bo.SinglePersonalStatisticsBo;
-import com.cyberpeace.cr.singletrain.service.bo.SingleStatisticsDetailBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +58,7 @@ public class SingleTrainStatisticsController {
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
     public BaseRsp<ListRsp<StatisticsDetail>> getAllDetail(TrainStatisticsDetailReq detailReq) {
         Page page = detailReq.toPageParam();
-        ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+        ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessType.TRAINING_SINGLE.getCode());
         return new BaseRsp<>(rsp);
     }
 

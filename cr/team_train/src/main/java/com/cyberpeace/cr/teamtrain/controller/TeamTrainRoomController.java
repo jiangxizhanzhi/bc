@@ -8,6 +8,12 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleSimple;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.TeamRoleGroup;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -44,10 +50,6 @@ import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.*;
@@ -685,7 +687,7 @@ public class TeamTrainRoomController {
 		}
 
 		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainTaskReleaseInfoList(resource_id,
-				CrRole.TeamRoleGroup.STUDENT.getCode());
+				TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(res);
 	}
 
@@ -706,7 +708,7 @@ public class TeamTrainRoomController {
 		}
 
 		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id,
-				CrRole.TeamRoleGroup.STUDENT.getCode());
+				TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(mergeStageByCreateTime(res));
 	}
 
@@ -739,7 +741,7 @@ public class TeamTrainRoomController {
 				teamRoom.getEndTime(), scoreCount, teamRoom.getReplaySceneId());
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id,
-				Lists.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()), scoreTrendReq);
+				Lists.newArrayList(TeamRoleGroup.STUDENT.getCode()), scoreTrendReq);
 		// 训练未开始，训练时间显示的是创建训练填写的训练开始时间，训练时长是训练模板设置的推荐时长
 		// 训练已开始，训练时间显示的启动训练时间，训练时长是当前时间-启动训练时间
 		// 训练已结束，训练时间显示的启动训练时间，训练时长是结束训练-启动训练时间
@@ -818,7 +820,7 @@ public class TeamTrainRoomController {
 				roomBaseInfo.getDifficulty()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
 		List<UserRole> teachers = crRoleService.getUserRolesByRoomIdAndRoleGroups(
-				room.getResourceId(), Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
+				room.getResourceId(), Lists.newArrayList(TeamRoleGroup.TEACHER.getCode()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
 		trainReport.setTeacherName(UserRole.getName(UserRole::getName, teachers));
 		trainReport.initRbGetScoreRsps(false);
@@ -921,7 +923,7 @@ public class TeamTrainRoomController {
 		}
 		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
 				teamRoom.getReplaySceneId(), node_id,
-				Lists.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()));
+				Lists.newArrayList(TeamRoleGroup.STUDENT.getCode()));
 
 		// 得到场景真实结束时间
 		Date actualEndTime = trainRecordService.getActualEndTime(resource_id);

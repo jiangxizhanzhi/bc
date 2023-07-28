@@ -3,7 +3,7 @@ package com.cyberpeace.cr.redvsblue.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 
 import lombok.Data;

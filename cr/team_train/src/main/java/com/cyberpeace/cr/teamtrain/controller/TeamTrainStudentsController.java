@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -33,10 +36,6 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
@@ -281,7 +280,7 @@ public class TeamTrainStudentsController {
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req) {
-		crCommonService.addMark(req, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		crCommonService.addMark(req, BusinessType.TRAINING_TEAM.getCode());
 		return new BaseRsp();
 	}
 

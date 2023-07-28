@@ -2,7 +2,7 @@ package com.cyberpeace.cr.redvsblue.controller.rsp;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -26,11 +26,11 @@ public class RbTemplateRoleRsp {
 		this.children = Lists.newArrayList();
 	}
 
-	public RbTemplateRoleRsp(CrRole.RbRoleGroup roleGroup) {
+	public RbTemplateRoleRsp(RbRoleGroup roleGroup) {
 		this(roleGroup, roleGroup.getDesc());
 	}
 
-	public RbTemplateRoleRsp(CrRole.RbRoleGroup roleGroup, String name) {
+	public RbTemplateRoleRsp(RbRoleGroup roleGroup, String name) {
 		this(roleGroup.getCode(), name);
 	}
 

@@ -2,7 +2,7 @@ package com.cyberpeace.common.mdparser.annotations;
 
 import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 import com.cyberpeace.common.mdparser.convert.NoConvert;
-import com.cyberpeace.common.mdparser.parser.MdContentParser;
+import com.cyberpeace.common.mdparser.MdContentParser;
 import com.cyberpeace.common.mdparser.parser.StringParser;
 
 import java.lang.annotation.*;

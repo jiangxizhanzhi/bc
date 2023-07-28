@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.mdparser.parser.MdContentParser;
+import com.cyberpeace.common.mdparser.MdContentParser;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Lists;
 

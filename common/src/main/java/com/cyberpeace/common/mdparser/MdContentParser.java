@@ -1,4 +1,4 @@
-package com.cyberpeace.common.mdparser.parser;
+package com.cyberpeace.common.mdparser;
 
 public interface MdContentParser<T, R> {
 

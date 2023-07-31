@@ -963,26 +963,27 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		if (CollectionUtils.isEmpty(ipBoList)) {
 			return CommonConstant.EMPTY_STRING;
 		}
+		return ipBoList.get(0).getIp();
 		// 只提供一个ip的情况
-		if (ipBoList.size() == 1) {
-			return ipBoList.get(0).getIp();
-		}
+//		if (ipBoList.size() == 1) {
+//			return ipBoList.get(0).getIp();
+//		}
 		// 必须配置外部网段
-		if (StringUtils.isBlank(EXTERNAL_IP_SEGMENT)) {
-			throw new BusinessException(BsErrorCode.SEGMENT_NOT_CONFIGURED);
-		}
-		String ip;
-		// 循环匹配ip是否在指定网段
-		for (IpBo ipBo : ipBoList) {
-			ip = ipBo.getIp();
-			if (BsUtil.isInRange(ip, EXTERNAL_IP_SEGMENT)) {
-				// 返回匹配到的第一个
-				return ip;
-			}
-		}
-		log.error("No valid external ip found.");
+//		if (StringUtils.isBlank(EXTERNAL_IP_SEGMENT)) {
+//			throw new BusinessException(BsErrorCode.SEGMENT_NOT_CONFIGURED);
+//		}
+//		String ip;
+//		// 循环匹配ip是否在指定网段
+//		for (IpBo ipBo : ipBoList) {
+//			ip = ipBo.getIp();
+//			if (BsUtil.isInRange(ip, EXTERNAL_IP_SEGMENT)) {
+//				// 返回匹配到的第一个
+//				return ip;
+//			}
+//		}
+//		log.error("No valid external ip found.");
 		// 未匹配到有效ip，返回空白字符串
-		return CommonConstant.EMPTY_STRING;
+//		return CommonConstant.EMPTY_STRING;
 	}
 
 	/**

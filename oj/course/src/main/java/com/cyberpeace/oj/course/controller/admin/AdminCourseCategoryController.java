@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.TrialButtonConstant;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;

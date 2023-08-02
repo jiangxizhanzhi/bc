@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.TrialButtonConstant;
+import com.cyberpeace.common.model.user.UserInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -131,6 +132,18 @@ public class EvalAlgorithmAdminController {
 	public BaseRsp<String> editAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
 		String evalAlgorithmId = req.getEvalAlgorithmId();
+
+		// 试用账号编辑改动
+		EvalAlgorithm currentAlgorithm = evalAlgorithmMapper.selectById(evalAlgorithmId);
+		if(null == currentAlgorithm){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		String createUserId = currentAlgorithm.getCreateUserId();
+		UserInfo userContext = UserInfoContext.getUserContext();
+		if(!createUserId.equals(userContext.getUserId())){
+			throw new BusinessException(ErrorCode.TRAIL_UNAUTHORIZED);
+		}
+
 		checkAlgorithmMode(evalAlgorithmId);
 		EvalAlgorithm originEvalAlgorithm = evalAlgorithmService.getById(req.getEvalAlgorithmId());
 
@@ -188,6 +201,16 @@ public class EvalAlgorithmAdminController {
 	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_ALGORITHM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
+
+		// 试用账号删除非自己账号创建的算法抛异常
+		LambdaQueryWrapper<EvalAlgorithm> query =  new LambdaQueryWrapper<>();
+		UserInfo userContext = UserInfoContext.getUserContext();
+		query.ne(EvalAlgorithm::getCreateUserId, userContext.getUserId());
+		query.in(EvalAlgorithm::getResourceId, deleteReq.getIds());
+		List<EvalAlgorithm> algorithms = evalAlgorithmMapper.selectList(query);
+		if (algorithms.size() > 0){
+			throw new BusinessException(ErrorCode.TRAIL_UNAUTHORIZED);
+		}
 
 		List<String> selectUsedAlgorithmIds = evalAlgorithmService
 				.selectUsedAlgorithmIds(deleteReq.getIds());

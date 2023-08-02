@@ -1,5 +1,6 @@
 package com.cyberpeace.config.aop;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
@@ -31,7 +32,22 @@ public class PermissionOperationAspect {
 
 		if (requirespermissionsFilter != null) {
 			// 权限校验,包含黑名单抛出异常
-
+			Class<?> targetCls=joinPoint.getTarget().getClass();
+			//获取方法签名(通过此签名获取目标方法信息)
+			MethodSignature ms=(MethodSignature)joinPoint.getSignature();
+			//获取目标方法上的注解指定的操作名称
+			Method targetMethod=
+					targetCls.getDeclaredMethod(
+							ms.getName(),
+							ms.getParameterTypes());
+			System.out.println("targetMethod="+targetMethod);
+			//获取目标方法名(目标类型+方法名)
+			String targetClsName=targetCls.getName();
+			String targetObjectMethodName=targetClsName+"."+ms.getName();
+			if (("com.cyberpeace.cr.evaluation.controller.EvalAlgorithmAdminController".equals(targetClsName))
+					&& (targetObjectMethodName.contains("edit") || targetObjectMethodName.contains("batchDelete"))){
+				return;
+			}
 			Set<String> permissionOperations = UserInfoContext.getUserContext()
 					.getPermissionOperations();
 

@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.TrialButtonConstant;
+import com.cyberpeace.common.model.user.UserInfo;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -67,7 +69,6 @@ public class EvalSystemIndexAdminController {
 
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
-	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystem> addEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
@@ -95,6 +96,13 @@ public class EvalSystemIndexAdminController {
 		if (null == evalSystem) {
 			log.info("EvalSystem not found! EvalSystemId=[{}]", evalSystemReq.getEvalSystemId());
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 试用账号编辑改动
+		String createUserId = evalSystem.getCreateUserId();
+		UserInfo userContext = UserInfoContext.getUserContext();
+		if(!createUserId.equals(userContext.getUserId())){
+			throw new BusinessException(ErrorCode.TRAIL_UNAUTHORIZED);
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -242,6 +250,16 @@ public class EvalSystemIndexAdminController {
 	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+
+		// 试用账号删除非自己账号创建的算法抛异常
+		LambdaQueryWrapper<EvalSystem> query =  new LambdaQueryWrapper<>();
+		UserInfo userContext = UserInfoContext.getUserContext();
+		query.ne(EvalSystem::getCreateUserId, userContext.getUserId());
+		query.in(EvalSystem::getResourceId, deleteReq.getIds());
+		List<EvalSystem> systems = evalSystemMapper.selectList(query);
+		if (systems.size() > 0){
+			throw new BusinessException(ErrorCode.TRAIL_UNAUTHORIZED);
+		}
 
 		Boolean result = evalSystemService.batchDelete(deleteReq.getIds());
 

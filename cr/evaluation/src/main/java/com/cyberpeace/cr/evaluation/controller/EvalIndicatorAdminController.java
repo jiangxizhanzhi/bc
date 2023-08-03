@@ -2,8 +2,10 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.TrialButtonConstant;
+import com.cyberpeace.common.model.user.UserInfo;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -77,7 +79,6 @@ public class EvalIndicatorAdminController {
 
 	@ApiOperation("新增指标项")
 	@PostMapping("")
-	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<String>
 			addEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
@@ -167,16 +168,21 @@ public class EvalIndicatorAdminController {
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<String>
 			editEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
-
-		validateReq(evalIndicatorReq);
-
+		// 试用账号编辑改动
 		EvalIndicator evalIndicator = evalIndicatorService
 				.getById(evalIndicatorReq.getEvalIndicatorId());
-		if (null == evalIndicator) {
+		if(null == evalIndicator){
 			log.info("EvalIndicator not found! evalIndicatorId=[{}]",
 					evalIndicatorReq.getEvalIndicatorId());
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		String createUserId = evalIndicator.getCreateUserId();
+		UserInfo userContext = UserInfoContext.getUserContext();
+		if(!createUserId.equals(userContext.getUserId())){
+			throw new BusinessException(ErrorCode.TRAIL_UNAUTHORIZED);
+		}
+		validateReq(evalIndicatorReq);
+
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -273,6 +279,17 @@ public class EvalIndicatorAdminController {
 	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
+
+
+		// 试用账号删除非自己账号创建的算法抛异常
+		LambdaQueryWrapper<EvalIndicator> query =  new LambdaQueryWrapper<>();
+		UserInfo userContext = UserInfoContext.getUserContext();
+		query.ne(EvalIndicator::getCreateUserId, userContext.getUserId());
+		query.in(EvalIndicator::getResourceId, deleteReq.getIds());
+		List<EvalIndicator> evalIndicators = evalIndicatorMapper.selectList(query);
+		if (evalIndicators.size() > 0){
+			throw new BusinessException(ErrorCode.TRAIL_UNAUTHORIZED);
+		}
 
 		Integer useNum = evalIndicatorService.selectIndexUsedNum(deleteReq.getIds());
 

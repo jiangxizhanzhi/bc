@@ -44,7 +44,9 @@ public class PermissionOperationAspect {
 			//获取目标方法名(目标类型+方法名)
 			String targetClsName=targetCls.getName();
 			String targetObjectMethodName=targetClsName+"."+ms.getName();
-			if (("com.cyberpeace.cr.evaluation.controller.EvalAlgorithmAdminController".equals(targetClsName))
+			if (("com.cyberpeace.cr.evaluation.controller.EvalAlgorithmAdminController".equals(targetClsName) ||
+					"com.cyberpeace.cr.evaluation.controller.EvalIndicatorAdminController".equals(targetClsName) ||
+					"com.cyberpeace.cr.evaluation.controller.EvalSystemIndexAdminController".equals(targetClsName))
 					&& (targetObjectMethodName.contains("edit") || targetObjectMethodName.contains("batchDelete"))){
 				return;
 			}

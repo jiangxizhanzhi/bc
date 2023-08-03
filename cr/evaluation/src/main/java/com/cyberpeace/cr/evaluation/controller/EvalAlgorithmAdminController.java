@@ -75,7 +75,7 @@ public class EvalAlgorithmAdminController {
 	public BaseRsp<EvalAlgorithm> addAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
 		EvalAlgorithm evalAlgorithm = convertEvalAlgorithmReqToEvalAlgorithm(req);
-
+		evalAlgorithm.setBuiltin(EvalAlgorithm.Builtin.FORMAT_ALGORITHM.getCode());
 		evalAlgorithmService.save(evalAlgorithm);
 
 		return new BaseRsp(evalAlgorithm);

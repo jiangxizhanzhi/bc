@@ -1,12 +1,5 @@
 package com.cyberpeace.cs.controller;
 
-import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.FileUtil;
@@ -18,10 +11,16 @@ import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-
+import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "公共服务接口")
 @RestController
@@ -35,6 +34,9 @@ public class CommonController {
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private RemoteServerEnvService remoteServerEnvService;
 
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
@@ -80,10 +82,13 @@ public class CommonController {
 			throw new UnauthorizedException();
 		}
 
+		// 判断Office服务是否正常
+		Boolean checkOffice = remoteServerEnvService.checkOffice();
+
 		// 校验权限和文件
 		filePermission.validatePermission(false);
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
-		filePermission.validateFileSuffix(fileName);
+		filePermission.validateFileSuffix(fileName, checkOffice);
 
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadDest(

@@ -1,13 +1,11 @@
 package com.cyberpeace.cs.constant;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.util.FileUtil;
-
 import lombok.Getter;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthorizedException;
 
 /**
  * @author chenzhuo
@@ -42,8 +40,17 @@ public enum UploadAttachmentPermission implements GenericEnum {
         this.menuIds = menuIds;
     }
 
-    public void validateFileSuffix(String fileName) {
-        FileUtil.validateFileSuffix(fileName, fileSuffix);
+    public void validateFileSuffix(String fileName, Boolean checkOffice) {
+
+        // 如果检查office服务不可用，则不允许上传office文件
+        String suffixs;
+        if (!checkOffice) {
+            suffixs = fileSuffix.replace(",DOC,DOCX,PPT,PPTX", "");
+        } else {
+            suffixs = fileSuffix;
+        }
+
+        FileUtil.validateFileSuffix(fileName, suffixs);
     }
 
     public void validatePermission(boolean all) {

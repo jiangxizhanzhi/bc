@@ -12,9 +12,9 @@ public class ReleaseMissionReq implements Serializable {
 	@ApiModelProperty(value = "角色id", required = true)
 	private String roleResourceId;
 
-	@ApiModelProperty(value = "任务id", required = true)
+	@ApiModelProperty(value = "任务id")
 	private String missionResourceId;
 
-	@ApiModelProperty(value = "任务ids", required = true)
+	@ApiModelProperty(value = "任务ids")
 	private List<String> missionResourceIds;
 }

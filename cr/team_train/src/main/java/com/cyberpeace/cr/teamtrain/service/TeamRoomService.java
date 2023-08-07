@@ -4,9 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTimeManagementReq;
+import com.cyberpeace.cr.teamtrain.controller.rsp.AddTeamTimeManagementRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTimeManagement;
 import com.cyberpeace.cr.teamtrain.service.context.StudentsTimeLineData;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
@@ -43,10 +44,9 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	IPage<TeamRoomData> list(ListQuery listQuery);
 
 	/** 修改团队训练状态
-	 * @param roomId 团队训练实例id
 	 * @return 团队训练实例状态
 	 */
-	Integer addTimeManagement(String roomId, TeamTimeManagement timeManagement);
+	AddTeamTimeManagementRsp addTimeManagement(TeamTimeManagementReq req);
 
 	/** 获取团队训练状态
 	 * @param roomId 团队训练实例id

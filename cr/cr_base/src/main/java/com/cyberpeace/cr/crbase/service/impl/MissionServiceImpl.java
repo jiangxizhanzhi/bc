@@ -263,6 +263,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				getFlagTaskList(mission, flagTaskList, task);
 			}
 			CrTaskLog taskLog = new CrTaskLog();
+			taskLog.setResourceId(UUID.randomUUID().toString());
 			taskLog.setRoomId(mission.getRoomId());
 			taskLog.setMissionId(mission.getResourceId());
 			taskLog.setActionCode(CrTaskLog.ActionCode.RELEASE.getCode());

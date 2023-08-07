@@ -23,6 +23,8 @@ import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTimeManagementReq;
+import com.cyberpeace.cr.teamtrain.controller.rsp.AddTeamTimeManagementRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -310,15 +312,15 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public Integer addTimeManagement(String roomId, TeamTimeManagement timeManagement) {
-		TeamRoom teamRoom = getById(roomId);
+	public AddTeamTimeManagementRsp addTimeManagement( TeamTimeManagementReq req) {
+		TeamRoom teamRoom = getById(req.getResourceId());
 
 		if (teamRoom.isUnopened()) {
 			teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.OPENING.getCode());
 		} else if (teamRoom.isOpening()) {
 			teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.ENDED.getCode());
 		} else if (teamRoom.isEnded()) {
-			log.error("teamTrain is over! roomId=[{}]", roomId);
+			log.error("teamTrain is over! roomId=[{}]", req.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
 		// 获取团队训练业务模板id
@@ -330,22 +332,50 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		} else {
 			businessTemplateId = teamTemplate.getBusinessTemplateId();
 		}
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		TeamTimeManagement timeManagement = BeanUtils.copy(req, TeamTimeManagement.class);
+		timeManagement.setRoomId(req.getResourceId());
+		int timeManagementStatus = TeamRoom.TrainingStatusCode.OPENING.getCode().equals(teamRoom.getTrainingStatus()) ?
+				TeamTimeManagement.TimeManagementStatus.START.getCode() : TeamTimeManagement.TimeManagementStatus.STOP.getCode();
+		timeManagement.setStatus(timeManagementStatus);
+		timeManagement.setCreateUserId(userId);
+
+		// 暂停或者停止，更新天文时间
+		if (timeManagement.isPaused() || timeManagement.isStopped()) {
+
+			long time = timeManagement.getCombatTime().getTime()
+					+ (System.currentTimeMillis() - timeManagement.getUpdateTime().getTime())
+					* timeManagement.getRate();
+			Date currentCombatTime = new Date(time);
+			timeManagement.setCombatTime(currentCombatTime);
+		}
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				updateById(teamRoom);
 				if (teamRoom.isOpening()) {
-					trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
+					trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, req.getResourceId(),
 							teamRoom.getCreateUserId(),
 							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 				} else if (teamRoom.isEnded()) {
-					trainRecordService.updateEndTimeByRoomId(roomId, new Date());
+					trainRecordService.updateEndTimeByRoomId(req.getResourceId(), new Date());
 				}
-				teamTimeManagementMapper.insert(timeManagement);
+				if (TeamRoom.TrainingStatusCode.OPENING.getCode().equals(teamRoom.getTrainingStatus())) {
+					teamTimeManagementMapper.insert(timeManagement);
+				}else {
+					teamTimeManagementMapper.updateById(timeManagement);
+				}
 			}
 		});
-		return teamRoom.getTrainingStatus();
+
+		AddTeamTimeManagementRsp teamTimeManagementRsp = BeanUtils.copy(timeManagement,
+				AddTeamTimeManagementRsp.class);
+		teamTimeManagementRsp.setRoomId(timeManagement.getRoomId());
+		teamTimeManagementRsp.setTrainingStatus(teamRoom.getTrainingStatus());
+		return teamTimeManagementRsp;
 	}
 
 	@Override

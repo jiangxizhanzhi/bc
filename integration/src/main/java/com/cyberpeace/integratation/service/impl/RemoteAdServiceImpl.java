@@ -128,7 +128,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	@Override
 	public List<CalendarCompetitionBo> list() {
 		// 接口请求
-		JSONObject competitionArray = HttpClientUtil.rawGet(COMPETITION_WEB_URL, JSONObject.class);
+		String formatUrl = String.format(COMPETITION_WEB_URL,  CommonConstant.EMPTY_STRING);
+		JSONObject competitionArray = HttpClientUtil.rawGet(formatUrl, JSONObject.class);
 		return new ArrayList<>();
 	}
 }

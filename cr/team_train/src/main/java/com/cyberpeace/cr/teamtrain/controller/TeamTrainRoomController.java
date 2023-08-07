@@ -543,22 +543,12 @@ public class TeamTrainRoomController {
 	@PostMapping("/start_end_team")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<AddTeamTimeManagementRsp> changeTrainingStatus(@RequestBody @Validated TeamTimeManagementReq req) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		TeamTimeManagement timeManagement = BeanUtils.copy(req, TeamTimeManagement.class);
-		timeManagement.setRoomId(req.getResourceId());
-		timeManagement.setStatus(TeamTimeManagement.TimeManagementStatus.START.getCode());
-		timeManagement.setCreateUserId(userId);
 
-		int status = teamRoomService.addTimeManagement(req.getResourceId(), timeManagement);
+		AddTeamTimeManagementRsp teamTimeManagementRsp = teamRoomService.addTimeManagement(req);
 		TeamRoom teamRoom = teamRoomService.getById(req.getResourceId());
 
-		AddTeamTimeManagementRsp teamTimeManagementRsp = BeanUtils.copy(timeManagement,
-				AddTeamTimeManagementRsp.class);
-		teamTimeManagementRsp.setRoomId(timeManagement.getRoomId());
-		teamTimeManagementRsp.setTrainingStatus(status);
-
 		// 记录远程操作日志
-		OperationType operationType = Objects.equals(status,
+		OperationType operationType = Objects.equals(teamTimeManagementRsp.getTrainingStatus(),
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP: OperationType.START;
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), teamRoom.getModule(),
 				operationType, teamRoomService.getById(req.getResourceId()).getName());

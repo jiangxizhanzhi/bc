@@ -34,6 +34,8 @@ public class EvalTemplate extends BaseTable {
 
 	private String redVsBlueId;
 
+	private Integer indexScore;
+
 	public void setLogoId(String logoId) {
 		this.logo = logoId;
 	}

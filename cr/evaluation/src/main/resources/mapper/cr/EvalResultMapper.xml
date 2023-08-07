@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalResultMapper">
+
+    <select id="pageList" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalResultListRsp">
+        select
+               T1.*,
+               T2.name as record_name
+        from cr_eval_result T1
+        left join cr_eval_record T2 on T2.resource_id = T1.record
+        <where>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                T1.create_time &gt;= #{startTime}
+                and T1.create_time &lt;= #{endTime}
+            </if>
+            <if test="type != null and type != ''">
+                and T1.type = #{type}
+            </if>
+            <if test="pattern != null and pattern != ''">
+                and T2.name = #{pattern}
+            </if>
+        </where>
+    </select>
+</mapper>

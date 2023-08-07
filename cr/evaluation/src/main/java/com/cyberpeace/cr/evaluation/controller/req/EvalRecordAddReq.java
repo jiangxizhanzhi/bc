@@ -32,7 +32,10 @@ public class EvalRecordAddReq implements Serializable {
 
     @ApiModelProperty(value = "指标分数", required = true)
     @NotNull
-    private Integer indicatorScore;
+    private Integer indexScore;
+
+    @ApiModelProperty(value = "最终分数")
+    private Integer finalScore;
 
     @ApiModelProperty(value = "开始时间（评估采集数据时间范围）")
     private Date startTime;
@@ -52,6 +55,6 @@ public class EvalRecordAddReq implements Serializable {
         }
         int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.zero"));
         int categoryMax = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.score.max"));
-        CrCommonValidator.validateRange(indicatorScore,lenMin, categoryMax, CrBusinessErrorCode.MAX_SCORE_10000);
+        CrCommonValidator.validateRange(indexScore,lenMin, categoryMax, CrBusinessErrorCode.MAX_SCORE_10000);
     }
 }

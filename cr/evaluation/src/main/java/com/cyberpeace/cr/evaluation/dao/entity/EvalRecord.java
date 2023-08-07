@@ -31,6 +31,15 @@ public class EvalRecord extends BaseTable {
     private Integer score;
 
     /**
+     * 评估任务指标分数
+     */
+    private Integer indexScore;
+    /**
+     * 评估任务最终分数
+     */
+    private Integer finalScore;
+
+    /**
      * 引用指标体系ID
      */
     private String systemId;

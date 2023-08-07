@@ -15,6 +15,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.controller.req.MissionFlagAttachmentQuery;
+import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
 import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
 import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
@@ -28,8 +30,6 @@ import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import com.cyberpeace.situation.model.ws.WsMissionDynamic;
 import com.cyberpeace.situation.service.DynamicSchemeService;
@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -92,10 +93,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	private DynamicSchemeService dynamicSchemeService;
 
 	@Autowired
-	private LocalSceneMapper localSceneMapper;
+	private CrRoleAssetNodeMapper crRoleAssetNodeMapper;
 
 	@Autowired
-	private CrRoleAssetNodeMapper crRoleAssetNodeMapper;
+	private CrFlagTaskMapper crFlagTaskMapper;
 
 	private volatile Map<String, MissionCategoryCache> categoryCache;
 
@@ -160,27 +161,16 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		List<CrTask> crTasks = crTaskMapper.selectByMissionId(missionId);
-
 		if (crTasks.size() > 0) {
-
 			throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 		}
-
 		Date releaseTime = new Date();
 
 		List<CrTask> tasks = new ArrayList<>();
+		List<CrFlagTask> flagTaskList = new ArrayList<>();
 		for (String userId : role.getUserIdList()) {
-			CrTask task = new CrTask();
-			task.setMissionId(mission.getResourceId());
-			task.setUserId(userId);
-			task.setStatus(CrTask.TaskStatus.RELEASED.getCode());
-			task.setReleaseTime(releaseTime);
-			task.setRoomId(mission.getRoomId());
-			task.setRoleId(role.getResourceId());
-			task.setBusinessType(role.getBusinessType());
-			task.setMissionTemplateId(mission.getMissionTemplateId());
-
-			tasks.add(task);
+			CrTask task = getCrTaskList(mission, role, releaseTime, tasks, userId);
+			getFlagTaskList(mission, flagTaskList, task);
 		}
 
 		CrTaskLog taskLog = new CrTaskLog();
@@ -195,8 +185,100 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskMapper.batchInsert(tasks);
 				crTaskLogMapper.insert(taskLog);
+				if (!CollectionUtils.isEmpty(flagTaskList)) {
+					crFlagTaskMapper.batchInsert(flagTaskList);
+				}
 			}
 		});
+	}
+
+	private CrTask getCrTaskList(Mission mission, CrRole role, Date releaseTime, List<CrTask> tasks, String userId) {
+		CrTask task = new CrTask();
+		task.setResourceId(UUID.randomUUID().toString());
+		task.setMissionId(mission.getResourceId());
+		task.setUserId(userId);
+		task.setStatus(CrTask.TaskStatus.RELEASED.getCode());
+		task.setReleaseTime(releaseTime);
+		task.setRoomId(mission.getRoomId());
+		task.setRoleId(role.getResourceId());
+		task.setBusinessType(role.getBusinessType());
+		task.setMissionTemplateId(mission.getMissionTemplateId());
+		tasks.add(task);
+		return task;
+	}
+
+	private void getFlagTaskList(Mission mission, List<CrFlagTask> flagTaskList, CrTask task) {
+		if (MissionBase.MissionType.FLAG.getCode().equals(mission.getType())) {
+			CrFlagTask flagTask = new CrFlagTask();
+			flagTask.setMissionId(mission.getResourceId());
+			flagTask.setTaskId(task.getResourceId());
+			MissionFlagQuery missionFlagQuery = JSON.parseObject(mission.getAnswer(), MissionFlagQuery.class);
+			if (MissionFlagQuery.FlagType.STATIC_FLAG.getCode()
+					.equals(missionFlagQuery.getFlagType())) {
+				flagTask.setFlagValue(missionFlagQuery.getFlagValue());
+			} else {
+				List<MissionFlagAttachmentQuery> attachmentList = missionFlagQuery.getAttachmentList();
+				int number = new Random().nextInt(attachmentList.size());
+				flagTask.setAttachmentId(attachmentList.get(number).getResourceId());
+				flagTask.setFlagValue(attachmentList.get(number).getFlagValue());
+			}
+			flagTaskList.add(flagTask);
+		}
+	}
+
+	@Override
+	public Boolean batchRelease(List<String> missionIds, String roleId, String currentUserId) {
+		List<Mission> missions = missionMapper.selectBatchIds(missionIds);
+		if (CollectionUtils.isEmpty(missions)) {
+			log.error("missions does not exist！missionIds=[{}]", JsonUtil.arrayToString(missionIds));
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+
+		CrRole role = crRoleMapper.selectById(roleId);
+		if (role == null) {
+			log.error("role does not exist！roleId=[{}]", roleId);
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+		//已下发的任务
+		List<CrTask> crTasks = crTaskMapper.selectByMissionIds(missionIds);
+
+		//过滤已下发的任务
+		if (crTasks.size() > 0) {
+			Set<String> existMissionIds = crTasks.stream().map(CrTask::getMissionId).collect(Collectors.toSet());
+			missions=missions.stream().filter(a->!existMissionIds.contains(a.getResourceId())).collect(Collectors.toList());
+			if (CollectionUtils.isEmpty(missions)) {
+				return false;
+			}
+		}
+
+		Date releaseTime = new Date();
+
+		List<CrTask> tasks = new ArrayList<>();
+		List<CrTaskLog> taskLogs = new ArrayList<>();
+		List<CrFlagTask> flagTaskList = new ArrayList<>();
+		//根据任务和user列表创建任务
+		for (Mission mission : missions) {
+			for (String userId : role.getUserIdList()) {
+				CrTask task = getCrTaskList(mission, role, releaseTime, tasks, userId);
+				getFlagTaskList(mission, flagTaskList, task);
+			}
+			CrTaskLog taskLog = new CrTaskLog();
+			taskLog.setRoomId(mission.getRoomId());
+			taskLog.setMissionId(mission.getResourceId());
+			taskLog.setActionCode(CrTaskLog.ActionCode.RELEASE.getCode());
+			taskLog.setUserId(currentUserId);
+			taskLogs.add(taskLog);
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				crTaskMapper.batchInsert(tasks);
+				crTaskLogMapper.batchInsert(taskLogs);
+				crFlagTaskMapper.batchInsert(flagTaskList);
+			}
+		});
+		return true;
 	}
 
 	@Override

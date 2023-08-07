@@ -451,4 +451,16 @@ public interface CrBusinessErrorCode {
 
 	String HAVE_APPLIED = "101140";
 
+	/** 规则分数不能超过100 */
+	String ILLEGAL_RULE_SCORE = "101141";
+
+	/** 非法的flag任务类型 */
+	String ILLEGAL_FLAG_TYPE = "101142";
+
+    /**  任务答案个数超出范围*/
+	String ANSWER_SIZE_OUT_OF_RANGE = "101043";
+
+	/**  任务答案长度超出范围*/
+	String ANSWER_LEN_OUT_OF_RANGE = "101044";
+
 }

@@ -32,7 +32,7 @@ public class Mission extends MissionBase {
 		result = result || (type.intValue() == MissionType.SINGLE_CHOICE.getCode());
 		result = result || (type.intValue() == MissionType.MULTIPLE_CHOICE.getCode());
 		result = result || (type.intValue() == MissionType.FILE.getCode());
-
+		result = result || (type.intValue() == MissionType.FLAG.getCode());
 		return result;
 	}
 }

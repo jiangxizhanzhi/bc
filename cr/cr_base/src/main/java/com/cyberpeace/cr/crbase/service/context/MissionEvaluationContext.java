@@ -1,10 +1,9 @@
 package com.cyberpeace.cr.crbase.service.context;
 
-import java.util.Date;
-
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 任务评估模型
@@ -53,4 +52,9 @@ public class MissionEvaluationContext {
 	private Integer missionScore;
 
 	private Date createTime;
+
+	private String rank;
+
+	private Integer rankScore;
+
 }

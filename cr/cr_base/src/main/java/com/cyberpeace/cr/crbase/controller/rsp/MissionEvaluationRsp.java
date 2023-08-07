@@ -1,11 +1,10 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
-import java.util.Date;
-
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class MissionEvaluationRsp {
@@ -66,6 +65,12 @@ public class MissionEvaluationRsp {
 
 	@ApiModelProperty(value = "提交信息")
 	private SubmitInfo submitInfo;
+
+	@ApiModelProperty(value = "是否一二三血")
+	private String rank;
+
+	@ApiModelProperty(value = "额外加分")
+	private Integer rankScore;
 
 	@Data
 	public class SubmitInfo {

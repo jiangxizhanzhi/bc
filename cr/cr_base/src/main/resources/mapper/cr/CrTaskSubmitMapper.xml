@@ -59,6 +59,7 @@
                 and cr_task_submit.evaluate_status = #{listQuery.evaluateStatus}
             </if>
         </where>
+        ORDER BY cr_task_submit.create_time ASC
     </select>
     <select id="selectOrderedSubmitsByTask" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit"
             parameterType="java.lang.String">

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper">
+
+    <insert id="batchInsert" parameterType="com.cyberpeace.cr.crbase.dao.entity.CrFlagTask">
+        insert into cr_flag_task
+        (resource_id, mission_id, task_id, attachment_id, flag_value, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId}, #{item.missionId}, #{item.taskId}, #{item.attachmentId},
+            #{item.flagValue}, now(),now())
+        </foreach>
+    </insert>
+</mapper>

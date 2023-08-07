@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.DailyTrainMapper">
+
+
+<!--    <resultMap id="listResultMap" type="com.cyberpeace.cr.singletrain.dao.entity.SingleRoomList">-->
+<!--        <id column="resource_id" property="businessTemplate.resourceId"/>-->
+<!--        <result column="name" property="businessTemplate.name"/>-->
+<!--        <result column="description" property="businessTemplate.description"/>-->
+<!--        <result column="difficulty" property="businessTemplate.difficulty"/>-->
+<!--        <result column="sub_type" property="singleTemplate.subType"/>-->
+<!--        <result column="pre_skills" property="singleTemplate.preSkills"/>-->
+<!--        <result column="train_skills" property="singleTemplate.trainSkills"/>-->
+<!--        <result column="duration_time" property="singleTemplate.durationTime"/>-->
+<!--        <result column="start_time" property="singleRoom.startTime"/>-->
+<!--        <result column="training_record" property="singleRoom.trainingRecord"/>-->
+<!--        <result column="topo_id" property="businessTemplate.topoId"/>-->
+<!--    </resultMap>-->
+
+<!--    <select id="singleTrainSearch" resultMap="listResultMap">-->
+<!--        select *-->
+<!--        from cr_business_template T1-->
+<!--        left join cr_single_template T2 on T1.resource_id = T2.business_template_id-->
+<!--        left join cr_single_room R1 on T1.resource_id = R1.business_template_id and R1.user_id = #{user_id}-->
+<!--        <where>-->
+<!--            T1.business_type = #{business_type}-->
+<!--            <if test="category != null and category">-->
+<!--                and T2.sub_type = #{category}-->
+<!--            </if>-->
+<!--            <if test="difficult != null and difficult">-->
+<!--                and T1.difficulty = #{difficult}-->
+<!--            </if>-->
+<!--            <if test="pattern != null and pattern">-->
+<!--                <bind name="pattern" value="'%' + pattern + '%'"/>-->
+<!--                and T1.name like #{pattern}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        order by R1.start_time desc, T1.id desc-->
+
+<!--    </select>-->
+
+
+<!--    <resultMap id="TeamRoomData" type="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData">-->
+<!--        <id property="resourceId" column="resource_id" jdbcType="VARCHAR"/>-->
+<!--        <result property="template" column="team_template_id" jdbcType="VARCHAR"/>-->
+<!--        <result property="templateName" column="team_template_name" jdbcType="VARCHAR"/>-->
+<!--        <result property="name" column="name" jdbcType="VARCHAR"/>-->
+<!--        <result property="description" column="description" jdbcType="VARCHAR"/>-->
+<!--        <result property="category" column="sub_type" jdbcType="VARCHAR"/>-->
+<!--        <result property="preSkill" column="pre_skills" jdbcType="VARCHAR"/>-->
+<!--        <result property="trainSkill" column="train_skills" jdbcType="VARCHAR"/>-->
+<!--        <result property="startTime" column="start_time" jdbcType="VARCHAR"/>-->
+<!--        <result property="endTime" column="end_time" jdbcType="VARCHAR"/>-->
+<!--        <result property="trainingStatus" column="training_status" jdbcType="VARCHAR"/>-->
+<!--        <result property="sceneStartTime" column="scene_start_time" jdbcType="VARCHAR"/>-->
+<!--        <result property="sceneEndTime" column="scene_end_time" jdbcType="VARCHAR"/>-->
+<!--        <result property="difficult" column="difficulty" jdbcType="VARCHAR"/>-->
+<!--        <result property="durationTime" column="duration_time" jdbcType="VARCHAR"/>-->
+<!--    </resultMap>-->
+
+<!--    <select id="listTeamRoom" resultMap="TeamRoomData">-->
+
+<!--        select cr_team_room.resource_id,-->
+<!--        cr_team_room.team_template_id,-->
+<!--        cr_team_room.NAME,-->
+<!--        cr_team_room.description,-->
+<!--        cr_team_room.sub_type,-->
+<!--        cr_team_room.pre_skills,-->
+<!--        cr_team_room.train_skills,-->
+<!--        cr_team_room.start_time,-->
+<!--        cr_team_room.end_time,-->
+<!--        cr_team_room.difficulty,-->
+<!--        cr_team_room.time_line_config,-->
+<!--        cr_team_room.create_user_id,-->
+<!--        cr_team_room.modify_user_id,-->
+<!--        cr_team_room.local_scene_id,-->
+<!--        cr_team_room.copyed_topo_id,-->
+<!--        cr_team_room.training_status,-->
+<!--        cr_team_template.duration_time,-->
+<!--        cr_team_template.business_template_id,-->
+<!--        local_scene.start_time scene_start_time,-->
+<!--        local_scene.destroy_time scene_end_time,-->
+<!--        local_scene.scene_status,-->
+<!--        (-->
+<!--        CASE-->
+<!--        WHEN cr_team_room.training_status = 1 THEN-->
+<!--        0-->
+<!--        WHEN cr_team_room.training_status = 0 THEN-->
+<!--        1-->
+<!--        WHEN cr_team_room.training_status = 2 THEN-->
+<!--        2-->
+<!--        END-->
+<!--        ) order_status-->
+<!--        from cr_team_room-->
+<!--        left join cr_team_template on cr_team_room.team_template_id = cr_team_template.resource_id-->
+<!--        left join local_scene on cr_team_room.resource_id = local_scene.business_instance_id-->
+<!--        <where>-->
+
+<!--            cr_team_room.resource_id in-->
+<!--            <if test="listQuery.ids != null and listQuery.ids.size() != 0">-->
+<!--                <foreach collection="listQuery.ids" item="roomId" separator="," close=")" open="(">-->
+<!--                    #{roomId}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--            <if test="listQuery.ids.size() == 0">-->
+<!--                ('')-->
+<!--            </if>-->
+<!--            <if test="listQuery.search != null and listQuery.search != ''">-->
+<!--                <bind name="search" value="'%' + listQuery.search + '%'"/>-->
+<!--                and cr_team_room.name like #{search}-->
+<!--            </if>-->
+<!--            <if test="listQuery.difficult != null and listQuery.difficult != ''">-->
+<!--                and cr_team_room.difficulty = #{listQuery.difficult}-->
+<!--            </if>-->
+<!--            <if test="listQuery.name != null and listQuery.name != ''">-->
+<!--                and cr_team_room.name = #{listQuery.name}-->
+<!--            </if>-->
+<!--            <if test="listQuery.category != null and listQuery.category != ''">-->
+<!--                and cr_team_room.sub_type = #{listQuery.category}-->
+<!--            </if>-->
+<!--            <if test="listQuery.trainCategory != null and listQuery.trainCategory != ''">-->
+<!--                and cr_team_room.train_category = #{listQuery.trainCategory}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        ORDER BY-->
+<!--        order_status-->
+<!--    </select>-->
+
+
+
+<!--    <select id="listRbRoom" resultType="com.cyberpeace.cr.redvsblue.service.context.RbRoomData">-->
+
+<!--        select cr_rb_room.resource_id,-->
+<!--        cr_rb_room.template_id template,-->
+<!--        cr_rb_room.template_name,-->
+<!--        cr_rb_room.`NAME`,-->
+<!--        cr_rb_room.description,-->
+<!--        cr_rb_room.sub_type category,-->
+<!--        cr_rb_room.pre_skill,-->
+<!--        cr_rb_room.train_skill,-->
+<!--        cr_rb_room.start_time,-->
+<!--        cr_rb_room.end_time,-->
+<!--        cr_rb_room.difficulty difficult,-->
+<!--        cr_rb_room.create_user_id,-->
+<!--        cr_rb_room.modify_user_id,-->
+<!--        cr_rb_room.local_scene_id,-->
+<!--        cr_rb_room.copyed_topo_id,-->
+<!--        cr_rb_room.training_status,-->
+<!--        cr_rb_template.duration_time,-->
+<!--        cr_rb_template.business_template_id,-->
+<!--        local_scene.start_time scene_start_time,-->
+<!--        local_scene.end_time scene_end_time,-->
+<!--        local_scene.scene_status,-->
+<!--        (-->
+<!--        CASE-->
+
+<!--        WHEN cr_rb_room.training_status = 4 THEN-->
+<!--        2-->
+<!--        WHEN cr_rb_room.training_status = 2 THEN-->
+<!--        1-->
+<!--        WHEN cr_rb_room.training_status = 1 THEN-->
+<!--        1-->
+<!--        WHEN cr_rb_room.training_status = 3 THEN-->
+<!--        1-->
+<!--        WHEN cr_rb_room.training_status = 0 THEN-->
+<!--        3-->
+<!--        END-->
+<!--        ) order_status-->
+<!--        from cr_rb_room-->
+<!--        left join cr_rb_template on cr_rb_room.template_id = cr_rb_template.resource_id-->
+<!--        left join local_scene on cr_rb_room.resource_id = local_scene.business_instance_id-->
+<!--        <where>-->
+
+<!--            cr_rb_room.resource_id in-->
+<!--            <if test="listQuery.ids != null and listQuery.ids.size() != 0">-->
+<!--                <foreach collection="listQuery.ids" item="roomId" separator="," close=")" open="(">-->
+<!--                    #{roomId}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--            <if test="listQuery.ids.size() == 0">-->
+<!--                ('')-->
+<!--            </if>-->
+<!--            <if test="listQuery.search != null and listQuery.search != ''">-->
+<!--                <bind name="search" value="'%' + listQuery.search + '%'"/>-->
+<!--                and cr_rb_room.name like #{search}-->
+<!--            </if>-->
+<!--            <if test="listQuery.difficult != null and listQuery.difficult != ''">-->
+<!--                and cr_rb_room.difficulty = #{listQuery.difficult}-->
+<!--            </if>-->
+<!--            <if test="listQuery.name != null and listQuery.name != ''">-->
+<!--                and cr_rb_room.name = #{listQuery.name}-->
+<!--            </if>-->
+<!--            <if test="listQuery.category != null and listQuery.category != ''">-->
+<!--                and cr_rb_room.sub_type = #{listQuery.category}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        ORDER BY-->
+<!--        order_status-->
+<!--    </select>-->
+
+</mapper>

@@ -50,8 +50,8 @@ public interface MenuConstant {
     //个人中心
     String WEB_PERSON_CENTER = "personal-folder";
 
-    //靶场测评
-    String WEB_CR_EVALUATION = "range-test";
+    //训练综合评估
+    String WEB_CR_EVALUATION = "train-assess";
 
     /**
      * 后台页面

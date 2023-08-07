@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class ReleaseMissionReq implements Serializable {
@@ -14,4 +15,6 @@ public class ReleaseMissionReq implements Serializable {
 	@ApiModelProperty(value = "任务id", required = true)
 	private String missionResourceId;
 
+	@ApiModelProperty(value = "任务ids", required = true)
+	private List<String> missionResourceIds;
 }

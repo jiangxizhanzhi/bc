@@ -1,21 +1,5 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -44,19 +28,19 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
-import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomReq;
+import com.cyberpeace.cr.teamtrain.controller.req.*;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTimeManagementRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTimeManagement;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
+import com.cyberpeace.cr.teamtrain.service.TeamTimeManagementService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
@@ -70,11 +54,26 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例")
 @RestController
@@ -125,6 +124,12 @@ public class TeamTrainRoomController {
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
 
+	@Autowired
+	private TeamTimeManagementService teamTimeManagementService;
+
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
+
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -141,14 +146,41 @@ public class TeamTrainRoomController {
 	@ApiOperation("停止场景")
 	@DeleteMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
+	public BaseRsp<Boolean> stopScene(@RequestBody SceneOpsReq sceneStopReq) {
 		String roomId = sceneStopReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		teamRoomService.checkTeacherPermission(roomId, userId);
 
-		Boolean result = teamSceneService.stopScene(roomId);
-		return new BaseRsp(result);
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
+		// 2、如果场景已经停止，返回成功
+		if (StringUtils.isBlank(teamRoom.getLocalSceneId())) {
+			return new BaseRsp(true);
+		}
+
+		TeamTimeManagement timeManagement = teamTimeManagementService.getByRoomId(roomId);
+		if (timeManagement == null) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+		}
+		if (timeManagement.isStopped()) {
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+		}
+
+		Boolean stopResult = localSceneService.stopScene(teamRoom.getLocalSceneId());
+		if (stopResult) {
+			teamTimeManagementService.updateTimeManagement(timeManagement, teamRoom,
+					TeamTimeManagement.TimeManagementStatus.STOP.getCode(),userId);
+			crRoomDeviceApplyService.releaseApply(teamRoom.getResourceId());
+		}
+
+		// 推送ws
+		crTaskService.pushStatusWs(roomId, TeamTimeManagement.TimeManagementStatus.STOP.getCode());
+
+		// 记录远程操作日志
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(),  teamRoom.getModule(),
+				OperationType.STOP, teamRoom.getName());
+
+		return new BaseRsp(stopResult);
 	}
 
 	@ApiOperation("查看场景")
@@ -158,18 +190,33 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
 		SceneViewContext context = teamSceneService.viewScene(resource_id, role_id);
-
 		return new BaseRsp<>(context);
 	}
 
 	@ApiOperation("暂停场景")
 	@PostMapping("/scene/pause")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+	public BaseRsp<Boolean> pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、只有教员可以操作场景
+		teamRoomService.checkTeacherPermission(roomId, userId);
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
 
-		teamSceneService.pauseScene(roomId);
-		return new BaseRsp();
+		// 2、 场景开启的状态下发送mp暂停请求
+		if (localSceneService.ensureSceneStarted(teamRoom.getLocalSceneId())
+				&& !localSceneService.pauseScene(teamRoom.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE);
+		}
+		// 3. 更新时间管理
+		TeamTimeManagement timeManagement = teamTimeManagementService.getByRoomId(roomId);
+		teamTimeManagementService.
+				updateTimeManagement(timeManagement, teamRoom, TeamTimeManagement.TimeManagementStatus.PAUSE.getCode(),
+						UserInfoContext.getUserContext().getUserId());
+		// 4.发送ws提醒前端刷新训练状态
+		crTaskService.pushStatusWs(roomId, TeamTimeManagement.TimeManagementStatus.PAUSE.getCode());
+		return new BaseRsp(true);
+
 	}
 
 	@ApiOperation("从暂停中恢复场景")
@@ -177,8 +224,24 @@ public class TeamTrainRoomController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1. 校验场景存在和用户权限
+		teamRoomService.checkTeacherPermission(roomId, userId);
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
 
-		teamSceneService.unpauseScene(roomId);
+		// 2、 如果mp场景存在，发送mp解除暂停请求
+		if (localSceneService.ensureSceneStarted(teamRoom.getLocalSceneId())
+				&& !localSceneService.unpauseScene(teamRoom.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE);
+		}
+		// 3. 更新时间管理
+		TeamTimeManagement timeManagement = teamTimeManagementService.getByRoomId(roomId);
+		teamTimeManagementService.updateTimeManagement(timeManagement, teamRoom,
+				TeamTimeManagement.TimeManagementStatus.RECOVERY.getCode(),
+				UserInfoContext.getUserContext().getUserId());
+
+		// 4.发送ws提醒前端刷新训练状态
+		crTaskService.pushStatusWs(roomId, TeamTimeManagement.TimeManagementStatus.RECOVERY.getCode());
 		return new BaseRsp();
 	}
 
@@ -599,6 +662,27 @@ public class TeamTrainRoomController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("批量任务下发")
+	@PostMapping("/batchMissions")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean>
+	releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+		if (CollectionUtils.isEmpty(releaseMissionReq.getMissionResourceIds())) {
+			return new BaseRsp<>(true);
+		}
+		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
+		teamRoomService.checkTeacherPermission(crRole.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		teamRoomService.checkRoomOpening(crRole.getRoomId());
+		Boolean res = missionService.batchRelease(releaseMissionReq.getMissionResourceIds(),
+				releaseMissionReq.getRoleResourceId(),
+				UserInfoContext.getUserContext().getUserId());
+		if (Boolean.TRUE.equals(res)) {
+			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+		}
+		return new BaseRsp<>(res);
+	}
+
 	@ApiOperation("任务关闭")
 	@PostMapping("/missions/close")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -665,4 +749,86 @@ public class TeamTrainRoomController {
 		return baseRole;
 	}
 
+	/**
+	 * 获取时间管理数据
+	 * @return
+	 */
+	@ApiOperation("获取时间管理数据")
+	@GetMapping("/get_time_management")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TeamTimeManagementRsp> getTimeManagement(@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+
+		TeamTimeManagement teamTimeManagement = teamTimeManagementService.getByRoomId(resourceId);
+		if (teamTimeManagement == null) {
+			return new BaseRsp(null);
+		}
+
+		TeamTimeManagementRsp rbTimeManagementRsp = BeanUtils.copy(teamTimeManagement, TeamTimeManagementRsp.class);
+
+		// 计算当前天文时间
+		long time = teamTimeManagement.getAstronomicalTime().getTime() + System.currentTimeMillis()
+				- teamTimeManagement.getCreateTime().getTime();
+		Date currentAstronomicalTime = new Date(time);
+
+		rbTimeManagementRsp.setCurrentAstronomicalTime(currentAstronomicalTime);
+		rbTimeManagementRsp.setCreateUser(teamTimeManagement.getCreateUserId());
+		rbTimeManagementRsp.setModifyTime(teamTimeManagement.getUpdateTime());
+		rbTimeManagementRsp.setModifyUser(teamTimeManagement.getUpdateUserId());
+		rbTimeManagementRsp.setRedVsBlue(teamTimeManagement.getRoomId());
+
+		// 计算当前作战时间
+		if (teamTimeManagement.isStopped() || teamTimeManagement.isPaused()) {
+			rbTimeManagementRsp.setCurrentCombatTime(teamTimeManagement.getCombatTime());
+		} else {
+			time = teamTimeManagement.getCombatTime().getTime()
+					+ (System.currentTimeMillis() - teamTimeManagement.getUpdateTime().getTime())
+					* teamTimeManagement.getRate();
+			Date currentCombatTime = new Date(time);
+			rbTimeManagementRsp.setCurrentCombatTime(currentCombatTime);
+		}
+
+		return new BaseRsp(rbTimeManagementRsp);
+	}
+
+	/**
+	 * 创建时间管理
+	 * @return
+	 */
+	@ApiOperation("创建时间管理")
+	@PostMapping("/create_time_management")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TeamTimeManagementRsp>
+	addTimeManagement(@RequestBody @Validated TeamTimeManagementReq teamTimeManagementReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		//todo 角色验证
+//		rbRoomService.checkDirectorPermission(teamTimeManagementReq.getRoomId(), userId);
+
+		if (teamTimeManagementService.getByRoomId(teamTimeManagementReq.getRoomId()) != null) {
+			log.error("teamTrain has begun！roleId=[{}]", teamTimeManagementReq.getRoomId());
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_HAS_BEGUN);
+		}
+
+		Integer rate = teamTimeManagementReq.getRate();
+		if (rate >TeamTimeManagement.RateStatus.FIVE.getCode()
+				|| rate < TeamTimeManagement.RateStatus.ONCE.getCode()) {
+			log.error("Rate Value Error！rate=[{}]", rate);
+			throw new BusinessException(CrBusinessErrorCode.RATE_VALUE_RANGE_ERROR);
+		}
+		// 创建时间管理
+		TeamTimeManagement timeManagement = BeanUtils.copy(teamTimeManagementReq, TeamTimeManagement.class);
+		TeamRoom teamRoom = teamRoomService.getById(teamTimeManagementReq.getRoomId());
+
+		teamTimeManagementService.addTimeManagement(timeManagement, teamRoom,
+				TeamTimeManagement.TimeManagementStatus.START.getCode(), userId);
+
+		TeamTimeManagementRsp teamTimeManagementRsp = BeanUtils.copy(timeManagement,
+				TeamTimeManagementRsp.class);
+		teamTimeManagementRsp.setRedVsBlue(timeManagement.getRoomId());
+
+		// 记录远程操作日志
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.START, teamRoom.getName());
+
+		return new BaseRsp(teamTimeManagementRsp);
+	}
 }

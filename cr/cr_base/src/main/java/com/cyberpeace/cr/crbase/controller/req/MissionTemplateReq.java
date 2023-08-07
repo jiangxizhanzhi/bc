@@ -1,22 +1,24 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 @Data
 public class MissionTemplateReq implements Serializable {
@@ -49,6 +51,11 @@ public class MissionTemplateReq implements Serializable {
 	private String writeUp;
 
 	public void validate() {
+
+		int answerSize = Integer.parseInt(ConfigUtil.getContextProperty("cr.answer.size"));
+		int minLen = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.min"));
+		int answerLen = Integer.parseInt(ConfigUtil.getContextProperty("cr.answer.len"));
+
 		// 验证名称长度
 		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);
 		// validate desc
@@ -72,6 +79,14 @@ public class MissionTemplateReq implements Serializable {
 		// validate answer
 		if (MissionBase.MissionType.ANSWER_NULLABLE_TYPE_LIST.contains(type) && answer == null) {
 			throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+		}
+		// 攻击/防御可多个答案,用|间隔，最多5个答案，总长度限制500字符
+		if (MissionBase.MissionType.ATTACK_DEFENCE_TYPE_LIST.contains(type)) {
+			CrCommonValidator.validateRange(answer.length(), minLen, answerLen,
+					CrBusinessErrorCode.ANSWER_LEN_OUT_OF_RANGE);
+			List<String> answerList = Arrays.asList(answer.split("[|]"));
+			CrCommonValidator.validateSize(answerList, 1, answerSize,
+					CrBusinessErrorCode.ANSWER_SIZE_OUT_OF_RANGE);
 		}
 		// validate choice
 		if (MissionBase.MissionType.HAS_OPTION_TYPE_LIST.contains(type)) {
@@ -100,5 +115,17 @@ public class MissionTemplateReq implements Serializable {
 					CrBusinessErrorCode.OPTIONS_DUPLICATE);
 		}
 
+		if (MissionBase.MissionType.FLAG.getCode().equals(type)) {
+			MissionFlagQuery missionFlagQuery = JSON.parseObject(answer, MissionFlagQuery.class);
+			Integer flagType = missionFlagQuery.getFlagType();
+			if (!MissionFlagQuery.FlagType.FLAG_TYPE_LIST.contains(flagType)) {
+				throw new BusinessException(CrBusinessErrorCode.ILLEGAL_FLAG_TYPE);
+			}
+			if (MissionFlagQuery.FlagType.STATIC_FLAG.getCode().equals(flagType) && StringUtils.isBlank(missionFlagQuery.getFlagValue())) {
+				throw new BusinessException(CrBusinessErrorCode.ILLEGAL_FLAG_TYPE);
+			} else if (MissionFlagQuery.FlagType.DYNAMIC_FLAG.getCode().equals(flagType) && CollectionUtils.isEmpty(missionFlagQuery.getAttachmentList())) {
+				throw new BusinessException(CrBusinessErrorCode.ILLEGAL_FLAG_TYPE);
+			}
+		}
 	}
 }

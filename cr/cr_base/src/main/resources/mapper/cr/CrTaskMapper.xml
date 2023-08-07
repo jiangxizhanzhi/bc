@@ -290,4 +290,13 @@
         </where>
     </select>
 
+    <select id="selectByMissionIds" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
+        select *
+        from cr_task
+        where mission_id in
+        <foreach collection="missionIds" item="missionId" separator="," open="(" close=")">
+            #{missionId}
+        </foreach>
+
+    </select>
 </mapper>

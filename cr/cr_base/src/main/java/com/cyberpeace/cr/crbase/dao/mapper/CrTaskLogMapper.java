@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
 import com.cyberpeace.cr.crbase.service.context.DynamicData;
+import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +21,6 @@ public interface CrTaskLogMapper extends BaseMapper<CrTaskLog> {
 	List<String> getReleaseIdsByRoomIdAndUserId(String roomId, String studentId);
 
 	List<CrTaskLog> getByMissionIdAndUserId(String missionId);
+
+	void batchInsert(@Param("taskLogs") List<CrTaskLog> taskLogs);
 }

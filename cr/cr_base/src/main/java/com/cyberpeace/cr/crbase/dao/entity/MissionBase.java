@@ -1,16 +1,16 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Data
 public class MissionBase extends BaseTable {
@@ -35,6 +35,7 @@ public class MissionBase extends BaseTable {
 	private String answer;
 
 	@ApiModelProperty(value = "选项")
+	@TableField(value = "'option'")
 	private String option;
 
 	@ApiModelProperty(value = "类型")
@@ -52,7 +53,7 @@ public class MissionBase extends BaseTable {
 	public enum MissionType {
 
 		JUDGE(0, "判断"), SINGLE_CHOICE(1, "单选"), MULTIPLE_CHOICE(2, "多选"), BLANK(3, "填空"), FAQ(4,
-				"问答"), ATTACK(5, "攻击"), DEFENCE(6, "防御"), FILE(7, "文件");
+				"问答"), ATTACK(5, "攻击"), DEFENCE(6, "防御"), FILE(7, "文件"),FLAG(8, "flag");
 
 		public static final List<Integer> OBJECTIVE_TYPE_LIST = new ArrayList<>(
 				Arrays.asList(JUDGE.code, SINGLE_CHOICE.code, MULTIPLE_CHOICE.code, FILE.code));
@@ -62,6 +63,9 @@ public class MissionBase extends BaseTable {
 
 		public static final List<Integer> HAS_OPTION_TYPE_LIST = new ArrayList<>(
 				Arrays.asList(SINGLE_CHOICE.code, MULTIPLE_CHOICE.code));
+
+		public static final List<Integer> ATTACK_DEFENCE_TYPE_LIST = new ArrayList<>(
+				Arrays.asList( ATTACK.code, DEFENCE.code ));
 
 		@Getter
 		private Integer code;

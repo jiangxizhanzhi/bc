@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.teamtrain.dao.mapper.TeamTimeManagementMapper">
+    <select id="selectByRoomId" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTimeManagement">
+        select *
+        from cr_team_time_management
+        where room_id = #{roomId}
+    </select>
+    <select id="selectRoomIdsByStatus" resultType="java.lang.String">
+        select room_id
+        from cr_team_time_management
+        where status = #{status}
+    </select>
+    <select id="selectAll" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTimeManagement">
+        select *
+        from cr_team_time_management
+    </select>
+    <select id="selectByStatus" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTimeManagement">
+        select *
+        from cr_team_time_management
+        where status = #{status}
+    </select>
+    <select id="selectExcludeStatus" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTimeManagement">
+        select *
+        from cr_team_time_management
+        where status != #{status}
+    </select>
+</mapper>

@@ -278,12 +278,6 @@ public interface CrTaskService {
 	List<CrTaskSubmit> getOrderedSubmitsByTask(String resourceId);
 
 	/**
-	 * 客观题对错判断
-	 * @return bool
-	 */
-	Boolean isCorrectByObjective(String userAnswer, String missionAnswer, Integer missionType);
-
-	/**
 	 * 统计未完成任务
 	 * @param roomId 训练实例id
 	 * @param crRoleIds 角色id列表

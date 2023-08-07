@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,11 +17,9 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
 import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -38,6 +38,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,6 +57,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			CrTaskLog.ActionCode.MAN_REJECT.getCode());
 	@Autowired
 	private CrTaskMapper crTaskMapper;
+	@Autowired
+	private CrFlagTaskMapper crFlagTaskMapper;
 	@Autowired
 	private MissionMapper missionMapper;
 	@Autowired
@@ -130,7 +133,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 			if (mission.isObjective()) {
 				// 客观题，可机评
-				if (isCorrect(val, mission.getAnswer(), mission.getType())) {
+				if (isCorrect(val, mission.getAnswer(), mission.getType(),crTask.getResourceId())) {
 					crTask.setScore(mission.getScore());
 					crTask.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
 				} else {
@@ -138,9 +141,18 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 					crTask.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
 				}
 			} else {
-				// 主观题
-				crTask.setScore(0);
-				crTask.setStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
+				// 主观题 攻击和防御可机评
+				Integer score = 0;
+				Integer status = CrTaskSubmit.EvaluateStatus.WAIT.getCode();
+				if (MissionBase.MissionType.ATTACK.getCode().equals(mission.getType()) || MissionBase.MissionType.DEFENCE.getCode().equals(mission.getType())) {
+					List<String> missionAnswerList = Arrays.asList( mission.getAnswer().split("[|]]"));
+					if (missionAnswerList.contains(val)) {
+						score = mission.getScore();
+						status = CrTaskSubmit.EvaluateStatus.SUCCESS.getCode();
+					}
+				}
+				crTask.setScore(score);
+				crTask.setStatus(status);
 			}
 
 			crTask.setUserAnswer(val);
@@ -150,7 +162,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			crTaskSubmit.setEvaluateStatus(crTask.getStatus());
 
 			missionScore.add(crTask.getScore());
-
 			pendingUpdateTask.add(crTask);
 			pendingSaveSubmit.add(crTaskSubmit);
 		});
@@ -328,15 +339,25 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return crTaskMapper.selectIdsByRoomIdAndUserId(roomId, userId);
 	}
 
-	private Boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType) {
+	private Boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType, String taskId) {
 		if (missionType.equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
 			List<String> userChoices = JsonUtil.toJsonObjectArray(userAnswer, String.class);
 			Set<String> userChoiceSet = Sets.newHashSet(userChoices);
 			List<String> choices = JsonUtil.toJsonObjectArray(missionAnswer, String.class);
 			Set<String> choiceSet = Sets.newHashSet(choices);
 			return userChoiceSet.equals(choiceSet);
-		} else if (missionType.equals(MissionBase.MissionType.FILE.getCode())){
+		} else if (missionType.equals(MissionBase.MissionType.FILE.getCode())) {
 			return userAnswer.equalsIgnoreCase(missionAnswer);
+		}else if (missionType.equals(MissionBase.MissionType.FLAG.getCode())) {
+			MissionFlagQuery missionFlagQuery = JSON.parseObject(missionAnswer, MissionFlagQuery.class);
+			if (MissionFlagQuery.FlagType.STATIC_FLAG.getCode().equals(missionFlagQuery.getFlagType())) {
+				return userAnswer.equals(missionFlagQuery.getFlagValue());
+			}else {
+				LambdaQueryWrapper<CrFlagTask> queryWrapper = new LambdaQueryWrapper<>();
+				queryWrapper.eq(CrFlagTask::getTaskId,taskId);
+				CrFlagTask flagTask = crFlagTaskMapper.selectOne(queryWrapper);
+				return userAnswer.equals(flagTask.getFlagValue());
+			}
 		} else {
 			return userAnswer.equals(missionAnswer);
 		}
@@ -395,7 +416,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		if (mission.isObjective()) {
 			// 客观题，可机评
-			if (isCorrect(answer, mission.getAnswer(), mission.getType())) {
+			if (isCorrect(answer, mission.getAnswer(), mission.getType(),task.getResourceId())) {
 				task.setScore(mission.getScore());
 				task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
 				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
@@ -510,20 +531,71 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.map(MissionEvaluationContext::getMissionHash).distinct()
 				.collect(Collectors.toList());
 
+		//获取一血, 二血, 三血及额外分数
+		Map<String, MissionEvaluationContext> rankMap = getRankContextMap(data);
+		//获取动态任务对应flagValue
+		LambdaQueryWrapper<CrFlagTask> flagTaskWrapper = new LambdaQueryWrapper<>();
+		flagTaskWrapper.in(CrFlagTask::getMissionId,missionIds);
+		List<CrFlagTask> flagTaskList = crFlagTaskMapper.selectList(flagTaskWrapper);
+		Map<String, String> taskFlagValueMap = StreamApiUtils.toMap(flagTaskList, CrFlagTask::getTaskId, CrFlagTask::getFlagValue);
+
 		List<Mission> missions = Lists.newArrayList();
 		if (missionIds.size() > 0) {
 			missions = missionMapper.batchSelect(missionIds);
 		}
-		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,
-				pc -> pc);
 
+		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,pc -> pc);
 		data.convert(missionEvaluationContext -> {
-			missionEvaluationContext
-					.setMission(missionMap.get(missionEvaluationContext.getMissionHash()));
 
+			MissionEvaluationContext rankContext = rankMap.get(missionEvaluationContext.getResourceId());
+			missionEvaluationContext.setRank(rankContext.getRank());
+			missionEvaluationContext.setRankScore(rankContext.getRankScore());
+
+			Mission mission = missionMap.get(missionEvaluationContext.getMissionHash());
+			//任务答案 flag类型:静态类型取flagValue,动态根据任务查对应flagValue
+			if (MissionBase.MissionType.FLAG.getCode().equals(mission.getType())) {
+				MissionFlagQuery missionFlagQuery = JSON.parseObject(mission.getAnswer(), MissionFlagQuery.class);
+				if (MissionFlagQuery.FlagType.STATIC_FLAG.getCode().equals(missionFlagQuery.getFlagType())) {
+					mission.setAnswer(missionFlagQuery.getFlagValue());
+				} else {
+					mission.setAnswer(taskFlagValueMap.get(missionEvaluationContext.getResourceId()));
+				}
+			}
+			missionEvaluationContext.setMission(mission);
 			return missionEvaluationContext;
 		});
 		return data;
+	}
+
+	/**
+	 * 获取一血, 二血, 三血及额外分数
+	 */
+	private Map<String, MissionEvaluationContext> getRankContextMap(IPage<MissionEvaluationContext> data) {
+
+		LambdaQueryWrapper<CrTaskSubmit> rankQueryWrapper = new LambdaQueryWrapper<>();
+		rankQueryWrapper.eq(CrTaskSubmit::getRoomId, data.getRecords().get(0).getRoomId());
+		rankQueryWrapper.orderByAsc(CrTaskSubmit::getCreateTime);
+		List<CrTaskSubmit> crTaskSubmits = crTaskSubmitMapper.selectList(rankQueryWrapper);
+
+		Map<String, MissionEvaluationContext> rankMap = new HashMap<>();
+		List<String> rankList = Arrays.asList("一血", "二血", "三血");
+		List<Double> rankScoreList = Arrays.asList(0.2, 0.1, 0.05);
+		for (int i = 0; i < crTaskSubmits.size(); i++) {
+			CrTaskSubmit crTaskSubmit = crTaskSubmits.get(i);
+			MissionEvaluationContext rankContext = new MissionEvaluationContext();
+			rankContext.setResourceId(crTaskSubmit.getResourceId());
+			if (i < 3) {
+				BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.get(i))
+						.setScale(0, BigDecimal.ROUND_HALF_UP);
+				rankContext.setRankScore(Integer.parseInt(rankScore.toString()));
+				rankContext.setRank(rankList.get(i));
+			} else {
+				rankContext.setRankScore(0);
+				rankContext.setRank("否");
+			}
+			rankMap.put(crTaskSubmit.getResourceId(), rankContext);
+		}
+		return rankMap;
 	}
 
 	@Override
@@ -560,12 +632,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();
 		webSocketHandler.pushMessage(messageContext, true);
-	}
-
-	@Override
-	public Boolean isCorrectByObjective(String userAnswer, String missionAnswer,
-			Integer missionType) {
-		return isCorrect(userAnswer, missionAnswer, missionType);
 	}
 
 	@Override

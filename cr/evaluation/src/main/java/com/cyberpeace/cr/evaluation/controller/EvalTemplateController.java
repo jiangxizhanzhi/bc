@@ -1,5 +1,9 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -48,6 +52,9 @@ public class EvalTemplateController {
 
 	@Autowired
 	private EvalTemplateService evalTemplateService;
+
+	@Autowired
+	private RbRoomMapper rbRoomMapper;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -188,6 +195,13 @@ public class EvalTemplateController {
 		EvalTemplateBaseInfoContext evalTemplateBaseInfoContext = BeanUtils.copy(evaTemplateAddReq,
 				EvalTemplateBaseInfoContext.class);
 		evalTemplateService.validateBaseInfo(evalTemplateBaseInfoContext);
+
+		// 校验红蓝模板资源是否存在
+		String redVsBlueId = evaTemplateAddReq.getRedVsBlueId();
+		RbRoom rbRoom = rbRoomMapper.selectById(redVsBlueId);
+		if(null == rbRoom){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 
 		// 校验测评步骤配置
 		evalTemplateService.validateStepConfig(evaTemplateAddReq.getStepConfig());

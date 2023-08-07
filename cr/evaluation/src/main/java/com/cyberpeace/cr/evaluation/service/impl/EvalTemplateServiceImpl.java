@@ -179,18 +179,6 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				CrCommonConstants.ZERO_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
 				CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 
-		// 校验LOGO文件是否存在
-		if (!attachmentService.isExist(evalTemplateBaseInfoContext.getLogoId())) {
-			throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
-		}
-
-		// 校验测试靶场的类型是否存在
-		if (!crConstantsService.validateType(
-				CrConstantsConfig.ConstantsType.EVALUATION_CATEGORY.getCode(),
-				evalTemplateBaseInfoContext.getCategoryCode())) {
-			throw new BusinessException(CrBusinessErrorCode.EVAL_CATEGORY_NOT_EXIST);
-		}
-
 		return true;
 	}
 

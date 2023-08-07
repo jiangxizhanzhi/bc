@@ -19,7 +19,6 @@ public class EvaTemplateBaseInfoReq {
 	private String description;
 
 	@ApiModelProperty(value = "测评靶场Logo文件id", required = true)
-	@NotNull
 	private String logoId;
 
 	@ApiModelProperty(value = "测评靶场类型", required = true)
@@ -29,5 +28,9 @@ public class EvaTemplateBaseInfoReq {
 	@ApiModelProperty(value = "是否录屏", required = true)
 	@NotNull
 	private Boolean enableRecording;
+
+	@ApiModelProperty(value = "完成红蓝训练id", required = true)
+	@NotNull
+	private String redVsBlueId;
 
 }

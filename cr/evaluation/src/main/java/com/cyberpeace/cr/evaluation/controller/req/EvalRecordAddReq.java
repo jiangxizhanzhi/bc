@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
@@ -7,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -28,10 +30,14 @@ public class EvalRecordAddReq implements Serializable {
     @ApiModelProperty(value = "使用指标体系ID", required = true)
     private String systemId;
 
-    @ApiModelProperty(value = "开始时间（评估采集数据时间范围）", required = true)
+    @ApiModelProperty(value = "指标分数", required = true)
+    @NotNull
+    private Integer indicatorScore;
+
+    @ApiModelProperty(value = "开始时间（评估采集数据时间范围）")
     private Date startTime;
 
-    @ApiModelProperty(value = "结束时间（评估采集数据时间范围）", required = true)
+    @ApiModelProperty(value = "结束时间（评估采集数据时间范围）")
     private Date endTime;
 
     @ApiModelProperty(value = "全量三级指标项", required = true)
@@ -44,5 +50,8 @@ public class EvalRecordAddReq implements Serializable {
         if (StringUtils.isNotEmpty(description)) {
             CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
         }
+        int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.zero"));
+        int categoryMax = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.score.max"));
+        CrCommonValidator.validateRange(indicatorScore,lenMin, categoryMax, CrBusinessErrorCode.MAX_SCORE_10000);
     }
 }

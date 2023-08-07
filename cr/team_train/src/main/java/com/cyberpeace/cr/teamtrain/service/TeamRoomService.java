@@ -1,16 +1,17 @@
 package com.cyberpeace.cr.teamtrain.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTimeManagement;
 import com.cyberpeace.cr.teamtrain.service.context.StudentsTimeLineData;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
+
+import java.util.List;
 
 /**
  *
@@ -45,7 +46,7 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param roomId 团队训练实例id
 	 * @return 团队训练实例状态
 	 */
-	Integer changeTrainingStatus(String roomId);
+	Integer addTimeManagement(String roomId, TeamTimeManagement timeManagement);
 
 	/** 获取团队训练状态
 	 * @param roomId 团队训练实例id

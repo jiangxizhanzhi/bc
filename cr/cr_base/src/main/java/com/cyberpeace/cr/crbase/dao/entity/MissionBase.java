@@ -35,7 +35,7 @@ public class MissionBase extends BaseTable {
 	private String answer;
 
 	@ApiModelProperty(value = "选项")
-	@TableField(value = "'option'")
+	@TableField(value = "option")
 	private String option;
 
 	@ApiModelProperty(value = "类型")

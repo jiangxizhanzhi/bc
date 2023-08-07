@@ -12,7 +12,7 @@ public class TeamTimeManagementReq implements Serializable {
 
 	@ApiModelProperty(required = true, value = "房间id")
 	@NotNull
-	private String roomId;
+	private String resourceId;
 
 	@ApiModelProperty(value = "天文时间")
 	private Date astronomicalTime;

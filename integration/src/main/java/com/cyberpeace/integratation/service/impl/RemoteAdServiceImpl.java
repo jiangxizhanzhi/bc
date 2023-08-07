@@ -1,16 +1,5 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -22,8 +11,16 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -38,6 +35,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String PRACTICE_COUNT_URL;
 
+	private String COMPETITION_WEB_URL;
+
 	@PostConstruct
 	public void init() {
 		PRACTICE_COUNT_URL = adEnvService.getAdHost()
@@ -46,6 +45,9 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 				+ ConfigUtil.getContextProperty("ad.theory_race.statistic");
 		COMPETITION_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.competition.list");
+
+		COMPETITION_WEB_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.competition.web");
 	}
 
 	@Override
@@ -122,4 +124,11 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	}
 
+
+	@Override
+	public List<CalendarCompetitionBo> list() {
+		// 接口请求
+		JSONObject competitionArray = HttpClientUtil.rawGet(COMPETITION_WEB_URL, JSONObject.class);
+		return new ArrayList<>();
+	}
 }

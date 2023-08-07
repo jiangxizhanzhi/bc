@@ -39,4 +39,6 @@ public interface FileTypeContant {
 	/** 后台评估指标项文件上传 */
 	String CR_EVAL_INDICATOR_ATTACHMENT = "JSON";
 
+	/** flag任务限制类型*/
+	String TASK_FLAG_ATTACHMENT = "ZIP";
 }

@@ -37,4 +37,10 @@ public interface RemoteAdService {
 	 * @return 竞赛习题数和
 	 */
 	Integer getAdPracticeCnt();
+
+	/**
+	 * @return 竞赛习题数和
+	 */
+	List<CalendarCompetitionBo> list();
+
 }

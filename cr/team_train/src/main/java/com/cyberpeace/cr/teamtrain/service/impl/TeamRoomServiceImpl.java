@@ -1,18 +1,5 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -39,8 +26,10 @@ import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTimeManagement;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
+import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTimeManagementMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.*;
@@ -48,8 +37,19 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -93,6 +93,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	TeamTimeManagementMapper teamTimeManagementMapper;
+
 
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
@@ -306,7 +310,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
-	public Integer changeTrainingStatus(String roomId) {
+	public Integer addTimeManagement(String roomId, TeamTimeManagement timeManagement) {
 		TeamRoom teamRoom = getById(roomId);
 
 		if (teamRoom.isUnopened()) {
@@ -338,6 +342,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				} else if (teamRoom.isEnded()) {
 					trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 				}
+				teamTimeManagementMapper.insert(timeManagement);
 			}
 		});
 		return teamRoom.getTrainingStatus();

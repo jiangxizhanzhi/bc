@@ -12,7 +12,7 @@ public interface MenuConstant {
     String WEB_ALL = "front_all";
 
     // 我的职业
-    String WEB_OJ_COURSE = "oj-course";
+    String WEB_OJ_COURSE = "personal-center";
 
     // 全部课程
     String WEB_OJ_ALL_COURSE = "oj-all-course";
@@ -48,7 +48,7 @@ public interface MenuConstant {
     String WEB_CR_TOOL_GHDB = "ghdb-library";
 
     //个人中心
-    String WEB_PERSON_CENTER = "personal-folder";
+    String WEB_PERSON_CENTER = "personal-center";
 
     //训练综合评估
     String WEB_CR_EVALUATION = "train-assess";

@@ -458,9 +458,9 @@ public interface CrBusinessErrorCode {
 	String ILLEGAL_FLAG_TYPE = "101142";
 
     /**  任务答案个数超出范围*/
-	String ANSWER_SIZE_OUT_OF_RANGE = "101043";
+	String ANSWER_SIZE_OUT_OF_RANGE = "101143";
 
 	/**  任务答案长度超出范围*/
-	String ANSWER_LEN_OUT_OF_RANGE = "101044";
+	String ANSWER_LEN_OUT_OF_RANGE = "101144";
 
 }

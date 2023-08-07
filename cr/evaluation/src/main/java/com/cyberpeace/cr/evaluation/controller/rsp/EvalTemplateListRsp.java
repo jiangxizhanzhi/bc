@@ -29,6 +29,9 @@ public class EvalTemplateListRsp implements Serializable {
 	@ApiModelProperty(value = "测评类型")
 	private Integer categoryCode;
 
+	@ApiModelProperty(value = "红蓝训练id")
+	private String redVsBlueId;
+
 	public void setLogo(String logo) {
 		this.logoId = logo;
 	}

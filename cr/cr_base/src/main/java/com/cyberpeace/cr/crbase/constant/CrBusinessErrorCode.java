@@ -463,4 +463,7 @@ public interface CrBusinessErrorCode {
 	/**  任务答案长度超出范围*/
 	String ANSWER_LEN_OUT_OF_RANGE = "101144";
 
+	/** 习题方向最长为10000*/
+	String MAX_SCORE_10000 = "101145";
+
 }

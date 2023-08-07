@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -533,7 +534,7 @@ public class RbRoomController {
 
 	@ApiOperation("完成列表查询")
 	@GetMapping("/finish/list")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	public BaseRsp<List<RbRoom>> getFinishList() {
 		LambdaQueryWrapper<RbRoom> query = new LambdaQueryWrapper<>();
 		query.eq(RbRoom::getTrainingStatus, RbRoom.TrainingStatusCode.ENDED.getCode());

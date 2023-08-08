@@ -466,4 +466,12 @@ public interface CrBusinessErrorCode {
 	/** 习题方向最长为10000*/
 	String MAX_SCORE_10000 = "101145";
 
+	/** 武器工具附件版本不能为空*/
+	String EMPTY_TOOL_VERSION = "101146";
+
+	/** 武器工具附件版本重复*/
+	String DUPLICATED_TOOL_VERSION = "101147";
+
+	/** 武器工具超过范围*/
+	String TOOL_OUT_OF_RANGE = "101148";
 }

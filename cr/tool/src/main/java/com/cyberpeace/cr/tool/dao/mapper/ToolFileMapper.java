@@ -13,4 +13,6 @@ import java.util.List;
 public interface ToolFileMapper extends BaseMapper<ToolFile> {
 
 	List<ToolFile> selectByIds(@NotEmpty @Param("ids") List<Integer> ids);
+
+	void batchInsert(@Param("list") List<ToolFile> list);
 }

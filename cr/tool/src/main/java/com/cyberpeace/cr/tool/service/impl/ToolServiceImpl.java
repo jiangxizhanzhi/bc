@@ -1,24 +1,18 @@
 package com.cyberpeace.cr.tool.service.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
+import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
@@ -28,10 +22,25 @@ import com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
 import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements ToolService {
@@ -47,6 +56,13 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 
 	@Autowired
 	private RemoteTerminalService remoteTerminalService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+
+	@Autowired
+	private UtilService utilService;
 
 	@Override
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "transactionManager")
@@ -155,4 +171,55 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
 		}
 	}
+
+	@Override
+	public void insert(ToolAddReq req) {
+		Tool tool = BeanUtils.copy(req, Tool.class);
+		tool.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		tool.setReadAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
+		tool.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		tool.setOperationAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
+		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
+		validateToolNameExist(tool);
+		validateToolAttachment(req.getToolFiles());
+		List<ToolFile> toolFiles = req.getToolFiles();
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+										@Override
+										protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+											save(tool);
+											toolFileMapper.batchInsert(toolFiles);
+										}
+									});
+	}
+
+	@Override
+	public void update(ToolUpdateReq req) {
+		Tool tool = BeanUtils.copy(req, Tool.class);
+		validateEditToolNameExist(tool);
+		validateToolAttachment(req.getToolFiles());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				updateById(tool);
+				req.getToolFiles().forEach(item-> toolFileMapper.updateById(item));
+			}
+		});
+	}
+
+	public void validateToolAttachment(List<ToolFile> toolFileList) {
+		// todo 系统配置
+		int MAX_TOOL_FILE = 5;
+		// version重复性校验
+		if (CollectionUtils.isEmpty(toolFileList)) {
+			throw new BusinessException(CrBusinessErrorCode.EMPTY_TOOL_VERSION);
+		}
+		Set<String> versions = toolFileList.stream().map(ToolFile::getVersion).collect(Collectors.toSet());
+		if (toolFileList.size() != versions.size()) {
+			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_VERSION);
+		}
+		if (toolFileList.size()>MAX_TOOL_FILE) {
+			throw new BusinessException(CrBusinessErrorCode.TOOL_OUT_OF_RANGE);
+		}
+	}
+
 }

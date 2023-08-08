@@ -97,7 +97,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private RemoteTopoService remoteTopoService;
 
 	@Autowired
-	TeamTimeManagementMapper teamTimeManagementMapper;
+	private TeamTimeManagementMapper teamTimeManagementMapper;
 
 
 	@Override
@@ -334,23 +334,24 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		TeamTimeManagement timeManagement = BeanUtils.copy(req, TeamTimeManagement.class);
-		timeManagement.setRoomId(req.getResourceId());
-		int timeManagementStatus = TeamRoom.TrainingStatusCode.OPENING.getCode().equals(teamRoom.getTrainingStatus()) ?
-				TeamTimeManagement.TimeManagementStatus.START.getCode() : TeamTimeManagement.TimeManagementStatus.STOP.getCode();
-		timeManagement.setStatus(timeManagementStatus);
-		timeManagement.setCreateUserId(userId);
 
-		// 暂停或者停止，更新天文时间
-		if (timeManagement.isPaused() || timeManagement.isStopped()) {
-
+		TeamTimeManagement timeManagement;
+		//插入天文时间 已开始
+		if (TeamRoom.TrainingStatusCode.OPENING.getCode().equals(teamRoom.getTrainingStatus())) {
+			timeManagement = BeanUtils.copy(req, TeamTimeManagement.class);
+			timeManagement.setRoomId(req.getResourceId());
+			timeManagement.setStatus(TeamTimeManagement.TimeManagementStatus.START.getCode());
+			timeManagement.setCreateUserId(userId);
+		} else {
+			//更新天文时间 结束
+			timeManagement = teamTimeManagementMapper.selectByRoomId(req.getResourceId());
 			long time = timeManagement.getCombatTime().getTime()
 					+ (System.currentTimeMillis() - timeManagement.getUpdateTime().getTime())
 					* timeManagement.getRate();
 			Date currentCombatTime = new Date(time);
 			timeManagement.setCombatTime(currentCombatTime);
+			timeManagement.setStatus(TeamTimeManagement.TimeManagementStatus.STOP.getCode());
 		}
-
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

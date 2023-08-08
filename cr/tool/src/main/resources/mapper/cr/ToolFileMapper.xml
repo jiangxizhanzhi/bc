@@ -9,4 +9,15 @@
             #{fId}
         </foreach>
     </select>
+
+    <insert id="batchInsert">
+        insert into cr_tool_toolfile
+        (file_name, save_path,file_url,version, create_time,
+        update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            ( #{item.fileName}, #{item.savePath}, #{item.fileUrl}, #{item.version},now(),now())
+        </foreach>
+    </insert>
+
 </mapper>

@@ -1,18 +1,16 @@
 package com.cyberpeace.cr.tool.dao.entity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.util.ConfigUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @TableName("cr_tool_toolfile")
-public class ToolFile implements Serializable {
+public class ToolFile {
 
 	@TableId(type = IdType.AUTO)
 	private Integer id;
@@ -26,6 +24,18 @@ public class ToolFile implements Serializable {
 	@ApiModelProperty("文件链接")
 	@TableField(exist = false)
 	private String fileUrl;
+
+	@ApiModelProperty("版本")
+	private String version;
+
+	@ApiModelProperty("创建时间")
+	@TableField(fill = FieldFill.INSERT)
+	private Date createTime;
+
+	@ApiModelProperty("更新时间")
+	@TableField(fill = FieldFill.INSERT_UPDATE)
+	private Date updateTime;
+
 
 	public String getFileUrl() {
 		if (StringUtils.isBlank(savePath)) {

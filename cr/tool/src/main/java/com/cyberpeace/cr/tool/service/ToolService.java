@@ -1,13 +1,14 @@
 package com.cyberpeace.cr.tool.service;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
+import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
+import org.apache.ibatis.annotations.Param;
 
 public interface ToolService extends IService<Tool> {
 
@@ -47,4 +48,16 @@ public interface ToolService extends IService<Tool> {
 	 * @param tool 工具对象
 	 */
 	void validateEditToolNameExist(Tool tool);
+
+
+	/**
+	 * 新增
+	 */
+	void insert(ToolAddReq req);
+
+
+	/**
+	 * 修改
+	 */
+	void update(ToolUpdateReq req);
 }

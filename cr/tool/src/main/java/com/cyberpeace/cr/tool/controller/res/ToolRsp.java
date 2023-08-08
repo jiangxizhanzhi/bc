@@ -1,13 +1,12 @@
 package com.cyberpeace.cr.tool.controller.res;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @ApiModel("工具库信息")
 @Data
@@ -89,4 +88,16 @@ public class ToolRsp implements Serializable {
 
 	@ApiModelProperty("标签")
 	private String tag;
+
+	@ApiModelProperty("授权操作类型 1=共享 2=自定义")
+	private Integer operationAuthType;
+
+	@ApiModelProperty("授权操作用户编号 ,为编号分割符")
+	private String operationAuthIds;
+
+	@ApiModelProperty("授权访问类型 1=共享 2=自定义")
+	private Integer readAuthType;
+
+	@ApiModelProperty("授权访问组织编号 ,为分割符")
+	private String readAuthIds;
 }

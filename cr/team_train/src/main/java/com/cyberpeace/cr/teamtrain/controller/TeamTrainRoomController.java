@@ -679,7 +679,11 @@ public class TeamTrainRoomController {
 		if (Boolean.TRUE.equals(res)) {
 			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
 		}
-		return new BaseRsp<>(res);
+		BaseRsp<Boolean> result = new BaseRsp<>(res);
+		if (res){
+			result.setMessage("无可分发任务");
+		}
+		return result;
 	}
 
 	@ApiOperation("任务关闭")

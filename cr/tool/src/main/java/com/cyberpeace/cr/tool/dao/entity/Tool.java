@@ -1,19 +1,18 @@
 package com.cyberpeace.cr.tool.dao.entity;
 
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.*;
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.model.BaseTable;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.ConfigUtil;
-
 import lombok.Data;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @TableName("cr_tool_tool")
-public class Tool extends BaseTable {
+public class Tool extends AuthTable {
 
 	// 在线
 	public static final Integer ONLINE = 1;
@@ -63,6 +62,14 @@ public class Tool extends BaseTable {
 	private String version;
 
 	private String files;
+
+	private Integer operationAuthType;
+
+	private String operationAuthIds;
+
+	private Integer readAuthType;
+
+	private String readAuthIds;
 
 	@TableField(exist = false)
 	private String coverUrl;

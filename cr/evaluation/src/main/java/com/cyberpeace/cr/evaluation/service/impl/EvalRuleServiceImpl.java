@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -37,7 +38,9 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 	@Override
 	public ListRsp<EvalRule> pageList(EvalRuleListReq req) {
 		LambdaQueryWrapper<EvalRule> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(EvalRule::getName, req.getName());
+		if (!Objects.isNull(req.getName())){
+			queryWrapper.eq(EvalRule::getName, req.getName());
+		}
 		Page<EvalRule> page = page(req.toPageParam(), queryWrapper);
 		return PageUtil.getListResult(page);
 	}

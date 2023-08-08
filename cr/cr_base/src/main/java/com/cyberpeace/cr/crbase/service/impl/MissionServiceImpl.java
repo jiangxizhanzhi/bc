@@ -210,6 +210,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	private void getFlagTaskList(Mission mission, List<CrFlagTask> flagTaskList, CrTask task) {
 		if (MissionBase.MissionType.FLAG.getCode().equals(mission.getType())) {
 			CrFlagTask flagTask = new CrFlagTask();
+			flagTask.setResourceId(UUID.randomUUID().toString());
 			flagTask.setMissionId(mission.getResourceId());
 			flagTask.setTaskId(task.getResourceId());
 			MissionFlagQuery missionFlagQuery = JSON.parseObject(mission.getAnswer(), MissionFlagQuery.class);

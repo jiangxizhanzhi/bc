@@ -755,9 +755,9 @@ public class TeamTrainRoomController {
 	@ApiOperation("获取时间管理数据")
 	@GetMapping("/get_time_management")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TeamTimeManagementRsp> getTimeManagement(@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+	public BaseRsp<TeamTimeManagementRsp> getTimeManagement(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
-		TeamTimeManagement teamTimeManagement = teamTimeManagementService.getByRoomId(resourceId);
+		TeamTimeManagement teamTimeManagement = teamTimeManagementService.getByRoomId(resource_id);
 		if (teamTimeManagement == null) {
 			return new BaseRsp(null);
 		}

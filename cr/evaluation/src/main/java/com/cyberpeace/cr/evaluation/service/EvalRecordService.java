@@ -73,9 +73,8 @@ public interface EvalRecordService extends IService<EvalRecord> {
     /**
      * 评估事件实际运行
      * @param evalRecord 评估对象
-     * @param evalTask 测评实例对象
      */
-    void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart, String language);
+    void recordRun(EvalRecord evalRecord, Boolean isRestart, String language);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`

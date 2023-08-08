@@ -15,4 +15,7 @@ public interface EvalRecordMapper extends BaseMapper<EvalRecord> {
                                      @Param("task_id") String task_id,
                                      @Param("status") Integer status,
                                      @Param("pattern") String pattern);
+
+
+    EvalRecord seletTemplateById(String roomId);
 }

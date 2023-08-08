@@ -50,6 +50,11 @@ public class EvalRecord extends BaseTable {
     private String taskId;
 
     /**
+     * 测评模板ID
+     */
+    private String  templateId;
+
+    /**
      * 评估任务进行中的错误信息收集
      */
     private String message;

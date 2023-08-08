@@ -74,7 +74,6 @@ public class EvalRecordController {
     @PostMapping("")
     public BaseRsp<EvalRecordRsp> create(@RequestBody EvalRecordAddReq requestData) {
         requestData.validate();
-        evalRecordService.isExist(requestData);
         return new BaseRsp<>(evalRecordService.create(requestData));
     }
 
@@ -83,7 +82,6 @@ public class EvalRecordController {
     @PatchMapping("")
     public BaseRsp<EvalRecordRsp> update(@RequestBody EvalRecordAddReq requestData) {
         requestData.validate();
-        evalRecordService.isExist(requestData);
         return new BaseRsp<>(evalRecordService.update(requestData));
     }
 
@@ -136,8 +134,6 @@ public class EvalRecordController {
     public BaseRsp<Boolean> start(@RequestBody EvalRecordStartReq requestData) {
         // 评估对象
         EvalRecord evalRecord = evalRecordService.getEntity(requestData.getResourceId());
-        // 评估实例对象
-        EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
 
         // 设置评估状态、开始时间
         if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
@@ -148,7 +144,7 @@ public class EvalRecordController {
 
         // 开始执行
         log.info(String.format("Range Test evaluation %s START.", evalRecord.getName()));
-        evalRecordService.recordRun(evalRecord, evalTask, false, CommonContext.getLanguage());
+        evalRecordService.recordRun(evalRecord, false, CommonContext.getLanguage());
 
         return new BaseRsp<>(result);
     }
@@ -203,4 +199,48 @@ public class EvalRecordController {
                                    @ApiParam(name = "task_id", value = "测评任务ID") @RequestParam("task_id")String taskId) {
         FileUtil.setResponse(new File(evalRecordService.dumpEvalRecordPath(resourceId, taskId)), true, httpServletResponse);
     }
+
+//    @ApiOperation("导入")
+//    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+//    @PostMapping("")
+//    public BaseRsp<EvalRecordRsp> importRecord(@Validated LoadRecordReq loadRecordReq) {
+//        AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
+//                false, loadCourseReq.getFile(), true);
+//        String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+//        String content = FileUtil.getContent(new File(dataPath));
+//        List<RecordDumpLoadBo> evalRecords = JsonUtil.toJsonObjectArray(content,
+//                RecordDumpLoadBo.class);
+//        return new BaseRsp<>(evalRecordService.create(requestData));
+//    }
+//
+//    @ApiOperation("导出")
+//    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+//    @GetMapping("")
+//    public BaseRsp<Boolean> exportRecord(@ApiParam(name = "ids",
+//            value = "课程编号") @RequestParam("id") @NotEmpty String resourceId,
+//                                         HttpServletResponse response) {
+//        EvalRecord evalRecord = evalRecordService.getById(resourceId);
+//        if(null == evalRecord){
+//            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+//        }
+//        EvalTask evalTask = evalTaskService.getById(evalRecord.getTaskId());
+//        String mpSceneId = evalTask.getMpSceneId();
+//        String recordStr = JsonUtil.toJsonString(evalRecord);
+//        String dataPath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID() + File.separatorChar + CrCommonConstants.RESOURCE_FILE_NAME;
+//        FileUtil.writeToDestFile(recordStr, dataPath);
+//        return new BaseRsp(Boolean.TRUE);
+//    }
+//
+//    private getNodes(){
+//        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+//        JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
+//        nodes.forEach(item -> {
+//            JSONObject nodeItem = (JSONObject) item;
+//
+//            EvalRoomPairRsp result = new EvalRoomPairRsp();
+//            result.setId(nodeItem.getString("id"));
+//            result.setLabel(nodeItem.getString("name"));
+//            results.add(result);
+//        });
+//    }
 }

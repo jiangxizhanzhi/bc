@@ -32,12 +32,12 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
      * @param evalVariableRef 变量项对象
      * @param evalAlgorithmRefMap 评估使用算法Map
      * @param evalRecord 评估对象
-     * @param evalTask 测评实例对象
+     * @param mpSceneId 测评实例对象
      */
     String startVariableAlgorithm(EvalVariableRef evalVariableRef,
                                   Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
                                   EvalRecord evalRecord,
-                                  EvalTask evalTask);
+                                  String mpSceneId);
 
     /**
      * 获取变量项结果折线图

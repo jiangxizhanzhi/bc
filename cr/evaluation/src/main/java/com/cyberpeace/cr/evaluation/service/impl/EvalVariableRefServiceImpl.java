@@ -61,17 +61,17 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
     public String startVariableAlgorithm(EvalVariableRef evalVariableRef,
                                        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
                                        EvalRecord evalRecord,
-                                       EvalTask evalTask) {
-        return startFormat(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+                                       String mpSceneId) {
+        return startFormat(evalVariableRef, evalAlgorithmRefMap, evalRecord, mpSceneId);
     }
 
-    private String startFormat(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+    private String startFormat(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, String mpSceneId) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "format algorithm start...");
 
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.FORMATTING.getCode())) {
             EvalLog.info(evalRecord, evalVariableRef, "format algorithm has been completed, continue.");
-            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord);
         }
 
         // 已经格式化数据数量
@@ -79,7 +79,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         // 分页执行格式化算法
         evalVariableRef.setFormatStartTime(new Date());
-        String result = executeFormat(evalVariableRef, evalAlgorithmRef, evalRecord, evalTask, count);
+        String result = executeFormat(evalVariableRef, evalAlgorithmRef, evalRecord, mpSceneId, count);
         evalVariableRef.setFormatEndTime(new Date());
 
         if (result == null) {
@@ -87,17 +87,17 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
             getBaseMapper().updateById(evalVariableRef);
 
             EvalLog.info(evalRecord, evalVariableRef, "format algorithm completed.");
-            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord);
         }
 
         return result;
     }
 
-    private String executeFormat(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask, int limit) {
+    private String executeFormat(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, String mpSceneId, int limit) {
 
         // 变量项探针采集数据
         List<EvalProbeData> evalProbeDataList = evalProbeDataService.lambdaQuery()
-                .eq(EvalProbeData::getSceneId, evalTask.getMpSceneId())
+                .eq(EvalProbeData::getSceneId, mpSceneId)
                 .eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId())
                 .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
                 .ge(EvalProbeData::getCollectionTime, evalRecord.getStartTime())
@@ -161,19 +161,19 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         evalVariableRefProbeDataService.saveBatch(evalVariableRefProbeDataList);
         if (perFormatSize == onceFormatSize) {
-            return executeFormat(evalVariableRef, evalAlgorithmRef, evalRecord, evalTask, limit + onceFormatSize);
+            return executeFormat(evalVariableRef, evalAlgorithmRef, evalRecord, mpSceneId, limit + onceFormatSize);
         }
 
         return null;
     }
 
-    private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+    private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "match algorithm start...");
 
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.MATCHING.getCode())) {
             EvalLog.info(evalRecord, evalVariableRef, "match algorithm has been completed, continue.");
-            return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+            return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
         }
 
         List<EvalVariableRefProbeDataContext> evalVariableRefProbeDataContextList = evalVariableRefProbeDataService
@@ -234,10 +234,10 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         EvalLog.info(evalRecord, evalVariableRef, "match algorithm completed.");
-        return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+        return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
     }
 
-    private String startMark(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+    private String startMark(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMarkAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "mark algorithm start...");
 

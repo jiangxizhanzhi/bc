@@ -22,6 +22,8 @@ public class EvalTemplate extends BaseTable {
 
 	private String topoId;
 
+	private String mpSceneId;
+
 	private Integer categoryCode;
 
 	private String stepConfig;
@@ -33,8 +35,6 @@ public class EvalTemplate extends BaseTable {
 	private String createUserId;
 
 	private String redVsBlueId;
-
-	private Integer indexScore;
 
 	public void setLogoId(String logoId) {
 		this.logo = logoId;

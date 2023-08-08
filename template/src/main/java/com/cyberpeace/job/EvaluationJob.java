@@ -40,7 +40,7 @@ public class EvaluationJob {
                 if (evalRecord.getEvalTime() == null) {
                     evalRecord.setEvalTime(new Date());
                 }
-                evalRecordService.recordRun(evalRecord, evalTask, true, WebConstant.LANGUAGE_ZH);
+                evalRecordService.recordRun(evalRecord, true, WebConstant.LANGUAGE_ZH);
             });
         }
 

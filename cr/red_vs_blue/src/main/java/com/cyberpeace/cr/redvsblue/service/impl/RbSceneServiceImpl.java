@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoomScene;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomSceneMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,6 +84,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	@Autowired
 	private CrRoomDeviceApplyService crRoomDeviceApplyService;
 
+	@Autowired
+	private RbRoomSceneMapper rbRoomSceneMapper;
+
 	@Override
 	public String startScene(String roomId, String userId) {
 		// 1、权限校验，学员是不可以启动场景的
@@ -107,6 +113,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 4、启动mp场景
 		String sceneId = localSceneService.startScene(localScene);
 
+		// 5. 添加 红蓝-mp-scene绑定
+		RbRoomScene rbRoomScene = new RbRoomScene();
+		LambdaQueryWrapper<RbRoomScene> query = new LambdaQueryWrapper<>();
+		query.eq(RbRoomScene::getRbId, room.getResourceId());
+		RbRoomScene queryRbRoomScene = rbRoomSceneMapper.selectOne(query);
+
 		try {
 			// 5、更新本地数据库数据
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -122,6 +134,14 @@ public class RbSceneServiceImpl implements RbSceneService {
 					// 执行表更新
 					localSceneService.save(localScene);
 					rbRoomService.updateById(room);
+					if(null != queryRbRoomScene){
+						queryRbRoomScene.setMpSceneId(sceneId);
+						rbRoomSceneMapper.updateById(queryRbRoomScene);
+					} else {
+						rbRoomScene.setMpSceneId(sceneId);
+						rbRoomScene.setRbId(roomId);
+						rbRoomSceneMapper.insert(rbRoomScene);
+					}
 				}
 			});
 			// 5.1 本地保存数据错误，删除已启动的远程场景

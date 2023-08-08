@@ -23,4 +23,9 @@
         </where>
         order by T1.id desc
     </select>
+
+    <select id="seletTemplateById" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalRecord">
+
+
+    </select>
 </mapper>

@@ -43,7 +43,7 @@ public class SingleTrainStatistics extends CrEventStatistics {
 
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
-		Integer completed = trainRecordMapper.countFinishedByUserIdAndType(userId,
+		Integer completed = trainRecordMapper.singleTrainCountFinishedByUserIdAndType(userId,
 				BusinessType.TRAINING_SINGLE.getCode());
 		Integer uncompleted = singleRoomMapper.countUnfinishedByUserId(userId);
 		TrainingCount count = new TrainingCount();
@@ -57,7 +57,7 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	public List<TrainingData> getRelatedTraining(String userId) {
 
 		List<TrainingData> dataList = Lists.newArrayList();
-		List<SingleRoom> rooms = singleRoomMapper.selectAllByUserId(userId,
+		List<SingleRoom> rooms = singleRoomMapper.singleTrainSelectAllByUserId(userId,
 				BusinessType.TRAINING_SINGLE.getCode());
 
 		for (SingleRoom room : rooms) {

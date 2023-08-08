@@ -99,14 +99,12 @@
         from cr_single_room
         where business_template_id = #{businessTemplateId}
     </select>
-    <select id="selectAllByUserId" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleRoom">
+    <select id="singleTrainSelectAllByUserId" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleRoom">
         select  T1.business_template_id, T1.start_time,T1.end_time
         from cr_train_record T1, cr_business_template T2
         where T1.business_template_id = T2.resource_id
         and T1.user_id = #{userId}
-        <if test="type == @com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate$BusinessType@TRAINING_SINGLE.code">
-            and T1.extra is not null
-        </if>
+        and T1.extra is not null
         and T1.business_type = #{type}
         union select business_template_id , start_time, end_time
         from cr_single_room

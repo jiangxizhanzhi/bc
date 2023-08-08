@@ -1,7 +1,24 @@
 package com.cyberpeace.cr.tool.controller.web;
 
-import javax.validation.constraints.NotBlank;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.tool.controller.req.WebToolListReq;
+import com.cyberpeace.cr.tool.controller.res.ToolRsp;
+import com.cyberpeace.cr.tool.controller.res.WebToolRsp;
+import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
+import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.service.ToolService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -12,23 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.tool.controller.req.WebToolListReq;
-import com.cyberpeace.cr.tool.controller.res.ToolRsp;
-import com.cyberpeace.cr.tool.controller.res.WebToolRsp;
-import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
-import com.cyberpeace.cr.tool.dao.entity.Tool;
-import com.cyberpeace.cr.tool.service.ToolService;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import javax.validation.constraints.NotBlank;
 
 @Api(tags = "前台-资源中心-工具库")
 @RestController
@@ -56,7 +57,9 @@ public class WebToolController {
 			listQuery.setCracked(webToolListReq.getCracked().equals(Tool.Cracked.FREE.getCode()));
 		}
 
-		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin);
+		// 获取权限
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),true);
+		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin,authContext);
 		IPage<WebToolRsp> convert = toolBoListRsp
 				.convert(webTool -> BeanUtils.copy(webTool, WebToolRsp.class));
 

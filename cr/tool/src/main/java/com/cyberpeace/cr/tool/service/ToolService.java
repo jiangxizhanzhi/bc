@@ -3,6 +3,7 @@ package com.cyberpeace.cr.tool.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
@@ -19,7 +20,7 @@ public interface ToolService extends IService<Tool> {
 	 * @param isAdmin 是否为后台访问
 	 * @return 分页工具数据
 	 */
-	IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin);
+	IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin, AuthContext authContext);
 
 	IPage<ToolRsp> selectNameSortPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin);
 

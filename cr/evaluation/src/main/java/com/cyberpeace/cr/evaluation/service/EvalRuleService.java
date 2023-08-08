@@ -44,4 +44,8 @@ public interface EvalRuleService extends IService<EvalRule> {
 	 */
 	String dumpEvalRule(String roomId);
 
+	/**
+	 * 初始化数据
+	 */
+	List<EvalRule> getInitialData(String roomId);
 }

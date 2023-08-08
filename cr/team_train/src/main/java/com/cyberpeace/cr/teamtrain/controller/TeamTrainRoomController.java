@@ -155,35 +155,8 @@ public class TeamTrainRoomController {
 
 		teamRoomService.checkTeacherPermission(roomId, userId);
 
-		TeamRoom teamRoom = teamRoomService.getById(roomId);
-		// 2、如果场景已经停止，返回成功
-		if (StringUtils.isBlank(teamRoom.getLocalSceneId())) {
-			return new BaseRsp(true);
-		}
-
-		TeamTimeManagement timeManagement = teamTimeManagementService.getByRoomId(roomId);
-		if (timeManagement == null) {
-			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
-		}
-		if (timeManagement.isStopped()) {
-			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
-		}
-
-		Boolean stopResult = localSceneService.stopScene(teamRoom.getLocalSceneId());
-		if (stopResult) {
-			teamTimeManagementService.updateTimeManagement(timeManagement, teamRoom,
-					TeamTimeManagement.TimeManagementStatus.STOP.getCode(),userId);
-			crRoomDeviceApplyService.releaseApply(teamRoom.getResourceId());
-		}
-
-		// 推送ws
-		crTaskService.pushStatusWs(roomId, TeamTimeManagement.TimeManagementStatus.STOP.getCode());
-
-		// 记录远程操作日志
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(),  teamRoom.getModule(),
-				OperationType.STOP, teamRoom.getName());
-
-		return new BaseRsp(stopResult);
+		Boolean result = teamSceneService.stopScene(roomId);
+		return new BaseRsp(result);
 	}
 
 	@ApiOperation("查看场景")
@@ -201,25 +174,9 @@ public class TeamTrainRoomController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<Boolean> pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 1、只有教员可以操作场景
-		teamRoomService.checkTeacherPermission(roomId, userId);
-		TeamRoom teamRoom = teamRoomService.getById(roomId);
 
-		// 2、 场景开启的状态下发送mp暂停请求
-		if (localSceneService.ensureSceneStarted(teamRoom.getLocalSceneId())
-				&& !localSceneService.pauseScene(teamRoom.getLocalSceneId())) {
-			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE);
-		}
-		// 3. 更新时间管理
-		TeamTimeManagement timeManagement = teamTimeManagementService.getByRoomId(roomId);
-		teamTimeManagementService.
-				updateTimeManagement(timeManagement, teamRoom, TeamTimeManagement.TimeManagementStatus.PAUSE.getCode(),
-						UserInfoContext.getUserContext().getUserId());
-		// 4.发送ws提醒前端刷新训练状态
-		crTaskService.pushStatusWs(roomId, TeamTimeManagement.TimeManagementStatus.PAUSE.getCode());
-		return new BaseRsp(true);
-
+		teamSceneService.pauseScene(roomId);
+		return new BaseRsp();
 	}
 
 	@ApiOperation("从暂停中恢复场景")
@@ -227,24 +184,8 @@ public class TeamTrainRoomController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 1. 校验场景存在和用户权限
-		teamRoomService.checkTeacherPermission(roomId, userId);
-		TeamRoom teamRoom = teamRoomService.getById(roomId);
 
-		// 2、 如果mp场景存在，发送mp解除暂停请求
-		if (localSceneService.ensureSceneStarted(teamRoom.getLocalSceneId())
-				&& !localSceneService.unpauseScene(teamRoom.getLocalSceneId())) {
-			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE);
-		}
-		// 3. 更新时间管理
-		TeamTimeManagement timeManagement = teamTimeManagementService.getByRoomId(roomId);
-		teamTimeManagementService.updateTimeManagement(timeManagement, teamRoom,
-				TeamTimeManagement.TimeManagementStatus.RECOVERY.getCode(),
-				UserInfoContext.getUserContext().getUserId());
-
-		// 4.发送ws提醒前端刷新训练状态
-		crTaskService.pushStatusWs(roomId, TeamTimeManagement.TimeManagementStatus.RECOVERY.getCode());
+		teamSceneService.unpauseScene(roomId);
 		return new BaseRsp();
 	}
 
@@ -680,7 +621,7 @@ public class TeamTrainRoomController {
 			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
 		}
 		BaseRsp<Boolean> result = new BaseRsp<>(res);
-		if (res){
+		if (!res){
 			result.setMessage("无可分发任务");
 		}
 		return result;
@@ -780,7 +721,7 @@ public class TeamTrainRoomController {
 		rbTimeManagementRsp.setRedVsBlue(teamTimeManagement.getRoomId());
 
 		// 计算当前作战时间
-		if (teamTimeManagement.isStopped() || teamTimeManagement.isPaused()) {
+		if (teamTimeManagement.isStopped()) {
 			rbTimeManagementRsp.setCurrentCombatTime(teamTimeManagement.getCombatTime());
 		} else {
 			time = teamTimeManagement.getCombatTime().getTime()

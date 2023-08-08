@@ -5,6 +5,13 @@
     <select id="list" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
         select * from cr_tool_tool
         <where>
+             resource_id in
+            <foreach collection="ids" index="index" separator="," item="courseId" open="(" close=")">
+                #{courseId}
+            </foreach>
+            <if test="ids.size() == 0">
+                ('')
+            </if>
             <if test="isAdmin == false">
                 and visible is true
             </if>
@@ -82,4 +89,31 @@
         order by convert(`name` using gbk)
     </select>
 
+
+    <select id="selectByAuth" resultType="java.lang.String">
+        select resource_id from cr_tool_tool
+        <where>
+            <if test="!authContext.isSuperAdmin">
+                <choose>
+                    <when test="authContext.isWeb">
+                        <choose>
+                            <when test="authContext.organization != null and authContext.organization != ''">
+                                <bind name="likeOrganization" value="'%' + authContext.organization + '%'"/>
+                                (create_user_id = #{authContext.userId} or (read_auth_ids like #{likeOrganization}
+                                and read_auth_type = 2) or read_auth_type = 1)
+                            </when>
+                            <otherwise>
+                                1!=1
+                            </otherwise>
+                        </choose>
+                    </when>
+                    <otherwise>
+                        <bind name="likeUser" value="'%' + authContext.userId + '%'"/>
+                        (create_user_id = #{authContext.userId} or (operation_auth_ids like #{likeUser}
+                        and operation_auth_type = 2) or operation_auth_type = 1)
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
 </mapper>

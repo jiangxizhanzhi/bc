@@ -3,10 +3,12 @@ package com.cyberpeace.cr.tool.controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
@@ -52,14 +54,16 @@ public class ToolController {
 		Boolean isAdmin = true;
 		Page page = pageReqBase.toPageParam();
 		ToolListQuery listQuery = BeanUtils.copy(pageReqBase, ToolListQuery.class);
-		IPage<ToolRsp> toolBoListRsp;
+
 		if (pageReqBase.getSort() != null && pageReqBase.getSort().equals("name")) {
 			pageReqBase.setSort(null);
 			page = pageReqBase.toPageParam();
-			toolBoListRsp = toolService.selectNameSortPage(page, listQuery, isAdmin);
-		} else {
-			toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin);
 		}
+
+		// 获取权限
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),false);
+		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin, authContext);
+
 		return new BaseRsp(PageUtil.getListResult(toolBoListRsp));
 	}
 

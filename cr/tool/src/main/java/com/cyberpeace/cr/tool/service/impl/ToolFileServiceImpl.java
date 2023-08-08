@@ -1,26 +1,24 @@
 package com.cyberpeace.cr.tool.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.util.FileUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 import com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper;
 import com.cyberpeace.cr.tool.service.ToolFileService;
 import com.google.common.io.Files;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> implements ToolFileService {
@@ -72,6 +70,7 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		return toolFile;
 	}
 
+	@Override
 	public ToolFile saveFile(MultipartFile multipartFile) {
 		File newFile;
 		try {

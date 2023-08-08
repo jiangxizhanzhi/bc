@@ -45,13 +45,14 @@ CREATE TABLE `cr_eval_rule` (
                                 KEY `room_id` (`room_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='测评规则';
 -- 武器工具库增加权限
+ALTER TABLE cr_tool_tool add column `create_user_id` varchar(64) NOT NULL COMMENT '创建者id';
 ALTER TABLE cr_tool_tool add column `operation_auth_type` int (11) NULL COMMENT '后台操作权限类型';
 ALTER TABLE cr_tool_tool add column `operation_auth_ids` longtext NULL COMMENT '拥有后台操作权限的用户id';
 ALTER TABLE cr_tool_tool add column `read_auth_type` int (1) NULL COMMENT '前台查看权限类型';
 ALTER TABLE cr_tool_tool add column `read_auth_ids` varchar(4096) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '拥有前台查看权限的组织';
 
 -- 武器工具库附件
-ALTER TABLE cr_tool_toolfile add column `version` varchar(256)NOT NULL COMMENT '版本号';
+ALTER TABLE cr_tool_toolfile add column `version` varchar(256) DEFAULT NULL COMMENT '版本号';
 ALTER TABLE cr_tool_toolfile add column `create_time`  datetime DEFAULT NULL COMMENT '创建时间';
 ALTER TABLE cr_tool_toolfile add column `update_time`  datetime DEFAULT NULL COMMENT '更新时间';
 

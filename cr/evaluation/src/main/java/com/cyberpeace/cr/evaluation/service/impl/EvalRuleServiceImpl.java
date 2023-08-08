@@ -26,8 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  *
@@ -157,7 +159,6 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 		}
 	}
 
-
 	public JSONObject getTemplateI18n() {
 		JSONObject jsonObject = new JSONObject();
 
@@ -166,5 +167,27 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 		}
 
 		return jsonObject;
+	}
+
+	@Override
+	public List<EvalRule> getInitialData(String roomId) {
+		List<EvalRule> result = new ArrayList<>();
+		result.add(setInitialEvalRule("有效得分", "与标准答案一致,且有关键截图证据", 100, roomId)) ;
+		result.add(setInitialEvalRule("部分有效得分", "与标准答案一致,缺少关键截图证据", 80, roomId)) ;
+		result.add(setInitialEvalRule("部分有效待补充", "与标准答案无关,且有关键截图证据", 60, roomId)) ;
+		result.add(setInitialEvalRule("无效待补充", "与标准答案类似,缺少关键截图证据", 40, roomId)) ;
+		result.add(setInitialEvalRule("无效不得分", "与标准答案无关,缺少关键截图证据", 0, roomId)) ;
+		saveBatch(result);
+		return result;
+	}
+
+	private EvalRule setInitialEvalRule(String name, String description, Integer score, String roomId) {
+		EvalRule evalRule = new EvalRule();
+		evalRule.setResourceId(UUID.randomUUID().toString());
+		evalRule.setName(name);
+		evalRule.setDescription(description);
+		evalRule.setScore(score);
+		evalRule.setRoomId(roomId);
+		return evalRule;
 	}
 }

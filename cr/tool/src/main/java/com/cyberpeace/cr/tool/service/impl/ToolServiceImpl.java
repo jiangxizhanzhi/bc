@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.BeanUtils;
@@ -132,8 +133,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	}
 
 	@Override
-	public IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin) {
-		IPage<Tool> result = toolMapper.list(page, toolListQuery, isAdmin);
+	public IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin, AuthContext authContext) {
+		List<String> ids = toolMapper.selectByAuth(authContext);
+		IPage<Tool> result = toolMapper.list(page, toolListQuery, isAdmin,	ids);
 		return result.convert(tool -> toBo(tool, false));
 	}
 

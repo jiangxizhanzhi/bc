@@ -31,29 +31,12 @@ public class TeamTimeManagement extends BaseTable {
 	private String updateUserId;
 
 	public Boolean isStopped() {
-
         return status.intValue() == TimeManagementStatus.STOP.getCode();
-	}
-
-	public Boolean isPaused() {
-
-		return status.intValue() == TimeManagementStatus.PAUSE.getCode();
-	}
-
-	public Boolean isRunning() {
-		boolean result = status.intValue() == TimeManagementStatus.RECOVERY.getCode();
-		result = result || status.intValue() == TimeManagementStatus.START.getCode();
-
-		return result;
-	}
-
-	public Boolean isRecovering() {
-		return status.intValue() == TimeManagementStatus.RECOVERY.getCode();
 	}
 
 	public enum TimeManagementStatus {
 
-		STOP(0, "停止"), PAUSE(1, "暂停"), START(2, "开始"), RECOVERY(3, "恢复");
+		NOT_START(0, "未开始"), START(1, "已开始"), STOP(2, "已结束");
 
 		@Getter
 		private Integer code;

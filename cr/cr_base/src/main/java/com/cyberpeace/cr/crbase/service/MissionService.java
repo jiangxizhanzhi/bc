@@ -12,8 +12,14 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
-import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.service.context.DynamicData;
+import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionDetail;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
@@ -182,11 +188,6 @@ public interface MissionService extends IService<Mission> {
 	 * @return 结果（布尔值）
 	 */
 	Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates);
-
-	/**
-	 * @param schemeData
-	 */
-	void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData);
 
 	/**
 	 * 校验任务

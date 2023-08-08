@@ -8,9 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.context.MissionStageScheme;
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.TeamRoleGroup;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +23,10 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -40,9 +41,11 @@ import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.CrBadgeService;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.service.context.DynamicData;
+import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.cyberpeace.cr.crbase.service.context.mission.*;
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.google.common.collect.Lists;
@@ -516,31 +519,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			return false;
 		}
 		return missionMapper.existByTitleAndIds(title, missionIds);
-	}
-
-	@Override
-	public void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData) {
-		List<String> missionIds = StreamApiUtils.map(schemeData.getMissions(),
-				AddTemplateMission::getResourceId);
-
-		if (missionIds.size() > 0) {
-			List<MissionTemplate> missions = missionTemplateMapper.selectBatchIds(missionIds);
-
-			Map<String, MissionTemplate> missionMap = StreamApiUtils.toMap(missions,
-					MissionTemplate::getResourceId, pc -> pc);
-
-			for (AddTemplateMission mission : schemeData.getMissions()) {
-
-				mission.setTitle(missionMap
-						.getOrDefault(mission.getResourceId(), new MissionTemplate()).getTitle());
-				mission.setDescription(
-						missionMap.getOrDefault(mission.getResourceId(), new MissionTemplate())
-								.getDescription());
-
-			}
-
-		}
-
 	}
 
 	@Override

@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.TeamRoleGroup;
-import com.cyberpeace.common.enums.BusinessType;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -20,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -31,10 +30,8 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.CrCommonService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.RtksRelatedService;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
@@ -58,6 +55,7 @@ import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import io.swagger.annotations.Api;
@@ -80,6 +78,9 @@ public class TeamTrainTemplateController {
 
 	@Autowired
 	private MissionService missionService;
+	
+	@Autowired
+	private MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private CrCommonService crCommonService;
@@ -186,13 +187,35 @@ public class TeamTrainTemplateController {
 		List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonUtil
 				.toJsonObjectArray(roleString, TeamTrainTemplateRoleRsp.class);
 		int index = 1;
+		// get mission template ids
+		List<String> missionIdsAll = Lists.newArrayList();
 		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
 			teamTrainTemplateRoleRsp.setId(template.getResourceId() + "_" + index++);
 			for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp
 					.getMissionsScheme().getSchemeData()) {
-				missionService.getMissionContent(schemeData);
+				List<String> missionIds = StreamApiUtils.map(schemeData.getMissions(),
+						AddTemplateMission::getResourceId);
+				missionIdsAll.addAll(missionIds);
 			}
 		}
+		// get mission templates
+		List<MissionTemplate> missions = missionTemplateService.getBatchByIds(missionIdsAll);
+		Map<String, MissionTemplate> missionMap = StreamApiUtils.toMap(missions,
+				MissionTemplate::getResourceId, pc -> pc);
+		// set desc and title
+		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
+			for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp
+					.getMissionsScheme().getSchemeData()) {
+				for (AddTemplateMission mission : schemeData.getMissions()) {
+					MissionTemplate missionTemplate = missionMap.get(mission.getResourceId());
+					if (null != missionTemplate) {
+						mission.setDescription(missionTemplate.getDescription());
+						mission.setTitle(missionTemplate.getTitle());
+					}
+				}
+			}
+		}
+
 		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
 		String sceneManagerId = "";
 		LocalScene localScene = localSceneService

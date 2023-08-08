@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,7 +34,6 @@ public class MissionBase extends BaseTable {
 	private String answer;
 
 	@ApiModelProperty(value = "选项")
-	@TableField(value = "option")
 	private String option;
 
 	@ApiModelProperty(value = "类型")

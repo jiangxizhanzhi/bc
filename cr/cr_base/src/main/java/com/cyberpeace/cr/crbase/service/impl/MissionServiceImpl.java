@@ -277,7 +277,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskMapper.batchInsert(tasks);
 				crTaskLogMapper.batchInsert(taskLogs);
-				crFlagTaskMapper.batchInsert(flagTaskList);
+				if (!CollectionUtils.isEmpty(flagTaskList)) {
+					crFlagTaskMapper.batchInsert(flagTaskList);
+				}
 			}
 		});
 		return true;

@@ -56,16 +56,14 @@
         set end_time = #{endTime}
         where room_id = #{roomId}
     </update>
-    <select id="countFinishedByUserIdAndType" resultType="java.lang.Integer">
+    <select id="singleTrainCountFinishedByUserIdAndType" resultType="java.lang.Integer">
         select count(T1.id)
         from cr_train_record T1,cr_business_template T2
         where T1.business_template_id = T2.resource_id
         and T1.user_id = #{userId}
         and T1.business_type = #{type}
         and T1.end_time is not null
-        <if test="type == @com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate$BusinessType@TRAINING_SINGLE.code">
-            and T1.extra is not null
-        </if>
+        and T1.extra is not null
     </select>
     <select id="getByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.TrainRecord">
         select *

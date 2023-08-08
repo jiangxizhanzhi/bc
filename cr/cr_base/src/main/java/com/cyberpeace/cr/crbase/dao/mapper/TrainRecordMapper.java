@@ -22,7 +22,7 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 	void setEndTimeByRoomId(@Param("room_id") String roomId,
 					@Param("business_type") Integer businessType, @Param("extra") String extra);
 
-	Integer countFinishedByUserIdAndType(@Param("userId") String userId,
+	Integer singleTrainCountFinishedByUserIdAndType(@Param("userId") String userId,
 			@Param("type") Integer type);
 
 	void batchEnd(@Param("businessTemplateId") String businessTemplateId);

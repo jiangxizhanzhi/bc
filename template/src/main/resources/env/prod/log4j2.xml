@@ -26,7 +26,7 @@
                 <SizeBasedTriggeringPolicy size="100 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="5"/>
+            <DefaultRolloverStrategy max="-1"/>
         </RollingFile>
         <!--*********************文件日志***********************-->
         <RollingFile name="resourceImport"
@@ -42,7 +42,7 @@
                 <SizeBasedTriggeringPolicy size="100 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="5"/>
+            <DefaultRolloverStrategy max="-1"/>
         </RollingFile>
 
         <RollingFile name="mp"
@@ -58,7 +58,7 @@
                 <SizeBasedTriggeringPolicy size="100 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="5">
+            <DefaultRolloverStrategy max="-1">
 
             </DefaultRolloverStrategy>
         </RollingFile>
@@ -76,7 +76,7 @@
                 <SizeBasedTriggeringPolicy size="100 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="5"/>
+            <DefaultRolloverStrategy max="-1"/>
         </RollingFile>
 
         <RollingFile name="eval"
@@ -92,7 +92,7 @@
                 <SizeBasedTriggeringPolicy size="100 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="5"/>
+            <DefaultRolloverStrategy max="-1"/>
         </RollingFile>
     </Appenders>
     <Loggers>
@@ -114,12 +114,8 @@
         <Logger name="eval" additivity="false" level="info">
             <appender-ref ref="eval" level="info"/>
         </Logger>
-
         <Logger name="com.cyberpeace.oj.rtks.dao.mapper" level="DEBUG" additivity="false"/>
         <Logger name="com.cyberpeace.cr.tool.dao.mapper" level="DEBUG" additivity="false"/>
         <Logger name="com.cyberpeace.oj.rtks.service.impl" level="DEBUG" additivity="false"/>
-
-
     </Loggers>
-
 </Configuration>

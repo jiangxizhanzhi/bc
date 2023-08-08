@@ -58,7 +58,7 @@ public class HttpClientUtil {
 		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
 
 		HttpPost post = new HttpPost(url);
-    post.setHeader(WebConstant.TRACE_HEADER, ThreadContext.get("logId"));
+		post.setHeader(WebConstant.TRACE_HEADER, ThreadContext.get("logId"));
 		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
 		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		post.setEntity(entity);

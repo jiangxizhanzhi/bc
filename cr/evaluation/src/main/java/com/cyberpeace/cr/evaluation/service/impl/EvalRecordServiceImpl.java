@@ -855,8 +855,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private String getMpSceneId(String roomId) {
-        EvalRecord evalRecord = evalRecordMapper.selectById(roomId);
-        EvalTemplate evalTemplate = evalTemplateService.getById(evalRecord.getTemplateId());
+        EvalTemplate evalTemplate = evalTemplateService.getById(roomId);
+        if(null == evalTemplate){
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
         return rbRoomSceneMapper.getByRbId(evalTemplate.getRedVsBlueId());
     }
 

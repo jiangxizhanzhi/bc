@@ -89,15 +89,10 @@ public class ToolRsp implements Serializable {
 	@ApiModelProperty("标签")
 	private String tag;
 
-	@ApiModelProperty("授权操作类型 1=共享 2=自定义")
-	private Integer operationAuthType;
+	@ApiModelProperty(value = "授权操作类型")
+	private Integer share;
 
-	@ApiModelProperty("授权操作用户编号 ,为编号分割符")
-	private String operationAuthIds;
+	@ApiModelProperty(value = "授权操作用户列表")
+	private List<String> shareTeachers;
 
-	@ApiModelProperty("授权访问类型 1=共享 2=自定义")
-	private Integer readAuthType;
-
-	@ApiModelProperty("授权访问组织编号 ,为分割符")
-	private String readAuthIds;
 }

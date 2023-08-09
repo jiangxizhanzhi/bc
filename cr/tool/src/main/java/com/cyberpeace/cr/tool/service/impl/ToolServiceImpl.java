@@ -7,11 +7,13 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.scene.DeviceInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
@@ -60,7 +62,6 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
-
 
 	@Autowired
 	private UtilService utilService;
@@ -125,7 +126,8 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		if (isDetail) {
 			setAboutFile(toolRsp, tool);
 		}
-
+		toolRsp.setShare(tool.getOperationAuthType());
+		toolRsp.setShareTeachers(JsonUtil.toJsonObjectArray(tool.getOperationAuthIds(), String.class));
 		toolRsp.setCreateTime(DateUtil.DateToString(tool.getCreateTime(), DateUtil.SHOT_PATTERN));
 		toolRsp.setUpdateTime(DateUtil.DateToString(tool.getUpdateTime(), DateUtil.SHOT_PATTERN));
 
@@ -177,6 +179,7 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	@Override
 	public void insert(ToolAddReq req) {
 		Tool tool = BeanUtils.copy(req, Tool.class);
+		tool.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		tool.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		tool.setReadAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
 		tool.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
@@ -184,12 +187,11 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
 		validateToolNameExist(tool);
 		validateToolAttachment(req.getToolFiles());
-		List<ToolFile> toolFiles = req.getToolFiles();
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 										@Override
 										protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 											save(tool);
-											toolFileMapper.batchInsert(toolFiles);
+											req.getToolFiles().forEach(item-> toolFileMapper.updateById(item));
 										}
 									});
 	}
@@ -206,6 +208,17 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 				req.getToolFiles().forEach(item-> toolFileMapper.updateById(item));
 			}
 		});
+	}
+
+	@Override
+	public void batchSetShares(ShareContext shareContext) {
+		String shareTeachers = JsonUtil.toJsonString(shareContext.getShareTeachers());
+		List<Tool> businessTemplateList = listByIds(shareContext.getIds());
+		businessTemplateList.forEach(businessTemplate -> {
+			businessTemplate.setOperationAuthType(shareContext.getShareMode());
+			businessTemplate.setOperationAuthIds(shareTeachers);
+		});
+		updateBatchById(businessTemplateList);
 	}
 
 	public void validateToolAttachment(List<ToolFile> toolFileList) {

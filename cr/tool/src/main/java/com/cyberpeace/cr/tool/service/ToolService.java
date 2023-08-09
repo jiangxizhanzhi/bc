@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
@@ -61,4 +62,13 @@ public interface ToolService extends IService<Tool> {
 	 * 修改
 	 */
 	void update(ToolUpdateReq req);
+
+
+	/**
+	 * 批量修改多个训练模板的权限
+	 *
+	 * @param shareContext 授权信息
+	 */
+	void batchSetShares(ShareContext shareContext);
+
 }

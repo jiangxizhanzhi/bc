@@ -11,6 +11,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.controller.req.ShareReq;
+import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
@@ -114,6 +116,19 @@ public class ToolController {
 		});
 
 		return new BaseRsp<>();
+	}
+
+	/**
+	 * 设置靶场业务模板的操作权限
+	 * @return
+	 */
+	@ApiOperation("批量修改操作权限")
+	@PostMapping("/batchSetShares")
+	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS}, logical = Logical.OR)
+	public BaseRsp<String> batchSetShares(@RequestBody @Validated ShareReq shareReq) {
+		ShareContext shareContext = BeanUtils.copy(shareReq, ShareContext.class);
+		toolService.batchSetShares(shareContext);
+		return new BaseRsp();
 	}
 
 }

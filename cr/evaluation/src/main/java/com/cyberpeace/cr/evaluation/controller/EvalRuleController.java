@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.controller;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRuleListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRuleReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRule;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.List;
 
 /**
  * @author yaoyao.Mei
@@ -64,8 +64,8 @@ public class EvalRuleController {
 	@ApiOperation("删除规则")
 	// @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@DeleteMapping("")
-	public BaseRsp<Boolean> delete(@RequestBody List<String> ids) {
-		return new BaseRsp<>(evalRuleService.delete(ids));
+	public BaseRsp<Boolean> delete(@RequestBody BatchDeleteReq req) {
+		return new BaseRsp<>(evalRuleService.delete(req.getIds()));
 	}
 
 	@ApiOperation("规则导出为PDF")

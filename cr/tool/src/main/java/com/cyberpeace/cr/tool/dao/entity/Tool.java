@@ -63,6 +63,8 @@ public class Tool extends AuthTable {
 
 	private String files;
 
+	private String createUserId;
+
 	private Integer operationAuthType;
 
 	private String operationAuthIds;

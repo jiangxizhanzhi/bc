@@ -40,8 +40,8 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 	@Override
 	public ListRsp<EvalRule> pageList(EvalRuleListReq req) {
 		LambdaQueryWrapper<EvalRule> queryWrapper = new LambdaQueryWrapper<>();
-		if (!Objects.isNull(req.getName())){
-			queryWrapper.eq(EvalRule::getName, req.getName());
+		if (!Objects.isNull(req.getPattern())){
+			queryWrapper.like(EvalRule::getName, req.getPattern());
 		}
 		Page<EvalRule> page = page(req.toPageParam(), queryWrapper);
 		return PageUtil.getListResult(page);
@@ -149,7 +149,7 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 
 	private void isExist(EvalRuleReq req) {
 		LambdaQueryChainWrapper<EvalRule> querySet = lambdaQuery()
-				.eq(EvalRule::getRoomId, req.getResourceId())
+				.eq(EvalRule::getRoomId, req.getRoomId())
 				.eq(EvalRule::getName, req.getName());
 		if (req.getResourceId() != null) {
 			querySet = querySet.ne(EvalRule::getResourceId, req.getResourceId());

@@ -349,12 +349,29 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
         List<LocalScene> localScenes = Lists.newArrayList();
         List<ClassroomGroupInfo> groupInfoList = Lists.newArrayList();
 
-        for (ClassroomGroupInfo groupInfo : groupInfos) {
-            OjLocalScene ojLocalScene = ojLocalSceneMapper
-                    .selectGroupScene(groupInfo.getResourceId());
-            // 需要更新的场景数据
-            if (null != ojLocalScene) {
-                LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		// 查询localScene数据
+		List<String> groupInfoIdList = groupInfos.stream().map(ClassroomGroupInfo::getResourceId)
+				.collect(Collectors.toList());
+		List<OjLocalScene> ojLocalScenes = Lists.newArrayList();
+		if (!groupInfoIdList.isEmpty()) {
+			ojLocalScenes = ojLocalSceneMapper.selectByGroupIds(groupInfoIdList);
+		}
+		Map<String, OjLocalScene> ojLocalSceneMap = StreamApiUtils.toMap(ojLocalScenes,
+				OjLocalScene::getBusinessId, item -> item);
+		List<String> localSceneIdList = ojLocalScenes.stream().map(OjLocalScene::getLocalSceneId)
+				.collect(Collectors.toList());
+		List<LocalScene> localSceneList = Lists.newArrayList();
+		if (!localSceneIdList.isEmpty()) {
+			localSceneList = localSceneMapper.selectBatchIds(localSceneIdList);
+		}
+		Map<String, LocalScene> localSceneMap = StreamApiUtils.toMap(localSceneList,
+				LocalScene::getResourceId, localScene -> localScene);
+
+		for (ClassroomGroupInfo groupInfo : groupInfos) {
+			OjLocalScene ojLocalScene = ojLocalSceneMap.get(groupInfo.getResourceId());
+			// 需要更新的场景数据
+			if (null != ojLocalScene) {
+				LocalScene localScene = localSceneMap.get(ojLocalScene.getLocalSceneId());
 
                 if (!end) {
                     localScene.setStartTime(new Date());

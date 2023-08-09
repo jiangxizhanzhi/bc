@@ -9,6 +9,8 @@ public interface CommonConstant {
 
 	String PERIOD = ".";
 
+	String LEFT_PERIOD_OBLIQUE_LINE = "./";
+
 	/** 空字符串*/
 	String BLANK_STR = "\"\"";
 

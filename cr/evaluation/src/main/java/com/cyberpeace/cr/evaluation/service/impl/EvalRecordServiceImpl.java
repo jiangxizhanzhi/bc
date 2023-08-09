@@ -301,9 +301,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
 
             // 设置5级变量项的评分方式
-            if(fifthSpecialistMap.containsKey(evalCollection.getResourceId())){
-                Integer specialVal = fifthSpecialistMap.get(evalCollection.getResourceId());
-                evalVariableRef.setScore(specialVal);
+            if(evalRecordVariableContextMap.containsKey(evalCollection.getResourceId())){
+                evalVariableRef.setScore(evalRecordVariableContext.getWeight());
             }
 
             variableRefs.add(evalVariableRef);
@@ -469,6 +468,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalVariableRef.setResourceId(evalRecordVariableContext.getResourceId());
                     evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
                     evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
+                    evalVariableRef.setScore(evalRecordVariableContext.getWeight());
                     evalVariableRefs.add(evalVariableRef);
                     variablesSet.add(evalVariableRef.getResourceId());
                 }
@@ -514,7 +514,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                         return;
                     }
                     EvalVariableRef evalVariableRef = fullVariablesMap.get(variableId);
-                    evalSystemIndexesContext.getChildren().add(BeanUtils.copy(evalVariableRef, EvalSystemIndexesContext.class));
+                    EvalSystemIndexesContext copy = BeanUtils.copy(evalVariableRef, EvalSystemIndexesContext.class);
+                    copy.setWeight(evalVariableRef.getScore());
+                    evalSystemIndexesContext.getChildren().add(copy);
                     variablesMap.add(variableId);
                 });
             } else {
@@ -575,7 +577,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Set<String> variableIds = evalIndexRefService.systemEvalVariableIds(evalRecord.getResourceId());
         EvalLog.info(evalRecord, String.format("collect wait to calculate variables id completed: %s", variableIds.toString()));
 
-        String mpSceneId = getMpSceneId(evalRecord.getResourceId());
+        String mpSceneId = getMpSceneId(evalRecord.getTemplateId());
 
         // 循环同步采集数据
         EvalLog.info(evalRecord, "sync remote server [MP] probe data start...");
@@ -591,6 +593,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalLog.info(evalRecord, "calculate indexes start...");
         startIndexes(evalRecord);
         EvalLog.info(evalRecord, "calculate indexes completed.");
+
+        // TODO复制当前的角色任务得分情况
+
 
         EvalLog.info(
                 evalRecord,
@@ -667,6 +672,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalRecord.setStatus(StringUtils.isEmpty(evalRecord.getMessage()) ? EvalRecord.Status.END.getCode() : EvalRecord.Status.EXCEPTION.getCode());
         evalRecord.setScore(evalIndexRefs.get(evalIndexRefs.size() - 1).getScore());
+        evalRecord.setFinalScore(Math.round(evalRecord.getScore() * evalRecord.getIndexScore()));
         evalRecord.setEvalEndTime(new Date());
         transactionTemplate.execute(status -> {
             evalIndexRefService.updateBatchById(evalIndexRefs);
@@ -898,9 +904,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public Map<String, List<EvalRoomPairRsp>> getProbes(String roomId) {
-        EvalTask evalTask = getTask(roomId);
+        String mpSceneId = getMpSceneId(roomId);
 
-        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+        JSONObject jsonObject = remoteSceneService.getById(mpSceneId, UserInfoContext.getUserContext().getUserId());
         JSONObject nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("elements");
 
         Map<String, List<EvalRoomPairRsp>> results = Maps.newHashMap();
@@ -925,9 +931,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public List<EvalRecordNodeProbeReq> getNodeProbe(String roomId) {
-        EvalTask evalTask = getTask(roomId);
+        String mpSceneId = getMpSceneId(roomId);
 
-        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+        JSONObject jsonObject = remoteSceneService.getById(mpSceneId, UserInfoContext.getUserContext().getUserId());
 
         JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
         JSONObject cpCollection = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection");

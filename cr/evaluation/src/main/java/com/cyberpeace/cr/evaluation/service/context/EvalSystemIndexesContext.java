@@ -25,6 +25,9 @@ public class EvalSystemIndexesContext implements Serializable {
     @ApiModelProperty("评分方式")
     private Integer type;
 
+    @ApiModelProperty("评分方式")
+    private Integer weight;
+
     @ApiModelProperty("主机节点ID")
     private String deviceId;
 

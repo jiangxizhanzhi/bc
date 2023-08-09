@@ -19,4 +19,7 @@ public class EvalRecordVariableContext implements Serializable {
 
     @ApiModelProperty(value = "选择主机可用探针ID", required = true)
     private String probeId;
+
+    @ApiModelProperty(value = "权重")
+    private Integer weight;
 }

@@ -22,8 +22,6 @@ public class EvalTemplate extends BaseTable {
 
 	private String topoId;
 
-	private String mpSceneId;
-
 	private Integer categoryCode;
 
 	private String stepConfig;

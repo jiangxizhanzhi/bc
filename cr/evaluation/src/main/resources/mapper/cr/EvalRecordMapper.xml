@@ -12,7 +12,7 @@
         from cr_eval_record T1
         left join cr_eval_index_ref T2 on T1.resource_id = T2.record_id and T2.level = 1
         <where>
-            T1.task_id = #{task_id}
+            T1.template_id = #{task_id}
             <if test="pattern != null and pattern != ''">
                 <bind name="pattern" value="'%' + pattern + '%'"/>
                 and T1.name like #{pattern}

@@ -1,11 +1,27 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.*;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -17,11 +33,9 @@ import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.common.enums.BusinessType;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -48,29 +62,17 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
-import com.cyberpeace.oj.practice.entity.Paper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.entity.Paper;
 import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
 import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -797,132 +799,125 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             }
         }
 
-        ClassroomPracticeBo classroomPracticeBo = ClassroomPracticeBo.builder()
-                .hasPractice(hasPractice).released(isReleased).build();
+		ClassroomPracticeBo classroomPracticeBo = ClassroomPracticeBo.builder()
+				.hasPractice(hasPractice).released(isReleased).build();
+		if (!hasPractice) {
+			return classroomPracticeBo;
+		}
+		List<UserInfo> userInfoList = remoteUserService.ListByOrgId(cpContext.getOrganizationId(),
+				true);
+		List<String> userIds = Lists.newArrayList();
 
-        if (hasPractice) {
-            List<UserInfo> userInfoList = remoteUserService
-                    .ListByOrgId(cpContext.getOrganizationId(), true);
-            List<String> userIds = Lists.newArrayList();
+		// 姓名搜索
+		String username = cpContext.getUsername();
+		boolean searchName = StringUtils.isNotBlank(username);
+		for (UserInfo userInfo : userInfoList) {
+			if (!searchName || userInfo.getName().contains(username)) {
+				userIds.add(userInfo.getUserId());
+			}
+		}
 
-            // 姓名搜索
-            String username = cpContext.getUsername();
-            boolean searchName = StringUtils.isNotBlank(username);
-            for (UserInfo userInfo : userInfoList) {
-                if (searchName) {
-                    if (!userInfo.getName().contains(username)) {
-                        continue;
-                    }
-                }
-                userIds.add(userInfo.getUserId());
-            }
+		List<PracticePaperEvaluateBo> practiceInfos = Lists.newArrayList();
 
-            List<PracticePaperEvaluateBo> practiceInfos = Lists.newArrayList();
+		if (userIds.isEmpty()) {
+			ListRsp<PracticePaperEvaluateBo> practiceInfosRsp = PageUtil
+					.getListResult(practiceInfos, page, 0);
+			classroomPracticeBo.setData(practiceInfosRsp);
+			return classroomPracticeBo;
+		}
 
-            if (userIds.isEmpty()) {
-                ListRsp<PracticePaperEvaluateBo> practiceInfosRsp = PageUtil
-                        .getListResult(practiceInfos, page, 0);
-                classroomPracticeBo.setData(practiceInfosRsp);
-                return classroomPracticeBo;
-            }
+		List<LessonPaperEvaluate> lessonPaperEvaluates = lessonPaperEvaluateMapper
+				.selectByLessonAndUsers(userIds, cpContext.getLessonId());
 
-            List<LessonPaperEvaluate> lessonPaperEvaluates = lessonPaperEvaluateMapper
-                    .selectByLessonAndUsers(userIds, cpContext.getLessonId());
+		Map<String, LessonPaperEvaluate> idToObj = StreamApiUtils.toMap(lessonPaperEvaluates,
+				LessonPaperEvaluate::getSubmitUserId, lessonPaperEvaluate -> lessonPaperEvaluate);
 
-            Map<String, LessonPaperEvaluate> idToObj = StreamApiUtils.toMap(lessonPaperEvaluates,
-                    LessonPaperEvaluate::getSubmitUserId,
-                    lessonPaperEvaluate -> lessonPaperEvaluate);
+		Map<String, String> userIdToName = Maps.newHashMap();
+		Map<String, String> OrgIdToName = Maps.newHashMap();
 
-            Map<String, String> userIdToName = Maps.newHashMap();
-            Map<String, String> OrgIdToName = Maps.newHashMap();
+		// 判断是否已提交
+		Boolean isCommitted = cpContext.getIsCommit();
+		// 判断是否已批改
+		Boolean isMarked = cpContext.getIsMark();
+		List<String> correctorIds = Lists.newArrayList();
+		for (UserInfo userInfo : userInfoList) {
+			if (!userIds.contains(userInfo.getUserId())) {
+				continue;
+			}
+			PracticePaperEvaluateBo practicePaperEvaluateBo = new PracticePaperEvaluateBo();
+			LessonPaperEvaluate lessonPaperEvaluate = idToObj.get(userInfo.getUserId());
 
-            for (UserInfo userInfo : userInfoList) {
-                if (!userIds.contains(userInfo.getUserId())) {
-                    continue;
-                }
+			if (null != isCommitted
+					&& (Boolean.TRUE.equals(isCommitted) == (null == lessonPaperEvaluate))) {
+				continue;
+			}
+			if (null == lessonPaperEvaluate && Boolean.TRUE.equals(isMarked)) {
+				continue;
+			}
+			if (null != lessonPaperEvaluate) {
+				Integer level = lessonPaperEvaluate.getLevel();
+				if (null != isMarked && (Boolean.TRUE.equals(isMarked) == (null == level))) {
+					continue;
+				}
 
-                PracticePaperEvaluateBo practicePaperEvaluateBo = new PracticePaperEvaluateBo();
+				if (level != null) {
+					practicePaperEvaluateBo.setCorrectTime(lessonPaperEvaluate.getUpdateTime());
+				}
 
-                // 判断是否已提交
-                Boolean isCommitted = cpContext.getIsCommit();
-                // 判断是否已批改
-                Boolean isMarked = cpContext.getIsMark();
+				practicePaperEvaluateBo.setSubmitState(true);
+				practicePaperEvaluateBo.setAccuracy(lessonPaperEvaluate.getAccuracy());
+				practicePaperEvaluateBo.setLevel(level);
+				practicePaperEvaluateBo.setSubmitTime(lessonPaperEvaluate.getCreateTime());
 
-                LessonPaperEvaluate lessonPaperEvaluate = idToObj.get(userInfo.getUserId());
+				String corrector = lessonPaperEvaluate.getCorrector();
+				if (corrector != null && !correctorIds.contains(corrector)) {
+					correctorIds.add(corrector);
+					practicePaperEvaluateBo.setCorrector(corrector);
+				}
+			}
 
-                if (null != isCommitted) {
-                    if (isCommitted && null == lessonPaperEvaluate) {
-                        continue;
-                    }
-                    if (!isCommitted && null != lessonPaperEvaluate) {
-                        continue;
-                    }
-                }
+			practicePaperEvaluateBo.setName(userInfo.getName());
+			practicePaperEvaluateBo.setUserId(userInfo.getUserId());
+			practicePaperEvaluateBo.setUsername(userInfo.getUserName());
+			// 组织信息查询
+			String organizationId = userInfo.getOrganizationId();
+			if (null != organizationId) {
+				String orgName = OrgIdToName.get(organizationId);
+				if (null == orgName) {
+					orgName = remoteOrganizationService.orgNameById(userInfo.getOrganizationId());
+					OrgIdToName.put(organizationId, orgName);
+				}
+				practicePaperEvaluateBo.setOrganizationName(orgName);
+			}
+			practiceInfos.add(practicePaperEvaluateBo);
+		}
+		// set corrector name
+		Map<String, UserInfo> userInOrgMap = StreamApiUtils.toMap(userInfoList, UserInfo::getUserId,
+				user -> user);
+		// 需要去mp查询的user id
+		List<String> toFetch = correctorIds.stream().filter(id -> !userInOrgMap.containsKey(id))
+				.collect(Collectors.toList());
+		if (!toFetch.isEmpty()) {
+			Map<String, UserInfo> correctorMap = remoteUserService.getIdUserInfoMap(toFetch);
+			userInOrgMap.putAll(correctorMap);
+		}
+		for (PracticePaperEvaluateBo bo : practiceInfos) {
+			if (null != bo.getCorrector()) {
+				UserInfo correctorInfo = userInOrgMap.get(bo.getCorrector());
+				if (null != correctorInfo) {
+					bo.setCorrector(correctorInfo.getName());
+				} else {
+					bo.setCorrector("");
+				}
+			}
+		}
 
-                if (null != lessonPaperEvaluate) {
+		ListRsp<PracticePaperEvaluateBo> practiceInfosRsp = PageUtil.getListResult(practiceInfos,
+				page, practiceInfos.size());
+		classroomPracticeBo.setData(practiceInfosRsp);
 
-                    Integer level = lessonPaperEvaluate.getLevel();
-
-                    if (null != isMarked) {
-                        if (isMarked && null == level) {
-                            continue;
-                        }
-                        if (!isMarked && null != level) {
-                            continue;
-                        }
-                    }
-
-                    if (level != null) {
-                        practicePaperEvaluateBo.setCorrectTime(lessonPaperEvaluate.getUpdateTime());
-                    }
-
-                    practicePaperEvaluateBo.setSubmitState(true);
-                    practicePaperEvaluateBo.setAccuracy(lessonPaperEvaluate.getAccuracy());
-                    practicePaperEvaluateBo.setLevel(level);
-                    practicePaperEvaluateBo.setSubmitTime(lessonPaperEvaluate.getCreateTime());
-
-                    String corrector = lessonPaperEvaluate.getCorrector();
-                    if (corrector != null) {
-                        if (userIdToName.containsKey(corrector)) {
-                            corrector = userIdToName.get(corrector);
-                        } else {
-                            String corrector_name = remoteUserService.getById(corrector).getName();
-                            userIdToName.put(corrector, corrector_name);
-                            corrector = corrector_name;
-                        }
-                    }
-                    practicePaperEvaluateBo.setCorrector(corrector);
-
-                } else if (null != isMarked && isMarked) {
-                    continue;
-                }
-
-                practicePaperEvaluateBo.setName(userInfo.getName());
-                practicePaperEvaluateBo.setUserId(userInfo.getUserId());
-                practicePaperEvaluateBo.setUsername(userInfo.getUserName());
-                // 组织信息查询
-                String organizationId = userInfo.getOrganizationId();
-                if (null != organizationId) {
-                    String orgName = OrgIdToName.get(organizationId);
-                    if (null == orgName) {
-                        orgName = remoteOrganizationService
-                                .orgNameById(userInfo.getOrganizationId());
-                        OrgIdToName.put(organizationId, orgName);
-                    }
-                    practicePaperEvaluateBo.setOrganizationName(orgName);
-                }
-
-                practiceInfos.add(practicePaperEvaluateBo);
-
-            }
-            ListRsp<PracticePaperEvaluateBo> practiceInfosRsp = PageUtil
-                    .getListResult(practiceInfos, page, practiceInfos.size());
-            classroomPracticeBo.setData(practiceInfosRsp);
-
-        }
-
-        return classroomPracticeBo;
-    }
+		return classroomPracticeBo;
+	}
 
     @Override
     public Integer deleteClassroom(String classroomId, AuthContext authContext) {

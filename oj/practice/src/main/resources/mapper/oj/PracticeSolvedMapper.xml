@@ -138,4 +138,13 @@
             order by oj_practice_solved.update_time desc
         </where>
     </select>
+    <select id="selectUserAndIdList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSolved">
+        select * from oj_practice_solved
+        where submit_user_id = #{userId}
+        and practice_type = #{practiceType}
+        and practice_id in
+        <foreach collection="practiceIdList" item="practiceId" open="(" close=")" separator=",">
+            #{practiceId}
+        </foreach>
+    </select>
 </mapper>

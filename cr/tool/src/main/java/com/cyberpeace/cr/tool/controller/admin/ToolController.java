@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.ShareReq;
+import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
@@ -129,6 +130,21 @@ public class ToolController {
 		ShareContext shareContext = BeanUtils.copy(shareReq, ShareContext.class);
 		toolService.batchSetShares(shareContext);
 		return new BaseRsp();
+	}
+
+	/**
+	 * 获取靶场业务模板的操作权限
+	 * @return
+	 */
+	@ApiOperation("查询操作权限")
+	@GetMapping("/getShares")
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
+			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Share> getShares(
+			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
+		Share data = toolService.getShares(resource_id);
+
+		return new BaseRsp(data);
 	}
 
 }

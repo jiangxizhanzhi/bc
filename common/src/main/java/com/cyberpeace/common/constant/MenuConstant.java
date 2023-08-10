@@ -116,6 +116,10 @@ public interface MenuConstant {
     //红蓝对抗
     String CMS_RED_VS_BLUE = "red-vs-blue-folder";
 
+    //对抗练习模式
+    String CMS_TRAINING_MODE = "confront-training-mode";
+
+
     //工具库
     String CMS_TOOL = "tool";
 

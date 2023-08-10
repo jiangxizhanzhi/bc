@@ -1,22 +1,20 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.CrFlagTask;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.crbase.controller.rsp.DailyTrainRsp;
+import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
-public interface DailyTrainMapper extends BaseMapper<CrFlagTask> {
+public interface DailyTrainMapper {
 
-//	IPage<SingleRoomList> singleTrainSearch(@Param("page") Page page,
-//											@Param("user_id") String userId, @Param("pattern") String pattern,
-//											@Param("category") Integer category, @Param("difficult") Integer difficult,
-//											@Param("business_type") Integer businessType);
-//
-//
-//	IPage<TeamRoomData> listTeamRoom(Page page, ListQuery listQuery);
-//
-//	IPage<RbRoomData> listRbRoom(Page page, ListQuery listQuery);
+    IPage<DailyTrainRsp> listBusinessTemplate(Page page,@Param("name") String name, @Param("businessType") List<Integer> businessType,@Param("trainCategory") List<Integer> trainCategory );
+
+    IPage<DailyTrainRsp> listCourse(Page page,@Param("name") String name);
 
 }

@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -531,12 +532,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.map(MissionEvaluationContext::getMissionHash).distinct()
 				.collect(Collectors.toList());
 
+		if (CollectionUtils.isEmpty(data.getRecords())){
+
+		}
 		//获取一血, 二血, 三血及额外分数
-		Map<String, MissionEvaluationContext> rankMap = getRankContextMap(data);
+		Map<String, MissionEvaluationContext> rankMap =CollectionUtils.isEmpty(data.getRecords())?Maps.newHashMap(): getRankContextMap(data);
 		//获取动态任务对应flagValue
 		LambdaQueryWrapper<CrFlagTask> flagTaskWrapper = new LambdaQueryWrapper<>();
-		flagTaskWrapper.in(CrFlagTask::getMissionId,missionIds);
-		List<CrFlagTask> flagTaskList = crFlagTaskMapper.selectList(flagTaskWrapper);
+		flagTaskWrapper.in(CrFlagTask::getMissionId, missionIds);
+		List<CrFlagTask> flagTaskList = CollectionUtils.isEmpty(data.getRecords()) ? new ArrayList<>() : crFlagTaskMapper.selectList(flagTaskWrapper);
 		Map<String, String> taskFlagValueMap = StreamApiUtils.toMap(flagTaskList, CrFlagTask::getTaskId, CrFlagTask::getFlagValue);
 
 		List<Mission> missions = Lists.newArrayList();

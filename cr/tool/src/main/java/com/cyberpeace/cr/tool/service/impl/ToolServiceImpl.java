@@ -7,13 +7,16 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.scene.DeviceInfo;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
+import com.cyberpeace.cr.crbase.service.context.ShareTeacher;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
@@ -27,6 +30,7 @@ import com.cyberpeace.cr.tool.service.ToolCategoryService;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -65,6 +69,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Override
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "transactionManager")
@@ -219,6 +226,31 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			businessTemplate.setOperationAuthIds(shareTeachers);
 		});
 		updateBatchById(businessTemplateList);
+	}
+
+	@Override
+	public Share getShares(String resourceId) {
+		Tool tool = getById(resourceId);
+		Share share = new Share();
+		share.setShareMode(tool.getOperationAuthType());
+		List<ShareTeacher> shareTeacherList = Lists.newArrayList();
+
+		if (AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode()
+				.equals(tool.getOperationAuthType())) {
+			String teachers = tool.getOperationAuthIds();
+			List<UserInfo> userInfoList = remoteUserService.getByIdList(JsonUtil.toJsonObjectArray(teachers, String.class));
+			userInfoList.forEach(userInfo -> {
+				ShareTeacher shareTeacher = new ShareTeacher();
+				shareTeacher.setId(userInfo.getUserId());
+				shareTeacher.setName(userInfo.getName());
+				shareTeacher.setUsername(userInfo.getUserName());
+				shareTeacher.setOrganization(userInfo.getOrganizationId());
+				shareTeacher.setOrganizationNameAll(userInfo.getOrganizationData());
+				shareTeacherList.add(shareTeacher);
+			});
+		}
+		share.setTeachers(shareTeacherList);
+		return share;
 	}
 
 	public void validateToolAttachment(List<ToolFile> toolFileList) {

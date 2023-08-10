@@ -1,13 +1,10 @@
 package com.cyberpeace.common.util;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeMap;
-
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.*;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -26,11 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.TraceIdContext;
 
-import com.alibaba.fastjson.JSON;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.*;
-import com.google.common.collect.Lists;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
 
 public class HttpClientUtil {
 
@@ -144,6 +143,22 @@ public class HttpClientUtil {
 		return doHttp(httpGet, resultType);
 	}
 
+	public static <T> T rawGetForCompetition(String url, Class<T> resultType) {
+		// 1、设置请求线程数据
+		setContext(url);
+
+		// 2、生成get请求
+		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		String authorization = CommonContext.getAuthorization();
+		if (null != authorization) { // 调用竞赛接口需要
+			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
+		}
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttpForCompetition(httpGet, resultType);
+	}
+
 	/**
 	 * 设置请求上下文
 	 * @param url
@@ -184,6 +199,41 @@ public class HttpClientUtil {
 
 		// 4、解析结果并返回
 		return parseHttpResponse(httpResponse, resultType);
+	}
+
+	private static <T> T doHttpForCompetition(HttpUriRequest httpRequest, Class<T> resultType) {
+		HttpResponse response = null;
+		String httpResponse = null;
+		try {
+			// 1、调用远程服务
+			response = HttpClients.custom().build().execute(httpRequest);
+			// 2、解析远程服务的返回值
+			httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
+
+			// 3、记录调用日志
+			HttpclientContext.getContext().addLog(httpResponse);
+		} catch (Exception e) {
+			try {
+				HttpclientContext.getContext().doRemoteException(e);
+			} catch (Exception e1) {
+				LOG.error("remote error logging Exception", e1);
+			} finally {
+				HttpclientContext.removeContext();
+				throw new RemoteServiceException();
+			}
+		}
+
+		if (StringUtils.isBlank(httpResponse)) {
+			HttpclientContext.getContext().addLog("httpResponse is null");
+			HttpclientContext.removeContext();
+			throw new RemoteServiceException();
+		}
+
+		// 4、解析结果并返回
+		return parseHttpResponse(httpResponse, resultType);
+
+
+
 	}
 
 	/**

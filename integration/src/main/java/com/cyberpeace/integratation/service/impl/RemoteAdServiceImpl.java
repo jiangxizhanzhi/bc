@@ -2,12 +2,11 @@ package com.cyberpeace.integratation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import com.google.common.collect.Lists;
@@ -21,6 +20,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -47,7 +47,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 				+ ConfigUtil.getContextProperty("ad.competition.list");
 
 		COMPETITION_WEB_URL = adEnvService.getAdHost()
-				+ ConfigUtil.getContextProperty("ad.competition.web");
+				+ ConfigUtil.getContextProperty("ad.competition.all");
 	}
 
 	@Override
@@ -126,10 +126,13 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 
 	@Override
-	public List<CalendarCompetitionBo> list() {
+	public ListRsp<CalendarCompetitionBo> listCalendarCompetitionBo(Page page, String competitionName) {
 		// 接口请求
-		String formatUrl = String.format(COMPETITION_WEB_URL,  CommonConstant.EMPTY_STRING);
-		JSONObject competitionArray = HttpClientUtil.rawGet(formatUrl, JSONObject.class);
-		return new ArrayList<>();
+		String name = Objects.nonNull(competitionName) ? competitionName : CommonConstant.EMPTY_STRING;
+		String formatUrl = String.format(COMPETITION_WEB_URL, page.getSize(), name);
+		JSONObject jsonObject = HttpClientUtil.rawGetForCompetition(formatUrl, JSONObject.class);
+		JSONArray competitionArray = JsonUtil.toJsonObject(jsonObject.get("list").toString(), JSONArray.class);
+		List<CalendarCompetitionBo> competitionBoList = StreamApiUtils.map(competitionArray, obj -> jsonToBo((JSONObject) obj));
+		return PageUtil.getListResult(competitionBoList, page, Long.parseLong(jsonObject.get("total").toString()) );
 	}
 }

@@ -1,6 +1,8 @@
 package com.cyberpeace.integratation.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 
 import java.util.Date;
@@ -41,6 +43,6 @@ public interface RemoteAdService {
 	/**
 	 * @return 竞赛习题数和
 	 */
-	List<CalendarCompetitionBo> list();
+	ListRsp<CalendarCompetitionBo> listCalendarCompetitionBo(Page page, String name);
 
 }

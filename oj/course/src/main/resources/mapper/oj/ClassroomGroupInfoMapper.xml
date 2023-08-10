@@ -4,6 +4,13 @@
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper">
 
     <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo"/>
+    <update id="updateBatchDestroyDelayByIds">
+        update oj_classroom_group_info set destroy_delay = #{destroyDelay}
+        where resource_id in
+        <foreach collection="resourceIdList" item="resourceId" open="(" close=")" separator=",">
+            #{resourceId}
+        </foreach>
+    </update>
 
     <select id="selectByRoomAndUser" resultMap="base">
         <bind name="groupUser" value="'%' + userId + '%'"/>
@@ -13,7 +20,8 @@
     </select>
 
     <select id="selectByRoom" resultMap="base">
-        select * from oj_classroom_group_info
+        select *
+        from oj_classroom_group_info
         where classroom_id = #{roomId}
     </select>
 

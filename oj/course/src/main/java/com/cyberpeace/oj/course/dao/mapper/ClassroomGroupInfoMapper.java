@@ -1,11 +1,12 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 
 @Mapper
 public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo> {
@@ -38,4 +39,13 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 * @param classroomId
 	 */
     void deleteByRoom(@Param("roomId") String classroomId);
+
+	/**
+	 * 批量更新摧毁延迟
+	 *
+	 * @param resourceIdList 资源id列表
+	 * @param destroyDelay   摧毁延迟
+	 */
+	void updateBatchDestroyDelayByIds(@Param("resourceIdList") List<String> resourceIdList,
+			@Param("destroyDelay") Integer destroyDelay);
 }

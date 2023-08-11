@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.context.scene.ElementFlow;
-import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +13,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.service.context.scene.AssetProperty;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
@@ -27,13 +29,11 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
-import com.cyberpeace.common.context.role.CrRoleNode;
-import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.cr.crbase.service.context.scene.AssetProperty;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateWsBo;
@@ -104,7 +104,6 @@ public class CrSceneServiceImpl implements CrSceneService {
 				: mpFlow.getScriptFile();
 	}
 
-	@Override
 	public List<FlowInfo> getNodeFlowContextList(String mpSceneId, String topoId, String nodeId) {
 		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, topoId, nodeId);
 		return BeanUtils.deepCopyList(elementFlowList, FlowInfo.class);
@@ -118,7 +117,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 			throw new BusinessException(CrBusinessErrorCode.NOT_SPECIFY_NODE);
 		}
 
-		CpFlow cpFlow = getCpFlow(mpSceneId, topoId);
+		Cpflow cpFlow = getCpFlow(mpSceneId, topoId);
 
 		List<ElementFlow> nodeFlowList = Lists.newArrayList();
 
@@ -136,12 +135,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**获取cpFlow*/
-	private CpFlow getCpFlow(String mpSceneId, String topoId) {
+	private Cpflow getCpFlow(String mpSceneId, String topoId) {
 
 		// 1.创建变量
 		UserInfo userInfo = UserInfoContext.getUserContext();
 		String userId = userInfo == null ? null : userInfo.getUserId();
-		CpFlow cpFlow = new CpFlow();
+		Cpflow cpFlow = null;
 
 		// 2. 获取cpFlow
 		// 2.1 优先获取场景数据
@@ -149,16 +148,16 @@ public class CrSceneServiceImpl implements CrSceneService {
 			// 2.1.1 请求sceneData
 			JSONObject data = localSceneService.getSceneData(mpSceneId, userId);
 			// 2.1.2 转换JsonObject为SceneData对象
-			SceneData sceneData = data.toJavaObject(SceneData.class);
+			SceneData sceneData = data.toJavaObject(SceneDataImpl.class);
 			// 2.1.3 获取流量数据
-			cpFlow = sceneData.getPlugins().getCpFlow();
+			cpFlow = sceneData.getPlugins().getCpflow();
 		} else if (StringUtils.isNotEmpty(topoId)) {
 			// 2.2 获取拓扑数据
 			// 2.2.1 请求topoData
 			JSONObject data = localSceneService.getTopoData(topoId);
 			TopoData topoData = data.getJSONObject(CrCommonConstants.TOPO_DATA_KEY)
 					.toJavaObject(TopoData.class);
-			cpFlow = topoData.getPlugins().getCpFlow();
+			cpFlow = topoData.getPlugins().getCpflow();
 		}
 
 		return cpFlow;
@@ -276,25 +275,6 @@ public class CrSceneServiceImpl implements CrSceneService {
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();
 		webSocketHandler.pushMessage(messageContext, true);
-	}
-
-	/**启动流量前校验流量任务状态*/
-	private Boolean checkFlowTaskStatus(String mpSceneId, String nodeId) {
-
-		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);
-
-		if (taskStatus.equals(ElementFlow.TaskStatusEnum.UNDEFINED.getCode())) {
-			log.error("Failed to judge flow task status! mpSceneId = [{}], nodeId = [{}]", mpSceneId, nodeId);
-			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_JUDGE_FLOW_TASK_STATUS);
-		}
-
-		if (!taskStatus.equals(ElementFlow.TaskStatusEnum.STOPPED.getCode())
-				&& !taskStatus.equals(ElementFlow.TaskStatusEnum.ZERO.getCode())) {
-			log.error("Uncompleted flow task exist on the node! mpSceneId = [{}], nodeId = [{}]", mpSceneId, nodeId);
-			throw new BusinessException(CrBusinessErrorCode.FLOW_TASK_EXISTS);
-		}
-
-		return true;
 	}
 
 	/**获取节点流量任务状态*/

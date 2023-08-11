@@ -6,10 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.BusinessType;
-import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +22,12 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.NameCount;
@@ -38,14 +40,12 @@ import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import com.cyberpeace.common.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualMissionBo;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.score.RecordStatistics;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
@@ -71,6 +71,7 @@ import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.cs.service.context.scene.SceneDataImpl;
 import com.cyberpeace.integratation.model.scene.SceneNodeListReq;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -839,7 +840,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			return null;
 		}
 		// 场景实际已被删除，清除本地脏数据
-		SceneData data = sceneData.toJavaObject(SceneData.class);
+		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 		if (data.isStopped()) {
 			clearLocal(room);
 			return null;

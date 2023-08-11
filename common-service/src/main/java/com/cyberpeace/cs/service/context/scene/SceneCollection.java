@@ -2,12 +2,10 @@ package com.cyberpeace.cs.service.context.scene;
 
 import java.io.Serializable;
 
-import lombok.Data;
+public interface SceneCollection extends Serializable {
 
-@Data
-public class SceneCollection implements Serializable {
+	Boolean getEnableFlowCollect();
 
-	private Boolean enableFlowCollect = false;
-
-	private Boolean enableProbeCollect;
+	Boolean getEnableProbeCollect();
 }
+

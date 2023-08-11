@@ -4,10 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.context.scene.ElementFlow;
-import com.cyberpeace.cr.teamtrain.service.context.TeamSceneData;
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,19 +14,22 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
-import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
@@ -276,7 +275,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		TeamRoom room = teamRoomService.getById(roomId);
 		String userId = UserInfoContext.getUserContext().getUserId();
 		List<Flow> flows = Lists.newArrayList();
-		CpFlow cpflow = null;
+		Cpflow cpflow = null;
 		Map<String, String> elementsMap = Maps.newHashMap();
 
 		// 2. 获取topo
@@ -286,9 +285,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			// 2.1.1 请求sceneData
 			JSONObject sceneData = localSceneService.getSceneData(localScene, userId);
 			// 2.1.2 转换JsonObject为SceneData对象
-			SceneData data = sceneData.toJavaObject(SceneData.class);
+			SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 			// 2.1.3 获取流量数据
-			cpflow = data.getPlugins().getCpFlow();
+			cpflow = data.getPlugins().getCpflow();
 			// 2.1.4 生成节点数据map
 			List<SceneElement> elements = data.getTopology().getElements();
 			for (SceneElement element : elements) {
@@ -300,7 +299,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId());
 			TopoData data = topoData.getJSONObject(CrCommonConstants.TOPO_DATA_KEY)
 					.toJavaObject(TopoData.class);
-			cpflow = data.getPlugins().getCpFlow();
+			cpflow = data.getPlugins().getCpflow();
 
 			List<TopoElement> elements = data.getTopology().getElements();
 			for (TopoElement element : elements) {
@@ -435,7 +434,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			return null;
 		}
 		// 场景实际已被删除，清除本地脏数据
-		TeamSceneData data = sceneData.toJavaObject(TeamSceneData.class);
+		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 		if (data.isStopped()) {
 			clearLocal(room);
 			return null;

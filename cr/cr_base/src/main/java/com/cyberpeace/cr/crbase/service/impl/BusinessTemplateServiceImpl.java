@@ -10,10 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.BusinessType;
-import com.cyberpeace.cr.crbase.service.context.scene.BaseSceneData;
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +23,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.ListRsp;
@@ -54,6 +53,8 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.cs.service.context.scene.SceneDataImpl;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -687,7 +688,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			return null;
 		}
 		// 场景实际已被删除，清除本地脏数据
-		BaseSceneData data = sceneData.toJavaObject(BaseSceneData.class);
+		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 		if (data.isStopped()) {
 			clearLocal(template);
 			return null;

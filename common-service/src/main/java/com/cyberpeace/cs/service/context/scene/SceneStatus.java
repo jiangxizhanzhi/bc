@@ -2,12 +2,10 @@ package com.cyberpeace.cs.service.context.scene;
 
 import java.io.Serializable;
 
-import lombok.Data;
+public interface SceneStatus extends Serializable {
 
-@Data
-public class SceneStatus implements Serializable {
+	Integer getEvent();
 
-	private Integer event;
-
-	private Integer eventStatus;
+	Integer getEventStatus();
 }
+

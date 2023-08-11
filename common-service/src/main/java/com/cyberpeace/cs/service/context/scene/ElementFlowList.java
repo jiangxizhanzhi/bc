@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.common.context.scene.ElementFlow;
-import lombok.Data;
 
-@Data
-public class ElementFlowList implements Serializable {
+public interface ElementFlowList extends Serializable {
 
-	private List<ElementFlow> flows;
+	List<ElementFlow> getFlows();
 }

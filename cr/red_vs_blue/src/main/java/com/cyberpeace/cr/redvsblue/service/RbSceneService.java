@@ -6,8 +6,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
-import com.cyberpeace.cr.redvsblue.service.context.RbSceneData;
 import com.cyberpeace.cr.redvsblue.service.context.RbSceneViewContext;
+import com.cyberpeace.cs.service.context.scene.SceneData;
 
 public interface RbSceneService {
 
@@ -79,5 +79,5 @@ public interface RbSceneService {
 	 */
 	JSONObject getNodeStatistics(String roomId);
 
-	RbSceneData getSceneData(RbRoom room);
+	SceneData getSceneData(RbRoom room);
 }

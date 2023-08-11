@@ -3,13 +3,10 @@ package com.cyberpeace.cs.service.context.scene;
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Data;
+public interface SceneTopology extends Serializable {
 
-@Data
-public class SceneTopology implements Serializable {
+	SceneStatus getScene();
 
-	private SceneStatus scene;
-
-	private List<SceneElement> elements;
-
+	List<SceneElement> getElements();
 }
+

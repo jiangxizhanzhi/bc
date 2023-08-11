@@ -2,12 +2,11 @@ package com.cyberpeace.cs.service.context.scene;
 
 import java.io.Serializable;
 
-import lombok.Data;
+public interface ScenePlugins extends Serializable {
 
-@Data
-public class ScenePlugins implements Serializable {
+	Cpflow getCpflow();
 
-	private CpFlow cpFlow;
-
-	private CpCollection cpCollection;
+	Cpcollection getCpcollection();
 }
+
+

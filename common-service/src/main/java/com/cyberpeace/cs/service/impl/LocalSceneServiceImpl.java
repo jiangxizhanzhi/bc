@@ -4,9 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.enums.SceneStatusEnum;
-import com.cyberpeace.integratation.model.mp.MpHostState;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +12,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -31,10 +31,10 @@ import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import com.cyberpeace.cs.service.context.RenameTopoContext;
 import com.cyberpeace.cs.service.context.SceneFlowContext;
 import com.cyberpeace.cs.service.context.TopoSwitchRecordingContext;
-import com.cyberpeace.cs.service.context.scene.CpFlow;
-import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.cs.service.context.scene.Cpflow;
 import com.cyberpeace.cs.service.context.scene.ElementFlowList;
 import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -213,7 +213,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Map<String, SceneFlowContext> getSceneFlowList(SceneData sceneData,
 			Integer interactiveType) {
 
-		CpFlow cpFlow = sceneData.getPlugins().getCpFlow();
+		Cpflow cpFlow = sceneData.getPlugins().getCpflow();
 		Map<String, SceneFlowContext> sceneFlowContextMap = Maps.newHashMap();
 
 		if (cpFlow == null) {

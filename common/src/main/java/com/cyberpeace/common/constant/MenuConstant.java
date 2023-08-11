@@ -119,7 +119,6 @@ public interface MenuConstant {
     //对抗练习模式
     String CMS_TRAINING_MODE = "confront-training-mode";
 
-
     //工具库
     String CMS_TOOL = "tool";
 

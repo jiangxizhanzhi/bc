@@ -1,32 +1,33 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRule;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
+import com.cyberpeace.cr.evaluation.dao.mapper.*;
+import com.cyberpeace.cr.evaluation.service.EvalRuleService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
@@ -36,8 +37,21 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
-
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -63,6 +77,25 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private CrTaskMapper crTaskMapper;
+	@Autowired
+	private CrEvalTrainTaskMapper evalTrainTaskMapper;
+	@Autowired
+	private CrTaskSubmitMapper taskSubmitMapper;
+	@Autowired
+	private CrEvalTaskSubmitMapper evalTaskSubmitMapper;
+	@Autowired
+	private CrScoreMapper scoreMapper;
+	@Autowired
+	private CrEvalScoreMapper evalScoreMapper;
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+	@Autowired
+	private EvalRuleService evalRuleService;
+	@Autowired
+	private EvalRuleMapper evalRuleMapper;
 
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
@@ -211,6 +244,51 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}
 
+		return true;
+	}
+
+	@Override
+	public Boolean add(EvalTemplate evalTemplate) {
+		String evalTemplateId = IDGeneratorUtil.getID();
+		evalTemplate.setResourceId(evalTemplateId);
+
+		LambdaQueryWrapper<CrTask> taskQuery = new LambdaQueryWrapper<>();
+		taskQuery.eq(CrTask::getRoomId, evalTemplate.getRedVsBlueId());
+		List<CrTask> taskList = crTaskMapper.selectList(taskQuery);
+		List<CrEvalTrainTask> crEvalTrainList = BeanUtils.deepCopyList(taskList, CrEvalTrainTask.class);
+		crEvalTrainList.forEach(item->item.setEvalTemplateId(evalTemplateId));
+
+		LambdaQueryWrapper<CrTaskSubmit> taskSubmitQuery = new LambdaQueryWrapper<>();
+		taskSubmitQuery.eq(CrTaskSubmit::getRoomId,  evalTemplate.getRedVsBlueId());
+		List<CrTaskSubmit> taskSubmitList = taskSubmitMapper.selectList(taskSubmitQuery);
+		List<CrEvalTaskSubmit> evalTaskSubmitList = BeanUtils.deepCopyList(taskSubmitList, CrEvalTaskSubmit.class);
+		evalTaskSubmitList.forEach(item->item.setEvalTemplateId(evalTemplateId));
+
+		LambdaQueryWrapper<CrScore> scoreQuery = new LambdaQueryWrapper<>();
+		scoreQuery.eq(CrScore::getRoomId,  evalTemplate.getRedVsBlueId());
+		List<CrScore> scoreList = scoreMapper.selectList(scoreQuery);
+		List<CrEvalScore> evalScoreList = BeanUtils.deepCopyList(scoreList, CrEvalScore.class);
+		evalScoreList.forEach(item->item.setEvalTemplateId(evalTemplateId));
+
+		//初始化评估规则数据
+		List<EvalRule> initialEvalRuleList = evalRuleService.getInitialData(evalTemplateId);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				save(evalTemplate);
+				if (!CollectionUtils.isEmpty(crEvalTrainList)) {
+					evalTrainTaskMapper.batchInsert(crEvalTrainList);
+				}
+				if (!CollectionUtils.isEmpty(evalTaskSubmitList)) {
+					evalTaskSubmitMapper.batchInsert(evalTaskSubmitList);
+				}
+				if (!CollectionUtils.isEmpty(evalScoreList)) {
+					evalScoreMapper.batchInsert(evalScoreList);
+				}
+				evalRuleMapper.batchInsert(initialEvalRuleList);
+			}
+		});
 		return true;
 	}
 

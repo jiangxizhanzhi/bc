@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.CrEvalScoreMapper">
+
+    <insert id="batchInsert" parameterType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore">
+        insert into cr_eval_score
+        (resource_id, room_id, user_id, training_score, training_percentage, skill_percentage,
+        skill_score, `comment`, final_score,eval_template_id, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId,jdbcType=VARCHAR}, #{item.roomId,jdbcType=VARCHAR}, #{item.userId,jdbcType=VARCHAR},
+            #{item.trainingScore,jdbcType=VARCHAR}, #{item.trainingPercentage,jdbcType=VARCHAR},
+            #{item.skillPercentage,jdbcType=VARCHAR}, #{item.skillScore,jdbcType=VARCHAR},
+            #{item.comment,jdbcType=LONGVARCHAR}, #{item.finalScore,jdbcType=VARCHAR}, #{item.evalTemplateId,jdbcType=VARCHAR}, now(),now() )
+        </foreach>
+    </insert>
+
+    <select id="getByRoomIdAndUser" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore">
+        select resource_id,
+        room_id,
+        user_id,
+        training_score,
+        training_percentage,
+        skill_percentage,
+        skill_score,
+        comment,
+        final_score
+        from cr_eval_score
+        where 1 = 1
+        and room_id = #{roomId}
+        and user_id = #{userId}
+    </select>
+
+</mapper>

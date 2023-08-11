@@ -31,6 +31,8 @@ public class CrEvalScore extends BaseTable {
 
 	private Integer finalScore;
 
+	private String evalTemplateId;
+
 	public enum ScoreValue {
 
 		MIN_PERCENTAGE(10, "评分最低占比"), MAX_PERCENTAGE(90, "评分最高占比"), SUM_OF_PERCENTAGE_INT(100,

@@ -38,6 +38,8 @@ public class CrEvalTaskSubmit extends BaseTable {
 
 	private Integer missionScore;
 
+	private String evalTemplateId;
+
 	public enum EvaluateStatus {
 
 		WAIT(0, "待评估"), SUCCESS(1, "成功"), FAIL(2, "失败"), REJECT(3, "驳回"), TASK_NOT_SUBMITTED(4,

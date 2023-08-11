@@ -7,7 +7,7 @@ import lombok.Data;
 
 @ApiModel
 @Data
-public class DailyTrainListReq extends PageReqBase {
+public class TrainModeListReq extends PageReqBase {
 
 	@ApiModelProperty(value = "类型")
 	private Integer type;

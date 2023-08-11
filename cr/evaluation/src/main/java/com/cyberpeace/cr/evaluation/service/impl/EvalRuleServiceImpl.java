@@ -29,7 +29,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  *
@@ -40,6 +39,7 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 	@Override
 	public ListRsp<EvalRule> pageList(EvalRuleListReq req) {
 		LambdaQueryWrapper<EvalRule> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(EvalRule::getEvalTemplateId,req.getEvalTemplateId());
 		if (!Objects.isNull(req.getPattern())){
 			queryWrapper.like(EvalRule::getName, req.getPattern());
 		}
@@ -78,7 +78,7 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 	public String dumpEvalRule(String roomId) {
 
 		LambdaQueryWrapper<EvalRule> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(EvalRule::getRoomId,roomId);
+		queryWrapper.eq(EvalRule::getEvalTemplateId,roomId);
 		List<EvalRule> list = list(queryWrapper);
 		JSONObject data = new JSONObject();
 		List<JSONObject> userList = Lists.newArrayList();
@@ -149,7 +149,7 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 
 	private void isExist(EvalRuleReq req) {
 		LambdaQueryChainWrapper<EvalRule> querySet = lambdaQuery()
-				.eq(EvalRule::getRoomId, req.getRoomId())
+				.eq(EvalRule::getEvalTemplateId, req.getEvalTemplateId())
 				.eq(EvalRule::getName, req.getName());
 		if (req.getResourceId() != null) {
 			querySet = querySet.ne(EvalRule::getResourceId, req.getResourceId());
@@ -170,24 +170,23 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 	}
 
 	@Override
-	public List<EvalRule> getInitialData(String roomId) {
+	public List<EvalRule> getInitialData(String evalTemplateId) {
 		List<EvalRule> result = new ArrayList<>();
-		result.add(setInitialEvalRule("有效得分", "与标准答案一致,且有关键截图证据", 100, roomId)) ;
-		result.add(setInitialEvalRule("部分有效得分", "与标准答案一致,缺少关键截图证据", 80, roomId)) ;
-		result.add(setInitialEvalRule("部分有效待补充", "与标准答案无关,且有关键截图证据", 60, roomId)) ;
-		result.add(setInitialEvalRule("无效待补充", "与标准答案类似,缺少关键截图证据", 40, roomId)) ;
-		result.add(setInitialEvalRule("无效不得分", "与标准答案无关,缺少关键截图证据", 0, roomId)) ;
-		saveBatch(result);
+		result.add(setInitialEvalRule("有效得分", "与标准答案一致,且有关键截图证据", 100, evalTemplateId)) ;
+		result.add(setInitialEvalRule("部分有效得分", "与标准答案一致,缺少关键截图证据", 80, evalTemplateId)) ;
+		result.add(setInitialEvalRule("部分有效待补充", "与标准答案无关,且有关键截图证据", 60, evalTemplateId)) ;
+		result.add(setInitialEvalRule("无效待补充", "与标准答案类似,缺少关键截图证据", 40, evalTemplateId)) ;
+		result.add(setInitialEvalRule("无效不得分", "与标准答案无关,缺少关键截图证据", 0, evalTemplateId)) ;
 		return result;
 	}
 
-	private EvalRule setInitialEvalRule(String name, String description, Integer score, String roomId) {
+	private EvalRule setInitialEvalRule(String name, String description, Integer score, String evalTemplateId) {
 		EvalRule evalRule = new EvalRule();
-		evalRule.setResourceId(UUID.randomUUID().toString());
+		evalRule.setResourceId(IDGeneratorUtil.getID());
 		evalRule.setName(name);
 		evalRule.setDescription(description);
 		evalRule.setScore(score);
-		evalRule.setRoomId(roomId);
+		evalRule.setEvalTemplateId(evalTemplateId);
 		return evalRule;
 	}
 }

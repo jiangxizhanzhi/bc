@@ -1,15 +1,21 @@
-package com.cyberpeace.cr.evaluation.dao.mapper.rb;
+package com.cyberpeace.cr.evaluation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
 import org.apache.ibatis.annotations.Param;
+import org.mapstruct.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalIndex
  */
+@Mapper
+@Repository
 public interface CrEvalTrainTaskMapper extends BaseMapper<CrEvalTrainTask> {
+
+	void batchInsert(@Param("list") List<CrEvalTrainTask> list);
 
 	CrEvalTrainTask selectByUserIdAndMissionId(@Param("userId") String userId, @Param("missionId") String missionId);
 

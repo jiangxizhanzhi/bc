@@ -2,7 +2,19 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.rb.CrEvalTrainTaskMapper">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTrainTaskMapper">
+
+    <insert id="batchInsert" >
+        insert into cr_eval_train_task
+        (resource_id, `status`, mission_id, user_id,
+        release_time, room_id, role_id, business_type, mission_template_id, eval_template_id, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId}, #{item.status}, #{item.missionId}, #{item.userId},
+            #{item.releaseTime}, #{item.roomId},#{item.roleId}, #{item.businessType}, #{item.missionTemplateId},#{item.evalTemplateId},
+            now(),now())
+        </foreach>
+    </insert>
 
     <select id="selectByUserIdAndMissionId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *

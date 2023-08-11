@@ -45,6 +45,8 @@ public class CrEvalTrainTask extends BaseTable {
 
 	private String missionTemplateId;
 
+	private String evalTemplateId;
+
 	public Boolean isFinished() {
 		boolean result = status.intValue() == TaskStatus.SUCCESS.getCode();
 		result = result || status.intValue() == TaskStatus.FAIL.getCode();

@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
@@ -10,6 +8,8 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
+
+import java.util.List;
 
 /**
  * 测评靶场-模板的处理
@@ -66,4 +66,8 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	 */
 	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 
+
+	/** 创建评估
+	 */
+	Boolean add(EvalTemplate evalTemplate);
 }

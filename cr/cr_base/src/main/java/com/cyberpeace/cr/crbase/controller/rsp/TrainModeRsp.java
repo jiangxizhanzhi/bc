@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class DailyTrainRsp implements Serializable {
+public class TrainModeRsp implements Serializable {
 
     @ApiModelProperty(value = "编号")
     private String resourceId;
@@ -41,7 +41,6 @@ public class DailyTrainRsp implements Serializable {
     public enum TrainType implements GenericEnum {
         TRAINING_SINGLE(1, "单兵练习"), TRAINING_TEAM_RED(2, "红队练习"), TRAINING_TEAM_BLUE(3, "蓝队练习"),
         RED_VS_BLUE(4, "红蓝练习"), COURSE(5, "攻防实训"), TRAINING_DAILY(6, "日常练习"),COMPETITION(8, "比武竞赛");
-
 
         public static final List<Integer> TRAINING_TYPE_LIST = new ArrayList<>(
                 Arrays.asList(TRAINING_SINGLE.code, TRAINING_TEAM_RED.code, TRAINING_TEAM_BLUE.code, RED_VS_BLUE.code, TRAINING_DAILY.code));

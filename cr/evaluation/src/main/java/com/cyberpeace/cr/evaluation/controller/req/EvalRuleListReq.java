@@ -10,8 +10,8 @@ import java.io.Serializable;
 @Data
 public class EvalRuleListReq extends PageReqBase implements Serializable {
 
-	@ApiModelProperty("房间号roomId")
+	@ApiModelProperty("测评模板Id")
 	@NotBlank
-	private String roomId;
+	private String evalTemplateId;
 
 }

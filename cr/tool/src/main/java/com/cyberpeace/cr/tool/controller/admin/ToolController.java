@@ -6,7 +6,6 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
@@ -17,6 +16,7 @@ import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
+import com.cyberpeace.cr.tool.controller.req.WebToolListReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
@@ -52,17 +52,15 @@ public class ToolController {
 	@ApiOperation("工具库列表")
 	@GetMapping("/list")
 	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS}, logical = Logical.OR)
-	public BaseRsp<ListRsp<ToolRsp>> getList(
-			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
+	public BaseRsp<ListRsp<ToolRsp>> getList(@ApiParam(name = "listReq", value = "查询条件") @Validated WebToolListReq req) {
 		Boolean isAdmin = true;
-		Page page = pageReqBase.toPageParam();
-		ToolListQuery listQuery = BeanUtils.copy(pageReqBase, ToolListQuery.class);
+		Page page = req.toPageParam();
+		ToolListQuery listQuery = BeanUtils.copy(req, ToolListQuery.class);
 
-		if (pageReqBase.getSort() != null && pageReqBase.getSort().equals("name")) {
-			pageReqBase.setSort(null);
-			page = pageReqBase.toPageParam();
+		if (req.getSort() != null && req.getSort().equals("name")) {
+			req.setSort(null);
+			page = req.toPageParam();
 		}
-
 		// 获取权限
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),false);
 		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin, authContext);

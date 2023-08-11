@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.crbase.service.context.role;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 用于后台模板查询的返回
@@ -22,4 +22,8 @@ public class CrRoleConfig extends CrRoleNodesData implements Serializable {
 
 	@ApiModelProperty(value = "任务配置")
 	private CrRoleConfigMissionsScheme missionsScheme;
+
+	@ApiModelProperty(value = "组织类型")
+	private String type;
+
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalRuleMapper">
+
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into cr_eval_rule
+        (resource_id, `name`, description, score, eval_template_id, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.description,jdbcType=VARCHAR},
+            #{item.score,jdbcType=INTEGER}, #{item.evalTemplateId,jdbcType=VARCHAR}, now(), now())
+        </foreach>
+    </insert>
+
+</mapper>

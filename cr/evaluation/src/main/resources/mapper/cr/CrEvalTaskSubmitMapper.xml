@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTaskSubmitMapper">
+
+    <insert id="batchInsert" parameterType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit">
+        insert into cr_eval_task_submit
+        (resource_id, room_id, task_id, answer, answer_extension, evaluator_id, evaluate_time,
+        evaluate_status, reason, detail, score, mission_score,eval_template_id, create_time, update_time )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId,jdbcType=VARCHAR}, #{item.roomId,jdbcType=VARCHAR}, #{item.taskId,jdbcType=VARCHAR},
+            #{item.answer,jdbcType=LONGVARCHAR}, #{item.answerExtension,jdbcType=LONGVARCHAR},
+            #{item.evaluatorId,jdbcType=VARCHAR}, #{item.evaluateTime,jdbcType=TIMESTAMP},
+            #{item.evaluateStatus,jdbcType=TINYINT}, #{item.reason,jdbcType=TINYINT}, #{item.detail,jdbcType=VARCHAR},
+            #{item.score,jdbcType=SMALLINT}, #{item.missionScore,jdbcType=SMALLINT}, #{item.evalTemplateId,jdbcType=SMALLINT}, now(),now())
+        </foreach>
+    </insert>
+
+    <select id="listRbCrTaskSubmit"
+            resultType="com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext">
+
+        select a.*, b.mission_id mission_hash
+        ,b.user_id submit_user,c.`name` submit_user_role,b.role_id submit_user_role_id
+        from cr_eval_task_submit a,cr_eval_train_task b,cr_role c
+        <where>
+            a.task_id=b.resource_id and b.role_id=c.resource_id
+            and b.eval_template_id = #{listQuery.evalTemplateId}
+            <if test="listQuery.studentHash != null and listQuery.studentHash != ''">
+                and b.user_id = #{listQuery.studentHash}
+            </if>
+
+            <if test="listQuery.evaluateStatus != null ">
+                and a.evaluate_status = #{listQuery.evaluateStatus}
+            </if>
+        </where>
+    </select>
+
+</mapper>

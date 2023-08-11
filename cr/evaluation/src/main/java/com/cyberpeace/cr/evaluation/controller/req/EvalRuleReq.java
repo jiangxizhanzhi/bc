@@ -21,7 +21,7 @@ public class EvalRuleReq implements Serializable {
 	@ApiModelProperty("得分")
 	private Integer score;
 
-	@ApiModelProperty("房间号roomId")
+	@ApiModelProperty("测评模板Id")
 	@NotBlank
-	private String roomId;
+	private String evalTemplateId;
 }

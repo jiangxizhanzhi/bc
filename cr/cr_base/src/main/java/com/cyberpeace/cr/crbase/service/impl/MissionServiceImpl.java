@@ -194,7 +194,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	private CrTask getCrTaskList(Mission mission, CrRole role, Date releaseTime, List<CrTask> tasks, String userId) {
 		CrTask task = new CrTask();
-		task.setResourceId(UUID.randomUUID().toString());
+		task.setResourceId(IDGeneratorUtil.getID());
 		task.setMissionId(mission.getResourceId());
 		task.setUserId(userId);
 		task.setStatus(CrTask.TaskStatus.RELEASED.getCode());
@@ -210,7 +210,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	private void getFlagTaskList(Mission mission, List<CrFlagTask> flagTaskList, CrTask task) {
 		if (MissionBase.MissionType.FLAG.getCode().equals(mission.getType())) {
 			CrFlagTask flagTask = new CrFlagTask();
-			flagTask.setResourceId(UUID.randomUUID().toString());
+			flagTask.setResourceId(IDGeneratorUtil.getID());
 			flagTask.setMissionId(mission.getResourceId());
 			flagTask.setTaskId(task.getResourceId());
 			MissionFlagQuery missionFlagQuery = JSON.parseObject(mission.getAnswer(), MissionFlagQuery.class);
@@ -264,7 +264,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				getFlagTaskList(mission, flagTaskList, task);
 			}
 			CrTaskLog taskLog = new CrTaskLog();
-			taskLog.setResourceId(UUID.randomUUID().toString());
+			taskLog.setResourceId(IDGeneratorUtil.getID());
 			taskLog.setRoomId(mission.getRoomId());
 			taskLog.setMissionId(mission.getResourceId());
 			taskLog.setActionCode(CrTaskLog.ActionCode.RELEASE.getCode());

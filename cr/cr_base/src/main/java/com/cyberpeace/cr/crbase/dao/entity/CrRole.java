@@ -1,8 +1,5 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -16,6 +13,9 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @TableName cr_role
@@ -144,7 +144,7 @@ public class CrRole extends BaseTable {
 	public enum TeamRoleGroup implements GenericEnum, RoleGroup, BaseI18n {
 
 		/***/
-		TEACHER(1, "教员", "Teacher"),
+		TEACHER(1, "导调员", "Teacher"),
 		STUDENT(2, "学员", "Student");
 
 		@Getter

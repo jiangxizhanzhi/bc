@@ -21,6 +21,6 @@ public class EvalRule extends BaseTable {
 
 	private Integer score;
 
-	private String roomId;
+	private String evalTemplateId;
 
 }

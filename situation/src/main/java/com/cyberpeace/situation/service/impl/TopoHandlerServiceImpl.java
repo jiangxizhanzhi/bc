@@ -1,12 +1,22 @@
 package com.cyberpeace.situation.service.impl;
 
+import static com.cyberpeace.situation.constant.SituationConstants.DEMO_SCENE_ID;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.SceneFlowContext;
-import com.cyberpeace.cs.service.context.scene.CpCollection;
+import com.cyberpeace.cs.service.context.scene.Cpcollection;
 import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.mp.MpNodeStatus;
 import com.cyberpeace.integratation.model.scene.ElementCommonContext;
@@ -14,28 +24,20 @@ import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.situation.req.FlowLogReq;
-import com.cyberpeace.situation.req.SituationConfigFilterReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
+import com.cyberpeace.situation.req.FlowLogReq;
+import com.cyberpeace.situation.req.SituationConfigFilterReq;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.cyberpeace.situation.service.context.ConnectionStatusContext;
 import com.cyberpeace.situation.service.context.ElementStatusContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import static com.cyberpeace.situation.constant.SituationConstants.DEMO_SCENE_ID;
 
 @Log4j2
 @Service
@@ -319,14 +321,13 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	@Override
 	public Boolean enableFlowAutoRun(MpSceneData mpSceneData) {
-		com.cyberpeace.cs.service.context.scene.SceneData sceneData = BeanUtils.copy(mpSceneData, com.cyberpeace.cs.service.context.scene.SceneData.class);
-		return !localSceneService.getSceneFlowList(sceneData, null).isEmpty();
+		return !localSceneService.getSceneFlowList(mpSceneData, null).isEmpty();
 	}
 
 	@Override
 	public Boolean enableFlowCollect(MpSceneData mpSceneData) {
 
-		CpCollection cpCollection = mpSceneData.getPlugins().getCpCollection();
+		Cpcollection cpCollection = mpSceneData.getPlugins().getCpcollection();
 
 		if (cpCollection == null) {
 			return false;
@@ -343,9 +344,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	@Override
 	public Boolean flowAutoRun(String sceneId, MpSceneData mpSceneData, Integer interactiveType) {
-		com.cyberpeace.cs.service.context.scene.SceneData sceneData = BeanUtils.copy(mpSceneData, com.cyberpeace.cs.service.context.scene.SceneData.class);
 		Map<String, SceneFlowContext> sceneFlowContextMap = localSceneService
-				.getSceneFlowList(sceneData, interactiveType);
+				.getSceneFlowList(mpSceneData, interactiveType);
 
 		return localSceneService.startRandomFlow(sceneId, sceneFlowContextMap);
 	}

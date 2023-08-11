@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.context.scene.BaseSceneData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +31,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.scene.Port;
 import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.cs.service.context.scene.SceneDataImpl;
 import com.cyberpeace.cs.service.context.scene.SceneElement;
 import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -80,7 +80,7 @@ public class CrCommonServiceImpl implements CrCommonService {
 		// 3. 获取用户名、用户头像、ip
 		JSONObject sceneData = localSceneService.getSceneData(localScene,
 				UserInfoContext.getUserContext().getUserId());
-		SceneData data = sceneData.toJavaObject(SceneData.class);
+		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 		Map<String, String> ipMap = Maps.newHashMap();
 		for (SceneElement element : data.getTopology().getElements()) {
 			for (Port port : element.getPorts()) {
@@ -113,12 +113,6 @@ public class CrCommonServiceImpl implements CrCommonService {
 
 		return sessionList;
 	}
-
-//	@Override
-//	public Boolean isStopped(JSONObject sceneData) {
-//		BaseSceneData data = sceneData.toJavaObject(BaseSceneData.class);
-//		return data.isStopped();
-//	}
 
 	@Override
 	public List<String> validateRoleConfig(List<CrRoleConfig> roleConfigs) {

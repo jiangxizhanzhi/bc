@@ -4,10 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.context.scene.ElementFlow;
-import com.cyberpeace.cr.redvsblue.service.context.RbSceneData;
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,19 +15,22 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
-import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
@@ -283,7 +282,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, PAUSE_FLAG);
 		// 如果场景在切换中不允许操作
-		RbSceneData sceneData = getSceneData(room);
+		SceneData sceneData = getSceneData(room);
 		if (sceneData != null && !sceneData.isFinish()) {
 			log.error("Scene is switching, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
@@ -312,7 +311,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, UNPAUSE_FLAG);
 		// 如果场景在切换中不允许操作
-		RbSceneData sceneData = getSceneData(room);
+		SceneData sceneData = getSceneData(room);
 		if (sceneData != null && !sceneData.isFinish()) {
 			log.error("Scene is switching, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
@@ -372,7 +371,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		RbRoom room = rbRoomService.getById(roomId);
 		String userId = UserInfoContext.getUserContext().getUserId();
 		List<Flow> flows = Lists.newArrayList();
-		CpFlow cpflow;
+		Cpflow cpflow;
 		Map<String, String> elementsMap = Maps.newHashMap();
 
 		// 2. 获取topo
@@ -382,9 +381,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 			// 2.1.1 请求sceneData
 			JSONObject sceneData = localSceneService.getSceneData(localScene, userId);
 			// 2.1.2 转换JsonObject为SceneData对象
-			SceneData data = sceneData.toJavaObject(SceneData.class);
+			SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 			// 2.1.3 获取流量数据
-			cpflow = data.getPlugins().getCpFlow();
+			cpflow = data.getPlugins().getCpflow();
 			// 2.1.4 生成节点数据map
 			List<SceneElement> elements = data.getTopology().getElements();
 			for (SceneElement element : elements) {
@@ -396,7 +395,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 			JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId());
 			TopoData data = topoData.getJSONObject(CrCommonConstants.TOPO_DATA_KEY)
 					.toJavaObject(TopoData.class);
-			cpflow = data.getPlugins().getCpFlow();
+			cpflow = data.getPlugins().getCpflow();
 
 			List<TopoElement> elements = data.getTopology().getElements();
 			for (TopoElement element : elements) {
@@ -477,7 +476,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 			return null;
 		}
 		// 场景实际已被删除，清除本地脏数据
-		RbSceneData data = sceneData.toJavaObject(RbSceneData.class);
+		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 		if (data.isStopped()) {
 			clearLocal(room);
 			return null;
@@ -486,12 +485,13 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return sceneData;
 	}
 
-	public RbSceneData getSceneData(RbRoom room) {
+	@Override
+	public SceneData getSceneData(RbRoom room) {
 		JSONObject sceneData = getMpSceneData(room);
 		if (sceneData == null) {
 			return null;
 		}
-		return sceneData.toJavaObject(RbSceneData.class);
+		return sceneData.toJavaObject(SceneDataImpl.class);
 	}
 
 	private CrRoleNodesData getNodes(CrRole selfRole, List<CrRole> roleList, String roleId) {

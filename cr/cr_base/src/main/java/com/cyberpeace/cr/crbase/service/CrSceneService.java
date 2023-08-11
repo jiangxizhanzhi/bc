@@ -3,15 +3,14 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
-import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.service.context.IdNameType;
-import com.cyberpeace.common.context.scene.ElementFlow;
-import com.cyberpeace.integratation.model.scene.FlowInfo;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 
 /**
@@ -33,14 +32,6 @@ public interface CrSceneService {
 	 * @return 流量文件路径
 	 */
 	String getFlowFilePath(String flowId);
-
-	/** 获取场景节点下流量（mp格式）列表
-	 * @param mpSceneId
-	 * @param topoId
-	 * @param nodeId
-	 * @return
-	 */
-	List<FlowInfo> getNodeFlowContextList(String mpSceneId, String topoId, String nodeId);
 
 	/** 获取靶场场景节点下流量列表
 	 * @param elementFlowListContext 节点流量查询体

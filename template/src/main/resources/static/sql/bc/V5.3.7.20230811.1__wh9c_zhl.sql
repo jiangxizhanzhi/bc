@@ -65,7 +65,6 @@ CREATE TABLE `cr_eval_score` (
                                  UNIQUE KEY `resource_id` (`resource_id`) USING BTREE,
                                  UNIQUE KEY `room_user` (`room_id`,`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='训练评分(评估)';
-ALTER TABLE cr_tool_toolfile add column `version` varchar(256) DEFAULT NULL COMMENT '版本号';
 
 -- 修改
 ALTER TABLE `cr_eval_rule` change  `room_id` `eval_template_id` varchar(32);

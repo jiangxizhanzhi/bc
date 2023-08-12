@@ -23,10 +23,10 @@
                 <MdcUuidFilter key="logId"/>
             </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="-1"/>
+            <DefaultRolloverStrategy max="5"/>
         </RollingFile>
         <!--*********************文件日志***********************-->
         <RollingFile name="resourceImport"
@@ -39,10 +39,10 @@
                 <MdcUuidFilter key="logId"/>
             </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="-1"/>
+            <DefaultRolloverStrategy max="5"/>
         </RollingFile>
 
         <RollingFile name="mp"
@@ -55,10 +55,10 @@
                 <MdcUuidFilter key="logId"/>
             </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="-1">
+            <DefaultRolloverStrategy max="5">
 
             </DefaultRolloverStrategy>
         </RollingFile>
@@ -73,10 +73,10 @@
                 <MdcUuidFilter key="logId"/>
             </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="-1"/>
+            <DefaultRolloverStrategy max="5"/>
         </RollingFile>
 
         <RollingFile name="eval"
@@ -89,10 +89,10 @@
                 <MdcUuidFilter key="logId"/>
             </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="-1"/>
+            <DefaultRolloverStrategy max="5"/>
         </RollingFile>
     </Appenders>
     <Loggers>

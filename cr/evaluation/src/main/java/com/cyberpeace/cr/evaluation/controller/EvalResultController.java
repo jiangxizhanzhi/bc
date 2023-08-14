@@ -18,7 +18,6 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalResultMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
-import com.cyberpeace.cr.evaluation.service.EvalResultService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

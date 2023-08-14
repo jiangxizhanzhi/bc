@@ -1,13 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.List;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.component.MyWebSocketHandler;
@@ -49,8 +41,14 @@ import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -340,10 +338,10 @@ public class CrSceneServiceImpl implements CrSceneService {
 	@Override
 	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
 			String businessId) {
-
+		ExecutorService exec = Executors.newCachedThreadPool();
 		// 校验节点下流量任务状态
 		// checkFlowTaskStatus(mpSceneId, nodeId);
-
+		exec.submit(() -> {
 		for (FlowInfoContext flowContext : flows) {
 			FlowOpsContext flowOpsContext = BeanUtils.copy(flowContext,
 					com.cyberpeace.integratation.model.scene.FlowOpsContext.class);
@@ -366,7 +364,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 				throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 			}
 		}
-
+        });
 		return true;
 	}
 

@@ -24,4 +24,6 @@ public class EvalResultListRsp implements Serializable {
     private Integer finalScore;
 
     private Integer type;
+
+    private String createTime;
 }

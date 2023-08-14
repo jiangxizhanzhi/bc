@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "靶场测评-评估结果")
@@ -75,6 +76,16 @@ public class EvalResultController {
     @PatchMapping("/system/run")
     public BaseRsp<EvalRecord> reviseFinalScore(@RequestBody EvalRecordAddReq requestData) {
         EvalRecord evalRecord = checkScore(requestData.getIndexScore(), requestData.getResourceId());
+        reRun(requestData, evalRecord);
+        evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
+        evalRecordMapper.updateById(evalRecord);
+        return new BaseRsp<>(evalRecord);
+    }
+
+
+    @Async
+    public Integer reRun(EvalRecordAddReq requestData, EvalRecord evalRecord) {
+
         Integer finalScore = requestData.getIndexScore() * evalRecord.getScore();
         EvalResult evalResult = new EvalResult();
         evalResult.setRecord(requestData.getResourceId());
@@ -87,7 +98,7 @@ public class EvalResultController {
         evalRecord.setIndexScore(requestData.getIndexScore());
         evalRecord.setFinalScore(finalScore);
         evalRecordMapper.updateById(evalRecord);
-        return new BaseRsp<>(evalRecord);
+        return finalScore;
     }
 
     private EvalRecord checkScore(Integer score, String resourceId) {

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -64,6 +67,9 @@ public class EvalSystemIndexAdminController {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	@Autowired
+	private EvalRecordMapper evalRecordMapper;
+
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
@@ -87,6 +93,14 @@ public class EvalSystemIndexAdminController {
 	@PutMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystem> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
+
+		String evalSystemId = evalSystemReq.getEvalSystemId();
+		LambdaQueryWrapper<EvalRecord> query = new LambdaQueryWrapper<>();
+		query.eq(EvalRecord::getSystemId, evalSystemId);
+		List<EvalRecord> evalRecords = evalRecordMapper.selectList(query);
+		if(evalRecords.size() > 0){
+			throw new BusinessException(CrBusinessErrorCode.SYSTEM_BIND_RECORD);
+		}
 
 		EvalSystem evalSystem = evalSystemService.getById(evalSystemReq.getEvalSystemId());
 		if (null == evalSystem) {

@@ -474,4 +474,7 @@ public interface CrBusinessErrorCode {
 
 	/** 武器工具超过范围*/
 	String TOOL_OUT_OF_RANGE = "101148";
+
+	/** 指标体系绑定评估实例不可删除*/
+	String SYSTEM_BIND_RECORD = "101149";
 }

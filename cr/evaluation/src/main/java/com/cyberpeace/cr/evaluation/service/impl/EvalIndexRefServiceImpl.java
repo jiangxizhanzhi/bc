@@ -1,14 +1,14 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +46,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 	@Autowired
 	private EvalVariableRefService evalVariableRefService;
+
+	@Autowired
+	private EvalVariableRefMapper evalVariableRefMapper;
 
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
@@ -252,23 +255,11 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 	@Override
 	public Set<String> systemEvalVariableIds(String recordId) {
-		Set<String> results = Sets.newHashSet();
-		List<String> fourthIds = Lists.newArrayList();
-		lambdaQuery().eq(EvalIndexRef::getRecordId, recordId)
-				.eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode())
-				.eq(EvalIndexRef::getType, EvalIndexRef.Type.SYSTEM.getCode()).list()
-				.forEach(evalIndexRef -> fourthIds.addAll(
-						JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class)));
-
-		if (fourthIds.isEmpty()) {
-			return results;
-		}
-
-		lambdaQuery().in(EvalIndexRef::getResourceId, fourthIds).list()
-				.forEach(evalIndexRef -> results.addAll(
-						JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class)));
-
-		return results;
+		LambdaQueryWrapper<EvalVariableRef> query = new LambdaQueryWrapper<>();
+		query.isNotNull(EvalVariableRef::getScore);
+		List<EvalVariableRef> variableRefs = evalVariableRefMapper.selectList(query);
+		List<String> columns = StreamApiUtils.getColumn(variableRefs, EvalVariableRef::getResourceId);
+		return new HashSet<>(columns);
 	}
 
 	@Override

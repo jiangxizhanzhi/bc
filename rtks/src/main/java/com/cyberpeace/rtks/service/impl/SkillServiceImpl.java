@@ -1,21 +1,9 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.enums.BusinessType;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -42,8 +30,18 @@ import com.cyberpeace.rtks.service.bo.skill.*;
 import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -87,10 +85,10 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
 		// fill missions
-		for (SkillRes skillRes : result.getRecords()) {
-			skillRes.setMissions(skillMissionRelationMapper
-					.batchSelectMissionResBySkillId(skillRes.getResourceId()));
-		}
+//		for (SkillRes skillRes : result.getRecords()) {
+//			skillRes.setMissions(skillMissionRelationMapper
+//					.batchSelectMissionResBySkillId(skillRes.getResourceId()));
+//		}
 		return PageUtil.getListResult(result);
 	}
 

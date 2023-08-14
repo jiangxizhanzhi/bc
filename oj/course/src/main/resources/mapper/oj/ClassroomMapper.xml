@@ -39,6 +39,49 @@
         </where>
     </select>
 
+    <resultMap id="ResMap" type="com.cyberpeace.oj.course.dao.entity.Classroom">
+        <result column="resource_id" property="resourceId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="course_id" property="courseId"/>
+        <result column="lesson_id" property="lessonId"/>
+        <result column="organization_id" property="organizationId"/>
+        <result column="organization_ids" property="organizationIds"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="train_plan_id" property="trainPlanId"/>
+        <association property="trainPlan" javaType="com.cyberpeace.oj.course.dao.entity.TrainPlan">
+            <result column="name" property="name"/>
+            <result column="train_plan_create_user_id" property="createUserId"/>
+        </association>
+    </resultMap>
+
+    <select id="selectAdminList" resultMap="ResMap">
+    select oj_classroom.*,t.name,t.create_user_id as train_plan_create_user_id from oj_classroom left join
+        oj_train_plan t
+        on oj_classroom.train_plan_id=t.resource_id
+        <where>
+            <if test="listQuery != null">
+                <if test="listQuery.startTime != null and listQuery.endTime != null">
+                    ((start_time &gt; #{listQuery.startTime} and start_time &lt; #{listQuery.endTime})
+                    or (end_time &gt; #{listQuery.startTime} and end_time &lt; #{listQuery.endTime})
+                    or (start_time &lt; #{listQuery.startTime} and end_time &gt; #{listQuery.endTime}))
+                </if>
+                <if test="listQuery.userId != null and listQuery.userId != ''">
+                    and create_user_id = #{listQuery.userId}
+                </if>
+                <if test="listQuery.childrenOrg != null and listQuery.childrenOrg.size() != 0">
+                    and organization_id in
+                    <foreach collection="listQuery.childrenOrg" item="orgId" open="(" close=")" separator=",">
+                        #{orgId}
+                    </foreach>
+                </if>
+                <if test="listQuery.trainPlanId != null and listQuery.trainPlanId != ''">
+                    and train_plan_id = #{listQuery.trainPlanId}
+                </if>
+            </if>
+        </where>
+    </select>
+
     <select id="selectListByCourse" resultMap="base">
         select * from oj_classroom
         <where>
@@ -86,12 +129,14 @@
     </select>
 
     <select id="selectByOrgId" resultMap="base">
-        select * from oj_classroom
+        select *
+        from oj_classroom
         where organization_id = #{orgId}
     </select>
 
     <select id="selectByPlan" resultMap="base">
-        select * from oj_classroom
+        select *
+        from oj_classroom
         where train_plan_id = #{planId}
     </select>
 
@@ -121,9 +166,9 @@
             </if>
 
 
-                <if test="trainPlanId != null">
-                    and train_plan_id = #{trainPlanId}
-                </if>
+            <if test="trainPlanId != null">
+                and train_plan_id = #{trainPlanId}
+            </if>
 
             <if test="childrenOrg != null and childrenOrg.size() != 0">
                 and organization_id in
@@ -138,12 +183,12 @@
         select resource_id from oj_classroom
         <where>
 
-                <if test="ids != null and ids.size() != 0">
-                     train_plan_id in
-                    <foreach collection="ids" item="id" open="(" close=")" separator=",">
-                        #{id}
-                    </foreach>
-                </if>
+            <if test="ids != null and ids.size() != 0">
+                train_plan_id in
+                <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
 
         </where>
     </select>

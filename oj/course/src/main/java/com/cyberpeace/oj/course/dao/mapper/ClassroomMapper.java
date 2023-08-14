@@ -1,15 +1,14 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface ClassroomMapper extends BaseMapper<Classroom> {
@@ -29,6 +28,13 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @return
 	 */
 	List<Classroom> selectList(@Param("listQuery") ClassRoomListQuery listQuery);
+
+	/**
+	 * 查询课程表数据
+	 * @param listQuery
+	 * @return
+	 */
+	List<Classroom> selectAdminList(@Param("listQuery") ClassRoomListQuery listQuery);
 
 	/**
 	 * 课程表数据查询 查询时间范围内 自己创建的 或者组织下的

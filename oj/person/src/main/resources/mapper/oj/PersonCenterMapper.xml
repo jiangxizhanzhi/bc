@@ -55,7 +55,7 @@
         oj_comment.create_time,
         oj_comment.root_id,
         IF(oj_comment.business_type = 2, concat(oj_course_lesson.course_id, '/',
-        oj_course_lesson.resource_id), oj_comment.business_id)  as root_business_id
+        oj_course_lesson.resource_id), oj_comment.business_id) as root_business_id
         from oj_comment
         left join oj_course_lesson on oj_comment.business_id = oj_course_lesson.resource_id
         where oj_comment.user_id = #{userId}
@@ -72,6 +72,13 @@
             </foreach>
         </if>
         <include refid="orderByTimeDesc"/>
+    </select>
+
+    <select id="selectByUserId" resultType="java.lang.String">
+        select business_id
+        from oj_note
+        where oj_note.`user_id` = #{userId}
+          and oj_note.note_type = #{noteType}
     </select>
 
     <select id="selectNoteByUser" resultMap="personNote">
@@ -102,7 +109,8 @@
         on oj_note.business_id = oj_practice_operation.resource_id
         left join oj_practice_theory
         on oj_note.business_id = oj_practice_theory.resource_id
-        left join (select p.name as name,l.resource_id as resource_id,p.resource_id as p_resource_id from oj_course_lesson l left join oj_paper p on l.paper_id = p.resource_id) pp
+        left join (select p.name as name,l.resource_id as resource_id,p.resource_id as p_resource_id from
+        oj_course_lesson l left join oj_paper p on l.paper_id = p.resource_id) pp
         on pp.resource_id = oj_note.business_id
         where oj_note.`user_id` = #{userId}
         and oj_note.note_type = #{noteType}
@@ -136,7 +144,7 @@
 
     <select id="selectExpLessonByAuth" resultType="java.lang.String">
         select resource_id from oj_course_lesson
-        where  public = True and type = 1
+        where public = True and type = 1
         and course_id in
         <if test="courseIds != null and courseIds.size() != 0">
             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
@@ -185,11 +193,11 @@
 
     <select id="selectResourceIdByUser" resultType="string">
         select (case when oj_course_lesson.resource_id is not null then
-                         concat(oj_course_lesson.course_id,'/',oj_course_lesson.resource_id)
-                     when oj_course.resource_id is not null then oj_course.resource_id
-                     when oj_practice_theory.resource_id is not null then oj_practice_theory.resource_id
-                     when oj_practice_operation.resource_id is not null then oj_practice_operation.resource_id
-            END) as resource_id
+        concat(oj_course_lesson.course_id,'/',oj_course_lesson.resource_id)
+        when oj_course.resource_id is not null then oj_course.resource_id
+        when oj_practice_theory.resource_id is not null then oj_practice_theory.resource_id
+        when oj_practice_operation.resource_id is not null then oj_practice_operation.resource_id
+        END) as resource_id
         from oj_resource_collection
         left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and
         oj_resource_collection.business_type = 3
@@ -211,6 +219,7 @@
         </if>
         order by oj_resource_collection.create_time desc
     </select>
+
 
     <select id="selectByUser" resultMap="base">
         select (case when oj_course_lesson.resource_id is not null then
@@ -308,6 +317,7 @@
                  left join oj_practice_operation p on p.resource_id = s.practice_id
         where s.submit_user_id = #{userId}
     </select>
+
 
     <select id="selectLessonByTime" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
         select create_time,course_id

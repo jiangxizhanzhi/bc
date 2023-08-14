@@ -45,6 +45,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
@@ -144,6 +146,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private EvalIndexMapper evalIndexMapper;
 
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
+    private EvalIndexRefToEvalSystemIndexesContext evalIndexRefToEvalSystemIndexesContext1;
 
     @Override
     public void isExist(EvalRecordAddReq requestData) {
@@ -203,11 +206,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern));
     }
 
+    @Mapper
+    public interface EvalRecordToEvalRecordRsp extends BaseConvertor<EvalRecord, EvalRecordRsp> {
+    }
+
+    public static final EvalRecordToEvalRecordRsp evalRecordToEvalRecordRsp = Mappers.getMapper(EvalRecordToEvalRecordRsp.class);
+
     @Override
     public EvalRecordRsp get(String recordId) {
         EvalRecord evalRecord = getEntity(recordId);
 
-        EvalRecordRsp recordRsp = BeanUtils.copy(evalRecord, EvalRecordRsp.class);
+        EvalRecordRsp recordRsp = evalRecordToEvalRecordRsp.from(evalRecord);
         recordRsp.setIndexes(Lists.newArrayList());
         List<EvalIndexRef> fullIndexes = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordRsp.getResourceId()).list();
         fullIndexes.sort(Comparator.comparing(EvalIndexRef::getLevel));
@@ -228,10 +237,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return recordRsp;
     }
 
+    @Mapper
+    public interface EvalRecordAddReqToEvalRecord extends BaseConvertor<EvalRecordAddReq, EvalRecord> {
+    }
+
+    public static final EvalRecordAddReqToEvalRecord evalRecordAddReqToEvalRecord = Mappers.getMapper(EvalRecordAddReqToEvalRecord.class);
+
+
     @Override
     public EvalRecordRsp create(EvalRecordAddReq requestData) {
         // 评估对象构建
-        EvalRecord evalRecord = BeanUtils.copy(requestData, EvalRecord.class);
+        EvalRecord evalRecord = evalRecordAddReqToEvalRecord.from(requestData);
         // 当evalRecord.resourceId不为空时, 视为更新
         boolean isUpdate = !StringUtils.isEmpty(evalRecord.getResourceId());
         if (!isUpdate) {
@@ -272,9 +288,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalAggregations.forEach(evalAggregation -> {
             List<String> collectionIds = JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class);
-            collectionIds.forEach(collectionId->{
+            collectionIds.forEach(collectionId -> {
                 String matrixData = evalAggregation.getMatrixData();
-                if(!collections.contains(collectionId)){
+                if (!collections.contains(collectionId)) {
                     collections.add(collectionId);
                 } else {
                     String id = IDGeneratorUtil.getID();
@@ -284,7 +300,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     collectionIds.set(collectionIds.indexOf(collectionId), id);
                     EvalRecordVariableContext evalRecordVariableContext = evalRecordVariableContextMap.get(collectionId);
                     evalRecordVariableContextMap.put(id, evalRecordVariableContext);
-                    if(StringUtils.isNotBlank(matrixData)){
+                    if (StringUtils.isNotBlank(matrixData)) {
                         String currentMatrixData = matrixData.replaceAll(collectionId, id);
                         evalAggregation.setMatrixData(currentMatrixData);
                     }
@@ -325,7 +341,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
             // 构建变量项新的算法数据 - 格式化算法
             String formatAlgorithmId = evalCollection.getFormatAlgorithmId();
-            if(evalAlgorithmMap.containsKey(formatAlgorithmId)) {
+            if (evalAlgorithmMap.containsKey(formatAlgorithmId)) {
                 formatAlgorithmId = IDGeneratorUtil.getID();
                 evalAlgorithmMap.put(formatAlgorithmId, evalAlgorithmMap.get(evalCollection.getFormatAlgorithmId()));
                 evalVariableRef.setFormatAlgorithmId(formatAlgorithmId);
@@ -336,7 +352,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
             // 匹配算法
             String detectionAlgorithmId = evalCollection.getDetectionAlgorithmId();
-            if(evalAlgorithmMap.containsKey(detectionAlgorithmId)) {
+            if (evalAlgorithmMap.containsKey(detectionAlgorithmId)) {
                 detectionAlgorithmId = IDGeneratorUtil.getID();
                 evalAlgorithmMap.put(detectionAlgorithmId, evalAlgorithmMap.get(evalCollection.getDetectionAlgorithmId()));
                 evalVariableRef.setMatchAlgorithmId(detectionAlgorithmId);
@@ -347,7 +363,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
             // 评分算法
             String scoreAlgorithmId = evalCollection.getScoreAlgorithmId();
-            if(evalAlgorithmMap.containsKey(scoreAlgorithmId)){
+            if (evalAlgorithmMap.containsKey(scoreAlgorithmId)) {
                 scoreAlgorithmId = IDGeneratorUtil.getID();
                 evalAlgorithmMap.put(scoreAlgorithmId, evalAlgorithmMap.get(evalCollection.getScoreAlgorithmId()));
                 evalVariableRef.setMarkAlgorithmId(scoreAlgorithmId);
@@ -382,7 +398,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
             List<String> nextIds = Lists.newArrayList();
             String matrixData = evalAggregation.getMatrixData();
-            for(String item :JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class)){
+            for (String item : JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class)) {
                 if (variableIdsMap.containsKey(item)) {
                     String currentId = variableIdsMap.get(item);
                     if (StringUtils.isNotBlank(matrixData) && matrixData.contains(item)) {
@@ -395,7 +411,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setNextIds(JsonUtil.toJsonString(nextIds));
 
             String aggregatingAlgorithmId = evalAggregation.getAggregatingAlgorithmId();
-            if(evalAlgorithmMap.containsKey(aggregatingAlgorithmId)){
+            if (evalAlgorithmMap.containsKey(aggregatingAlgorithmId)) {
                 aggregatingAlgorithmId = IDGeneratorUtil.getID();
                 evalAlgorithmMap.put(aggregatingAlgorithmId, evalAlgorithmMap.get(evalAggregation.getAggregatingAlgorithmId()));
                 evalAggregation.setAggregatingAlgorithmId(aggregatingAlgorithmId);
@@ -431,7 +447,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
                 nextIds = evalIndex.getChildrenIds();
                 String aggregatingAlgorithmId = evalIndex.getAggregatingAlgorithmId();
-                if(evalAlgorithmMap.containsKey(aggregatingAlgorithmId)){
+                if (evalAlgorithmMap.containsKey(aggregatingAlgorithmId)) {
                     aggregatingAlgorithmId = IDGeneratorUtil.getID();
                     evalAlgorithmMap.put(aggregatingAlgorithmId, evalAlgorithmMap.get(evalIndex.getAggregatingAlgorithmId()));
                     evalIndexRef.setAlgorithmId(aggregatingAlgorithmId);
@@ -446,7 +462,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
                 nextIds = evalIndicator.getAggregationIds();
                 String aggregatingAlgorithmId = evalIndicator.getAggregatingAlgorithmId();
-                if(evalAlgorithmMap.containsKey(aggregatingAlgorithmId)){
+                if (evalAlgorithmMap.containsKey(aggregatingAlgorithmId)) {
                     aggregatingAlgorithmId = IDGeneratorUtil.getID();
                     evalAlgorithmMap.put(aggregatingAlgorithmId, evalAlgorithmMap.get(evalIndicator.getAggregatingAlgorithmId()));
                     evalIndexRef.setAlgorithmId(aggregatingAlgorithmId);
@@ -469,27 +485,27 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(nextIds, String.class).stream().map(evalIndexIdsMap::get).collect(Collectors.toList())));
             List<String> nextIdLists = JsonUtil.toJsonObjectArray(nextIds, String.class);
             String matrixData = evalIndex.getMatrixData();
-            if(evalIndex.getLevel().equals(EvalIndex.Level.THIRD.getCode())){
+            if (evalIndex.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
                 matrixData = evalIndicatorService.getById(evalIndex.getEvalIndicatorId()).getMatrixData();
             }
-            for(String nextId:nextIdLists){
+            for (String nextId : nextIdLists) {
                 String currentId = evalIndexIdsMap.get(nextId);
                 if (StringUtils.isNotBlank(matrixData)) {
                     matrixData = matrixData.replaceAll(nextId, currentId);
                 }
             }
             evalIndexRef.setMatrixData(matrixData);
-            if(evalIndex.getLevel().equals(EvalIndex.Level.SECOND.getCode()) && StringUtils.isNotBlank(matrixData)){
+            if (evalIndex.getLevel().equals(EvalIndex.Level.SECOND.getCode()) && StringUtils.isNotBlank(matrixData)) {
                 // 三级指标的 indicator id与 三级指标 resource_id 关联
                 Map<String, String> tmp = new HashMap<>();
-                for(String id:nextIdLists){
+                for (String id : nextIdLists) {
                     EvalIndex index = evalIndexMap.get(id);
                     String evalIndicatorId = index.getEvalIndicatorId();
                     tmp.put(evalIndicatorId, index.getResourceId());
                 }
                 JSONArray objects = JsonUtil.stringToArray(matrixData);
                 // 从上面的map 中获取三级指标的indicator 对应的id 并替换成当前新生成的id
-                for(int i = 0;i< objects.size();i++){
+                for (int i = 0; i < objects.size(); i++) {
                     JSONObject object = objects.getJSONObject(i);
                     String key = object.getString("key");
                     String resourceId = tmp.get(key);
@@ -529,9 +545,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     public void setSpecialList(List<EvalRecordIndexContext> fourthIndexes, Map<String, Integer> fourthIndexesTypeMap,
-                               Map<String, Integer> fourthSpecialistMap,Map<String, EvalRecordVariableContext> evalRecordVariableContextMap){
+                               Map<String, Integer> fourthSpecialistMap, Map<String, EvalRecordVariableContext> evalRecordVariableContextMap) {
 
-        fourthIndexes.forEach(fourthIndex->{
+        fourthIndexes.forEach(fourthIndex -> {
             fourthIndexesTypeMap.put(fourthIndex.getResourceId(), fourthIndex.getType());
             List<EvalRecordVariableContext> variables = fourthIndex.getVariables();
             if (fourthIndex.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
@@ -543,13 +559,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
+    @Mapper
+    @IgnoreId
+    public interface EvalAlgorithmToEvalAlgorithmRef extends BaseConvertor<EvalAlgorithm, EvalAlgorithmRef> {
+    }
+
+    public static final EvalAlgorithmToEvalAlgorithmRef evalAlgorithmToEvalAlgorithmRef = Mappers.getMapper(EvalAlgorithmToEvalAlgorithmRef.class);
+
+
     private EvalAlgorithmRef generateAlgorithmRef(String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap) {
         // 取消原逻辑 【已拷贝算法, 不再重复拷贝, evalAlgorithmRefMap获取返回】
 
 
         EvalAlgorithm originAlgorithm = originAlgorithmMap.get(algorithmId);
         EvalAlgorithmRef newAlgorithm = new EvalAlgorithmRef();
-        org.springframework.beans.BeanUtils.copyProperties(originAlgorithm, newAlgorithm, "id");
+        newAlgorithm = evalAlgorithmToEvalAlgorithmRef.from(originAlgorithm);
         newAlgorithm.setResourceId(IDGeneratorUtil.getID());
 
         // 拷贝过一次算法, 放入evalAlgorithmRefMap
@@ -557,13 +581,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return newAlgorithm;
     }
 
+
+
     @Override
     public EvalRecordRsp update(EvalRecordAddReq requestData) {
         EvalRecord originEvalRecord = getEntity(requestData.getResourceId());
 
-        EvalRecord newEvalRecord = BeanUtils.copy(originEvalRecord, EvalRecord.class);
-        BeanUtils.copyProperties(requestData, newEvalRecord);
-
+        EvalRecord newEvalRecord = evalRecordAddReqToEvalRecord.from(requestData);
         // 指标体系ID被更新情况, 调用this.create, 由create方法进行指标体系重建
         if (!originEvalRecord.getSystemId().equals(newEvalRecord.getSystemId())) {
             return create(requestData);
@@ -597,7 +621,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> {
                 if (!variablesSet.contains(evalRecordVariableContext.getResourceId())) {
                     EvalVariableRef evalVariableRef = new EvalVariableRef();
-                    BeanUtils.copyProperties(evalRecordVariableContext, evalVariableRef);
+                    evalVariableRef = evalRecordVariableContextToEvalVariableRef.from(evalRecordVariableContext);
                     evalVariableRef.setResourceId(evalRecordVariableContext.getResourceId());
                     evalVariableRef.setDeviceId(evalRecordVariableContext.getDeviceId());
                     evalVariableRef.setProbeId(evalRecordVariableContext.getProbeId());
@@ -619,8 +643,26 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return get(newEvalRecord.getResourceId());
     }
 
+    @Mapper
+    public interface EvalRecordVariableContextToEvalVariableRef extends BaseConvertor<EvalRecordVariableContext, EvalVariableRef> {
+    }
+
+    public static final EvalRecordVariableContextToEvalVariableRef evalRecordVariableContextToEvalVariableRef = Mappers.getMapper(EvalRecordVariableContextToEvalVariableRef.class);
+
+    @Mapper
+    public interface EvalIndexRefToEvalSystemIndexesContext extends BaseConvertor<EvalIndexRef, EvalSystemIndexesContext> {
+    }
+
+    public static final EvalIndexRefToEvalSystemIndexesContext evalIndexRefToEvalSystemIndexesContext = Mappers.getMapper(EvalIndexRefToEvalSystemIndexesContext.class);
+
+    @Mapper
+    public interface EvalVariableRefToEvalSystemIndexesContext extends BaseConvertor<EvalVariableRef, EvalSystemIndexesContext> {
+    }
+
+    public static final EvalVariableRefToEvalSystemIndexesContext evalVariableRefToEvalSystemIndexesContext = Mappers.getMapper(EvalVariableRefToEvalSystemIndexesContext.class);
+
     private EvalSystemIndexesContext generateNextIndexes(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> fullIndexesMap, Map<String, EvalVariableRef> fullVariablesMap, Boolean isFull) {
-        EvalSystemIndexesContext evalSystemIndexesContext = BeanUtils.copy(evalIndexRef, EvalSystemIndexesContext.class);
+        EvalSystemIndexesContext evalSystemIndexesContext = evalIndexRefToEvalSystemIndexesContext.from(evalIndexRef);
         evalSystemIndexesContext.setChildren(Lists.newArrayList());
         List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
 
@@ -645,7 +687,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                         return;
                     }
                     EvalVariableRef evalVariableRef = fullVariablesMap.get(variableId);
-                    evalSystemIndexesContext.getChildren().add(BeanUtils.copy(evalVariableRef, EvalSystemIndexesContext.class));
+                    evalSystemIndexesContext.getChildren().add(evalVariableRefToEvalSystemIndexesContext.from(evalVariableRef));
                     variablesMap.add(variableId);
                 });
             } else {
@@ -733,7 +775,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private void addResToEvalResult(EvalRecord evalRecord) {
-        if(evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())){
+        if (evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())) {
             return;
         }
         Integer exeCycle = 1;
@@ -747,7 +789,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         filter.last("limit 1");
         EvalResult evalResultQuery = evalResultMapper.selectOne(filter);
         evalResult.setExeCycle(exeCycle);
-        if(null != evalResultQuery){
+        if (null != evalResultQuery) {
             exeCycle += evalResultQuery.getExeCycle();
             evalResult.setExeCycle(exeCycle);
         }
@@ -771,10 +813,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Map<String, EvalIndexRef> fourthEvalIndexRefMap = StreamApiUtils.toMap(fourthIndexes, EvalIndexRef::getResourceId, s -> s);
         Map<String, EvalVariableRef> fifthEvalIndexRefMap = StreamApiUtils.toMap(variableRefs, EvalVariableRef::getResourceId, s -> s);
 
-        for(EvalIndexRef first:firstIndexes){
+        for (EvalIndexRef first : firstIndexes) {
             String nextIds = first.getNextIds();
             Integer score = first.getScore();
-            if(first.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())){
+            if (first.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 score = first.getSpecialistValue();
             }
             evalResult.setFirstIndexRes(score);
@@ -784,28 +826,28 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             JSONObject fourthObj = new JSONObject();
             JSONObject fifthObj = new JSONObject();
 
-            for(String tmpIndex:nextIdList){
+            for (String tmpIndex : nextIdList) {
                 EvalIndexRef evalIndexRef = secondEvalIndexRefMap.get(tmpIndex);
-                if(null != evalIndexRef){
+                if (null != evalIndexRef) {
                     secondObj.put(evalIndexRef.getResourceId(), evalIndexRef.getScore());
                 }
                 String refNextIds = evalIndexRef.getNextIds();
                 List<String> nextRedIdList = JsonUtil.toJsonObjectArray(refNextIds, String.class);
-                for(String tmpNextIndex:nextRedIdList){
+                for (String tmpNextIndex : nextRedIdList) {
                     EvalIndexRef indexRef = thirdEvalIndexRefMap.get(tmpNextIndex);
-                    if(null != indexRef){
+                    if (null != indexRef) {
                         Integer indexRefScore = indexRef.getScore();
                         thirdObj.put(indexRef.getResourceId(), indexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode()) ? indexRef.getSpecialistValue() : indexRefScore);
                     }
                     String ids = indexRef.getNextIds();
                     List<String> idList = JsonUtil.toJsonObjectArray(ids, String.class);
-                    for(String currentNextId:idList){
+                    for (String currentNextId : idList) {
                         EvalIndexRef current = fourthEvalIndexRefMap.get(currentNextId);
                         log.info("current evalIndexRef name is : [{}], id is [{}], score is [{}]", current.getName(), current.getResourceId(), current.getScore());
-                        if(null != current){
+                        if (null != current) {
                             Integer type = current.getType();
                             Integer currentScore = current.getScore();
-                            if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
+                            if (type.equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                                 currentScore = current.getSpecialistValue();
                             }
                             fourthObj.put(current.getResourceId(), currentScore);
@@ -827,11 +869,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private void getFifthObj(Map<String, EvalVariableRef> fifthEvalIndexRefMap, JSONObject fifthObj, EvalIndexRef current) {
         String fifthIds = current.getNextIds();
         List<String> fifthIdsList = JsonUtil.toJsonObjectArray(fifthIds, String.class);
-        for(String fifthId:fifthIdsList){
+        for (String fifthId : fifthIdsList) {
             EvalVariableRef fifthVariableRef = fifthEvalIndexRefMap.get(fifthId);
-            if(null != fifthVariableRef){
+            if (null != fifthVariableRef) {
                 Integer score = fifthVariableRef.getScore();
-                if(fifthVariableRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())){
+                if (fifthVariableRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     score = current.getSpecialistValue();
                 }
                 fifthObj.put(fifthId, score);
@@ -932,7 +974,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             EvalLog.info(evalRecord, "variables probe data has been sync, continue.");
             return;
         }
-        evalVariableRefs.forEach(a->a.setProgress(EvalVariableRef.Progress.NOT_START.getCode()));
+        evalVariableRefs.forEach(a -> a.setProgress(EvalVariableRef.Progress.NOT_START.getCode()));
         // 终端节点IP <nodeId, nodeIp>
         Map<String, String> ipMap = nodeIpMap(evalTask.getMpSceneId());
 
@@ -1202,11 +1244,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return results;
     }
 
+    @Mapper
+    public interface EvalRecordToEvalRecordResultRsp extends BaseConvertor<EvalRecord, EvalRecordResultRsp> {
+    }
+
+    public static final EvalRecordToEvalRecordResultRsp evalRecordToEvalRecordResultRsp = Mappers.getMapper(EvalRecordToEvalRecordResultRsp.class);
+
     @Override
     public EvalRecordResultRsp result(String recordId) {
-        EvalRecordResultRsp result = new EvalRecordResultRsp();
-        BeanUtils.copyProperties(getById(recordId), result);
 
+//        EvalRecordResultRsp result = ERMapper.INSTANCE.evalRecordToEvalRecordResultRsp(getById(recordId));
+        EvalRecordResultRsp result = evalRecordToEvalRecordResultRsp.from(getById(recordId));
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordId).list();
         evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel));
 
@@ -1263,7 +1311,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             e.printStackTrace();
             throw e;
         } finally {
-            if(!new File(destHtmlPath).delete()){
+            if (!new File(destHtmlPath).delete()) {
                 log.error("failed to delete file:{}", destHtmlPath);
             }
         }
@@ -1290,9 +1338,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
                 rsp.setResourceId(evalIndexRef.getResourceId());
                 rsp.setName(evalIndexRef.getName());
-                for(int i = 0; i < evalResults.size(); i++){
+                for (int i = 0; i < evalResults.size(); i++) {
                     EvalResult evalResult = evalResults.get(i);
-                    if(i == 0){
+                    if (i == 0) {
                         rsp.setExeCycle(evalResult.getExeCycle());
                     }
                     Integer firstIndexRes = evalResult.getFirstIndexRes();
@@ -1313,7 +1361,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         nextIds.forEach(nextId -> {
             EvalSystemResultRsp rsp = new EvalSystemResultRsp();
             EvalIndexRef evalIndexRef1 = evalIndexRefMap.get(nextId);
-            if(null == evalIndexRef1){
+            if (null == evalIndexRef1) {
                 EvalVariableRef evalVariableRef = evalVariableRefMap.get(nextId);
                 rsp.setResourceId(evalVariableRef.getResourceId());
                 rsp.setName(evalVariableRef.getName());
@@ -1323,7 +1371,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     JSONObject jsonObject = JsonUtil.toJsonObject(fifthIndexRes, JSONObject.class);
                     Integer score = null;
                     Object obj = jsonObject.get(nextId);
-                    if(null != obj){
+                    if (null != obj) {
                         score = Integer.parseInt(obj.toString());
                     }
                     setCycleResult(rsp, i, score);
@@ -1374,9 +1422,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             String fourthIndexRes = evalResult.getFourthIndexRes();
             JSONObject jsonObject = JsonUtil.toJsonObject(fourthIndexRes, JSONObject.class);
             Integer score = 0;
-            if(null != jsonObject && jsonObject.size() > 0){
+            if (null != jsonObject && jsonObject.size() > 0) {
                 Object obj = jsonObject.get(nextId);
-                if(null == obj){
+                if (null == obj) {
                     score = null;
                 } else {
                     score = Integer.parseInt(obj.toString());
@@ -1387,15 +1435,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private void setCycleResult(EvalSystemResultRsp rsp, int i, Integer score) {
-        if(0 == i) {
+        if (0 == i) {
             rsp.setFirstScore(score);
-        } else if( i == 1 ) {
+        } else if (i == 1) {
             rsp.setSecondScore(score);
-        } else if(i == 2) {
+        } else if (i == 2) {
             rsp.setThirdScore(score);
-        } else if(i ==3) {
+        } else if (i == 3) {
             rsp.setFourthScore(score);
-        } else if(i ==4) {
+        } else if (i == 4) {
             rsp.setFifthScore(score);
         }
     }
@@ -1425,7 +1473,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         data.put("name", evalRecord.getName());
         data.put("templateName", template.getName());
         data.put("recordDescription", evalRecord.getDescription());
-        data.put("templateDescription",template.getDescription());
+        data.put("templateDescription", template.getDescription());
         data.put("score", evalRecord.getScore());
         data.put("endTime", evalRecord.getEndTime());
         data.put("evalTime", evalRecord.getEvalTime());
@@ -1504,7 +1552,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
-    private EvalRecordResultIndexRsp parseGraph(EvalRecordResultRsp result, String variableId){
+    private EvalRecordResultIndexRsp parseGraph(EvalRecordResultRsp result, String variableId) {
         List<EvalSystemIndexesContext> indexes = result.getIndexes();
         EvalRecordResultIndexRsp evalRecordResultIndexRsp = new EvalRecordResultIndexRsp();
         if (CollectionUtils.isNotEmpty(indexes)) {
@@ -1512,17 +1560,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             getOtherResult(evalRecordResultIndexRsp);
             setParentId(evalRecordResultIndexRsp);
         }
-        return  evalRecordResultIndexRsp;
+        return evalRecordResultIndexRsp;
     }
 
-    private void getOtherResult(EvalRecordResultIndexRsp evalRecordResultIndexRsp){
+    private void getOtherResult(EvalRecordResultIndexRsp evalRecordResultIndexRsp) {
         List<EvalRecordResultIndexRsp> children = evalRecordResultIndexRsp.getChildren();
         if (CollectionUtils.isNotEmpty(children)) {
             for (EvalRecordResultIndexRsp child : children) {
                 if (child.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
                     EvalRecordResultIndexRsp childEvalRecordResultIndexRsp = evalIndexRefService.resultIndex(child.getResourceId());
                     child.setChildren(childEvalRecordResultIndexRsp.getChildren());
-                }else {
+                } else {
                     getOtherResult(child);
                 }
             }
@@ -1547,7 +1595,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
-    private EvalVariableGraphListRsp changeGraph(String variableId){
+    private EvalVariableGraphListRsp changeGraph(String variableId) {
         EvalVariableGraphListRsp result = new EvalVariableGraphListRsp();
         result.setTime(Lists.newArrayList());
         result.setValue(Lists.newArrayList());
@@ -1572,14 +1620,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
         return result;
     }
-    private String changeRecordStatus(Boolean enableRecording){
+
+    private String changeRecordStatus(Boolean enableRecording) {
         if (CommonContext.isChinese()) {
-            if (enableRecording){
+            if (enableRecording) {
                 return CommonConstant.RIGHT;
-            }else {
+            } else {
                 return CommonConstant.NO;
             }
-        }else {
+        } else {
             return String.valueOf(enableRecording);
         }
     }

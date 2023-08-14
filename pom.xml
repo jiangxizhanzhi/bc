@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.13</version>
+        <version>2.7.14</version>
         <relativePath/>
     </parent>
 
@@ -33,15 +33,15 @@
         <cache.version>2.3.2.RELEASE</cache.version>
         <zip4j.version>1.3.2</zip4j.version>
         <caffeine.version>2.6.2</caffeine.version>
-        <amqp.version>2.7.13</amqp.version>
-        <springboot.web.version>2.7.13</springboot.web.version>
+        <amqp.version>2.7.14</amqp.version>
+        <springboot.web.version>2.7.14</springboot.web.version>
         <springboot.mybatis.version>2.2.0</springboot.mybatis.version>
-        <springboot.aop.version>2.7.13</springboot.aop.version>
+        <springboot.aop.version>2.7.14</springboot.aop.version>
         <springfox.version>3.0.0</springfox.version>
         <hibernate.validator.version>6.0.13.Final</hibernate.validator.version>
         <mysql.connector.version>8.0.25</mysql.connector.version>
         <lombok.version>1.18.20</lombok.version>
-        <springboot.test.version>2.7.13</springboot.test.version>
+        <springboot.test.version>2.7.14</springboot.test.version>
         <poi-ooxml.version>5.1.0</poi-ooxml.version>
         <poi-version>5.1.0</poi-version>
         <freemarker.version>2.3.28</freemarker.version>
@@ -71,7 +71,7 @@
         <oj.practice.version>0.0.1-SNAPSHOT</oj.practice.version>
         <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
         <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
-        <aop-version>2.7.13</aop-version>
+        <aop-version>2.7.14</aop-version>
     </properties>
 
     <modules>

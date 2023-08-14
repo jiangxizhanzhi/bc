@@ -30,6 +30,9 @@ public class EvalRecordRsp implements Serializable {
     @ApiModelProperty("指标分数")
     private Integer indexScore;
 
+    @ApiModelProperty("最终分数")
+    private Integer finalScore;
+
     @ApiModelProperty("开始时间（评估采集数据时间范围）")
     private Date startTime;
 

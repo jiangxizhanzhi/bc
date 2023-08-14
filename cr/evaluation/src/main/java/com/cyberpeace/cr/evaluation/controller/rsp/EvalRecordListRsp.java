@@ -28,6 +28,9 @@ public class EvalRecordListRsp implements Serializable {
     @ApiModelProperty("评分最终结果")
     private Integer finalScore;
 
+    @ApiModelProperty("评估指标分数")
+    private Integer indexScore;
+
     @ApiModelProperty("关联指标体系ID")
     private String systemId;
 

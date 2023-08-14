@@ -18,6 +18,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalResultMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.cyberpeace.cr.evaluation.service.EvalResultService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -46,11 +47,12 @@ public class EvalResultController {
     @ApiOperation("获取靶场测评实例评估结果（分页）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/list")
-    public BaseRsp<ListRsp<EvalResultListReq>> list(EvalResultListReq queryParams) {
+    public BaseRsp<ListRsp<EvalResultListRsp>> list(EvalResultListReq queryParams) {
 
         String startTime = queryParams.getStartTime();
         String endTime = queryParams.getEndTime();
-        Page<EvalResultListRsp> evalResultListRspPage = evalResultMapper.pageList(queryParams.toPageParam(), startTime, endTime, queryParams.getType(), queryParams.getPattern());
+        Page<EvalResultListRsp> evalResultListRspPage = evalResultMapper.pageList(queryParams.toPageParam(),
+                startTime, endTime, queryParams.getType(), queryParams.getPattern(), queryParams.getRecord());
         return new BaseRsp<>(PageUtil.getListResult(evalResultListRspPage));
     }
 
@@ -76,15 +78,16 @@ public class EvalResultController {
     @PatchMapping("/system/run")
     public BaseRsp<EvalRecord> reviseFinalScore(@RequestBody EvalRecordAddReq requestData) {
         EvalRecord evalRecord = checkScore(requestData.getIndexScore(), requestData.getResourceId());
-        reRun(requestData, evalRecord);
+        Integer originalStatus = evalRecord.getStatus();
         evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
         evalRecordMapper.updateById(evalRecord);
+        reRun(requestData, evalRecord, originalStatus);
         return new BaseRsp<>(evalRecord);
     }
 
 
     @Async
-    public Integer reRun(EvalRecordAddReq requestData, EvalRecord evalRecord) {
+    public Integer reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus) {
 
         Integer finalScore = requestData.getIndexScore() * evalRecord.getScore();
         EvalResult evalResult = new EvalResult();
@@ -97,6 +100,7 @@ public class EvalResultController {
 
         evalRecord.setIndexScore(requestData.getIndexScore());
         evalRecord.setFinalScore(finalScore);
+        evalRecord.setStatus(originalStatus);
         evalRecordMapper.updateById(evalRecord);
         return finalScore;
     }

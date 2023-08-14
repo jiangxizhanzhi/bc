@@ -15,4 +15,7 @@ public class EvalResultListReq extends PageReqBase {
 
     @ApiModelProperty("日志类型")
     private Integer type;
+
+    @ApiModelProperty("记录id")
+    private String record;
 }

@@ -15,6 +15,7 @@ public interface EvalResultMapper extends BaseMapper<EvalResult> {
                                      @Param("startTime") String startTime,
                                      @Param("endTime") String endTime,
                                      @Param("type") Integer type,
-                                     @Param("pattern") String pattern);
+                                     @Param("pattern") String pattern,
+                                     @Param("record") String record);
 
 }

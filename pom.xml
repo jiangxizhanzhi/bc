@@ -24,7 +24,7 @@
         <guava.version>32.1.1-jre</guava.version>
         <common.lang.version>3.9</common.lang.version>
         <fastjson.version>1.2.83</fastjson.version>
-        <shiro.version>1.9.1</shiro.version>
+        <shiro.version>1.12.0</shiro.version>
         <mybatis.plus.version>3.4.1</mybatis.plus.version>
         <flyway.version>6.0.8</flyway.version>
         <orika.version>1.5.4</orika.version>
@@ -49,6 +49,7 @@
         <xmlworker.version>5.4.1</xmlworker.version>
         <itext-asian.version>5.2.0</itext-asian.version>
         <flying-saucer-pdf.version>9.1.22</flying-saucer-pdf.version>
+        <snakeyaml.version>1.33</snakeyaml.version>
 
         <!-- 自有模块版本号 -->
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
@@ -227,6 +228,11 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate.validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
             </dependency>
 
             <dependency>

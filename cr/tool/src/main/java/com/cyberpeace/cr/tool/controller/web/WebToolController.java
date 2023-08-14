@@ -75,4 +75,20 @@ public class WebToolController {
 		return new BaseRsp<>(toolRsp);
 	}
 
+	@ApiOperation("工具库列表")
+	@GetMapping("/topology_list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
+	public BaseRsp<ListRsp<ToolRsp>> topologyList(
+			@ApiParam(name = "listReq", value = "查询条件") @Validated WebToolListReq webToolListReq) {
+
+		Boolean isAdmin = false;
+		Page page = webToolListReq.toPageParam();
+		ToolListQuery listQuery = BeanUtils.copy(webToolListReq, ToolListQuery.class);
+
+		// 获取权限
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),true);
+		ListRsp<ToolRsp> toolRspListRsp = toolService.selectPageForTopology(page, listQuery, isAdmin, authContext);
+		return new BaseRsp<>(toolRspListRsp);
+	}
+
 }

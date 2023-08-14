@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
@@ -77,5 +78,10 @@ public interface ToolService extends IService<Tool> {
 	 * @return 授权数据
 	 */
 	Share getShares(String resourceId);
+
+	/**
+	 * 拓扑武器工具查询分页
+	 */
+	ListRsp<ToolRsp> selectPageForTopology(Page page, ToolListQuery toolListQuery, Boolean isAdmin, AuthContext authContext);
 
 }

@@ -532,9 +532,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.map(MissionEvaluationContext::getMissionHash).distinct()
 				.collect(Collectors.toList());
 
-		if (CollectionUtils.isEmpty(data.getRecords())){
-
-		}
 		//获取一血, 二血, 三血及额外分数
 		Map<String, MissionEvaluationContext> rankMap =CollectionUtils.isEmpty(data.getRecords())?Maps.newHashMap(): getRankContextMap(data);
 		//获取动态任务对应flagValue

@@ -1,18 +1,17 @@
 package com.cyberpeace.cr.teamtrain.dao.entity;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.Date;
 
 @TableName(value = "cr_team_room")
 @Data
@@ -115,7 +114,7 @@ public class TeamRoom extends BaseTable {
 	 * 区分红队训练/蓝队训练
 	 */
 	public enum TrainCategory {
-		RED(1, "红队"), BLUE(2, "蓝队");
+		RED(1, "红队"), BLUE(2, "蓝队"), DAILY(3, "日常");
 
 		@Getter
 		private final Integer code;
@@ -133,12 +132,14 @@ public class TeamRoom extends BaseTable {
 	public OperationModule getModule() {
 		return getTrainCategory().equals(TrainCategory.RED.getCode())
 				? OperationModule.RED_TEAM
-				: OperationModule.BLUE_TEAM;
+				: getTrainCategory().equals(TrainCategory.BLUE.getCode()) ?
+				OperationModule.BLUE_TEAM : OperationModule.DAILY_TRAIN;
 	}
 
 	public String getLogMsg() {
 		return getTrainCategory().equals(TrainCategory.RED.getCode())
 				? LogContent.RED_TEAM_TRAIN_ROOM.getMsg()
-				: LogContent.BLUE_TEAM_TRAIN_ROOM.getMsg();
+				: getTrainCategory().equals(TrainCategory.BLUE.getCode()) ?
+				LogContent.BLUE_TEAM_TRAIN_ROOM.getMsg() :LogContent.DAILY_TRAIN_ROOM.getMsg() ;
 	}
 }

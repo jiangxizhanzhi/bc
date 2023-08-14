@@ -26,6 +26,7 @@ public enum LogContent implements BaseI18n {
 	TEAM_TRAIN_ROOM("Team Train scene","团队训练场景"),
 	RED_TEAM_TRAIN_ROOM("Red team Train scene","红队训练场景"),
 	BLUE_TEAM_TRAIN_ROOM("Blue team Train scene","蓝队训练场景"),
+	DAILY_TRAIN_ROOM("Blue team Train scene","日常训练场景"),
 	RB_TRAIN_ROOM("Cyber Wargame scene","红蓝对抗场景"),
 	RANGE_TEST_ROOM("Range Test scene","靶场测评场景"),
 

@@ -256,19 +256,28 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		taskQuery.eq(CrTask::getRoomId, evalTemplate.getRedVsBlueId());
 		List<CrTask> taskList = crTaskMapper.selectList(taskQuery);
 		List<CrEvalTrainTask> crEvalTrainList = BeanUtils.deepCopyList(taskList, CrEvalTrainTask.class);
-		crEvalTrainList.forEach(item->item.setEvalTemplateId(evalTemplateId));
+		for (CrEvalTrainTask item : crEvalTrainList) {
+			item.setEvalTemplateId(evalTemplateId);
+			item.setResourceId(null);
+		}
 
 		LambdaQueryWrapper<CrTaskSubmit> taskSubmitQuery = new LambdaQueryWrapper<>();
 		taskSubmitQuery.eq(CrTaskSubmit::getRoomId,  evalTemplate.getRedVsBlueId());
 		List<CrTaskSubmit> taskSubmitList = taskSubmitMapper.selectList(taskSubmitQuery);
 		List<CrEvalTaskSubmit> evalTaskSubmitList = BeanUtils.deepCopyList(taskSubmitList, CrEvalTaskSubmit.class);
-		evalTaskSubmitList.forEach(item->item.setEvalTemplateId(evalTemplateId));
+		for (CrEvalTaskSubmit item : evalTaskSubmitList) {
+			item.setEvalTemplateId(evalTemplateId);
+			item.setResourceId(null);
+		}
 
 		LambdaQueryWrapper<CrScore> scoreQuery = new LambdaQueryWrapper<>();
 		scoreQuery.eq(CrScore::getRoomId,  evalTemplate.getRedVsBlueId());
 		List<CrScore> scoreList = scoreMapper.selectList(scoreQuery);
 		List<CrEvalScore> evalScoreList = BeanUtils.deepCopyList(scoreList, CrEvalScore.class);
-		evalScoreList.forEach(item->item.setEvalTemplateId(evalTemplateId));
+		for (CrEvalScore item : evalScoreList) {
+			item.setEvalTemplateId(evalTemplateId);
+			item.setResourceId(null);
+		}
 
 		//初始化评估规则数据
 		List<EvalRule> initialEvalRuleList = evalRuleService.getInitialData(evalTemplateId);

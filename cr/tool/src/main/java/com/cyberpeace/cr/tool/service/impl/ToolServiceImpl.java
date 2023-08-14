@@ -6,13 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DateUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
@@ -43,10 +41,8 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -251,6 +247,58 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		}
 		share.setTeachers(shareTeacherList);
 		return share;
+	}
+
+	@Override
+	public ListRsp<ToolRsp> selectPageForTopology(Page page, ToolListQuery toolListQuery, Boolean isAdmin, AuthContext authContext) {
+		List<String> ids = toolMapper.selectByAuth(authContext);
+		IPage<Tool> toolIPage = toolMapper.list(page, toolListQuery, isAdmin,	ids);
+
+
+		ArrayList<Integer> fileList = new ArrayList<>();
+		List<ToolRsp> toolRespList = new ArrayList<>();
+		for (Tool tool : toolIPage.getRecords()) {
+			if (StringUtils.isNotBlank(tool.getFiles())){
+				fileList.addAll(LocalStringUtil.strToList(tool.getFiles()));
+			}
+
+			ToolRsp toolResp = BeanUtils.copy(tool, ToolRsp.class);
+			List<String> categoryList = LocalStringUtil.strToListStr(tool.getCategory());
+			toolResp.setCategory(categoryList);
+			toolRespList.add(toolResp);
+		}
+		List<ToolCategory> toolCategories = toolCategoryService.selectAll();
+		Map<String, String> categoryMap = toolCategories.stream().collect(Collectors.toMap(ToolCategory::getResourceId, ToolCategory::selectI18nName));
+
+		List<ToolFile> toolFileList = CollectionUtils.isEmpty(fileList)?new ArrayList<>(): toolFileMapper.selectByIds(fileList);
+		Map<Integer, ToolFile> toolFileMap = toolFileList.stream().collect(Collectors.toMap(ToolFile::getId, Function.identity()));
+
+		for (ToolRsp toolRsp : toolRespList) {
+			if (toolRsp.getCategory().isEmpty()) {
+				toolRsp.setCategoryI18nName("");
+			}else {
+				Set<String> categoryIds = Sets.newHashSet();
+				categoryIds.addAll(toolRsp.getCategory());
+
+				List<String> i18nName = Lists.newArrayList();
+				for (String categoryId : categoryIds) {
+					i18nName.add(categoryMap.get(categoryId));
+				}
+				toolRsp.setCategoryI18nName(Joiner.on(",").join(i18nName));
+			}
+
+			if (!StringUtils.isBlank(toolRsp.getImageResourceId())) {
+				DeviceInfo deviceInfo = remoteTerminalService.getById(toolRsp.getImageResourceId());
+				toolRsp.setDeviceName(deviceInfo.getName());
+			}
+
+			List<ToolFile> files = new ArrayList<>();
+			for (Integer fileId : LocalStringUtil.strToList(toolRsp.getFiles())) {
+				files.add(toolFileMap.get(fileId));
+			}
+			toolRsp.setToolFiles(files);
+		}
+		return PageUtil.getListResult(toolRespList, page, toolIPage.getTotal());
 	}
 
 	public void validateToolAttachment(List<ToolFile> toolFileList) {

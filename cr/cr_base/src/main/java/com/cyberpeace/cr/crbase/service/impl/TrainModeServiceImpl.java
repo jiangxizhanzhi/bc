@@ -9,11 +9,14 @@ import com.cyberpeace.cr.crbase.controller.req.TrainModeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainModeRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainModeMapper;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.TrainingModeService;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -37,6 +40,14 @@ public class TrainModeServiceImpl implements TrainingModeService {
 
     @Autowired
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    @Qualifier("businessTemplateHandler")
+    private BusinessTemplateHandler businessTemplateHandler;
+
+    @Autowired
+    private LocalSceneService localSceneService;
+
 
     @Override
     public ListRsp<TrainModeRsp> list(TrainModeListReq listReq) {
@@ -108,7 +119,41 @@ public class TrainModeServiceImpl implements TrainingModeService {
 
                 trainModeReqList.removeAll(competitionList);
                 for (TrainModeReq trainModeReq : trainModeReqList) {
-
+                    // 校验是否符合删除条件
+//                    BusinessTemplateHandler handler = businessTemplateHandler
+//                            .getHandler(businessTemplate.getBusinessType());
+//                    handler.checkBeforeDel(businessTemplate);
+//                    // 先删除测试场景
+//                    if (StringUtils.isNotBlank(businessTemplate.getLocalSceneId())) {
+//                        LocalScene localScene = localSceneService
+//                                .getById(businessTemplate.getLocalSceneId());
+//
+//                        if (localScene != null
+//                                && StringUtils.isNotBlank(localScene.getMpSceneId())) {
+//                            try {
+//                                localSceneService.deleteRemoteScene(localScene);
+//                            } catch (Exception e) {
+//                                log.error(String.format(
+//                                        "failed to delete test scene [%s] of business template [%s]",
+//                                        localScene.getMpSceneId(),
+//                                        businessTemplate.getResourceId()));
+//                                // do nothing
+//                            }
+//                        }
+//                        // 删除测试场景的localScene
+//                        localSceneService.removeById(businessTemplate.getLocalSceneId());
+//                    }
+//                    // 删除中台拓扑
+//                    try {
+//                        localSceneService.deleteTopo(businessTemplate.getTopoId());
+//                    } catch (Exception e) {
+//                        log.error(String.format(
+//                                "failed to delete topo [%s] of business template [%s]",
+//                                businessTemplate.getTopoId(), businessTemplate.getResourceId()));
+//                        // do nothing
+//                    }
+//                    // 删除模板相关其他
+//                    handler.deleteTemplateRelated(businessTemplate);
                 }
 
             }

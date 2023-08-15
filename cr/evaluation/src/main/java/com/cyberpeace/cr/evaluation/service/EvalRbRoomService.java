@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
@@ -31,4 +32,14 @@ public interface EvalRbRoomService extends IService<RbRoom> {
 
 
     StudentScoreRsp getStudentScore(String resource_id, String user_hash);
+
+    /**
+     * 修改评估
+     */
+    void submitEvaluation( String taskSubmitId, Integer score, String detail, Integer reason,
+                          Integer evaluateStatus, String currentUserId);
+
+
+
+    void updateStudentScore(StudentScoreReq studentScoreReq);
 }

@@ -8,8 +8,14 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class SubmitEvaluationReq {
+
+	@NotNull
+	@ApiModelProperty(value = "测评模版ID")
+	private String evalTemplateId;
 
 	@ApiModelProperty(value = "房间ID")
 	private String roomId;

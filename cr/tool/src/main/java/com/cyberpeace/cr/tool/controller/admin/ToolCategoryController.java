@@ -1,14 +1,5 @@
 package com.cyberpeace.cr.tool.controller.admin;
 
-import javax.validation.constraints.NotBlank;
-
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -20,10 +11,17 @@ import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.res.ToolCategoryRsp;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
 
 @Api(tags = "后台-资源管理-工具库-分类管理")
 @RestController
@@ -36,7 +34,7 @@ public class ToolCategoryController {
 
 	@GetMapping("/list")
 	@ApiOperation("工具分类列表")
-	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS}, logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS, MenuConstant.WEB_CR_TOOL_TOOLS}, logical = Logical.OR)
 	public BaseRsp<ListRsp<ToolCategory>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
 		ListRsp<ToolCategory> courseInfos = toolCategoryService.selectPage(pageReqBase);

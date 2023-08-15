@@ -32,7 +32,7 @@
     <select id="selectByRoomIdAndUserIds" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *
         from cr_eval_tain_task
-        where room_id = #{roomId}
+        where eval_template_id = #{missionTemplateId}
         and user_id in
         <foreach collection="userIds" item="userId" separator="," open="(" close=")">
             #{userId}
@@ -42,8 +42,8 @@
 
     <select id="selectByRoomIdAndUserId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *
-        from cr_eval_tain_task
-        where room_id = #{roomId}
+        from cr_eval_train_task
+        where room_id = #{missionTemplateId}
         and user_id = #{userId}
     </select>
 

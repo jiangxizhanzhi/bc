@@ -49,9 +49,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -256,9 +254,13 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		taskQuery.eq(CrTask::getRoomId, evalTemplate.getRedVsBlueId());
 		List<CrTask> taskList = crTaskMapper.selectList(taskQuery);
 		List<CrEvalTrainTask> crEvalTrainList = BeanUtils.deepCopyList(taskList, CrEvalTrainTask.class);
+		Map<String, String> taskIdMatchMap = new HashMap<>();
 		for (CrEvalTrainTask item : crEvalTrainList) {
 			item.setEvalTemplateId(evalTemplateId);
-			item.setResourceId(null);
+			String resourceId = item.getResourceId();
+			String taskId = IDGeneratorUtil.getID();
+			taskIdMatchMap.put(resourceId,taskId);
+			item.setResourceId(taskId);
 		}
 
 		LambdaQueryWrapper<CrTaskSubmit> taskSubmitQuery = new LambdaQueryWrapper<>();
@@ -267,6 +269,8 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		List<CrEvalTaskSubmit> evalTaskSubmitList = BeanUtils.deepCopyList(taskSubmitList, CrEvalTaskSubmit.class);
 		for (CrEvalTaskSubmit item : evalTaskSubmitList) {
 			item.setEvalTemplateId(evalTemplateId);
+			String newTaskId = taskIdMatchMap.get(item.getTaskId());
+			item.setTaskId(newTaskId);
 			item.setResourceId(null);
 		}
 

@@ -4,9 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
+import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
+import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
@@ -35,10 +38,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -127,6 +127,18 @@ public class TrainEvalController {
         });
 
         return new BaseRsp(PageUtil.getListResult(data));
+    }
+
+    @ApiOperation("提交任务的人工评估")
+    @PostMapping("/submit_evaluation")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
+            value = "学员评分") @RequestBody SubmitEvaluationReq req) {
+        evalRbRoomService.submitEvaluation(req.getSubmitId(),
+                req.getScore(), req.getDetail(),
+                req.getReason(), req.getEvaluateStatus(),
+                UserInfoContext.getUserContext().getUserId());
+        return new BaseRsp<>();
     }
 
     /**
@@ -219,12 +231,20 @@ public class TrainEvalController {
     public BaseRsp<StudentScoreRsp> getStudentScore(
             @ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
             @ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
-//		rbRoomService.checkRefereePermission(resource_id,
-//				UserInfoContext.getUserContext().getUserId());
+
         //todo  修改得分
         StudentScoreRsp studentScoreRsp = evalRbRoomService.getStudentScore(resource_id, user_hash);
-
         return new BaseRsp<>(studentScoreRsp);
+    }
+
+    @ApiOperation("提交学员评分")
+    @PostMapping("/student_score")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    public BaseRsp updateStudentScore(@ApiParam(name = "studentScoreReq",
+            value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
+        evalRbRoomService.updateStudentScore(studentScoreReq);
+
+        return new BaseRsp<>();
     }
 
     /**
@@ -239,13 +259,8 @@ public class TrainEvalController {
     public BaseRsp<JSONObject> getRbScoreProgress(
             @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
-//		String userId = UserInfoContext.getUserContext().getUserId();
-//		if (CrRole.RbRoleGroup.RED_BLUE.equals(role_type)) {
-//			return new BaseRsp(getRbScoreProgress_6(resource_id, roleType, userId));
-//		}
-//		permissionCheckTeacherOrGroup(resource_id, userId, roleType);
         //todo  修改得分
-        JSONObject data = rbRoomScoreService.getRbScoreProgress(resource_id, roleType);
+        JSONObject data = evalRbRoomService.getRbScoreProgress(resource_id, roleType);
         return new BaseRsp(data);
     }
 

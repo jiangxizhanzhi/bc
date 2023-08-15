@@ -6,33 +6,47 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
+import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrFlagTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrScore;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TrainingScore;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
+import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalScoreMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTaskSubmitMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTrainTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
+import com.cyberpeace.cr.redvsblue.service.context.RoleUserIds;
+import com.cyberpeace.cr.redvsblue.service.context.TimeData;
+import com.cyberpeace.cr.redvsblue.service.context.mission.ObjWithTime;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -50,6 +64,9 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
     private CrScoreService crScoreService;
 
     @Autowired
+    private CrEvalScoreMapper crEvalScoreMapper;
+
+    @Autowired
     private CrEvalTaskSubmitMapper crEvalTaskSubmitMapper;
 
     @Autowired
@@ -57,6 +74,19 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
 
     @Autowired
     private MissionMapper missionMapper;
+
+    @Autowired
+    private CrEvalTrainTaskMapper evalTrainTaskMapper;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
+    private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
+            CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
+            CrTaskLog.ActionCode.MAN_SUCCESS.getCode(), CrTaskSubmit.EvaluateStatus.FAIL.getCode(),
+            CrTaskLog.ActionCode.MAN_FAILURE.getCode(),
+            CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
+            CrTaskLog.ActionCode.MAN_REJECT.getCode());
 
     @Override
     public IPage<MissionEvaluationContext> getRbMissionEvaluationList(EvalMissionEvaluationBo missionEvaluationQuery) {
@@ -146,28 +176,94 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
         return rankMap;
     }
 
+    @Autowired
+    private RbRoomScoreService rbRoomScoreService;
+
+    @Autowired
+    private CrRoleService crRoleService;
 
     @Override
     public JSONObject getRbScoreProgress(String roomId, Integer roleType) {
-        return null;
+        // 获取实例实际开始时间和理论结束时间
+        TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
+
+        RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, roleType));
+        List<Integer> yData = getScoreProgress(timeData, roomId, roleUserIds);
+
+        JSONObject json = new JSONObject();
+        json.put("status", timeData.getStatus());
+        json.put("time_stamp", System.currentTimeMillis() / 1000);
+        json.put("start_time", timeData.getStartTime());
+        json.put("running", timeData.getRunning());
+        json.put("total_score", timeData.getAccumulatedValue());
+        json.put("x_data", timeData.getXData());
+        json.put("y_data", yData);
+        return json;
+    }
+
+    private List<Integer> getScoreProgress(TimeData timeData, String roomId, RoleUserIds roleUserIds) {
+        // 一次取出所有用户的得分纪录
+        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
+        List<ObjWithTime> taskTimes = crEvalTrainTasks.stream().map(taskContext -> {
+            ObjWithTime objWithTime = new ObjWithTime();
+            objWithTime.setTime(taskContext.getLastSubmitTime());
+            objWithTime.setValue(taskContext.getScore());
+            return objWithTime;
+        }).collect(Collectors.toList());
+        return timeData.calculateCountByTime(taskTimes);
+    }
+
+    private RoleUserIds getRoleInfo(RoleQuery roleQuery) {
+        List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+
+        if (crRoles == null) {
+            log.error("role does not exist！roleType=[{}]", roleQuery.getRoleGroup());
+            throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+        }
+        List<String> roleIds = Lists.newArrayList();
+        List<String> userIds = Lists.newArrayList();
+
+        for (CrRole crRole : crRoles) {
+            roleIds.add(crRole.getResourceId());
+            userIds.addAll(crRole.getUserIdList());
+        }
+        RoleUserIds roleUserIds = new RoleUserIds();
+        roleUserIds.setRoleIds(roleIds);
+        roleUserIds.setUserIds(userIds);
+
+        return roleUserIds;
     }
 
     @Override
     public StudentScoreRsp getStudentScore(String resource_id, String user_hash) {
 
-        List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(resource_id, user_hash);
+        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserId(resource_id, user_hash);
+        List<TaskContext> taskContextList = new ArrayList<>();
+        List<String> missionIds = new ArrayList<>();
+        for (CrEvalTrainTask task : crEvalTrainTasks) {
+            missionIds.add(task.getMissionId());
+        }
+        if (missionIds.size() > 0) {
+            List<Mission> missionList = missionMapper.batchSelect(missionIds);
+            Map<String, Mission> missionMap = Maps.newHashMap();
+            for (Mission mission : missionList) {
+                missionMap.put(mission.getResourceId(), mission);
+            }
+
+            for (CrEvalTrainTask task : crEvalTrainTasks) {
+                TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
+                taskContext.setMission(missionMap.get(task.getMissionId()));
+                taskContextList.add(taskContext);
+            }
+        }
 
         Integer getScoreObjective = 0;
-
         Integer getScoreSubjective = 0;
-
         Integer sumScoreObjective = 0;
-
         Integer sumScoreSubjective = 0;
-
         TrainingScore trainingScore = new TrainingScore();
 
-        for (TaskContext task : taskList) {
+        for (TaskContext task : taskContextList) {
             Mission mission = task.getMission();
             int score = task.getScore() == null ? 0 : task.getScore();
             if (mission.isObjective()) {
@@ -197,5 +293,122 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
         studentScoreRsp.setTrainingScore(trainingScore);
 
         return studentScoreRsp;
+    }
+
+    @Override
+    public void submitEvaluation(String taskSubmitId, Integer score, String detail, Integer reason, Integer evaluateStatus, String currentUserId) {
+        // check permission??
+        CrEvalTaskSubmit crEvalTaskSubmit = crEvalTaskSubmitMapper.selectById(taskSubmitId);
+        if (crEvalTaskSubmit == null) {
+            throw new BusinessException(CrBusinessErrorCode.MISSION_SUBMIT_NOT_FOUND);
+        }
+        if (crEvalTaskSubmit.getEvaluateStatus().equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
+            throw new BusinessException(CrBusinessErrorCode.TASK_REJECTED);
+        }
+
+        CrEvalTrainTask crEvalTrainTask = evalTrainTaskMapper.selectById(crEvalTaskSubmit.getTaskId());
+        if (crEvalTrainTask == null) {
+            log.error("task does not exist！roleId=[{}]", crEvalTaskSubmit.getTaskId());
+            throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
+        }
+
+        // 驳回??
+        if (score == null) {
+            score = 0;
+        }
+        // 校验分数
+        if (crEvalTaskSubmit.getMissionScore() < score || score < 0) {
+            throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+        }
+
+        crEvalTaskSubmit.setScore(score);
+        crEvalTaskSubmit.setDetail(detail);
+        crEvalTaskSubmit.setReason(reason);
+        crEvalTaskSubmit.setEvaluateStatus(evaluateStatus);
+        crEvalTaskSubmit.setEvaluatorId(currentUserId);
+        crEvalTaskSubmit.setEvaluateTime(new Date());
+
+        crEvalTrainTask.setStatus(evaluateStatus);
+        crEvalTrainTask.setScore(score);
+
+        CrTaskLog evaluationLog = CrTaskLog.builder().roomId(crEvalTaskSubmit.getRoomId())
+                .missionId(crEvalTrainTask.getMissionId())
+                .actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
+                .build();
+
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                evalTrainTaskMapper.updateById(crEvalTrainTask);
+                crEvalTaskSubmitMapper.updateById(crEvalTaskSubmit);
+                evaluationLog.setTaskId(crEvalTrainTask.getResourceId());
+            }
+        });
+
+    }
+
+    @Override
+    public void updateStudentScore(StudentScoreReq studentScoreReq) {
+        Integer trainingPercentage = Integer
+                .parseInt(studentScoreReq.getTrainingPercentage().replace("%", ""));
+        if (trainingPercentage < CrScore.ScoreValue.MIN_PERCENTAGE.getCode()
+                || trainingPercentage > CrScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
+            log.error("trainingPercentage out of range！value=[{}]", trainingPercentage);
+            throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+        }
+        Integer abilityPercentage = Integer
+                .parseInt(studentScoreReq.getAbilityPercentage().replace("%", ""));
+        if (abilityPercentage < CrScore.ScoreValue.MIN_PERCENTAGE.getCode()
+                || abilityPercentage > CrScore.ScoreValue.MAX_PERCENTAGE.getCode()) {
+            log.error("abilityPercentage out of range！value=[{}]", abilityPercentage);
+            throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+        }
+        if (abilityPercentage + trainingPercentage != CrScore.ScoreValue.SUM_OF_PERCENTAGE_INT
+                .getCode()) {
+            log.error("sumPercentage is wrong！value=[{}],sum=[{}]",
+                    abilityPercentage + trainingPercentage,
+                    CrScore.ScoreValue.SUM_OF_PERCENTAGE_INT.getCode());
+            throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+
+        }
+
+        List<Integer> abilityScoreList = JsonUtil
+                .toJsonObjectArray(studentScoreReq.getAbilityScore(), Integer.class);
+
+        if (abilityScoreList.size() != CrScore.ScoreValue.ABILITY_SCORE_NUM.getCode()) {
+            log.error("abilityScoreListSize is wrong！value=[{}],size=[{}]", abilityScoreList.size(),
+                    CrScore.ScoreValue.ABILITY_SCORE_NUM.getCode());
+            throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+        }
+        IntSummaryStatistics stats = abilityScoreList.stream().mapToInt((x) -> x)
+                .summaryStatistics();
+        if (stats.getMax() > CrScore.ScoreValue.MAX_ABILITY_SCORE_VALUE.getCode()
+                || stats.getMin() < CrScore.ScoreValue.MIN_ABILITY_SCORE_VALUE.getCode()) {
+            log.error("abilityScore out of range！maxValue=[{}],minValue=[{}]", stats.getMax(),
+                    stats.getMin());
+            throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+        }
+
+
+        CrEvalScore oldScore = crEvalScoreMapper.getByRoomIdAndUser(studentScoreReq.getRoomId(), studentScoreReq.getUser());
+        CrEvalScore newCrScore = getTeamScoreFromReq(studentScoreReq);
+
+        if (oldScore == null) {
+            crEvalScoreMapper.insert(newCrScore);
+        } else {
+            newCrScore.setResourceId(oldScore.getResourceId());
+            crEvalScoreMapper.updateById(newCrScore);
+        }
+    }
+
+    private CrEvalScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
+        CrEvalScore crScore = BeanUtils.copy(studentScoreReq, CrEvalScore.class);
+        crScore.setRoomId(studentScoreReq.getRoomId());
+        crScore.setUserId(studentScoreReq.getUser());
+        crScore.setSkillScore(studentScoreReq.getAbilityScore());
+        crScore.setSkillPercentage(studentScoreReq.getAbilityPercentage());
+        crScore.setRoomId(studentScoreReq.getRoomId());
+        return crScore;
     }
 }

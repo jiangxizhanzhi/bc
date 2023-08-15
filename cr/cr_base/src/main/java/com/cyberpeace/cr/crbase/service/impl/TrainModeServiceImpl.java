@@ -76,8 +76,9 @@ public class TrainModeServiceImpl implements TrainingModeService {
 
         } else if (trainingTypeList.contains(listReq.getType())) {
             // 红蓝/团队/单兵其中一种
+            Integer businessType = TrainModeRsp.getBusinessTypeByTrainType(listReq.getType());
             Integer trainCategoryType = TrainModeRsp.TrainCategoryType.getTrainCategoryByTrainType(listReq.getType());
-            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(listReq.toPageParam(), listReq.getPattern(), Collections.singletonList(listReq.getType()), Collections.singletonList(trainCategoryType));
+            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(listReq.toPageParam(), listReq.getPattern(), Collections.singletonList(businessType), Collections.singletonList(trainCategoryType));
             return PageUtil.getListResult(trainModeRspPage);
         } else if (TrainModeRsp.TrainType.COURSE.getCode().equals(listReq.getType())) {
             // 攻防实训

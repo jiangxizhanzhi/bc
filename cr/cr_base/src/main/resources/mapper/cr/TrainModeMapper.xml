@@ -21,7 +21,7 @@
         </if>
         <where>
             <if test="businessType != null and businessType.size() > 0">
-                and business_type IN
+                and a.business_type IN
                 <foreach collection="businessType" open="(" close=")" item="type" separator=",">
                     #{type}
                 </foreach>

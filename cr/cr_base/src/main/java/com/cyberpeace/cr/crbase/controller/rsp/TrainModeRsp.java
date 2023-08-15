@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
@@ -91,5 +92,26 @@ public class TrainModeRsp implements Serializable {
         }
     }
 
+    /**
+     * 根据TrainType获取BusinessType (表cr_business_template字段businessType=3时,对应表cr_team_template字段train_category)
+     */
+    public static Integer getBusinessTypeByTrainType(Integer code) {
+        if (TrainType.TRAINING_SINGLE.code.equals(code)) {
+            return BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode();
+        }
+        if (TrainType.TRAINING_TEAM_RED.code.equals(code)) {
+            return  BusinessTemplate.BusinessType.TRAINING_TEAM.getCode();
+        }
+        if (TrainType.TRAINING_TEAM_BLUE.code.equals(code)) {
+            return  BusinessTemplate.BusinessType.TRAINING_TEAM.getCode();
+        }
+        if (TrainType.RED_VS_BLUE.code.equals(code)) {
+            return  BusinessTemplate.BusinessType.RED_VS_BLUE.getCode();
+        }
+        if (TrainType.TRAINING_DAILY.code.equals(code)) {
+            return  BusinessTemplate.BusinessType.TRAINING_TEAM.getCode();
+        }
+        return null;
+    }
 }
 

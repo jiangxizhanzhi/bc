@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,6 +35,7 @@ import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
@@ -161,7 +161,7 @@ public class AdminClassroomController {
 	public BaseRsp<Classroom>
 			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
 
-		//约定临时计划的id需要转换
+		// 约定临时计划的id需要转换
 		if (TrainPlan.TASK_SET_ID.equals(classroomReq.getTrainPlanId())) {
 			classroomReq.setTrainPlanId("");
 		}
@@ -394,13 +394,6 @@ public class AdminClassroomController {
 		FileUtil.setResponse(new File(filePath), true, response);
 
 		return new BaseRsp<>(Boolean.TRUE);
-	}
-
-	@ApiOperation("实验报告导出")
-	@GetMapping("/report/export")
-	public void exportReport(HttpServletResponse httpServletResponse,@RequestParam("classroom_id") String classroomId){
-		String destPdfPath = classroomService.exportReport(classroomId);
-		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
 	}
 
 }

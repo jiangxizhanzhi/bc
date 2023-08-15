@@ -136,7 +136,5 @@ public interface ClassroomService extends IService<Classroom> {
 
 	List<String> selectIdsByPlanIds(List<String> ids);
 
-	String exportReport(String classroomId);
-
 	List<String> selectTempTaskIdsByUser(UserInfo userContext);
 }

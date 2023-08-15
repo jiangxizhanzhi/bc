@@ -3,22 +3,9 @@ package com.cyberpeace.common.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
-import com.vladsch.flexmark.ext.emoji.EmojiExtension;
-import com.vladsch.flexmark.ext.emoji.EmojiImageType;
-import com.vladsch.flexmark.ext.emoji.EmojiShortcutType;
-import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
-import com.vladsch.flexmark.ext.gfm.tasklist.TaskListExtension;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
-import com.vladsch.flexmark.ext.toc.TocExtension;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.ast.Document;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -27,7 +14,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Sets;
-
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -105,12 +91,12 @@ public class MdUtil {
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
 	 * @param mdFile md文件
-     * @param content md内容
+	 * @param content md内容
 	 * @return
 	 */
 	public static String dumpMarkdownImages(File mdFile, String content) {
-        String img = new File(mdFile.getParentFile().getAbsolutePath(), "img").getAbsolutePath();
-        FileUtil.mkdirs(img);
+		String img = new File(mdFile.getParentFile().getAbsolutePath(), "img").getAbsolutePath();
+		FileUtil.mkdirs(img);
 
 		// 匹配文件路径
 		String withOutCode = filterCodeContent(content);
@@ -128,44 +114,43 @@ public class MdUtil {
 		// 文件路径替换
 		for (String imagePath : matchStrSet) {
 			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
-            String realPath = getRealPath(imagePath);
-            File source = new File(realPath);
-            if (!source.exists()) {
-                throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
-            }
+			String realPath = getRealPath(imagePath);
+			File source = new File(realPath);
+			if (!source.exists()) {
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
+			}
 
-            File dist = new File(img, source.getName());
-            if (!dist.exists()) {
-                FileUtil.copyFile(source.getAbsolutePath(), dist.getAbsolutePath(), false);
-            }
+			File dist = new File(img, source.getName());
+			if (!dist.exists()) {
+				FileUtil.copyFile(source.getAbsolutePath(), dist.getAbsolutePath(), false);
+			}
 
-            content = content.replace(imagePath, "img/" + dist.getName());
+			content = content.replace(imagePath, "img/" + dist.getName());
 		}
 
 		return content;
 	}
 
-    private static String getRealPath(String fileUrl) {
+	private static String getRealPath(String fileUrl) {
 
-        String LOCAL_PREFIX = ConfigUtil.getContextProperty("cr.local.file.prefix");
-        String LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
+		String LOCAL_PREFIX = ConfigUtil.getContextProperty("cr.local.file.prefix");
+		String LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
 
-        if (StringUtils.isNotBlank(fileUrl)) {
-            if (fileUrl.startsWith(LOCAL_PARENT_PATH)) {
-                return fileUrl;
-            }
+		if (StringUtils.isNotBlank(fileUrl)) {
+			if (fileUrl.startsWith(LOCAL_PARENT_PATH)) {
+				return fileUrl;
+			}
 
-            if (fileUrl.startsWith(LOCAL_PREFIX)) {
-                return fileUrl.replace(LOCAL_PREFIX, LOCAL_PARENT_PATH + File.separator);
-            }
+			if (fileUrl.startsWith(LOCAL_PREFIX)) {
+				return fileUrl.replace(LOCAL_PREFIX, LOCAL_PARENT_PATH + File.separator);
+			}
 
-            return LOCAL_PARENT_PATH + File.separator + fileUrl;
+			return LOCAL_PARENT_PATH + File.separator + fileUrl;
 
-        }
+		}
 
-        return fileUrl;
-    }
-
+		return fileUrl;
+	}
 
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
@@ -216,7 +201,8 @@ public class MdUtil {
 	 * @param handoutPath
 	 * @return
 	 */
-	private static String replaceImgContent(String markdownPath, Set<String> matchStrSet, String handoutPath) {
+	private static String replaceImgContent(String markdownPath, Set<String> matchStrSet,
+			String handoutPath) {
 
 		// 获取当前文件夹
 		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
@@ -241,11 +227,9 @@ public class MdUtil {
 			}
 			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 		}
-		
+
 		return content;
 	}
-
-	
 
 	/**
 	 * markdown内容过滤掉代码块
@@ -253,11 +237,13 @@ public class MdUtil {
 	 */
 	public static String filterCodeContent(String content) {
 		// 匹配```代码块```
-		List<String> matchStr = LocalStringUtil.getMatchStr(content, PatternConstant.MULTIPLE_CODING_BLOCK);
+		List<String> matchStr = LocalStringUtil.getMatchStr(content,
+				PatternConstant.MULTIPLE_CODING_BLOCK);
 		String tmp = LocalStringUtil.replaceToBlank(content, matchStr);
 
 		// 匹配`代码块`｜``代码块``
-		List<String> singleMatchStr = LocalStringUtil.getMatchStr(tmp, PatternConstant.SINGLE_CODING_BLOCK);
+		List<String> singleMatchStr = LocalStringUtil.getMatchStr(tmp,
+				PatternConstant.SINGLE_CODING_BLOCK);
 		return LocalStringUtil.replaceToBlank(tmp, singleMatchStr);
 	}
 
@@ -280,16 +266,19 @@ public class MdUtil {
 		} else {
 			if (!coding) {
 				String compareContent = content;
-				//当前行内存在字符 ` 时，开始裁剪
+				// 当前行内存在字符 ` 时，开始裁剪
 				while (content.contains(CommonConstant.MD_CODING_BLOCK_ONE)) {
 					int firstIndex = content.indexOf(CommonConstant.MD_CODING_BLOCK_ONE, 0);
-					compareContent = compareContent.replaceFirst(CommonConstant.MD_CODING_BLOCK_ONE, "");
-					//存在两个`符号时，进行裁剪，否则跳出循环
+					compareContent = compareContent.replaceFirst(CommonConstant.MD_CODING_BLOCK_ONE,
+							"");
+					// 存在两个`符号时，进行裁剪，否则跳出循环
 					if (compareContent.contains(CommonConstant.MD_CODING_BLOCK_ONE)) {
-						int secondIndex = compareContent.indexOf(CommonConstant.MD_CODING_BLOCK_ONE, 0);
-						content = content.replace(content.substring(firstIndex,secondIndex + 2),"");
+						int secondIndex = compareContent.indexOf(CommonConstant.MD_CODING_BLOCK_ONE,
+								0);
+						content = content.replace(content.substring(firstIndex, secondIndex + 2),
+								"");
 						compareContent = content;
-					}else {
+					} else {
 						break;
 					}
 				}
@@ -312,9 +301,9 @@ public class MdUtil {
 
 	public static File saveAsFileWriter(String content, String savefile) {
 		FileWriter fwriter = null;
-        File file = new File(savefile);
+		File file = new File(savefile);
 		try {
-			if(!file.exists()) {
+			if (!file.exists()) {
 				file.createNewFile();
 			}
 			fwriter = new FileWriter(savefile);
@@ -329,46 +318,6 @@ public class MdUtil {
 				ex.printStackTrace();
 			}
 		}
-        return file;
+		return file;
 	}
-
-	/**
-	 * 将入参Markdown文档转换为html文档
-	 */
-	public static String mdToHtmlForApiDoc(String md) {
-		// 按需添加扩展
-		MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS, Arrays.asList(
-				// 自定义扩展，为<pre>标签添加line-numbers的class，用于prism库代码左侧行号展示
-//				CodePreLineNumbersExtension.create(),
-				AutolinkExtension.create(),
-				EmojiExtension.create(),
-				StrikethroughExtension.create(),
-				TaskListExtension.create(),
-				TablesExtension.create(),
-				TocExtension.create()
-		))
-													 // set GitHub table parsing options
-													 .set(TablesExtension.WITH_CAPTION, false)
-													 .set(TablesExtension.COLUMN_SPANS, false)
-													 .set(TablesExtension.MIN_HEADER_ROWS, 1)
-													 .set(TablesExtension.MAX_HEADER_ROWS, 1)
-													 .set(TablesExtension.APPEND_MISSING_COLUMNS, true)
-													 .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
-													 .set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true)
-													 // setup emoji shortcut options
-													 // uncomment and change to your image directory for emoji images if you have it setup
-//				.set(EmojiExtension.ROOT_IMAGE_PATH, emojiInstallDirectory())
-													 .set(EmojiExtension.USE_SHORTCUT_TYPE, EmojiShortcutType.GITHUB)
-													 .set(EmojiExtension.USE_IMAGE_TYPE, EmojiImageType.IMAGE_ONLY);
-		return mdToHtml(md, options);
-	}
-	private static String mdToHtml(String md, MutableDataSet options) {
-		// uncomment to convert soft-breaks to hard breaks
-//		options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
-		Parser parser = Parser.builder(options).build();
-		HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-		Document document = parser.parse(md);
-		return renderer.render(document);
-	}
-
 }

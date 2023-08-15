@@ -1,11 +1,24 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
-import com.cyberpeace.common.constant.*;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.ExcelHeader;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -24,7 +37,6 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
-import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -36,7 +48,10 @@ import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.*;
+import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
+import com.cyberpeace.oj.ojbase.constant.ClassroomType;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -57,20 +72,8 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -156,8 +159,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
-//		classroomValidateHandler.validateClassroomLessonExist(classroom.getLessonId(),
-//				classroom.getOrganizationId());
+		// classroomValidateHandler.validateClassroomLessonExist(classroom.getLessonId(),
+		// classroom.getOrganizationId());
 		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
 				classroom.getEndTime());
 		classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
@@ -206,7 +209,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
 				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
 		// 唯一索引 课时+组织id唯一性校验
-//		classroomValidateHandler.validateClassroomLessonExistExcludeItself(classroom.getLessonId(), classroom.getOrganizationId(), classroom);
+		// classroomValidateHandler.validateClassroomLessonExistExcludeItself(classroom.getLessonId(),
+		// classroom.getOrganizationId(), classroom);
 
 		// 课程权限校验
 		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
@@ -344,8 +348,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				// 课程表数据查询
 				List<Classroom> classrooms = classroomMapper.selectListByCourse(publicCourseIds,
 						roomListQuery);
-				classroomBos = StreamApiUtils.map(classrooms,
-						classroom -> entityToBo(classroom));
+				classroomBos = StreamApiUtils.map(classrooms, classroom -> entityToBo(classroom));
 			}
 		}
 
@@ -512,7 +515,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 过滤已删除组织关联数据
 		List<String> orgs = remoteOrganizationService.childrenList("", true);
-		classrooms = classrooms.stream().filter(classroom -> orgs.contains(classroom.getOrganizationId())).collect(Collectors.toList());
+		classrooms = classrooms.stream()
+				.filter(classroom -> orgs.contains(classroom.getOrganizationId()))
+				.collect(Collectors.toList());
 
 		return StreamApiUtils.map(classrooms, classroom -> entityToBo(classroom));
 	}
@@ -631,8 +636,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 排名数据统计
 		List<UserNoteScoreBo> topNum = statisticTopNum(evaluates, notes, 20);
-		return ClassroomStatisticBo.builder().signInfo(signInfoBo)
-				.top20(topNum).gradeDistribution(distributionBo).build();
+		return ClassroomStatisticBo.builder().signInfo(signInfoBo).top20(topNum)
+				.gradeDistribution(distributionBo).build();
 	}
 
 	/**
@@ -1034,7 +1039,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Override
 	public IPage<ClassroomBo> selectPage(ClassRoomPageQuery roomListQuery,
-										 AuthContext authContext) {
+			AuthContext authContext) {
 		Page page = roomListQuery.toPageParam();
 		IPage<Classroom> result = classroomMapper.page(page, roomListQuery.getUserId(),
 				roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg());
@@ -1064,8 +1069,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Map<String, String> orgMap = Maps.newHashMap();
 		List<Course> changeCourses = Lists.newArrayList();
 
-		//sheetData的第0个位置对应源文件的第二行，因此监测行数全部都要相差2
-		for (int i = CommonConstant.TWO; i < sheetData.size()+CommonConstant.TWO; i++) {
+		// sheetData的第0个位置对应源文件的第二行，因此监测行数全部都要相差2
+		for (int i = CommonConstant.TWO; i < sheetData.size() + CommonConstant.TWO; i++) {
 
 			// 空数据不管
 			if (!validateEmptyData(sheetData.get(i - CommonConstant.TWO), i)) {
@@ -1081,8 +1086,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.TWO), userInfo, i,
 					orgMap);
-			validateOrgUnderClassroomTime(trainPlan.getResourceId(), classroom.getOrganizationId(), classroom.getStartTime(),
-					classroom.getEndTime(), i);
+			validateOrgUnderClassroomTime(trainPlan.getResourceId(), classroom.getOrganizationId(),
+					classroom.getStartTime(), classroom.getEndTime(), i);
 
 			Course course = courseMapper.selectById(classroom.getCourseId());
 			if (null == course) {
@@ -1125,128 +1130,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	@Override
-	public String exportReport(String classroomId){
-		String basePath = AttachmentPath.LESSON_HTML_TEMPLATE.getDesc();
-		// 基本数据校验
-		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
-		CourseLesson courseLesson = courseValidateHandler
-				.validateLessonExist(classroom.getLessonId(), false);
-		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
-		//课程名称
-		String initLessonName = lesson.getName();
-		String lessonName = initLessonName.replace(" ","");
-		String htmlPath = basePath + File.separator + lessonName;
-		//清理目录
-		File file = new File(htmlPath);
-		if (file.exists()) {
-			FileUtil.deleteDir(file);
-		}
-		FileUtil.mkdirs(htmlPath);
-
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-				true);
-		Map<String, String> orgMap = remoteOrganizationService
-				.childrenMap(classroom.getOrganizationId(), true);
-		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
-		List<ClassroomReportBo> data = StreamApiUtils.map(userInfos,
-				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
-		//过滤实验报告为空的情况
-		List<ClassroomReportBo> filterData = StreamApiUtils.filter(data, classroomReportBo -> classroomReportBo.getContent()!=null);
-		if (filterData.size() == 0){
-			throw new BusinessException(OjBusinessErrorCode.NO_REPORT_CAN_BE_EXPORTED);
-		}
-		for(ClassroomReportBo classroomReportBo: filterData){
-			String initPersonName =
-					classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + initLessonName + ClassroomExportReportConstant.SESSION_REPORT.getMsg();
-			String personName = initPersonName.replace(" ","");
-			String baseClassroomPath = htmlPath + File.separator + personName;
-			JSONObject jsonObject = new JSONObject();
-			String mdContent = classroomReportBo.getContent();
-			//处理图片
-			List<String> strList = LocalStringUtil.getMatchStr(mdContent, PatternConstant.MARKDOWN_IMAGE);
-			for (String str : strList) {
-				String imgUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
-				try {
-					//判断图片真实类型
-					String realType = ImgUtil.imgType(new File(imgUrl));
-					if (realType.equals("webp")) {
-						//图片真实类型为webp时，html转pdf图片无法显示，需要将图片转成jpg
-						String imgName = EnumUtils.getEnumDescByCode(AttachmentPath.UPLOAD_IMAGE.getCode(), AttachmentPath.class) + IDGeneratorUtil.getID() + ".jpg";
-						ImgUtil.webpToJpg(imgUrl, imgName);
-						imgUrl = imgName;
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				imgUrl = "http://" + SystemPropUtil.getProp("BC_HOST") + imgUrl;
-				log.info("imgUrl:" + imgUrl);
-				mdContent = mdContent.replace(str, String.format(MdConstant.ONLY_URL_IMG, imgUrl));
-			}
-			//附件
-			List<String> urlList = LocalStringUtil.getMatchStr(mdContent, PatternConstant.MARKDOWN_URL);
-			int j = 0;
-			for (String str: urlList) {
-				j++;
-				String fileUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
-				if (!new File(fileUrl).isFile()) {
-					continue;
-				}
-				FileUtil.copyFile(fileUrl,
-						baseClassroomPath + File.separator + j + "." + FileUtil.getFileSuffix(fileUrl), false);
-				fileUrl = j + "." + FileUtil.getFileSuffix(fileUrl);
-				mdContent = mdContent.replace(str, fileUrl);
-			}
-			String reportContent = MdUtil.mdToHtmlForApiDoc(mdContent);
-			//实验报告
-			jsonObject.put("report_content", reportContent);
-			//是否通过
-			if (classroomReportBo.getPassed() == null) {
-				jsonObject.put("passed", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
-			} else if (classroomReportBo.getPassed()) {
-				jsonObject.put("passed", ClassroomExportReportConstant.YES.getMsg());
-			} else {
-				jsonObject.put("passed", ClassroomExportReportConstant.NO.getMsg());
-			}
-			//评分
-			if (classroomReportBo.getScore() == null) {
-				jsonObject.put("score", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
-			} else {
-				jsonObject.put("score", classroomReportBo.getScore().toString());
-			}
-			//评语
-			if (classroomReportBo.getEvaluateComment() == null) {
-				jsonObject.put("evaluate_comment", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
-			} else {
-				jsonObject.put("evaluate_comment", classroomReportBo.getEvaluateComment());
-			}
-			jsonObject.put("report_content_title", ClassroomExportReportConstant.LABORATORY_REPORT_TITLE.getMsg());
-			jsonObject.put("score_title", ClassroomExportReportConstant.SCORE_TITLE.getMsg());
-			jsonObject.put("passed_title", ClassroomExportReportConstant.PASSED_TITLE.getMsg());
-			jsonObject.put("evaluate_comment_title", ClassroomExportReportConstant.EVALUATE_COMMENT_TITLE.getMsg());
-			String destHtmlPath = baseClassroomPath + File.separator + personName + ".html";
-			HtmlToPdfUtil.getHtmlTemplateInstance(jsonObject, HtmlTemplateEnum.LESSON, destHtmlPath);
-			// 在同目录下生成pdf
-			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
-					+ "pdf";
-			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
-			File pdfFile = new File(destPdfPath);
-			pdfFile.renameTo(new File(baseClassroomPath + File.separator + initPersonName + ".pdf"));
-			//删除html文件
-			FileUtil.deleteDir(new File(destHtmlPath));
-			File baseClassroomFile = new File(baseClassroomPath);
-			baseClassroomFile.renameTo(new File(htmlPath + File.separator + initPersonName));
-		}
-		File zipFile = new File(ZipUtil.toZip(htmlPath));
-		String zipPath = basePath + File.separator + initLessonName + ClassroomExportReportConstant.LABORATORY_REPORT_SUFFIX.getMsg();
-		zipFile.renameTo(new File(zipPath));
-		FileUtil.deleteDir(new File(htmlPath));
-		return zipPath;
-	}
-
-	@Override
 	public List<String> selectTempTaskIdsByUser(UserInfo userContext) {
 
-		return classroomMapper.selectTempTaskIdsByUser(userContext.getUserId(),userContext.isSuperuser()) ;
+		return classroomMapper.selectTempTaskIdsByUser(userContext.getUserId(),
+				userContext.isSuperuser());
 	}
 
 	/**
@@ -1255,8 +1142,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @param classrooms 起止时间
 	 */
 	private void validateTime(List<Classroom> classrooms) {
-		for(Classroom cls:classrooms){
-			if(cls.getStartTime().equals(cls.getEndTime()) || cls.getStartTime().after(cls.getEndTime())){
+		for (Classroom cls : classrooms) {
+			if (cls.getStartTime().equals(cls.getEndTime())
+					|| cls.getStartTime().after(cls.getEndTime())) {
 				throw new BusinessException(OjBusinessErrorCode.END_GT_START_TIME);
 			}
 		}
@@ -1351,7 +1239,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Override
 	public void exportTrainPlan(UserInfo userInfo, String filePath) {
 		// 数据查询及转换
-		String userId =userInfo.isSuperuser() ? CommonConstant.EMPTY_STRING : userInfo.getUserId();
+		String userId = userInfo.isSuperuser() ? CommonConstant.EMPTY_STRING : userInfo.getUserId();
 
 		List<TrainPlan> trainPlanList = trainPlanMapper.selectByUser(userId);
 
@@ -1366,7 +1254,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 *  会按照页面逻辑查询计划下的课程任务
 	 * */
 	private List<TrainPlanExportBo> planToExportBo(String userId, TrainPlan trainPlan) {
-		List<Classroom> classroomList = classroomMapper.selectByUserPlan(userId,trainPlan.getResourceId());
+		List<Classroom> classroomList = classroomMapper.selectByUserPlan(userId,
+				trainPlan.getResourceId());
 		return StreamApiUtils.map(classroomList,
 				classroom -> classRoomToExportBo(trainPlan.getName(), classroom));
 	}
@@ -1462,13 +1351,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
 		}
 
-		//查询当前用户有权限的所有课程
+		// 查询当前用户有权限的所有课程
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
 
-
-		if(!authCourseIds.contains(courseId)){
+		if (!authCourseIds.contains(courseId)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NO_PERMISSION, rowIndex);
 		}
 
@@ -1544,7 +1432,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @param endTime
 	 * @param rowIndex
 	 */
-	private void validateOrgUnderClassroomTime(String planId, String orgId, Date startTime, Date endTime, int rowIndex) {
+	private void validateOrgUnderClassroomTime(String planId, String orgId, Date startTime,
+			Date endTime, int rowIndex) {
 		List<Classroom> classrooms = classroomMapper.selectByOrgId(orgId);
 		for (Classroom classroom : classrooms) {
 			if (planId.equals(classroom.getTrainPlanId())) {
@@ -1559,7 +1448,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 					&& endTime.equals(classroom.getEndTime());
 
 			if (startIn || endIn || startAndEndEq) {
-				throw new BusinessException(OjBusinessErrorCode.IMPORT_CLASS_IN_SCHEDULES, rowIndex);
+				throw new BusinessException(OjBusinessErrorCode.IMPORT_CLASS_IN_SCHEDULES,
+						rowIndex);
 			}
 		}
 	}

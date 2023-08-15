@@ -9,13 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.constant.*;
-import com.cyberpeace.common.model.ExtractBase;
-import com.cyberpeace.cs.controller.CommonController;
-import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -27,6 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -52,6 +48,9 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.controller.CommonController;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -202,9 +201,9 @@ public class MissionController {
 
 	@ApiOperation("前台更新任务")
 	@PutMapping("/mission_update")
-	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
-	public BaseRsp<?>
-			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
+	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
+			logical = Logical.OR)
+	public BaseRsp<?> updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		missionModifyReq.validate();
 		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
@@ -220,7 +219,8 @@ public class MissionController {
 
 	@ApiOperation("获取任务类型")
 	@GetMapping("/missions/get_category/")
-	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
+	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
+			logical = Logical.OR)
 	public BaseRsp<List<MissionCategory>> listCategories() {
 
 		List<MissionCategory> categories = missionService.listCategories();
@@ -362,51 +362,6 @@ public class MissionController {
 		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService
 				.pageMissionTemplate(pageReq);
 		return new BaseRsp(missionTemplateRspListRsp);
-	}
-
-	@ApiOperation("解析md文件数据")
-	@PostMapping("/parse/md")
-	public BaseRsp<ExtractBase> parseMDFile(@RequestParam("missionId") String missionId,
-							  @RequestParam("md") MultipartFile md){
-		String realContent = null;
-		String suffix = FileUtil.getFileSuffix(md.getOriginalFilename());
-		suffix = suffix.toLowerCase();
-		if (!suffix.equals(FileSunffixConstant.ZIP.getDesc()) && !suffix.equals(FileSunffixConstant.RAR.getDesc())){
-			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE,
-					"" + FileSunffixConstant.ZIP.getDesc() + "," + FileSunffixConstant.RAR.getDesc());
-		}
-		// 文件上传至服务器 原始文件地址存储
-		String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
-				missionId);
-		AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, md);
-		ExtractBase extractBase = BeanUtils.copy(attachmentBo, ExtractBase.class);
-		// 获取md文件存储地址
-		String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(), missionId);
-		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
-		// 计算要解压的文件地址
-		String unzipPath = handoutPath + FileUtil.getFileName(realPath, false);
-
-		//校验是zip还是rar
-		String mdFilePath = null;
-		if (suffix.equals(FileSunffixConstant.ZIP.getDesc())) {
-			ZipUtil.unzipToDest(realPath, unzipPath);
-		}else {
-			RarUtil.unrarToDest(realPath, unzipPath);
-		}
-		// 获取解压的rar文件
-		mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
-		if (StringUtils.isBlank(mdFilePath)) {
-			extractBase.setIsExtract(Boolean.FALSE);
-			return new BaseRsp<>(extractBase);
-		}
-		// md文件内容
-		String content = MdUtil.parseMarkdown(mdFilePath);
-		realContent = utilService.replaceMarkdownFile(content);
-		extractBase.setContent(realContent);
-		extractBase.setIsExtract(Boolean.TRUE);
-		return new BaseRsp<>(extractBase);
-
-
 	}
 
 	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {

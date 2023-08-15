@@ -8,7 +8,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
-import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
@@ -19,6 +18,7 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.evaluation.controller.req.EvalMissionEvaluationListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.TrainEvalService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
@@ -229,7 +229,7 @@ public class TrainEvalController {
     @GetMapping("/student_score")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<StudentScoreRsp> getStudentScore(
-            @ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
+            @ApiParam(name = "resource_id", value = "评估id", required = true) String resource_id,
             @ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
 
         //todo  修改得分
@@ -240,8 +240,7 @@ public class TrainEvalController {
     @ApiOperation("提交学员评分")
     @PostMapping("/student_score")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-    public BaseRsp updateStudentScore(@ApiParam(name = "studentScoreReq",
-            value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
+    public BaseRsp updateStudentScore(@ApiParam(name = "studentScoreReq",value = "学员评分") @RequestBody EvalStudentScoreReq studentScoreReq) {
         evalRbRoomService.updateStudentScore(studentScoreReq);
 
         return new BaseRsp<>();
@@ -296,11 +295,11 @@ public class TrainEvalController {
     @GetMapping("/team_mission_progress")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<JSONObject> getRbMissionProgress(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-            @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
-//		String userId = UserInfoContext.getUserContext().getUserId();
-//		permissionCheckTeacherOrGroup(resource_id, userId, roleType);
-        JSONObject data = rbRoomScoreService.getRbMissionProgress(resource_id, roleType);
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id")String evalTemplateId,
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam("resource_id")String resourceId,
+            @ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam("role_type")Integer roleType) {
+
+        JSONObject data = evalRbRoomService.getRbMissionProgress(evalTemplateId,resourceId, roleType);
         return new BaseRsp(data);
     }
 

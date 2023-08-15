@@ -6,13 +6,14 @@
 
     <insert id="batchInsert" >
         insert into cr_eval_train_task
-        (resource_id, `status`, mission_id, user_id,
-        release_time, room_id, role_id, business_type, mission_template_id, eval_template_id, create_time, update_time)
+        (resource_id, `status`, mission_id, user_id, user_answer,
+        release_time, room_id, role_id, business_type, mission_template_id, eval_template_id,
+        last_submit_time, task_start_time, score, create_time, update_time)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.resourceId}, #{item.status}, #{item.missionId}, #{item.userId},
+            (#{item.resourceId}, #{item.status}, #{item.missionId}, #{item.userId},#{item.userAnswer},
             #{item.releaseTime}, #{item.roomId},#{item.roleId}, #{item.businessType}, #{item.missionTemplateId},#{item.evalTemplateId},
-            now(),now())
+            #{item.lastSubmitTime}, #{item.taskStartTime}, #{item.score}, now(),now())
         </foreach>
     </insert>
 
@@ -23,16 +24,10 @@
         and user_id = #{userId}
     </select>
 
-    <select id="selectByRoomId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
-        select *
-        from cr_eval_tain_task
-        where room_id = #{roomId}
-    </select>
-
     <select id="selectByRoomIdAndUserIds" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *
         from cr_eval_tain_task
-        where eval_template_id = #{missionTemplateId}
+        where eval_template_id = #{evalTemplateId}
         and user_id in
         <foreach collection="userIds" item="userId" separator="," open="(" close=")">
             #{userId}
@@ -43,7 +38,7 @@
     <select id="selectByRoomIdAndUserId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *
         from cr_eval_train_task
-        where room_id = #{missionTemplateId}
+        where eval_template_id = #{evalTemplateId}
         and user_id = #{userId}
     </select>
 
@@ -51,7 +46,7 @@
     <select id="selectByRoomIdAndUserIdsAndStatusList" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *
         from cr_task
-        where room_id = #{roomId}
+        where eval_template_id = #{evalTemplateId}
         and user_id in
         <foreach collection="userIds" item="userId" separator="," open="(" close=")">
             #{userId}

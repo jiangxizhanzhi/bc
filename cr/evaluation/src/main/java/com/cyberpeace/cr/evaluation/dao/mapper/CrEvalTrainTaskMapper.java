@@ -19,13 +19,12 @@ public interface CrEvalTrainTaskMapper extends BaseMapper<CrEvalTrainTask> {
 
 	CrEvalTrainTask selectByUserIdAndMissionId(@Param("userId") String userId, @Param("missionId") String missionId);
 
-	List<CrEvalTrainTask> selectByRoomId(@Param("roomId") String roomId);
+	List<CrEvalTrainTask> selectByRoomIdAndUserIds(@Param("evalTemplateId")String evalTemplateId,@Param("userIds") List<String> userIds);
 
-	List<CrEvalTrainTask> selectByRoomIdAndUserIds(@Param("missionTemplateId")String missionTemplateId,@Param("userIds") List<String> userIds);
+	List<CrEvalTrainTask> selectByRoomIdAndUserId(@Param("evalTemplateId")String evalTemplateId,@Param("userId") String userId);
 
-	List<CrEvalTrainTask> selectByRoomIdAndUserId(@Param("missionTemplateId")String missionTemplateId,@Param("userId") String userId);
-
-	List<CrEvalTrainTask> selectByRoomIdAndUserIdsAndStatusList(@Param("roomId")String roomId,@Param("userIds") List<String> userIds,
+	List<CrEvalTrainTask> selectByRoomIdAndUserIdsAndStatusList(@Param("evalTemplateId")String evalTemplateId,@Param("userIds") List<String> userIds,
 																@Param("statusList") List<Integer> statusList);
+
 
 }

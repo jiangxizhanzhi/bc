@@ -1,50 +1,48 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.List;
-
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.service.CrSceneService;
-import com.cyberpeace.cr.redvsblue.controller.req.AllStartFlowRsp;
-import com.cyberpeace.cr.redvsblue.controller.req.FlowListQuery;
-import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
-import com.cyberpeace.cs.service.context.scene.ElementFlow;
-import com.cyberpeace.integratation.model.scene.FlowOpsContext;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.tomcat.jni.Local;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
+import com.cyberpeace.cr.redvsblue.controller.req.AllStartFlowRsp;
+import com.cyberpeace.cr.redvsblue.controller.req.FlowListQuery;
+import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.scene.ElementFlow;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 import com.cyberpeace.integratation.service.RemoteLogService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "红蓝对抗场景")
 @Slf4j
@@ -91,7 +89,7 @@ public class RbSceneController {
 
 	@ApiOperation("查看场景")
 	@GetMapping("")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE,MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
 	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "room_id", value = "红蓝对抗实例id", required = true) String room_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {

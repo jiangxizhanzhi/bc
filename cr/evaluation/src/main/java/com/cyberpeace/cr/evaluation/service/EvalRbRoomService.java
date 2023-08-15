@@ -3,9 +3,9 @@ package com.cyberpeace.cr.evaluation.service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
+import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 
@@ -40,6 +40,15 @@ public interface EvalRbRoomService extends IService<RbRoom> {
                           Integer evaluateStatus, String currentUserId);
 
 
+    void updateStudentScore(EvalStudentScoreReq studentScoreReq);
 
-    void updateStudentScore(StudentScoreReq studentScoreReq);
+
+    /**
+     * 获取任务进度信息
+     * @param roomId 红蓝对抗实例id
+     * @param roleType 角色类型
+     * @return 任务进度数据
+     */
+    JSONObject getRbMissionProgress(String evalTemplateId,String roomId, Integer roleType);
+
 }

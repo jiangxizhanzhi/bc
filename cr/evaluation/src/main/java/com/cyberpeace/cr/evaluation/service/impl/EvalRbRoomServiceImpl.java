@@ -12,18 +12,17 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
-import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TrainingScore;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
@@ -58,9 +57,6 @@ import java.util.stream.Collectors;
 public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> implements EvalRbRoomService {
 
     @Autowired
-    private CrTaskService crTaskService;
-
-    @Autowired
     private CrScoreService crScoreService;
 
     @Autowired
@@ -80,6 +76,12 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
 
     @Autowired
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private RbRoomScoreService rbRoomScoreService;
+
+    @Autowired
+    private CrRoleService crRoleService;
 
     private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
             CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
@@ -176,17 +178,10 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
         return rankMap;
     }
 
-    @Autowired
-    private RbRoomScoreService rbRoomScoreService;
-
-    @Autowired
-    private CrRoleService crRoleService;
-
     @Override
     public JSONObject getRbScoreProgress(String roomId, Integer roleType) {
         // 获取实例实际开始时间和理论结束时间
         TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
-
         RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, roleType));
         List<Integer> yData = getScoreProgress(timeData, roomId, roleUserIds);
 
@@ -281,15 +276,14 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
         trainingScore.setGetScoreSubjective(getScoreSubjective);
         trainingScore.setGetScoreObjective(getScoreObjective);
 
-        CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_hash);
+        CrEvalScore evalScore = crEvalScoreMapper.getByRoomIdAndUser(resource_id, user_hash);
         StudentScoreRsp studentScoreRsp = new StudentScoreRsp();
-        if (crScore != null) {
-            studentScoreRsp = BeanUtils.copy(crScore, StudentScoreRsp.class);
+        if (evalScore != null) {
+            studentScoreRsp = BeanUtils.copy(evalScore, StudentScoreRsp.class);
             studentScoreRsp.setAbilityScore(
-                    JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class));
-            studentScoreRsp.setAbilityPercentage(crScore.getSkillPercentage());
+                    JsonUtil.toJsonObjectArray(evalScore.getSkillScore(), Integer.class));
+            studentScoreRsp.setAbilityPercentage(evalScore.getSkillPercentage());
         }
-
         studentScoreRsp.setTrainingScore(trainingScore);
 
         return studentScoreRsp;
@@ -349,7 +343,7 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
     }
 
     @Override
-    public void updateStudentScore(StudentScoreReq studentScoreReq) {
+    public void updateStudentScore(EvalStudentScoreReq studentScoreReq) {
         Integer trainingPercentage = Integer
                 .parseInt(studentScoreReq.getTrainingPercentage().replace("%", ""));
         if (trainingPercentage < CrScore.ScoreValue.MIN_PERCENTAGE.getCode()
@@ -390,8 +384,7 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
             throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
         }
 
-
-        CrEvalScore oldScore = crEvalScoreMapper.getByRoomIdAndUser(studentScoreReq.getRoomId(), studentScoreReq.getUser());
+        CrEvalScore oldScore = crEvalScoreMapper.getByRoomIdAndUser(studentScoreReq.getEvalTemplateId(), studentScoreReq.getUser());
         CrEvalScore newCrScore = getTeamScoreFromReq(studentScoreReq);
 
         if (oldScore == null) {
@@ -402,13 +395,63 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
         }
     }
 
-    private CrEvalScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
+    private CrEvalScore getTeamScoreFromReq(EvalStudentScoreReq studentScoreReq) {
         CrEvalScore crScore = BeanUtils.copy(studentScoreReq, CrEvalScore.class);
         crScore.setRoomId(studentScoreReq.getRoomId());
         crScore.setUserId(studentScoreReq.getUser());
         crScore.setSkillScore(studentScoreReq.getAbilityScore());
         crScore.setSkillPercentage(studentScoreReq.getAbilityPercentage());
-        crScore.setRoomId(studentScoreReq.getRoomId());
+        crScore.setEvalTemplateId(studentScoreReq.getEvalTemplateId());
         return crScore;
     }
+
+    @Override
+    public JSONObject getRbMissionProgress(String evalTemplateId,String roomId, Integer roleType) {
+
+        // 获取角色组数据
+        RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
+
+        // 获取实例实际开始时间和理论结束时间
+        TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
+
+        // 获取组内已下发的任务
+        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIds(evalTemplateId, roleUserIds.getUserIds());
+
+        List<ObjWithTime> taskTimes = crEvalTrainTasks.stream().map(taskContext -> {
+            ObjWithTime objWithTime = new ObjWithTime();
+            objWithTime.setTime(taskContext.getReleaseTime());
+
+            return objWithTime;
+        }).collect(Collectors.toList());
+
+        List<Integer> totalProgressYData = timeData.calculateCountByTime(taskTimes);
+
+        // 获取已完成的任务
+        List<CrEvalTrainTask> finishedTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
+
+        List<ObjWithTime> finishedTimes = finishedTasks.stream().map(crTask -> {
+            ObjWithTime objWithTime = new ObjWithTime();
+            objWithTime.setTime(crTask.getLastSubmitTime());
+            return objWithTime;
+        }).collect(Collectors.toList());
+
+        List<Integer> completedProgressYData = timeData.calculateCountByTime(finishedTimes);
+
+        JSONObject json = new JSONObject();
+
+        json.put("total_mission", crEvalTrainTasks.size());
+        json.put("completed_mission", finishedTasks.size());
+        json.put("total_members", roleUserIds.getUserIds().size());
+        json.put("x_data", timeData.getXData());
+        json.put("y_total", totalProgressYData);
+        json.put("y_complete", completedProgressYData);
+
+        return json;
+    }
+
+    private RoleUserIds getRoleInfo(String roomId, Integer roleType) {
+        return getRoleInfo(new RoleQuery(roomId, roleType));
+    }
+
+
 }

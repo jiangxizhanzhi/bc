@@ -18,4 +18,6 @@ public interface CrEvalScoreMapper extends BaseMapper<CrEvalScore> {
     void batchInsert(@Param("list") List<CrEvalScore> list);
 
     CrEvalScore getByRoomIdAndUser(@Param("evalTemplateId") String evalTemplateId,@Param("userId") String userId);
+
+    List<CrEvalScore> getByRoomIdAndUsers(@Param("roomId") String roomId,@Param("user") List<String> users);
 }

@@ -11,6 +11,8 @@ import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.CrTrainActionService;
@@ -75,6 +77,12 @@ public class RbRoomUserController {
 
 	@Autowired
 	private CrTrainActionService crTrainActionService;
+
+	@Autowired
+	private CrTaskLogMapper crTaskLogMapper;
+
+	@Autowired
+	private CrTaskMapper crTaskMapper;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -306,7 +314,19 @@ public class RbRoomUserController {
 			@ApiParam(value = "下发任务ID", required = true) @RequestParam("mission_id") String missionId) {
 		TaskContext crTask = crTaskService.getByMissionAndUser(missionId, UserInfoContext.getUserContext().getUserId());
 		Mission mission = missionService.getById(crTask.getMissionId());
-
+		RbRoom rbRoom = rbRoomService.getById(crTask.getRoomId());
+		// 新增红蓝队员进
+		CrTask task = crTaskMapper.selectByUserIdAndMissionId(UserInfoContext.getUserContext().getUserId(), missionId);
+		// 添加用户是否为红蓝队员的校验
+		if(null != rbRoom ){
+			CrTaskLog crTaskLog = new CrTaskLog();
+			crTaskLog.setActionCode(CrTaskLog.ActionCode.START_ANSWER.getCode());
+			crTaskLog.setMissionId(missionId);
+			crTaskLog.setRoomId(crTask.getRoomId());
+			crTaskLog.setUserId(UserInfoContext.getUserContext().getUserId());
+			crTaskLog.setTaskId(crTask.getResourceId());
+			crTaskLogMapper.insert(crTaskLog);
+		}
 		return new BaseRsp<>(
 				crTrainActionService.saveTeamAction(
 						crTask.getRoomId(),

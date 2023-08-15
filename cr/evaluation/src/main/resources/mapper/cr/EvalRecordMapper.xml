@@ -28,4 +28,7 @@
 
 
     </select>
+    <select id="getScoreByRole" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalRecord">
+        select user_ids from cr_role where room_id = #{roomId}
+    </select>
 </mapper>

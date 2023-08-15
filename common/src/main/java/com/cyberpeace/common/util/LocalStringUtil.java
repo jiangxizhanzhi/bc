@@ -258,4 +258,18 @@ public class LocalStringUtil {
 
 		return newPattern;
 	}
+
+	public static String getValueFromBracket(String str, String leftBracket, String rightBracket) {
+		String pattern = "" + leftBracket + "(.*?)" + rightBracket + "$";
+		Pattern regex = Pattern.compile(pattern);
+		Matcher match = regex.matcher(str);
+
+		if (match.find()) {
+			int oldValue = Integer.parseInt(match.group(1));
+			int newValue = oldValue + 1;
+			return leftBracket + newValue + rightBracket;
+		}
+
+		return "";
+	}
 }

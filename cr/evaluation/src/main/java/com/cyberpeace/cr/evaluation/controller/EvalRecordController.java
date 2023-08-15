@@ -7,10 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.bo.RecordDumpLoadBo;
@@ -45,6 +42,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.cyberpeace.cr.crbase.utils.FileMD5Checksum.getFileMD5Checksum;
 
@@ -254,8 +253,16 @@ public class EvalRecordController {
         LambdaQueryWrapper<EvalRecord> queryRecord = new LambdaQueryWrapper<>();
         queryRecord.eq(EvalRecord::getName, recordName);
         EvalRecord evalRecord = evalRecordService.getBaseMapper().selectOne(queryRecord);
+
+        LambdaQueryWrapper<EvalRecord> query = new LambdaQueryWrapper<>();
+        recordName += "（1）";
+        query.eq(EvalRecord::getName, recordName);
+        EvalRecord evalRecordAddOne = evalRecordService.getBaseMapper().selectOne(query);
         if(null == evalRecord){
             BeanUtils.copyProperties(recordDumpLoadBo, evalRecord);
+        } else if (null != evalRecordAddOne){
+            recordName = LocalStringUtil.getValueFromBracket(recordName, "（", "）");
+
         } else {
             recordName += "（1）";
         }

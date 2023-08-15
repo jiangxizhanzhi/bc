@@ -18,4 +18,6 @@ public interface EvalRecordMapper extends BaseMapper<EvalRecord> {
 
 
     EvalRecord seletTemplateById(String roomId);
+
+    EvalRecord getScoreByRole(@Param("roomId") String roomId);
 }

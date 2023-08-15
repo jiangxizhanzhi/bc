@@ -46,6 +46,19 @@
         from cr_task_log
         where mission_id = #{missionId}
     </select>
+    <select id="getReleaseIdsByRoomIdAndUsers" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTaskLog">
+        <bind name="RELEASE" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@SUBMIT.code"/>
+        <bind name="START_ANSWER" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@START_ANSWER.code"/>
+        select count(resource_id)  as actionCode,create_time
+        from cr_task_log
+        where room_id = #{room_id}
+        and user_id in
+        <foreach collection="users" index="index" separator="," item="user" open="(" close=")">
+            #{user}
+        </foreach>
+        and (action_code =${RELEASE} or action_code =${START_ANSWER})
+        group by create_time,user_id
+    </select>
 
     <insert id="batchInsert" parameterType="com.cyberpeace.cr.crbase.dao.entity.CrTaskLog">
         insert into cr_task_log

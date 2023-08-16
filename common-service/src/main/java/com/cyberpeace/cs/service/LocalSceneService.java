@@ -1,7 +1,5 @@
 package com.cyberpeace.cs.service;
 
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -10,6 +8,8 @@ import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import com.cyberpeace.cs.service.context.SceneFlowContext;
 import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
+
+import java.util.Map;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -164,4 +164,39 @@ public interface LocalSceneService extends IService<LocalScene> {
 	Boolean unpauseScene(LocalScene localScene);
 
     Boolean createNode(String localSceneId, String nodeId);
+
+	/**
+	 * 启动单个节点
+	 *
+	 * @param mpSceneId 国会议员场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean}
+	 */
+	Boolean startNode(String mpSceneId, String nodeId);
+
+	/**
+	 * 单个节点关机
+	 *
+	 * @param mpSceneId 国会议员场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean}
+	 */
+	Boolean stopNode(String mpSceneId, String nodeId);
+
+	/**
+	 * 场景重启
+	 *
+	 * @param mpSceneId 场景id
+	 * @return {@code Boolean}
+	 */
+	Boolean restartScene(String mpSceneId);
+
+	/**
+	 * 通过mp scene id获取localscene
+	 *
+	 * @param mpSceneId 议员scenen id
+	 * @return {@code LocalScene}
+	 */
+	LocalScene getOrExceptionByMpSceneId(String mpSceneId);
+
 }

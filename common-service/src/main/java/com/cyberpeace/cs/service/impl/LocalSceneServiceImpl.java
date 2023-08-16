@@ -1,13 +1,5 @@
 package com.cyberpeace.cs.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -37,8 +29,14 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author SN
@@ -549,4 +547,39 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 		return true;
 	}
+
+	@Override
+	public Boolean startNode(String mpSceneId, String nodeId) {
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
+		NodeOpsContext context = getNodeOpsContext(localScene, nodeId);
+		return remoteSceneService.startNode(context);
+	}
+
+	@Override
+	public Boolean stopNode(String mpSceneId, String nodeId) {
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
+		NodeOpsContext context = getNodeOpsContext(localScene, nodeId);
+		return remoteSceneService.stopNode(context);
+	}
+
+	@Override
+	public Boolean restartScene(String mpSceneId) {
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
+
+		NodeOpsContext nodeOpsContext = new NodeOpsContext();
+		nodeOpsContext.setId(localScene.getMpSceneId());
+		nodeOpsContext.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,localScene.getBusinessInstanceId());
+		return remoteSceneService.restartScene(nodeOpsContext);
+	}
+
+	@Override
+	public LocalScene getOrExceptionByMpSceneId(String mpSceneId) {
+		LocalScene localScene = localSceneMapper.selectBySceneId(mpSceneId);
+		if (null == localScene) {
+			log.error("cannot find a local_scene by scene_id: [{}]", mpSceneId);
+			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
+		}
+		return localScene;
+	}
+
 }

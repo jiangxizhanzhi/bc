@@ -200,4 +200,22 @@ public interface RemoteSceneService {
 	void replaceAccessIpExe(JSONObject elementPorts);
 
     Boolean createNode(NodeOpsContext nodeOpsContext);
+
+	/**
+	 * 启动单个节点
+	 *
+	 * @param context 上下文
+	 */
+	Boolean startNode(NodeOpsContext context);
+
+	/**
+	 * 单个节点关机
+	 *
+	 * @param context 上下文
+	 * @return {@code Boolean}
+	 */
+	Boolean stopNode(NodeOpsContext context);
+
+	Boolean restartScene(NodeOpsContext nodeOpsContext);
+
 }

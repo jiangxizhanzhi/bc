@@ -96,6 +96,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_DUMP_URL;
 
+	private String NODE_START_URL;
+
+	private String NODE_STOP_URL;
+
+	private String SCENE_RESTART_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -164,6 +170,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		CONNECTION_STATUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.connection.status");
 
+		NODE_START_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.start");
+		NODE_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.stop");
+		SCENE_RESTART_URL=MP_HOST + ConfigUtil.getContextProperty("mp.scene.restart");
+
 	}
 
 	@Override
@@ -208,6 +218,21 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean restartNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RESTART_URL, nodeOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean startNode(NodeOpsContext context) {
+		return HttpClientUtil.post(NODE_START_URL, context, Boolean.class);
+	}
+
+	@Override
+	public Boolean stopNode(NodeOpsContext context) {
+		return HttpClientUtil.post(NODE_STOP_URL, context, Boolean.class);
+	}
+
+	@Override
+	public Boolean restartScene(NodeOpsContext context) {
+		return HttpClientUtil.post(SCENE_RESTART_URL, context, Boolean.class);
 	}
 
 	@Override

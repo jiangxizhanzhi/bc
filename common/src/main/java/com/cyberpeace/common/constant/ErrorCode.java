@@ -158,4 +158,7 @@ public interface ErrorCode {
 
 	/** 图片后缀不为jpg */
 	String ILLEGAL_PICTURE_SUFFIX = "100051";
+
+	/** 未知场景 */
+	String UNKNOWN_SCENE = "100052";
 }

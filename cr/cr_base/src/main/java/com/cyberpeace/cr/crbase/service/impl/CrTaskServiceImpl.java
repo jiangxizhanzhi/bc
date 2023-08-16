@@ -578,19 +578,19 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		rankQueryWrapper.orderByAsc(CrTaskSubmit::getCreateTime);
 		List<CrTaskSubmit> crTaskSubmits = crTaskSubmitMapper.selectList(rankQueryWrapper);
 
-		Map<String, MissionEvaluationContext> rankMap = new HashMap<>();
-		List<String> rankList = Arrays.asList("一血", "二血", "三血");
-		List<Double> rankScoreList = Arrays.asList(0.2, 0.1, 0.05);
-		for (int i = 0; i < crTaskSubmits.size(); i++) {
-			CrTaskSubmit crTaskSubmit = crTaskSubmits.get(i);
+		Map<String, MissionEvaluationContext> rankMap = Maps.newHashMap();
+		List<String> rankList = new ArrayList<>(Arrays.asList("一血", "二血", "三血"));
+		List<Double> rankScoreList = new ArrayList<>(Arrays.asList(0.2, 0.1, 0.05));
+		for (CrTaskSubmit crTaskSubmit : crTaskSubmits) {
 			MissionEvaluationContext rankContext = new MissionEvaluationContext();
 			rankContext.setResourceId(crTaskSubmit.getResourceId());
-			if (i < 3) {
-				BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.get(i))
+			boolean submitStatus = CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(crTaskSubmit.getEvaluateStatus());
+			if (rankList.size() > 0 && submitStatus) {
+				BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.remove(0))
 						.setScale(0, BigDecimal.ROUND_HALF_UP);
 				rankContext.setRankScore(Integer.parseInt(rankScore.toString()));
-				rankContext.setRank(rankList.get(i));
-			} else {
+				rankContext.setRank(rankList.remove(0));
+			}else {
 				rankContext.setRankScore(0);
 				rankContext.setRank("否");
 			}

@@ -53,6 +53,8 @@ public class MissionEvaluationContext {
 
 	private Date createTime;
 
+	private String evalTemplateId;
+
 	private String rank;
 
 	private Integer rankScore;

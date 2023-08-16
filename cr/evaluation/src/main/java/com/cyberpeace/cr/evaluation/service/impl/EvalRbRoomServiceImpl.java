@@ -151,23 +151,24 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
     private Map<String, MissionEvaluationContext> getRankContextMap(IPage<MissionEvaluationContext> data) {
 
         LambdaQueryWrapper<CrEvalTaskSubmit> rankQueryWrapper = new LambdaQueryWrapper<>();
-        rankQueryWrapper.eq(CrEvalTaskSubmit::getRoomId, data.getRecords().get(0).getRoomId());
+        rankQueryWrapper.eq(CrEvalTaskSubmit::getEvalTemplateId, data.getRecords().get(0).getEvalTemplateId());
         rankQueryWrapper.orderByAsc(CrEvalTaskSubmit::getCreateTime);
         List<CrEvalTaskSubmit> crTaskSubmits = crEvalTaskSubmitMapper.selectList(rankQueryWrapper);
 
-        Map<String, MissionEvaluationContext> rankMap = new HashMap<>();
-        List<String> rankList = Arrays.asList("一血", "二血", "三血");
-        List<Double> rankScoreList = Arrays.asList(0.2, 0.1, 0.05);
-        for (int i = 0; i < crTaskSubmits.size(); i++) {
-            CrEvalTaskSubmit crTaskSubmit = crTaskSubmits.get(i);
+        Map<String, MissionEvaluationContext> rankMap = Maps.newHashMap();
+        List<String> rankList = new ArrayList<>(Arrays.asList("一血", "二血", "三血"));
+        List<Double> rankScoreList = new ArrayList<>(Arrays.asList(0.2, 0.1, 0.05));
+
+        for (CrEvalTaskSubmit crTaskSubmit : crTaskSubmits) {
             MissionEvaluationContext rankContext = new MissionEvaluationContext();
             rankContext.setResourceId(crTaskSubmit.getResourceId());
-            if (i < 3) {
-                BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.get(i))
+            boolean submitStatus = CrEvalTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(crTaskSubmit.getEvaluateStatus());
+            if (rankList.size() > 0 && submitStatus) {
+                BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.remove(0))
                         .setScale(0, BigDecimal.ROUND_HALF_UP);
                 rankContext.setRankScore(Integer.parseInt(rankScore.toString()));
-                rankContext.setRank(rankList.get(i));
-            } else {
+                rankContext.setRank(rankList.remove(0));
+            }else {
                 rankContext.setRankScore(0);
                 rankContext.setRank("否");
             }

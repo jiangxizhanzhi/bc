@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.controller;
+package com.cyberpeace.oj.course.controller.admin;
 
 
 import com.cyberpeace.common.constant.MenuConstant;
@@ -7,7 +7,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.TrainModeDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.TrainModeListReq;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainModeRsp;
-import com.cyberpeace.cr.crbase.service.TrainingModeService;
+import com.cyberpeace.oj.course.service.TrainingModeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "后台-练习资源管理-对抗练习")
 @RestController
 @Slf4j
-@RequestMapping("/cr/training_mode")
+@RequestMapping("/oj/training_mode")
 public class TrainModeController {
 
 @Autowired
@@ -36,6 +36,6 @@ private TrainingModeService trainingModeService;
     @RequiresPermissions(MenuConstant.CMS_TRAINING_MODE)
     @DeleteMapping("")
     public BaseRsp<Boolean> delete(@RequestBody TrainModeDeleteReq req) {
-        return new BaseRsp<>(trainingModeService.delete(req.getTrainModeReqList()));
+        return new BaseRsp<>(trainingModeService.delete(req.getList()));
     }
 }

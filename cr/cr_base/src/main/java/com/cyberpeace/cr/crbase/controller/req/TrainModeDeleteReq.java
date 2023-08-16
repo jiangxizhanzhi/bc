@@ -10,6 +10,6 @@ import java.util.List;
 public class TrainModeDeleteReq implements Serializable {
 
     @ApiModelProperty("TrainModeReq列表")
-   private List<TrainModeReq> trainModeReqList;
+   private List<TrainModeReq> list;
 
 }

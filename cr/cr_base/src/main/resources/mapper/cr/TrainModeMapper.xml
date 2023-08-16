@@ -10,16 +10,13 @@
         cr_business_template a
         LEFT JOIN cr_team_template b
         ON a.resource_id=b.business_template_id
-        AND b.train_category IN
-        <if test="trainCategory != null and trainCategory != ''">
-            <foreach collection="trainCategory" open="(" close=")" item="category" separator=",">
-                #{category}
-            </foreach>
-        </if>
-        <if test="trainCategory == null and trainCategory == ''">
-            ('')
-        </if>
         <where>
+            <if test="trainCategory != null and trainCategory.size() > 0">
+                AND b.train_category IN
+                <foreach collection="trainCategory" open="(" close=")" item="category" separator=",">
+                    #{category}
+                </foreach>
+            </if>
             <if test="businessType != null and businessType.size() > 0">
                 and a.business_type IN
                 <foreach collection="businessType" open="(" close=")" item="type" separator=",">

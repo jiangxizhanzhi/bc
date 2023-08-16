@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.service;
+package com.cyberpeace.oj.course.service;
 
 
 import com.cyberpeace.common.model.ListRsp;
@@ -7,7 +7,6 @@ import com.cyberpeace.cr.crbase.controller.req.TrainModeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainModeRsp;
 
 import java.util.List;
-
 
 public interface TrainingModeService {
 

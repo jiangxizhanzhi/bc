@@ -56,6 +56,10 @@ public class TrainModeRsp implements Serializable {
             this.code = code;
             this.desc = desc;
         }
+        public static TrainType getTrainTypeByCode(Integer code) {
+            return Arrays.stream(TrainType.values()).filter(item -> item.getCode().equals(code)).findFirst().get();
+        }
+
     }
 
     public enum TrainCategoryType implements GenericEnum {

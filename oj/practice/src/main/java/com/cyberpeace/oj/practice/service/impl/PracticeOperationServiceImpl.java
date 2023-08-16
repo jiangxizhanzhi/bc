@@ -1,5 +1,23 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,6 +27,8 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
@@ -18,10 +38,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
-import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -63,22 +81,8 @@ import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author chenz
@@ -629,19 +633,49 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,
 				operationListQuery, authContext.getIsWeb());
+		// 批量查询convert需要的数据
+		List<String> practiceIdList = iPage.getRecords().stream()
+				.map(PracticeOperation::getResourceId).collect(Collectors.toList());
+		List<String> practiceSetIdList = iPage.getRecords().stream()
+				.map(PracticeOperation::getPracticeSetId).collect(Collectors.toList());
+		List<String> creatorIdList = iPage.getRecords().stream()
+				.map(PracticeOperation::getCreateUserId).collect(Collectors.toList());
 
-		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext, listQuery.getSolved()));
+		List<PracticeSolved> practiceSolvedList = Lists.newArrayList();
+		if (!practiceIdList.isEmpty()) {
+			practiceSolvedList = practiceSolvedMapper.selectUserAndIdList(authContext.getUserId(),
+					PracticeCategory.PracticeType.OPERATION.getCode(), practiceIdList);
+		}
+		Map<String, PracticeSolved> practiceSolvedMap = StreamApiUtils.toMap(practiceSolvedList,
+				PracticeSolved::getPracticeId, item -> item);
+
+		List<PracticeSet> practiceSetList = Lists.newArrayList();
+		if (!practiceSetIdList.isEmpty()) {
+			practiceSetList = practiceSetMapper.selectBatchIds(practiceSetIdList);
+		}
+		Map<String, PracticeSet> practiceSetMap = StreamApiUtils.toMap(practiceSetList,
+				PracticeSet::getResourceId, item -> item);
+
+		Map<String, UserInfo> creatorMap = remoteUserService.getIdUserInfoMap(creatorIdList);
+
+		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext,
+				listQuery.getSolved(), practiceSolvedMap, practiceSetMap, creatorMap));
 	}
 
 	/**
+	 * 20230809 尽量去除循环查库
 	 * 数据转换
 	 * @param practiceOperation
 	 * @param authContext 
 	 * @param solved 
+	 * @param practiceSolvedMap
+	 * @param practiceSetMap
+	 * @param creatorMap
 	 * @return
 	 */
 	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
-			AuthContext authContext, Boolean solved) {
+			AuthContext authContext, Boolean solved, Map<String, PracticeSolved> practiceSolvedMap,
+			Map<String, PracticeSet> practiceSetMap, Map<String, UserInfo> creatorMap) {
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
@@ -657,18 +691,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			if (null != solved) {
 				operationListBo.setSolved(solved);
 			} else {
-				PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
-						authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
-						practiceOperation.getResourceId(), IS_COLLECTED);
+				PracticeSolved practiceSolved = practiceSolvedMap
+						.get(practiceOperation.getResourceId());
 				operationListBo.setSolved(
 						null != practiceSolved ? practiceSolved.getSolved() : CommonConstant.FALSE);
 			}
 		}
 
-		PracticeSet practiceSet = practiceSetMapper
-				.selectById(practiceOperation.getPracticeSetId());
+		PracticeSet practiceSet = practiceSetMap.get(practiceOperation.getPracticeSetId());
 		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
-		UserInfo userInfo = remoteUserService.getById(practiceOperation.getCreateUserId());
+		UserInfo userInfo = creatorMap.get(practiceOperation.getCreateUserId());
 		operationListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 		return operationListBo;
 

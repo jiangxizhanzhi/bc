@@ -184,7 +184,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			return null;
 		}
 
-		Map<String, String> userInfoMap = StreamApiUtils.toMap(remoteUserService.getByIdList(userIdList), UserInfo::getUserId, UserInfo::getUserName);
+		Map<String, String> userInfoMap = remoteUserService.getIdNameMap(userIdList);
 		Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSetMapper.selectBatchIds(practiceIdList), PracticeSet::getResourceId, PracticeSet::getName);
 		LambdaQueryWrapper<PracticeSolved> practiceSolvedQuery = new LambdaQueryWrapper<>();
 		practiceSolvedQuery.eq(PracticeSolved::getSubmitUserId, authContext.getUserId());

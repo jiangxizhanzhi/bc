@@ -7,10 +7,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm
  */
+@Mapper
+@Repository
 public interface EvalAlgorithmMapper extends BaseMapper<EvalAlgorithm> {
 
 	void updateStateById(String resourceId);

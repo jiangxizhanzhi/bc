@@ -345,58 +345,62 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
         // 查询分组场景 并根据是否延时设置时间
         List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
 
-        // 统计更新数据
-        List<LocalScene> localScenes = Lists.newArrayList();
-        List<ClassroomGroupInfo> groupInfoList = Lists.newArrayList();
+		// 查询localScene数据
+		List<String> groupInfoIdList = groupInfos.stream().map(ClassroomGroupInfo::getResourceId)
+				.collect(Collectors.toList());
+		List<OjLocalScene> ojLocalSceneList = Lists.newArrayList();
+		if (!groupInfoIdList.isEmpty()) {
+			ojLocalSceneList = ojLocalSceneMapper.selectByGroupIds(groupInfoIdList);
+		}
+		List<String> localSceneIdList = ojLocalSceneList.stream().map(OjLocalScene::getLocalSceneId)
+				.collect(Collectors.toList());
+		List<LocalScene> localSceneList = Lists.newArrayList();
+		if (!localSceneIdList.isEmpty()) {
+			localSceneList.addAll(localSceneMapper.selectBatchIds(localSceneIdList));
+		}
+		// 要更新的数据
+		Integer ttl = !end ? (courseLesson.getDestroyDelay() * CommonConstant.SIXTY) : null;
+		// destroy delay
+		String destroyCloseStr = ConfigUtil.getContextProperty("oj.destroy.delay.close");
+		Integer destroyDelay = end ? Integer.parseInt(destroyCloseStr)
+				: courseLesson.getDestroyDelay();
 
-        for (ClassroomGroupInfo groupInfo : groupInfos) {
-            OjLocalScene ojLocalScene = ojLocalSceneMapper
-                    .selectGroupScene(groupInfo.getResourceId());
-            // 需要更新的场景数据
-            if (null != ojLocalScene) {
-                LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		// set end time
+		for (LocalScene localScene : localSceneList) {
+			if (end) {
+				localScene.setEndTime(null);
+			} else {
+				localScene.setStartTime(new Date());
+				localScene.setEndTime(TimeUtil.addHours(localScene.getStartTime(),
+						courseLesson.getDestroyDelay()));
+			}
+			localScene.setSceneTtl(ttl);
+		}
+		// 数据更新
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-                if (!end) {
-                    localScene.setStartTime(new Date());
-                }
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				if (CollectionUtils.isNotEmpty(localSceneList)) {
+					localSceneList
+							.forEach(localScene -> localSceneMapper.updateEndTime(localScene));
+				}
+				if (CollectionUtils.isNotEmpty(groupInfoIdList)) {
+					classroomGroupInfoMapper.updateBatchDestroyDelayByIds(groupInfoIdList,
+							destroyDelay);
+				}
+			}
+		});
 
-                localScene.setEndTime(!end ? TimeUtil.addHours(localScene.getStartTime(),
-                        courseLesson.getDestroyDelay()) : null);
-                localScene.setSceneTtl(
-                        !end ? (courseLesson.getDestroyDelay() * CommonConstant.SIXTY) : null);
-                localScenes.add(localScene);
-            }
-
-            // 需要更新的分组数据
-            String destroyCloseStr = ConfigUtil.getContextProperty("oj.destroy.delay.close");
-            groupInfo.setDestroyDelay(
-                    end ? Integer.parseInt(destroyCloseStr) : courseLesson.getDestroyDelay());
-
-            groupInfoList.add(groupInfo);
-        }
-
-        // 数据更新
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                if (CollectionUtils.isNotEmpty(localScenes)) {
-                    localScenes.forEach(localScene -> localSceneMapper.updateEndTime(localScene));
-                }
-                if (CollectionUtils.isNotEmpty(groupInfoList)) {
-                    groupInfoList
-                            .forEach(groupInfo -> classroomGroupInfoMapper.updateById(groupInfo));
-                }
-            }
-        });
-
-        if (CollectionUtils.isNotEmpty(localScenes)) {
-            List<String> ojLocalSceneIds = StreamApiUtils.map(localScenes,
-                    LocalScene::getBusinessInstanceId);
-            List<OjLocalScene> ojLocalSceneList = ojLocalSceneMapper
-                    .selectBatchIds(ojLocalSceneIds);
-            ojLocalSceneList.forEach(ojLocalScene -> pushGroupSyncMessage(ojLocalScene));
-        }
+		if (CollectionUtils.isNotEmpty(localSceneList)) {
+			Set<String> businessInstanceIdSet = localSceneList.stream()
+					.map(LocalScene::getBusinessInstanceId).collect(Collectors.toSet());
+			for (OjLocalScene ojLocalScene : ojLocalSceneList) {
+				if (businessInstanceIdSet.contains(ojLocalScene.getResourceId())) {
+					pushGroupSyncMessage(ojLocalScene);
+				}
+			}
+		}
 
         return true;
     }

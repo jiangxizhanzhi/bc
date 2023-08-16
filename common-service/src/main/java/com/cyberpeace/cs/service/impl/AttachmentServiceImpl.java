@@ -283,8 +283,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	@Override
 	public Boolean isExist(String attachmentId) {
 		Attachment attachment = attachmentMapper.selectById(attachmentId);
-		return !(attachment == null
-				|| !new File(ConfigUtil.getContextProperty("cr.local.upload.path") + "/"
-						+ attachment.getFilePath()).exists());
+		return attachment != null && new File(ConfigUtil.getContextProperty("cr.local.upload.path")
+				+ "/" + attachment.getFilePath()).exists();
 	}
 }

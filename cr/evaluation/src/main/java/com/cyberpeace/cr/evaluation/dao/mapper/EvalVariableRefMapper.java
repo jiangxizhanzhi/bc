@@ -1,12 +1,13 @@
 package com.cyberpeace.cr.evaluation.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
 
 @Mapper
 @Repository

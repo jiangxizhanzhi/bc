@@ -43,5 +43,5 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 												@Param("endTime") Date endTime);
 
 	List<PracticeSolved> selectUserAndIdList(@Param("userId") String userId,
-			@Param("code") Integer code, @Param("practiceIdList") List<String> practiceIdList);
+			@Param("practiceType") Integer practiceType, @Param("practiceIdList") List<String> practiceIdList);
 }

@@ -23,6 +23,7 @@ import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TrainingScore;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
@@ -107,9 +108,6 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
                 .map(MissionEvaluationContext::getMissionHash).distinct()
                 .collect(Collectors.toList());
 
-        if (CollectionUtils.isEmpty(data.getRecords())){
-
-        }
         //获取一血, 二血, 三血及额外分数
         Map<String, MissionEvaluationContext> rankMap =CollectionUtils.isEmpty(data.getRecords())? Maps.newHashMap(): getRankContextMap(data);
         //获取动态任务对应flagValue
@@ -290,9 +288,9 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
     }
 
     @Override
-    public void submitEvaluation(String taskSubmitId, Integer score, String detail, Integer reason, Integer evaluateStatus, String currentUserId) {
+    public void submitEvaluation(EvalSubmitEvaluationReq req, String currentUserId) {
         // check permission??
-        CrEvalTaskSubmit crEvalTaskSubmit = crEvalTaskSubmitMapper.selectById(taskSubmitId);
+        CrEvalTaskSubmit crEvalTaskSubmit = crEvalTaskSubmitMapper.selectById(req.getSubmitId());
         if (crEvalTaskSubmit == null) {
             throw new BusinessException(CrBusinessErrorCode.MISSION_SUBMIT_NOT_FOUND);
         }
@@ -306,28 +304,31 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
             throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
         }
 
-        // 驳回??
-        if (score == null) {
-            score = 0;
+        Integer score = req.getScore();
+        if (Objects.isNull(req.getScoreResult())){
+            if (req.getScore() == null) {
+                score = 0;
+            }
+            // 校验分数
+            if (crEvalTaskSubmit.getMissionScore() < score || score < 0) {
+                throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
+            }
+        }else {
+            score= crEvalTaskSubmit.getMissionScore()*req.getScoreResult()/100;
         }
-        // 校验分数
-        if (crEvalTaskSubmit.getMissionScore() < score || score < 0) {
-            throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
-        }
-
         crEvalTaskSubmit.setScore(score);
-        crEvalTaskSubmit.setDetail(detail);
-        crEvalTaskSubmit.setReason(reason);
-        crEvalTaskSubmit.setEvaluateStatus(evaluateStatus);
+        crEvalTaskSubmit.setDetail( req.getDetail());
+        crEvalTaskSubmit.setReason( req.getReason());
+        crEvalTaskSubmit.setEvaluateStatus(req.getEvaluateStatus());
         crEvalTaskSubmit.setEvaluatorId(currentUserId);
         crEvalTaskSubmit.setEvaluateTime(new Date());
 
-        crEvalTrainTask.setStatus(evaluateStatus);
+        crEvalTrainTask.setStatus(req.getEvaluateStatus());
         crEvalTrainTask.setScore(score);
 
         CrTaskLog evaluationLog = CrTaskLog.builder().roomId(crEvalTaskSubmit.getRoomId())
                 .missionId(crEvalTrainTask.getMissionId())
-                .actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
+                .actionCode(evaluateStatusToActionCode.get(req.getEvaluateStatus())).userId(currentUserId)
                 .build();
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 
@@ -36,8 +37,7 @@ public interface EvalRbRoomService extends IService<RbRoom> {
     /**
      * 修改评估
      */
-    void submitEvaluation( String taskSubmitId, Integer score, String detail, Integer reason,
-                          Integer evaluateStatus, String currentUserId);
+    void submitEvaluation(EvalSubmitEvaluationReq req, String currentUserId);
 
 
     void updateStudentScore(EvalStudentScoreReq studentScoreReq);

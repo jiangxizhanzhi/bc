@@ -8,7 +8,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
-import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
@@ -19,6 +18,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.evaluation.controller.req.EvalMissionEvaluationListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
 import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.TrainEvalService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
@@ -133,11 +133,8 @@ public class TrainEvalController {
     @PostMapping("/submit_evaluation")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
-            value = "学员评分") @RequestBody SubmitEvaluationReq req) {
-        evalRbRoomService.submitEvaluation(req.getSubmitId(),
-                req.getScore(), req.getDetail(),
-                req.getReason(), req.getEvaluateStatus(),
-                UserInfoContext.getUserContext().getUserId());
+            value = "学员评分") @RequestBody EvalSubmitEvaluationReq req) {
+        evalRbRoomService.submitEvaluation(req, UserInfoContext.getUserContext().getUserId());
         return new BaseRsp<>();
     }
 

@@ -29,7 +29,8 @@ public enum OperationModule implements BaseI18n {
 	TEAM_TRAIN(18, "团队训练", "team train"),
 	RED_TEAM(26, "红队训练", "red team train"),
 	BLUE_TEAM(27, "蓝队训练", "blue team train"),
-	DAILY_TRAIN(28, "日常训练", "team train");
+	DAILY_TRAIN(28, "日常训练", "daily train"),
+	COMPETE_TRAIN(29, "对抗练习", "compete train");
 
 	@Getter
 	private final Integer code;

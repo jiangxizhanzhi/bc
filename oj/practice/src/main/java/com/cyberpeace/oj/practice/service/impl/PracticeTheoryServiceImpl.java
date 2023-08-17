@@ -55,777 +55,795 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper, PracticeTheory> implements PracticeTheoryService {
 
-	private Integer MAX_CONTENT_LENGTH;
-
-	private Integer MAX_CATEGORY_LENGTH;
-
-	private final Boolean IS_COLLECTED = Boolean.FALSE;
-
-	@PostConstruct
-	private void init() {
-		MAX_CONTENT_LENGTH = Integer
-				.parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
-
-		MAX_CATEGORY_LENGTH = Integer
-				.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
-	}
-
-	@Autowired
-	private PracticeSetMapper practiceSetMapper;
-
-	@Autowired
-	private PracticeTheoryMapper practiceTheoryMapper;
-
-	@Autowired
-	private RemoteUserService remoteUserService;
-
-	@Autowired
-	private ResourceCollectionService resourceCollectionService;
-
-	@Resource(name = "theory")
-	private TheoryEvaluateHandler theoryEvaluateHandler;
-
-	@Autowired
-	private PracticeSolvedMapper practiceSolvedMapper;
-
-	@Autowired
-	private PracticeCategoryMapper practiceCategoryMapper;
-
-	@Autowired
-	private TransactionTemplate transactionTemplate;
-
-	@Autowired
-	private PracticeValidateHandler practiceValidateHandler;
-
-	@Autowired
-	private PracticeCategoryService practiceCategoryService;
-
-	@Autowired
-	private RemoteLogService remoteLogService;
-
-	@Autowired
-	private PracticeMistakeMapper practiceMistakeMapper;
-
-	@Autowired
-	private PracticeMistakeService practiceMistakeService;
-
-	@Override
-	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
-			AuthContext authContext) {
-
-		// 过滤无权限习题集
-		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authSetIds)) {
-			return null;
-		}
-
-		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authSetIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authSetIds)
-				|| (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-				&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
-			return null;
-		}
-
-		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
-		theoryListQuery.setQuestionType(listQuery.getTheoryType());
-		// 根据习题集过滤习题编号
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
-			authSetIds.clear();
-			authSetIds.add(listQuery.getPracticeSetId());
-		}
-		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-				authContext.getIsWeb());
-
-		if (CollectionUtils.isEmpty(practiceIds)) {
-			return null;
-		}
-		theoryListQuery.setResourceIds(practiceIds);
-
-		// 答题记录过滤习题
-		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
-			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
-					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-					CommonConstant.TRUE, IS_COLLECTED);
-			List<String> triedIds = practiceSolvedMapper.selectUserAndSolved(
-					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-					CommonConstant.FALSE, IS_COLLECTED);
-
-			// 求交集 空则返回为空
-			if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())) {
-				theoryListQuery.getResourceIds().retainAll(solvedIds);
-			} else if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode())){
-				theoryListQuery.getResourceIds().retainAll(triedIds);
-			} else {
-				theoryListQuery.getResourceIds().removeAll(solvedIds);
-				theoryListQuery.getResourceIds().removeAll(triedIds);
-			}
-
-			// 资源数据判空
-			if (CollectionUtils.isEmpty(theoryListQuery.getResourceIds())) {
-				return null;
-			}
-		}
-
-		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
-				authContext.getIsWeb());
-
-		List<String> userIdList = new ArrayList<>();
-		List<String> practiceIdList = new ArrayList<>();
-		for (PracticeTheory record : iPage.getRecords()) {
-			userIdList.add(record.getCreateUserId());
-			practiceIdList.add(record.getPracticeSetId());
-		}
-
-		if(CollectionUtils.isEmpty(userIdList) || CollectionUtils.isEmpty(practiceIdList)) {
-			return null;
-		}
-
-		Map<String, String> userInfoMap = remoteUserService.getIdNameMap(userIdList);
-		Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSetMapper.selectBatchIds(practiceIdList), PracticeSet::getResourceId, PracticeSet::getName);
-		LambdaQueryWrapper<PracticeSolved> practiceSolvedQuery = new LambdaQueryWrapper<>();
-		practiceSolvedQuery.eq(PracticeSolved::getSubmitUserId, authContext.getUserId());
-		practiceSolvedQuery.eq(PracticeSolved::getPracticeType, PracticeCategory.PracticeType.THEORY.getCode());
-		Map<String, PracticeSolved> practiceSolvedMap = StreamApiUtils.toMap(practiceSolvedMapper.selectList(practiceSolvedQuery), PracticeSolved::getResourceId, item -> item);
-
-		return iPage.convert(practiceTheory -> {
-			PracticeTheoryListBo theoryListBo = BeanUtils.copy(practiceTheory,PracticeTheoryListBo.class);
-
-			if (authContext.getIsWeb()) {
-				// 解题状态设置
-				if (null != listQuery.getSolved()) {
-					theoryListBo.setSolved(listQuery.getSolved());
-				} else {
-					PracticeSolved practiceSolved = practiceSolvedMap.get(practiceTheory.getResourceId());
-					if (practiceSolved == null) {
-						theoryListBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
-					}else {
-						theoryListBo.setSolved(practiceSolved.getSolved() ?
-								PracticeSolved.SolvedStatus.SOLVED.getCode() : PracticeSolved.SolvedStatus.TRIED.getCode());
-					}
-				}
-			}
-
-			String userName= userInfoMap.get(practiceTheory.getCreateUserId());
-			theoryListBo.setCreateUserName(null != userName ? userName : "");
-			String practiceSetName=	practiceSetMap.get(practiceTheory.getPracticeSetId());
-			theoryListBo.setPracticeSetName(null != practiceSetName ? practiceSetName : "");
-			return theoryListBo;
-		});
-	}
-
-	@Override
-	public WebTheoryBo selectById(String resourceId, String userId, Boolean isCollected) {
-
-		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
-		if (null == practiceTheory) {
-			log.error("Theory practice not found! practice_id=[{}]", resourceId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);
-
-		Boolean result = resourceCollectionService.selectByUnique(userId,
-				ResourceCollection.BusinessType.THEORY.getCode(), resourceId);
-		webTheoryBo.setIsCollection(null == result ? CommonConstant.FALSE : result);
-
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
-				.getCode().intValue()) {
-			webTheoryBo.setBlankCount(JsonUtil
-					.toJsonObjectArray(practiceTheory.getBlank(), BlankAnswer.class).size());
-		}
-
-		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
-				PracticeCategory.PracticeType.THEORY.getCode(), resourceId, isCollected);
-
-		answerToNull(webTheoryBo, practiceSolved);
-
-		PracticeSet practiceSet = practiceSetMapper.selectById(webTheoryBo.getPracticeSetId());
-		webTheoryBo.setPracticeSetName(practiceSet.getName());
-
-		return webTheoryBo;
-	}
-
-	/**
-	 * 答案置空
-	 *
-	 * @param webTheoryBo
-	 * @param practiceSolved
-	 */
-	private void answerToNull(WebTheoryBo webTheoryBo, PracticeSolved practiceSolved) {
-
-		if (null == practiceSolved) {
-			answerToNull(webTheoryBo);
-			webTheoryBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
-		} else {
-			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
-			if (practiceSolved.getSolved()) {
-				detailBo.setCorrectAnswer(webTheoryBo.getAnswer());
-				detailBo.setIsSolved(practiceSolved.getSolved());
-				detailBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
-				if (webTheoryBo.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
-						.getCode().intValue()) {
-					detailBo.setKeyword(webTheoryBo.getKeyword());
-				}
-				webTheoryBo.setResolvedDetail(detailBo);
-				webTheoryBo.setSolved(PracticeSolved.SolvedStatus.SOLVED.getCode());
-			} else {
-				PracticeNoSolvedBo practiceNoSolvedBo = new PracticeNoSolvedBo();
-				practiceNoSolvedBo.setIsSolved(practiceSolved.getSolved());
-				answerToNull(webTheoryBo);
-				webTheoryBo.setResolvedDetail(practiceNoSolvedBo);
-				webTheoryBo.setSolved(PracticeSolved.SolvedStatus.TRIED.getCode());
-			}
-		}
-
-	}
-
-	/**
-	 * 答案置空
-	 *
-	 * @param webTheoryBo
-	 */
-	private void answerToNull(WebTheoryBo webTheoryBo) {
-		webTheoryBo.setAnswer(null);
-		webTheoryBo.setBlank(null);
-		webTheoryBo.setKeyword(null);
-	}
-
-	@Override
-	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer,
-			Boolean isCollected) {
-
-		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(theoryId);
-		if (null == practiceTheory) {
-			log.info("Theory practice not found! practice_id=[{}]", theoryId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		// 判断是否已完成答题
-		PracticeSolved solvedPractice = practiceSolvedMapper.selectUserAndId(userId,
-				PracticeCategory.PracticeType.THEORY.getCode(), theoryId, isCollected);
-		if (null != solvedPractice && solvedPractice.getSolved()) {
-			return BeanUtils.copy(solvedPractice, EvaluateResult.class);
-		}
-
-		EvaluateResult evaluateResult = theoryEvaluateHandler.evaluateByBusiness(userId,
-				practiceTheory, userAnswer);
-
-		// 将评估记录存储
-		PracticeSolved practiceSolved = BeanUtils.copy(evaluateResult, PracticeSolved.class);
-		practiceSolved.setPracticeId(practiceTheory.getResourceId());
-		practiceSolved.setSubmitUserId(userId);
-		practiceSolved.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
-		practiceSolved.setSubmitAnswer(userAnswer);
-
-		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
-				ResourceCollection.BusinessType.THEORY.getCode(), practiceTheory.getResourceId()));
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				//更新错题集状态
-				if (evaluateResult.getSolved()) {
-					practiceMistakeService.addCorrect(userId, practiceTheory.getResourceId(), PracticeCategory.PracticeType.THEORY.getCode());
-				} else {
-					practiceMistakeService.addIncorrect(userId, practiceTheory.getResourceId(), PracticeCategory.PracticeType.THEORY.getCode());
-				}
-				//更新题目状态
-				try {
-					practiceSolvedMapper.insert(practiceSolved);
-				} catch (DuplicateKeyException e) {
-					practiceSolvedMapper.updateSolved(practiceSolved);
-				}
-			}
-		});
-
-
-		return evaluateResult;
-	}
-
-	@Override
-	public Integer create(PracticeTheory practiceTheory, AuthContext authContext) {
-
-		// 数据校验
-		practiceValidateHandler.validateTheoryContentExist(practiceTheory.getPracticeSetId(),
-				practiceTheory.getContent());
-		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
-				PracticeCategory.PracticeType.THEORY.getCode());
-		PracticeSet practiceSet = practiceValidateHandler.validateSetType(
-				practiceTheory.getPracticeSetId(), PracticeSet.PracticeType.THEORY.getCode());
-		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());
-		// 基本数据设置
-		practiceTheory.setBuiltin(CommonConstant.FALSE);
-		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
-		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
-
-		return transactionTemplate.execute(new TransactionCallback<Integer>() {
-
-			@Override
-			public Integer doInTransaction(TransactionStatus status) {
-				practiceSetMapper.updateById(practiceSet);
-				return practiceTheoryMapper.insert(practiceTheory);
-			}
-		});
-	}
-
-	@Override
-	public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
-
-		// 数据校验
-		practiceValidateHandler.validateTheoryContentExistExcludeItself(practiceTheory.getPracticeSetId(),
-				practiceTheory.getContent(), practiceTheory);
-		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
-				PracticeCategory.PracticeType.THEORY.getCode());
-		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
-				PracticeSet.PracticeType.THEORY.getCode());
-		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());
-		PracticeTheory originPractice = practiceTheoryMapper.selectById(practiceTheory.getResourceId());
-		String originChangeBo = BeanUtils.copy(originPractice, TheoryChangeBo.class).toString();
-		String changeBo = BeanUtils.copy(practiceTheory, TheoryChangeBo.class).toString();
-		// 数据更新
-		final int[] result = new int[1];
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				//如果对应的几个字段被修改则删除对应的错题记录和做题记录
-				if (!changeBo.equals(originChangeBo)) {
-					LambdaQueryWrapper<PracticeSolved> practiceSolvedLambdaQueryWrapper = new LambdaQueryWrapper<>();
-					practiceSolvedLambdaQueryWrapper.eq(PracticeSolved::getPracticeId, practiceTheory.getResourceId());
-					practiceSolvedMapper.delete(practiceSolvedLambdaQueryWrapper);
-					LambdaQueryWrapper<PracticeMistake> practiceMistakeLambdaQueryWrapper = new LambdaQueryWrapper<>();
-					practiceMistakeLambdaQueryWrapper.eq(PracticeMistake::getPracticeId, practiceTheory.getResourceId());
-					practiceMistakeMapper.delete(practiceMistakeLambdaQueryWrapper);
-				}
-				result[0] = practiceTheoryMapper.updateById(practiceTheory);
-			}
-		});
-
-		return result[0];
-	}
-
-	@Override
-	public List<String> selectPracticeListIds(AuthContext authContext, String practiceSetId) {
-
-		List<String> setIds ;
-		if (practiceSetId == null) {
-			setIds = practiceSetMapper.selectByAuthContext(authContext);
-			if (CollectionUtils.isEmpty(setIds)) {
-				return Lists.newArrayList();
-			}
-		} else {
-			setIds = Arrays.asList(practiceSetId);
-		}
-
-		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(setIds);
-		List<String> publicIds = practiceSets.stream()
-				.filter(practiceSet -> practiceSet.getIsPublic())
-				.map(practiceSet -> practiceSet.getResourceId()).collect(Collectors.toList());
-		if (CollectionUtils.isEmpty(publicIds)) {
-			return Lists.newArrayList();
-		}
-
-		return practiceTheoryMapper.selectBySetIds(publicIds, authContext.getIsWeb());
-	}
-
-	@Override
-	public Integer batchDelete(List<String> resourceIds) {
-		String practiceId = resourceIds.get(CommonConstant.ZERO);
-		PracticeTheory theory = practiceTheoryMapper.selectById(practiceId);
-
-		// 习题集数据更新
-		PracticeSet practiceSet = practiceValidateHandler
-				.validatePracticeSetExist(theory.getPracticeSetId());
-		practiceSet.setPracticeCount(null == practiceSet.getPracticeCount()
-				|| practiceSet.getPracticeCount() <= resourceIds.size() ? CommonConstant.ZERO
-						: practiceSet.getPracticeCount() - resourceIds.size());
-
-		return transactionTemplate.execute(new TransactionCallback<Integer>() {
-
-			@Override
-			public Integer doInTransaction(TransactionStatus status) {
-				practiceMistakeMapper.deleteByPracticeIds(resourceIds, null);
-				practiceSolvedMapper.deleteByPracticeIds(resourceIds);
-				practiceSetMapper.updateById(practiceSet);
-				return practiceTheoryMapper.deleteBatchIds(resourceIds);
-			}
-		});
-	}
-
-	@Override
-	public PracticeTheory loadPracticeTheory(String practiceSetId, PracticeTheoryDumpLoadBo dumpBo,
-			String userId) {
-		// 重复则不导入
-		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId,
-				dumpBo.getContent());
-		if (StringUtils.isNotBlank(practiceId)) {
-			log.error("Practice theory exist! practice_id=[{}], practice_name=[{}]", practiceId,
-					dumpBo.getContent());
-			return null;
-		}
-
-		PracticeTheory practiceTheory = BeanUtils.copy(dumpBo, PracticeTheory.class);
-		practiceTheory.setPracticeSetId(practiceSetId);
-		practiceTheory.setBuiltin(CommonConstant.TRUE);
-		practiceTheory.setResourceId(IDGeneratorUtil.getID());
-		practiceTheory.setCreateUserId(userId);
-		// 增加判断 添加默认值 防止前端无法格式化数据
-		if (StringUtils.isBlank(dumpBo.getKeyword())) {
-			practiceTheory.setKeyword(CommonConstant.EMPTY_LIST_JSON);
-		}
-		if (StringUtils.isBlank(dumpBo.getKnowledge())) {
-			practiceTheory.setKnowledge(CommonConstant.EMPTY_LIST_JSON);
-		}
-		if (StringUtils.isBlank(dumpBo.getOption())) {
-			practiceTheory.setOption(CommonConstant.EMPTY_OBJECT);
-		}
-
-		// 分类数据
-		String categoryId = practiceCategoryService.selectCategoryOrCreate(dumpBo.getCategoryName(),
-				PracticeCategory.PracticeType.THEORY.getCode(), userId);
-		practiceTheory.setCategoryId(categoryId);
-
-		return practiceTheory;
-	}
-
-	@Override
-	public PracticeTheoryDumpLoadBo dumpTheory(PracticeTheory practiceTheory) {
-		PracticeTheoryDumpLoadBo dumpLoadBo = BeanUtils.copy(practiceTheory,
-				PracticeTheoryDumpLoadBo.class);
-
-		// 分类数据处理
-		PracticeCategory category = practiceValidateHandler
-				.validateCategoryExist(practiceTheory.getCategoryId());
-		dumpLoadBo.setCategoryName(category.getName());
-		return dumpLoadBo;
-	}
-
-	@Override
-	public void createMpLog(String practiceId, LogContent logContent) {
-		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
-		String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
-				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
-	}
-
-	@Override
-	public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo,
-			AuthContext authContext) {
-
-		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(setIds)) {
-			return new ExternalTheoryCountBo();
-		}
-
-		String searchSet = theoryListQueryBo.getPracticeSetId();
-		if (StringUtils.isNotBlank(searchSet)) {
-			if (setIds.contains(searchSet)) {
-				setIds.clear();
-				setIds.add(searchSet);
-			} else {
-				return new ExternalTheoryCountBo();
-			}
-		}
-
-		// 设置查询条件
-		TheoryListQuery listQuery = BeanUtils.copy(theoryListQueryBo, TheoryListQuery.class);
-		listQuery.setPracticeSetIds(setIds);
-
-		// 数据查询转换
-		List<TheorySimpleBo> bos = practiceTheoryMapper.selectSimple(listQuery, true);
-		Map<Integer, List<TheorySimpleBo>> typeMap = StreamApiUtils.groupBy(bos,
-				TheorySimpleBo::getTheoryType);
-		ExternalTheoryCountBo countBo = new ExternalTheoryCountBo(typeMap);
-		return countBo;
-	}
-
-	@Override
-	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
-
-		MdTheoryPractice mdTheoryPractice = new MdTheoryPractice();
-
-		List<TheoryBaseMd> singleList = Lists.newArrayList();
-
-		List<TheoryBaseMd> multipleList = Lists.newArrayList();
-
-		List<TheoryBaseMd> blankList = Lists.newArrayList();
-
-		List<TheoryBaseMd> anwserList = Lists.newArrayList();
-
-		List<TheoryBaseMd> judgeList = Lists.newArrayList();
-
-		for (PracticeTheory theory : theories) {
-			Integer code = theory.getTheoryType();
-			TheoryBaseMd theoryBaseMd = BeanUtils.copy(theory, TheoryBaseMd.class);
-
-			String difficulty = EnumUtils.getEnumDescByCode(theory.getDifficulty(),
-					Difficulty.class);
-			theoryBaseMd.setDifficulty(difficulty);
-			// 答案增加之前两个空格和换行
-			theoryBaseMd.setAnswer("  " + theory.getAnswer() + System.lineSeparator());
-
-			// 分类数据,有可能为空
-			String category = "";
-			try {
-				CategoryListBo categoryListBo = practiceCategoryService
-						.selectById(theory.getCategoryId(), false);
-				category = categoryListBo.getName();
-
-			} catch (Exception e) {
-				log.error("theory category is null . theoryId=[{}]", theory.getResourceId());
-
-			}
-
-			theoryBaseMd.setCategory(category);
-
-			// 单选需要获取选项内容
-
-			if (PracticeTheory.TheoryType.SINGLE.getCode().equals(code)) {
-				changeTitleToTheoryBaseMd(theory, theoryBaseMd);
-				singleList.add(theoryBaseMd);
-			}
-
-			// 多选需要获取选项内容,修改答案
-			if (PracticeTheory.TheoryType.MULTIPLE.getCode().equals(code)) {
-				changeTitleToTheoryBaseMd(theory, theoryBaseMd);
-
-				String anwser = theory.getAnswer().replace("|", "");
-
-				theoryBaseMd.setAnswer(anwser);
-				multipleList.add(theoryBaseMd);
-
-			}
-
-			// 填空需要修改答案
-			if (PracticeTheory.TheoryType.FILL_BLANK.getCode().equals(code)) {
-
-				List<BlankAnswer> blankAnswers = JsonUtil.toJsonObjectArray(theory.getAnswer(),
-						BlankAnswer.class);
-
-				String answer = "";
-
-				for (int i = 0; i < blankAnswers.size(); i++) {
-					String answerValue = blankAnswers.get(i).getValue();
-					answer += "  " + (i + 1) + ". " + answerValue + System.lineSeparator();
-
-				}
-
-				theoryBaseMd.setAnswer(answer.trim());
-				blankList.add(theoryBaseMd);
-
-			}
-			// 判断需要修改答案
-			if (PracticeTheory.TheoryType.JUDGMENT.getCode().equals(code)) {
-
-				String answer = theory.getAnswer().equals("A") ? "T" : "F";
-
-				theoryBaseMd.setAnswer(answer);
-
-				judgeList.add(theoryBaseMd);
-
-			}
-
-			// 简答
-			if (PracticeTheory.TheoryType.SHORT_ANSWER.getCode().equals(code)) {
-
-				anwserList.add(theoryBaseMd);
-
-			}
-			theoryBaseMd
-					.setTitle(MdTheoryParser.setRelativeFilePath(path, theoryBaseMd.getTitle()));
-
-		}
-		mdTheoryPractice.setSingleList(singleList);
-		mdTheoryPractice.setMultipleList(multipleList);
-		mdTheoryPractice.setBlankList(blankList);
-		mdTheoryPractice.setJudgeList(judgeList);
-		mdTheoryPractice.setAnwserList(anwserList);
-
-		return mdTheoryPractice;
-	}
-
-	@Override
-	public ProgressStatisticsRes getProgressStatistics(String practiceSetId) {
-		ProgressStatisticsRes progressStatisticsRes = new ProgressStatisticsRes();
-
-		TheoryListQuery listQuery = new TheoryListQuery();
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
-
-		// 过滤无权限习题集
-		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authSetIds.retainAll(setIds);
-		List<ProgressProportion> progressProportionList = new ArrayList<>();
-		// 根据习题集过滤习题编号
-		if (StringUtils.isNotBlank(practiceSetId)) {
-			if (authSetIds.contains(practiceSetId)){
-				authSetIds.clear();
-				authSetIds.add(practiceSetId);
-			}else {
-				authSetIds.clear();
-			}
-		}
-		if (CollectionUtils.isNotEmpty(authSetIds)){
-			progressProportionList = practiceTheoryMapper.selectByGroupDifficulty(listQuery,
-					authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
-		}
-		Map<Integer, ProgressProportion> progressProportionMap = progressProportionList.stream().collect(Collectors.toMap(ProgressProportion::getDifficulty, item -> item));
-		
-		ProgressProportion simple = progressProportionMap.get(Difficulty.PRIMARY.getCode());
-		simple = simple == null ? setProgressProportionZero(Difficulty.PRIMARY.getCode()) : simple;
-		progressStatisticsRes.setSimple(simple);
-
-		ProgressProportion medium = progressProportionMap.get(Difficulty.MIDDLE.getCode());
-		medium = medium == null ? setProgressProportionZero(Difficulty.MIDDLE.getCode()) : medium;
-		progressStatisticsRes.setMedium(medium);
-
-		ProgressProportion difficulty = progressProportionMap.get(Difficulty.HIGH.getCode());
-		difficulty = difficulty == null ? setProgressProportionZero(Difficulty.HIGH.getCode()): difficulty;
-		progressStatisticsRes.setDifficulty(difficulty);
-
-		ProgressProportion sum = new ProgressProportion();
-		sum.setSum(simple.getSum() + medium.getSum() + difficulty.getSum());
-		sum.setCount(simple.getCount() + medium.getCount() + difficulty.getCount());
-		progressStatisticsRes.setSum(sum);
-		return progressStatisticsRes;
-	}
-
-	public ProgressProportion setProgressProportionZero(int type) {
-		ProgressProportion progressProportion = new ProgressProportion();
-		progressProportion.setDifficulty(type);
-		progressProportion.setCount(0);
-		progressProportion.setSum(0);
-		return progressProportion;
-	}
-
-	@Override
-	public List<CategoryProgressRes> getProgressByCategory() {
-		List<CategoryProgressRes> categoryProgressResList = new ArrayList<>();
-
-		TheoryListQuery listQuery = new TheoryListQuery();
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),CommonConstant.TRUE);
-		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authSetIds.retainAll(setIds);
-		List<CategoryProgressRes> allPracticeTheoryByAuth =new ArrayList<>();
-		if (CollectionUtils.isNotEmpty(authSetIds)){
-			 allPracticeTheoryByAuth = practiceTheoryMapper.selectByGroupCategory(listQuery, authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
-		}
-		Map<String, CategoryProgressRes> categoryProgressResMap = StreamApiUtils.toMap(allPracticeTheoryByAuth, CategoryProgressRes::getCategoryId, item -> item);
-		List<PracticeCategory> practiceCategoryList = practiceCategoryMapper.listByTypeAndName(PracticeCategory.PracticeType.THEORY.getCode(), null);
-		for (PracticeCategory practiceCategory : practiceCategoryList) {
-			CategoryProgressRes categoryProgressRes = categoryProgressResMap.get(practiceCategory.getResourceId());
-			categoryProgressResList.add(new CategoryProgressRes(practiceCategory.getName(),
-					practiceCategory.getResourceId(),
-					categoryProgressRes == null ? 0 : categoryProgressRes.getCount(),
-					categoryProgressRes == null ? 0 : categoryProgressRes.getSum()));
-		}
-		return categoryProgressResList;
-	}
-
-
-	@Override
-	public List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq) {
-		//获取所有可见的习题id
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
-		List<String> practiceIds = getPracticeIdsByUserAndSet(authContext, null);
-		//获取练习记录
-		Date startDate = StringUtils.isEmpty(webTheoryRecordReq.getStartTime()) ? null :
-				TimeUtil.toDate4(webTheoryRecordReq.getStartTime() + " 00:00:00");
-		Date endDate = StringUtils.isEmpty(webTheoryRecordReq.getEndTime()) ? null :
-				TimeUtil.toDate4(webTheoryRecordReq.getEndTime() + " 23:59:59");
-
-		List<PracticeTheoryListBo> practiceTheoryList = practiceSolvedMapper.selectPracticeTheoryRecord(UserInfoContext.getUserContext().getUserId(), practiceIds,
-				startDate,
-				endDate,
-				webTheoryRecordReq.getSolved());
-		//设置习题集名称
-		List<String> practiceSetIds = StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getPracticeSetId);
-		if (practiceSetIds.size() == 0) {
-			return new ArrayList<>();
-		}
-		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
-		Map<String, String> practiceSetIdNameMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getName);
-		for (PracticeTheoryListBo practiceTheoryListBo : practiceTheoryList) {
-			practiceTheoryListBo.setPracticeSetName(practiceSetIdNameMap.get(practiceTheoryListBo.getPracticeSetId()));
-		}
-		return practiceTheoryList;
-	}
-
-	/**
-	 * 获取该用户所有可见的习题id
-	 * @param authContext
-	 * @param practiceSetId
-	 * @return
-	 */
-	@Override
-	public List<String> getPracticeIdsByUserAndSet(AuthContext authContext, String practiceSetId) {
-		// 过滤无权限习题集
-		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authSetIds)) {
-			return new ArrayList<>();
-		}
-
-		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authSetIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authSetIds)
-				|| (StringUtils.isNotBlank(practiceSetId)
-				&& !authSetIds.contains(practiceSetId))) {
-			return new ArrayList<>();
-		}
-
-		// 根据习题集过滤习题编号
-		if (StringUtils.isNotBlank(practiceSetId)) {
-			authSetIds.clear();
-			authSetIds.add(practiceSetId);
-		}
-		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-				authContext.getIsWeb());
-
-		if (CollectionUtils.isEmpty(practiceIds)) {
-			return new ArrayList<>();
-		}
-		return practiceIds;
-	}
-
-	@Override
-	public List<PracticeTheory> getCategoryIdAndSetIds() {
-		return practiceTheoryMapper.selectAllCategoryIds();
-	}
-
-	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
-		String[] split = theoryBaseMd.getTitle().split("\n");
-		List<String> content = Arrays.asList(split);
-		Map<String, String> optionMap = JsonUtil.toJsonObject(theory.getOption(), TreeMap.class);
-		String title = "";
-
-		title += "    " + theory.getTitle() + System.lineSeparator() + System.lineSeparator();
-
-		Iterator iterator = optionMap.keySet().iterator();
-
-		while (iterator.hasNext()) {
-			String key = (String) iterator.next();
-			String value = optionMap.get(key).trim();
-
-			title += "    " + key + ". " + value + System.lineSeparator() + System.lineSeparator();
-		}
-
-		theoryBaseMd.setTitle(title);
-
-	}
+    private Integer MAX_CONTENT_LENGTH;
+
+    private Integer MAX_CATEGORY_LENGTH;
+
+    private final Boolean IS_COLLECTED = Boolean.FALSE;
+
+    @PostConstruct
+    private void init() {
+        MAX_CONTENT_LENGTH = Integer
+                .parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
+
+        MAX_CATEGORY_LENGTH = Integer
+                .parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
+    }
+
+    @Autowired
+    private PracticeSetMapper practiceSetMapper;
+
+    @Autowired
+    private PracticeTheoryMapper practiceTheoryMapper;
+
+    @Autowired
+    private RemoteUserService remoteUserService;
+
+    @Autowired
+    private ResourceCollectionService resourceCollectionService;
+
+    @Resource(name = "theory")
+    private TheoryEvaluateHandler theoryEvaluateHandler;
+
+    @Autowired
+    private PracticeSolvedMapper practiceSolvedMapper;
+
+    @Autowired
+    private PracticeCategoryMapper practiceCategoryMapper;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private PracticeValidateHandler practiceValidateHandler;
+
+    @Autowired
+    private PracticeCategoryService practiceCategoryService;
+
+    @Autowired
+    private RemoteLogService remoteLogService;
+
+    @Autowired
+    private PracticeMistakeMapper practiceMistakeMapper;
+
+    @Autowired
+    private PracticeMistakeService practiceMistakeService;
+
+
+    @Override
+    public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
+                                                   AuthContext authContext) {
+
+        // 过滤无权限习题集
+        List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+        if (CollectionUtils.isEmpty(authSetIds)) {
+            return null;
+        }
+
+        // 过滤非公开习题集
+        List<PracticeSet> practiceSets = practiceSetMapper
+                .selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+        List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+        authSetIds.retainAll(setIds);
+        if (CollectionUtils.isEmpty(authSetIds)
+                || (StringUtils.isNotBlank(listQuery.getPracticeSetId())
+                && !authSetIds.contains(listQuery.getPracticeSetId()))) {
+            return null;
+        }
+
+        TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
+        theoryListQuery.setQuestionType(listQuery.getTheoryType());
+        // 根据习题集过滤习题编号
+        if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+            authSetIds.clear();
+            authSetIds.add(listQuery.getPracticeSetId());
+        }
+        List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
+                authContext.getIsWeb());
+
+        if (CollectionUtils.isEmpty(practiceIds)) {
+            return null;
+        }
+        theoryListQuery.setResourceIds(practiceIds);
+
+        // 答题记录过滤习题
+        if (authContext.getIsWeb() && null != listQuery.getSolved()) {
+            List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
+                    authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
+                    CommonConstant.TRUE, IS_COLLECTED);
+            List<String> triedIds = practiceSolvedMapper.selectUserAndSolved(
+                    authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
+                    CommonConstant.FALSE, IS_COLLECTED);
+
+            // 求交集 空则返回为空
+            if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())) {
+                theoryListQuery.getResourceIds().retainAll(solvedIds);
+            } else if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode())) {
+                theoryListQuery.getResourceIds().retainAll(triedIds);
+            } else {
+                theoryListQuery.getResourceIds().removeAll(solvedIds);
+                theoryListQuery.getResourceIds().removeAll(triedIds);
+            }
+
+            // 资源数据判空
+            if (CollectionUtils.isEmpty(theoryListQuery.getResourceIds())) {
+                return null;
+            }
+        }
+
+        IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
+                authContext.getIsWeb());
+
+        List<String> userIdList = new ArrayList<>();
+        List<String> practiceIdList = new ArrayList<>();
+        for (PracticeTheory record : iPage.getRecords()) {
+            userIdList.add(record.getCreateUserId());
+            practiceIdList.add(record.getPracticeSetId());
+        }
+
+        if (CollectionUtils.isEmpty(userIdList) || CollectionUtils.isEmpty(practiceIdList)) {
+            return null;
+        }
+
+        Map<String, String> userInfoMap = StreamApiUtils.toMap(remoteUserService.getByIdList(userIdList), UserInfo::getUserId, UserInfo::getName);
+        Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSetMapper.selectBatchIds(practiceIdList), PracticeSet::getResourceId, PracticeSet::getName);
+        LambdaQueryWrapper<PracticeSolved> practiceSolvedQuery = new LambdaQueryWrapper<>();
+        practiceSolvedQuery.eq(PracticeSolved::getSubmitUserId, authContext.getUserId());
+        practiceSolvedQuery.eq(PracticeSolved::getPracticeType, PracticeCategory.PracticeType.THEORY.getCode());
+        Map<String, PracticeSolved> practiceSolvedMap = StreamApiUtils.toMap(practiceSolvedMapper.selectList(practiceSolvedQuery), PracticeSolved::getResourceId, item -> item);
+
+        return iPage.convert(practiceTheory -> {
+            PracticeTheoryListBo theoryListBo = BeanUtils.copy(practiceTheory, PracticeTheoryListBo.class);
+
+            if (authContext.getIsWeb()) {
+                // 解题状态设置
+                if (null != listQuery.getSolved()) {
+                    theoryListBo.setSolved(listQuery.getSolved());
+                } else {
+                    PracticeSolved practiceSolved = practiceSolvedMap.get(practiceTheory.getResourceId());
+                    if (practiceSolved == null) {
+                        theoryListBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
+                    } else {
+                        theoryListBo.setSolved(practiceSolved.getSolved() ?
+                                PracticeSolved.SolvedStatus.SOLVED.getCode() : PracticeSolved.SolvedStatus.TRIED.getCode());
+                    }
+                }
+            }
+
+            String userName = userInfoMap.get(practiceTheory.getCreateUserId());
+            theoryListBo.setCreateUserName(null != userName ? userName : "");
+            String practiceSetName = practiceSetMap.get(practiceTheory.getPracticeSetId());
+            theoryListBo.setPracticeSetName(null != practiceSetName ? practiceSetName : "");
+            return theoryListBo;
+        });
+    }
+
+    @Override
+    public WebTheoryBo selectById(String resourceId, String userId, Boolean isCollected) {
+
+        PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
+        if (null == practiceTheory) {
+            log.error("Theory practice not found! practice_id=[{}]", resourceId);
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+
+        WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);
+
+        Boolean result = resourceCollectionService.selectByUnique(userId,
+                ResourceCollection.BusinessType.THEORY.getCode(), resourceId);
+        webTheoryBo.setIsCollection(null == result ? CommonConstant.FALSE : result);
+
+        if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+                .getCode().intValue()) {
+            webTheoryBo.setBlankCount(JsonUtil
+                    .toJsonObjectArray(practiceTheory.getBlank(), BlankAnswer.class).size());
+        }
+
+        PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(userId,
+                PracticeCategory.PracticeType.THEORY.getCode(), resourceId, isCollected);
+
+        answerToNull(webTheoryBo, practiceSolved);
+
+        PracticeSet practiceSet = practiceSetMapper.selectById(webTheoryBo.getPracticeSetId());
+        webTheoryBo.setPracticeSetName(practiceSet.getName());
+
+        /**
+         * 获取此题top5
+         */
+        List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectTop5(resourceId);
+        if (practiceSolveds.size() > 0) {
+            webTheoryBo.setTop5(practiceSolveds.stream().map(item -> practiceSolvedToTop5(item)).collect(Collectors.toList()));
+        }
+
+        return webTheoryBo;
+    }
+
+    public Top5 practiceSolvedToTop5(PracticeSolved item) {
+        Top5 top5 = new Top5();
+        top5.setSolved(item.getSolved());
+        top5.setUpdateTime(item.getUpdateTime());
+        top5.setUserName(remoteUserService.getById(item.getSubmitUserId()).getUserName());
+        return top5;
+    }
+
+    /**
+     * 答案置空
+     *
+     * @param webTheoryBo
+     * @param practiceSolved
+     */
+    private void answerToNull(WebTheoryBo webTheoryBo, PracticeSolved practiceSolved) {
+
+        if (null == practiceSolved) {
+            answerToNull(webTheoryBo);
+            webTheoryBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
+        } else {
+            PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
+            if (practiceSolved.getSolved()) {
+                detailBo.setCorrectAnswer(webTheoryBo.getAnswer());
+                detailBo.setIsSolved(practiceSolved.getSolved());
+                detailBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
+                if (webTheoryBo.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
+                        .getCode().intValue()) {
+                    detailBo.setKeyword(webTheoryBo.getKeyword());
+                }
+                webTheoryBo.setResolvedDetail(detailBo);
+                webTheoryBo.setSolved(PracticeSolved.SolvedStatus.SOLVED.getCode());
+            } else {
+                PracticeNoSolvedBo practiceNoSolvedBo = new PracticeNoSolvedBo();
+                practiceNoSolvedBo.setIsSolved(practiceSolved.getSolved());
+                answerToNull(webTheoryBo);
+                webTheoryBo.setResolvedDetail(practiceNoSolvedBo);
+                webTheoryBo.setSolved(PracticeSolved.SolvedStatus.TRIED.getCode());
+            }
+        }
+
+    }
+
+    /**
+     * 答案置空
+     *
+     * @param webTheoryBo
+     */
+    private void answerToNull(WebTheoryBo webTheoryBo) {
+        webTheoryBo.setAnswer(null);
+        webTheoryBo.setBlank(null);
+        webTheoryBo.setKeyword(null);
+    }
+
+    @Override
+    public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer,
+                                       Boolean isCollected) {
+
+        PracticeTheory practiceTheory = practiceTheoryMapper.selectById(theoryId);
+        if (null == practiceTheory) {
+            log.info("Theory practice not found! practice_id=[{}]", theoryId);
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+
+        // 判断是否已完成答题
+        PracticeSolved solvedPractice = practiceSolvedMapper.selectUserAndId(userId,
+                PracticeCategory.PracticeType.THEORY.getCode(), theoryId, isCollected);
+        if (null != solvedPractice && solvedPractice.getSolved()) {
+            return BeanUtils.copy(solvedPractice, EvaluateResult.class);
+        }
+
+        EvaluateResult evaluateResult = theoryEvaluateHandler.evaluateByBusiness(userId,
+                practiceTheory, userAnswer);
+
+        // 将评估记录存储
+        PracticeSolved practiceSolved = BeanUtils.copy(evaluateResult, PracticeSolved.class);
+        practiceSolved.setPracticeId(practiceTheory.getResourceId());
+        practiceSolved.setSubmitUserId(userId);
+        practiceSolved.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+        practiceSolved.setSubmitAnswer(userAnswer);
+
+        practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
+                ResourceCollection.BusinessType.THEORY.getCode(), practiceTheory.getResourceId()));
+
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                //更新错题集状态
+                if (evaluateResult.getSolved()) {
+                    practiceMistakeService.addCorrect(userId, practiceTheory.getResourceId(), PracticeCategory.PracticeType.THEORY.getCode());
+                } else {
+                    practiceMistakeService.addIncorrect(userId, practiceTheory.getResourceId(), PracticeCategory.PracticeType.THEORY.getCode());
+                }
+                //更新题目状态
+                try {
+                    practiceSolvedMapper.insert(practiceSolved);
+                } catch (DuplicateKeyException e) {
+                    practiceSolvedMapper.updateSolved(practiceSolved);
+                }
+            }
+        });
+
+
+        return evaluateResult;
+    }
+
+    @Override
+    public Integer create(PracticeTheory practiceTheory, AuthContext authContext) {
+
+        // 数据校验
+        practiceValidateHandler.validateTheoryContentExist(practiceTheory.getPracticeSetId(),
+                practiceTheory.getContent());
+        practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
+                PracticeCategory.PracticeType.THEORY.getCode());
+        PracticeSet practiceSet = practiceValidateHandler.validateSetType(
+                practiceTheory.getPracticeSetId(), PracticeSet.PracticeType.THEORY.getCode());
+        practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType(), practiceTheory.getKeyword());
+        // 基本数据设置
+        practiceTheory.setBuiltin(CommonConstant.FALSE);
+        practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
+        practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
+
+        return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+            @Override
+            public Integer doInTransaction(TransactionStatus status) {
+                practiceSetMapper.updateById(practiceSet);
+                return practiceTheoryMapper.insert(practiceTheory);
+            }
+        });
+    }
+
+    @Override
+    public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
+
+        // 数据校验
+        practiceValidateHandler.validateTheoryContentExistExcludeItself(practiceTheory.getPracticeSetId(),
+                practiceTheory.getContent(), practiceTheory);
+        practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
+                PracticeCategory.PracticeType.THEORY.getCode());
+        practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
+                PracticeSet.PracticeType.THEORY.getCode());
+        practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType(), practiceTheory.getKeyword());
+        PracticeTheory originPractice = practiceTheoryMapper.selectById(practiceTheory.getResourceId());
+        String originChangeBo = BeanUtils.copy(originPractice, TheoryChangeBo.class).toString();
+        String changeBo = BeanUtils.copy(practiceTheory, TheoryChangeBo.class).toString();
+        // 数据更新
+        final int[] result = new int[1];
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                //如果对应的几个字段被修改则删除对应的错题记录和做题记录
+                if (!changeBo.equals(originChangeBo)) {
+                    LambdaQueryWrapper<PracticeSolved> practiceSolvedLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                    practiceSolvedLambdaQueryWrapper.eq(PracticeSolved::getPracticeId, practiceTheory.getResourceId());
+                    practiceSolvedMapper.delete(practiceSolvedLambdaQueryWrapper);
+                    LambdaQueryWrapper<PracticeMistake> practiceMistakeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                    practiceMistakeLambdaQueryWrapper.eq(PracticeMistake::getPracticeId, practiceTheory.getResourceId());
+                    practiceMistakeMapper.delete(practiceMistakeLambdaQueryWrapper);
+                }
+                result[0] = practiceTheoryMapper.updateById(practiceTheory);
+            }
+        });
+
+        return result[0];
+    }
+
+    @Override
+    public List<String> selectPracticeListIds(AuthContext authContext, String practiceSetId) {
+
+        List<String> setIds;
+        if (practiceSetId == null) {
+            setIds = practiceSetMapper.selectByAuthContext(authContext);
+            if (CollectionUtils.isEmpty(setIds)) {
+                return Lists.newArrayList();
+            }
+        } else {
+            setIds = Arrays.asList(practiceSetId);
+        }
+
+        List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(setIds);
+        List<String> publicIds = practiceSets.stream()
+                .filter(practiceSet -> practiceSet.getIsPublic())
+                .map(practiceSet -> practiceSet.getResourceId()).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(publicIds)) {
+            return Lists.newArrayList();
+        }
+
+        return practiceTheoryMapper.selectBySetIds(publicIds, authContext.getIsWeb());
+    }
+
+    @Override
+    public Integer batchDelete(List<String> resourceIds) {
+        String practiceId = resourceIds.get(CommonConstant.ZERO);
+        PracticeTheory theory = practiceTheoryMapper.selectById(practiceId);
+
+        // 习题集数据更新
+        PracticeSet practiceSet = practiceValidateHandler
+                .validatePracticeSetExist(theory.getPracticeSetId());
+        practiceSet.setPracticeCount(null == practiceSet.getPracticeCount()
+                || practiceSet.getPracticeCount() <= resourceIds.size() ? CommonConstant.ZERO
+                : practiceSet.getPracticeCount() - resourceIds.size());
+
+        return transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+            @Override
+            public Integer doInTransaction(TransactionStatus status) {
+                practiceMistakeMapper.deleteByPracticeIds(resourceIds, null);
+                practiceSolvedMapper.deleteByPracticeIds(resourceIds);
+                practiceSetMapper.updateById(practiceSet);
+                return practiceTheoryMapper.deleteBatchIds(resourceIds);
+            }
+        });
+    }
+
+    @Override
+    public PracticeTheory loadPracticeTheory(String practiceSetId, PracticeTheoryDumpLoadBo dumpBo,
+                                             String userId) {
+        // 重复则不导入
+        String practiceId = practiceTheoryMapper.selectByContent(practiceSetId,
+                dumpBo.getContent());
+        if (StringUtils.isNotBlank(practiceId)) {
+            log.error("Practice theory exist! practice_id=[{}], practice_name=[{}]", practiceId,
+                    dumpBo.getContent());
+            return null;
+        }
+
+        PracticeTheory practiceTheory = BeanUtils.copy(dumpBo, PracticeTheory.class);
+        practiceTheory.setPracticeSetId(practiceSetId);
+        practiceTheory.setBuiltin(CommonConstant.TRUE);
+        practiceTheory.setResourceId(IDGeneratorUtil.getID());
+        practiceTheory.setCreateUserId(userId);
+        // 增加判断 添加默认值 防止前端无法格式化数据
+        if (StringUtils.isBlank(dumpBo.getKeyword())) {
+            practiceTheory.setKeyword(CommonConstant.EMPTY_LIST_JSON);
+        }
+        if (StringUtils.isBlank(dumpBo.getKnowledge())) {
+            practiceTheory.setKnowledge(CommonConstant.EMPTY_LIST_JSON);
+        }
+        if (StringUtils.isBlank(dumpBo.getOption())) {
+            practiceTheory.setOption(CommonConstant.EMPTY_OBJECT);
+        }
+
+        // 分类数据
+        String categoryId = practiceCategoryService.selectCategoryOrCreate(dumpBo.getCategoryName(),
+                PracticeCategory.PracticeType.THEORY.getCode(), userId);
+        practiceTheory.setCategoryId(categoryId);
+
+        return practiceTheory;
+    }
+
+    @Override
+    public PracticeTheoryDumpLoadBo dumpTheory(PracticeTheory practiceTheory) {
+        PracticeTheoryDumpLoadBo dumpLoadBo = BeanUtils.copy(practiceTheory,
+                PracticeTheoryDumpLoadBo.class);
+
+        // 分类数据处理
+        PracticeCategory category = practiceValidateHandler
+                .validateCategoryExist(practiceTheory.getCategoryId());
+        dumpLoadBo.setCategoryName(category.getName());
+        return dumpLoadBo;
+    }
+
+    @Override
+    public void createMpLog(String practiceId, LogContent logContent) {
+        PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
+        String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
+        remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
+                OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
+    }
+
+    @Override
+    public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo,
+                                           AuthContext authContext) {
+
+        List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+        if (CollectionUtils.isEmpty(setIds)) {
+            return new ExternalTheoryCountBo();
+        }
+
+        String searchSet = theoryListQueryBo.getPracticeSetId();
+        if (StringUtils.isNotBlank(searchSet)) {
+            if (setIds.contains(searchSet)) {
+                setIds.clear();
+                setIds.add(searchSet);
+            } else {
+                return new ExternalTheoryCountBo();
+            }
+        }
+
+        // 设置查询条件
+        TheoryListQuery listQuery = BeanUtils.copy(theoryListQueryBo, TheoryListQuery.class);
+        listQuery.setPracticeSetIds(setIds);
+
+        // 数据查询转换
+        List<TheorySimpleBo> bos = practiceTheoryMapper.selectSimple(listQuery, true);
+        Map<Integer, List<TheorySimpleBo>> typeMap = StreamApiUtils.groupBy(bos,
+                TheorySimpleBo::getTheoryType);
+        ExternalTheoryCountBo countBo = new ExternalTheoryCountBo(typeMap);
+        return countBo;
+    }
+
+    @Override
+    public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
+
+        MdTheoryPractice mdTheoryPractice = new MdTheoryPractice();
+
+        List<TheoryBaseMd> singleList = Lists.newArrayList();
+
+        List<TheoryBaseMd> multipleList = Lists.newArrayList();
+
+        List<TheoryBaseMd> blankList = Lists.newArrayList();
+
+        List<TheoryBaseMd> anwserList = Lists.newArrayList();
+
+        List<TheoryBaseMd> judgeList = Lists.newArrayList();
+
+        for (PracticeTheory theory : theories) {
+            Integer code = theory.getTheoryType();
+            TheoryBaseMd theoryBaseMd = BeanUtils.copy(theory, TheoryBaseMd.class);
+
+            String difficulty = EnumUtils.getEnumDescByCode(theory.getDifficulty(),
+                    Difficulty.class);
+            theoryBaseMd.setDifficulty(difficulty);
+            // 答案增加之前两个空格和换行
+            theoryBaseMd.setAnswer("  " + theory.getAnswer() + System.lineSeparator());
+
+            // 分类数据,有可能为空
+            String category = "";
+            try {
+                CategoryListBo categoryListBo = practiceCategoryService
+                        .selectById(theory.getCategoryId(), false);
+                category = categoryListBo.getName();
+
+            } catch (Exception e) {
+                log.error("theory category is null . theoryId=[{}]", theory.getResourceId());
+
+            }
+
+            theoryBaseMd.setCategory(category);
+
+            // 单选需要获取选项内容
+
+            if (PracticeTheory.TheoryType.SINGLE.getCode().equals(code)) {
+                changeTitleToTheoryBaseMd(theory, theoryBaseMd);
+                singleList.add(theoryBaseMd);
+            }
+
+            // 多选需要获取选项内容,修改答案
+            if (PracticeTheory.TheoryType.MULTIPLE.getCode().equals(code)) {
+                changeTitleToTheoryBaseMd(theory, theoryBaseMd);
+
+                String anwser = theory.getAnswer().replace("|", "");
+
+                theoryBaseMd.setAnswer(anwser);
+                multipleList.add(theoryBaseMd);
+
+            }
+
+            // 填空需要修改答案
+            if (PracticeTheory.TheoryType.FILL_BLANK.getCode().equals(code)) {
+
+                List<BlankAnswer> blankAnswers = JsonUtil.toJsonObjectArray(theory.getAnswer(),
+                        BlankAnswer.class);
+
+                String answer = "";
+
+                for (int i = 0; i < blankAnswers.size(); i++) {
+                    String answerValue = blankAnswers.get(i).getValue();
+                    answer += "  " + (i + 1) + ". " + answerValue + System.lineSeparator();
+
+                }
+
+                theoryBaseMd.setAnswer(answer.trim());
+                blankList.add(theoryBaseMd);
+
+            }
+            // 判断需要修改答案
+            if (PracticeTheory.TheoryType.JUDGMENT.getCode().equals(code)) {
+
+                String answer = theory.getAnswer().equals("A") ? "T" : "F";
+
+                theoryBaseMd.setAnswer(answer);
+
+                judgeList.add(theoryBaseMd);
+
+            }
+
+            // 简答
+            if (PracticeTheory.TheoryType.SHORT_ANSWER.getCode().equals(code)) {
+
+                anwserList.add(theoryBaseMd);
+
+            }
+            theoryBaseMd
+                    .setTitle(MdTheoryParser.setRelativeFilePath(path, theoryBaseMd.getTitle()));
+
+        }
+        mdTheoryPractice.setSingleList(singleList);
+        mdTheoryPractice.setMultipleList(multipleList);
+        mdTheoryPractice.setBlankList(blankList);
+        mdTheoryPractice.setJudgeList(judgeList);
+        mdTheoryPractice.setAnwserList(anwserList);
+
+        return mdTheoryPractice;
+    }
+
+    @Override
+    public ProgressStatisticsRes getProgressStatistics(String practiceSetId) {
+        ProgressStatisticsRes progressStatisticsRes = new ProgressStatisticsRes();
+
+        TheoryListQuery listQuery = new TheoryListQuery();
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                CommonConstant.TRUE);
+
+        // 过滤无权限习题集
+        List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+        // 过滤非公开习题集
+        List<PracticeSet> practiceSets = practiceSetMapper
+                .selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+        List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+        authSetIds.retainAll(setIds);
+        List<ProgressProportion> progressProportionList = new ArrayList<>();
+        // 根据习题集过滤习题编号
+        if (StringUtils.isNotBlank(practiceSetId)) {
+            if (authSetIds.contains(practiceSetId)) {
+                authSetIds.clear();
+                authSetIds.add(practiceSetId);
+            } else {
+                authSetIds.clear();
+            }
+        }
+        if (CollectionUtils.isNotEmpty(authSetIds)) {
+            progressProportionList = practiceTheoryMapper.selectByGroupDifficulty(listQuery,
+                    authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
+        }
+        Map<Integer, ProgressProportion> progressProportionMap = progressProportionList.stream().collect(Collectors.toMap(ProgressProportion::getDifficulty, item -> item));
+
+        ProgressProportion simple = progressProportionMap.get(Difficulty.PRIMARY.getCode());
+        simple = simple == null ? setProgressProportionZero(Difficulty.PRIMARY.getCode()) : simple;
+        progressStatisticsRes.setSimple(simple);
+
+        ProgressProportion medium = progressProportionMap.get(Difficulty.MIDDLE.getCode());
+        medium = medium == null ? setProgressProportionZero(Difficulty.MIDDLE.getCode()) : medium;
+        progressStatisticsRes.setMedium(medium);
+
+        ProgressProportion difficulty = progressProportionMap.get(Difficulty.HIGH.getCode());
+        difficulty = difficulty == null ? setProgressProportionZero(Difficulty.HIGH.getCode()) : difficulty;
+        progressStatisticsRes.setDifficulty(difficulty);
+
+        ProgressProportion sum = new ProgressProportion();
+        sum.setSum(simple.getSum() + medium.getSum() + difficulty.getSum());
+        sum.setCount(simple.getCount() + medium.getCount() + difficulty.getCount());
+        progressStatisticsRes.setSum(sum);
+        return progressStatisticsRes;
+    }
+
+    public ProgressProportion setProgressProportionZero(int type) {
+        ProgressProportion progressProportion = new ProgressProportion();
+        progressProportion.setDifficulty(type);
+        progressProportion.setCount(0);
+        progressProportion.setSum(0);
+        return progressProportion;
+    }
+
+    @Override
+    public List<CategoryProgressRes> getProgressByCategory() {
+        List<CategoryProgressRes> categoryProgressResList = new ArrayList<>();
+
+        TheoryListQuery listQuery = new TheoryListQuery();
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), CommonConstant.TRUE);
+        List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+        // 过滤非公开习题集
+        List<PracticeSet> practiceSets = practiceSetMapper
+                .selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+        List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+        authSetIds.retainAll(setIds);
+        List<CategoryProgressRes> allPracticeTheoryByAuth = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(authSetIds)) {
+            allPracticeTheoryByAuth = practiceTheoryMapper.selectByGroupCategory(listQuery, authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
+        }
+        Map<String, CategoryProgressRes> categoryProgressResMap = StreamApiUtils.toMap(allPracticeTheoryByAuth, CategoryProgressRes::getCategoryId, item -> item);
+        List<PracticeCategory> practiceCategoryList = practiceCategoryMapper.listByTypeAndName(PracticeCategory.PracticeType.THEORY.getCode(), null);
+        for (PracticeCategory practiceCategory : practiceCategoryList) {
+            CategoryProgressRes categoryProgressRes = categoryProgressResMap.get(practiceCategory.getResourceId());
+            categoryProgressResList.add(new CategoryProgressRes(practiceCategory.getName(),
+                    practiceCategory.getResourceId(),
+                    categoryProgressRes == null ? 0 : categoryProgressRes.getCount(),
+                    categoryProgressRes == null ? 0 : categoryProgressRes.getSum()));
+        }
+        return categoryProgressResList;
+    }
+
+
+    @Override
+    public List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq) {
+        //获取所有可见的习题id
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+        List<String> practiceIds = getPracticeIdsByUserAndSet(authContext, null);
+        //获取练习记录
+        Date startDate = StringUtils.isEmpty(webTheoryRecordReq.getStartTime()) ? null :
+                TimeUtil.toDate4(webTheoryRecordReq.getStartTime() + " 00:00:00");
+        Date endDate = StringUtils.isEmpty(webTheoryRecordReq.getEndTime()) ? null :
+                TimeUtil.toDate4(webTheoryRecordReq.getEndTime() + " 23:59:59");
+
+        List<PracticeTheoryListBo> practiceTheoryList = practiceSolvedMapper.selectPracticeTheoryRecord(UserInfoContext.getUserContext().getUserId(), practiceIds,
+                startDate,
+                endDate,
+                webTheoryRecordReq.getSolved());
+        //设置习题集名称
+        List<String> practiceSetIds = StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getPracticeSetId);
+        if (practiceSetIds.size() == 0) {
+            return new ArrayList<>();
+        }
+        List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
+        Map<String, String> practiceSetIdNameMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getName);
+        for (PracticeTheoryListBo practiceTheoryListBo : practiceTheoryList) {
+            practiceTheoryListBo.setPracticeSetName(practiceSetIdNameMap.get(practiceTheoryListBo.getPracticeSetId()));
+        }
+        return practiceTheoryList;
+    }
+
+    /**
+     * 获取该用户所有可见的习题id
+     *
+     * @param authContext
+     * @param practiceSetId
+     * @return
+     */
+    @Override
+    public List<String> getPracticeIdsByUserAndSet(AuthContext authContext, String practiceSetId) {
+        // 过滤无权限习题集
+        List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+        if (CollectionUtils.isEmpty(authSetIds)) {
+            return new ArrayList<>();
+        }
+
+        // 过滤非公开习题集
+        List<PracticeSet> practiceSets = practiceSetMapper
+                .selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+        List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+        authSetIds.retainAll(setIds);
+        if (CollectionUtils.isEmpty(authSetIds)
+                || (StringUtils.isNotBlank(practiceSetId)
+                && !authSetIds.contains(practiceSetId))) {
+            return new ArrayList<>();
+        }
+
+        // 根据习题集过滤习题编号
+        if (StringUtils.isNotBlank(practiceSetId)) {
+            authSetIds.clear();
+            authSetIds.add(practiceSetId);
+        }
+        List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
+                authContext.getIsWeb());
+
+        if (CollectionUtils.isEmpty(practiceIds)) {
+            return new ArrayList<>();
+        }
+        return practiceIds;
+    }
+
+    @Override
+    public List<PracticeTheory> getCategoryIdAndSetIds() {
+        return practiceTheoryMapper.selectAllCategoryIds();
+    }
+
+    private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
+        String[] split = theoryBaseMd.getTitle().split("\n");
+        List<String> content = Arrays.asList(split);
+        Map<String, String> optionMap = JsonUtil.toJsonObject(theory.getOption(), TreeMap.class);
+        String title = "";
+
+        title += "    " + theory.getTitle() + System.lineSeparator() + System.lineSeparator();
+
+        Iterator iterator = optionMap.keySet().iterator();
+
+        while (iterator.hasNext()) {
+            String key = (String) iterator.next();
+            String value = optionMap.get(key).trim();
+
+            title += "    " + key + ". " + value + System.lineSeparator() + System.lineSeparator();
+        }
+
+        theoryBaseMd.setTitle(title);
+
+    }
 }

@@ -1,21 +1,5 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.slf4j.impl.TraceIdContext;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -38,8 +22,21 @@ import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.practice.entity.Paper;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.impl.TraceIdContext;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -184,7 +181,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		List<String> userIds = userInfos.stream().map(UserInfo::getUserId)
 				.collect(Collectors.toList());
 		Map<String, String> usernameMap = userInfos.stream()
-				.collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getUserName));
+				.collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
 		if (log.isDebugEnabled()) {
 			log.debug("getAllUser cost =" + (System.currentTimeMillis() - startTime));
 		}

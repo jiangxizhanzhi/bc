@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel("评估实时消息数据")
@@ -12,10 +14,11 @@ public class EvalRoleEventActivityListRsp implements Serializable {
 
     private String resourceId;
 
-    @ApiModelProperty("名称")
-    private String name;
+    private List<Date> creatTime;
 
-    private String creatTime;
+    @ApiModelProperty("事件数量")
+    private List<Integer> redCount;
 
-    private Integer count;
+    @ApiModelProperty("事件数量")
+    private List<Integer> blueCount;
 }

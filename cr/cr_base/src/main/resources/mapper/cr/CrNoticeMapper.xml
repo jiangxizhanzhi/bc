@@ -14,4 +14,15 @@
         and (`group` = ${@com.cyberpeace.cr.crbase.dao.entity.CrNotice$Group@ALL.code} or `group` = #{group})
         order by status desc, release_time desc
     </select>
+    <select id="getByRoom" resultType="com.cyberpeace.cr.crbase.dao.entity.CrNotice">
+        select count(l.resource_id)  as count,l.create_time,t.role_id as roleGroup
+        from cr_notice l left join cr_task t on t.mission_id = l.mission_id
+        where l.room_id = #{room_id}
+        and l.user_id in
+        <foreach collection="users" index="index" separator="," item="user" open="(" close=")">
+            #{user}
+        </foreach>
+        and (l.action_code =${RELEASE} or l.action_code =${START_ANSWER})
+        group by l.create_time,t.role_id
+    </select>
 </mapper>

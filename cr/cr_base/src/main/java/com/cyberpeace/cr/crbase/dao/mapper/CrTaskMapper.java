@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
+import com.cyberpeace.cr.crbase.controller.rsp.EvalEventStatusCount;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
 import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
@@ -91,4 +93,8 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	List<CrTask> selectByUserIdAndBusinessType(String userId, Integer businessType);
 
 	List<CrTask> selectByMissionIds(@Param("missionIds") List<String> missionIds);
+
+	List<EvalEventStatusCount> getTaskByRoomIdAndUsers(String roomId);
+
+	List<EvalEventCountBar> getTaskByRoomIdAndType(String roomId);
 }

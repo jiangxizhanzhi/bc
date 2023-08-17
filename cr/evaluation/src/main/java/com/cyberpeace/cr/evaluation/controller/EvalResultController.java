@@ -7,21 +7,21 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
-import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
+import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
+import com.cyberpeace.cr.crbase.controller.rsp.EvalEventStatusCount;
+import com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.*;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalResultListReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleEventActivityListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleScoreListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalResultListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleEventActivityListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleEventPercentRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleScoreListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
@@ -31,6 +31,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalResultMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,10 +43,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.cyberpeace.common.util.EnumUtils.getListCode;
 
 @Api(tags = "靶场测评-评估结果")
 @RestController
@@ -74,6 +75,18 @@ public class EvalResultController {
 
     @Autowired
     private CrTaskLogMapper crTaskLogMapper;
+
+    @Autowired
+    private CrNoticeMapper crNoticeMapper;
+
+    @Autowired
+    private CrTaskMapper crTaskMapper;
+
+    @Autowired
+    private CrRoleAssetNodeMapper crRoleAssetNodeMapper;
+
+    @Autowired
+    private CrConstantsService crConstantsService;
 
     @ApiOperation("获取靶场测评实例评估结果（分页）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -193,28 +206,206 @@ public class EvalResultController {
 
     @ApiOperation("评估结果详情-红蓝队实时消息-折线图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-    @GetMapping("/event/score")
-    public BaseRsp<List<EvalRoleEventActivityListRsp>> getEventActivity(@ApiParam(name = "id",
+    @GetMapping("/event/msg/")
+    public BaseRsp<EvalRoleEventActivityListRsp> getEventActivity(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
-        List<EvalRoleEventActivityListRsp> res = new ArrayList<>();
+        EvalRoleEventActivityListRsp res = new EvalRoleEventActivityListRsp();
+        List<Date> dates = new ArrayList<>();
+        List<Integer> redCount = new ArrayList<>();
+        List<Integer> blueCount = new ArrayList<>();
 
         String redVsBlueId = getRoomId(resourceId);
-        List<CrRole> redRoles = getCrRoles(redVsBlueId);
 
-        LambdaQueryWrapper<CrTaskLog> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(CrTaskLog::getRoomId, redVsBlueId);
-        redRoles.forEach(crRole -> {
-            List<String> ids = JsonUtil.toJsonObjectArray(crRole.getUserIds(), String.class);
-            List<CrTaskLog> crTaskLogs = crTaskLogMapper.getReleaseIdsByRoomIdAndUsers(redVsBlueId, ids);
-            EvalRoleEventActivityListRsp rsp = new EvalRoleEventActivityListRsp();
-//            rsp.setCount(cr);
-        });
-//        Map<Integer, CrTaskLog> taskLogMap = StreamApiUtils.toMap(crTaskLogs, CrTaskLog::getUserId, s -> s);
-//        CrTaskLog crTaskLog = taskLogMap.get(CrTaskLog.ActionCode.SUBMIT.getCode());
-        // 完成答题
-//        CrTaskLog crTaskLog = taskLogMap.get(CrTaskLog.ActionCode.SUBMIT.getCode());
+        List<EvalRoleEventActivity> crTaskLogs = crTaskLogMapper.getReleaseIdsByRoomIdAndUsers(redVsBlueId);
+
+        for(EvalRoleEventActivity crTaskLog:crTaskLogs){
+            dates.add(crTaskLog.getCreateTime());
+            Integer count = crTaskLog.getCount();
+            if(crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
+                redCount.add(count);
+                blueCount.add(0);
+
+            } else{
+                redCount.add(0);
+                blueCount.add(count);
+            }
+        }
+        res.setCreatTime(dates);
+        res.setBlueCount(blueCount);
+        res.setRedCount(redCount);
         return new BaseRsp<>(res);
 
+    }
+
+    @ApiOperation("评估结果详情-节点资产变化-折线图")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/event/node/")
+    public BaseRsp<EvalRoleEventActivityListRsp> getNodeActivity(@ApiParam(name = "id",
+            value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
+        EvalRoleEventActivityListRsp res = new EvalRoleEventActivityListRsp();
+        List<Date> dates = new ArrayList<>();
+        List<Integer> redCount = new ArrayList<>();
+        List<Integer> blueCount = new ArrayList<>();
+
+        String redVsBlueId = getRoomId(resourceId);
+        LambdaQueryWrapper<CrRoleAssetNode> query = new LambdaQueryWrapper<>();
+        query.eq(CrRoleAssetNode::getRoomId, redVsBlueId);
+        List<CrRoleAssetNode> crRoleAssetNodes = crRoleAssetNodeMapper.selectList(query);
+
+        for(CrRoleAssetNode roleAssetNode:crRoleAssetNodes){
+            dates.add(roleAssetNode.getCreateTime());
+            Integer count = roleAssetNode.getRoleType();
+            if(roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.RED.getCode())){
+                redCount.add(count);
+                blueCount.add(0);
+
+            } else{
+                redCount.add(0);
+                blueCount.add(count);
+            }
+        }
+        res.setCreatTime(dates);
+        res.setBlueCount(blueCount);
+        res.setRedCount(redCount);
+        return new BaseRsp<>(res);
+
+    }
+
+    @ApiOperation("评估结果详情-攻防事件-柱状图")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/event/bar")
+    public BaseRsp<List<EvalRoleEventPercentRsp>> getEventBar(@ApiParam(name = "id",
+            value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
+        String redVsBlueId = getRoomId(resourceId);
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndType(redVsBlueId);
+        Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
+        List<EvalRoleEventPercentRsp> res = new ArrayList<>();
+        List<Integer> listCode = getListCode(ActionTypeZHL.class);
+
+        for( Integer tmp:listCode){
+            EvalRoleEventPercentRsp rsp = new EvalRoleEventPercentRsp();
+            rsp.setCount(0);
+            if(barMap.containsKey(tmp)){
+                EvalEventCountBar evalEventCountBar = barMap.get(tmp);
+                rsp.setCount(evalEventCountBar.getCount());
+            }
+            String eventTypeStr = EnumUtils.getEnumDescByCode(tmp, ActionTypeZHL.class);
+            if(tmp > ActionTypeZHL.ZHL_ATTACK6.getCode()){
+                rsp.setRole(CrRole.RbRoleGroup.BLUE.getCode());
+            } else {
+                rsp.setRole(CrRole.RbRoleGroup.RED.getCode());
+            }
+            rsp.setName(eventTypeStr);
+            res.add(rsp);
+        }
+        return new BaseRsp<>(res);
+
+    }
+
+    @ApiOperation("评估结果详情-攻防事件-雷达图")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/event/count")
+    public BaseRsp<List<EvalEventCountBar>> getEventCount(@ApiParam(name = "id",
+            value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
+        List<EvalEventCountBar> res = new ArrayList<>();
+        String redVsBlueId = getRoomId(resourceId);
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndType(redVsBlueId);
+        Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
+        List<Integer> listCode = getListCode(ActionTypeZHL.class);
+        if(type.equals(CrRole.RbRoleGroup.RED.getCode())){
+            listCode = listCode.stream().filter(s->s<=ActionTypeZHL.ZHL_ATTACK6.getCode()).collect(Collectors.toList());
+
+        } else if(type.equals(CrRole.RbRoleGroup.BLUE.getCode())){
+            listCode = listCode.stream().filter(s->s>ActionTypeZHL.ZHL_ATTACK6.getCode()).collect(Collectors.toList());;
+        } else {
+            return new BaseRsp<>(res);
+        }
+        for(Integer tmp:listCode){
+            EvalEventCountBar rsp = new EvalEventCountBar();
+            rsp.setCount(0);
+            if(barMap.containsKey(tmp)){
+                EvalEventCountBar evalEventCountBar = barMap.get(tmp);
+                rsp.setCount(evalEventCountBar.getCount());
+            }
+            String eventTypeStr = EnumUtils.getEnumDescByCode(tmp, ActionTypeZHL.class);
+            rsp.setType(tmp);
+            rsp.setEventName(eventTypeStr);
+            res.add(rsp);
+        }
+
+        return new BaseRsp<>(res);
+
+    }
+
+    @ApiOperation("评估结果详情-攻防事件-雷达图")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/event/pencent")
+    public BaseRsp<List<EvalEventCountBar>> getEventPencent(@ApiParam(name = "id",
+            value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
+        List<EvalEventCountBar> res = new ArrayList<>();
+        String redVsBlueId = getRoomId(resourceId);
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndType(redVsBlueId);
+        Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
+        List<CrConstantsConfig> crConstantsConfigList;
+        if(type.equals(CrRole.RbRoleGroup.RED.getCode())){
+            crConstantsConfigList = crConstantsService.getByType(-1);
+
+        } else if(type.equals(CrRole.RbRoleGroup.BLUE.getCode())){
+            crConstantsConfigList = crConstantsService.getByType(-2);
+        } else {
+            return new BaseRsp<>(res);
+        }
+        Integer sum = 0;
+        for(CrConstantsConfig tmp:crConstantsConfigList){
+            Integer tmpType = tmp.getType();
+            EvalEventCountBar rsp = new EvalEventCountBar();
+            rsp.setCount(0);
+            if(barMap.containsKey(tmpType)){
+                EvalEventCountBar evalEventCountBar = barMap.get(tmpType);
+                Integer count = evalEventCountBar.getCount();
+                sum += count;
+                rsp.setCount(count);
+            }
+            String eventTypeStr = EnumUtils.getEnumDescByCode(tmpType, ActionTypeZHL.class);
+            rsp.setType(type);
+            rsp.setEventName(eventTypeStr);
+            res.add(rsp);
+        }
+        Integer finalSum = sum;
+        res.forEach(item -> item.setCount(finalSum.equals(0) ? 0 : item.getCount()/ finalSum));
+
+        return new BaseRsp<>(res);
+
+    }
+
+
+    @ApiOperation("评估结果详情-任务公告-环形图")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/event/notices")
+    public BaseRsp<List<EvalEventStatusCount>> getEventOtherPercent(@ApiParam(name = "id",
+            value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
+        LambdaQueryWrapper<CrNotice> queryWrapper = new LambdaQueryWrapper<>();
+        String redVsBlueId = getRoomId(resourceId);
+        queryWrapper.eq(CrNotice::getRoomId, redVsBlueId);
+        List<CrNotice> crNotices = crNoticeMapper.selectList(queryWrapper);
+        List<EvalEventStatusCount> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndUsers(redVsBlueId);
+        List<EvalEventStatusCount> res = new ArrayList<>();
+        Map<Integer, Integer> toMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventStatusCount::getStatus, EvalEventStatusCount::getCount);
+        List<Integer> codes = Arrays.asList(CrTask.TaskStatus.CLOSE.getCode(), CrTask.TaskStatus.RELEASED.getCode());
+        for(Integer code:codes){
+            EvalEventStatusCount statusCount = new EvalEventStatusCount();
+            statusCount.setStatus(code);
+            statusCount.setCount(0);
+            if(toMap.containsKey(code)){
+                statusCount.setCount(toMap.get(code));
+            }
+            res.add(statusCount);
+        }
+        EvalEventStatusCount statusCount = new EvalEventStatusCount();
+        statusCount.setStatus(0);
+        statusCount.setCount(crNotices.size());
+        res.add(statusCount);
+        return new BaseRsp<>(res);
     }
 
 }

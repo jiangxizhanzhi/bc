@@ -17,4 +17,6 @@ public interface CrNoticeMapper extends BaseMapper<CrNotice> {
     IPage<CrNoticeListRsp> pageAdmin(@Param("room_id") String roomId, Page page);
 
     List<CrNotice> page(@Param("room_id") String roomId, @Param("group") String group);
+
+    List<CrNotice> getByRoom(@Param("room_id") String roomId, @Param("group") String group);
 }

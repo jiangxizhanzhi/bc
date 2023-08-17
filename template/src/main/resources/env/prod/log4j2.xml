@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration monitorInterval="180" packages="">
     <properties>
-        <property name="LOG_HOME">/usr/local/tomcat</property>
+        <property name="LOG_HOME" value="${sys:BC_LOG_HOME:-/usr/local/tomcat/logs}"> </property>>
     </properties>
 
     <Appenders>
@@ -15,8 +15,8 @@
             </Filters>
         </console>
         <!-- FileAppender-->
-        <RollingFile name="log" fileName="${LOG_HOME}/logs/bc.log"
-                     filePattern="${LOG_HOME}/logs/bc_%d{yyyy-MM-dd}.%i.log">
+        <RollingFile name="log" fileName="${LOG_HOME}/bc.log"
+                     filePattern="${LOG_HOME}/bc_%d{yyyy-MM-dd}.%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %X{logId} - %m%n"/>
             <!-- 使用自定义过滤器 -->
             <Filters>
@@ -30,8 +30,8 @@
         </RollingFile>
         <!--*********************文件日志***********************-->
         <RollingFile name="resourceImport"
-                     fileName="${LOG_HOME}/logs/bcResourceImport.log"
-                     filePattern="${LOG_HOME}/logs/bcResourceImport_%d{yyyy-MM-dd}.%i.log">
+                     fileName="${LOG_HOME}/bcResourceImport.log"
+                     filePattern="${LOG_HOME}/bcResourceImport_%d{yyyy-MM-dd}.%i.log">
             <!--设置日志格式-->
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %X{logId} - %m%n"/>
             <!-- 使用自定义过滤器 -->
@@ -46,8 +46,8 @@
         </RollingFile>
 
         <RollingFile name="mp"
-                     fileName="${LOG_HOME}/logs/bcMp.log"
-                     filePattern="${LOG_HOME}/logs/bcMp_%d{yyyy-MM-dd}.%i.log">
+                     fileName="${LOG_HOME}/bcMp.log"
+                     filePattern="${LOG_HOME}/bcMp_%d{yyyy-MM-dd}.%i.log">
             <!--设置日志格式-->
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c  %X{logId} - %m%n"/>
             <!-- 使用自定义过滤器 -->
@@ -64,8 +64,8 @@
         </RollingFile>
 
         <RollingFile name="mq"
-                     fileName="${LOG_HOME}/logs/bcMq.log"
-                     filePattern="${LOG_HOME}/logs/bcMq_%d{yyyy-MM-dd}.%i.log">
+                     fileName="${LOG_HOME}/bcMq.log"
+                     filePattern="${LOG_HOME}/bcMq_%d{yyyy-MM-dd}.%i.log">
             <!--设置日志格式-->
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c  %X{logId} - %m%n"/>
             <!-- 使用自定义过滤器 -->
@@ -80,8 +80,8 @@
         </RollingFile>
 
         <RollingFile name="eval"
-                     fileName="${LOG_HOME}/logs/bcEval.log"
-                     filePattern="${LOG_HOME}/logs/bcEval_%d{yyyy-MM-dd}.%i.log">
+                     fileName="${LOG_HOME}/bcEval.log"
+                     filePattern="${LOG_HOME}/bcEval_%d{yyyy-MM-dd}.%i.log">
             <!--设置日志格式-->
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %X{logId:defaultValue} - %m%n"/>
             <!-- 使用自定义过滤器 -->

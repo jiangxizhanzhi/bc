@@ -5,6 +5,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -109,6 +110,8 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 				} else if ("blue".equals(roleType)) {
 					crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.BLUE.getCode());
 				}
+				crRoleAssetNode.setId(null);
+				crRoleAssetNode.setResourceId(IDGeneratorUtil.getID());
 				crRoleAssetNodeEditList.add(crRoleAssetNode);
 			}
 			if (wsMissionDynamicList.size() < 1 && mission.getEventType() < 7){

@@ -1,15 +1,13 @@
 package com.cyberpeace.cr.crbase.service.impl.bo;
 
-import java.util.List;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.util.List;
 
 /**
  * 训练模板基础信息
@@ -65,4 +63,25 @@ public class BaseInfo {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 	}
+
+	/**
+	 * type=3(日常训练模),场景类型枚举对应category(0,1,2,3)
+	 */
+	public enum DailyCategoryType {
+
+		VULNERABILITY_MINING(0, "漏洞挖掘"), WEAPON_VERIFICATION(1, "武器验证"),
+		SCENARIO_REPRODUCTION(2, "场景复现"), TECHNICAL_REPLICATION(3, "技术复现"), OTHERS(4,"其他");
+
+		private Integer code;
+
+		private String desc;
+
+		DailyCategoryType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
+
+
 }

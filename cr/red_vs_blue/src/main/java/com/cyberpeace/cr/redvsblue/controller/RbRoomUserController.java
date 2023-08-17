@@ -6,6 +6,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.MissionFlagAttachmentQuery;
@@ -43,6 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,6 +118,7 @@ public class RbRoomUserController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
+		String prefixPath = ConfigUtil.getContextProperty("cr.local.file.prefix");
 
 		// 获取下发的任务内容
 		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(resource_id, userId);
@@ -135,8 +138,8 @@ public class RbRoomUserController {
 			Integer evaluateStatus = taskContext.getStatus();
 
 			// 未提交过
-			if (taskSubmits == null || taskSubmits.size() == 0) {
-				if (evaluateStatus != CrTask.TaskStatus.CLOSE.getCode()) {
+			if (CollectionUtils.isEmpty(taskSubmits)) {
+				if (!evaluateStatus.equals(CrTask.TaskStatus.CLOSE.getCode())) {
 					evaluateStatus = CrTask.TaskStatus.RELEASED.getCode();
 				}
 			}
@@ -197,6 +200,7 @@ public class RbRoomUserController {
 					MissionFlagAttachmentQuery missionFlag = crFlagTaskMapper.selectFileByTask(taskContext.getResourceId());
 					String[] split = missionFlag.getFilePath().split("[/]");
 					missionFlag.setFileName(split[split.length - 1]);
+					missionFlag.setFilePath(prefixPath+missionFlag.getFilePath());
 					missionInfoRsp.setFlagFile(missionFlag);
 					missionInfoRsp.setAnswer(missionFlag.getFlagValue());
 				}

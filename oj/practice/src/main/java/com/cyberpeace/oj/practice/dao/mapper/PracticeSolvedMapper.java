@@ -1,15 +1,14 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
-import java.util.Date;
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
 
 @Mapper
 public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
@@ -44,4 +43,6 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 
 	List<PracticeSolved> selectUserAndIdList(@Param("userId") String userId,
 			@Param("practiceType") Integer practiceType, @Param("practiceIdList") List<String> practiceIdList);
+
+	List<PracticeSolved> selectTop5( @Param("practiceId") String practiceId);
 }

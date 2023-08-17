@@ -1,11 +1,10 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
-import java.util.Date;
-
 import com.cyberpeace.common.model.BaseTable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class RbTimeManagementRsp extends BaseTable {
@@ -45,5 +44,8 @@ public class RbTimeManagementRsp extends BaseTable {
 
 	@ApiModelProperty(value = "当前天文时间")
 	private Date currentAstronomicalTime;
+
+	@ApiModelProperty(value = "持续时间")
+	private long duration;
 
 }

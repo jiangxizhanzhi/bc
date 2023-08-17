@@ -1,0 +1,1 @@
+ALTER TABLE cr_eval_template ADD COLUMN duration int(11) DEFAULT 0;

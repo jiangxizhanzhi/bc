@@ -701,7 +701,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeSet practiceSet = practiceSetMap.get(practiceOperation.getPracticeSetId());
 		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 		UserInfo userInfo = creatorMap.get(practiceOperation.getCreateUserId());
-		operationListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
+		operationListBo.setCreateUserName(null != userInfo ? userInfo.getName() : "");
 		return operationListBo;
 
 	}

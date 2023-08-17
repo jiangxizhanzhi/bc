@@ -1,13 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
@@ -37,8 +29,14 @@ import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -100,7 +98,7 @@ public class CrCommonServiceImpl implements CrCommonService {
 			if (userInfo == null) {
 				continue;
 			}
-			session.setUsername(userInfo.getUserName());
+			session.setUsername(userInfo.getName());
 			session.setAvatar(userInfo.getAvatarUrl());
 			session.setIp(ipMap.get(session.getNodeId()));
 			// cpu, memory

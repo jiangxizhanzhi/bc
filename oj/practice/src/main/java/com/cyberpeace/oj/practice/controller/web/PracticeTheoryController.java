@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -51,149 +50,179 @@ import java.util.List;
 @Slf4j
 public class PracticeTheoryController {
 
-	@Autowired
-	private PracticeTheoryService practiceTheoryService;
+    @Autowired
+    private PracticeTheoryService practiceTheoryService;
 
-	@Autowired
-	private PracticeCategoryService practiceCategoryService;
+    @Autowired
+    private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
-	private PracticeMistakeService practiceMistakeService;
+    @Autowired
+    private PracticeMistakeService practiceMistakeService;
 
-	@Autowired
-	private ResourceCollectionService resourceCollectionService;
+    @Autowired
+    private ResourceCollectionService resourceCollectionService;
 
-	@Autowired
-	private NoteService noteService;
+    @Autowired
+    private NoteService noteService;
 
-	@GetMapping("")
-	@ApiOperation("查询理论基础练习详细信息")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {
-		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
-				UserInfoContext.getUserContext().getUserId(), Boolean.FALSE);
+    @GetMapping("")
+    @ApiOperation("查询理论基础练习详细信息")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {
+        WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
+                UserInfoContext.getUserContext().getUserId(), Boolean.FALSE);
 
-		return new BaseRsp<>(theoryBo);
-	}
+        return new BaseRsp<>(theoryBo);
+    }
 
-	@GetMapping("/list")
-	@ApiOperation("分页查询理论基础习题")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<ListRsp<PracticeTheoryListBo>> getList(WebTheoryListReq listReq) {
+    @GetMapping("/list")
+    @ApiOperation("分页查询理论基础习题")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<ListRsp<PracticeTheoryListBo>> getList(WebTheoryListReq listReq) {
 
-		// 设置默认排序字段
-		Page page = listReq.toPageParam();
-		if (CollectionUtils.isEmpty(page.getOrders())) {
-			OrderItem orderItem1 = new OrderItem("update_time", false);
-			OrderItem orderItem2 = new OrderItem("id", true);
-			page.setOrders(Lists.newArrayList(orderItem1, orderItem2));
-		}
+        // 设置默认排序字段
+        Page page = listReq.toPageParam();
+        if (CollectionUtils.isEmpty(page.getOrders())) {
+            OrderItem orderItem1 = new OrderItem("update_time", false);
+            OrderItem orderItem2 = new OrderItem("id", true);
+            page.setOrders(Lists.newArrayList(orderItem1, orderItem2));
+        }
 
-		// 查询子分类信息
-		List<String> categoryIds = practiceCategoryService
-				.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
+        // 查询子分类信息
+        List<String> categoryIds = practiceCategoryService
+                .selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                CommonConstant.TRUE);
 
-		TheoryListQueryBo listQueryBo = BeanUtils.copy(listReq, TheoryListQueryBo.class);
-		listQueryBo.setCategoryIds(categoryIds);
+        TheoryListQueryBo listQueryBo = BeanUtils.copy(listReq, TheoryListQueryBo.class);
+        listQueryBo.setCategoryIds(categoryIds);
 
-		IPage<PracticeTheoryListBo> result = practiceTheoryService.pageByQuery(page, listQueryBo,
-				authContext);
+        IPage<PracticeTheoryListBo> result = practiceTheoryService.pageByQuery(page, listQueryBo,
+                authContext);
 
-		return new BaseRsp<>(PageUtil.getListResult(result));
-	}
+        return new BaseRsp<>(PageUtil.getListResult(result));
+    }
 
-	@ApiOperation("理论基础练习题提交")
-	@PostMapping("/submit_answer")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<EvaluateResultTheory> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
+    @GetMapping("/listTop5")
+    @ApiOperation("查询理论基础习题top5")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<ListRsp<PracticeTheoryListBo>> getListTop5(WebTheoryListReq listReq) {
 
-		EvaluateResult evaluateResult = practiceTheoryService.submitAnswer(
-				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
-				answerReq.getSubmitAnswer(), Boolean.FALSE);
+        // 设置默认排序字段
+        Page page = listReq.toPageParam();
+        if (CollectionUtils.isEmpty(page.getOrders())) {
+            OrderItem orderItem1 = new OrderItem("update_time", false);
+            OrderItem orderItem2 = new OrderItem("id", true);
+            page.setOrders(Lists.newArrayList(orderItem1, orderItem2));
+        }
 
-		// 记录远程操作日志
-		LogContent logContent = evaluateResult.getSolved() ? LogContent.CORRECT
-				: LogContent.INCORRECT;
-		practiceTheoryService.createMpLog(answerReq.getResourceId(), logContent);
+        // 查询子分类信息
+        List<String> categoryIds = practiceCategoryService
+                .selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                CommonConstant.TRUE);
 
-		EvaluateResultTheory evaluateResultTheory = BeanUtils.copy(evaluateResult, EvaluateResultTheory.class);
-		if (evaluateResult.getSolved()){
-			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.SOLVED.getCode());
-		} else {
-			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.TRIED.getCode());
-		}
-		return new BaseRsp<>(evaluateResultTheory);
-	}
+        TheoryListQueryBo listQueryBo = BeanUtils.copy(listReq, TheoryListQueryBo.class);
+        listQueryBo.setCategoryIds(categoryIds);
 
-	@ApiOperation("获取所有理论习题编号列表")
-	@GetMapping("/list/ids")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<List<String>> getPracticeListId(
-			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId)  {
+        IPage<PracticeTheoryListBo> result = practiceTheoryService.pageByQuery(page, listQueryBo,
+                authContext);
+        if (PageUtil.getListResult(result).getList().size() > 5) {
+            return new BaseRsp(PageUtil.getListResult(result).getList().subList(0, 5));
+        }
+        return new BaseRsp(PageUtil.getListResult(result));
+    }
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
-		List<String> practiceIds = practiceTheoryService.selectPracticeListIds(authContext, practiceSetId);
-		return new BaseRsp<>(practiceIds);
-	}
+    @ApiOperation("理论基础练习题提交")
+    @PostMapping("/submit_answer")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<EvaluateResultTheory> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
-	@ApiOperation("获取进度统计")
-	@GetMapping("/progress")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<ProgressStatisticsRes> getProgressStatistics (
-			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
-		return new BaseRsp<>(practiceTheoryService.getProgressStatistics(practiceSetId));
-	}
+        EvaluateResult evaluateResult = practiceTheoryService.submitAnswer(
+                UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
+                answerReq.getSubmitAnswer(), Boolean.FALSE);
 
-	@ApiOperation("统计错题、收藏、笔记数量")
-	@GetMapping("/statistics")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<TheoryStatisticsRes> getTheoryStatistics () {
-		TheoryStatisticsRes theoryStatisticsRes = new TheoryStatisticsRes();
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
-		String userId = authContext.getUserId();
-		List<String> practiceIds = practiceTheoryService.getPracticeIdsByUserAndSet(authContext, null);
-		if (CollectionUtils.isEmpty(practiceIds)){
-			theoryStatisticsRes.setCollection(0);
-			theoryStatisticsRes.setNote(0);
-			theoryStatisticsRes.setMistake(0);
-			return new BaseRsp<>(theoryStatisticsRes);
-		}
-		theoryStatisticsRes.setMistake(practiceMistakeService.getTheoryMistakeCount(userId,practiceIds));
-		theoryStatisticsRes.setCollection(resourceCollectionService.countCollectionByUserIdAndBusinessId(userId,
-				ResourceCollection.BusinessType.THEORY.getCode(), practiceIds));
-		theoryStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), practiceIds));
-		return new BaseRsp<>(theoryStatisticsRes);
-	}
+        // 记录远程操作日志
+        LogContent logContent = evaluateResult.getSolved() ? LogContent.CORRECT
+                : LogContent.INCORRECT;
+        practiceTheoryService.createMpLog(answerReq.getResourceId(), logContent);
 
-	@ApiOperation("最近5条练习记录")
-	@GetMapping("/record")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<List<PracticeTheoryListBo>> getTheoryRecord() {
-		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(new WebTheoryRecordReq());
-		if (practiceTheoryList.size() > 5) {
-			return new BaseRsp(practiceTheoryList.subList(0, 5));
-		}
-		return new BaseRsp(practiceTheoryList);
-	}
+        EvaluateResultTheory evaluateResultTheory = BeanUtils.copy(evaluateResult, EvaluateResultTheory.class);
+        if (evaluateResult.getSolved()) {
+            evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.SOLVED.getCode());
+        } else {
+            evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.TRIED.getCode());
+        }
+        return new BaseRsp<>(evaluateResultTheory);
+    }
 
-	@ApiOperation("练习记录")
-	@GetMapping("/record_page")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<ListRsp<PracticeTheoryListBo>> getTheoryRecordPage(WebTheoryRecordReq webTheoryRecordReq) {
-		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(webTheoryRecordReq);
-		Page page = webTheoryRecordReq.toPageParam();
-		return new BaseRsp<>(PageUtil.getListResult(practiceTheoryList, page, practiceTheoryList.size()));
-	}
+    @ApiOperation("获取所有理论习题编号列表")
+    @GetMapping("/list/ids")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<List<String>> getPracticeListId(
+            @ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 
-	@ApiOperation("获取练习记录练习id列表")
-	@GetMapping("/record_practice_ids")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<List<String>> getRecordIds() {
-		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(new WebTheoryRecordReq());
-		return new BaseRsp<>(StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getResourceId));
-	}
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                CommonConstant.TRUE);
+        List<String> practiceIds = practiceTheoryService.selectPracticeListIds(authContext, practiceSetId);
+        return new BaseRsp<>(practiceIds);
+    }
+
+    @ApiOperation("获取进度统计")
+    @GetMapping("/progress")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<ProgressStatisticsRes> getProgressStatistics(
+            @ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
+        return new BaseRsp<>(practiceTheoryService.getProgressStatistics(practiceSetId));
+    }
+
+    @ApiOperation("统计错题、收藏、笔记数量")
+    @GetMapping("/statistics")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<TheoryStatisticsRes> getTheoryStatistics() {
+        TheoryStatisticsRes theoryStatisticsRes = new TheoryStatisticsRes();
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+        String userId = authContext.getUserId();
+        List<String> practiceIds = practiceTheoryService.getPracticeIdsByUserAndSet(authContext, null);
+        if (CollectionUtils.isEmpty(practiceIds)) {
+            theoryStatisticsRes.setCollection(0);
+            theoryStatisticsRes.setNote(0);
+            theoryStatisticsRes.setMistake(0);
+            return new BaseRsp<>(theoryStatisticsRes);
+        }
+        theoryStatisticsRes.setMistake(practiceMistakeService.getTheoryMistakeCount(userId, practiceIds));
+        theoryStatisticsRes.setCollection(resourceCollectionService.countCollectionByUserIdAndBusinessId(userId,
+                ResourceCollection.BusinessType.THEORY.getCode(), practiceIds));
+        theoryStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), practiceIds));
+        return new BaseRsp<>(theoryStatisticsRes);
+    }
+
+    @ApiOperation("最近5条练习记录")
+    @GetMapping("/record")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<List<PracticeTheoryListBo>> getTheoryRecord() {
+        List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(new WebTheoryRecordReq());
+        if (practiceTheoryList.size() > 5) {
+            return new BaseRsp(practiceTheoryList.subList(0, 5));
+        }
+        return new BaseRsp(practiceTheoryList);
+    }
+
+    @ApiOperation("练习记录")
+    @GetMapping("/record_page")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<ListRsp<PracticeTheoryListBo>> getTheoryRecordPage(WebTheoryRecordReq webTheoryRecordReq) {
+        List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(webTheoryRecordReq);
+        Page page = webTheoryRecordReq.toPageParam();
+        return new BaseRsp<>(PageUtil.getListResult(practiceTheoryList, page, practiceTheoryList.size()));
+    }
+
+    @ApiOperation("获取练习记录练习id列表")
+    @GetMapping("/record_practice_ids")
+    @RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+    public BaseRsp<List<String>> getRecordIds() {
+        List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(new WebTheoryRecordReq());
+        return new BaseRsp<>(StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getResourceId));
+    }
 
 }

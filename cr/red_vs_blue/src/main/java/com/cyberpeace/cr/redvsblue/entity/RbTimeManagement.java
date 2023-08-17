@@ -1,14 +1,13 @@
 package com.cyberpeace.cr.redvsblue.entity;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.Date;
 
 @Data
 @TableName("cr_rb_time_management")
@@ -30,6 +29,8 @@ public class RbTimeManagement extends BaseTable {
 	private String createUserId;
 
 	private String updateUserId;
+
+	private long duration;
 
 	public Boolean isStopped() {
 

@@ -3,6 +3,8 @@ package com.cyberpeace.oj.practice.service.bo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class WebTheoryBo extends AdminTheoryBo {
 
@@ -20,5 +22,8 @@ public class WebTheoryBo extends AdminTheoryBo {
 
 	@ApiModelProperty("习题集名称")
 	private String practiceSetName;
+
+	@ApiModelProperty("答题top5")
+	private List<Top5> top5;
 
 }

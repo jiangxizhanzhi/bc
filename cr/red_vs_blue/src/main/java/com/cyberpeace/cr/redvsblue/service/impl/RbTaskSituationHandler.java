@@ -135,7 +135,8 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 				wsMissionDynamicList.add(new WsMissionDynamic("", roleType, sceneId, targetId, mission.getEventType(), false));
 			}
 		}
-		crRoleAssetNodeService.updateBatchById(crRoleAssetNodeEditList);
+		crRoleAssetNodeService.saveBatch(crRoleAssetNodeEditList);
+		// 待恢复 crRoleAssetNodeService.updateBatchById(crRoleAssetNodeEditList);
 		dynamicSchemeService.pushMissionDynamicToRoom(wsMissionDynamicList, sceneId);
 	}
 }

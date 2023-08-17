@@ -167,12 +167,15 @@ public class EvalResultController {
 
         String redVsBlueId = getRoomId(resourceId);
 
+        EvalRecord evalRecord = evalRecordService.getById(resourceId);
+
         List<CrRole> redRoles = getCrRoles(redVsBlueId);
+
         List<EvalRoleScoreListRsp> res = new ArrayList<>();
 
         for(CrRole redRole:redRoles){
             List<String> ids = JsonUtil.toJsonObjectArray(redRole.getUserIds(), String.class);
-            List<CrEvalScore> crEvalScores = crEvalScoreMapper.getByRoomIdAndUsers(redVsBlueId, ids);
+            List<CrEvalScore> crEvalScores = crEvalScoreMapper.getByRoomIdAndUsers(redVsBlueId, evalRecord.getTemplateId(),ids);
             List<Integer> scores = StreamApiUtils.getColumn(crEvalScores, CrEvalScore::getFinalScore);
             int sum = scores.stream().mapToInt(Integer::intValue).sum();
             EvalRoleScoreListRsp rsp = new EvalRoleScoreListRsp();
@@ -337,7 +340,7 @@ public class EvalResultController {
 
     }
 
-    @ApiOperation("评估结果详情-攻防事件-雷达图")
+    @ApiOperation("评估结果详情-攻防事件-环形图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/pencent")
     public BaseRsp<List<EvalEventCountBar>> getEventPencent(@ApiParam(name = "id",
@@ -357,7 +360,7 @@ public class EvalResultController {
         }
         Integer sum = 0;
         for(CrConstantsConfig tmp:crConstantsConfigList){
-            Integer tmpType = tmp.getType();
+            Integer tmpType = tmp.getCode();
             EvalEventCountBar rsp = new EvalEventCountBar();
             rsp.setCount(0);
             if(barMap.containsKey(tmpType)){
@@ -367,12 +370,12 @@ public class EvalResultController {
                 rsp.setCount(count);
             }
             String eventTypeStr = EnumUtils.getEnumDescByCode(tmpType, ActionTypeZHL.class);
-            rsp.setType(type);
+            rsp.setType(tmp.getCode());
             rsp.setEventName(eventTypeStr);
             res.add(rsp);
         }
         Integer finalSum = sum;
-        res.forEach(item -> item.setCount(finalSum.equals(0) ? 0 : item.getCount()/ finalSum));
+        res.forEach(item -> item.setCount(finalSum.equals(0) ? 0 : item.getCount()/ finalSum * 100) );
 
         return new BaseRsp<>(res);
 

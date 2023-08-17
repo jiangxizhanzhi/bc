@@ -217,7 +217,18 @@ public class RbRoomUserController {
 
 		CrTask task = crTaskService.getByUserIdAndMissionId(userId,
 				submitMissionsReq.getMissionHash());
-
+		RbRoom rbRoom = rbRoomService.getById(task.getRoomId());
+		// 新增红蓝队员进
+		// 添加用户是否为红蓝队员的校验
+		if(null != rbRoom ){
+			CrTaskLog crTaskLog = new CrTaskLog();
+			crTaskLog.setActionCode(CrTaskLog.ActionCode.START_ANSWER.getCode());
+			crTaskLog.setMissionId(task.getMissionId());
+			crTaskLog.setRoomId(rbRoom.getResourceId());
+			crTaskLog.setUserId(UserInfoContext.getUserContext().getUserId());
+			crTaskLog.setTaskId(task.getResourceId());
+			crTaskLogMapper.insert(crTaskLog);
+		}
 		if (null == task) {
 			log.error("user‘s mission does not release！userId=[{}] missionId=[{}]", userId,
 					submitMissionsReq.getMissionHash());
@@ -331,19 +342,6 @@ public class RbRoomUserController {
 			@ApiParam(value = "下发任务ID", required = true) @RequestParam("mission_id") String missionId) {
 		TaskContext crTask = crTaskService.getByMissionAndUser(missionId, UserInfoContext.getUserContext().getUserId());
 		Mission mission = missionService.getById(crTask.getMissionId());
-		RbRoom rbRoom = rbRoomService.getById(crTask.getRoomId());
-		// 新增红蓝队员进
-		CrTask task = crTaskMapper.selectByUserIdAndMissionId(UserInfoContext.getUserContext().getUserId(), missionId);
-		// 添加用户是否为红蓝队员的校验
-		if(null != rbRoom ){
-			CrTaskLog crTaskLog = new CrTaskLog();
-			crTaskLog.setActionCode(CrTaskLog.ActionCode.START_ANSWER.getCode());
-			crTaskLog.setMissionId(missionId);
-			crTaskLog.setRoomId(crTask.getRoomId());
-			crTaskLog.setUserId(UserInfoContext.getUserContext().getUserId());
-			crTaskLog.setTaskId(crTask.getResourceId());
-			crTaskLogMapper.insert(crTaskLog);
-		}
 		return new BaseRsp<>(
 				crTrainActionService.saveTeamAction(
 						crTask.getRoomId(),

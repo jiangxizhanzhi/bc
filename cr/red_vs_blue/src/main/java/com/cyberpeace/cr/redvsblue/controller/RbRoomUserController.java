@@ -195,7 +195,9 @@ public class RbRoomUserController {
 					missionInfoRsp.setAnswer(missionFlagQuery.getFlagValue());
 				}else {
 					MissionFlagAttachmentQuery missionFlag = crFlagTaskMapper.selectFileByTask(taskContext.getResourceId());
-					missionInfoRsp.setMissionFlagAttachmentQuery(missionFlag);
+					String[] split = missionFlag.getFilePath().split("[/]");
+					missionFlag.setFileName(split[split.length - 1]);
+					missionInfoRsp.setFlagFile(missionFlag);
 					missionInfoRsp.setAnswer(missionFlag.getFlagValue());
 				}
 			}

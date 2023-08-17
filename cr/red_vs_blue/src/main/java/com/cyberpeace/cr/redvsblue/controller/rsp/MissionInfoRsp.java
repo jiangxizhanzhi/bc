@@ -59,6 +59,6 @@ public class MissionInfoRsp implements Serializable {
 	private Boolean writeUpShow;
 
 	@ApiModelProperty(value = "附件")
-	private MissionFlagAttachmentQuery  missionFlagAttachmentQuery;
+	private MissionFlagAttachmentQuery  flagFile;
 
 }

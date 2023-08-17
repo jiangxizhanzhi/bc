@@ -2,16 +2,14 @@ package com.cyberpeace.cr.evaluation.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbSituationScoreRsp;
 
-public interface EvalRbRoomService extends IService<RbRoom> {
-
+public interface EvalRbRoomService {
 
     /**
      * 分页查询评估任务评估
@@ -21,16 +19,14 @@ public interface EvalRbRoomService extends IService<RbRoom> {
     IPage<MissionEvaluationContext>
     getRbMissionEvaluationList(EvalMissionEvaluationBo missionEvaluationQuery);
 
-
-
     /**
      * 获取得分趋势信息
-     * @param roomId 红蓝对抗实例id
-     * @param roleType 角色类型
+     * @param evalTemplateId 评估模版id
+     * @param roomId         红蓝对抗实例id
+     * @param roleType       角色类型
      * @return 得分趋势信息
      */
-    JSONObject getRbScoreProgress(String roomId, Integer roleType);
-
+    JSONObject getRbScoreProgress(String evalTemplateId, String roomId, Integer roleType);
 
     StudentScoreRsp getStudentScore(String resource_id, String user_hash);
 
@@ -42,13 +38,24 @@ public interface EvalRbRoomService extends IService<RbRoom> {
 
     void updateStudentScore(EvalStudentScoreReq studentScoreReq);
 
+    /**
+     * 获取红蓝学员排名
+     * @param evalTemplateId 评估模版id
+     * @param roomId         红蓝对抗实例id
+     * @param roleType       角色类型
+     * @return 红蓝学员排名
+     */
+    JSONObject getRbMembersRanking(String evalTemplateId, String roomId, Integer roleType);
 
     /**
-     * 获取任务进度信息
-     * @param roomId 红蓝对抗实例id
-     * @param roleType 角色类型
-     * @return 任务进度数据
+     * 获取任务排名数据
+     * @param evalTemplateId 评估模版id
+     * @param roomId         红蓝对抗实例id
+     * @param roleType       角色类型
+     * @return 任务排名数据
      */
-    JSONObject getRbMissionProgress(String evalTemplateId,String roomId, Integer roleType);
+    JSONObject getRbLeaderBoard(String evalTemplateId, String roomId, Integer roleType);
+
+    RbSituationScoreRsp getTeamScore(String evalTemplateId, String roomId, Integer roleType);
 
 }

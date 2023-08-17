@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -18,6 +18,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TrainingScore;
@@ -32,15 +33,18 @@ import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTaskSubmitMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTrainTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
-import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbSituationScoreRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.context.RoleUserIds;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.ObjWithTime;
+import com.cyberpeace.cr.redvsblue.service.context.mission.RankData;
+import com.cyberpeace.cr.redvsblue.service.context.mission.UserCounter;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,7 +59,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> implements EvalRbRoomService {
+public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
     @Autowired
     private CrScoreService crScoreService;
@@ -83,6 +87,13 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
 
     @Autowired
     private CrRoleService crRoleService;
+
+    @Autowired
+    private RemoteUserService remoteUserService;
+
+    @Autowired
+    private MissionService missionService;
+
 
     private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
             CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
@@ -144,7 +155,6 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
         return data;
     }
 
-
     /**
      * 获取一血, 二血, 三血及额外分数
      */
@@ -178,11 +188,11 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
     }
 
     @Override
-    public JSONObject getRbScoreProgress(String roomId, Integer roleType) {
+    public JSONObject getRbScoreProgress(String evalTemplateId, String roomId, Integer roleType) {
         // 获取实例实际开始时间和理论结束时间
         TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
         RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, roleType));
-        List<Integer> yData = getScoreProgress(timeData, roomId, roleUserIds);
+        List<Integer> yData = getScoreProgress(timeData, evalTemplateId, roleUserIds);
 
         JSONObject json = new JSONObject();
         json.put("status", timeData.getStatus());
@@ -195,9 +205,9 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
         return json;
     }
 
-    private List<Integer> getScoreProgress(TimeData timeData, String roomId, RoleUserIds roleUserIds) {
+    private List<Integer> getScoreProgress(TimeData timeData, String evalTemplateId, RoleUserIds roleUserIds) {
         // 一次取出所有用户的得分纪录
-        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
+        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
         List<ObjWithTime> taskTimes = crEvalTrainTasks.stream().map(taskContext -> {
             ObjWithTime objWithTime = new ObjWithTime();
             objWithTime.setTime(taskContext.getLastSubmitTime());
@@ -408,52 +418,200 @@ public class EvalRbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> imp
     }
 
     @Override
-    public JSONObject getRbMissionProgress(String evalTemplateId,String roomId, Integer roleType) {
+    public JSONObject getRbMembersRanking(String evalTemplateId,String roomId, Integer roleType) {
 
-        // 获取角色组数据
-        RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
+        List<RankData> rankDataList = getUserScoreMissionData(evalTemplateId,roomId, roleType);
 
-        // 获取实例实际开始时间和理论结束时间
-        TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
+        Collections.sort(rankDataList);
 
-        // 获取组内已下发的任务
-        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIds(evalTemplateId, roleUserIds.getUserIds());
+        int ranking = 1;
+        Integer total = 0;
 
-        List<ObjWithTime> taskTimes = crEvalTrainTasks.stream().map(taskContext -> {
-            ObjWithTime objWithTime = new ObjWithTime();
-            objWithTime.setTime(taskContext.getReleaseTime());
-
-            return objWithTime;
-        }).collect(Collectors.toList());
-
-        List<Integer> totalProgressYData = timeData.calculateCountByTime(taskTimes);
-
-        // 获取已完成的任务
-        List<CrEvalTrainTask> finishedTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
-
-        List<ObjWithTime> finishedTimes = finishedTasks.stream().map(crTask -> {
-            ObjWithTime objWithTime = new ObjWithTime();
-            objWithTime.setTime(crTask.getLastSubmitTime());
-            return objWithTime;
-        }).collect(Collectors.toList());
-
-        List<Integer> completedProgressYData = timeData.calculateCountByTime(finishedTimes);
+        for (RankData rankData : rankDataList) {
+            rankData.setRanking(ranking++);
+            total += rankData.getScore();
+        }
 
         JSONObject json = new JSONObject();
-
-        json.put("total_mission", crEvalTrainTasks.size());
-        json.put("completed_mission", finishedTasks.size());
-        json.put("total_members", roleUserIds.getUserIds().size());
-        json.put("x_data", timeData.getXData());
-        json.put("y_total", totalProgressYData);
-        json.put("y_complete", completedProgressYData);
+        json.put("ranking_data", rankDataList);
+        json.put("time_stamp", System.currentTimeMillis() / 1000);
+        json.put("total_score", total);
 
         return json;
     }
 
-    private RoleUserIds getRoleInfo(String roomId, Integer roleType) {
-        return getRoleInfo(new RoleQuery(roomId, roleType));
+
+    @Override
+    public JSONObject getRbLeaderBoard(String evalTemplateId, String roomId, Integer roleType) {
+
+        List<RankData> rankDataList = getUserScoreMissionData(evalTemplateId, roomId, roleType);
+        Collections.sort(rankDataList);
+        int ranking = 1;
+        List<RankData> missionDataList = Lists.newArrayList();
+        for (RankData rankData : rankDataList) {
+            rankData.setRanking(ranking++);
+            RankData missionData = BeanUtils.deepCopy(rankData, RankData.class);
+            missionData.setSortType("missionRatio");
+            missionDataList.add(missionData);
+        }
+        Collections.sort(missionDataList);
+        ranking = 1;
+        for (RankData missionData : missionDataList) {
+            missionData.setRanking(ranking++);
+        }
+        JSONObject json = new JSONObject();
+        json.put("ranking_data", rankDataList);
+        json.put("time_stamp", System.currentTimeMillis() / 1000);
+        json.put("mission_data", missionDataList);
+        return json;
     }
 
+    private List<TaskContext> getTaskContext(List<CrEvalTrainTask> taskList) {
+        List<TaskContext> taskContextList = new ArrayList<>();
+
+        List<String> missionIds = new ArrayList<>();
+
+        for (CrEvalTrainTask task : taskList) {
+            missionIds.add(task.getMissionId());
+        }
+        if (missionIds.size() > 0) {
+            List<Mission> missionList = missionMapper.batchSelect(missionIds);
+            Map<String, Mission> missionMap = Maps.newHashMap();
+            for (Mission mission : missionList) {
+                missionMap.put(mission.getResourceId(), mission);
+            }
+
+            for (CrEvalTrainTask task : taskList) {
+                TaskContext taskContext = BeanUtils.copy(task, TaskContext.class);
+                taskContext.setMission(missionMap.get(task.getMissionId()));
+                taskContextList.add(taskContext);
+            }
+        }
+
+        return taskContextList;
+    }
+
+    private List<RankData> getUserScoreMissionData(String evalTemplateId, String roomId, Integer roleType) {
+
+        // 获取角色组数据
+        RoleQuery roleQuery = new RoleQuery(roomId, roleType);
+        List<CrRole> studentRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+
+        Map<String, UserCounter> userCounterHashMap = Maps.newHashMap();
+        // 获取角色组用户
+        List<String> userIds = Lists.newArrayList();
+        for (CrRole crRole : studentRoles) {
+            List<String> users = crRole.getUserIdList();
+            userIds.addAll(users);
+
+            // 获取用户
+            for (String userId : users) {
+                UserCounter userCounter = userCounterHashMap.getOrDefault(userId,  new UserCounter());
+                userCounter.setRoleId(crRole.getResourceId());
+                userCounterHashMap.put(userId, userCounter);
+            }
+        }
+
+        List<CrEvalTrainTask> finishedTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, userIds, CrTask.TaskStatus.FINISHED_STATUS_LIST);
+
+        for (CrEvalTrainTask crTask : finishedTasks) {
+            String submitUser = crTask.getUserId();
+            // 获取用户每一个已完成的任务
+            UserCounter userCounter = userCounterHashMap.getOrDefault(submitUser, new UserCounter());
+            // 更新用户的分数和完成任务数量
+            userCounter.getRemoteMissionIds().add(crTask.getMissionId());
+            userCounter.setScore(userCounter.getScore() + crTask.getScore());
+            userCounter.setRoleId(crTask.getRoleId());
+            userCounterHashMap.put(submitUser, userCounter);
+        }
+
+        List<RankData> rankDataList = Lists.newArrayList();
+        Map<String, CrRole> rolesMap = StreamApiUtils.toMap(studentRoles, CrRole::getResourceId,pc -> pc);
+        Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+        for (String key : userCounterHashMap.keySet()) {
+            if (!userInfoMap.containsKey(key)) {
+                continue;
+            }
+            UserCounter userCounter = userCounterHashMap.get(key);
+            Integer roleMissionCount = crRoleService.getMissionCount(rolesMap.get(userCounter.getRoleId()));
+            Integer missionRatio = roleMissionCount == 0 ? 0: userCounter.getRemoteMissionIds().size() * 100 / roleMissionCount;
+            RankData rankData = new RankData();
+            rankData.setName(userInfoMap.get(key).getName());
+            rankData.setLogo(userInfoMap.get(key).getAvatarUrl());
+            rankData.setScore(userCounter.getScore());
+            rankData.setCompletedMission(userCounter.getRemoteMissionIds().size());
+            rankData.setMissionRatio(missionRatio);
+            rankDataList.add(rankData);
+        }
+
+        return rankDataList;
+    }
+
+
+    @Override
+    public RbSituationScoreRsp getTeamScore(String evalTemplateId,String roomId, Integer roleType) {
+        checkRole(roleType);
+
+        Map<String, Mission> missionMap = missionService.batchGetByRoom(roomId).stream().collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
+
+        List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomIdAndRoleGroup(roomId, roleType);
+
+        LambdaQueryWrapper<CrEvalTrainTask> taskQuery = new LambdaQueryWrapper<>();
+        taskQuery.in(CrEvalTrainTask::getRoleId,crRoleList.stream().map(CrRole::getResourceId).collect(Collectors.toList()));
+        taskQuery.eq(CrEvalTrainTask::getEvalTemplateId,evalTemplateId);
+        List<CrEvalTrainTask> crTaskList = evalTrainTaskMapper.selectList(taskQuery);
+        crTaskList.sort(Comparator.comparing((CrEvalTrainTask crTask) -> crTask.getScore() == null ? 0 : crTask.getScore()).reversed());
+
+        Set<String> tmpFilter = Sets.newHashSet();
+        crTaskList = crTaskList.stream().filter(crTask -> tmpFilter.add(crTask.getMissionId())).collect(Collectors.toList());
+
+        Map<String, RbSituationScoreRsp.RoleScoreInfo> roleScoreInfoMap = crRoleList.stream().collect(Collectors.toMap(CrRole::getResourceId, crRole -> {
+            RbSituationScoreRsp.RoleScoreInfo roleScoreInfo = new RbSituationScoreRsp.RoleScoreInfo();
+            roleScoreInfo.setRoleId(crRole.getResourceId());
+            roleScoreInfo.setRoleName(crRole.getName());
+            roleScoreInfo.setScore(0);
+
+            return roleScoreInfo;
+        }));
+
+        Integer score = 0;
+        Integer residualScore = 0;
+        for (CrEvalTrainTask crTask: crTaskList) {
+            if (crTask.isFinished()) {
+                Mission mission = missionMap.get(crTask.getMissionId());
+                if (!crTask.getScore().equals(mission.getScore())) {
+                    int diffScore = mission.getScore() - crTask.getScore();
+                    residualScore += diffScore;
+                }
+                score += crTask.getScore();
+                RbSituationScoreRsp.RoleScoreInfo roleScoreInfo = roleScoreInfoMap.get(crTask.getRoleId());
+                roleScoreInfo.setScore(roleScoreInfo.getScore() + crTask.getScore());
+
+            } else {
+                residualScore += missionMap.get(crTask.getMissionId()).getScore();
+            }
+        }
+
+        RbSituationScoreRsp rbSituationScoreRsp = new RbSituationScoreRsp();
+        rbSituationScoreRsp.setScore(score);
+        rbSituationScoreRsp.setResidualScore(residualScore);
+
+        rbSituationScoreRsp.setRoleScoreInfoList(
+                roleScoreInfoMap.values().stream().peek(
+                        roleScoreInfo -> roleScoreInfo.setPercentage(
+                                roleScoreInfo.getScore() == 0
+                                        ? (double) 0: (double) roleScoreInfo.getScore() / (double) rbSituationScoreRsp.getScore() * 100
+                        )
+                ).collect(Collectors.toList())
+        );
+
+        return rbSituationScoreRsp;
+    }
+
+    private void checkRole(Integer roleGroup) {
+        if (!CrRole.RbRoleGroup.isRvbStudentRole(roleGroup)) {
+            throw new BusinessException(CrBusinessErrorCode.INVALID_ROLE_INFO);
+        }
+    }
 
 }

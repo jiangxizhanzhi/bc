@@ -1,19 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.cr.redvsblue.controller.rsp.*;
-import com.cyberpeace.cr.redvsblue.service.context.XYData;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -21,17 +9,28 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.redvsblue.controller.rsp.*;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = "红蓝对抗实例统计")
 @RestController
@@ -59,7 +58,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取实例运行时间和状态")
 	@GetMapping("/rb_time_data")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
 	public BaseRsp<TimeDataRsp> getRbTimeData(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		TimeData data = rbRoomScoreService.getRbTimeData(resource_id);

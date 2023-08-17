@@ -23,11 +23,9 @@ import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.TrainEvalService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbSituationScoreRsp;
-import com.cyberpeace.cr.redvsblue.controller.rsp.TimeDataRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSituationService;
-import com.cyberpeace.cr.redvsblue.service.context.TimeData;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import io.swagger.annotations.Api;
@@ -213,9 +211,6 @@ public class TrainEvalController {
     public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
             @ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
             @ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
-//        rbRoomService.checkRefereePermission(resource_id,
-//                UserInfoContext.getUserContext().getUserId());
-
         MissionDynamicRsp missionDynamicRsp = crScoreController.getUserMissionDynamic(resource_id,
                 student_id);
 
@@ -229,7 +224,6 @@ public class TrainEvalController {
             @ApiParam(name = "resource_id", value = "评估id", required = true) String resource_id,
             @ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
 
-        //todo  修改得分
         StudentScoreRsp studentScoreRsp = evalRbRoomService.getStudentScore(resource_id, user_hash);
         return new BaseRsp<>(studentScoreRsp);
     }
@@ -239,7 +233,6 @@ public class TrainEvalController {
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp updateStudentScore(@ApiParam(name = "studentScoreReq",value = "学员评分") @RequestBody EvalStudentScoreReq studentScoreReq) {
         evalRbRoomService.updateStudentScore(studentScoreReq);
-
         return new BaseRsp<>();
     }
 
@@ -253,53 +246,12 @@ public class TrainEvalController {
     @GetMapping("/team_score_progress")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<JSONObject> getRbScoreProgress(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true)@RequestParam("eval_template_id") String evalTemplateId,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
-        //todo  修改得分
-        JSONObject data = evalRbRoomService.getRbScoreProgress(resource_id, roleType);
+        JSONObject data = evalRbRoomService.getRbScoreProgress(evalTemplateId,roomId, roleType);
         return new BaseRsp(data);
     }
-
-    /**
-     * 查询红蓝实时战况页面 正中间计时器
-     * 获取实例运行时间和状态
-     *
-     * @return
-     */
-    @ApiOperation("获取实例运行时间和状态")
-    @GetMapping("/rb_time_data")
-    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-    public BaseRsp<TimeDataRsp> getRbTimeData(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-        TimeData data = rbRoomScoreService.getRbTimeData(resource_id);
-
-        TimeDataRsp timeDataRsp = new TimeDataRsp();
-        timeDataRsp.setStartTime((int) (data.getStartTime().getTime() / 1000));
-        timeDataRsp.setTimeStamp((int) (System.currentTimeMillis() / 1000));
-        timeDataRsp.setRunning(data.getRunning());
-        timeDataRsp.setStatus(data.getStatus());
-        return new BaseRsp(timeDataRsp);
-    }
-
-    /**
-     * 红方/蓝方成绩页面 右侧中折线图 任务进展
-     * 红蓝实时战况页面 左右两侧 任务进展
-     * 队内任务下发和完成任务数进展
-     *
-     * @return
-     */
-    @ApiOperation("获取任务下发和完成任务数进展")
-    @GetMapping("/team_mission_progress")
-    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-    public BaseRsp<JSONObject> getRbMissionProgress(
-            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id")String evalTemplateId,
-            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam("resource_id")String resourceId,
-            @ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam("role_type")Integer roleType) {
-
-        JSONObject data = evalRbRoomService.getRbMissionProgress(evalTemplateId,resourceId, roleType);
-        return new BaseRsp(data);
-    }
-
 
     /**
      * 红蓝实时战况页面 左右两侧 任务分类 柱状图
@@ -311,52 +263,61 @@ public class TrainEvalController {
     @GetMapping("/team_members_ranking")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<JSONObject> getRbMembersRanking(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
 //		String userId = UserInfoContext.getUserContext().getUserId();
 
 //		permissionCheckTeacherOrGroup(resource_id, userId, roleType);
         //todo  修改得分
-        JSONObject data = rbRoomScoreService.getRbMembersRanking(resource_id, roleType);
+        JSONObject data = evalRbRoomService.getRbMembersRanking(evalTemplateId, roomId, roleType);
         return new BaseRsp(data);
     }
 
     /**
-     * 红蓝实时战况页面 左右两侧 任务分类 柱状图
-     * 获取实例下的角色任务分类分布数据
-     *
+     *  红方/蓝方成绩页面 右侧中折线图 任务进展
+     *     红蓝实时战况页面 左右两侧 任务进展
+     *     队内任务下发和完成任务数进展
      * @return
      */
-    @ApiOperation("获取实例下的任务评估数据统计")
-    @GetMapping("/team_mission_evaluation")
-    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-    public BaseRsp<JSONObject> getRbMissionEvaluation(
+    @ApiOperation("获取任务下发和完成任务数进展")
+    @GetMapping("/team_mission_progress")
+    @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    public BaseRsp<JSONObject> getRbMissionProgress(
             @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-            @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
-//		String userId = UserInfoContext.getUserContext().getUserId();
-//		permissionCheckTeacherOrGroup(resource_id, userId, roleType);
+            @ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 
-        JSONObject data = rbRoomScoreService.getRbMissionEvaluation(resource_id, roleType);
+        JSONObject data = rbRoomScoreService.getRbMissionProgress(resource_id, role_type);
         return new BaseRsp(data);
     }
 
     /**
      * 红蓝实时战况页面 左右两侧 任务分类 柱状图
-     * 获取实例下的角色任务分类分布数据
-     *
+     *     获取实例下的角色任务分类分布数据
      * @return
      */
     @ApiOperation("获取实例下的角色任务分类分布数据")
     @GetMapping("/team_mission_category")
-    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<XYData> getRbMissionCategory(
             @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-            @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
-//		String userId = UserInfoContext.getUserContext().getUserId();
-//
-//		permissionCheckTeacherOrGroup(resource_id, userId, roleType);
+            @ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
+        XYData data = rbRoomScoreService.getRbMissionCategory(resource_id, role_type);
+        return new BaseRsp(data);
+    }
 
-        XYData data = rbRoomScoreService.getRbMissionCategory(resource_id, roleType);
+    /**
+     * 红蓝实时战况页面 左右两侧 任务分类 柱状图
+     *     获取实例下的角色任务分类分布数据
+     * @return
+     */
+    @ApiOperation("获取实例下的任务评估数据统计")
+    @GetMapping("/team_mission_evaluation")
+    @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    public BaseRsp<JSONObject> getRbMissionEvaluation(
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
+        JSONObject data = rbRoomScoreService.getRbMissionEvaluation(resource_id, role_type);
         return new BaseRsp(data);
     }
 
@@ -370,13 +331,13 @@ public class TrainEvalController {
     @GetMapping("/team_leader_board")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<JSONObject> getRbLeaderBoard(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
 //		String userId = UserInfoContext.getUserContext().getUserId();
-//
 //		permissionCheckTeacherOrGroup(resource_id, userId, roleType);
         //todo  修改得分
-        JSONObject data = rbRoomScoreService.getRbLeaderBoard(resource_id, roleType);
+        JSONObject data = evalRbRoomService.getRbLeaderBoard(evalTemplateId,roomId, roleType);
 
         return new BaseRsp(data);
     }
@@ -385,10 +346,10 @@ public class TrainEvalController {
     @ApiOperation("获取红蓝对抗队伍得分")
     @GetMapping("/score")
     public BaseRsp<RbSituationScoreRsp> score(
-            @ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(value = "角色类型, 红=4;蓝=5", required = true) @RequestParam(value = "role_type") Integer roleType) {
-        //todo  修改得分
-        return new BaseRsp<>(rbSituationService.getTeamScore(roomId, roleType));
+        return new BaseRsp<>(evalRbRoomService.getTeamScore(evalTemplateId,roomId, roleType));
     }
 
 }

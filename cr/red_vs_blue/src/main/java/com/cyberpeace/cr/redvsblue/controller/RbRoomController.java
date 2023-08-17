@@ -434,7 +434,7 @@ public class RbRoomController {
 	 */
 	@ApiOperation("获取时间管理数据")
 	@GetMapping("/get_time_management")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
 	public BaseRsp<RbTimeManagementRsp> getTimeManagement(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 

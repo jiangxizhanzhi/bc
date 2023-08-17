@@ -17,24 +17,6 @@
         </foreach>
     </insert>
 
-    <select id="selectByUserIdAndMissionId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
-        select *
-        from cr_task
-        where mission_id = #{missionId}
-        and user_id = #{userId}
-    </select>
-
-    <select id="selectByRoomIdAndUserIds" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
-        select *
-        from cr_eval_tain_task
-        where eval_template_id = #{evalTemplateId}
-        and user_id in
-        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
-            #{userId}
-        </foreach>
-    </select>
-
-
     <select id="selectByRoomIdAndUserId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *
         from cr_eval_train_task
@@ -42,10 +24,9 @@
         and user_id = #{userId}
     </select>
 
-
     <select id="selectByRoomIdAndUserIdsAndStatusList" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *
-        from cr_task
+        from cr_eval_train_task
         where eval_template_id = #{evalTemplateId}
         and user_id in
         <foreach collection="userIds" item="userId" separator="," open="(" close=")">

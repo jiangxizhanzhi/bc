@@ -15,6 +15,8 @@ import com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalResultListReq;
@@ -250,27 +252,55 @@ public class EvalResultController {
 
         String redVsBlueId = getRoomId(resourceId);
         List<CrRole> crRoles = getCrRoles(redVsBlueId);
+        Map<Integer, List<CrRole>> roleMap = StreamApiUtils.groupBy(crRoles, CrRole::getRoleGroup);
+        List<CrRole> blueRoles = roleMap.get(CrRole.RbRoleGroup.BLUE.getCode());
+        List<CrRole> redRoles = roleMap.get(CrRole.RbRoleGroup.RED.getCode());
+
+        int redNodes = getRoleNodeCount(redRoles);
+        int blueNodes = getRoleNodeCount(blueRoles);
+
         LambdaQueryWrapper<CrRoleAssetNode> query = new LambdaQueryWrapper<>();
         query.eq(CrRoleAssetNode::getRoomId, redVsBlueId);
         List<CrRoleAssetNode> crRoleAssetNodes = crRoleAssetNodeMapper.selectList(query);
 
         for(CrRoleAssetNode roleAssetNode:crRoleAssetNodes){
+            blueNodes = getBlueNodes(blueNodes, roleAssetNode);
+            redNodes = getBlueNodes(redNodes, roleAssetNode);
             dates.add(roleAssetNode.getCreateTime());
-            Integer count = roleAssetNode.getRoleType();
-            if(roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.RED.getCode())){
-                redCount.add(count);
-                blueCount.add(0);
-
-            } else{
-                redCount.add(0);
-                blueCount.add(count);
-            }
+            redCount.add(redNodes);
+            blueCount.add(blueNodes);
         }
         res.setCreatTime(dates);
         res.setBlueCount(blueCount);
         res.setRedCount(redCount);
         return new BaseRsp<>(res);
 
+    }
+
+    private int getBlueNodes(int blueNodes, CrRoleAssetNode roleAssetNode) {
+        if (roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())
+                && !roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
+            blueNodes -= 1;
+        }
+
+        if (!roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())
+                && roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
+            blueNodes += 1;
+        }
+        if (roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
+            blueNodes += 1;
+        }
+        return blueNodes;
+    }
+
+    private int getRoleNodeCount(List<CrRole> redRoles) {
+        int redNodes = 0;
+        for(CrRole redRole: redRoles){
+            CrRoleNodesData nodeData = redRole.getNodeData();
+            List<CrRoleNode> assetNodes = nodeData.getAssetNodes();
+            redNodes += assetNodes.size();
+        }
+        return redNodes;
     }
 
     @ApiOperation("评估结果详情-攻防事件-柱状图")

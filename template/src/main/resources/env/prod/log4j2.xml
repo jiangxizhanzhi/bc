@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration monitorInterval="180" packages="">
     <properties>
-        <property name="LOG_HOME" value="${sys:BC_LOG_HOME:-/usr/local/tomcat/logs}"> </property>>
+        <property name="LOG_HOME" value="${env:BC_LOG_HOME:-/usr/local/tomcat/logs}"> </property>>
     </properties>
 
     <Appenders>

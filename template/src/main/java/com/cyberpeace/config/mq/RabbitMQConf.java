@@ -233,7 +233,7 @@ public class RabbitMQConf {
     }
 
     private String getProjectName() {
-        String projectName = SystemPropUtil.getProp("PROJECT_NAME");
+        String projectName = SystemPropUtil.getProp("BC_PROJECT_NAME");
 
         if (StringUtils.isBlank(projectName)) {
             projectName = defaultProjectName;

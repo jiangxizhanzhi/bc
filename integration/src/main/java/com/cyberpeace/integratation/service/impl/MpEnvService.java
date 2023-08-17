@@ -24,7 +24,7 @@ public class MpEnvService {
 
 	@PostConstruct
 	public void init() {
-		MP_HOST = SystemPropUtil.getProp("MP_HOST");
+		MP_HOST = SystemPropUtil.getProp("MP_IP");
 		MP_PORT = SystemPropUtil.getProp("MP_PORT");
 		MP_URL = "http://" + MP_HOST + ":" + MP_PORT;
 

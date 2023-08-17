@@ -48,7 +48,7 @@ public class InitChecker {
 	 * 检查中台配置
 	 */
 	private void checkMp() {
-		blankCheck("MP_HOST");
+		blankCheck("MP_IP");
 		blankCheck("MP_PORT");
 		blankCheck("MP_SECRET");
 

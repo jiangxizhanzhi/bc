@@ -27,7 +27,7 @@ public class AdEnvService {
 
 	@PostConstruct
 	public void init() {
-		AD_HOST = SystemPropUtil.getProp("AD_HOST");
+		AD_HOST = SystemPropUtil.getProp("AD_IP");
 		AD_PORT = SystemPropUtil.getProp("AD_PORT");
 		AD_URL = "http://" + AD_HOST + ":" + AD_PORT;
 

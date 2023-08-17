@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.controller.req.MissionFlagAttachmentQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrFlagTask;
 import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
@@ -13,5 +14,7 @@ import java.util.List;
 public interface CrFlagTaskMapper extends BaseMapper<CrFlagTask> {
 
 	void batchInsert(@Param("list") List<CrFlagTask> list);
+
+	MissionFlagAttachmentQuery selectFileByTask(@Param("taskId") String taskId);
 
 }

@@ -18,7 +18,7 @@ public class MissionFlagQuery {
 	@ApiModelProperty(value = "flag值")
 	private String flagValue;
 
-	@ApiModelProperty(value = "flag值")
+	@ApiModelProperty(value = "附件")
 	private List<MissionFlagAttachmentQuery>  attachmentList;
 
 	public enum FlagType {

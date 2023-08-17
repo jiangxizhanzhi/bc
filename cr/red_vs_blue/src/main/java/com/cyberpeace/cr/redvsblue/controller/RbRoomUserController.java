@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -7,10 +8,13 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.controller.req.MissionFlagAttachmentQuery;
+import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
 import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
@@ -83,6 +87,9 @@ public class RbRoomUserController {
 
 	@Autowired
 	private CrTaskMapper crTaskMapper;
+
+	@Autowired
+	private CrFlagTaskMapper crFlagTaskMapper;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -182,6 +189,16 @@ public class RbRoomUserController {
 			missionInfoRsp.setEvaluateStatus(evaluateStatus);
 			missionInfoRsp.setRejectLog(rejectLogs);
 
+			if (MissionBase.MissionType.FLAG.getCode().equals(missionInfoRsp.getType())){
+				MissionFlagQuery missionFlagQuery = JSON.parseObject(missionInfoRsp.getAnswer(), MissionFlagQuery.class);
+				if (MissionFlagQuery.FlagType.STATIC_FLAG.getCode().equals(missionFlagQuery.getFlagType())) {
+					missionInfoRsp.setAnswer(missionFlagQuery.getFlagValue());
+				}else {
+					MissionFlagAttachmentQuery missionFlag = crFlagTaskMapper.selectFileByTask(taskContext.getResourceId());
+					missionInfoRsp.setMissionFlagAttachmentQuery(missionFlag);
+					missionInfoRsp.setAnswer(missionFlag.getFlagValue());
+				}
+			}
 			return missionInfoRsp;
 		}).collect(Collectors.toList());
 

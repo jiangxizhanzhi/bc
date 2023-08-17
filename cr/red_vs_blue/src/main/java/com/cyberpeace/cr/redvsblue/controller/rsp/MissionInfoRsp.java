@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
-import java.io.Serializable;
-import java.util.List;
-
+import com.cyberpeace.cr.crbase.controller.req.MissionFlagAttachmentQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class MissionInfoRsp implements Serializable {
@@ -56,4 +57,8 @@ public class MissionInfoRsp implements Serializable {
 
 	@ApiModelProperty("展示题解")
 	private Boolean writeUpShow;
+
+	@ApiModelProperty(value = "附件")
+	private MissionFlagAttachmentQuery  missionFlagAttachmentQuery;
+
 }

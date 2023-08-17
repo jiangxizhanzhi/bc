@@ -11,4 +11,11 @@
             #{item.flagValue}, now(),now())
         </foreach>
     </insert>
+
+    <select id="selectFileByTask" resultType="com.cyberpeace.cr.crbase.controller.req.MissionFlagAttachmentQuery">
+        SELECT a.flag_value, b.file_name, b.file_path FROM cr_flag_task a
+        LEFT JOIN attachment b ON a.attachment_id=b.resource_id
+        WHERE a.task_id =#{taskId} limit 1
+    </select>
+
 </mapper>

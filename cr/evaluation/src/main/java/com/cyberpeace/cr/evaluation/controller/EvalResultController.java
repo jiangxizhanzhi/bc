@@ -82,7 +82,7 @@ public class EvalResultController {
     private CrTaskMapper crTaskMapper;
 
     @Autowired
-    private CrRoleAssetNodeMapper crRoleAssetNodeMapper;
+    private CrRoleAssetNodeCopyMapper crRoleAssetNodeCopyMapper;
 
     @Autowired
     private CrConstantsService crConstantsService;
@@ -259,11 +259,11 @@ public class EvalResultController {
         int redNodes = getRoleNodeCount(redRoles);
         int blueNodes = getRoleNodeCount(blueRoles);
 
-        LambdaQueryWrapper<CrRoleAssetNode> query = new LambdaQueryWrapper<>();
-        query.eq(CrRoleAssetNode::getRoomId, redVsBlueId);
-        List<CrRoleAssetNode> crRoleAssetNodes = crRoleAssetNodeMapper.selectList(query);
+        LambdaQueryWrapper<CrRoleAssetNodeCopy> query = new LambdaQueryWrapper<>();
+        query.eq(CrRoleAssetNodeCopy::getRoomId, redVsBlueId);
+        List<CrRoleAssetNodeCopy> crRoleAssetNodes = crRoleAssetNodeCopyMapper.selectList(query);
 
-        for(CrRoleAssetNode roleAssetNode:crRoleAssetNodes){
+        for(CrRoleAssetNodeCopy roleAssetNode:crRoleAssetNodes){
             blueNodes = getBlueNodes(blueNodes, roleAssetNode);
             redNodes = getBlueNodes(redNodes, roleAssetNode);
             dates.add(roleAssetNode.getCreateTime());
@@ -277,7 +277,7 @@ public class EvalResultController {
 
     }
 
-    private int getBlueNodes(int blueNodes, CrRoleAssetNode roleAssetNode) {
+    private int getBlueNodes(int blueNodes, CrRoleAssetNodeCopy roleAssetNode) {
         if (roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())
                 && !roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
             blueNodes -= 1;
@@ -287,19 +287,18 @@ public class EvalResultController {
                 && roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
             blueNodes += 1;
         }
-        if (roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
-            blueNodes += 1;
-        }
         return blueNodes;
     }
 
     private int getRoleNodeCount(List<CrRole> redRoles) {
         int redNodes = 0;
+        List<CrRoleNode> assetNodes = new ArrayList<>();
         for(CrRole redRole: redRoles){
             CrRoleNodesData nodeData = redRole.getNodeData();
-            List<CrRoleNode> assetNodes = nodeData.getAssetNodes();
+            assetNodes.addAll(nodeData.getAssetNodes());
             redNodes += assetNodes.size();
         }
+        redNodes = (int) assetNodes.stream().distinct().count();
         return redNodes;
     }
 

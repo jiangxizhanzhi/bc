@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
@@ -92,6 +93,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Autowired
 	private CrRoleAssetNodeService crRoleAssetNodeService;
 
+	@Autowired
+	private CrRoleAssetNodeCopyService crRoleAssetNodeCopyService;
+
 	@Override
 	public Integer getTrainingStatus(String roomId) {
 		RbRoomData teamRoomdata = getRbRoomDataByRoomId(roomId);
@@ -165,6 +169,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 				Set<String> filterRoleAssetNode = Sets.newHashSet();
 				List<CrRoleAssetNode> crRoleAssetNodeList = Lists.newArrayList();
+				List<CrRoleAssetNodeCopy> crRoleAssetNodeCopies = Lists.newArrayList();
 				for (CrRole crRole : crRoles) {
 					if (index >= users.size()) {
 						log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
@@ -201,6 +206,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 
 								crRoleAssetNodeList.add(crRoleAssetNode);
+								CrRoleAssetNodeCopy assetNodeCopy = new CrRoleAssetNodeCopy();
+								BeanUtils.copyProperties(crRoleAssetNode, assetNodeCopy);
+								crRoleAssetNodeCopies.add(assetNodeCopy);
 								filterRoleAssetNode.add(ignoreKey);
 							}
 						});
@@ -208,6 +216,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				}
 				if (!crRoleAssetNodeList.isEmpty()) {
 					crRoleAssetNodeService.saveBatch(crRoleAssetNodeList);
+					crRoleAssetNodeCopyService.saveBatch(crRoleAssetNodeCopies);
 				}
 
 			}

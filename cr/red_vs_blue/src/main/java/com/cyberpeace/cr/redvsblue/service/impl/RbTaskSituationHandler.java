@@ -4,17 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrRoleAssetNode;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleAssetNodeMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionEventDeviceMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
+import com.cyberpeace.cr.crbase.service.CrRoleAssetNodeCopyService;
 import com.cyberpeace.cr.crbase.service.CrRoleAssetNodeService;
 import com.cyberpeace.cr.crbase.service.impl.CrTaskSituationHandler;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -55,6 +54,9 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 	private CrRoleAssetNodeMapper crRoleAssetNodeMapper;
 
 	@Autowired
+	private CrRoleAssetNodeCopyService crRoleAssetNodeCopyService;
+
+	@Autowired
 	private CrRoleAssetNodeService crRoleAssetNodeService;
 
 	@Override
@@ -91,6 +93,7 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 		Map<String, String> elementMap = StreamApiUtils.toMap(crLabelGroupList, CrLabelGroup::getValue, CrLabelGroup::getLabel);
 		List<String> targetName = StreamApiUtils.map(targetIds, elementMap::get);
 		List<CrRoleAssetNode> crRoleAssetNodeEditList = new ArrayList<>();
+		List<CrRoleAssetNodeCopy> crRoleAssetNodeCopies = new ArrayList<>();
 		for (String targetId: targetIds) {
 			LambdaQueryWrapper<CrRoleAssetNode> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
 			crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNode::getDeviceId, targetId);
@@ -110,8 +113,11 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 				} else if ("blue".equals(roleType)) {
 					crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.BLUE.getCode());
 				}
-				crRoleAssetNode.setId(null);
-				crRoleAssetNode.setResourceId(IDGeneratorUtil.getID());
+				CrRoleAssetNodeCopy crRoleAssetNodeCopy = new CrRoleAssetNodeCopy();
+				BeanUtils.copyProperties(crRoleAssetNode, crRoleAssetNodeCopy);
+				crRoleAssetNodeCopy.setId(null);
+				crRoleAssetNodeCopy.setResourceId(IDGeneratorUtil.getID());
+				crRoleAssetNodeCopies.add(crRoleAssetNodeCopy);
 				crRoleAssetNodeEditList.add(crRoleAssetNode);
 			}
 			if (wsMissionDynamicList.size() < 1 && mission.getEventType() < 7){
@@ -138,8 +144,8 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 				wsMissionDynamicList.add(new WsMissionDynamic("", roleType, sceneId, targetId, mission.getEventType(), false));
 			}
 		}
-		crRoleAssetNodeService.saveBatch(crRoleAssetNodeEditList);
-		// 待恢复 crRoleAssetNodeService.updateBatchById(crRoleAssetNodeEditList);
+		crRoleAssetNodeCopyService.saveBatch(crRoleAssetNodeCopies);
+		crRoleAssetNodeService.updateBatchById(crRoleAssetNodeEditList);
 		dynamicSchemeService.pushMissionDynamicToRoom(wsMissionDynamicList, sceneId);
 	}
 }

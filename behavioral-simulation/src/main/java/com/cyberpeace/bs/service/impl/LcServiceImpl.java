@@ -114,6 +114,11 @@ public class LcServiceImpl implements LcService {
     private String BEHAVIOR_IMPORT_GZ = "api/v1/flowcharts/behaviorImport";
 
     /**
+     * excel行为导入
+     */
+    private String BEHAVIOR_IMPORT_XLS = "api/v1/sainingNlpImport";
+
+    /**
      * 实时总带宽
      */
     private String BANDWIDTH_SUM = "api/v1/monitor/getAll";
@@ -439,4 +444,13 @@ public class LcServiceImpl implements LcService {
 			return new LcDevice();
 		}
 	}
+
+    @Override
+    public String importBehaviorByExcel(MultipartFile file) {
+        // 请求地址
+        String targetUrl = LC_HOST_PORT + BEHAVIOR_IMPORT_XLS;
+        // 发送文件请求
+        String rsp = LcHttpClient.uploadFile2Lc(targetUrl, file);
+        return rsp;
+    }
 }

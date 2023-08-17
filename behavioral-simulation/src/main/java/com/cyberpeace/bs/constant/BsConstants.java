@@ -52,6 +52,8 @@ public interface BsConstants {
      */
     String HOUR = "时";
 
+	String SCRIPT_SUFFIX = ".xlsx";
+
 	/**
 	 * 网络类型
 	 *

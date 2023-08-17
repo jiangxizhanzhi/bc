@@ -1,5 +1,13 @@
 package com.cyberpeace.bs.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
@@ -10,15 +18,10 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 行为管理相关接口
@@ -116,6 +119,26 @@ public class BehaviorController {
         String rsp = lcService.importBehavior(file);
         return new BaseRsp<>(rsp);
     }
+
+	/**
+	 * excel导入行为接口
+	 * 接受文件流输入，将excel文件包含的行为导入系统
+	 *
+	 * @param file excel文件
+	 * @return {@code BaseRsp<String>}
+	 */
+	@ApiOperation("导入脚本行为")
+	@PutMapping("/import/script")
+	public BaseRsp<String> importBehaviorByExcel(@RequestParam("file") MultipartFile file) {
+		if (file == null || file.isEmpty()) {
+			throw new BusinessException(ErrorCode.EMPTY_FILE);
+		}
+		if (!file.getOriginalFilename().endsWith(BsConstants.SCRIPT_SUFFIX)) {
+			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+		}
+		String rsp = lcService.importBehaviorByExcel(file);
+		return new BaseRsp<>(rsp);
+	}
 
     /**
      * 获取行为录制跳转host

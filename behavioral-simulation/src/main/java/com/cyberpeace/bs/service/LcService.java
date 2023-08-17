@@ -161,4 +161,11 @@ public interface LcService {
 	 */
 	LcDevice getDeviceOrEmptyById(String id);
 
+    /**
+     * 通过excel导入行为
+     *
+     * @param file 文件
+     * @return {@code String}
+     */
+    String importBehaviorByExcel(MultipartFile file);
 }

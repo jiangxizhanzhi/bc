@@ -249,7 +249,7 @@ public class EvalResultController {
         List<Integer> blueCount = new ArrayList<>();
 
         String redVsBlueId = getRoomId(resourceId);
-        List<EvalRoomPairRsp> nodes = evalRecordService.getNodes(resourceId);
+        List<CrRole> crRoles = getCrRoles(redVsBlueId);
         LambdaQueryWrapper<CrRoleAssetNode> query = new LambdaQueryWrapper<>();
         query.eq(CrRoleAssetNode::getRoomId, redVsBlueId);
         List<CrRoleAssetNode> crRoleAssetNodes = crRoleAssetNodeMapper.selectList(query);

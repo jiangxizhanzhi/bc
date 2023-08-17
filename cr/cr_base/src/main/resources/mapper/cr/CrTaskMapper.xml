@@ -308,7 +308,7 @@
         from cr_task
         where room_id = #{room_id}
         and (status =${RELEASED} or status =${CLOSE})
-        group by create_time,status
+        group by status
     </select>
 
     <select id="getTaskByRoomIdAndType" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar">

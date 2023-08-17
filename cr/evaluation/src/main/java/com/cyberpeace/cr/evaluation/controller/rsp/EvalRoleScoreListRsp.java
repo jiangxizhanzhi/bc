@@ -15,7 +15,7 @@ public class EvalRoleScoreListRsp implements Serializable {
     @ApiModelProperty("名称")
     private String name;
 
-    private String role;
+    private Integer role;
 
     private Integer score;
 }

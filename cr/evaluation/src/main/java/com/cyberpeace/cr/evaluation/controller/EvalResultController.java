@@ -18,10 +18,7 @@ import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalResultListReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalResultListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleEventActivityListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleEventPercentRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleScoreListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
@@ -163,13 +160,14 @@ public class EvalResultController {
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/role/score")
     public BaseRsp<List<EvalRoleScoreListRsp>> getScoreByRole(@ApiParam(name = "id",
-            value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
+            value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
 
         String redVsBlueId = getRoomId(resourceId);
 
         EvalRecord evalRecord = evalRecordService.getById(resourceId);
 
         List<CrRole> redRoles = getCrRoles(redVsBlueId);
+        redRoles = redRoles.stream().filter(redRole -> redRole.getRoleGroup().equals(type)).collect(Collectors.toList());
 
         List<EvalRoleScoreListRsp> res = new ArrayList<>();
 
@@ -179,7 +177,7 @@ public class EvalResultController {
             List<Integer> scores = StreamApiUtils.getColumn(crEvalScores, CrEvalScore::getFinalScore);
             int sum = scores.stream().mapToInt(Integer::intValue).sum();
             EvalRoleScoreListRsp rsp = new EvalRoleScoreListRsp();
-            rsp.setRole(redRole.getResourceId());
+            rsp.setRole(redRole.getRoleGroup());
             rsp.setName(redRole.getName());
             rsp.setScore(sum);
             res.add(rsp);
@@ -251,6 +249,7 @@ public class EvalResultController {
         List<Integer> blueCount = new ArrayList<>();
 
         String redVsBlueId = getRoomId(resourceId);
+        List<EvalRoomPairRsp> nodes = evalRecordService.getNodes(resourceId);
         LambdaQueryWrapper<CrRoleAssetNode> query = new LambdaQueryWrapper<>();
         query.eq(CrRoleAssetNode::getRoomId, redVsBlueId);
         List<CrRoleAssetNode> crRoleAssetNodes = crRoleAssetNodeMapper.selectList(query);

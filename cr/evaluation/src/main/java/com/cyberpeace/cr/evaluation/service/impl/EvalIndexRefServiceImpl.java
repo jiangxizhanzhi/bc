@@ -257,6 +257,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	public Set<String> systemEvalVariableIds(String recordId) {
 		LambdaQueryWrapper<EvalVariableRef> query = new LambdaQueryWrapper<>();
 		query.isNotNull(EvalVariableRef::getScore);
+		query.eq(EvalVariableRef::getRecordId, recordId);
 		List<EvalVariableRef> variableRefs = evalVariableRefMapper.selectList(query);
 		List<String> columns = StreamApiUtils.getColumn(variableRefs, EvalVariableRef::getResourceId);
 		return new HashSet<>(columns);

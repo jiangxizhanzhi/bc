@@ -672,7 +672,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalRecord.setStatus(StringUtils.isEmpty(evalRecord.getMessage()) ? EvalRecord.Status.END.getCode() : EvalRecord.Status.EXCEPTION.getCode());
         evalRecord.setScore(evalIndexRefs.get(evalIndexRefs.size() - 1).getScore());
-        evalRecord.setFinalScore(null == evalRecord.getScore() ? null : Math.round(evalRecord.getScore() * evalRecord.getIndexScore()));
+        evalRecord.setFinalScore(null == evalRecord.getScore() ? 0 : Math.round(evalRecord.getScore() * evalRecord.getIndexScore()));
         evalRecord.setEvalEndTime(new Date());
         transactionTemplate.execute(status -> {
             evalIndexRefService.updateBatchById(evalIndexRefs);

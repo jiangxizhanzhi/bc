@@ -12,15 +12,20 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventStatusCount;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity;
-import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrRoleAssetNodeCopy;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
-import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalResultListReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.*;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalResultListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleEventActivityListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleEventPercentRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleScoreListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
@@ -30,6 +35,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalResultMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.cyberpeace.cr.evaluation.service.EvalResultService;
 import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -85,7 +91,7 @@ public class EvalResultController {
     private CrRoleAssetNodeCopyMapper crRoleAssetNodeCopyMapper;
 
     @Autowired
-    private CrConstantsService crConstantsService;
+    private EvalResultService evalResultService;
 
     @ApiOperation("获取靶场测评实例评估结果（分页）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -338,34 +344,8 @@ public class EvalResultController {
     @GetMapping("/event/count")
     public BaseRsp<List<EvalEventCountBar>> getEventCount(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
-        List<EvalEventCountBar> res = new ArrayList<>();
         String redVsBlueId = getRoomId(resourceId);
-        List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndType(redVsBlueId);
-        Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
-        List<Integer> listCode = getListCode(ActionTypeZHL.class);
-        if(type.equals(CrRole.RbRoleGroup.RED.getCode())){
-            listCode = listCode.stream().filter(s->s<=ActionTypeZHL.ZHL_ATTACK6.getCode()).collect(Collectors.toList());
-
-        } else if(type.equals(CrRole.RbRoleGroup.BLUE.getCode())){
-            listCode = listCode.stream().filter(s->s>ActionTypeZHL.ZHL_ATTACK6.getCode()).collect(Collectors.toList());;
-        } else {
-            return new BaseRsp<>(res);
-        }
-        for(Integer tmp:listCode){
-            EvalEventCountBar rsp = new EvalEventCountBar();
-            rsp.setCount(0);
-            if(barMap.containsKey(tmp)){
-                EvalEventCountBar evalEventCountBar = barMap.get(tmp);
-                rsp.setCount(evalEventCountBar.getCount());
-            }
-            String eventTypeStr = EnumUtils.getEnumDescByCode(tmp, ActionTypeZHL.class);
-            rsp.setType(tmp);
-            rsp.setEventName(eventTypeStr);
-            res.add(rsp);
-        }
-
-        return new BaseRsp<>(res);
-
+        return new BaseRsp<>(evalResultService.getEventCount(redVsBlueId, type));
     }
 
     @ApiOperation("评估结果详情-攻防事件-环形图")
@@ -373,40 +353,8 @@ public class EvalResultController {
     @GetMapping("/event/pencent")
     public BaseRsp<List<EvalEventCountBar>> getEventPencent(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
-        List<EvalEventCountBar> res = new ArrayList<>();
         String redVsBlueId = getRoomId(resourceId);
-        List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndType(redVsBlueId);
-        Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
-        List<CrConstantsConfig> crConstantsConfigList;
-        if(type.equals(CrRole.RbRoleGroup.RED.getCode())){
-            crConstantsConfigList = crConstantsService.getByType(-1);
-
-        } else if(type.equals(CrRole.RbRoleGroup.BLUE.getCode())){
-            crConstantsConfigList = crConstantsService.getByType(-2);
-        } else {
-            return new BaseRsp<>(res);
-        }
-        Integer sum = 0;
-        for(CrConstantsConfig tmp:crConstantsConfigList){
-            Integer tmpType = tmp.getCode();
-            EvalEventCountBar rsp = new EvalEventCountBar();
-            rsp.setCount(0);
-            if(barMap.containsKey(tmpType)){
-                EvalEventCountBar evalEventCountBar = barMap.get(tmpType);
-                Integer count = evalEventCountBar.getCount();
-                sum += count;
-                rsp.setCount(count);
-            }
-            String eventTypeStr = EnumUtils.getEnumDescByCode(tmpType, ActionTypeZHL.class);
-            rsp.setType(tmp.getCode());
-            rsp.setEventName(eventTypeStr);
-            res.add(rsp);
-        }
-        Integer finalSum = sum;
-        res.forEach(item -> item.setCount(finalSum.equals(0) ? 0 : item.getCount()/ finalSum * 100) );
-
-        return new BaseRsp<>(res);
-
+        return new BaseRsp<>(evalResultService.getEventPercent(redVsBlueId, type));
     }
 
 

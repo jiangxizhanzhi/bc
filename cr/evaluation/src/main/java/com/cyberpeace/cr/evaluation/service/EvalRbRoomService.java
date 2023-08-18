@@ -16,8 +16,7 @@ public interface EvalRbRoomService {
      * @param missionEvaluationQuery 分页查询体
      * @return 任务评估
      */
-    IPage<MissionEvaluationContext>
-    getRbMissionEvaluationList(EvalMissionEvaluationBo missionEvaluationQuery);
+    IPage<MissionEvaluationContext> getRbMissionEvaluationList(EvalMissionEvaluationBo missionEvaluationQuery);
 
     /**
      * 获取得分趋势信息
@@ -57,5 +56,25 @@ public interface EvalRbRoomService {
     JSONObject getRbLeaderBoard(String evalTemplateId, String roomId, Integer roleType);
 
     RbSituationScoreRsp getTeamScore(String evalTemplateId, String roomId, Integer roleType);
+
+    /**
+     * 获取红蓝对抗实例的任务评估数据统计
+     * @param evalTemplateId 评估模版id
+     * @param roomId 红蓝对抗实例id
+     * @param roleType 角色类型
+     * @return 任务评估数据统计
+     */
+    JSONObject getRbMissionEvaluation(String evalTemplateId, String roomId, Integer roleType);
+
+
+    /**
+     * 获取任务进度信息
+     * @param evalTemplateId 评估模版id
+     * @param roomId 红蓝对抗实例id
+     * @param roleType 角色类型
+     * @return 任务进度数据
+     */
+    JSONObject getRbMissionProgress(String evalTemplateId,String roomId, Integer roleType);
+
 
 }

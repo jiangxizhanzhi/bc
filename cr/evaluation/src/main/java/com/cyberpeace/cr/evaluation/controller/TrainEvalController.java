@@ -282,12 +282,12 @@ public class TrainEvalController {
      */
     @ApiOperation("获取任务下发和完成任务数进展")
     @GetMapping("/team_mission_progress")
-    @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<JSONObject> getRbMissionProgress(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
 
-        JSONObject data = rbRoomScoreService.getRbMissionProgress(resource_id, role_type);
+        JSONObject data = rbRoomScoreService.getRbMissionProgress(roomId, role_type);
         return new BaseRsp(data);
     }
 
@@ -298,11 +298,11 @@ public class TrainEvalController {
      */
     @ApiOperation("获取实例下的角色任务分类分布数据")
     @GetMapping("/team_mission_category")
-    @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<XYData> getRbMissionCategory(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
-        XYData data = rbRoomScoreService.getRbMissionCategory(resource_id, role_type);
+        XYData data = rbRoomScoreService.getRbMissionCategory(roomId, role_type);
         return new BaseRsp(data);
     }
 
@@ -313,11 +313,11 @@ public class TrainEvalController {
      */
     @ApiOperation("获取实例下的任务评估数据统计")
     @GetMapping("/team_mission_evaluation")
-    @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<JSONObject> getRbMissionEvaluation(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
-        JSONObject data = rbRoomScoreService.getRbMissionEvaluation(resource_id, role_type);
+        JSONObject data = rbRoomScoreService.getRbMissionEvaluation(roomId, role_type);
         return new BaseRsp(data);
     }
 
@@ -345,6 +345,7 @@ public class TrainEvalController {
 
     @ApiOperation("获取红蓝对抗队伍得分")
     @GetMapping("/score")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<RbSituationScoreRsp> score(
             @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,

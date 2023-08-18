@@ -130,26 +130,10 @@ public class EvalResultController {
         Integer originalStatus = evalRecord.getStatus();
         evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
         evalRecordMapper.updateById(evalRecord);
-        reRun(requestData, evalRecord, originalStatus);
+        evalRecordService.reRun(requestData, evalRecord, originalStatus);
         return new BaseRsp<>(evalRecord);
     }
 
-
-    @Async
-    public void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus) {
-
-        EvalResult evalResult = new EvalResult();
-        evalResult.setRecord(requestData.getResourceId());
-        evalResult.setWeight(evalRecord.getScore());
-        evalResult.setIndexScore(requestData.getIndexScore());
-        evalResult.setFinalScore(evalRecord.getFinalScore());
-        evalResult.setType(EvalResult.Type.SYSTEM_RUN.getCode());
-        evalResultMapper.insert(evalResult);
-
-        evalRecord.setIndexScore(requestData.getIndexScore());
-        evalRecord.setStatus(originalStatus);
-        evalRecordMapper.updateById(evalRecord);
-    }
 
     private EvalRecord checkScore(Integer score, String resourceId) {
         int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.zero"));

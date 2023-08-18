@@ -76,6 +76,8 @@ public interface EvalRecordService extends IService<EvalRecord> {
      */
     void recordRun(EvalRecord evalRecord, Boolean isRestart, String language);
 
+    void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus);
+
     /**
      * 获取测评实例中场景所有节点`id`, `name`
      * @param roomId 靶场测评实例id

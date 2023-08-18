@@ -133,6 +133,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private EvalRecordMapper evalRecordMapper;
 
+    @Autowired
+    private EvalResultMapper evalResultMapper;
+
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
     @Override
@@ -601,6 +604,30 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalRecord,
                 String.format("END, result: %s, cost: %s", evalRecord.getScore(), evalRecord.getEvalEndTime().getTime() - evalRecord.getEvalTime().getTime())
         );
+    }
+
+
+
+    @Async
+    @Override
+    public void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus) {
+        try{
+
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            // 处理异常
+        }
+        EvalResult evalResult = new EvalResult();
+        evalResult.setRecord(requestData.getResourceId());
+        evalResult.setWeight(evalRecord.getScore());
+        evalResult.setIndexScore(requestData.getIndexScore());
+        evalResult.setFinalScore(evalRecord.getFinalScore());
+        evalResult.setType(EvalResult.Type.SYSTEM_RUN.getCode());
+        evalResultMapper.insert(evalResult);
+
+        evalRecord.setIndexScore(requestData.getIndexScore());
+        evalRecord.setStatus(originalStatus);
+        evalRecordMapper.updateById(evalRecord);
     }
 
     private void startVariables(EvalRecord evalRecord, String mpSceneId, Set<String> variableIds) {

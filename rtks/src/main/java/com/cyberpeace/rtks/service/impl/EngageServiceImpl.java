@@ -43,61 +43,6 @@ public class EngageServiceImpl implements EngageService {
 
 	private volatile EngageCache cachedEngages;
 
-	/**
-	 * 5.3.7升级到5.4时，处理旧的attack和训练模板的关联
-	 * id变动，条目变动
-	 * rtks_attack_train_rel更新
-	 * @PostConstruct 执行在flyway执行之前
-	 */
-	@PostConstruct
-	private void trainRelUpgrade() {
-		try {
-			List<EngageTrainRelation> relationList = engageMapper.getAllRel();
-			// 无关联，跳过
-			if (relationList.isEmpty()) {
-				return;
-			}
-			// 已升级
-			if (relationList.get(0).getEngageId()
-					.length() < CrCommonConstants.GENERATED_UUID_LENGTH) {
-				return;
-			}
-			Map<String, String> oldNewMap = getOldNewMap();
-			List<EngageTrainRelation> newRelList = Lists.newArrayList();
-			// 一个新的id可能对应多个旧id
-			Set<String> engageTrainSet = Sets.newHashSet();
-
-			for (EngageTrainRelation old : relationList) {
-				String oldId = old.getEngageId();
-				String trainId = old.getBusinessTemplateId();
-				String newId = oldNewMap.get(oldId);
-				if (null == newId || engageTrainSet.contains(trainId + newId)) {
-					continue;
-				}
-				EngageTrainRelation newRel = new EngageTrainRelation();
-				newRel.setEngageId(newId);
-				newRel.setBusinessTemplateId(trainId);
-				newRelList.add(newRel);
-				engageTrainSet.add(trainId + newId);
-			}
-			if (newRelList.isEmpty()) {
-				return;
-			}
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					// 清除全部旧的
-					engageMapper.clearAllRel();
-					// 插入新的
-					engageMapper.insertBatch(newRelList);
-				}
-			});
-		} catch (Exception e) {
-			log.error("error occurred when try to upgrade engage_train relation", e);
-		}
-	}
-
 	@Override
 	public List<EngageCategoryBo<EngageBackBo>> getEngages() {
 		ensureEngageCache();

@@ -2,9 +2,11 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -25,10 +27,6 @@ import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
@@ -446,6 +444,9 @@ public class RbRoomDirectorController {
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
 		// 更改时间管理状态
+		management.setLength(management.getLength()
+				+ TimeUtil.getIntervalSeconds(management.getRecoverTime(), new Date()));
+		management.setEndTime(new Date());
 		rbTimeManagementService.updateTimeManagement(management, room,
 				RbTimeManagement.TimeManagementStatus.STOP.getCode(), userId);
 

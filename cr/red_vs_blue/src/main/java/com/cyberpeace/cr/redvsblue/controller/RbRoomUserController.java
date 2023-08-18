@@ -318,7 +318,7 @@ public class RbRoomUserController {
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
 		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
 		rbTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
-		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
+		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCostLong(resource_id));
 		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}
@@ -341,7 +341,6 @@ public class RbRoomUserController {
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
 		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
 		rbTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
-		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
 		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.REPLAY.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}

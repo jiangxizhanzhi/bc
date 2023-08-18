@@ -67,6 +67,14 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	 */
 	String getTimeCost(String roomId);
 
+	/**
+	 * 获取当前训练时长,long型
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Integer}
+	 */
+	Long getTimeCostLong(String roomId);
+
 	String getColonTimeCost(String roomId);
 
 	/**

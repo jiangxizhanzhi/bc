@@ -11,10 +11,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cr.redvsblue.entity.RbRoom;
-import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTimeManagementMapper;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -94,6 +94,8 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 			String userId) {
 		timeManagement.setStatus(status);
 		timeManagement.setCreateUserId(userId);
+		timeManagement.setRecoverTime(new Date());
+		timeManagement.setLength(0L);
 
 		room.setTrainingStatus(timeManagement.getStatus());
 
@@ -110,15 +112,22 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 
 	@Override
 	public String getTimeCost(String roomId) {
+		return TimeUtil.duration2String(getTimeCostLong(roomId));
+	}
+
+	@Override
+	public Long getTimeCostLong(String roomId) {
 		RbTimeManagement timeManagement = getByRoomId(roomId);
 		if (timeManagement == null) {
-			return TimeUtil.duration2String(0L);
+			return 0L;
 		}
-		if (timeManagement.isStopped()) {
-			return TimeUtil.getTimeInterval(timeManagement.getCreateTime(),
-					timeManagement.getUpdateTime());
+		// 暂停或者停止状态，返回已记录的训练时长
+		if (timeManagement.isPaused() || timeManagement.isStopped()) {
+			return timeManagement.getLength();
 		} else {
-			return TimeUtil.getTimeInterval(timeManagement.getCreateTime(), new Date());
+			// 运行中（开始或者恢复后），返回已记录的训练时长 + 当前时间到恢复时间之间的差值
+			return TimeUtil.getIntervalSeconds(timeManagement.getRecoverTime(), new Date())
+					+ timeManagement.getLength();
 		}
 	}
 
@@ -140,7 +149,7 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
     public Date getActualEndTime(String roomId) {
 		RbTimeManagement management = this.getByRoomId(roomId);
 		if(null != management && management.isStopped()){
-			return management.getUpdateTime();
+			return management.getEndTime();
 		} else {
 			log.error("training not existing or not ended: [{}]", roomId);
 			return null;

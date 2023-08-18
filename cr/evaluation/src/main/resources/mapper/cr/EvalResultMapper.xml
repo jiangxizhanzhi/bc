@@ -10,7 +10,7 @@
                T1.*,
                T2.name as name
         from cr_eval_result T1
-        left join cr_eval_record T2 on T2.resource_id = T1.record where T1.record = #{record}
+        left join cr_eval_record T2 on T2.resource_id = T1.record where T2.template_id = #{record}
         <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
             and T1.create_time &gt;= #{startTime}
             and T1.create_time &lt;= #{endTime}

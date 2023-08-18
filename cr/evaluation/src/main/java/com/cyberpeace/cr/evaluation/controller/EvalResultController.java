@@ -128,9 +128,11 @@ public class EvalResultController {
     public BaseRsp<EvalRecord> reviseFinalScore(@RequestBody EvalRecordAddReq requestData) {
         EvalRecord evalRecord = checkScore(requestData.getIndexScore(), requestData.getResourceId());
         Integer originalStatus = evalRecord.getStatus();
+        Integer finalScore = evalRecord.getFinalScore();
         evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
+        evalRecord.setScore(null);
         evalRecordMapper.updateById(evalRecord);
-        evalRecordService.reRun(requestData, evalRecord, originalStatus);
+        evalRecordService.reRun(requestData, evalRecord, originalStatus,finalScore);
         return new BaseRsp<>(evalRecord);
     }
 

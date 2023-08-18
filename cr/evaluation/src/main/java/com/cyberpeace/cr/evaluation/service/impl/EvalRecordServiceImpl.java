@@ -48,7 +48,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
@@ -610,7 +609,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Async
     @Override
-    public void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus) {
+    public void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus, Integer finalScore) {
         try{
 
             Thread.sleep(2000);
@@ -623,11 +622,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalResult.setIndexScore(requestData.getIndexScore());
         evalResult.setFinalScore(evalRecord.getFinalScore());
         evalResult.setType(EvalResult.Type.SYSTEM_RUN.getCode());
-        evalResultMapper.insert(evalResult);
 
         evalRecord.setIndexScore(requestData.getIndexScore());
         evalRecord.setStatus(originalStatus);
-        evalRecordMapper.updateById(evalRecord);
+        evalRecord.setScore(finalScore);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                evalRecordMapper.updateById(evalRecord);
+                evalResultMapper.insert(evalResult);
+            }
+        });
     }
 
     private void startVariables(EvalRecord evalRecord, String mpSceneId, Set<String> variableIds) {

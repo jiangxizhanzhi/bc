@@ -3,12 +3,10 @@ package com.cyberpeace.cr.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 
 import java.util.List;
 import java.util.Map;
@@ -76,7 +74,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
      */
     void recordRun(EvalRecord evalRecord, Boolean isRestart, String language);
 
-    void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus);
+    void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus, Integer finalScore);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`

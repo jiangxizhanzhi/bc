@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
+import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
 
 /**
  * 训练使用记录
@@ -86,7 +87,7 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 * @param roomId 房间id
 	 * @return {@code Long}
 	 */
-	Long getTimeCostLong(String roomId);
+	TrainingTimeCost getTimeCostLong(String roomId);
 
     String getColonTimeCost(String roomId);
 

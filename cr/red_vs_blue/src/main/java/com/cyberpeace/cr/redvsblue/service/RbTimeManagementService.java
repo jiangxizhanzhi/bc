@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 
@@ -73,7 +74,7 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	 * @param roomId 房间id
 	 * @return {@code Integer}
 	 */
-	Long getTimeCostLong(String roomId);
+	TrainingTimeCost getTimeCostLong(String roomId);
 
 	String getColonTimeCost(String roomId);
 

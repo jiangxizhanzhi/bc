@@ -1178,12 +1178,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			result.setFinished(0);
 			result.setScore(0);
 			// 训练时长为0
-			result.setTimeCost(TimeUtil.duration2String(0L));
+			result.setTimeCost(0L);
 			result.setStarted(false);
 		} else {
 			// training started
 			result = getMatrixProgress(room);
-			result.setTimeCost(TimeUtil.getTimeInterval(room.getCreateTime(), new Date()));
+			result.setTimeCost(TimeUtil.getIntervalSeconds(room.getCreateTime(), new Date()));
 			result.setStarted(true);
 		}
 		// set user_info

@@ -11,6 +11,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTimeManagementMapper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
@@ -112,23 +113,28 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 
 	@Override
 	public String getTimeCost(String roomId) {
-		return TimeUtil.duration2String(getTimeCostLong(roomId));
+		return TimeUtil.duration2String(getTimeCostLong(roomId).getTimeCost());
 	}
 
 	@Override
-	public Long getTimeCostLong(String roomId) {
+	public TrainingTimeCost getTimeCostLong(String roomId) {
+		TrainingTimeCost timeCost = new TrainingTimeCost();
 		RbTimeManagement timeManagement = getByRoomId(roomId);
 		if (timeManagement == null) {
-			return 0L;
+			return timeCost;
 		}
 		// 暂停或者停止状态，返回已记录的训练时长
 		if (timeManagement.isPaused() || timeManagement.isStopped()) {
-			return timeManagement.getLength();
+			timeCost.setRunning(false);
+			timeCost.setTimeCost(timeManagement.getLength());
 		} else {
 			// 运行中（开始或者恢复后），返回已记录的训练时长 + 当前时间到恢复时间之间的差值
-			return TimeUtil.getIntervalSeconds(timeManagement.getRecoverTime(), new Date())
-					+ timeManagement.getLength();
+			timeCost.setRunning(true);
+			timeCost.setTimeCost(
+					TimeUtil.getIntervalSeconds(timeManagement.getRecoverTime(), new Date())
+							+ timeManagement.getLength());
 		}
+		return timeCost;
 	}
 
 	@Override

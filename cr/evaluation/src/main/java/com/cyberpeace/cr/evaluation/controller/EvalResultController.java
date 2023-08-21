@@ -45,7 +45,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -249,19 +248,25 @@ public class EvalResultController {
         List<CrRole> blueRoles = roleMap.get(CrRole.RbRoleGroup.BLUE.getCode());
         List<CrRole> redRoles = roleMap.get(CrRole.RbRoleGroup.RED.getCode());
 
-        int redNodes = getRoleNodeCount(redRoles);
-        int blueNodes = getRoleNodeCount(blueRoles);
+        List<CrRoleNode> redNode= getRoleNodeCount(redRoles);
+        List<String> redDeviceIds = StreamApiUtils.getColumn(redNode, CrRoleNode::getId);
+        List<CrRoleNode> blueNode = getRoleNodeCount(blueRoles);
+        List<String> blueDeviceIds = StreamApiUtils.getColumn(blueNode, CrRoleNode::getId);
 
         LambdaQueryWrapper<CrRoleAssetNodeCopy> query = new LambdaQueryWrapper<>();
         query.eq(CrRoleAssetNodeCopy::getRoomId, redVsBlueId);
         List<CrRoleAssetNodeCopy> crRoleAssetNodes = crRoleAssetNodeCopyMapper.selectList(query);
 
         for(CrRoleAssetNodeCopy roleAssetNode:crRoleAssetNodes){
-            blueNodes = getBlueNodes(blueNodes, roleAssetNode);
-            redNodes = getBlueNodes(redNodes, roleAssetNode);
-            dates.add(roleAssetNode.getCreateTime());
-            redCount.add(redNodes);
-            blueCount.add(blueNodes);
+            if(redDeviceIds.contains(roleAssetNode.getDeviceId())){
+                redDeviceIds = getBlueNodes(roleAssetNode, CrRole.RbRoleGroup.RED.getCode(), redDeviceIds, dates);
+                redCount.add(redDeviceIds.size());
+            }
+            if(blueDeviceIds.contains(roleAssetNode.getDeviceId())){
+                blueDeviceIds = getBlueNodes(roleAssetNode, CrRole.RbRoleGroup.BLUE.getCode(), blueDeviceIds, dates);
+                blueCount.add(blueDeviceIds.size());
+            }
+
         }
         res.setCreatTime(dates);
         res.setBlueCount(blueCount);
@@ -270,29 +275,29 @@ public class EvalResultController {
 
     }
 
-    private int getBlueNodes(int blueNodes, CrRoleAssetNodeCopy roleAssetNode) {
-        if (roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())
-                && !roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
-            blueNodes -= 1;
+    private List<String> getBlueNodes(CrRoleAssetNodeCopy roleAssetNode, Integer type, List<String> deviceIds, List<Date> dates) {
+        if (roleAssetNode.getOriginalRoleType().equals(type)
+                && !roleAssetNode.getRoleType().equals(type)) {
+            deviceIds.remove(roleAssetNode.getDeviceId());
+            dates.add(roleAssetNode.getCreateTime());
         }
 
-        if (!roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())
-                && roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
-            blueNodes += 1;
+        if (!roleAssetNode.getOriginalRoleType().equals(type)
+                && roleAssetNode.getRoleType().equals(type)) {
+            deviceIds.add(roleAssetNode.getDeviceId());
+            dates.add(roleAssetNode.getCreateTime());
         }
-        return blueNodes;
+        return deviceIds;
     }
 
-    private int getRoleNodeCount(List<CrRole> redRoles) {
-        int redNodes = 0;
+
+    private List<CrRoleNode> getRoleNodeCount(List<CrRole> redRoles) {
         List<CrRoleNode> assetNodes = new ArrayList<>();
         for(CrRole redRole: redRoles){
             CrRoleNodesData nodeData = redRole.getNodeData();
             assetNodes.addAll(nodeData.getAssetNodes());
-            redNodes += assetNodes.size();
         }
-        redNodes = (int) assetNodes.stream().distinct().count();
-        return redNodes;
+        return assetNodes.stream().distinct().collect(Collectors.toList());
     }
 
     @ApiOperation("评估结果详情-攻防事件-柱状图")

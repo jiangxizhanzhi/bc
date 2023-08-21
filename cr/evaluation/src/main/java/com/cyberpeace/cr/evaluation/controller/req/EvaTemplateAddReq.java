@@ -23,7 +23,6 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 	private String authIds;
 
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
-	@NotNull
 	private Integer authType;
 
 }

@@ -1,19 +1,5 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -43,6 +29,7 @@ import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRoleRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
@@ -54,9 +41,21 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "团队训练模板")
 @RestController
@@ -91,7 +90,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
 		// set type
 		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());

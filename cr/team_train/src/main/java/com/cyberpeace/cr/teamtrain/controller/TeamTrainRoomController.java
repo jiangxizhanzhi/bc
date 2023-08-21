@@ -63,6 +63,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -278,7 +279,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
 		// 校验
 		teamTrainRoomReq.validate();
@@ -412,7 +413,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());

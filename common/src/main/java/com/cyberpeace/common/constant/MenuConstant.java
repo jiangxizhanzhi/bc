@@ -35,6 +35,9 @@ public interface MenuConstant {
     //红蓝对抗
     String WEB_CR_RED_VS_BLUE = "red-vs-blue";
 
+    //日常练习
+    String WEB_CR_DAILY_TRAIN = "practice-train";
+
     //工具库
     String WEB_CR_TOOL_TOOLS = "tool-magazine";
 
@@ -118,6 +121,9 @@ public interface MenuConstant {
 
     //对抗练习模式
     String CMS_TRAINING_MODE = "confront-training-mode";
+
+    //日常练习管理
+    String CMS_DAILY_MODE = " daily-practice";
 
     //工具库
     String CMS_TOOL = "tool";

@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.crbase.utils;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
@@ -14,6 +12,8 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 /**
  * 一些靶场工具
@@ -29,7 +29,7 @@ public class CrCommonUtil {
 		SimplePropertyPreFilter schemeFilter = new SimplePropertyPreFilter(
 				CrRoleConfigSchemeStage.class, "stage", "missions");
 		SimplePropertyPreFilter roleFilter = new SimplePropertyPreFilter(CrRoleConfig.class, "name",
-				"asset_nodes", "visible_nodes", "missions_scheme");
+				"asset_nodes", "visible_nodes", "missions_scheme", "type");
 		SerializeConfig config = new SerializeConfig();
 		config.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
 		return JSONObject.toJSONString(roleConfig, config,

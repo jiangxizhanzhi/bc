@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class TeamTrainTemplateAddReq extends TeamTrainTemplateReq {
-    @ApiModelProperty("红蓝队训练, 1=红;2=蓝")
+    @ApiModelProperty("红蓝队训练, 1=红;2=蓝;3=日常")
     private Integer trainCategory;
 }

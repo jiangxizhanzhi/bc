@@ -1,13 +1,12 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
+import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 @Data
 public class TeamRoomRsp implements Serializable {

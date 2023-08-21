@@ -65,6 +65,8 @@ public class TeamTemplate extends BaseTable {
 
 	private Integer trainCategory;
 
+	private Integer sceneType;
+
 	public OperationModule getModule() {
 		return getTrainCategory().equals(TeamRoom.TrainCategory.RED.getCode())
 				? OperationModule.RED_TEAM

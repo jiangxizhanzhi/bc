@@ -12,4 +12,6 @@ public class BusinessTemplateData extends BusinessTemplate {
 
 	private Integer resourceOccupiedNums;
 
+	private Integer sceneType;
+
 }

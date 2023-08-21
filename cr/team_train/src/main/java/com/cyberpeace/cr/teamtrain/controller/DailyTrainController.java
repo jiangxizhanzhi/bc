@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -10,7 +11,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
+import com.cyberpeace.cr.crbase.controller.req.scene.DailyTemplateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.BusinessTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -22,6 +23,7 @@ import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
@@ -36,7 +38,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,9 +79,8 @@ public class DailyTrainController {
     @ApiOperation("查询模板列表")
     @GetMapping("/list")
     @RequiresPermissions(MenuConstant.CMS_DAILY_MODE)
-    public BaseRsp<ListRsp<BusinessTemplateRsp>> getTemplate(TemplateReq listReq) {
-        BusinessTemplateQuery businessTemplateQuery = BeanUtils.copy(listReq,
-                BusinessTemplateQuery.class);
+    public BaseRsp<ListRsp<BusinessTemplateRsp>> getTemplate(DailyTemplateReq listReq) {
+        BusinessTemplateQuery businessTemplateQuery = BeanUtils.copy(listReq,BusinessTemplateQuery.class);
         businessTemplateQuery.setSort("-cr_business_template.create_time");
 
         IPage<BusinessTemplateData> data = businessTemplateService.page(businessTemplateQuery);
@@ -119,7 +119,7 @@ public class DailyTrainController {
 
     @ApiOperation("新增")
     @PostMapping()
-    @RequiresPermissions(value = {MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.CMS_DAILY_MODE}, logical = Logical.OR)
+    @RequiresPermissions(MenuConstant.CMS_DAILY_MODE)
     public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
         // set type
         addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
@@ -152,6 +152,42 @@ public class DailyTrainController {
     }
 
 
+    @ApiOperation("修改")
+    @PatchMapping()
+    @RequiresPermissions(MenuConstant.CMS_DAILY_MODE)
+    public BaseRsp update(@RequestBody @Validated TeamTrainTemplateModifyReq modifyReq) {
+        String resourceId = modifyReq.getResourceId();
+        TeamTemplate teamTemplate = teamTemplateService.getByTemplateBusinessId(resourceId);
+        BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
+        if (businessTemplate == null) {
+            throw new ResourceNotFoundException(resourceId);
+        }
+        // update
+        String oldRoleConfig = teamTemplate.getRoleConfig();
+        reqToTeamTemplate(modifyReq, teamTemplate);
+
+        // save
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo());
+                teamTemplateService.updateById(teamTemplate);
+                // delete&update related missionTemplates
+                businessTemplateService.updateMissionTemplateRelation(resourceId, oldRoleConfig,
+                        teamTemplate.getRoleConfig());
+            }
+        });
+
+        String teamTrainTemplateName = modifyReq.getBaseInfo().getName();
+        remoteLogService.addOjLog(UserInfoContext.getUserContext(), teamTemplate.getModule(),
+                OperationType.UPDATE, teamTrainTemplateName,
+                LogContent.CR_FORMAT.format(OperationType.UPDATE, teamTemplate.getLogMsg(), teamTrainTemplateName));
+
+        return new BaseRsp<>();
+    }
+
+
     private TeamTemplate reqToTeamTemplate(TeamTrainTemplateReq req, TeamTemplate teamTemplate) {
 
         List<CrRoleConfig> roleConfigs = req.getRoleList();
@@ -163,6 +199,7 @@ public class DailyTrainController {
 
         // 校验 tag
         teamTemplate.setSubType(baseInfo.getCategory());
+        teamTemplate.setSceneType(baseInfo.getSceneType());
         teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
         teamTemplate.setDurationTime(baseInfo.getDurationTime());
         teamTemplate.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigs));

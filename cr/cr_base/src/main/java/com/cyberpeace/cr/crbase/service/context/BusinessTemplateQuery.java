@@ -1,15 +1,13 @@
 package com.cyberpeace.cr.crbase.service.context;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.LocalStringUtil;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /*
  * 后台使用的查询类
@@ -41,4 +39,7 @@ public class BusinessTemplateQuery extends PageReqBase {
 	}
 
 	private Integer trainCategory;
+
+	@ApiModelProperty("场景类型")
+	private Integer sceneType;
 }

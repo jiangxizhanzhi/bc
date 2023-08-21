@@ -59,6 +59,10 @@ public class BaseInfo {
 	@NotNull
 	private SceneConfigData sceneConfigData;
 
+	@ApiModelProperty(value = "训练类别", required = true)
+	@NotNull
+	private Integer sceneType;
+
 	public void validate() {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
@@ -67,7 +71,7 @@ public class BaseInfo {
 	/**
 	 * type=3(日常训练模),场景类型枚举对应category(0,1,2,3)
 	 */
-	public enum DailyCategoryType {
+	public enum DailySceneType {
 
 		VULNERABILITY_MINING(0, "漏洞挖掘"), WEAPON_VERIFICATION(1, "武器验证"),
 		SCENARIO_REPRODUCTION(2, "场景复现"), TECHNICAL_REPLICATION(3, "技术复现"), OTHERS(4,"其他");
@@ -76,7 +80,7 @@ public class BaseInfo {
 
 		private String desc;
 
-		DailyCategoryType(Integer code, String desc) {
+		DailySceneType(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

@@ -14,10 +14,14 @@
             <bind name="search" value="'%' + listQuery.search + '%'"/>
         </if>
         select
-        resource_id ,topo_id,`name`, description,business_type,difficulty,local_scene_id,
-        create_user_id,operation_auth_type,operation_auth_ids, read_auth_type, read_auth_ids,create_time
-        from
-        cr_business_template
+        cr_business_template.resource_id ,cr_business_template.topo_id,cr_business_template.`name`, cr_business_template.description,cr_business_template.business_type,cr_business_template.difficulty,cr_business_template.local_scene_id,
+        cr_business_template.create_user_id,cr_business_template.operation_auth_type,cr_business_template.operation_auth_ids, cr_business_template.read_auth_type, cr_business_template.read_auth_ids,
+        cr_business_template.create_time,b.scene_type
+        from cr_business_template
+        <if test="listQuery.trainCategory != null and listQuery.trainCategory != ''">
+            inner JOIN cr_team_template b
+            on cr_business_template.resource_id= b.business_template_id
+        </if>
         <where>
             cr_business_template.resource_id in
             <if test="listQuery.ids != null and listQuery.ids.size() != 0">
@@ -36,8 +40,10 @@
                 and cr_business_template.business_type = #{listQuery.type}
             </if>
             <if test="listQuery.trainCategory != null and listQuery.trainCategory != ''">
-                and resource_id
-                in (select business_template_id from cr_team_template where cr_team_template.train_category = #{listQuery.trainCategory})
+                and b.train_category = #{listQuery.trainCategory}
+            </if>
+            <if test="listQuery.sceneType != null and listQuery.sceneType != ''">
+                and b.scene_type = #{listQuery.sceneType}
             </if>
         </where>
 

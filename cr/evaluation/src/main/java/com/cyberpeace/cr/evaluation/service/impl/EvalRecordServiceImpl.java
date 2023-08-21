@@ -625,7 +625,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalRecord.setIndexScore(requestData.getIndexScore());
         evalRecord.setStatus(originalStatus);
-        evalRecord.setScore(finalScore);
+        evalRecord.setFinalScore(finalScore);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             @Override

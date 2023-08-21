@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +40,7 @@ public class SystemUseStatusJob {
 		String cpuCmd = " top -b -n 1";
 		if (insertSystemUseStatus) {
 			List<String> cpuInfo = execShell(cpuCmd);
-			log.info("cpuInfo:{}", cpuInfo);
+			log.info("cpuInfo:{}", cpuInfo.get(2));
 			List<String> disk = execShell(diskCmd);
 			log.info("disk:{}", disk);
 			List<String> ram = execShell(memoryCmd);
@@ -85,8 +87,10 @@ public class SystemUseStatusJob {
 	 * @return CPU使用率 0.36
 	 */
 	public static Double getCpuUsage(List<String> cpuInfo) {
-		return Double.valueOf(Arrays.asList(cpuInfo.get(1).split("\\s+")).get(1));
-
+		Double id = Double.parseDouble(Arrays.asList(cpuInfo.get(2).split("\\s+")).get(7));
+		DecimalFormat df = new DecimalFormat("#.#");
+		df.setRoundingMode(RoundingMode.DOWN);
+		return Double.parseDouble(df.format(100 - id));
 	}
 	/**
 	 * 获取disk使用率

@@ -329,6 +329,11 @@ public class RbSceneServiceImpl implements RbSceneService {
         // 3. 更新时间管理
         RbTimeManagement timeManagement = rbTimeManagementService.getByRoomId(roomId);
         timeManagement.setRecoverTime(new Date());
+		// 5.4.1向前兼容，原本处于暂停状态的rb，恢复训练前记录其原本训练长度
+		if (timeManagement.getLength() == 0) {
+			timeManagement.setLength(TimeUtil.getIntervalSeconds(timeManagement.getCreateTime(),
+					timeManagement.getUpdateTime()));
+		}
         rbTimeManagementService.updateTimeManagement(timeManagement, room,
                 RbTimeManagement.TimeManagementStatus.RECOVERY.getCode(),
                 UserInfoContext.getUserContext().getUserId());

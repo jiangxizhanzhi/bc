@@ -126,7 +126,13 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 		// 暂停或者停止状态，返回已记录的训练时长
 		if (timeManagement.isPaused() || timeManagement.isStopped()) {
 			timeCost.setRunning(false);
-			timeCost.setTimeCost(timeManagement.getLength());
+			// 5.4.1向前兼容
+			if (timeManagement.getLength() == 0) {
+				timeCost.setTimeCost(TimeUtil.getIntervalSeconds(timeManagement.getCreateTime(),
+						timeManagement.getUpdateTime()));
+			} else {
+				timeCost.setTimeCost(timeManagement.getLength());
+			}
 		} else {
 			// 运行中（开始或者恢复后），返回已记录的训练时长 + 当前时间到恢复时间之间的差值
 			timeCost.setRunning(true);

@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.BusinessType;
-import com.cyberpeace.common.enums.RbRoleGroup;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -22,6 +19,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -30,7 +30,10 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
-import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
@@ -317,8 +320,8 @@ public class RbRoomUserController {
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
 		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
-		rbTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
-		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCostLong(resource_id));
+		rbTaskMatrix.setFinalScore(crScore == null ? 0 : crScore.getFinalScore());
+		rbTaskMatrix.setTime(rbTimeManagementService.getTimeCostLong(resource_id));
 		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}

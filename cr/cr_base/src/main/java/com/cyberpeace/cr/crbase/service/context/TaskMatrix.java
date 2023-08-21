@@ -1,18 +1,23 @@
 package com.cyberpeace.cr.crbase.service.context;
 
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.context.role.CrRoleSimple;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.common.context.role.CrRoleSimple;
+
+import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 public class TaskMatrix {
@@ -34,12 +39,17 @@ public class TaskMatrix {
     @ApiModelProperty(value = "得分")
     private Integer score;
 
-
     @ApiModelProperty(value = "任务列表")
     private List<TaskStage> taskList;
 
     @ApiModelProperty(value = "训练时长，单位为秒")
     private Long timeCost;
+
+    /**
+     * 取名为了兼容单兵
+     */
+    @ApiModelProperty(value = "是否正在运行")
+	private Boolean started;
 
     @ApiModelProperty(value = "用户头像")
     private String logo;
@@ -48,6 +58,11 @@ public class TaskMatrix {
     private Integer finalScore;
 
     public TaskMatrix() {
+    }
+
+    public void setTime(TrainingTimeCost timeCost){
+        this.timeCost = timeCost.getTimeCost();
+        this.started = timeCost.getRunning();
     }
 
     public TaskMatrix init(List<CrTask> tasks,Map<String, Mission> missionMap) {

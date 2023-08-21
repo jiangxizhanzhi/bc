@@ -2,7 +2,6 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.Date;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +10,9 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -79,20 +81,26 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 
 	@Override
 	public String getTimeCost(String roomId) {
-		return TimeUtil.duration2String(getTimeCostLong(roomId));
+		return TimeUtil.duration2String(getTimeCostLong(roomId).getTimeCost());
 	}
 
     @Override
-    public Long getTimeCostLong(String roomId) {
+	public TrainingTimeCost getTimeCostLong(String roomId) {
+		TrainingTimeCost timeCost = new TrainingTimeCost();
 		TrainRecord trainRecord = trainRecordMapper.getByRoomId(roomId);
 		if(null == trainRecord){
-			return 0L;
+			return timeCost;
 		}
 		if (trainRecord.getEndTime() != null) {
-			return TimeUtil.getIntervalSeconds(trainRecord.getStartTime(), trainRecord.getEndTime());
+			timeCost.setRunning(false);
+			timeCost.setTimeCost(TimeUtil.getIntervalSeconds(trainRecord.getStartTime(),
+					trainRecord.getEndTime()));
 		} else {
-			return TimeUtil.getIntervalSeconds(trainRecord.getStartTime(), new Date());
+			timeCost.setRunning(true);
+			timeCost.setTimeCost(
+					TimeUtil.getIntervalSeconds(trainRecord.getStartTime(), new Date()));
 		}
+		return timeCost;
     }
 
     @Override

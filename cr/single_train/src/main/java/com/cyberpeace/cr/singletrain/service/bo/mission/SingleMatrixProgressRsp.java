@@ -39,7 +39,7 @@ public class SingleMatrixProgressRsp implements Serializable {
 	private Integer score;
 
 	@ApiModelProperty(value = "训练时长")
-	private String timeCost;
+	private Long timeCost;
 
 	@ApiModelProperty(value = "任务矩阵")
 	private List<MatrixStage> matrix = Lists.newArrayList();

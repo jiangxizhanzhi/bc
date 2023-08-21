@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.BusinessType;
-import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -23,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -36,6 +35,8 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
@@ -306,7 +307,7 @@ public class TeamTrainStudentsController {
 				user_id);
 		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
 		teamTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
-		teamTaskMatrix.setTimeCost(trainRecordService.getTimeCostLong(resource_id));
+		teamTaskMatrix.setTime(trainRecordService.getTimeCostLong(resource_id));
 		teamTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(teamTaskMatrix);
 	}

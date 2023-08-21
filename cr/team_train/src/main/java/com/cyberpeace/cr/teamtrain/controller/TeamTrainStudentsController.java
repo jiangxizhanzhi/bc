@@ -306,7 +306,7 @@ public class TeamTrainStudentsController {
 				user_id);
 		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
 		teamTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
-		teamTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
+		teamTaskMatrix.setTimeCost(trainRecordService.getTimeCostLong(resource_id));
 		teamTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(teamTaskMatrix);
 	}
@@ -329,7 +329,6 @@ public class TeamTrainStudentsController {
 		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
 		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
 		teamTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
-		teamTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
 		teamTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.REPLAY.getDesc());
 		return new BaseRsp<>(teamTaskMatrix);
 	}

@@ -44,8 +44,4 @@ public class RbTimeManagementRsp extends BaseTable {
 
 	@ApiModelProperty(value = "当前天文时间")
 	private Date currentAstronomicalTime;
-
-	@ApiModelProperty(value = "持续时间")
-	private long duration;
-
 }

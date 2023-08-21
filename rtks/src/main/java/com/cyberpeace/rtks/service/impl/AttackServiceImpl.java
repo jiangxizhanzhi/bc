@@ -42,60 +42,6 @@ public class AttackServiceImpl implements AttackService {
 
 	private volatile AttackCache cachedAttacks;
 
-	/**
-	 * 5.3.7升级到5.4时，处理旧的attack和训练模板的关联
-	 * id变动，条目变动
-	 * rtks_attack_train_rel更新
-	 * @PostConstruct 执行在flyway执行之前
-	 */
-	@PostConstruct
-	private void trainRelUpgrade() {
-		try {
-			List<AttackTrainRelation> relationList = attackMapper.getAllRel();
-			if (relationList.isEmpty()) {
-				// 无关联，跳过
-				return;
-			}
-			// 已升级
-			if (relationList.get(0).getAttackId()
-					.length() < CrCommonConstants.GENERATED_UUID_LENGTH) {
-				return;
-			}
-			Map<String, String> oldNewMap = getOldNewMap();
-			List<AttackTrainRelation> newRelList = Lists.newArrayList();
-			// 一个新的id可能对应多个旧id
-			Set<String> attackTrainSet = Sets.newHashSet();
-			for (AttackTrainRelation old : relationList) {
-				String oldId = old.getAttackId();
-				String trainId = old.getBusinessTemplateId();
-				String newId = oldNewMap.get(oldId);
-				if (null == newId || attackTrainSet.contains(trainId + newId)) {
-					continue;
-				}
-				AttackTrainRelation newRel = new AttackTrainRelation();
-				newRel.setAttackId(newId);
-				newRel.setBusinessTemplateId(trainId);
-				newRelList.add(newRel);
-				attackTrainSet.add(trainId + newId);
-			}
-			if (newRelList.isEmpty()) {
-				return;
-			}
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					// 清除全部旧的
-					attackMapper.clearAllRel();
-					// 插入新的
-					attackMapper.insertBatch(newRelList);
-				}
-			});
-		} catch (Exception e) {
-			log.error("error occurred when try to upgrade attack_train relation", e);
-		}
-	}
-
 	@Override
 	public List<AttackCategoryBo<AttackBackBo>> getAttacks() {
 		ensureAttackCache();

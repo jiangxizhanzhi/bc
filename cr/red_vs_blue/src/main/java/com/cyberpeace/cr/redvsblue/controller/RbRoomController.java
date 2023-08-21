@@ -357,11 +357,6 @@ public class RbRoomController {
         if (rbTimeManagement == null) {
             return new BaseRsp(null);
         }
-        if (rbTimeManagement.getStatus() == RbTimeManagement.TimeManagementStatus.START.getCode()) {
-            rbTimeManagement.setDuration(rbTimeManagement.getDuration() + TimeUtil.getIntervalSeconds(rbTimeManagement.getCreateTime(), new Date()));
-        } else if (rbTimeManagement.getStatus() == RbTimeManagement.TimeManagementStatus.RECOVERY.getCode()) {
-            rbTimeManagement.setDuration(rbTimeManagement.getDuration() + TimeUtil.getIntervalSeconds(rbTimeManagement.getUpdateTime(), new Date()));
-        }
         RbTimeManagementRsp rbTimeManagementRsp = BeanUtils.copy(rbTimeManagement,
                 RbTimeManagementRsp.class);
 
@@ -375,7 +370,6 @@ public class RbRoomController {
         rbTimeManagementRsp.setModifyTime(rbTimeManagement.getUpdateTime());
         rbTimeManagementRsp.setModifyUser(rbTimeManagement.getUpdateUserId());
         rbTimeManagementRsp.setRedVsBlue(rbTimeManagement.getRoomId());
-        rbTimeManagementRsp.setDuration(rbTimeManagement.getDuration());
         // 计算当前作战时间
         if (rbTimeManagement.isStopped() || rbTimeManagement.isPaused()) {
             rbTimeManagementRsp.setCurrentCombatTime(rbTimeManagement.getCombatTime());

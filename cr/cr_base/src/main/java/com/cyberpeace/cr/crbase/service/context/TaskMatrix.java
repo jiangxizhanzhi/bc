@@ -38,8 +38,8 @@ public class TaskMatrix {
     @ApiModelProperty(value = "任务列表")
     private List<TaskStage> taskList;
 
-    @ApiModelProperty(value = "训练时长")
-    private String timeCost;
+    @ApiModelProperty(value = "训练时长，单位为秒")
+    private Long timeCost;
 
     @ApiModelProperty(value = "用户头像")
     private String logo;

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
+import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountRingGraph;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
@@ -58,9 +59,9 @@ public class EvalResultServiceImpl implements EvalResultService {
     }
 
     @Override
-    public List<EvalEventCountBar> getEventPercent(String redVsBlueId, Integer roleType) {
+    public List<EvalEventCountRingGraph> getEventPercent(String redVsBlueId, Integer roleType) {
 
-        ArrayList<EvalEventCountBar> result = new ArrayList<>();
+        ArrayList<EvalEventCountRingGraph> result = new ArrayList<>();
         List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndType(redVsBlueId);
         Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
         List<CrConstantsConfig> crConstantsConfigList;
@@ -71,14 +72,14 @@ public class EvalResultServiceImpl implements EvalResultService {
         } else {
             return new ArrayList<>();
         }
-        Integer sum = 0;
+        double sum = 0;
         for(CrConstantsConfig tmp:crConstantsConfigList){
             Integer tmpType = tmp.getCode();
-            EvalEventCountBar rsp = new EvalEventCountBar();
+            EvalEventCountRingGraph rsp = new EvalEventCountRingGraph();
             rsp.setCount(0);
             if(barMap.containsKey(tmpType)){
                 EvalEventCountBar evalEventCountBar = barMap.get(tmpType);
-                Integer count = evalEventCountBar.getCount();
+                double count = evalEventCountBar.getCount() * 1.0;
                 sum += count;
                 rsp.setCount(count);
             }
@@ -87,8 +88,8 @@ public class EvalResultServiceImpl implements EvalResultService {
             rsp.setEventName(eventTypeStr);
             result.add(rsp);
         }
-        Integer finalSum = sum;
-        result.forEach(item -> item.setCount(finalSum.equals(0) ? 0 : item.getCount()/ finalSum * 100) );
+        double finalSum = sum;
+        result.forEach(item -> item.setCount(Math.abs(finalSum - 0.0) <= 0.000001 ? 0 : (item.getCount()/ finalSum) * 100) );
         return result;
     }
 }

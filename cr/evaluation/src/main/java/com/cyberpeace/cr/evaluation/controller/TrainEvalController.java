@@ -8,10 +8,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
-import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
-import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -354,7 +351,7 @@ public class TrainEvalController {
     @ApiOperation("评估结果详情-攻防事件-环形图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/percent")
-    public BaseRsp<List<EvalEventCountBar>> getEventPercent(
+    public BaseRsp<List<EvalEventCountRingGraph>> getEventPercent(
             @ApiParam(name = "red_vs_blue_id", value = "房间id", required = true) @RequestParam("red_vs_blue_id") String redVsBlueId,
             @RequestParam("role") @NotEmpty Integer type) {
         return new BaseRsp<>(evalResultService.getEventPercent(redVsBlueId,type));

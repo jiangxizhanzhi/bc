@@ -10,6 +10,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
+import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountRingGraph;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventStatusCount;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity;
 import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
@@ -337,7 +338,7 @@ public class EvalResultController {
     @ApiOperation("评估结果详情-攻防事件-环形图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/pencent")
-    public BaseRsp<List<EvalEventCountBar>> getEventPencent(@ApiParam(name = "id",
+    public BaseRsp<List<EvalEventCountRingGraph>> getEventPencent(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
         String redVsBlueId = getRoomId(resourceId);
         return new BaseRsp<>(evalResultService.getEventPercent(redVsBlueId, type));

@@ -43,7 +43,6 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +89,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	@RequiresPermissions(value = {MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
+	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
 		// set type
 		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());

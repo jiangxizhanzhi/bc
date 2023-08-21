@@ -8,5 +8,4 @@ INSERT INTO `cr_tool_toolcategory`(`resource_id`, `cn_name`, `en_name`, `serial_
 INSERT INTO `cr_tool_toolcategory`(`resource_id`, `cn_name`, `en_name`, `serial_version_uid`) VALUES ( '993d4085f37b47e7a631d5cdfb608a5b', '响应工具', 'response tools', NULL);
 
 
---cr_team_template增加场景类型
-ALTER TABLE cr_team_template add column `scene_type` tinyint(4) NOT NULL COMMENT '场景类别';
+ALTER TABLE cr_team_template add column `scene_type` tinyint(4) NULL COMMENT '场景类别' AFTER `train_category`;

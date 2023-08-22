@@ -1,14 +1,11 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -17,9 +14,9 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.teamtrain.controller.req.DailyTrainRoomReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
-import com.cyberpeace.cr.teamtrain.controller.rsp.*;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
@@ -29,7 +26,6 @@ import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
@@ -46,8 +42,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Api(tags = "日常训练实例")
 @RestController
@@ -210,70 +204,6 @@ public class DailyTrainRoomController {
         baseRole.setRoleDataList(roleUsersList);
 
         return baseRole;
-    }
-
-    @ApiOperation("列表查询")
-    @GetMapping("/list")
-    @RequiresPermissions(MenuConstant.WEB_CR_DAILY_TRAIN)
-    public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
-        ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
-        listQuery.setPer_page(listReq.getPerPage());
-        String userId = UserInfoContext.getUserContext().getUserId();
-        // 默认时间排序
-        listQuery.setSort("-cr_team_room.create_time");
-
-        IPage<TeamRoomData> data = teamRoomService.list(listQuery);
-
-        // 训练场景拓扑节点数量获取
-        Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
-                data.getRecords().stream().map(TeamRoomData::getCopyedTopoId).collect(Collectors.toList()));
-
-        List<DailyRoomRsp> teamRoomRspList = Lists.newArrayList();
-        ListRsp<DailyRoomRsp> teamRoomRspListRsp = new ListRsp();
-
-        // attack engage relation
-        List<String> businessTemplateIds = data.getRecords().stream().map(TeamRoomData::getBusinessTemplateId).collect(Collectors.toList());
-        List<String> attackRelatedIds = businessTemplateService.getAttackRelatedIds(businessTemplateIds);
-        List<String> engageRelatedIds = businessTemplateService.getEngageRelatedIds(businessTemplateIds);
-
-        for (TeamRoomData teamRoomData : data.getRecords()) {
-            RoleQuery roleQuery = new RoleQuery();
-            roleQuery.setRoomId(teamRoomData.getResourceId());
-            List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
-
-             List<DailyTrainTemplateRoleRsp> dailyTemplateRoleResp = JsonUtil.toJsonObjectArray(teamRoomData.getRoleConfig(), DailyTrainTemplateRoleRsp.class);
-
-            List<DailyRoomRoleRes> rolesData = Lists.newArrayList();
-            for (DailyTrainTemplateRoleRsp dailyTrainTemplateRoleRsp : dailyTemplateRoleResp) {
-                DailyRoomRoleRes dailyRoomRole = new DailyRoomRoleRes();
-                dailyRoomRole.setName(dailyTrainTemplateRoleRsp.getName());
-                dailyRoomRole.setType(dailyTrainTemplateRoleRsp.getType());
-                dailyRoomRole.setChildren(dailyTrainTemplateRoleRsp.getChildren());
-                dailyRoomRole.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
-                rolesData.add(dailyRoomRole);
-            }
-
-            DailyRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, DailyRoomRsp.class);
-            teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
-            teamRoomRsp.setRolesData(rolesData);
-            teamRoomRsp.setNodesCount(topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
-            teamRoomRsp.setResourceOccupiedNums(topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
-            teamRoomRsp.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
-            teamRoomRsp.setTrainSkill(JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
-            // set attack engage relation
-            teamRoomRsp.setIsAttackRelated(attackRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
-            teamRoomRsp.setIsEngageRelated(engageRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
-
-            teamRoomRsp.setUserAvatar(UserInfoContext.getUserContext().getAvatarUrl());
-            teamRoomRspList.add(teamRoomRsp);
-        }
-
-        teamRoomRspListRsp.setList(teamRoomRspList);
-        teamRoomRspListRsp.setTotal(data.getTotal());
-        teamRoomRspListRsp.setLastPage(data.getPages());
-        teamRoomRspListRsp.setCurrentPage(data.getCurrent());
-
-        return new BaseRsp(teamRoomRspListRsp);
     }
 
 }

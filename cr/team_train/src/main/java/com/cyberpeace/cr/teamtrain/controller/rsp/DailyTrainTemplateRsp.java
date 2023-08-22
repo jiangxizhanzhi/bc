@@ -22,6 +22,9 @@ public class DailyTrainTemplateRsp implements Serializable {
 	@ApiModelProperty(value = "角色列表")
 	private List<DailyTrainTemplateRoleRsp> roleList;
 
+	@ApiModelProperty(value = "角色结构列表")
+	private List<DailyBaseRoleRsp> roleStructureList;
+
 	@ApiModelProperty(value = "角色结构")
 	private List<BaseRole> roleStructure;
 

@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.teamtrain.controller.req;
 
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -21,9 +20,6 @@ public class CrDailyRoleConfig  {
 	 */
 	@ApiModelProperty(value = "辅助前端切换不同角色任务编排的字段")
 	private String id;
-
-	@ApiModelProperty(value = "任务配置")
-	private CrRoleConfigMissionsScheme missionsScheme;
 
 	@ApiModelProperty(value = "组织类型")
 	private String type;

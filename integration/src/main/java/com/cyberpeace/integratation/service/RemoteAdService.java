@@ -41,8 +41,13 @@ public interface RemoteAdService {
 	Integer getAdPracticeCnt();
 
 	/**
-	 * @return 竞赛习题数和
+	 * @return 后台竞赛列表
 	 */
 	ListRsp<CalendarCompetitionBo> listCalendarCompetitionBo(Page page, String name);
+
+	/**
+	 * @return 批量删除
+	 */
+	Boolean batchDelete(List<String> ids);
 
 }

@@ -104,4 +104,7 @@ public interface JsonKeyConstant {
 	String IMAGE_IDS = "image_ids";
 
 	String MESSAGE = "message";
+
+	String CREATE_TIME = "create_time";
+
 }

@@ -110,20 +110,21 @@ public class TrainModeServiceImpl implements TrainingModeService {
         }
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),false);
 
-        List<TrainModeReq> competitionList = new ArrayList<>();
+        List<String> competitionList = new ArrayList<>();
         List<String> trainIdList = new ArrayList<>();
         List<String> courseIdList = new ArrayList<>();
         for (TrainModeReq trainModeReq : trainModeReqList) {
             if (TrainModeRsp.TrainType.COMPETITION.getCode().equals(trainModeReq.getType())) {
-                competitionList.add(trainModeReq);
+                competitionList.add(trainModeReq.getId());
             } else if (TrainModeRsp.TrainType.COURSE.getCode().equals(trainModeReq.getType())) {
                 courseIdList.add(trainModeReq.getId());
             } else {
                 trainIdList.add(trainModeReq.getId());
             }
         }
-        //todo 删除竞赛成功,删除其他类型
-
+        if (!CollectionUtils.isEmpty(competitionList)){
+            remoteAdService.batchDelete(competitionList);
+        }
         //攻防实训删除
         List<Course> courseList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(courseIdList)) {
@@ -215,8 +216,8 @@ public class TrainModeServiceImpl implements TrainingModeService {
             trainModeRsp.setResourceId(competitionBo.getResourceId());
             trainModeRsp.setName(competitionBo.getName());
             trainModeRsp.setDescription(competitionBo.getStartTime() + "-" + competitionBo.getEndTime());
-            trainModeRsp.setType(TrainModeRsp.TrainType.TRAINING_DAILY.getCode());
-            trainModeRsp.setCreateTime(competitionBo.getStartTime());
+            trainModeRsp.setType(TrainModeRsp.TrainType.COMPETITION.getCode());
+            trainModeRsp.setCreateTime(competitionBo.getCreateTime());
             competitionList.add(trainModeRsp);
         }
         return competitionList;

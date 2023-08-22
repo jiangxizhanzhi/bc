@@ -28,7 +28,7 @@
                 AND NAME LIKE #{pattern}
             </if>
         </where>
-        order by a.update_time
+        ORDER BY a.create_time DESC
     </select>
 
     <select id="listCourse" resultType="com.cyberpeace.cr.crbase.controller.rsp.TrainModeRsp">
@@ -42,5 +42,6 @@
                 and name like #{pattern}
             </if>
         </where>
+        ORDER BY a.create_time DESC
     </select>
 </mapper>

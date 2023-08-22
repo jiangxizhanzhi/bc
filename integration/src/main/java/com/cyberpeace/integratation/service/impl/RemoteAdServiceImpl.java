@@ -9,8 +9,10 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.cyberpeace.integratation.service.bo.CompetitionDeleteBo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,9 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String PRACTICE_COUNT_URL;
 
-	private String COMPETITION_WEB_URL;
+	private String COMPETITION_PAGE_URL;
+
+	private String COMPETITION_DELETE_URL;
 
 	@PostConstruct
 	public void init() {
@@ -46,8 +50,12 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		COMPETITION_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.competition.list");
 
-		COMPETITION_WEB_URL = adEnvService.getAdHost()
+		COMPETITION_PAGE_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.competition.all");
+
+		COMPETITION_DELETE_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.competition.delete");
+
 	}
 
 	@Override
@@ -79,6 +87,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		bo.setClassify(json.getInteger(JsonKeyConstant.CLASSIFY));
 		bo.setStatus(json.getInteger(JsonKeyConstant.STATUS));
 		bo.setType(json.getInteger(JsonKeyConstant.TYPE));
+		bo.setCreateTime(json.getDate(JsonKeyConstant.CREATE_TIME));
 		return bo;
 	}
 
@@ -129,10 +138,25 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	public ListRsp<CalendarCompetitionBo> listCalendarCompetitionBo(Page page, String competitionName) {
 		// 接口请求
 		String name = Objects.nonNull(competitionName) ? competitionName : CommonConstant.EMPTY_STRING;
-		String formatUrl = String.format(COMPETITION_WEB_URL, page.getSize(), name);
+		String formatUrl = String.format(COMPETITION_PAGE_URL, page.getSize(), name);
 		JSONObject jsonObject = HttpClientUtil.rawGetForCompetition(formatUrl, JSONObject.class);
 		JSONArray competitionArray = JsonUtil.toJsonObject(jsonObject.get("list").toString(), JSONArray.class);
 		List<CalendarCompetitionBo> competitionBoList = StreamApiUtils.map(competitionArray, obj -> jsonToBo((JSONObject) obj));
 		return PageUtil.getListResult(competitionBoList, page, Long.parseLong(jsonObject.get("total").toString()) );
+	}
+
+	@Override
+	public Boolean batchDelete(List<String> ids) {
+
+		List<String> notBlankIds = StreamApiUtils.filter(ids,
+				StringUtils::isNotBlank);
+		if (CollectionUtils.isEmpty(notBlankIds)) {
+			return Boolean.TRUE;
+		}
+		CompetitionDeleteBo competitionDeleteBo = new CompetitionDeleteBo();
+		competitionDeleteBo.setResource_ids(notBlankIds);
+		String formatUrl = String.format(COMPETITION_DELETE_URL, ids);
+		HttpClientUtil.deleteForCompetition(formatUrl, competitionDeleteBo, JSONObject.class);
+		return true;
 	}
 }

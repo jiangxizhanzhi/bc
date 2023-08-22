@@ -134,7 +134,7 @@ public class DailyTrainController {
 
     @ApiOperation("查询")
     @GetMapping()
-    @RequiresPermissions(MenuConstant.CMS_TRAINING_MODE)
+    @RequiresPermissions(MenuConstant.CMS_DAILY_MODE)
     public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
         businessTemplateService.checkPermission(resource_id,UserInfoContext.getUserContext().getUserId());
 

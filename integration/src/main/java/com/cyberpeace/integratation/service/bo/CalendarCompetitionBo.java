@@ -32,4 +32,7 @@ public class CalendarCompetitionBo implements Serializable {
 	/** 比赛分类*/
 	private Integer classify;
 
+	/** 开始时间*/
+	private Date createTime;
+
 }

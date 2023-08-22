@@ -162,7 +162,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(value = {MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.CMS_TRAINING_MODE}, logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.CMS_DAILY_MODE}, logical = Logical.OR)
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
 		businessTemplateService.checkPermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());

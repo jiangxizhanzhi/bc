@@ -83,6 +83,26 @@ public class HttpClientUtil {
 		return doHttp(delete, resultType);
 	}
 
+	public static <T> T deleteForCompetition(String url, Object body, Class<T> resultType) {
+		// 1、设置请；线程数据
+		setContext(url);
+
+		// 2、设置请求参数
+		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
+
+		HttpDeleteWithBody delete = new HttpDeleteWithBody(url);
+		delete.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		delete.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		delete.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		delete.setEntity(entity);
+		String authorization = CommonContext.getAuthorization();
+		if (null != authorization) { // 调用竞赛接口需要
+			delete.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
+		}
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttpForCompetition(delete, resultType);
+	}
+
 	/**
 	 * 请求地址中包含特殊字符的可使用该方法 比如空格 * ｜
 	 * @param resultType

@@ -49,9 +49,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "日常练习")
@@ -225,7 +223,10 @@ public class DailyTrainController {
         List<CrDailyRoleConfig> dailyTemplateRoleResp = JsonUtil.toJsonObjectArray(teamTemplateData.getRoleConfig(), CrDailyRoleConfig.class);
 
         List<DailyBaseRoleRsp> roleStructureList = new ArrayList<>();
-
+        DailyBaseRoleRsp teacher = new DailyBaseRoleRsp();
+        teacher.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
+        teacher.setRoleGroup(CrRole.TeamRoleGroup.TEACHER.getCode());
+        roleStructureList.add(teacher);
         for (CrDailyRoleConfig dailyRoleConfig : dailyTemplateRoleResp) {
             DailyBaseRoleRsp dailyBaseRoleRsp = new DailyBaseRoleRsp();
             dailyBaseRoleRsp.setName(dailyRoleConfig.getName());
@@ -236,17 +237,7 @@ public class DailyTrainController {
             dailyBaseRoleRsp.setRoleStructure(baseRoles);
             roleStructureList.add(dailyBaseRoleRsp);
         }
-        // 获取角色列表
-        String roleString = teamTemplateData.getRoleConfig();
 
-        List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,BaseRole.class);
-        teamTrainTemplateRoleList.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT.getCode()));
-
-        BaseRole baseRole = new BaseRole();
-        baseRole.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
-        baseRole.setRoleGroup(CrRole.TeamRoleGroup.TEACHER.getCode());
-
-        teamTrainTemplateRoleList.add(0, baseRole);
 
         // 设置返回对象
         DailyTrainTemplateRsp teamTrainTemplateRsp = new DailyTrainTemplateRsp();
@@ -256,7 +247,6 @@ public class DailyTrainController {
         teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 
         teamTrainTemplateRsp.setRoleStructureList(roleStructureList);
-        teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
         return teamTrainTemplateRsp;
     }
 

@@ -15,6 +15,9 @@ public class DailyBaseRoleRsp {
     @ApiModelProperty(value = "组织类型")
     private String type;
 
+    @ApiModelProperty(value = "角色组")
+    private Integer roleGroup;
+
     @ApiModelProperty(value = "角色结构")
     private List<BaseRole> roleStructure;
 

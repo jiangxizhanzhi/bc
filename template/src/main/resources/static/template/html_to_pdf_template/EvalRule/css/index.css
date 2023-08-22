@@ -27,6 +27,8 @@
 
 .table-content {
     display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
     margin: 8px 24px;
 }
 .contents {

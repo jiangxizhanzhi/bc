@@ -7,7 +7,10 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountRingGraph;
@@ -29,14 +32,14 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleEventPercentRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoleScoreListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalRoleScore;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore;
-import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalScoreMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalResultMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.cyberpeace.cr.evaluation.service.EvalResultService;
+import com.cyberpeace.cr.evaluation.service.EvalRoleScoreService;
 import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -92,6 +95,9 @@ public class EvalResultController {
 
     @Autowired
     private EvalResultService evalResultService;
+
+    @Autowired
+    private EvalRoleScoreService evalRoleScoreService;
 
     @ApiOperation("获取靶场测评实例评估结果（分页）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -156,25 +162,22 @@ public class EvalResultController {
     public BaseRsp<List<EvalRoleScoreListRsp>> getScoreByRole(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
 
-        String redVsBlueId = getRoomId(resourceId);
-
         EvalRecord evalRecord = evalRecordService.getById(resourceId);
-
-        List<CrRole> redRoles = getCrRoles(redVsBlueId);
-        redRoles = redRoles.stream().filter(redRole -> redRole.getRoleGroup().equals(type)).collect(Collectors.toList());
-
         List<EvalRoleScoreListRsp> res = new ArrayList<>();
-
-        for(CrRole redRole:redRoles){
-            List<String> ids = JsonUtil.toJsonObjectArray(redRole.getUserIds(), String.class);
-            List<CrEvalScore> crEvalScores = crEvalScoreMapper.getByRoomIdAndUsers(redVsBlueId, evalRecord.getTemplateId(),ids);
-            List<Integer> scores = StreamApiUtils.getColumn(crEvalScores, CrEvalScore::getFinalScore);
-            int sum = scores.stream().mapToInt(Integer::intValue).sum();
-            EvalRoleScoreListRsp rsp = new EvalRoleScoreListRsp();
-            rsp.setRole(redRole.getRoleGroup());
-            rsp.setName(redRole.getName());
-            rsp.setScore(sum);
-            res.add(rsp);
+        if(evalRecord.getStatus().equals(EvalRecord.Status.END.getCode()) || evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())){
+            LambdaQueryWrapper<EvalRoleScore> query = new LambdaQueryWrapper<>();
+            query.eq(EvalRoleScore::getRecord, resourceId);
+            List<EvalRoleScore> evalRoleScores = evalRoleScoreService.getBaseMapper().selectList(query);
+            evalRoleScores.forEach(evalRoleScore -> {
+                EvalRoleScoreListRsp rsp = new EvalRoleScoreListRsp();
+                rsp.setRole(evalRoleScore.getRoleGroup());
+                String roleId = evalRoleScore.getRoleId();
+                CrRole crRole = crRoleMapper.selectById(roleId);
+                rsp.setName(roleId);
+                rsp.setName(crRole.getName());
+                rsp.setScore(evalRoleScore.getScore());
+                res.add(rsp);
+            });
         }
         return new BaseRsp<>(res);
     }
@@ -249,45 +252,38 @@ public class EvalResultController {
         List<CrRole> redRoles = roleMap.get(CrRole.RbRoleGroup.RED.getCode());
 
         List<CrRoleNode> redNode= getRoleNodeCount(redRoles);
-        List<String> redDeviceIds = StreamApiUtils.getColumn(redNode, CrRoleNode::getId);
+        List<String> redDeviceIds = StreamApiUtils.getColumn(redNode, CrRoleNode::getId).stream().distinct().collect(Collectors.toList());
         List<CrRoleNode> blueNode = getRoleNodeCount(blueRoles);
-        List<String> blueDeviceIds = StreamApiUtils.getColumn(blueNode, CrRoleNode::getId);
+        List<String> blueDeviceIds = StreamApiUtils.getColumn(blueNode, CrRoleNode::getId).stream().distinct().collect(Collectors.toList());
 
         LambdaQueryWrapper<CrRoleAssetNodeCopy> query = new LambdaQueryWrapper<>();
         query.eq(CrRoleAssetNodeCopy::getRoomId, redVsBlueId);
         List<CrRoleAssetNodeCopy> crRoleAssetNodes = crRoleAssetNodeCopyMapper.selectList(query);
 
         for(CrRoleAssetNodeCopy roleAssetNode:crRoleAssetNodes){
-            if(redDeviceIds.contains(roleAssetNode.getDeviceId())){
-                redDeviceIds = getBlueNodes(roleAssetNode, CrRole.RbRoleGroup.RED.getCode(), redDeviceIds, dates);
+            if(roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.RED.getCode()) && roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode())){
+                redDeviceIds.remove(roleAssetNode.getDeviceId());
                 redCount.add(redDeviceIds.size());
-            }
-            if(blueDeviceIds.contains(roleAssetNode.getDeviceId())){
-                blueDeviceIds = getBlueNodes(roleAssetNode, CrRole.RbRoleGroup.BLUE.getCode(), blueDeviceIds, dates);
+                if (!blueDeviceIds.contains(roleAssetNode.getDeviceId())) {
+                    blueDeviceIds.add(roleAssetNode.getDeviceId());
+                }
                 blueCount.add(blueDeviceIds.size());
+                dates.add(roleAssetNode.getCreateTime());
+            } else if(roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode()) && roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.RED.getCode())){
+                if(!redDeviceIds.contains(roleAssetNode.getDeviceId())){
+                    redDeviceIds.add(roleAssetNode.getDeviceId());
+                }
+                redCount.add(redDeviceIds.size());
+                blueDeviceIds.remove(roleAssetNode.getDeviceId());
+                blueCount.add(blueDeviceIds.size());
+                dates.add(roleAssetNode.getCreateTime());
             }
-
         }
         res.setCreatTime(dates);
         res.setBlueCount(blueCount);
         res.setRedCount(redCount);
         return new BaseRsp<>(res);
 
-    }
-
-    private List<String> getBlueNodes(CrRoleAssetNodeCopy roleAssetNode, Integer type, List<String> deviceIds, List<Date> dates) {
-        if (roleAssetNode.getOriginalRoleType().equals(type)
-                && !roleAssetNode.getRoleType().equals(type)) {
-            deviceIds.remove(roleAssetNode.getDeviceId());
-            dates.add(roleAssetNode.getCreateTime());
-        }
-
-        if (!roleAssetNode.getOriginalRoleType().equals(type)
-                && roleAssetNode.getRoleType().equals(type)) {
-            deviceIds.add(roleAssetNode.getDeviceId());
-            dates.add(roleAssetNode.getCreateTime());
-        }
-        return deviceIds;
     }
 
 

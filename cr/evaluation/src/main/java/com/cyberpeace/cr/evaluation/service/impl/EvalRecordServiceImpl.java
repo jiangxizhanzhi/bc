@@ -19,14 +19,18 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
+import com.cyberpeace.cr.evaluation.controller.bo.EvalTaskBo;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.context.*;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomSceneMapper;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -134,6 +138,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Autowired
     private EvalResultMapper evalResultMapper;
+
+    @Autowired
+    private CrEvalTaskSubmitMapper crEvalTaskSubmitMapper;
+
+    @Autowired
+    private EvalRoleScoreService evalRoleScoreService;
 
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
@@ -597,7 +607,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalLog.info(evalRecord, "calculate indexes completed.");
 
         // TODO复制当前的角色任务得分情况
-
+        EvalLog.info(evalRecord, "copy task score start...");
+        copyScore(evalRecord);
+        EvalLog.info(evalRecord, "copy task score completed.");
 
         EvalLog.info(
                 evalRecord,
@@ -605,6 +617,57 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         );
     }
 
+    private void copyScore(EvalRecord record) {
+
+        List<EvalTaskBo> tasks = crEvalTaskSubmitMapper.getByRoomId(record.getTemplateId());
+        int flag = 1;
+
+        addExtraScore(tasks, flag);
+        Map<Integer, List<EvalTaskBo>> group = StreamApiUtils.groupBy(tasks, EvalTaskBo::getRoleGroup);
+        List<EvalRoleScore> addList = new ArrayList<>();
+        addRoleScores(record, group, addList, CrRole.RbRoleGroup.BLUE.getCode());
+        addRoleScores(record, group, addList, CrRole.RbRoleGroup.RED.getCode());
+        evalRoleScoreService.saveBatch(addList);
+
+    }
+
+    @Override
+    public void addExtraScore(List<EvalTaskBo> tasks, int flag) {
+        for(EvalTaskBo tmp: tasks){
+            if(flag == 1){
+                BigDecimal rankScore = BigDecimal.valueOf(tmp.getMissionScore() * 0.2)
+                        .setScale(0, BigDecimal.ROUND_HALF_UP);
+                tmp.setScore(Integer.parseInt(rankScore.toString()));
+                flag += 1;
+            } else if(flag == 2){
+                BigDecimal rankScore = BigDecimal.valueOf(tmp.getMissionScore() * 0.1)
+                        .setScale(0, BigDecimal.ROUND_HALF_UP);
+                tmp.setScore(Integer.parseInt(rankScore.toString()));
+                flag += 1;
+            } else if(flag == 3){
+                BigDecimal rankScore = BigDecimal.valueOf(tmp.getMissionScore() * 0.05)
+                        .setScale(0, BigDecimal.ROUND_HALF_UP);
+                tmp.setScore(Integer.parseInt(rankScore.toString()));
+                flag += 1;
+            }
+        }
+    }
+
+    private void addRoleScores(EvalRecord record, Map<Integer, List<EvalTaskBo>> group, List<EvalRoleScore> addList, Integer role) {
+        List<EvalTaskBo> blueTasks = group.get(role);
+        Map<String, List<EvalTaskBo>> blueRolesTask = StreamApiUtils.groupBy(blueTasks, EvalTaskBo::getRoleId);
+        for(Map.Entry<String, List<EvalTaskBo>> tmp:blueRolesTask.entrySet()){
+            String roleId = tmp.getKey();
+            List<EvalTaskBo> value = tmp.getValue();
+            int sum = value.stream().mapToInt(EvalTaskBo::getScore).sum();
+            EvalRoleScore evalRoleScore = new EvalRoleScore();
+            evalRoleScore.setRecord(record.getResourceId());
+            evalRoleScore.setRoleId(roleId);
+            evalRoleScore.setScore(sum);
+            evalRoleScore.setRoleGroup(role);
+            addList.add(evalRoleScore);
+        }
+    }
 
 
     @Async

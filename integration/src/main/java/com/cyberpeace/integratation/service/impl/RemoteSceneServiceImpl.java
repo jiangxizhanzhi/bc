@@ -1,5 +1,4 @@
 package com.cyberpeace.integratation.service.impl;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -102,6 +101,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_RESTART_URL;
 
+	private String FLOW_ATTACK_URL;
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -173,6 +173,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		NODE_START_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.start");
 		NODE_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.stop");
 		SCENE_RESTART_URL=MP_HOST + ConfigUtil.getContextProperty("mp.scene.restart");
+
+		FLOW_ATTACK_URL = MP_HOST + ConfigUtil.getContextProperty("mp.flow.attack.count");
 
 	}
 
@@ -489,5 +491,13 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				});
 			}
 		}
+	}
+
+	@Override
+	public List<MpFlowAttackCount> getFlowAttackCount(String sceneId) {
+		FlowAttackContext flowAttackContext = new FlowAttackContext();
+		flowAttackContext.setSceneId(sceneId);
+		JSONArray objects = HttpClientUtil.rawGetForAttack(FLOW_ATTACK_URL, flowAttackContext, JSONArray.class);
+		return objects.toJavaList(MpFlowAttackCount.class);
 	}
 }

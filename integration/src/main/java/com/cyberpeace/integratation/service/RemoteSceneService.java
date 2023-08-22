@@ -218,4 +218,5 @@ public interface RemoteSceneService {
 
 	Boolean restartScene(NodeOpsContext nodeOpsContext);
 
+	List<MpFlowAttackCount> getFlowAttackCount(String sceneId);
 }

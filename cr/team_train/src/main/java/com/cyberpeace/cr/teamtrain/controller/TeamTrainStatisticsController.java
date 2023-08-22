@@ -7,7 +7,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainStatisticsDetailReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamCapabilityRsp;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -92,7 +91,7 @@ public class TeamTrainStatisticsController {
     public BaseRsp<List<TeamCapabilityRsp>> getFlowAttackCount(
             @ApiParam(name = "room_id", value = "训练id", required = true) @RequestParam("room_id") String roomId) {
 
-        SceneViewContext context = teamSceneService.viewScene(roomId, null);
+//        SceneViewContext context = teamSceneService.viewScene(roomId, null);
         List<CrRole> crRoles = crRoleService.selectRbStudentsRoleByRoomId(roomId);
 
         Map<String, String> roleIpMap = new HashMap<>();
@@ -107,10 +106,17 @@ public class TeamTrainStatisticsController {
 //        List<MpFlowAttackCount> flowAttackCountList = remoteSceneService.getFlowAttackCount(context.getMpSceneId());
 //        Map<String, Integer> attackMap = StreamApiUtils.toMap(flowAttackCountList, MpFlowAttackCount::getNodeName, MpFlowAttackCount::getTimes);
 
-        for (Map.Entry<String, String> entry : roleIpMap.entrySet()) {
-            TeamCapabilityRsp teamCapabilityRsp = new TeamCapabilityRsp();
-            teamCapabilityRsp.setRoleName(entry.getValue());
+//        for (Map.Entry<String, String> entry : roleIpMap.entrySet()) {
+//            TeamCapabilityRsp teamCapabilityRsp = new TeamCapabilityRsp();
+//            teamCapabilityRsp.setRoleName(entry.getValue());
 //            teamCapabilityRsp.setTimes(attackMap.get(entry.getKey()));
+//            result.add(teamCapabilityRsp);
+//        }
+//        return new BaseRsp<>(result);
+
+        for (CrRole crRole : crRoles) {
+            TeamCapabilityRsp teamCapabilityRsp = new TeamCapabilityRsp();
+            teamCapabilityRsp.setRoleName(crRole.getName());
             Random random = new Random();
             teamCapabilityRsp.setTimes(10+random.nextInt(10));
             result.add(teamCapabilityRsp);

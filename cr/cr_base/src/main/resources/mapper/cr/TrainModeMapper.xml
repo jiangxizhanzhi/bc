@@ -42,6 +42,6 @@
                 and name like #{pattern}
             </if>
         </where>
-        ORDER BY a.create_time DESC
+        ORDER BY create_time DESC
     </select>
 </mapper>

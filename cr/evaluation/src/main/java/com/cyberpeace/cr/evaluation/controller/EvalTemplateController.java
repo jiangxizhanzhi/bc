@@ -1,4 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -9,6 +10,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateModifyReq;
@@ -22,7 +24,9 @@ import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoomScene;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomSceneMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import io.swagger.annotations.Api;
@@ -34,6 +38,9 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = "靶场测评-模板")
 @RestController
@@ -52,6 +59,9 @@ public class EvalTemplateController {
 
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
+
+	@Autowired
+	private RbRoomSceneMapper rbRoomSceneMapper;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -109,11 +119,20 @@ public class EvalTemplateController {
 
 		IPage<EvalTemplate> data = evalTemplateService.list(evalTemplateListQuery);
 
+		List<String> column = StreamApiUtils.getColumn(data.getRecords(), EvalTemplate::getRedVsBlueId);
+
+		LambdaQueryWrapper<RbRoomScene> query = new LambdaQueryWrapper<>();
+		query.in(RbRoomScene::getRbId, column);
+		List<RbRoomScene> rbRoomScenes = rbRoomSceneMapper.selectList(query);
+		Map<String, RbRoomScene> toMap = StreamApiUtils.toMap(rbRoomScenes, RbRoomScene::getRbId, s -> s);
+
 		data.convert(evalTemplate -> {
 			EvalTemplateListRsp evalTemplateListRsp = BeanUtils.copy(evalTemplate,
 					EvalTemplateListRsp.class);
 			evalTemplateListRsp
 					.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
+			RbRoomScene rbRoomScene = toMap.get(evalTemplateListRsp.getResourceId());
+			evalTemplateListRsp.setMpSceneId(null == rbRoomScene ? null : rbRoomScene.getMpSceneId());
 			return evalTemplateListRsp;
 
 		});

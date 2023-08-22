@@ -17,11 +17,9 @@
         cr_business_template.resource_id ,cr_business_template.topo_id,cr_business_template.`name`, cr_business_template.description,cr_business_template.business_type,cr_business_template.difficulty,cr_business_template.local_scene_id,
         cr_business_template.create_user_id,cr_business_template.operation_auth_type,cr_business_template.operation_auth_ids, cr_business_template.read_auth_type, cr_business_template.read_auth_ids,
         cr_business_template.create_time,b.scene_type
-        from cr_business_template
-        <if test="listQuery.trainCategory != null and listQuery.trainCategory != ''">
-            inner JOIN cr_team_template b
-            on cr_business_template.resource_id= b.business_template_id
-        </if>
+        FROM cr_business_template
+        LEFT JOIN cr_team_template b
+        ON cr_business_template.resource_id= b.business_template_id
         <where>
             cr_business_template.resource_id in
             <if test="listQuery.ids != null and listQuery.ids.size() != 0">
@@ -42,7 +40,7 @@
             <if test="listQuery.trainCategory != null and listQuery.trainCategory != ''">
                 and b.train_category = #{listQuery.trainCategory}
             </if>
-            <if test="listQuery.sceneType != null and listQuery.sceneType != ''">
+            <if  test=" listQuery.sceneType != null and listQuery.sceneType != ''">
                 and b.scene_type = #{listQuery.sceneType}
             </if>
         </where>

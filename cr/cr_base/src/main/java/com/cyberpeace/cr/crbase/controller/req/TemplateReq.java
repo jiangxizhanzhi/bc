@@ -22,7 +22,9 @@ public class TemplateReq extends PageReqBase {
 	@ApiModelProperty(value = "难度")
 	private String difficult;
 
-	@ApiModelProperty(value = "红/蓝训练区分, 1=红;2=蓝")
+	@ApiModelProperty(value = "红/蓝训练区分, 1=红;2=蓝;3:日常")
 	private Integer trainCategory;
 
+	@ApiModelProperty(value = "场景类型")
+	private Integer sceneType;
 }

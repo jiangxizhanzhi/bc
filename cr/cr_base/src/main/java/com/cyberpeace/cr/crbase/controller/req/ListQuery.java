@@ -1,14 +1,13 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
-import java.util.List;
-
 import com.cyberpeace.common.model.PageReqBase;
-
 import com.cyberpeace.common.util.LocalStringUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /*
  * 前台使用的查询类
@@ -43,4 +42,7 @@ public class ListQuery extends PageReqBase {
 	}
 
 	private Integer trainCategory;
+
+	@ApiModelProperty(value = "场景类型")
+	private Integer sceneType;
 }

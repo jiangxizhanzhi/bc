@@ -90,7 +90,7 @@ public class BusinessTemplateController {
 	@ApiOperation("查询模板列表")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN,MenuConstant.CMS_DAILY_MODE }, logical = Logical.OR)
 	public BaseRsp<ListRsp<BusinessTemplateRsp>> getTemplate(TemplateReq listReq) {
 		BusinessTemplateQuery businessTemplateQuery = BeanUtils.copy(listReq,
 				BusinessTemplateQuery.class);

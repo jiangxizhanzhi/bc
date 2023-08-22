@@ -25,4 +25,6 @@ public class TeamTemplateListReq extends PageReqBase {
 	@ApiModelProperty(value = "红蓝训练区分, 1=红;2=蓝")
 	private Integer trainCategory;
 
+	@ApiModelProperty(value = "场景类型")
+	private Integer sceneType;
 }

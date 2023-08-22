@@ -1,19 +1,17 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 @Data
 public class BaseInfoRsp implements Serializable {
@@ -58,6 +56,9 @@ public class BaseInfoRsp implements Serializable {
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
+	@ApiModelProperty(value = "场景类型")
+	private Integer sceneType;
+
 	public BaseInfoRsp(TeamTemplate template, BusinessTemplate businessTemplate) {
 		this.name = businessTemplate.getName();
 		this.category = template.getSubType();
@@ -70,6 +71,7 @@ public class BaseInfoRsp implements Serializable {
 		this.trainSkill = JsonUtil.toJsonObjectArray(template.getTrainSkills(), String.class);
 		this.peopleNumber = template.getPeopleNumber();
 		this.logo = businessTemplate.getLogo();
+		this.sceneType = template.getSceneType();
 	}
 
 	public BaseInfoRsp(TeamTemplateData teamTemplateData) {
@@ -85,5 +87,6 @@ public class BaseInfoRsp implements Serializable {
 				String.class);
 		this.peopleNumber = teamTemplateData.getPeopleNumber();
 		this.logo = teamTemplateData.getLogo();
+		this.sceneType = teamTemplateData.getSceneType();
 	}
 }

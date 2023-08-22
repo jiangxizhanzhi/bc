@@ -43,6 +43,7 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Api(tags = "团队训练模板")
@@ -160,7 +162,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.CMS_TRAINING_MODE}, logical = Logical.OR)
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
 		businessTemplateService.checkPermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());
@@ -178,9 +180,10 @@ public class TeamTrainTemplateController {
 		int index = 1;
 		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
 			teamTrainTemplateRoleRsp.setId(template.getResourceId() + "_" + index++);
-			for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp
-					.getMissionsScheme().getSchemeData()) {
-				missionService.getMissionContent(schemeData);
+			if (Objects.nonNull(teamTrainTemplateRoleRsp.getMissionsScheme())) {
+				for (MissionSchemeObject<AddTemplateMission> schemeData : teamTrainTemplateRoleRsp.getMissionsScheme().getSchemeData()) {
+					missionService.getMissionContent(schemeData);
+				}
 			}
 		}
 		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
@@ -226,7 +229,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -272,7 +275,6 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
-
 		return teamTrainTemplateRsp;
 	}
 

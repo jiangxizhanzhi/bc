@@ -50,6 +50,6 @@ public class BusinessTemplateRsp implements Serializable {
 	private SceneConfigRsp sceneConfigInfo;
 
 	@ApiModelProperty(value = "冗余字段，场景类型(日常练习)")
-	private Integer category;
+	private Integer sceneType;
 
 }

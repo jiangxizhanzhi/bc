@@ -79,9 +79,6 @@ public class EvalResultController {
     private CrRoleMapper crRoleMapper;
 
     @Autowired
-    private CrEvalScoreMapper crEvalScoreMapper;
-
-    @Autowired
     private CrTaskLogMapper crTaskLogMapper;
 
     @Autowired

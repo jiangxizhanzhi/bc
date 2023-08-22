@@ -1,26 +1,39 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainStatisticsDetailReq;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamCapabilityInfoRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamCapabilityRsp;
+import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamTrainStatisticsService;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamOrganizationStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamPersonalStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamStatisticsDetailBo;
+import com.cyberpeace.integratation.model.mp.MpFlowAttackCount;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -40,6 +53,14 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
 
+    @Autowired
+    private TeamSceneService teamSceneService;
+
+    @Autowired
+    private CrRoleService crRoleService;
+
+    @Autowired
+    private RemoteSceneService remoteSceneService;
 
     @Override
     public List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics(Integer teamCategory) {
@@ -282,6 +303,73 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         }
 
         return PageUtil.getListResult(newRsp, page, newRsp.size());
+    }
+
+    @Override
+    public JSONObject getFlowAttackCount(String roomId) {
+        SceneViewContext context = teamSceneService.viewScene(roomId, null);
+        RoleQuery roleQuery=new RoleQuery();
+        roleQuery.setRoomId(roomId);
+        roleQuery.setRoleGroup(2);
+        List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+
+        List<String> userIds = new ArrayList<>();
+        Map<String, String> roleIpMap = Maps.newHashMap();
+        Map<String, String> roleIdMap = Maps.newHashMap();
+
+        for(CrRole role: crRoles){
+            JSONObject jsonObject = JSONObject.parseObject(role.getNodes());
+            List<JSONObject> visibleNodes = jsonObject.getJSONArray("visibleNodes").toJavaList(JSONObject.class);
+            for(JSONObject visibleNode: visibleNodes){
+                String nodeId = visibleNode.getString("id");
+                roleIpMap.put(role.getName(),nodeId);
+            }
+            userIds.addAll(role.getUserIdList());
+            roleIdMap.put(role.getName(),role.getResourceId());
+        }
+        //获取角色对用任务的分组
+        if (CollectionUtils.isEmpty(userIds)){
+            return  new JSONObject();
+        }
+
+        List<CrTask> finishedTasks =crTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, userIds, CrTask.TaskStatus.FINISHED_STATUS_LIST);
+        Map<String, List<CrTask>> roleTaskMap = StreamApiUtils.groupBy(finishedTasks, CrTask::getRoleId);
+
+        //获取流量节点对应的攻击次数
+        List<MpFlowAttackCount> flowAttackCountList = remoteSceneService.getFlowAttackCount(context.getMpSceneId());
+        Map<String, Integer> attackMap = StreamApiUtils.toMap(flowAttackCountList, MpFlowAttackCount::getNodeName, MpFlowAttackCount::getTimes);
+
+        Map<String, List<TeamCapabilityInfoRsp>> teamCapabilityInfoMap = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : roleIdMap.entrySet()) {
+            String roleName = entry.getKey();
+            List<TeamCapabilityInfoRsp> teamCapabilityList = CollectionUtils.isEmpty(teamCapabilityInfoMap.get(roleName)) ? new ArrayList<>() : teamCapabilityInfoMap.get(roleName);
+            //攻击次数
+            String ip = roleIpMap.get(roleName);
+            TeamCapabilityInfoRsp teamCapabilityInfoRsp = new TeamCapabilityInfoRsp();
+            teamCapabilityInfoRsp.setTimes(attackMap.get(ip));
+            //角色任务得分
+            String roleId = roleIdMap.get(roleName);
+            List<CrTask> taskList = roleTaskMap.get(roleId);
+            Integer score = CollectionUtils.isEmpty(taskList) ? 0 : taskList.stream().mapToInt(CrTask::getScore).sum();
+            teamCapabilityInfoRsp.setScore(score);
+            teamCapabilityList.add(teamCapabilityInfoRsp);
+            teamCapabilityInfoMap.put(roleName,teamCapabilityList);
+        }
+
+        List<TeamCapabilityRsp> result = new ArrayList<>();
+        List<String> resultNameList = new ArrayList<>();
+        for (Map.Entry<String, List<TeamCapabilityInfoRsp>> entry : teamCapabilityInfoMap.entrySet()) {
+            TeamCapabilityRsp teamCapabilityRsp = new TeamCapabilityRsp();
+            teamCapabilityRsp.setRoleName(entry.getKey());
+            teamCapabilityRsp.setList(entry.getValue());
+            result.add(teamCapabilityRsp);
+            resultNameList.add(entry.getKey());
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("roleNameList",resultNameList);
+        jsonObject.put("teamCapabilityList",result);
+
+        return jsonObject;
     }
 
 }

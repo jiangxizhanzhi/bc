@@ -13,7 +13,6 @@ public class TeamCapabilityRsp implements Serializable {
 	 */
 	private String roleName;
 
-
 	private List<TeamCapabilityInfoRsp> list;
 
 }

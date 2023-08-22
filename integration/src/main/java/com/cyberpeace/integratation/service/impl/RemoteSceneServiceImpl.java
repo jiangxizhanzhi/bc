@@ -495,9 +495,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public List<MpFlowAttackCount> getFlowAttackCount(String sceneId) {
-		FlowAttackContext flowAttackContext = new FlowAttackContext();
-		flowAttackContext.setSceneId(sceneId);
-		JSONArray objects = HttpClientUtil.rawGetForAttack(FLOW_ATTACK_URL, flowAttackContext, JSONArray.class);
+		String formatUrl = String.format(FLOW_ATTACK_URL, sceneId);
+		JSONArray objects = HttpClientUtil.rawGet(formatUrl, JSONArray.class);
 		return objects.toJavaList(MpFlowAttackCount.class);
 	}
 }

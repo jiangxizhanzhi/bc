@@ -163,26 +163,6 @@ public class HttpClientUtil {
 		return doHttp(httpGet, resultType);
 	}
 
-	public static <T> T rawGetForAttack(String url, Object body, Class<T> resultType) {
-		// 1、设置请；线程数据
-		setContext(url);
-
-		// 2、设置请求参数
-		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
-
-		HttpGetWithBody get = new HttpGetWithBody(url);
-		get.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		get.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
-		get.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		get.setEntity(entity);
-		String authorization = CommonContext.getAuthorization();
-		if (null != authorization) { // 调用竞赛接口需要
-			get.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
-		}
-		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(get, resultType);
-	}
-
 
 	public static <T> T rawGetForCompetition(String url, Class<T> resultType) {
 		// 1、设置请求线程数据

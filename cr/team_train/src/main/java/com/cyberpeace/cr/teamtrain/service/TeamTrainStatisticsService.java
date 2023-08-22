@@ -1,13 +1,14 @@
 package com.cyberpeace.cr.teamtrain.service;
 
-import java.util.List;
-
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainStatisticsDetailReq;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamOrganizationStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamPersonalStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamStatisticsDetailBo;
+
+import java.util.List;
 
 public interface TeamTrainStatisticsService {
 
@@ -31,4 +32,6 @@ public interface TeamTrainStatisticsService {
 	 */
 	ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page, Integer teamCategory);
 
+
+	JSONObject getFlowAttackCount(String roomId);
 }

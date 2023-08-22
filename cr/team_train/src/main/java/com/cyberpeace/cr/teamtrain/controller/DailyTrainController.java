@@ -15,14 +15,17 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
+import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRoleRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -46,18 +49,17 @@ import java.util.stream.Collectors;
 @RequiresAuthentication
 public class DailyTrainController {
 
-    @Autowired
-    private RemoteUserService remoteUserService;
+
     @Autowired
     private BusinessTemplateService businessTemplateService;
-    @Autowired
-    private TeamTemplateMapper teamTemplateMapper;
     @Autowired
     private TransactionTemplate transactionTemplate;
     @Autowired
     private TeamTemplateService teamTemplateService;
     @Autowired
     private RemoteLogService remoteLogService;
+    @Autowired
+    private LocalSceneService localSceneService;
 
 
     @ApiOperation("新增")
@@ -128,6 +130,39 @@ public class DailyTrainController {
                 LogContent.CR_FORMAT.format(OperationType.UPDATE, teamTemplate.getLogMsg(), teamTrainTemplateName));
 
         return new BaseRsp<>();
+    }
+
+    @ApiOperation("查询")
+    @GetMapping()
+    @RequiresPermissions(MenuConstant.CMS_TRAINING_MODE)
+    public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
+        businessTemplateService.checkPermission(resource_id,UserInfoContext.getUserContext().getUserId());
+
+        TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resource_id);
+        BusinessTemplate businessTemplate = businessTemplateService.getById(template.getBusinessTemplateId());
+
+        BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
+        String roleString = template.getRoleConfig();
+        List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonUtil.toJsonObjectArray(roleString, TeamTrainTemplateRoleRsp.class);
+        int index = 1;
+        for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
+            teamTrainTemplateRoleRsp.setId(template.getResourceId() + "_" + index++);
+        }
+        baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
+        String sceneManagerId = "";
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(businessTemplate.getResourceId());
+        if (localScene != null) {
+            sceneManagerId = localScene.getResourceId();
+        }
+        baseInfoRsp.setSceneManagerId(sceneManagerId);
+
+        TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
+        teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+        teamTrainTemplateRsp.setPeopleNumber(baseInfoRsp.getPeopleNumber());
+        teamTrainTemplateRsp.setResourceId(template.getResourceId());
+        teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
+        teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
+        return new BaseRsp(teamTrainTemplateRsp);
     }
 
     private TeamTemplate reqToTeamTemplate(TeamTrainTemplateReq req, TeamTemplate teamTemplate) {

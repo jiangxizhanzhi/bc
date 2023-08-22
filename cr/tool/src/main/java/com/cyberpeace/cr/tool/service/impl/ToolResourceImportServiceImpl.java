@@ -2,20 +2,19 @@ package com.cyberpeace.cr.tool.service.impl;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.DateUtil;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
@@ -105,7 +104,11 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		ArrayListMultimap<String, String> mdData = parseMdFile(mdFile);
 
 		Tool tool = convertTool(mdData, mdFile);
-		tool.setCreateUserId(CrCommonConstants.SUPER_ADMIN_HASH);
+		tool.setCreateUserId(CommonConstant.ADMIN_ID);
+		tool.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		tool.setReadAuthIds(CommonConstant.EMPTY_LIST_JSON);
+		tool.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		tool.setOperationAuthIds(CommonConstant.EMPTY_LIST_JSON);
 
 		if (StringUtils.isBlank(tool.getResourceId())) {
 			toolService.save(tool);

@@ -21,11 +21,6 @@ public interface CrCommonConstants {
 
 	String TOPO_DATA_KEY = "scene_config";
 
-	/**
-	 * 内置导入超级管理员编号
-	 */
-	String SUPER_ADMIN_HASH = "3f655d87112f4ae094bbaf70830e20aa";
-
 	Integer STUDENT_ROLE = 1;
 
 	Integer TERMINAL_TYPE_CODE = 4;

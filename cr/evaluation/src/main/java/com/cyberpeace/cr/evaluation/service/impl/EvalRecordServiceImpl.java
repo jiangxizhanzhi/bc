@@ -603,7 +603,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 执行指标项
         EvalLog.info(evalRecord, "calculate indexes start...");
-//        startIndexes(evalRecord);
+        startIndexes(evalRecord);
         EvalLog.info(evalRecord, "calculate indexes completed.");
 
         // TODO复制当前的角色任务得分情况

@@ -17,4 +17,9 @@ public class OperationListQuery extends PatternBase {
 
 	private Integer difficulty;
 
+	/**
+	 * 知识点正则
+	 */
+	private String knowledgeExp;
+
 }

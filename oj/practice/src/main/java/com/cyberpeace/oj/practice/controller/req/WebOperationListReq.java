@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.practice.controller.req;
 
+import java.util.List;
+
 import com.cyberpeace.common.model.PageReqBase;
 
 import io.swagger.annotations.ApiModel;
@@ -21,6 +23,9 @@ public class WebOperationListReq extends PageReqBase {
 
 	@ApiModelProperty("难度")
 	private Integer difficulty;
+
+	@ApiModelProperty("知识点，用逗号隔开多个知识点")
+	private List<String> knowledge;
 
 	public void setCategory_id(String categoryId) {
 		this.categoryId = categoryId;

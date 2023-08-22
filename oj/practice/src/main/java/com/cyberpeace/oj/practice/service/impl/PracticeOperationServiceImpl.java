@@ -631,6 +631,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			}
 		}
 
+		// where knowledge REGEXP '("知识点1"|"知识点2"|"知识点3"|"知识点4")'
+		if (CollectionUtils.isNotEmpty(listQuery.getKnowledgeList())) {
+			operationListQuery.setKnowledgeExp(
+					"(\"" + String.join("\"|\"", listQuery.getKnowledgeList()) + "\")");
+		}
+
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,
 				operationListQuery, authContext.getIsWeb());
 		// 批量查询convert需要的数据
@@ -679,6 +685,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
+		// 显示知识点
+		operationListBo.setKnowledge(
+				JsonUtil.toJsonObjectArray(practiceOperation.getKnowledge(), String.class));
 		if (practiceOperation.getDynamicEnv()
 				&& StringUtils.isNotBlank(practiceOperation.getTopoId())) {
 			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
@@ -1391,6 +1400,20 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public List<PracticeOperation> getCategoryIdAndSetIds() {
 		return practiceOperationMapper.selectAllCategoryIds();
+	}
+
+	@Override
+	public List<String> getKnowledgeListByFrequency() {
+		List<String> practiceOperationKnowledgeList = practiceOperationMapper.selectAllKnowledge();
+		Map<String, Integer> knowledgeMap = Maps.newHashMap();
+		for (String knowledgeJson : practiceOperationKnowledgeList) {
+			for (String knowledge : JsonUtil.toJsonObjectArray(knowledgeJson, String.class)) {
+				knowledgeMap.put(knowledge, knowledgeMap.getOrDefault(knowledge, 0) + 1);
+			}
+		}
+		return knowledgeMap.keySet().stream()
+				.sorted(Comparator.comparing(knowledgeMap::get).reversed())
+				.collect(Collectors.toList());
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.bo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -55,5 +56,8 @@ public class AdminOperationListBo implements Serializable {
 
 	@ApiModelProperty("是否有场景")
 	private Boolean hasSceneData;
+
+	@ApiModelProperty("")
+	private List<String> knowledge;
 
 }

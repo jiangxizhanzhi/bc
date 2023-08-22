@@ -164,6 +164,7 @@ public class EvalResultController {
         if(evalRecord.getStatus().equals(EvalRecord.Status.END.getCode()) || evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())){
             LambdaQueryWrapper<EvalRoleScore> query = new LambdaQueryWrapper<>();
             query.eq(EvalRoleScore::getRecord, resourceId);
+            query.eq(EvalRoleScore::getRoleGroup, type);
             List<EvalRoleScore> evalRoleScores = evalRoleScoreService.getBaseMapper().selectList(query);
             evalRoleScores.forEach(evalRoleScore -> {
                 EvalRoleScoreListRsp rsp = new EvalRoleScoreListRsp();

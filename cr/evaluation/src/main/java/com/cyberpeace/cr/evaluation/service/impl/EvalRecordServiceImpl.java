@@ -603,7 +603,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 执行指标项
         EvalLog.info(evalRecord, "calculate indexes start...");
-        startIndexes(evalRecord);
+//        startIndexes(evalRecord);
         EvalLog.info(evalRecord, "calculate indexes completed.");
 
         // TODO复制当前的角色任务得分情况
@@ -634,20 +634,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Override
     public void addExtraScore(List<EvalTaskBo> tasks, int flag) {
         for(EvalTaskBo tmp: tasks){
+            Integer score = tmp.getScore();
             if(flag == 1){
                 BigDecimal rankScore = BigDecimal.valueOf(tmp.getMissionScore() * 0.2)
                         .setScale(0, BigDecimal.ROUND_HALF_UP);
-                tmp.setScore(Integer.parseInt(rankScore.toString()));
+                tmp.setScore(score + Integer.parseInt(rankScore.toString()));
                 flag += 1;
             } else if(flag == 2){
                 BigDecimal rankScore = BigDecimal.valueOf(tmp.getMissionScore() * 0.1)
                         .setScale(0, BigDecimal.ROUND_HALF_UP);
-                tmp.setScore(Integer.parseInt(rankScore.toString()));
+                tmp.setScore(score + Integer.parseInt(rankScore.toString()));
                 flag += 1;
             } else if(flag == 3){
                 BigDecimal rankScore = BigDecimal.valueOf(tmp.getMissionScore() * 0.05)
                         .setScale(0, BigDecimal.ROUND_HALF_UP);
-                tmp.setScore(Integer.parseInt(rankScore.toString()));
+                tmp.setScore(score + Integer.parseInt(rankScore.toString()));
                 flag += 1;
             }
         }

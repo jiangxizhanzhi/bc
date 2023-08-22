@@ -33,7 +33,7 @@ public class RbStatisticsController {
 
 
     @GetMapping("/personal_rank")
-    @ApiOperation("红蓝对抗个人排名TOP5")
+    @ApiOperation("所有人员排名")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)
     public BaseRsp<List<RbPersonalStatisticsBo>> getAllPersonalRank() {
         List<RbPersonalStatisticsBo> rsp = RbTrainStatistics.getAllPersonalRankStatistics();
@@ -41,7 +41,7 @@ public class RbStatisticsController {
     }
 
     @GetMapping("/organization_rank")
-    @ApiOperation("红蓝对抗组织排名TOP5")
+    @ApiOperation("所有组织排名")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)
     public BaseRsp<List<RbOrganizationStatisticsBo>> getOrganizationRank() {
         List<RbOrganizationStatisticsBo> rsp = RbTrainStatistics.getOrganizationRankStatistics();

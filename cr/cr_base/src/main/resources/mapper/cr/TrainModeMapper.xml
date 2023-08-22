@@ -5,7 +5,7 @@
     <select id="listBusinessTemplate" resultType="com.cyberpeace.cr.crbase.controller.rsp.TrainModeRsp">
         SELECT
         a.resource_id ,a.`name`,a.description, a.create_time , a.update_time,
-        IF(a.business_type=3, case b.train_category when 1 then 2 when 2 then 3  when 3 then 9  else 999  end ,a.business_type ) type
+        IF(a.business_type=3, case b.train_category when 1 then 2 when 2 then 3  when 3 then 6  else 999  end ,a.business_type ) type
         FROM
         cr_business_template a
         LEFT JOIN cr_team_template b

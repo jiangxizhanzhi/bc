@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		ArrayListMultimap<String, String> mdData = parseMdFile(mdFile);
 
 		Tool tool = convertTool(mdData, mdFile);
+		tool.setCreateUserId(CrCommonConstants.SUPER_ADMIN_HASH);
 
 		if (StringUtils.isBlank(tool.getResourceId())) {
 			toolService.save(tool);

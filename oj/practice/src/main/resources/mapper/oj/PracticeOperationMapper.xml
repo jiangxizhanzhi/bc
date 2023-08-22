@@ -35,6 +35,9 @@
                     <bind name="title" value="'%' + listQuery.pattern + '%'"/>
                     and title like #{title}
                 </if>
+                <if test="listQuery.knowledgeExp != null and listQuery.knowledgeExp != ''">
+                    and knowledge REGEXP #{listQuery.knowledgeExp}
+                </if>
             </if>
             <if test="isPublic != null and isPublic">
                 and `public` = #{isPublic}
@@ -160,5 +163,9 @@
     <select id="selectAllCategoryIds" resultMap="operation">
         SELECT distinct category_id, practice_set_id
         FROM oj_practice_operation
+    </select>
+    <select id="selectAllKnowledge" resultType="java.lang.String">
+        select knowledge
+        from oj_practice_operation
     </select>
 </mapper>

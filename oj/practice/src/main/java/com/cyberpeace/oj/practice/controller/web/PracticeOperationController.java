@@ -1,12 +1,20 @@
 package com.cyberpeace.oj.practice.controller.web;
 
+import java.util.*;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -36,18 +44,11 @@ import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @Slf4j
 @RestController
@@ -86,6 +87,14 @@ public class PracticeOperationController {
 		return new BaseRsp<>(operationBo);
 	}
 
+	@GetMapping("/knowledge/list")
+	@ApiOperation("获取知识点列表，按频次排序")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<List<String>> listKnowledge() {
+		List<String> knowledgeList = practiceOperationService.getKnowledgeListByFrequency();
+		return new BaseRsp<>(knowledgeList);
+	}
+
 	@GetMapping("/list")
 	@ApiOperation("获取实践操作列表")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -99,6 +108,8 @@ public class PracticeOperationController {
 		}
 
 		OperationListQueryBo listQueryBo = BeanUtils.copy(listReq, OperationListQueryBo.class);
+		// 知识点
+		listQueryBo.setKnowledgeList(listReq.getKnowledge());
 
 		List<String> categoryIds = practiceCategoryService
 				.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);

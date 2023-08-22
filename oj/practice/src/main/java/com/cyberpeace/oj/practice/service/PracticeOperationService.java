@@ -1,5 +1,9 @@
 package com.cyberpeace.oj.practice.service;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,10 +18,6 @@ import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 public interface PracticeOperationService extends IService<PracticeOperation> {
 
@@ -248,4 +248,11 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
     List<PracticeOperation> getCategoryIdAndSetIds();
+
+	/**
+	 * 获取知识点列表并通过频率排序
+	 *
+	 * @return {@code List<String>}
+	 */
+	List<String> getKnowledgeListByFrequency();
 }

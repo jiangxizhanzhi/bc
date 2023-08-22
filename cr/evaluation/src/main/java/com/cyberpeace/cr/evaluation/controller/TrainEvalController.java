@@ -27,6 +27,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -340,7 +341,7 @@ public class TrainEvalController {
     }
 
     @ApiOperation("评估结果详情-攻防事件-雷达图")
-    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @RequiresPermissions(value = {MenuConstant.WEB_CR_EVALUATION, MenuConstant.WEB_CR_RED_VS_BLUE}, logical = Logical.OR)
     @GetMapping("/event/count")
     public BaseRsp<List<EvalEventCountBar>> getEventCount(
             @ApiParam(name = "red_vs_blue_id", value = "房间id", required = true) @RequestParam("red_vs_blue_id") String redVsBlueId,

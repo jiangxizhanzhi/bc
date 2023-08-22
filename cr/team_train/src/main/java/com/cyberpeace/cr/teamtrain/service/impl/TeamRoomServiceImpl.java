@@ -131,9 +131,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
 
 		// 设置红/蓝训练标识
-		teamRoom.setTrainCategory(template.getTrainCategory() == null
-				? TeamRoom.TrainCategory.RED.getCode()
-				: template.getTrainCategory());
+		teamRoom.setTrainCategory(template.getTrainCategory());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

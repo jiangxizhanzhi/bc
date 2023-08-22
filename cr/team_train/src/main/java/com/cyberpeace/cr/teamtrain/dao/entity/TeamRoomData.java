@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.teamtrain.dao.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import lombok.Data;
 
 /** 多表关联的团队实例
  *
@@ -52,5 +52,8 @@ public class TeamRoomData implements Serializable {
 	private String logo;
 
 	private String businessTemplateId;
+
+	private String roleConfig;
+
 
 }

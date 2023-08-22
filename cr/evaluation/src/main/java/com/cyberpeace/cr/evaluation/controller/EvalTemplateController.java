@@ -131,7 +131,7 @@ public class EvalTemplateController {
 					EvalTemplateListRsp.class);
 			evalTemplateListRsp
 					.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
-			RbRoomScene rbRoomScene = toMap.get(evalTemplateListRsp.getResourceId());
+			RbRoomScene rbRoomScene = toMap.get(evalTemplateListRsp.getRedVsBlueId());
 			evalTemplateListRsp.setMpSceneId(null == rbRoomScene ? null : rbRoomScene.getMpSceneId());
 			return evalTemplateListRsp;
 

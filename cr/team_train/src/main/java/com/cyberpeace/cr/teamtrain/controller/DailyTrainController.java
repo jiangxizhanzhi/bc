@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -10,14 +11,13 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
+import com.cyberpeace.cr.teamtrain.controller.req.CrDailyRoleConfig;
+import com.cyberpeace.cr.teamtrain.controller.req.DailyTrainTemplateAddReq;
+import com.cyberpeace.cr.teamtrain.controller.req.DailyTrainTemplateModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRoleRsp;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.DailyTrainTemplateRoleRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.DailyTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -65,7 +65,7 @@ public class DailyTrainController {
     @ApiOperation("新增")
     @PostMapping()
     @RequiresPermissions(MenuConstant.CMS_DAILY_MODE)
-    public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
+    public BaseRsp create(@RequestBody @Validated DailyTrainTemplateAddReq addReq) {
         // set type
         addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
         // create team template
@@ -100,7 +100,7 @@ public class DailyTrainController {
     @ApiOperation("修改")
     @PatchMapping()
     @RequiresPermissions(MenuConstant.CMS_DAILY_MODE)
-    public BaseRsp update(@RequestBody @Validated TeamTrainTemplateModifyReq modifyReq) {
+    public BaseRsp update(@RequestBody @Validated DailyTrainTemplateModifyReq modifyReq) {
         String resourceId = modifyReq.getResourceId();
         TeamTemplate teamTemplate = teamTemplateService.getByTemplateBusinessId(resourceId);
         BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
@@ -135,7 +135,7 @@ public class DailyTrainController {
     @ApiOperation("查询")
     @GetMapping()
     @RequiresPermissions(MenuConstant.CMS_DAILY_MODE)
-    public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
+    public BaseRsp<DailyTrainTemplateRsp> getTeamTemplate(String resource_id) {
         businessTemplateService.checkPermission(resource_id,UserInfoContext.getUserContext().getUserId());
 
         TeamTemplate template = teamTemplateService.getByTemplateBusinessId(resource_id);
@@ -143,11 +143,12 @@ public class DailyTrainController {
 
         BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
         String roleString = template.getRoleConfig();
-        List<TeamTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonUtil.toJsonObjectArray(roleString, TeamTrainTemplateRoleRsp.class);
-        int index = 1;
-        for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
-            teamTrainTemplateRoleRsp.setId(template.getResourceId() + "_" + index++);
-        }
+        List<DailyTrainTemplateRoleRsp> teamTrainTemplateRoleRsps = JsonUtil.toJsonObjectArray(roleString, DailyTrainTemplateRoleRsp.class);
+//        int index = 1;
+
+//        for (DailyTrainTemplateRsp teamTrainTemplateRoleRsp : teamTrainTemplateRoleRsps) {
+//            teamTrainTemplateRoleRsp.setId(template.getResourceId() + "_" + index++);
+//        }
         baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
         String sceneManagerId = "";
         LocalScene localScene = localSceneService.getByBusinessInstanceId(businessTemplate.getResourceId());
@@ -156,21 +157,23 @@ public class DailyTrainController {
         }
         baseInfoRsp.setSceneManagerId(sceneManagerId);
 
-        TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
-        teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
-        teamTrainTemplateRsp.setPeopleNumber(baseInfoRsp.getPeopleNumber());
-        teamTrainTemplateRsp.setResourceId(template.getResourceId());
-        teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
-        teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
-        return new BaseRsp(teamTrainTemplateRsp);
+        DailyTrainTemplateRsp dailyTrainTemplateRsp = new DailyTrainTemplateRsp();
+        dailyTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+        dailyTrainTemplateRsp.setPeopleNumber(baseInfoRsp.getPeopleNumber());
+        dailyTrainTemplateRsp.setResourceId(template.getResourceId());
+        dailyTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
+        dailyTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
+        return new BaseRsp(dailyTrainTemplateRsp);
     }
 
-    private TeamTemplate reqToTeamTemplate(TeamTrainTemplateReq req, TeamTemplate teamTemplate) {
+    private TeamTemplate reqToTeamTemplate(DailyTrainTemplateAddReq req, TeamTemplate teamTemplate) {
 
-        List<CrRoleConfig> roleConfigs = req.getRoleList();
+        List<CrDailyRoleConfig> roleConfigs = req.getRoleList();
         BaseInfo baseInfo = req.getBaseInfo();
         // 校验角色名称是否重复
-        CrCommonValidator.checkStringListDuplicate(roleConfigs.stream().map(CrRoleConfig::getName).collect(Collectors.toList()),CrBusinessErrorCode.ROLE_NAME_DUPLICATE);
+        for (CrDailyRoleConfig dailyRoleConfig : roleConfigs) {
+            CrCommonValidator.checkStringListDuplicate(dailyRoleConfig.getChildren().stream().map(CrRoleConfig::getName).collect(Collectors.toList()),CrBusinessErrorCode.ROLE_NAME_DUPLICATE);
+        }
         teamTemplate.setPreSkills(JsonUtil.arrayToString(new ArrayList<>()));
         teamTemplate.setTrainSkills(JsonUtil.arrayToString(new ArrayList<>()));
 
@@ -179,9 +182,9 @@ public class DailyTrainController {
         teamTemplate.setSceneType(baseInfo.getSceneType());
         teamTemplate.setPeopleNumber(baseInfo.getPeopleNumber());
         teamTemplate.setDurationTime(baseInfo.getDurationTime());
-        teamTemplate.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigs));
-        teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(req.getTimeLineConfig()));
 
+        teamTemplate.setRoleConfig(JSONObject.toJSONString(roleConfigs));
+        teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(req.getTimeLineConfig()));
         return teamTemplate;
     }
 

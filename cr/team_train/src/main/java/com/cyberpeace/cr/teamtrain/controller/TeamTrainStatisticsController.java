@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainStatisticsDetailReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamCapabilityRsp;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -15,6 +17,7 @@ import com.cyberpeace.cr.teamtrain.service.TeamTrainStatisticsService;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamOrganizationStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamPersonalStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamStatisticsDetailBo;
+import com.cyberpeace.integratation.model.mp.MpFlowAttackCount;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = "团队训练统计")
 @RestController
@@ -91,7 +97,7 @@ public class TeamTrainStatisticsController {
     public BaseRsp<List<TeamCapabilityRsp>> getFlowAttackCount(
             @ApiParam(name = "room_id", value = "训练id", required = true) @RequestParam("room_id") String roomId) {
 
-//        SceneViewContext context = teamSceneService.viewScene(roomId, null);
+        SceneViewContext context = teamSceneService.viewScene(roomId, null);
         List<CrRole> crRoles = crRoleService.selectRbStudentsRoleByRoomId(roomId);
 
         Map<String, String> roleIpMap = new HashMap<>();
@@ -103,25 +109,18 @@ public class TeamTrainStatisticsController {
             }
         }
         List<TeamCapabilityRsp> result = new ArrayList<>();
-//        List<MpFlowAttackCount> flowAttackCountList = remoteSceneService.getFlowAttackCount(context.getMpSceneId());
-//        Map<String, Integer> attackMap = StreamApiUtils.toMap(flowAttackCountList, MpFlowAttackCount::getNodeName, MpFlowAttackCount::getTimes);
+        List<MpFlowAttackCount> flowAttackCountList = remoteSceneService.getFlowAttackCount(context.getMpSceneId());
+        Map<String, Integer> attackMap = StreamApiUtils.toMap(flowAttackCountList, MpFlowAttackCount::getNodeName, MpFlowAttackCount::getTimes);
 
 //        for (Map.Entry<String, String> entry : roleIpMap.entrySet()) {
 //            TeamCapabilityRsp teamCapabilityRsp = new TeamCapabilityRsp();
 //            teamCapabilityRsp.setRoleName(entry.getValue());
-//            teamCapabilityRsp.setTimes(attackMap.get(entry.getKey()));
+////            teamCapabilityRsp.setList();
 //            result.add(teamCapabilityRsp);
 //        }
-//        return new BaseRsp<>(result);
 
-        for (CrRole crRole : crRoles) {
-            TeamCapabilityRsp teamCapabilityRsp = new TeamCapabilityRsp();
-            teamCapabilityRsp.setRoleName(crRole.getName());
-            Random random = new Random();
-            teamCapabilityRsp.setTimes(10+random.nextInt(10));
-            result.add(teamCapabilityRsp);
-        }
         return new BaseRsp<>(result);
+
     }
 
 }

@@ -1,14 +1,13 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class TeamTrainTemplateRoleRsp implements Serializable {
@@ -48,5 +47,7 @@ public class TeamTrainTemplateRoleRsp implements Serializable {
 
 	@ApiModelProperty(value = "类型")
 	private String type;
+
+
 
 }

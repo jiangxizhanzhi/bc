@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.controller.rsp;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class TeamCapabilityRsp implements Serializable {
@@ -12,8 +13,7 @@ public class TeamCapabilityRsp implements Serializable {
 	 */
 	private String roleName;
 
-	/**
-	 * 次数
-	 */
-	private Integer times;
+
+	private List<TeamCapabilityInfoRsp> list;
+
 }

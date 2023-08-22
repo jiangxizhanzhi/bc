@@ -59,7 +59,7 @@ public class BaseInfo {
 	@NotNull
 	private SceneConfigData sceneConfigData;
 
-	@ApiModelProperty(value = "训练类别", required = true)
+	@ApiModelProperty(value = "场景类型", required = true)
 	@NotNull
 	private Integer sceneType;
 

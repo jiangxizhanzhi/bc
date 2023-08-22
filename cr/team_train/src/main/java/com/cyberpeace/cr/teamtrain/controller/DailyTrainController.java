@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -92,6 +93,10 @@ public class DailyTrainController {
             ids.add(businessTemplateData.getResourceId());
         }
         Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
+
+        if (CollectionUtils.isEmpty(ids)){
+            return  new BaseRsp();
+        }
         Map<String, Integer> subTypeMap = StreamApiUtils.toMap(teamTemplateMapper.getTeamTemplateByBusinessIds(ids), TeamTemplate::getBusinessTemplateId, TeamTemplate::getSubType);
 
         data.convert(businessTemplateData -> {

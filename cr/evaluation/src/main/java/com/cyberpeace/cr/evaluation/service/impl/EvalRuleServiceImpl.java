@@ -96,18 +96,15 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 
 		data.put("user_list", userList);
 
-//		data.put("radarLabels", radarLabels);
 		data.put("locale", getTemplateI18n());
 		data.put("user_list", userList);
-//		data.put("mission_report", getTrainingMissionReport(roomId).getData());
 		data.put("report", new TrainingReport());
 		data.put("reportTime", "2023-08-01");
 
 		//变量项算法
 		String destPdfPath;
 
-		data.put("rule_list", list);
-//		data.put("name", list);
+		data.put("ScoreRole", list);
 		String destHtmlPath = String.format("%s%s-%s.html",
 				AttachmentPath.EVAL_RULE_HTML_TEMPLATE.getDesc(), roomId,
 				UserInfoContext.getUserContext().getUserId());

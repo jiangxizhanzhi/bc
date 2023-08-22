@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <script src="./js/flexible.js"></script>
+  </head>
+  <body id="app-wapper" class="theme-dark">
+    <div class="page">
+      <div class="title">打分规则</div>
+      <div class="table-title">
+        <div class="titles">规则名称</div>
+        <div class="titles">要点说明</div>
+        <div class="titles">得分结果</div>
+      </div>
+      <#list ScoreRole as eval>
+      <div class="table-content">
+        <div class="contents"><span>${eval.name}</span></div>
+        <div class="contents"><span>${eval.description}</span></div>
+        <div class="contents"><span>${eval.score}%</span></div>
+      </div>
+    </#list>
+<!--      <div class="table-content">-->
+<!--        <div class="contents">部分有效得分</div>-->
+<!--        <div class="contents">与标准答案一致,且有关键截图证据与标准答案一致,且有关键截图证据与标准答案一致,且有关键截图证据与标准答案一致,且有关键截图证据与标准答案一致,且有关键截图证据与标准答案一致,且有关键截图证据与标准答</div>-->
+<!--        <div class="contents">100%</div>-->
+<!--      </div>-->
+      
+    </div>
+  </body>
+</html>

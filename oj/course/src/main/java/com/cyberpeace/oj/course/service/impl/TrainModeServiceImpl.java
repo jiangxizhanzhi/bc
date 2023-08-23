@@ -6,6 +6,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.req.TrainModeListReq;
@@ -14,15 +15,18 @@ import com.cyberpeace.cr.crbase.controller.rsp.TrainModeRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainModeMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.oj.course.service.TrainingModeService;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.TrainingModeService;
+import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +58,9 @@ public class TrainModeServiceImpl implements TrainingModeService {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    private CourseMapper courseMapper;
+
     @Override
     public ListRsp<TrainModeRsp> list(TrainModeListReq listReq) {
 
@@ -61,21 +68,20 @@ public class TrainModeServiceImpl implements TrainingModeService {
         List<Integer> trainingTypeList = TrainModeRsp.TrainType.TRAINING_TYPE_LIST;
         List<Integer> categoryTypeList = TrainModeRsp.TrainCategoryType.CATEGORY_TYPE_LIST;
         if (Objects.isNull(listReq.getType())) {
-            ArrayList<TrainModeRsp> result = new ArrayList<>();
-
-            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(listReq.toPageParam(), listReq.getPattern(), businessTypeList, categoryTypeList);
-            IPage<TrainModeRsp> courseList = trainModeMapper.listCourse(listReq.toPageParam(), listReq.getPattern());
-            courseList.getRecords().forEach(item->item.setType(TrainModeRsp.TrainType.COURSE.getCode()));
-
             Page newPage = new Page<>();
             newPage.setPages(1);
             newPage.setSize(10000);
+            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(newPage, listReq.getPattern(), businessTypeList, categoryTypeList);
+            ArrayList<TrainModeRsp> result = new ArrayList<>(trainModeRspPage.getRecords());
+            //实训
+            IPage<Course> iPage = getCoursePage(newPage,listReq.getPattern());
+            List<TrainModeRsp> trainCourseList = getTrainCourseList(iPage);
+            result.addAll(trainCourseList);
+            //竞赛
             ListRsp<CalendarCompetitionBo> competitionBoList = remoteAdService.listCalendarCompetitionBo(newPage, listReq.getPattern());
             List<TrainModeRsp> competitionList = getCompetitionBoList(competitionBoList);
-
-            result.addAll(trainModeRspPage.getRecords());
-            result.addAll(courseList.getRecords());
             result.addAll(competitionList);
+
             List<TrainModeRsp> collect = result.stream().sorted(Comparator.comparing(TrainModeRsp::getCreateTime).reversed()).collect(Collectors.toList());
             return PageUtil.getListResult(collect, listReq.toPageParam(), result.size());
 
@@ -86,12 +92,18 @@ public class TrainModeServiceImpl implements TrainingModeService {
             categoryTypeList = Objects.isNull(trainCategoryType) ? null : Collections.singletonList(trainCategoryType);
             IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(listReq.toPageParam(), listReq.getPattern(), Collections.singletonList(businessType), categoryTypeList);
             return PageUtil.getListResult(trainModeRspPage);
+
         } else if (TrainModeRsp.TrainType.COURSE.getCode().equals(listReq.getType())) {
-            // 攻防实训
-            IPage<TrainModeRsp> courseList = trainModeMapper.listCourse(listReq.toPageParam(), listReq.getPattern());
-            courseList.getRecords().forEach(item->item.setType(TrainModeRsp.TrainType.COURSE.getCode()));
-            return PageUtil.getListResult(courseList);
+            // 单独攻防实训
+            IPage<Course> iPage = getCoursePage(listReq.toPageParam(), listReq.getPattern());
+            List<TrainModeRsp> trainCourseList = getTrainCourseList(iPage);
+            ListRsp<TrainModeRsp> listRsp = new ListRsp<>();
+            listRsp.setList(trainCourseList);
+            listRsp.setTotal(iPage.getTotal());
+            listRsp.setCurrentPage(iPage.getCurrent());
+            return listRsp;
         } else {
+            //单独竞赛
             ListRsp<CalendarCompetitionBo> competitionBoRspList = remoteAdService.listCalendarCompetitionBo(listReq.toPageParam(), listReq.getPattern());
             List<TrainModeRsp> competitionList = getCompetitionBoList(competitionBoRspList);
             ListRsp<TrainModeRsp> listRsp = new ListRsp<>();
@@ -103,12 +115,49 @@ public class TrainModeServiceImpl implements TrainingModeService {
         }
     }
 
+    private List<TrainModeRsp> getTrainCourseList(IPage<Course> iPage) {
+        List<TrainModeRsp> courseList = new ArrayList<>();
+        for (Course record : iPage.getRecords()) {
+            TrainModeRsp trainModeRsp = new TrainModeRsp();
+            trainModeRsp.setResourceId(record.getResourceId());
+            trainModeRsp.setName(record.getName());
+            trainModeRsp.setDescription(record.getDescription());
+            trainModeRsp.setType(TrainModeRsp.TrainType.COURSE.getCode());
+            trainModeRsp.setCreateTime(record.getCreateTime());
+            courseList.add(trainModeRsp);
+        }
+        return courseList;
+    }
+
+    private IPage<Course> getCoursePage(Page newPage, String pattern) {
+        // 分类数据组装
+        CourseQueryBo adminQueryBo = new CourseQueryBo();
+        adminQueryBo.setPattern(pattern);
+        adminQueryBo.setUserId(UserInfoContext.getUserContext().getUserId());
+        // 获取权限
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
+        List<String> courseIds = courseMapper.selectByAuth(authContext);
+
+        // 我的课程 系统课程 共享课程过滤
+        SpecialCourseContext specialContext = BeanUtils.copy(authContext, SpecialCourseContext.class);
+        if (!specialContext.getMyCourse() && !specialContext.getSystemCourse() && !specialContext.getShareCourse()) {
+            return new Page<>();
+        }
+        if (!specialContext.getMyCourse() || !specialContext.getShareCourse() || !specialContext.getSystemCourse()) {
+            courseIds = courseMapper.selectSpecial(courseIds, specialContext);
+            if (CollectionUtils.isEmpty(courseIds)) {
+                return new Page<>();
+            }
+        }
+        return courseMapper.listByPage(newPage, adminQueryBo, courseIds, authContext.getIsWeb());
+    }
+
     @Override
     public Boolean delete(List<TrainModeReq> trainModeReqList) {
         if (CollectionUtils.isEmpty(trainModeReqList)) {
             return false;
         }
-        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),false);
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
 
         List<String> competitionList = new ArrayList<>();
         List<String> trainIdList = new ArrayList<>();
@@ -122,7 +171,7 @@ public class TrainModeServiceImpl implements TrainingModeService {
                 trainIdList.add(trainModeReq.getId());
             }
         }
-        if (!CollectionUtils.isEmpty(competitionList)){
+        if (!CollectionUtils.isEmpty(competitionList)) {
             remoteAdService.batchDelete(competitionList);
         }
         //攻防实训删除
@@ -134,10 +183,10 @@ public class TrainModeServiceImpl implements TrainingModeService {
 
         //单兵/红队/蓝队/红蓝对抗/日常练习删除
         Map<String, BusinessTemplate> businessTemplateMap = Maps.newHashMap();
-        if (!CollectionUtils.isEmpty(trainIdList)){
+        if (!CollectionUtils.isEmpty(trainIdList)) {
             businessTemplateService.batchDelete(trainIdList);
             List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(trainIdList);
-            businessTemplateMap = StreamApiUtils.toMap(businessTemplateList, item-> String.valueOf(item.getResourceId()) , item -> item);
+            businessTemplateMap = StreamApiUtils.toMap(businessTemplateList, item -> String.valueOf(item.getResourceId()), item -> item);
         }
         //根据类型分组
         Map<Integer, List<TrainModeReq>> typeListMap = StreamApiUtils.groupBy(trainModeReqList, TrainModeReq::getType);
@@ -156,33 +205,33 @@ public class TrainModeServiceImpl implements TrainingModeService {
                 continue;
             }
             TrainModeRsp.TrainType type = TrainModeRsp.TrainType.getTrainTypeByCode(entry.getKey());
-            switch (type){
-                case TRAINING_SINGLE :
+            switch (type) {
+                case TRAINING_SINGLE:
                     module = OperationModule.SINGLE_TRAIN;
                     msg = LogContent.SINGLE_TRAIN_TEMPLATE.getMsg();
                     templateName = LogContent.BATCH_DELETE_FORMAT.format(LogContent.SINGLE_TRAIN_TEMPLATE.getMsg());
                     break;
-                case TRAINING_TEAM_RED :
+                case TRAINING_TEAM_RED:
                     module = OperationModule.RED_TEAM;
                     msg = LogContent.RED_TEAM_TRAIN_TEMPLATE.getMsg();
                     templateName = LogContent.BATCH_DELETE_FORMAT.format(LogContent.RED_TEAM_TRAIN_TEMPLATE.getMsg());
                     break;
-                case TRAINING_TEAM_BLUE :
+                case TRAINING_TEAM_BLUE:
                     module = OperationModule.BLUE_TEAM;
                     msg = LogContent.BLUE_TEAM_TRAIN_TEMPLATE.getMsg();
                     templateName = LogContent.BATCH_DELETE_FORMAT.format(LogContent.BLUE_TEAM_TRAIN_TEMPLATE.getMsg());
                     break;
-                case RED_VS_BLUE :
+                case RED_VS_BLUE:
                     module = OperationModule.RED_VS_BLUE;
                     msg = LogContent.RB_ROOM_TEMPLATE.getMsg();
                     templateName = LogContent.BATCH_DELETE_FORMAT.format(LogContent.RB_ROOM_TEMPLATE.getMsg());
                     break;
-                case TRAINING_DAILY :
+                case TRAINING_DAILY:
                     module = OperationModule.DAILY_TRAIN;
                     msg = LogContent.TEAM_TRAIN_TEMPLATE.getMsg();
                     templateName = LogContent.BATCH_DELETE_FORMAT.format(LogContent.TEAM_TRAIN_TEMPLATE.getMsg());
                     break;
-                case COURSE :
+                case COURSE:
                     module = OperationModule.COURSE;
                     templateName = LogContent.BATCH_DELETE_FORMAT.format(LogContent.COURSE_FORMAT.getMsg());
                     break;
@@ -193,9 +242,9 @@ public class TrainModeServiceImpl implements TrainingModeService {
             if (!CollectionUtils.isEmpty(entry.getValue())) {
                 List<String> nameList = new ArrayList<>();
                 for (TrainModeReq trainModeReq : entry.getValue()) {
-                    if (TrainModeRsp.TrainType.COURSE.getCode().equals(entry.getKey()) ){
+                    if (TrainModeRsp.TrainType.COURSE.getCode().equals(entry.getKey())) {
                         nameList = courseList.stream().map(Course::getName).collect(Collectors.toList());
-                    }else {
+                    } else {
                         BusinessTemplate businessTemplate = businessTemplateMap.get(trainModeReq.getId());
                         if (Objects.nonNull(businessTemplate)) {
                             nameList.add(businessTemplate.getName());
@@ -215,7 +264,7 @@ public class TrainModeServiceImpl implements TrainingModeService {
             TrainModeRsp trainModeRsp = new TrainModeRsp();
             trainModeRsp.setResourceId(competitionBo.getResourceId());
             trainModeRsp.setName(competitionBo.getName());
-            trainModeRsp.setDescription(competitionBo.getStartTime() + "-" + competitionBo.getEndTime());
+            trainModeRsp.setDescription(competitionBo.getDesc());
             trainModeRsp.setType(TrainModeRsp.TrainType.COMPETITION.getCode());
             trainModeRsp.setCreateTime(competitionBo.getCreateTime());
             competitionList.add(trainModeRsp);

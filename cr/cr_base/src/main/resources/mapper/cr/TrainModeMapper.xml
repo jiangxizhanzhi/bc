@@ -31,17 +31,4 @@
         ORDER BY a.create_time DESC
     </select>
 
-    <select id="listCourse" resultType="com.cyberpeace.cr.crbase.controller.rsp.TrainModeRsp">
-        SELECT
-        resource_id ,`name`, description, create_time ,update_time
-        FROM
-        oj_course
-        <where>
-            <if test="name != null and name !=''">
-                <bind name="pattern" value="'%' + name + '%'"/>
-                and name like #{pattern}
-            </if>
-        </where>
-        ORDER BY create_time DESC
-    </select>
 </mapper>

@@ -15,6 +15,4 @@ public interface TrainModeMapper {
 
     IPage<TrainModeRsp> listBusinessTemplate(Page page, @Param("name") String name, @Param("businessType") List<Integer> businessType, @Param("trainCategory") List<Integer> trainCategory );
 
-    IPage<TrainModeRsp> listCourse(Page page, @Param("name") String name);
-
 }

@@ -86,8 +86,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		bo.setEndTime(json.getDate(JsonKeyConstant.END_TIME));
 		bo.setClassify(json.getInteger(JsonKeyConstant.CLASSIFY));
 		bo.setStatus(json.getInteger(JsonKeyConstant.STATUS));
-		bo.setType(json.getInteger(JsonKeyConstant.TYPE));
 		bo.setCreateTime(json.getDate(JsonKeyConstant.CREATE_TIME));
+		bo.setDesc(json.getString(JsonKeyConstant.DESC));
 		return bo;
 	}
 

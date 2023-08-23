@@ -107,4 +107,6 @@ public interface JsonKeyConstant {
 
 	String CREATE_TIME = "create_time";
 
+	String DESC = "desc";
+
 }

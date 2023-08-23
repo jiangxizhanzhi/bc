@@ -36,9 +36,11 @@ import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbTimeManagementRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoomScene;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomSceneMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
@@ -122,6 +124,9 @@ public class RbRoomController {
 
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
+
+	@Autowired
+	private RbRoomSceneMapper rbRoomSceneMapper;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -748,8 +753,16 @@ public class RbRoomController {
 	@GetMapping("/finish/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	public BaseRsp<List<RbRoom>> getFinishList() {
+		List<RbRoom> res = new ArrayList<>();
 		LambdaQueryWrapper<RbRoom> query = new LambdaQueryWrapper<>();
 		query.eq(RbRoom::getTrainingStatus, RbRoom.TrainingStatusCode.ENDED.getCode());
+
+		List<RbRoomScene> rbRoomScenes = rbRoomSceneMapper.selectList(null);
+		List<String> rbs = StreamApiUtils.getColumn(rbRoomScenes, RbRoomScene::getRbId);
+		if(rbs.isEmpty()){
+			return new BaseRsp<>(res);
+		}
+		query.in(RbRoom::getResourceId, rbs);
 		List<RbRoom> rbRooms = rbRoomMapper.selectList(query);
 		return new BaseRsp<>(rbRooms);
 	}

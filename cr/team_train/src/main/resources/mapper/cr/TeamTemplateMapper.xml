@@ -73,4 +73,10 @@
         where business_template_id in <foreach collection="businessTemplateIds" separator="," open="(" close=")" item="business_template_id">#{business_template_id}</foreach>
     </select>
 
+    <select id="getTeamTemplateByRoomId" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate">
+        SELECT a.* from  cr_team_template a
+        JOIN cr_team_room b
+        on a.resource_id= b.team_template_id
+        WHERE b.resource_id= #{roomId} limit 1
+    </select>
 </mapper>

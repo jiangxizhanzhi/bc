@@ -22,11 +22,9 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateAddReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateModifyReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainTemplateReq;
+import com.cyberpeace.cr.teamtrain.controller.req.*;
 import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
+import com.cyberpeace.cr.teamtrain.controller.rsp.DailyBaseRoleRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRoleRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -53,6 +51,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -188,8 +187,7 @@ public class TeamTrainTemplateController {
 		}
 		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
 		String sceneManagerId = "";
-		LocalScene localScene = localSceneService
-				.getByBusinessInstanceId(businessTemplate.getResourceId());
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(businessTemplate.getResourceId());
 		if (localScene != null) {
 			sceneManagerId = localScene.getResourceId();
 		}
@@ -263,9 +261,7 @@ public class TeamTrainTemplateController {
 		BaseRole baseRole = new BaseRole();
 		baseRole.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
 		baseRole.setRoleGroup(CrRole.TeamRoleGroup.TEACHER.getCode());
-
 		teamTrainTemplateRoleList.add(0, baseRole);
-
 		// 设置返回对象
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 		teamTrainTemplateRsp.setNodesCount(
@@ -275,7 +271,30 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
+		if (TeamRoom.TrainCategory.DAILY.getCode().equals(teamTemplateData.getBusinessType())) {
+			setRoleStructureList(teamTemplateData, teamTrainTemplateRsp);
+		}
 		return teamTrainTemplateRsp;
+	}
+
+	private void setRoleStructureList(TeamTemplateData teamTemplateData, TeamTrainTemplateRsp teamTrainTemplateRsp) {
+		List<CrDailyRoleConfig> dailyTemplateRoleResp = JsonUtil.toJsonObjectArray(teamTemplateData.getRoleConfig(), CrDailyRoleConfig.class);
+		List<DailyBaseRoleRsp> roleStructureList = new ArrayList<>();
+		DailyBaseRoleRsp teacher = new DailyBaseRoleRsp();
+		teacher.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
+		teacher.setRoleGroup(CrRole.TeamRoleGroup.TEACHER.getCode());
+		roleStructureList.add(teacher);
+		for (CrDailyRoleConfig dailyRoleConfig : dailyTemplateRoleResp) {
+			DailyBaseRoleRsp dailyBaseRoleRsp = new DailyBaseRoleRsp();
+			dailyBaseRoleRsp.setName(dailyRoleConfig.getName());
+			dailyBaseRoleRsp.setType(dailyRoleConfig.getType());
+			List<CrRoleConfig> children = dailyRoleConfig.getChildren();
+			List<BaseRole> baseRoles = BeanUtils.deepCopyList(children, BaseRole.class);
+			baseRoles.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT.getCode()));
+			dailyBaseRoleRsp.setRoleStructure(baseRoles);
+			roleStructureList.add(dailyBaseRoleRsp);
+		}
+		teamTrainTemplateRsp.setRoleStructureList(roleStructureList);
 	}
 
 	private TeamTemplate reqToTeamTemplate(TeamTrainTemplateReq req, TeamTemplate teamTemplate) {

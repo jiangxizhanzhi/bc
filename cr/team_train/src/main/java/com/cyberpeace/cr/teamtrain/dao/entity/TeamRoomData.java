@@ -56,4 +56,6 @@ public class TeamRoomData implements Serializable {
 	private String roleConfig;
 
 	private Boolean supportPartialStart;
+
+	private Integer sceneType;
 }

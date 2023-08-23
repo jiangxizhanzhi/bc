@@ -1,12 +1,11 @@
 package com.cyberpeace.cr.teamtrain.controller.req;
 
-import java.util.List;
-
 import com.cyberpeace.common.model.PageReqBase;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @ApiModel
 @Data
@@ -30,4 +29,6 @@ public class TeamRoomListReq extends PageReqBase {
 	@ApiModelProperty(value = "训练分类")
 	private Integer trainCategory;
 
+	@ApiModelProperty(value = "场景分类")
+	private Integer sceneType;
 }

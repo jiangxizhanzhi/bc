@@ -48,6 +48,8 @@ public class TeamTemplateData implements Serializable {
 
 	private String logo;
 
+	private Integer trainCategory;
+
 	private Integer sceneType;
 
 }

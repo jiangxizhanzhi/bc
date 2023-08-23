@@ -735,4 +735,19 @@ public class TeamTrainRoomController {
 		return new BaseRsp(rbTimeManagementRsp);
 	}
 
+
+	@ApiOperation("创建启动节点")
+	@PostMapping("/node/create")
+	public BaseRsp createNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
+		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.createNode(room.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_CREATE_NODE);
+		}
+		return new BaseRsp();
+	}
 }

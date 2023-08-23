@@ -1,12 +1,11 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class TeamTrainTemplateRsp implements Serializable {
@@ -25,6 +24,9 @@ public class TeamTrainTemplateRsp implements Serializable {
 
 	@ApiModelProperty(value = "角色结构")
 	private List<BaseRole> roleStructure;
+
+	@ApiModelProperty(value = "角色结构列表")
+	private List<DailyBaseRoleRsp> roleStructureList;
 
 	@ApiModelProperty(value = "节点数")
 	private Integer nodesCount;

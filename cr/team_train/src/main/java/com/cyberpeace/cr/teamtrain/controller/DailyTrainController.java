@@ -1,4 +1,5 @@
 package com.cyberpeace.cr.teamtrain.controller;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -49,8 +50,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Api(tags = "日常练习")
 @RestController
@@ -178,9 +184,9 @@ public class DailyTrainController {
         List<CrDailyRoleConfig> roleConfigs = req.getRoleList();
         BaseInfo baseInfo = req.getBaseInfo();
         // 校验角色名称是否重复
-        for (CrDailyRoleConfig dailyRoleConfig : roleConfigs) {
-            CrCommonValidator.checkStringListDuplicate(dailyRoleConfig.getChildren().stream().map(CrRoleConfig::getName).collect(Collectors.toList()),CrBusinessErrorCode.ROLE_NAME_DUPLICATE);
-        }
+        List<String> roleNameList = roleConfigs.stream().map(CrDailyRoleConfig::getChildren).flatMap(Collection::stream).map(CrRoleConfig::getName).collect(toList());
+        CrCommonValidator.checkStringListDuplicate(roleNameList,CrBusinessErrorCode.ROLE_NAME_DUPLICATE);
+
         teamTemplate.setPreSkills(JsonUtil.arrayToString(new ArrayList<>()));
         teamTemplate.setTrainSkills(JsonUtil.arrayToString(new ArrayList<>()));
 
@@ -237,8 +243,6 @@ public class DailyTrainController {
             dailyBaseRoleRsp.setRoleStructure(baseRoles);
             roleStructureList.add(dailyBaseRoleRsp);
         }
-
-
         // 设置返回对象
         DailyTrainTemplateRsp teamTrainTemplateRsp = new DailyTrainTemplateRsp();
         teamTrainTemplateRsp.setNodesCount(topologyNodesStats.get(teamTemplateData.getTopoId()).getNodeCounts());

@@ -22,6 +22,7 @@
         <result property="durationTime" column="duration_time" jdbcType="VARCHAR"/>
         <result property="roleConfig" column="role_config" jdbcType="VARCHAR"/>
         <result property="supportPartialStart" column="support_partial_start"/>
+        <result property="sceneType" column="scene_type" />
 
     </resultMap>
 
@@ -77,6 +78,7 @@
         cr_team_template.duration_time,
         cr_team_template.business_template_id,
         cr_team_template.role_config,
+        cr_team_template.scene_type,
         local_scene.start_time scene_start_time,
         local_scene.destroy_time scene_end_time,
         local_scene.scene_status,

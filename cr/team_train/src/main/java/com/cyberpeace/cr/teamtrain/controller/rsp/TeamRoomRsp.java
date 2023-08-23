@@ -88,4 +88,7 @@ public class TeamRoomRsp implements Serializable {
 
 	@ApiModelProperty("角色头像")
 	private String userAvatar;
+
+	@ApiModelProperty(value = "场景分类")
+	private Integer sceneType;
 }

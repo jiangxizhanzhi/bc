@@ -122,6 +122,9 @@
             <if test="listQuery.trainCategory != null and listQuery.trainCategory != ''">
                 and cr_team_room.train_category = #{listQuery.trainCategory}
             </if>
+            <if test="listQuery.sceneType != null and listQuery.sceneType != ''">
+                and cr_team_template.scene_type = #{listQuery.sceneType}
+            </if>
         </where>
         ORDER BY
         order_status

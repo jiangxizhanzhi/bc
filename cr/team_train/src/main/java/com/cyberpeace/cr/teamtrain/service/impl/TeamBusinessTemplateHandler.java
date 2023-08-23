@@ -1,11 +1,5 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -25,12 +19,17 @@ import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -134,8 +133,10 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		TeamTemplate teamTemplate = teamTemplateService
 				.getByTemplateBusinessId(businessTemplate.getResourceId());
 		// 删除任务模板
-		missionTemplateService.batchDelete(teamTemplateService
-				.getMissionTemplateIdsByRoleConfig(teamTemplate.getRoleConfig()));
+		if (!TeamRoom.TrainCategory.DAILY.getCode().equals(teamTemplate.getTrainCategory())){
+			missionTemplateService.batchDelete(teamTemplateService
+					.getMissionTemplateIdsByRoleConfig(teamTemplate.getRoleConfig()));
+		}
 		// 删除训练模板
 		teamTemplateService.removeById(teamTemplate.getResourceId());
 	}

@@ -51,4 +51,7 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	List<PracticeOperation> selectAllCategoryIds();
 
 	List<String> selectAllKnowledge();
+
+	List<String> selectKnowledgeBySetId(@Param("setIds") List<String> setIds,
+			@Param("isWeb") Boolean isWeb);
 }

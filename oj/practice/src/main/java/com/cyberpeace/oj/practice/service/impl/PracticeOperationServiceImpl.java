@@ -1403,17 +1403,40 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public List<String> getKnowledgeListByFrequency() {
-		List<String> practiceOperationKnowledgeList = practiceOperationMapper.selectAllKnowledge();
+	public List<String> getKnowledgeListByFrequency(String pattern, Boolean isWeb) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+
+		// 过滤习题集
+		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(authIds)) {
+			return Lists.newArrayList();
+		}
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authIds.retainAll(setIds);
+		if (CollectionUtils.isEmpty(authIds)) {
+			return Lists.newArrayList();
+		}
+
+		List<String> practiceOperationKnowledgeList = practiceOperationMapper
+				.selectKnowledgeBySetId(authIds, isWeb);
 		Map<String, Integer> knowledgeMap = Maps.newHashMap();
 		for (String knowledgeJson : practiceOperationKnowledgeList) {
 			for (String knowledge : JsonUtil.toJsonObjectArray(knowledgeJson, String.class)) {
 				knowledgeMap.put(knowledge, knowledgeMap.getOrDefault(knowledge, 0) + 1);
 			}
 		}
-		return knowledgeMap.keySet().stream()
+		List<String> res = knowledgeMap.keySet().stream()
 				.sorted(Comparator.comparing(knowledgeMap::get).reversed())
 				.collect(Collectors.toList());
+		if (StringUtils.isBlank(pattern)) {
+			return res;
+		} else {
+			return res.stream().filter(s -> s.contains(pattern)).collect(Collectors.toList());
+		}
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

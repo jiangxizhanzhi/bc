@@ -252,7 +252,9 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	/**
 	 * 获取知识点列表并通过频率排序
 	 *
+	 * @param pattern 模糊匹配
+	 * @param isWeb   前后台
 	 * @return {@code List<String>}
 	 */
-	List<String> getKnowledgeListByFrequency();
+	List<String> getKnowledgeListByFrequency(String pattern, Boolean isWeb);
 }

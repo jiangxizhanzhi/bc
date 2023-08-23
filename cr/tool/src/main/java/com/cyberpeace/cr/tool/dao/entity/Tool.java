@@ -77,6 +77,10 @@ public class Tool extends AuthTable {
 	private String coverUrl;
 
 	public String getCoverUrl() {
+		// 前端静态默认文件
+		if (StringUtils.isNotBlank(cover) && cover.startsWith("/page/")) {
+			return cover;
+		}
 		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
 		if (StringUtils.isNotBlank(cover) && !cover.startsWith(prefix)) {
 			return prefix + cover;

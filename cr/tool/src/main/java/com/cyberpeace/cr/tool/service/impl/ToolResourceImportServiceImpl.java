@@ -224,34 +224,27 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	}
 
 	private void setVersionAndFiles(Tool tool, List<String> versions, File mdFile) {
-		if (versions.isEmpty()) {
-			tool.setVersion("");
-			return;
-		}
-
+		tool.setVersion("");
 		// version和附件，默认是成对出现的
-		if (versions.size() > 1) {
-			tool.setVersion(getVersion(versions.get(versions.size() - 2)));
-		} else if (versions.size() == 1) {
-			tool.setVersion(getVersion(versions.get(versions.size() - 1)));
-			return;
-		} else {
+		if (versions.isEmpty() || versions.size() < 2) {
 			return;
 		}
 
-		List<String> attachments = Lists.newArrayList();
-		for (int i = 1; i < versions.size(); i = i + 2) {
-			attachments.add(versions.get(i));
-		}
-
+		String attachmentVersion;
 		// 上传版本对应的安装包
 		ArrayList<Integer> versionFiles = Lists.newArrayList();
-		for (String filePath : attachments) {
-			ToolFile toolFile = uploadFile(filePath, mdFile, false);
-			if (toolFile != null) {
+		for (int i = 0; i < versions.size() - 1; i = i + 2) {
+			String filePath = versions.get(i + 1);
+			attachmentVersion = getVersion(versions.get(i));
+			String path = uploadFile(filePath, mdFile);
+			if (null != path) {
+				String filename = toolFileService.saveFile(path, false);
+				ToolFile toolFile = toolFileService.newToolFile(filename, filename,
+						attachmentVersion);
 				versionFiles.add(toolFile.getId());
 			}
 		}
+
 		String files = Joiner.on(",").join(versionFiles);
 		tool.setFiles(files);
 	}
@@ -267,7 +260,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 				return s;
 			}
 		}
-		return "";
+		return CommonConstant.TOOL_DEFAULT_VERSION;
 	}
 
 	private void setCracked(Tool tool, List<String> cracked) {
@@ -277,10 +270,12 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	}
 
 	private void setCover(Tool tool, List<String> logo, File mdFile) {
-		ToolFile toolFile = uploadFile(toStr(logo), mdFile, true);
-		if (toolFile == null) {
-			tool.setCover("");
+		String filePath = uploadFile(toStr(logo), mdFile);
+		if (filePath == null) {
+			tool.setCover(CommonConstant.TOOL_DEFAULT_LOGO);
 		} else {
+			String fileName = toolFileService.saveFile(filePath, true);
+			ToolFile toolFile = toolFileService.newToolFile(fileName, fileName);
 			tool.setCover(toolFile.getSavePath());
 		}
 	}
@@ -289,10 +284,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * 上传文件
 	 * @param string 需要解析的文件路径
 	 * @param mdFile markdown文件
-	 * @param transferName  true表示使用随机文件名
-	 * @return
+	 * @return 需要复制的文件路径
 	 */
-	private ToolFile uploadFile(String string, File mdFile, boolean transferName) {
+	private String uploadFile(String string, File mdFile) {
 		// 兼容 [IDA_Pro_v7.0(MacOS).zip](./zip/IDA_Pro_v7.0(MacOS).zip) 格式的数据
 		// [Eziriz.IntelliLock.v2.7.5.1.Cracked.by.yoza[UpK].rar.7z](./zip/Eziriz.IntelliLock.v2.7.5.1.Cracked.by.yoza[UpK].rar.7z)
 		Pattern compile = Pattern.compile("]\\((.*)\\)");
@@ -305,7 +299,8 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		String replace = group.replace("/", File.separator).replaceFirst(".", "");
 		String filePath = mdFile.getParentFile().getPath() + replace;
 
-		return toolFileService.saveFile(filePath, transferName);
+		return filePath;
+
 	}
 
 	private String toStr(List<String> stringList) {

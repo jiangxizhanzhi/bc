@@ -37,7 +37,7 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 	}
 
 	@Override
-	public ToolFile saveFile(String filePath, boolean transferName) {
+	public String saveFile(String filePath, boolean transferName) {
 		String fileSuffix = filePath.substring(filePath.lastIndexOf("."));
 		String fileName = UUID.randomUUID() + fileSuffix;
 		// 工具库的附件，使用原始的附件名
@@ -59,13 +59,24 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 			//("复制文件失败: " + filePath + " ,to:" + fullPath);
 		}
 
-		return newToolFile(fileName, fileName);
+		return fileName;
 	}
 
-	private ToolFile newToolFile(String OriginalFileName, String FileName) {
+	@Override
+	public ToolFile newToolFile(String originalFilename, String filename) {
 		ToolFile toolFile = new ToolFile();
-		toolFile.setFileName(OriginalFileName);
-		toolFile.setSavePath(savePath + FileName);
+		toolFile.setFileName(originalFilename);
+		toolFile.setSavePath(savePath + filename);
+		save(toolFile);
+		return toolFile;
+	}
+
+	@Override
+	public ToolFile newToolFile(String originalFileName, String fileName, String version){
+		ToolFile toolFile = new ToolFile();
+		toolFile.setFileName(originalFileName);
+		toolFile.setSavePath(savePath + fileName);
+		toolFile.setVersion(version);
 		save(toolFile);
 		return toolFile;
 	}

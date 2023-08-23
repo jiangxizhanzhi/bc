@@ -91,6 +91,10 @@ public interface CommonConstant {
 
 	String ADMIN_ID = "3f655d87112f4ae094bbaf70830e20aa";
 
+	String TOOL_DEFAULT_VERSION = "v1.0";
+
+	String TOOL_DEFAULT_LOGO = "/page/cr/public/static/layui/images/default/tool_default.png";
+
 	String SPACE = " ";
 
 	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;

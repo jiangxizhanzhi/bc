@@ -61,6 +61,8 @@ public class TeamRoom extends BaseTable {
 
 	private Integer trainCategory;
 
+	private Boolean supportPartialStart;
+
 	public TeamRoom() {}
 
 	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template) {

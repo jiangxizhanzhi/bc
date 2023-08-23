@@ -48,6 +48,9 @@ public class DailyTrainRoomReq {
     @ApiModelProperty(value = "录屏开关")
     private Boolean enableRecording;
 
+    @ApiModelProperty(value = "允许部分启动,日常训练功能")
+    private Boolean supportPartialStart;
+
     @ApiModelProperty(value = "LOGO")
     private String logo;
 

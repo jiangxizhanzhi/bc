@@ -23,6 +23,7 @@ import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.teamtrain.controller.req.CrDailyRoleConfig;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTimeManagementReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.AddTeamTimeManagementRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -129,18 +130,30 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
 		teamRoom.setTeamTemplateName(businessTemplate.getName());
 		teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
-
-		// 设置红/蓝训练标识
+		// 设置红/蓝 日常训练标识
 		teamRoom.setTrainCategory(template.getTrainCategory());
+
+		//日常训练 处理部分启动;角色信息
+		List<RoleListContext> originRoles;
+		if (template.getTrainCategory().equals(TeamRoom.TrainCategory.DAILY.getCode())){
+			List<CrDailyRoleConfig> crDailyRoleConfigs = JsonUtil.toJsonObjectArray(template.getRoleConfig(), CrDailyRoleConfig.class);
+			List<RoleListContext> originRoleList =new ArrayList<>();
+			for (CrDailyRoleConfig crDailyRoleConfig : crDailyRoleConfigs) {
+				originRoleList.addAll(BeanUtils.deepCopyList(crDailyRoleConfig.getChildren(),RoleListContext.class));
+			}
+			originRoles=originRoleList;
+			//复制完topo后修改部分启动状态
+			remoteTopoService.setSupportPartialStart(teamRoom.getCopyedTopoId(),teamTrainRoomContext.getSupportPartialStart());
+			teamRoom.setSupportPartialStart(teamTrainRoomContext.getSupportPartialStart());
+		}else {
+			originRoles = JsonUtil.toJsonObjectArray(template.getRoleConfig(), RoleListContext.class);
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				save(teamRoom);
-
-				List<RoleListContext> originRoles = JsonUtil
-						.toJsonObjectArray(template.getRoleConfig(), RoleListContext.class);
 				List<RoomRole> users = teamTrainRoomContext.getRoleConfig();
 				int index = 0;
 				RoleListContext teacherRole = new RoleListContext();

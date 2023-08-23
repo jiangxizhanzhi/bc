@@ -1,14 +1,13 @@
 package com.cyberpeace.cr.teamtrain.service.context;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 团队训练实例模型
@@ -65,4 +64,7 @@ public class TeamTrainRoomContext implements Serializable {
 	private String logo;
 
 	private Integer trainCategory;
+
+	@ApiModelProperty(value = "允许部分启动,日常训练功能")
+	private Boolean supportPartialStart;
 }

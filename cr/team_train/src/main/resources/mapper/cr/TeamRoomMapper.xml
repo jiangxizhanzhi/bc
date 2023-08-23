@@ -21,6 +21,7 @@
         <result property="difficult" column="difficulty" jdbcType="VARCHAR"/>
         <result property="durationTime" column="duration_time" jdbcType="VARCHAR"/>
         <result property="roleConfig" column="role_config" jdbcType="VARCHAR"/>
+        <result property="supportPartialStart" column="support_partial_start"/>
 
     </resultMap>
 
@@ -44,6 +45,7 @@
                cr_team_room.copyed_topo_id,
                cr_team_room.training_status,
                cr_team_room.logo,
+               cr_team_room.support_partial_start,
                cr_team_template.duration_time,
                cr_train_record.start_time scene_start_time,
                cr_train_record.end_time   scene_end_time

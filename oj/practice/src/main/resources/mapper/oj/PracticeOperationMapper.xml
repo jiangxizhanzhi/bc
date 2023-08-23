@@ -168,4 +168,16 @@
         select knowledge
         from oj_practice_operation
     </select>
+    <select id="selectKnowledgeBySetId" resultType="java.lang.String">
+        select knowledge from oj_practice_operation
+        <where>
+            practice_set_id in
+            <foreach collection="setIds" item="setId" separator="," open="(" close=")">
+                #{setId}
+            </foreach>
+            <if test="isWeb != null and isWeb">
+                and `public`=#{isWeb}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -18,6 +18,7 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PatternBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -90,8 +91,9 @@ public class PracticeOperationController {
 	@GetMapping("/knowledge/list")
 	@ApiOperation("获取知识点列表，按频次排序")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
-	public BaseRsp<List<String>> listKnowledge() {
-		List<String> knowledgeList = practiceOperationService.getKnowledgeListByFrequency();
+	public BaseRsp<List<String>> listKnowledge(PatternBase pattern) {
+		List<String> knowledgeList = practiceOperationService
+				.getKnowledgeListByFrequency(pattern.getPattern(), true);
 		return new BaseRsp<>(knowledgeList);
 	}
 

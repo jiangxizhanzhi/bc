@@ -57,7 +57,7 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("是否有场景")
 	private Boolean hasSceneData;
 
-	@ApiModelProperty("")
+	@ApiModelProperty("知识点")
 	private List<String> knowledge;
 
 }

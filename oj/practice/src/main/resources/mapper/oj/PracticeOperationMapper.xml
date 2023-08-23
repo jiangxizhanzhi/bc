@@ -178,6 +178,10 @@
             <if test="isWeb != null and isWeb">
                 and `public`=#{isWeb}
             </if>
+            <if test="pattern != null and pattern != ''">
+                <bind name="knowledgePattern" value="'%' + pattern + '%'"/>
+                and knowledge like #{knowledgePattern}
+            </if>
         </where>
     </select>
 </mapper>

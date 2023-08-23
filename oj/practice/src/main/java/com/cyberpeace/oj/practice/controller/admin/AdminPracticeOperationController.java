@@ -1,5 +1,16 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,7 +22,7 @@ import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PatternBase;
+import com.cyberpeace.common.model.PatternReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -27,27 +38,18 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.req.*;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.OperationBo;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.impl.PracticeValidateHandler;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Api(tags = "oj-后台实践操作练习相关api")
 @RestController
@@ -161,9 +163,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@GetMapping("/knowledge/list")
 	@ApiOperation("获取知识点列表，按频次排序")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
-	public BaseRsp<List<String>> listKnowledge(PatternBase pattern) {
+	public BaseRsp<List<String>> listKnowledge(PatternReq pattern) {
 		List<String> knowledgeList = practiceOperationService
-				.getKnowledgeListByFrequency(pattern.getPattern(), false);
+				.getKnowledgeListByFrequency(pattern, false);
 		return new BaseRsp<>(knowledgeList);
 	}
 

@@ -33,6 +33,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.PatternReq;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -1403,7 +1404,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public List<String> getKnowledgeListByFrequency(String pattern, Boolean isWeb) {
+	public List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
@@ -1422,7 +1423,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		List<String> practiceOperationKnowledgeList = practiceOperationMapper
-				.selectKnowledgeBySetId(authIds, isWeb);
+				.selectKnowledgeBySetId(authIds, pattern.getPattern(), isWeb);
 		Map<String, Integer> knowledgeMap = Maps.newHashMap();
 		for (String knowledgeJson : practiceOperationKnowledgeList) {
 			for (String knowledge : JsonUtil.toJsonObjectArray(knowledgeJson, String.class)) {
@@ -1432,10 +1433,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		List<String> res = knowledgeMap.keySet().stream()
 				.sorted(Comparator.comparing(knowledgeMap::get).reversed())
 				.collect(Collectors.toList());
-		if (StringUtils.isBlank(pattern)) {
+		if (StringUtils.isBlank(pattern.getOriginPattern())) {
 			return res;
 		} else {
-			return res.stream().filter(s -> s.contains(pattern)).collect(Collectors.toList());
+			return res.stream().filter(s -> s.contains(pattern.getOriginPattern()))
+					.collect(Collectors.toList());
 		}
 	}
 

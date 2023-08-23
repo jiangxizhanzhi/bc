@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.PatternReq;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
@@ -256,5 +257,5 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param isWeb   前后台
 	 * @return {@code List<String>}
 	 */
-	List<String> getKnowledgeListByFrequency(String pattern, Boolean isWeb);
+	List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb);
 }

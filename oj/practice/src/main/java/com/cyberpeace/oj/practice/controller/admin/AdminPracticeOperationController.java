@@ -11,6 +11,7 @@ import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PatternBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -157,6 +158,15 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp<>(result);
 	}
 
+	@GetMapping("/knowledge/list")
+	@ApiOperation("获取知识点列表，按频次排序")
+	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
+	public BaseRsp<List<String>> listKnowledge(PatternBase pattern) {
+		List<String> knowledgeList = practiceOperationService
+				.getKnowledgeListByFrequency(pattern.getPattern(), false);
+		return new BaseRsp<>(knowledgeList);
+	}
+
 	@ApiOperation("分页查询实践操作习题")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -165,6 +175,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		OperationListQueryBo listQuery = BeanUtils.copy(listReq, OperationListQueryBo.class);
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
+
+		// 知识点
+		listQuery.setKnowledgeList(listReq.getKnowledge());
 
 		if (StringUtils.isNotBlank(listReq.getCategoryId())) {
 			List<String> categoryIds = practiceCategoryService

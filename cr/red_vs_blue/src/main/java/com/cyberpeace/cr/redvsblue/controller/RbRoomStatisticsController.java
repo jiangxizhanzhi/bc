@@ -96,7 +96,7 @@ public class RbRoomStatisticsController {
 	 * 指定队伍（红/蓝）排行榜 得分排名 任务进展排名
 	 * @return
 	 */
-	@ApiOperation("指定队伍（红/蓝）排行榜 得分排名")
+	@ApiOperation("排行榜大屏展示")
 	@GetMapping("/team_leader_board")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbLeaderBoard(
@@ -156,7 +156,7 @@ public class RbRoomStatisticsController {
 	 * 导演-任务编排 左侧柱状图
 	 * @return
 	 */
-	@ApiOperation("查询任务状态")
+	@ApiOperation("练习情况概览")
 	@GetMapping("/missions_statistics")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionsStatistic>> getMissionsStatistics(
@@ -192,7 +192,7 @@ public class RbRoomStatisticsController {
 	 *     队内任务下发和完成任务数进展
 	 * @return
 	 */
-	@ApiOperation("获取任务下发和完成任务数进展")
+	@ApiOperation("成果大屏展示")
 	@GetMapping("/team_mission_progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMissionProgress(
@@ -212,7 +212,7 @@ public class RbRoomStatisticsController {
 	 *     队伍得分趋势统计
 	 * @return
 	 */
-	@ApiOperation("队伍得分趋势统计")
+	@ApiOperation("实况大屏展示")
 	@GetMapping("/team_score_progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbScoreProgress(

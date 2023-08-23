@@ -59,7 +59,7 @@ public class RbSituationController {
 		return new BaseRsp<>(rbSituationService.getMissionStatus(roomId, roleType));
 	}
 
-	@ApiOperation("获取红蓝对抗攻击与防守事件")
+	@ApiOperation("攻击事件")
 	@GetMapping("/ad_event")
 	public BaseRsp<List<RbSituationAdEventRsp>> adEvent(
 			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
@@ -83,7 +83,7 @@ public class RbSituationController {
 		return new BaseRsp<>(rbSituationService.getTeamAction(roomId, roleType));
 	}
 
-	@ApiOperation("获取红蓝对抗平台动态")
+	@ApiOperation("平台动态")
 	@GetMapping("/platform_action")
 	public BaseRsp<List<RbSituationActionRsp>> platformAction(
 			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,

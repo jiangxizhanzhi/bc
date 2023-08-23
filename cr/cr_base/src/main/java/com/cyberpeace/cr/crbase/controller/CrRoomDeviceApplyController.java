@@ -38,7 +38,7 @@ public class CrRoomDeviceApplyController {
         return new BaseRsp<>(crRoomDeviceApplyService.occupy(deviceId));
     }
 
-    @ApiOperation("实装分配-设备审批同意")
+    @ApiOperation("访问控制")
     @PostMapping("/admin/allow")
     public BaseRsp<Boolean> allow(@RequestBody @Validated RoomDeviceApplyAllowReq roomDeviceApplyAllowReq) {
         return new BaseRsp<>(crRoomDeviceApplyService.allow(roomDeviceApplyAllowReq.getApplyId()));

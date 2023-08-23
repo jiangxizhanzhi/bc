@@ -206,7 +206,7 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("获取监控")
+	@ApiOperation("数据监控")
 	@GetMapping("/sessions")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MonitorSession>> getSessions(

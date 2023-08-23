@@ -79,7 +79,7 @@ public class RbTemplateAdminController {
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
-	@ApiOperation("新增")
+	@ApiOperation("练习资产管理")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp create(@RequestBody @Validated RbTemplateAddReq addReq) {
@@ -161,6 +161,50 @@ public class RbTemplateAdminController {
 					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.RB_ROOM_TEMPLATE.getMsg(), columns.toString()));
 		}
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("练习资产分析")
+	@GetMapping("/asset")
+	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
+	public BaseRsp<RbTemplateRsp> assetAnalysis(String resource_id) {
+
+		businessTemplateService.checkPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resource_id);
+
+		BusinessTemplate businessTemplate = businessTemplateService
+				.getById(template.getBusinessTemplateId());
+
+		// 获取红蓝角色
+		String roleString = template.getRoleConfig();
+		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
+
+		Map<String, MissionTemplate> mapping = missionTemplateService
+				.getMappingBySchemeJson(roleString);
+		List<JSONObject> redRoleRsps = getRoles(roleObject.getJSONArray("red_roles"), mapping);
+		List<JSONObject> blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
+
+		// 获取基本信息
+		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
+
+		baseInfoRsp.setSceneConfigData(localSceneService.getTopoData(businessTemplate.getTopoId()));
+		String sceneManagerId = "";
+		LocalScene localScene = localSceneService
+				.getByBusinessInstanceId(businessTemplate.getResourceId());
+		if (localScene != null) {
+			sceneManagerId = localScene.getResourceId();
+		}
+		baseInfoRsp.setSceneManagerId(sceneManagerId);
+
+		// 获取返回对象
+		RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();
+
+		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
+		teamTrainTemplateRsp.setResourceId(template.getResourceId());
+		teamTrainTemplateRsp.setRedRoles(redRoleRsps);
+		teamTrainTemplateRsp.setBlueRoles(blueRoleRsps);
+
+		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
 	@ApiOperation("查询")

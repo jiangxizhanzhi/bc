@@ -274,7 +274,7 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("动态任务新增")
+	@ApiOperation("练习任务基本信息管理")
 	@PostMapping("/mission_info_create")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean>
@@ -351,7 +351,7 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("查询角色")
+	@ApiOperation("用户角色")
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<CrRbRoleContext> getRoles(

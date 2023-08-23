@@ -340,7 +340,7 @@ public class TrainEvalController {
         return new BaseRsp<>(evalRbRoomService.getTeamScore(evalTemplateId, roomId, roleType));
     }
 
-    @ApiOperation("评估结果详情-攻防事件-雷达图")
+    @ApiOperation("攻击方式统计")
     @RequiresPermissions(value = {MenuConstant.WEB_CR_EVALUATION, MenuConstant.WEB_CR_RED_VS_BLUE}, logical = Logical.OR)
     @GetMapping("/event/count")
     public BaseRsp<List<EvalEventCountBar>> getEventCount(

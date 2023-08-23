@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,10 +11,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
@@ -51,6 +54,7 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -67,6 +71,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -104,6 +109,9 @@ public class RbRoomController {
 	private RemoteLogService remoteLogService;
 
 	@Autowired
+	private RemoteUserService remoteUserService;
+
+	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	@Autowired
@@ -119,6 +127,141 @@ public class RbRoomController {
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
+		// 校验
+		rbRoomReq.validate();
+
+		RbRoomContext rbRoomContext = BeanUtils.copy(rbRoomReq, RbRoomContext.class);
+		rbRoomContext
+				.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getPreSkill(), String.class));
+		rbRoomContext
+				.setTrainSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getTrainSkill(), String.class));
+		rbRoomContext.setRoleConfig(
+				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
+
+		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
+
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoomReq.getTemplate());
+		String rbTemplateName = businessTemplateMapper
+				.selectById(rbTemplate.getBusinessTemplateId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.CREATE, rbRoomReq.getName(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoomReq.getName()));
+
+		return getRbRoom(rbRoom.getResourceId());
+	}
+
+	@ApiOperation("红蓝训练创建")
+	@PostMapping("add")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp create1(@RequestBody @Validated RbRoomReq rbRoomReq) {
+		// 校验
+		rbRoomReq.validate();
+
+		RbRoomContext rbRoomContext = BeanUtils.copy(rbRoomReq, RbRoomContext.class);
+		rbRoomContext
+				.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getPreSkill(), String.class));
+		rbRoomContext
+				.setTrainSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getTrainSkill(), String.class));
+		rbRoomContext.setRoleConfig(
+				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
+
+		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
+
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoomReq.getTemplate());
+		String rbTemplateName = businessTemplateMapper
+				.selectById(rbTemplate.getBusinessTemplateId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.CREATE, rbRoomReq.getName(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoomReq.getName()));
+
+		return getRbRoom(rbRoom.getResourceId());
+	}
+
+	@ApiOperation("裁判员基本信息管理")
+	@PostMapping("add/referee")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp create2(@RequestBody @Validated RbRoomReq rbRoomReq) {
+		// 校验
+		rbRoomReq.validate();
+
+		RbRoomContext rbRoomContext = BeanUtils.copy(rbRoomReq, RbRoomContext.class);
+		rbRoomContext
+				.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getPreSkill(), String.class));
+		rbRoomContext
+				.setTrainSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getTrainSkill(), String.class));
+		rbRoomContext.setRoleConfig(
+				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
+
+		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
+
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoomReq.getTemplate());
+		String rbTemplateName = businessTemplateMapper
+				.selectById(rbTemplate.getBusinessTemplateId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.CREATE, rbRoomReq.getName(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoomReq.getName()));
+
+		return getRbRoom(rbRoom.getResourceId());
+	}
+
+	@ApiOperation("红蓝队选手方基本信息管理")
+	@PostMapping("add/role")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp create3(@RequestBody @Validated RbRoomReq rbRoomReq) {
+		// 校验
+		rbRoomReq.validate();
+
+		RbRoomContext rbRoomContext = BeanUtils.copy(rbRoomReq, RbRoomContext.class);
+		rbRoomContext
+				.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getPreSkill(), String.class));
+		rbRoomContext
+				.setTrainSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getTrainSkill(), String.class));
+		rbRoomContext.setRoleConfig(
+				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
+
+		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
+
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoomReq.getTemplate());
+		String rbTemplateName = businessTemplateMapper
+				.selectById(rbTemplate.getBusinessTemplateId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.CREATE, rbRoomReq.getName(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoomReq.getName()));
+
+		return getRbRoom(rbRoom.getResourceId());
+	}
+
+	@ApiOperation("所有人员管理（管理员、导演、裁判和红蓝双方）")
+	@PostMapping("add/roles")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp create4(@RequestBody @Validated RbRoomReq rbRoomReq) {
+		// 校验
+		rbRoomReq.validate();
+
+		RbRoomContext rbRoomContext = BeanUtils.copy(rbRoomReq, RbRoomContext.class);
+		rbRoomContext
+				.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getPreSkill(), String.class));
+		rbRoomContext
+				.setTrainSkill(JsonUtil.toJsonObjectArray(rbRoomReq.getTrainSkill(), String.class));
+		rbRoomContext.setRoleConfig(
+				JsonUtil.toJsonObjectArray(rbRoomReq.getRoleConfig(), RoomRole.class));
+
+		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
+
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoomReq.getTemplate());
+		String rbTemplateName = businessTemplateMapper
+				.selectById(rbTemplate.getBusinessTemplateId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.CREATE, rbRoomReq.getName(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoomReq.getName()));
+
+		return getRbRoom(rbRoom.getResourceId());
+	}
+
+	@ApiOperation("配置IP")
+	@PostMapping("setIP")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp setIp(@RequestBody @Validated RbRoomReq rbRoomReq) {
 		// 校验
 		rbRoomReq.validate();
 
@@ -163,7 +306,7 @@ public class RbRoomController {
 		return new BaseRsp(baseRole);
 	}
 
-	@ApiOperation("查询")
+	@ApiOperation("当前练习过程的基本信息")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbRoomRsp> getRbRoom(
@@ -340,7 +483,7 @@ public class RbRoomController {
 	 * 查询红蓝对抗学员用户列表
 	 * @return
 	 */
-	@ApiOperation("获取群组成员列表")
+	@ApiOperation("API接口鉴权")
 	@GetMapping("/members_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getMembersInfo(
@@ -356,6 +499,77 @@ public class RbRoomController {
 		List<DashboardUser> data = rbRoomService.getMembersInfo(id, resource_id);
 		JSONObject json = new JSONObject();
 		json.put("list", data);
+
+		return new BaseRsp(json);
+	}
+
+	@ApiOperation("单位信息")
+	@GetMapping("/all/members_org_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<JSONObject> getAllMembersOrgInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		rbRoomService.checkRoomPermission(resource_id, userId);
+
+		Map<String, UserInfo> users = remoteUserService.allUsers();
+		LambdaQueryWrapper<CrRole> query = new LambdaQueryWrapper<>();
+		query.eq(CrRole::getRoomId, resource_id);
+		List<CrRole> crRoles = crRoleService.getBaseMapper().selectList(query);
+
+		for (CrRole crRole : crRoles) {
+			List<String> userIds = JsonUtil.toJsonObjectArray(crRole.getUserIds(),
+					String.class);
+			List<String> items = new ArrayList<>();
+			for (String s : userIds) {
+				String replace = s + ":" + s.replace(s, s + users.get(s).getOrganizationData());
+				items.add(replace);
+
+			}
+			crRole.setUserIds(JsonUtil.arrayToString(items));
+		}
+
+		Map<Integer, List<CrRole>> roleMap = StreamApiUtils.groupBy(crRoles, CrRole::getRoleGroup);
+		JSONObject json = new JSONObject();
+		for(Map.Entry<Integer, List<CrRole>> tmp:roleMap.entrySet()){
+			Integer roleGroup = tmp.getKey();
+			List<CrRole> value = tmp.getValue();
+			JSONArray array = new JSONArray();
+			for(CrRole val:value){
+				JSONObject current = new JSONObject();
+				current.put("role", val.getName());
+				current.put("user", val.getUserIds());
+				array.add(current);
+
+			}
+			json.put(roleGroup.toString(), array);
+		}
+
+		return new BaseRsp(json);
+	}
+
+	/**
+	 * 查询红蓝对抗学员用户列表
+	 * @return
+	 */
+	@ApiOperation("队伍信息")
+	@GetMapping("/all/members_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<JSONObject> getAllMembersInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		rbRoomService.checkRoomPermission(resource_id, userId);
+
+		LambdaQueryWrapper<CrRole> query = new LambdaQueryWrapper<>();
+		query.eq(CrRole::getRoomId, resource_id);
+		List<CrRole> crRoles = crRoleService.getBaseMapper().selectList(query);
+		crRoles = crRoles.stream().filter(s->s.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode()) || s.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())).collect(Collectors.toList());
+		Map<Integer, List<CrRole>> roleMap = StreamApiUtils.groupBy(crRoles, CrRole::getRoleGroup);
+		JSONObject json = new JSONObject();
+		for(Map.Entry<Integer, List<CrRole>> tmp:roleMap.entrySet()){
+			Integer roleGroup = tmp.getKey();
+			List<CrRole> value = tmp.getValue();
+			json.put(roleGroup.toString(), value);
+		}
 
 		return new BaseRsp(json);
 	}

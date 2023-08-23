@@ -60,7 +60,7 @@ public class CrNoticeController {
         return new BaseRsp<>(crNoticeService.get(noticeId));
     }
 
-    @ApiOperation("训练公告新增")
+    @ApiOperation("公告管理（发布公告、公告管理）")
     @PostMapping("")
     public BaseRsp<CrNoticeDetailRsp> create(@RequestBody CrNoticeCreateReq crNoticeReq) {
         return new BaseRsp<>(crNoticeService.create(crNoticeReq));

@@ -83,7 +83,7 @@ public class RbRoomScoreController {
 	@Autowired
 	private MpEnvService mpEnvService;
 
-	@ApiOperation("训练记录导出为PDF")
+	@ApiOperation("成绩管理（筛选、查看、导出报告）")
 	@GetMapping("/train2pdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
@@ -293,7 +293,7 @@ public class RbRoomScoreController {
 	 *
 	 * @return
 	 */
-	@ApiOperation("获取用户训练报告")
+	@ApiOperation("双方练习成果综合统计分析")
 	@GetMapping("/get_training_report")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TrainingReport> getTrainingReport(

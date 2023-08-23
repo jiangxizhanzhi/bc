@@ -87,7 +87,7 @@ public class RbSceneController {
 		return new BaseRsp(result);
 	}
 
-	@ApiOperation("查看场景")
+	@ApiOperation("虚拟终端")
 	@GetMapping("")
 	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE,MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
 	public BaseRsp<SceneViewContext> getScene(
@@ -231,7 +231,7 @@ public class RbSceneController {
 		return new BaseRsp<>(downloadFlowFilePathRsp);
 	}
 
-	@ApiOperation("节点流量全部启动")
+	@ApiOperation("设计数据流量")
 	@PostMapping("/all_start")
 	public BaseRsp<Boolean> allStartFlow(@RequestBody @Validated AllStartFlowRsp allStartFlowRsp) {
 		RbRoom rbRoom = rbRoomService.getById(allStartFlowRsp.getRoomId());
@@ -253,7 +253,7 @@ public class RbSceneController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("重启节点")
+	@ApiOperation("练习资产管理")
 	@PostMapping("/node/restart")
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		RbRoom room = rbRoomService.getById(nodeOpsReq.getResourceId());

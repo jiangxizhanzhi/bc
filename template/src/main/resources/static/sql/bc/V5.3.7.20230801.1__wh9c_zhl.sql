@@ -46,7 +46,6 @@ CREATE TABLE `cr_eval_export_record`  (
                                `export_file_md5` int(11) NULL DEFAULT NULL COMMENT '导出文件md5',
                                `update_time` datetime NOT NULL,
                                `create_time` datetime NOT NULL,
-                                UNIQUE INDEX `unique_record_id`(`record`) USING BTREE,
                                 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 

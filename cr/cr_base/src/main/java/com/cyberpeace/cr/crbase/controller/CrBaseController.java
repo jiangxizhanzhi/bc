@@ -52,10 +52,62 @@ public class CrBaseController {
 	@Autowired
 	private TrainUserService  trainUserService;
 
-	@ApiOperation("个人中心训练统计")
+	@ApiOperation("所有练习的统计数据")
 	@GetMapping("/training_statistics")
 	public BaseRsp<TrainingStatisticsRsp>
 			getTrainingStatistics(@ApiParam @Validated PageReqBase req) {
+
+		TrainingStatisticsPage page = new TrainingStatisticsPage(req);
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, page);
+
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("累计练习总数")
+	@GetMapping("/total")
+	public BaseRsp<TrainingStatisticsRsp>
+	total(@ApiParam @Validated PageReqBase req) {
+
+		TrainingStatisticsPage page = new TrainingStatisticsPage(req);
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, page);
+
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("资产总数")
+	@GetMapping("/training_statistics2")
+	public BaseRsp<TrainingStatisticsRsp>
+	getTrainingStatistics2(@ApiParam @Validated PageReqBase req) {
+
+		TrainingStatisticsPage page = new TrainingStatisticsPage(req);
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, page);
+
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("选手总数")
+	@GetMapping("/training_statistics3")
+	public BaseRsp<TrainingStatisticsRsp>
+	getTrainingStatistics3(@ApiParam @Validated PageReqBase req) {
+
+		TrainingStatisticsPage page = new TrainingStatisticsPage(req);
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, page);
+
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("战绩总数")
+	@GetMapping("/training_statistics4")
+	public BaseRsp<TrainingStatisticsRsp>
+	getTrainingStatistics4(@ApiParam @Validated PageReqBase req) {
 
 		TrainingStatisticsPage page = new TrainingStatisticsPage(req);
 

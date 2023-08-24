@@ -276,14 +276,11 @@ public class EvalRecordController {
         EvalRecord evalRecord = evalRecordService.getBaseMapper().selectOne(queryRecord);
 
         LambdaQueryWrapper<EvalRecord> query = new LambdaQueryWrapper<>();
-        String originalRecordName = recordName;
-        recordName += "（1）";
         query.eq(EvalRecord::getName, recordName);
-        EvalRecord evalRecordAddOne = evalRecordService.getBaseMapper().selectOne(query);
-        if(null == evalRecordAddOne){
+        if(null == evalRecord){
             BeanUtils.copyProperties(recordDumpLoadBo, evalRecord);
         } else {
-            recordName = originalRecordName + IDGeneratorUtil.getID();
+            recordName += IDGeneratorUtil.getID();
         }
         evalRecord.setName(recordName);
         String recordId = IDGeneratorUtil.getID();

@@ -1,5 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.context.user.OperationUserInfo;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -14,9 +20,6 @@ import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
@@ -36,6 +39,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.util.List;
+
 @Api(tags = "靶场测评-模板")
 @RestController
 @RequiresAuthentication
@@ -50,6 +55,9 @@ public class EvalTemplateController {
 
 	@Autowired
 	private EvalTemplateService evalTemplateService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -95,9 +103,17 @@ public class EvalTemplateController {
 
 		// 构造接口返回数据
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
-		evalTemplateRsp.setOperationAuthIds(evalTemplate.getAuthIds());
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
+		// auth users
+		List<UserInfo> userInfos = remoteUserService.getByIdList(evalTemplate.getAuthIds());
+		List<OperationUserInfo> operationUserInfos = StreamApiUtils.map(userInfos, userInfo -> {
+			OperationUserInfo operationUserInfo = BeanUtils.copy(userInfo, OperationUserInfo.class);
+			operationUserInfo.setId(userInfo.getUserId());
+			operationUserInfo.setUsername(userInfo.getUserName());
+			return operationUserInfo;
+		});
+		evalTemplateRsp.setOperationAuthIds(operationUserInfos);
 		return new BaseRsp<>(evalTemplateRsp);
 	}
 

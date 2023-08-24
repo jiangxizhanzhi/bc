@@ -429,6 +429,19 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			}
 		} else {
 			// 主观题
+			if (MissionBase.MissionType.ATTACK_DEFENCE_TYPE_LIST.contains(mission.getType())) {
+				List<String> answers = Arrays.asList(mission.getAnswer().split("[|]"));
+				if (answers.contains(answer)) {
+					task.setScore(mission.getScore());
+					task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+					evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
+					judgeTaskAndPushMissionToSituation(missionId, mission.getScore());
+				} else {
+					task.setScore(0);
+					task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
+					evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_FAILURE.getCode());
+				}
+			}
 			task.setScore(0);
 			task.setStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
 		}

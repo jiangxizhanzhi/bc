@@ -13,12 +13,12 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainStatisticsDetailReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamCapabilityInfoRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamCapabilityRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
@@ -319,17 +319,10 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         roleQuery.setRoleGroup(2);
         List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-        TeamTemplate template = teamTemplateMapper.getTeamTemplateByRoomId(roomId);
-
-        List<CrRoleConfig> crRoleConfigs = JSONObject.parseArray(template.getRoleConfig(), CrRoleConfig.class);
-        List<String> roleTypeList = crRoleConfigs.stream().map(CrRoleConfig::getName).collect(Collectors.toList());
-
         List<String> userIds = new ArrayList<>();
         Map<String, String> roleIpMap = Maps.newHashMap();
         Map<String, String> roleIdMap = Maps.newHashMap();
 
-        Map<String, String> roleTypeMap = new HashMap<>();
-        int size = 0;
         for(CrRole role: crRoles){
             JSONObject jsonObject = JSONObject.parseObject(role.getNodes());
             List<JSONObject> visibleNodes = jsonObject.getJSONArray("visibleNodes").toJavaList(JSONObject.class);
@@ -339,15 +332,15 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
             }
             userIds.addAll(role.getUserIdList());
             roleIdMap.put(role.getName(),role.getResourceId());
-            if (role.getRoleGroup().equals(CrRole.TeamRoleGroup.STUDENT.getCode())){
-                roleTypeMap.put(role.getName(),roleTypeList.get(size));
-            }
         }
-        //获取角色对用任务的分组
-        if (CollectionUtils.isEmpty(userIds)){
-            return  new JSONObject();
+        if (CollectionUtils.isEmpty(userIds)) {
+            return new JSONObject();
         }
+        //获取模版类型(红方/蓝方)
+        TeamTemplate template = teamTemplateMapper.getTeamTemplateByRoomId(roomId);
+        String typeName = TeamRoom.TrainCategory.RED.getCode().equals(template.getTrainCategory()) ? "红方-" : "蓝方-";
 
+        //获取角色对应完成任务
         List<CrTask> finishedTasks =crTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, userIds, CrTask.TaskStatus.FINISHED_STATUS_LIST);
         Map<String, List<CrTask>> roleTaskMap = StreamApiUtils.groupBy(finishedTasks, CrTask::getRoleId);
 
@@ -377,12 +370,10 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
 
         for (Map.Entry<String, List<TeamCapabilityInfoRsp>> entry : teamCapabilityInfoMap.entrySet()) {
             TeamCapabilityRsp teamCapabilityRsp = new TeamCapabilityRsp();
-            String type = roleTypeMap.get(entry.getKey());
-            String typeName = "red".equals(type) ? "红方-" + entry.getKey() : "蓝方-" + entry.getKey();
-            teamCapabilityRsp.setRoleName(typeName);
+            teamCapabilityRsp.setRoleName(typeName+entry.getKey());
             teamCapabilityRsp.setList(entry.getValue());
             result.add(teamCapabilityRsp);
-            resultNameList.add(typeName);
+            resultNameList.add(typeName+entry.getKey());
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("roleNameList",resultNameList);

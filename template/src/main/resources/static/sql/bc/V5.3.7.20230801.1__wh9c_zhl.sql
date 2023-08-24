@@ -43,7 +43,7 @@ CREATE TABLE `cr_eval_export_record`  (
                                `id` int(11) NOT NULL AUTO_INCREMENT,
                                `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源id',
                                `record` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联评估运行实例id',
-                               `export_file_md5` int(11) NULL DEFAULT NULL COMMENT '导出文件md5',
+                               `export_file_md5` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '导出文件md5',
                                `update_time` datetime NOT NULL,
                                `create_time` datetime NOT NULL,
                                 PRIMARY KEY (`id`) USING BTREE

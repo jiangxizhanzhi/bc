@@ -259,7 +259,7 @@ public class EvalRecordController {
 
         String importRecord = recordDumpLoadBo.getResourceId();
         String boTemplateId = recordDumpLoadBo.getTemplateId();
-        if(!template.equals(boTemplateId)){
+        if(!templateId.equals(boTemplateId)){
             throw new BusinessException(CrBusinessErrorCode.UNFIT_RECORD);
         }
 
@@ -280,10 +280,10 @@ public class EvalRecordController {
         recordName += "（1）";
         query.eq(EvalRecord::getName, recordName);
         EvalRecord evalRecordAddOne = evalRecordService.getBaseMapper().selectOne(query);
-        if(null == evalRecord){
+        if(null == evalRecordAddOne){
             BeanUtils.copyProperties(recordDumpLoadBo, evalRecord);
-        } else if (null != evalRecordAddOne){
-            recordName = LocalStringUtil.getValueFromBracket(originalRecordName, "（", "）");
+        } else {
+            recordName = originalRecordName + LocalStringUtil.getValueFromBracket(recordName, "（", "）");
         }
         evalRecord.setName(recordName);
         String recordId = IDGeneratorUtil.getID();
@@ -367,6 +367,8 @@ public class EvalRecordController {
         String recordStr = JsonUtil.toJsonString(recordDumpLoadBo);
         String dataPath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID() + File.separatorChar + CrCommonConstants.RESOURCE_FILE_NAME;
 
+
+        FileUtil.writeToDestFile(recordStr, dataPath);
         // 导出文件记录md5sum存入表中
         String md5sum = getFileMD5Checksum(dataPath);
         EvalExportRecord evalExportRecord = new EvalExportRecord();
@@ -375,9 +377,6 @@ public class EvalRecordController {
         LambdaQueryWrapper<EvalExportRecord> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EvalExportRecord::getRecord, evalRecord.getResourceId());
         evalExportRecordMapper.insert(evalExportRecord);
-
-
-        FileUtil.writeToDestFile(recordStr, dataPath);
         FileUtil.setResponse(new File(dataPath), false, response);
         return new BaseRsp(Boolean.TRUE);
     }

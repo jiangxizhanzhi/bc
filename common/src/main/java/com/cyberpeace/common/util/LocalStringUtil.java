@@ -260,7 +260,7 @@ public class LocalStringUtil {
 	}
 
 	public static String getValueFromBracket(String str, String leftBracket, String rightBracket) {
-		String pattern = "" + leftBracket + "(.*?)" + rightBracket + "$";
+		String pattern = "" + leftBracket + "(\\d+)" + rightBracket + "$";
 		Pattern regex = Pattern.compile(pattern);
 		Matcher match = regex.matcher(str);
 

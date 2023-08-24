@@ -682,9 +682,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
         EvalResult evalResult = new EvalResult();
         evalResult.setRecord(requestData.getResourceId());
-        evalResult.setWeight(evalRecord.getScore());
-        evalResult.setIndexScore(requestData.getIndexScore());
-        evalResult.setFinalScore(evalRecord.getFinalScore());
+        evalResult.setWeight(score);
+        evalResult.setIndexScore(indexScore);
+        evalResult.setFinalScore(finalScore);
         evalResult.setType(EvalResult.Type.SYSTEM_RUN.getCode());
 
         evalRecord.setIndexScore(requestData.getIndexScore());

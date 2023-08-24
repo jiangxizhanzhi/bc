@@ -17,10 +17,7 @@ import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
-import com.cyberpeace.cr.crbase.service.CrConstantsService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TrainingScore;
@@ -167,29 +164,29 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
      */
     private Map<String, MissionEvaluationContext> getRankContextMap(IPage<MissionEvaluationContext> data) {
 
-        LambdaQueryWrapper<CrEvalTaskSubmit> rankQueryWrapper = new LambdaQueryWrapper<>();
-        rankQueryWrapper.eq(CrEvalTaskSubmit::getEvalTemplateId, data.getRecords().get(0).getEvalTemplateId());
-        rankQueryWrapper.orderByAsc(CrEvalTaskSubmit::getCreateTime);
-        List<CrEvalTaskSubmit> crTaskSubmits = crEvalTaskSubmitMapper.selectList(rankQueryWrapper);
+        List<MissionTaskSummitContext> missionTaskList= crEvalTaskSubmitMapper.listFinishMissionTaskSubmit(data.getRecords().get(0).getEvalTemplateId());
+        //有序分组
+        LinkedHashMap<String, List<MissionTaskSummitContext>> missionGroupMap = missionTaskList.stream().collect(Collectors.groupingBy(MissionTaskSummitContext::getMissionId, LinkedHashMap::new, Collectors.toList()));
 
         Map<String, MissionEvaluationContext> rankMap = Maps.newHashMap();
-        List<String> rankList = new ArrayList<>(Arrays.asList("一血", "二血", "三血"));
-        List<Double> rankScoreList = new ArrayList<>(Arrays.asList(0.2, 0.1, 0.05));
-
-        for (CrEvalTaskSubmit crTaskSubmit : crTaskSubmits) {
-            MissionEvaluationContext rankContext = new MissionEvaluationContext();
-            rankContext.setResourceId(crTaskSubmit.getResourceId());
-            boolean submitStatus = CrEvalTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(crTaskSubmit.getEvaluateStatus());
-            if (rankList.size() > 0 && submitStatus) {
-                BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.remove(0))
-                        .setScale(0, BigDecimal.ROUND_HALF_UP);
-                rankContext.setRankScore(Integer.parseInt(rankScore.toString()));
-                rankContext.setRank(rankList.remove(0));
-            } else {
-                rankContext.setRankScore(0);
-                rankContext.setRank("否");
+        for (Map.Entry<String, List<MissionTaskSummitContext>> entry : missionGroupMap.entrySet()) {
+            List<String> rankList = new ArrayList<>(Arrays.asList("一血", "二血", "三血"));
+            List<Double> rankScoreList = new ArrayList<>(Arrays.asList(0.2, 0.1, 0.05));
+            for (MissionTaskSummitContext crTaskSubmit : entry.getValue()) {
+                MissionEvaluationContext rankContext = new MissionEvaluationContext();
+                rankContext.setResourceId(crTaskSubmit.getResourceId());
+                boolean submitStatus = CrEvalTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(crTaskSubmit.getEvaluateStatus());
+                if (rankList.size() > 0 && submitStatus) {
+                    BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.remove(0))
+                            .setScale(0, BigDecimal.ROUND_HALF_UP);
+                    rankContext.setRankScore(Integer.parseInt(rankScore.toString()));
+                    rankContext.setRank(rankList.remove(0));
+                } else {
+                    rankContext.setRankScore(0);
+                    rankContext.setRank("否");
+                }
+                rankMap.put(crTaskSubmit.getResourceId(), rankContext);
             }
-            rankMap.put(crTaskSubmit.getResourceId(), rankContext);
         }
         return rankMap;
     }

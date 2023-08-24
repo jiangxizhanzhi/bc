@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.crbase.service.MissionTaskSummitContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.evaluation.controller.bo.EvalTaskBo;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
@@ -25,4 +26,6 @@ public interface CrEvalTaskSubmitMapper extends BaseMapper<CrEvalTaskSubmit> {
     IPage<MissionEvaluationContext> listRbCrTaskSubmit(Page page,@Param("listQuery") EvalMissionEvaluationBo listQuery);
 
     List<EvalTaskBo> getByRoomId(@Param("template_id") String roomId);
+
+    List<MissionTaskSummitContext> listFinishMissionTaskSubmit(@Param("evalTemplateId") String evalTemplateId);
 }

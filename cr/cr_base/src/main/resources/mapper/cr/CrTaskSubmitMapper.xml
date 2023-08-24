@@ -79,4 +79,10 @@
         </foreach>
     </select>
 
+    <select id="listFinishMissionTaskSubmit" resultType="com.cyberpeace.cr.crbase.service.MissionTaskSummitContext">
+        select a.*,b.mission_id from cr_task_submit a
+        join cr_task b on a.task_id=b.resource_id
+        where b.room_id = #{roomId}
+        order by a.create_time asc
+    </select>
 </mapper>

@@ -47,4 +47,10 @@
         order by a.create_time desc
     </select>
 
+    <select id="listFinishMissionTaskSubmit" resultType="com.cyberpeace.cr.crbase.service.MissionTaskSummitContext">
+        select a.*,b.mission_id from cr_eval_task_submit a
+        join cr_eval_train_task b on a.task_id=b.resource_id
+        where b.eval_template_id = #{evalTemplateId}
+        order by a.create_time asc
+    </select>
 </mapper>

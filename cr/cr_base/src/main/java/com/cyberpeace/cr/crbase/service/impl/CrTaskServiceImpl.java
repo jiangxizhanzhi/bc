@@ -21,6 +21,7 @@ import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.MissionTaskSummitContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -586,28 +587,29 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	 */
 	private Map<String, MissionEvaluationContext> getRankContextMap(IPage<MissionEvaluationContext> data) {
 
-		LambdaQueryWrapper<CrTaskSubmit> rankQueryWrapper = new LambdaQueryWrapper<>();
-		rankQueryWrapper.eq(CrTaskSubmit::getRoomId, data.getRecords().get(0).getRoomId());
-		rankQueryWrapper.orderByAsc(CrTaskSubmit::getCreateTime);
-		List<CrTaskSubmit> crTaskSubmits = crTaskSubmitMapper.selectList(rankQueryWrapper);
+		List<MissionTaskSummitContext> missionTaskList= crTaskSubmitMapper.listFinishMissionTaskSubmit(data.getRecords().get(0).getRoomId());
+		//有序分组
+		LinkedHashMap<String, List<MissionTaskSummitContext>> missionGroupMap = missionTaskList.stream().collect(Collectors.groupingBy(MissionTaskSummitContext::getMissionId, LinkedHashMap::new, Collectors.toList()));
 
 		Map<String, MissionEvaluationContext> rankMap = Maps.newHashMap();
-		List<String> rankList = new ArrayList<>(Arrays.asList("一血", "二血", "三血"));
-		List<Double> rankScoreList = new ArrayList<>(Arrays.asList(0.2, 0.1, 0.05));
-		for (CrTaskSubmit crTaskSubmit : crTaskSubmits) {
-			MissionEvaluationContext rankContext = new MissionEvaluationContext();
-			rankContext.setResourceId(crTaskSubmit.getResourceId());
-			boolean submitStatus = CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(crTaskSubmit.getEvaluateStatus());
-			if (rankList.size() > 0 && submitStatus) {
-				BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.remove(0))
-						.setScale(0, BigDecimal.ROUND_HALF_UP);
-				rankContext.setRankScore(Integer.parseInt(rankScore.toString()));
-				rankContext.setRank(rankList.remove(0));
-			}else {
-				rankContext.setRankScore(0);
-				rankContext.setRank("否");
+		for (Map.Entry<String, List<MissionTaskSummitContext>> entry : missionGroupMap.entrySet()) {
+			List<String> rankList = new ArrayList<>(Arrays.asList("一血", "二血", "三血"));
+			List<Double> rankScoreList = new ArrayList<>(Arrays.asList(0.2, 0.1, 0.05));
+			for (MissionTaskSummitContext crTaskSubmit : entry.getValue()) {
+				MissionEvaluationContext rankContext = new MissionEvaluationContext();
+				rankContext.setResourceId(crTaskSubmit.getResourceId());
+				boolean submitStatus = CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(crTaskSubmit.getEvaluateStatus());
+				if (rankList.size() > 0 && submitStatus) {
+					BigDecimal rankScore = BigDecimal.valueOf(crTaskSubmit.getMissionScore() * rankScoreList.remove(0))
+							.setScale(0, BigDecimal.ROUND_HALF_UP);
+					rankContext.setRankScore(Integer.parseInt(rankScore.toString()));
+					rankContext.setRank(rankList.remove(0));
+				} else {
+					rankContext.setRankScore(0);
+					rankContext.setRank("否");
+				}
+				rankMap.put(crTaskSubmit.getResourceId(), rankContext);
 			}
-			rankMap.put(crTaskSubmit.getResourceId(), rankContext);
 		}
 		return rankMap;
 	}

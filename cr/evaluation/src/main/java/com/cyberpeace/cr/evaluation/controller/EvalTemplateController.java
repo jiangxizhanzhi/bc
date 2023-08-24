@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -10,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -17,6 +18,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateModifyReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateDeleteReq;
@@ -93,6 +95,7 @@ public class EvalTemplateController {
 
 		// 构造接口返回数据
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
+		evalTemplateRsp.setOperationAuthIds(evalTemplate.getAuthIds());
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
 		return new BaseRsp<>(evalTemplateRsp);
@@ -174,6 +177,10 @@ public class EvalTemplateController {
 
 		// 设置模板用户
 		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		if (evaTemplateAddReq.getOperationAuthType().equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())) {
+			evalTemplate.setOperationAuthIds(
+					JsonUtil.arrayToString(evaTemplateAddReq.getAuthUserIds()));
+		}
 
 		// 设置模板拓扑
 		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
@@ -192,6 +199,8 @@ public class EvalTemplateController {
 		// 校验测评步骤配置
 		evalTemplateService.validateStepConfig(evaTemplateAddReq.getStepConfig());
 
+		CrCommonValidator.validateEnumCode(evaTemplateAddReq.getOperationAuthType(),
+				AuthTable.AuthType.class);
 	}
 
 }

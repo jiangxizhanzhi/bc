@@ -3,14 +3,14 @@ package com.cyberpeace.cr.crbase.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.AuthTable;
 
 import lombok.Data;
-import lombok.Getter;
 
 /**
  * 靶场模板公共信息模型
+ *  仅使用 operationAuthType， operationAuthIds
+ *  不使用 readAuthType， readAuthIds
  * */
 @Data
 @TableName("cr_business_template")

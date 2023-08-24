@@ -1,5 +1,13 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.util.HashSet;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,15 +36,8 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -75,9 +76,11 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		}
 
 		// 校验用户权限
-		if (!Objects.equals(evalTemplate.getCreateUserId(),
-				UserInfoContext.getUserContext().getUserId())) {
-			log.error("Permission denied! userId = [{}]", UserInfoContext.getUserContext().getUserId());
+		String currentId = UserInfoContext.getUserContext().getUserId();
+		if (!evalTemplate.isFree2Operate() && !evalTemplate.getCreateUserId().equals(currentId)
+				&& !evalTemplate.getOperationAuthIds().contains(currentId)) {
+			log.error("Permission denied! userId = [{}]",
+					UserInfoContext.getUserContext().getUserId());
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 

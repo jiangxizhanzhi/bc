@@ -15,7 +15,8 @@
                 and category_code = #{evalTemplateListQuery.categoryCode}
             </if>
             <if test="userId != null and userId != ''">
-                and create_user_id = #{userId}
+                <bind name="auth" value="'%' + userId + '%'"/>
+                and (operation_auth_type = 1 or create_user_id = #{userId} or operation_auth_ids like #{auth})
             </if>
             <if test="evalTemplateListQuery.pattern != null and evalTemplateListQuery.pattern != ''">
                 <bind name="pattern" value="'%' + evalTemplateListQuery.pattern + '%'"/>

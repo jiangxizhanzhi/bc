@@ -19,10 +19,10 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 	@NotNull
 	private List<EvalTaskStepConfig> stepConfig;
 
-	@ApiModelProperty("授权人编号集合")
-	private String authIds;
+	@ApiModelProperty("授权用户")
+	private List<String> authUserIds;
 
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
-	private Integer authType;
+	private Integer operationAuthType;
 
 }

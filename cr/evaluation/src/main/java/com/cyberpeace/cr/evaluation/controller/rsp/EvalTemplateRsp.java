@@ -25,6 +25,12 @@ public class EvalTemplateRsp extends EvalTemplateListRsp implements Serializable
 	@ApiModelProperty(value = "当前测评任务")
 	private String currentTask;
 
+	@ApiModelProperty("授权用户")
+	private List<String> operationAuthIds;
+
+	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
+	private Integer operationAuthType;
+
 	public void setStepConfig(String stepConfig) {
 		this.stepConfig = JsonUtil.toJsonObjectArray(stepConfig, EvalTaskStepConfig.class);
 	}

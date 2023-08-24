@@ -186,4 +186,8 @@ public interface ErrorCode {
 
 	/** 笔记为空*/
 	String BLANK_NOTE = "100059";
+	/**
+	 * 无效的枚举值
+	 */
+	String INVALID_ENUM_CODE = "100060";
 }

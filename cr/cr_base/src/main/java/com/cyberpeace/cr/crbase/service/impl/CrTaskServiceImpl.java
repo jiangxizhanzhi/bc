@@ -442,9 +442,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 					task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
 					evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_FAILURE.getCode());
 				}
+			}else {
+				task.setScore(0);
+				task.setStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
 			}
-			task.setScore(0);
-			task.setStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
 		}
 
 		task.setUserAnswer(answer);

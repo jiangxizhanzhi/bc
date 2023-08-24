@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.constant.OperationModule;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -131,8 +132,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 		LocalScene.BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
 		if (businessCode.getCode().equals(LocalScene.BusinessCode.TEAM_TRAINING.getCode())) {
-			if (!teamReferenceType.equals(businessCode.getCode())) {
+			if (teamReferenceType.equals(OperationModule.BLUE_TEAM.getCode())) {
 				businessCode = LocalScene.BusinessCode.BLUE_TEAM_TRAINING;
+			} else if (teamReferenceType.equals(OperationModule.DAILY_TRAIN.getCode())) {
+				businessCode = LocalScene.BusinessCode.DAILY_TRAINING;
 			}
 		}
 		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());

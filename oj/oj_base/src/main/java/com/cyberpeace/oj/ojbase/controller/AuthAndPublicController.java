@@ -24,7 +24,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.controller.req.ResourceAuthReq;
 import com.cyberpeace.oj.ojbase.controller.req.ResourceShareReq;
 import com.cyberpeace.oj.ojbase.controller.res.OperationAuthInfo;
-import com.cyberpeace.oj.ojbase.controller.res.OperationUserInfo;
+import com.cyberpeace.common.context.user.OperationUserInfo;
 import com.cyberpeace.oj.ojbase.controller.res.ReadAuthInfo;
 import com.google.common.collect.Lists;
 

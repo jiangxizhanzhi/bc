@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller.res;
 
+import com.cyberpeace.common.context.user.OperationUserInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

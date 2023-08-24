@@ -1,6 +1,7 @@
 package com.cyberpeace.common.model;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
@@ -35,5 +36,23 @@ public class AuthTable extends BaseTable {
 			this.desc = desc;
 		}
 
+	}
+
+	/**
+	 * 开放操作
+	 *
+	 * @return boolean
+	 */
+	public boolean isFree2Operate() {
+		return this.operationAuthType.equals(AuthType.ALL_SHARE_MODE.getCode());
+	}
+
+	/**
+	 * 开放读取
+	 *
+	 * @return boolean
+	 */
+	public boolean isFree2Read() {
+		return this.readAuthType.equals(AuthType.ALL_SHARE_MODE.getCode());
 	}
 }

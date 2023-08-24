@@ -9,7 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
@@ -203,4 +206,16 @@ public class CrCommonValidator {
 		return checkData;
 	}
 
+	/**
+	 * 验证枚举code
+	 *
+	 * @param code          代码
+	 * @param authTypeClass 身份验证类型类
+	 */
+	public static <T extends GenericEnum> void validateEnumCode(Integer code,
+			Class<T> authTypeClass) {
+		if (null == code || EnumUtils.getEnumByCode(code, authTypeClass) == null) {
+			throw new BusinessException(ErrorCode.INVALID_ENUM_CODE);
+		}
+	}
 }

@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -120,10 +121,13 @@ public class EvalTemplateController {
 		IPage<EvalTemplate> data = evalTemplateService.list(evalTemplateListQuery);
 
 		List<String> column = StreamApiUtils.getColumn(data.getRecords(), EvalTemplate::getRedVsBlueId);
+		List<RbRoomScene> rbRoomScenes = new ArrayList<>();
+		if(!column.isEmpty()){
+			LambdaQueryWrapper<RbRoomScene> query = new LambdaQueryWrapper<>();
+			query.in(RbRoomScene::getRbId, column);
+			rbRoomScenes = rbRoomSceneMapper.selectList(query);
 
-		LambdaQueryWrapper<RbRoomScene> query = new LambdaQueryWrapper<>();
-		query.in(RbRoomScene::getRbId, column);
-		List<RbRoomScene> rbRoomScenes = rbRoomSceneMapper.selectList(query);
+		}
 		Map<String, RbRoomScene> toMap = StreamApiUtils.toMap(rbRoomScenes, RbRoomScene::getRbId, s -> s);
 
 		data.convert(evalTemplate -> {

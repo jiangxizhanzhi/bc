@@ -132,10 +132,14 @@ public class EvalResultController {
         EvalRecord evalRecord = checkScore(requestData.getIndexScore(), requestData.getResourceId());
         Integer originalStatus = evalRecord.getStatus();
         Integer finalScore = evalRecord.getFinalScore();
+        Integer indexScore = evalRecord.getIndexScore();
+        Integer score = evalRecord.getScore();
         evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
         evalRecord.setScore(null);
+        evalRecord.setFinalScore(null);
+        evalRecord.setIndexScore(null);
         evalRecordMapper.updateById(evalRecord);
-        evalRecordService.reRun(requestData, evalRecord, originalStatus,finalScore);
+        evalRecordService.reRun(requestData, evalRecord, originalStatus,finalScore, score, indexScore);
         return new BaseRsp<>(evalRecord);
     }
 

@@ -75,7 +75,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
      */
     void recordRun(EvalRecord evalRecord, Boolean isRestart, String language);
 
-    void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus, Integer finalScore);
+    void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus, Integer finalScore, Integer score, Integer indexScore);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`

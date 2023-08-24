@@ -477,4 +477,7 @@ public interface CrBusinessErrorCode {
 
 	/** 指标体系绑定评估实例不可删除*/
 	String SYSTEM_BIND_RECORD = "101149";
+
+	/** 导出文档不可修改*/
+	String JSON_FILE_CANNOT_MODIFIED = "101150";
 }

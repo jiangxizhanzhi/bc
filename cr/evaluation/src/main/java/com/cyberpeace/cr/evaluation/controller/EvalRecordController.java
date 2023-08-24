@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.bo.RecordDumpLoadBo;
@@ -249,6 +250,14 @@ public class EvalRecordController {
         List<EvalIndexRef> indexRefs = recordDumpLoadBo.getIndexRefs();
         List<EvalVariableRef> variableRefs = recordDumpLoadBo.getVariableRefs();
 
+        String importRecord = recordDumpLoadBo.getResourceId();
+        LambdaQueryWrapper<EvalExportRecord> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EvalExportRecord::getRecord, importRecord);
+        List<EvalExportRecord> recordList = evalExportRecordMapper.selectList(queryWrapper);
+        List<String> column = StreamApiUtils.getColumn(recordList, EvalExportRecord::getExportFileMd5);
+        if(!column.contains(md5sum)){
+            throw new BusinessException(CrBusinessErrorCode.JSON_FILE_CANNOT_MODIFIED);
+        }
         String recordName = recordDumpLoadBo.getName();
         LambdaQueryWrapper<EvalRecord> queryRecord = new LambdaQueryWrapper<>();
         queryRecord.eq(EvalRecord::getName, recordName);
@@ -262,9 +271,6 @@ public class EvalRecordController {
             BeanUtils.copyProperties(recordDumpLoadBo, evalRecord);
         } else if (null != evalRecordAddOne){
             recordName = LocalStringUtil.getValueFromBracket(recordName, "（", "）");
-
-        } else {
-            recordName += "（1）";
         }
         evalRecord.setName(recordName);
         String recordId = IDGeneratorUtil.getID();
@@ -327,6 +333,11 @@ public class EvalRecordController {
         if(null == evalRecord){
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
+
+        Integer status = evalRecord.getStatus();
+        if(!status.equals(EvalRecord.Status.END.getCode())){
+            throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
+        }
         EvalTemplate evalTemplate = evalTemplateService.getById(evalRecord.getTemplateId());
         String redVsBlueId = evalTemplate.getRedVsBlueId();
         // 体系包含数据查询
@@ -350,13 +361,8 @@ public class EvalRecordController {
         evalExportRecord.setExportFileMd5(md5sum);
         LambdaQueryWrapper<EvalExportRecord> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EvalExportRecord::getRecord, evalRecord.getResourceId());
-        EvalExportRecord exportRecord = evalExportRecordMapper.selectOne(queryWrapper);
-        if(null == exportRecord){
-            evalExportRecordMapper.insert(evalExportRecord);
-        } else {
-            exportRecord.setExportFileMd5(md5sum);
-            evalExportRecordMapper.updateById(exportRecord);
-        }
+        evalExportRecordMapper.insert(evalExportRecord);
+
 
         FileUtil.writeToDestFile(recordStr, dataPath);
         FileUtil.setResponse(new File(dataPath), false, response);

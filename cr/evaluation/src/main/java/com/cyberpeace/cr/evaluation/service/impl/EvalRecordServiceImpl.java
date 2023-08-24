@@ -673,7 +673,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Async
     @Override
-    public void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus, Integer finalScore) {
+    public void reRun(EvalRecordAddReq requestData, EvalRecord evalRecord, Integer originalStatus, Integer finalScore, Integer score, Integer indexScore) {
         try{
 
             Thread.sleep(2000);
@@ -690,6 +690,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalRecord.setIndexScore(requestData.getIndexScore());
         evalRecord.setStatus(originalStatus);
         evalRecord.setFinalScore(finalScore);
+        evalRecord.setIndexScore(indexScore);
+        evalRecord.setScore(score);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             @Override

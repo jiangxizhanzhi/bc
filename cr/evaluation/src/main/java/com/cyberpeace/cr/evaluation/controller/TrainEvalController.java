@@ -252,7 +252,7 @@ public class TrainEvalController {
     public BaseRsp<JSONObject> getRbMembersRanking(
             @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
-            @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
+            @ApiParam(name = "role_type", value = "角色类型", required = true)@RequestParam("role_type") Integer roleType) {
 
         //todo  修改得分
         JSONObject data = evalRbRoomService.getRbMembersRanking(evalTemplateId, roomId, roleType);

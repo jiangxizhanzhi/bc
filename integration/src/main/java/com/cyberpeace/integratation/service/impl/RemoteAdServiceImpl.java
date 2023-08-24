@@ -36,12 +36,16 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String COMPETITION_LIST_URL;
 
+	private String PRACTICE_COUNT_URL;
+
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.theory_race.statistic");
 		COMPETITION_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.competition.list");
+		PRACTICE_COUNT_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.practice.count");
 	}
 
 	@Override
@@ -104,5 +108,17 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		}
 		return res;
 	}
+
+    @Override
+    public Integer getAdPracticeCnt() {
+		// 无竞赛环境则不调用
+		if (StringUtils.isBlank(adEnvService.getAdHost())) {
+			return 0;
+		}
+
+		// 接口请求
+		JSONObject jsonObject = HttpClientUtil.rawGet(PRACTICE_COUNT_URL, JSONObject.class);
+		return Integer.parseInt(jsonObject.get("ques_num").toString());
+    }
 
 }

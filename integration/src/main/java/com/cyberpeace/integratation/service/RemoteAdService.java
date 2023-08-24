@@ -32,4 +32,8 @@ public interface RemoteAdService {
 	 */
 	List<JSONObject> competitionListWithMinScore(String startTime, String endTime, List<String> userIds, Integer minScore);
 
+	/**
+	 * @return 竞赛习题数和
+	 */
+	Integer getAdPracticeCnt();
 }

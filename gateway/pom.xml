@@ -37,6 +37,11 @@
             <version>${oj.practice.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>tool</artifactId>
+            <version>${cr.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.cyberpeace.situation</groupId>
             <artifactId>situation</artifactId>
             <version>${situation.version}</version>

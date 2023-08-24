@@ -23,6 +23,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalResultListReq;
@@ -165,21 +166,29 @@ public class EvalResultController {
 
         EvalRecord evalRecord = evalRecordService.getById(resourceId);
         List<EvalRoleScoreListRsp> res = new ArrayList<>();
+        String templateId = evalRecord.getTemplateId();
+        EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
+        RoleQuery roleQuery = new RoleQuery();
+        roleQuery.setRoomId(evalTemplate.getRedVsBlueId());
+        List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
+        crRoles = crRoles.stream().filter(s-> s.getRoleGroup().equals(type)).collect(Collectors.toList());
         if(evalRecord.getStatus().equals(EvalRecord.Status.END.getCode()) || evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())){
             LambdaQueryWrapper<EvalRoleScore> query = new LambdaQueryWrapper<>();
             query.eq(EvalRoleScore::getRecord, resourceId);
             query.eq(EvalRoleScore::getRoleGroup, type);
             List<EvalRoleScore> evalRoleScores = evalRoleScoreService.getBaseMapper().selectList(query);
-            evalRoleScores.forEach(evalRoleScore -> {
+            Map<String, EvalRoleScore> scoreMap = StreamApiUtils.toMap(evalRoleScores, EvalRoleScore::getRoleId, s -> s);
+            for(CrRole crRole:crRoles){
                 EvalRoleScoreListRsp rsp = new EvalRoleScoreListRsp();
-                rsp.setRole(evalRoleScore.getRoleGroup());
-                String roleId = evalRoleScore.getRoleId();
-                CrRole crRole = crRoleMapper.selectById(roleId);
-                rsp.setName(roleId);
+                rsp.setRole(crRole.getRoleGroup());
                 rsp.setName(crRole.getName());
-                rsp.setScore(evalRoleScore.getScore());
+                if(scoreMap.containsKey(crRole.getResourceId())){
+                    EvalRoleScore evalRoleScore = scoreMap.get(crRole.getResourceId());
+                    rsp.setScore(evalRoleScore.getScore());
+                }
                 res.add(rsp);
-            });
+
+            }
         }
         return new BaseRsp<>(res);
     }

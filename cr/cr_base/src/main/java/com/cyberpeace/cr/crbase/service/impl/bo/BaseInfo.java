@@ -73,8 +73,8 @@ public class BaseInfo {
 	 */
 	public enum DailySceneType {
 
-		VULNERABILITY_MINING(0, "漏洞挖掘"), WEAPON_VERIFICATION(1, "武器验证"),
-		SCENARIO_REPRODUCTION(2, "场景复现"), TECHNICAL_REPLICATION(3, "技术复现"), OTHERS(4,"其他");
+		VULNERABILITY_MINING(1, "漏洞挖掘"), WEAPON_VERIFICATION(2, "武器验证"),
+		SCENARIO_REPRODUCTION(3, "场景复现"), TECHNICAL_REPLICATION(4, "技术复现"), OTHERS(5,"其他");
 
 		private Integer code;
 

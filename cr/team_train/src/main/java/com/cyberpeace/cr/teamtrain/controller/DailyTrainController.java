@@ -1,46 +1,35 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.CrDailyRoleConfig;
 import com.cyberpeace.cr.teamtrain.controller.req.DailyTrainTemplateAddReq;
 import com.cyberpeace.cr.teamtrain.controller.req.DailyTrainTemplateModifyReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTemplateListReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.BaseInfoRsp;
-import com.cyberpeace.cr.teamtrain.controller.rsp.DailyBaseRoleRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.DailyTrainTemplateRoleRsp;
 import com.cyberpeace.cr.teamtrain.controller.rsp.DailyTrainTemplateRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +42,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -199,59 +186,6 @@ public class DailyTrainController {
         teamTemplate.setRoleConfig(JSONObject.toJSONString(roleConfigs));
         teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(req.getTimeLineConfig()));
         return teamTemplate;
-    }
-
-    @ApiOperation("前台列表查询")
-    @GetMapping("/list")
-    @RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
-    public BaseRsp<ListRsp<DailyTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
-        ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
-        listQuery.setPer_page(listReq.getPerPage());
-        // 默认时间排序
-        listQuery.setSort("-cr_business_template.create_time");
-
-        IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
-        // 训练场景拓扑节点数量获取
-        Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
-                data.getRecords().stream().map(TeamTemplateData::getTopoId).collect(Collectors.toList()));
-
-        data.convert(teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData,
-                topologyNodesStats));
-
-        return new BaseRsp(data);
-    }
-
-    public DailyTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(
-            TeamTemplateData teamTemplateData, Map<String, TopoDigest> topologyNodesStats) {
-
-        BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
-
-        List<CrDailyRoleConfig> dailyTemplateRoleResp = JsonUtil.toJsonObjectArray(teamTemplateData.getRoleConfig(), CrDailyRoleConfig.class);
-
-        List<DailyBaseRoleRsp> roleStructureList = new ArrayList<>();
-        DailyBaseRoleRsp teacher = new DailyBaseRoleRsp();
-        teacher.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
-        teacher.setRoleGroup(CrRole.TeamRoleGroup.TEACHER.getCode());
-        roleStructureList.add(teacher);
-        for (CrDailyRoleConfig dailyRoleConfig : dailyTemplateRoleResp) {
-            DailyBaseRoleRsp dailyBaseRoleRsp = new DailyBaseRoleRsp();
-            dailyBaseRoleRsp.setName(dailyRoleConfig.getName());
-            dailyBaseRoleRsp.setType(dailyRoleConfig.getType());
-            List<CrRoleConfig> children = dailyRoleConfig.getChildren();
-            List<BaseRole> baseRoles = BeanUtils.deepCopyList(children, BaseRole.class);
-            baseRoles.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT.getCode()));
-            dailyBaseRoleRsp.setRoleStructure(baseRoles);
-            roleStructureList.add(dailyBaseRoleRsp);
-        }
-        // 设置返回对象
-        DailyTrainTemplateRsp teamTrainTemplateRsp = new DailyTrainTemplateRsp();
-        teamTrainTemplateRsp.setNodesCount(topologyNodesStats.get(teamTemplateData.getTopoId()).getNodeCounts());
-        teamTrainTemplateRsp.setResourceOccupiedNums(topologyNodesStats.get(teamTemplateData.getTopoId()).getResourceOccupiedNums());
-        teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
-        teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
-
-        teamTrainTemplateRsp.setRoleStructureList(roleStructureList);
-        return teamTrainTemplateRsp;
     }
 
 }

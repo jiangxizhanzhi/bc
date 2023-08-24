@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface TrainModeMapper {
 
-    IPage<TrainModeRsp> listBusinessTemplate(Page page, @Param("name") String name, @Param("businessType") List<Integer> businessType, @Param("trainCategory") List<Integer> trainCategory );
+    IPage<TrainModeRsp> listBusinessTemplate(Page page, @Param("name") String name, @Param("businessType") List<Integer> businessType, @Param("trainCategory") Integer trainCategory );
 
 }

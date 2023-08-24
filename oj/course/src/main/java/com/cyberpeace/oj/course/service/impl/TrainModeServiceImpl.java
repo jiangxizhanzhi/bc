@@ -66,12 +66,11 @@ public class TrainModeServiceImpl implements TrainingModeService {
 
         List<Integer> businessTypeList = BusinessTemplate.BusinessType.BUSINESS_TYPE_LIST;
         List<Integer> trainingTypeList = TrainModeRsp.TrainType.TRAINING_TYPE_LIST;
-        List<Integer> categoryTypeList = TrainModeRsp.TrainCategoryType.CATEGORY_TYPE_LIST;
         if (Objects.isNull(listReq.getType())) {
             Page newPage = new Page<>();
             newPage.setPages(1);
             newPage.setSize(10000);
-            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(newPage, listReq.getPattern(), businessTypeList, categoryTypeList);
+            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(newPage, listReq.getPattern(), businessTypeList, null);
             ArrayList<TrainModeRsp> result = new ArrayList<>(trainModeRspPage.getRecords());
             //实训
             IPage<Course> iPage = getCoursePage(newPage,listReq.getPattern());
@@ -89,8 +88,7 @@ public class TrainModeServiceImpl implements TrainingModeService {
             // 红蓝/团队/单兵其中一种
             Integer businessType = TrainModeRsp.getBusinessTypeByTrainType(listReq.getType());
             Integer trainCategoryType = TrainModeRsp.TrainCategoryType.getTrainCategoryByTrainType(listReq.getType());
-            categoryTypeList = Objects.isNull(trainCategoryType) ? null : Collections.singletonList(trainCategoryType);
-            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(listReq.toPageParam(), listReq.getPattern(), Collections.singletonList(businessType), categoryTypeList);
+            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(listReq.toPageParam(), listReq.getPattern(), Collections.singletonList(businessType), trainCategoryType);
             return PageUtil.getListResult(trainModeRspPage);
 
         } else if (TrainModeRsp.TrainType.COURSE.getCode().equals(listReq.getType())) {

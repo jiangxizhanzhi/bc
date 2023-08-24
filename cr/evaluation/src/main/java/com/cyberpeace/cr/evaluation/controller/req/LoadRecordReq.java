@@ -16,4 +16,7 @@ public class LoadRecordReq implements Serializable {
 	@NotNull
 	private MultipartFile file;
 
+	@ApiModelProperty("评估id")
+	private String templateId;
+
 }

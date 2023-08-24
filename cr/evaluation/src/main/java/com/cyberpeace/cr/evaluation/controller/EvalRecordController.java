@@ -244,6 +244,13 @@ public class EvalRecordController {
         String realPath = utilService.getRealPath(attachmentBo.getFilePath());
         String md5sum = getFileMD5Checksum(realPath);
 
+
+        String templateId = loadRecordReq.getTemplateId();
+        EvalTemplate template = evalTemplateService.getById(templateId);
+        if(null == template){
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+
         String content = FileUtil.getContent(new File(realPath));
         RecordDumpLoadBo recordDumpLoadBo = JsonUtil.toJsonObject(content,
                 RecordDumpLoadBo.class);
@@ -251,6 +258,11 @@ public class EvalRecordController {
         List<EvalVariableRef> variableRefs = recordDumpLoadBo.getVariableRefs();
 
         String importRecord = recordDumpLoadBo.getResourceId();
+        String boTemplateId = recordDumpLoadBo.getTemplateId();
+        if(!template.equals(boTemplateId)){
+            throw new BusinessException(CrBusinessErrorCode.UNFIT_RECORD);
+        }
+
         LambdaQueryWrapper<EvalExportRecord> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EvalExportRecord::getRecord, importRecord);
         List<EvalExportRecord> recordList = evalExportRecordMapper.selectList(queryWrapper);
@@ -264,13 +276,14 @@ public class EvalRecordController {
         EvalRecord evalRecord = evalRecordService.getBaseMapper().selectOne(queryRecord);
 
         LambdaQueryWrapper<EvalRecord> query = new LambdaQueryWrapper<>();
+        String originalRecordName = recordName;
         recordName += "（1）";
         query.eq(EvalRecord::getName, recordName);
         EvalRecord evalRecordAddOne = evalRecordService.getBaseMapper().selectOne(query);
         if(null == evalRecord){
             BeanUtils.copyProperties(recordDumpLoadBo, evalRecord);
         } else if (null != evalRecordAddOne){
-            recordName = LocalStringUtil.getValueFromBracket(recordName, "（", "）");
+            recordName = LocalStringUtil.getValueFromBracket(originalRecordName, "（", "）");
         }
         evalRecord.setName(recordName);
         String recordId = IDGeneratorUtil.getID();

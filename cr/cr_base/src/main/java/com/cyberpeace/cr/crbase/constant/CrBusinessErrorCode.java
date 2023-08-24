@@ -480,4 +480,7 @@ public interface CrBusinessErrorCode {
 
 	/** 导出文档不可修改*/
 	String JSON_FILE_CANNOT_MODIFIED = "101150";
+
+	/** 导出文档不可修改*/
+	String UNFIT_RECORD = "101151";
 }

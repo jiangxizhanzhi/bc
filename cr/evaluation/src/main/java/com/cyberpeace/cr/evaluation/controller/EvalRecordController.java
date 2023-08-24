@@ -283,7 +283,7 @@ public class EvalRecordController {
         if(null == evalRecordAddOne){
             BeanUtils.copyProperties(recordDumpLoadBo, evalRecord);
         } else {
-            recordName = originalRecordName + LocalStringUtil.getValueFromBracket(recordName, "（", "）");
+            recordName = originalRecordName + IDGeneratorUtil.getID();
         }
         evalRecord.setName(recordName);
         String recordId = IDGeneratorUtil.getID();
@@ -324,6 +324,9 @@ public class EvalRecordController {
         });
 
         evalRecord.setId(null);
+        evalRecord.setScore(null);
+        evalRecord.setFinalScore(null);
+        evalRecord.setStatus(EvalRecord.Status.NOT_START.getCode());
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {

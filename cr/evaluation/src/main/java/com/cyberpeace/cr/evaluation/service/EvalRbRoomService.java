@@ -77,4 +77,5 @@ public interface EvalRbRoomService {
     JSONObject getRbMissionProgress(String evalTemplateId,String roomId, Integer roleType);
 
 
+    JSONObject getAllRbScoreProgress(String roomId, Integer roleType, String template);
 }

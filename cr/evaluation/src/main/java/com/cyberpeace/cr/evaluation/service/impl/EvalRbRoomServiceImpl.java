@@ -209,7 +209,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         return json;
     }
 
-    private List<Integer> getScoreProgress(TimeData timeData, String evalTemplateId, RoleUserIds roleUserIds) {
+    public List<Integer> getScoreProgress(TimeData timeData, String evalTemplateId, RoleUserIds roleUserIds) {
         // 一次取出所有用户的得分纪录
         List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
         List<ObjWithTime> taskTimes = crEvalTrainTasks.stream().map(taskContext -> {
@@ -226,7 +226,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     }
 
 
-    private RoleUserIds getRoleInfo(RoleQuery roleQuery) {
+    public RoleUserIds getRoleInfo(RoleQuery roleQuery) {
         List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
         if (crRoles == null) {
@@ -708,6 +708,37 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         json.put("x_data", timeData.getXData());
         json.put("y_total", totalProgressYData);
         json.put("y_complete", completedProgressYData);
+
+        return json;
+    }
+
+    @Override
+    public JSONObject getAllRbScoreProgress(String roomId, Integer roleType, String template) {
+
+        // 获取实例实际开始时间和理论结束时间
+        TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
+
+        JSONObject json = new JSONObject();
+
+        json.put("status", timeData.getStatus());
+        json.put("time_stamp", System.currentTimeMillis() / 1000);
+        json.put("start_time", timeData.getStartTime());
+        json.put("running", timeData.getRunning());
+        json.put("total_score", 0);
+        json.put("x_data", timeData.getXData());
+        RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, CrRole.RbRoleGroup.RED));
+
+
+        List<Integer> yRedData = getScoreProgress(timeData, template, roleUserIds);
+
+        json.put("red_total_score", timeData.getAccumulatedValue());
+        json.put("y_red_score", yRedData);
+
+        roleUserIds = getRoleInfo(new RoleQuery(roomId, CrRole.RbRoleGroup.BLUE));
+        List<Integer> yBlueData = getScoreProgress(timeData, template, roleUserIds);
+
+        json.put("blue_total_score", timeData.getAccumulatedValue());
+        json.put("y_blue_score", yBlueData);
 
         return json;
     }

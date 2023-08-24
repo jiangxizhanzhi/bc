@@ -9,6 +9,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.*;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -235,9 +236,18 @@ public class TrainEvalController {
     public BaseRsp<JSONObject> getRbScoreProgress(
             @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
-            @ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
+            @ApiParam(name = "role_type", value = "角色类型", required = true)@RequestParam("role_type") Integer roleType) {
+        String userId = UserInfoContext.getUserContext().getUserId();
+        if (CrRole.RbRoleGroup.RED_BLUE.equals(roleType)) {
+            return new BaseRsp(getRbScoreProgress_6(roomId, roleType, evalTemplateId));
+        }
+
         JSONObject data = evalRbRoomService.getRbScoreProgress(evalTemplateId, roomId, roleType);
         return new BaseRsp(data);
+    }
+
+    private JSONObject getRbScoreProgress_6(String roomId, Integer roleType, String templateId) {
+        return evalRbRoomService.getAllRbScoreProgress(roomId, roleType, templateId);
     }
 
     /**

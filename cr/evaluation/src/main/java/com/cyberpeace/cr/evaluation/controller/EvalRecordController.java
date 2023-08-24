@@ -280,7 +280,7 @@ public class EvalRecordController {
         if(null == evalRecord){
             BeanUtils.copyProperties(recordDumpLoadBo, evalRecord);
         } else {
-            recordName += IDGeneratorUtil.getID();
+            recordName += "" +  IDGeneratorUtil.getUUIDBits(6);
         }
         evalRecord.setName(recordName);
         String recordId = IDGeneratorUtil.getID();

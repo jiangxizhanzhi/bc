@@ -271,7 +271,7 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
-		if (TeamRoom.TrainCategory.DAILY.getCode().equals(teamTemplateData.getBusinessType())) {
+		if (TeamRoom.TrainCategory.DAILY.getCode().equals(teamTemplateData.getTrainCategory())) {
 			setRoleStructureList(teamTemplateData, teamTrainTemplateRsp);
 		}
 		return teamTrainTemplateRsp;

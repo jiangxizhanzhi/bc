@@ -136,7 +136,6 @@ public class RbSceneServiceImpl implements RbSceneService {
 					rbRoomService.updateById(room);
 					if(null != queryRbRoomScene){
 						queryRbRoomScene.setMpSceneId(sceneId);
-						rbRoomSceneMapper.updateById(queryRbRoomScene);
 					} else {
 						rbRoomScene.setMpSceneId(sceneId);
 						rbRoomScene.setRbId(roomId);

@@ -143,15 +143,19 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 					crTask.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
 				}
 			} else {
-				// 主观题 攻击和防御可机评
-				Integer score = 0;
+				// 主观题 文件,攻击和防御可机评
+				int score = 0;
 				Integer status = CrTaskSubmit.EvaluateStatus.WAIT.getCode();
-				if (MissionBase.MissionType.ATTACK.getCode().equals(mission.getType()) || MissionBase.MissionType.DEFENCE.getCode().equals(mission.getType())) {
-					List<String> missionAnswerList = Arrays.asList( mission.getAnswer().split("[|]]"));
-					if (missionAnswerList.contains(val)) {
-						score = mission.getScore();
-						status = CrTaskSubmit.EvaluateStatus.SUCCESS.getCode();
-					}
+
+				if (MissionBase.MissionType.ATTACK_DEFENCE_TYPE_LIST.contains(mission.getType())) {
+					List<String> answers = Arrays.asList(mission.getAnswer().split("[|]"));
+					boolean flag = answers.contains(val);
+					score = flag ? mission.getScore() : 0;
+					status = flag ? CrTaskSubmit.EvaluateStatus.SUCCESS.getCode() : CrTaskSubmit.EvaluateStatus.FAIL.getCode();
+				} else if (MissionBase.MissionType.FILE.getCode().equals(mission.getType())) {
+					boolean flag = val.equalsIgnoreCase(mission.getAnswer());
+					score = flag ? mission.getScore() : 0;
+					status = flag ? CrTaskSubmit.EvaluateStatus.SUCCESS.getCode() : CrTaskSubmit.EvaluateStatus.FAIL.getCode();
 				}
 				crTask.setScore(score);
 				crTask.setStatus(status);
@@ -348,9 +352,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			List<String> choices = JsonUtil.toJsonObjectArray(missionAnswer, String.class);
 			Set<String> choiceSet = Sets.newHashSet(choices);
 			return userChoiceSet.equals(choiceSet);
-		} else if (missionType.equals(MissionBase.MissionType.FILE.getCode())) {
-			return userAnswer.equalsIgnoreCase(missionAnswer);
-		}else if (missionType.equals(MissionBase.MissionType.FLAG.getCode())) {
+		} else if (missionType.equals(MissionBase.MissionType.FLAG.getCode())) {
 			MissionFlagQuery missionFlagQuery = JSON.parseObject(missionAnswer, MissionFlagQuery.class);
 			if (MissionFlagQuery.FlagType.STATIC_FLAG.getCode().equals(missionFlagQuery.getFlagType())) {
 				return userAnswer.equals(missionFlagQuery.getFlagValue());
@@ -418,31 +420,18 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		if (mission.isObjective()) {
 			// 客观题，可机评
-			if (isCorrect(answer, mission.getAnswer(), mission.getType(),task.getResourceId())) {
-				task.setScore(mission.getScore());
-				task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
-				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
-				judgeTaskAndPushMissionToSituation(missionId, mission.getScore());
-			} else {
-				task.setScore(0);
-				task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
-				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_FAILURE.getCode());
-			}
+			boolean evalFlag = isCorrect(answer, mission.getAnswer(), mission.getType(),task.getResourceId());
+			setTaskEvalResult(mission, task, evaluateLog, evalFlag);
 		} else {
-			// 主观题
+			// 主观题 文件,攻击和防御可机评
 			if (MissionBase.MissionType.ATTACK_DEFENCE_TYPE_LIST.contains(mission.getType())) {
 				List<String> answers = Arrays.asList(mission.getAnswer().split("[|]"));
-				if (answers.contains(answer)) {
-					task.setScore(mission.getScore());
-					task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
-					evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
-					judgeTaskAndPushMissionToSituation(missionId, mission.getScore());
-				} else {
-					task.setScore(0);
-					task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
-					evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_FAILURE.getCode());
-				}
-			}else {
+				boolean evalFlag = answers.contains(answer);
+				setTaskEvalResult(mission, task, evaluateLog, evalFlag);
+			} else if (MissionBase.MissionType.FILE.getCode().equals(mission.getType())) {
+				boolean evalFlag = answer.equalsIgnoreCase(mission.getAnswer());
+				setTaskEvalResult(mission, task, evaluateLog, evalFlag);
+			} else {
 				task.setScore(0);
 				task.setStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
 			}
@@ -467,6 +456,19 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				}
 			}
 		});
+	}
+
+	private void setTaskEvalResult(Mission mission, CrTask task, CrTaskLog evaluateLog, boolean evalFlag) {
+		if (evalFlag) {
+			task.setScore(mission.getScore());
+			task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+			evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
+			judgeTaskAndPushMissionToSituation(mission.getResourceId(), mission.getScore());
+		} else {
+			task.setScore(0);
+			task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
+			evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_FAILURE.getCode());
+		}
 	}
 
 	@Override

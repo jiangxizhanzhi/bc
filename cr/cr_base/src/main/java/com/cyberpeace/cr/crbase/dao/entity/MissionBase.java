@@ -54,7 +54,7 @@ public class MissionBase extends BaseTable {
 				"问答"), ATTACK(5, "攻击"), DEFENCE(6, "防御"), FILE(7, "文件"),FLAG(8, "flag");
 
 		public static final List<Integer> OBJECTIVE_TYPE_LIST = new ArrayList<>(
-				Arrays.asList(JUDGE.code, SINGLE_CHOICE.code, MULTIPLE_CHOICE.code, FILE.code));
+				Arrays.asList(JUDGE.code, SINGLE_CHOICE.code, MULTIPLE_CHOICE.code));
 
 		public static final List<Integer> ANSWER_NULLABLE_TYPE_LIST = new ArrayList<>(
 				Arrays.asList(FAQ.code, ATTACK.code, DEFENCE.code, FILE.code));

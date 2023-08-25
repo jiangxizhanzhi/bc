@@ -7,27 +7,21 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.teamtrain.controller.req.DailyTrainRoomReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
-import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,26 +50,7 @@ public class DailyTrainRoomController {
     private CrRoleService crRoleService;
 
     @Autowired
-    private TransactionTemplate transactionTemplate;
-
-    @Autowired
-    private TeamSceneService teamSceneService;
-
-    @Autowired
-    private RemoteTopoService remoteTopoService;
-
-    @Autowired
     private RemoteLogService remoteLogService;
-
-    @Autowired
-    private TrainRecordService trainRecordService;
-
-    @Autowired
-    private BusinessTemplateService businessTemplateService;
-
-    @Autowired
-    private TeamRoomMapper teamRoomMapper;
-
 
     @ApiOperation("新增")
     @PostMapping()
@@ -84,8 +58,7 @@ public class DailyTrainRoomController {
     public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated DailyTrainRoomReq teamTrainRoomReq) {
         // 校验
         teamTrainRoomReq.validate();
-        TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
-                TeamTrainRoomContext.class);
+        TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,TeamTrainRoomContext.class);
         List<RoomRole> roles = BeanUtils.deepCopyList(teamTrainRoomReq.getRoleConfig(),RoomRole.class);
         teamTrainRoomContext.setRoleConfig(roles);
         teamTrainRoomContext.setPreSkill(new ArrayList<>());
@@ -147,7 +120,7 @@ public class DailyTrainRoomController {
         teamRoomRsp.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
         teamRoomRsp.setTrainSkill(JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 
-        return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
+        return new BaseRsp<>(teamRoomRsp);
     }
 
     private List<TeamRoomRoleRes> getTeamRoomRoleRes(List<CrRole> crRoles) {
@@ -175,34 +148,6 @@ public class DailyTrainRoomController {
                 baseRole.setRoleGroup(crRole.getRoleGroup());
             }
         });
-        return baseRole;
-    }
-
-    // 先获取实例列表中自己的角色，再获取所有的学员角色
-    private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
-        BaseRole baseRole = new BaseRole();
-        List<RoleUsers> roleUsersList = Lists.newArrayList();
-        crRoles.forEach(crRole -> {
-            if (crRole.containsUser(userId)) {
-                baseRole.setResourceId(crRole.getResourceId());
-                baseRole.setName(crRole.getName());
-
-                baseRole.setDescription(crRole.getDescription());
-                baseRole.setRoleGroup(crRole.getRoleGroup());
-            }
-            if (crRole.isTeamStudent()) {
-                RoleUsers roleUsers = new RoleUsers();
-                roleUsers.setRoleName(crRole.getName());
-                roleUsers.setRoleGroup(crRole.getRoleGroup());
-                String userNamesByRoleUsers = crRoleService
-                        .getUserNamesByRoleUsers(crRole.getUserIdList());
-                roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
-                roleUsersList.add(roleUsers);
-            }
-        });
-
-        baseRole.setRoleDataList(roleUsersList);
-
         return baseRole;
     }
 

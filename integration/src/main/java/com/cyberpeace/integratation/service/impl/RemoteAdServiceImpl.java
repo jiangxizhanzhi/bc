@@ -22,7 +22,6 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -137,7 +136,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	@Override
 	public ListRsp<CalendarCompetitionBo> listCalendarCompetitionBo(Page page, String competitionName) {
 		// 接口请求
-		String name = Objects.nonNull(competitionName) ? competitionName : CommonConstant.EMPTY_STRING;
+		String name = StringUtils.isNotBlank(competitionName) ? competitionName : CommonConstant.EMPTY_STRING;
 		String formatUrl = String.format(COMPETITION_PAGE_URL, page.getSize(), name);
 		JSONObject jsonObject = HttpClientUtil.rawGetForCompetition(formatUrl, JSONObject.class);
 		JSONArray competitionArray = JsonUtil.toJsonObject(jsonObject.get("list").toString(), JSONArray.class);

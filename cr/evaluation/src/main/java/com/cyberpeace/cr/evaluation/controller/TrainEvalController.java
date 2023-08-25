@@ -49,6 +49,7 @@ public class TrainEvalController {
 
     @Autowired
     private RbRoomScoreService rbRoomScoreService;
+
     @Autowired
     private EvalRbRoomService evalRbRoomService;
 
@@ -87,22 +88,18 @@ public class TrainEvalController {
         Map<String, String> userInfoMap = remoteUserService.getIdNameMap(userIds);
 
         data.convert(missionEvaluationContext -> {
-            MissionEvaluationRsp missionEvaluationRsp = BeanUtils.copy(missionEvaluationContext,
-                    MissionEvaluationRsp.class);
+            MissionEvaluationRsp missionEvaluationRsp = BeanUtils.copy(missionEvaluationContext,MissionEvaluationRsp.class);
 
             MissionEvaluationRsp.SubmitInfo submitInfo = missionEvaluationRsp.new SubmitInfo();
 
             submitInfo.setCreateTime(missionEvaluationContext.getCreateTime());
             submitInfo.setUserAnswer(missionEvaluationContext.getAnswer());
 
-            missionEvaluationRsp
-                    .setEvaluatorName(userInfoMap.get(missionEvaluationContext.getEvaluatorId()));
+            missionEvaluationRsp.setEvaluatorName(userInfoMap.get(missionEvaluationContext.getEvaluatorId()));
             missionEvaluationRsp.setEvaluator(missionEvaluationContext.getEvaluatorId());
             missionEvaluationRsp.setSubmitUserRole(missionEvaluationContext.getSubmitUserRole());
-            missionEvaluationRsp
-                    .setSubmitUserRoleResourceId(missionEvaluationContext.getSubmitUserRoleId());
-            missionEvaluationRsp
-                    .setSubmitUserName(userInfoMap.get(missionEvaluationContext.getSubmitUser()));
+            missionEvaluationRsp.setSubmitUserRoleResourceId(missionEvaluationContext.getSubmitUserRoleId());
+            missionEvaluationRsp.setSubmitUserName(userInfoMap.get(missionEvaluationContext.getSubmitUser()));
             missionEvaluationRsp.setSubmitLogHash(missionEvaluationContext.getMissionHash());
             missionEvaluationRsp.setTotalScore(missionEvaluationContext.getMission().getScore());
             missionEvaluationRsp.setEvaluateTime(missionEvaluationContext.getEvaluateTime());
@@ -199,8 +196,7 @@ public class TrainEvalController {
     public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
             @ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
             @ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
-        MissionDynamicRsp missionDynamicRsp = crScoreController.getUserMissionDynamic(resource_id,
-                student_id);
+        MissionDynamicRsp missionDynamicRsp = crScoreController.getUserMissionDynamic(resource_id, student_id);
 
         return new BaseRsp<>(missionDynamicRsp);
     }
@@ -237,11 +233,10 @@ public class TrainEvalController {
             @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true)@RequestParam("role_type") Integer roleType) {
-        String userId = UserInfoContext.getUserContext().getUserId();
+
         if (CrRole.RbRoleGroup.RED_BLUE.equals(roleType)) {
             return new BaseRsp(getRbScoreProgress_6(roomId, roleType, evalTemplateId));
         }
-
         JSONObject data = evalRbRoomService.getRbScoreProgress(evalTemplateId, roomId, roleType);
         return new BaseRsp(data);
     }
@@ -264,7 +259,6 @@ public class TrainEvalController {
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true)@RequestParam("role_type") Integer roleType) {
 
-        //todo  修改得分
         JSONObject data = evalRbRoomService.getRbMembersRanking(evalTemplateId, roomId, roleType);
         return new BaseRsp(data);
     }
@@ -335,7 +329,6 @@ public class TrainEvalController {
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam("role_type") Integer roleType) {
 
-        //todo  修改得分
         JSONObject data = evalRbRoomService.getRbLeaderBoard(evalTemplateId, roomId, roleType);
         return new BaseRsp(data);
     }

@@ -26,7 +26,6 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.integratation.service.RemoteTopoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -63,8 +62,6 @@ public class DailyTrainController {
     private RemoteLogService remoteLogService;
     @Autowired
     private LocalSceneService localSceneService;
-    @Autowired
-    private RemoteTopoService remoteTopoService;
 
     @ApiOperation("新增")
     @PostMapping()

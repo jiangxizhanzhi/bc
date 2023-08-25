@@ -38,7 +38,7 @@ public interface EvalRbRoomService {
     void updateStudentScore(EvalStudentScoreReq studentScoreReq);
 
     /**
-     * 获取红蓝学员排名
+     * 获取评估-红蓝学员排名
      * @param evalTemplateId 评估模版id
      * @param roomId         红蓝对抗实例id
      * @param roleType       角色类型
@@ -58,7 +58,7 @@ public interface EvalRbRoomService {
     RbSituationScoreRsp getTeamScore(String evalTemplateId, String roomId, Integer roleType);
 
     /**
-     * 获取红蓝对抗实例的任务评估数据统计
+     * 获取评估-红蓝对抗实例的任务评估数据统计
      * @param evalTemplateId 评估模版id
      * @param roomId 红蓝对抗实例id
      * @param roleType 角色类型

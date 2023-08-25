@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -38,7 +37,7 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 	public ListRsp<EvalRule> pageList(EvalRuleListReq req) {
 		LambdaQueryWrapper<EvalRule> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(EvalRule::getEvalTemplateId,req.getEvalTemplateId());
-		if (!Objects.isNull(req.getPattern())){
+		if (StringUtils.isNotBlank(req.getPattern())){
 			queryWrapper.like(EvalRule::getName, req.getPattern());
 		}
 		Page<EvalRule> page = page(req.toPageParam(), queryWrapper);
@@ -104,20 +103,17 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 		int lenZero = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.zero"));
 		int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.min"));
 		int nameMax = Integer.parseInt(ConfigUtil.getContextProperty("cr.eval.rule.name.max"));
-		int descriptionMax = Integer
-				.parseInt(ConfigUtil.getContextProperty("cr.eval.rule.description.max"));
+		int descriptionMax = Integer.parseInt(ConfigUtil.getContextProperty("cr.eval.rule.description.max"));
 		int scoreMax = Integer.parseInt(ConfigUtil.getContextProperty("cr.eval.rule.score.max"));
 
 		if (req.getName() != null) {
-			CrCommonValidator.validateRange(req.getName().length(), lenMin, nameMax,
-					CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+			CrCommonValidator.validateRange(req.getName().length(), lenMin, nameMax, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		}
 		if (StringUtils.isNotEmpty(req.getDescription())) {
-			CrCommonValidator.validateRange(req.getDescription().length(), lenZero, descriptionMax,
-					CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+			CrCommonValidator.validateRange(req.getDescription().length(), lenZero, descriptionMax, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 		}
 		if (null != req.getScore()) {
-			CrCommonValidator.validateRange(req.getScore(), 0,scoreMax,CrBusinessErrorCode.ILLEGAL_RULE_SCORE);
+			CrCommonValidator.validateRange(req.getScore(), 0, scoreMax, CrBusinessErrorCode.ILLEGAL_RULE_SCORE);
 		}
 	}
 

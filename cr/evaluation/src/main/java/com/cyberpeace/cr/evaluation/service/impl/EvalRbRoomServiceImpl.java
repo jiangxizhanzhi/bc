@@ -15,7 +15,6 @@ import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
@@ -61,9 +60,6 @@ import java.util.stream.Collectors;
 public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
     @Autowired
-    private CrTaskMapper crTaskMapper;
-
-    @Autowired
     private CrEvalScoreMapper crEvalScoreMapper;
 
     @Autowired
@@ -96,9 +92,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     @Autowired
     private CrTaskService crTaskService;
 
-    @Autowired
-    private CrConstantsService crConstantsService;
-
     private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
             CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
             CrTaskLog.ActionCode.MAN_SUCCESS.getCode(), CrTaskSubmit.EvaluateStatus.FAIL.getCode(),
@@ -114,7 +107,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
         Page page = missionEvaluationQuery.toPageParam();
         IPage<MissionEvaluationContext> data = crEvalTaskSubmitMapper.listRbCrTaskSubmit(page, missionEvaluationQuery);
-
         return setMission(data);
     }
 
@@ -225,7 +217,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         return getRoleInfo(new RoleQuery(roomId, roleType));
     }
 
-
     public RoleUserIds getRoleInfo(RoleQuery roleQuery) {
         List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
@@ -270,8 +261,8 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
             }
         }
 
-        Integer getScoreObjective = 0;
-        Integer getScoreSubjective = 0;
+        int getScoreObjective = 0;
+        int getScoreSubjective = 0;
         Integer sumScoreObjective = 0;
         Integer sumScoreSubjective = 0;
         TrainingScore trainingScore = new TrainingScore();
@@ -498,7 +489,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
                 taskContextList.add(taskContext);
             }
         }
-
         return taskContextList;
     }
 
@@ -554,7 +544,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
             rankData.setMissionRatio(missionRatio);
             rankDataList.add(rankData);
         }
-
         return rankDataList;
     }
 
@@ -581,7 +570,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
             roleScoreInfo.setRoleId(crRole.getResourceId());
             roleScoreInfo.setRoleName(crRole.getName());
             roleScoreInfo.setScore(0);
-
             return roleScoreInfo;
         }));
 
@@ -659,7 +647,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         json.put("fail", failCount);
         json.put("reject", rejectCount);
         json.put("unreported", unreportedCount);
-
         return json;
     }
 
@@ -728,7 +715,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         json.put("x_data", timeData.getXData());
         RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, CrRole.RbRoleGroup.RED));
 
-
         List<Integer> yRedData = getScoreProgress(timeData, template, roleUserIds);
 
         json.put("red_total_score", timeData.getAccumulatedValue());
@@ -739,7 +725,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
         json.put("blue_total_score", timeData.getAccumulatedValue());
         json.put("y_blue_score", yBlueData);
-
         return json;
     }
 
@@ -749,6 +734,5 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         queryWrapper.in(CrEvalTrainTask::getUserId, ids);
         return evalTrainTaskMapper.selectList(queryWrapper);
     }
-
 
 }

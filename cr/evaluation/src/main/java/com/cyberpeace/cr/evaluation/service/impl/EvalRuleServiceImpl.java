@@ -13,7 +13,6 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRuleListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRuleReq;
@@ -21,7 +20,6 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalRule;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRuleMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRuleService;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -81,29 +79,8 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 		queryWrapper.eq(EvalRule::getEvalTemplateId,roomId);
 		List<EvalRule> list = list(queryWrapper);
 		JSONObject data = new JSONObject();
-		List<JSONObject> userList = Lists.newArrayList();
-		for (int i = 0; i < 5; i++) {
-			JSONObject userObject = new JSONObject();
-			userObject.put("userId", "userId"+i);
-			userObject.put("userName", "userName"+i);
-			userObject.put("userRole", "userRole"+i);
-
-			userObject.put("score","score"+i);
-			userObject.put("mission", "mission"+i);
-			userObject.put("radar", "radar"+i);
-			userList.add(userObject);
-		}
-
-		data.put("user_list", userList);
-
-		data.put("locale", getTemplateI18n());
-		data.put("user_list", userList);
-		data.put("report", new TrainingReport());
-		data.put("reportTime", "2023-08-01");
-
 		//变量项算法
 		String destPdfPath;
-
 		data.put("ScoreRole", list);
 		String destHtmlPath = String.format("%s%s-%s.html",
 				AttachmentPath.EVAL_RULE_HTML_TEMPLATE.getDesc(), roomId,
@@ -117,7 +94,7 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 			throw e;
 		} finally {
 			if(!new File(destHtmlPath).delete()){
-//				log.error("failed to delete file:{}", destHtmlPath);
+				log.error("failed to delete file: "+ destHtmlPath);
 			}
 		}
 		return destPdfPath;
@@ -154,16 +131,6 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 		if (SqlHelper.retBool(querySet.count())) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
-	}
-
-	public JSONObject getTemplateI18n() {
-		JSONObject jsonObject = new JSONObject();
-
-		for (TrainingReport.TemplateI18n enumData : TrainingReport.TemplateI18n.values()) {
-			jsonObject.put(enumData.name(), enumData.getMsg());
-		}
-
-		return jsonObject;
 	}
 
 	@Override

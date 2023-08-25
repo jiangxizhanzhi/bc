@@ -190,6 +190,50 @@ interface ZiguanConstants {
 
 		}
 	};
+
+	Map<String, Integer> TEAM_TYPE = new HashMap<String, Integer>(){
+		{
+			put("骨干网-医院", 2);
+			put("骨干网-学校", 2);
+			put("骨干网-政府", 2);
+			put("某银行网络的渗透实战", 1);
+			put("一次校园网的渗透测试", 1);
+			put("企业内网的一次病毒入侵", 1);
+			put("民航中小机场网络的突破与渗透", 1);
+			put("某民营企业的一次近源渗透", 1);
+			put("基于无线技术的内网突破", 1);
+			put("某TW军区作战指挥中心的渗透测试", 1);
+			put("某TW军事网络的渗透演练", 1);
+			put("某集团数据窃取安全防御场景", 2);
+			put("某风电集团内网环境的突破", 1);
+			put("邮件钓鱼渗透实战", 1);
+			put("某企业IT信息中心的内网穿透", 1);
+			put("某水利企业信息中心的内网渗透", 1);
+			put("某能源化工集团内网渗透实战", 1);
+			put("典型企业生产环境渗透赛", 1);
+			put("输油储油工艺的渗透实战", 1);
+			put("基于轨道交通工艺的渗透测试", 1);
+			put("金融APP诈骗站点侦察取证", 2);
+			put("ACL规则学习实验", 2);
+			put("VPN办公网络的突破和渗透", 1);
+			put("中国石油某油田分公司企业内网应急响应", 2);
+			put("暴恐组织窝点情报渗透侦查", 1);
+			put("暗网环境组网过程", 2);
+			put("Ddos攻击网络安全应急响应", 2);
+			put("内网横向移动网络安全应急响应", 2);
+			put("多重网络的跨网突破与渗透", 1);
+			put("俄沙虫组织对乌电信运营商投递恶意程序", 1);
+			put("酒店网站系统渗透实战", 1);
+			put("博客站点渗透演练", 1);
+			put("博彩系统渗透实战", 1);
+			put("搭建与配置匿名攻击阵地环境", 1);
+			put("云服务的突破与渗透", 1);
+			put("数据恢复网络安全应急响应", 2);
+			put("某中型金融企业内网的蜜罐部署与编排", 2);
+			put("常见WEB攻击应急处置实战", 2);
+			put("数据泄漏网络安全应急响应", 2);
+		}
+	};
 }
 
 interface RoleGroupNames {
@@ -329,6 +373,14 @@ public class MDParser {
 		}
 		// team training
 		if (businessTemplate.getBusinessType().equals(ZiguanConstants.TEAM_TRAIN)) {
+			// 红队或者蓝队
+			Integer trainCategory = ZiguanConstants.TEAM_TYPE.get(businessTemplate.getName());
+			if (null == trainCategory) {
+				templateContext.setTrainCategory(3);
+				templateContext.setSceneType(5);
+			} else {
+				templateContext.setTrainCategory(trainCategory);
+			}
 			List<Role> roles = parseRoles(data.get(ZiguanConstants.ROLE_INFO)).getStudent();
 			templateContext.setRoleConfig(
 					JsonUtil.arrayToString(team(roles), PropertyNamingStrategy.SnakeCase));

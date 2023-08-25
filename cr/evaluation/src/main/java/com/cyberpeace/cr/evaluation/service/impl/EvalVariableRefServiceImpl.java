@@ -100,8 +100,6 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
                 .eq(EvalProbeData::getSceneId, mpSceneId)
                 .eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId())
                 .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
-                .ge(EvalProbeData::getCollectionTime, evalRecord.getStartTime())
-                .le(EvalProbeData::getCollectionTime, evalRecord.getEndTime())
                 .orderByAsc(EvalProbeData::getCollectionTime)
                 .last(String.format("limit %s, %s", limit, onceFormatSize))
                 .list();

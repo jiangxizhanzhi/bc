@@ -131,8 +131,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		topoJson.put("support_partial_start", topoData.getSupportPartialStart());
 
 		LocalScene.BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
-		if (businessCode.getCode().equals(LocalScene.BusinessCode.TEAM_TRAINING.getCode())) {
-			if (teamReferenceType.equals(OperationModule.BLUE_TEAM.getCode())) {
+		if (businessCode.getCode().equals(LocalScene.BusinessCode.TEAM_TRAINING.getCode()) ) {
+			if (teamReferenceType.equals(OperationModule.BLUE_TEAM.getCode()) ||
+			teamReferenceType.equals(LocalScene.BusinessCode.BLUE_TRAINING.getCode())) {
 				businessCode = LocalScene.BusinessCode.BLUE_TEAM_TRAINING;
 			} else if (teamReferenceType.equals(OperationModule.DAILY_TRAIN.getCode())) {
 				businessCode = LocalScene.BusinessCode.DAILY_TRAINING;

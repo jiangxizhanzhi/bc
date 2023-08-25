@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -219,7 +220,7 @@ public class EvalResultController {
     public BaseRsp<EvalRoleEventActivityListRsp> getEventActivity(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
         EvalRoleEventActivityListRsp res = new EvalRoleEventActivityListRsp();
-        List<Date> dates = new ArrayList<>();
+        List<String> dates = new ArrayList<>();
         List<Integer> redCount = new ArrayList<>();
         List<Integer> blueCount = new ArrayList<>();
 
@@ -228,7 +229,7 @@ public class EvalResultController {
         List<EvalRoleEventActivity> crTaskLogs = crTaskLogMapper.getReleaseIdsByRoomIdAndUsers(redVsBlueId);
 
         for(EvalRoleEventActivity crTaskLog:crTaskLogs){
-            dates.add(crTaskLog.getCreateTime());
+            dates.add(new SimpleDateFormat("MM-dd HH:mm:ss").format(crTaskLog.getCreateTime()));
             Integer count = crTaskLog.getCount();
             if(crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
                 redCount.add(count);
@@ -252,7 +253,7 @@ public class EvalResultController {
     public BaseRsp<EvalRoleEventActivityListRsp> getNodeActivity(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
         EvalRoleEventActivityListRsp res = new EvalRoleEventActivityListRsp();
-        List<Date> dates = new ArrayList<>();
+        List<String> dates = new ArrayList<>();
         List<Integer> redCount = new ArrayList<>();
         List<Integer> blueCount = new ArrayList<>();
 
@@ -279,7 +280,7 @@ public class EvalResultController {
                     blueDeviceIds.add(roleAssetNode.getDeviceId());
                 }
                 blueCount.add(blueDeviceIds.size());
-                dates.add(roleAssetNode.getCreateTime());
+                dates.add(new SimpleDateFormat("MM-dd HH:mm:ss").format(roleAssetNode.getCreateTime()));
             } else if(roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode()) && roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.RED.getCode())){
                 if(!redDeviceIds.contains(roleAssetNode.getDeviceId())){
                     redDeviceIds.add(roleAssetNode.getDeviceId());
@@ -287,7 +288,7 @@ public class EvalResultController {
                 redCount.add(redDeviceIds.size());
                 blueDeviceIds.remove(roleAssetNode.getDeviceId());
                 blueCount.add(blueDeviceIds.size());
-                dates.add(roleAssetNode.getCreateTime());
+                dates.add(new SimpleDateFormat("MM-dd HH:mm:ss").format(roleAssetNode.getCreateTime()));
             }
         }
         res.setCreatTime(dates);

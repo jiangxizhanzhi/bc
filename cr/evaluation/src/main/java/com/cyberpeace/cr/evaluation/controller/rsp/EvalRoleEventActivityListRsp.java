@@ -14,7 +14,7 @@ public class EvalRoleEventActivityListRsp implements Serializable {
 
     private String resourceId;
 
-    private List<Date> creatTime;
+    private List<String> creatTime;
 
     @ApiModelProperty("事件数量")
     private List<Integer> redCount;

@@ -1,9 +1,5 @@
 package com.cyberpeace.cr.crbase.service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
@@ -18,6 +14,10 @@ import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -55,7 +55,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
 	String addTemplate(BaseInfo baseInfo);
 
-	String addTemplate(BaseInfo baseInfo, Integer teamReferenceType);
+	String addTemplate(BaseInfo baseInfo, Integer teamReferenceType, Integer trainCategory);
 
 	/**
 	 * 查询有权查看的训练模板
@@ -177,7 +177,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param businessTemplate 业务模板
 	 * @param baseInfo         更新基础信息
 	 */
-	void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo);
+	void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo, Integer trainCategory);
 
 	/**
 	 * 创建或更新模板时校验是否重名
@@ -186,7 +186,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param type       类型
 	 * @param resourceId 模板id
 	 */
-	void validateName(String name, Integer type, String resourceId);
+	void validateName(String name, Integer type, String resourceId, Integer trainCategory);
 
 	/**
 	 * 创建或更新模板时，更新任务模板关联

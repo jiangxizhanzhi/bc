@@ -1,12 +1,6 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,6 +8,11 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Mapper
 @Repository
@@ -40,7 +39,7 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 * 校验模板名称
 	 */
 	Boolean existByNameAndTypeAndId(@Param("templateName") String templateName,
-			@Param("type") Integer type, @Param("templateId") String templateId);
+			@Param("type") Integer type, @Param("templateId") String templateId, @Param("trainCategory") Integer trainCategory);
 
 	List<String>
 			getAttackRelatedIds(@Param("businessTemplateIds") List<String> businessTemplateIds);

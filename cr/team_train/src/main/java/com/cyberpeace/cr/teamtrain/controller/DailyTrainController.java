@@ -78,7 +78,7 @@ public class DailyTrainController {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 // save business template
-                String businessTemplateId = businessTemplateService.addTemplate(addReq.getBaseInfo(), OperationModule.DAILY_TRAIN.getCode());
+                String businessTemplateId = businessTemplateService.addTemplate(addReq.getBaseInfo(), OperationModule.DAILY_TRAIN.getCode(), addReq.getTrainCategory());
                 // save team template
                 teamTemplate.setBusinessTemplateId(businessTemplateId);
                 teamTemplateService.save(teamTemplate);
@@ -117,7 +117,7 @@ public class DailyTrainController {
 
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo());
+                businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo(), teamTemplate.getTrainCategory());
                 teamTemplateService.updateById(teamTemplate);
                 // delete&update related missionTemplates
                 businessTemplateService.updateMissionTemplateRelation(resourceId, oldRoleConfig,

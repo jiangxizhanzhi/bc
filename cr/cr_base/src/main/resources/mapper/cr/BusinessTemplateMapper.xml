@@ -98,12 +98,18 @@
     <select id="existByNameAndTypeAndId" resultType="java.lang.Boolean">
         select case
         when exists(select 1
-        from cr_business_template
-        where `name` = #{templateName}
-        and business_type = #{type}
+        from cr_business_template a
+        left join cr_team_template b
+        on a.resource_id= b.business_template_id
+        where a.`name` = #{templateName}
+        and a.business_type = #{type}
         <if test="templateId != null and templateId != ''">
-            and resource_id != #{templateId}
-        </if>)
+            and a.resource_id != #{templateId}
+        </if>
+        <if test="trainCategory != null and trainCategory != ''">
+            and b.train_category = #{trainCategory}
+        </if>
+        )
         then 1
         else 0
         end

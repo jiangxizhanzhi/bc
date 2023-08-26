@@ -211,7 +211,7 @@ public class BusinessTemplateController {
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public BaseRsp<String> validateNamePatch(@RequestBody @Validated NameValidReq nameValidReq) {
 		businessTemplateService.validateName(nameValidReq.getName(), nameValidReq.getType(),
-				nameValidReq.getId());
+				nameValidReq.getId(), nameValidReq.getTrainCategory());
 		return new BaseRsp();
 	}
 

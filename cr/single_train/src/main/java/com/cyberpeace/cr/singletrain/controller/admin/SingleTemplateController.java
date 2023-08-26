@@ -126,7 +126,7 @@ public class SingleTemplateController {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				businessTemplateService.updateTemplate(businessTemplate, baseInfo);
+				businessTemplateService.updateTemplate(businessTemplate, baseInfo, null);
 				singleTemplateService.updateById(singleTemplate);
 				// delete&update missionTemplates
 				businessTemplateService.updateMissionTemplateRelation(

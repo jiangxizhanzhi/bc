@@ -1,24 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.integratation.constant.OperationModule;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -52,14 +33,31 @@ import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -102,11 +100,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
-		return addTemplate(baseInfo, null);
+		return addTemplate(baseInfo, null, null);
 	}
 
 	@Override
-	public String addTemplate(BaseInfo baseInfo, Integer teamReferenceType) {
+	public String addTemplate(BaseInfo baseInfo, Integer teamReferenceType, Integer trainCategory) {
 		// validate length
 		baseInfo.validate();
 		// 1、从输入业务中解析公共模板
@@ -117,7 +115,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
 		businessTemplate.setLogo(baseInfo.getLogo());
 		// validate name
-		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(), "");
+		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(), "", trainCategory);
 
 		businessTemplate.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		businessTemplate.setOperationAuthIds("[]");
@@ -179,7 +177,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo) {
+	public void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo, Integer trainCategory) {
 		// validate length
 		baseInfo.validate();
 		// base info
@@ -189,7 +187,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setLogo(baseInfo.getLogo());
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(),
-				businessTemplate.getResourceId());
+				businessTemplate.getResourceId(), trainCategory);
 		// update topo
 		SceneConfigData topoData = baseInfo.getSceneConfigData();
 		if (topoData != null) {
@@ -205,9 +203,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public void validateName(String name, Integer type, String resourceId) {
+	public void validateName(String name, Integer type, String resourceId, Integer trainCategory) {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-		if (businessTemplateMapper.existByNameAndTypeAndId(name, type, resourceId)) {
+		if (businessTemplateMapper.existByNameAndTypeAndId(name, type, resourceId, trainCategory)) {
 			log.error("template name already exist！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
 		}

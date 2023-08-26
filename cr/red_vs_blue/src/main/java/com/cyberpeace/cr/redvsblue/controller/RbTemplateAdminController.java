@@ -131,7 +131,7 @@ public class RbTemplateAdminController {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo());
+				businessTemplateService.updateTemplate(businessTemplate, modifyReq.getBaseInfo(), null);
 				rbTemplateService.updateById(rbTemplate);
 				// delete&update missionTemplates
 				businessTemplateService.updateMissionTemplateRelation(resourceId, oldRoleConfig,

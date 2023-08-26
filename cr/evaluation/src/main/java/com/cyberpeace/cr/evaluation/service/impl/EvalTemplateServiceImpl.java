@@ -296,7 +296,6 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		List<CrEvalRole> evalRoleList = BeanUtils.deepCopyList(roleList, CrEvalRole.class);
 		for (CrEvalRole item : evalRoleList) {
 			item.setEvalTemplateId(evalTemplateId);
-			item.setResourceId(null);
 		}
 
 		//初始化评估规则数据
@@ -315,10 +314,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				if (!CollectionUtils.isEmpty(evalScoreList)) {
 					evalScoreMapper.batchInsert(evalScoreList);
 				}
-				if (!CollectionUtils.isEmpty(evalRoleList)) {
-					evalRoleMapper.batchInsert(evalRoleList);
-				}
-
+				evalRoleMapper.batchInsert(evalRoleList);
 				evalRuleMapper.batchInsert(initialEvalRuleList);
 			}
 		});

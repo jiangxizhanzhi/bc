@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.CrEvalRoleMapper">
+
+    <insert id="batchInsert"  parameterType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole" >
+        insert into cr_eval_role
+        (resource_id, `name`, room_id, description, role_group, nodes, user_ids, exercise_paper,
+        parent_resource_id, mission_scheme, business_type,eval_template_id, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.roomId,jdbcType=VARCHAR},
+            #{item.description,jdbcType=VARCHAR}, #{item.roleGroup,jdbcType=INTEGER}, #{item.nodes,jdbcType=VARCHAR},
+            #{item.userIds,jdbcType=LONGVARCHAR}, #{item.exercisePaper,jdbcType=VARCHAR}, #{item.parentResourceId,jdbcType=VARCHAR},
+            #{item.missionScheme,jdbcType=VARCHAR}, #{item.businessType,jdbcType=INTEGER}, #{item.evalTemplateId,jdbcType=VARCHAR},
+            now(),now() )
+        </foreach>
+    </insert>
+
+</mapper>

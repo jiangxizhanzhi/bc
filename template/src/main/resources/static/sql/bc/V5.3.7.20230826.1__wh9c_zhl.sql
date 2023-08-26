@@ -1,0 +1,21 @@
+CREATE TABLE `cr_eval_role` (
+                           `id` int(11) NOT NULL AUTO_INCREMENT,
+                           `resource_id` varchar(64) NOT NULL COMMENT 'uuid',
+                           `name` varchar(255) NOT NULL COMMENT '角色名',
+                           `room_id` varchar(40) NOT NULL COMMENT '训练房间id',
+                           `description` varchar(2048) DEFAULT NULL COMMENT '描述',
+                           `role_group` int(11) NOT NULL COMMENT '权限组',
+                           `nodes` varchar(4000) DEFAULT NULL COMMENT '角色节点',
+                           `user_ids` text NOT NULL COMMENT '角色用户',
+                           `exercise_paper` varchar(4000) DEFAULT NULL COMMENT '训练手册',
+                           `parent_resource_id` varchar(40) DEFAULT NULL COMMENT '父角色id',
+                           `mission_scheme` varchar(4000) DEFAULT NULL COMMENT '任务数据',
+                           `business_type` int(11) NOT NULL COMMENT '训练类型',
+                           `eval_template_id` varchar(32) DEFAULT NULL COMMENT '评测模版id',
+                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                           PRIMARY KEY (`id`) USING BTREE,
+                           UNIQUE KEY `resource_id` (`resource_id`) USING BTREE,
+                           KEY `room_id` (`room_id`) USING BTREE,
+                           KEY `eval_template_id` (`eval_template_id`) USING BTREE
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='评估-训练角色详情';

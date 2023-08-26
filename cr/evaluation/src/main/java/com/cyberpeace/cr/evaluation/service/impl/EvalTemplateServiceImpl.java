@@ -12,14 +12,17 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRule;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
@@ -94,6 +97,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	private EvalRuleService evalRuleService;
 	@Autowired
 	private EvalRuleMapper evalRuleMapper;
+	@Autowired
+	private CrRoleMapper crRoleMapper;
+	@Autowired
+	private CrEvalRoleMapper evalRoleMapper;
 
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
@@ -283,6 +290,15 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			item.setResourceId(null);
 		}
 
+		LambdaQueryWrapper<CrRole> roleQuery = new LambdaQueryWrapper<>();
+		scoreQuery.eq(CrScore::getRoomId,  evalTemplate.getRedVsBlueId());
+		List<CrRole> roleList = crRoleMapper.selectList(roleQuery);
+		List<CrEvalRole> evalRoleList = BeanUtils.deepCopyList(roleList, CrEvalRole.class);
+		for (CrEvalRole item : evalRoleList) {
+			item.setEvalTemplateId(evalTemplateId);
+			item.setResourceId(null);
+		}
+
 		//初始化评估规则数据
 		List<EvalRule> initialEvalRuleList = evalRuleService.getInitialData(evalTemplateId);
 
@@ -299,6 +315,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				if (!CollectionUtils.isEmpty(evalScoreList)) {
 					evalScoreMapper.batchInsert(evalScoreList);
 				}
+				if (!CollectionUtils.isEmpty(evalRoleList)) {
+					evalRoleMapper.batchInsert(evalRoleList);
+				}
+
 				evalRuleMapper.batchInsert(initialEvalRuleList);
 			}
 		});

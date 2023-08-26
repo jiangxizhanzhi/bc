@@ -23,7 +23,7 @@
 
         select a.*, b.mission_id mission_hash
         ,b.user_id submit_user,c.`name` submit_user_role,b.role_id submit_user_role_id
-        from cr_eval_task_submit a,cr_eval_train_task b,cr_role c
+        from cr_eval_task_submit a,cr_eval_train_task b,cr_eval_role c
         <where>
             a.task_id=b.resource_id and b.role_id=c.resource_id
             and b.eval_template_id = #{listQuery.evalTemplateId}

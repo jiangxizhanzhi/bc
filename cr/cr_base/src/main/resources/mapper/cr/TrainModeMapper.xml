@@ -11,6 +11,15 @@
         LEFT JOIN cr_team_template b
         ON a.resource_id=b.business_template_id
         <where>
+            a.resource_id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach collection="ids" item="templateId" separator="," close=")" open="(">
+                    #{templateId}
+                </foreach>
+            </if>
+            <if test="ids.size() == 0">
+                ('')
+            </if>
             <if test="trainCategory != null and trainCategory !=''">
                 AND b.train_category = #{trainCategory}
             </if>

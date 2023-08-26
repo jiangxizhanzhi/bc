@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
@@ -13,6 +14,7 @@ import com.cyberpeace.cr.crbase.controller.req.TrainModeListReq;
 import com.cyberpeace.cr.crbase.controller.req.TrainModeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainModeRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainModeMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -60,9 +62,15 @@ public class TrainModeServiceImpl implements TrainingModeService {
 
     @Autowired
     private CourseMapper courseMapper;
+    @Autowired
+    private BusinessTemplateMapper businessTemplateMapper;
 
     @Override
     public ListRsp<TrainModeRsp> list(TrainModeListReq listReq) {
+
+        String userId = UserInfoContext.getUserContext().getUserId();
+        UserInfo userInfo = UserInfoContext.getUserContext();
+        List<String> ids = userInfo.isSuperuser() ? businessTemplateMapper.getAllIds() : businessTemplateMapper.selectIdsByUserId(userId);
 
         List<Integer> businessTypeList = BusinessTemplate.BusinessType.BUSINESS_TYPE_LIST;
         List<Integer> trainingTypeList = TrainModeRsp.TrainType.TRAINING_TYPE_LIST;
@@ -70,7 +78,7 @@ public class TrainModeServiceImpl implements TrainingModeService {
             Page newPage = new Page<>();
             newPage.setPages(1);
             newPage.setSize(10000);
-            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(newPage, listReq.getPattern(), businessTypeList, null);
+            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(newPage, listReq.getPattern(), businessTypeList, null,ids);
             ArrayList<TrainModeRsp> result = new ArrayList<>(trainModeRspPage.getRecords());
             //实训
             IPage<Course> iPage = getCoursePage(newPage,listReq.getPattern());
@@ -88,7 +96,7 @@ public class TrainModeServiceImpl implements TrainingModeService {
             // 红蓝/团队/单兵其中一种
             Integer businessType = TrainModeRsp.getBusinessTypeByTrainType(listReq.getType());
             Integer trainCategoryType = TrainModeRsp.TrainCategoryType.getTrainCategoryByTrainType(listReq.getType());
-            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(listReq.toPageParam(), listReq.getPattern(), Collections.singletonList(businessType), trainCategoryType);
+            IPage<TrainModeRsp> trainModeRspPage = trainModeMapper.listBusinessTemplate(listReq.toPageParam(), listReq.getPattern(), Collections.singletonList(businessType), trainCategoryType,ids);
             return PageUtil.getListResult(trainModeRspPage);
 
         } else if (TrainModeRsp.TrainType.COURSE.getCode().equals(listReq.getType())) {
@@ -135,6 +143,9 @@ public class TrainModeServiceImpl implements TrainingModeService {
         // 获取权限
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
         List<String> courseIds = courseMapper.selectByAuth(authContext);
+        if (CollectionUtils.isEmpty(courseIds)) {
+            return new Page<>();
+        }
 
         // 我的课程 系统课程 共享课程过滤
         SpecialCourseContext specialContext = BeanUtils.copy(authContext, SpecialCourseContext.class);

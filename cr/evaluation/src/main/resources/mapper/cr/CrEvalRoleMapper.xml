@@ -18,4 +18,22 @@
         </foreach>
     </insert>
 
+    <select id="selectCrRoleByRoomId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole">
+        select resource_id,
+        `name`,
+        room_id,
+        description,
+        role_group,
+        nodes,
+        user_ids,
+        exercise_paper,
+        parent_resource_id,
+        mission_scheme,
+        business_type
+        from cr_eval_role
+        where room_id = #{roomId}
+        <if test="roleGroup != null and roleGroup != ''">
+            and role_group like #{roleGroup}
+        </if>
+    </select>
 </mapper>

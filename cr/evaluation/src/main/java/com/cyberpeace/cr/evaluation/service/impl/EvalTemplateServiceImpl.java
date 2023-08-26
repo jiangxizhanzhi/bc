@@ -291,7 +291,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		}
 
 		LambdaQueryWrapper<CrRole> roleQuery = new LambdaQueryWrapper<>();
-		scoreQuery.eq(CrScore::getRoomId,  evalTemplate.getRedVsBlueId());
+		roleQuery.eq(CrRole::getRoomId,  evalTemplate.getRedVsBlueId());
 		List<CrRole> roleList = crRoleMapper.selectList(roleQuery);
 		List<CrEvalRole> evalRoleList = BeanUtils.deepCopyList(roleList, CrEvalRole.class);
 		for (CrEvalRole item : evalRoleList) {

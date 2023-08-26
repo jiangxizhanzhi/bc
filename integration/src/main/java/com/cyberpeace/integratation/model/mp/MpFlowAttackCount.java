@@ -7,6 +7,10 @@ import java.io.Serializable;
 @Data
 public class MpFlowAttackCount implements Serializable {
 
+    /**
+     * 节点id
+     */
+    private String nodeId;
 
     /**
      * 节点名称

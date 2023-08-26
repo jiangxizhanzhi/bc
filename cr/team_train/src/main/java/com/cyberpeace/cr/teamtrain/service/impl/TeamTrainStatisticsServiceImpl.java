@@ -346,16 +346,16 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
 
         //获取流量节点对应的攻击次数
         List<MpFlowAttackCount> flowAttackCountList = remoteSceneService.getFlowAttackCount(context.getMpSceneId());
-        Map<String, Integer> attackMap = StreamApiUtils.toMap(flowAttackCountList, MpFlowAttackCount::getNodeName, MpFlowAttackCount::getTimes);
+        Map<String, Integer> attackMap = StreamApiUtils.toMap(flowAttackCountList, MpFlowAttackCount::getNodeId, MpFlowAttackCount::getTimes);
 
         Map<String, List<TeamCapabilityInfoRsp>> teamCapabilityInfoMap = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : roleIdMap.entrySet()) {
             String roleName = entry.getKey();
             List<TeamCapabilityInfoRsp> teamCapabilityList = CollectionUtils.isEmpty(teamCapabilityInfoMap.get(roleName)) ? new ArrayList<>() : teamCapabilityInfoMap.get(roleName);
             //攻击次数
-            String ip = roleIpMap.get(roleName);
+            String id = roleIpMap.get(roleName);
             TeamCapabilityInfoRsp teamCapabilityInfoRsp = new TeamCapabilityInfoRsp();
-            teamCapabilityInfoRsp.setTimes(attackMap.get(ip));
+            teamCapabilityInfoRsp.setTimes(attackMap.get(id));
             //角色任务得分
             String roleId = roleIdMap.get(roleName);
             List<CrTask> taskList = roleTaskMap.get(roleId);

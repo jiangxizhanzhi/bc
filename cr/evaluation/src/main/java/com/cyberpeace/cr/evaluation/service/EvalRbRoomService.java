@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbSituationScoreRsp;
+
+import java.util.List;
 
 public interface EvalRbRoomService {
 
@@ -78,4 +81,11 @@ public interface EvalRbRoomService {
 
 
     JSONObject getAllRbScoreProgress(String roomId, Integer roleType, String template);
+
+    /**
+     * 获取用户列表
+     * @param roomId 红蓝对抗实例id
+     * @return 相关用户列表
+     */
+    List<UserRole> getUserList(String roomId);
 }

@@ -4,26 +4,35 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
-import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.evaluation.controller.req.EvalMissionEvaluationListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
+import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalRoleMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.EvalResultService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbSituationScoreRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -64,6 +73,9 @@ public class TrainEvalController {
 
     @Autowired
     private EvalResultService evalResultService;
+
+    @Autowired
+    private CrEvalRoleMapper crEvalRoleMapper;
 
     @ApiOperation("获取学员的评估提交记录")
     @GetMapping("/mission_evaluation")
@@ -181,7 +193,7 @@ public class TrainEvalController {
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<List<UserRole>> getUserList(
             @ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-        List<UserRole> data = rbRoomService.getUserList(resource_id);
+        List<UserRole> data = evalRbRoomService.getUserList(resource_id);
         return new BaseRsp<>(data);
     }
 
@@ -360,5 +372,128 @@ public class TrainEvalController {
             @RequestParam("role") @NotEmpty Integer type) {
         return new BaseRsp<>(evalResultService.getEventPercent(redVsBlueId,type));
     }
+
+    @ApiOperation("当前练习过程的基本信息")
+    @GetMapping()
+    @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    public BaseRsp<RbRoomRsp> getRbRoom(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+        String userId = UserInfoContext.getUserContext().getUserId();
+
+        RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
+
+        RoleQuery roleQuery = new RoleQuery();
+        roleQuery.setRoomId(rbRoomData.getResourceId());
+
+        List<CrEvalRole> crRoles = crEvalRoleMapper.selectCrRoleByRoomId(roleQuery);
+
+        RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
+        rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
+        rbRoomRsp.setRolesData(getRbRoomRoleRes(crRoles));
+        rbRoomRsp.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
+        rbRoomRsp.setTrainSkill(
+                JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));
+
+        return new BaseRsp(rbRoomRsp);
+    }
+
+    /** 先获取实例列表中自己的角色，再获取所有角色(查看列表用到)
+     * @param crRoles
+     * @param userId
+     * @return
+     */
+    private BaseRole getSelfRoleUsers(List<CrEvalRole> crRoles, String userId) {
+        BaseRole baseRole = new BaseRole();
+        List<RoleUsers> roleUsersList = Lists.newArrayList();
+        crRoles.forEach(crRole -> {
+            if (crRole.containsUser(userId)) {
+                baseRole.setResourceId(crRole.getResourceId());
+                baseRole.setName(crRole.getName());
+                baseRole.setParentHash(crRole.getRoleGroup());
+                baseRole.setDescription(crRole.getDescription());
+                baseRole.setRoleGroup(crRole.getRoleGroup());
+            }
+
+            RoleUsers roleUsers = new RoleUsers();
+            roleUsers.setRoleName(crRole.getName());
+            roleUsers.setRoleGroup(crRole.getRoleGroup());
+            String userNamesByRoleUsers = getUserNamesByRoleUsers(crRole.getUserIdList());
+            roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
+
+            roleUsersList.add(roleUsers);
+
+        });
+
+        ChartInfo chartInfo = new ChartInfo();
+        chartInfo.setInfoType(ChartInfo.ChartInfoType.NOT_RED_OR_BLUE_ONGOING.getCode());
+        chartInfo.setRoleDataList(roleUsersList);
+
+        baseRole.setChartInfo(chartInfo);
+
+        return baseRole;
+    }
+
+    public String getUserNamesByRoleUsers(List<String> userList) {
+        List<String> userNames = Lists.newArrayList();
+
+        List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
+        userInfoList.forEach(userInfo -> {
+            if (userList.contains(userInfo.getUserId())) {
+                userNames.add(userInfo.getUserName());
+            }
+        });
+
+        return JsonUtil.toJsonString(userNames);
+    }
+
+    private List<RbRoomRoleRes> getRbRoomRoleRes(List<CrEvalRole> crRoles) {
+        List<RbRoomRoleRes> rbRoomRoleResList = Lists.newArrayList();
+        List<RbRoomRoleRes> redRoles = Lists.newArrayList();
+        List<RbRoomRoleRes> blueRoles = Lists.newArrayList();
+
+        for (CrEvalRole crRole : crRoles) {
+            RbRoomRoleRes rbRoomRoleRes = BeanUtils.copy(crRole, RbRoomRoleRes.class);
+            rbRoomRoleRes.setUsersData(getUserDatas(crRole.getUserIdList()));
+            rbRoomRoleRes.setUsers(crRole.getUserIdList());
+            rbRoomRoleRes.setRoleGroup(crRole.getRoleGroup());
+
+            if (crRole.isRedStudent()) {
+                redRoles.add(rbRoomRoleRes);
+            } else if (crRole.isBlueStudent()) {
+                blueRoles.add(rbRoomRoleRes);
+            } else {
+                rbRoomRoleResList.add(rbRoomRoleRes);
+            }
+        }
+        RbRoomRoleRes redRoleRes = new RbRoomRoleRes();
+        redRoleRes.setName(CrRole.RbRoleGroup.RED.getDesc());
+        redRoleRes.setResourceId("redResourceId");
+        redRoleRes.setRoleGroup(CrRole.RbRoleGroup.RED.getCode());
+        redRoleRes.setChildren(redRoles);
+        rbRoomRoleResList.add(redRoleRes);
+
+        RbRoomRoleRes blueRoleRes = new RbRoomRoleRes();
+        blueRoleRes.setName(CrRole.RbRoleGroup.BLUE.getDesc());
+        blueRoleRes.setResourceId("blueResourceId");
+        blueRoleRes.setRoleGroup(CrRole.RbRoleGroup.BLUE.getCode());
+        blueRoleRes.setChildren(blueRoles);
+        rbRoomRoleResList.add(blueRoleRes);
+
+        return rbRoomRoleResList;
+    }
+
+    public List<UserData> getUserDatas(List<String> userIdList) {
+        List<UserData> userDataList = Lists.newArrayList();
+        List<UserInfo> userInfoList = remoteUserService.getByIdList(userIdList);
+        for (UserInfo userInfo : userInfoList) {
+            UserData userData = new UserData();
+            userData.setResourceId(userInfo.getUserId());
+            userData.setRepName(userInfo.getName());
+            userData.setLogo(userInfo.getAvatarUrl());
+            userDataList.add(userData);
+        }
+        return userDataList;
+    }
+
 
 }

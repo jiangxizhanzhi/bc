@@ -24,6 +24,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TrainingScore;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
@@ -755,6 +756,58 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         queryWrapper.eq(CrEvalTrainTask::getEvalTemplateId, evalTemplateId);
         queryWrapper.in(CrEvalTrainTask::getUserId, ids);
         return evalTrainTaskMapper.selectList(queryWrapper);
+    }
+
+
+    @Override
+    public List<UserRole> getUserList(String roomId) {
+        List<UserRole> userRoleList = Lists.newArrayList();
+
+        List<String> userList = Lists.newArrayList();
+
+        List<CrEvalRole> crRoles = selectRbStudentsRoleByRoomId(roomId);
+
+        for (CrEvalRole crRole : crRoles) {
+            List<String> users = crRole.getUserIdList();
+            users.forEach(user -> {
+                UserRole userRole = new UserRole();
+                userRole.setResourceId(user);
+                userRole.setRoleName(crRole.getName());
+                userRole.setRoleDesc(
+                        crRole.getDescription() == null ? "" : crRole.getDescription());
+                userRoleList.add(userRole);
+                userList.add(user);
+            });
+        }
+
+        // 获取全部用户
+        Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userList);
+
+        // 去掉不存在的用户
+        Iterator<UserRole> userIterator = userRoleList.iterator();
+        while (userIterator.hasNext()) {
+            UserRole userRole = userIterator.next();
+            UserInfo userInfo = userInfoMap.get(userRole.getResourceId());
+            if (userInfo == null) {
+                userIterator.remove();
+            } else {
+                userRole.setName(userInfo.getName());
+                userRole.setLogo(userInfo.getAvatarUrl());
+            }
+        }
+
+        return userRoleList;
+    }
+
+    public List<CrEvalRole> selectRbStudentsRoleByRoomId(String roomId) {
+        List<CrEvalRole> crRoleList = Lists.newArrayList();
+
+        for (CrRole.RbRoleGroup roleCode : CrRole.RbRoleGroup.studentRoleGroups()) {
+            RoleQuery roleQuery = new RoleQuery(roomId, roleCode);
+            List<CrEvalRole> crRoles = crEvalRoleMapper.selectCrRoleByRoomId(roleQuery);
+            crRoleList.addAll(crRoles);
+        }
+        return crRoleList;
     }
 
 }

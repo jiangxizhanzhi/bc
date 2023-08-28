@@ -193,10 +193,7 @@ public class TrainingPlanController {
 
 	@ApiOperation("查询个人能力评估")
 	@GetMapping("/getRoleDetailRes")
-	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
-			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
-	public BaseRsp<RoleDetailRes> getRoleDetailRes() {// @ApiParam(name = "course_type", value =
-		// "查询课程类型(skill/knowledge)", required =
+	public BaseRsp<RoleDetailRes> getRoleDetailRes() {
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {

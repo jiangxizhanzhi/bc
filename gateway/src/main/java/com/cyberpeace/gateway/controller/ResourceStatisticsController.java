@@ -3,7 +3,6 @@ package com.cyberpeace.gateway.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cyberpeace.gateway.service.bo.ResourceRsp;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
-import com.cyberpeace.integratation.service.RemoteAdService;
+import com.cyberpeace.gateway.service.bo.ResourceRsp;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
@@ -38,9 +37,6 @@ public class ResourceStatisticsController {
 	@Autowired
 	private ToolMapper toolMapper;
 
-	@Autowired
-	private RemoteAdService remoteAdService;
-
 	@GetMapping("")
 	@ApiOperation("获取首页资源统计")
 	public BaseRsp<List<ResourceRsp>> listDirection() {
@@ -50,13 +46,12 @@ public class ResourceStatisticsController {
 		Integer operationCnt = practiceOperationMapper.selectCount(null);
 		Integer toolCnt = toolMapper.selectCount(null);
 		Integer practiceCnt = theoryCnt + operationCnt;
-		Integer adPracticeCnt = remoteAdService.getAdPracticeCnt();
 		ResourceRsp courseRsp = new ResourceRsp();
 		ResourceRsp practiceCounts = new ResourceRsp();
 		ResourceRsp toolCounts = new ResourceRsp();
 		courseRsp.setResourceName("course");
 		courseRsp.setCount(courseCnt);
-		practiceCounts.setCount(adPracticeCnt + practiceCnt);
+		practiceCounts.setCount(practiceCnt);
 		practiceCounts.setResourceName("practice");
 		toolCounts.setResourceName("tool");
 		toolCounts.setCount(toolCnt);

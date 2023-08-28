@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.exception.evaluate.RemoteException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -115,10 +116,13 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		if (StringUtils.isBlank(adEnvService.getAdHost())) {
 			return 0;
 		}
-
-		// 接口请求
-		JSONObject jsonObject = HttpClientUtil.rawGet(PRACTICE_COUNT_URL, JSONObject.class);
-		return Integer.parseInt(jsonObject.get("ques_num").toString());
-    }
+		try {
+			// 接口请求
+			JSONObject jsonObject = HttpClientUtil.rawGet(PRACTICE_COUNT_URL, JSONObject.class);
+			return Integer.parseInt(jsonObject.get("ques_num").toString());
+		} catch (RemoteException re) {
+			return 0;
+		}
+	}
 
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.CrEvalRbRoomMapper">
+    <select id="getRbRoomDataByRoomId" resultType="com.cyberpeace.cr.redvsblue.service.context.RbRoomData"
+            parameterType="java.lang.String">
+        select a.resource_id,
+        a.template_id template,
+        a.template_name,
+        a.`NAME`,
+        a.description,
+        a.sub_type   category,
+        a.pre_skill,
+        a.train_skill,
+        a.start_time,
+        a.end_time,
+        a.difficulty  difficult,
+        a.create_user_id,
+        a.create_time,
+        a.enable_recording,
+        a.support_partial_start,
+        a.modify_user_id,
+        a.local_scene_id,
+        a.copyed_topo_id,
+        a.training_status,
+        a.logo,
+        b.duration_time,
+        c.start_time scene_start_time,
+        c.end_time  scene_end_time,
+        c.scene_status
+        from cr_eval_rb_room a 
+        left join cr_rb_template b on a.template_id = b.resource_id
+        left join cr_eval_local_scene c on a.resource_id = c.business_instance_id
+        where a.resource_id = #{resourceId}
+    </select>
+   
+</mapper>

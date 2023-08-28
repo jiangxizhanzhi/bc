@@ -8,9 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalIndex
- */
 @Mapper
 @Repository
 public interface CrEvalTrainTaskMapper extends BaseMapper<CrEvalTrainTask> {

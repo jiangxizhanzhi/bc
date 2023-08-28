@@ -21,7 +21,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +57,7 @@ public class RbRoomStatisticsController {
 	 */
 	@ApiOperation("获取实例运行时间和状态")
 	@GetMapping("/rb_time_data")
-	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeDataRsp> getRbTimeData(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		TimeData data = rbRoomScoreService.getRbTimeData(resource_id);

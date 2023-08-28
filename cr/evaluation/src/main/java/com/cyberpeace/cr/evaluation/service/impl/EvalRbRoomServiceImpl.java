@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -23,6 +24,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TrainingScore;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
@@ -31,16 +33,16 @@ import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
-import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalRoleMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalScoreMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTaskSubmitMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTrainTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbSituationScoreRsp;
-import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoleUserIds;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
+import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.ObjWithTime;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RankData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.UserCounter;
@@ -84,7 +86,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     private TransactionTemplate transactionTemplate;
 
     @Autowired
-    private RbRoomScoreService rbRoomScoreService;
+    private RbTimeManagementService rbTimeManagementService;
 
     @Autowired
     private CrEvalRoleMapper crEvalRoleMapper;
@@ -97,6 +99,9 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
     @Autowired
     private CrTaskService crTaskService;
+
+    @Autowired
+    private CrEvalRbRoomMapper crEvalRbRoomMapper;
 
     private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
             CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
@@ -192,7 +197,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     @Override
     public JSONObject getRbScoreProgress(String evalTemplateId, String roomId, Integer roleType) {
         // 获取实例实际开始时间和理论结束时间
-        TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
+        TimeData timeData = getRbTimeData(roomId);
         RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, roleType));
         List<Integer> yData = getScoreProgress(timeData, evalTemplateId, roleUserIds);
 
@@ -681,7 +686,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
 
         // 获取实例实际开始时间和理论结束时间
-        TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
+        TimeData timeData =getRbTimeData(roomId);
 
         // 一次取出所有用户的得分纪录
         List<CrEvalTrainTask> crTasks = getEvalTrainTaskList(evalTemplateId, roleUserIds.getUserIds());
@@ -726,7 +731,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     public JSONObject getAllRbScoreProgress(String roomId, Integer roleType, String template) {
 
         // 获取实例实际开始时间和理论结束时间
-        TimeData timeData = rbRoomScoreService.getRbTimeData(roomId);
+        TimeData timeData = getRbTimeData(roomId);
 
         JSONObject json = new JSONObject();
 
@@ -808,6 +813,69 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
             crRoleList.addAll(crRoles);
         }
         return crRoleList;
+    }
+
+    @Override
+    public RbRoomData getRbRoomDataByRoomId(String resourceId) {
+        RbRoomData rbRoomData = crEvalRbRoomMapper.getRbRoomDataByRoomId(resourceId);
+        if (rbRoomData == null) {
+            throw new ResourceNotFoundException(resourceId);
+        }
+        return rbRoomData;
+    }
+
+    @Override
+    public TimeData getRbTimeData(String roomId) {
+        RbRoomData rbRoomData = getRbRoomDataByRoomId(roomId);
+        RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(roomId);
+        Date endTime = rbRoomData.getEndTime();
+        TimeData timeDate;
+        // 未开始
+        if (rbTimeManagement == null) {
+            timeDate = new TimeData(0, rbRoomData.getStartTime(), endTime, endTime);
+        } else if (rbTimeManagement.isStopped()) {
+            // 已结束
+            timeDate = new TimeData(2, rbTimeManagement.getCreateTime(), rbTimeManagement.getUpdateTime(), endTime);
+        } else {
+            // 进行中
+            timeDate = new TimeData(1, rbTimeManagement.getCreateTime(), new Date(), endTime);
+        }
+        return timeDate;
+    }
+
+
+
+
+    @Override
+    public XYData getRbMissionCategory(String roomId, Integer roleType) {
+        // 获取场景实例下的任务hash
+        RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
+
+        List<CrEvalTrainTask> evalTrainTaskList = getEvalTrainTaskList(roomId, roleUserIds.getUserIds());
+        List<TaskContext> taskContexts = getTaskContext(evalTrainTaskList);
+
+        Map<String, Integer> missionsCategory = Maps.newHashMap();
+
+        List<MissionCategory> missionCategories = missionService.listCategories();
+
+        Map<String, String> missionCategoryMap = missionCategories.stream()
+                .collect(Collectors.toMap(MissionCategory::getResourceId, bo -> bo.getName()));
+        for (TaskContext taskContext : taskContexts) {
+            Mission mission = taskContext.getMission();
+            Integer count = missionsCategory
+                    .getOrDefault(missionCategoryMap.get(mission.getCategoryId()), 0) + 1;
+            missionsCategory.put(missionCategoryMap.get(mission.getCategoryId()), count);
+        }
+
+        List<String> xData = Lists.newArrayList();
+        List<Integer> yData = Lists.newArrayList();
+
+        for (MissionCategory missionCategory : missionCategories) {
+            xData.add(missionCategory.getName());
+            yData.add(missionsCategory.getOrDefault(missionCategory.getName(), 0));
+        }
+
+        return new XYData(xData, yData);
     }
 
 }

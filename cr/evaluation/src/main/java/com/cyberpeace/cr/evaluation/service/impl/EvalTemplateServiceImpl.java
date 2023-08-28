@@ -22,13 +22,10 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRule;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalRuleService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
@@ -37,7 +34,11 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -101,6 +102,16 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	private CrRoleMapper crRoleMapper;
 	@Autowired
 	private CrEvalRoleMapper evalRoleMapper;
+	@Autowired
+	private RbRoomMapper rbRoomMapper;
+	@Autowired
+	private CrEvalRbRoomMapper evalRbRoomMapper;
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
+	@Autowired
+	private CrEvalLocalSceneMapper evalLocalSceneMapper;
+
+
 
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
@@ -266,12 +277,12 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			item.setEvalTemplateId(evalTemplateId);
 			String resourceId = item.getResourceId();
 			String taskId = IDGeneratorUtil.getID();
-			taskIdMatchMap.put(resourceId,taskId);
+			taskIdMatchMap.put(resourceId, taskId);
 			item.setResourceId(taskId);
 		}
 
 		LambdaQueryWrapper<CrTaskSubmit> taskSubmitQuery = new LambdaQueryWrapper<>();
-		taskSubmitQuery.eq(CrTaskSubmit::getRoomId,  evalTemplate.getRedVsBlueId());
+		taskSubmitQuery.eq(CrTaskSubmit::getRoomId, evalTemplate.getRedVsBlueId());
 		List<CrTaskSubmit> taskSubmitList = taskSubmitMapper.selectList(taskSubmitQuery);
 		List<CrEvalTaskSubmit> evalTaskSubmitList = BeanUtils.deepCopyList(taskSubmitList, CrEvalTaskSubmit.class);
 		for (CrEvalTaskSubmit item : evalTaskSubmitList) {
@@ -282,7 +293,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		}
 
 		LambdaQueryWrapper<CrScore> scoreQuery = new LambdaQueryWrapper<>();
-		scoreQuery.eq(CrScore::getRoomId,  evalTemplate.getRedVsBlueId());
+		scoreQuery.eq(CrScore::getRoomId, evalTemplate.getRedVsBlueId());
 		List<CrScore> scoreList = scoreMapper.selectList(scoreQuery);
 		List<CrEvalScore> evalScoreList = BeanUtils.deepCopyList(scoreList, CrEvalScore.class);
 		for (CrEvalScore item : evalScoreList) {
@@ -290,13 +301,30 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			item.setResourceId(null);
 		}
 
-		LambdaQueryWrapper<CrRole> roleQuery = new LambdaQueryWrapper<>();
-		roleQuery.eq(CrRole::getRoomId,  evalTemplate.getRedVsBlueId());
-		List<CrRole> roleList = crRoleMapper.selectList(roleQuery);
-		List<CrEvalRole> evalRoleList = BeanUtils.deepCopyList(roleList, CrEvalRole.class);
-		for (CrEvalRole item : evalRoleList) {
-			item.setEvalTemplateId(evalTemplateId);
+		List<CrRole> roleList = null;
+		RbRoom rbRoom = null;
+		LocalScene localScene = null;
+
+		LambdaQueryWrapper<CrEvalRole> evalRoleQuery = new LambdaQueryWrapper<>();
+		evalRoleQuery.eq(CrEvalRole::getRoomId, evalTemplate.getRedVsBlueId());
+		Integer existRole = evalRoleMapper.selectCount(evalRoleQuery);
+		if (existRole == 0) {
+			LambdaQueryWrapper<CrRole> roleQuery = new LambdaQueryWrapper<>();
+			roleQuery.eq(CrRole::getRoomId, evalTemplate.getRedVsBlueId());
+			roleList = crRoleMapper.selectList(roleQuery);
 		}
+
+		CrEvalRbRoom existRbRoom = evalRbRoomMapper.selectById(evalTemplate.getRedVsBlueId());
+		if (Objects.isNull(existRbRoom)) {
+			rbRoom = rbRoomMapper.selectById(evalTemplate.getRedVsBlueId());
+			CrEvalLocalScene evalLocalScene = evalLocalSceneMapper.selectById(rbRoom.getLocalSceneId());
+			if (Objects.isNull(evalLocalScene)) {
+				localScene = localSceneMapper.selectById(rbRoom.getLocalSceneId());
+			}
+		}
+		List<CrEvalRole> addRoleList = existRole == 0 ? BeanUtils.deepCopyList(roleList, CrEvalRole.class) : null;
+		CrEvalRbRoom addRbRoom = Objects.isNull(existRbRoom) ? BeanUtils.copy(rbRoom, CrEvalRbRoom.class) : null;
+		CrEvalLocalScene addLocalScene = Objects.nonNull(localScene) ? BeanUtils.copy(localScene, CrEvalLocalScene.class) : null;
 
 		//初始化评估规则数据
 		List<EvalRule> initialEvalRuleList = evalRuleService.getInitialData(evalTemplateId);
@@ -314,8 +342,20 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				if (!CollectionUtils.isEmpty(evalScoreList)) {
 					evalScoreMapper.batchInsert(evalScoreList);
 				}
-				evalRoleMapper.batchInsert(evalRoleList);
+
 				evalRuleMapper.batchInsert(initialEvalRuleList);
+
+				if (!CollectionUtils.isEmpty(addRoleList)) {
+					evalRoleMapper.batchInsert(addRoleList);
+				}
+
+				if (Objects.nonNull(addRbRoom)) {
+					evalRbRoomMapper.insert(addRbRoom);
+				}
+
+				if (Objects.nonNull(addLocalScene)) {
+					evalLocalSceneMapper.insert(addLocalScene);
+				}
 			}
 		});
 		return true;

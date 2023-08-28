@@ -9,6 +9,9 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbSituationScoreRsp;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
+import com.cyberpeace.cr.redvsblue.service.context.TimeData;
+import com.cyberpeace.cr.redvsblue.service.context.XYData;
 
 import java.util.List;
 
@@ -88,4 +91,27 @@ public interface EvalRbRoomService {
      * @return 相关用户列表
      */
     List<UserRole> getUserList(String roomId);
+
+    /**
+     * 获取红蓝对抗实例数据
+     * @param resourceId 红蓝对抗实例id
+     * @return 红蓝对抗实例数据
+     */
+    RbRoomData getRbRoomDataByRoomId(String resourceId);
+
+    /**
+     * 获取任务类别图表数据
+     * @param roomId 红蓝对抗实例id
+     * @param roleType 角色类型
+     * @return 任务类别图表数据
+     */
+    XYData getRbMissionCategory(String roomId, Integer roleType);
+
+    /**
+     * 获取时间趋势数据
+     * @param roomId 红蓝对抗实例id
+     * @return 时间趋势数据
+     */
+    TimeData getRbTimeData(String roomId);
+
 }

@@ -9,9 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * @Entity com.cyberpeace.cr.teamtrain.dao.entity.Role
- */
 @Mapper
 @Repository
 public interface CrEvalRoleMapper extends BaseMapper<CrEvalRole> {

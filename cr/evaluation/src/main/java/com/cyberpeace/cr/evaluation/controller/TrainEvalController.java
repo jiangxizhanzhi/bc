@@ -27,9 +27,9 @@ import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbSituationScoreRsp;
-import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
-import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.controller.rsp.TimeDataRsp;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
+import com.cyberpeace.cr.redvsblue.service.context.TimeData;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -57,13 +57,7 @@ import java.util.stream.Collectors;
 public class TrainEvalController {
 
     @Autowired
-    private RbRoomScoreService rbRoomScoreService;
-
-    @Autowired
     private EvalRbRoomService evalRbRoomService;
-
-    @Autowired
-    private RbRoomService rbRoomService;
 
     @Autowired
     private RemoteUserService remoteUserService;
@@ -306,7 +300,7 @@ public class TrainEvalController {
     public BaseRsp<XYData> getRbMissionCategory(
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
-        XYData data = rbRoomScoreService.getRbMissionCategory(roomId, role_type);
+        XYData data =  evalRbRoomService.getRbMissionCategory(roomId, role_type);
         return new BaseRsp(data);
     }
 
@@ -374,13 +368,12 @@ public class TrainEvalController {
     }
 
     @ApiOperation("当前练习过程的基本信息")
-    @GetMapping()
-    @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    @GetMapping("/getRbRoom")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<RbRoomRsp> getRbRoom(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
         String userId = UserInfoContext.getUserContext().getUserId();
-
-        RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
+        RbRoomData rbRoomData =  evalRbRoomService.getRbRoomDataByRoomId(resource_id);
 
         RoleQuery roleQuery = new RoleQuery();
         roleQuery.setRoomId(rbRoomData.getResourceId());
@@ -495,5 +488,26 @@ public class TrainEvalController {
         return userDataList;
     }
 
+
+    /**
+     * 查询红蓝实时战况页面 正中间计时器
+     * 获取实例运行时间和状态
+     * @return
+     */
+    @ApiOperation("获取实例运行时间和状态")
+    @GetMapping("/rb_time_data")
+    @RequiresPermissions( MenuConstant.WEB_CR_EVALUATION)
+    public BaseRsp<TimeDataRsp> getRbTimeData(
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+        TimeData data =  evalRbRoomService.getRbTimeData(resource_id);
+
+        TimeDataRsp timeDataRsp = new TimeDataRsp();
+        timeDataRsp.setStartTime((int) (data.getStartTime().getTime() / 1000));
+        timeDataRsp.setTimeStamp((int) (System.currentTimeMillis() / 1000));
+        timeDataRsp.setRunning(data.getRunning());
+        timeDataRsp.setStatus(data.getStatus());
+
+        return new BaseRsp(timeDataRsp);
+    }
 
 }

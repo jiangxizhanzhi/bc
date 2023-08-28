@@ -81,8 +81,6 @@ public class CrEvalRole extends BaseTable {
 	 */
 	private Integer businessType;
 
-	private String evalTemplateId;
-
 	public CrEvalRole(String name, Integer code) {
 		this.name = name;
 		this.roleGroup = code;

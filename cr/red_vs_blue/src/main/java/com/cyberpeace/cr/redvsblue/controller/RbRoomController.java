@@ -292,7 +292,7 @@ public class RbRoomController {
 
 	@ApiOperation("查询当前用户角色")
 	@GetMapping("get_role")
-	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE,MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<BaseRole> getRbRoomRole(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 

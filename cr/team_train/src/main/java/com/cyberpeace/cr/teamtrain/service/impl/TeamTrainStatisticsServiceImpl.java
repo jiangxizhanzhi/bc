@@ -41,6 +41,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -320,15 +321,17 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
         List<String> userIds = new ArrayList<>();
-        Map<String, String> roleIpMap = Maps.newHashMap();
+        Map<String, List<String>> roleIpMap = Maps.newHashMap();
         Map<String, String> roleIdMap = Maps.newHashMap();
 
         for(CrRole role: crRoles){
             JSONObject jsonObject = JSONObject.parseObject(role.getNodes());
             List<JSONObject> visibleNodes = jsonObject.getJSONArray("visibleNodes").toJavaList(JSONObject.class);
             for(JSONObject visibleNode: visibleNodes){
-                String nodeId = visibleNode.getString("id");
-                roleIpMap.put(role.getName(),nodeId);
+                List<String> idList = roleIpMap.get(role.getName());
+                idList = CollectionUtils.isEmpty(idList) ? new ArrayList<>() : idList;
+                idList.add(visibleNode.getString("id"));
+                roleIpMap.put(role.getName(),idList);
             }
             userIds.addAll(role.getUserIdList());
             roleIdMap.put(role.getName(),role.getResourceId());
@@ -353,9 +356,13 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
             String roleName = entry.getKey();
             List<TeamCapabilityInfoRsp> teamCapabilityList = CollectionUtils.isEmpty(teamCapabilityInfoMap.get(roleName)) ? new ArrayList<>() : teamCapabilityInfoMap.get(roleName);
             //攻击次数
-            String id = roleIpMap.get(roleName);
+            AtomicInteger times = new AtomicInteger();
+            List<String> idList = roleIpMap.get(roleName);
+            if (!CollectionUtils.isEmpty(idList)) {
+                idList.forEach(item -> times.addAndGet(attackMap.get(item) == null ? 0 : attackMap.get(item)));
+            }
             TeamCapabilityInfoRsp teamCapabilityInfoRsp = new TeamCapabilityInfoRsp();
-            teamCapabilityInfoRsp.setTimes(attackMap.get(id));
+            teamCapabilityInfoRsp.setTimes(times.get());
             //角色任务得分
             String roleId = roleIdMap.get(roleName);
             List<CrTask> taskList = roleTaskMap.get(roleId);

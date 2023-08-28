@@ -42,6 +42,11 @@
             <version>${cr.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>cr_base</artifactId>
+            <version>${cr.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.cyberpeace.situation</groupId>
             <artifactId>situation</artifactId>
             <version>${situation.version}</version>

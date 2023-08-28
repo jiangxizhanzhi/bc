@@ -10,15 +10,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.gateway.service.bo.ResourceRsp;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 资源统计数据控制器
+ *
+ * @author tangjingjing
+ * @date 2023/08/28
+ */
 @Api(tags = "资源统计相关api")
 @RestController
 @RequestMapping("/resource/statistic/")
@@ -26,33 +31,42 @@ import io.swagger.annotations.ApiOperation;
 public class ResourceStatisticsController {
 
 	@Autowired
-	private CourseMapper courseMapper;
-
-	@Autowired
-	private PracticeTheoryMapper practiceTheoryMapper;
-
-	@Autowired
-	private PracticeOperationMapper practiceOperationMapper;
-
-	@Autowired
 	private ToolMapper toolMapper;
+
+	@Autowired
+	private CrConstantsService crConstantsService;
 
 	@GetMapping("")
 	@ApiOperation("获取首页资源统计")
 	public BaseRsp<List<ResourceRsp>> listDirection() {
 		List<ResourceRsp> rsp = new ArrayList<>();
-		Integer courseCnt = courseMapper.selectCount(null);
-		Integer theoryCnt = practiceTheoryMapper.selectCount(null);
-		Integer operationCnt = practiceOperationMapper.selectCount(null);
+		// 读取常量
+		List<CrConstantsConfig> configs = crConstantsService
+				.getByType(CrConstantsConfig.ConstantsType.GWDK.getCode());
+		String courseCount = "0";
+		String adCount = "0";
+		for (CrConstantsConfig config : configs) {
+			if (config.getCnName().equals("课程数量")) {
+				courseCount = config.getEnName();
+			}
+			if (config.getCnName().equals("赛题数量")) {
+				adCount = config.getEnName();
+			}
+		}
+		Integer courseCnt = new Integer(courseCount);
+		Integer adCnt = new Integer(adCount);
+
 		Integer toolCnt = toolMapper.selectCount(null);
-		Integer practiceCnt = theoryCnt + operationCnt;
 		ResourceRsp courseRsp = new ResourceRsp();
 		ResourceRsp practiceCounts = new ResourceRsp();
 		ResourceRsp toolCounts = new ResourceRsp();
+		// 课程数量
 		courseRsp.setResourceName("course");
 		courseRsp.setCount(courseCnt);
-		practiceCounts.setCount(practiceCnt);
+		// 赛题数量
 		practiceCounts.setResourceName("practice");
+		practiceCounts.setCount(adCnt);
+		// 工具数量
 		toolCounts.setResourceName("tool");
 		toolCounts.setCount(toolCnt);
 		rsp.add(courseRsp);

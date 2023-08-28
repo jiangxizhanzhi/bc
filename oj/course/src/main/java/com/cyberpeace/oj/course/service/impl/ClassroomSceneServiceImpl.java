@@ -3,12 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.SceneStatusEnum;
-import com.cyberpeace.oj.course.service.bo.StartSceneBo;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
-import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +17,8 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -49,11 +45,15 @@ import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.GroupWsMessageIdentifier;
+import com.cyberpeace.oj.course.service.bo.StartSceneBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
+import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.google.common.collect.Lists;
@@ -120,8 +120,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 		//启动场景时，获取该课时最新的存活时间
 		groupInfo.setDestroyDelay(courseLesson.getDestroyDelay());
-
-		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
+		// 5.4.1只限制前台启动场景数量
+		if (authContext.getIsWeb()) {
+			ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
+		}
 
 		// 不为空返回已存在场景
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(groupId,
@@ -252,11 +254,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		if (CollectionUtils.isEmpty(groupIds)) {
 			return Lists.newArrayList();
 		}
-		// 场景启动数据校验
-		List<OjLocalScene> ojLocalScenes = ojLocalSceneMapper.selectByGroupIds(groupIds);
-		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(),
-				groupInfoList.size() - ojLocalScenes.size());
-
+		
 		if (null != batchSceneMap.get(classroomId)) {
 			batchSceneMap.get(classroomId).addStartScene(UserInfoContext.getUserContext(),
 					groupInfoList);

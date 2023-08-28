@@ -569,7 +569,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			missionEvaluationContext.setRank(rankContext.getRank());
 			missionEvaluationContext.setRankScore(rankContext.getRankScore());
 
-			Mission mission = missionMap.get(missionEvaluationContext.getMissionHash());
+			Mission missionByMap = missionMap.get(missionEvaluationContext.getMissionHash());
+			Mission mission = BeanUtils.copy(missionByMap, Mission.class);
 			//任务答案 flag类型:静态类型取flagValue,动态根据任务查对应flagValue
 			if (MissionBase.MissionType.FLAG.getCode().equals(mission.getType())) {
 				MissionFlagQuery missionFlagQuery = JSON.parseObject(mission.getAnswer(), MissionFlagQuery.class);

@@ -24,11 +24,4 @@
         order by T1.id desc
     </select>
 
-    <select id="seletTemplateById" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalRecord">
-
-
-    </select>
-    <select id="getScoreByRole" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalRecord">
-        select user_ids from cr_role where room_id = #{roomId}
-    </select>
 </mapper>

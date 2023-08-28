@@ -52,7 +52,7 @@
         select count(l.resource_id)  as count,l.create_time,r.role_group as roleGroup
         from cr_task_log l
         left join cr_task t on t.mission_id = l.mission_id
-        left join cr_role r on r.resource_id = t.role_id
+        left join cr_eval_role r on r.resource_id = t.role_id
         where l.room_id = #{room_id}
         and (l.action_code =${RELEASE} or l.action_code =${START_ANSWER})
         group by l.create_time,t.role_id

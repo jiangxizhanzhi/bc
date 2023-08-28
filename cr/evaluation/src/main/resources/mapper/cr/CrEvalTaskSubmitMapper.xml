@@ -38,7 +38,7 @@
     </select>
     <select id="getByRoomId" resultType="com.cyberpeace.cr.evaluation.controller.bo.EvalTaskBo">
         select a.score, a.mission_score, c.role_group , c.resource_id as role_id, c.name
-        from cr_eval_task_submit a,cr_eval_train_task b,cr_role c
+        from cr_eval_task_submit a,cr_eval_train_task b,cr_eval_role c
         <where>
             a.task_id=b.resource_id and b.role_id=c.resource_id
             and b.eval_template_id = #{template_id}

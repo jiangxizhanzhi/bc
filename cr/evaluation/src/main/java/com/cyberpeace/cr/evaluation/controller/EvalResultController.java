@@ -20,7 +20,10 @@ import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoleAssetNodeCopy;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.mapper.*;
+import com.cyberpeace.cr.crbase.dao.mapper.CrNoticeMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleAssetNodeCopyMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -35,6 +38,8 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRoleScore;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
+import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalRoleMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalResultMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
@@ -53,7 +58,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.cyberpeace.common.util.EnumUtils.getListCode;
@@ -78,7 +86,7 @@ public class EvalResultController {
     private EvalTemplateMapper evalTemplateMapper;
 
     @Autowired
-    private CrRoleMapper crRoleMapper;
+    private CrEvalRoleMapper crEvalRoleMapper;
 
     @Autowired
     private CrTaskLogMapper crTaskLogMapper;
@@ -171,7 +179,8 @@ public class EvalResultController {
         EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
         RoleQuery roleQuery = new RoleQuery();
         roleQuery.setRoomId(evalTemplate.getRedVsBlueId());
-        List<CrRole> crRoles = crRoleMapper.selectCrRoleByRoomId(roleQuery);
+
+        List<CrEvalRole> crRoles = crEvalRoleMapper.selectCrRoleByRoomId(roleQuery);
         crRoles = crRoles.stream().filter(s-> s.getRoleGroup().equals(type)).collect(Collectors.toList());
         if(evalRecord.getStatus().equals(EvalRecord.Status.END.getCode()) || evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())){
             LambdaQueryWrapper<EvalRoleScore> query = new LambdaQueryWrapper<>();
@@ -179,7 +188,7 @@ public class EvalResultController {
             query.eq(EvalRoleScore::getRoleGroup, type);
             List<EvalRoleScore> evalRoleScores = evalRoleScoreService.getBaseMapper().selectList(query);
             Map<String, EvalRoleScore> scoreMap = StreamApiUtils.toMap(evalRoleScores, EvalRoleScore::getRoleId, s -> s);
-            for(CrRole crRole:crRoles){
+            for(CrEvalRole crRole:crRoles){
                 EvalRoleScoreListRsp rsp = new EvalRoleScoreListRsp();
                 rsp.setRole(crRole.getRoleGroup());
                 rsp.setName(crRole.getName());
@@ -195,13 +204,12 @@ public class EvalResultController {
     }
 
 
-    private List<CrRole> getCrRoles(String redVsBlueId) {
-        LambdaQueryWrapper<CrRole> query = new LambdaQueryWrapper<>();
-        query.eq(CrRole::getRoomId, redVsBlueId);
-        List<CrRole> crRoles = crRoleMapper.selectList(query);
-        List<CrRole> redRoles = crRoles.stream().filter(crRole -> crRole.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode()) ||
+    private List<CrEvalRole> getCrRoles(String redVsBlueId) {
+        LambdaQueryWrapper<CrEvalRole> query = new LambdaQueryWrapper<>();
+        query.eq(CrEvalRole::getRoomId, redVsBlueId);
+        List<CrEvalRole> crRoles = crEvalRoleMapper.selectList(query);
+        return crRoles.stream().filter(crRole -> crRole.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode()) ||
                 crRole.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())).collect(Collectors.toList());
-        return redRoles;
     }
 
     private String getRoomId(String resourceId) {
@@ -258,10 +266,10 @@ public class EvalResultController {
         List<Integer> blueCount = new ArrayList<>();
 
         String redVsBlueId = getRoomId(resourceId);
-        List<CrRole> crRoles = getCrRoles(redVsBlueId);
-        Map<Integer, List<CrRole>> roleMap = StreamApiUtils.groupBy(crRoles, CrRole::getRoleGroup);
-        List<CrRole> blueRoles = roleMap.get(CrRole.RbRoleGroup.BLUE.getCode());
-        List<CrRole> redRoles = roleMap.get(CrRole.RbRoleGroup.RED.getCode());
+        List<CrEvalRole> crRoles = getCrRoles(redVsBlueId);
+        Map<Integer, List<CrEvalRole>> roleMap = StreamApiUtils.groupBy(crRoles, CrEvalRole::getRoleGroup);
+        List<CrEvalRole> blueRoles = roleMap.get(CrRole.RbRoleGroup.BLUE.getCode());
+        List<CrEvalRole> redRoles = roleMap.get(CrRole.RbRoleGroup.RED.getCode());
 
         List<CrRoleNode> redNode= getRoleNodeCount(redRoles);
         List<String> redDeviceIds = StreamApiUtils.getColumn(redNode, CrRoleNode::getId).stream().distinct().collect(Collectors.toList());
@@ -299,9 +307,9 @@ public class EvalResultController {
     }
 
 
-    private List<CrRoleNode> getRoleNodeCount(List<CrRole> redRoles) {
+    private List<CrRoleNode> getRoleNodeCount(List<CrEvalRole> redRoles) {
         List<CrRoleNode> assetNodes = new ArrayList<>();
-        for(CrRole redRole: redRoles){
+        for(CrEvalRole redRole: redRoles){
             CrRoleNodesData nodeData = redRole.getNodeData();
             assetNodes.addAll(nodeData.getAssetNodes());
         }

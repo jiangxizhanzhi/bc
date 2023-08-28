@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -114,4 +115,13 @@ public interface EvalRbRoomService {
      */
     TimeData getRbTimeData(String roomId);
 
+    /**
+     * 获取某用户在单个训练中的雷达图
+     * @param roomId 训练实例id
+     * @param userId 用户id
+     * @return 雷达数值
+     */
+    List<Integer> getRadar(String evalTemplateId, String roomId, String userId);
+
+    MissionDynamicRsp getUserMissionDynamic(String evalTemplateId, String roomId, String studentId);
 }

@@ -12,7 +12,9 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper;
@@ -20,10 +22,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.MissionTaskSummitContext;
-import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
-import com.cyberpeace.cr.crbase.service.context.TaskContext;
-import com.cyberpeace.cr.crbase.service.context.TrainingScore;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -252,7 +251,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     @Override
     public StudentScoreRsp getStudentScore(String resource_id, String user_hash) {
 
-        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserId(resource_id, user_hash);
+        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByTemplateIdAndUserId(resource_id, user_hash);
         List<TaskContext> taskContextList = new ArrayList<>();
         List<String> missionIds = new ArrayList<>();
         for (CrEvalTrainTask task : crEvalTrainTasks) {
@@ -874,8 +873,156 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
             xData.add(missionCategory.getName());
             yData.add(missionsCategory.getOrDefault(missionCategory.getName(), 0));
         }
-
         return new XYData(xData, yData);
     }
 
+
+    @Override
+    public List<Integer> getRadar(String evalTemplateId,String roomId, String userId) {
+        CrEvalRole crRole = getCrRoleByRoomIdAndUserId(roomId, userId);
+        List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole( crRole);
+        // 获取当前学员的每项总分
+        List<Integer> allPoints = getPoints();
+
+        for (MissionSchemeObject<MissionContext> missionSchemeObject : missionSchemeObjectList) {
+            for (MissionContext mission : missionSchemeObject.getMissions()) {
+                String skillPoints = mission.getSkillPoints();
+                List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
+
+                for (int i = 0; i < points.size(); i++) {
+                    allPoints.set(i, allPoints.get(i) + points.get(i));
+                }
+            }
+        }
+        // 获取当前学员成功的每项总分
+        List<Integer> successPoints = getPoints();
+        List<CrEvalTrainTask> finishedTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, Collections.singletonList(userId),CrTask.TaskStatus.FINISHED_STATUS_LIST);
+        for (CrEvalTrainTask finishedTask : finishedTasks) {
+            if (CrTask.TaskStatus.SUCCESS.getCode().equals(finishedTask.getStatus())) {
+                String skillPoints = missionService.getById(finishedTask.getMissionId())
+                        .getSkillPoints();
+                List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
+
+                for (int i = 0; i < points.size(); i++) {
+                    successPoints.set(i, successPoints.get(i) + points.get(i));
+                }
+            }
+        }
+
+        List<Integer> radarPoints = getPoints();
+        for (int i = 0; i < successPoints.size(); i++) {
+            int radarPoint = 0;
+            if (!allPoints.get(i).equals(0)) {
+                radarPoint = successPoints.get(i) * 100 / allPoints.get(i);
+            }
+            radarPoints.set(i, radarPoint);
+        }
+        return radarPoints;
+    }
+
+    public CrEvalRole getCrRoleByRoomIdAndUserId(String roomId, String userId) {
+
+        LambdaQueryWrapper<CrEvalRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CrEvalRole::getRoomId,roomId);
+        wrapper.like(CrEvalRole::getUserIds,userId);
+        CrEvalRole crRole = crEvalRoleMapper.selectOne(wrapper);
+        if (crRole == null) {
+            log.error("User does not have Role in TeamRoom！roomId=[{}] userId=[{}]", roomId,
+                    userId);
+            throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+        }
+        return crRole;
+    }
+
+    public List<MissionSchemeObject<MissionContext>> getBaseMissionByRole(CrEvalRole crRole) {
+        List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = Lists.newArrayList();
+        for (MissionStageScheme missionStageScheme : crRole.getMissionStageSchemes()) {
+            List<Mission> missionList = missionService.batchGet(missionStageScheme.getMissions());
+
+            missionList.forEach(mission -> {
+                mission.setAnswer("");
+            });
+
+            List<MissionContext> missionContextList = BeanUtils.deepCopyList(missionList,
+                    MissionContext.class);
+            MissionSchemeObject missionSchemeObject = BeanUtils.copy(missionStageScheme, MissionSchemeObject.class);
+            missionSchemeObject.setMissions(missionContextList);
+            missionSchemeObjectList.add(missionSchemeObject);
+        }
+        return missionSchemeObjectList;
+    }
+
+
+    private List<Integer> getPoints() {
+        List<Integer> points = Lists.newArrayList();
+        int skillPointsSize = CrCommonConstants.SKILL_POINTS_SIZE;
+        for (int i = 0; i < skillPointsSize; i++) {
+            points.add(0);
+        }
+        return points;
+    }
+
+    @Override
+    public MissionDynamicRsp getUserMissionDynamic(String evalTemplateId,String roomId,String studentId) {
+        TaskCounter taskCounter = getTaskCounter(evalTemplateId, roomId, studentId);
+
+        List<StatisticalInfo> statisticalInfoList = Lists.newArrayList();
+        StatisticalInfo statisticalInfo = new StatisticalInfo();
+        statisticalInfo.setStatistical_state(TaskCounter.TaskType.FINISHED.getCode());
+        statisticalInfo.setValue(taskCounter.getFinished());
+        statisticalInfoList.add(statisticalInfo);
+
+        StatisticalInfo statisticalInfo1 = new StatisticalInfo();
+        statisticalInfo1.setStatistical_state(TaskCounter.TaskType.RELEASED.getCode());
+        statisticalInfo1.setValue(taskCounter.getReleased());
+        statisticalInfoList.add(statisticalInfo1);
+
+        StatisticalInfo statisticalInfo2 = new StatisticalInfo();
+        statisticalInfo2.setStatistical_state(TaskCounter.TaskType.NOTRELEASED.getCode());
+        statisticalInfo2.setValue(taskCounter.getNotReleased());
+        statisticalInfoList.add(statisticalInfo2);
+
+        StatisticalInfo statisticalInfo3 = new StatisticalInfo();
+        statisticalInfo3.setStatistical_state(TaskCounter.TaskType.CLOSED.getCode());
+        statisticalInfo3.setValue(taskCounter.getClosed());
+        statisticalInfoList.add(statisticalInfo3);
+
+        List<DynamicData> dynamicDataList = missionService.getTaskLogByRoomIdAndUserId(roomId,studentId);
+        MissionDynamicRsp missionDynamicRsp = new MissionDynamicRsp();
+        missionDynamicRsp.setDynamicData(dynamicDataList);
+        missionDynamicRsp.setStatisticalInfo(statisticalInfoList);
+        return missionDynamicRsp;
+    }
+
+    public TaskCounter getTaskCounter(String evalTemplateId,String roomId, String studentId) {
+        TaskCounter taskCounter = new TaskCounter();
+
+        CrEvalRole crRole = getCrRoleByRoomIdAndUserId(roomId, studentId);
+        Integer finished = 0;
+        Integer released = 0;
+        Integer closed = 0;
+
+        List<CrEvalTrainTask> taskList = evalTrainTaskMapper.selectByTemplateIdAndUserId(evalTemplateId, studentId);
+        List<TaskContext> taskContextList = getTaskContext(taskList);
+
+        for (TaskContext taskContext : taskContextList) {
+            if (taskContext.isFinished()) {
+                finished++;
+            } else if (taskContext.getStatus().intValue() == CrTask.TaskStatus.CLOSE.getCode()) {
+                closed++;
+            } else {
+                released++;
+            }
+        }
+        taskCounter.setFinished(finished);
+        taskCounter.setReleased(released);
+        taskCounter.setClosed(closed);
+        int countMissions = 0;
+        for (MissionStageScheme missionStageScheme : crRole.getMissionStageSchemes()) {
+            countMissions += missionStageScheme.getMissions().size();
+        }
+        taskCounter.setNotReleased(countMissions - finished - released - closed);
+
+        return taskCounter;
+    }
 }

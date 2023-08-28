@@ -17,7 +17,7 @@
         </foreach>
     </insert>
 
-    <select id="selectByRoomIdAndUserId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
+    <select id="selectByTemplateIdAndUserId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask">
         select *
         from cr_eval_train_task
         where eval_template_id = #{evalTemplateId}

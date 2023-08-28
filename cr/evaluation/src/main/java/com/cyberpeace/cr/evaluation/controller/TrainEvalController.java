@@ -200,11 +200,11 @@ public class TrainEvalController {
     @GetMapping("/get_user_mission_dynamic")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
-            @ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id,
-            @ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
-        MissionDynamicRsp missionDynamicRsp = crScoreController.getUserMissionDynamic(resource_id, student_id);
-
-        return new BaseRsp<>(missionDynamicRsp);
+              @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
+            @ApiParam(name = "student_id", value = "用户id", required = true)@RequestParam("student_id") String userId) {
+        MissionDynamicRsp userMissionDynamic = evalRbRoomService.getUserMissionDynamic(evalTemplateId, roomId, userId);
+        return new BaseRsp<>(userMissionDynamic);
     }
 
     @ApiOperation("查询学员评分")
@@ -508,6 +508,19 @@ public class TrainEvalController {
         timeDataRsp.setStatus(data.getStatus());
 
         return new BaseRsp(timeDataRsp);
+    }
+
+
+    @ApiOperation("获取学员技能点雷达图")
+    @GetMapping("/missions/radar")
+    @RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
+            logical = Logical.OR)
+    public BaseRsp<List<Integer>> getRadar(
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
+            @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
+            @ApiParam(name = "user_hash", value = "用户id", required = true)@RequestParam("user_hash") String userId) {
+        List<Integer> radars = evalRbRoomService.getRadar(evalTemplateId,roomId, userId);
+        return new BaseRsp<>(radars);
     }
 
 }

@@ -14,7 +14,7 @@ public interface CrEvalTrainTaskMapper extends BaseMapper<CrEvalTrainTask> {
 
 	void batchInsert(@Param("list") List<CrEvalTrainTask> list);
 
-	List<CrEvalTrainTask> selectByRoomIdAndUserId(@Param("evalTemplateId")String evalTemplateId,@Param("userId") String userId);
+	List<CrEvalTrainTask> selectByTemplateIdAndUserId(@Param("evalTemplateId")String evalTemplateId,@Param("userId") String userId);
 
 	List<CrEvalTrainTask> selectByRoomIdAndUserIdsAndStatusList(@Param("evalTemplateId")String evalTemplateId,@Param("userIds") List<String> userIds,
 																@Param("statusList") List<Integer> statusList);

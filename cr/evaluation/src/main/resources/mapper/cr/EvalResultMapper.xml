@@ -19,7 +19,7 @@
             and T1.type = #{type}
         </if>
         <if test="pattern != null and pattern != ''">
-            and T2.name = #{pattern}
+            and T2.name like concat("%", #{pattern} ,"%")
         </if>
 
     </select>

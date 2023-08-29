@@ -16,14 +16,9 @@ import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountRingGraph;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventStatusCount;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity;
-import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrRoleAssetNodeCopy;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrNoticeMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleAssetNodeCopyMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -39,10 +34,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRoleScore;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
-import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalRoleMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalResultMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.cyberpeace.cr.evaluation.service.EvalResultService;
 import com.cyberpeace.cr.evaluation.service.EvalRoleScoreService;
@@ -89,13 +81,13 @@ public class EvalResultController {
     private CrEvalRoleMapper crEvalRoleMapper;
 
     @Autowired
-    private CrTaskLogMapper crTaskLogMapper;
-
-    @Autowired
     private CrNoticeMapper crNoticeMapper;
 
     @Autowired
-    private CrTaskMapper crTaskMapper;
+    private CrEvalTrainTaskMapper crEvalTrainTaskMapper;
+
+    @Autowired
+    private CrEvalTaskLogMapper crEvalTaskLogMapper;
 
     @Autowired
     private CrRoleAssetNodeCopyMapper crRoleAssetNodeCopyMapper;
@@ -222,6 +214,14 @@ public class EvalResultController {
         return redVsBlueId;
     }
 
+    private EvalTemplate getRoomById(String resourceId) {
+        EvalRecord evalRecord = evalRecordMapper.selectById(resourceId);
+        if (null == evalRecord) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        return evalTemplateMapper.selectById(evalRecord.getTemplateId());
+    }
+
     @ApiOperation("评估结果详情-红蓝队实时消息-折线图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/msg/")
@@ -234,7 +234,8 @@ public class EvalResultController {
 
         String redVsBlueId = getRoomId(resourceId);
 
-        List<EvalRoleEventActivity> crTaskLogs = crTaskLogMapper.getReleaseIdsByRoomIdAndUsers(redVsBlueId);
+        List<Integer> activeTimeList = CrTaskLog.ActionCode.ACTIVE_TIME_LIST;
+        List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(redVsBlueId,activeTimeList);
 
         for(EvalRoleEventActivity crTaskLog:crTaskLogs){
             dates.add(new SimpleDateFormat("MM-dd HH:mm:ss").format(crTaskLog.getCreateTime()));
@@ -322,7 +323,7 @@ public class EvalResultController {
     public BaseRsp<List<EvalRoleEventPercentRsp>> getEventBar(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
         String redVsBlueId = getRoomId(resourceId);
-        List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndType(redVsBlueId);
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByRoomIdAndType(redVsBlueId);
         Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
         List<EvalRoleEventPercentRsp> res = new ArrayList<>();
         List<Integer> listCode = getListCode(ActionTypeZHL.class);
@@ -350,19 +351,21 @@ public class EvalResultController {
     @ApiOperation("评估结果详情-攻防事件-雷达图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/count")
-    public BaseRsp<List<EvalEventCountBar>> getEventCount(@ApiParam(name = "id",
-            value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
-        String redVsBlueId = getRoomId(resourceId);
-        return new BaseRsp<>(evalResultService.getEventCount(redVsBlueId, type));
+    public BaseRsp<List<EvalEventCountBar>> getEventCount(
+            @ApiParam(name = "id",value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
+        EvalTemplate evalTemplate = getRoomById(resourceId);
+        return new BaseRsp<>(evalResultService.getEventCount(evalTemplate.getResourceId(), type));
     }
 
     @ApiOperation("评估结果详情-攻防事件-环形图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/pencent")
-    public BaseRsp<List<EvalEventCountRingGraph>> getEventPencent(@ApiParam(name = "id",
+    public BaseRsp<List<EvalEventCountRingGraph>> getEventPencent(
+
+            @ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
-        String redVsBlueId = getRoomId(resourceId);
-        return new BaseRsp<>(evalResultService.getEventPercent(redVsBlueId, type));
+        EvalTemplate evalTemplate = getRoomById(resourceId);
+        return new BaseRsp<>(evalResultService.getEventPercent(evalTemplate.getResourceId(), type));
     }
 
 
@@ -375,7 +378,7 @@ public class EvalResultController {
         String redVsBlueId = getRoomId(resourceId);
         queryWrapper.eq(CrNotice::getRoomId, redVsBlueId);
         List<CrNotice> crNotices = crNoticeMapper.selectList(queryWrapper);
-        List<EvalEventStatusCount> taskByRoomIdAndUsers = crTaskMapper.getTaskByRoomIdAndUsers(redVsBlueId);
+        List<EvalEventStatusCount> taskByRoomIdAndUsers = crEvalTrainTaskMapper.getTaskByRoomIdAndUsers(redVsBlueId);
         List<EvalEventStatusCount> res = new ArrayList<>();
         Map<Integer, Integer> toMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventStatusCount::getStatus, EvalEventStatusCount::getCount);
         List<Integer> codes = Arrays.asList(CrTask.TaskStatus.CLOSE.getCode(), CrTask.TaskStatus.RELEASED.getCode());

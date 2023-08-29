@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTaskLogMapper">
+
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into cr_eval_task_log
+        (resource_id, room_id, mission_id, action_code, user_id, task_id, eval_template_id, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId,jdbcType=VARCHAR}, #{item.roomId,jdbcType=VARCHAR}, #{item.missionId,jdbcType=VARCHAR},
+            #{item.actionCode,jdbcType=TINYINT}, #{item.userId,jdbcType=VARCHAR},#{item.taskId,jdbcType=VARCHAR},
+            #{item.evalTemplateId,jdbcType=VARCHAR},now(),now())
+        </foreach>
+    </insert>
+
+    <select id="getTaskByRoomIdAndType" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar">
+        <bind name="RELEASED" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@MAN_SUCCESS.code"/>
+        <bind name="CLOSE" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@ROBOT_SUCCESS.code"/>
+        select m.event_type as type,count(t.resource_id) as count
+        from cr_eval_task_log t
+        LEFT JOIN cr_mission m on t.resource_id = m.resource_id
+        where t.eval_template_id = #{evalTemplateId}
+        and (t.action_code =${RELEASED} or t.action_code =${CLOSE}) and m.event_type is not null
+        group by m.event_type
+    </select>
+
+    <select id="getReleaseIdsByRoomIdAndUsers" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity">
+        select count(l.resource_id)  as count,l.create_time,r.role_group as roleGroup
+        from cr_eval_task_log l
+        left join cr_eval_train_task t on t.resource_id = l.task_id
+        left join cr_eval_role r on r.resource_id = t.role_id
+        where l.room_id = #{room_id}
+        and l.action_code in
+        <foreach collection="activeTimeList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        group by l.create_time,t.role_id
+    </select>
+
+</mapper>

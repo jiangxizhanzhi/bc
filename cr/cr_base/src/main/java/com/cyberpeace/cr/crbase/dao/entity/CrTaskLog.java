@@ -7,6 +7,10 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,6 +42,10 @@ public class CrTaskLog extends BaseTable {
 
 		@Getter
 		private String desc;
+
+		public static final List<Integer> ACTIVE_TIME_LIST = new ArrayList<>(
+				Arrays.asList(ROBOT_SUCCESS.code, ROBOT_FAILURE.code, MAN_SUCCESS.code,MAN_FAILURE.code,MAN_REJECT.code,START_ANSWER.code ));
+
 
 		ActionCode(Integer code, String desc) {
 			this.code = code;

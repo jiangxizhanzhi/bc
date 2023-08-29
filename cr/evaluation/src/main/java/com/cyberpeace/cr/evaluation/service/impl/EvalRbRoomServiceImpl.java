@@ -28,10 +28,7 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalScore;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
@@ -97,10 +94,10 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     private MissionService missionService;
 
     @Autowired
-    private CrTaskService crTaskService;
+    private CrEvalRbRoomMapper crEvalRbRoomMapper;
 
     @Autowired
-    private CrEvalRbRoomMapper crEvalRbRoomMapper;
+    private CrEvalTaskLogMapper crEvalTaskLogMapper;
 
     private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
             CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
@@ -350,7 +347,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         crEvalTrainTask.setStatus(evaluateStatus);
         crEvalTrainTask.setScore(score);
 
-        CrTaskLog evaluationLog = CrTaskLog.builder().roomId(crEvalTaskSubmit.getRoomId())
+        CrEvalTaskLog evaluationLog = CrEvalTaskLog.builder().roomId(crEvalTaskSubmit.getRoomId())
                 .missionId(crEvalTrainTask.getMissionId())
                 .actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
                 .build();
@@ -362,6 +359,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
                 evalTrainTaskMapper.updateById(crEvalTrainTask);
                 crEvalTaskSubmitMapper.updateById(crEvalTaskSubmit);
                 evaluationLog.setTaskId(crEvalTrainTask.getResourceId());
+                crEvalTaskLogMapper.insert(evaluationLog);
             }
         });
 
@@ -645,9 +643,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     public JSONObject getRbMissionEvaluation(String evalTemplateId, String roomId, Integer roleType) {
 
         RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
-
-        Integer unreportedCount = crTaskService.countUnreportedByUsers(roomId,
-                roleUserIds.getUserIds());
+        Integer unreportedCount = evalTrainTaskMapper.countUnreportedByRoomIdAndUserIds(evalTemplateId, roleUserIds.getUserIds());
         // 获取任务状态数据
         List<CrEvalTrainTask> taskList = getEvalTrainTaskList(evalTemplateId, roleUserIds.getUserIds());
         List<TaskContext> crTaskSubmits = getTaskContext(taskList);
@@ -767,9 +763,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     @Override
     public List<UserRole> getUserList(String roomId) {
         List<UserRole> userRoleList = Lists.newArrayList();
-
         List<String> userList = Lists.newArrayList();
-
         List<CrEvalRole> crRoles = selectRbStudentsRoleByRoomId(roomId);
 
         for (CrEvalRole crRole : crRoles) {
@@ -778,8 +772,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
                 UserRole userRole = new UserRole();
                 userRole.setResourceId(user);
                 userRole.setRoleName(crRole.getName());
-                userRole.setRoleDesc(
-                        crRole.getDescription() == null ? "" : crRole.getDescription());
+                userRole.setRoleDesc(crRole.getDescription() == null ? "" : crRole.getDescription());
                 userRoleList.add(userRole);
                 userList.add(user);
             });
@@ -800,7 +793,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
                 userRole.setLogo(userInfo.getAvatarUrl());
             }
         }
-
         return userRoleList;
     }
 
@@ -843,27 +835,19 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         return timeDate;
     }
 
-
-
-
     @Override
     public XYData getRbMissionCategory(String roomId, Integer roleType) {
         // 获取场景实例下的任务hash
         RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
-
         List<CrEvalTrainTask> evalTrainTaskList = getEvalTrainTaskList(roomId, roleUserIds.getUserIds());
         List<TaskContext> taskContexts = getTaskContext(evalTrainTaskList);
 
         Map<String, Integer> missionsCategory = Maps.newHashMap();
-
         List<MissionCategory> missionCategories = missionService.listCategories();
-
-        Map<String, String> missionCategoryMap = missionCategories.stream()
-                .collect(Collectors.toMap(MissionCategory::getResourceId, bo -> bo.getName()));
+        Map<String, String> missionCategoryMap = missionCategories.stream().collect(Collectors.toMap(MissionCategory::getResourceId, MissionCategory::getName));
         for (TaskContext taskContext : taskContexts) {
             Mission mission = taskContext.getMission();
-            Integer count = missionsCategory
-                    .getOrDefault(missionCategoryMap.get(mission.getCategoryId()), 0) + 1;
+            Integer count = missionsCategory.getOrDefault(missionCategoryMap.get(mission.getCategoryId()), 0) + 1;
             missionsCategory.put(missionCategoryMap.get(mission.getCategoryId()), count);
         }
 
@@ -900,8 +884,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         List<CrEvalTrainTask> finishedTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, Collections.singletonList(userId),CrTask.TaskStatus.FINISHED_STATUS_LIST);
         for (CrEvalTrainTask finishedTask : finishedTasks) {
             if (CrTask.TaskStatus.SUCCESS.getCode().equals(finishedTask.getStatus())) {
-                String skillPoints = missionService.getById(finishedTask.getMissionId())
-                        .getSkillPoints();
+                String skillPoints = missionService.getById(finishedTask.getMissionId()).getSkillPoints();
                 List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
 
                 for (int i = 0; i < points.size(); i++) {
@@ -928,8 +911,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         wrapper.like(CrEvalRole::getUserIds,userId);
         CrEvalRole crRole = crEvalRoleMapper.selectOne(wrapper);
         if (crRole == null) {
-            log.error("User does not have Role in TeamRoom！roomId=[{}] userId=[{}]", roomId,
-                    userId);
+            log.error("User does not have Role in TeamRoom！roomId=[{}] userId=[{}]", roomId, userId);
             throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
         }
         return crRole;
@@ -940,12 +922,9 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         for (MissionStageScheme missionStageScheme : crRole.getMissionStageSchemes()) {
             List<Mission> missionList = missionService.batchGet(missionStageScheme.getMissions());
 
-            missionList.forEach(mission -> {
-                mission.setAnswer("");
-            });
+            missionList.forEach(mission -> mission.setAnswer(""));
 
-            List<MissionContext> missionContextList = BeanUtils.deepCopyList(missionList,
-                    MissionContext.class);
+            List<MissionContext> missionContextList = BeanUtils.deepCopyList(missionList, MissionContext.class);
             MissionSchemeObject missionSchemeObject = BeanUtils.copy(missionStageScheme, MissionSchemeObject.class);
             missionSchemeObject.setMissions(missionContextList);
             missionSchemeObjectList.add(missionSchemeObject);

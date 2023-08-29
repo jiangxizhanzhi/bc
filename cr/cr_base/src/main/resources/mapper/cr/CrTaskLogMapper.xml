@@ -46,17 +46,6 @@
         from cr_task_log
         where mission_id = #{missionId}
     </select>
-    <select id="getReleaseIdsByRoomIdAndUsers" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity">
-        <bind name="RELEASE" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@SUBMIT.code"/>
-        <bind name="START_ANSWER" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@START_ANSWER.code"/>
-        select count(l.resource_id)  as count,l.create_time,r.role_group as roleGroup
-        from cr_task_log l
-        left join cr_task t on t.mission_id = l.mission_id
-        left join cr_eval_role r on r.resource_id = t.role_id
-        where l.room_id = #{room_id}
-        and (l.action_code =${RELEASE} or l.action_code =${START_ANSWER})
-        group by l.create_time,t.role_id
-    </select>
 
     <insert id="batchInsert" parameterType="com.cyberpeace.cr.crbase.dao.entity.CrTaskLog">
         insert into cr_task_log
@@ -68,4 +57,15 @@
             #{taskLost.userId}, #{taskLost.taskId}, now(),now())
         </foreach>
     </insert>
+
+    <select id="getTaskByRoomIdAndType" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar">
+        <bind name="RELEASED" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@MAN_SUCCESS.code"/>
+        <bind name="CLOSE" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@ROBOT_SUCCESS.code"/>
+        select m.event_type as type,count(t.resource_id) as count
+        from cr_task_log t
+        LEFT JOIN cr_mission m on t.resource_id = m.resource_id
+        where t.room_id = #{roomId}
+        and (t.action_code =${RELEASED} or t.action_code =${CLOSE}) and m.event_type is not null
+        group by m.event_type
+    </select>
 </mapper>

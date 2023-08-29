@@ -5,8 +5,12 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
@@ -16,6 +20,7 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,10 +31,16 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.cyberpeace.common.util.EnumUtils.getListCode;
 
 @Api(tags = "红蓝对抗实例统计")
 @RestController
@@ -49,6 +60,8 @@ public class RbRoomStatisticsController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+	@Autowired
+	private CrTaskLogMapper crTaskLogMapper;
 
 	/**
 	 * 查询红蓝实时战况页面 正中间计时器
@@ -309,4 +322,37 @@ public class RbRoomStatisticsController {
 	) {
 		return new BaseRsp<>();
 	}
+
+
+	@ApiOperation("攻击方式统计")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@GetMapping("/event/count")
+	public BaseRsp<List<EvalEventCountBar>> getEventCount(
+			@ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
+			@RequestParam("role") @NotEmpty Integer type) {
+		List<EvalEventCountBar> eventCountBarList = new ArrayList<>();
+			List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskLogMapper.getTaskByRoomIdAndType(roomId);
+			Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
+			List<Integer> listCode = getListCode(ActionTypeZHL.class);
+			if (type.equals(CrRole.RbRoleGroup.RED.getCode())) {
+				listCode = listCode.stream().filter(s -> s <= ActionTypeZHL.ZHL_ATTACK6.getCode()).collect(Collectors.toList());
+			} else if (type.equals(CrRole.RbRoleGroup.BLUE.getCode())) {
+				listCode = listCode.stream().filter(s -> s > ActionTypeZHL.ZHL_ATTACK6.getCode()).collect(Collectors.toList());
+			} else {
+				return new BaseRsp<>();
+			}
+			for (Integer tmp : listCode) {
+				EvalEventCountBar rsp = new EvalEventCountBar();
+				rsp.setCount(0);
+				if (barMap.containsKey(tmp)) {
+					EvalEventCountBar evalEventCountBar = barMap.get(tmp);
+					rsp.setCount(evalEventCountBar.getCount());
+				}
+				String eventTypeStr = EnumUtils.getEnumDescByCode(tmp, ActionTypeZHL.class);
+				rsp.setType(tmp);
+				rsp.setEventName(eventTypeStr);
+				eventCountBarList.add(rsp);
+			}
+			return new BaseRsp<>(eventCountBarList);
+		}
 }

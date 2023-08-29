@@ -63,9 +63,6 @@ public class TrainEvalController {
     private RemoteUserService remoteUserService;
 
     @Autowired
-    private CrScoreController crScoreController;
-
-    @Autowired
     private EvalResultService evalResultService;
 
     @Autowired
@@ -350,21 +347,21 @@ public class TrainEvalController {
     }
 
     @ApiOperation("攻击方式统计")
-    @RequiresPermissions(value = {MenuConstant.WEB_CR_EVALUATION, MenuConstant.WEB_CR_RED_VS_BLUE}, logical = Logical.OR)
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/count")
     public BaseRsp<List<EvalEventCountBar>> getEventCount(
-            @ApiParam(name = "red_vs_blue_id", value = "房间id", required = true) @RequestParam("red_vs_blue_id") String redVsBlueId,
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
             @RequestParam("role") @NotEmpty Integer type) {
-       return new BaseRsp<>(evalResultService.getEventCount(redVsBlueId,type));
+        return new BaseRsp<>(evalResultService.getEventCount(evalTemplateId, type));
     }
 
     @ApiOperation("评估结果详情-攻防事件-环形图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/percent")
     public BaseRsp<List<EvalEventCountRingGraph>> getEventPercent(
-            @ApiParam(name = "red_vs_blue_id", value = "房间id", required = true) @RequestParam("red_vs_blue_id") String redVsBlueId,
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
             @RequestParam("role") @NotEmpty Integer type) {
-        return new BaseRsp<>(evalResultService.getEventPercent(redVsBlueId,type));
+        return new BaseRsp<>(evalResultService.getEventPercent(evalTemplateId,type));
     }
 
     @ApiOperation("当前练习过程的基本信息")
@@ -513,8 +510,7 @@ public class TrainEvalController {
 
     @ApiOperation("获取学员技能点雷达图")
     @GetMapping("/missions/radar")
-    @RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
-            logical = Logical.OR)
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<List<Integer>> getRadar(
             @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,

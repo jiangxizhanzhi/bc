@@ -96,5 +96,4 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 
 	List<EvalEventStatusCount> getTaskByRoomIdAndUsers(String roomId);
 
-	List<EvalEventCountBar> getTaskByRoomIdAndType(String roomId);
 }

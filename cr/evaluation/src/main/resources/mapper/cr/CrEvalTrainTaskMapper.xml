@@ -38,4 +38,22 @@
         </foreach>
     </select>
 
+    <select id="countUnreportedByRoomIdAndUserIds" resultType="java.lang.Integer">
+        select count(*) from cr_eval_train_task where eval_template_id = #{evalTemplateId}
+        and user_id in
+        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+        and last_submit_time is null
+    </select>
+
+    <select id="getTaskByRoomIdAndUsers" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalEventStatusCount">
+        <bind name="RELEASED" value="@com.cyberpeace.cr.crbase.dao.entity.CrTask$TaskStatus@RELEASED.code"/>
+        <bind name="CLOSE" value="@com.cyberpeace.cr.crbase.dao.entity.CrTask$TaskStatus@CLOSE.code"/>
+        select status,count(resource_id)  as count
+        from cr_eval_train_task
+        where eval_template_id = #{evalTemplateId}
+        and (status =${RELEASED} or status =${CLOSE})
+        group by status
+    </select>
 </mapper>

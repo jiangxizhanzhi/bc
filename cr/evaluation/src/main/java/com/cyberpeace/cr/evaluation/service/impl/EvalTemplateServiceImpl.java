@@ -12,14 +12,8 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrScore;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
-import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRule;
@@ -110,8 +104,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	private LocalSceneMapper localSceneMapper;
 	@Autowired
 	private CrEvalLocalSceneMapper evalLocalSceneMapper;
-
-
+	@Autowired
+	private CrTaskLogMapper crTaskLogMapper;
+	@Autowired
+	private CrEvalTaskLogMapper evalTaskLogMapper;
 
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
@@ -280,6 +276,17 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			taskIdMatchMap.put(resourceId, taskId);
 			item.setResourceId(taskId);
 		}
+		LambdaQueryWrapper<CrTaskLog> taskLogQuery = new LambdaQueryWrapper<>();
+		taskLogQuery.eq(CrTaskLog::getRoomId, evalTemplate.getRedVsBlueId());
+		List<CrTaskLog> crTaskLogs = crTaskLogMapper.selectList(taskLogQuery);
+		List<CrEvalTaskLog> evalTaskLogList = BeanUtils.deepCopyList(crTaskLogs, CrEvalTaskLog.class);
+		for (CrEvalTaskLog item : evalTaskLogList) {
+			item.setEvalTemplateId(evalTemplateId);
+			String newTaskId = taskIdMatchMap.get(item.getTaskId());
+			item.setTaskId(newTaskId);
+			item.setResourceId(null);
+		}
+
 
 		LambdaQueryWrapper<CrTaskSubmit> taskSubmitQuery = new LambdaQueryWrapper<>();
 		taskSubmitQuery.eq(CrTaskSubmit::getRoomId, evalTemplate.getRedVsBlueId());
@@ -342,19 +349,18 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				if (!CollectionUtils.isEmpty(evalScoreList)) {
 					evalScoreMapper.batchInsert(evalScoreList);
 				}
-
 				evalRuleMapper.batchInsert(initialEvalRuleList);
-
 				if (!CollectionUtils.isEmpty(addRoleList)) {
 					evalRoleMapper.batchInsert(addRoleList);
 				}
-
 				if (Objects.nonNull(addRbRoom)) {
 					evalRbRoomMapper.insert(addRbRoom);
 				}
-
 				if (Objects.nonNull(addLocalScene)) {
 					evalLocalSceneMapper.insert(addLocalScene);
+				}
+				if (!CollectionUtils.isEmpty(evalTaskLogList)) {
+					evalTaskLogMapper.batchInsert(evalTaskLogList);
 				}
 			}
 		});

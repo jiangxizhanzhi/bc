@@ -415,7 +415,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.actionCode(CrTaskLog.ActionCode.SUBMIT.getCode()).userId(userId).build();
 
 		// 创建可能存在的评估log
-		CrTaskLog evaluateLog = CrTaskLog.builder().roomId(task.getRoomId()).missionId(missionId)
+		CrTaskLog evaluateLog = CrTaskLog.builder().roomId(task.getRoomId()).missionId(missionId).taskId(task.getResourceId())
 				.build();
 
 		if (mission.isObjective()) {
@@ -510,7 +510,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		CrTaskLog evaluationLog = CrTaskLog.builder().roomId(taskSubmit.getRoomId())
 				.missionId(task.getMissionId())
-				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
+				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId).taskId(task.getResourceId())
 				.build();
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

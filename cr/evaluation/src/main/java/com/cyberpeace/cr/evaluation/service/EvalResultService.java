@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface EvalResultService {
 
-    List<EvalEventCountBar> getEventCount(String redVsBlueId, Integer roleType);
+    List<EvalEventCountBar> getEventCount(String evalTemplateId, Integer roleType);
 
-    List<EvalEventCountRingGraph> getEventPercent(String redVsBlueId, Integer roleType);
+    List<EvalEventCountRingGraph> getEventPercent(String evalTemplateId, Integer roleType);
 }

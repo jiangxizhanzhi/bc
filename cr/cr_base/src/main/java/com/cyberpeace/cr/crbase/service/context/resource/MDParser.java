@@ -373,14 +373,6 @@ public class MDParser {
 		}
 		// team training
 		if (businessTemplate.getBusinessType().equals(ZiguanConstants.TEAM_TRAIN)) {
-			// 红队或者蓝队
-			Integer trainCategory = ZiguanConstants.TEAM_TYPE.get(businessTemplate.getName());
-			if (null == trainCategory) {
-				templateContext.setTrainCategory(3);
-				templateContext.setSceneType(5);
-			} else {
-				templateContext.setTrainCategory(trainCategory);
-			}
 			List<Role> roles = parseRoles(data.get(ZiguanConstants.ROLE_INFO)).getStudent();
 			templateContext.setRoleConfig(
 					JsonUtil.arrayToString(team(roles), PropertyNamingStrategy.SnakeCase));

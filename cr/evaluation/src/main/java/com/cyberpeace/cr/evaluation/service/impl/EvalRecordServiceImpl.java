@@ -620,9 +620,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private void copyScore(EvalRecord record) {
 
         List<EvalTaskBo> tasks = crEvalTaskSubmitMapper.getByRoomId(record.getTemplateId());
-        int flag = 1;
+//        int flag = 1;
 
-        addExtraScore(tasks, flag);
+//        addExtraScore(tasks, flag);
         Map<Integer, List<EvalTaskBo>> group = StreamApiUtils.groupBy(tasks, EvalTaskBo::getRoleGroup);
         List<EvalRoleScore> addList = new ArrayList<>();
         addRoleScores(record, group, addList, CrRole.RbRoleGroup.BLUE.getCode());

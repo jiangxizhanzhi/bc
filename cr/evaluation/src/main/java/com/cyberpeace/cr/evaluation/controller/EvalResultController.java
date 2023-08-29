@@ -238,7 +238,7 @@ public class EvalResultController {
         List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(redVsBlueId,activeTimeList);
 
         for(EvalRoleEventActivity crTaskLog:crTaskLogs){
-            dates.add(new SimpleDateFormat("MM-dd HH:mm:ss").format(crTaskLog.getCreateTime()));
+            dates.add(new SimpleDateFormat("HH:mm:ss").format(crTaskLog.getCreateTime()));
             Integer count = crTaskLog.getCount();
             if(crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
                 redCount.add(count);
@@ -289,7 +289,7 @@ public class EvalResultController {
                     blueDeviceIds.add(roleAssetNode.getDeviceId());
                 }
                 blueCount.add(blueDeviceIds.size());
-                dates.add(new SimpleDateFormat("MM-dd HH:mm:ss").format(roleAssetNode.getCreateTime()));
+                dates.add(new SimpleDateFormat("HH:mm:ss").format(roleAssetNode.getCreateTime()));
             } else if(roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode()) && roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.RED.getCode())){
                 if(!redDeviceIds.contains(roleAssetNode.getDeviceId())){
                     redDeviceIds.add(roleAssetNode.getDeviceId());
@@ -297,7 +297,7 @@ public class EvalResultController {
                 redCount.add(redDeviceIds.size());
                 blueDeviceIds.remove(roleAssetNode.getDeviceId());
                 blueCount.add(blueDeviceIds.size());
-                dates.add(new SimpleDateFormat("MM-dd HH:mm:ss").format(roleAssetNode.getCreateTime()));
+                dates.add(new SimpleDateFormat("HH:mm:ss").format(roleAssetNode.getCreateTime()));
             }
         }
         res.setCreatTime(dates);

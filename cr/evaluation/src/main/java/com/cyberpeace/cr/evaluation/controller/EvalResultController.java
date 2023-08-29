@@ -360,9 +360,7 @@ public class EvalResultController {
     @ApiOperation("评估结果详情-攻防事件-环形图")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/event/pencent")
-    public BaseRsp<List<EvalEventCountRingGraph>> getEventPencent(
-
-            @ApiParam(name = "id",
+    public BaseRsp<List<EvalEventCountRingGraph>> getEventPencent(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId, @RequestParam("role") @NotEmpty Integer type) {
         EvalTemplate evalTemplate = getRoomById(resourceId);
         return new BaseRsp<>(evalResultService.getEventPercent(evalTemplate.getResourceId(), type));

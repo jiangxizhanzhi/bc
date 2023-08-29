@@ -349,7 +349,7 @@ public class EvalRecordController {
 
         Integer status = evalRecord.getStatus();
         if(!status.equals(EvalRecord.Status.END.getCode())){
-            throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
+            throw new BusinessException(CrBusinessErrorCode.CANNOT_BE_EXPORTED);
         }
         EvalTemplate evalTemplate = evalTemplateService.getById(evalRecord.getTemplateId());
         String redVsBlueId = evalTemplate.getRedVsBlueId();

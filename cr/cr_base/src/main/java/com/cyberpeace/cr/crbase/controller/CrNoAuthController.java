@@ -7,14 +7,12 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
+import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -29,10 +27,12 @@ import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.cyberpeace.cr.crbase.service.context.resource.MDParser;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Sets;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -58,6 +58,9 @@ public class CrNoAuthController {
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -148,5 +151,16 @@ public class CrNoAuthController {
 		List<String> res = businessTemplateService.getExistedNames(template_names);
 
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("辅助鉴权")
+	@GetMapping("/auth")
+	public BaseRsp auth(@ApiParam(name = "token", value = "jwt token") String token) {
+		try {
+			remoteUserService.doAuthentication(token);
+		} catch (Exception e) {
+			throw new AuthenticationException();
+		}
+		return new BaseRsp();
 	}
 }

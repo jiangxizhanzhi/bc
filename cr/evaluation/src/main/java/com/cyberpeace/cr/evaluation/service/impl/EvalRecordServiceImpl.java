@@ -780,13 +780,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private void syncProbeData(EvalRecord evalRecord, Set<String> variableIds, String mpSceneId) {
-        if (variableIds.isEmpty()) {
-            EvalLog.info(evalRecord, "variables id is empty, continue.");
-            return;
-        }
+//        if (variableIds.isEmpty()) {
+//            EvalLog.info(evalRecord, "variables id is empty, continue.");
+//            return;
+//        }
 
         // 获取需要同步数据的变量项
-        List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode())).list();
+        List<EvalVariableRef> byRecordId = evalVariableRefMapper.getByRecordId(evalRecord.getResourceId());
+        List<String> column = StreamApiUtils.getColumn(byRecordId, EvalVariableRef::getResourceId);
+        List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, column).in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode())).list();
 
         // 没有需要同步数据变量项, 跳过
         if (evalVariableRefs.isEmpty()) {

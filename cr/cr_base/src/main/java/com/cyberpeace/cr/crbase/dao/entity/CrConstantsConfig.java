@@ -55,6 +55,7 @@ public class CrConstantsConfig implements SelectI18nName {
 		MESSAGE_MODULE_TYPE(31, "留言主题类型"),
 		STUDY_STATISTICS(37,"学习统计类型难度"),
 		EVAL_STATUS(38, "靶场测评评估状态"),
+		TRAIN_CATEGORY(39, "团队训练类型"),
 		RED_ACTION_TYPE(-1, "红队动效事件"),
 		BLUE_ACTION_TYPE(-2, "蓝队动效事件"),
 		RB_NOTICE_TYPE(-3, "红蓝对抗日志对象类型"),

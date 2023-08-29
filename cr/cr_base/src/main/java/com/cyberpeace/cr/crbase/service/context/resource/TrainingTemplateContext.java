@@ -12,6 +12,8 @@ public class TrainingTemplateContext {
 
 	private String businessTemplateId;
 
+	private String btName;
+
 	private String preSkills;
 
 	private String trainSkills;
@@ -27,8 +29,4 @@ public class TrainingTemplateContext {
 	private String timeLineConfig;
 
 	private Integer peopleNumber;
-
-	private Integer trainCategory;
-
-	private Integer sceneType;
 }

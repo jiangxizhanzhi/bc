@@ -93,6 +93,9 @@ public class CrNoAuthController {
 			localSceneService.setTopoType(topoId, businessTemplateService
 					.convertTypeToCode(template.getBusinessType()).getCode());
 
+			// 红队或者蓝队
+			mdParser.getTemplateContext().setBtName(templateName);
+
 			// get handler
 			BusinessTemplateHandler handler = businessTemplateHandler
 					.getHandler(template.getBusinessType());

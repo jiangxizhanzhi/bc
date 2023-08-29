@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
@@ -115,7 +116,7 @@ public class TeamRoom extends BaseTable {
 	/**
 	 * 区分红队训练/蓝队训练
 	 */
-	public enum TrainCategory {
+	public enum TrainCategory implements GenericEnum {
 		RED(1, "红队"), BLUE(2, "蓝队"), DAILY(3, "日常");
 
 		@Getter

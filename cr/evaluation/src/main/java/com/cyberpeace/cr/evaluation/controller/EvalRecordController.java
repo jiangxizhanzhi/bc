@@ -109,6 +109,7 @@ public class EvalRecordController {
     @PostMapping("")
     public BaseRsp<EvalRecordRsp> create(@RequestBody EvalRecordAddReq requestData) {
         requestData.validate();
+        evalRecordService.isExist(requestData);
         return new BaseRsp<>(evalRecordService.create(requestData));
     }
 
@@ -117,6 +118,7 @@ public class EvalRecordController {
     @PatchMapping("")
     public BaseRsp<EvalRecordRsp> update(@RequestBody EvalRecordAddReq requestData) {
         requestData.validate();
+        evalRecordService.isExist(requestData);
         return new BaseRsp<>(evalRecordService.update(requestData));
     }
 

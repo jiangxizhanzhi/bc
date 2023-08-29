@@ -483,4 +483,7 @@ public interface CrBusinessErrorCode {
 
 	/** 导出文档不可修改*/
 	String UNFIT_RECORD = "101151";
+
+	/** 非正常评估结果不可导出*/
+	String CANNOT_BE_EXPORTED = "101152";
 }

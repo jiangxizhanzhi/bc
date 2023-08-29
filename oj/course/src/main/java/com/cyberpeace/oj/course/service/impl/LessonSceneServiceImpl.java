@@ -2,8 +2,6 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -35,7 +36,6 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
-import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
@@ -91,7 +91,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
 
 		// 场景启动数据校验
-		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
+		if (authContext.getIsWeb()) {
+			ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
+		}
 
 		// 先查询课程表场景
 //		ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, null,

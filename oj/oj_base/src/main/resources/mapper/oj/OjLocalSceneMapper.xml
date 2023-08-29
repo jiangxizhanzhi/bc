@@ -24,8 +24,10 @@
     </select>
 
     <select id="selectByUser" resultType="java.lang.Integer">
-        select count(id) from oj_local_scene
+        select count(id)
+        from oj_local_scene
         where user_id = #{userId}
+          and from_web is true
     </select>
 
     <select id="selectByBusiness" resultMap="ojScene">

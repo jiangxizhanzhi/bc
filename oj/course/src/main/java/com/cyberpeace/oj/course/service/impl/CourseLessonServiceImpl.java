@@ -7,10 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.oj.practice.entity.Paper;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.*;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -64,10 +62,15 @@ import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
-import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.entity.Paper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.*;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.impl.LessonOperationEvaluateHandler;
@@ -1135,9 +1138,40 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				return courseLessonMapper.deleteBatchIds(resourceIds);
 			}
 		});
+		// 删除课件和视频
+		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
+		for (CourseLesson lesson : lessonList) {
+			String handoutUrl = lesson.getHandoutUrl();
+			String videoUrl = lesson.getVideoUrl();
+			this.deleteAttachment(handoutUrl, prefix);
+			this.deleteAttachment(videoUrl, prefix);
+		}
 		
 		this.clearSceneAndTopos(sceneContext.getScenes(), sceneContext.getTopos());
 		return resourceIds.size();
+	}
+
+	/**
+	 * 删除附件
+	 *
+	 * @param url        url
+	 * @param pathPrefix 路径前缀
+	 */
+	private void deleteAttachment(String url, String pathPrefix) {
+		if(StringUtils.isBlank(url) || url.contains(" ") || url.contains("\n")){
+			return;
+		}
+		if (!url.startsWith(pathPrefix)) {
+			url = url + pathPrefix;
+		}
+		try {
+			File toDelete = new File(url);
+			if (toDelete.exists()) {
+				FileUtil.deleteDir(toDelete);
+			}
+		} catch (Exception e) {
+			log.error("failed to delete [{}]", url, e);
+		}
 	}
 
 	/**

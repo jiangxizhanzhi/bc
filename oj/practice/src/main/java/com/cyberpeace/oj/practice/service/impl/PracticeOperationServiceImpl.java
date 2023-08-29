@@ -771,8 +771,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public JSONObject startScene(String resourceId, AuthContext authContext) {
 
-		// 场景启动数量校验
-		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
+		// 场景启动数量校验, 5.4.1只限制前台启动场景
+		if (authContext.getIsWeb()) {
+			ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
+		}
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {

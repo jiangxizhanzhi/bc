@@ -38,7 +38,7 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 	OjLocalScene selectGroupScene(@Param("groupId") String groupId);
 
 	/**
-	 * 根据用户查询场景启动数量
+	 * 根据用户查询前台场景启动数量
 	 * @param userId
 	 * @return
 	 */

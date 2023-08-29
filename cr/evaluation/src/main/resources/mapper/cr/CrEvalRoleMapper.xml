@@ -13,7 +13,8 @@
             (#{item.resourceId,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.roomId,jdbcType=VARCHAR},
             #{item.description,jdbcType=VARCHAR}, #{item.roleGroup,jdbcType=INTEGER}, #{item.nodes,jdbcType=VARCHAR},
             #{item.userIds,jdbcType=LONGVARCHAR}, #{item.exercisePaper,jdbcType=VARCHAR}, #{item.parentResourceId,jdbcType=VARCHAR},
-            #{item.missionScheme,jdbcType=VARCHAR}, #{item.businessType,jdbcType=INTEGER}, now(),now() )
+            #{item.missionScheme,jdbcType=VARCHAR}, #{item.businessType,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP},#{item.updateTime,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
 

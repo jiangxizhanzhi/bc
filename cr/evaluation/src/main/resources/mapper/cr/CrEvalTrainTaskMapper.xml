@@ -13,7 +13,8 @@
         <foreach collection="list" item="item" separator=",">
             (#{item.resourceId}, #{item.status}, #{item.missionId}, #{item.userId},#{item.userAnswer},
             #{item.releaseTime}, #{item.roomId},#{item.roleId}, #{item.businessType}, #{item.missionTemplateId},#{item.evalTemplateId},
-            #{item.lastSubmitTime}, #{item.taskStartTime}, #{item.score}, now(),now())
+            #{item.lastSubmitTime}, #{item.taskStartTime}, #{item.score}, #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
 

@@ -14,7 +14,8 @@
             #{item.answer,jdbcType=LONGVARCHAR}, #{item.answerExtension,jdbcType=LONGVARCHAR},
             #{item.evaluatorId,jdbcType=VARCHAR}, #{item.evaluateTime,jdbcType=TIMESTAMP},
             #{item.evaluateStatus,jdbcType=TINYINT}, #{item.reason,jdbcType=TINYINT}, #{item.detail,jdbcType=VARCHAR},
-            #{item.score,jdbcType=SMALLINT}, #{item.missionScore,jdbcType=SMALLINT}, #{item.evalTemplateId,jdbcType=SMALLINT}, now(),now())
+            #{item.score,jdbcType=SMALLINT}, #{item.missionScore,jdbcType=SMALLINT}, #{item.evalTemplateId,jdbcType=SMALLINT},
+            #{item.createTime,jdbcType=TIMESTAMP},#{item.updateTime,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
 

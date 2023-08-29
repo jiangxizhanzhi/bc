@@ -13,7 +13,8 @@
             (#{item.resourceId,jdbcType=VARCHAR}, #{item.roomId,jdbcType=VARCHAR}, #{item.userId,jdbcType=VARCHAR},
             #{item.trainingScore,jdbcType=VARCHAR}, #{item.trainingPercentage,jdbcType=VARCHAR},
             #{item.skillPercentage,jdbcType=VARCHAR}, #{item.skillScore,jdbcType=VARCHAR},
-            #{item.comment,jdbcType=LONGVARCHAR}, #{item.finalScore,jdbcType=VARCHAR}, #{item.evalTemplateId,jdbcType=VARCHAR}, now(),now() )
+            #{item.comment,jdbcType=LONGVARCHAR}, #{item.finalScore,jdbcType=VARCHAR}, #{item.evalTemplateId,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP},#{item.updateTime,jdbcType=TIMESTAMP} )
         </foreach>
     </insert>
 

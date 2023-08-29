@@ -11,7 +11,7 @@
         <foreach collection="list" item="item" separator=",">
             (#{item.resourceId,jdbcType=VARCHAR}, #{item.roomId,jdbcType=VARCHAR}, #{item.missionId,jdbcType=VARCHAR},
             #{item.actionCode,jdbcType=TINYINT}, #{item.userId,jdbcType=VARCHAR},#{item.taskId,jdbcType=VARCHAR},
-            #{item.evalTemplateId,jdbcType=VARCHAR},now(),now())
+            #{item.evalTemplateId,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP},#{item.updateTime,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
 

@@ -27,5 +27,5 @@ public interface CrTaskLogMapper extends BaseMapper<CrTaskLog> {
 
 	void batchInsert(@Param("taskLogs") List<CrTaskLog> taskLogs);
 
-	List<EvalEventCountBar> getTaskByRoomIdAndType(@Param("roomId") String roomId);
+	List<EvalEventCountBar> getTaskByRoomIdAndType(@Param("roomId") String roomId,@Param("status") Integer status);
 }

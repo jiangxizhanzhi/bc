@@ -10,6 +10,7 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
@@ -331,7 +332,7 @@ public class RbRoomStatisticsController {
 			@ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
 			@RequestParam("role") @NotEmpty Integer type) {
 		List<EvalEventCountBar> eventCountBarList = new ArrayList<>();
-			List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskLogMapper.getTaskByRoomIdAndType(roomId);
+		List<EvalEventCountBar> taskByRoomIdAndUsers = crTaskLogMapper.getTaskByRoomIdAndType(roomId, CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
 			Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
 			List<Integer> listCode = getListCode(ActionTypeZHL.class);
 			if (type.equals(CrRole.RbRoleGroup.RED.getCode())) {

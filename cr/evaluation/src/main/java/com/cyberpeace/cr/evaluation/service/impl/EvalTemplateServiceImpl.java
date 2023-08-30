@@ -364,7 +364,6 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				}
 				if (!CollectionUtils.isEmpty(evalTaskLogList)) {
 					evalTaskLogMapper.batchInsert(evalTaskLogList);
-//					evalTaskLogList.forEach(item -> evalTaskLogMapper.insert(item));
 				}
 			}
 		});

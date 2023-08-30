@@ -19,7 +19,7 @@ public class EvalRoleEventActivity implements Serializable {
     @ApiModelProperty("红蓝队")
     private Integer roleGroup;
 
-    private Date createTime;
+    private String createTime;
 
     @ApiModelProperty("事件数量")
     private Integer count;

@@ -7,10 +7,7 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountRingGraph;
@@ -52,10 +49,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.cyberpeace.common.util.EnumUtils.getListCode;
@@ -236,10 +230,12 @@ public class EvalResultController {
 
         EvalTemplate evalTemplate = getRoomById(resourceId);
         List<Integer> activeTimeList = CrTaskLog.ActionCode.ACTIVE_TIME_LIST;
-        List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(evalTemplate.getResourceId(),activeTimeList);
+
+        Date oneDayAgo = TimeUtil.addHours(new Date(),-24);
+        List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(evalTemplate.getResourceId(),activeTimeList,oneDayAgo);
 
         for(EvalRoleEventActivity crTaskLog:crTaskLogs){
-            dates.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(crTaskLog.getCreateTime()));
+            dates.add(crTaskLog.getCreateTime());
             Integer count = crTaskLog.getCount();
             if(crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
                 redCount.add(count);
@@ -396,10 +392,10 @@ public class EvalResultController {
 
         LambdaQueryWrapper<CrEvalTrainTask> taskWrapper = new LambdaQueryWrapper<>();
         taskWrapper.eq(CrEvalTrainTask::getEvalTemplateId, evalTemplate.getResourceId());
-        taskWrapper.eq(CrEvalTrainTask::getStatus, CrEvalTrainTask.TaskStatus.CLOSE);
+        taskWrapper.eq(CrEvalTrainTask::getStatus, CrEvalTrainTask.TaskStatus.CLOSE.getCode());
         Integer closeSize = crEvalTrainTaskMapper.selectCount(taskWrapper);
         EvalEventStatusCount closeCount = new EvalEventStatusCount();
-        closeCount.setStatus(CrEvalTrainTask.TaskStatus.RELEASED.getCode());
+        closeCount.setStatus(CrEvalTrainTask.TaskStatus.CLOSE.getCode());
         closeCount.setCount(closeSize == null ? 0 : closeSize);
         res.add(closeCount);
 

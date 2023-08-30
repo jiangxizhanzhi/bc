@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -20,6 +21,8 @@ public interface CrEvalTaskLogMapper extends BaseMapper<CrEvalTaskLog> {
 
     List<EvalEventCountBar> getTaskByEvalTemplateAndType(@Param("evalTemplateId") String evalTemplateId,@Param("status") Integer status);
 
-    List<EvalRoleEventActivity> getReleaseIdsByRoomIdAndUsers(@Param("evalTemplateId") String evalTemplateId, @Param("activeTimeList")List<Integer> activeTimeList);
+    List<EvalRoleEventActivity> getReleaseIdsByRoomIdAndUsers(@Param("evalTemplateId") String evalTemplateId,
+                                                              @Param("activeTimeList") List<Integer> activeTimeList,
+                                                              @Param("startDate") Date startDate);
 
 }

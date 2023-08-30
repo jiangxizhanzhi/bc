@@ -149,23 +149,25 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		TeamTemplate teamTemplate = BeanUtils.copy(templateContext, TeamTemplate.class);
 
-		List<CrConstantsConfig> configs = crConstantsService
-				.getByType(CrConstantsConfig.ConstantsType.TRAIN_CATEGORY.getCode());
-		for (CrConstantsConfig config : configs) {
-			if (config.getCnName().equals(templateContext.getBtName())) {
-				Integer trainCategory = EnumUtils.getEnumCodeByDesc(config.getEnName(),
-						TeamRoom.TrainCategory.class);
-				if (null == trainCategory
-						|| trainCategory.equals(TeamRoom.TrainCategory.DAILY.getCode())) {
-					teamTemplate.setTrainCategory(3);
-					teamTemplate.setSceneType(5);
-				} else {
-					teamTemplate.setTrainCategory(trainCategory);
-				}
-				break;
-			}
+		Integer trainCategory = getTrainCategory(templateContext.getBtName());
+		if (null == trainCategory || trainCategory.equals(TeamRoom.TrainCategory.DAILY.getCode())) {
+			teamTemplate.setTrainCategory(3);
+			teamTemplate.setSceneType(5);
+		} else {
+			teamTemplate.setTrainCategory(trainCategory);
 		}
 		teamTemplateService.save(teamTemplate);
 	}
 
+	private Integer getTrainCategory(String btName) {
+		List<CrConstantsConfig> configs = crConstantsService
+				.getByType(CrConstantsConfig.ConstantsType.TRAIN_CATEGORY.getCode());
+		for (CrConstantsConfig config : configs) {
+			if (config.getCnName().trim().equals(btName)) {
+				return EnumUtils.getEnumCodeByDesc(config.getEnName().trim(),
+						TeamRoom.TrainCategory.class);
+			}
+		}
+		return null;
+	}
 }

@@ -311,7 +311,7 @@ public class MDParser {
 		String baseText = stripMd(mdPath);
 		Map<String, String> data = parseText(baseText, LINE_SEP + H3,
 				ZiguanConstants.TEMPLATE_BASE_INFO_FIELDS);
-		return data.get(ZiguanConstants.TEMPLATE_NAME);
+		return data.get(ZiguanConstants.TEMPLATE_NAME).trim();
 	}
 
 	/**
@@ -355,7 +355,7 @@ public class MDParser {
 		}
 		templateContext.setTrainSkills(JsonUtil.arrayToString(skills));
 		// other
-		businessTemplate.setName(data.get(ZiguanConstants.TEMPLATE_NAME));
+		businessTemplate.setName(data.get(ZiguanConstants.TEMPLATE_NAME).trim());
 		businessTemplate.setDescription(data.get(ZiguanConstants.DESCRIPTION));
 		businessTemplate.setTopoId(topoId);
 		businessTemplate.setResourceId(businessTemplateId);

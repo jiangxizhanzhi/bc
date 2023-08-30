@@ -343,14 +343,15 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         crEvalTaskSubmit.setEvaluateStatus(evaluateStatus);
         crEvalTaskSubmit.setEvaluatorId(currentUserId);
         crEvalTaskSubmit.setEvaluateTime(new Date());
+        crEvalTaskSubmit.setUpdateTime(new Date());
 
         crEvalTrainTask.setStatus(evaluateStatus);
         crEvalTrainTask.setScore(score);
+        crEvalTrainTask.setUpdateTime(new Date());
 
-        Date currentTime=new Date(System.currentTimeMillis());
         CrEvalTaskLog evaluationLog = CrEvalTaskLog.builder().roomId(crEvalTaskSubmit.getRoomId())
                 .missionId(crEvalTrainTask.getMissionId()).actionCode(evaluateStatusToActionCode.get(evaluateStatus))
-                .userId(currentUserId).evalTemplateId(req.getEvalTemplateId()).createTime(currentTime).updateTime(currentTime)
+                .userId(currentUserId).evalTemplateId(req.getEvalTemplateId()).createTime(new Date()).updateTime(new Date())
                 .build();
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -412,6 +413,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         CrEvalScore newCrScore = getTeamScoreFromReq(studentScoreReq);
 
         if (oldScore == null) {
+            newCrScore.setCreateTime(new Date());
             crEvalScoreMapper.insert(newCrScore);
         } else {
             newCrScore.setResourceId(oldScore.getResourceId());
@@ -426,6 +428,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         crScore.setSkillScore(studentScoreReq.getAbilityScore());
         crScore.setSkillPercentage(studentScoreReq.getAbilityPercentage());
         crScore.setEvalTemplateId(studentScoreReq.getEvalTemplateId());
+        crScore.setUpdateTime(new Date());
         return crScore;
     }
 

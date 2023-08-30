@@ -34,6 +34,8 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRoleScore;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskLog;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.cyberpeace.cr.evaluation.service.EvalResultService;
@@ -322,7 +324,7 @@ public class EvalResultController {
     public BaseRsp<List<EvalRoleEventPercentRsp>> getEventBar(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
         EvalTemplate evalTemplate = getRoomById(resourceId);
-        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByRoomIdAndType(evalTemplate.getResourceId(), CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByEvalTemplateAndType(evalTemplate.getResourceId(), CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
         Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
         List<EvalRoleEventPercentRsp> res = new ArrayList<>();
         List<Integer> listCode = getListCode(ActionTypeZHL.class);
@@ -371,27 +373,36 @@ public class EvalResultController {
     @GetMapping("/event/notices")
     public BaseRsp<List<EvalEventStatusCount>> getEventOtherPercent(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
-        LambdaQueryWrapper<CrNotice> queryWrapper = new LambdaQueryWrapper<>();
-        String redVsBlueId = getRoomId(resourceId);
-        queryWrapper.eq(CrNotice::getRoomId, redVsBlueId);
-        List<CrNotice> crNotices = crNoticeMapper.selectList(queryWrapper);
-        List<EvalEventStatusCount> taskByRoomIdAndUsers = crEvalTrainTaskMapper.getTaskByRoomIdAndUsers(redVsBlueId);
+
         List<EvalEventStatusCount> res = new ArrayList<>();
-        Map<Integer, Integer> toMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventStatusCount::getStatus, EvalEventStatusCount::getCount);
-        List<Integer> codes = Arrays.asList(CrTask.TaskStatus.CLOSE.getCode(), CrTask.TaskStatus.RELEASED.getCode());
-        for(Integer code:codes){
-            EvalEventStatusCount statusCount = new EvalEventStatusCount();
-            statusCount.setStatus(code);
-            statusCount.setCount(0);
-            if(toMap.containsKey(code)){
-                statusCount.setCount(toMap.get(code));
-            }
-            res.add(statusCount);
-        }
+
+        LambdaQueryWrapper<CrNotice> queryWrapper = new LambdaQueryWrapper<>();
+        EvalTemplate evalTemplate = getRoomById(resourceId);
+        queryWrapper.eq(CrNotice::getRoomId, evalTemplate.getRedVsBlueId());
+        List<CrNotice> crNotices = crNoticeMapper.selectList(queryWrapper);
         EvalEventStatusCount statusCount = new EvalEventStatusCount();
         statusCount.setStatus(0);
         statusCount.setCount(crNotices.size());
         res.add(statusCount);
+
+        LambdaQueryWrapper<CrEvalTaskLog> logWrapper = new LambdaQueryWrapper<>();
+        logWrapper.eq(CrEvalTaskLog::getEvalTemplateId, evalTemplate.getResourceId());
+        logWrapper.eq(CrEvalTaskLog::getActionCode, CrTaskLog.ActionCode.RELEASE.getCode());
+        Integer releasedSize = crEvalTaskLogMapper.selectCount(logWrapper);
+        EvalEventStatusCount releasedCount = new EvalEventStatusCount();
+        releasedCount.setStatus(CrEvalTrainTask.TaskStatus.RELEASED.getCode());
+        releasedCount.setCount(releasedSize == null ? 0 : releasedSize);
+        res.add(releasedCount);
+
+        LambdaQueryWrapper<CrEvalTrainTask> taskWrapper = new LambdaQueryWrapper<>();
+        taskWrapper.eq(CrEvalTrainTask::getEvalTemplateId, evalTemplate.getResourceId());
+        taskWrapper.eq(CrEvalTrainTask::getStatus, CrEvalTrainTask.TaskStatus.CLOSE);
+        Integer closeSize = crEvalTrainTaskMapper.selectCount(taskWrapper);
+        EvalEventStatusCount closeCount = new EvalEventStatusCount();
+        closeCount.setStatus(CrEvalTrainTask.TaskStatus.RELEASED.getCode());
+        closeCount.setCount(closeSize == null ? 0 : closeSize);
+        res.add(closeCount);
+
         return new BaseRsp<>(res);
     }
 

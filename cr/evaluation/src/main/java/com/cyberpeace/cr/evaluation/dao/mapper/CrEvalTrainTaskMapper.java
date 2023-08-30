@@ -23,5 +23,4 @@ public interface CrEvalTrainTaskMapper extends BaseMapper<CrEvalTrainTask> {
 
 	Integer countUnreportedByRoomIdAndUserIds(@Param("evalTemplateId")String evalTemplateId, @Param("userIds") List<String> userIds);
 
-	List<EvalEventStatusCount> getTaskByRoomIdAndUsers(@Param("evalTemplateId")String evalTemplateId);
 }

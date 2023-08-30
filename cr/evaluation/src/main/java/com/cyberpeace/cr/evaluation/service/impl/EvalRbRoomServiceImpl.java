@@ -349,7 +349,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
         CrEvalTaskLog evaluationLog = CrEvalTaskLog.builder().roomId(crEvalTaskSubmit.getRoomId())
                 .missionId(crEvalTrainTask.getMissionId())
-                .actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
+                .actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId).evalTemplateId(req.getEvalTemplateId())
                 .build();
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {

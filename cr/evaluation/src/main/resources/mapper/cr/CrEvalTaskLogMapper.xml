@@ -16,14 +16,12 @@
     </insert>
 
     <select id="getTaskByRoomIdAndType" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar">
-        <bind name="RELEASED" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@MAN_SUCCESS.code"/>
-        <bind name="CLOSE" value="@com.cyberpeace.cr.crbase.dao.entity.CrTaskLog$ActionCode@ROBOT_SUCCESS.code"/>
         select m.event_type as type,count(t.resource_id) as count
         from cr_eval_task_log t
         JOIN cr_eval_train_task a ON a.resource_id = t.task_id
         JOIN cr_mission m ON m.resource_id = a.mission_id
         where t.eval_template_id = #{evalTemplateId}
-        and (t.action_code =${RELEASED} or t.action_code =${CLOSE}) and m.event_type is not null
+        and a.`status`= #{status} and m.event_type is not null
         group by m.event_type
     </select>
 

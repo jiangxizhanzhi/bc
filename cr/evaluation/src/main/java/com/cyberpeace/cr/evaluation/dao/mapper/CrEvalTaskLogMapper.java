@@ -18,7 +18,7 @@ public interface CrEvalTaskLogMapper extends BaseMapper<CrEvalTaskLog> {
 
     void batchInsert(@Param("list") List<CrEvalTaskLog> list);
 
-    List<EvalEventCountBar> getTaskByRoomIdAndType(@Param("evalTemplateId") String evalTemplateId);
+    List<EvalEventCountBar> getTaskByRoomIdAndType(@Param("evalTemplateId") String evalTemplateId,@Param("status") Integer status);
 
     List<EvalRoleEventActivity> getReleaseIdsByRoomIdAndUsers(@Param("room_id")String roomId, @Param("activeTimeList")List<Integer> activeTimeList);
 

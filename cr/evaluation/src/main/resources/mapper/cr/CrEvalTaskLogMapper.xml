@@ -30,7 +30,7 @@
         from cr_eval_task_log l
         left join cr_eval_train_task t on t.resource_id = l.task_id
         left join cr_eval_role r on r.resource_id = t.role_id
-        where l.room_id = #{room_id}
+        where l.eval_template_id = #{evalTemplateId}
         and l.action_code in
         <foreach collection="activeTimeList" item="item" separator="," open="(" close=")">
             #{item}

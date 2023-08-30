@@ -232,13 +232,12 @@ public class EvalResultController {
         List<Integer> redCount = new ArrayList<>();
         List<Integer> blueCount = new ArrayList<>();
 
-        String redVsBlueId = getRoomId(resourceId);
-
+        EvalTemplate evalTemplate = getRoomById(resourceId);
         List<Integer> activeTimeList = CrTaskLog.ActionCode.ACTIVE_TIME_LIST;
-        List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(redVsBlueId,activeTimeList);
+        List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(evalTemplate.getResourceId(),activeTimeList);
 
         for(EvalRoleEventActivity crTaskLog:crTaskLogs){
-            dates.add(new SimpleDateFormat("HH:mm:ss").format(crTaskLog.getCreateTime()));
+            dates.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(crTaskLog.getCreateTime()));
             Integer count = crTaskLog.getCount();
             if(crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
                 redCount.add(count);
@@ -322,8 +321,8 @@ public class EvalResultController {
     @GetMapping("/event/bar")
     public BaseRsp<List<EvalRoleEventPercentRsp>> getEventBar(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
-        String redVsBlueId = getRoomId(resourceId);
-        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByRoomIdAndType(redVsBlueId, CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+        EvalTemplate evalTemplate = getRoomById(resourceId);
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByRoomIdAndType(evalTemplate.getResourceId(), CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
         Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
         List<EvalRoleEventPercentRsp> res = new ArrayList<>();
         List<Integer> listCode = getListCode(ActionTypeZHL.class);

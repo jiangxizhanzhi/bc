@@ -20,6 +20,6 @@ public interface CrEvalTaskLogMapper extends BaseMapper<CrEvalTaskLog> {
 
     List<EvalEventCountBar> getTaskByRoomIdAndType(@Param("evalTemplateId") String evalTemplateId,@Param("status") Integer status);
 
-    List<EvalRoleEventActivity> getReleaseIdsByRoomIdAndUsers(@Param("room_id")String roomId, @Param("activeTimeList")List<Integer> activeTimeList);
+    List<EvalRoleEventActivity> getReleaseIdsByRoomIdAndUsers(@Param("evalTemplateId") String evalTemplateId, @Param("activeTimeList")List<Integer> activeTimeList);
 
 }

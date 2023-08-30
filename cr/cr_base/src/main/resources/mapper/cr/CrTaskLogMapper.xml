@@ -61,10 +61,10 @@
     <select id="getTaskByRoomIdAndType" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar">
         select m.event_type as type,count(t.resource_id) as count
         from cr_task_log t
-        LEFT JOIN cr_mission m on t.resource_id = m.resource_id
+        JOIN cr_task a ON a.resource_id = t.task_id
+        JOIN cr_mission m ON m.resource_id = a.mission_id
         where t.room_id = #{roomId}
-        and a.`status`= #{status}
-        and m.event_type is not null
+        and a.`status`= #{status} and m.event_type is not null
         group by m.event_type
     </select>
 </mapper>

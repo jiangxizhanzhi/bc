@@ -14,6 +14,7 @@ import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
@@ -407,7 +408,27 @@ public class LcServiceImpl implements LcService {
 			throw new BusinessException(BsErrorCode.DEVICE_NOT_FOUND);
 		}
 		// get device
-		LcDevice device = deviceList.get(0);
+		List<LcDevice> onlineDevices = Lists.newArrayList();
+		List<String> ids = Lists.newArrayList();
+		for (LcDevice device : deviceList) {
+			ids.add(device.getId());
+			if (!device.getStatus().equals(BsConstants.LcDeviceStatus.OFFLINE)) {
+				onlineDevices.add(device);
+			}
+		}
+        // uuid查到几个设备
+		log.info("get device [{}] by uuid: [{}]", String.join(",", ids), uuid);
+        // 没有查询到在线设备
+        if (onlineDevices.isEmpty()) {
+			log.error("cant find online device by uuid:[{}]", uuid);
+			throw new BusinessException(BsErrorCode.NO_ONLINE_DEVICE);
+		}
+        // 查询到多个在线设备
+		if (onlineDevices.size() > 1) {
+			log.error("found multiple online device by uuid:[{}]", uuid);
+			throw new BusinessException(BsErrorCode.MULTIPLE_DEVICE);
+		}
+		LcDevice device = onlineDevices.get(0);
 		if (StringUtils.isBlank(device.getId())) {
 			log.error("empty device id by uuid: [{}]", uuid);
 			throw new BusinessException(BsErrorCode.EMPTY_DEVICE_ID);

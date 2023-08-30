@@ -110,4 +110,12 @@ public interface BsErrorCode {
 	 * 空设备id
 	 */
 	String EMPTY_DEVICE_ID = "105021";
+	/**
+	 * 没有在线设备
+	 */
+	String NO_ONLINE_DEVICE = "105022";
+	/**
+	 * 多个在线设备
+	 */
+	String MULTIPLE_DEVICE = "105023";
 }

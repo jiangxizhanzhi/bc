@@ -326,7 +326,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
 
         for(CrRole role: crRoles){
             JSONObject jsonObject = JSONObject.parseObject(role.getNodes());
-            List<JSONObject> visibleNodes = jsonObject.getJSONArray("visibleNodes").toJavaList(JSONObject.class);
+            List<JSONObject> visibleNodes = jsonObject.getJSONArray("assetNodes").toJavaList(JSONObject.class);
             for(JSONObject visibleNode: visibleNodes){
                 List<String> idList = roleIpMap.get(role.getName());
                 idList = CollectionUtils.isEmpty(idList) ? new ArrayList<>() : idList;

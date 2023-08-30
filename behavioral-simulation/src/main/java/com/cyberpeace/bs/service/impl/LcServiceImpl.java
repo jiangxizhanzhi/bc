@@ -416,16 +416,19 @@ public class LcServiceImpl implements LcService {
 				onlineDevices.add(device);
 			}
 		}
-        // uuid查到几个设备
+		// uuid查到几个设备
 		log.info("get device [{}] by uuid: [{}]", String.join(",", ids), uuid);
-        // 没有查询到在线设备
-        if (onlineDevices.isEmpty()) {
+		// 没有查询到在线设备
+		if (onlineDevices.isEmpty()) {
 			log.error("cant find online device by uuid:[{}]", uuid);
 			throw new BusinessException(BsErrorCode.NO_ONLINE_DEVICE);
 		}
-        // 查询到多个在线设备
+		// 查询到多个在线设备
 		if (onlineDevices.size() > 1) {
-			log.error("found multiple online device by uuid:[{}]", uuid);
+			List<String> onlineIds = onlineDevices.stream().map(LcDevice::getId)
+					.collect(Collectors.toList());
+			log.error("found multiple online device [{}] by uuid:[{}]", String.join(",", onlineIds),
+					uuid);
 			throw new BusinessException(BsErrorCode.MULTIPLE_DEVICE);
 		}
 		LcDevice device = onlineDevices.get(0);

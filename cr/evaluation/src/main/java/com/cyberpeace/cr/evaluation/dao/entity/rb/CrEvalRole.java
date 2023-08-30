@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
  */
 @TableName(value = "cr_eval_role")
 @Data
-public class CrEvalRole extends BaseTable {
+public class CrEvalRole {
 
 	/**
 	 *
@@ -80,6 +81,12 @@ public class CrEvalRole extends BaseTable {
 	 *
 	 */
 	private Integer businessType;
+
+	private Integer id;
+
+	private Date createTime;
+
+	private Date updateTime;
 
 	public CrEvalRole(String name, Integer code) {
 		this.name = name;

@@ -1,13 +1,13 @@
 package com.cyberpeace.cr.evaluation.dao.entity.rb;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.model.BaseTable;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @TableName("cr_eval_task_log")
-public class CrEvalTaskLog extends BaseTable {
+public class CrEvalTaskLog {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -31,6 +31,12 @@ public class CrEvalTaskLog extends BaseTable {
 	private String userId;
 
 	private String evalTemplateId;
+
+	private Integer id;
+
+	private Date createTime;
+
+	private Date updateTime;
 
 	public enum ActionCode {
 

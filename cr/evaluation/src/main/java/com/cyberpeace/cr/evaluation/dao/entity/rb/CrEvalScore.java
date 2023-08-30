@@ -8,9 +8,11 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.Date;
+
 @Data
 @TableName(value = "cr_eval_score")
-public class CrEvalScore extends BaseTable {
+public class CrEvalScore {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -32,6 +34,12 @@ public class CrEvalScore extends BaseTable {
 	private Integer finalScore;
 
 	private String evalTemplateId;
+
+	private Integer id;
+
+	private Date createTime;
+
+	private Date updateTime;
 
 	public enum ScoreValue {
 

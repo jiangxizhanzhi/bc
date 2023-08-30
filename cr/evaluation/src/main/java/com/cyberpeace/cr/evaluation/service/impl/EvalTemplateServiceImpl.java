@@ -275,6 +275,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			String taskId = IDGeneratorUtil.getID();
 			taskIdMatchMap.put(resourceId, taskId);
 			item.setResourceId(taskId);
+			item.setId(null);
 		}
 		LambdaQueryWrapper<CrTaskLog> taskLogQuery = new LambdaQueryWrapper<>();
 		taskLogQuery.eq(CrTaskLog::getRoomId, evalTemplate.getRedVsBlueId());
@@ -285,8 +286,8 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			String newTaskId = taskIdMatchMap.get(item.getTaskId());
 			item.setTaskId(newTaskId);
 			item.setResourceId(null);
+			item.setId(null);
 		}
-
 
 		LambdaQueryWrapper<CrTaskSubmit> taskSubmitQuery = new LambdaQueryWrapper<>();
 		taskSubmitQuery.eq(CrTaskSubmit::getRoomId, evalTemplate.getRedVsBlueId());
@@ -297,6 +298,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			String newTaskId = taskIdMatchMap.get(item.getTaskId());
 			item.setTaskId(newTaskId);
 			item.setResourceId(null);
+			item.setId(null);
 		}
 
 		LambdaQueryWrapper<CrScore> scoreQuery = new LambdaQueryWrapper<>();
@@ -306,6 +308,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		for (CrEvalScore item : evalScoreList) {
 			item.setEvalTemplateId(evalTemplateId);
 			item.setResourceId(null);
+			item.setId(null);
 		}
 
 		List<CrRole> roleList = null;
@@ -361,6 +364,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				}
 				if (!CollectionUtils.isEmpty(evalTaskLogList)) {
 					evalTaskLogMapper.batchInsert(evalTaskLogList);
+//					evalTaskLogList.forEach(item -> evalTaskLogMapper.insert(item));
 				}
 			}
 		});

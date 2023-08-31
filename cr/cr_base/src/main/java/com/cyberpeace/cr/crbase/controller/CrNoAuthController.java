@@ -159,6 +159,7 @@ public class CrNoAuthController {
 		try {
 			remoteUserService.doAuthentication(token);
 		} catch (Exception e) {
+			log.error("authentication failed with token:[{}]", token, e);
 			throw new AuthenticationException();
 		}
 		return new BaseRsp();

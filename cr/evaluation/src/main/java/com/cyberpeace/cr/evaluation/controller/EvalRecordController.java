@@ -275,11 +275,12 @@ public class EvalRecordController {
         String recordName = recordDumpLoadBo.getName();
         LambdaQueryWrapper<EvalRecord> queryRecord = new LambdaQueryWrapper<>();
         queryRecord.eq(EvalRecord::getName, recordName);
+        queryRecord.eq(EvalRecord::getTemplateId,templateId);
         EvalRecord evalRecord = evalRecordService.getBaseMapper().selectOne(queryRecord);
 
         LambdaQueryWrapper<EvalRecord> query = new LambdaQueryWrapper<>();
         query.eq(EvalRecord::getName, recordName);
-        if(null == evalRecord){
+        if(Objects.isNull(evalRecord)){
             BeanUtils.copyProperties(recordDumpLoadBo, evalRecord);
         } else {
             recordName += "-" +  IDGeneratorUtil.getUUIDBits(6);

@@ -34,7 +34,7 @@ public class EvalResultServiceImpl implements EvalResultService {
     @Override
     public List<EvalEventCountBar> getEventCount(String evalTemplateId, Integer roleType) {
         List<EvalEventCountBar> result = new ArrayList<>();
-        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByEvalTemplateAndType(evalTemplateId, CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByEvalTemplateAndType(evalTemplateId, CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),roleType);
         Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
         List<Integer> listCode = getListCode(ActionTypeZHL.class);
         if (roleType.equals(CrRole.RbRoleGroup.RED.getCode())) {
@@ -63,7 +63,7 @@ public class EvalResultServiceImpl implements EvalResultService {
     public List<EvalEventCountRingGraph> getEventPercent(String evalTemplateId, Integer roleType) {
 
         ArrayList<EvalEventCountRingGraph> result = new ArrayList<>();
-        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByEvalTemplateAndType(evalTemplateId, CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByEvalTemplateAndType(evalTemplateId, CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),roleType);
         Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
         List<CrConstantsConfig> crConstantsConfigList;
         if (roleType.equals(CrRole.RbRoleGroup.RED.getCode())) {

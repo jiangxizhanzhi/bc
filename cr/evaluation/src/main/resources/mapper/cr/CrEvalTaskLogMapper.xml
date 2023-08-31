@@ -16,13 +16,16 @@
     </insert>
 
     <select id="getTaskByEvalTemplateAndType" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar">
-        select m.event_type as type,count(t.resource_id) as count
-        from cr_eval_task_log t
-        JOIN cr_eval_train_task a ON a.resource_id = t.task_id
+        select m.event_type AS type,COUNT(a.resource_id) AS count
+        FROM cr_eval_train_task a
         JOIN cr_mission m ON m.resource_id = a.mission_id
-        where t.eval_template_id = #{evalTemplateId}
-        and a.`status`= #{status} and m.event_type is not null
-        group by m.event_type
+        JOIN cr_eval_role r ON r.resource_id = a.role_id
+        WHERE a.eval_template_id = #{evalTemplateId}
+        AND a.`status`= #{status} AND m.event_type IS NOT NULL
+        <if test="groupType != null and groupType != ''">
+            AND r.role_group = #{groupType}
+        </if>
+        GROUP BY m.event_type
     </select>
 
     <select id="getReleaseIdsByRoomIdAndUsers" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity">

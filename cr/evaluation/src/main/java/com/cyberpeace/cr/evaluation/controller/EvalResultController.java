@@ -320,7 +320,7 @@ public class EvalResultController {
     public BaseRsp<List<EvalRoleEventPercentRsp>> getEventBar(@ApiParam(name = "id",
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
         EvalTemplate evalTemplate = getRoomById(resourceId);
-        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByEvalTemplateAndType(evalTemplate.getResourceId(), CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+        List<EvalEventCountBar> taskByRoomIdAndUsers = crEvalTaskLogMapper.getTaskByEvalTemplateAndType(evalTemplate.getResourceId(), CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),null);
         Map<Integer, EvalEventCountBar> barMap = StreamApiUtils.toMap(taskByRoomIdAndUsers, EvalEventCountBar::getType, s -> s);
         List<EvalRoleEventPercentRsp> res = new ArrayList<>();
         List<Integer> listCode = getListCode(ActionTypeZHL.class);

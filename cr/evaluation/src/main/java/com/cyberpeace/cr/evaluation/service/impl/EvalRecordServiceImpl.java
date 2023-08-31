@@ -703,12 +703,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private void startVariables(EvalRecord evalRecord, String mpSceneId, Set<String> variableIds) {
-        if (variableIds.isEmpty()) {
-            EvalLog.info(evalRecord, "variables id is empty, continue.");
-            return;
-        }
-
-        List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode()).ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode()).list();
+//        if (variableIds.isEmpty()) {
+//            EvalLog.info(evalRecord, "variables id is empty, continue.");
+//            return;
+//        }
+        List<EvalVariableRef> byRecordId = evalVariableRefMapper.getByRecordId(evalRecord.getResourceId());
+        List<String> column = StreamApiUtils.getColumn(byRecordId, EvalVariableRef::getResourceId);
+        List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, column).ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode()).ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode()).list();
 
         // 运行中变量项为空, 退出执行下一步
         if (evalVariableRefList.isEmpty()) {

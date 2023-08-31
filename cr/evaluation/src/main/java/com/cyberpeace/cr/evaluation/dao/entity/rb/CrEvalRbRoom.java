@@ -49,5 +49,4 @@ public class CrEvalRbRoom extends BaseTable {
 
 	private String logo;
 
-
 }

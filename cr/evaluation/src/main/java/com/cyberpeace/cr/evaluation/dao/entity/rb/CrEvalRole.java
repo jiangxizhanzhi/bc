@@ -24,7 +24,7 @@ import java.util.List;
  */
 @TableName(value = "cr_eval_role")
 @Data
-public class CrEvalRole {
+public class CrEvalRole extends BaseTable{
 
 	/**
 	 *
@@ -81,12 +81,6 @@ public class CrEvalRole {
 	 *
 	 */
 	private Integer businessType;
-
-	private Integer id;
-
-	private Date createTime;
-
-	private Date updateTime;
 
 	public CrEvalRole(String name, Integer code) {
 		this.name = name;

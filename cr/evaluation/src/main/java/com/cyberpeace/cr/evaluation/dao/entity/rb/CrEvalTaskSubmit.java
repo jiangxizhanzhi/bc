@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @TableName("cr_eval_task_submit")
-public class CrEvalTaskSubmit {
+public class CrEvalTaskSubmit extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -39,12 +39,6 @@ public class CrEvalTaskSubmit {
 	private Integer missionScore;
 
 	private String evalTemplateId;
-
-	private Integer id;
-
-	private Date createTime;
-
-	private Date updateTime;
 
 	public enum EvaluateStatus {
 

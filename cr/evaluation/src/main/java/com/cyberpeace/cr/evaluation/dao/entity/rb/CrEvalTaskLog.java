@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @TableName("cr_eval_task_log")
-public class CrEvalTaskLog {
+public class CrEvalTaskLog extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -32,12 +32,6 @@ public class CrEvalTaskLog {
 
 	private String evalTemplateId;
 
-	private Integer id;
-
-	private Date createTime;
-
-	private Date updateTime;
-
 	public enum ActionCode {
 
 		RELEASE(1, "下发任务"), OPEN_WRITEUP(2, "开放题解"), CLOSE_WRITEUP(3, "关闭题解"), SUBMIT(4,
@@ -49,10 +43,6 @@ public class CrEvalTaskLog {
 
 		@Getter
 		private String desc;
-
-		public static final List<Integer> ACTIVE_TIME_LIST = new ArrayList<>(
-				Arrays.asList(ROBOT_SUCCESS.code, ROBOT_FAILURE.code, MAN_SUCCESS.code,MAN_FAILURE.code,MAN_REJECT.code,START_ANSWER.code ));
-
 
 		ActionCode(Integer code, String desc) {
 			this.code = code;

@@ -16,7 +16,7 @@ import java.util.List;
 
 @Data
 @TableName("cr_eval_train_task")
-public class CrEvalTrainTask {
+public class CrEvalTrainTask extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -46,12 +46,6 @@ public class CrEvalTrainTask {
 	private String missionTemplateId;
 
 	private String evalTemplateId;
-
-	private Integer id;
-
-	private Date createTime;
-
-	private Date updateTime;
 
 	public Boolean isFinished() {
 		boolean result = status.intValue() == TaskStatus.SUCCESS.getCode();

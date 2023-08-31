@@ -2,10 +2,8 @@ package com.cyberpeace.cr.evaluation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
-import com.cyberpeace.cr.crbase.controller.rsp.EvalEventStatusCount;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskLog;
-import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
 import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;

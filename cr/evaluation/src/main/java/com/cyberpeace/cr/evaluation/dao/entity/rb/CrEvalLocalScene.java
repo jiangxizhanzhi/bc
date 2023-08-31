@@ -16,7 +16,7 @@ import java.util.Date;
 
 @Data
 @TableName("cr_eval_local_scene")
-public class CrEvalLocalScene {
+public class CrEvalLocalScene extends BaseTable{
 
 	/**
 	 *
@@ -115,12 +115,6 @@ public class CrEvalLocalScene {
 	 * 实训课后联系=course_id/lesson_id/paper_id
 	 */
 	private String meta;
-
-	private Integer id;
-
-	private Date createTime;
-
-	private Date updateTime;
 
 	public enum SceneStatusEnum implements GenericEnum {
 

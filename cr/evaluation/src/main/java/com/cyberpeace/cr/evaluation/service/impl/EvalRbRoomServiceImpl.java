@@ -343,16 +343,13 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         crEvalTaskSubmit.setEvaluateStatus(evaluateStatus);
         crEvalTaskSubmit.setEvaluatorId(currentUserId);
         crEvalTaskSubmit.setEvaluateTime(new Date());
-        crEvalTaskSubmit.setUpdateTime(new Date());
 
         crEvalTrainTask.setStatus(evaluateStatus);
         crEvalTrainTask.setScore(score);
-        crEvalTrainTask.setUpdateTime(new Date());
 
         CrEvalTaskLog evaluationLog = CrEvalTaskLog.builder().roomId(crEvalTaskSubmit.getRoomId())
                 .missionId(crEvalTrainTask.getMissionId()).actionCode(evaluateStatusToActionCode.get(evaluateStatus))
-                .userId(currentUserId).evalTemplateId(req.getEvalTemplateId()).createTime(new Date()).updateTime(new Date())
-                .build();
+                .userId(currentUserId).evalTemplateId(req.getEvalTemplateId()).build();
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

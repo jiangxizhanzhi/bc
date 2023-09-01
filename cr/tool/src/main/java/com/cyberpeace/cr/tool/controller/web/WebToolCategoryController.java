@@ -8,6 +8,7 @@ import com.cyberpeace.cr.tool.service.ToolCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,12 @@ public class WebToolCategoryController {
 
     @GetMapping("/list")
     @ApiOperation("工具分类列表")
-    @RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
+    @RequiresPermissions(value = {MenuConstant.WEB_CR_TOOL_TOOLS, MenuConstant.WEB_CR_SINGLE_TRAIN,
+            MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE,
+            MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
     public BaseRsp<List<WebToolCategoryRsp>> getList(
             @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
         List<WebToolCategoryRsp> webToolCategoryRsps = toolCategoryService.webSelectAll();
-
         return new BaseRsp<>(webToolCategoryRsps);
     }
 

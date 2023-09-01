@@ -240,8 +240,7 @@ public class EvalResultController {
             if(crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
                 redCount.add(count);
                 blueCount.add(0);
-
-            } else{
+            } else if (crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())){
                 redCount.add(0);
                 blueCount.add(count);
             }

@@ -20,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,9 @@ public class WebToolController {
 
 	@ApiOperation("工具库列表")
 	@GetMapping("/topology_list")
-	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_TOOL_TOOLS, MenuConstant.WEB_CR_SINGLE_TRAIN,
+			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE,
+			MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<ListRsp<ToolRsp>> topologyList(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated WebToolListReq webToolListReq) {
 

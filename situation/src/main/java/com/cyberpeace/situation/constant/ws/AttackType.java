@@ -26,7 +26,9 @@ public enum AttackType {
     MEDIA_ANIMATION(ActionType.NONE,"多媒体动效","Media Animation","media-animation"),
     HIGHLIGHT_AREA(ActionType.HIGHLIGHT_AREA,"区域高亮","Highlight Area","highlight-area"),
     HIGHLIGHT_ELEMENT(ActionType.HIGHLIGHT_ELEMENT,"节点聚焦","Highlight Element","highlight-element"),
-    LINK_POWER_OFF(ActionType.LINK_POWER_OFF,"链路断线","Link Poweroff","link-poweroff");
+    LINK_POWER_OFF(ActionType.LINK_POWER_OFF,"链路断线","Link Poweroff","link-poweroff"),
+	NODE_CONNECTED(ActionType.NODE_CONNECTED,"节点上线","Node Connected","node-connected"),
+	NODE_DISCONNECTED(ActionType.NODE_DISCONNECTED,"节点下线","Node Disconnected","node-disconnected");
 
     @Getter
 	private ActionType actionType;

@@ -79,7 +79,7 @@ public class WebToolController {
 	@ApiOperation("工具库列表")
 	@GetMapping("/topology_list")
 	@RequiresPermissions(value = {MenuConstant.WEB_CR_TOOL_TOOLS, MenuConstant.WEB_CR_SINGLE_TRAIN,
-			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE,
+			MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE,
 			MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<ListRsp<ToolRsp>> topologyList(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated WebToolListReq webToolListReq) {

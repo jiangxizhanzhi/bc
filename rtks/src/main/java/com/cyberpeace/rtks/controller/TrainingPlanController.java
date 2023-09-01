@@ -238,7 +238,7 @@ public class TrainingPlanController {
 	@ApiOperation("岗位评估-技能体系清单")
 	@GetMapping("/role_evaluation/skill_list")
 	@RequiresPermissions(
-			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
+			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN,
 					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_PERSON_CENTER },
 			logical = Logical.OR)
 	public BaseRsp<ListRsp<SkillProcessRes>> pageSkillProcess(@Validated PageReqBase pageReqBase) {
@@ -254,7 +254,7 @@ public class TrainingPlanController {
 	@ApiOperation("岗位简介-岗位训练路径")
 	@GetMapping("/role_desc/training_path")
 	@RequiresPermissions(
-			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
+			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN,
 					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_PERSON_CENTER },
 			logical = Logical.OR)
 	public BaseRsp<ListRsp<SkillPagePath>> pageSkillPath(@Validated PageReqBase pageReqBase) {

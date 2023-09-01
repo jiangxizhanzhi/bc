@@ -29,14 +29,17 @@ public interface MenuConstant {
     //单兵训练
     String WEB_CR_SINGLE_TRAIN = "single-list";
 
-    //团队训练
-    String WEB_CR_TEAM_TRAIN = "group-training";
+    //红队训练
+    String WEB_CR_RED_TRAIN = "group-training";
 
-    //红蓝对抗
-    String WEB_CR_RED_VS_BLUE = "red-vs-blue";
+    //蓝队训练
+    String WEB_CR_BLUE_TRAIN = "blue-training";
 
     //日常练习
     String WEB_CR_DAILY_TRAIN = "practice-train";
+
+    //红蓝对抗
+    String WEB_CR_RED_VS_BLUE = "red-vs-blue";
 
     //工具库
     String WEB_CR_TOOL_TOOLS = "tool-magazine";
@@ -113,17 +116,20 @@ public interface MenuConstant {
     //单兵训练
     String CMS_CR_SINGLE_TRAIN = "cr-individual-training";
 
-    //团队训练
-    String CMS_CR_TEAM_TRAIN = "cr-team-training";
+    //红队训练
+    String CMS_CR_RED_TRAIN = "cr-team-training";
+
+    //蓝队训练
+    String CMS_CR_BLUE_TRAIN = "blue-team-training";
+
+    //日常练习管理
+    String CMS_DAILY_MODE = " daily-practice";
 
     //红蓝对抗
     String CMS_RED_VS_BLUE = "red-vs-blue-folder";
 
     //对抗练习模式
     String CMS_TRAINING_MODE = "confront-training-mode";
-
-    //日常练习管理
-    String CMS_DAILY_MODE = " daily-practice";
 
     //工具库
     String CMS_TOOL = "tool";

@@ -81,7 +81,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN,MenuConstant.WEB_CR_DAILY_TRAIN},logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -105,7 +105,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -178,7 +178,7 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("获取任务列表")
 	@GetMapping("/get_mission_scheme")
-	@RequiresPermissions(value={MenuConstant.WEB_CR_TEAM_TRAIN,MenuConstant.WEB_CR_DAILY_TRAIN},logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<List<MissionSchemeObject<SchemeListMissionRsp>>> getMissionScheme(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -204,7 +204,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<String>
 			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		CrCommonValidator.checkStringExist(submitMissionsReq.getAnswer(),
@@ -225,7 +225,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("获取任务详情")
 	@GetMapping("/get_mission_detail")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<MissionRsp> getMissionDetail(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "mission_id", value = "任务id", required = true) String mission_id) {
@@ -258,7 +258,7 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
-	@RequiresPermissions(value={MenuConstant.WEB_CR_TEAM_TRAIN,MenuConstant.WEB_CR_DAILY_TRAIN},logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<StudentsTimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
@@ -319,7 +319,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("实装分配-设备审批申请")
 	@PostMapping("/device/apply")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<Boolean> deviceApply(@RequestBody @Validated RoomDeviceApplyReq roomDeviceApplyReq) {
 		TeamRoom teamRoom = teamRoomService.getById(roomDeviceApplyReq.getRoomId());
 		if (teamRoom == null) {

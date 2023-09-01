@@ -138,7 +138,7 @@ public class CrBaseController {
 	@GetMapping("/current_time")
 	@RequiresPermissions(
 			value = { MenuConstant.CMS_CLASS_ROOM, MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN },
+					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN,MenuConstant.WEB_CR_DAILY_TRAIN },
 			logical = Logical.OR)
 	public BaseRsp<CurrentTimeRsp> getCurrentTime() {
 		CurrentTimeRsp rsp = new CurrentTimeRsp();
@@ -155,7 +155,8 @@ public class CrBaseController {
 			rsp.add(new CodeNameRsp(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
 					LocalScene.BusinessCode.SINGLE_TRAINING.getDesc()));
 		}
-		if (permissions.contains(MenuConstant.CMS_CR_TEAM_TRAIN)) {
+
+		if (permissions.contains(MenuConstant.CMS_CR_RED_TRAIN)||permissions.contains(MenuConstant.CMS_CR_BLUE_TRAIN)||permissions.contains(MenuConstant.CMS_DAILY_MODE)) {
 			rsp.add(new CodeNameRsp(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
 					LocalScene.BusinessCode.TEAM_TRAINING.getDesc()));
 		}

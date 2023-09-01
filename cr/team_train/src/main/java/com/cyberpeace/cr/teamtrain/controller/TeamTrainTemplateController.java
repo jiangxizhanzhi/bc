@@ -90,7 +90,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN, MenuConstant.CMS_DAILY_MODE}, logical = Logical.OR)
 	public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
 		// set type
 		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
@@ -126,7 +126,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("修改")
 	@PatchMapping()
-	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN, MenuConstant.CMS_DAILY_MODE}, logical = Logical.OR)
 	public BaseRsp update(@RequestBody @Validated TeamTrainTemplateModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		TeamTemplate teamTemplate = teamTemplateService.getByTemplateBusinessId(resourceId);
@@ -161,7 +161,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(value = {MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.CMS_DAILY_MODE}, logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN , MenuConstant.CMS_DAILY_MODE}, logical = Logical.OR)
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
 		businessTemplateService.checkPermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());
@@ -207,7 +207,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
-	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN, MenuConstant.CMS_DAILY_MODE}, logical = Logical.OR)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(deleteReq.getIds());
@@ -227,7 +227,7 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
-	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());

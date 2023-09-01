@@ -163,8 +163,8 @@ public class MissionController {
 	@PostMapping("/missions")
 	@RequiresPermissions(
 			value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.CMS_RED_VS_BLUE,
-					MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_TEAM_TRAIN },
-			logical = Logical.OR)
+					MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_RED_TRAIN,
+					MenuConstant.CMS_CR_BLUE_TRAIN, MenuConstant.CMS_DAILY_MODE }, logical = Logical.OR)
 	public BaseRsp<MissionTemplateRsp>
 			addMission(@RequestBody @Validated MissionTemplateReq missionTemplateReq) {
 		missionTemplateReq.validate();

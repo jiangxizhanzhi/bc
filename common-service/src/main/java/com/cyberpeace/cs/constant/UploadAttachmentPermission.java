@@ -25,7 +25,7 @@ public enum UploadAttachmentPermission implements GenericEnum {
     CMS_MISSION_MD_ATTACHMENT(8,"后台任务编辑MD附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_CR_MISSION_SCHEME}),
     CMS_LESSON_HANDOUT_ATTACHMENT(9,"后台课时讲义附件上传", FileTypeContant.HANDOUT_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_COURSES}),
     CMS_LESSON_VIDEO_ATTACHMENT(10,"后台课时视频附件上传", FileTypeContant.VIDEO_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_COURSES}),
-    CR_TRAIN_NOTICE_ATTACHMENT(11,"前台训练公告附件上传", FileTypeContant.TRAIN_NOTICE_ATTACHMENT, new String[]{MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE}),
+    CR_TRAIN_NOTICE_ATTACHMENT(11,"前台训练公告附件上传", FileTypeContant.TRAIN_NOTICE_ATTACHMENT, new String[]{MenuConstant.WEB_CR_RED_TRAIN,MenuConstant.WEB_CR_BLUE_TRAIN,MenuConstant.WEB_CR_DAILY_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE}),
     CR_EVAL_INDICATOR_LOAD_ATTACHMENT(12,"后台指标项文件上传", FileTypeContant.CR_EVAL_INDICATOR_ATTACHMENT, new String[]{MenuConstant.CMS_CR_EVALUATION_INDICATOR}),
     WEB_TASK_FLAG_ATTACHMENT(13,"红蓝练习flag任务文件上传", FileTypeContant.TASK_FLAG_ATTACHMENT, new String[]{MenuConstant.WEB_CR_RED_VS_BLUE});
 

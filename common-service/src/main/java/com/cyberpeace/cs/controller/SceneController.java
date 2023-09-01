@@ -43,7 +43,8 @@ public class SceneController {
 	@ApiOperation("场景节点打快照")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN,
+			MenuConstant.CMS_DAILY_MODE }, logical = Logical.OR)
 	public BaseRsp<Boolean> nodeSnapshot(@Valid @RequestBody NodeSnapShotReq snapShotReq) {
 
 		snapShotReq.setSnapshotName(snapShotReq.getSnapshotName().trim());
@@ -62,7 +63,8 @@ public class SceneController {
 	@ApiOperation("场景节点快照删除")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN,
+			MenuConstant.CMS_DAILY_MODE }, logical = Logical.OR)
 	public BaseRsp<Boolean> snapshotDelete(@Valid @RequestBody NodeSnapshotDeleteReq deleteReq) {
 
 		Boolean result = localSceneService.deleteSnapshot(deleteReq.getSceneId(),
@@ -74,7 +76,8 @@ public class SceneController {
 	@ApiOperation("场景节点快照路径")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN,
+			MenuConstant.CMS_DAILY_MODE }, logical = Logical.OR)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "scene_id", value = "场景编号", required = true),
 			@ApiImplicitParam(name = "id", value = "镜像编号", required = true) })
 	public BaseRsp<JSONArray> snapshotPath(@RequestParam("scene_id") String sceneId,
@@ -89,8 +92,10 @@ public class SceneController {
 	@ApiOperation("单个节点开机")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
-			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+			MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN,
+			MenuConstant.CMS_DAILY_MODE, MenuConstant.WEB_CR_SINGLE_TRAIN,
+			MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN,
+			MenuConstant.WEB_CR_DAILY_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
 	public BaseRsp<Boolean> startNode(@Valid @RequestBody NodeOpsReq req) {
 		Boolean result = localSceneService.startNode(req.getMpSceneId(), req.getNodeId());
 		return new BaseRsp<>(result);
@@ -101,8 +106,10 @@ public class SceneController {
 	@ApiOperation("单个节点关机")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
-			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+			MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN,
+			MenuConstant.CMS_DAILY_MODE, MenuConstant.WEB_CR_SINGLE_TRAIN,
+			MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN,
+			MenuConstant.WEB_CR_DAILY_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
 	public BaseRsp<Boolean> stopNode(@Valid @RequestBody NodeOpsReq req) {
 		Boolean result = localSceneService.stopNode(req.getMpSceneId(), req.getNodeId());
 		return new BaseRsp<>(result);
@@ -113,8 +120,10 @@ public class SceneController {
 	@ApiOperation("场景重启")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
-			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+			MenuConstant.CMS_CR_RED_TRAIN, MenuConstant.CMS_CR_BLUE_TRAIN,
+			MenuConstant.CMS_DAILY_MODE, MenuConstant.WEB_CR_SINGLE_TRAIN,
+			MenuConstant.WEB_CR_RED_TRAIN,MenuConstant.WEB_CR_BLUE_TRAIN,
+			MenuConstant.WEB_CR_DAILY_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
 	public BaseRsp<Boolean> restartNode(@Valid @RequestBody NodeOpsReq req) {
 		Boolean result = localSceneService.restartScene(req.getMpSceneId());
 		return new BaseRsp<>(result);

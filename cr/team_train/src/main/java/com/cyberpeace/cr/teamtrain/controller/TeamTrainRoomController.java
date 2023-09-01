@@ -136,7 +136,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN},logical = Logical.OR)
 	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -149,7 +149,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("停止场景")
 	@DeleteMapping("/scene")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<Boolean> stopScene(@RequestBody SceneOpsReq sceneStopReq) {
 		String roomId = sceneStopReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -162,7 +162,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查看场景")
 	@GetMapping("/scene")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
@@ -172,7 +172,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("暂停场景")
 	@PostMapping("/scene/pause")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<Boolean> pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
@@ -182,7 +182,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/scene/unpause")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
@@ -192,7 +192,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查询流量")
 	@GetMapping("flow")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<FlowRsp> getFlowList(
 			@ApiParam(name = "room_id", value = "团队训练id", required = true) String room_id) {
 
@@ -205,7 +205,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp startFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -226,7 +226,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("停止流量")
 	@PostMapping("/flow/stop")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp stopFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -247,7 +247,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("重启节点")
 	@PostMapping("/scene/node/restart")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
@@ -263,7 +263,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("重建节点")
 	@PostMapping("/scene/node/recreate")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
@@ -279,7 +279,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
 		// 校验
 		teamTrainRoomReq.validate();
@@ -306,7 +306,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("修改")
 	@PutMapping()
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<TeamRoomRsp>
 			update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
 		// 校验
@@ -333,7 +333,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -374,7 +374,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated SceneOpsReq opsReq) {
 
 		String roomId = opsReq.getRoomId();
@@ -413,7 +413,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
-	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
@@ -483,7 +483,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("修改团队训练状态")
 	@PostMapping("/start_end_team")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<AddTeamTimeManagementRsp> changeTrainingStatus(@RequestBody @Validated TeamTimeManagementReq req) {
 
 		AddTeamTimeManagementRsp teamTimeManagementRsp = teamRoomService.addTimeManagement(req);
@@ -499,7 +499,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("查询团队训练状态")
 	@GetMapping("/start_end_team")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<Map> getTrainingStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		Integer status = teamRoomService.getTrainingStatus(resource_id);
@@ -516,7 +516,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("查询团队训练学员用户列表")
 	@GetMapping("/get_user_list")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<List<UserRole>> getUserList(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		List<UserRole> data = teamRoomService.getUserList(resource_id);
@@ -530,7 +530,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<TimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
@@ -545,7 +545,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("查询团队训练训练手册")
 	@GetMapping("/get_training_manual")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<String> getTrainingManual(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
@@ -560,7 +560,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("修改开放题解")
 	@PostMapping("/update_show_write_up")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<String> updateShowWriteUp(@RequestBody @Validated WriteUpReq writeUpReq) {
 
 		teamRoomService.checkTeacherPermission(writeUpReq.getRoomId(),
@@ -579,7 +579,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("任务下发")
 	@PostMapping("/missions")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<String>
 			releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
@@ -605,7 +605,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("批量任务下发")
 	@PostMapping("/batchMissions")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<Boolean>
 	releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 		if (CollectionUtils.isEmpty(releaseMissionReq.getMissionResourceIds())) {
@@ -630,7 +630,7 @@ public class TeamTrainRoomController {
 
 	@ApiOperation("任务关闭")
 	@PostMapping("/missions/close")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<Boolean> closeMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 		if (crRole == null) {
@@ -700,7 +700,7 @@ public class TeamTrainRoomController {
 	 */
 	@ApiOperation("获取时间管理数据")
 	@GetMapping("/get_time_management")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
 	public BaseRsp<TeamTimeManagementRsp> getTimeManagement(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		TeamTimeManagement teamTimeManagement = teamTimeManagementService.getByRoomId(resource_id);

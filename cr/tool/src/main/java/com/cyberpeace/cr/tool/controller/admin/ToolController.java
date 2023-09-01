@@ -136,7 +136,8 @@ public class ToolController {
 	 */
 	@ApiOperation("查询操作权限")
 	@GetMapping("/getShares")
-	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_RED_TRAIN,
+			MenuConstant.CMS_CR_BLUE_TRAIN, MenuConstant.CMS_DAILY_MODE,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public BaseRsp<Share> getShares(
 			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {

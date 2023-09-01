@@ -27,6 +27,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,7 @@ public class DailyTrainRoomController {
 
     @ApiOperation("修改")
     @PutMapping()
-    @RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+    @RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
     public BaseRsp<TeamRoomRsp>
     update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
         // 校验

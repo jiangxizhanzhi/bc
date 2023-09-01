@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -80,7 +81,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_TEAM_TRAIN,MenuConstant.WEB_CR_DAILY_TRAIN},logical = Logical.OR)
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -177,7 +178,7 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("获取任务列表")
 	@GetMapping("/get_mission_scheme")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value={MenuConstant.WEB_CR_TEAM_TRAIN,MenuConstant.WEB_CR_DAILY_TRAIN},logical = Logical.OR)
 	public BaseRsp<List<MissionSchemeObject<SchemeListMissionRsp>>> getMissionScheme(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -257,7 +258,7 @@ public class TeamTrainStudentsController {
 	 */
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(value={MenuConstant.WEB_CR_TEAM_TRAIN,MenuConstant.WEB_CR_DAILY_TRAIN},logical = Logical.OR)
 	public BaseRsp<StudentsTimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 

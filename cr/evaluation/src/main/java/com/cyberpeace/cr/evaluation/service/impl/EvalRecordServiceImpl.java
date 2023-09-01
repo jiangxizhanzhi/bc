@@ -232,6 +232,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         if (!isUpdate) {
             evalRecord.setResourceId(IDGeneratorUtil.getID());
             evalRecord.setStatus(EvalRecord.Status.NOT_START.getCode());
+            evalRecord.setType(EvalRecord.Type.ADD.getCode());
         }
 
         // 获取"系统评分"指标项下的变量项节点、探针信息

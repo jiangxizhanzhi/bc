@@ -286,6 +286,7 @@ public class EvalRecordController {
             recordName += "-" +  IDGeneratorUtil.getUUIDBits(6);
         }
         evalRecord.setName(recordName);
+        evalRecord.setType(EvalRecord.Type.IMPORT.getCode());
         String recordId = IDGeneratorUtil.getID();
         evalRecord.setResourceId(recordId);
         Map<String, String> variableMap = new HashMap<>();

@@ -79,6 +79,25 @@ public class EvalRecord extends BaseTable {
      */
     private Date evalEndTime;
 
+    /**
+     * 评估任务类型 (1:新增 2:导入 )
+     */
+    private Integer type;
+
+    public enum Type implements GenericEnum {
+        ADD(1, "新增"),
+        IMPORT(2, "导入");
+        @Getter
+        private final Integer code;
+        @Getter
+        private final String desc;
+
+        Type(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
+
     public enum Status implements GenericEnum {
         NOT_START(1, "未评估"),
         RUNNING(2, "评估中"),

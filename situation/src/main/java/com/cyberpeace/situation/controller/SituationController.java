@@ -2,7 +2,6 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
@@ -36,6 +36,7 @@ import com.cyberpeace.situation.service.TopoHandlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "态势拓扑")
 @Slf4j
@@ -258,6 +259,7 @@ public class SituationController {
 		}
 
 		// 推送节点链路状态
+		linkStatus = "true".equals(SystemPropUtil.getProp("LINK_STATUS"));
 		if (linkStatus) {
 			refreshDataRes.setLinkStatus(situationHandlerService.pushLinkStatus(sceneId));
 		}

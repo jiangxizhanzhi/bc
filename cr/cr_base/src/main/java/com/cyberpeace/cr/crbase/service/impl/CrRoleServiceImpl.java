@@ -1,9 +1,14 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.enums.TeamRoleGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -434,5 +439,42 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
+
+	@Override
+	public void combineRoleConst(DashboardInfo dashboardInfo) {
+		List<DashboardRole> roleConst = new ArrayList<DashboardRole>() {{
+			DashboardRole red = new DashboardRole();
+			red.setRoleType(RbRoleGroup.RED.getEnglish());
+			red.setRole(RbRoleGroup.RED.getMsg());
+			red.setRoleCode(RbRoleGroup.RED.getCode());
+			add(red);
+
+			DashboardRole blue = new DashboardRole();
+			blue.setRoleType(RbRoleGroup.BLUE.getEnglish());
+			blue.setRole(RbRoleGroup.BLUE.getMsg());
+			blue.setRoleCode(RbRoleGroup.BLUE.getCode());
+			add(blue);
+
+			DashboardRole white = new DashboardRole();
+			white.setRoleType(RbRoleGroup.WHITE.getEnglish());
+			white.setRole(RbRoleGroup.WHITE.getMsg());
+			white.setRoleCode(RbRoleGroup.WHITE.getCode());
+			add(white);
+
+			DashboardRole teamTeacher = new DashboardRole();
+			teamTeacher.setRoleType(TeamRoleGroup.TEACHER.getEnglish());
+			teamTeacher.setRole(TeamRoleGroup.TEACHER.getMsg());
+			teamTeacher.setRoleCode(TeamRoleGroup.TEACHER.getCode());
+			add(teamTeacher);
+
+			DashboardRole teamStudent = new DashboardRole();
+			teamStudent.setRoleType(TeamRoleGroup.STUDENT.getEnglish());
+			teamStudent.setRole(TeamRoleGroup.STUDENT.getMsg());
+			teamStudent.setRoleCode(TeamRoleGroup.STUDENT.getCode());
+			add(teamStudent);
+		}};
+		dashboardInfo.setRoleConst(roleConst);
+	}
+
 
 }

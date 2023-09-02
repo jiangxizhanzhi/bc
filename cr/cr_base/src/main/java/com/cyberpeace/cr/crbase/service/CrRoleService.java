@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
@@ -148,4 +149,6 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param userId 用户id
 	 */
 	void checkPermission(String roomId, String userId);
+
+	void combineRoleConst(DashboardInfo dashboardInfo);
 }

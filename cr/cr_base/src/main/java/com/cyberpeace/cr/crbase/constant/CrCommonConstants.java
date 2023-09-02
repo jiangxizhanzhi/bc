@@ -67,4 +67,7 @@ public interface CrCommonConstants {
 
 	Integer MAX_MISSION_WEIGHT = ConfigReader.readInt("rtks.mission.weight.max");
 
+	String TEAM_GROUP_AVATAR = "/cpms/upload/images/e4abbc7f396c46958f5b599a3750645a.png";
+
+	String TEAM_GROUP_JAR_AVATAR = "teamtrain/team_group_avatar.png";
 }

@@ -1,11 +1,14 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -749,5 +752,33 @@ public class TeamTrainRoomController {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_CREATE_NODE);
 		}
 		return new BaseRsp();
+	}
+
+	@ApiOperation("获取聊天框用户列表")
+	@GetMapping("/dashboard_info")
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
+	public BaseRsp<DashboardInfo> getDashboardInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+
+		DashboardInfo data = teamRoomService.getDashboardInfo(crRole, resource_id, userId);
+
+		return new BaseRsp(data);
+	}
+
+	@ApiOperation("获取聊天框群组成员列表")
+	@GetMapping("/members_info")
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
+	public BaseRsp<JSONObject> getMembersInfo(
+			@ApiParam(name = "resource_id", value = "房间id", required = true) String resource_id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		teamRoomService.checkRoomPermission(resource_id, userId);
+
+		List<DashboardUser> data = teamRoomService.getMembersInfo(resource_id);
+		JSONObject json = new JSONObject();
+		json.put("list", data);
+
+		return new BaseRsp(json);
 	}
 }

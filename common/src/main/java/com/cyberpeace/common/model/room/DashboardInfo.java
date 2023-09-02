@@ -17,4 +17,7 @@ public class DashboardInfo implements Serializable {
 
 	@ApiModelProperty("群组信息")
 	private List<DashboardGroup> group;
+
+	@ApiModelProperty("角色常量")
+	private List<DashboardRole> roleConst;
 }

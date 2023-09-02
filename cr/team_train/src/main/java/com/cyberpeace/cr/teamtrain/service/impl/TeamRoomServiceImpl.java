@@ -6,13 +6,20 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.room.DashboardFriend;
+import com.cyberpeace.common.model.room.DashboardGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -48,10 +55,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -619,6 +627,186 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (teamRoomMapper.existByName(name)) {
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}
+	}
+
+
+	@Override
+	public CrRole checkRoomPermission(String roomId, String userId) {
+		TeamRoom rbRoom = getById(roomId);
+		if (rbRoom == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		if (crRole == null) {
+			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]", roomId,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+		return crRole;
+	}
+
+	@Override
+	public DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId) {
+		DashboardInfo dashboardInfo = new DashboardInfo();
+		// 添加常量供前端使用
+		crRoleService.combineRoleConst(dashboardInfo);
+
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(roomId);
+
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+		List<String> userIds = Lists.newArrayList();
+		crRoles.forEach(role -> userIds.addAll(role.getUserIdList()));
+		// 获取全部用户
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+
+		// 自己
+		final DashboardUser[] mineArr = new DashboardUser[1];
+		// 好友列表
+		final List<DashboardUser> friend = Lists.newArrayList();
+		// 团队群组
+		List<String> teamMembers = Lists.newArrayList();
+
+		crRoles.forEach(role -> {
+			List<String> userIdList = role.getUserIdList();
+			// 过滤不存在用户
+			userIdList = userIdList.stream()
+					.filter(userInfoMap::containsKey)
+					.collect(Collectors.toList());
+			role.setUserIdList(userIdList);
+
+			teamMembers.addAll(userIdList);
+
+			// 将自己的信息单独列出来
+			Optional<String> first = userIdList.stream()
+					.filter(userId -> userId.equals(currentUserId))
+					.findFirst();
+			String myUserId = first.orElse("");
+			if(StringUtils.isNotEmpty(myUserId)) {
+				mineArr[0] = (buildDashboardUser(role, myUserId, userInfoMap));
+			}
+
+			userIds.addAll(role.getUserIdList());
+
+			userIdList = userIdList.stream()
+					.filter(item -> !currentUserId.equals(item))
+					.collect(Collectors.toList());
+			role.setUserIdList(userIdList);
+			// 添加所有人作为好友列表
+			friend.addAll(buildDashboardUser(role, userInfoMap));
+		});
+
+		DashboardUser mine = mineArr[0];
+		mine.username(userInfoMap.get(mine.getId()).getName())
+				.avatar(userInfoMap.get(mine.getId()).getAvatarUrl());
+
+		// 好友列表封装
+		DashboardFriend dashboardFriend = new DashboardFriend();
+		dashboardFriend.setId(1);
+		dashboardFriend.setGroupname(DashboardFriend.GROUP_NAME.FRIEND_LIST.getDesc());
+		dashboardFriend.setList(friend);
+
+		// 群组封装
+		List<DashboardGroup> groups = Lists.newArrayList();
+		DashboardGroup teamGroup = new DashboardGroup(RbRoleGroup.TEAM_GROUP.getMsg(),
+				RbRoleGroup.TEAM.getCode(),
+				confirmAvatarFile(CrCommonConstants.TEAM_GROUP_AVATAR, CrCommonConstants.TEAM_GROUP_JAR_AVATAR));
+		teamGroup.setMembers(teamMembers);
+		teamGroup.setId(roomId);
+		groups.add(teamGroup);
+
+
+		dashboardInfo.setMine(mine);
+		dashboardInfo.setFriend(Lists.newArrayList(dashboardFriend));
+		dashboardInfo.setGroup(groups);
+
+		return dashboardInfo;
+	}
+
+	private List<DashboardUser> buildDashboardUser(CrRole role, Map<String, UserInfo> userInfoMap) {
+		return role.getUserIdList().stream()
+				.map(userId -> buildDashboardUser(role, userId, userInfoMap))
+				.collect(Collectors.toList());
+	}
+
+    private DashboardUser buildDashboardUser(CrRole role, String userId, Map<String, UserInfo> userInfoMap) {
+        UserInfo userInfo = userInfoMap.get(userId);
+
+		DashboardUser dashboardUser = new DashboardUser();
+		dashboardUser
+				.id(userId)
+				.status("online")
+				.sign("")
+				.avatar(userInfo.getAvatarUrl())
+				.username(userInfo.getName());
+		if(role.isTeamTeacher()) {
+			dashboardUser.role(TeamRoleGroup.TEACHER.getMsg());
+		}
+		if(role.isTeamStudent()) {
+			dashboardUser.role(TeamRoleGroup.STUDENT.getMsg());
+		}
+		return dashboardUser;
+    }
+
+
+	private String confirmAvatarFile(String filePath, String jarFilePath) {
+		File file = new File(filePath);
+		if(file.exists()) {
+			return filePath;
+		}
+		if(!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
+
+		try(
+				InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(jarFilePath);
+				OutputStream outputStream = new FileOutputStream(file);
+		) {
+			int read = 0;
+			byte[] bytes = new byte[2048];
+			while((read = inputStream.read(bytes)) > 0) {
+				outputStream.write(bytes, 0, read);
+			}
+		} catch (Exception e) {
+			log.error("file not found in directory{}",
+					filePath);
+			throw new BusinessException(
+					CrBusinessErrorCode.NOT_PATH);
+		}
+		return filePath;
+	}
+
+
+	@Override
+	public List<DashboardUser> getMembersInfo(String roomId) {
+		List<DashboardUser> friend = Lists.newArrayList();
+
+
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(roomId);
+//		roleQuery.setRoleGroup(CrRole.TeamRoleGroup.STUDENT);
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+		final List<String> userIds = new ArrayList<>();
+		crRoles.forEach(role -> userIds.addAll(role.getUserIdList()));
+
+		// 获取全部用户
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+
+		crRoles.forEach(role -> {
+			List<String> userIdList = role.getUserIdList();
+			// 过滤不存在用户
+			userIdList = userIdList.stream()
+					.filter(userInfoMap::containsKey)
+					.collect(Collectors.toList());
+			role.setUserIdList(userIdList);
+
+			List<DashboardUser> dashboardUsers = buildDashboardUser(role, userInfoMap);
+			friend.addAll(dashboardUsers);
+		});
+
+		return friend;
 	}
 
 }

@@ -48,5 +48,12 @@
         and last_submit_time is null
     </select>
 
-
+    <select id="selectBySubmitTaskByEvalTemplateId" resultType="com.cyberpeace.cr.evaluation.service.bo.EvalRankTaskBo">
+        select a.resource_id taskId, b.resource_id submitId, b.score, a.mission_id missionId,
+        a.user_id userId, a.role_id roleId, a.room_id roomId
+        FROM cr_eval_train_task a
+        JOIN cr_eval_task_submit b
+        on a.resource_id = b.task_id
+        where a.eval_template_id = #{evalTemplateId}
+    </select>
 </mapper>

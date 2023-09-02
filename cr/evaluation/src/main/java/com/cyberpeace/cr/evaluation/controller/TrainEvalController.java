@@ -7,6 +7,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
@@ -44,7 +45,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotEmpty;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -517,6 +520,15 @@ public class TrainEvalController {
             @ApiParam(name = "user_hash", value = "用户id", required = true)@RequestParam("user_hash") String userId) {
         List<Integer> radars = evalRbRoomService.getRadar(evalTemplateId,roomId, userId);
         return new BaseRsp<>(radars);
+    }
+
+
+    @ApiOperation("训练评估排名导出为PDF")
+    @GetMapping("/rank2pdf")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    public void  dumpEvalRank2PDF(HttpServletResponse httpServletResponse, @ApiParam(name = "eval_template_id", value = "评估id", required = true)
+                                                                @RequestParam("eval_template_id") String evalTemplateId) {
+         FileUtil.setResponse(new File(evalRbRoomService.rankExport(evalTemplateId)), true, httpServletResponse);
     }
 
 }

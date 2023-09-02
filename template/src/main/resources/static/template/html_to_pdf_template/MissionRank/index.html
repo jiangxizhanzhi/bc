@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+<!--    <link rel="stylesheet" type="text/css" href="./index.css" />-->
+<!--    <script src="./js/flexible.js"></script>-->
+    <script type="text/javaScript">  </script>
+  </head>
+  <style>
+  <#include "./css/index.css">
+  </style>
+  <body id="app-wappers" class="theme-dark">
+    <div class="page">
+      <div class="title">成绩排名</div>
+      <div class="table-title">
+        <div class="titles">排名</div>
+        <div class="titles">姓名</div>
+        <div class="titles">分值</div>
+        <div class="titles">一二三血总成绩</div>
+        <div class="titles">总分</div>
+        <div class="titles">所属队伍</div>
+
+      </div>
+
+      <#list UserRank as item>
+      <div class="table-content">
+        <div class="contents"><span>${item.sort}</span></div>
+        <div class="contents"><span>${item.name}</span></div>
+        <div class="contents"><span>${item.score}</span></div>
+        <div class="contents">${item.rankScore}</div>
+        <div class="contents">${item.totalScore}</div>
+        <div class="contents">${item.group}</div>
+      </div>
+    </#list>
+    </div>
+  </body>
+</html>

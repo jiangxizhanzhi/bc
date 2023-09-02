@@ -124,4 +124,7 @@ public interface EvalRbRoomService {
     List<Integer> getRadar(String evalTemplateId, String roomId, String userId);
 
     MissionDynamicRsp getUserMissionDynamic(String evalTemplateId, String roomId, String studentId);
+
+    String rankExport(String evalTemplateId);
+
 }

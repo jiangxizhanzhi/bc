@@ -1,0 +1,37 @@
+#app-wappers {
+    background: #3c4b6b;
+}
+
+.page {
+    background: #3c4b6b;
+    text-align: center;
+    color: rgb(255, 255, 255);
+}
+
+.title {
+    font-size: 24px;
+    padding: 24px 0px;
+}
+
+.table-title {
+  display: flex;
+  margin: 0 24px;
+}
+.titles {
+    width: 33%;
+    background-color: #47567a;
+    height: 32px;
+    line-height: 32px;
+}
+
+.table-content {
+  display: flex;
+  margin: 8px 24px;
+}
+.contents {
+    width: 33%;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    font-size: 16px;
+}
+

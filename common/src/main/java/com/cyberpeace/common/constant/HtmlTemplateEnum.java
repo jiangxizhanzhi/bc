@@ -12,7 +12,8 @@ public enum HtmlTemplateEnum {
 	TEAM("index.html", "static/template/html_to_pdf_template/Team"),
 	EVAL("index.html", "static/template/html_to_pdf_template/Eval"),
 	LESSON("index.html", "static/template/html_to_pdf_template/Lesson"),
-	EVAL_RULE("index.html", "static/template/html_to_pdf_template/EvalRule");
+	EVAL_RULE("index.html", "static/template/html_to_pdf_template/EvalRule"),
+	MISSION_RANK("index.html", "static/template/html_to_pdf_template/MissionRank");
 
 	@Getter
 	private String templatePath;

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventStatusCount;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
+import com.cyberpeace.cr.evaluation.service.bo.EvalRankTaskBo;
 import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
@@ -22,5 +23,8 @@ public interface CrEvalTrainTaskMapper extends BaseMapper<CrEvalTrainTask> {
 																@Param("statusList") List<Integer> statusList);
 
 	Integer countUnreportedByRoomIdAndUserIds(@Param("evalTemplateId")String evalTemplateId, @Param("userIds") List<String> userIds);
+
+
+	List<EvalRankTaskBo> selectBySubmitTaskByEvalTemplateId(@Param("evalTemplateId")String evalTemplateId);
 
 }

@@ -51,4 +51,7 @@ public class EvalRecordListRsp implements Serializable {
 
     @ApiModelProperty("评估开始时间")
     private Date evalTime;
+
+    @ApiModelProperty("评估状态")
+    private Integer type;
 }

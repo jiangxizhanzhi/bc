@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.controller.req;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.controller.bo.EvalRecordGrade;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -49,6 +50,9 @@ public class EvalRecordAddReq implements Serializable {
     @ApiModelProperty(value = "全量三级指标项", required = true)
     private List<EvalRecordIndexContext> indexes;
 
+    @ApiModelProperty(value = "评分等级")
+    private List<EvalRecordGrade> gradeList;
+
     public void validate() {
         if (name != null) {
             CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
@@ -58,6 +62,6 @@ public class EvalRecordAddReq implements Serializable {
         }
         int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.zero"));
         int categoryMax = Integer.parseInt(ConfigUtil.getContextProperty("cr.str.len.score.max"));
-        CrCommonValidator.validateRange(indexScore,lenMin, categoryMax, CrBusinessErrorCode.MAX_SCORE_10000);
+        CrCommonValidator.validateRange(indexScore, lenMin, categoryMax, CrBusinessErrorCode.MAX_SCORE_10000);
     }
 }

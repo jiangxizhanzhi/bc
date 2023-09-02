@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
+import com.cyberpeace.cr.evaluation.controller.bo.EvalRecordGrade;
 import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,4 +45,7 @@ public class EvalRecordRsp implements Serializable {
 
     @ApiModelProperty("指标体系结构")
     private List<EvalSystemIndexesContext> indexes;
+
+    @ApiModelProperty(value = "评分等级")
+    private List<EvalRecordGrade> gradeList;
 }

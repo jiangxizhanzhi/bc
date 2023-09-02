@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -22,6 +23,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
+import com.cyberpeace.cr.evaluation.controller.bo.EvalRecordGrade;
 import com.cyberpeace.cr.evaluation.controller.bo.EvalTaskBo;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
@@ -205,6 +207,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalRecord evalRecord = getEntity(recordId);
 
         EvalRecordRsp recordRsp = BeanUtils.copy(evalRecord, EvalRecordRsp.class);
+        recordRsp.setGradeList(JSON.parseArray(evalRecord.getGrade(), EvalRecordGrade.class));
         recordRsp.setIndexes(Lists.newArrayList());
         List<EvalIndexRef> fullIndexes = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordRsp.getResourceId()).list();
         fullIndexes.sort(Comparator.comparing(EvalIndexRef::getLevel));
@@ -233,6 +236,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalRecord.setResourceId(IDGeneratorUtil.getID());
             evalRecord.setStatus(EvalRecord.Status.NOT_START.getCode());
             evalRecord.setType(EvalRecord.Type.ADD.getCode());
+            evalRecord.setGrade(JSON.toJSONString(requestData.getGradeList()));
         }
 
         // 获取"系统评分"指标项下的变量项节点、探针信息
@@ -444,7 +448,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         EvalRecord newEvalRecord = BeanUtils.copy(originEvalRecord, EvalRecord.class);
         BeanUtils.copyProperties(requestData, newEvalRecord);
-
+        newEvalRecord.setGrade(JSON.toJSONString(requestData.getGradeList()));
         // 指标体系ID被更新情况, 调用this.create, 由create方法进行指标体系重建
         if (!originEvalRecord.getSystemId().equals(newEvalRecord.getSystemId())) {
             return create(requestData);
@@ -1078,8 +1082,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Override
     public EvalRecordResultRsp result(String recordId) {
         EvalRecordResultRsp result = new EvalRecordResultRsp();
-        BeanUtils.copyProperties(getById(recordId), result);
-
+        EvalRecord evalRecord = getById(recordId);
+        BeanUtils.copyProperties(evalRecord, result);
+        result.setGradeList(JSON.parseArray(evalRecord.getGrade(),EvalRecordGrade.class));
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordId).list();
         evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel));
 
@@ -1102,7 +1107,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
             result.setMessage(StringUtils.join(msgNow, "\n"));
         }
-
         return result;
     }
 

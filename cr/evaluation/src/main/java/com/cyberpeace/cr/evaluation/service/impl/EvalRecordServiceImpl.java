@@ -1109,7 +1109,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         List<Integer> gradeList = JSON.parseArray(evalRecord.getGrade(), Integer.class);
         Integer gradeScore = gradeList.stream().reduce(0, Integer::sum);
-        String gradeSr = gradeScore >= 80 ? "高" : gradeScore >= 60 ? "中" : "低";
+        String gradeSr = gradeScore >= 20 ? "高" : gradeScore >= 15 ? "中" : "低";
         result.setGradeStr(gradeSr);
         return result;
     }

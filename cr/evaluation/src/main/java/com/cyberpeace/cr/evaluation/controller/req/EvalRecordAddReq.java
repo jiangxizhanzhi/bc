@@ -3,7 +3,6 @@ package com.cyberpeace.cr.evaluation.controller.req;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.controller.bo.EvalRecordGrade;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -51,7 +50,7 @@ public class EvalRecordAddReq implements Serializable {
     private List<EvalRecordIndexContext> indexes;
 
     @ApiModelProperty(value = "评分等级")
-    private List<EvalRecordGrade> gradeList;
+    private List<String> gradeList;
 
     public void validate() {
         if (name != null) {

@@ -10,4 +10,8 @@ public class EvalRecordResultRsp extends EvalRecordRsp {
 
     @ApiModelProperty("运行错误信息")
     private String message;
+
+    @ApiModelProperty("评价等级")
+    private String gradeStr;
+
 }

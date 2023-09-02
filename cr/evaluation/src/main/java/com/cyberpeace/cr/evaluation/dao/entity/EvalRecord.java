@@ -89,25 +89,6 @@ public class EvalRecord extends BaseTable {
      */
     private String grade;
 
-    public enum GradeType implements GenericEnum {
-
-        PROFESSIONAL_ABILITY(1, "专业能力"), TEAMWORK(2, "团队协作"), EXECUTION(3,
-                "执行力"), LEADERSHIP(4, "领导力"),COMPREHENSIVE_EVALUATION(5, "综合评价");
-
-        @Getter
-        private Integer code;
-
-        @Getter
-        private String desc;
-
-        GradeType(Integer code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-
-    }
-
-
     public enum Type implements GenericEnum {
         ADD(1, "新增"),
         IMPORT(2, "导入");

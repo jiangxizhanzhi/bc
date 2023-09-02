@@ -23,7 +23,6 @@ import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
-import com.cyberpeace.cr.evaluation.controller.bo.EvalRecordGrade;
 import com.cyberpeace.cr.evaluation.controller.bo.EvalTaskBo;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
@@ -207,7 +206,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalRecord evalRecord = getEntity(recordId);
 
         EvalRecordRsp recordRsp = BeanUtils.copy(evalRecord, EvalRecordRsp.class);
-        recordRsp.setGradeList(JSON.parseArray(evalRecord.getGrade(), EvalRecordGrade.class));
+        recordRsp.setGradeList(JSON.parseArray(evalRecord.getGrade(), String.class));
         recordRsp.setIndexes(Lists.newArrayList());
         List<EvalIndexRef> fullIndexes = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordRsp.getResourceId()).list();
         fullIndexes.sort(Comparator.comparing(EvalIndexRef::getLevel));
@@ -1084,7 +1083,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalRecordResultRsp result = new EvalRecordResultRsp();
         EvalRecord evalRecord = getById(recordId);
         BeanUtils.copyProperties(evalRecord, result);
-        result.setGradeList(JSON.parseArray(evalRecord.getGrade(),EvalRecordGrade.class));
+        result.setGradeList(JSON.parseArray(evalRecord.getGrade(),String.class));
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordId).list();
         evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel));
 
@@ -1107,6 +1106,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
             result.setMessage(StringUtils.join(msgNow, "\n"));
         }
+
+        List<Integer> gradeList = JSON.parseArray(evalRecord.getGrade(), Integer.class);
+        Integer gradeScore = gradeList.stream().reduce(0, Integer::sum);
+        String gradeSr = gradeScore >= 80 ? "高" : gradeScore >= 60 ? "中" : "低";
+        result.setGradeStr(gradeSr);
         return result;
     }
 

@@ -711,8 +711,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		// 群组封装
 		List<DashboardGroup> groups = Lists.newArrayList();
 		DashboardGroup teamGroup = new DashboardGroup(RbRoleGroup.TEAM_GROUP.getMsg(),
-				RbRoleGroup.TEAM.getCode(),
-				confirmAvatarFile(CrCommonConstants.TEAM_GROUP_AVATAR, CrCommonConstants.TEAM_GROUP_JAR_AVATAR));
+				RbRoleGroup.TEAM.getCode(), "");
 		teamGroup.setMembers(teamMembers);
 		teamGroup.setId(roomId);
 		groups.add(teamGroup);

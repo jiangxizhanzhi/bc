@@ -206,7 +206,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalRecord evalRecord = getEntity(recordId);
 
         EvalRecordRsp recordRsp = BeanUtils.copy(evalRecord, EvalRecordRsp.class);
-        recordRsp.setGradeList(JSON.parseArray(evalRecord.getGrade(), String.class));
+        recordRsp.setGradeList(JSON.parseArray(evalRecord.getGrade(), Integer.class));
         recordRsp.setIndexes(Lists.newArrayList());
         List<EvalIndexRef> fullIndexes = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordRsp.getResourceId()).list();
         fullIndexes.sort(Comparator.comparing(EvalIndexRef::getLevel));
@@ -1083,7 +1083,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalRecordResultRsp result = new EvalRecordResultRsp();
         EvalRecord evalRecord = getById(recordId);
         BeanUtils.copyProperties(evalRecord, result);
-        result.setGradeList(JSON.parseArray(evalRecord.getGrade(),String.class));
+        result.setGradeList(JSON.parseArray(evalRecord.getGrade(),Integer.class));
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, recordId).list();
         evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel));
 

@@ -46,5 +46,5 @@ public class EvalRecordRsp implements Serializable {
     private List<EvalSystemIndexesContext> indexes;
 
     @ApiModelProperty(value = "评分等级")
-    private List<String> gradeList;
+    private List<Integer> gradeList;
 }

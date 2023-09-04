@@ -22,7 +22,7 @@ public interface CrEvalTaskLogMapper extends BaseMapper<CrEvalTaskLog> {
                                                          @Param("groupType") Integer groupType);
 
     List<EvalRoleEventActivity> getReleaseIdsByRoomIdAndUsers(@Param("evalTemplateId") String evalTemplateId,
-                                                              @Param("activeTimeList") List<Integer> activeTimeList,
+                                                              @Param("codeList") List<Integer> codeList,
                                                               @Param("startDate") Date startDate);
 
 }

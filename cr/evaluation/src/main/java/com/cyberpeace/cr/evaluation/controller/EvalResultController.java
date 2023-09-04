@@ -45,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -229,10 +230,16 @@ public class EvalResultController {
         List<Integer> blueCount = new ArrayList<>();
 
         EvalTemplate evalTemplate = getRoomById(resourceId);
-        List<Integer> activeTimeList = CrTaskLog.ActionCode.ACTIVE_TIME_LIST;
+        List<Integer> codeList = CrTaskLog.ActionCode.ACTIVE_TIME_LIST;
 
-        Date oneDayAgo = TimeUtil.addHours(new Date(),-24);
-        List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(evalTemplate.getResourceId(),activeTimeList,oneDayAgo);
+        //获取最后一次提交提交记录的一天前时间
+        LambdaQueryWrapper<CrEvalTaskLog> lastQuery = new LambdaQueryWrapper<>();
+        lastQuery.eq(CrEvalTaskLog::getEvalTemplateId,evalTemplate.getResourceId());
+        lastQuery.orderByDesc(CrEvalTaskLog::getCreateTime);
+        List<CrEvalTaskLog> evalTaskLogList = crEvalTaskLogMapper.selectList(lastQuery);
+
+        Date oneDayAgo = CollectionUtils.isEmpty(evalTaskLogList) ? new Date() : TimeUtil.addHours(evalTaskLogList.get(0).getCreateTime(),-24) ;
+        List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(evalTemplate.getResourceId(), codeList, oneDayAgo);
 
         for(EvalRoleEventActivity crTaskLog:crTaskLogs){
             dates.add(crTaskLog.getCreateTime());
@@ -248,8 +255,16 @@ public class EvalResultController {
         res.setCreatTime(dates);
         res.setBlueCount(blueCount);
         res.setRedCount(redCount);
-        return new BaseRsp<>(res);
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:00:00");
+        for (int i = 0; i < 24; i++) {
+            String currentFormat = simpleDateFormat.format(TimeUtil.addHours(oneDayAgo, i));
+            if (!dates.contains(currentFormat)) {
+                redCount.add(0);
+                blueCount.add(0);
+            }
+        }
+        return new BaseRsp<>(res);
     }
 
     @ApiOperation("评估结果详情-节点资产变化-折线图")
@@ -383,19 +398,21 @@ public class EvalResultController {
         LambdaQueryWrapper<CrEvalTaskLog> logWrapper = new LambdaQueryWrapper<>();
         logWrapper.eq(CrEvalTaskLog::getEvalTemplateId, evalTemplate.getResourceId());
         logWrapper.eq(CrEvalTaskLog::getActionCode, CrTaskLog.ActionCode.RELEASE.getCode());
-        Integer releasedSize = crEvalTaskLogMapper.selectCount(logWrapper);
+        logWrapper.groupBy(CrEvalTaskLog::getMissionId);
+        int releasedSize = crEvalTaskLogMapper.selectList(logWrapper).size();
         EvalEventStatusCount releasedCount = new EvalEventStatusCount();
         releasedCount.setStatus(CrEvalTrainTask.TaskStatus.RELEASED.getCode());
-        releasedCount.setCount(releasedSize == null ? 0 : releasedSize);
+        releasedCount.setCount(releasedSize);
         res.add(releasedCount);
 
         LambdaQueryWrapper<CrEvalTrainTask> taskWrapper = new LambdaQueryWrapper<>();
         taskWrapper.eq(CrEvalTrainTask::getEvalTemplateId, evalTemplate.getResourceId());
         taskWrapper.eq(CrEvalTrainTask::getStatus, CrEvalTrainTask.TaskStatus.CLOSE.getCode());
-        Integer closeSize = crEvalTrainTaskMapper.selectCount(taskWrapper);
+        taskWrapper.groupBy(CrEvalTrainTask::getMissionId);
+        int closeSize = crEvalTrainTaskMapper.selectList(taskWrapper).size();
         EvalEventStatusCount closeCount = new EvalEventStatusCount();
         closeCount.setStatus(CrEvalTrainTask.TaskStatus.CLOSE.getCode());
-        closeCount.setCount(closeSize == null ? 0 : closeSize);
+        closeCount.setCount(closeSize);
         res.add(closeCount);
 
         return new BaseRsp<>(res);

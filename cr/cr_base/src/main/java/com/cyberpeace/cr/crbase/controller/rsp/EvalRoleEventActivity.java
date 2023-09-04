@@ -11,11 +11,6 @@ import java.util.Date;
 @ApiModel("评估实时消息数据")
 public class EvalRoleEventActivity implements Serializable {
 
-    private String resourceId;
-
-    @ApiModelProperty("名称")
-    private String name;
-
     @ApiModelProperty("红蓝队")
     private Integer roleGroup;
 

@@ -37,7 +37,7 @@
         join cr_eval_role r on r.resource_id = t.role_id
         where l.eval_template_id = #{evalTemplateId}
         and l.action_code in
-        <foreach collection="activeTimeList" item="item" separator="," open="(" close=")">
+        <foreach collection="codeList" item="item" separator="," open="(" close=")">
             #{item}
         </foreach>
         AND l.create_time  &gt;= #{startDate}

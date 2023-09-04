@@ -85,7 +85,7 @@ public class TeamTrainStatisticsController {
 
     @ApiOperation("3D态势-战队能力")
     @GetMapping("/flow_attack")
-    @RequiresPermissions(MenuConstant.CMS_CR_RED_TEAM_TRAIN_STATISTICS)
+    @RequiresPermissions(value = {MenuConstant.WEB_CR_RED_TRAIN, MenuConstant.WEB_CR_BLUE_TRAIN, MenuConstant.WEB_CR_DAILY_TRAIN}, logical = Logical.OR)
     public BaseRsp<JSONObject> getFlowAttackCount(
             @ApiParam(name = "room_id", value = "训练id", required = true) @RequestParam("room_id") String roomId) {
         return new BaseRsp<>(teamTrainStatistics.getFlowAttackCount(roomId));

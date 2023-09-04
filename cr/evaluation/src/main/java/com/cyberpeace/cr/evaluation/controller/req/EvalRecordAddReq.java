@@ -50,7 +50,7 @@ public class EvalRecordAddReq implements Serializable {
     private List<EvalRecordIndexContext> indexes;
 
     @ApiModelProperty(value = "评分等级")
-    private List<String> gradeList;
+    private List<Integer> gradeList;
 
     public void validate() {
         if (name != null) {

@@ -262,6 +262,7 @@ public class EvalResultController {
             if (!dates.contains(currentFormat)) {
                 redCount.add(0);
                 blueCount.add(0);
+                dates.add(currentFormat);
             }
         }
         return new BaseRsp<>(res);

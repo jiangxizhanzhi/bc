@@ -339,9 +339,9 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         if (CollectionUtils.isEmpty(userIds)) {
             return new JSONObject();
         }
-        //获取模版类型(红方/蓝方)
+        //获取模版类型(红方/蓝方/日常)
         TeamTemplate template = teamTemplateMapper.getTeamTemplateByRoomId(roomId);
-        String typeName = TeamRoom.TrainCategory.RED.getCode().equals(template.getTrainCategory()) ? "红方-" : "蓝方-";
+        String typeName = TeamRoom.TrainCategory.RED.getCode().equals(template.getTrainCategory()) ? "红方-" : TeamRoom.TrainCategory.BLUE.getCode().equals(template.getTrainCategory()) ? "蓝方-" : "";
 
         //获取角色对应完成任务
         List<CrTask> finishedTasks =crTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, userIds, CrTask.TaskStatus.FINISHED_STATUS_LIST);

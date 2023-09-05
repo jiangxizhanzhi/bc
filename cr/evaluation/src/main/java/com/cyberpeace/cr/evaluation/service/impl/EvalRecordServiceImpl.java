@@ -58,6 +58,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.averagingInt;
+
 @Service
 @Slf4j
 public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRecord> implements EvalRecordService {
@@ -761,7 +763,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = evalAlgorithmRefService.lambdaQuery().in(EvalAlgorithmRef::getResourceId, usingAlgorithmIds).list().stream().collect(Collectors.toMap(EvalAlgorithmRef::getResourceId, evalAlgorithmRef -> evalAlgorithmRef));
 
         // 四级指标使用的变量项
-        Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefService.lambdaQuery().eq(EvalVariableRef::getRecordId, evalRecord.getResourceId()).list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
+        List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery().eq(EvalVariableRef::getRecordId, evalRecord.getResourceId()).list();
+        Double avg = evalVariableRefList.stream().collect(averagingInt(EvalVariableRef::getScore));
+
+        Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefList.stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
 
         evalIndexRefs.forEach(evalIndexRef -> {
             EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalIndexRef.getAlgorithmId());
@@ -776,6 +781,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalRecord.setStatus(StringUtils.isEmpty(evalRecord.getMessage()) ? EvalRecord.Status.END.getCode() : EvalRecord.Status.EXCEPTION.getCode());
         evalRecord.setScore(evalIndexRefs.get(evalIndexRefs.size() - 1).getScore());
+
+        if (avg > 0) {
+            evalRecord.setFinalScore(null == evalRecord.getScore() ? 0 : (int) (Math.round(avg * evalRecord.getIndexScore()) / 100));
+        } else {
+            evalRecord.setFinalScore(null == evalRecord.getScore() ? 0 : Math.round(evalRecord.getScore() * evalRecord.getIndexScore()) / 100);
+        }
         evalRecord.setFinalScore(null == evalRecord.getScore() ? 0 : Math.round(evalRecord.getScore() * evalRecord.getIndexScore())/100);
         evalRecord.setEvalEndTime(new Date());
         transactionTemplate.execute(status -> {

@@ -31,8 +31,14 @@ public class AreaInfo implements Serializable {
 	@ApiModelProperty("区域状态")
 	private String status;
 
-	@ApiModelProperty("区域样式")
+	@ApiModelProperty("区域颜色")
+	private String color;
+
+	@ApiModelProperty("区域边框样式")
 	private LineStyle style;
+
+	@ApiModelProperty("区域字体样式")
+	private FontStyle fontStyle;
 
 	@ApiModelProperty("区域动效")
 	private List<String> effect;

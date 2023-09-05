@@ -901,7 +901,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         if (evalTemplateId != null) {
             List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, userIds, CrTask.TaskStatus.FINISHED_STATUS_LIST);
             if (!CollectionUtils.isEmpty(crEvalTrainTasks)) {
-                Date lastTime = crEvalTrainTasks.get(crEvalTrainTasks.size() - 1).getCreateTime();
+                Date lastTime = crEvalTrainTasks.get(crEvalTrainTasks.size() - 1).getUpdateTime();
                 if (lastTime.after(rbRoomData.getEndTime())) {
                     endTime = lastTime;
                 }

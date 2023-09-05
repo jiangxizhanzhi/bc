@@ -39,7 +39,7 @@
         <foreach collection="statusList" item="status" separator="," open="(" close=")">
             #{status}
         </foreach>
-        order by create_time asc
+        order by update_time asc
     </select>
 
     <select id="countUnreportedByRoomIdAndUserIds" resultType="java.lang.Integer">

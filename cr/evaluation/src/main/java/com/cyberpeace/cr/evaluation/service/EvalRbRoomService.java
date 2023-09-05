@@ -116,7 +116,7 @@ public interface EvalRbRoomService {
      * @param roomId 红蓝对抗实例id
      * @return 时间趋势数据
      */
-    TimeData getRbTimeData(String roomId);
+    TimeData getRbTimeData(String roomId, String evalTemplateId, List<String> userIds);
 
     /**
      * 获取某用户在单个训练中的雷达图

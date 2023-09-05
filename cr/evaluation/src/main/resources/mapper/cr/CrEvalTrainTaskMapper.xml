@@ -29,14 +29,17 @@
         select *
         from cr_eval_train_task
         where eval_template_id = #{evalTemplateId}
-        and user_id in
-        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
-            #{userId}
-        </foreach>
+        <if test="userIds != null and userIds.size() >= 1 ">
+            and user_id in
+            <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
         and status in
         <foreach collection="statusList" item="status" separator="," open="(" close=")">
             #{status}
         </foreach>
+        order by create_time asc
     </select>
 
     <select id="countUnreportedByRoomIdAndUserIds" resultType="java.lang.Integer">

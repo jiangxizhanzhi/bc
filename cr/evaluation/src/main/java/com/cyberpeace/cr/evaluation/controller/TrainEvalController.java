@@ -514,7 +514,7 @@ public class TrainEvalController {
     @RequiresPermissions( MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<TimeDataRsp> getRbTimeData(
             @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-        TimeData data =  evalRbRoomService.getRbTimeData(resource_id);
+        TimeData data = evalRbRoomService.getRbTimeData(resource_id, null, null);
 
         TimeDataRsp timeDataRsp = new TimeDataRsp();
         timeDataRsp.setStartTime((int) (data.getStartTime().getTime() / 1000));

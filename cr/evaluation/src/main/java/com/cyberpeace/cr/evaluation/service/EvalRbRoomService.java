@@ -37,7 +37,7 @@ public interface EvalRbRoomService {
     StudentScoreRsp getStudentScore(String resource_id, String user_hash);
 
 
-    void judgeTaskAndPushMissionToSituation(String missionId, Integer score,String evalTemplateId);
+    void judgeTaskAndPushMissionToSituation(String missionId, String evalTemplateId);
 
     /**
      * 修改评估

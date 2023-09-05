@@ -136,7 +136,7 @@ public class TrainEvalController {
         CrEvalTaskSubmit crEvalTaskSubmit = evalTaskSubmitMapper.selectById(req.getSubmitId());
         CrEvalTrainTask task = evalTrainTaskMapper.selectById(crEvalTaskSubmit.getTaskId());
         if (req.getEvaluateStatus().equals(1)) {
-            evalRbRoomService.judgeTaskAndPushMissionToSituation(task.getMissionId(), req.getScore(),task.getEvalTemplateId());
+            evalRbRoomService.judgeTaskAndPushMissionToSituation(task.getMissionId(), task.getEvalTemplateId());
         }
         evalRbRoomService.submitEvaluation(req, UserInfoContext.getUserContext().getUserId());
         return new BaseRsp<>();

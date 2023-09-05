@@ -326,11 +326,8 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     }
 
     @Override
-    public void judgeTaskAndPushMissionToSituation(String missionId, Integer score,String evalTemplateId) {
-       pushMissionToSituation(missionId);
-    }
+    public void judgeTaskAndPushMissionToSituation(String missionId, String evalTemplateId) {
 
-    private void pushMissionToSituation(String missionId) {
         List<Integer> redRoleType = Arrays.asList(ActionTypeZHL.ZHL_ATTACK3.getCode(), ActionTypeZHL.ZHL_ATTACK4.getCode(),
                 ActionTypeZHL.ZHL_ATTACK5.getCode(), ActionTypeZHL.ZHL_ATTACK6.getCode());
         List<Integer> blueRoleType = Arrays.asList(ActionTypeZHL.ZHL_DEFENSE4.getCode(), ActionTypeZHL.ZHL_DEFENSE5.getCode(),
@@ -350,7 +347,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         for (String targetId: targetIds) {
             LambdaQueryWrapper<CrRoleAssetNodeCopy> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
             crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNodeCopy::getDeviceId, targetId);
-            crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNodeCopy::getRoomId, mission.getRoomId());
+            crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNodeCopy::getEvalTemplateId, evalTemplateId);
             List<CrRoleAssetNodeCopy> crRoleAssetNodeList = crRoleAssetNodeCopyMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
             if (crRoleAssetNodeList.size() != 1) {
                 roleType = "";

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,7 +31,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -63,6 +62,9 @@ import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPoint;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointDo;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointQuestion;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
@@ -307,6 +309,31 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 代表数据库已存在学习记录 不做任何处理
 		}
 
+		// 知识检查点
+		if (StringUtils.isNotBlank(lesson.getCheckPoint())
+				&& lesson.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
+			List<CheckPointDo> checkPointDoList = JsonUtil.toJsonObjectArray(lesson.getCheckPoint(),
+					CheckPointDo.class);
+			List<String> theoryIds = StreamApiUtils.distinctFlatMap(checkPointDoList,
+					CheckPointDo::getTheory);
+			Map<String, CheckPointQuestion> questionMap = practiceTheoryService
+					.getCheckPointQuestionsByIds(theoryIds);
+
+			List<CheckPoint> checkPointList = Lists.newArrayList();
+			for (CheckPointDo pointDo : checkPointDoList) {
+				CheckPoint checkPoint = new CheckPoint();
+				checkPoint.setKnowledgeName(pointDo.getName());
+				checkPoint.setKnowledgeTime(pointDo.getTime());
+				for (String theoryId : pointDo.getTheory()) {
+					if (questionMap.containsKey(theoryId)) {
+						checkPoint.getKnowledgeAnswerList().add(questionMap.get(theoryId));
+					}
+				}
+				checkPointList.add(checkPoint);
+			}
+			infoBo.setFormKnowledgeListData(checkPointList);
+		}
+
 		return infoBo;
 	}
 
@@ -372,6 +399,31 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 知识点数据转换
 		lessonInfoBo.setKnowledge(JsonUtil.toJsonObjectArray(lesson.getKnowledge(), String.class));
+
+		// 知识检查点
+		if (StringUtils.isNotBlank(lesson.getCheckPoint())
+				&& lesson.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
+			List<CheckPointDo> checkPointDoList = JsonUtil.toJsonObjectArray(lesson.getCheckPoint(),
+					CheckPointDo.class);
+			List<String> theoryIds = StreamApiUtils.distinctFlatMap(checkPointDoList,
+					CheckPointDo::getTheory);
+			Map<String, CheckPointQuestion> questionMap = practiceTheoryService
+					.getCheckPointQuestionsByIds(theoryIds);
+
+			List<CheckPoint> checkPointList = Lists.newArrayList();
+			for (CheckPointDo pointDo : checkPointDoList) {
+				CheckPoint checkPoint = new CheckPoint();
+				checkPoint.setKnowledgeName(pointDo.getName());
+				checkPoint.setKnowledgeTime(pointDo.getTime());
+				for (String theoryId : pointDo.getTheory()) {
+					if (questionMap.containsKey(theoryId)) {
+						checkPoint.getKnowledgeAnswerList().add(questionMap.get(theoryId));
+					}
+				}
+				checkPointList.add(checkPoint);
+			}
+			lessonInfoBo.setFormKnowledgeListData(checkPointList);
+		}
 
 		return lessonInfoBo;
 	}

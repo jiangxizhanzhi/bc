@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPoint;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -43,6 +44,12 @@ public class LessonInfoBo implements Serializable {
 
 	@ApiModelProperty("视频文件地址")
 	private String videoUrl;
+
+	@ApiModelProperty(value = "视频长度")
+	private String videoTime;
+
+	@ApiModelProperty(value = "知识检查点")
+	private List<CheckPoint> formKnowledgeListData;
 
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	private Integer difficulty;

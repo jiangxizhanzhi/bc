@@ -266,6 +266,54 @@
         SELECT distinct category_id, practice_set_id
         FROM oj_practice_theory
     </select>
-
-
+    <select id="getCheckPointQuestionsByIds"
+            resultType="com.cyberpeace.oj.ojbase.service.bo.check.CheckPointQuestion">
+        select
+        oj_practice_theory.resource_id,
+        oj_practice_theory.title,
+        oj_practice_theory.content,
+        oj_practice_theory.category_id,
+        oj_practice_category.name as category_name,
+        oj_practice_theory.theory_type as question_type,
+        oj_practice_theory.`option`,
+        oj_practice_theory.score,
+        oj_practice_theory.answer
+        from oj_practice_theory left join oj_practice_category on oj_practice_theory.category_id =
+        oj_practice_category.resource_id
+        where oj_practice_theory.resource_id in
+        <foreach collection="theoryIds" open="(" close=")" separator="," item="theoryId">
+            #{theoryId}
+        </foreach>
+    </select>
+    <select id="getSingleMultiJudgeList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+        select * from oj_practice_theory
+        <where>
+            <if test="pattern != null and pattern != ''">
+                <bind name="pattern" value="'%' + pattern + '%'"/>
+                content like #{pattern}
+            </if>
+            <if test="category != null and category != ''">
+                and category_id = #{category}
+            </if>
+            <if test="practice_set_ids != null and practice_set_ids.size() != 0">
+                and practice_set_id in
+                <foreach collection="practice_set_ids" close=")" open="(" item="setId" separator=",">
+                    #{setId}
+                </foreach>
+            </if>
+            <choose>
+                <when test="question_type != null">
+                    and theory_type = #{question_type}
+                </when>
+                <otherwise>
+                    and theory_type in (0, 1, 2)
+                </otherwise>
+            </choose>
+            <if test="difficulty != null">
+                and difficulty = #{difficulty}
+            </if>
+            and `public` = true
+        </where>
+        order by id desc
+    </select>
 </mapper>

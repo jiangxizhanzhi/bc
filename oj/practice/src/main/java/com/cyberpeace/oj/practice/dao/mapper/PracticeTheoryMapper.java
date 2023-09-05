@@ -1,18 +1,20 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointQuestion;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.ProgressProportion;
 import com.cyberpeace.oj.practice.service.externalbo.TheorySimpleBo;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Mapper
 @Repository
@@ -88,4 +90,23 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @return
 	 */
 	List<PracticeTheory> selectAllCategoryIds();
+
+	List<CheckPointQuestion>
+			getCheckPointQuestionsByIds(@Param("theoryIds") List<String> theoryIds);
+
+	/**
+	 * 获取单选、多选、判断
+	 *
+	 * @param page           分页
+	 * @param pattern
+	 * @param practiceSetIds practice设置id列表
+	 * @param category
+	 * @param questionType
+	 * @param difficulty
+	 * @return {@code IPage<PracticeTheory>}
+	 */
+	IPage<PracticeTheory> getSingleMultiJudgeList(Page page, @Param("pattern") String pattern,
+			@Param("practice_set_ids") List<String> practiceSetIds,
+			@Param("category") String category, @Param("question_type") Integer questionType,
+			@Param("difficulty") Integer difficulty);
 }

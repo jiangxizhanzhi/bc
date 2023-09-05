@@ -57,6 +57,12 @@ public class LessonAddReq implements Serializable {
 	@ApiModelProperty("视频文件")
 	private String video;
 
+	@ApiModelProperty(value = "视频长度")
+	private String video_time;
+
+	@ApiModelProperty(value = "知识检查点")
+	private String form_knowledge_list_data;
+
 	@ApiModelProperty(name = "oj_scene_config", value = "场景配置信息")
 	private String ojSceneConfig;
 

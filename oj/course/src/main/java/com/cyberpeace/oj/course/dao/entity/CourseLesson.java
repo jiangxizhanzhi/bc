@@ -44,6 +44,12 @@ public class CourseLesson extends BaseTable {
 	@ApiModelProperty("视频地址")
 	private String videoUrl;
 
+	@ApiModelProperty("视频长度")
+	private String videoTime;
+
+	@ApiModelProperty("知识检查点")
+	private String checkPoint;
+
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 

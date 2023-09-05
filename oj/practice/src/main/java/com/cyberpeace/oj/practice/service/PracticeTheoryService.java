@@ -1,10 +1,14 @@
 package com.cyberpeace.oj.practice.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointQuestion;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
@@ -12,8 +16,6 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
-
-import java.util.List;
 
 public interface PracticeTheoryService extends IService<PracticeTheory> {
 
@@ -135,5 +137,13 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	List<PracticeTheory> getCategoryIdAndSetIds();
+
+	/**
+	 * 获取检查点问题列表
+	 *
+	 * @param theoryIds 理论题id列表
+	 * @return {@code List<CheckPointQuestion>}
+	 */
+	Map<String, CheckPointQuestion> getCheckPointQuestionsByIds(List<String> theoryIds);
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPoint;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -37,6 +38,12 @@ public class AdminLessonBo implements Serializable {
 
 	@ApiModelProperty("视频地址")
 	private String videoUrl;
+
+	@ApiModelProperty(value = "视频长度")
+	private String videoTime;
+
+	@ApiModelProperty(value = "知识检查点")
+	private List<CheckPoint> formKnowledgeListData;
 
 	@ApiModelProperty("难度")
 	private Integer difficulty;

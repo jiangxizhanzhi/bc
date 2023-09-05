@@ -1,5 +1,19 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,6 +27,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -43,20 +58,18 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPoint;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointDo;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointQuestion;
+import com.cyberpeace.oj.practice.controller.req.external.PracticeTheoryListReq;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+import com.google.common.collect.Lists;
+
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Api(tags = "oj-后台课时相关api")
 @RestController
@@ -85,6 +98,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private PracticeSetService practiceSetService;
+
+	@Autowired
+	private PracticeTheoryMapper practiceTheoryMapper;
 
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -423,6 +442,32 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(simpleDataRes);
 	}
 
+	@ApiOperation("知识检查点-理论题库-分页查询")
+	@GetMapping("/theory/list")
+	public BaseRsp<ListRsp<PracticeTheory>> getTheoryList(PracticeTheoryListReq queryParams) {
+
+		// 数据校验
+		UserInfo userInfo = UserInfoContext.getUserContext();
+
+		// 习题集权限查询
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+		List<String> setIds = practiceSetService.getSetIds(authContext,
+				queryParams.getPracticeSet());
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new BaseRsp<>(PageUtil.getNullResult());
+		}
+
+		Page page = queryParams.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
+
+		IPage<PracticeTheory> result = practiceTheoryMapper.getSingleMultiJudgeList(page,
+				queryParams.getPattern(), setIds, queryParams.getCategory(),
+				queryParams.getQuestionType(), queryParams.getDifficulty());
+		return new BaseRsp<>(PageUtil.getListResult(result));
+	}
+
 	/**
 	 * 更新请求转换为实体类
 	 * @param lessonUpdateReq
@@ -457,6 +502,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseLesson.setHandoutUrl(utilService.replaceFileUrl(lessonUpdateReq.getHandoutUrl()));
 		}
 
+		if (StringUtils.isNotBlank(lessonUpdateReq.getVideo())) {
+			// 知识检查点
+			courseLesson.setVideoTime(lessonUpdateReq.getVideo_time());
+			courseLesson.setCheckPoint(getCheckPoint(lessonUpdateReq));
+		}
+
 		return courseLesson;
 	}
 
@@ -471,11 +522,43 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson courseLesson = BeanUtils.copy(lessonAddReq, CourseLesson.class);
 		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		
+		if (StringUtils.isNotBlank(lessonAddReq.getVideo())) {
+			// 知识检查点
+			courseLesson.setVideoTime(lessonAddReq.getVideo_time());
+			courseLesson.setCheckPoint(getCheckPoint(lessonAddReq));
+		}
 
 		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());
 		courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());
 
 		return courseLesson;
+	}
+
+	/**
+	 * 获取checkpoint
+	 *
+	 * @param req 请求体
+	 * @return {@code String}
+	 */
+	private <T extends LessonAddReq> String getCheckPoint(T req) {
+		if (StringUtils.isBlank(req.getForm_knowledge_list_data())) {
+			return "";
+		}
+		List<CheckPoint> checkPointList = JsonUtil
+				.toJsonObjectArray(req.getForm_knowledge_list_data(), CheckPoint.class);
+		List<CheckPointDo> pointDoList = Lists.newArrayList();
+		for (CheckPoint checkPoint : checkPointList) {
+			CheckPointDo pointDo = new CheckPointDo();
+			pointDo.setName(checkPoint.getKnowledgeName());
+			pointDo.setTime(checkPoint.getKnowledgeTime());
+			if (null != checkPoint.getKnowledgeAnswerList()) {
+				pointDo.setTheory(checkPoint.getKnowledgeAnswerList().stream()
+						.map(CheckPointQuestion::getResourceId).collect(Collectors.toList()));
+			}
+			pointDoList.add(pointDo);
+		}
+		return JsonUtil.arrayToString(pointDoList);
 	}
 
 }

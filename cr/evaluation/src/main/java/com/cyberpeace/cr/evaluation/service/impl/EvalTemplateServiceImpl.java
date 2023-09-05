@@ -342,22 +342,13 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		CrEvalRbRoom addRbRoom = Objects.isNull(existRbRoom) ? BeanUtils.copy(rbRoom, CrEvalRbRoom.class) : null;
 		CrEvalLocalScene addLocalScene = Objects.nonNull(localScene) ? BeanUtils.copy(localScene, CrEvalLocalScene.class) : null;
 
-		List<CrRoleAssetNode> crRoleAssetNodeList = null;
-		LambdaQueryWrapper<CrRoleAssetNodeCopy> evalNodeQuery = new LambdaQueryWrapper<>();
-		evalNodeQuery.eq(CrRoleAssetNodeCopy::getRoomId, evalTemplate.getRedVsBlueId());
-		Integer existAssetNode = crRoleAssetNodeCopyMapper.selectCount(evalNodeQuery);
-
-		if (existAssetNode == 0) {
-			LambdaQueryWrapper<CrRoleAssetNode> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
-			crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNode::getRoomId, evalTemplate.getRedVsBlueId());
-			crRoleAssetNodeList = crRoleAssetNodeMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
-		}
-		List<CrRoleAssetNodeCopy> addNodeList = existAssetNode == 0 && !CollectionUtils.isEmpty(crRoleAssetNodeList) ? BeanUtils.deepCopyList(crRoleAssetNodeList, CrRoleAssetNodeCopy.class) : null;
-		if (!CollectionUtils.isEmpty(addNodeList)) {
-			for (CrRoleAssetNodeCopy item : addNodeList) {
-				item.setEvalTemplateId(evalTemplateId);
-				item.setId(null);
-			}
+		LambdaQueryWrapper<CrRoleAssetNode> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNode::getRoomId, evalTemplate.getRedVsBlueId());
+		List<CrRoleAssetNode> roleAssetNodeList = crRoleAssetNodeMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
+		List<CrRoleAssetNodeCopy> addNodeList = BeanUtils.deepCopyList(roleAssetNodeList, CrRoleAssetNodeCopy.class);
+		for (CrRoleAssetNodeCopy item : addNodeList) {
+			item.setEvalTemplateId(evalTemplateId);
+			item.setId(null);
 		}
 
 		//初始化评估规则数据

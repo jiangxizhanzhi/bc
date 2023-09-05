@@ -6,23 +6,20 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.HtmlToPdfUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.MissionFlagQuery;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.dao.mapper.CrFlagTaskMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.MissionTaskSummitContext;
 import com.cyberpeace.cr.crbase.service.context.*;
@@ -48,7 +45,9 @@ import com.cyberpeace.cr.redvsblue.service.context.mission.ObjWithTime;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RankData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.UserCounter;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -106,6 +105,12 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
     @Autowired
     private CrEvalTaskLogMapper crEvalTaskLogMapper;
+
+    @Autowired
+    private MissionEventDeviceMapper missionEventDeviceMapper;
+
+    @Autowired
+    private CrRoleAssetNodeCopyMapper crRoleAssetNodeCopyMapper;
 
     private final Map<Integer, Integer> evaluateStatusToActionCode = ImmutableMap.of(
             CrTaskSubmit.EvaluateStatus.SUCCESS.getCode(),
@@ -316,6 +321,64 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         studentScoreRsp.setTrainingScore(trainingScore);
 
         return studentScoreRsp;
+    }
+
+    @Override
+    public void judgeTaskAndPushMissionToSituation(String missionId, Integer score,String evalTemplateId) {
+        //判断该任务有没有被同角色下的其他用户提交过或曾经成功过
+        List<CrEvalTaskLog> crTaskLogList = crEvalTaskLogMapper.getByMissionIdAndUserId(missionId,evalTemplateId);
+        Boolean success = false;
+        for (CrEvalTaskLog crTaskLog: crTaskLogList) {
+            if (crTaskLog.getActionCode().equals(CrTaskLog.ActionCode.MAN_SUCCESS.getCode()) ||
+                    crTaskLog.getActionCode().equals(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode())) {
+                success = true;
+            }
+        }
+        if (!success) {
+            pushMissionToSituation(missionId);
+        }
+    }
+
+    private void pushMissionToSituation(String missionId) {
+        List<Integer> redRoleType = Arrays.asList(ActionTypeZHL.ZHL_ATTACK3.getCode(), ActionTypeZHL.ZHL_ATTACK4.getCode(),
+                ActionTypeZHL.ZHL_ATTACK5.getCode(), ActionTypeZHL.ZHL_ATTACK6.getCode());
+        List<Integer> blueRoleType = Arrays.asList(ActionTypeZHL.ZHL_DEFENSE4.getCode(), ActionTypeZHL.ZHL_DEFENSE5.getCode(),
+                ActionTypeZHL.ZHL_DEFENSE6.getCode());
+        Mission mission = missionMapper.selectById(missionId);
+        if (mission == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        CrEvalRbRoom evalRbRoom = crEvalRbRoomMapper.selectById(mission.getRoomId());
+        if (evalRbRoom == null){
+            return;
+        }
+
+        List<String> targetIds = missionEventDeviceMapper.getDeviceIdsByMissionId(missionId);
+        String roleType = "";
+        List<CrRoleAssetNodeCopy> crRoleAssetNodeEditList = new ArrayList<>();
+        for (String targetId: targetIds) {
+            LambdaQueryWrapper<CrRoleAssetNodeCopy> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNodeCopy::getDeviceId, targetId);
+            crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNodeCopy::getRoomId, mission.getRoomId());
+            List<CrRoleAssetNodeCopy> crRoleAssetNodeList = crRoleAssetNodeCopyMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
+            if (crRoleAssetNodeList.size() != 1) {
+                roleType = "";
+            } else if (redRoleType.contains(mission.getEventType())) {
+                roleType = "red";
+            } else if (blueRoleType.contains(mission.getEventType())) {
+                roleType = "blue";
+            }
+            if (crRoleAssetNodeList.size() > 0) {
+                CrRoleAssetNodeCopy crRoleAssetNode = crRoleAssetNodeList.get(0);
+                if ("red".equals(roleType)) {
+                    crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.RED.getCode());
+                } else if ("blue".equals(roleType)) {
+                    crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.BLUE.getCode());
+                }
+                crRoleAssetNodeEditList.add(crRoleAssetNode);
+            }
+        }
+        crRoleAssetNodeEditList.forEach(item->crRoleAssetNodeCopyMapper.updateById(item));
     }
 
     @Override

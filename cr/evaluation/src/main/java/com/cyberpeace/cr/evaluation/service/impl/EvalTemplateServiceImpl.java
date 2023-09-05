@@ -109,6 +109,12 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	@Autowired
 	private CrEvalTaskLogMapper evalTaskLogMapper;
 
+	@Autowired
+	private CrRoleAssetNodeMapper crRoleAssetNodeMapper;
+
+	@Autowired
+	private CrRoleAssetNodeCopyMapper crRoleAssetNodeCopyMapper;
+
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
 
@@ -336,6 +342,18 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		CrEvalRbRoom addRbRoom = Objects.isNull(existRbRoom) ? BeanUtils.copy(rbRoom, CrEvalRbRoom.class) : null;
 		CrEvalLocalScene addLocalScene = Objects.nonNull(localScene) ? BeanUtils.copy(localScene, CrEvalLocalScene.class) : null;
 
+		List<CrRoleAssetNode> crRoleAssetNodeList = null;
+		LambdaQueryWrapper<CrRoleAssetNodeCopy> evalNodeQuery = new LambdaQueryWrapper<>();
+		evalNodeQuery.eq(CrRoleAssetNodeCopy::getRoomId, evalTemplate.getRedVsBlueId());
+		Integer existAssetNode = crRoleAssetNodeCopyMapper.selectCount(evalNodeQuery);
+
+		if (existAssetNode == 0) {
+			LambdaQueryWrapper<CrRoleAssetNode> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNode::getRoomId, evalTemplate.getRedVsBlueId());
+			crRoleAssetNodeList = crRoleAssetNodeMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
+		}
+		List<CrRoleAssetNodeCopy> addNodeList = existAssetNode == 0 && !CollectionUtils.isEmpty(crRoleAssetNodeList) ? BeanUtils.deepCopyList(crRoleAssetNodeList, CrRoleAssetNodeCopy.class) : null;
+
 		//初始化评估规则数据
 		List<EvalRule> initialEvalRuleList = evalRuleService.getInitialData(evalTemplateId);
 
@@ -364,6 +382,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				}
 				if (!CollectionUtils.isEmpty(evalTaskLogList)) {
 					evalTaskLogMapper.batchInsert(evalTaskLogList);
+				}
+				if (!CollectionUtils.isEmpty(addNodeList)) {
+					crRoleAssetNodeCopyMapper.batchInsert(addNodeList);
 				}
 			}
 		});

@@ -25,4 +25,6 @@ public interface CrEvalTaskLogMapper extends BaseMapper<CrEvalTaskLog> {
                                                               @Param("codeList") List<Integer> codeList,
                                                               @Param("startDate") Date startDate);
 
+
+    List<CrEvalTaskLog> getByMissionIdAndUserId(@Param("missionId") String missionId,@Param("evalTemplateId") String evalTemplateId);
 }

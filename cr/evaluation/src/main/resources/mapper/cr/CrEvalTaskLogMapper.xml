@@ -44,4 +44,12 @@
         group by createTime,t.role_id
     </select>
 
+
+    <select id="getByMissionIdAndUserId" resultType="com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskLog">
+        select *
+        from cr_eval_task_log
+        where mission_id = #{missionId}
+        and eval_template_id = #{evalTemplateId}
+    </select>
+
 </mapper>

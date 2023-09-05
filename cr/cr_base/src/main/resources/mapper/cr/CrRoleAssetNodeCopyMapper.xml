@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrRoleAssetNodeCopyMapper">
+
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into cr_role_asset_node_copy
+        (resource_id, room_id, role_type, device_id, node_category, original_role_type, create_time,
+        update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId,jdbcType=VARCHAR}, #{item.roomId,jdbcType=VARCHAR}, #{item.roleType,jdbcType=INTEGER},
+            #{item.deviceId,jdbcType=VARCHAR}, #{item.nodeCategory,jdbcType=INTEGER}, #{item.originalRoleType,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+</mapper>

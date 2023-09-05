@@ -10,7 +10,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
@@ -21,7 +20,11 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalMissionEvaluationListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStudentScoreReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSubmitEvaluationReq;
 import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalRole;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTaskSubmit;
+import com.cyberpeace.cr.evaluation.dao.entity.rb.CrEvalTrainTask;
 import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalRoleMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTaskSubmitMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.CrEvalTrainTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalRbRoomService;
 import com.cyberpeace.cr.evaluation.service.EvalResultService;
 import com.cyberpeace.cr.evaluation.service.bo.EvalMissionEvaluationBo;
@@ -70,6 +73,12 @@ public class TrainEvalController {
 
     @Autowired
     private CrEvalRoleMapper crEvalRoleMapper;
+
+    @Autowired
+    private CrEvalTaskSubmitMapper evalTaskSubmitMapper;
+
+    @Autowired
+    private CrEvalTrainTaskMapper evalTrainTaskMapper;
 
     @ApiOperation("获取学员的评估提交记录")
     @GetMapping("/mission_evaluation")
@@ -123,6 +132,12 @@ public class TrainEvalController {
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
             value = "学员评分") @RequestBody EvalSubmitEvaluationReq req) {
+
+        CrEvalTaskSubmit crEvalTaskSubmit = evalTaskSubmitMapper.selectById(req.getSubmitId());
+        CrEvalTrainTask task = evalTrainTaskMapper.selectById(crEvalTaskSubmit.getTaskId());
+        if (req.getEvaluateStatus().equals(1)) {
+            evalRbRoomService.judgeTaskAndPushMissionToSituation(task.getMissionId(), req.getScore(),task.getEvalTemplateId());
+        }
         evalRbRoomService.submitEvaluation(req, UserInfoContext.getUserContext().getUserId());
         return new BaseRsp<>();
     }

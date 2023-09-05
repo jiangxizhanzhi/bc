@@ -327,18 +327,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
     @Override
     public void judgeTaskAndPushMissionToSituation(String missionId, Integer score,String evalTemplateId) {
-        //判断该任务有没有被同角色下的其他用户提交过或曾经成功过
-        List<CrEvalTaskLog> crTaskLogList = crEvalTaskLogMapper.getByMissionIdAndUserId(missionId,evalTemplateId);
-        Boolean success = false;
-        for (CrEvalTaskLog crTaskLog: crTaskLogList) {
-            if (crTaskLog.getActionCode().equals(CrTaskLog.ActionCode.MAN_SUCCESS.getCode()) ||
-                    crTaskLog.getActionCode().equals(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode())) {
-                success = true;
-            }
-        }
-        if (!success) {
-            pushMissionToSituation(missionId);
-        }
+       pushMissionToSituation(missionId);
     }
 
     private void pushMissionToSituation(String missionId) {

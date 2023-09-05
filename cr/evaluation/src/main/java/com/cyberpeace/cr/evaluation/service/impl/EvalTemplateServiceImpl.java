@@ -348,6 +348,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		List<CrRoleAssetNodeCopy> addNodeList = BeanUtils.deepCopyList(roleAssetNodeList, CrRoleAssetNodeCopy.class);
 		for (CrRoleAssetNodeCopy item : addNodeList) {
 			item.setEvalTemplateId(evalTemplateId);
+			item.setResourceId(null);
 			item.setId(null);
 		}
 

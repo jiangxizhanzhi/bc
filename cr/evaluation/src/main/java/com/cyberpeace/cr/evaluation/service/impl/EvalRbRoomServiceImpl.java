@@ -366,6 +366,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
                 } else if ("blue".equals(roleType)) {
                     crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.BLUE.getCode());
                 }
+                crRoleAssetNode.setUpdateTime(new Date());
                 crRoleAssetNodeEditList.add(crRoleAssetNode);
             }
         }

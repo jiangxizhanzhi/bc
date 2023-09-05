@@ -301,7 +301,7 @@ public class EvalResultController {
                     blueDeviceIds.add(roleAssetNode.getDeviceId());
                 }
                 blueCount.add(blueDeviceIds.size());
-                dates.add(new SimpleDateFormat("HH:mm:ss").format(roleAssetNode.getCreateTime()));
+                dates.add(new SimpleDateFormat("HH:mm:ss").format(roleAssetNode.getUpdateTime()));
             } else if(roleAssetNode.getOriginalRoleType().equals(CrRole.RbRoleGroup.BLUE.getCode()) && roleAssetNode.getRoleType().equals(CrRole.RbRoleGroup.RED.getCode())){
                 if(!redDeviceIds.contains(roleAssetNode.getDeviceId())){
                     redDeviceIds.add(roleAssetNode.getDeviceId());
@@ -309,7 +309,7 @@ public class EvalResultController {
                 redCount.add(redDeviceIds.size());
                 blueDeviceIds.remove(roleAssetNode.getDeviceId());
                 blueCount.add(blueDeviceIds.size());
-                dates.add(new SimpleDateFormat("HH:mm:ss").format(roleAssetNode.getCreateTime()));
+                dates.add(new SimpleDateFormat("HH:mm:ss").format(roleAssetNode.getUpdateTime()));
             }
         }
         res.setCreatTime(dates);

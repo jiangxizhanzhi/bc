@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
-import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -16,12 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.annoations.AuthKeyUser;
+import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PatternReq;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
@@ -39,14 +38,16 @@ import com.cyberpeace.gateway.service.bo.ExternalPracticeSetBo;
 import com.cyberpeace.oj.practice.controller.req.external.PracticeRandomChoiceReq;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
+import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
+import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -186,6 +187,14 @@ public class ExternalOperationController {
 		return externalOperationBo;
 	}
 
+	@GetMapping("/knowledge/list")
+	@ApiOperation("获取知识点列表，按频次排序")
+	public BaseRsp<List<String>> listKnowledge(PatternReq pattern) {
+		List<String> knowledgeList = practiceOperationService.getKnowledgeListByFrequency(pattern,
+				false);
+		return new BaseRsp<>(knowledgeList);
+	}
+
 	@ApiOperation("实操习题分页查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<ExternalOperationBo>> pageList(OperationPageReq req) {
@@ -209,6 +218,11 @@ public class ExternalOperationController {
 
 		if (StringUtils.hasText(req.getCategory())) {
 			listQuery.setCategoryIds(Lists.newArrayList(req.getCategory()));
+		}
+
+		// where knowledge REGEXP '("知识点1"|"知识点2"|"知识点3"|"知识点4")'
+		if (!CollectionUtils.isEmpty(req.getKnowledge())) {
+			listQuery.setKnowledgeExp("(\"" + String.join("\"|\"", req.getKnowledge()) + "\")");
 		}
 
 		// 条件查询

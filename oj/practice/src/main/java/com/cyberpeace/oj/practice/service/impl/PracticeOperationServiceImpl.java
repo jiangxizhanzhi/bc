@@ -1409,7 +1409,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
+				isWeb);
 
 		// 过滤习题集
 		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);

@@ -4,7 +4,7 @@
 
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         insert into cr_role_asset_node_copy
-        (resource_id, room_id, role_type, device_id, node_category, original_role_type,eval_template_id,  create_time,
+        (resource_id, room_id, role_type, device_id, node_category, original_role_type,eval_template_id,create_time,
         update_time)
         values
         <foreach collection="list" item="item" separator=",">

@@ -782,7 +782,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalRecord.setStatus(StringUtils.isEmpty(evalRecord.getMessage()) ? EvalRecord.Status.END.getCode() : EvalRecord.Status.EXCEPTION.getCode());
 
         if (avg > 0) {
-            evalRecord.setFinalScore((int) (Math.round(avg * evalRecord.getIndexScore()) / 100));
+            evalRecord.setFinalScore((int) (Math.round(avg )* evalRecord.getIndexScore() / 100));
             evalRecord.setScore((int) (Math.round(avg)));
         } else {
             evalRecord.setFinalScore(null == evalRecord.getScore() ? 0 : Math.round(evalRecord.getScore() * evalRecord.getIndexScore()) / 100);

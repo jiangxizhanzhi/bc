@@ -46,4 +46,6 @@ public class CrRoleAssetNodeCopy extends BaseTable {
      */
     private Integer originalRoleType;
 
+    private String evalTemplateId;
+
 }

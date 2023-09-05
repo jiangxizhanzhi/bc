@@ -353,6 +353,12 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			crRoleAssetNodeList = crRoleAssetNodeMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
 		}
 		List<CrRoleAssetNodeCopy> addNodeList = existAssetNode == 0 && !CollectionUtils.isEmpty(crRoleAssetNodeList) ? BeanUtils.deepCopyList(crRoleAssetNodeList, CrRoleAssetNodeCopy.class) : null;
+		if (!CollectionUtils.isEmpty(addNodeList)) {
+			for (CrRoleAssetNodeCopy item : addNodeList) {
+				item.setEvalTemplateId(evalTemplateId);
+				item.setId(null);
+			}
+		}
 
 		//初始化评估规则数据
 		List<EvalRule> initialEvalRuleList = evalRuleService.getInitialData(evalTemplateId);

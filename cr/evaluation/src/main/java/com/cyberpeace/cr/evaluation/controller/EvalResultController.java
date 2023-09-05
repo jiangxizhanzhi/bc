@@ -278,8 +278,8 @@ public class EvalResultController {
         List<Integer> redCount = new ArrayList<>();
         List<Integer> blueCount = new ArrayList<>();
 
-        String redVsBlueId = getRoomId(resourceId);
-        List<CrEvalRole> crRoles = getCrRoles(redVsBlueId);
+        EvalTemplate evalTemplate = getRoomById(resourceId);
+        List<CrEvalRole> crRoles = getCrRoles(evalTemplate.getRedVsBlueId());
         Map<Integer, List<CrEvalRole>> roleMap = StreamApiUtils.groupBy(crRoles, CrEvalRole::getRoleGroup);
         List<CrEvalRole> blueRoles = roleMap.get(CrRole.RbRoleGroup.BLUE.getCode());
         List<CrEvalRole> redRoles = roleMap.get(CrRole.RbRoleGroup.RED.getCode());
@@ -290,7 +290,7 @@ public class EvalResultController {
         List<String> blueDeviceIds = StreamApiUtils.getColumn(blueNode, CrRoleNode::getId).stream().distinct().collect(Collectors.toList());
 
         LambdaQueryWrapper<CrRoleAssetNodeCopy> query = new LambdaQueryWrapper<>();
-        query.eq(CrRoleAssetNodeCopy::getRoomId, redVsBlueId);
+        query.eq(CrRoleAssetNodeCopy::getEvalTemplateId, evalTemplate.getResourceId());
         List<CrRoleAssetNodeCopy> crRoleAssetNodes = crRoleAssetNodeCopyMapper.selectList(query);
 
         for(CrRoleAssetNodeCopy roleAssetNode:crRoleAssetNodes){

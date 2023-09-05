@@ -252,20 +252,31 @@ public class EvalResultController {
                 blueCount.add(count);
             }
         }
-        res.setCreatTime(dates);
-        res.setBlueCount(blueCount);
-        res.setRedCount(redCount);
+
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:00:00");
+        EvalRoleEventActivityListRsp newResult = new EvalRoleEventActivityListRsp();
+        List<String> newDates = new ArrayList<>();
+        List<Integer> newRedCount = new ArrayList<>();
+        List<Integer> newBlueCount = new ArrayList<>();
+
         for (int i = 0; i < 24; i++) {
             String currentFormat = simpleDateFormat.format(TimeUtil.addHours(oneDayAgo, i));
             if (!dates.contains(currentFormat)) {
-                redCount.add(0);
-                blueCount.add(0);
-                dates.add(currentFormat);
+                newDates.add(i, currentFormat);
+                newRedCount.add(i, 0);
+                newBlueCount.add(i, 0);
+            }else {
+                int size = dates.indexOf(currentFormat);
+                newDates.add(i, currentFormat);
+                newRedCount.add(i, redCount.get(size));
+                newBlueCount.add(i, blueCount.get(size));
             }
         }
-        return new BaseRsp<>(res);
+        newResult.setCreatTime(newDates);
+        newResult.setBlueCount(newRedCount);
+        newResult.setRedCount(newBlueCount);
+        return new BaseRsp<>(newResult);
     }
 
     @ApiOperation("评估结果详情-节点资产变化-折线图")

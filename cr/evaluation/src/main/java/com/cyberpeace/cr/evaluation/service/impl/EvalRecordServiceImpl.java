@@ -582,7 +582,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     @Override
-    @Async
+//    @Async
     public void recordRun(EvalRecord evalRecord, Boolean isRestart, String language) {
         CommonContext.setLanguage(language);
         EvalLog.info(evalRecord, String.format("Range Test evaluation %s %s.", evalRecord.getName(), isRestart ? "RESTART" : "START"));
@@ -604,7 +604,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 执行变量项
         EvalLog.info(evalRecord, "calculate variables start...");
-        startVariables(evalRecord, mpSceneId, variableIds);
+//        startVariables(evalRecord, mpSceneId, variableIds);
         EvalLog.info(evalRecord, "calculate variables completed.");
 
         // 执行指标项
@@ -783,7 +783,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalRecord.setScore(evalIndexRefs.get(evalIndexRefs.size() - 1).getScore());
 
         if (avg > 0) {
-            evalRecord.setFinalScore(null == evalRecord.getScore() ? 0 : (int) (Math.round(avg * evalRecord.getIndexScore()) / 100));
+            evalRecord.setFinalScore((int) (Math.round(avg * evalRecord.getIndexScore()) / 100));
         } else {
             evalRecord.setFinalScore(null == evalRecord.getScore() ? 0 : Math.round(evalRecord.getScore() * evalRecord.getIndexScore()) / 100);
         }

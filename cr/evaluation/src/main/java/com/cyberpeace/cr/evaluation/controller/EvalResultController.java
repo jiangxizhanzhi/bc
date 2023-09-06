@@ -50,7 +50,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.cyberpeace.common.util.EnumUtils.getListCode;
@@ -241,42 +244,33 @@ public class EvalResultController {
         Date oneDayAgo = CollectionUtils.isEmpty(evalTaskLogList) ? new Date() : TimeUtil.addHours(evalTaskLogList.get(0).getCreateTime(),-24) ;
         List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(evalTemplate.getResourceId(), codeList, oneDayAgo);
 
-        for(EvalRoleEventActivity crTaskLog:crTaskLogs){
-            dates.add(crTaskLog.getCreateTime());
-            Integer count = crTaskLog.getCount();
-            if(crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
-                redCount.add(count);
-                blueCount.add(0);
-            } else if (crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())){
-                redCount.add(0);
-                blueCount.add(count);
-            }
-        }
-
-
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:00:00");
-        EvalRoleEventActivityListRsp newResult = new EvalRoleEventActivityListRsp();
-        List<String> newDates = new ArrayList<>();
-        List<Integer> newRedCount = new ArrayList<>();
-        List<Integer> newBlueCount = new ArrayList<>();
-
         for (int i = 0; i < 24; i++) {
             String currentFormat = simpleDateFormat.format(TimeUtil.addHours(oneDayAgo, i));
-            if (!dates.contains(currentFormat)) {
-                newDates.add(i, currentFormat);
-                newRedCount.add(i, 0);
-                newBlueCount.add(i, 0);
-            }else {
-                int size = dates.indexOf(currentFormat);
-                newDates.add(i, currentFormat);
-                newRedCount.add(i, redCount.get(size));
-                newBlueCount.add(i, blueCount.get(size));
+            dates.add(currentFormat);
+            boolean addFlag = false;
+
+            for (EvalRoleEventActivity crTaskLog : crTaskLogs) {
+                Integer count = crTaskLog.getCount();
+                if (currentFormat.equals(crTaskLog.getCreateTime()) && crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())) {
+                    redCount.add(count);
+                    blueCount.add(0);
+                    addFlag = true;
+                } else if (currentFormat.equals(crTaskLog.getCreateTime()) && crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
+                    redCount.add(0);
+                    blueCount.add(count);
+                    addFlag = true;
+                }
+            }
+            if (!addFlag) {
+                redCount.add(0);
+                blueCount.add(0);
             }
         }
-        newResult.setCreatTime(newDates);
-        newResult.setBlueCount(newRedCount);
-        newResult.setRedCount(newBlueCount);
-        return new BaseRsp<>(newResult);
+        res.setCreatTime(dates);
+        res.setBlueCount(redCount);
+        res.setRedCount(blueCount);
+        return new BaseRsp<>(res);
     }
 
     @ApiOperation("评估结果详情-节点资产变化-折线图")

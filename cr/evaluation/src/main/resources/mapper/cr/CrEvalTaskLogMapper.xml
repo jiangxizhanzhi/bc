@@ -41,7 +41,7 @@
             #{item}
         </foreach>
         AND l.create_time  &gt;= #{startDate}
-        group by createTime,t.role_id
+        group by createTime,roleGroup
     </select>
 
 

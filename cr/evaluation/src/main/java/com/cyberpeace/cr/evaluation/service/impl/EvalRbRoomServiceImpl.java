@@ -233,7 +233,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
         List<ObjWithTime> taskTimes = crEvalTrainTasks.stream().map(taskContext -> {
             ObjWithTime objWithTime = new ObjWithTime();
-            objWithTime.setTime(taskContext.getLastSubmitTime());
+            objWithTime.setTime(taskContext.getUpdateTime());
             objWithTime.setValue(taskContext.getScore());
             return objWithTime;
         }).collect(Collectors.toList());
@@ -764,7 +764,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         LambdaQueryWrapper<CrEvalTrainTask> finishQuery = new LambdaQueryWrapper<>();
         finishQuery.eq(CrEvalTrainTask::getEvalTemplateId, evalTemplateId);
         finishQuery.in(CrEvalTrainTask::getUserId, roleUserIds.getUserIds());
-        finishQuery.eq(CrEvalTrainTask::getStatus, CrTask.TaskStatus.FINISHED_STATUS_LIST);
+        finishQuery.in(CrEvalTrainTask::getStatus, CrTask.TaskStatus.FINISHED_STATUS_LIST);
         List<CrEvalTrainTask> finishedTasks = evalTrainTaskMapper.selectList(finishQuery);
         List<ObjWithTime> finishedTimes = finishedTasks.stream().map(crTask -> {
             ObjWithTime objWithTime = new ObjWithTime();
@@ -894,14 +894,31 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
                 }
             }
         }
-        return new TimeData(2, rbTimeManagement.getCreateTime(), endTime, endTime);
+        TimeData timeData = new TimeData(2, rbTimeManagement.getCreateTime(), endTime, endTime);
+        List<String> xDataList = timeData.getXData();
+        if (!CollectionUtils.isEmpty(xDataList)){
+            String lastXData = xDataList.get(xDataList.size() - 1);
+            int hour = Integer.parseInt(lastXData.split(":")[0]);
+            int minute = Integer.parseInt(lastXData.split(":")[1]);
+            if (minute == 58) {
+                xDataList.add(hour + ":" + "59");
+                xDataList.add(hour + 1 + ":" + "00");
+            } else if (minute == 59) {
+                xDataList.add(hour + 1 + ":" + "00");
+                xDataList.add(hour + 1 + ":" + "01");
+            } else {
+                xDataList.add(hour + ":" + minute + 1);
+                xDataList.add(hour + ":" + minute + 2);
+            }
+        }
+        return timeData;
     }
 
     @Override
-    public XYData getRbMissionCategory(String roomId, Integer roleType) {
+    public XYData getRbMissionCategory(String roomId,String evalTemplateId, Integer roleType) {
         // 获取场景实例下的任务hash
         RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
-        List<CrEvalTrainTask> evalTrainTaskList = getEvalTrainTaskList(roomId, roleUserIds.getUserIds());
+        List<CrEvalTrainTask> evalTrainTaskList = getEvalTrainTaskList(evalTemplateId, roleUserIds.getUserIds());
         List<TaskContext> taskContexts = getTaskContext(evalTrainTaskList);
 
         Map<String, Integer> missionsCategory = Maps.newHashMap();

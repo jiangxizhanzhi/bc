@@ -109,7 +109,7 @@ public interface EvalRbRoomService {
      * @param roleType 角色类型
      * @return 任务类别图表数据
      */
-    XYData getRbMissionCategory(String roomId, Integer roleType);
+    XYData getRbMissionCategory(String roomId, String evalTemplateId, Integer roleType);
 
     /**
      * 获取时间趋势数据

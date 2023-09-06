@@ -53,6 +53,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Api(tags = "训练评估")
@@ -135,7 +136,11 @@ public class TrainEvalController {
 
         CrEvalTaskSubmit crEvalTaskSubmit = evalTaskSubmitMapper.selectById(req.getSubmitId());
         CrEvalTrainTask task = evalTrainTaskMapper.selectById(crEvalTaskSubmit.getTaskId());
-        if (req.getEvaluateStatus().equals(1)) {
+        Integer evaluateStatus = req.getEvaluateStatus();
+        if (Objects.nonNull(req.getScoreResult())) {
+            evaluateStatus = req.getScoreResult() >= 60 ? CrEvalTaskSubmit.EvaluateStatus.SUCCESS.getCode() : CrEvalTaskSubmit.EvaluateStatus.FAIL.getCode();
+        }
+        if (evaluateStatus.equals(1)) {
             evalRbRoomService.judgeTaskAndPushMissionToSituation(task.getMissionId(), task.getEvalTemplateId());
         }
         evalRbRoomService.submitEvaluation(req, UserInfoContext.getUserContext().getUserId());
@@ -314,8 +319,9 @@ public class TrainEvalController {
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<XYData> getRbMissionCategory(
             @ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId,
             @ApiParam(name = "role_type", value = "角色类型", required = true) Integer role_type) {
-        XYData data =  evalRbRoomService.getRbMissionCategory(roomId, role_type);
+        XYData data =  evalRbRoomService.getRbMissionCategory(roomId, evalTemplateId, role_type);
         return new BaseRsp(data);
     }
 
@@ -513,8 +519,9 @@ public class TrainEvalController {
     @GetMapping("/rb_time_data")
     @RequiresPermissions( MenuConstant.WEB_CR_EVALUATION)
     public BaseRsp<TimeDataRsp> getRbTimeData(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-        TimeData data = evalRbRoomService.getRbTimeData(resource_id, null, null);
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId) {
+        TimeData data = evalRbRoomService.getRbTimeData(resource_id, evalTemplateId, null);
 
         TimeDataRsp timeDataRsp = new TimeDataRsp();
         timeDataRsp.setStartTime((int) (data.getStartTime().getTime() / 1000));

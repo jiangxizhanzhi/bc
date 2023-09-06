@@ -48,4 +48,6 @@ public class MpAuthenticatedUser implements Serializable {
 	private String id;
 
 	private Date dateJoined;
+
+	private Date createTime;
 }

@@ -1,16 +1,24 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.LineChart;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -113,5 +121,35 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 			return null;
 		}
     }
+
+	@Override
+	public LineChart getOwnSingleChart() {
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if(null == userInfo){
+			return new LineChart().addDot(TimeUtil.format6(new Date()), 0);
+		}
+		List<TrainRecord> recordList = trainRecordMapper.selectByUserIdAndType(userInfo.getUserId(),
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		Map<String, Integer> cntMap = Maps.newHashMap();
+		for (TrainRecord trainRecord : recordList) {
+			String date = TimeUtil.format6(trainRecord.getStartTime());
+			cntMap.put(date, cntMap.getOrDefault(date, 0) + 1);
+		}
+
+		Date head = userInfo.getCreateTime();
+		Date now = new Date();
+		LineChart chart = new LineChart();
+		while (head.before(now)) {
+			String date = TimeUtil.format6(head);
+			chart.addDot(date, cntMap.getOrDefault(date, 0));
+			head = TimeUtil.addDates(head, 1);
+		}
+		// 今天的数据
+		String date = TimeUtil.format6(head);
+		if (date.equals(TimeUtil.format6(now))) {
+			chart.addDot(date, cntMap.getOrDefault(date, 0));
+		}
+		return chart;
+	}
 
 }

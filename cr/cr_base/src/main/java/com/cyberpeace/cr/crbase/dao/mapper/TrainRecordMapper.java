@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,4 +31,6 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 	TrainRecord getByRoomId(String roomId);
 
 	void updateEndTimeByRoomId(@Param("roomId") String roomId, @Param("endTime") Date endTime);
+
+	List<TrainRecord> selectByUserIdAndType(@Param("userId") String userId, @Param("code") Integer code);
 }

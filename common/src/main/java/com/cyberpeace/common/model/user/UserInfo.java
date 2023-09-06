@@ -1,6 +1,7 @@
 package com.cyberpeace.common.model.user;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -80,5 +81,10 @@ public class UserInfo implements Serializable {
      * 用户菜单权限
      */
     private Set<String> permissions;
+
+    /**
+     * 注册时间
+     */
+    private Date createTime;
 
 }

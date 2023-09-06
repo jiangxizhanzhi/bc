@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.model.LineChart;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.singletrain.service.SingleTrainStatisticsService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -207,6 +210,13 @@ public class SingleRoomScoreController {
 		}
 		RecordDetail detail = singleRoomService.getRecordDetail(resource_id);
 		return new BaseRsp<>(detail);
+	}
+	
+	@ApiOperation("单兵训练训练概况")
+	@GetMapping("/trend")
+	public BaseRsp<LineChart> getConclusion(){
+		LineChart chart = trainRecordService.getOwnSingleChart();
+		return new BaseRsp<>(chart);
 	}
 
 	private Object gettaskCount(MissionReport missionReport) {

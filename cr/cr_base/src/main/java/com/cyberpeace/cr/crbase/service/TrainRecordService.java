@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.LineChart;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 
 /**
@@ -89,4 +90,11 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 * @return {@code Date}
 	 */
 	Date getActualEndTime(String roomId);
+
+	/**
+	 * 获取自身的单兵训练概况折线图
+	 *
+	 * @return {@code LineChart}
+	 */
+	LineChart getOwnSingleChart();
 }

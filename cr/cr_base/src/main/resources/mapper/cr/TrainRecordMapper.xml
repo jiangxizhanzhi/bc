@@ -72,5 +72,11 @@
         from cr_train_record
         where room_id = #{roomId}
     </select>
+    <select id="selectByUserIdAndType" resultType="com.cyberpeace.cr.crbase.dao.entity.TrainRecord">
+        select *
+        from cr_train_record
+        where user_id = #{userId}
+          and business_type = #{code}
+    </select>
 
 </mapper>

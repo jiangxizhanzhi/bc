@@ -405,6 +405,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setSuperuser(byId.isSuperuser());
 		userInfo.setAdmin(byId.isAdmin());
 
+		userInfo.setCreateTime(mpAuthenticatedUser.getCreateTime());
 		return userInfo;
 	}
 

@@ -141,7 +141,7 @@ public class TimeData {
 			// 无统计数据产生时（未运行/未产生任务数据）只做x轴坐标显示，y轴数据全为0
 			if (objWithTimes != null) {
 				// point_index指向data最后一位时，不再进行统计。
-				if (pointIndex < objWithTimes.size()) {
+				if (pointIndex <= objWithTimes.size() - 1) {
 					for (int index = pointIndex; index < objWithTimes.size(); index++) {
 						Date itemTime = objWithTimes.get(index).getTime();
 						if (itemTime.after(timePoint)) {
@@ -151,6 +151,12 @@ public class TimeData {
 						}
 						// 指定统计字段，否则统计次数
 						accumulatedValue += objWithTimes.get(index).getValue();
+
+//						// 统计到最后一位
+//						if (index == objWithTimes.size() - 1) {
+//							pointIndex = index + 1;
+//
+//						}
 					}
 
 				}

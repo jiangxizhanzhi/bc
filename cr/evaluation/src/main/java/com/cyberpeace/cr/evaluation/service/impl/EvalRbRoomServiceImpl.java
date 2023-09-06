@@ -753,7 +753,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
         List<ObjWithTime> taskTimes = crTasks.stream().map(taskContext -> {
             ObjWithTime objWithTime = new ObjWithTime();
-            objWithTime.setTime(taskContext.getReleaseTime());
+            objWithTime.setTime(taskContext.getUpdateTime());
 
             return objWithTime;
         }).collect(Collectors.toList());

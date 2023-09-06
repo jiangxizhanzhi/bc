@@ -502,7 +502,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseLesson.setHandoutUrl(utilService.replaceFileUrl(lessonUpdateReq.getHandoutUrl()));
 		}
 
-		if (StringUtils.isNotBlank(lessonUpdateReq.getVideo())) {
+		if (StringUtils.isNotBlank(lessonUpdateReq.getVideoUrl())
+				&& lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
 			// 知识检查点
 			courseLesson.setVideoTime(lessonUpdateReq.getVideo_time());
 			courseLesson.setCheckPoint(getCheckPoint(lessonUpdateReq));
@@ -523,7 +524,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		
-		if (StringUtils.isNotBlank(lessonAddReq.getVideo())) {
+		if (StringUtils.isNotBlank(lessonAddReq.getVideo())
+				&& lessonAddReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
 			// 知识检查点
 			courseLesson.setVideoTime(lessonAddReq.getVideo_time());
 			courseLesson.setCheckPoint(getCheckPoint(lessonAddReq));

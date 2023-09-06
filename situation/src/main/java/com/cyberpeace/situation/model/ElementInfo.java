@@ -36,10 +36,10 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("节点类型")
 	private String type;
 
-	@ApiModelProperty("节点动作状态")
+	@ApiModelProperty("节点业务状态")
 	private String actionStatus;
 
-	@ApiModelProperty("节点状态")
+	@ApiModelProperty("节点运行状态")
 	private String status;
 
 	@ApiModelProperty("节点所属区域")
@@ -56,6 +56,12 @@ public class ElementInfo implements Serializable {
 
 	@ApiModelProperty("节点颜色")
 	private String color;
+
+	@ApiModelProperty("节点名称颜色")
+	private String nameColor;
+
+	@ApiModelProperty("节点字体样式")
+	private FontStyle fontStyle;
 
 	public ElementInfo(JSONObject element) {
 		this.setElementId(element.getString("id"));

@@ -764,7 +764,16 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 四级指标使用的变量项
         List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery().eq(EvalVariableRef::getRecordId, evalRecord.getResourceId()).list();
-        Double avg = evalVariableRefList.stream().collect(averagingInt(EvalVariableRef::getScore));
+
+        int sum = 0;
+        int count = 0;
+        for (EvalVariableRef evalVariableRef : evalVariableRefList) {
+            if (Objects.nonNull(evalVariableRef.getScore())) {
+                sum += evalVariableRef.getScore();
+                count++;
+            }
+        }
+        int avg = sum / count;
 
         Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefList.stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
 
@@ -782,8 +791,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalRecord.setStatus(StringUtils.isEmpty(evalRecord.getMessage()) ? EvalRecord.Status.END.getCode() : EvalRecord.Status.EXCEPTION.getCode());
 
         if (avg > 0) {
-            evalRecord.setFinalScore((int) (Math.round(avg) * evalRecord.getIndexScore() / 100));
-            evalRecord.setScore((int) (Math.round(avg)));
+            evalRecord.setFinalScore(avg * evalRecord.getIndexScore() / 100);
+            evalRecord.setScore(avg);
         } else {
             evalRecord.setFinalScore(null == evalRecord.getScore() ? 0 : Math.round(evalRecord.getScore() * evalRecord.getIndexScore()) / 100);
             evalRecord.setScore(evalIndexRefs.get(evalIndexRefs.size() - 1).getScore());

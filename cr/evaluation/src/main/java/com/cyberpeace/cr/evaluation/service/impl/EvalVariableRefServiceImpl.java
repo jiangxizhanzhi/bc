@@ -265,19 +265,22 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         EvalLog.debug(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
 
         // 运行评分算法
-        Integer score;
+        Integer score=evalVariableRef.getScore();
         evalVariableRef.setMarkStartTime(new Date());
-        try {
-            score = remotePythonService.markPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
-        } catch (RemoteServiceException e) {
-            if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+
+        if (Objects.isNull(evalVariableRef.getScore())){
+            try {
+                score = remotePythonService.markPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
+            } catch (RemoteServiceException e) {
+                if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+                    return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MARK_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+                }
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MARK_EXECUTE_FAILED), evalVariableRef.getName());
+            }
+
+            if (score > 100 || 0 > score) {
                 return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MARK_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
             }
-            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MARK_EXECUTE_FAILED), evalVariableRef.getName());
-        }
-
-        if (score > 100 || 0 > score) {
-            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MARK_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
         }
 
         evalVariableRef.setMarkEndTime(new Date());

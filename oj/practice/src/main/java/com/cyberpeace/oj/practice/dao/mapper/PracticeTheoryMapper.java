@@ -102,11 +102,9 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param practiceSetIds practice设置id列表
 	 * @param category
 	 * @param questionType
-	 * @param difficulty
 	 * @return {@code IPage<PracticeTheory>}
 	 */
 	IPage<PracticeTheory> getSingleMultiJudgeList(Page page, @Param("pattern") String pattern,
 			@Param("practice_set_ids") List<String> practiceSetIds,
-			@Param("category") String category, @Param("question_type") Integer questionType,
-			@Param("difficulty") Integer difficulty);
+			@Param("category") String category, @Param("question_type") Integer questionType);
 }

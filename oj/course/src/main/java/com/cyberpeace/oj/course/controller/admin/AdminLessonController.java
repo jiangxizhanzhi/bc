@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -61,10 +62,14 @@ import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.bo.check.CheckPoint;
 import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointDo;
 import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointQuestion;
-import com.cyberpeace.oj.practice.controller.req.external.PracticeTheoryListReq;
+import com.cyberpeace.oj.practice.controller.req.LibPracticeListReq;
+import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
+import com.cyberpeace.oj.practice.service.bo.LibPracticeListBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.google.common.collect.Lists;
 
@@ -107,6 +112,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private PracticeCategoryService practiceCategoryService;
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
@@ -444,27 +452,47 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("知识检查点-理论题库-分页查询")
 	@GetMapping("/theory/list")
-	public BaseRsp<ListRsp<PracticeTheory>> getTheoryList(PracticeTheoryListReq queryParams) {
-
+	public BaseRsp<ListRsp<LibPracticeListBo>>
+			selectPracticeInfo(LibPracticeListReq practiceListReq) {
 		// 数据校验
 		UserInfo userInfo = UserInfoContext.getUserContext();
 
 		// 习题集权限查询
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 		List<String> setIds = practiceSetService.getSetIds(authContext,
-				queryParams.getPracticeSet());
+				practiceListReq.getPracticeSetId());
 		if (CollectionUtils.isEmpty(setIds)) {
 			return new BaseRsp<>(PageUtil.getNullResult());
 		}
 
-		Page page = queryParams.toPageParam();
+		Page page = practiceListReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}
 
 		IPage<PracticeTheory> result = practiceTheoryMapper.getSingleMultiJudgeList(page,
-				queryParams.getPattern(), setIds, queryParams.getCategory(),
-				queryParams.getQuestionType(), queryParams.getDifficulty());
+				practiceListReq.getPattern(), setIds, practiceListReq.getCategoryId(),
+				practiceListReq.getQuestionType());
+		List<String> categoryIds = result.getRecords().stream().map(PracticeBase::getCategoryId)
+				.collect(Collectors.toList());
+		List<PracticeCategory> categories = practiceCategoryService.getBaseMapper()
+				.selectBatchIds(categoryIds);
+		Map<String, String> categoryMap = StreamApiUtils.toMap(categories,
+				PracticeCategory::getResourceId, PracticeCategory::getName);
+		result.convert(theory -> {
+			LibPracticeListBo bo = new LibPracticeListBo();
+			bo.setResourceId(theory.getResourceId());
+			bo.setTitle(theory.getTitle());
+			bo.setContent(theory.getContent());
+			bo.setCategoryId(theory.getCategoryId());
+			bo.setCategoryName(categoryMap.getOrDefault(theory.getCategoryId(), ""));
+			bo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+			bo.setQuestionType(theory.getTheoryType());
+			bo.setOption(theory.getOption());
+			bo.setScore(theory.getScore());
+			bo.setAnswer(theory.getAnswer());
+			return bo;
+		});
 		return new BaseRsp<>(PageUtil.getListResult(result));
 	}
 
@@ -508,6 +536,13 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseLesson.setVideoTime(lessonUpdateReq.getVideo_time());
 			courseLesson.setCheckPoint(getCheckPoint(lessonUpdateReq));
 		}
+		//
+		// // 备课笔记
+		// if
+		// (lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode()))
+		// {
+		// courseLesson.setPrepareNote(lessonUpdateReq.getPrepare_note());
+		// }
 
 		return courseLesson;
 	}

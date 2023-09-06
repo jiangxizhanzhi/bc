@@ -309,9 +309,6 @@
                     and theory_type in (0, 1, 2)
                 </otherwise>
             </choose>
-            <if test="difficulty != null">
-                and difficulty = #{difficulty}
-            </if>
             and `public` = true
         </where>
         order by id desc

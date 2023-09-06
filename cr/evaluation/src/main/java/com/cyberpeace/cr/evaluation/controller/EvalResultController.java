@@ -229,8 +229,8 @@ public class EvalResultController {
             value = "评估记录编号") @RequestParam("id") @NotEmpty String resourceId) {
         EvalRoleEventActivityListRsp res = new EvalRoleEventActivityListRsp();
         List<String> dates = new ArrayList<>();
-        List<Integer> redCount = new ArrayList<>();
-        List<Integer> blueCount = new ArrayList<>();
+        List<Integer> redCountList = new ArrayList<>();
+        List<Integer> blueCountList = new ArrayList<>();
 
         EvalTemplate evalTemplate = getRoomById(resourceId);
         List<Integer> codeList = CrTaskLog.ActionCode.ACTIVE_TIME_LIST;
@@ -250,28 +250,21 @@ public class EvalResultController {
             String dateFormatStr = dateFormat.format(TimeUtil.addHours(oneDayAgo, i));
             String currentFormat = simpleDateFormat.format(TimeUtil.addHours(oneDayAgo, i));
             dates.add(currentFormat);
-            boolean addFlag = false;
-
+            int redCount=0;
+            int blueCount = 0;
             for (EvalRoleEventActivity crTaskLog : crTaskLogs) {
-                Integer count = crTaskLog.getCount();
                 if (dateFormatStr.equals(crTaskLog.getCreateTime()) && crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())) {
-                    redCount.add(count);
-                    blueCount.add(0);
-                    addFlag = true;
+                    redCount=crTaskLog.getCount();
                 } else if (dateFormatStr.equals(crTaskLog.getCreateTime()) && crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
-                    redCount.add(0);
-                    blueCount.add(count);
-                    addFlag = true;
+                    blueCount=crTaskLog.getCount();
                 }
             }
-            if (!addFlag) {
-                redCount.add(0);
-                blueCount.add(0);
-            }
+            redCountList.add(redCount);
+            blueCountList.add(blueCount);
         }
         res.setCreatTime(dates);
-        res.setBlueCount(redCount);
-        res.setRedCount(blueCount);
+        res.setRedCount(redCountList);
+        res.setBlueCount(blueCountList);
         return new BaseRsp<>(res);
     }
 

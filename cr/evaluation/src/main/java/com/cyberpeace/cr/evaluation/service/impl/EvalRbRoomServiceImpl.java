@@ -237,7 +237,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
             objWithTime.setValue(taskContext.getScore());
             return objWithTime;
         }).collect(Collectors.toList());
-        return timeData.calculateCountByTime(taskTimes);
+        return timeData.calculateCountByTimeForEval(taskTimes);
     }
 
     private RoleUserIds getRoleInfo(String roomId, Integer roleType) {
@@ -758,7 +758,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
             return objWithTime;
         }).collect(Collectors.toList());
 
-        List<Integer> totalProgressYData = timeData.calculateCountByTime(taskTimes);
+        List<Integer> totalProgressYData = timeData.calculateCountByTimeForEval(taskTimes);
 
         // 获取已完成的任务
         LambdaQueryWrapper<CrEvalTrainTask> finishQuery = new LambdaQueryWrapper<>();
@@ -768,12 +768,12 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         List<CrEvalTrainTask> finishedTasks = evalTrainTaskMapper.selectList(finishQuery);
         List<ObjWithTime> finishedTimes = finishedTasks.stream().map(crTask -> {
             ObjWithTime objWithTime = new ObjWithTime();
-            objWithTime.setTime(crTask.getLastSubmitTime());
+            objWithTime.setTime(crTask.getUpdateTime());
 
             return objWithTime;
         }).collect(Collectors.toList());
 
-        List<Integer> completedProgressYData = timeData.calculateCountByTime(finishedTimes);
+        List<Integer> completedProgressYData = timeData.calculateCountByTimeForEval(finishedTimes);
 
         JSONObject json = new JSONObject();
 

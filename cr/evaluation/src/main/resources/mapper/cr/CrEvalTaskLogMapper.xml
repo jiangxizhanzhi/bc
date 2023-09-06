@@ -30,7 +30,7 @@
 
     <select id="getReleaseIdsByRoomIdAndUsers" resultType="com.cyberpeace.cr.crbase.controller.rsp.EvalRoleEventActivity">
         select count(l.resource_id)  as count,
-        date_format(l.create_time, '%k:00:00') createTime,
+        date_format( l.create_time, '%Y-%m-%d %k:00:00' ) createTime,
         r.role_group as roleGroup
         from cr_eval_task_log l
         join cr_eval_train_task t on t.resource_id = l.task_id
@@ -42,6 +42,7 @@
         </foreach>
         AND l.create_time  &gt;= #{startDate}
         group by createTime,roleGroup
+        order by createTime asc
     </select>
 
 

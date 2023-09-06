@@ -244,19 +244,21 @@ public class EvalResultController {
         Date oneDayAgo = CollectionUtils.isEmpty(evalTaskLogList) ? new Date() : TimeUtil.addHours(evalTaskLogList.get(0).getCreateTime(),-24) ;
         List<EvalRoleEventActivity> crTaskLogs = crEvalTaskLogMapper.getReleaseIdsByRoomIdAndUsers(evalTemplate.getResourceId(), codeList, oneDayAgo);
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:00:00");
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 25; i++) {
+            String dateFormatStr = dateFormat.format(TimeUtil.addHours(oneDayAgo, i));
             String currentFormat = simpleDateFormat.format(TimeUtil.addHours(oneDayAgo, i));
             dates.add(currentFormat);
             boolean addFlag = false;
 
             for (EvalRoleEventActivity crTaskLog : crTaskLogs) {
                 Integer count = crTaskLog.getCount();
-                if (currentFormat.equals(crTaskLog.getCreateTime()) && crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())) {
+                if (dateFormatStr.equals(crTaskLog.getCreateTime()) && crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())) {
                     redCount.add(count);
                     blueCount.add(0);
                     addFlag = true;
-                } else if (currentFormat.equals(crTaskLog.getCreateTime()) && crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
+                } else if (dateFormatStr.equals(crTaskLog.getCreateTime()) && crTaskLog.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())) {
                     redCount.add(0);
                     blueCount.add(count);
                     addFlag = true;

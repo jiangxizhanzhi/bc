@@ -220,6 +220,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setPosition(new PlaneCoordinate(x, y));
 			elementInfo.setPorts(portsInfo);
 			elementInfo.setHierarchy(hierarchy);
+			elementInfo.setCategory(category);
 
 			// 提取自定义配置
 			Map<Integer, String> elementConfig = getNodeConfig(elementConfigMap, elementId,

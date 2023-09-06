@@ -24,6 +24,9 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("节点角色")
 	private String role;
 
+	@ApiModelProperty("节点类别")
+	private Integer category;
+
 	@ApiModelProperty("节点描述")
 	private String desc;
 

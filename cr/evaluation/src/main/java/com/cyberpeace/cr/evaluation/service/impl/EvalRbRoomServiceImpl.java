@@ -744,12 +744,11 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
         // 获取角色组数据
         RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
-
-        // 获取实例实际开始时间和理论结束时间
-        TimeData timeData = getRbTimeData(roomId, evalTemplateId, roleUserIds.getUserIds());
-
         // 一次取出所有用户的得分纪录
         List<CrEvalTrainTask> crTasks = getEvalTrainTaskList(evalTemplateId, roleUserIds.getUserIds());
+        Date updateTime =  CollectionUtils.isEmpty(crTasks)? null: crTasks.get(0).getUpdateTime();
+        // 获取实例实际开始时间和理论结束时间
+        TimeData timeData = getRbTimeDataForLastTime(roomId, evalTemplateId, roleUserIds.getUserIds(),updateTime);
 
         List<ObjWithTime> taskTimes = crTasks.stream().map(taskContext -> {
             ObjWithTime objWithTime = new ObjWithTime();
@@ -765,6 +764,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         finishQuery.eq(CrEvalTrainTask::getEvalTemplateId, evalTemplateId);
         finishQuery.in(CrEvalTrainTask::getUserId, roleUserIds.getUserIds());
         finishQuery.in(CrEvalTrainTask::getStatus, CrTask.TaskStatus.FINISHED_STATUS_LIST);
+        finishQuery.orderByDesc(CrEvalTrainTask::getUpdateTime);
         List<CrEvalTrainTask> finishedTasks = evalTrainTaskMapper.selectList(finishQuery);
         List<ObjWithTime> finishedTimes = finishedTasks.stream().map(crTask -> {
             ObjWithTime objWithTime = new ObjWithTime();
@@ -772,7 +772,8 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
             return objWithTime;
         }).collect(Collectors.toList());
-
+        updateTime =  CollectionUtils.isEmpty(finishedTasks)? null: finishedTasks.get(0).getUpdateTime();
+        timeData = getRbTimeDataForLastTime(roomId, evalTemplateId, roleUserIds.getUserIds(),updateTime);
         List<Integer> completedProgressYData = timeData.calculateCountByTimeForEval(finishedTimes);
 
         JSONObject json = new JSONObject();
@@ -819,6 +820,7 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         LambdaQueryWrapper<CrEvalTrainTask> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(CrEvalTrainTask::getEvalTemplateId, evalTemplateId);
         queryWrapper.in(CrEvalTrainTask::getUserId, ids);
+        queryWrapper.orderByDesc(CrEvalTrainTask::getUpdateTime);
         return evalTrainTaskMapper.selectList(queryWrapper);
     }
 
@@ -879,13 +881,18 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         return rbRoomData;
     }
 
-    @Override
-    public TimeData getRbTimeData(String roomId, String evalTemplateId, List<String> userIds) {
+
+    private TimeData getRbTimeDataForLastTime(String roomId, String evalTemplateId, List<String> userIds, Date updateTime ) {
         RbRoomData rbRoomData = getRbRoomDataByRoomId(roomId);
         RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(roomId);
 
         Date endTime = rbRoomData.getEndTime();
-        if (evalTemplateId != null) {
+
+       if (Objects.nonNull(updateTime)){
+           if (updateTime.after(rbRoomData.getEndTime())) {
+               endTime = updateTime;
+           }
+       } else if (evalTemplateId != null) {
             List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, userIds, CrTask.TaskStatus.FINISHED_STATUS_LIST);
             if (!CollectionUtils.isEmpty(crEvalTrainTasks)) {
                 Date lastTime = crEvalTrainTasks.get(crEvalTrainTasks.size() - 1).getUpdateTime();
@@ -912,6 +919,11 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
             }
         }
         return timeData;
+    }
+
+    @Override
+    public TimeData getRbTimeData(String roomId, String evalTemplateId, List<String> userIds) {
+        return getRbTimeDataForLastTime(roomId, evalTemplateId, userIds, null);
     }
 
     @Override

@@ -59,6 +59,9 @@ public class Course extends AuthTable {
 	@ApiModelProperty("讲师")
 	private String lecturer;
 
+	@ApiModelProperty("授课人数")
+	private Integer lecturee;
+
 	@ApiModelProperty("学分")
 	private Integer score;
 

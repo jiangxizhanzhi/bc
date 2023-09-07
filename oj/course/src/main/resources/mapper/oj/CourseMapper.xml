@@ -17,6 +17,11 @@
             resource_id = #{resourceId}
         </where>
     </update>
+    <update id="updateLecturee">
+        update oj_course
+        set lecturee = lecturee + #{cnt}
+        where resource_id = #{resourceId}
+    </update>
 
     <select id="listByPage" resultMap="baseResultMap">
         select L1.*, count(L2.course_id) as lesson_count from oj_course L1

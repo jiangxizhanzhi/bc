@@ -66,7 +66,7 @@
         select distinct oj_course.name,oj_course.resource_id,oj_course.difficulty,oj_course_category.name as
         category_name,
         oj_course.create_user_id as create_user,ifnull(lesson.count,0) as lesson_count,ifnull(learned_lessons.count,0)
-        as heat,
+        as heat, oj_course.lecturee,
         ifnull(report.count,0) as finish_report_count
         from oj_course
         left join oj_course_category on oj_course.category_id = oj_course_category.resource_id

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.course.service.LessonPrepareNoteService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +49,7 @@ import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
+import com.cyberpeace.oj.course.service.LessonPrepareNoteService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
@@ -72,6 +72,7 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -183,7 +184,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 分组数据
 		List<String> userIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
-
+		// 授课人数
+		Integer lectureeCnt = Sets.newHashSet(userIds).size();
 		// 如果组织下不包含创建者则把创建者加入
 		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
 				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
@@ -199,6 +201,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroomGroupInfoService.saveBatch(groupInfoList);
 				if (changCourse) {
 					courseMapper.updateById(course);
+				}
+				if (lectureeCnt != 0) {
+					courseMapper.updateLecturee(course.getResourceId(), lectureeCnt);
 				}
 			}
 		});

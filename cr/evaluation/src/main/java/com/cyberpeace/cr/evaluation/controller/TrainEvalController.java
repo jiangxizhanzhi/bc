@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
@@ -45,12 +46,14 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -521,7 +524,13 @@ public class TrainEvalController {
     public BaseRsp<TimeDataRsp> getRbTimeData(
             @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
             @ApiParam(name = "eval_template_id", value = "评估id", required = true) @RequestParam("eval_template_id") String evalTemplateId) {
-        TimeData data = evalRbRoomService.getRbTimeData(resource_id, evalTemplateId, null);
+
+        LambdaQueryWrapper<CrEvalTrainTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CrEvalTrainTask::getEvalTemplateId,evalTemplateId);
+        queryWrapper.orderByDesc(CrEvalTrainTask::getUpdateTime);
+        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectList(queryWrapper);
+        Date updateTime =  CollectionUtils.isEmpty(crEvalTrainTasks)? null: crEvalTrainTasks.get(0).getUpdateTime();
+        TimeData data = evalRbRoomService.getRbTimeData(resource_id, evalTemplateId, updateTime);
 
         TimeDataRsp timeDataRsp = new TimeDataRsp();
         timeDataRsp.setStartTime((int) (data.getStartTime().getTime() / 1000));

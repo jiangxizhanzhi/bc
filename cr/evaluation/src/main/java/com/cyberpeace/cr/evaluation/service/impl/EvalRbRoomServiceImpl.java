@@ -45,7 +45,6 @@ import com.cyberpeace.cr.redvsblue.service.context.mission.ObjWithTime;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RankData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.UserCounter;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import com.google.common.collect.ImmutableMap;
@@ -213,10 +212,21 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
         RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, roleType));
 
+        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
+        Date updateTime = CollectionUtils.isEmpty(crEvalTrainTasks) ? null : crEvalTrainTasks.get(crEvalTrainTasks.size() - 1).getUpdateTime();
         // 获取实例实际开始时间和理论结束时间
-        TimeData timeData = getRbTimeData(roomId,evalTemplateId,roleUserIds.getUserIds());
+        TimeData timeData = getRbTimeDataForLastTime(roomId, evalTemplateId, roleUserIds.getUserIds(), updateTime);
 
-        List<Integer> yData = getScoreProgress(timeData, evalTemplateId, roleUserIds);
+
+        // 一次取出所有用户的得分纪录
+        List<ObjWithTime> taskTimes = crEvalTrainTasks.stream().map(taskContext -> {
+            ObjWithTime objWithTime = new ObjWithTime();
+            objWithTime.setTime(taskContext.getUpdateTime());
+            objWithTime.setValue(taskContext.getScore());
+            return objWithTime;
+        }).collect(Collectors.toList());
+        List<Integer> yData = timeData.calculateCountByTimeForEval(taskTimes);
+
         JSONObject json = new JSONObject();
         json.put("status", timeData.getStatus());
         json.put("time_stamp", System.currentTimeMillis() / 1000);
@@ -226,18 +236,6 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
         json.put("x_data", timeData.getXData());
         json.put("y_data", yData);
         return json;
-    }
-
-    public List<Integer> getScoreProgress(TimeData timeData, String evalTemplateId, RoleUserIds roleUserIds) {
-        // 一次取出所有用户的得分纪录
-        List<CrEvalTrainTask> crEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(evalTemplateId, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
-        List<ObjWithTime> taskTimes = crEvalTrainTasks.stream().map(taskContext -> {
-            ObjWithTime objWithTime = new ObjWithTime();
-            objWithTime.setTime(taskContext.getUpdateTime());
-            objWithTime.setValue(taskContext.getScore());
-            return objWithTime;
-        }).collect(Collectors.toList());
-        return timeData.calculateCountByTimeForEval(taskTimes);
     }
 
     private RoleUserIds getRoleInfo(String roomId, Integer roleType) {
@@ -772,19 +770,30 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
 
             return objWithTime;
         }).collect(Collectors.toList());
-        updateTime =  CollectionUtils.isEmpty(finishedTasks)? null: finishedTasks.get(0).getUpdateTime();
-        timeData = getRbTimeDataForLastTime(roomId, evalTemplateId, roleUserIds.getUserIds(),updateTime);
-        List<Integer> completedProgressYData = timeData.calculateCountByTimeForEval(finishedTimes);
+        Date finishTime = CollectionUtils.isEmpty(finishedTasks) ? null : finishedTasks.get(0).getUpdateTime();
+        TimeData finishTimeData = getRbTimeDataForLastTime(roomId, evalTemplateId, roleUserIds.getUserIds(), finishTime);
+        List<Integer> completedProgressYData = finishTimeData.calculateCountByTimeForEval(finishedTimes);
 
         JSONObject json = new JSONObject();
 
         json.put("total_mission", crTasks.size());
         json.put("completed_mission", finishedTasks.size());
         json.put("total_members", roleUserIds.getUserIds().size());
-        json.put("x_data", timeData.getXData());
+
+        List<String> xDate = timeData.getXData().size() > finishTimeData.getXData().size() ? timeData.getXData() : finishTimeData.getXData();
+        int totalLastData = CollectionUtils.isEmpty(totalProgressYData) ? 0 : totalProgressYData.get(totalProgressYData.size() - 1);
+        int completedLastData = CollectionUtils.isEmpty(completedProgressYData) ? 0 : completedProgressYData.get(completedProgressYData.size() - 1);
+        int redSize = totalProgressYData.size();
+        for (int i = 0; i < xDate.size() - redSize; i++) {
+            totalProgressYData.add(totalLastData);
+        }
+        int blueSize = completedProgressYData.size();
+        for (int i = 0; i < xDate.size() - blueSize; i++) {
+            completedProgressYData.add(completedLastData);
+        }
+        json.put("x_data", xDate);
         json.put("y_total", totalProgressYData);
         json.put("y_complete", completedProgressYData);
-
         return json;
     }
 
@@ -792,27 +801,59 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     public JSONObject getAllRbScoreProgress(String roomId, Integer roleType, String template) {
 
         RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, CrRole.RbRoleGroup.RED));
-        // 获取实例实际开始时间和理论结束时间
-        TimeData timeData = getRbTimeData(roomId, template, roleUserIds.getUserIds());
-
         JSONObject json = new JSONObject();
-
-        json.put("status", timeData.getStatus());
+        // 一次取出所有用户的得分纪录
+        List<CrEvalTrainTask> redEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(template, roleUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
+        Date updateTime = CollectionUtils.isEmpty(redEvalTrainTasks) ? null : redEvalTrainTasks.get(redEvalTrainTasks.size() - 1).getUpdateTime();
+        // 获取实例实际开始时间和理论结束时间
+        TimeData redTimeData = getRbTimeDataForLastTime(roomId, template, roleUserIds.getUserIds(), updateTime);
+        json.put("status", redTimeData.getStatus());
         json.put("time_stamp", System.currentTimeMillis() / 1000);
-        json.put("start_time", timeData.getStartTime());
-        json.put("running", timeData.getRunning());
+        json.put("start_time", redTimeData.getStartTime());
+        json.put("running", redTimeData.getRunning());
         json.put("total_score", 0);
-        json.put("x_data", timeData.getXData());
 
-        List<Integer> yRedData = getScoreProgress(timeData, template, roleUserIds);
-        json.put("red_total_score", timeData.getAccumulatedValue());
+
+        List<ObjWithTime> taskTimes = redEvalTrainTasks.stream().map(taskContext -> {
+            ObjWithTime objWithTime = new ObjWithTime();
+            objWithTime.setTime(taskContext.getUpdateTime());
+            objWithTime.setValue(taskContext.getScore());
+            return objWithTime;
+        }).collect(Collectors.toList());
+        List<Integer> yRedData = redTimeData.calculateCountByTimeForEval(taskTimes);
+        json.put("red_total_score", redTimeData.getAccumulatedValue());
         json.put("y_red_score", yRedData);
 
-        roleUserIds = getRoleInfo(new RoleQuery(roomId, CrRole.RbRoleGroup.BLUE));
-        List<Integer> yBlueData = getScoreProgress(timeData, template, roleUserIds);
+        RoleUserIds blueUserIds = getRoleInfo(new RoleQuery(roomId, CrRole.RbRoleGroup.BLUE));
+        // 一次取出所有用户的得分纪录
+        List<CrEvalTrainTask> blueEvalTrainTasks = evalTrainTaskMapper.selectByRoomIdAndUserIdsAndStatusList(template, blueUserIds.getUserIds(), CrTask.TaskStatus.FINISHED_STATUS_LIST);
 
-        json.put("blue_total_score", timeData.getAccumulatedValue());
+        Date blueUpdateTime = CollectionUtils.isEmpty(blueEvalTrainTasks) ? null : blueEvalTrainTasks.get(blueEvalTrainTasks.size() - 1).getUpdateTime();
+        TimeData blueTimeData = getRbTimeDataForLastTime(roomId, template, roleUserIds.getUserIds(), blueUpdateTime);
+
+        List<ObjWithTime> blueTaskTimes = blueEvalTrainTasks.stream().map(taskContext -> {
+            ObjWithTime objWithTime = new ObjWithTime();
+            objWithTime.setTime(taskContext.getUpdateTime());
+            objWithTime.setValue(taskContext.getScore());
+            return objWithTime;
+        }).collect(Collectors.toList());
+        List<Integer> yBlueData = blueTimeData.calculateCountByTimeForEval(blueTaskTimes);
+
+        json.put("blue_total_score", blueTimeData.getAccumulatedValue());
         json.put("y_blue_score", yBlueData);
+
+        List<String> xDate = redTimeData.getXData().size() > blueTimeData.getXData().size() ? redTimeData.getXData() : blueTimeData.getXData();
+        int redLastData = CollectionUtils.isEmpty(yRedData) ? 0 : yRedData.get(yRedData.size() - 1);
+        int blueLastData = CollectionUtils.isEmpty(yBlueData) ? 0 : yBlueData.get(yBlueData.size() - 1);
+        int redSize = yRedData.size();
+        for (int i = 0; i < xDate.size() - redSize; i++) {
+            yRedData.add(redLastData);
+        }
+        int blueSize = yBlueData.size();
+        for (int i = 0; i < xDate.size() - blueSize; i++) {
+            yBlueData.add(blueLastData);
+        }
+        json.put("x_data", xDate);
         return json;
     }
 
@@ -922,8 +963,8 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
     }
 
     @Override
-    public TimeData getRbTimeData(String roomId, String evalTemplateId, List<String> userIds) {
-        return getRbTimeDataForLastTime(roomId, evalTemplateId, userIds, null);
+    public TimeData getRbTimeData(String roomId, String evalTemplateId, Date updateTime) {
+        return getRbTimeDataForLastTime(roomId, evalTemplateId, null, updateTime);
     }
 
     @Override

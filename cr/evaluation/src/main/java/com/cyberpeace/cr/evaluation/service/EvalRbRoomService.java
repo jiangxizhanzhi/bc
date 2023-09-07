@@ -14,6 +14,7 @@ import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 
+import java.util.Date;
 import java.util.List;
 
 public interface EvalRbRoomService {
@@ -116,7 +117,7 @@ public interface EvalRbRoomService {
      * @param roomId 红蓝对抗实例id
      * @return 时间趋势数据
      */
-    TimeData getRbTimeData(String roomId, String evalTemplateId, List<String> userIds);
+    TimeData getRbTimeData(String roomId, String evalTemplateId, Date updateTime);
 
     /**
      * 获取某用户在单个训练中的雷达图

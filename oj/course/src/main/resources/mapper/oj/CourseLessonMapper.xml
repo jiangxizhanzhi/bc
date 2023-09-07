@@ -103,4 +103,16 @@
         </where>
         and node_type = 1
     </select>
+    <select id="selectByHeat" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
+        select name, heat
+        from oj_course_lesson
+        <if test="null != courseIds and courseIds.size() > 0">
+            where oj_course_lesson.course_id in
+            <foreach collection="courseIds" index="index" separator="," item="courseId" open="(" close=")">
+                #{courseId}
+            </foreach>
+        </if>
+        ORDER BY oj_course_lesson.heat DESC
+        LIMIT 5
+    </select>
 </mapper>

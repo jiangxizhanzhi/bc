@@ -14,6 +14,8 @@ public interface CourseLearnStatisticsService {
 
 	HistogramRes courseHistogram(AuthContext authContext);
 
+	HistogramRes lessonHistogram(AuthContext authContext);
+
 	HistogramRes directionHistogram(AuthContext authContext);
 
 	ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page page,

@@ -3,7 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
@@ -25,11 +25,11 @@ import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
 import com.cyberpeace.oj.course.controller.res.HistogramRes;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLearnStatisticsMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsService {
@@ -55,6 +55,27 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		List<Course> courses = courseLearnStatisticsMapper.selectByHeat(courseIds);
 		courses = courses.stream().filter(s -> s.getHeat() > 0).collect(Collectors.toList());
 		return getCourseHistogramRes(courses);
+	}
+
+	@Override
+	public HistogramRes lessonHistogram(AuthContext authContext) {
+		List<String> courseIds = null;
+		if (null != authContext) {
+			courseIds = courseMapper.selectByAuth(authContext);
+		}
+		List<CourseLesson> lessonList = courseLessonMapper.selectByHeat(courseIds);
+		lessonList = lessonList.stream().filter(l -> l.getHeat() > 0).collect(Collectors.toList());
+		List<String> xNames = new ArrayList<>();
+		List<Integer> yValues = new ArrayList<>();
+		for (CourseLesson lesson : lessonList) {
+			Integer heat = lesson.getHeat();
+			xNames.add(lesson.getName());
+			yValues.add(heat);
+		}
+		HistogramRes res = new HistogramRes();
+		res.setXNames(xNames);
+		res.setYValues(yValues);
+		return res;
 	}
 
 	@Override

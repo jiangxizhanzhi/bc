@@ -58,6 +58,16 @@ public class AdminLearnStatisticController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("课时热度Top5")
+	@GetMapping("/lesson_histogram")
+	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
+	public BaseRsp<HistogramRes> lessonHistogram() {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		HistogramRes res = courseLearnStatisticsService.lessonHistogram(authContext);
+		return new BaseRsp<>(res);
+	}
+
 	@ApiOperation("课程方向统计柱状图")
 	@GetMapping("/direction_histogram")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)

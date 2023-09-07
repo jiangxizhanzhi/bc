@@ -45,4 +45,6 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	Integer selectMinIndex(@Param("courseId") String courseId);
 
 	Integer selectChapterCount(@Param("courseId") String courseId);
+
+    List<CourseLesson> selectByHeat(@Param("courseIds") List<String> courseIds);
 }

@@ -914,8 +914,8 @@ public class EvalRbRoomServiceImpl implements EvalRbRoomService {
                 xDataList.add(hour + 1 + ":" + "00");
                 xDataList.add(hour + 1 + ":" + "01");
             } else {
-                xDataList.add(hour + ":" + minute + 1);
-                xDataList.add(hour + ":" + minute + 2);
+                xDataList.add(hour + ":" + (minute + 1));
+                xDataList.add(hour + ":" + (minute + 2));
             }
         }
         return timeData;

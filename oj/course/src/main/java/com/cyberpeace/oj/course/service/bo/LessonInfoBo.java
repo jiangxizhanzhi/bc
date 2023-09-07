@@ -75,7 +75,7 @@ public class LessonInfoBo implements Serializable {
 	@ApiModelProperty("知识点")
 	private List<String> knowledge;
 
-	@ApiModelProperty("传贱人编号")
+	@ApiModelProperty("创建人编号")
 	private String createUser;
 
 	@ApiModelProperty("试卷编号")

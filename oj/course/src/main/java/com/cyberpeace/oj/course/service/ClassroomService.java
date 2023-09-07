@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
@@ -139,4 +140,20 @@ public interface ClassroomService extends IService<Classroom> {
 	String exportReport(String classroomId);
 
 	List<String> selectTempTaskIdsByUser(UserInfo userContext);
+
+	/**
+	 * 获取备课笔记
+	 *
+	 * @param roomId
+	 * @return {@code BaseRsp<String>}
+	 */
+	String getPrepareNote(String roomId);
+
+	/**
+	 * 更新备课笔记
+	 * @param roomId
+	 * @param note
+	 * @return {@code String}
+	 */
+	void modifyPrepareNote(String roomId, String note);
 }

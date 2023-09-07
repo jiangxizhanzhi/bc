@@ -47,6 +47,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.LessonPrepareNoteService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.course.service.bo.AdminLessonBo;
 import com.cyberpeace.oj.course.service.bo.AdminLessonListBo;
@@ -109,6 +110,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
+
+	@Autowired
+	private LessonPrepareNoteService lessonPrepareNoteService;
 
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -220,6 +224,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		// 执行数据更新
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson, topoConfig,
 				contextList);
+		// 备课笔记
+		if (lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())
+				&& null != lessonUpdateReq.getPrepare_note()) {
+			lessonPrepareNoteService.submitNote(lessonUpdateReq.getResourceId(),
+					lessonUpdateReq.getPrepare_note());
+		}
 
 		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
 		String operationTarget = courseName + "-" + lesson.getName();
@@ -536,13 +546,6 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseLesson.setVideoTime(lessonUpdateReq.getVideo_time());
 			courseLesson.setCheckPoint(getCheckPoint(lessonUpdateReq));
 		}
-		//
-		// // 备课笔记
-		// if
-		// (lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode()))
-		// {
-		// courseLesson.setPrepareNote(lessonUpdateReq.getPrepare_note());
-		// }
 
 		return courseLesson;
 	}

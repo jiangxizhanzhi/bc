@@ -46,7 +46,10 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
-import com.cyberpeace.oj.course.service.*;
+import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
+import com.cyberpeace.oj.course.service.ClassroomService;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -172,7 +175,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private ClassroomMapper classroomMapper;
 
 	@Autowired
-	private LessonPracticeSceneService lessonPracticeSceneService;
+	private LessonPrepareNoteMapper lessonPrepareNoteMapper;
 
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
@@ -423,6 +426,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				checkPointList.add(checkPoint);
 			}
 			lessonInfoBo.setFormKnowledgeListData(checkPointList);
+		}
+
+		// 备课笔记
+		if (lesson.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
+			UserInfo userInfo = UserInfoContext.getUserContext();
+			if (null != userInfo) {
+				lessonInfoBo.setPrepareNote(lessonPrepareNoteMapper
+						.selectNoteByLessonAndUser(lesson.getResourceId(), userInfo.getUserId()));
+			}
 		}
 
 		return lessonInfoBo;

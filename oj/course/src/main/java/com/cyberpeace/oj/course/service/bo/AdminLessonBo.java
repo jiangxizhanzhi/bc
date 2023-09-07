@@ -45,6 +45,9 @@ public class AdminLessonBo implements Serializable {
 	@ApiModelProperty(value = "知识检查点")
 	private List<CheckPoint> formKnowledgeListData;
 
+	@ApiModelProperty(value = "备课笔记")
+	private String prepareNote;
+
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 

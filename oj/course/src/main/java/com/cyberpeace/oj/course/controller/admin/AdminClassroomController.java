@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,6 +26,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
@@ -36,16 +36,15 @@ import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
+import com.cyberpeace.oj.ojbase.service.bo.check.PrepareNoteReq;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台课程表api")
@@ -299,6 +298,25 @@ public class AdminClassroomController {
 				.practiceStatistic(classroomPracticeContext, page);
 
 		return new BaseRsp<>(classroomPracticeBo);
+	}
+
+	@ApiOperation("获取课堂备课笔记")
+	@GetMapping("/prepare/note")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<String>
+			getPrepareNote(@ApiParam(name = "resource_id", value = "课堂id") String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		String res = classroomService.getPrepareNote(resource_id);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("修改课堂备课笔记")
+	@PatchMapping("/prepare/note")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<String> modifyPrepareNote(@Validated @RequestBody PrepareNoteReq req) {
+		CrCommonValidator.validateId(req.getClassRoomId());
+		classroomService.modifyPrepareNote(req.getClassRoomId(), req.getNote());
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("课堂练习详情")

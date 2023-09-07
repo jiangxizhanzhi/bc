@@ -1,5 +1,20 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.cyberpeace.oj.course.service.LessonPrepareNoteService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -57,20 +72,8 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -147,6 +150,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
+	
+	@Autowired
+	private LessonPrepareNoteMapper lessonPrepareNoteMapper;
+
+	@Autowired
+	private LessonPrepareNoteService lessonPrepareNoteService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -1265,6 +1274,27 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public List<String> selectTempTaskIdsByUser(UserInfo userContext) {
 
 		return classroomMapper.selectTempTaskIdsByUser(userContext.getUserId(),userContext.isSuperuser()) ;
+	}
+
+	@Override
+	public String getPrepareNote(String roomId) {
+		Classroom classroom = classroomMapper.selectById(roomId);
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (null == classroom || null == userInfo) {
+			return "";
+		}
+		return lessonPrepareNoteMapper.selectNoteByLessonAndUser(classroom.getLessonId(),
+				userInfo.getUserId());
+	}
+
+	@Override
+	public void modifyPrepareNote(String roomId, String note) {
+		Classroom classroom = classroomMapper.selectById(roomId);
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (null == classroom || null == userInfo) {
+			return;
+		}
+		lessonPrepareNoteService.submitNote(classroom.getLessonId(), note);
 	}
 
 	/**

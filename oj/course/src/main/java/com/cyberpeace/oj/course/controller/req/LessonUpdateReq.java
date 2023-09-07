@@ -21,6 +21,9 @@ public class LessonUpdateReq extends LessonAddReq {
 	@ApiModelProperty(name = "video_url", value = "视频地址")
 	private String videoUrl;
 
+	@ApiModelProperty(value = "备课笔记")
+	private String prepare_note;
+
 	public void setResource_id(String resource_id) {
 		this.resourceId = resource_id;
 	}

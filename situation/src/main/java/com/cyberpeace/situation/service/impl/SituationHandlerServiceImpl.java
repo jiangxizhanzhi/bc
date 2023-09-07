@@ -137,16 +137,18 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Display display = JsonUtil.toJsonObject(area.getString("display_context"),
 					Display.class);
 
-			// 区域填充数据
-			areaInfo.setColor(display.getBody().getFill());
+			if (display != null) {
+				// 区域填充数据
+				areaInfo.setColor(display.getBody().getFill());
 
-			// 区域字体数据
-			areaInfo.setFontStyle(
-					new FontStyle(display.getLabel().getFill(), display.getLabel().getFontSize()));
+				// 区域字体数据
+				areaInfo.setFontStyle(
+						new FontStyle(display.getLabel().getFill(), display.getLabel().getFontSize()));
 
-			// 区域边框数据
-			areaInfo.setStyle(new LineStyle(display.getBody().getStroke(),
-					display.getBody().getStrokeWidth(), LineType.DASHED_STRAIGHT.getCode()));
+				// 区域边框数据
+				areaInfo.setStyle(new LineStyle(display.getBody().getStroke(),
+						display.getBody().getStrokeWidth(), LineType.DASHED_STRAIGHT.getCode()));
+			}
 
 			// 将区域数据添加入列表
 			areasInfo.put(area.getString("id"), areaInfo);
@@ -248,9 +250,12 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 提取样式数据
 			Display display = JsonUtil.toJsonObject(element.getString("display_context"),
 					Display.class);
-			elementInfo.setFontStyle(
-					new FontStyle(display.getText().getFill(), display.getText().getFontSize()));
-			elementInfo.setNameColor(display.getText().getFill());
+
+			if (display != null) {
+				elementInfo.setFontStyle(
+						new FontStyle(display.getText().getFill(), display.getText().getFontSize()));
+				elementInfo.setNameColor(display.getText().getFill());
+			}
 
 			// 写入节点列表
 			elementsInfo.put(elementId, elementInfo);

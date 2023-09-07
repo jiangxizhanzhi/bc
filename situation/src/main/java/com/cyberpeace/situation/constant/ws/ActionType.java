@@ -29,7 +29,7 @@ public enum ActionType {
 	LINK_POWER_OFF(13,"链路断线","element",true,true),
 	NODE_CONNECTED(14,"节点上线","element",true,false),
 	NODE_DISCONNECTED(15,"节点下线","element",true,false),
-	NODE_ALARM(16,"节点告警","element",true,false);
+	NODE_ALARM(16,"节点告警","element",true,true);
 
 	@Getter
 	private Integer code;

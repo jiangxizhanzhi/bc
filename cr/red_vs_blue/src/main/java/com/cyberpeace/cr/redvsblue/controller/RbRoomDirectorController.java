@@ -499,7 +499,7 @@ public class RbRoomDirectorController {
 
 	@ApiOperation("红蓝对抗-任务导调-任务列表")
 	@GetMapping("/mission/list")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<TrainTaskReleaseInfoContext>> getMissionList(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 

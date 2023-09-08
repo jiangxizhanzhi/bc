@@ -443,8 +443,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("查询课程下课时简易数据")
 	@GetMapping("/simple/list")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp<List<SimpleDataRes>>
-			selectAllLesson(@RequestParam("course_id") String courseId) {
+	public BaseRsp<List<SimpleDataRes>> selectAllLesson(@RequestParam("course_id") String courseId,
+			@ApiParam(name = "pattern", value = "搜索关键词") String pattern) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		List<String> enableCourseIds = courseMapper.selectByAuth(authContext);
@@ -455,6 +455,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		// 仅查询公开课
 		List<CourseLesson> lessons = courseLessonMapper.selectByCourse(courseId, true);
+		if (StringUtils.isNotBlank(pattern)) {
+			lessons = lessons.stream().filter(l -> l.getName().contains(pattern))
+					.collect(Collectors.toList());
+		}
 		List<SimpleDataRes> simpleDataRes = StreamApiUtils.map(lessons,
 				courseLesson -> BeanUtils.copy(courseLesson, SimpleDataRes.class));
 		return new BaseRsp<>(simpleDataRes);

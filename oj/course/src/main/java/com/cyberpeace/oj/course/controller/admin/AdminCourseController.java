@@ -1,5 +1,22 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
@@ -28,29 +45,15 @@ import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import java.io.File;
-import java.util.List;
 
 @Slf4j
 @Api(tags = "oj-后台课程相关api")
@@ -253,7 +256,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@ApiOperation("查询全部课程信息")
 	@GetMapping("/all/course")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp<List<SimpleDataRes>> allCourse() {
+	public BaseRsp<List<SimpleDataRes>> allCourse(@ApiParam(name = "pattern", value = "搜索关键词")String pattern) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
@@ -263,7 +266,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		}
 
 		List<Course> courses = courseMapper.selectBatchIds(courseIds);
-
+		if (StringUtils.isNotBlank(pattern)) {
+			courses = courses.stream().filter(c -> c.getName().contains(pattern))
+					.collect(Collectors.toList());
+		}
 		List<SimpleDataRes> courseRes = StreamApiUtils.map(courses,
 				course -> BeanUtils.copy(course, SimpleDataRes.class));
 		return new BaseRsp<>(courseRes);

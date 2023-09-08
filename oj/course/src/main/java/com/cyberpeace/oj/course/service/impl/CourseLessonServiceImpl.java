@@ -66,6 +66,7 @@ import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.bo.check.CheckPoint;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointAnswer;
 import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointDo;
 import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointQuestion;
 import com.cyberpeace.oj.practice.dao.entity.*;
@@ -191,6 +192,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
+	@Autowired
+	private LessonCheckPointAnswerMapper lessonCheckPointAnswerMapper;
 
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext) {
@@ -321,7 +325,17 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					CheckPointDo::getTheory);
 			Map<String, CheckPointQuestion> questionMap = practiceTheoryService
 					.getCheckPointQuestionsByIds(theoryIds);
-
+			LessonCheckPointAnswer answer = lessonCheckPointAnswerMapper
+					.selectByLessonAndUser(lessonId, UserInfoContext.getUserContext().getUserId());
+			Map<String, String> userAnswerMap = Maps.newHashMap();
+			if (null != answer && StringUtils.isNotBlank(answer.getAnswer())) {
+				List<CheckPointAnswer> answerList = JsonUtil.toJsonObjectArray(answer.getAnswer(),
+						CheckPointAnswer.class);
+				for (CheckPointAnswer checkPointAnswer : answerList) {
+					userAnswerMap.put(checkPointAnswer.getPracticeId(),
+							checkPointAnswer.getSubmitAnswer());
+				}
+			}
 			List<CheckPoint> checkPointList = Lists.newArrayList();
 			for (CheckPointDo pointDo : checkPointDoList) {
 				CheckPoint checkPoint = new CheckPoint();
@@ -329,7 +343,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				checkPoint.setKnowledgeTime(pointDo.getTime());
 				for (String theoryId : pointDo.getTheory()) {
 					if (questionMap.containsKey(theoryId)) {
-						checkPoint.getKnowledgeAnswerList().add(questionMap.get(theoryId));
+						CheckPointQuestion question = questionMap.get(theoryId);
+						String userAnswer = userAnswerMap.get(theoryId);
+						if (StringUtils.isNotBlank(userAnswer)) {
+							question.setUserAnswer(userAnswer);
+						}
+						checkPoint.getKnowledgeAnswerList().add(question);
 					}
 				}
 				checkPointList.add(checkPoint);

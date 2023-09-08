@@ -19,6 +19,7 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.LessonPracticeSubmitReq;
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.LessonCheckPointService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 import com.cyberpeace.oj.course.service.bo.LessonPracticeBo;
@@ -28,6 +29,7 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.ojbase.service.bo.check.CheckPointAnswer;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 
 import io.swagger.annotations.*;
@@ -45,6 +47,9 @@ public class WebLessonController {
 
 	@Autowired
 	private LessonSceneService lessonSceneService;
+
+	@Autowired
+	private LessonCheckPointService lessonCheckPointService;
 
 	@ApiOperation("课时详情查询")
 	@GetMapping("")
@@ -98,6 +103,17 @@ public class WebLessonController {
 
 		return new BaseRsp<>(evaluateResult);
 
+	}
+
+	@ApiOperation("知识检查点解答")
+	@PostMapping("/check_point/submit")
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+	public BaseRsp<EvaluateResult>
+			submitCheckPoint(@RequestBody @Validated LessonPracticeSubmitReq submitReq) {
+		List<CheckPointAnswer> answerContexts = BeanUtils.deepCopyList(submitReq.getAnswers(),
+				CheckPointAnswer.class);
+		lessonCheckPointService.submitAnswer(submitReq.getLessonId(), answerContexts);
+		return new BaseRsp<>();
 	}
 
     @ApiOperation("前台课时获取拓扑信息")

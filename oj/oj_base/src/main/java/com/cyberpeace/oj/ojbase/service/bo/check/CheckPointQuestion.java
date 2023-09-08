@@ -43,4 +43,7 @@ public class CheckPointQuestion implements Serializable {
 
 	@ApiModelProperty(value = "答案")
 	private String answer;
+
+	@ApiModelProperty(value = "用户提交答案")
+	private String userAnswer;
 }

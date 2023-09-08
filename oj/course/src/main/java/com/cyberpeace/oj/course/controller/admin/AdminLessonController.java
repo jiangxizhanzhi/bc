@@ -544,11 +544,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseLesson.setHandoutUrl(utilService.replaceFileUrl(lessonUpdateReq.getHandoutUrl()));
 		}
 
-		if (StringUtils.isNotBlank(lessonUpdateReq.getVideoUrl())
-				&& lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
+		if (StringUtils.isNotBlank(lessonUpdateReq.getVideo())) {
 			// 知识检查点
 			courseLesson.setVideoTime(lessonUpdateReq.getVideo_time());
-			courseLesson.setCheckPoint(getCheckPoint(lessonUpdateReq));
+			if (lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
+				courseLesson.setCheckPoint(getCheckPoint(lessonUpdateReq));
+			}
 		}
 
 		return courseLesson;
@@ -566,11 +567,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		
-		if (StringUtils.isNotBlank(lessonAddReq.getVideo())
-				&& lessonAddReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
+		if (StringUtils.isNotBlank(lessonAddReq.getVideo())) {
 			// 知识检查点
 			courseLesson.setVideoTime(lessonAddReq.getVideo_time());
-			courseLesson.setCheckPoint(getCheckPoint(lessonAddReq));
+			if (lessonAddReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
+				courseLesson.setCheckPoint(getCheckPoint(lessonAddReq));
+			}
 		}
 
 		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());

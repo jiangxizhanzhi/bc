@@ -95,6 +95,8 @@ public interface CommonConstant {
 
 	String SPACE = " ";
 
+	String RETURN = "\n";
+
 	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
 
 	/** 底层 中台 靶场 竞赛共享目录*/

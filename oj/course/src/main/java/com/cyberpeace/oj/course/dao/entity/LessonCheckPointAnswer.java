@@ -24,6 +24,8 @@ public class LessonCheckPointAnswer implements Serializable {
 
 	private String userId;
 
+	private String time;
+
 	private String answer;
 
 	@ApiModelProperty("创建时间")

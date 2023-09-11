@@ -325,28 +325,37 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					CheckPointDo::getTheory);
 			Map<String, CheckPointQuestion> questionMap = practiceTheoryService
 					.getCheckPointQuestionsByIds(theoryIds);
-			LessonCheckPointAnswer answer = lessonCheckPointAnswerMapper
+			List<LessonCheckPointAnswer> checkPointAnswerList = lessonCheckPointAnswerMapper
 					.selectByLessonAndUser(lessonId, UserInfoContext.getUserContext().getUserId());
-			Map<String, String> userAnswerMap = Maps.newHashMap();
-			if (null != answer && StringUtils.isNotBlank(answer.getAnswer())) {
-				List<CheckPointAnswer> answerList = JsonUtil.toJsonObjectArray(answer.getAnswer(),
-						CheckPointAnswer.class);
-				for (CheckPointAnswer checkPointAnswer : answerList) {
-					userAnswerMap.put(checkPointAnswer.getPracticeId(),
-							checkPointAnswer.getSubmitAnswer());
+			Map<String, Map<String, String>> userAnswerMap = Maps.newHashMap();
+			for (LessonCheckPointAnswer answer : checkPointAnswerList) {
+				Map<String, String> onePointAnswerMap = Maps.newHashMap();
+				userAnswerMap.put(answer.getTime(), onePointAnswerMap);
+				if (StringUtils.isNotBlank(answer.getAnswer())) {
+					List<CheckPointAnswer> answerList = JsonUtil
+							.toJsonObjectArray(answer.getAnswer(), CheckPointAnswer.class);
+					for (CheckPointAnswer checkPointAnswer : answerList) {
+						onePointAnswerMap.put(checkPointAnswer.getPracticeId(),
+								checkPointAnswer.getSubmitAnswer());
+					}
 				}
 			}
+
 			List<CheckPoint> checkPointList = Lists.newArrayList();
 			for (CheckPointDo pointDo : checkPointDoList) {
 				CheckPoint checkPoint = new CheckPoint();
 				checkPoint.setKnowledgeName(pointDo.getName());
 				checkPoint.setKnowledgeTime(pointDo.getTime());
+				Map<String, String> onePointAnswerMap = userAnswerMap
+						.get(checkPoint.getKnowledgeTime());
 				for (String theoryId : pointDo.getTheory()) {
 					if (questionMap.containsKey(theoryId)) {
 						CheckPointQuestion question = questionMap.get(theoryId);
-						String userAnswer = userAnswerMap.get(theoryId);
-						if (StringUtils.isNotBlank(userAnswer)) {
-							question.setUserAnswer(userAnswer);
+						if (null != onePointAnswerMap) {
+							String userAnswer = onePointAnswerMap.get(theoryId);
+							if (StringUtils.isNotBlank(userAnswer)) {
+								question.setUserAnswer(userAnswer);
+							}
 						}
 						checkPoint.getKnowledgeAnswerList().add(question);
 					}

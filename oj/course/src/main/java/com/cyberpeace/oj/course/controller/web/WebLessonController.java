@@ -112,7 +112,8 @@ public class WebLessonController {
 			submitCheckPoint(@RequestBody @Validated LessonPracticeSubmitReq submitReq) {
 		List<CheckPointAnswer> answerContexts = BeanUtils.deepCopyList(submitReq.getAnswers(),
 				CheckPointAnswer.class);
-		lessonCheckPointService.submitAnswer(submitReq.getLessonId(), answerContexts);
+		lessonCheckPointService.submitAnswer(submitReq.getLessonId(),
+				submitReq.getNowKnowledgeTime(), answerContexts);
 		return new BaseRsp<>();
 	}
 

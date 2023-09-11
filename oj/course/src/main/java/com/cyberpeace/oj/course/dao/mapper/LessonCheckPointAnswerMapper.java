@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -11,6 +13,9 @@ import com.cyberpeace.oj.course.dao.entity.LessonCheckPointAnswer;
 @Repository
 public interface LessonCheckPointAnswerMapper extends BaseMapper<LessonCheckPointAnswer> {
 
-	LessonCheckPointAnswer selectByLessonAndUser(@Param("lessonId") String lessonId,
+	List<LessonCheckPointAnswer> selectByLessonAndUser(@Param("lessonId") String lessonId,
 			@Param("userId") String userId);
+
+	LessonCheckPointAnswer selectByLessonAndUserAndTime(@Param("lessonId") String lessonId,
+			@Param("userId") String userId, @Param("time") String time);
 }

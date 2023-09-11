@@ -20,6 +20,10 @@ public class LessonPracticeSubmitReq implements Serializable {
 	@NotBlank
 	private String lessonId;
 
+	@ApiModelProperty("提交时间")
+	@NotBlank
+	private String nowKnowledgeTime;
+
 	@ApiModelProperty("答案提交")
 	private List<PracticeSubmitReq> answers;
 

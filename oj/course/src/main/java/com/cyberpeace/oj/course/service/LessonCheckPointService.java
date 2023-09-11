@@ -8,7 +8,8 @@ public interface LessonCheckPointService {
 
 	/**
 	 * @param lessonId
+	 * @param time
 	 * @param answerContexts
 	 */
-	void submitAnswer(String lessonId, List<CheckPointAnswer> answerContexts);
+	void submitAnswer(String lessonId, String time, List<CheckPointAnswer> answerContexts);
 }

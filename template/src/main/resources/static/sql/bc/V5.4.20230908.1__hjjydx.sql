@@ -22,9 +22,10 @@ CREATE TABLE `oj_check_point_answer`
     `id`          int                                                       NOT NULL AUTO_INCREMENT,
     `lesson_id`   varchar(32)                                               NOT NULL COMMENT '课时id',
     `user_id`     varchar(32)                                               NOT NULL COMMENT '用户id',
+    `time`        varchar(32)                                               NOT NULL COMMENT '检查点时间',
     `answer`      longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '用户提交答案',
     `create_time` datetime                                                  NULL,
     `update_time` datetime                                                  NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `lesson_user` (`lesson_id`, `user_id`) USING BTREE
+    UNIQUE INDEX `lesson_user_time`(`lesson_id`, `user_id`, `time`) USING BTREE
 );

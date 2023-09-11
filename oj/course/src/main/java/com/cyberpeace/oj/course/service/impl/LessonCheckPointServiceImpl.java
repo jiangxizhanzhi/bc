@@ -24,20 +24,21 @@ public class LessonCheckPointServiceImpl implements LessonCheckPointService {
 	private LessonCheckPointAnswerMapper lessonCheckPointAnswerMapper;
 
 	@Override
-	public void submitAnswer(String lessonId, List<CheckPointAnswer> answerContexts) {
+	public void submitAnswer(String lessonId, String time, List<CheckPointAnswer> answerContexts) {
 		CrCommonValidator.validateId(lessonId);
 		if (CollectionUtils.isEmpty(answerContexts)) {
 			return;
 		}
 		String answerJson = JsonUtil.arrayToString(answerContexts);
 		String userId = UserInfoContext.getUserContext().getUserId();
-		LessonCheckPointAnswer exist = lessonCheckPointAnswerMapper.selectByLessonAndUser(lessonId,
-				userId);
+		LessonCheckPointAnswer exist = lessonCheckPointAnswerMapper.selectByLessonAndUserAndTime(lessonId,
+				userId, time);
 		if (null == exist) {
 			LessonCheckPointAnswer answer = new LessonCheckPointAnswer();
 			answer.setLessonId(lessonId);
 			answer.setUserId(userId);
 			answer.setAnswer(answerJson);
+			answer.setTime(time);
 			lessonCheckPointAnswerMapper.insert(answer);
 		} else {
 			exist.setAnswer(answerJson);

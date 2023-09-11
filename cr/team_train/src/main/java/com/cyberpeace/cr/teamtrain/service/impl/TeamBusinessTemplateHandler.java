@@ -153,6 +153,8 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		if (null == trainCategory || trainCategory.equals(TeamRoom.TrainCategory.DAILY.getCode())) {
 			teamTemplate.setTrainCategory(3);
 			teamTemplate.setSceneType(5);
+			teamTemplate.setRoleConfig("[{\"children\": " + teamTemplate.getRoleConfig()
+					+ ", \"name\": \"组织一\", \"type\": \"default_org\"}]");
 		} else {
 			teamTemplate.setTrainCategory(trainCategory);
 		}

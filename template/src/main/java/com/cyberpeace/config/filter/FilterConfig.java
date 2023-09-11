@@ -1,13 +1,9 @@
 package com.cyberpeace.config.filter;
 
-import com.cyberpeace.config.auth.StaticResourceFilter;
+import com.cyberpeace.config.auth.*;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.cyberpeace.config.auth.DebounceFilter;
-import com.cyberpeace.config.auth.ExceptionFilter;
-import com.cyberpeace.config.auth.MyFilter;
 
 @Configuration
 public class FilterConfig {
@@ -49,6 +45,17 @@ public class FilterConfig {
 		filterRegistrationBean.setOrder(107);
 		filterRegistrationBean.setFilter(new StaticResourceFilter());
 		filterRegistrationBean.setName("staticResourceFilter");
+		filterRegistrationBean.addUrlPatterns("/*");
+		return filterRegistrationBean;
+	}
+
+	@Bean
+	public FilterRegistrationBean demonstrationFilter() {
+
+		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+		filterRegistrationBean.setOrder(100);
+		filterRegistrationBean.setFilter(new DemonstrationFilter());
+		filterRegistrationBean.setName("demonstrationFilter");
 		filterRegistrationBean.addUrlPatterns("/*");
 		return filterRegistrationBean;
 	}

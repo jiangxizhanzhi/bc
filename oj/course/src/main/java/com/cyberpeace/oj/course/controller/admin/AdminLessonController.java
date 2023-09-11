@@ -544,7 +544,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseLesson.setHandoutUrl(utilService.replaceFileUrl(lessonUpdateReq.getHandoutUrl()));
 		}
 
-		if (StringUtils.isNotBlank(lessonUpdateReq.getVideo())) {
+		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())) {
+			courseLesson.setVideoTime("");
+			courseLesson.setCheckPoint(CommonConstant.EMPTY_LIST_JSON);
+		} else {
 			// 知识检查点
 			courseLesson.setVideoTime(lessonUpdateReq.getVideo_time());
 			if (lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {

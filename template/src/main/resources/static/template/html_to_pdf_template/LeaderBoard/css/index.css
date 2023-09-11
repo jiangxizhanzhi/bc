@@ -34,7 +34,6 @@
 }
 .titles {
     width: 30%;
-
     background-color: #47567a;
     height: 32px;
     line-height: 32px;
@@ -44,11 +43,12 @@
     display: flex;
     display: -webkit-box;
     display: -webkit-flex;
-
     margin: 8px 24px;
 }
 
 .contents {
+    height: 32px;
+    line-height: 32px;
     width: 30%;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.4);

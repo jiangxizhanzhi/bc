@@ -254,7 +254,6 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			if (display != null) {
 				elementInfo.setFontStyle(
 						new FontStyle(display.getText().getFill(), display.getText().getFontSize()));
-				elementInfo.setNameColor(display.getText().getFill());
 			}
 
 			// 写入节点列表

@@ -54,9 +54,6 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("节点颜色")
 	private String color;
 
-	@ApiModelProperty("节点名称颜色")
-	private String nameColor;
-
 	@ApiModelProperty("节点字体样式")
 	private FontStyle fontStyle;
 

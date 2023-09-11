@@ -79,4 +79,6 @@ public interface RbRoomScoreService extends IService<RbRoom> {
 	 * @return 红蓝双方得分趋势
 	 */
 	JSONObject getAllRbScoreProgress(String roomId, Integer roleType);
+
+	String getRbLeaderBoardPdf( String roomId, Integer roleType);
 }

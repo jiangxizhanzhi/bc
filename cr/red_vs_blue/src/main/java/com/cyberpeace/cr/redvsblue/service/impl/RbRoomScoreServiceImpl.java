@@ -1,11 +1,16 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -500,4 +505,35 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return roleUserIds;
 	}
 
+	@Override
+	public String getRbLeaderBoardPdf(String roomId, Integer roleType) {
+
+		JSONObject jsonObject = getRbLeaderBoard(roomId, roleType);
+		Object rankDataList = jsonObject.get("ranking_data");
+		Object missionDataList = jsonObject.get("mission_data");
+
+		JSONObject data = new JSONObject();
+		//变量项算法
+		String destPdfPath;
+		data.put("RankDataList", rankDataList);
+		data.put("MissionDataList", missionDataList);
+		data.put("title", CrRole.RbRoleGroup.RED.equals(roleType) ? "红方排行榜" : "蓝方排行榜");
+
+		String destHtmlPath = String.format("%s%s-%s.html",
+				AttachmentPath.RED_BLUE_BOARD_HTML_TEMPLATE.getDesc(), roomId,
+				UserInfoContext.getUserContext().getUserId());
+		try {
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.LEADER_BOARD, destHtmlPath);
+			destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html")) + "pdf";
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if (!new File(destHtmlPath).delete()) {
+				log.error("failed to delete file: " + destHtmlPath);
+			}
+		}
+		return destPdfPath;
+	}
 }

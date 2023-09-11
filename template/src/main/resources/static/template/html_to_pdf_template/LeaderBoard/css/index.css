@@ -1,0 +1,56 @@
+#app-wappers {
+    background: #3c4b6b;
+}
+
+.page {
+    background: #3c4b6b;
+    text-align: center;
+    color: rgb(255, 255, 255);
+}
+
+.title {
+    font-size: 24px;
+    padding: 24px 0px;
+}
+
+.top-content {
+    text-align: center;
+    padding-left: 30%;
+
+}
+
+.score-type {
+    font-size: 18px;
+    padding: 24px 24px;
+    text-align: left;
+    margin-left: 24%;
+}
+
+.table-title {
+    display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+    margin: 0 24px;
+}
+.titles {
+    width: 30%;
+
+    background-color: #47567a;
+    height: 32px;
+    line-height: 32px;
+}
+
+.table-content {
+    display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+
+    margin: 8px 24px;
+}
+
+.contents {
+    width: 30%;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    font-size: 16px;
+}

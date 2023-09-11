@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <!--    <link rel="stylesheet" type="text/css" href="./index.css" />-->
+  <!--    <script src="./js/flexible.js"></script>-->
+  <script type="text/javaScript">  </script>
+</head>
+<style>
+  <#include "./css/index.css">
+</style>
+<body id="app-wappers" class="theme-dark">
+<div class="page">
+  <div class="title">${title}</div>
+  <!-- 得分排名 -->
+  <div class="top-content">
+    <div class="score-type">得分排名</div>
+
+    <div class="table-title">
+      <div class="titles">人员名称</div>
+      <div class="titles">分数</div>
+    </div>
+    <#list RankDataList as item>
+    <div class="table-content">
+      <div class="contents">${item.name}</div>
+      <div class="contents">${item.score}</div>
+    </div>
+  </#list>
+  </div>
+
+
+  <!--任务进展排名  -->
+  <div class="top-content">
+    <div class="score-type">任务进展排名</div>
+    <div class="table-title">
+      <div class="titles">人员名称</div>
+      <div class="titles">任务进展</div>
+    </div>
+    <#list MissionDataList as item>
+    <div class="table-content">
+      <div class="contents">${item.name}</div>
+      <div class="contents">${item.mission_ratio}%</div>
+    </div>
+    </#list>
+  </div>
+</div>
+</body>
+</html>

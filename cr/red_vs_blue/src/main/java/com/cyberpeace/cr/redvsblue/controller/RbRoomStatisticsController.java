@@ -6,6 +6,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.EvalEventCountBar;
@@ -35,7 +36,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotEmpty;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -356,4 +359,14 @@ public class RbRoomStatisticsController {
 			}
 			return new BaseRsp<>(eventCountBarList);
 		}
+
+	@ApiOperation("排行榜大屏展示PDF")
+	@GetMapping("/team_leader_board_pdf")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public void getRbLeaderBoardPdf(HttpServletResponse httpServletResponse,
+									@ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam("room_id") String roomId,
+									@ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam("role_type") Integer roleType) {
+		FileUtil.setResponse(new File(rbRoomScoreService.getRbLeaderBoardPdf(roomId, roleType)), true, httpServletResponse);
+	}
+
 }

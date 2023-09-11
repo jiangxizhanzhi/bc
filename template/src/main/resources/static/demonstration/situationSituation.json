@@ -1,0 +1,215 @@
+[
+  {
+    "level_id": "160a82bb64a4b931d1ecfc0907e34820",
+    "level_name": "安全基础设施提供",
+    "roles": [
+      {
+        "role_id": "e25dc8c9d15ddd621f16616083d68726",
+        "role_name": "安全开发工程师",
+        "qualified": 5
+      },
+      {
+        "role_id": "542fc3e2caf0fa9b4935432ffe4daafa",
+        "role_name": "安全运维工程师",
+        "qualified": 3
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "安全取证工程师",
+        "qualified": 6
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "渗透测试工程师",
+        "qualified": 7
+      },
+      {
+        "role_id": "f7753c4236c6b6981a577118a686aeb3",
+        "role_name": "逆向分析工程师",
+        "qualified": 7
+      }
+    ]
+  },
+  {
+    "level_id": "9c47cad21bf1c3a19168126aef24c771",
+    "level_name": "运营与维护",
+    "roles": [
+      {
+        "role_id": "e25dc8c9d15ddd621f16616083d68726",
+        "role_name": "安全开发工程师",
+        "qualified": 8
+      },
+      {
+        "role_id": "542fc3e2caf0fa9b4935432ffe4daafa",
+        "role_name": "安全运维工程师",
+        "qualified": 5
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "安全取证工程师",
+        "qualified": 2
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "渗透测试工程师",
+        "qualified": 9
+      },
+      {
+        "role_id": "f7753c4236c6b6981a577118a686aeb3",
+        "role_name": "逆向分析工程师",
+        "qualified": 1
+      }
+    ]
+  },
+  {
+    "level_id": "8dba745e3fcaa3448cc303db510f43e0",
+    "level_name": "监管与治理",
+    "roles": [
+      {
+        "role_id": "e25dc8c9d15ddd621f16616083d68726",
+        "role_name": "安全开发工程师",
+        "qualified": 3
+      },
+      {
+        "role_id": "542fc3e2caf0fa9b4935432ffe4daafa",
+        "role_name": "安全运维工程师",
+        "qualified":5
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "安全取证工程师",
+        "qualified": 1
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "渗透测试工程师",
+        "qualified": 4
+      },
+      {
+        "role_id": "f7753c4236c6b6981a577118a686aeb3",
+        "role_name": "逆向分析工程师",
+        "qualified": 9
+      }
+    ]
+  },
+  {
+    "level_id": "39b1a4360ca4cb64e14e90534246f27b",
+    "level_name": "保护和防御",
+    "roles": [
+      {
+        "role_id": "e25dc8c9d15ddd621f16616083d68726",
+        "role_name": "安全开发工程师",
+        "qualified": 1
+      },
+      {
+        "role_id": "542fc3e2caf0fa9b4935432ffe4daafa",
+        "role_name": "安全运维工程师",
+        "qualified": 3
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "安全取证工程师",
+        "qualified": 8
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "渗透测试工程师",
+        "qualified": 4
+      },
+      {
+        "role_id": "f7753c4236c6b6981a577118a686aeb3",
+        "role_name": "逆向分析工程师",
+        "qualified": 2
+      }
+    ]
+  },
+  {
+    "level_id": "bc4e6ddddbe2ff78d0eae79de829272e",
+    "level_name": "分析",
+    "roles": [
+      {
+        "role_id": "e25dc8c9d15ddd621f16616083d68726",
+        "role_name": "安全开发工程师",
+        "qualified": 6
+      },
+      {
+        "role_id": "542fc3e2caf0fa9b4935432ffe4daafa",
+        "role_name": "安全运维工程师",
+        "qualified": 1
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "安全取证工程师",
+        "qualified": 5
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "渗透测试工程师",
+        "qualified": 8
+      },
+      {
+        "role_id": "f7753c4236c6b6981a577118a686aeb3",
+        "role_name": "逆向分析工程师",
+        "qualified": 3
+      }
+    ]
+  },
+  {
+    "level_id": "5836fceb39ebb1867f2d9d357e52cd2f",
+    "level_name": "搜集与运作",
+    "roles": [      {
+      "role_id": "e25dc8c9d15ddd621f16616083d68726",
+      "role_name": "安全开发工程师",
+      "qualified": 4
+    },
+      {
+        "role_id": "542fc3e2caf0fa9b4935432ffe4daafa",
+        "role_name": "安全运维工程师",
+        "qualified": 1
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "安全取证工程师",
+        "qualified": 8
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "渗透测试工程师",
+        "qualified": 2
+      },
+      {
+        "role_id": "f7753c4236c6b6981a577118a686aeb3",
+        "role_name": "逆向分析工程师",
+        "qualified": 9
+      }]
+  },
+  {
+    "level_id": "a6ff1c1d65b1c411aea838460333d0a9",
+    "level_name": "调查",
+    "roles": [      {
+      "role_id": "e25dc8c9d15ddd621f16616083d68726",
+      "role_name": "安全开发工程师",
+      "qualified": 1
+    },
+      {
+        "role_id": "542fc3e2caf0fa9b4935432ffe4daafa",
+        "role_name": "安全运维工程师",
+        "qualified": 9
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "安全取证工程师",
+        "qualified": 2
+      },
+      {
+        "role_id": "aeec2fc773691f459105b0323c3e1711",
+        "role_name": "渗透测试工程师",
+        "qualified": 7
+      },
+      {
+        "role_id": "f7753c4236c6b6981a577118a686aeb3",
+        "role_name": "逆向分析工程师",
+        "qualified": 6
+      }]
+  }
+]

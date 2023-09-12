@@ -7,21 +7,24 @@ import com.cyberpeace.common.util.DateUtil;
 import java.util.*;
 
 public enum DemonstrationUriEnum {
-    SITUATION_RANKING("/ojj/rtks/situation/ranking/","classpath:static/demonstration/situationRanking.json",null),
-    SITUATION_SITUATION("/ojj/rtks/situation/situation/","classpath:static/demonstration/situationSituation.json",null),
-    SITUATION_TREND("/ojj/rtks/situation/trend/","classpath:static/demonstration/situationTrend.json",new SituationTrendServiceImpl()),
-    SITUATION_NEW("/ojj/rtks/situation/news/","classpath:static/demonstration/situationNew.json",new SituationNewsServiceImpl());
+    SITUATION_RANKING("/ojj/rtks/situation/ranking/","/cpms/demonstration/situationRanking.json","classpath:static/demonstration/situationRanking.json",null),
+    SITUATION_SITUATION("/ojj/rtks/situation/situation/","/cpms/demonstration/situationSituation.json","classpath:static/demonstration/situationSituation.json",null),
+    SITUATION_TREND("/ojj/rtks/situation/trend/","/cpms/demonstration/situationTrend.json","classpath:static/demonstration/situationTrend.json",new SituationTrendServiceImpl()),
+    SITUATION_NEW("/ojj/rtks/situation/news/","/cpms/demonstration/situationNew.json","classpath:static/demonstration/situationNew.json",new SituationNewsServiceImpl());
 
 
     private String uri;
 
     private String filePath;
 
+    private String systemPath;
+
     private DemonstrationService demonstrationService;
 
-    DemonstrationUriEnum(String uri, String filePath, DemonstrationService demonstrationService) {
+    DemonstrationUriEnum(String uri, String filePath, String systemPath, DemonstrationService demonstrationService) {
         this.uri = uri;
         this.filePath = filePath;
+        this.systemPath = systemPath;
         this.demonstrationService = demonstrationService;
     }
 
@@ -35,6 +38,11 @@ public enum DemonstrationUriEnum {
 
     public String getFilePath() {
         return filePath;
+    }
+
+
+    public String getSystemPath() {
+        return systemPath;
     }
 
     public static DemonstrationUriEnum getByUri(String uri) {

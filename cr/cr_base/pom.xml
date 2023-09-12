@@ -17,6 +17,12 @@
     <name>cr_base</name>
 
     <dependencies>
+        <dependency>
+            <groupId>com.cyberpeace.situation</groupId>
+            <artifactId>situation</artifactId>
+            <version>${situation.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

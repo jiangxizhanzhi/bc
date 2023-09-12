@@ -36,7 +36,10 @@ public class DemonstrationFilter implements Filter {
             DemonstrationUriEnum demonstrationUriEnum = DemonstrationUriEnum.getByUri(uri);
             if (demonstrationUriEnum!=null) {
                 String filePath = demonstrationUriEnum.getFilePath();
-                File file = ResourceUtils.getFile(filePath);
+                File file = new File(filePath);
+                if (!file.exists()) {
+                    file = ResourceUtils.getFile(demonstrationUriEnum.getSystemPath());
+                }
                 if (file.exists()) {
                     String content =contentCache.getIfPresent(filePath);
                     if (content==null) {

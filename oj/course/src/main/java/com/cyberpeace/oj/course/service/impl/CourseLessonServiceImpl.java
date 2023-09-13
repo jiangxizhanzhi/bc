@@ -350,7 +350,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 						.get(checkPoint.getKnowledgeTime());
 				for (String theoryId : pointDo.getTheory()) {
 					if (questionMap.containsKey(theoryId)) {
-						CheckPointQuestion question = questionMap.get(theoryId);
+						CheckPointQuestion question = BeanUtils.copy(questionMap.get(theoryId),
+								CheckPointQuestion.class);
 						if (null != onePointAnswerMap) {
 							String userAnswer = onePointAnswerMap.get(theoryId);
 							if (StringUtils.isNotBlank(userAnswer)) {

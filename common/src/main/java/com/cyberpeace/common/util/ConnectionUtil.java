@@ -13,13 +13,13 @@ public class ConnectionUtil {
 		//定义连接工厂
 		ConnectionFactory factory = new ConnectionFactory();
 		//设置服务地址
-		factory.setHost(SystemPropUtil.getProp("MQ.HOST"));
+		factory.setHost(SystemPropUtil.getProp("MQ_HOST"));
 		//端口
-		factory.setPort(Integer.parseInt(SystemPropUtil.getProp("MQ.PORT")));
+		factory.setPort(Integer.parseInt(SystemPropUtil.getProp("MQ_PORT")));
 		//设置账号信息，用户名、密码、vhost
 		factory.setVirtualHost("/");//设置虚拟机，一个mq服务可以设置多个虚拟机，每个虚拟机就相当于一个独立的mq
-		factory.setUsername(SystemPropUtil.getProp("MQ.USERNAME"));
-		factory.setPassword(SystemPropUtil.getProp("MQ.PASSWORD"));
+		factory.setUsername(SystemPropUtil.getProp("MQ_USERNAME"));
+		factory.setPassword(SystemPropUtil.getProp("MQ_PASSWORD"));
 		// 通过工厂获取连接
 		Connection connection = factory.newConnection();
 		return connection;

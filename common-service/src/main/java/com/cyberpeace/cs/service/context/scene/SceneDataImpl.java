@@ -23,7 +23,7 @@ public class SceneDataImpl implements SceneData {
 	@Override
 	public Boolean isStopped() {
 		return this.getTopology().getScene().getEvent().equals(MP_SCENE_DELETE_EVENT_CODE) && this
-				.getTopology().getScene().getEventStatus().equals(MP_SCENE_PROGRESS_FINISH_CODE);
+				.getTopology().getScene().getEvent_status().equals(MP_SCENE_PROGRESS_FINISH_CODE);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class SceneDataImpl implements SceneData {
 	@Override
 	public Boolean isUnPause() {
 		return this.getTopology().getScene().getEvent().equals(MP_SCENE_UNPAUSE_EVENT_CODE) && this
-				.getTopology().getScene().getEventStatus().equals(MP_SCENE_PROGRESS_FINISH_CODE);
+				.getTopology().getScene().getEvent_status().equals(MP_SCENE_PROGRESS_FINISH_CODE);
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class SceneDataImpl implements SceneData {
 	 */
 	@Override
 	public Boolean isFinish() {
-		return this.getTopology().getScene().getEventStatus().equals(MP_SCENE_PROGRESS_FINISH_CODE);
+		return this.getTopology().getScene().getEvent_status().equals(MP_SCENE_PROGRESS_FINISH_CODE);
 	}
 
 }
@@ -70,9 +70,9 @@ class PortImpl implements Port {
 @Data
 class SceneCollectionImpl implements SceneCollection {
 
-	private Boolean enableFlowCollect = false;
+	private Boolean enable_flow_collect = false;
 
-	private Boolean enableProbeCollect;
+	private Boolean enable_probe_collect;
 }
 
 @Data
@@ -98,7 +98,7 @@ class SceneStatusImpl implements SceneStatus {
 
 	private Integer event;
 
-	private Integer eventStatus;
+	private Integer event_status;
 }
 
 @Data

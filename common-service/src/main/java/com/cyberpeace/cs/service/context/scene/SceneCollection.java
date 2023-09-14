@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public interface SceneCollection extends Serializable {
 
-	Boolean getEnableFlowCollect();
+	Boolean getEnable_flow_collect();
 
-	Boolean getEnableProbeCollect();
+	Boolean getEnable_probe_collect();
 }
 

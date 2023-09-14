@@ -313,7 +313,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		}
 
 		Integer event = mpSceneData.getTopology().getScene().getEvent();
-		Integer eventStatus = mpSceneData.getTopology().getScene().getEventStatus();
+		Integer eventStatus = mpSceneData.getTopology().getScene().getEvent_status();
 
 		return !event.equals(MP_SCENE_DELETE_EVENT_CODE)
 				|| !eventStatus.equals(MP_SCENE_PROGRESS_FINISH_CODE);
@@ -337,7 +337,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 			return false;
 		}
 
-		Boolean enableFlowCollect = cpCollection.getScene().getEnableFlowCollect();
+		Boolean enableFlowCollect = cpCollection.getScene().getEnable_flow_collect();
 		return !(enableFlowCollect == null || !enableFlowCollect);
 
 	}

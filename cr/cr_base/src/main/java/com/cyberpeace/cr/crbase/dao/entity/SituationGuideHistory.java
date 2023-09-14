@@ -18,7 +18,7 @@ public class SituationGuideHistory extends BaseTable {
 
     private String sceneId;
 
-    private String name;
+    private String eventName;
 
     private Integer type;
 
@@ -32,8 +32,10 @@ public class SituationGuideHistory extends BaseTable {
 
     private Integer result;
 
-    private String missionId;
+    private Integer role;
 
-    private Integer condition;
+    private String taskId;
+
+    private Integer triggerCondition;
 
 }

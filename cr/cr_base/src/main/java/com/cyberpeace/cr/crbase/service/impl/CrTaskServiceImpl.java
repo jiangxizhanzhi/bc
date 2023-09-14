@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.cr.crbase.dao.mapper.*;
+import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +31,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -86,6 +85,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private SituationGuideSchemeMapper situationGuideSchemeMapper;
+
+	@Autowired
+	private SituationGuideHisMapper situationGuideHisMapper;
+
+	@Autowired
+	private SituationGuideService situationGuideService;
 
 	@Override
 	public CrTask getById(String taskId) {
@@ -441,6 +449,9 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskSubmit.setScore(task.getScore());
 		crTaskSubmit.setEvaluateStatus(task.getStatus());
 
+		//任务导调
+		SituationGuideHistory guideHis = getGuideHisByMissionId(missionId, task.getResourceId());
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -452,8 +463,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				if (mission.isObjective()) {
 					crTaskLogMapper.insert(evaluateLog);
 				}
+
+				//插入态势导调历史记录
+				if (Objects.nonNull(guideHis) && SituationGuideScheme.conditionType.MISSION_SUBMIT.getCode().equals(guideHis.getTriggerCondition())) {
+					situationGuideHisMapper.insert(guideHis);
+				}
 			}
 		});
+
+		situationGuideService.pushDataToRoomByGuide(null, guideHis);
 	}
 
 	@Override
@@ -501,6 +519,9 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
 				.build();
 
+		//任务导调
+		SituationGuideHistory guideHis = getGuideHisByMissionId(task.getMissionId(), task.getResourceId());
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -509,9 +530,16 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				crTaskSubmitMapper.updateById(taskSubmit);
 				evaluationLog.setTaskId(task.getResourceId());
 				crTaskLogMapper.insert(evaluationLog);
+
+				//插入态势导调历史记录
+				if (Objects.nonNull(guideHis) && SituationGuideScheme.conditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition())
+						&& CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(evaluateStatus)) {
+					situationGuideHisMapper.insert(guideHis);
+				}
 			}
 		});
-
+		// 态势导调动效
+		situationGuideService.pushDataToRoomByGuide(null, guideHis);
 	}
 
 	@Override
@@ -758,4 +786,19 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "",remark);
 	}
 
+	public SituationGuideHistory getGuideHisByMissionId(String missionId,String taskId) {
+		LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(SituationGuideScheme::getMissionId, missionId);
+		List<SituationGuideScheme> situationGuideSchemes = situationGuideSchemeMapper.selectList(queryWrapper);
+
+		if (CollectionUtils.isEmpty(situationGuideSchemes)) {
+			return null;
+		}
+		SituationGuideHistory guideHis = BeanUtils.copy(situationGuideSchemes.get(0), SituationGuideHistory.class);
+		guideHis.setResourceId(IDGeneratorUtil.getID());
+		guideHis.setTaskId(taskId);
+		guideHis.setCreateTime(new Date());
+		guideHis.setUpdateTime(new Date());
+		return guideHis;
+	}
 }

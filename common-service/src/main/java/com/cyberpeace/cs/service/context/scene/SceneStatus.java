@@ -6,6 +6,6 @@ public interface SceneStatus extends Serializable {
 
 	Integer getEvent();
 
-	Integer getEventStatus();
+	Integer getEvent_status();
 }
 

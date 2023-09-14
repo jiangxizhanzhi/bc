@@ -3,7 +3,10 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -21,10 +24,8 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
-import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
-import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -39,7 +40,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Slf4j
@@ -80,11 +80,14 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
 		}
 
-		// 校验用户权限
-		if (!Objects.equals(evalTask.getCreateUserId(),
-				UserInfoContext.getUserContext().getUserId())) {
-			log.error("Permission denied! CreateUserId = [{}], UserId = [{}]", evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId());
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		//校验用户权限
+		EvalTemplate evalTemplate = evalTemplateMapper.selectById(evalTask.getTemplateId());
+		if (AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode().equals(evalTemplate.getOperationAuthType())) {
+			List<String> authIds = evalTemplate.getAuthIds();
+			if (!authIds.contains(UserInfoContext.getUserContext().getUserId())) {
+				log.error("Permission denied! taskId = [{}], UserId = [{}]", taskId, UserInfoContext.getUserContext().getUserId());
+				throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+			}
 		}
 
 		return evalTask;

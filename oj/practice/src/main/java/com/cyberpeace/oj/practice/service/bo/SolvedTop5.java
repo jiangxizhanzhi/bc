@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class Top5 {
+public class SolvedTop5 {
 
     @ApiModelProperty("用户名")
     private String userName;

@@ -247,23 +247,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         PracticeSet practiceSet = practiceSetMapper.selectById(webTheoryBo.getPracticeSetId());
         webTheoryBo.setPracticeSetName(practiceSet.getName());
 
-        /**
-         * 获取此题top5
-         */
-        List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectTop5(resourceId);
-        if (practiceSolveds.size() > 0) {
-            webTheoryBo.setTop5(practiceSolveds.stream().map(item -> practiceSolvedToTop5(item)).collect(Collectors.toList()));
-        }
-
         return webTheoryBo;
-    }
-
-    public Top5 practiceSolvedToTop5(PracticeSolved item) {
-        Top5 top5 = new Top5();
-        top5.setSolved(item.getSolved());
-        top5.setUpdateTime(item.getUpdateTime());
-        top5.setUserName(remoteUserService.getById(item.getSubmitUserId()).getUserName());
-        return top5;
     }
 
     /**
@@ -824,6 +808,29 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
     @Override
     public List<PracticeTheory> getCategoryIdAndSetIds() {
         return practiceTheoryMapper.selectAllCategoryIds();
+    }
+
+    @Override
+    public List<SolvedTop5> getSolvedTop5(String resourceId) {
+        List<String> userIds = practiceSolvedMapper.selectUserIdByPracticeId(resourceId);
+        List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
+        userIds = StreamApiUtils.map(userInfoList, UserInfo::getUserId);
+        if (CollectionUtils.isEmpty(userIds)) {
+            return new ArrayList<>();
+        }
+        Map<String, String> userIdNameMap = StreamApiUtils.toMap(userInfoList, UserInfo::getUserId, UserInfo::getUserName);
+        List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectTop5(resourceId, userIds);
+
+        if (practiceSolveds.size() > 0) {
+            return practiceSolveds.stream().map(item -> {
+                SolvedTop5 solvedTop5 = new SolvedTop5();
+                solvedTop5.setSolved(item.getSolved());
+                solvedTop5.setUpdateTime(item.getUpdateTime());
+                solvedTop5.setUserName(userIdNameMap.get(item.getSubmitUserId()));
+                return solvedTop5;
+            }).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {

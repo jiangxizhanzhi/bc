@@ -29,6 +29,12 @@
         from oj_practice_solved
         where practice_id = #{practiceId}
           and solved = 1
+        <if test="userIds != null and userIds.size() > 0">
+            and submit_user_id in
+            <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
         order by update_time desc limit 5
     </select>
 
@@ -158,4 +164,11 @@
             #{practiceId}
         </foreach>
     </select>
+
+    <select id="selectUserIdByPracticeId" resultType="java.lang.String">
+        select submit_user_id from oj_practice_solved
+        where practice_id = #{practiceId}
+          and solved = 1
+    </select>
+
 </mapper>

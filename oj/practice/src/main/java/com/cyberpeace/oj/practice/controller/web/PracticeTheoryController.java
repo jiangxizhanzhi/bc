@@ -1,16 +1,5 @@
 package com.cyberpeace.oj.practice.controller.web;
 
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -40,11 +29,19 @@ import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Api(tags = "oj-前台理论基础练习相关")
 @RestController
@@ -242,6 +239,13 @@ public class PracticeTheoryController {
 				.getPracticeRecord(new WebTheoryRecordReq());
 		return new BaseRsp<>(
 				StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getResourceId));
+	}
+
+	@ApiOperation("最近答题")
+	@GetMapping("/solved/top5")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<List<SolvedTop5>> getSolvedTop5(@ApiParam(name = "resource_id", value = "习题编号") @RequestParam("resource_id") String resourceId) {
+		return new BaseRsp<>(practiceTheoryService.getSolvedTop5(resourceId));
 	}
 
 }

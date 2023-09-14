@@ -136,4 +136,6 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 */
 	List<PracticeTheory> getCategoryIdAndSetIds();
 
+	List<SolvedTop5> getSolvedTop5(String resourceId);
+
 }

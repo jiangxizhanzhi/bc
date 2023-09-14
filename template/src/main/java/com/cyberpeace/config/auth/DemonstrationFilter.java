@@ -9,6 +9,7 @@ import com.cyberpeace.config.filter.FilterConfig;
 import com.cyberpeace.enums.DemonstrationUriEnum;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ResourceUtils;
 
 import javax.servlet.*;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class DemonstrationFilter implements Filter {
 
 
@@ -33,6 +35,7 @@ public class DemonstrationFilter implements Filter {
         if ("open".equals(demo)) {
             // 获取请求的路径或其他条件，判断是否为名单内请求
             String uri = request.getRequestURI();
+            log.info("request uri=============>"+uri);
             DemonstrationUriEnum demonstrationUriEnum = DemonstrationUriEnum.getByUri(uri);
             if (demonstrationUriEnum!=null) {
                 String filePath = demonstrationUriEnum.getFilePath();

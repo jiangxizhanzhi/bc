@@ -560,8 +560,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     @Mapper
-    @IgnoreId
     public interface EvalAlgorithmToEvalAlgorithmRef extends BaseConvertor<EvalAlgorithm, EvalAlgorithmRef> {
+
+        @IgnoreId
+        EvalAlgorithmRef from(EvalAlgorithm source);
+
+        @IgnoreId
+        EvalAlgorithm to(EvalAlgorithmRef target);
+
     }
 
     public static final EvalAlgorithmToEvalAlgorithmRef evalAlgorithmToEvalAlgorithmRef = Mappers.getMapper(EvalAlgorithmToEvalAlgorithmRef.class);

@@ -118,4 +118,8 @@ public interface BsErrorCode {
 	 * 多个在线设备
 	 */
 	String MULTIPLE_DEVICE = "105023";
+	/**
+	 * 部分行为的录制设备与行为集合不匹配
+	 */
+	String ILLEGAL_BEHAVIOR_OS = "105024";
 }

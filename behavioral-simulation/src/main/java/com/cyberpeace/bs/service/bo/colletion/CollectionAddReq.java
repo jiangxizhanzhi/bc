@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 
+import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 
@@ -46,6 +48,11 @@ public class CollectionAddReq implements Serializable {
 	public void validate() {
 		CrCommonValidator.validateNameLen(this.name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		CrCommonValidator.validateDescLen(this.description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		for (IdStep idStep : behaviorList) {
+			if (!idStep.getAccessOs().equals(this.getAccessOs())) {
+				throw new BusinessException(BsErrorCode.ILLEGAL_BEHAVIOR_OS);
+			}
+		}
 	}
 
 	public List<String> getBehaviorIds() {
@@ -70,5 +77,10 @@ class IdStep implements Serializable {
 	 */
 	@ApiModelProperty(value = "行为步骤")
 	private Integer stepCount;
+
+	/**
+	 * 设备类型
+	 */
+	private Integer accessOs;
 
 }

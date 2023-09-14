@@ -255,10 +255,8 @@ public class RbRoomUserController {
 				rbRefereeService.notifySubmission(submitMissionsReq.getMissionHash());
 			}
 		});
-
-		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(),
-				MissionWsCode.RVB_MISSION_CODE);
-
+		//态势导调动效推送
+		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(), MissionWsCode.RVB_MISSION_CODE);
 		return new BaseRsp<>();
 	}
 

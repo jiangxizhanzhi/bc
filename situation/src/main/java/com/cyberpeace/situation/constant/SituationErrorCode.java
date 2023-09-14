@@ -52,4 +52,14 @@ public interface SituationErrorCode {
 
 	/** 找不到对应动效 */
 	String CANNOT_FIND_DYNAMIC = "104017";
+
+	/** 导调方案名称不合法 */
+	String INVALID_GUIDE_SCHEME_NAME = "104018";
+
+	/** 导调方案名称重复 */
+	String DUPLICATED_GUIDE_SCHEME_NAME = "104019";
+
+	/** 导调方案参数不合法 */
+	String INVALID_GUIDE_SCHEME = "104020";
+
 }

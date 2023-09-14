@@ -6,6 +6,9 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
+/**
+ * @author myy
+ */
 @Data
 public class SituationGuideRes implements Serializable {
 
@@ -14,7 +17,7 @@ public class SituationGuideRes implements Serializable {
 
 	@ApiModelProperty("动效方案名称")
 	@NotBlank
-	private String name;
+	private String eventName;
 
 	@ApiModelProperty("类型 1:任务导调 2:手动导调")
 	@NotBlank
@@ -36,10 +39,25 @@ public class SituationGuideRes implements Serializable {
 	@ApiModelProperty("攻击结果 1:成功 2失败")
 	private Integer result;
 
+	@ApiModelProperty("成功链接")
+	private String successUrl;
+
+	@ApiModelProperty("失败链接")
+	private String failUrl;
+
+	@ApiModelProperty("失败链接")
+	private String redUrl;
+
+	@ApiModelProperty("成功链接")
+	private String blueUrl;
+
+	@ApiModelProperty("归属角色 4:红队 5蓝队")
+	private Integer role;
+
 	@ApiModelProperty("任务id")
 	private String missionId;
 
 	@ApiModelProperty("触发条件1:任务提交 2:任务判断成功")
-	private Integer condition;
+	private Integer triggerCondition;
 
 }

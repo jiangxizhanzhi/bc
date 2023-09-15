@@ -450,7 +450,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskSubmit.setEvaluateStatus(task.getStatus());
 
 		//任务导调
-		SituationGuideHistory guideHis = getGuideHisByMissionId(missionId, task.getResourceId());
+		SituationGuideHistory guideHis = situationGuideService.getGuideHisByMissionId(missionId, task.getResourceId());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -520,7 +520,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.build();
 
 		//任务导调
-		SituationGuideHistory guideHis = getGuideHisByMissionId(task.getMissionId(), task.getResourceId());
+		SituationGuideHistory guideHis = situationGuideService.getGuideHisByMissionId(task.getMissionId(), task.getResourceId());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -786,19 +786,4 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "",remark);
 	}
 
-	public SituationGuideHistory getGuideHisByMissionId(String missionId,String taskId) {
-		LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(SituationGuideScheme::getMissionId, missionId);
-		List<SituationGuideScheme> situationGuideSchemes = situationGuideSchemeMapper.selectList(queryWrapper);
-
-		if (CollectionUtils.isEmpty(situationGuideSchemes)) {
-			return null;
-		}
-		SituationGuideHistory guideHis = BeanUtils.copy(situationGuideSchemes.get(0), SituationGuideHistory.class);
-		guideHis.setResourceId(IDGeneratorUtil.getID());
-		guideHis.setTaskId(taskId);
-		guideHis.setCreateTime(new Date());
-		guideHis.setUpdateTime(new Date());
-		return guideHis;
-	}
 }

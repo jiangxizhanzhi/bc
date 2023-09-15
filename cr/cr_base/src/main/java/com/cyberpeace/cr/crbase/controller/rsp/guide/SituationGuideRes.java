@@ -1,9 +1,10 @@
-package com.cyberpeace.cr.crbase.controller.rsp;
+package com.cyberpeace.cr.crbase.controller.rsp.guide;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -12,8 +13,13 @@ import java.io.Serializable;
 @Data
 public class SituationGuideRes implements Serializable {
 
-	@ApiModelProperty("场景id")
-	private String sceneId;
+	@ApiModelProperty("房间id")
+	@NotBlank
+	private String roomId;
+
+	@ApiModelProperty("训练类型 3:团队 4:红蓝")
+	@NotNull
+	private Integer businessType;
 
 	@ApiModelProperty("动效方案名称")
 	@NotBlank

@@ -10,4 +10,27 @@
         where scene_id = #{sceneId}
     </delete>
 
+    <select id="selectRoleConfigByBusinessType" resultType="com.cyberpeace.cr.crbase.service.context.guide.SituationGuideMissionBo">
+        select a.resource_id roomId,b.business_template_id, b.role_config from
+        <if test="businessType == 3 ">
+            cr_team_room a JOIN cr_team_template b
+            on a.team_template_id=b.resource_id
+        </if>
+        <if test="businessType == 4 ">
+            cr_rb_room a JOIN cr_rb_template b
+            on a.template_id=b.resource_id
+        </if>
+        WHERE a.resource_id = #{roomId}
+    </select>
+
+    <select id="selectRoomType" resultType="com.cyberpeace.cr.crbase.service.context.guide.SituationRoomBo">
+        select resource_id roomId,local_scene_id from
+        <if test="businessType == 3 ">
+            cr_team_room
+        </if>
+        <if test="businessType == 4 ">
+            cr_rb_room
+        </if>
+        WHERE resource_id = #{roomId}
+    </select>
 </mapper>

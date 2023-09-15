@@ -10,9 +10,13 @@ import java.io.Serializable;
 @Data
 public class AddGuideSchemeReq implements Serializable {
 
-    @ApiModelProperty("场景id")
+    @ApiModelProperty("房间id")
     @NotBlank
-    private String sceneId;
+    private String roomId;
+
+    @ApiModelProperty("训练类型 3:团队 4:红蓝")
+    @NotNull
+    private Integer businessType;
 
     @ApiModelProperty("导调方案名称")
     @NotBlank

@@ -1,9 +1,9 @@
 package com.cyberpeace.bs.service.bo;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import lombok.Data;
 
 /**
  * 配管下发的命令
@@ -12,7 +12,7 @@ import java.util.List;
  * @date 2023/05/08
  */
 @Data
-public class CommandBo<T> implements Serializable {
+public class CommandBo<T extends Serializable> implements Serializable {
 
     /**
      * 任务id
@@ -71,7 +71,7 @@ public class CommandBo<T> implements Serializable {
  * @date 2023/05/08
  */
 @Data
-class Configuration<T> implements Serializable {
+class Configuration<T extends Serializable> implements Serializable {
 
     /**
      * 目标信息

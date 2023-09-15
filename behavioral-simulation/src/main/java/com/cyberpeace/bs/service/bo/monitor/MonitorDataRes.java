@@ -1,16 +1,18 @@
 package com.cyberpeace.bs.service.bo.monitor;
 
-import com.cyberpeace.bs.constant.BsConstants;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.compress.utils.Lists;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+
+import com.cyberpeace.bs.constant.BsConstants;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * 监控数据结果
@@ -130,7 +132,7 @@ public class MonitorDataRes implements Serializable {
  * @date 2023/05/08
  */
 @Data
-class ExecutedBo {
+class ExecutedBo implements Serializable {
 
     /**
      * 未执行数

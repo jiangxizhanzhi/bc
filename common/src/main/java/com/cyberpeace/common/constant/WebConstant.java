@@ -15,6 +15,8 @@ public interface WebConstant {
 	 */
 	String CONTENT_TYPE = "application/json;charset=UTF-8";
 
+	String CONTENT_TYPE_NAME = "Content-Type";
+
 	Integer HTTP_200 = 200;
 
 	/**

@@ -245,7 +245,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setSceneId(sceneId);
 		simulator.setSceneName(sceneName);
 		// set id, 用节点id作为仪表id
-		simulator.setResourceId(nodeBo.getNodeId().replaceAll("-", ""));
+		simulator.setResourceId(nodeBo.getNodeId().replace("-", ""));
 		userInstanceList
 				.forEach(instance -> instance.setUserSimulatorId(simulator.getResourceId()));
 		return simulator;

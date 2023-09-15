@@ -1,18 +1,12 @@
 package com.cyberpeace.bs.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.cyberpeace.bs.constant.BsErrorCode;
-import com.cyberpeace.bs.utils.model.LcResponse;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.LcServiceException;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.HttpclientContext;
-import com.cyberpeace.common.model.HttpclientModel;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,11 +22,20 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.impl.TraceIdContext;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.bs.utils.model.LcResponse;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.LcServiceException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.HttpclientContext;
+import com.cyberpeace.common.model.HttpclientModel;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 远程http客户端
@@ -77,7 +80,7 @@ public class LcHttpClient {
 		HttpPost post = new HttpPost(url);
 		// 设置headers
 		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		post.setHeader(WebConstant.CONTENT_TYPE_NAME, WebConstant.CONTENT_TYPE);
 		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		post.setEntity(entity);
 
@@ -92,7 +95,7 @@ public class LcHttpClient {
 		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
 		HttpPatch patch = new HttpPatch(url);
 		patch.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		patch.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		patch.setHeader(WebConstant.CONTENT_TYPE_NAME, WebConstant.CONTENT_TYPE);
 		patch.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		patch.setEntity(entity);
 
@@ -121,9 +124,9 @@ public class LcHttpClient {
 				HttpclientContext.getContext().doRemoteException(e);
 			} catch (Exception e1) {
 				log.error("remote error logging Exception", e1);
+				throw new LcServiceException(e.getMessage());
 			} finally {
 				HttpclientContext.removeContext();
-				throw new LcServiceException(e.getMessage());
 			}
 		}
 
@@ -357,7 +360,7 @@ public class LcHttpClient {
 			// 2.创建post方式请求对象
 			HttpPost httpPost = new HttpPost(url);
 			// 4.设置 json body
-			httpPost.addHeader("Content-Type", "application/json");
+			httpPost.addHeader(WebConstant.CONTENT_TYPE_NAME, "application/json");
 			httpPost.setEntity(new StringEntity(JsonUtil.toJsonString(body)));
 			// set headers
 			setAuthorization(httpPost);

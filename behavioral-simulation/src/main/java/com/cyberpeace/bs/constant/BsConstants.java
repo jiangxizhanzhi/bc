@@ -60,17 +60,17 @@ public interface BsConstants {
 	 * @author SN
 	 * @date 2023/07/17
 	 */
-	interface NetworkType {
+	public final class NetworkType {
 
 		/**
 		 * 互联网
 		 */
-		Integer INTERNET = 1;
+		public static final Integer INTERNET = 1;
 
 		/**
 		 * 内网
 		 */
-		Integer INTRANET = 2;
+		public static final Integer INTRANET = 2;
 	}
 
 	/**
@@ -79,21 +79,21 @@ public interface BsConstants {
 	 * @author SN
 	 * @date 2023/07/25
 	 */
-	interface LcDeviceStatus {
+	public final class LcDeviceStatus {
 
 		/**
 		 * 可用
 		 */
-		Integer AVAILABLE = 1;
+		public static final Integer AVAILABLE = 1;
 
 		/**
 		 * 被占用
 		 */
-		Integer OCCUPIED = 2;
+		public static final Integer OCCUPIED = 2;
 
 		/**
 		 * 离线
 		 */
-		Integer OFFLINE = 3;
+		public static final Integer OFFLINE = 3;
 	}
 }

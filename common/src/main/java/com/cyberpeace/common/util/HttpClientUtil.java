@@ -101,7 +101,7 @@ public class HttpClientUtil {
 
 		HttpDeleteWithBody delete = new HttpDeleteWithBody(url);
 		delete.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		delete.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		delete.setHeader(WebConstant.CONTENT_TYPE_NAME, WebConstant.CONTENT_TYPE);
 		delete.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		delete.setEntity(entity);
 
@@ -142,7 +142,7 @@ public class HttpClientUtil {
 
 		HttpPost post = new HttpPost(url);
 		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		post.setHeader(WebConstant.CONTENT_TYPE_NAME, WebConstant.CONTENT_TYPE);
 		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		post.setEntity(entity);
 

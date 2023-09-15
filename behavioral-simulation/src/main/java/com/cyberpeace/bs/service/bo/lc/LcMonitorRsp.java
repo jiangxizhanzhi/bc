@@ -1,10 +1,11 @@
 package com.cyberpeace.bs.service.bo.lc;
 
-import com.google.common.collect.Lists;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import lombok.Data;
 
 /**
  * 远程监控响应
@@ -18,30 +19,30 @@ public class LcMonitorRsp implements Serializable {
     /**
      * 带宽
      */
-    List<Integer> bandwidth = Lists.newArrayList();
+	private List<Integer> bandwidth = Lists.newArrayList();
 
     /**
      * 包
      */
-    List<Integer> packet = Lists.newArrayList();
+	private List<Integer> packet = Lists.newArrayList();
 
     /**
      * 连接请求
      */
-    List<Integer> connection = Lists.newArrayList();
+	private List<Integer> connection = Lists.newArrayList();
 
     /**
      * 成功建立的连接
      */
-    List<Integer> connected = Lists.newArrayList();
+	private List<Integer> connected = Lists.newArrayList();
 
     /**
      * 行为步骤执行数
      */
-    List<Integer> step = Lists.newArrayList();
+	private List<Integer> step = Lists.newArrayList();
 
     /**
      * 会话数
      */
-    List<Integer> session = Lists.newArrayList();
+	private List<Integer> session = Lists.newArrayList();
 }

@@ -124,8 +124,6 @@ public class LcHttpClient {
 			try {
 				HttpclientContext.getContext().doRemoteException(e);
 				throw new LcServiceException(e.getMessage());
-			} catch (Exception e1) {
-				log.error("remote error logging Exception", e1);
 			} finally {
 				HttpclientContext.removeContext();
 			}

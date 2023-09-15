@@ -11,8 +11,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class ListGuideSchemeReq extends PageReqBase {
 
-    @ApiModelProperty("场景id")
+    @ApiModelProperty("房间id")
     @NotBlank
-    private String sceneId;
+    private String roomId;
 
 }

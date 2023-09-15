@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.controller.rsp;
+package com.cyberpeace.cr.crbase.controller.rsp.guide;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -5,7 +5,8 @@ ALTER TABLE cr_rb_time_management ADD COLUMN end_time datetime(6) null comment '
 CREATE TABLE `situation_guide_scheme` (
                                           `id` INT ( 11 ) NOT NULL AUTO_INCREMENT COMMENT '自增id',
                                           `resource_id` VARCHAR ( 32 ) NOT NULL COMMENT '资源id',
-                                          `scene_id` VARCHAR ( 32 ) DEFAULT NULL COMMENT '场景id',
+                                          `room_id` VARCHAR ( 32 ) DEFAULT NULL COMMENT '房间id',
+                                          `business_type` INT ( 11 ) NOT NULL COMMENT '训练类型 3:团队 4:红蓝',
                                           `event_name` VARCHAR ( 255 ) DEFAULT NULL COMMENT '事件名称',
                                           `type` INT ( 11 ) NOT NULL COMMENT '类型1:任务导调 2:手动导调',
                                           `event_type` INT ( 11 ) NOT NULL COMMENT '事件类型',
@@ -20,7 +21,7 @@ CREATE TABLE `situation_guide_scheme` (
                                           `update_time` datetime NOT NULL COMMENT '更新时间',
                                           PRIMARY KEY ( `id` ) USING BTREE,
                                           UNIQUE KEY `resource_id` ( `resource_id` ) USING BTREE,
-                                          KEY `scene_id` ( `scene_id` ) USING BTREE,
+                                          KEY `room_id` ( `room_id` ) USING BTREE,
                                           KEY `mission_id` ( `mission_id` ) USING BTREE
 ) ENGINE = INNODB DEFAULT CHARSET = utf8 ROW_FORMAT = DYNAMIC COMMENT = '态势导调方案表';
 
@@ -28,6 +29,8 @@ CREATE TABLE `situation_guide_history` (
                                            `id` INT ( 11 ) NOT NULL AUTO_INCREMENT COMMENT '自增id',
                                            `resource_id` VARCHAR ( 32 ) NOT NULL COMMENT '资源id',
                                            `scene_id` VARCHAR ( 32 ) DEFAULT NULL COMMENT '场景id',
+                                           `room_id` VARCHAR ( 32 ) DEFAULT NULL COMMENT '房间id',
+                                           `business_type` INT ( 11 ) NOT NULL COMMENT '训练类型 3:团队 4:红蓝',
                                            `event_name` VARCHAR ( 255 ) DEFAULT NULL COMMENT '事件名称',
                                            `type` INT ( 11 ) NOT NULL COMMENT '类型1:任务导调 2:手动导调',
                                            `event_type` INT ( 11 ) NOT NULL COMMENT '事件类型',
@@ -42,6 +45,5 @@ CREATE TABLE `situation_guide_history` (
                                            `update_time` datetime NOT NULL COMMENT '更新时间',
                                            PRIMARY KEY ( `id` ) USING BTREE,
                                            UNIQUE KEY `resource_id` ( `resource_id` ) USING BTREE,
-                                           KEY `scene_id` ( `scene_id` ) USING BTREE,
-                                           KEY `task_id` ( `task_id` ) USING BTREE
+                                           KEY `room_id` ( `room_id` ) USING BTREE
 ) ENGINE = INNODB DEFAULT CHARSET = utf8 ROW_FORMAT = DYNAMIC COMMENT = '态势导调历史记录表';

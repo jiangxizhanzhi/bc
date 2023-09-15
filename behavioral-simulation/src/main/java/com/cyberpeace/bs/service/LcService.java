@@ -87,16 +87,13 @@ public interface LcService {
     List<LcActualDevice> getActualDevices(List<Integer> types);
 
     /**
-     * 获取设备监控数据
-     *
-     * @param deviceId  设备id
-     * @param deviceIp  设备ip地址
-     * @param isEntity  是否实体
-     * @param startTime 开始时间
-     * @return {@code LcMonitorRsp}
-     */
-    LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity,
-                                      Long startTime);
+	 * 获取设备监控数据
+	 *
+	 * @param deviceId  设备id
+	 * @param startTime 开始时间
+	 * @return {@code LcMonitorRsp}
+	 */
+	LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Long startTime);
 
     /**
      * 删除行为

@@ -637,8 +637,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		}
 		// get lc monitor data, 固定为8小时
 		long timestamp = System.currentTimeMillis() - hours * BsConstants.MILLI_IN_A_HOUR;
-		LcMonitorRsp lcMonitorRsp = lcService.getDeviceMonitorData(simulator.getDeviceId(),
-				simulator.getDeviceIp(), simulator.getIsEntity(), timestamp);
+
+		LcMonitorRsp lcMonitorRsp = lcService.getDeviceMonitorData(getLcDeviceId(simulator),
+				simulator.getDeviceIp(), timestamp);
+
 		// res init time, 先获取实际的开始时间
 		long startTimeStamp = timestamp + (hours - duration) * BsConstants.MILLI_IN_A_HOUR;
 		res.init(startTimeStamp, duration);
@@ -1029,6 +1031,21 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			return lcService.getDeviceOrEmptyById(simulator.getYwId());
 		} else {
 			return lcService.getDeviceOrEmptyByUuid(simulator.getDeviceId());
+		}
+	}
+
+	/**
+	 * 获取远程deviceid
+	 *
+	 * @param simulator 仪表
+	 * @return {@code String}
+	 */
+	private String getLcDeviceId(UserSimulator simulator) {
+		// 区分实体设备和虚拟设备
+		if (Boolean.TRUE.equals(simulator.getIsEntity())) {
+			return simulator.getYwId();
+		} else {
+			return lcService.getDeviceIdByUuid(simulator.getDeviceId());
 		}
 	}
 }

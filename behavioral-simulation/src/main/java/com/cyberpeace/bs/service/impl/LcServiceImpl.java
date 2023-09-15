@@ -327,15 +327,15 @@ public class LcServiceImpl implements LcService {
     }
 
     @Override
-    public LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity,
-                                             Long startTime) {
+	public LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Long startTime) {
         // 请求地址
         String targetUrl = LC_HOST_PORT + MONITOR_URL;
         // 组装请求体
         LcMonitorReq req = new LcMonitorReq();
-        req.setDeviceId(BsUtil.getLcDeviceId(deviceId, !isEntity));
+		req.setDeviceId(new Integer(deviceId));
         req.setDeviceIp(deviceIp);
-        req.setIsUsingIp(!isEntity);
+		// 不再使用ip寻找设备
+		req.setIsUsingIp(false);
         // 设置监控数据开始时间戳
         req.setStartTime(startTime);
         // 日志记录请求

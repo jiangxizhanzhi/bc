@@ -26,6 +26,6 @@ public class RbSituationMissionStatusRsp implements Serializable {
 
     @ApiModelProperty("是否完成")
     public Boolean getIsFinished() {
-        return status != null && status.equals(CrTask.TaskStatus.SUCCESS.getCode()) ? Boolean.TRUE : Boolean.FALSE;
+        return status != null && CrTask.TaskStatus.FINISHED_STATUS_LIST.contains(status) ? Boolean.TRUE : Boolean.FALSE;
     }
 }

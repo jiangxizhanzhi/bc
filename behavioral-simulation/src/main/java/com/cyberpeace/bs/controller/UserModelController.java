@@ -1,5 +1,11 @@
 package com.cyberpeace.bs.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.PageReqWithType;
@@ -9,14 +15,10 @@ import com.cyberpeace.bs.service.bo.model.*;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 用户模型相关接口
@@ -28,7 +30,6 @@ import java.util.List;
 @Api(tags = "行为模拟-网络用户行为模型")
 @RestController
 @RequestMapping("/bs/user_model")
-// @RequiresAuthentication
 public class UserModelController {
 
     @Autowired

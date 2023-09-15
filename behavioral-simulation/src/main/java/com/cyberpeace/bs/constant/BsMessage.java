@@ -21,4 +21,9 @@ public final class BsMessage {
      * 无可用设备
      */
 	public static final String NO_DEVICES = "当前没有可用实体设备";
+
+	/**
+	 * 内容识别错误，导入失败
+	 */
+	public static final String INVALID_FILE = "内容识别错误，导入失败！";
 }

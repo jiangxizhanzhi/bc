@@ -32,7 +32,6 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "用户行为仪表，行为流量发生")
 @RestController
 @RequestMapping("/bs/simulator")
-// @RequiresAuthentication
 public class UserSimulatorController {
 
     @Autowired

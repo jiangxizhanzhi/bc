@@ -1,19 +1,21 @@
 package com.cyberpeace.bs.controller;
 
 
-import com.cyberpeace.bs.service.DeviceService;
-import com.cyberpeace.bs.service.bo.device.DeviceAddReq;
-import com.cyberpeace.bs.service.bo.device.DeviceDistributionReq;
-import com.cyberpeace.bs.service.bo.device.DeviceDistributionRes;
-import com.cyberpeace.common.model.BaseRsp;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.cyberpeace.bs.service.DeviceService;
+import com.cyberpeace.bs.service.bo.device.DeviceAddReq;
+import com.cyberpeace.bs.service.bo.device.DeviceDistributionReq;
+import com.cyberpeace.bs.service.bo.device.DeviceDistributionRes;
+import com.cyberpeace.common.model.BaseRsp;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 实体设备相关接口
@@ -24,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "实体设备相关")
 @RestController
 @RequestMapping("/bs/actual_device")
-// @RequiresAuthentication
 public class DeviceController {
 
     @Autowired

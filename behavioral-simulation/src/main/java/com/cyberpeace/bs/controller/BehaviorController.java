@@ -32,7 +32,6 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "行为模拟-行为管理")
 @RestController
 @RequestMapping("/bs/behavior")
-// @RequiresAuthentication
 public class BehaviorController {
 
     @Autowired

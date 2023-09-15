@@ -12,7 +12,7 @@ import lombok.Data;
  * @date 2023/05/08
  */
 @Data
-public class CommandBo<T extends Serializable> implements Serializable {
+public class CommandBo<T> {
 
     /**
      * 任务id
@@ -71,7 +71,7 @@ public class CommandBo<T extends Serializable> implements Serializable {
  * @date 2023/05/08
  */
 @Data
-class Configuration<T extends Serializable> implements Serializable {
+class Configuration<T> {
 
     /**
      * 目标信息

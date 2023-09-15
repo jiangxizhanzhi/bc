@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.bs.constant.BsMessage;
 import com.cyberpeace.bs.utils.model.LcResponse;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -258,7 +259,13 @@ public class LcHttpClient {
 		HttpEntity entity = builder.build();
 		// 设置请求体
 		httpPost.setEntity(entity);
-		String rsp = doHttp(httpPost, String.class);
+		String rsp = "";
+		try {
+			rsp = doHttp(httpPost, String.class);
+		} catch (LcServiceException le) {
+			log.error("failed to upload file, ", le);
+			throw new LcServiceException(BsMessage.INVALID_FILE);
+		}
 		return rsp;
 	}
 

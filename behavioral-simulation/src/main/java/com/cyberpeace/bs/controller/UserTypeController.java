@@ -1,5 +1,9 @@
 package com.cyberpeace.bs.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.service.UserTypeService;
 import com.cyberpeace.bs.service.bo.user.UserTypeAddBo;
@@ -9,11 +13,9 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户类型增删改查相关接口
@@ -24,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "用户行为模拟-用户类型管理")
 @RestController
 @RequestMapping("/bs/user_type")
-// @RequiresAuthentication
 public class UserTypeController {
 
     @Autowired

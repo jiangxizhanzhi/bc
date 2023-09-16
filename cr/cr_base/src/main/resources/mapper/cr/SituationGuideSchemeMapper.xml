@@ -33,4 +33,16 @@
         </if>
         WHERE resource_id = #{roomId}
     </select>
+
+    <select id="countByType" resultType="java.lang.Integer">
+        select count(*) from situation_guide_scheme
+        <where>
+            <if test="roomId != null and roomId != ''">
+                room_id = #{roomId}
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+        </where>
+    </select>
 </mapper>

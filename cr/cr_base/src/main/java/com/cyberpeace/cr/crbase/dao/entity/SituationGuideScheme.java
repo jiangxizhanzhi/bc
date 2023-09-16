@@ -54,7 +54,7 @@ public class SituationGuideScheme extends BaseTable {
 
     public enum Type implements GenericEnum {
 
-        MISSION(1, "任务导调"), MANUALLY(2, "手动导调");
+        MISSION(1, "任务导调"), MANUALLY(2, "手动导调"), FLOW(3, "流量采集事件"), HOST(4, "主机采集事件");
 
         @Getter
         private Integer code;

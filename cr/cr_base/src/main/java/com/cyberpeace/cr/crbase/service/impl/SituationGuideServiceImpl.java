@@ -30,6 +30,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.model.ElementInfo;
@@ -68,6 +69,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     private LocalSceneService localSceneService;
     @Autowired
     private SituationHandlerService situationHandlerService;
+
+    @Autowired
+    private RemoteSceneService remoteSceneService;
 
     public Integer MIN_STR_LEN = 1;
 
@@ -230,13 +234,21 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Override
     public List<AttackTopFiveRsp> attackTop5(String roomId) {
-        //todo 临时数据,便于前端画图
         ArrayList<AttackTopFiveRsp> result = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            AttackTopFiveRsp attackTopFiveRsp = new AttackTopFiveRsp();
-            attackTopFiveRsp.setCategory(i);
-            attackTopFiveRsp.setCount(i);
-            result.add(attackTopFiveRsp);
+        //获取任务导调和态势导调数量
+        result.add(new AttackTopFiveRsp(SituationGuideScheme.Type.MISSION.getDesc(),
+                situationGuideSchemeMapper.countByType(roomId, SituationGuideScheme.Type.MISSION.getCode())));
+        result.add(new AttackTopFiveRsp(SituationGuideScheme.Type.MANUALLY.getDesc(),
+                situationGuideSchemeMapper.countByType(roomId, SituationGuideScheme.Type.MANUALLY.getCode())));
+        //获取流量采集事件和主机采集事件数量
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+        if (localScene == null) {
+            result.add(new AttackTopFiveRsp(SituationGuideScheme.Type.FLOW.getDesc(), 0));
+            result.add(new AttackTopFiveRsp(SituationGuideScheme.Type.HOST.getDesc(), 0));
+        } else {
+            JSONObject jsonObject = remoteSceneService.getEventTotalCount(localScene.getMpSceneId());
+            result.add(new AttackTopFiveRsp(SituationGuideScheme.Type.FLOW.getDesc(), jsonObject.getInteger("flow")));
+            result.add(new AttackTopFiveRsp(SituationGuideScheme.Type.HOST.getDesc(), jsonObject.getInteger("host")));
         }
         return result;
     }

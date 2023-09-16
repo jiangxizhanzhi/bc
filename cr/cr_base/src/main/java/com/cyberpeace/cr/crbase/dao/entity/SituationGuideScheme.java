@@ -103,7 +103,7 @@ public class SituationGuideScheme extends BaseTable {
 
     public enum RoleType implements GenericEnum {
 
-        RED(4, "红队"), BLUE(5, "蓝队");
+        RED(4, "归属红方"), BLUE(5, "归属蓝方");
 
         @Getter
         private Integer code;

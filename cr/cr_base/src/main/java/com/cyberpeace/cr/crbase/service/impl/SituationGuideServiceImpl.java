@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
@@ -14,6 +15,7 @@ import com.cyberpeace.cr.crbase.controller.req.guide.AddGuideSchemeReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.GuideImplementReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.ListGuideSchemeReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.UpdateGuideSchemeReq;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
@@ -25,9 +27,11 @@ import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideSchemeMapper;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import com.cyberpeace.cr.crbase.service.WsMultiNodeGuide;
+import com.cyberpeace.cr.crbase.service.context.guide.AttackTimeCountGroup;
 import com.cyberpeace.cr.crbase.service.context.guide.AttackTypeCountGroup;
 import com.cyberpeace.cr.crbase.service.context.guide.SituationGuideMissionBo;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
+import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
@@ -36,6 +40,7 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.model.ConnectionInfo;
 import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
@@ -43,6 +48,7 @@ import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +57,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -148,7 +155,11 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     @Override
     public Boolean deleteGuideScheme(List<String> ids) {
         if (!CollectionUtils.isEmpty(ids)) {
-            return removeByIds(ids);
+            removeByIds(ids);
+            LambdaQueryWrapper<SituationGuideHistory> deleteWrapper = new LambdaQueryWrapper<>();
+            deleteWrapper.in(SituationGuideHistory::getGuideId);
+            situationGuideHisMapper.delete(deleteWrapper);
+            return true;
         }
         return false;
     }
@@ -179,6 +190,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //增加历史记录
         SituationGuideHistory his = BeanUtils.copy(guideScheme, SituationGuideHistory.class);
         his.setResourceId(IDGeneratorUtil.getID());
+        his.setGuideId(guideScheme.getResourceId());
         his.setId(null);
         his.setCreateTime(new Date());
         his.setUpdateTime(new Date());
@@ -199,6 +211,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         }
         SituationGuideHistory guideHis = BeanUtils.copy(guideScheme, SituationGuideHistory.class);
         guideHis.setResourceId(IDGeneratorUtil.getID());
+        guideHis.setGuideId(guideScheme.getResourceId());
         guideHis.setId(null);
         guideHis.setTaskId(taskId);
         guideHis.setSceneId(viewScene(guideHis.getRoomId()));
@@ -240,8 +253,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //获取任务导调和手动导调记录
         List<AttackTypeCountGroup> attackTypeCountGroupList = situationGuideHisMapper.countByCategory(roomId, SituationGuideScheme.EventType.ATTACK.getCode());
         List<AttackTopFiveRsp> result = attackTypeCountGroupList.stream()
-                                                                .map(attackTypeCountGroup -> new AttackTopFiveRsp(SituationGuideScheme.AttackUrlEnum.getEnumByCode(attackTypeCountGroup.getCategory()).getName(), attackTypeCountGroup.getCount()))
-                                                                .collect(Collectors.toList());
+                .map(attackTypeCountGroup -> new AttackTopFiveRsp(SituationGuideScheme.AttackUrlEnum.getEnumByCode(attackTypeCountGroup.getCategory()).getName(), attackTypeCountGroup.getCount()))
+                .collect(Collectors.toList());
         //获取主机采集事件和流量采集事件
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
         if (localScene != null) {
@@ -253,13 +266,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         result.sort(new Comparator<AttackTopFiveRsp>() {
             @Override
             public int compare(AttackTopFiveRsp o1, AttackTopFiveRsp o2) {
-                return o1.getCount()-o2.getCount();
+                return o1.getCount() - o2.getCount();
             }
         });
         if (result.size() < 5) {
             return result;
         }
-        return result.subList(0,5);
+        return result.subList(0, 5);
     }
 
     @Override
@@ -307,10 +320,10 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                         Mission mission = missionMap.get(missionTemplate.getResourceId());
                         guideMissionRsp.setMissionTitle(mission.getTitle());
                         guideMissionRsp.setMissionId(mission.getResourceId());
-                        //组装编辑状态
+
                         Boolean isEditable = !missionIds.contains(mission.getResourceId());
                         guideMissionRsp.setIsEditable(isEditable);
-                        //组装态势导调任务id
+
                         SituationGuideScheme guideScheme = missionGuideMap.get(mission.getResourceId());
                         guideMissionRsp.setGuideId(Objects.isNull(guideScheme) ? null : guideScheme.getResourceId());
                         missionList.add(guideMissionRsp);
@@ -343,6 +356,85 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.FLOW.getDesc(), jsonObject.getInteger("flow")));
             result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.HOST.getDesc(), jsonObject.getInteger("host")));
         }
+        return result;
+    }
+
+    @Override
+    public GuideTimeDistributionRsp guideTimeDistribution(String roomId) {
+        GuideTimeDistributionRsp result = new GuideTimeDistributionRsp();
+
+        Date oneDayAgo = TimeUtil.addHours(new Date(), -24);
+        List<AttackTimeCountGroup> attackTimeCountGroupList = situationGuideHisMapper.countByTime(roomId, oneDayAgo);
+        //获取流量采集事件和主机采集事件数量
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+        if (localScene == null) {
+            return result;
+        } else {
+            JSONArray attackTrendList = remoteSceneService.getEventTrentCount(localScene.getMpSceneId());
+            List<SceneTrend> sceneTrendList = attackTrendList.toJavaList(SceneTrend.class);
+            List<String> timeList = new ArrayList<>();
+            List<Integer> countList = new ArrayList<>();
+            for (SceneTrend sceneTrend : sceneTrendList) {
+                timeList.add(sceneTrend.getTime());
+                countList.add(sceneTrend.getData_size());
+            }
+//            result.setTimeList(timeList);
+//            result.setCountList(countList);
+        }
+        // todo 中台提供最近24小时数据
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:00:00");
+        List<String> timeList = new ArrayList<>();
+        List<Integer> countList = new ArrayList<>();
+        for (int i = 1; i < 25; i++) {
+            String dateFormatStr = dateFormat.format(TimeUtil.addHours(oneDayAgo, i));
+            String currentFormat = simpleDateFormat.format(TimeUtil.addHours(oneDayAgo, i));
+            timeList.add(currentFormat);
+            int count = 0;
+            for (AttackTimeCountGroup attack : attackTimeCountGroupList) {
+                if (dateFormatStr.equals(attack.getCreateTime())) {
+                    count = attack.getCount();
+                }
+            }
+            countList.add(count);
+        }
+        result.setTimeList(timeList);
+        result.setCountList(countList);
+        return result;
+    }
+
+    @Override
+    public GuideParamTypeRsp getParamType(String roomId) {
+        GuideParamTypeRsp result = new GuideParamTypeRsp();
+        result.setEventType(Arrays.stream(SituationGuideScheme.EventType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+        result.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+        result.setDefenseType(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+        result.setResultType(Arrays.stream(SituationGuideScheme.ResultType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+        result.setRoleType(Arrays.stream(SituationGuideScheme.RoleType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+        result.setConditionType(Arrays.stream(SituationGuideScheme.conditionType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+
+        String sceneId = viewScene(roomId);
+        SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
+        SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+        List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
+                .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
+                .collect(Collectors.toList());
+
+        Map<String, String> nodeMap = StreamApiUtils.toMap(nodeList, MissionCategoryRsp::getResourceId, MissionCategoryRsp::getName);
+        List<String> sourceList = situationTopo.getConnections().stream().map(ConnectionInfo::getSource).collect(Collectors.toList());
+        List<String> targetList = situationTopo.getConnections().stream().map(ConnectionInfo::getTarget).collect(Collectors.toList());
+        List<MissionCategoryRsp> sourceType = new ArrayList<>();
+        List<MissionCategoryRsp> targetType = new ArrayList<>();
+        for (String id : sourceList) {
+            sourceType.add(new MissionCategoryRsp(id, nodeMap.get(id)));
+        }
+        for (String id : targetList) {
+            targetType.add(new MissionCategoryRsp(id, nodeMap.get(id)));
+        }
+        result.setNodeType(nodeList);
+        result.setSourceType(sourceType);
+        result.setTargetType(targetType);
         return result;
     }
 

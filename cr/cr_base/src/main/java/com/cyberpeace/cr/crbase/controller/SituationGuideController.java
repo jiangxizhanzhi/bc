@@ -67,6 +67,12 @@ public class SituationGuideController {
         return new BaseRsp<>(situationGuideService.deleteGuideScheme(req.getIds()));
     }
 
+    @ApiOperation("导调参数类型")
+    @GetMapping("/guide_param_type")
+    public BaseRsp<GuideParamTypeRsp> getParamType(@ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam(value = "room_id") String roomId) {
+        return new BaseRsp<>(situationGuideService.getParamType(roomId));
+    }
+
     @ApiOperation("攻防态势模型")
     @GetMapping("/model")
     public BaseRsp<SituationModelRsp> listModel() {
@@ -133,5 +139,13 @@ public class SituationGuideController {
             required = true) @RequestParam(value = "room_id") String roomId) {
         return new BaseRsp<>(situationGuideService.guideStatistics(roomId));
     }
+
+    @ApiOperation("态势导调时间部分图")
+    @GetMapping("/time_Distribution")
+    public BaseRsp<GuideTimeDistributionRsp> guideTimeDistribution(@ApiParam(name = "room_id", value = "房间id",
+            required = true) @RequestParam(value = "room_id") String roomId) {
+        return new BaseRsp<>(situationGuideService.guideTimeDistribution(roomId));
+    }
+
 
 }

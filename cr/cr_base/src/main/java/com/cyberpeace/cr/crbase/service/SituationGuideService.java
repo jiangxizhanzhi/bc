@@ -6,10 +6,7 @@ import com.cyberpeace.cr.crbase.controller.req.guide.AddGuideSchemeReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.GuideImplementReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.ListGuideSchemeReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.UpdateGuideSchemeReq;
-import com.cyberpeace.cr.crbase.controller.rsp.guide.AttackTopFiveRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.guide.GuideRoleStageRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.guide.GuideStatisticsRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.guide.SituationGuideRes;
+import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideScheme;
 
@@ -39,4 +36,7 @@ public interface SituationGuideService {
 
     List<GuideStatisticsRsp> guideStatistics(String roomId);
 
+    GuideTimeDistributionRsp guideTimeDistribution(String roomId);
+
+    GuideParamTypeRsp getParamType(String roomId);
 }

@@ -15,8 +15,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class AttackTopFiveRsp implements Serializable {
 
-	@ApiModelProperty("攻防类型")
-	private String category;
+	@ApiModelProperty("名称")
+	private String name;
 
 	@ApiModelProperty("次数")
 	private Integer count;

@@ -20,10 +20,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchLoadMdReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.RtksRelatedService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.resource.MDParser;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -67,6 +64,9 @@ public class CrNoAuthController {
 
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
+
+	@Autowired
+	private MissionSituationService missionSituationService;
 
 	@ApiOperation("批量导入资管模板")
 	@PostMapping("/batchLoadMD")
@@ -133,6 +133,12 @@ public class CrNoAuthController {
 					handler.loadTrainTemplate(mdParser.getTemplateContext());
 					attachmentService.loadZiguanImages(attachments);
 					rtksRelatedService.createAttackEngageRel(btId, relatedTechs);
+					// situation
+					if (null != mdParser.getSituationConfig()) {
+						missionSituationService.batchCreate(mdParser.getSituationConfig(),
+								missionTemplateList);
+					}
+
 				}
 			});
 		}

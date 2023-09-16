@@ -179,18 +179,6 @@ public class CrScoreController {
 
 	}
 
-	public void updateSubmitEvaluation(SubmitEvaluationReq submitEvaluationReq) {
-
-		crTaskService.submitEvaluation(submitEvaluationReq.getSubmitId(),
-				submitEvaluationReq.getScore(), submitEvaluationReq.getDetail(),
-				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
-				UserInfoContext.getUserContext().getUserId());
-
-		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
-				MissionWsCode.TEAM_MISSION_CODE);
-
-	}
-
 	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(MissionEvaluationListReq missionEvaluationListReq) {
 

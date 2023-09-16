@@ -38,6 +38,8 @@ public class WsPath {
 
 	public static final String SITUATION = "/ws/situation/scene";
 
+	public static final String INDUSTRY_SITUATION = "/ws/situation/industry";
+
 	public static final String NOTICE = "/ws/cr/ce_base/notice";
 
 	public static final String EXERCISE_PAPER = "/ws/cr/ce_base/exercise_paper";

@@ -211,6 +211,12 @@ public class RbRoomScoreController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 5.4.1-该接口页面未使用
+	 *
+	 * @param submitEvaluationReq submit评估请求体
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -221,7 +227,7 @@ public class RbRoomScoreController {
 
 		rbRoomService.checkRoomOpening(submitEvaluationReq.getRoomId());
 
-		crScoreController.updateSubmitEvaluation(submitEvaluationReq);
+//		crScoreController.updateSubmitEvaluation(submitEvaluationReq); 实际该接口未使用
 
 		return new BaseRsp<>();
 	}

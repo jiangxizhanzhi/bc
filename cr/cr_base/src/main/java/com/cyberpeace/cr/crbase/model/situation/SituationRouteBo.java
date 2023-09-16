@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.service.bo.situation;
+package com.cyberpeace.cr.crbase.model.situation;
 
 import java.io.Serializable;
 

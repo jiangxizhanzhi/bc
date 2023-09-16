@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.service.bo.situation;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.model.situation.SituationRouteBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

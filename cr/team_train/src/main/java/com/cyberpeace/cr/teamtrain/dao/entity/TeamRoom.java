@@ -63,6 +63,11 @@ public class TeamRoom extends BaseTable {
 	 */
 	private String replaySceneId;
 
+	/**
+	 * 行业态势攻击路径
+	 */
+	private String areaPath;
+
 	public TeamRoom() {}
 
 	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template) {

@@ -33,13 +33,6 @@ public interface CrTaskService {
 	 */
 	TaskContext getByMissionAndUser(String missionId, String userId);
 
-	/** 提交任务答案
-	 * @param roomId 训练实例id
-	 * @param missionId 任务id
-	 * @param answer 答案
-	 */
-	void submitMissions(String roomId, String missionId, String answer);
-
 	/**
 	 * 批量提交任务答案
 	 * @param roomId 训练实例id
@@ -56,13 +49,6 @@ public interface CrTaskService {
 	 * @return List<Task>  实例列表
 	 */
 	List<TaskContext> getByRoomIdAndUser(String roomId, String userId);
-
-	/**
-	 * 根据roomId获取task
-	 * @param roomId 训练实例id
-	 * @return List<Task>  实例列表
-	 */
-	List<TaskContext> getTaskContextByRoomId(String roomId);
 
 	/**
 	 * 根据roomId,roleIds获取task

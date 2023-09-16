@@ -3,25 +3,34 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.model.EntranceBo;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.MissionSituation;
+import com.cyberpeace.cr.crbase.model.situation.SituationRouteBo;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.MissionSituationService;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSituationService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
-import com.cyberpeace.cr.teamtrain.service.bo.situation.*;
+import com.cyberpeace.cr.teamtrain.service.bo.situation.SituationTaskProgress;
+import com.cyberpeace.cr.teamtrain.service.bo.situation.StudentScoreVo;
+import com.cyberpeace.cr.teamtrain.service.bo.situation.TeamSituationInfo;
+import com.cyberpeace.cr.teamtrain.service.bo.situation.TeamSituationTaskStatistics;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -54,10 +63,17 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private MissionSituationService missionSituationService;
+
 	@Override
-	public Boolean ifShowSituation(String roomId) {
+	public EntranceBo ifShowSituation(String roomId) {
 		TeamRoom room = teamRoomService.getById(roomId);
-		return room.getTeamTemplateName().equals(HANGYOU_TEMPLATE_NAME);
+		EntranceBo res = new EntranceBo();
+		res.setShow(StringUtils.isNotBlank(room.getAreaPath()));
+		res.setUrl("/ts/industry/AviationOil/?businessId=" + roomId);
+		res.setWsUrl(String.format("/%s/?businessId=%s&token=", WsPath.INDUSTRY_SITUATION, roomId));
+		return res;
 	}
 
 	@Override
@@ -89,29 +105,21 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		res.setStatistics(statistics);
 
 		// 攻击路径
-		// stage:mission map
-		Map<String, List<String>> stageMissionMap = Maps.newHashMap();
-		for (CrRoleSimple role : roles) {
-			for (CrRoleMissionSchemeStage stage : role.getMissionScheme()) {
-				stageMissionMap.put(stage.getStage(), stage.getMissions());
-				if (CollectionUtils.isNotEmpty(stage.getDynamic())) {
-					stageMissionMap.get(stage.getStage()).addAll(stage.getDynamic());
-				}
-			}
-		}
-		// mission_id:task map
-		Map<String, List<CrTask>> missionTaskMap = Maps.newHashMap();
-		for (CrTask crTask : taskList) {
-			if (!missionTaskMap.containsKey(crTask.getMissionId())) {
-				missionTaskMap.put(crTask.getMissionId(), Lists.newArrayList());
-			}
-			missionTaskMap.get(crTask.getMissionId()).add(crTask);
-		}
+		TeamRoom room = teamRoomService.getById(roomId);
+		List<String> route = JsonUtil.toJsonObjectArray(room.getAreaPath(), String.class);
+		// submitted missions
+		List<String> submittedMissionIds = taskList.stream().filter(task -> task.isSubmitted())
+				.map(CrTask::getMissionTemplateId).distinct().collect(Collectors.toList());
+		List<MissionSituation> situationList = missionSituationService.getBaseMapper()
+				.selectBatchIds(submittedMissionIds);
+		Set<String> lightedAreas = situationList.stream().map(MissionSituation::getArea)
+				.collect(Collectors.toSet());
+
 		List<SituationRouteBo> routeBoList = Lists.newArrayList();
-		for (String stageName : DEFAULT_ROUTE) {
+		for (String areaName : route) {
 			SituationRouteBo bo = new SituationRouteBo();
-			bo.setNode(stageName);
-			bo.setAttacked(checkIfSubmitted(stageName, stageMissionMap, missionTaskMap));
+			bo.setNode(areaName);
+			bo.setAttacked(lightedAreas.contains(areaName));
 			routeBoList.add(bo);
 		}
 		res.setRoute(routeBoList);

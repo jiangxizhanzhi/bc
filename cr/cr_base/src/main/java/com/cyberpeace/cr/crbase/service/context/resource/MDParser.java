@@ -1,5 +1,12 @@
 package com.cyberpeace.cr.crbase.service.context.resource;
 
+import java.io.File;
+import java.io.Serializable;
+import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
+import org.yaml.snakeyaml.Yaml;
+
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
@@ -13,13 +20,11 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.*;
+import javax.accessibility.AccessibleValue;
 
 interface ZiguanConstants {
 
@@ -234,6 +239,14 @@ public class MDParser {
 
 	private static final String TASK_DIR = "task";
 
+	private static final String TS_DIR = "ts";
+
+	private static final String TS_YML = "task.yml";
+
+	private static final String TS_CODE = "situation_code";
+
+	private static final String AVIATION_TS_PATH = "/home/apps/situation/IndustrySituation/AviationOil/";
+
 	private static final String LOGO_FILE = "/logo.png";
 
 	private static final String LOGO_SUFFIX = ".png";
@@ -251,6 +264,8 @@ public class MDParser {
 	private BusinessTemplate businessTemplate = new BusinessTemplate();
 
 	private TrainingTemplateContext templateContext = new TrainingTemplateContext();
+
+	private IndustrySituationConfig situationConfig;
 
 	public MDParser(String dirPath, String topoId) {
 		this.dirPath = dirPath;
@@ -357,7 +372,8 @@ public class MDParser {
 			images.put(logoId, newFileName);
 			businessTemplate.setLogo(dest);
 		}
-
+		// 读取态势配置，复制态势文件
+		this.loadSituationConfig();
 	}
 
 	/**
@@ -758,6 +774,23 @@ public class MDParser {
 			}
 		}
 		return label.trim();
+	}
+
+	private void loadSituationConfig() {
+		String tsPath = dirPath + SEP + TS_DIR;
+		String configPath = tsPath + SEP + TS_YML;
+		File ymlFile = new File(configPath);
+		if (!ymlFile.exists()) {
+			log.info("no ts config file in {}", dirPath);
+			return;
+		}
+		Yaml yaml = new Yaml();
+		String configString = FileUtil.getContent(ymlFile);
+		this.situationConfig = yaml.loadAs(configString, IndustrySituationConfig.class);
+		this.templateContext.setSituationConfig(JsonUtil.toJsonString(this.situationConfig));
+		// copy files
+		FileUtil.deleteDir(new File(AVIATION_TS_PATH));
+		FileUtil.copyDirectory(tsPath + SEP + TS_CODE, AVIATION_TS_PATH, false);
 	}
 }
 

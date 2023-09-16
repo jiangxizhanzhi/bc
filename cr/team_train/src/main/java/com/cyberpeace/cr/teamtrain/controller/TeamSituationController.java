@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.model.EntranceBo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/cr/training_team/situation")
 @Slf4j
-public class TeamTrainSituationController {
+public class TeamSituationController {
 
 	@Autowired
 	private TeamSituationService teamSituationService;
@@ -32,10 +33,10 @@ public class TeamTrainSituationController {
 	@ApiOperation("是否显示行业态势入口")
 	@GetMapping("/entrance")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<Boolean>
+	public BaseRsp<EntranceBo>
 			ifShowEntrance(@ApiParam(name = "room_id", value = "团队训练id") String room_id) {
 		CrCommonValidator.validateId(room_id);
-		Boolean res = teamSituationService.ifShowSituation(room_id);
+		EntranceBo res = teamSituationService.ifShowSituation(room_id);
 		return new BaseRsp<>(res);
 	}
 

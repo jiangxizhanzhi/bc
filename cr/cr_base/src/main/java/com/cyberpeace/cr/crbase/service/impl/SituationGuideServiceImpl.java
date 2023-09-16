@@ -318,22 +318,22 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Override
     public List<GuideStatisticsRsp> guideStatistics(String roomId) {
-
-        //todo 临时数据,便于前端画图
         ArrayList<GuideStatisticsRsp> result = new ArrayList<>();
-        GuideStatisticsRsp statisticsRsp = new GuideStatisticsRsp();
-        statisticsRsp.setGuideName("任务导调");
-        statisticsRsp.setGuideType(1);
-        statisticsRsp.setCount(4);
-        statisticsRsp.setPercent(40.0);
-        result.add(statisticsRsp);
-
-        GuideStatisticsRsp statisticsRsp2 = new GuideStatisticsRsp();
-        statisticsRsp2.setGuideName("手动导调");
-        statisticsRsp2.setGuideType(2);
-        statisticsRsp2.setCount(6);
-        statisticsRsp2.setPercent(60.0);
-        result.add(statisticsRsp2);
+        //获取任务导调和态势导调数量
+        result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.MISSION.getDesc(),
+                situationGuideSchemeMapper.countByType(roomId, SituationGuideScheme.Type.MISSION.getCode())));
+        result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.MANUALLY.getDesc(),
+                situationGuideSchemeMapper.countByType(roomId, SituationGuideScheme.Type.MANUALLY.getCode())));
+        //获取流量采集事件和主机采集事件数量
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+        if (localScene == null) {
+            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.FLOW.getDesc(), 0));
+            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.HOST.getDesc(), 0));
+        } else {
+            JSONObject jsonObject = remoteSceneService.getEventTotalCount(localScene.getMpSceneId());
+            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.FLOW.getDesc(), jsonObject.getInteger("flow")));
+            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.HOST.getDesc(), jsonObject.getInteger("host")));
+        }
         return result;
     }
 

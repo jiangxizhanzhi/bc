@@ -192,7 +192,8 @@ public class MissionController {
 
 	@ApiOperation("后台更新任务")
 	@PutMapping("/missions")
-	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_TEAM_TRAIN}, logical = Logical.OR)
 	public BaseRsp<MissionTemplateRsp>
 			updateMissionTemplate(@RequestBody @Validated MissionTemplateModifyReq modifyReq) {
 		if (StringUtils.isBlank(modifyReq.getResourceId())) {
@@ -298,7 +299,8 @@ public class MissionController {
 
 	@ApiOperation("分页查询任务方案")
 	@GetMapping("/combat_techs/list")
-	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_TEAM_TRAIN}, logical = Logical.OR)
 	public BaseRsp<List<MissionSchemeTemplateRsp>>
 			listSchemeTemplate(@Validated PageReqBase pageReqBase) {
 		ListRsp<MissionSchemeTemplateRsp> schemeTemplateListRsp = missionService

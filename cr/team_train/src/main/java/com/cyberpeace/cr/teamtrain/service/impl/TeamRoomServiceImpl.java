@@ -7,13 +7,6 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.context.MissionStageScheme;
-import com.cyberpeace.common.context.role.CrRoleNodesData;
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.SceneStatusEnum;
-import com.cyberpeace.common.enums.RbRoleGroup;
-import com.cyberpeace.common.enums.TeamRoleGroup;
-import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +20,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
@@ -43,14 +40,20 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
-import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.resource.IndustrySituationConfig;
+import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -146,6 +149,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
 		teamRoom.setTeamTemplateName(businessTemplate.getName());
 		teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
+		// 行业态势-攻击路径
+		if (StringUtils.isNotBlank(template.getSituationConfig())) {
+			IndustrySituationConfig config = JsonUtil.toJsonObject(template.getSituationConfig(),
+					IndustrySituationConfig.class);
+			teamRoom.setAreaPath(JsonUtil.arrayToString(config.getArea_path()));
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service;
 
+import com.cyberpeace.common.model.EntranceBo;
 import com.cyberpeace.cr.teamtrain.service.bo.situation.StudentScoreVo;
 import com.cyberpeace.cr.teamtrain.service.bo.situation.TeamSituationInfo;
 
@@ -13,7 +14,7 @@ public interface TeamSituationService {
      * @param roomId 房间id
      * @return {@code Boolean}
      */
-    Boolean ifShowSituation(String roomId);
+    EntranceBo ifShowSituation(String roomId);
 
 
     /**

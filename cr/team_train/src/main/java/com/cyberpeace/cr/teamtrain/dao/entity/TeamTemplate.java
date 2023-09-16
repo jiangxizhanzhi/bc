@@ -61,4 +61,9 @@ public class TeamTemplate extends BaseTable {
 	 */
 	private Integer peopleNumber;
 
+	/**
+	 * 行业态势配置
+	 */
+	private String situationConfig;
+
 }

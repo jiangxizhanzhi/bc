@@ -27,4 +27,6 @@ public class TrainingTemplateContext {
 	private String timeLineConfig;
 
 	private Integer peopleNumber;
+
+	private String situationConfig;
 }

@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cyberpeace.common.enums.TeamRoleGroup;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -35,10 +37,6 @@ import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.crbase.service.context.UserReport;
@@ -73,6 +71,9 @@ public class TeamTrainScoreController {
 
 	@Autowired
 	private CrScoreService crScoreService;
+
+	@Autowired
+	private CrTaskService crTaskService;
 
 	@Autowired
 	private MissionService missionService;
@@ -226,8 +227,13 @@ public class TeamTrainScoreController {
 			value = "学员评分") @RequestBody SubmitEvaluationReq submitEvaluationReq) {
 		teamRoomService.checkRoomOpening(submitEvaluationReq.getRoomId());
 
-		crScoreController.updateSubmitEvaluation(submitEvaluationReq);
+		crTaskService.submitEvaluation(submitEvaluationReq.getSubmitId(),
+				submitEvaluationReq.getScore(), submitEvaluationReq.getDetail(),
+				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
+				UserInfoContext.getUserContext().getUserId());
 
+		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
+				MissionWsCode.TEAM_MISSION_CODE);
 		return new BaseRsp<>();
 	}
 

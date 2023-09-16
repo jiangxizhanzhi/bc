@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -32,6 +33,7 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.IndustrySituationService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -87,6 +89,9 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	private RemoteUserService remoteUserService;
 
 	@Autowired
+	private IndustrySituationService industrySituationService;
+
+	@Autowired
 	private SituationGuideSchemeMapper situationGuideSchemeMapper;
 
 	@Autowired
@@ -112,11 +117,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		taskContext.setMission(missionMapper.selectById(task.getMissionId()));
 
 		return taskContext;
-	}
-
-	@Override
-	public void submitMissions(String roomId, String missionId, String answer) {
-		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "");
 	}
 
 	@Override
@@ -193,14 +193,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		});
 
 		return missionScore.stream().mapToInt(item -> item).sum();
-
-	}
-
-	@Override
-	public List<TaskContext> getTaskContextByRoomId(String roomId) {
-		List<CrTask> taskList = crTaskMapper.selectByRoomId(roomId);
-
-		return getTaskContext(taskList);
 
 	}
 
@@ -471,6 +463,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			}
 		});
 
+		// 自动评估状态为正确，则触发行业态势，
+		if (StringUtils.isNotBlank(task.getMissionTemplateId())
+				&& task.getStatus().equals(CrTask.TaskStatus.SUCCESS.getCode())) {
+			industrySituationService.pushSituationWs(task.getRoomId(), task.getMissionTemplateId());
+		}
+
 		situationGuideService.pushDataToRoomByGuide(null, guideHis);
 	}
 
@@ -511,6 +509,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		taskSubmit.setEvaluatorId(currentUserId);
 		taskSubmit.setEvaluateTime(new Date());
 
+		Integer oldStatus = task.getStatus();
 		task.setStatus(evaluateStatus);
 		task.setScore(score);
 
@@ -538,6 +537,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				}
 			}
 		});
+
+		// 评估触发行业态势，原状态不为正确，评估为正确则触发
+		if (StringUtils.isNotBlank(task.getMissionTemplateId())
+				&& !oldStatus.equals(CrTask.TaskStatus.SUCCESS.getCode())
+				&& evaluateStatus.equals(CrTask.TaskStatus.SUCCESS.getCode())) {
+			industrySituationService.pushSituationWs(task.getRoomId(), task.getMissionTemplateId());
+		}
 		// 态势导调动效
 		situationGuideService.pushDataToRoomByGuide(null, guideHis);
 	}

@@ -118,6 +118,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String EVENT_TOTAL_COUNT_URL;
 
+	private String ATTACK_TYPE_COUNT_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -206,6 +208,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_TREND = MP_HOST + ConfigUtil.getContextProperty("mp.scene.trend");
 
 		EVENT_TOTAL_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.count");
+
+		ATTACK_TYPE_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("attack.type.count");
 	}
 
 	@Override
@@ -570,5 +574,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public JSONObject getEventTotalCount(String sceneId) {
 		String requestUrl = EVENT_TOTAL_COUNT_URL + sceneId;
 		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONArray getAttackTypeCountGroup(String sceneId) {
+		String requestUrl = ATTACK_TYPE_COUNT_URL + sceneId;
+		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
 	}
 }

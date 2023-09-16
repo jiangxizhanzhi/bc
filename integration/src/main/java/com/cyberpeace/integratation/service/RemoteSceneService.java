@@ -263,4 +263,6 @@ public interface RemoteSceneService {
 	JSONArray sceneTrend(String mpSceneId);
 
 	JSONObject getEventTotalCount(String sceneId);
+
+	JSONArray getAttackTypeCountGroup(String sceneId);
 }

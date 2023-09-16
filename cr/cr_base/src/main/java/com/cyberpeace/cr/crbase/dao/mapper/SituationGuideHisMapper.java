@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SituationGuideHisMapper extends BaseMapper<SituationGuideHistory> {
 
+	Integer countByType(@Param("roomId") String roomId, @Param("type") Integer type);
+
+	List<AttackTypeCountGroup> countByCategory(@Param("roomId") String roomId, @Param("eventType") Integer eventType);
+
 }

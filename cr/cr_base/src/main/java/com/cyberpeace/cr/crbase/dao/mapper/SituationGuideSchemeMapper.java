@@ -15,6 +15,4 @@ public interface SituationGuideSchemeMapper extends BaseMapper<SituationGuideSch
     SituationGuideMissionBo selectRoleConfigByBusinessType(@Param("roomId") String roomId, @Param("businessType") Integer businessType);
 
     SituationRoomBo selectRoomType(@Param("roomId") String roomId, @Param("businessType") Integer businessType);
-
-    Integer countByType(@Param("roomId") String roomId, @Param("type") Integer type);
 }

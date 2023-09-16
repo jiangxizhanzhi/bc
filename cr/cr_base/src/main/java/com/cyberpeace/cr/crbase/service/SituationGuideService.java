@@ -21,23 +21,21 @@ public interface SituationGuideService {
 
     String addGuideScheme(AddGuideSchemeReq addGuideSchemeReq);
 
-    SituationGuideRes getGuideSchemeById(String resourceId);
+    SituationGuideRes getGuideSchemeDetail(String resourceId);
 
     UpdateGuideSchemeReq updateGuideScheme(UpdateGuideSchemeReq updateGuideSchemeReq);
 
-    void deleteGuideScheme(List<String> ids);
+    Boolean deleteGuideScheme(List<String> ids);
 
-    void validGuideSchemeName(String name, String roomId, String resourceId);
+    Boolean guideImplement(GuideImplementReq req);
 
-    void guideImplement(GuideImplementReq req);
+    SituationGuideHistory getGuideHisByMissionId(String missionId, String taskId);
 
-    SituationGuideHistory getGuideHisByMissionId(String missionId,String taskId);
-
-    void pushDataToRoomByGuide(Boolean isInstance, SituationGuideHistory his);
+    Boolean pushDataToRoomByGuide(Boolean isInstance, SituationGuideHistory his);
 
     List<AttackTopFiveRsp> attackTop5(String roomId);
 
-    List<GuideRoleStageRsp>  missionGuide(String roomId, Integer businessType);
+    List<GuideRoleStageRsp> missionGuide(String roomId, Integer businessType);
 
     List<GuideStatisticsRsp> guideStatistics(String roomId);
 

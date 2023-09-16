@@ -22,7 +22,7 @@ CREATE TABLE `situation_guide_scheme` (
                                           PRIMARY KEY ( `id` ) USING BTREE,
                                           UNIQUE KEY `resource_id` ( `resource_id` ) USING BTREE,
                                           KEY `room_id` ( `room_id` ) USING BTREE,
-                                          KEY `mission_id` ( `mission_id` ) USING BTREE
+                                          UNIQUE  KEY `mission_id` ( `mission_id` ) USING BTREE
 ) ENGINE = INNODB DEFAULT CHARSET = utf8 ROW_FORMAT = DYNAMIC COMMENT = '态势导调方案表';
 
 CREATE TABLE `situation_guide_history` (
@@ -38,6 +38,7 @@ CREATE TABLE `situation_guide_history` (
                                            `source` VARCHAR ( 128 ) DEFAULT NULL COMMENT '攻击源',
                                            `target` VARCHAR ( 128 ) DEFAULT NULL COMMENT '攻击目标',
                                            `result` INT ( 11 ) DEFAULT NULL COMMENT '攻击结果 1:成功 2失败',
+                                           `mission_id` VARCHAR ( 32 ) DEFAULT NULL COMMENT '任务id',
                                            `task_id` VARCHAR ( 32 ) DEFAULT NULL COMMENT '下发任务id',
                                            `role` INT ( 11 ) DEFAULT NULL COMMENT '所属角色 4:红方 5:蓝方',
                                            `trigger_condition` INT ( 11 ) DEFAULT NULL COMMENT '触发条件1:任务提交 2:任务判断成功',

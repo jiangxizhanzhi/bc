@@ -38,6 +38,8 @@ public class SituationGuideHistory extends BaseTable {
 
     private Integer role;
 
+    private String missionId;
+
     private String taskId;
 
     private Integer triggerCondition;

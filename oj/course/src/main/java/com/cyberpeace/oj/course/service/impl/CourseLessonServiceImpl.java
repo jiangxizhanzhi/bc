@@ -316,6 +316,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 代表数据库已存在学习记录 不做任何处理
 		}
 
+		infoBo.setVideoTime(lesson.getVideoTime());
 		// 知识检查点
 		if (StringUtils.isNotBlank(lesson.getCheckPoint())
 				&& lesson.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {

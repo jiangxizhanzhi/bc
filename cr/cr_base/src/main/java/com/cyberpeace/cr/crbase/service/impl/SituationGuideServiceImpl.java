@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,12 +25,15 @@ import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideSchemeMapper;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import com.cyberpeace.cr.crbase.service.WsMultiNodeGuide;
+import com.cyberpeace.cr.crbase.service.context.guide.AttackTypeCountGroup;
 import com.cyberpeace.cr.crbase.service.context.guide.SituationGuideMissionBo;
+import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.model.ElementInfo;
@@ -68,6 +72,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     private LocalSceneService localSceneService;
     @Autowired
     private SituationHandlerService situationHandlerService;
+
+    @Autowired
+    private RemoteSceneService remoteSceneService;
 
     public Integer MIN_STR_LEN = 1;
 
@@ -230,15 +237,29 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Override
     public List<AttackTopFiveRsp> attackTop5(String roomId) {
-        //todo 临时数据,便于前端画图
-        ArrayList<AttackTopFiveRsp> result = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            AttackTopFiveRsp attackTopFiveRsp = new AttackTopFiveRsp();
-            attackTopFiveRsp.setCategory(i);
-            attackTopFiveRsp.setCount(i);
-            result.add(attackTopFiveRsp);
+        //获取任务导调和手动导调记录
+        List<AttackTypeCountGroup> attackTypeCountGroupList = situationGuideHisMapper.countByCategory(roomId, SituationGuideScheme.EventType.ATTACK.getCode());
+        List<AttackTopFiveRsp> result = attackTypeCountGroupList.stream()
+                                                                .map(attackTypeCountGroup -> new AttackTopFiveRsp(SituationGuideScheme.AttackUrlEnum.getEnumByCode(attackTypeCountGroup.getCategory()).getName(), attackTypeCountGroup.getCount()))
+                                                                .collect(Collectors.toList());
+        //获取主机采集事件和流量采集事件
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+        if (localScene != null) {
+            JSONArray attackCountList = remoteSceneService.getAttackTypeCountGroup(localScene.getMpSceneId());
+            List<AttackTypeCount> attackTypeCountList = attackCountList.toJavaList(AttackTypeCount.class);
+            result.addAll(attackTypeCountList.stream().map(attackTypeCount -> new AttackTopFiveRsp(attackTypeCount.getAttack_type(), attackTypeCount.getTimes())).collect(Collectors.toList()));
         }
-        return result;
+        //排序，取Top5
+        result.sort(new Comparator<AttackTopFiveRsp>() {
+            @Override
+            public int compare(AttackTopFiveRsp o1, AttackTopFiveRsp o2) {
+                return o1.getCount()-o2.getCount();
+            }
+        });
+        if (result.size() < 5) {
+            return result;
+        }
+        return result.subList(0,5);
     }
 
     @Override
@@ -306,22 +327,22 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Override
     public List<GuideStatisticsRsp> guideStatistics(String roomId) {
-
-        //todo 临时数据,便于前端画图
         ArrayList<GuideStatisticsRsp> result = new ArrayList<>();
-        GuideStatisticsRsp statisticsRsp = new GuideStatisticsRsp();
-        statisticsRsp.setGuideName("任务导调");
-        statisticsRsp.setGuideType(1);
-        statisticsRsp.setCount(4);
-        statisticsRsp.setPercent(40.0);
-        result.add(statisticsRsp);
-
-        GuideStatisticsRsp statisticsRsp2 = new GuideStatisticsRsp();
-        statisticsRsp2.setGuideName("手动导调");
-        statisticsRsp2.setGuideType(2);
-        statisticsRsp2.setCount(6);
-        statisticsRsp2.setPercent(60.0);
-        result.add(statisticsRsp2);
+        //获取任务导调和态势导调数量
+        result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.MISSION.getDesc(),
+                situationGuideHisMapper.countByType(roomId, SituationGuideScheme.Type.MISSION.getCode())));
+        result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.MANUALLY.getDesc(),
+                situationGuideHisMapper.countByType(roomId, SituationGuideScheme.Type.MANUALLY.getCode())));
+        //获取流量采集事件和主机采集事件数量
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+        if (localScene == null) {
+            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.FLOW.getDesc(), 0));
+            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.HOST.getDesc(), 0));
+        } else {
+            JSONObject jsonObject = remoteSceneService.getEventTotalCount(localScene.getMpSceneId());
+            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.FLOW.getDesc(), jsonObject.getInteger("flow")));
+            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.HOST.getDesc(), jsonObject.getInteger("host")));
+        }
         return result;
     }
 

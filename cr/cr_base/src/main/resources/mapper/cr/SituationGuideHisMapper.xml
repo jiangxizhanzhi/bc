@@ -4,4 +4,29 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper">
 
+    <select id="countByType" resultType="java.lang.Integer">
+        select count(*) from situation_guide_scheme
+        <where>
+            <if test="roomId != null and roomId != ''">
+                room_id = #{roomId}
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+        </where>
+    </select>
+
+    <select id="countByCategory" resultType="com.cyberpeace.cr.crbase.service.context.guide.AttackTypeCountGroup">
+        select event_type as category , count(*) as `count` from situation_guide_scheme
+        <where>
+            <if test="roomId != null and roomId != ''">
+                room_id = #{roomId}
+            </if>
+            <if test="eventType != null">
+                and `event_type` = #{eventType}
+            </if>
+            group by event_type
+        </where>
+    </select>
+
 </mapper>

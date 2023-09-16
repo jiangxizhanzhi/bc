@@ -1,12 +1,12 @@
 package com.cyberpeace.integratation.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2
@@ -261,4 +261,8 @@ public interface RemoteSceneService {
 	JSONArray attackTypeCount(String mpSceneId);
 
 	JSONArray sceneTrend(String mpSceneId);
+
+	JSONObject getEventTotalCount(String sceneId);
+
+	JSONArray getAttackTypeCountGroup(String sceneId);
 }

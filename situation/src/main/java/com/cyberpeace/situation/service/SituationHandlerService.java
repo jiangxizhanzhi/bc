@@ -1,14 +1,14 @@
 package com.cyberpeace.situation.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.situation.req.FlowLogReq;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
+import com.cyberpeace.situation.req.FlowLogReq;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 场景态势数据处理
@@ -148,4 +148,8 @@ public interface SituationHandlerService {
 	 */
 	List<WsMessage> pushFlowEvents(FlowLogReq flowLogReq);
 
+	/**
+	 * 获取处理后的态势数
+	 */
+	SituationTopo getSituationTopoBySceneId(String sceneId, Boolean instance);
 }

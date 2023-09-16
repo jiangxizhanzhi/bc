@@ -1,15 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import static com.cyberpeace.situation.constant.SituationConstants.DEFAULT_LINE_WIDTH;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -35,9 +25,18 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static com.cyberpeace.situation.constant.SituationConstants.DEFAULT_LINE_WIDTH;
 
 @Slf4j
 @Service
@@ -670,6 +669,18 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		return wsMultiNodeDynamics;
 
+	}
+
+	@Override
+	@Cacheable(cacheNames = "getSituationTopo", key = "#sceneId")
+	public SituationTopo getSituationTopoBySceneId(String sceneId, Boolean isInstance) {
+		SceneData sceneData;
+		if (isInstance != null && !isInstance) {
+			sceneData = topoHandlerService.getSceneData(null, sceneId);
+		} else {
+			sceneData = topoHandlerService.getSceneData(sceneId, null);
+		}
+		return getSituationTopo(sceneData);
 	}
 
 }

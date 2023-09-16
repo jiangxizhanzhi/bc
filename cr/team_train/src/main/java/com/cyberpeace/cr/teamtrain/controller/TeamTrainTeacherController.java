@@ -1,24 +1,18 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.List;
-
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.cr.crbase.controller.rsp.PlaybackOptionRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
@@ -36,10 +30,22 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
-
+import com.cyberpeace.situation.model.SceneData;
+import com.cyberpeace.situation.model.SituationTopo;
+import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.TopoHandlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例-教员")
 @RestController
@@ -69,6 +75,15 @@ public class TeamTrainTeacherController {
 
 	@Autowired
 	private CrBadgeService crBadgeService;
+
+	@Autowired
+	private GuideHistoryService guideHistoryService;
+
+	@Autowired
+	private TopoHandlerService topoHandlerService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
@@ -247,5 +262,24 @@ public class TeamTrainTeacherController {
 		CrCommonValidator.validateId(resource_id);
 		crBadgeService.clickEvaluationBadge(resource_id);
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("返回态势回放所有下拉框选项")
+	@GetMapping("/playback/option")
+	public BaseRsp<PlaybackOptionRsp> getAllOption(@ApiParam(name = "room_id", value = "房间ID") @RequestParam("room_id") String roomId) {
+		TimeLineData res = teamTeacherService.getReplayTimeline(roomId, null);
+		PlaybackOptionRsp playbackOptionRsp = guideHistoryService.getAllOption(roomId);
+		playbackOptionRsp.setStartTime(TimeUtil.format1(res.getStartTime()));
+		playbackOptionRsp.setEndTime(TimeUtil.format1(res.getEndTime()));
+
+		//根据拓扑id获取节点信息
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
+		SceneData sceneData = topoHandlerService.getSceneData(null, teamRoom.getCopyedTopoId());
+		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
+														 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
+														 .collect(Collectors.toList());
+		playbackOptionRsp.setNodeList(nodeList);
+		return new BaseRsp<>(playbackOptionRsp);
 	}
 }

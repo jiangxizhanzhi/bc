@@ -5,12 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 
 /**
@@ -89,16 +86,16 @@ public class SituationGuideScheme extends BaseTable {
         }
     }
 
-    public enum resultType implements GenericEnum {
+    public enum ResultType implements GenericEnum {
 
-        SUCCESS(1, "成功"), FAIL(2, "失败");
+        SUCCESS(1, "成功"), FAIL(2, "失败"), UNKNOWN(3, "未知");
 
         @Getter
         private Integer code;
         @Getter
         private String desc;
 
-        resultType(int code, String desc) {
+        ResultType(int code, String desc) {
             this.code = code;
             this.desc = desc;
         }

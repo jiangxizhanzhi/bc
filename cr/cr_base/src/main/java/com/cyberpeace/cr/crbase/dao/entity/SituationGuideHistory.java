@@ -20,6 +20,8 @@ public class SituationGuideHistory extends BaseTable {
 
     private String roomId;
 
+    private String guideId;
+
     private Integer businessType;
 
     private String eventName;

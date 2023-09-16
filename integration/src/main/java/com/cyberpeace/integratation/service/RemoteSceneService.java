@@ -265,4 +265,7 @@ public interface RemoteSceneService {
 	JSONObject getEventTotalCount(String sceneId);
 
 	JSONArray getAttackTypeCountGroup(String sceneId);
+
+	JSONArray getEventTrentCount(String sceneId);
+
 }

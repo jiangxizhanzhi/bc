@@ -8,24 +8,23 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.guide.AddGuideSchemeReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.GuideImplementReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.ListGuideSchemeReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.UpdateGuideSchemeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideScheme;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideSchemeMapper;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import com.cyberpeace.cr.crbase.service.WsMultiNodeGuide;
 import com.cyberpeace.cr.crbase.service.context.guide.SituationGuideMissionBo;
-import com.cyberpeace.cr.crbase.service.context.guide.SituationRoomBo;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
@@ -57,19 +56,16 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Autowired
     private SituationGuideHisMapper situationGuideHisMapper;
-
     @Autowired
     private SituationGuideSchemeMapper situationGuideSchemeMapper;
-
     @Autowired
     private MissionMapper missionMapper;
-
+    @Autowired
+    private CrTaskMapper crTaskMapper;
     @Autowired
     private TopoHandlerService topoHandlerService;
-
     @Autowired
     private LocalSceneService localSceneService;
-
     @Autowired
     private SituationHandlerService situationHandlerService;
 
@@ -77,27 +73,33 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     public Integer MAX_NAME_STR_LEN = 255;
 
+    /**
+     * 手动导调列表
+     */
     @Override
     public ListRsp<SituationGuideScheme> listByRoomId(ListGuideSchemeReq req) {
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getRoomId, req.getRoomId());
+        queryWrapper.eq(SituationGuideScheme::getType, SituationGuideScheme.Type.MANUALLY.getCode());
         Page<SituationGuideScheme> page = page(req.toPageParam(), queryWrapper);
         return PageUtil.getListResult(page);
     }
 
     @Override
-    public String addGuideScheme(AddGuideSchemeReq addGuideSchemeReq) {
-        SituationGuideScheme situationGuideScheme = BeanUtils.copy(addGuideSchemeReq, SituationGuideScheme.class);
+    public String addGuideScheme(AddGuideSchemeReq req) {
+        validGuideSchemeName(req.getEventName(), req.getRoomId(), null);
+        validGuideSchemeParam(req);
+        SituationGuideScheme situationGuideScheme = BeanUtils.copy(req, SituationGuideScheme.class);
         situationGuideScheme.setResourceId(IDGeneratorUtil.getID());
         save(situationGuideScheme);
         return situationGuideScheme.getResourceId();
     }
 
     @Override
-    public SituationGuideRes getGuideSchemeById(String resourceId) {
+    public SituationGuideRes getGuideSchemeDetail(String resourceId) {
         SituationGuideScheme situationGuideScheme = getById(resourceId);
         if (situationGuideScheme == null) {
-            log.error("get dynamic scheme by id ({}) error, dynamic scheme not found", resourceId);
+            log.error("get guide scheme by id ({}) error, guide scheme not found", resourceId);
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         SituationGuideRes resp = BeanUtils.copy(situationGuideScheme, SituationGuideRes.class);
@@ -128,24 +130,23 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public UpdateGuideSchemeReq updateGuideScheme(UpdateGuideSchemeReq updateGuideSchemeReq) {
-        SituationGuideScheme situationGuideScheme = BeanUtils.copy(updateGuideSchemeReq, SituationGuideScheme.class);
+    public UpdateGuideSchemeReq updateGuideScheme(UpdateGuideSchemeReq req) {
+        validGuideSchemeName(req.getEventName(), req.getRoomId(), req.getResourceId());
+        validGuideSchemeParam(req);
+        SituationGuideScheme situationGuideScheme = BeanUtils.copy(req, SituationGuideScheme.class);
         updateById(situationGuideScheme);
-        return updateGuideSchemeReq;
+        return req;
     }
 
     @Override
-    public void deleteGuideScheme(List<String> ids) {
+    public Boolean deleteGuideScheme(List<String> ids) {
         if (!CollectionUtils.isEmpty(ids)) {
-            removeByIds(ids);
+            return removeByIds(ids);
         }
+        return false;
     }
 
-    /**
-     * 校验导调方案是否重名
-     */
-    @Override
-    public void validGuideSchemeName(String name, String roomId, String resourceId) {
+    private void validGuideSchemeName(String name, String roomId, String resourceId) {
         validateNameLen(name, SituationErrorCode.INVALID_GUIDE_SCHEME_NAME);
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getEventName, name);
@@ -161,21 +162,23 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public void guideImplement(GuideImplementReq req) {
+    public Boolean guideImplement(GuideImplementReq req) {
         SituationGuideScheme guideScheme = getById(req.getResourceId());
-
-        // todo 根据roomId获取sceneId,只查不处理脏数据
-        String sceneId = viewScene(guideScheme.getRoomId(), guideScheme.getBusinessType());
+        if (Objects.isNull(guideScheme)) {
+            return false;
+        }
+        String sceneId = viewScene(guideScheme.getRoomId());
 
         //增加历史记录
         SituationGuideHistory his = BeanUtils.copy(guideScheme, SituationGuideHistory.class);
         his.setResourceId(IDGeneratorUtil.getID());
+        his.setId(null);
         his.setCreateTime(new Date());
         his.setUpdateTime(new Date());
         his.setSceneId(sceneId);
         situationGuideHisMapper.insert(his);
 
-        pushDataToRoomByGuide(req.getIsInstance(), his);
+        return pushDataToRoomByGuide(req.getIsInstance(), his);
     }
 
 
@@ -183,26 +186,24 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     public SituationGuideHistory getGuideHisByMissionId(String missionId, String taskId) {
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getMissionId, missionId);
-        List<SituationGuideScheme> situationGuideSchemes = situationGuideSchemeMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(situationGuideSchemes)) {
+        SituationGuideScheme guideScheme = situationGuideSchemeMapper.selectOne(queryWrapper);
+        if (Objects.isNull(guideScheme)) {
             return null;
         }
-
-        SituationGuideHistory guideHis = BeanUtils.copy(situationGuideSchemes.get(0), SituationGuideHistory.class);
-        // todo 根据roomId获取sceneId, 只查不处理脏数据
-        String sceneId = viewScene(guideHis.getRoomId(), guideHis.getBusinessType());
-        guideHis.setSceneId(sceneId);
+        SituationGuideHistory guideHis = BeanUtils.copy(guideScheme, SituationGuideHistory.class);
         guideHis.setResourceId(IDGeneratorUtil.getID());
+        guideHis.setId(null);
         guideHis.setTaskId(taskId);
+        guideHis.setSceneId(viewScene(guideHis.getRoomId()));
         guideHis.setCreateTime(new Date());
         guideHis.setUpdateTime(new Date());
         return guideHis;
     }
 
     @Override
-    public void pushDataToRoomByGuide(Boolean isInstance, SituationGuideHistory his) {
+    public Boolean pushDataToRoomByGuide(Boolean isInstance, SituationGuideHistory his) {
         if (Objects.isNull(his) || StringUtils.isBlank(his.getSceneId())) {
-            return;
+            return false;
         }
         String sceneId = his.getSceneId();
         List<String> elementIds = getElementIds(sceneId, isInstance);
@@ -224,6 +225,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeGuide);
         }
         situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeGuide.getSceneId());
+        return true;
     }
 
     @Override
@@ -241,6 +243,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Override
     public List<GuideRoleStageRsp> missionGuide(String roomId, Integer businessType) {
+
+        //根据roomId和训练类型获取角色任务配置(团队训练/红蓝对抗)
         SituationGuideMissionBo situationGuideMissionBo = situationGuideSchemeMapper.selectRoleConfigByBusinessType(roomId, businessType);
         if (Objects.isNull(situationGuideMissionBo) || StringUtils.isBlank(situationGuideMissionBo.getRoleConfig())) {
             return null;
@@ -256,6 +260,15 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             crRoleConfigs.addAll(blueRoleResp);
         }
 
+        //根据roomId获取训练下发任务,'未下发',任务导调才可编辑 (未下发无task数据)
+        List<String> missionIds = crTaskMapper.selectByRoomId(roomId).stream().map(CrTask::getMissionId).collect(Collectors.toList());
+
+        //获取训练房间所有导调任务
+        LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SituationGuideScheme::getRoomId, roomId);
+        Map<String, SituationGuideScheme> missionGuideMap = StreamApiUtils.toMap(situationGuideSchemeMapper.selectList(queryWrapper), SituationGuideScheme::getMissionId, item -> item);
+
+        //根据roomId获取训练任务mission
         Map<String, Mission> missionMap = StreamApiUtils.toMap(missionMapper.selectByRoomId(roomId), Mission::getMissionTemplateId, item -> item);
         List<GuideRoleStageRsp> result = new ArrayList<>();
         for (CrRoleConfig crRoleConfig : crRoleConfigs) {
@@ -268,17 +281,20 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                 List<GuideMissionRsp> missionList = new ArrayList<>();
                 for (CrRoleConfigMission missionTemplate : schemeDatum.getMissions()) {
                     if (missionMap.containsKey(missionTemplate.getResourceId())) {
+                        //组装训练任务,编辑状态,态势导调任务id
                         GuideMissionRsp guideMissionRsp = new GuideMissionRsp();
                         Mission mission = missionMap.get(missionTemplate.getResourceId());
                         guideMissionRsp.setMissionTitle(mission.getTitle());
                         guideMissionRsp.setMissionId(mission.getResourceId());
+                        //组装编辑状态
+                        Boolean isEditable = !missionIds.contains(mission.getResourceId());
+                        guideMissionRsp.setIsEditable(isEditable);
+                        //组装态势导调任务id
+                        SituationGuideScheme guideScheme = missionGuideMap.get(mission.getResourceId());
+                        guideMissionRsp.setGuideId(Objects.isNull(guideScheme) ? null : guideScheme.getResourceId());
                         missionList.add(guideMissionRsp);
                     }
                 }
-                //todo 模版的阶段任务修改是否展示
-//                if (CollectionUtils.isEmpty(missionList)){
-//                    continue;
-//                }
                 missionStageRsp.setMissionList(missionList);
                 stageList.add(missionStageRsp);
             }
@@ -309,6 +325,48 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result;
     }
 
+    /**
+     * 校验导调参数
+     */
+    private void validGuideSchemeParam(AddGuideSchemeReq req) {
+        //任务导调判断是否可新增/编辑
+        if (SituationGuideScheme.Type.MISSION.getCode().equals(req.getType()) && Objects.nonNull(req.getMissionId())) {
+            List<CrTask> taskList = crTaskMapper.selectByMissionId(req.getMissionId());
+            //'未下发',任务导调才可编辑
+            if (!CollectionUtils.isEmpty(taskList)) {
+                throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
+            }
+        }
+
+        //判断参数是否为空
+        SituationGuideScheme.EventType eventType = SituationGuideScheme.EventType.getEventTypeByCode(req.getEventType());
+        boolean missionFlag = SituationGuideScheme.Type.MISSION.getCode().equals(req.getType()) && req.getMissionId() == null;
+        boolean flag;
+        switch (eventType) {
+            case ATTACK:
+            case DEFENSE:
+                flag = req.getCategory() == null || req.getSource() == null || req.getTarget() == null || req.getResult() == null;
+                if (flag || missionFlag) {
+                    throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
+                }
+                break;
+            case BLOCKING:
+                flag = req.getSource() == null || req.getTarget() == null;
+                if (flag || missionFlag) {
+                    throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
+                }
+                break;
+            case BELONGING:
+                flag = req.getSource() == null;
+                if (flag || missionFlag) {
+                    throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
+                }
+                break;
+            default:
+                throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
+        }
+    }
+
     public List<String> getElementIds(String sceneId, Boolean isInstance) {
 
         SceneData sceneData;
@@ -318,11 +376,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             sceneData = topoHandlerService.getSceneData(sceneId, null);
         }
         SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
-        List<ElementInfo> elementInfoList = Lists
-                .newArrayList(situationTopo.getElements().values());
+        List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
         return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());
     }
 
+    /**
+     * 校验导调名称是否合法
+     */
     public void validateLength(String target, Integer minLen, Integer maxLen, String errorCode) {
         if (StringUtils.isBlank(target)) {
             log.error("length of name is null, minLen is {}, maxLen is {}", minLen, maxLen);
@@ -344,35 +404,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         validateLength(target, MIN_STR_LEN, MAX_NAME_STR_LEN, errorCode);
     }
 
-
-    public String viewScene(String roomId, Integer businessType) {
-        String sceneId = null;
-        SituationRoomBo situationRoomBo = situationGuideSchemeMapper.selectRoomType(roomId, businessType);
-        JSONObject sceneData = getMpSceneData(situationRoomBo);
-        if (sceneData != null) {
-            sceneId = sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY);
-        }
-        return sceneId;
-    }
-
-    private JSONObject getMpSceneData(SituationRoomBo room) {
-
-        if (Objects.isNull(room) || StringUtils.isBlank(room.getLocalSceneId())) {
-            return null;
-        }
-        LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
+    public String viewScene(String roomId) {
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
         if (null == localScene) {
             return null;
         }
-        String mpSceneId = localScene.getMpSceneId();
-        if (StringUtils.isBlank(mpSceneId)) {
-            return null;
-        }
-        try {
-            return localSceneService.getSceneData(mpSceneId, UserInfoContext.getUserContext().getUserId());
-        } catch (Exception e) {
-            log.error("situation guide getMpSceneData error");
-        }
-        return null;
+        return localScene.getMpSceneId();
     }
+
 }

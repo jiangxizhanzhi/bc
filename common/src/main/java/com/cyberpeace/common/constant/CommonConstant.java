@@ -9,6 +9,8 @@ public interface CommonConstant {
 
 	String PERIOD = ".";
 
+	String LEFT_PERIOD_OBLIQUE_LINE = "./";
+
 	/** 空字符串*/
 	String BLANK_STR = "\"\"";
 
@@ -92,6 +94,8 @@ public interface CommonConstant {
 	String ADMIN_ID = "3f655d87112f4ae094bbaf70830e20aa";
 
 	String SPACE = " ";
+
+	String RETURN = "\n";
 
 	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
 

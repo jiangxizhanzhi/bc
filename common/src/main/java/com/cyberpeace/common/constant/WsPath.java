@@ -56,6 +56,7 @@ public class WsPath {
 		cache.add(CLASSROOM_SCENE);
 		cache.add(CLASSROOM_GROUP_SCENE);
 		cache.add(SITUATION);
+		cache.add(INDUSTRY_SITUATION);
 		cache.add(CLASSROOM_CHAT);
 		cache.add(CLASSROOM_HELP);
 		cache.add(ROOM_SCENE_FIFTEEN_MIN_TIPS);

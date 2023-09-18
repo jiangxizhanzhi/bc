@@ -72,7 +72,7 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		EntranceBo res = new EntranceBo();
 		res.setShow(StringUtils.isNotBlank(room.getAreaPath()));
 		res.setUrl("/ts/industry/AviationOil/?businessId=" + roomId);
-		res.setWsUrl(String.format("/%s/?businessId=%s&token=", WsPath.INDUSTRY_SITUATION, roomId));
+		res.setWsUrl(String.format("%s?business_id=%s&token=", WsPath.INDUSTRY_SITUATION, roomId));
 		return res;
 	}
 
@@ -110,8 +110,7 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		// submitted missions
 		List<String> submittedMissionIds = taskList.stream().filter(task -> task.isSubmitted())
 				.map(CrTask::getMissionTemplateId).distinct().collect(Collectors.toList());
-		List<MissionSituation> situationList = missionSituationService.getBaseMapper()
-				.selectBatchIds(submittedMissionIds);
+		List<MissionSituation> situationList = missionSituationService.getBatchByIds(submittedMissionIds);
 		Set<String> lightedAreas = situationList.stream().map(MissionSituation::getArea)
 				.collect(Collectors.toSet());
 

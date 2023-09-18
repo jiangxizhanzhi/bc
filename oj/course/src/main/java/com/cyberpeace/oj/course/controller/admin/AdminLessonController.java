@@ -489,8 +489,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 				practiceListReq.getQuestionType());
 		List<String> categoryIds = result.getRecords().stream().map(PracticeBase::getCategoryId)
 				.collect(Collectors.toList());
-		List<PracticeCategory> categories = practiceCategoryService.getBaseMapper()
-				.selectBatchIds(categoryIds);
+		List<PracticeCategory> categories = practiceCategoryService.getBatchByIds(categoryIds);
 		Map<String, String> categoryMap = StreamApiUtils.toMap(categories,
 				PracticeCategory::getResourceId, PracticeCategory::getName);
 		result.convert(theory -> {

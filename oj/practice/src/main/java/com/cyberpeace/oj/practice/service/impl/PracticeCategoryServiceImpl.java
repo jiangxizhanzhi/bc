@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
@@ -220,6 +220,14 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 		practiceCategoryMapper.insert(practiceCategory);
 		return resourceId;
+	}
+
+	@Override
+	public List<PracticeCategory> getBatchByIds(List<String> categoryIds) {
+		if (CollectionUtils.isEmpty(categoryIds)) {
+			return Lists.newArrayList();
+		}
+		return this.baseMapper.selectBatchIds(categoryIds);
 	}
 
 	/**

@@ -81,4 +81,12 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 * @return
 	 */
 	String selectCategoryOrCreate(String categoryName, Integer code, String userId);
+
+	/**
+	 * 获取批量byid列表
+	 *
+	 * @param categoryIds categoryid列表
+	 * @return {@code List<PracticeCategory>}
+	 */
+	List<PracticeCategory> getBatchByIds(List<String> categoryIds);
 }

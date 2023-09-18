@@ -77,7 +77,7 @@
                 and `source` = #{sourceId}
             </if>
             <if test="targetId != null and targetId != ''">
-                and target = #{tartgetId}
+                and target = #{targetId}
             </if>
             <if test="result != null">
                 and `result` = #{result}

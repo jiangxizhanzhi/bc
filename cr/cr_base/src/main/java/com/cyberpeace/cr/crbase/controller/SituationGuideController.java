@@ -141,7 +141,7 @@ public class SituationGuideController {
     }
 
     @ApiOperation("态势导调时间部分图")
-    @GetMapping("/time_Distribution")
+    @GetMapping("/time_distribution")
     public BaseRsp<GuideTimeDistributionRsp> guideTimeDistribution(@ApiParam(name = "room_id", value = "房间id",
             required = true) @RequestParam(value = "room_id") String roomId) {
         return new BaseRsp<>(situationGuideService.guideTimeDistribution(roomId));

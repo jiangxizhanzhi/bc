@@ -362,27 +362,18 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     @Override
     public GuideTimeDistributionRsp guideTimeDistribution(String roomId) {
         GuideTimeDistributionRsp result = new GuideTimeDistributionRsp();
-
-        Date oneDayAgo = TimeUtil.addHours(new Date(), -24);
-        List<AttackTimeCountGroup> attackTimeCountGroupList = situationGuideHisMapper.countByTime(roomId, oneDayAgo);
+        // todo 中台提供最近24小时数据
         //获取流量采集事件和主机采集事件数量
+        List<Integer> eventList = new ArrayList<>();
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
-        if (localScene == null) {
-            return result;
-        } else {
+        if (localScene != null) {
             JSONArray attackTrendList = remoteSceneService.getEventTrentCount(localScene.getMpSceneId());
             List<SceneTrend> sceneTrendList = attackTrendList.toJavaList(SceneTrend.class);
-            List<String> timeList = new ArrayList<>();
-            List<Integer> countList = new ArrayList<>();
-            for (SceneTrend sceneTrend : sceneTrendList) {
-                timeList.add(sceneTrend.getTime());
-                countList.add(sceneTrend.getData_size());
-            }
-//            result.setTimeList(timeList);
-//            result.setCountList(countList);
+            eventList = sceneTrendList.stream().map(SceneTrend::getData_size).collect(Collectors.toList());
         }
-        // todo 中台提供最近24小时数据
-
+        // 导调24小时内数据
+        Date oneDayAgo = TimeUtil.addHours(new Date(), -24);
+        List<AttackTimeCountGroup> attackTimeCountGroupList = situationGuideHisMapper.countByTime(roomId, oneDayAgo);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:00:00");
         List<String> timeList = new ArrayList<>();
@@ -397,6 +388,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                     count = attack.getCount();
                 }
             }
+            count += CollectionUtils.isEmpty(eventList) ? 0 : eventList.get(i - 1);
             countList.add(count);
         }
         result.setTimeList(timeList);
@@ -408,8 +400,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     public GuideParamTypeRsp getParamType(String roomId) {
         GuideParamTypeRsp result = new GuideParamTypeRsp();
         result.setEventType(Arrays.stream(SituationGuideScheme.EventType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
-        result.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
-        result.setDefenseType(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+        result.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values()).map(item -> new ParamTypeRsp(item.getName(), item.getCode())).collect(Collectors.toList()));
+        result.setDefenseType(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values()).map(item -> new ParamTypeRsp(item.getName(), item.getCode())).collect(Collectors.toList()));
         result.setResultType(Arrays.stream(SituationGuideScheme.ResultType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
         result.setRoleType(Arrays.stream(SituationGuideScheme.RoleType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
         result.setConditionType(Arrays.stream(SituationGuideScheme.conditionType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));

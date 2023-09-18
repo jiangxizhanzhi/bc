@@ -184,8 +184,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 分组数据
 		List<String> userIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
-		// 授课人数
-		Integer lectureeCnt = Sets.newHashSet(userIds).size();
 		// 如果组织下不包含创建者则把创建者加入
 		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
 				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
@@ -201,9 +199,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				classroomGroupInfoService.saveBatch(groupInfoList);
 				if (changCourse) {
 					courseMapper.updateById(course);
-				}
-				if (lectureeCnt != 0) {
-					courseMapper.updateLecturee(course.getResourceId(), lectureeCnt);
 				}
 			}
 		});

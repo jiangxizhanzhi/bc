@@ -53,11 +53,4 @@ public interface CourseMapper extends BaseMapper<Course> {
 
 	void updateCourseHeat(@Param("heat") Integer heat,@Param("resourceId") String resourceId);
 
-	/**
-	 * 增加授课人数
-	 *
-	 * @param resourceId
-	 * @param cnt
-	 */
-	void updateLecturee(@Param("resourceId") String resourceId, @Param("cnt") Integer cnt);
 }

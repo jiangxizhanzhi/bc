@@ -66,7 +66,7 @@
         select distinct oj_course.name,oj_course.resource_id,oj_course.difficulty,oj_course_category.name as
         category_name,
         oj_course.create_user_id as create_user,ifnull(lesson.count,0) as lesson_count,ifnull(learned_lessons.count,0)
-        as heat, oj_course.lecturee,
+        as heat, group_info.count as lecturee,
         ifnull(report.count,0) as finish_report_count
         from oj_course
         left join oj_course_category on oj_course.category_id = oj_course_category.resource_id
@@ -78,6 +78,10 @@
         left join (select count(oj_course_lesson.course_id) as count, oj_course_lesson.course_id from oj_note
         left join oj_course_lesson on oj_course_lesson.resource_id = oj_note.business_id
         where note_type =2 and business_type = 2 group by oj_course_lesson.course_id) report on report.course_id =
+        oj_course.resource_id
+        left join (select count(distinct oj_classroom_group_info.group_user_ids) as count, oj_classroom.course_id as course_id from
+        oj_classroom left join oj_classroom_group_info on oj_classroom.resource_id =
+        oj_classroom_group_info.classroom_id group by oj_classroom.course_id) group_info on group_info.course_id =
         oj_course.resource_id
 
         <where>

@@ -6,16 +6,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cr.crbase.service.context.guide.MpEvent;
-import com.cyberpeace.cr.crbase.service.context.guide.ScreenBo;
 import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryReq;
 import com.cyberpeace.cr.crbase.controller.rsp.PlaybackOptionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.guide.AttackCodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.GuideHistoryRsp;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideScheme;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.service.GuideHistoryService;
+import com.cyberpeace.cr.crbase.service.context.guide.MpEvent;
+import com.cyberpeace.cr.crbase.service.context.guide.ScreenBo;
 import com.cyberpeace.integratation.model.scene.AttackScreenContext;
 import com.cyberpeace.integratation.model.scene.SceneEventContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -54,7 +55,7 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		playbackOptionRsp.setBlockingEventNames(situationGuideHisMapper.getEventNameList(roomId, SituationGuideScheme.EventType.BLOCKING.getCode()));
 		playbackOptionRsp.setBelongingEventNames(situationGuideHisMapper.getEventNameList(roomId, SituationGuideScheme.EventType.BELONGING.getCode()));
 		playbackOptionRsp.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
-											  .map(attackUrlEnum -> new CodeNameRsp(attackUrlEnum.getCode(), attackUrlEnum.getMsg()))
+											  .map(attackUrlEnum -> new AttackCodeNameRsp(attackUrlEnum.getCode(), attackUrlEnum.getMsg(), attackUrlEnum.getType()))
 											  .collect(Collectors.toList()));
 		playbackOptionRsp.setDefenseType(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values())
 											  .map(defenseUrlEnum -> new CodeNameRsp(defenseUrlEnum.getCode(), defenseUrlEnum.getMsg()))

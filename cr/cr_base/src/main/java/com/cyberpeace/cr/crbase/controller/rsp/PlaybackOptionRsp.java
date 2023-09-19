@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.controller.rsp;
 
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.guide.AttackCodeNameRsp;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -30,7 +31,7 @@ public class PlaybackOptionRsp implements Serializable {
 	private List<String> belongingEventNames;
 
 	@ApiModelProperty("攻击类型")
-	private List<CodeNameRsp> attackType;
+	private List<AttackCodeNameRsp> attackType;
 
 	@ApiModelProperty("防御类型")
 	private List<CodeNameRsp> defenseType;
@@ -43,5 +44,8 @@ public class PlaybackOptionRsp implements Serializable {
 
 	@ApiModelProperty("节点列表")
 	private List<MissionCategoryRsp> nodeList;
+
+	@ApiModelProperty("区域列表")
+	private List<MissionCategoryRsp> areaList;
 
 }

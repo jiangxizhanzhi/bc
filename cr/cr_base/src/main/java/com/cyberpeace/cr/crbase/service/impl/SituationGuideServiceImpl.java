@@ -291,9 +291,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
         WsMessage<WsMultiNodeGuide> wsMessage;
         if (elementIds.contains(his.getTarget())) {
-            wsMessage = new WsMessage<>(MessageType.AttackEventEE.getDesc(), wsMultiNodeGuide);
+            wsMessage = new WsMessage<>(MessageType.DirectorSchedulingEE.getDesc(), wsMultiNodeGuide);
         } else {
-            wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeGuide);
+            wsMessage = new WsMessage<>(MessageType.DirectorSchedulingEA.getDesc(), wsMultiNodeGuide);
         }
         situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeGuide.getSceneId());
         return true;
@@ -460,7 +460,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         result.setConditionType(Arrays.stream(SituationGuideScheme.ConditionType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
 
         SituationModelRsp situationModelRsp = listModel();
-        result.setAttackType(situationModelRsp.getAttackList());
+        result.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
+                                   .map(item -> new AttackSituationOffensiveDescRsp(item.getCode(), item.getMsg(), item.getDesc(), item.getSuccessUrl(), item.getFailUrl(), item.getType()))
+                                   .collect(Collectors.toList()));
         result.setDefenseType(situationModelRsp.getDefenseList());
         result.setBlockingUrl(situationModelRsp.getBlockingUrl());
         result.setBelongUrl(situationModelRsp.getBelongUrl());
@@ -470,6 +472,14 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
                 .collect(Collectors.toList());
         result.setNodeType(nodeList);
+        if (CollectionUtils.isEmpty(situationTopo.getAreas())) {
+            result.setAreaType(new ArrayList<>());
+            return result;
+        }
+        List<MissionCategoryRsp> areaList = situationTopo.getAreas().values().stream()
+                                                         .map(areaInfo -> new MissionCategoryRsp(areaInfo.getAreaId(), "area-" + areaInfo.getAreaId()))
+                                                         .collect(Collectors.toList());
+        result.setAreaType(areaList);
 
         return result;
     }

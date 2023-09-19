@@ -17,7 +17,7 @@ public class GuideParamTypeRsp {
     private List<ParamTypeRsp> eventType;
 
     @ApiModelProperty(value = "攻击类型")
-    private List<SituationOffensiveDescRsp> attackType;
+    private List<AttackSituationOffensiveDescRsp> attackType;
 
     @ApiModelProperty(value = "防御类型")
     private List<SituationOffensiveDescRsp> defenseType;
@@ -33,6 +33,9 @@ public class GuideParamTypeRsp {
 
     @ApiModelProperty(value = "节点")
     private List<MissionCategoryRsp> nodeType;
+
+    @ApiModelProperty(value = "区域")
+    private List<MissionCategoryRsp> areaType;
 
     @ApiModelProperty(value = "阻断类型")
     private String blockingUrl;

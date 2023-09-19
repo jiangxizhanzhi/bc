@@ -237,20 +237,20 @@ public class SituationGuideScheme extends BaseTable {
      * 攻击类型url枚举
      */
     public enum AttackUrlEnum implements BaseI18n {
-        RECONNAISSANCE(1, "侦察", "Reconnaissance", "对手正试图收集可用于规划未来行动的信息。", "", "", "reconnaissance"),
-        RESOURCE_DEVELOPMENT(2, "资源开发", "Resource Development", "攻击者正在尝试建立可用于支持操作的资源。", "", "", "resource development"),
-        INITIAL_VISIT(3, "初始访问", "Initial Access", "攻击者正试图进入您的网络。", "", "", "initial access"),
-        IMPLEMENT(4, "执行", "Execution", "攻击者正在尝试运行恶意代码。", "", "", "execution"),
-        PERSISTENCE(5, "持久化", "Persistence", "对手正试图保持他们的立足点。", "", "", "persistence"),
-        PRIVACY_IMPROVEMENT(6, "特权提升", "Privilege Escalation", "攻击者正在尝试获取更高级别的权限。", "", "", "privilege escalation"),
-        ESCAPE_DEFENSE(7, "逃避防御", "Defense Evasion", "对手试图避免被检测到。", "", "", "defense evasion"),
-        ACCORDING_INTERVIEW(8, "凭据访问", "Credential Access", "攻击者试图窃取帐户名和密码。", "", "", "credential access"),
-        ATTACK_DISCOVER(9, "发现", "Discovery", "对手正在尝试找出您的环境。", "", "", "discovery"),
-        MOVE_HORIZONTALLY(10, "横向移动", "Lateral Movement", "攻击者正在尝试在您的环境中移动。", "", "", "lateral movement"),
-        COLLECT_MESSAGE(11, "信息收集", "Collection", "对手正试图收集与其目标相关的数据。", "", "", "collection"),
-        COMMAND_CONTROL(12, "命令与控制", "Command and Control", "攻击者正试图与受感染的系统进行通信以控制它们。", "", "", "command and control"),
-        INFORMATION_THEFT(13, "信息盗取", "Exfiltration", "攻击者试图窃取数据。", "", "", "exfiltration"),
-        INFLUENCE(14, "影响", "Impact", "攻击者试图操纵、中断或破坏您的系统和数据。", "", "", "impact");
+        RECONNAISSANCE(1, "侦察", "Reconnaissance", "对手正试图收集可用于规划未来行动的信息。", "", "", "reconnaissance", "compound"),
+        RESOURCE_DEVELOPMENT(2, "资源开发", "Resource Development", "攻击者正在尝试建立可用于支持操作的资源。", "", "", "resource development", "element"),
+        INITIAL_VISIT(3, "初始访问", "Initial Access", "攻击者正试图进入您的网络。", "", "", "initial access", "element"),
+        IMPLEMENT(4, "执行", "Execution", "攻击者正在尝试运行恶意代码。", "", "", "execution", "element"),
+        PERSISTENCE(5, "持久化", "Persistence", "对手正试图保持他们的立足点。", "", "", "persistence", "element"),
+        PRIVACY_IMPROVEMENT(6, "特权提升", "Privilege Escalation", "攻击者正在尝试获取更高级别的权限。", "", "", "privilege escalation", "element"),
+        ESCAPE_DEFENSE(7, "逃避防御", "Defense Evasion", "对手试图避免被检测到。", "", "", "defense evasion", "element"),
+        ACCORDING_INTERVIEW(8, "凭据访问", "Credential Access", "攻击者试图窃取帐户名和密码。", "", "", "credential access", "element"),
+        ATTACK_DISCOVER(9, "发现", "Discovery", "对手正在尝试找出您的环境。", "", "", "discovery", "element"),
+        MOVE_HORIZONTALLY(10, "横向移动", "Lateral Movement", "攻击者正在尝试在您的环境中移动。", "", "", "lateral movement", "element"),
+        COLLECT_MESSAGE(11, "信息收集", "Collection", "对手正试图收集与其目标相关的数据。", "", "", "collection", "element"),
+        COMMAND_CONTROL(12, "命令与控制", "Command and Control", "攻击者正试图与受感染的系统进行通信以控制它们。", "", "", "command and control", "element"),
+        INFORMATION_THEFT(13, "信息盗取", "Exfiltration", "攻击者试图窃取数据。", "", "", "exfiltration", "element"),
+        INFLUENCE(14, "影响", "Impact", "攻击者试图操纵、中断或破坏您的系统和数据。", "", "", "impact", "element");
 
         @Getter
         private final Integer code;
@@ -273,8 +273,11 @@ public class SituationGuideScheme extends BaseTable {
         @Getter
         private final String mpCode;
 
+        @Getter
+        private final String type;
+
         AttackUrlEnum(Integer code, String chinese, String english, String desc, String successUrl, String failUrl,
-                      String mpCode) {
+                      String mpCode, String type) {
             this.code = code;
             this.chinese = chinese;
             this.english = english;
@@ -282,6 +285,7 @@ public class SituationGuideScheme extends BaseTable {
             this.successUrl = successUrl;
             this.failUrl = failUrl;
             this.mpCode = mpCode;
+            this.type = type;
         }
 
         public static AttackUrlEnum getEnumByCode(Integer code) {

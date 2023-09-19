@@ -84,7 +84,7 @@ public class SituationGuideController {
             Integer code = modelEnum.getCode();
             SituationOffensiveDescRsp model = new SituationOffensiveDescRsp();
             model.setCode(code);
-            model.setName(modelEnum.getName());
+            model.setName(modelEnum.getMsg());
             model.setDesc(modelEnum.getDesc());
             model.setSuccessUrl(modelEnum.getSuccessUrl());
             model.setFailUrl(modelEnum.getFailUrl());
@@ -95,7 +95,7 @@ public class SituationGuideController {
             Integer code = modelEnum.getCode();
             SituationOffensiveDescRsp model = new SituationOffensiveDescRsp();
             model.setCode(code);
-            model.setName(modelEnum.getName());
+            model.setName(modelEnum.getMsg());
             model.setDesc(modelEnum.getDesc());
             model.setSuccessUrl(modelEnum.getSuccessUrl());
             model.setFailUrl(modelEnum.getFailUrl());

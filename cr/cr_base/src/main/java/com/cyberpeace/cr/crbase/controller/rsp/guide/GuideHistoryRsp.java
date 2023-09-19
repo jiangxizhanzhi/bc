@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -42,6 +43,9 @@ public class GuideHistoryRsp implements Serializable {
 
 	@ApiModelProperty("源节点端口")
 	private String targetPort;
+
+	@ApiModelProperty("时间")
+	private Date createTime;
 
 	public GuideHistoryRsp(String eventName, String triggerType, String actionType, List<String> category) {
 		this.eventName = eventName;

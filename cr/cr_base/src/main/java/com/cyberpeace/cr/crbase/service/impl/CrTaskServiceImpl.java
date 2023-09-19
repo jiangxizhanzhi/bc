@@ -457,7 +457,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				}
 
 				//插入态势导调历史记录
-				if (Objects.nonNull(guideHis) && SituationGuideScheme.conditionType.MISSION_SUBMIT.getCode().equals(guideHis.getTriggerCondition())) {
+				if (Objects.nonNull(guideHis) && SituationGuideScheme.ConditionType.MISSION_SUBMIT.getCode().equals(guideHis.getTriggerCondition())) {
 					situationGuideHisMapper.insert(guideHis);
 				}
 			}
@@ -531,7 +531,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				crTaskLogMapper.insert(evaluationLog);
 
 				//插入态势导调历史记录
-				if (Objects.nonNull(guideHis) && SituationGuideScheme.conditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition())
+				if (Objects.nonNull(guideHis) && SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition())
 						&& CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(evaluateStatus)) {
 					situationGuideHisMapper.insert(guideHis);
 				}

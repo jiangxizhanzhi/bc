@@ -18,8 +18,8 @@ public class SituationModelRsp {
     private List<SituationOffensiveDescRsp> defenseList;
 
     @ApiModelProperty(value = "阻断类型")
-    private String blocking;
+    private String blockingUrl;
 
     @ApiModelProperty(value = "归属类型")
-    private SituationBelongDescRsp belong;
+    private SituationBelongDescRsp belongUrl;
 }

@@ -33,4 +33,16 @@
         </if>
         WHERE resource_id = #{roomId}
     </select>
+
+    <select id="selectSceneByRoomId" resultType="com.cyberpeace.cr.crbase.service.context.guide.SituationGuideSceneBo">
+        SELECT a.resource_id roomId,a.copyed_topo_id topoId,b.mp_scene_id sceneId FROM
+        <if test="businessType == 3 ">
+            cr_team_room a
+        </if>
+        <if test="businessType == 4 ">
+            cr_rb_room a
+        </if>
+       LEFT JOIN local_scene b ON a.local_scene_id=b.resource_id
+       WHERE a.resource_id = #{roomId} limit 1
+    </select>
 </mapper>

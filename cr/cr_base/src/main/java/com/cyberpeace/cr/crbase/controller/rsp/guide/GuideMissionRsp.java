@@ -17,10 +17,10 @@ public class GuideMissionRsp implements Serializable {
     @ApiModelProperty("任务id")
     private String missionId;
 
-    @ApiModelProperty("态势导调id")
+    @ApiModelProperty("态势导调id;无值新增,有值为编辑")
     private String guideId;
 
-    @ApiModelProperty("是否可编辑 0: 不可编辑 1:可编辑")
+    @ApiModelProperty("是否可编辑")
     private Boolean isEditable;
 
 }

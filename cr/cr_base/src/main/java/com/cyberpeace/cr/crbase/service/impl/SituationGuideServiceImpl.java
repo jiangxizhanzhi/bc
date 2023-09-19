@@ -372,6 +372,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
                         SituationGuideScheme guideScheme = missionGuideMap.get(mission.getResourceId());
                         guideMissionRsp.setGuideId(Objects.isNull(guideScheme) ? null : guideScheme.getResourceId());
+                        guideMissionRsp.setEventType( Objects.isNull(guideScheme) ? null : guideScheme.getEventType());
                         missionList.add(guideMissionRsp);
                     }
                 }
@@ -385,23 +386,28 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public List<GuideStatisticsRsp> guideStatistics(String roomId) {
-        ArrayList<GuideStatisticsRsp> result = new ArrayList<>();
+    public GuideStatisticsRsp guideStatistics(String roomId) {
+        GuideStatisticsRsp result = new GuideStatisticsRsp();
+        ArrayList<GuideStatisticsDetailRsp> detailList = new ArrayList<>();
         //获取任务导调和态势导调数量
-        result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.MISSION.getDesc(),
+        detailList.add(new GuideStatisticsDetailRsp(SituationGuideScheme.Type.MISSION.getDesc(),
                 situationGuideHisMapper.countByType(roomId, SituationGuideScheme.Type.MISSION.getCode())));
-        result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.MANUALLY.getDesc(),
+        detailList.add(new GuideStatisticsDetailRsp(SituationGuideScheme.Type.MANUALLY.getDesc(),
                 situationGuideHisMapper.countByType(roomId, SituationGuideScheme.Type.MANUALLY.getCode())));
         //获取流量采集事件和主机采集事件数量
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
         if (localScene == null) {
-            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.FLOW.getDesc(), 0));
-            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.HOST.getDesc(), 0));
+            detailList.add(new GuideStatisticsDetailRsp(SituationGuideScheme.Type.FLOW.getDesc(), 0));
+            detailList.add(new GuideStatisticsDetailRsp(SituationGuideScheme.Type.HOST.getDesc(), 0));
         } else {
             JSONObject jsonObject = remoteSceneService.getEventTotalCount(localScene.getMpSceneId());
-            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.FLOW.getDesc(), jsonObject.getInteger("flow")));
-            result.add(new GuideStatisticsRsp(SituationGuideScheme.Type.HOST.getDesc(), jsonObject.getInteger("host")));
+            detailList.add(new GuideStatisticsDetailRsp(SituationGuideScheme.Type.FLOW.getDesc(), jsonObject.getInteger("flow")));
+            detailList.add(new GuideStatisticsDetailRsp(SituationGuideScheme.Type.HOST.getDesc(), jsonObject.getInteger("host")));
         }
+        Integer totalCount = detailList.stream().map(GuideStatisticsDetailRsp::getCount).reduce(0, Integer::sum);
+
+        result.setList(detailList);
+        result.setTotalCount(totalCount);
         return result;
     }
 

@@ -35,6 +35,7 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.model.ElementInfo;
+import com.cyberpeace.situation.model.LineStyle;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.model.ws.WsMessage;
@@ -288,6 +289,11 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         wsMultiNodeGuide.setTargetId(his.getTarget());
         wsMultiNodeGuide.setResult(his.getResult());
         wsMultiNodeGuide.setRole(his.getRole());
+        LineStyle lineStyle = new LineStyle();
+        lineStyle.setLineType("straight");
+        lineStyle.setColor("#FF0000");
+        lineStyle.setWidth(3);
+        wsMultiNodeGuide.setLineStyle(lineStyle);
 
         WsMessage<WsMultiNodeGuide> wsMessage;
         if (elementIds.contains(his.getTarget())) {

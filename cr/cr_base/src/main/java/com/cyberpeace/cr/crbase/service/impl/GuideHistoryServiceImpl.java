@@ -54,10 +54,10 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		playbackOptionRsp.setBlockingEventNames(situationGuideHisMapper.getEventNameList(roomId, SituationGuideScheme.EventType.BLOCKING.getCode()));
 		playbackOptionRsp.setBelongingEventNames(situationGuideHisMapper.getEventNameList(roomId, SituationGuideScheme.EventType.BELONGING.getCode()));
 		playbackOptionRsp.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
-											  .map(attackUrlEnum -> new CodeNameRsp(attackUrlEnum.getCode(), attackUrlEnum.getName()))
+											  .map(attackUrlEnum -> new CodeNameRsp(attackUrlEnum.getCode(), attackUrlEnum.getMsg()))
 											  .collect(Collectors.toList()));
 		playbackOptionRsp.setDefenseType(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values())
-											  .map(defenseUrlEnum -> new CodeNameRsp(defenseUrlEnum.getCode(), defenseUrlEnum.getName()))
+											  .map(defenseUrlEnum -> new CodeNameRsp(defenseUrlEnum.getCode(), defenseUrlEnum.getMsg()))
 											  .collect(Collectors.toList()));
 		playbackOptionRsp.setResult(Arrays.stream(SituationGuideScheme.ResultType.values())
 											  .map(resultType -> new CodeNameRsp(resultType.getCode(), resultType.getDesc()))
@@ -122,9 +122,9 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			//获取记录攻防类型
 			String category = null;
 			if (SituationGuideScheme.EventType.ATTACK.getCode().equals(situationGuideHistory.getEventType())) {
-				category = SituationGuideScheme.AttackUrlEnum.getEnumByCode(situationGuideHistory.getCategory()).getName();
+				category = SituationGuideScheme.AttackUrlEnum.getEnumByCode(situationGuideHistory.getCategory()).getMsg();
 			} else if (SituationGuideScheme.EventType.DEFENSE.getCode().equals(situationGuideHistory.getEventType())) {
-				category = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(situationGuideHistory.getCategory()).getName();
+				category = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(situationGuideHistory.getCategory()).getMsg();
 			}
 			//获取事件名称、触发类型、动作类型
 			GuideHistoryRsp guideHistoryRsp = null;
@@ -171,13 +171,13 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		if (attackScreenBo == null) {
 			sceneEventContext.setAttack(null);
 		} else {
-			sceneEventContext.setAttack(screenToAttackScreenContext(attackScreenBo));
+			sceneEventContext.setAttack(screenToAttackScreenContext(attackScreenBo, true));
 		}
 		//是否筛选防御
 		if (defenseScreenBo == null) {
 			sceneEventContext.setDefense(null);
 		} else {
-			sceneEventContext.setDefense(screenToAttackScreenContext(defenseScreenBo));
+			sceneEventContext.setDefense(screenToAttackScreenContext(defenseScreenBo, false));
 		}
 		//中台无阻断和归属事件，不做处理
 
@@ -187,8 +187,8 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		for (MpEvent mpEvent : mpEventList) {
 			GuideHistoryRsp guideHistoryRsp = new GuideHistoryRsp();
 			guideHistoryRsp.setEventName(mpEvent.getEventName());
-			guideHistoryRsp.setTriggerType(MpEvent.TriggerType.getMsgByCode(mpEvent.getTriggerType()));
-			guideHistoryRsp.setActionType(MpEvent.AttackType.getMsgByCode(mpEvent.getActionType()));
+			guideHistoryRsp.setTriggerType(SituationGuideScheme.Type.getTypeByMpCode(mpEvent.getTriggerType()).getMsg());
+			guideHistoryRsp.setActionType(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getMsg());
 			guideHistoryRsp.setCategory(mpEvent.getAttCkNames());
 			guideHistoryRsp.setSourceName(mpEvent.getSourceNodeName());
 			guideHistoryRsp.setSourceIp(mpEvent.getSourceNodeIp());
@@ -203,12 +203,14 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 
 	@Override
 	public List<String> getEventTimeList(String roomId, Integer businessType) {
+		List<String> eventTimes = situationGuideHisMapper.getEventTimes(roomId);
 		//获取该训练过程中的所有场景id
 		String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(roomId, businessType);
 		List<String> sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
-		JSONArray eventTimeArray = remoteSceneService.getEventTimeList(StringUtils.join(sceneIds, ","));
-		List<String> eventTimes = eventTimeArray.toJavaList(JSONObject.class).stream().map(eventTime -> eventTime.getString("time")).collect(Collectors.toList());
-		eventTimes.addAll(situationGuideHisMapper.getEventTimes(roomId));
+		if (CollectionUtils.isNotEmpty(sceneIds)) {
+			JSONArray eventTimeArray = remoteSceneService.getEventTimeList(StringUtils.join(sceneIds, ","));
+			eventTimes.addAll(eventTimeArray.toJavaList(JSONObject.class).stream().map(eventTime -> eventTime.getString("time")).collect(Collectors.toList()));
+		}
 		return eventTimes;
 	}
 
@@ -224,12 +226,17 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 	}
 
 	//转化攻击、防御的筛选条件
-	private AttackScreenContext screenToAttackScreenContext(ScreenBo screenBo) {
+	private AttackScreenContext screenToAttackScreenContext(ScreenBo screenBo, Boolean attack) {
 		AttackScreenContext screenContext = new AttackScreenContext();
 		screenContext.setStartTime(screenBo.getStartTime());
 		screenContext.setEndTime(screenBo.getEndTime());
-		// todo 与中台类型对接
-		screenContext.setDefenseTypes(null);
+		String defenseType = null;
+		if (attack) {
+			defenseType = SituationGuideScheme.AttackUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
+		} else {
+			defenseType = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
+		}
+		screenContext.setDefenseTypes(Collections.singletonList(defenseType));
 		if (screenBo.getEventName() != null) {
 			screenContext.setEventName(Collections.singletonList(screenBo.getEventName()));
 		} else {

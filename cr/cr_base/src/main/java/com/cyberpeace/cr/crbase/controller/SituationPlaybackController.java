@@ -33,7 +33,7 @@ public class SituationPlaybackController {
 	@GetMapping("/event/time")
 	public BaseRsp<List<String>> getEventTime(
 			@RequestParam(name = "room_id") @ApiParam(name = "room_id" ,value = "房间id") String roomId,
-			@RequestParam(name = "business_type") @ApiParam(name = "business_type" ,value = "房间id") Integer businessType
+			@RequestParam(name = "business_type") @ApiParam(name = "business_type" ,value = "训练类型") Integer businessType
 	) {
 		return new BaseRsp<>(guideHistoryService.getEventTimeList(roomId, businessType));
 	}

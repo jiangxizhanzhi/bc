@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
@@ -48,7 +47,6 @@ import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,7 +251,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //获取任务导调和手动导调记录
         List<AttackTypeCountGroup> attackTypeCountGroupList = situationGuideHisMapper.countByCategory(roomId, SituationGuideScheme.EventType.ATTACK.getCode());
         List<AttackTopFiveRsp> result = attackTypeCountGroupList.stream()
-                .map(attackTypeCountGroup -> new AttackTopFiveRsp(SituationGuideScheme.AttackUrlEnum.getEnumByCode(attackTypeCountGroup.getCategory()).getName(), attackTypeCountGroup.getCount()))
+                .map(attackTypeCountGroup -> new AttackTopFiveRsp(SituationGuideScheme.AttackUrlEnum.getEnumByCode(attackTypeCountGroup.getCategory()).getMsg(), attackTypeCountGroup.getCount()))
                 .collect(Collectors.toList());
         //获取主机采集事件和流量采集事件
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
@@ -400,8 +398,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     public GuideParamTypeRsp getParamType(String roomId) {
         GuideParamTypeRsp result = new GuideParamTypeRsp();
         result.setEventType(Arrays.stream(SituationGuideScheme.EventType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
-        result.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values()).map(item -> new ParamTypeRsp(item.getName(), item.getCode())).collect(Collectors.toList()));
-        result.setDefenseType(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values()).map(item -> new ParamTypeRsp(item.getName(), item.getCode())).collect(Collectors.toList()));
+        result.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values()).map(item -> new ParamTypeRsp(item.getMsg(), item.getCode())).collect(Collectors.toList()));
+        result.setDefenseType(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values()).map(item -> new ParamTypeRsp(item.getMsg(), item.getCode())).collect(Collectors.toList()));
         result.setResultType(Arrays.stream(SituationGuideScheme.ResultType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
         result.setRoleType(Arrays.stream(SituationGuideScheme.RoleType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
         result.setConditionType(Arrays.stream(SituationGuideScheme.conditionType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));

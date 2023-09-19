@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
 
@@ -49,29 +50,57 @@ public class SituationGuideScheme extends BaseTable {
 
     private Integer triggerCondition;
 
-    public enum Type implements GenericEnum {
+    public enum Type implements GenericEnum, BaseI18n {
 
-        MISSION(1, "任务导调"), MANUALLY(2, "手动导调"), FLOW(3, "流量采集事件"), HOST(4, "主机采集事件");
+        MISSION(1, "任务导调", "Task facilitation", ""),
+        MANUALLY(2, "手动导调", "Manual tuning", ""),
+        FLOW(3, "流量采集事件", "Traffic collection", "flow"),
+        HOST(4, "主机采集事件", "Host acquisition", "host");
 
         @Getter
         private Integer code;
         @Getter
-        private String desc;
+        private String chinese;
+        @Getter
+        private String english;
+        @Getter
+        private String mpCode;
 
-        Type(int code, String desc) {
+        Type(Integer code, String chinese, String english, String mpCode) {
             this.code = code;
-            this.desc = desc;
+            this.chinese = chinese;
+            this.english = english;
+            this.mpCode = mpCode;
+        }
+
+        public static Type getTypeByMpCode(String mpCode) {
+            return Arrays.stream(Type.values())
+                         .filter(item -> item.getMpCode().equals(mpCode))
+                         .findFirst()
+                         .orElseThrow(() -> new IllegalArgumentException("The code of EventType isn't available"));
+        }
+
+        @Override
+        public String getDesc() {
+            return this.getMsg();
         }
     }
 
-    public enum EventType implements GenericEnum {
+    public enum EventType implements GenericEnum, BaseI18n {
 
-        ATTACK(1, "攻击"), DEFENSE(2, "防御"), BLOCKING(3, "阻断"), BELONGING(4, "归属");
+        ATTACK(1, "攻击", "attack", "attack"),
+        DEFENSE(2, "防御", "defense", "defense"),
+        BLOCKING(3, "阻断", "interdiction", ""),
+        BELONGING(4, "归属", "ascription", "");
 
         @Getter
         private Integer code;
         @Getter
-        private String desc;
+        private String chinese;
+        @Getter
+        private String english;
+        @Getter
+        private String mpCode;
 
         public static EventType getEventTypeByCode(Integer code) {
             return Arrays.stream(EventType.values())
@@ -80,84 +109,128 @@ public class SituationGuideScheme extends BaseTable {
                     .orElseThrow(() -> new IllegalArgumentException("The code of EventType isn't available"));
         }
 
-        EventType(int code, String desc) {
+        public static EventType getEventTypeByMpCode(String mpCode) {
+            return Arrays.stream(EventType.values())
+                         .filter(item -> item.getMpCode().equals(mpCode))
+                         .findFirst()
+                         .orElseThrow(() -> new IllegalArgumentException("The code of EventType isn't available"));
+        }
+
+        EventType(Integer code, String chinese, String english, String mpCode) {
             this.code = code;
-            this.desc = desc;
+            this.chinese = chinese;
+            this.english = english;
+            this.mpCode = mpCode;
+        }
+
+        @Override
+        public String getDesc() {
+            return this.getMsg();
         }
     }
 
-    public enum ResultType implements GenericEnum {
+    public enum ResultType implements GenericEnum, BaseI18n {
 
-        SUCCESS(1, "成功"), FAIL(2, "失败"), UNKNOWN(3, "未知");
+        SUCCESS(1, "成功", "success"),
+        FAIL(2, "失败", "fail"),
+        UNKNOWN(3, "未知", "unknown");
 
         @Getter
         private Integer code;
         @Getter
-        private String desc;
+        private String chinese;
+        @Getter
+        private String english;
 
-        ResultType(int code, String desc) {
+        ResultType(Integer code, String chinese, String english) {
             this.code = code;
-            this.desc = desc;
+            this.chinese = chinese;
+            this.english = english;
+        }
+
+        @Override
+        public String getDesc() {
+            return this.getMsg();
         }
     }
 
-    public enum RoleType implements GenericEnum {
+    public enum RoleType implements GenericEnum, BaseI18n {
 
-        RED(4, "归属红方"), BLUE(5, "归属蓝方");
+        RED(4, "归属红方", "red"), BLUE(5, "归属蓝方", "blue");
 
         @Getter
         private Integer code;
         @Getter
-        private String desc;
+        private String chinese;
+        @Getter
+        private String english;
 
-        RoleType(int code, String desc) {
+        RoleType(Integer code, String chinese, String english) {
             this.code = code;
-            this.desc = desc;
+            this.chinese = chinese;
+            this.english = english;
+        }
+
+        @Override
+        public String getDesc() {
+            return this.getMsg();
         }
     }
 
     /**
      * 触发条件枚举
      */
-    public enum conditionType implements GenericEnum {
+    public enum conditionType implements GenericEnum, BaseI18n {
 
-        MISSION_SUBMIT(1, "任务提交"), MISSION_SUCCESS(2, "任务判断成功");
+        MISSION_SUBMIT(1, "任务提交", "submit"),
+        MISSION_SUCCESS(2, "任务判断成功", "judge success");
 
         @Getter
         private Integer code;
         @Getter
-        private String desc;
+        private String chinese;
+        @Getter
+        private String english;
 
-        conditionType(int code, String desc) {
+        conditionType(Integer code, String chinese, String english) {
             this.code = code;
-            this.desc = desc;
+            this.chinese = chinese;
+            this.english = english;
+        }
+
+        @Override
+        public String getDesc() {
+            return this.getMsg();
         }
     }
 
     /**
      * 攻击类型url枚举
      */
-    public enum AttackUrlEnum {
-        RECONNAISSANCE(1, "侦察", "对手正试图收集可用于规划未来行动的信息。", "", ""),
-        RESOURCE_DEVELOPMENT(2, "资源开发", "攻击者正在尝试建立可用于支持操作的资源。", "", ""),
-        INITIAL_VISIT(3, "初始访问", "攻击者正试图进入您的网络。", "", ""),
-        IMPLEMENT(4, "执行", "攻击者正在尝试运行恶意代码。", "", ""),
-        PERSISTENCE(5, "持久化", "对手正试图保持他们的立足点。", "", ""),
-        PRIVACY_IMPROVEMENT(6, "特权提升", "攻击者正在尝试获取更高级别的权限。", "", ""),
-        ESCAPE_DEFENSE(7, "逃避防御", "对手试图避免被检测到。", "", ""),
-        ACCORDING_INTERVIEW(8, "凭据访问", "攻击者试图窃取帐户名和密码。", "", ""),
-        ATTACK_DISCOVER(9, "发现", "对手正在尝试找出您的环境。", "", ""),
-        MOVE_HORIZONTALLY(10, "横向移动", "攻击者正在尝试在您的环境中移动。", "", ""),
-        COLLECT_MESSAGE(11, "信息收集", "对手正试图收集与其目标相关的数据。", "", ""),
-        COMMAND_CONTROL(12, "命令与控制", "攻击者正试图与受感染的系统进行通信以控制它们。", "", ""),
-        INFORMATION_THEFT(13, "信息盗取", "攻击者试图窃取数据。", "", ""),
-        INFLUENCE(14, "影响", "攻击者试图操纵、中断或破坏您的系统和数据。", "", "");
+    public enum AttackUrlEnum implements BaseI18n {
+        RECONNAISSANCE(1, "侦察", "Reconnaissance", "对手正试图收集可用于规划未来行动的信息。", "", "", "reconnaissance"),
+        RESOURCE_DEVELOPMENT(2, "资源开发", "Resource Development", "攻击者正在尝试建立可用于支持操作的资源。", "", "", "resource development"),
+        INITIAL_VISIT(3, "初始访问", "Initial Access", "攻击者正试图进入您的网络。", "", "", "initial access"),
+        IMPLEMENT(4, "执行", "Execution", "攻击者正在尝试运行恶意代码。", "", "", "execution"),
+        PERSISTENCE(5, "持久化", "Persistence", "对手正试图保持他们的立足点。", "", "", "persistence"),
+        PRIVACY_IMPROVEMENT(6, "特权提升", "Privilege Escalation", "攻击者正在尝试获取更高级别的权限。", "", "", "privilege escalation"),
+        ESCAPE_DEFENSE(7, "逃避防御", "Defense Evasion", "对手试图避免被检测到。", "", "", "defense evasion"),
+        ACCORDING_INTERVIEW(8, "凭据访问", "Credential Access", "攻击者试图窃取帐户名和密码。", "", "", "credential access"),
+        ATTACK_DISCOVER(9, "发现", "Discovery", "对手正在尝试找出您的环境。", "", "", "discovery"),
+        MOVE_HORIZONTALLY(10, "横向移动", "Lateral Movement", "攻击者正在尝试在您的环境中移动。", "", "", "lateral movement"),
+        COLLECT_MESSAGE(11, "信息收集", "Collection", "对手正试图收集与其目标相关的数据。", "", "", "collection"),
+        COMMAND_CONTROL(12, "命令与控制", "Command and Control", "攻击者正试图与受感染的系统进行通信以控制它们。", "", "", "command and control"),
+        INFORMATION_THEFT(13, "信息盗取", "Exfiltration", "攻击者试图窃取数据。", "", "", "exfiltration"),
+        INFLUENCE(14, "影响", "Impact", "攻击者试图操纵、中断或破坏您的系统和数据。", "", "", "impact");
 
         @Getter
         private final Integer code;
 
         @Getter
-        private final String name;
+        private final String chinese;
+
+        @Getter
+        private final String english;
 
         @Getter
         private final String desc;
@@ -168,12 +241,18 @@ public class SituationGuideScheme extends BaseTable {
         @Getter
         private final String failUrl;
 
-        AttackUrlEnum(Integer code, String name, String desc, String successUrl, String failUrl) {
+        @Getter
+        private final String mpCode;
+
+        AttackUrlEnum(Integer code, String chinese, String english, String desc, String successUrl, String failUrl,
+                      String mpCode) {
             this.code = code;
-            this.name = name;
+            this.chinese = chinese;
+            this.english = english;
             this.desc = desc;
             this.successUrl = successUrl;
             this.failUrl = failUrl;
+            this.mpCode = mpCode;
         }
 
         public static AttackUrlEnum getEnumByCode(Integer code) {
@@ -187,35 +266,41 @@ public class SituationGuideScheme extends BaseTable {
     /**
      * 防御类型url枚举
      */
-    public enum DefenseUrlEnum {
-        PLANNING(15, "规划", "确定操作并将其与所需的最终状态对齐。", "", ""),
-        COLLECT(16, "收集", "收集对手工具，观察战术，并收集有关对手活动的其他原始情报。", "", ""),
-        DEFENSE_DISCOVER(17, "发现", "建立或保持对对手活动的意识。", "", ""),
-        DEFENSE(18, "防御", "停止对手按预期执行其操作的全部或部分能力。", "", ""),
-        MOVEMENT(19, "转移", "鼓励或阻止对手按预期进行操作。", "", ""),
-        DESTROY(20, "破坏", "损害对手按预期执行操作的能力。", "", ""),
-        ENSURE(21, "保证", "为欺骗性组件添加真实性，以使对手相信环境是真实的。", "", ""),
-        EXCITATION(22, "激励", "鼓励对手执行部分或全部任务。", "", ""),
-        ANALYZE(23, "分析", "回顾性审查从操作中获得的信息。", "", "");
-
+    public enum DefenseUrlEnum implements BaseI18n {
+        PLANNING(15, "规划", "Plan", "确定操作并将其与所需的最终状态对齐。", "", "", "Plan"),
+        COLLECT(16, "收集", "Collect", "收集对手工具，观察战术，并收集有关对手活动的其他原始情报。", "", "", "collect"),
+        DEFENSE_DISCOVER(17, "发现", "Detect", "建立或保持对对手活动的意识。", "", "", "detect"),
+        DEFENSE(18, "防御", "Prevent", "停止对手按预期执行其操作的全部或部分能力。", "", "", "prevent"),
+        MOVEMENT(19, "转移", "Direct", "鼓励或阻止对手按预期进行操作。", "", "", "direct"),
+        DESTROY(20, "破坏", "Disrupt", "损害对手按预期执行操作的能力。", "", "", "disrupt"),
+        ENSURE(21, "保证", "Reassure", "为欺骗性组件添加真实性，以使对手相信环境是真实的。", "", "", "reassure"),
+        EXCITATION(22, "激励", "Motivate", "鼓励对手执行部分或全部任务。", "", "", "motivate"),
+        ANALYZE(23, "分析", "Analyze", "回顾性审查从操作中获得的信息。", "", "", "analyze");
 
         @Getter
         private final Integer code;
         @Getter
-        private final String name;
+        private final String chinese;
+        @Getter
+        private final String english;
         @Getter
         private final String desc;
         @Getter
         private final String successUrl;
         @Getter
         private final String failUrl;
+        @Getter
+        private final String mpCode;
 
-        DefenseUrlEnum(Integer code, String name, String desc, String successUrl, String failUrl) {
+        DefenseUrlEnum(Integer code, String chinese, String english, String desc, String successUrl, String failUrl,
+                       String mpCode) {
             this.code = code;
-            this.name = name;
+            this.chinese = chinese;
+            this.english = english;
             this.desc = desc;
             this.successUrl = successUrl;
             this.failUrl = failUrl;
+            this.mpCode = mpCode;
         }
 
         public static DefenseUrlEnum getEnumByCode(Integer code) {

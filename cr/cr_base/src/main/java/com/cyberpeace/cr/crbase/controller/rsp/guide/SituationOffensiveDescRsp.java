@@ -24,4 +24,13 @@ public class SituationOffensiveDescRsp {
 
     @ApiModelProperty(value = "失败链接")
     private String failUrl;
+
+    public SituationOffensiveDescRsp(Integer code, String name, String desc, String successUrl, String failUrl) {
+        this.code = code;
+        this.name = name;
+        this.desc = desc;
+        this.successUrl = successUrl;
+        this.failUrl = failUrl;
+    }
+
 }

@@ -39,4 +39,6 @@ public interface SituationGuideHisMapper extends BaseMapper<SituationGuideHistor
 
     List<String> getEventTimes(@Param("roomId") String roomId);
 
+    List<SituationGuideHistory> guideRecordListByTime(@Param("roomId") String roomId, @Param("startDate") Date startDate);
+
 }

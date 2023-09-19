@@ -73,11 +73,18 @@ public class SituationGuideScheme extends BaseTable {
             this.mpCode = mpCode;
         }
 
+        public static Type getTypeByCode(Integer code) {
+            return Arrays.stream(Type.values())
+                    .filter(item -> item.getCode().equals(code))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("The code of Type isn't available"));
+        }
+
         public static Type getTypeByMpCode(String mpCode) {
             return Arrays.stream(Type.values())
                          .filter(item -> item.getMpCode().equals(mpCode))
                          .findFirst()
-                         .orElseThrow(() -> new IllegalArgumentException("The code of EventType isn't available"));
+                         .orElseThrow(() -> new IllegalArgumentException("The code of Type isn't available"));
         }
 
         @Override
@@ -148,6 +155,14 @@ public class SituationGuideScheme extends BaseTable {
             this.english = english;
         }
 
+        public static ResultType getResultTypeByCode(Integer code) {
+            return Arrays.stream(ResultType.values())
+                    .filter(item -> item.getCode().equals(code))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+
         @Override
         public String getDesc() {
             return this.getMsg();
@@ -171,6 +186,13 @@ public class SituationGuideScheme extends BaseTable {
             this.english = english;
         }
 
+        public static RoleType getRoleTypeByCode(Integer code) {
+            return Arrays.stream(RoleType.values())
+                    .filter(item -> item.getCode().equals(code))
+                    .findFirst()
+                    .orElse(null);
+        }
+
         @Override
         public String getDesc() {
             return this.getMsg();
@@ -180,7 +202,7 @@ public class SituationGuideScheme extends BaseTable {
     /**
      * 触发条件枚举
      */
-    public enum conditionType implements GenericEnum, BaseI18n {
+    public enum ConditionType implements GenericEnum, BaseI18n {
 
         MISSION_SUBMIT(1, "任务提交", "submit"),
         MISSION_SUCCESS(2, "任务判断成功", "judge success");
@@ -192,7 +214,7 @@ public class SituationGuideScheme extends BaseTable {
         @Getter
         private String english;
 
-        conditionType(Integer code, String chinese, String english) {
+        ConditionType(Integer code, String chinese, String english) {
             this.code = code;
             this.chinese = chinese;
             this.english = english;
@@ -201,6 +223,13 @@ public class SituationGuideScheme extends BaseTable {
         @Override
         public String getDesc() {
             return this.getMsg();
+        }
+
+        public static ConditionType getEnumByCode(Integer code) {
+            return Arrays.stream(ConditionType.values())
+                    .filter(item -> item.getCode().equals(code))
+                    .findFirst()
+                    .orElse(null);
         }
     }
 

@@ -33,10 +33,10 @@ public class AddGuideSchemeReq implements Serializable {
     @ApiModelProperty("攻防类型")
     private Integer category;
 
-    @ApiModelProperty("攻击源")
+    @ApiModelProperty("靶标源")
     private String source;
 
-    @ApiModelProperty("攻击目标")
+    @ApiModelProperty("靶标目标")
     private String target;
 
     @ApiModelProperty("攻击结果 1:成功 2失败")

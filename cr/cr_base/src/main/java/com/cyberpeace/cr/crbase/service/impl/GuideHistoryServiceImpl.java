@@ -151,8 +151,16 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			}
 			guideHistoryRspList.add(guideHistoryRsp);
 		}
+		//获取中台数据,处理数据
+		List<GuideHistoryRsp> mpEventList = getMpEventList(screenGuideHistoryReq, attackScreenBo, defenseScreenBo);
+		guideHistoryRspList.addAll(mpEventList);
 
-		//获取中台数据
+		return guideHistoryRspList;
+	}
+
+	public List<GuideHistoryRsp> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq, ScreenBo attackScreenBo, ScreenBo defenseScreenBo) {
+		List<GuideHistoryRsp> result = new ArrayList<>();
+
 		SceneEventContext sceneEventContext = new SceneEventContext();
 		//默认返回前1000条数据
 		sceneEventContext.setPage(1);
@@ -160,13 +168,14 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		//获取该训练过程中的所有场景id
 		String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
 		List<String> sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
+		if (CollectionUtils.isEmpty(sceneIds)){
+			return result;
+		}
 		sceneEventContext.setSceneId(StringUtils.join(sceneIds, ","));
 		//是否查询流量事件
-		sceneEventContext.setFlow(screenGuideHistoryReq.getEventSubTypeList()
-													   .contains(SituationGuideScheme.Type.FLOW.getCode()));
+		sceneEventContext.setFlow(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.FLOW.getCode()));
 		//是否查询主机事件
-		sceneEventContext.setHost(screenGuideHistoryReq.getEventSubTypeList()
-													   .contains(SituationGuideScheme.Type.HOST.getCode()));
+		sceneEventContext.setHost(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.HOST.getCode()));
 		//是否筛选攻击
 		if (attackScreenBo == null) {
 			sceneEventContext.setAttack(null);
@@ -184,6 +193,7 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		//处理成前端展示类型
 		JSONArray mpEventArray = remoteSceneService.getEventList(sceneEventContext);
 		List<MpEvent> mpEventList = mpEventArray.toJavaList(MpEvent.class);
+
 		for (MpEvent mpEvent : mpEventList) {
 			GuideHistoryRsp guideHistoryRsp = new GuideHistoryRsp();
 			guideHistoryRsp.setEventName(mpEvent.getEventName());
@@ -196,9 +206,10 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			guideHistoryRsp.setTargetName(mpEvent.getTargetNodeName());
 			guideHistoryRsp.setTargetIp(mpEvent.getTargetNodeIp());
 			guideHistoryRsp.setTargetPort(mpEvent.getTargetNodePort());
-			guideHistoryRspList.add(guideHistoryRsp);
+			guideHistoryRsp.setCreateTime(TimeUtil.toDate1(mpEvent.getTime()));
+			result.add(guideHistoryRsp);
 		}
-		return guideHistoryRspList;
+		return result;
 	}
 
 	@Override

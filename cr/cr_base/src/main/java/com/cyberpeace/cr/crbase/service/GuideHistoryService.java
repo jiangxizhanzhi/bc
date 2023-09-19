@@ -13,4 +13,5 @@ public interface GuideHistoryService {
 	List<GuideHistoryRsp> getRecord(ScreenGuideHistoryReq screenGuideHistoryReq);
 
 	List<String> getEventTimeList(String roomId, Integer businessType);
+
 }

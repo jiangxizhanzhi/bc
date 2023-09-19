@@ -3,12 +3,9 @@ package com.cyberpeace.cr.crbase.controller;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.AddGuideSchemeReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.GuideImplementReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.ListGuideSchemeReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.UpdateGuideSchemeReq;
+import com.cyberpeace.cr.crbase.controller.req.guide.*;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
-import com.cyberpeace.cr.crbase.dao.entity.SituationGuideScheme;
+import com.cyberpeace.cr.crbase.service.GuideHistoryService;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -36,20 +32,20 @@ public class SituationGuideController {
 
     @ApiOperation("手动导调列表")
     @PostMapping("/list")
-    public BaseRsp<ListRsp<SituationGuideScheme>> list(@RequestBody @Validated ListGuideSchemeReq req) {
+    public BaseRsp<ListRsp<SituationGuideListRsp>> list(@RequestBody @Validated ListGuideSchemeReq req) {
         return new BaseRsp<>(situationGuideService.listByRoomId(req));
     }
 
-    @ApiOperation("新增手动导调")
+    @ApiOperation("新增导调方案")
     @PostMapping("")
     public BaseRsp<String> addGuideScheme(@RequestBody @Validated AddGuideSchemeReq req) {
         String resourceId = situationGuideService.addGuideScheme(req);
         return new BaseRsp<>(resourceId);
     }
 
-    @ApiOperation("查看手动导调方案")
+    @ApiOperation("查看导调方案")
     @GetMapping("")
-    public BaseRsp<SituationGuideRes> getGuideSchemeById(@ApiParam(name = "resource_id", value = "导调方案编号",
+    public BaseRsp<SituationGuideRsp> getGuideSchemeById(@ApiParam(name = "resource_id", value = "导调方案编号",
             required = true) @RequestParam(value = "resource_id") String resourceId) {
         return new BaseRsp<>(situationGuideService.getGuideSchemeDetail(resourceId));
     }
@@ -69,53 +65,27 @@ public class SituationGuideController {
 
     @ApiOperation("导调参数类型")
     @GetMapping("/guide_param_type")
-    public BaseRsp<GuideParamTypeRsp> getParamType(@ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam(value = "room_id") String roomId) {
-        return new BaseRsp<>(situationGuideService.getParamType(roomId));
+    public BaseRsp<GuideParamTypeRsp> getParamType(@ApiParam(name = "room_id", value = "房间id", required = true) @RequestParam(value = "room_id") String roomId,
+                                                   @ApiParam(name = "business_type", value = "训练类型", required = true) @RequestParam(value = "business_type") Integer businessType) {
+        return new BaseRsp<>(situationGuideService.getParamType(roomId, businessType));
     }
 
     @ApiOperation("攻防态势模型")
     @GetMapping("/model")
     public BaseRsp<SituationModelRsp> listModel() {
-        SituationModelRsp situationModelRsp = new SituationModelRsp();
-        List<SituationOffensiveDescRsp> attackList = new ArrayList<>();
-        List<SituationOffensiveDescRsp> defenseList = new ArrayList<>();
+        return new BaseRsp<>(situationGuideService.listModel());
+    }
 
-        for (SituationGuideScheme.AttackUrlEnum modelEnum : SituationGuideScheme.AttackUrlEnum.values()) {
-            Integer code = modelEnum.getCode();
-            SituationOffensiveDescRsp model = new SituationOffensiveDescRsp();
-            model.setCode(code);
-            model.setName(modelEnum.getMsg());
-            model.setDesc(modelEnum.getDesc());
-            model.setSuccessUrl(modelEnum.getSuccessUrl());
-            model.setFailUrl(modelEnum.getFailUrl());
-            attackList.add(model);
-        }
-
-        for (SituationGuideScheme.DefenseUrlEnum modelEnum : SituationGuideScheme.DefenseUrlEnum.values()) {
-            Integer code = modelEnum.getCode();
-            SituationOffensiveDescRsp model = new SituationOffensiveDescRsp();
-            model.setCode(code);
-            model.setName(modelEnum.getMsg());
-            model.setDesc(modelEnum.getDesc());
-            model.setSuccessUrl(modelEnum.getSuccessUrl());
-            model.setFailUrl(modelEnum.getFailUrl());
-            defenseList.add(model);
-        }
-        situationModelRsp.setAttackList(attackList);
-        situationModelRsp.setDefenseList(defenseList);
-        situationModelRsp.setBlocking(SituationGuideScheme.BlockingAndBelongingUrlEnum.BLOCKING.getOneUrl());
-        SituationBelongDescRsp belong = new SituationBelongDescRsp();
-        belong.setName(SituationGuideScheme.BlockingAndBelongingUrlEnum.BELONGING.getName());
-        belong.setRedUrl(SituationGuideScheme.BlockingAndBelongingUrlEnum.BELONGING.getOneUrl());
-        belong.setBlueUrl(SituationGuideScheme.BlockingAndBelongingUrlEnum.BELONGING.getTwoUrl());
-        situationModelRsp.setBelong(belong);
-        return new BaseRsp<>(situationModelRsp);
+    @ApiOperation("执行测试")
+    @PostMapping("/guide_test")
+    public BaseRsp<Boolean> guideTest(@RequestBody @Validated GuideImplementReq req) {
+        return new BaseRsp<>(situationGuideService.guideImplement(req, true));
     }
 
     @ApiOperation("执行导调")
     @PostMapping("/implement")
     public BaseRsp<Boolean> guideImplement(@RequestBody @Validated GuideImplementReq req) {
-        return new BaseRsp<>(situationGuideService.guideImplement(req));
+        return new BaseRsp<>(situationGuideService.guideImplement(req, false));
     }
 
     @ApiOperation("任务导调列表")
@@ -140,12 +110,18 @@ public class SituationGuideController {
         return new BaseRsp<>(situationGuideService.guideStatistics(roomId));
     }
 
-    @ApiOperation("态势导调时间部分图")
+    @ApiOperation("态势导调时间分布图")
     @GetMapping("/time_distribution")
     public BaseRsp<GuideTimeDistributionRsp> guideTimeDistribution(@ApiParam(name = "room_id", value = "房间id",
             required = true) @RequestParam(value = "room_id") String roomId) {
         return new BaseRsp<>(situationGuideService.guideTimeDistribution(roomId));
     }
 
+
+    @ApiOperation("态势导调记录")
+    @PostMapping("/guide_record")
+    public BaseRsp<ListRsp<GuideHistoryRsp>> guideRecord(@RequestBody @Validated GuideRecordReq pageReq) {
+        return new BaseRsp<>(situationGuideService.guideRecord(pageReq));
+    }
 
 }

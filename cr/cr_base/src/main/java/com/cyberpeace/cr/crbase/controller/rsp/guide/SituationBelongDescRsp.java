@@ -10,9 +10,6 @@ import lombok.Data;
 @Data
 public class SituationBelongDescRsp {
 
-    @ApiModelProperty(value = "类型")
-    private String name;
-
     @ApiModelProperty(value = "成功链接")
     private String redUrl;
 

@@ -2,29 +2,25 @@ package com.cyberpeace.cr.crbase.service;
 
 
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.controller.req.guide.AddGuideSchemeReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.GuideImplementReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.ListGuideSchemeReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.UpdateGuideSchemeReq;
+import com.cyberpeace.cr.crbase.controller.req.guide.*;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
-import com.cyberpeace.cr.crbase.dao.entity.SituationGuideScheme;
 
 import java.util.List;
 
 public interface SituationGuideService {
 
-    ListRsp<SituationGuideScheme> listByRoomId(ListGuideSchemeReq req);
+    ListRsp<SituationGuideListRsp> listByRoomId(ListGuideSchemeReq req);
 
     String addGuideScheme(AddGuideSchemeReq addGuideSchemeReq);
 
-    SituationGuideRes getGuideSchemeDetail(String resourceId);
+    SituationGuideRsp getGuideSchemeDetail(String resourceId);
 
     UpdateGuideSchemeReq updateGuideScheme(UpdateGuideSchemeReq updateGuideSchemeReq);
 
     Boolean deleteGuideScheme(List<String> ids);
 
-    Boolean guideImplement(GuideImplementReq req);
+    Boolean guideImplement(GuideImplementReq req, boolean isTest);
 
     SituationGuideHistory getGuideHisByMissionId(String missionId, String taskId);
 
@@ -38,5 +34,9 @@ public interface SituationGuideService {
 
     GuideTimeDistributionRsp guideTimeDistribution(String roomId);
 
-    GuideParamTypeRsp getParamType(String roomId);
+    GuideParamTypeRsp getParamType(String roomId, Integer businessType);
+
+    SituationModelRsp listModel();
+
+    ListRsp<GuideHistoryRsp> guideRecord(GuideRecordReq pageReq);
 }

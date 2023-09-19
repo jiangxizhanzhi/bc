@@ -92,7 +92,7 @@
         SELECT
         date_format(create_time, '%Y-%m-%d %H:00:00' ) createTime,
         COUNT(1) AS `count`
-        FROM situation_guide_scheme
+        FROM situation_guide_history
         WHERE  room_id = #{roomId}
         AND create_time  &gt;= #{startDate}
         GROUP BY createTime
@@ -121,5 +121,13 @@
                 room_id = #{roomId}
             </if>
         </where>
+    </select>
+
+    <select id="guideRecordListByTime" resultType="com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory">
+        SELECT
+        *
+        FROM situation_guide_history
+        WHERE  room_id = #{roomId}
+        AND create_time  &gt;= #{startDate}
     </select>
 </mapper>

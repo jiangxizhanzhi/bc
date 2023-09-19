@@ -10,10 +10,7 @@ import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.controller.req.guide.AddGuideSchemeReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.GuideImplementReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.ListGuideSchemeReq;
-import com.cyberpeace.cr.crbase.controller.req.guide.UpdateGuideSchemeReq;
+import com.cyberpeace.cr.crbase.controller.req.guide.*;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -26,9 +23,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideSchemeMapper;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import com.cyberpeace.cr.crbase.service.WsMultiNodeGuide;
-import com.cyberpeace.cr.crbase.service.context.guide.AttackTimeCountGroup;
-import com.cyberpeace.cr.crbase.service.context.guide.AttackTypeCountGroup;
-import com.cyberpeace.cr.crbase.service.context.guide.SituationGuideMissionBo;
+import com.cyberpeace.cr.crbase.service.context.guide.*;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
@@ -39,7 +34,6 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
-import com.cyberpeace.situation.model.ConnectionInfo;
 import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
@@ -47,6 +41,7 @@ import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +72,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     private LocalSceneService localSceneService;
     @Autowired
     private SituationHandlerService situationHandlerService;
-
+    @Autowired
+    private GuideHistoryServiceImpl guideHistoryService;
     @Autowired
     private RemoteSceneService remoteSceneService;
 
@@ -89,12 +85,44 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
      * 手动导调列表
      */
     @Override
-    public ListRsp<SituationGuideScheme> listByRoomId(ListGuideSchemeReq req) {
+    public ListRsp<SituationGuideListRsp> listByRoomId(ListGuideSchemeReq req) {
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getRoomId, req.getRoomId());
         queryWrapper.eq(SituationGuideScheme::getType, SituationGuideScheme.Type.MANUALLY.getCode());
         Page<SituationGuideScheme> page = page(req.toPageParam(), queryWrapper);
-        return PageUtil.getListResult(page);
+        page.convert(item -> {
+            SituationGuideListRsp situationGuideListRsp = new SituationGuideListRsp();
+            situationGuideListRsp.setResourceId(item.getResourceId());
+            situationGuideListRsp.setRoomId(item.getRoomId());
+            situationGuideListRsp.setEventName(item.getEventName());
+            situationGuideListRsp.setEventType(item.getEventType());
+            situationGuideListRsp.setCategory(item.getCategory());
+            situationGuideListRsp.setSource(item.getSource());
+            situationGuideListRsp.setTarget(item.getTarget());
+            return situationGuideListRsp;
+        });
+        ListRsp<SituationGuideListRsp> result = PageUtil.getListResult(page);
+        if (CollectionUtils.isEmpty(result.getList())) {
+            return result;
+        }
+
+        SituationTopo situationTopo = getSituationTopoByRoomId(req.getRoomId(), SituationGuideScheme.Type.MANUALLY.getCode());
+
+        for (SituationGuideListRsp situationGuideListRsp : result.getList()) {
+            Map<String, ElementInfo> elementMap = situationTopo.getElements();
+            ElementInfo sourceElement = elementMap.get(situationGuideListRsp.getSource());
+            ElementInfo targetElement = elementMap.get(situationGuideListRsp.getTarget());
+            situationGuideListRsp.setSourceName(Objects.isNull(sourceElement) ? situationGuideListRsp.getSource() : sourceElement.getName());
+            situationGuideListRsp.setTargetName(Objects.isNull(targetElement) ? situationGuideListRsp.getTarget() : targetElement.getName());
+            if (SituationGuideScheme.EventType.ATTACK.getCode().equals(situationGuideListRsp.getEventType())) {
+                SituationGuideScheme.AttackUrlEnum enumByCode = SituationGuideScheme.AttackUrlEnum.getEnumByCode(situationGuideListRsp.getCategory());
+                situationGuideListRsp.setCategoryName(enumByCode.getMsg());
+            } else if (SituationGuideScheme.EventType.DEFENSE.getCode().equals(situationGuideListRsp.getEventType())) {
+                SituationGuideScheme.DefenseUrlEnum enumByCode = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(situationGuideListRsp.getCategory());
+                situationGuideListRsp.setCategoryName(enumByCode.getMsg());
+            }
+        }
+        return result;
     }
 
     @Override
@@ -108,23 +136,46 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public SituationGuideRes getGuideSchemeDetail(String resourceId) {
+    public SituationGuideRsp getGuideSchemeDetail(String resourceId) {
         SituationGuideScheme situationGuideScheme = getById(resourceId);
         if (situationGuideScheme == null) {
             log.error("get guide scheme by id ({}) error, guide scheme not found", resourceId);
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        SituationGuideRes resp = BeanUtils.copy(situationGuideScheme, SituationGuideRes.class);
+        SituationGuideRsp resp = BeanUtils.copy(situationGuideScheme, SituationGuideRsp.class);
+        SituationGuideScheme.Type type = SituationGuideScheme.Type.getTypeByCode(resp.getType());
+        resp.setTypeName(type.getMsg());
+
         SituationGuideScheme.EventType eventType = SituationGuideScheme.EventType.getEventTypeByCode(resp.getEventType());
+        resp.setEventTypeName(eventType.getMsg());
+
+        SituationTopo situationTopo = getSituationTopoByRoomId(situationGuideScheme.getRoomId(), situationGuideScheme.getBusinessType());
+        Map<String, ElementInfo> elementMap = situationTopo.getElements();
+
+        ElementInfo sourceElement = elementMap.get(resp.getSource());
+        ElementInfo targetElement = elementMap.get(resp.getTarget());
+        resp.setSourceName(Objects.isNull(sourceElement) ? resp.getSource() : sourceElement.getName());
+        resp.setTargetName(Objects.isNull(targetElement) ? resp.getTarget() : targetElement.getName());
+
+        SituationGuideScheme.ResultType resultType = SituationGuideScheme.ResultType.getResultTypeByCode(resp.getResult());
+        resp.setResultName(Objects.isNull(resultType) ? null : resultType.getMsg());
+
+        SituationGuideScheme.RoleType roleType = SituationGuideScheme.RoleType.getRoleTypeByCode(resp.getRole());
+        resp.setRoleName(Objects.isNull(roleType) ? null : roleType.getMsg());
+
+        SituationGuideScheme.ConditionType conditionType = SituationGuideScheme.ConditionType.getEnumByCode(resp.getTriggerCondition());
+        resp.setTriggerName(Objects.isNull(conditionType) ? null : conditionType.getMsg());
 
         switch (eventType) {
             case ATTACK:
                 SituationGuideScheme.AttackUrlEnum attackUrlEnum = SituationGuideScheme.AttackUrlEnum.getEnumByCode(resp.getCategory());
+                resp.setCategoryName(attackUrlEnum.getMsg());
                 resp.setSuccessUrl(attackUrlEnum.getSuccessUrl());
                 resp.setFailUrl(attackUrlEnum.getFailUrl());
                 break;
             case DEFENSE:
                 SituationGuideScheme.DefenseUrlEnum defenseUrlEnum = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(resp.getCategory());
+                resp.setCategoryName(defenseUrlEnum.getMsg());
                 resp.setSuccessUrl(defenseUrlEnum.getSuccessUrl());
                 resp.setFailUrl(defenseUrlEnum.getFailUrl());
             case BLOCKING:
@@ -178,7 +229,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public Boolean guideImplement(GuideImplementReq req) {
+    public Boolean guideImplement(GuideImplementReq req, boolean isTest) {
         SituationGuideScheme guideScheme = getById(req.getResourceId());
         if (Objects.isNull(guideScheme)) {
             return false;
@@ -193,8 +244,10 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         his.setCreateTime(new Date());
         his.setUpdateTime(new Date());
         his.setSceneId(sceneId);
-        situationGuideHisMapper.insert(his);
-
+        //非测试状态 新增历史记录
+        if (!isTest) {
+            situationGuideHisMapper.insert(his);
+        }
         return pushDataToRoomByGuide(req.getIsInstance(), his);
     }
 
@@ -261,12 +314,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             result.addAll(attackTypeCountList.stream().map(attackTypeCount -> new AttackTopFiveRsp(attackTypeCount.getAttack_type(), attackTypeCount.getTimes())).collect(Collectors.toList()));
         }
         //排序，取Top5
-        result.sort(new Comparator<AttackTopFiveRsp>() {
-            @Override
-            public int compare(AttackTopFiveRsp o1, AttackTopFiveRsp o2) {
-                return o1.getCount() - o2.getCount();
-            }
-        });
+        result.sort(Comparator.comparingInt(AttackTopFiveRsp::getCount));
         if (result.size() < 5) {
             return result;
         }
@@ -395,37 +443,114 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public GuideParamTypeRsp getParamType(String roomId) {
+    public GuideParamTypeRsp getParamType(String roomId, Integer businessType) {
         GuideParamTypeRsp result = new GuideParamTypeRsp();
-        result.setEventType(Arrays.stream(SituationGuideScheme.EventType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
-        result.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values()).map(item -> new ParamTypeRsp(item.getMsg(), item.getCode())).collect(Collectors.toList()));
-        result.setDefenseType(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values()).map(item -> new ParamTypeRsp(item.getMsg(), item.getCode())).collect(Collectors.toList()));
+        if (SituationGuideScheme.Type.MANUALLY.getCode().equals(businessType)) {
+            List<ParamTypeRsp> eventType = new ArrayList<>();
+            eventType.add(new ParamTypeRsp(SituationGuideScheme.EventType.ATTACK.getDesc(), SituationGuideScheme.EventType.ATTACK.getCode()));
+            eventType.add(new ParamTypeRsp(SituationGuideScheme.EventType.DEFENSE.getDesc(), SituationGuideScheme.EventType.DEFENSE.getCode()));
+            eventType.add(new ParamTypeRsp(SituationGuideScheme.EventType.BLOCKING.getDesc(), SituationGuideScheme.EventType.BLOCKING.getCode()));
+            result.setEventType(eventType);
+        } else {
+            result.setEventType(Arrays.stream(SituationGuideScheme.EventType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+        }
+
         result.setResultType(Arrays.stream(SituationGuideScheme.ResultType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
         result.setRoleType(Arrays.stream(SituationGuideScheme.RoleType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
-        result.setConditionType(Arrays.stream(SituationGuideScheme.conditionType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+        result.setConditionType(Arrays.stream(SituationGuideScheme.ConditionType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
 
-        String sceneId = viewScene(roomId);
-        SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
-        SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+        SituationModelRsp situationModelRsp = listModel();
+        result.setAttackType(situationModelRsp.getAttackList());
+        result.setDefenseType(situationModelRsp.getDefenseList());
+        result.setBlockingUrl(situationModelRsp.getBlockingUrl());
+        result.setBelongUrl(situationModelRsp.getBelongUrl());
+
+        SituationTopo situationTopo = getSituationTopoByRoomId(roomId, businessType);
         List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
                 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
                 .collect(Collectors.toList());
-
-        Map<String, String> nodeMap = StreamApiUtils.toMap(nodeList, MissionCategoryRsp::getResourceId, MissionCategoryRsp::getName);
-        List<String> sourceList = situationTopo.getConnections().stream().map(ConnectionInfo::getSource).collect(Collectors.toList());
-        List<String> targetList = situationTopo.getConnections().stream().map(ConnectionInfo::getTarget).collect(Collectors.toList());
-        List<MissionCategoryRsp> sourceType = new ArrayList<>();
-        List<MissionCategoryRsp> targetType = new ArrayList<>();
-        for (String id : sourceList) {
-            sourceType.add(new MissionCategoryRsp(id, nodeMap.get(id)));
-        }
-        for (String id : targetList) {
-            targetType.add(new MissionCategoryRsp(id, nodeMap.get(id)));
-        }
         result.setNodeType(nodeList);
-        result.setSourceType(sourceType);
-        result.setTargetType(targetType);
+
         return result;
+    }
+
+    @Override
+    public SituationModelRsp listModel() {
+        SituationModelRsp situationModelRsp = new SituationModelRsp();
+        List<SituationOffensiveDescRsp> attackList = new ArrayList<>();
+        List<SituationOffensiveDescRsp> defenseList = new ArrayList<>();
+
+        for (SituationGuideScheme.AttackUrlEnum modelEnum : SituationGuideScheme.AttackUrlEnum.values()) {
+            SituationOffensiveDescRsp model = new SituationOffensiveDescRsp(modelEnum.getCode(), modelEnum.getMsg(), modelEnum.getDesc(), modelEnum.getSuccessUrl(), modelEnum.getFailUrl());
+            attackList.add(model);
+        }
+
+        for (SituationGuideScheme.DefenseUrlEnum modelEnum : SituationGuideScheme.DefenseUrlEnum.values()) {
+            SituationOffensiveDescRsp model = new SituationOffensiveDescRsp(modelEnum.getCode(), modelEnum.getMsg(), modelEnum.getDesc(), modelEnum.getSuccessUrl(), modelEnum.getFailUrl());
+            defenseList.add(model);
+        }
+        situationModelRsp.setAttackList(attackList);
+        situationModelRsp.setDefenseList(defenseList);
+        situationModelRsp.setBlockingUrl(SituationGuideScheme.BlockingAndBelongingUrlEnum.BLOCKING.getOneUrl());
+        SituationBelongDescRsp belong = new SituationBelongDescRsp();
+        belong.setRedUrl(SituationGuideScheme.BlockingAndBelongingUrlEnum.BELONGING.getOneUrl());
+        belong.setBlueUrl(SituationGuideScheme.BlockingAndBelongingUrlEnum.BELONGING.getTwoUrl());
+        situationModelRsp.setBelongUrl(belong);
+        return situationModelRsp;
+    }
+
+    @Override
+    public ListRsp<GuideHistoryRsp> guideRecord(GuideRecordReq pageReq) {
+
+        Date oneDayAgo = TimeUtil.addHours(new Date(), -24);
+        //TODO 中台导调记录
+        ScreenGuideHistoryReq historyReq = new ScreenGuideHistoryReq();
+        historyReq.setEventSubTypeList(Arrays.asList(SituationGuideScheme.Type.FLOW.getCode(), SituationGuideScheme.Type.FLOW.getCode()));
+        historyReq.setRoomId(pageReq.getRoomId());
+        historyReq.setBusinessType(pageReq.getBusinessType());
+        ScreenBo screenBo = new ScreenBo();
+        screenBo.setStartTime(TimeUtil.format1(oneDayAgo));
+        screenBo.setEndTime(TimeUtil.format1(new Date()));
+        historyReq.setAttackScreenBo(screenBo);
+        historyReq.setDefenseScreenBo(screenBo);
+        List<GuideHistoryRsp> mpEventList = guideHistoryService.getMpEventList(historyReq, null, null);
+
+        List<SituationGuideHistory> historyList = situationGuideHisMapper.guideRecordListByTime(pageReq.getRoomId(), oneDayAgo);
+        Set<String> sceneSet = historyList.stream().map(SituationGuideHistory::getSceneId).collect(Collectors.toSet());
+        Map<String, ElementInfo> elementMap = Maps.newHashMap();
+
+        for (String sceneId : sceneSet) {
+            SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(sceneId, true);
+            elementMap.putAll(situationTopo.getElements());
+        }
+
+        historyList.sort(Comparator.comparingLong(item -> item.getCreateTime().getTime()));
+        List<GuideHistoryRsp> resultList = new ArrayList<>();
+        for (SituationGuideHistory his : historyList) {
+            GuideHistoryRsp guideHistoryRsp = new GuideHistoryRsp();
+            guideHistoryRsp.setEventName(his.getEventName());
+            SituationGuideScheme.ConditionType conditionType = SituationGuideScheme.ConditionType.getEnumByCode(his.getTriggerCondition());
+            guideHistoryRsp.setTriggerType(Objects.isNull(conditionType) ? null : conditionType.getDesc());
+            ElementInfo sourceElement = elementMap.get(his.getSource());
+            ElementInfo targetElement = elementMap.get(his.getTarget());
+            guideHistoryRsp.setSourceName(Objects.isNull(sourceElement) ? his.getSource() : sourceElement.getName());
+            guideHistoryRsp.setTargetName(Objects.isNull(targetElement) ? his.getTarget() : targetElement.getName());
+            guideHistoryRsp.setCreateTime(his.getCreateTime());
+
+            if (SituationGuideScheme.EventType.ATTACK.getCode().equals(his.getEventType())) {
+                guideHistoryRsp.setActionType(SituationGuideScheme.EventType.ATTACK.getDesc());
+                SituationGuideScheme.AttackUrlEnum attackUrlEnum = SituationGuideScheme.AttackUrlEnum.getEnumByCode(his.getCategory());
+                guideHistoryRsp.setCategory(Collections.singletonList(attackUrlEnum.name()));
+            } else if (SituationGuideScheme.EventType.DEFENSE.getCode().equals(his.getEventType())) {
+                guideHistoryRsp.setActionType(SituationGuideScheme.EventType.DEFENSE.getDesc());
+                SituationGuideScheme.DefenseUrlEnum defenseUrlEnum = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(his.getCategory());
+                guideHistoryRsp.setCategory(Collections.singletonList(defenseUrlEnum.name()));
+            }
+            resultList.add(guideHistoryRsp);
+        }
+        resultList.addAll(mpEventList);
+        resultList.sort(Comparator.comparing(item -> item.getCreateTime().getTime()));
+        return PageUtil.getListResult(resultList, pageReq.toPageParam(), resultList.size());
     }
 
     /**
@@ -507,6 +632,19 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         validateLength(target, MIN_STR_LEN, MAX_NAME_STR_LEN, errorCode);
     }
 
+    public SituationTopo getSituationTopoByRoomId(String roomId, Integer businessType) {
+        SituationGuideSceneBo situationGuideSceneBo = situationGuideSchemeMapper.selectSceneByRoomId(roomId, businessType);
+        if (Objects.isNull(situationGuideSceneBo)) {
+            SituationTopo situationTopo = new SituationTopo();
+            situationTopo.setElements(new HashMap<>());
+            return situationTopo;
+        }
+        if (StringUtils.isNotBlank(situationGuideSceneBo.getSceneId())) {
+            return situationHandlerService.getSituationTopoBySceneId(situationGuideSceneBo.getSceneId(), true);
+        }
+        return situationHandlerService.getSituationTopoBySceneId(situationGuideSceneBo.getTopoId(), false);
+    }
+
     public String viewScene(String roomId) {
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
         if (null == localScene) {
@@ -514,5 +652,4 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         }
         return localScene.getMpSceneId();
     }
-
 }

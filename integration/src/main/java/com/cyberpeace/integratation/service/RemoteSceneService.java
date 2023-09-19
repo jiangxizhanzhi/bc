@@ -268,4 +268,8 @@ public interface RemoteSceneService {
 
 	JSONArray getEventTrentCount(String sceneId);
 
+	JSONArray getEventTimeList(String sceneIds);
+
+	JSONArray getEventList(SceneEventContext sceneEventContext);
+
 }

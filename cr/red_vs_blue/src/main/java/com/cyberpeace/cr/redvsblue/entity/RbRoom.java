@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.redvsblue.entity;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -9,9 +7,12 @@ import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
-
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("cr_rb_room")
@@ -59,6 +60,11 @@ public class RbRoom extends BaseTable {
 	 */
 	private String replaySceneId;
 
+	/**
+	 * 该训练过程的所有场景id
+	 */
+	private String sceneIdRecord;
+
 	public RbRoom() {
 
 	}
@@ -93,6 +99,17 @@ public class RbRoom extends BaseTable {
 
 	public boolean isEnded() {
 		return trainingStatus.equals(RbRoom.TrainingStatusCode.ENDED.getCode());
+	}
+
+	public List<String> getSceneIds() {
+		if (this.sceneIdRecord == null) {
+			return new ArrayList<>();
+		}
+		return JsonUtil.toJsonObjectArray(this.sceneIdRecord, String.class);
+	}
+
+	public void setSceneIds(List<String> sceneIds) {
+		this.sceneIdRecord = JsonUtil.toJsonString(sceneIds);
 	}
 
 	public enum TrainingStatusCode {

@@ -122,6 +122,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String EVENT_TRENT_COUNT_URL;
 
+	private String EVENT_TIME_LIST_URL;
+
+	private String EVENT_LIST_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -214,6 +218,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		ATTACK_TYPE_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("attack.type.count");
 
 		EVENT_TRENT_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.trend");
+
+		EVENT_TIME_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.time");
+
+		EVENT_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.list");
 	}
 
 	@Override
@@ -590,6 +598,20 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public JSONArray getEventTrentCount(String sceneId) {
 		String requestUrl = EVENT_TRENT_COUNT_URL + sceneId;
 		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+	}
+
+	@Override
+	public JSONArray getEventTimeList(String sceneIds) {
+		String requestUrl = EVENT_TIME_LIST_URL + sceneIds;
+		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+	}
+
+	@Override
+	public JSONArray getEventList(SceneEventContext sceneEventContext) {
+		JSONObject jsonObject = HttpClientUtil.post(EVENT_LIST_URL,
+				JsonUtil.toJsonString(sceneEventContext, PropertyNamingStrategy.SnakeCase),
+				JSONObject.class);
+		return jsonObject.getJSONArray("list");
 	}
 
 }

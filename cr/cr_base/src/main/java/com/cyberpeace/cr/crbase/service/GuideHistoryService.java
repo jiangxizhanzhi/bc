@@ -10,8 +10,7 @@ public interface GuideHistoryService {
 
 	PlaybackOptionRsp getAllOption(String roomId);
 
-//	void refresh(ScreenGuideHistoryReq screenGuideHistoryReq);
+	List<GuideHistoryRsp> getRecord(ScreenGuideHistoryReq screenGuideHistoryReq);
 
-	List<GuideHistoryRsp> getLocalRecord(ScreenGuideHistoryReq screenGuideHistoryReq);
-
+	List<String> getEventTimeList(String roomId, Integer businessType);
 }

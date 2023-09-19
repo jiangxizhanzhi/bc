@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.controller.req.guide;
+package com.cyberpeace.cr.crbase.service.context.guide;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class Screen implements Serializable {
+public class ScreenBo implements Serializable {
 
 	@ApiModelProperty("开始时间")
 	private String startTime;

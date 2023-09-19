@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.controller.req.guide;
 
+import com.cyberpeace.cr.crbase.service.context.guide.ScreenBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,19 +15,23 @@ public class ScreenGuideHistoryReq implements Serializable {
 	@NotBlank
 	private String roomId;
 
+	@ApiModelProperty("训练类型")
+	@NotBlank
+	private Integer businessType;
+
 	@ApiModelProperty("事件类型")
 	private List<Integer> eventSubTypeList;
 
 	@ApiModelProperty("攻击筛选条件")
-	private Screen attackScreen;
+	private ScreenBo attackScreenBo;
 
 	@ApiModelProperty("防御筛选条件")
-	private Screen defenseScreen;
+	private ScreenBo defenseScreenBo;
 
 	@ApiModelProperty("阻断筛选条件")
-	private Screen blockingScreen;
+	private ScreenBo blockingScreenBo;
 
 	@ApiModelProperty("归属筛选条件")
-	private Screen belongingScreen;
+	private ScreenBo belongingScreenBo;
 
 }

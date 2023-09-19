@@ -30,7 +30,7 @@
     </select>
 
     <select id="getEventNameList" resultType="java.lang.String">
-        select event_name
+        select DISTINCT event_name
         from situation_guide_history
         <where>
             1=1

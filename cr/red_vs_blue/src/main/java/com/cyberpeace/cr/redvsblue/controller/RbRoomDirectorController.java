@@ -579,6 +579,11 @@ public class RbRoomDirectorController {
 														 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
 														 .collect(Collectors.toList());
 		playbackOptionRsp.setNodeList(nodeList);
+		//区域信息
+		List<MissionCategoryRsp> areaList = situationTopo.getAreas().values().stream()
+														 .map(areaInfo -> new MissionCategoryRsp(areaInfo.getAreaId(), "area-" + areaInfo.getAreaId()))
+														 .collect(Collectors.toList());
+		playbackOptionRsp.setAreaList(areaList);
 		return new BaseRsp<>(playbackOptionRsp);
 	}
 }

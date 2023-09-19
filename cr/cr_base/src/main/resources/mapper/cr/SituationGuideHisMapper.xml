@@ -38,7 +38,7 @@
                 and room_id = #{roomId}
             </if>
             <if test="eventType != null">
-                and eventType = #{eventType}
+                and event_type = #{eventType}
             </if>
         </where>
     </select>
@@ -96,5 +96,30 @@
         WHERE  room_id = #{roomId}
         AND create_time  &gt;= #{startDate}
         GROUP BY createTime
+    </select>
+
+    <select id="getSceneIdsByRoom" resultType="java.lang.String">
+        select scene_id_record from
+        <if test="businessType == 3 ">
+            cr_team_room
+        </if>
+        <if test="businessType == 4 ">
+            cr_rb_room
+        </if>
+        <where>
+            <if test="roomId != null and roomId != ''">
+                resource_id = #{roomId}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getEventTimes" resultType="java.lang.String">
+        select update_time from situation_guide_history
+        <where>
+            <if test="roomId != null and roomId != ''">
+                room_id = #{roomId}
+            </if>
+        </where>
     </select>
 </mapper>

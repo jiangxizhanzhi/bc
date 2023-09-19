@@ -1,16 +1,17 @@
 package com.cyberpeace.cr.teamtrain.dao.entity;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @TableName(value = "cr_team_room")
 @Data
@@ -68,6 +69,12 @@ public class TeamRoom extends BaseTable {
 	 */
 	private String areaPath;
 
+	/**
+	 * 该训练过程的所有场景id
+	 */
+	private String sceneIdRecord;
+
+
 	public TeamRoom() {}
 
 	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template) {
@@ -98,6 +105,17 @@ public class TeamRoom extends BaseTable {
 
 	public boolean isEnded() {
 		return trainingStatus.equals(TeamRoom.TrainingStatusCode.ENDED.getCode());
+	}
+
+	public List<String> getSceneIds() {
+		if (this.sceneIdRecord == null) {
+			return new ArrayList<>();
+		}
+		return JsonUtil.toJsonObjectArray(this.sceneIdRecord, String.class);
+	}
+
+	public void setSceneIds(List<String> sceneIds) {
+		this.sceneIdRecord = JsonUtil.toJsonString(sceneIds);
 	}
 
 	public enum TrainingStatusCode {

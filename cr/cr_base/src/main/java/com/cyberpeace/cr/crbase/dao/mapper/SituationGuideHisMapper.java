@@ -35,4 +35,8 @@ public interface SituationGuideHisMapper extends BaseMapper<SituationGuideHistor
 
     List<AttackTimeCountGroup> countByTime(@Param("roomId") String roomId, @Param("startDate") Date startDate);
 
+    String getSceneIdsByRoom(@Param("roomId") String roomId, @Param("businessType") Integer businessType);
+
+    List<String> getEventTimes(@Param("roomId") String roomId);
+
 }

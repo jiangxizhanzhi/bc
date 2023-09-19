@@ -30,10 +30,8 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
-import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
-import com.cyberpeace.situation.service.TopoHandlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -78,9 +76,6 @@ public class TeamTrainTeacherController {
 
 	@Autowired
 	private GuideHistoryService guideHistoryService;
-
-	@Autowired
-	private TopoHandlerService topoHandlerService;
 
 	@Autowired
 	private SituationHandlerService situationHandlerService;
@@ -266,6 +261,7 @@ public class TeamTrainTeacherController {
 
 	@ApiOperation("返回态势回放所有下拉框选项")
 	@GetMapping("/playback/option")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<PlaybackOptionRsp> getAllOption(@ApiParam(name = "room_id", value = "房间ID") @RequestParam("room_id") String roomId) {
 		TimeLineData res = teamTeacherService.getReplayTimeline(roomId, null);
 		PlaybackOptionRsp playbackOptionRsp = guideHistoryService.getAllOption(roomId);
@@ -274,8 +270,7 @@ public class TeamTrainTeacherController {
 
 		//根据拓扑id获取节点信息
 		TeamRoom teamRoom = teamRoomService.getById(roomId);
-		SceneData sceneData = topoHandlerService.getSceneData(null, teamRoom.getCopyedTopoId());
-		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(teamRoom.getCopyedTopoId(), false);
 		List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
 														 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
 														 .collect(Collectors.toList());

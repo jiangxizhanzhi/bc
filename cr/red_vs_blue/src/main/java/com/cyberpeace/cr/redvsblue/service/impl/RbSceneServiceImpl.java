@@ -1,16 +1,5 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -44,8 +33,17 @@ import com.cyberpeace.cs.service.context.scene.*;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -242,6 +240,11 @@ public class RbSceneServiceImpl implements RbSceneService {
             if (!(room.isEnded() && localScene.getCreateTime()
                     .after(rbTimeManagementService.getActualEndTime(roomId)))) {
                 room.setReplaySceneId(localScene.getMpSceneId());
+
+                //该训练过程中的场景+1
+                List<String> sceneIds = room.getSceneIds();
+                sceneIds.add(localScene.getMpSceneId());
+                room.setSceneIds(sceneIds);
             }
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

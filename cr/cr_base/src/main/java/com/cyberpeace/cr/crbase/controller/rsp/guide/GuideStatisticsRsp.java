@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author myy
@@ -15,10 +16,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class GuideStatisticsRsp implements Serializable {
 
-	@ApiModelProperty("导调名称")
-	private String guideName;
 
-	@ApiModelProperty("导调类型数量")
-	private Integer count;
+    @ApiModelProperty("导调总数量")
+    private Integer totalCount;
 
+    @ApiModelProperty("导调类型")
+    List<GuideStatisticsDetailRsp> list;
 }

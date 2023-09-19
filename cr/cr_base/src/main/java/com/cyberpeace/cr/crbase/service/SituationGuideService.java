@@ -30,7 +30,7 @@ public interface SituationGuideService {
 
     List<GuideRoleStageRsp> missionGuide(String roomId, Integer businessType);
 
-    List<GuideStatisticsRsp> guideStatistics(String roomId);
+    GuideStatisticsRsp guideStatistics(String roomId);
 
     GuideTimeDistributionRsp guideTimeDistribution(String roomId);
 

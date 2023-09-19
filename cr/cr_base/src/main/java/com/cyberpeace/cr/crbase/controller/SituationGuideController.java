@@ -105,7 +105,7 @@ public class SituationGuideController {
 
     @ApiOperation("态势导调类型统计")
     @GetMapping("/guide_statistics")
-    public BaseRsp<List<GuideStatisticsRsp>> guideStatistics(@ApiParam(name = "room_id", value = "房间id",
+    public BaseRsp<GuideStatisticsRsp> guideStatistics(@ApiParam(name = "room_id", value = "房间id",
             required = true) @RequestParam(value = "room_id") String roomId) {
         return new BaseRsp<>(situationGuideService.guideStatistics(roomId));
     }

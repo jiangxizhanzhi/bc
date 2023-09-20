@@ -5,6 +5,7 @@ import java.sql.Wrapper;
 import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
 import com.cyberpeace.oj.practice.dao.entity.*;
@@ -242,7 +243,13 @@ public class CourseImportServiceImpl implements CourseImportService {
 	private CourseLesson doParseLesson(String lessonPath, Course course,
 			Map<String, String> envReqs, Map<String, String> nameMap) {
 		log.info("Start parsing lesson information! lesson_path=[{}]", lessonPath);
-		CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
+		CourseLesson courseLesson=null;
+		try {
+
+			courseLesson= parseLesson(lessonPath, course, envReqs);
+		}catch (Exception e) {
+			throw new RemoteServiceException("file parse Exception file: "+lessonPath);
+		}
 		if (null == courseLesson) {
 			return null;
 		}

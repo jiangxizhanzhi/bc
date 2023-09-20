@@ -5,6 +5,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.guide.*;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
+import com.cyberpeace.cr.crbase.service.context.guide.MpEvent;
 
 import java.util.List;
 
@@ -40,5 +41,9 @@ public interface SituationGuideService {
 
     ListRsp<GuideHistoryRsp> guideRecord(GuideRecordReq pageReq);
 
-    List<GuideHistoryRsp> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq);
+    List<MpEvent> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq);
+
+    List<GuideHistoryRsp> mpEventToGuideHistoryRsp(List<MpEvent> mpEventList);
+
+    List<SituationGuideHistory> guideHistoryRspToSituationGuideHistory(List<GuideHistoryRsp> guideHistoryRspList);
 }

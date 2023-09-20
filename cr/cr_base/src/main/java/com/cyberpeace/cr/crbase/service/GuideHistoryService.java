@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import com.cyberpeace.cr.crbase.controller.req.guide.ExecGuideHisRep;
 import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryReq;
 import com.cyberpeace.cr.crbase.controller.rsp.PlaybackOptionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.GuideHistoryRsp;
@@ -13,5 +14,7 @@ public interface GuideHistoryService {
 	List<GuideHistoryRsp> getRecord(ScreenGuideHistoryReq screenGuideHistoryReq);
 
 	List<String> getEventTimeList(String roomId, Integer businessType);
+
+	Boolean execute(ExecGuideHisRep execGuideHisRep);
 
 }

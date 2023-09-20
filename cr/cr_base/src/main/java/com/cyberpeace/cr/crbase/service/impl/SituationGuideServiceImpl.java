@@ -537,7 +537,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         screenBo.setEndTime(TimeUtil.format1(new Date()));
         historyReq.setAttackScreenBo(screenBo);
         historyReq.setDefenseScreenBo(screenBo);
-        List<GuideHistoryRsp> mpEventList = getMpEventList(historyReq);
+        List<GuideHistoryRsp> mpEventList = mpEventToGuideHistoryRsp(getMpEventList(historyReq));
 
         List<SituationGuideHistory> historyList = situationGuideHisMapper.guideRecordListByTime(pageReq.getRoomId(), oneDayAgo);
         Set<String> sceneSet = historyList.stream().map(SituationGuideHistory::getSceneId).collect(Collectors.toSet());
@@ -578,7 +578,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public List<GuideHistoryRsp> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq) {
+    public List<MpEvent> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq) {
         List<GuideHistoryRsp> result = new ArrayList<>();
 
         SceneEventContext sceneEventContext = new SceneEventContext();
@@ -589,7 +589,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
         List<String> sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
         if (org.apache.commons.collections.CollectionUtils.isEmpty(sceneIds)){
-            return result;
+            return new ArrayList<>();
         }
         sceneEventContext.setSceneId(StringUtils.join(sceneIds, ","));
         //是否查询流量事件
@@ -612,9 +612,16 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
         //处理成前端展示类型
         JSONArray mpEventArray = remoteSceneService.getEventList(sceneEventContext);
-        List<MpEvent> mpEventList = mpEventArray.toJavaList(MpEvent.class);
+        return mpEventArray.toJavaList(MpEvent.class);
+    }
 
-        Map<String, Integer> attCk = Arrays.stream(SituationGuideScheme.AttackUrlEnum.values()).collect(Collectors.toMap(SituationGuideScheme.AttackUrlEnum::getMpCode, SituationGuideScheme.AttackUrlEnum::getCode));
+    @Override
+    public List<GuideHistoryRsp> mpEventToGuideHistoryRsp(List<MpEvent> mpEventList) {
+        List<GuideHistoryRsp> result = new ArrayList<>();
+        Map<String, Integer> attCk = Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
+                                           .collect(Collectors.toMap(SituationGuideScheme.AttackUrlEnum::getMpCode, SituationGuideScheme.AttackUrlEnum::getCode));
+        attCk.putAll(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values())
+                           .collect(Collectors.toMap(SituationGuideScheme.DefenseUrlEnum::getMpCode, SituationGuideScheme.DefenseUrlEnum::getCode)));
 
         for (MpEvent mpEvent : mpEventList) {
             GuideHistoryRsp guideHistoryRsp = new GuideHistoryRsp();
@@ -632,13 +639,36 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             guideHistoryRsp.setSourceName(mpEvent.getSourceNodeName());
             guideHistoryRsp.setSourceIp(mpEvent.getSourceNodeIp());
             guideHistoryRsp.setSourcePort(mpEvent.getSourceNodePort());
+            guideHistoryRsp.setSourceId(mpEvent.getSourceNodeId());
             guideHistoryRsp.setTargetName(mpEvent.getTargetNodeName());
             guideHistoryRsp.setTargetIp(mpEvent.getTargetNodeIp());
             guideHistoryRsp.setTargetPort(mpEvent.getTargetNodePort());
+            guideHistoryRsp.setTargetId(mpEvent.getTargetNodeId());
+            guideHistoryRsp.setResult(SituationGuideScheme.ResultType.SUCCESS.getCode());
+            guideHistoryRsp.setRole(SituationGuideScheme.RoleType.RED.getCode());
             guideHistoryRsp.setCreateTime(TimeUtil.toDate1(mpEvent.getTime()));
             result.add(guideHistoryRsp);
         }
         return result;
+    }
+
+    @Override
+    public List<SituationGuideHistory> guideHistoryRspToSituationGuideHistory(List<GuideHistoryRsp> guideHistoryRspList) {
+        List<SituationGuideHistory> situationGuideHistoryList = new ArrayList<>();
+        for (GuideHistoryRsp guideHistoryRsp : guideHistoryRspList) {
+            for (Integer category : guideHistoryRsp.getCategoryCode()) {
+                SituationGuideHistory situationGuideHistory = new SituationGuideHistory();
+                situationGuideHistory.setEventName(guideHistoryRsp.getEventName());
+                situationGuideHistory.setCategory(category);
+                situationGuideHistory.setEventType(guideHistoryRsp.getActionCode());
+                situationGuideHistory.setSource(guideHistoryRsp.getSourceId());
+                situationGuideHistory.setTarget(guideHistoryRsp.getTargetId());
+                situationGuideHistory.setResult(guideHistoryRsp.getResult());
+                situationGuideHistory.setRole(guideHistoryRsp.getRole());
+                situationGuideHistoryList.add(situationGuideHistory);
+            }
+        }
+        return situationGuideHistoryList;
     }
 
     /**

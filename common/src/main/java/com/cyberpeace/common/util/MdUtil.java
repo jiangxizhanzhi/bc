@@ -28,7 +28,6 @@ import com.google.common.collect.Sets;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.util.CollectionUtils;
 
 /**
  * markdown操作工具类
@@ -147,19 +146,19 @@ public class MdUtil {
 
     private static String getRealPath(String fileUrl) {
 
-        String LOCAL_PREFIX = ConfigUtil.getContextProperty("cr.local.file.prefix");
-        String LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
+        String localPrefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
+        String localParentPath = ConfigUtil.getContextProperty("cr.local.upload.path");
 
         if (StringUtils.isNotBlank(fileUrl)) {
-            if (fileUrl.startsWith(LOCAL_PARENT_PATH)) {
+            if (fileUrl.startsWith(localParentPath)) {
                 return fileUrl;
             }
 
-            if (fileUrl.startsWith(LOCAL_PREFIX)) {
-                return fileUrl.replace(LOCAL_PREFIX, LOCAL_PARENT_PATH + File.separator);
+            if (fileUrl.startsWith(localPrefix)) {
+                return fileUrl.replace(localPrefix, localParentPath + File.separator);
             }
 
-            return LOCAL_PARENT_PATH + File.separator + fileUrl;
+            return localParentPath + File.separator + fileUrl;
 
         }
 
@@ -337,45 +336,6 @@ public class MdUtil {
 		return LocalStringUtil.replaceToBlank(tmp, singleMatchStr);
 	}
 
-	private static boolean append(String content, boolean coding, StringBuilder builder, int type) {
-		// 如果开始和结尾在一行里 直接跳过此行
-		boolean singleLine = content.trim().length() >= CommonConstant.FOUR
-				&& content.trim().startsWith(CommonConstant.MD_CODING_BLOCK)
-				&& content.trim().endsWith(CommonConstant.MD_CODING_BLOCK)
-				&& CommonConstant.ONE.intValue() == type;
-		if (singleLine) {
-			return coding;
-		}
-
-		// 如果此行开始为代码块标识符 则对下面内容进行略过
-		boolean omit = (content.trim().startsWith(CommonConstant.MD_CODING_BLOCK)
-				|| content.trim().endsWith(CommonConstant.MD_CODING_BLOCK))
-				&& CommonConstant.ONE.intValue() == type;
-		if (omit) {
-			coding = !coding;
-		} else {
-			if (!coding) {
-				String compareContent = content;
-				//当前行内存在字符 ` 时，开始裁剪
-				while (content.contains(CommonConstant.MD_CODING_BLOCK_ONE)) {
-					int firstIndex = content.indexOf(CommonConstant.MD_CODING_BLOCK_ONE, 0);
-					compareContent = compareContent.replaceFirst(CommonConstant.MD_CODING_BLOCK_ONE, "");
-					//存在两个`符号时，进行裁剪，否则跳出循环
-					if (compareContent.contains(CommonConstant.MD_CODING_BLOCK_ONE)) {
-						int secondIndex = compareContent.indexOf(CommonConstant.MD_CODING_BLOCK_ONE, 0);
-						content = content.replace(content.substring(firstIndex,secondIndex + 2),"");
-						compareContent = content;
-					}else {
-						break;
-					}
-				}
-				builder.append(content + System.lineSeparator());
-			}
-		}
-
-		return coding;
-	}
-
 	/**
 	 * 读取md文件内容 不包含代码块
 	 * @param file
@@ -387,24 +347,25 @@ public class MdUtil {
 	}
 
 	public static File saveAsFileWriter(String content, String savefile) {
-		FileWriter fwriter = null;
         File file = new File(savefile);
-		try {
-			if(!file.exists()) {
-				file.createNewFile();
+        try {
+			if (file.exists()) {
+				log.info("saveAsFileWriter file already exists: [{}]", savefile);
+			} else {
+				boolean newFileFlag = file.createNewFile();
+				if (!newFileFlag) {
+					log.info("saveAsFileWriter failed to create new file: [{}]", savefile);
+				}
 			}
-			fwriter = new FileWriter(savefile);
-			fwriter.write(content);
-		} catch (IOException ex) {
+
+			try (FileWriter fileWriter = new FileWriter(file)) {
+				fileWriter.write(content);
+			}
+
+		}catch (IOException ex){
 			ex.printStackTrace();
-		} finally {
-			try {
-				fwriter.flush();
-				fwriter.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
 		}
+
         return file;
 	}
 
@@ -440,7 +401,6 @@ public class MdUtil {
 	}
 	private static String mdToHtml(String md, MutableDataSet options) {
 		// uncomment to convert soft-breaks to hard breaks
-//		options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
 		Parser parser = Parser.builder(options).build();
 		HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 		Document document = parser.parse(md);

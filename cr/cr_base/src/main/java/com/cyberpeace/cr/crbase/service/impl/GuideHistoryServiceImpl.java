@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.controller.req.guide.ExecGuideHisRep;
 import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryReq;
 import com.cyberpeace.cr.crbase.controller.rsp.PlaybackOptionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
@@ -16,6 +17,7 @@ import com.cyberpeace.cr.crbase.dao.entity.SituationGuideScheme;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.service.GuideHistoryService;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
+import com.cyberpeace.cr.crbase.service.context.guide.MpEvent;
 import com.cyberpeace.cr.crbase.service.context.guide.ScreenBo;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.model.ElementInfo;
@@ -110,12 +112,11 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 					belongingScreenBo.getSource(), null, null, belongingScreenBo.getRole()));
 		}
 
-		if (CollectionUtils.isNotEmpty(situationGuideHistoryList)) {
-			String topoId = situationGuideHisMapper.getTopoIdByRoom(situationGuideHistoryList.get(0).getRoomId(), situationGuideHistoryList.get(0).getBusinessType());
-			for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
-				situationGuideHistory.setSceneId(topoId);
-				situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
-			}
+		String topoId = null;
+		topoId = situationGuideHisMapper.getTopoIdByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
+		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
+			situationGuideHistory.setSceneId(topoId);
+			situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
 		}
 
 		//处理成前端展示类型
@@ -149,22 +150,53 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 						EnumUtils.getEnumDescByCode(situationGuideHistory.getEventType(), SituationGuideScheme.EventType.class),
 						null);
 			}
+			guideHistoryRsp.setCategoryCode(Collections.singletonList(situationGuideHistory.getCategory()));
+			guideHistoryRsp.setActionCode(situationGuideHistory.getEventType());
+			guideHistoryRsp.setTriggerCode(situationGuideHistory.getType());
+			guideHistoryRsp.setResult(situationGuideHistory.getResult());
+			guideHistoryRsp.setRole(situationGuideHistory.getRole());
 			//获取源节点名称、ip
 			if (StringUtils.isNotEmpty(situationGuideHistory.getSource())) {
 				guideHistoryRsp.setSourceName(elementInfoMap.get(situationGuideHistory.getSource()).getName());
 				guideHistoryRsp.setSourceIp(getElementIp(elementInfoMap.get(situationGuideHistory.getSource())));
+				guideHistoryRsp.setSourceId(situationGuideHistory.getSource());
 			}
 			//获取目标节点名称、ip
 			if (StringUtils.isNotEmpty(situationGuideHistory.getTarget())) {
-				guideHistoryRsp.setSourceName(elementInfoMap.get(situationGuideHistory.getSource()).getName());
-				guideHistoryRsp.setSourceIp(getElementIp(elementInfoMap.get(situationGuideHistory.getSource())));
+				guideHistoryRsp.setTargetName(elementInfoMap.get(situationGuideHistory.getSource()).getName());
+				guideHistoryRsp.setTargetName(getElementIp(elementInfoMap.get(situationGuideHistory.getSource())));
+				guideHistoryRsp.setTargetIp(situationGuideHistory.getTarget());
 			}
 			guideHistoryRspList.add(guideHistoryRsp);
 		}
 
 		//获取中台数据,处理数据
-		List<GuideHistoryRsp> mpEventList = situationGuideService.getMpEventList(screenGuideHistoryReq);
-		guideHistoryRspList.addAll(mpEventList);
+		List<MpEvent> mpEventList = situationGuideService.getMpEventList(screenGuideHistoryReq);
+
+		//推送动效
+		Map<String, Integer> attCk = Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
+										   .collect(Collectors.toMap(SituationGuideScheme.AttackUrlEnum::getMpCode, SituationGuideScheme.AttackUrlEnum::getCode));
+		attCk.putAll(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values())
+						   .collect(Collectors.toMap(SituationGuideScheme.DefenseUrlEnum::getMpCode, SituationGuideScheme.DefenseUrlEnum::getCode)));
+
+		for (MpEvent mpEvent : mpEventList) {
+			for (String category : mpEvent.getAttCks()) {
+				SituationGuideHistory situationGuideHistory = new SituationGuideHistory();
+				situationGuideHistory.setSceneId(topoId);
+				situationGuideHistory.setCategory(attCk.get(category));
+				situationGuideHistory.setEventName(mpEvent.getEventName());
+				situationGuideHistory.setEventType(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getCode());
+				situationGuideHistory.setSource(mpEvent.getSourceNodeId());
+				situationGuideHistory.setTarget(mpEvent.getTargetNodeId());
+				//中台没有攻击结果和归属，赋一个默认值
+				situationGuideHistory.setResult(SituationGuideScheme.ResultType.SUCCESS.getCode());
+				situationGuideHistory.setRole(SituationGuideScheme.RoleType.RED.getCode());
+				situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
+			}
+		}
+
+		//处理成前端展示
+		guideHistoryRspList.addAll(situationGuideService.mpEventToGuideHistoryRsp(mpEventList));
 
 		return guideHistoryRspList;
 	}
@@ -180,6 +212,17 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			eventTimes.addAll(eventTimeArray.toJavaList(JSONObject.class).stream().map(eventTime -> eventTime.getString("time")).collect(Collectors.toList()));
 		}
 		return eventTimes;
+	}
+
+	@Override
+	public Boolean execute(ExecGuideHisRep execGuideHisRep) {
+		List<SituationGuideHistory> situationGuideHistoryList = situationGuideService.guideHistoryRspToSituationGuideHistory(Collections.singletonList(execGuideHisRep));
+		String topoId = situationGuideHisMapper.getTopoIdByRoom(execGuideHisRep.getRoomId(), execGuideHisRep.getBusinessType());
+		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
+			situationGuideHistory.setSceneId(topoId);
+			situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
+		}
+		return true;
 	}
 
 	//获取节点ip

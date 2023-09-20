@@ -16,7 +16,7 @@ public class ScreenGuideHistoryReq implements Serializable {
 	@NotBlank
 	private String roomId;
 
-	@ApiModelProperty("训练类型")
+	@ApiModelProperty("训练类型(3：团队，4：红蓝")
 	@NotNull
 	private Integer businessType;
 

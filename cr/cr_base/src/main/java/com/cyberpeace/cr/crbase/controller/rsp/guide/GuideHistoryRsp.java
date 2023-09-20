@@ -44,14 +44,26 @@ public class GuideHistoryRsp implements Serializable {
 	@ApiModelProperty("源节点端口")
 	private String sourcePort;
 
+	@ApiModelProperty("源节点id")
+	private String sourceId;
+
 	@ApiModelProperty("目的节点名称")
 	private String targetName;
 
 	@ApiModelProperty("目的节点IP")
 	private String targetIp;
 
-	@ApiModelProperty("源节点端口")
+	@ApiModelProperty("目的节点端口")
 	private String targetPort;
+
+	@ApiModelProperty("目的节点id")
+	private String targetId;
+
+	@ApiModelProperty("结果")
+	private Integer result;
+
+	@ApiModelProperty("归属角色")
+	private Integer role;
 
 	@ApiModelProperty("时间")
 	private Date createTime;

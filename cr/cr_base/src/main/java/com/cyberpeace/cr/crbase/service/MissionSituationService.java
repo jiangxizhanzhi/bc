@@ -17,4 +17,12 @@ public interface MissionSituationService extends IService<MissionSituation> {
      */
     void batchCreate(IndustrySituationConfig situationConfig,
 			List<MissionTemplate> missionTemplateList);
+
+	/**
+	 * 获取批量byid列表
+	 *
+	 * @param situationIds situationid列表
+	 * @return {@code List<MissionSituation>}
+	 */
+	List<MissionSituation> getBatchByIds(List<String> situationIds);
 }

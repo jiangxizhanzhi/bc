@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -47,5 +48,13 @@ public class MissionSituationServiceImpl extends ServiceImpl<MissionSituationMap
 			situationList.add(situation);
 		}
 		this.saveBatch(situationList);
+	}
+
+	@Override
+	public List<MissionSituation> getBatchByIds(List<String> situationIds) {
+		if (CollectionUtils.isEmpty(situationIds)) {
+			return Lists.newArrayList();
+		}
+		return this.getBaseMapper().selectBatchIds(situationIds);
 	}
 }

@@ -36,7 +36,7 @@ public class IndustrySituationServiceImpl implements IndustrySituationService {
 
 		IndustrySituationWsMessageIdentifier identifier = new IndustrySituationWsMessageIdentifier();
 		identifier.setPath(WsPath.INDUSTRY_SITUATION);
-		identifier.setBusinessId(roomId);
+		identifier.setBusiness_id(roomId);
 
 		IndustrySituationEvent event = new IndustrySituationEvent();
 		event.setCode(missionSituation.getTsId());

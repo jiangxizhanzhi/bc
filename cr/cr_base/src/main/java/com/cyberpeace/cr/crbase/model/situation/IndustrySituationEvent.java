@@ -1,3 +1,4 @@
+
 package com.cyberpeace.cr.crbase.model.situation;
 
 import java.io.Serializable;

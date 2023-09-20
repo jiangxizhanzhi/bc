@@ -46,10 +46,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
-import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
-import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -405,6 +402,16 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 视频和讲义数据处理
 		lessonInfoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
+		// 获取并更新视频时长
+		if (StringUtils.isNotBlank(lessonInfoBo.getVideoUrl())
+				&& StringUtils.isBlank(lessonInfoBo.getVideoTime())) {
+			String videoTime = Mp4Util.getVideoTimeOfLocalFile(lessonInfoBo.getVideoUrl());
+			lessonInfoBo.setVideoTime(videoTime);
+			if (!"".equals(videoTime)) {
+				lesson.setVideoTime(videoTime);
+				this.updateById(lesson);
+			}
+		}
 		if (null != lesson.getHandoutType() && lesson.getHandoutType()
 				.intValue() == CourseLesson.HandoutType.PDF.getCode().intValue()) {
 			lessonInfoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));

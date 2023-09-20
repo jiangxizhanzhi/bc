@@ -41,4 +41,6 @@ public interface SituationGuideHisMapper extends BaseMapper<SituationGuideHistor
 
     List<SituationGuideHistory> guideRecordListByTime(@Param("roomId") String roomId, @Param("startDate") Date startDate);
 
+    String getTopoIdByRoom(@Param("roomId") String roomId, @Param("businessType") Integer businessType);
+
 }

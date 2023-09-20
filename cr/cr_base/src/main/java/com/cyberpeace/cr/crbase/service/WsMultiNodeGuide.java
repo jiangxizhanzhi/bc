@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import com.cyberpeace.situation.model.LineStyle;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -34,5 +35,8 @@ public class WsMultiNodeGuide implements Serializable {
 
     @ApiModelProperty("归属角色 4:红队 5蓝队")
     private Integer role;
+
+    @ApiModelProperty("线型")
+    private LineStyle lineStyle;
 
 }

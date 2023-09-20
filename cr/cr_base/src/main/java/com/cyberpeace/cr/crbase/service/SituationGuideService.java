@@ -39,4 +39,6 @@ public interface SituationGuideService {
     SituationModelRsp listModel();
 
     ListRsp<GuideHistoryRsp> guideRecord(GuideRecordReq pageReq);
+
+    List<GuideHistoryRsp> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq);
 }

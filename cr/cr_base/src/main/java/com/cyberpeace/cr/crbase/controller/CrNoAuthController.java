@@ -95,7 +95,7 @@ public class CrNoAuthController {
 						templateName));
 				overWritten = true;
 			}
-			mdParser.load(businessTemplateId);
+			mdParser.loadDealError(businessTemplateId);
 			BusinessTemplate template = mdParser.getBusinessTemplate();
 			List<MissionTemplate> missionTemplateList = mdParser.getMissionTemplates();
 			Map<String, String> attachments = mdParser.getImages();

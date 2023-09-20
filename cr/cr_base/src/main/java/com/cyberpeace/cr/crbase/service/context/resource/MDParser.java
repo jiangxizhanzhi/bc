@@ -255,9 +255,10 @@ public class MDParser {
 	private TrainingTemplateContext templateContext = new TrainingTemplateContext();
 
 
-	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(()->"");
-	//字段
-	public static ThreadLocal<String> filedErrorMsg = ThreadLocal.withInitial(()->"");
+	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(() -> "");
+
+	// 字段
+	public static ThreadLocal<String> filedErrorMsg = ThreadLocal.withInitial(() -> "");
 
 	public MDParser(String dirPath, String topoId) {
 		this.dirPath = dirPath;
@@ -278,8 +279,11 @@ public class MDParser {
 	public void loadDealError(String businessTemplateId) {
 		try {
 			load(businessTemplateId);
-		}catch (Exception e) {
-			throw new RemoteServiceException("file parse Exception file: "+fileErrorMsg.get()+"  filed: "+filedErrorMsg.get());
+		} catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RemoteServiceException("file parse Exception file: " + fileErrorMsg.get()
+					+ "  filed: " + filedErrorMsg.get());
 		} finally {
 			fileErrorMsg.remove();
 			filedErrorMsg.remove();
@@ -892,29 +896,30 @@ class GroupRoles {
 
 	private List<Role> blue = Lists.newArrayList();
 }
-class MsgMap extends HashMap{
+
+class MsgMap extends HashMap {
 
 	Map<String, String> mapping;
 
 	public MsgMap(Map<String, String> mapping) {
 		super();
 		this.mapping = new HashMap<>();
-		if (mapping!=null) {
+		if (mapping != null) {
 			for (Entry<String, String> entry : mapping.entrySet()) {
-				this.mapping.put(entry.getValue(),entry.getKey());
+				this.mapping.put(entry.getValue(), entry.getKey());
 			}
 		}
 	}
 
 	@Override
 	public Object get(Object key) {
-		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(),key.toString()));
+		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(), key.toString()));
 		return super.get(key);
 	}
 
 	@Override
 	public Object getOrDefault(Object key, Object defaultValue) {
-		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(),key.toString()));
+		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(), key.toString()));
 		return super.getOrDefault(key, defaultValue);
 	}
 }

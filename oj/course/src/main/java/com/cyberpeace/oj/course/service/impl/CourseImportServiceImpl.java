@@ -246,9 +246,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 		CourseLesson courseLesson=null;
 		try {
 
-			courseLesson= parseLesson(lessonPath, course, envReqs);
-		}catch (Exception e) {
-			throw new RemoteServiceException("file parse Exception file: "+lessonPath);
+			courseLesson = parseLesson(lessonPath, course, envReqs);
+		} catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RemoteServiceException("file parse Exception file: " + lessonPath);
 		}
 		if (null == courseLesson) {
 			return null;

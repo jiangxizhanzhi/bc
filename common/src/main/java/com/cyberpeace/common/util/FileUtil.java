@@ -167,10 +167,12 @@ public class FileUtil {
 		} catch (Exception e) {
 			// 文件读取失败
 			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL, file.getPath());
 		} finally {
 			try {
-				br.close();
+				if (br!=null) {
+					br.close();
+				}
 			} catch (IOException e) {
 				// 不做任何处理
 			}

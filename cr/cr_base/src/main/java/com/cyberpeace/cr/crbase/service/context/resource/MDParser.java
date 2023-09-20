@@ -11,6 +11,8 @@ import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.exception.evaluate.RemoteException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -267,6 +269,11 @@ public class MDParser {
 
 	private IndustrySituationConfig situationConfig;
 
+
+	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(()->"");
+	//字段
+	public static ThreadLocal<String> filedErrorMsg = ThreadLocal.withInitial(()->"");
+
 	public MDParser(String dirPath, String topoId) {
 		this.dirPath = dirPath;
 		this.topoId = topoId;
@@ -283,6 +290,16 @@ public class MDParser {
 		return data.get(ZiguanConstants.TEMPLATE_NAME);
 	}
 
+	public void loadDealError(String businessTemplateId) {
+		try {
+			load(businessTemplateId);
+		}catch (Exception e) {
+			throw new RemoteServiceException("file parse Exception file: "+fileErrorMsg.get()+"  filed: "+filedErrorMsg.get());
+		} finally {
+			fileErrorMsg.remove();
+			filedErrorMsg.remove();
+		}
+	}
 	/**
 	 * 解析入口
 	 */
@@ -719,6 +736,7 @@ public class MDParser {
 	 * @return
 	 */
 	private String stripMd(String mdPath) {
+		fileErrorMsg.set(mdPath);
 		List<String> lines = FileUtil.listContent(new File(mdPath));
 		StringBuilder ret = new StringBuilder();
 		String tempStr;
@@ -744,7 +762,7 @@ public class MDParser {
 	private Map<String, String> parseText(String text, String separator,
 			Map<String, String> mapping) {
 		String[] parts = text.split(separator);
-		Map<String, String> ret = Maps.newHashMap();
+		Map<String, String> ret = new MsgMap<>(mapping);
 
 		for (String part : parts) {
 			String[] partParts = StringUtils.split(part, LINE_SEP, 2);
@@ -906,4 +924,30 @@ class GroupRoles {
 	private List<Role> red = Lists.newArrayList();
 
 	private List<Role> blue = Lists.newArrayList();
+}
+class MsgMap<K,V> extends HashMap<K,V>{
+
+	private Map<String, String> mapping;
+
+	public MsgMap(Map<String, String> mapping) {
+		super();
+		this.mapping = new HashMap<>();
+		if (mapping!=null) {
+			for (Entry<String, String> entry : mapping.entrySet()) {
+				this.mapping.put(entry.getValue(),entry.getKey());
+			}
+		}
+	}
+
+	@Override
+	public V get(Object key) {
+		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(),key.toString()));
+		return super.get(key);
+	}
+
+	@Override
+	public V getOrDefault(Object key, V defaultValue) {
+		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(),key.toString()));
+		return super.getOrDefault(key, defaultValue);
+	}
 }

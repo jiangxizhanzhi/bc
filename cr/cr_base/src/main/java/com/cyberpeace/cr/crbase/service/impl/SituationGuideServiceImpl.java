@@ -31,6 +31,8 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.AttackScreenContext;
+import com.cyberpeace.integratation.model.scene.SceneEventContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
@@ -73,8 +75,6 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     private LocalSceneService localSceneService;
     @Autowired
     private SituationHandlerService situationHandlerService;
-    @Autowired
-    private GuideHistoryServiceImpl guideHistoryService;
     @Autowired
     private RemoteSceneService remoteSceneService;
 
@@ -352,10 +352,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //获取训练房间所有导调任务
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getRoomId, roomId);
+        queryWrapper.eq(SituationGuideScheme::getType,SituationGuideScheme.Type.MISSION.getCode());
         Map<String, SituationGuideScheme> missionGuideMap = StreamApiUtils.toMap(situationGuideSchemeMapper.selectList(queryWrapper), SituationGuideScheme::getMissionId, item -> item);
 
         //根据roomId获取训练任务mission
-        Map<String, Mission> missionMap = StreamApiUtils.toMap(missionMapper.selectByRoomId(roomId), Mission::getMissionTemplateId, item -> item);
+        List<Mission> missions = missionMapper.selectByRoomId(roomId).stream().filter(item-> StringUtils.isNotBlank(item.getMissionTemplateId())).collect(Collectors.toList());
+        Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getMissionTemplateId, item -> item);
         List<GuideRoleStageRsp> result = new ArrayList<>();
         for (CrRoleConfig crRoleConfig : crRoleConfigs) {
             GuideRoleStageRsp guideRoleStageRsp = new GuideRoleStageRsp();
@@ -535,7 +537,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         screenBo.setEndTime(TimeUtil.format1(new Date()));
         historyReq.setAttackScreenBo(screenBo);
         historyReq.setDefenseScreenBo(screenBo);
-        List<GuideHistoryRsp> mpEventList = guideHistoryService.getMpEventList(historyReq, null, null);
+        List<GuideHistoryRsp> mpEventList = getMpEventList(historyReq);
 
         List<SituationGuideHistory> historyList = situationGuideHisMapper.guideRecordListByTime(pageReq.getRoomId(), oneDayAgo);
         Set<String> sceneSet = historyList.stream().map(SituationGuideHistory::getSceneId).collect(Collectors.toSet());
@@ -573,6 +575,70 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         resultList.addAll(mpEventList);
         resultList.sort(Comparator.comparing(item -> item.getCreateTime().getTime()));
         return PageUtil.getListResult(resultList, pageReq.toPageParam(), resultList.size());
+    }
+
+    @Override
+    public List<GuideHistoryRsp> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq) {
+        List<GuideHistoryRsp> result = new ArrayList<>();
+
+        SceneEventContext sceneEventContext = new SceneEventContext();
+        //默认返回前1000条数据
+        sceneEventContext.setPage(1);
+        sceneEventContext.setPageSize(1000);
+        //获取该训练过程中的所有场景id
+        String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
+        List<String> sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
+        if (org.apache.commons.collections.CollectionUtils.isEmpty(sceneIds)){
+            return result;
+        }
+        sceneEventContext.setSceneId(StringUtils.join(sceneIds, ","));
+        //是否查询流量事件
+        sceneEventContext.setFlow(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.FLOW.getCode()));
+        //是否查询主机事件
+        sceneEventContext.setHost(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.HOST.getCode()));
+        //是否筛选攻击
+        if (screenGuideHistoryReq.getAttackScreenBo() == null) {
+            sceneEventContext.setAttack(null);
+        } else {
+            sceneEventContext.setAttack(screenToAttackScreenContext(screenGuideHistoryReq.getAttackScreenBo(), true));
+        }
+        //是否筛选防御
+        if (screenGuideHistoryReq.getDefenseScreenBo() == null) {
+            sceneEventContext.setDefense(null);
+        } else {
+            sceneEventContext.setDefense(screenToAttackScreenContext(screenGuideHistoryReq.getDefenseScreenBo(), false));
+        }
+        //中台无阻断和归属事件，不做处理
+
+        //处理成前端展示类型
+        JSONArray mpEventArray = remoteSceneService.getEventList(sceneEventContext);
+        List<MpEvent> mpEventList = mpEventArray.toJavaList(MpEvent.class);
+
+        Map<String, Integer> attCk = Arrays.stream(SituationGuideScheme.AttackUrlEnum.values()).collect(Collectors.toMap(SituationGuideScheme.AttackUrlEnum::getMpCode, SituationGuideScheme.AttackUrlEnum::getCode));
+
+        for (MpEvent mpEvent : mpEventList) {
+            GuideHistoryRsp guideHistoryRsp = new GuideHistoryRsp();
+            guideHistoryRsp.setEventName(mpEvent.getEventName());
+            guideHistoryRsp.setTriggerType(SituationGuideScheme.Type.getTypeByMpCode(mpEvent.getTriggerType()).getMsg());
+            guideHistoryRsp.setTriggerCode(SituationGuideScheme.Type.getTypeByMpCode(mpEvent.getTriggerType()).getCode());
+            guideHistoryRsp.setActionType(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getMsg());
+            guideHistoryRsp.setActionCode(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getCode());
+            guideHistoryRsp.setCategory(mpEvent.getAttCkNames());
+            List<Integer> categoryCode = new ArrayList<>();
+            for (String mpCode : mpEvent.getAttCks()) {
+                categoryCode.add(attCk.get(mpCode));
+            }
+            guideHistoryRsp.setCategoryCode(categoryCode);
+            guideHistoryRsp.setSourceName(mpEvent.getSourceNodeName());
+            guideHistoryRsp.setSourceIp(mpEvent.getSourceNodeIp());
+            guideHistoryRsp.setSourcePort(mpEvent.getSourceNodePort());
+            guideHistoryRsp.setTargetName(mpEvent.getTargetNodeName());
+            guideHistoryRsp.setTargetIp(mpEvent.getTargetNodeIp());
+            guideHistoryRsp.setTargetPort(mpEvent.getTargetNodePort());
+            guideHistoryRsp.setCreateTime(TimeUtil.toDate1(mpEvent.getTime()));
+            result.add(guideHistoryRsp);
+        }
+        return result;
     }
 
     /**
@@ -673,5 +739,27 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             return null;
         }
         return localScene.getMpSceneId();
+    }
+
+    //转化攻击、防御的筛选条件
+    private AttackScreenContext screenToAttackScreenContext(ScreenBo screenBo, Boolean attack) {
+        AttackScreenContext screenContext = new AttackScreenContext();
+        screenContext.setStartTime(screenBo.getStartTime());
+        screenContext.setEndTime(screenBo.getEndTime());
+        String defenseType = null;
+        if (attack) {
+            defenseType = SituationGuideScheme.AttackUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
+        } else {
+            defenseType = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
+        }
+        screenContext.setDefenseTypes(Collections.singletonList(defenseType));
+        if (screenBo.getEventName() != null) {
+            screenContext.setEventName(Collections.singletonList(screenBo.getEventName()));
+        } else {
+            screenContext.setEventName(null);
+        }
+        screenContext.setSourceNodeIds(Collections.singletonList(screenBo.getSource()));
+        screenContext.setTargetNodeIds(Collections.singletonList(screenBo.getTarget()));
+        return screenContext;
     }
 }

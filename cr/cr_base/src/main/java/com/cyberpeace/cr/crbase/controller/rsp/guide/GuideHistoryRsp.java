@@ -20,11 +20,20 @@ public class GuideHistoryRsp implements Serializable {
 	@ApiModelProperty("触发类型")
 	private String triggerType;
 
+	@ApiModelProperty("触发类型code")
+	private Integer triggerCode;
+
 	@ApiModelProperty("动作类型")
 	private String actionType;
 
+	@ApiModelProperty("动作类型code")
+	private Integer actionCode;
+
 	@ApiModelProperty("攻防类型")
 	private List<String> category;
+
+	@ApiModelProperty("攻防类型code")
+	private List<Integer> categoryCode;
 
 	@ApiModelProperty("源节点名称")
 	private String sourceName;

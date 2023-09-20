@@ -111,7 +111,6 @@
                 resource_id = #{roomId}
             </if>
         </where>
-
     </select>
 
     <select id="getEventTimes" resultType="java.lang.String">
@@ -129,5 +128,20 @@
         FROM situation_guide_history
         WHERE  room_id = #{roomId}
         AND create_time  &gt;= #{startDate}
+    </select>
+
+    <select id="getTopoIdByRoom" resultType="java.lang.String">
+        select copyed_topo_id from
+        <if test="businessType == 3 ">
+            cr_team_room
+        </if>
+        <if test="businessType == 4 ">
+            cr_rb_room
+        </if>
+        <where>
+            <if test="roomId != null and roomId != ''">
+                resource_id = #{roomId}
+            </if>
+        </where>
     </select>
 </mapper>

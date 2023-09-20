@@ -5,7 +5,6 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.*;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
-import com.cyberpeace.cr.crbase.service.GuideHistoryService;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,8 +30,8 @@ public class SituationGuideController {
     private SituationGuideService situationGuideService;
 
     @ApiOperation("手动导调列表")
-    @PostMapping("/list")
-    public BaseRsp<ListRsp<SituationGuideListRsp>> list(@RequestBody @Validated ListGuideSchemeReq req) {
+    @GetMapping("/list")
+    public BaseRsp<ListRsp<SituationGuideListRsp>> list(@Validated ListGuideSchemeReq req) {
         return new BaseRsp<>(situationGuideService.listByRoomId(req));
     }
 
@@ -119,8 +118,8 @@ public class SituationGuideController {
 
 
     @ApiOperation("态势导调记录")
-    @PostMapping("/guide_record")
-    public BaseRsp<ListRsp<GuideHistoryRsp>> guideRecord(@RequestBody @Validated GuideRecordReq pageReq) {
+    @GetMapping("/guide_record")
+    public BaseRsp<ListRsp<GuideHistoryRsp>> guideRecord(@Validated GuideRecordReq pageReq) {
         return new BaseRsp<>(situationGuideService.guideRecord(pageReq));
     }
 

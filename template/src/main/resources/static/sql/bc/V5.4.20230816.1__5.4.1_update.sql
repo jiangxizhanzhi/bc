@@ -126,3 +126,8 @@ ALTER TABLE `cr_team_template`
 -- TeamRoom
 ALTER TABLE `cr_team_room`
     ADD COLUMN `area_path` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '攻击路径';
+
+
+ALTER TABLE `cr_rb_room` ADD COLUMN `scene_id_record` varchar(255) null comment '训练过程中的所有场景id';
+
+ALTER TABLE `cr_team_room` ADD COLUMN `scene_id_record` varchar(255) null comment '训练过程中的所有场景id';

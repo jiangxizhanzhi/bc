@@ -237,20 +237,20 @@ public class SituationGuideScheme extends BaseTable {
      * 攻击类型url枚举
      */
     public enum AttackUrlEnum implements BaseI18n {
-        RECONNAISSANCE(1, "侦察", "Reconnaissance", "对手正试图收集可用于规划未来行动的信息。", "", "", "reconnaissance", "compound"),
-        RESOURCE_DEVELOPMENT(2, "资源开发", "Resource Development", "攻击者正在尝试建立可用于支持操作的资源。", "", "", "resource development", "element"),
-        INITIAL_VISIT(3, "初始访问", "Initial Access", "攻击者正试图进入您的网络。", "", "", "initial access", "element"),
-        IMPLEMENT(4, "执行", "Execution", "攻击者正在尝试运行恶意代码。", "", "", "execution", "element"),
-        PERSISTENCE(5, "持久化", "Persistence", "对手正试图保持他们的立足点。", "", "", "persistence", "element"),
-        PRIVACY_IMPROVEMENT(6, "特权提升", "Privilege Escalation", "攻击者正在尝试获取更高级别的权限。", "", "", "privilege escalation", "element"),
-        ESCAPE_DEFENSE(7, "逃避防御", "Defense Evasion", "对手试图避免被检测到。", "", "", "defense evasion", "element"),
-        ACCORDING_INTERVIEW(8, "凭据访问", "Credential Access", "攻击者试图窃取帐户名和密码。", "", "", "credential access", "element"),
-        ATTACK_DISCOVER(9, "发现", "Discovery", "对手正在尝试找出您的环境。", "", "", "discovery", "element"),
-        MOVE_HORIZONTALLY(10, "横向移动", "Lateral Movement", "攻击者正在尝试在您的环境中移动。", "", "", "lateral movement", "element"),
-        COLLECT_MESSAGE(11, "信息收集", "Collection", "对手正试图收集与其目标相关的数据。", "", "", "collection", "element"),
-        COMMAND_CONTROL(12, "命令与控制", "Command and Control", "攻击者正试图与受感染的系统进行通信以控制它们。", "", "", "command and control", "element"),
-        INFORMATION_THEFT(13, "信息盗取", "Exfiltration", "攻击者试图窃取数据。", "", "", "exfiltration", "element"),
-        INFLUENCE(14, "影响", "Impact", "攻击者试图操纵、中断或破坏您的系统和数据。", "", "", "impact", "element");
+        RECONNAISSANCE(1, "侦察", "Reconnaissance", "对手正试图收集可用于规划未来行动的信息。", "/cpms/guide/1_attack.png", "", "reconnaissance", "compound"),
+        RESOURCE_DEVELOPMENT(2, "资源开发", "Resource Development", "攻击者正在尝试建立可用于支持操作的资源。", "/cpms/guide/2_attack.png", "", "resource development", "element"),
+        INITIAL_VISIT(3, "初始访问", "Initial Access", "攻击者正试图进入您的网络。", "/cpms/guide/3_attack.png", "", "initial access", "element"),
+        IMPLEMENT(4, "执行", "Execution", "攻击者正在尝试运行恶意代码。", "/cpms/guide/4_attack.png", "", "execution", "element"),
+        PERSISTENCE(5, "持久化", "Persistence", "对手正试图保持他们的立足点。", "/cpms/guide/5_attack.png", "", "persistence", "element"),
+        PRIVACY_IMPROVEMENT(6, "特权提升", "Privilege Escalation", "攻击者正在尝试获取更高级别的权限。", "/cpms/guide/6_attack.png", "", "privilege escalation", "element"),
+        ESCAPE_DEFENSE(7, "逃避防御", "Defense Evasion", "对手试图避免被检测到。", "/cpms/guide/7_attack.png", "", "defense evasion", "element"),
+        ACCORDING_INTERVIEW(8, "凭据访问", "Credential Access", "攻击者试图窃取帐户名和密码。", "/cpms/guide/8_attack.png", "", "credential access", "element"),
+        ATTACK_DISCOVER(9, "发现", "Discovery", "对手正在尝试找出您的环境。", "/cpms/guide/9_attack.png", "", "discovery", "element"),
+        MOVE_HORIZONTALLY(10, "横向移动", "Lateral Movement", "攻击者正在尝试在您的环境中移动。", "/cpms/guide/10_attack.png", "", "lateral movement", "element"),
+        COLLECT_MESSAGE(11, "信息收集", "Collection", "对手正试图收集与其目标相关的数据。", "/cpms/guide/11_attack.png", "", "collection", "element"),
+        COMMAND_CONTROL(12, "命令与控制", "Command and Control", "攻击者正试图与受感染的系统进行通信以控制它们。", "/cpms/guide/12_attack.png", "", "command and control", "element"),
+        INFORMATION_THEFT(13, "信息盗取", "Exfiltration", "攻击者试图窃取数据。", "/cpms/guide/13_attack.png", "", "exfiltration", "element"),
+        INFLUENCE(14, "影响", "Impact", "攻击者试图操纵、中断或破坏您的系统和数据。", "/cpms/guide/14_attack.png", "", "impact", "element");
 
         @Getter
         private final Integer code;
@@ -300,15 +300,15 @@ public class SituationGuideScheme extends BaseTable {
      * 防御类型url枚举
      */
     public enum DefenseUrlEnum implements BaseI18n {
-        PLANNING(15, "规划", "Plan", "确定操作并将其与所需的最终状态对齐。", "", "", "Plan"),
-        COLLECT(16, "收集", "Collect", "收集对手工具，观察战术，并收集有关对手活动的其他原始情报。", "", "", "collect"),
-        DEFENSE_DISCOVER(17, "发现", "Detect", "建立或保持对对手活动的意识。", "", "", "detect"),
-        DEFENSE(18, "防御", "Prevent", "停止对手按预期执行其操作的全部或部分能力。", "", "", "prevent"),
-        MOVEMENT(19, "转移", "Direct", "鼓励或阻止对手按预期进行操作。", "", "", "direct"),
-        DESTROY(20, "破坏", "Disrupt", "损害对手按预期执行操作的能力。", "", "", "disrupt"),
-        ENSURE(21, "保证", "Reassure", "为欺骗性组件添加真实性，以使对手相信环境是真实的。", "", "", "reassure"),
-        EXCITATION(22, "激励", "Motivate", "鼓励对手执行部分或全部任务。", "", "", "motivate"),
-        ANALYZE(23, "分析", "Analyze", "回顾性审查从操作中获得的信息。", "", "", "analyze");
+        PLANNING(15, "规划", "Plan", "确定操作并将其与所需的最终状态对齐。", "/cpms/guide/15_defense.png", "", "plan"),
+        COLLECT(16, "收集", "Collect", "收集对手工具，观察战术，并收集有关对手活动的其他原始情报。", "/cpms/guide/16_defense.png", "", "collect"),
+        DEFENSE_DISCOVER(17, "发现", "Detect", "建立或保持对对手活动的意识。", "/cpms/guide/17_defense.png", "", "detect"),
+        DEFENSE(18, "防御", "Prevent", "停止对手按预期执行其操作的全部或部分能力。", "/cpms/guide/18_defense.png", "", "prevent"),
+        MOVEMENT(19, "转移", "Direct", "鼓励或阻止对手按预期进行操作。", "/cpms/guide/19_defense.png", "", "direct"),
+        DESTROY(20, "破坏", "Disrupt", "损害对手按预期执行操作的能力。", "/cpms/guide/20_defense.png", "", "disrupt"),
+        ENSURE(21, "保证", "Reassure", "为欺骗性组件添加真实性，以使对手相信环境是真实的。", "/cpms/guide/21_defense.png", "", "reassure"),
+        EXCITATION(22, "激励", "Motivate", "鼓励对手执行部分或全部任务。", "/cpms/guide/22_defense.png", "", "motivate"),
+        ANALYZE(23, "分析", "Analyze", "回顾性审查从操作中获得的信息。", "/cpms/guide/23_defense.png", "", "analyze");
 
         @Getter
         private final Integer code;

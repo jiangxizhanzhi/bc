@@ -100,14 +100,15 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             situationGuideListRsp.setCategory(item.getCategory());
             situationGuideListRsp.setSource(item.getSource());
             situationGuideListRsp.setTarget(item.getTarget());
+            situationGuideListRsp.setBusinessType(item.getBusinessType());
             return situationGuideListRsp;
         });
         ListRsp<SituationGuideListRsp> result = PageUtil.getListResult(page);
         if (CollectionUtils.isEmpty(result.getList())) {
             return result;
         }
-
-        SituationTopo situationTopo = getSituationTopoByRoomId(req.getRoomId(), SituationGuideScheme.Type.MANUALLY.getCode());
+        Integer businessType = result.getList().get(0).getBusinessType();
+        SituationTopo situationTopo = getSituationTopoByRoomId(req.getRoomId(),businessType);
 
         for (SituationGuideListRsp situationGuideListRsp : result.getList()) {
             Map<String, ElementInfo> elementMap = situationTopo.getElements();

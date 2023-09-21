@@ -678,7 +678,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     private void validGuideSchemeParam(AddGuideSchemeReq req) {
         //任务导调判断是否可新增/编辑
         if (SituationGuideScheme.Type.MISSION.getCode().equals(req.getType()) && Objects.nonNull(req.getMissionId())) {
-            List<CrTask> taskList = crTaskMapper.selectByMissionId(req.getMissionId());
+            List<CrTask> taskList = crTaskMapper.selectByMissionId(req.getMissionId()).stream().filter(item-> StringUtils.isNotBlank(item.getMissionTemplateId())).collect(Collectors.toList());
             //'未下发',任务导调才可编辑
             if (!CollectionUtils.isEmpty(taskList)) {
                 throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);

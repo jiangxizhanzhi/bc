@@ -17,6 +17,8 @@ public class SituationGuideListRsp implements Serializable {
     @ApiModelProperty("房间id")
     private String roomId;
 
+    private Integer businessType;
+
     @ApiModelProperty("动效方案名称")
     private String eventName;
 

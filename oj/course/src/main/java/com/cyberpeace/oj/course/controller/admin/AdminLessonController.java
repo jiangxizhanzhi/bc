@@ -225,8 +225,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		CourseLesson lesson = courseLessonService.updateLesson(courseLesson, topoConfig,
 				contextList);
 		// 备课笔记
-		if (lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())
-				&& null != lessonUpdateReq.getPrepare_note()) {
+		if (lessonUpdateReq.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())) {
 			lessonPrepareNoteService.submitNote(lessonUpdateReq.getResourceId(),
 					lessonUpdateReq.getPrepare_note());
 		}

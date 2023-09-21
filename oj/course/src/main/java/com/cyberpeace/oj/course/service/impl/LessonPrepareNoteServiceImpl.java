@@ -25,9 +25,7 @@ public class LessonPrepareNoteServiceImpl implements LessonPrepareNoteService {
 		if (null == userInfo) {
 			return;
 		}
-		if (StringUtils.isBlank(note)) {
-			return;
-		}
+
 		LessonPrepareNote exist = lessonPrepareNoteMapper.getByLessonAndUser(lessonId,
 				userInfo.getUserId());
 		if (null == exist) {

@@ -69,10 +69,10 @@ public class SituationGuideRsp implements Serializable {
 	@ApiModelProperty("失败链接")
 	private String failUrl;
 
-	@ApiModelProperty("失败链接")
+	@ApiModelProperty("红队链接")
 	private String redUrl;
 
-	@ApiModelProperty("成功链接")
+	@ApiModelProperty("蓝队链接")
 	private String blueUrl;
 
 	@ApiModelProperty("归属角色 4:红队 5蓝队")

@@ -57,6 +57,9 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("节点字体样式")
 	private FontStyle fontStyle;
 
+	@ApiModelProperty("一级类型code")
+	private Integer oneCategoryCode;
+
 	public ElementInfo(JSONObject element) {
 		this.setElementId(element.getString("id"));
 		this.setName(element.getString("name"));

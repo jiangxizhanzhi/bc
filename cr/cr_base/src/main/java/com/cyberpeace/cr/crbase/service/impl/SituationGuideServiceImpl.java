@@ -108,7 +108,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             return result;
         }
         Integer businessType = result.getList().get(0).getBusinessType();
-        SituationTopo situationTopo = getSituationTopoByRoomId(req.getRoomId(),businessType);
+        SituationTopo situationTopo = getSituationTopoByRoomId(req.getRoomId(), businessType);
 
         for (SituationGuideListRsp situationGuideListRsp : result.getList()) {
             Map<String, ElementInfo> elementMap = situationTopo.getElements();
@@ -180,6 +180,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                 resp.setCategoryName(defenseUrlEnum.getMsg());
                 resp.setSuccessUrl(defenseUrlEnum.getSuccessUrl());
                 resp.setFailUrl(defenseUrlEnum.getFailUrl());
+                break;
             case BLOCKING:
                 String oneUrl = SituationGuideScheme.BlockingAndBelongingUrlEnum.BLOCKING.getOneUrl();
                 resp.setSuccessUrl(oneUrl);
@@ -334,7 +335,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //根据roomId和训练类型获取角色任务配置(团队训练/红蓝对抗)
         SituationGuideMissionBo situationGuideMissionBo = situationGuideSchemeMapper.selectRoleConfigByBusinessType(roomId, businessType);
         if (Objects.isNull(situationGuideMissionBo) || StringUtils.isBlank(situationGuideMissionBo.getRoleConfig())) {
-            return null;
+            return new ArrayList<>();
         }
         List<CrRoleConfig> crRoleConfigs = new ArrayList<>();
         if (BusinessType.TRAINING_TEAM.getCode().equals(businessType)) {
@@ -353,11 +354,11 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //获取训练房间所有导调任务
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getRoomId, roomId);
-        queryWrapper.eq(SituationGuideScheme::getType,SituationGuideScheme.Type.MISSION.getCode());
+        queryWrapper.eq(SituationGuideScheme::getType, SituationGuideScheme.Type.MISSION.getCode());
         Map<String, SituationGuideScheme> missionGuideMap = StreamApiUtils.toMap(situationGuideSchemeMapper.selectList(queryWrapper), SituationGuideScheme::getMissionId, item -> item);
 
         //根据roomId获取训练任务mission
-        List<Mission> missions = missionMapper.selectByRoomId(roomId).stream().filter(item-> StringUtils.isNotBlank(item.getMissionTemplateId())).collect(Collectors.toList());
+        List<Mission> missions = missionMapper.selectByRoomId(roomId).stream().filter(item -> StringUtils.isNotBlank(item.getMissionTemplateId())).collect(Collectors.toList());
         Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getMissionTemplateId, item -> item);
         List<GuideRoleStageRsp> result = new ArrayList<>();
         for (CrRoleConfig crRoleConfig : crRoleConfigs) {
@@ -381,7 +382,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
                         SituationGuideScheme guideScheme = missionGuideMap.get(mission.getResourceId());
                         guideMissionRsp.setGuideId(Objects.isNull(guideScheme) ? null : guideScheme.getResourceId());
-                        guideMissionRsp.setEventType( Objects.isNull(guideScheme) ? null : guideScheme.getEventType());
+                        guideMissionRsp.setEventType(Objects.isNull(guideScheme) ? null : guideScheme.getEventType());
                         missionList.add(guideMissionRsp);
                     }
                 }
@@ -476,24 +477,33 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
         SituationModelRsp situationModelRsp = listModel();
         result.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
-                                   .map(item -> new AttackSituationOffensiveDescRsp(item.getCode(), item.getMsg(), item.getDesc(), item.getSuccessUrl(), item.getFailUrl(), item.getType()))
-                                   .collect(Collectors.toList()));
+                .map(item -> new AttackSituationOffensiveDescRsp(item.getCode(), item.getMsg(), item.getDesc(), item.getSuccessUrl(), item.getFailUrl(), item.getType()))
+                .collect(Collectors.toList()));
         result.setDefenseType(situationModelRsp.getDefenseList());
         result.setBlockingUrl(situationModelRsp.getBlockingUrl());
         result.setBelongUrl(situationModelRsp.getBelongUrl());
 
         SituationTopo situationTopo = getSituationTopoByRoomId(roomId, businessType);
-        List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
-                .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
-                .collect(Collectors.toList());
+
+        List<MissionCategoryRsp> nodeList=new ArrayList<>();
+        List<MissionCategoryRsp> blockingNodeType=new ArrayList<>();
+        for (ElementInfo elementInfo : situationTopo.getElements().values()) {
+            MissionCategoryRsp missionCategoryRsp = new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName());
+            if (Objects.nonNull(elementInfo.getOneCategoryCode()) && 4 == elementInfo.getOneCategoryCode()) {
+                blockingNodeType.add(missionCategoryRsp);
+            }
+            nodeList.add(missionCategoryRsp);
+        }
         result.setNodeType(nodeList);
+        result.setBlockingNodeType(blockingNodeType);
+
         if (CollectionUtils.isEmpty(situationTopo.getAreas())) {
             result.setAreaType(new ArrayList<>());
             return result;
         }
         List<MissionCategoryRsp> areaList = situationTopo.getAreas().values().stream()
-                                                         .map(areaInfo -> new MissionCategoryRsp(areaInfo.getAreaId(), "area-" + areaInfo.getAreaId()))
-                                                         .collect(Collectors.toList());
+                .map(areaInfo -> new MissionCategoryRsp(areaInfo.getAreaId(), "area-" + areaInfo.getAreaId()))
+                .collect(Collectors.toList());
         result.setAreaType(areaList);
 
         return result;
@@ -580,7 +590,6 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Override
     public List<MpEvent> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq) {
-        List<GuideHistoryRsp> result = new ArrayList<>();
 
         SceneEventContext sceneEventContext = new SceneEventContext();
         //默认返回前1000条数据
@@ -589,7 +598,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //获取该训练过程中的所有场景id
         String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
         List<String> sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
-        if (org.apache.commons.collections.CollectionUtils.isEmpty(sceneIds)){
+        if (CollectionUtils.isEmpty(sceneIds)) {
             return new ArrayList<>();
         }
         sceneEventContext.setSceneId(StringUtils.join(sceneIds, ","));
@@ -620,9 +629,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     public List<GuideHistoryRsp> mpEventToGuideHistoryRsp(List<MpEvent> mpEventList) {
         List<GuideHistoryRsp> result = new ArrayList<>();
         Map<String, Integer> attCk = Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
-                                           .collect(Collectors.toMap(SituationGuideScheme.AttackUrlEnum::getMpCode, SituationGuideScheme.AttackUrlEnum::getCode));
+                .collect(Collectors.toMap(SituationGuideScheme.AttackUrlEnum::getMpCode, SituationGuideScheme.AttackUrlEnum::getCode));
         attCk.putAll(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values())
-                           .collect(Collectors.toMap(SituationGuideScheme.DefenseUrlEnum::getMpCode, SituationGuideScheme.DefenseUrlEnum::getCode)));
+                .collect(Collectors.toMap(SituationGuideScheme.DefenseUrlEnum::getMpCode, SituationGuideScheme.DefenseUrlEnum::getCode)));
 
         for (MpEvent mpEvent : mpEventList) {
             GuideHistoryRsp guideHistoryRsp = new GuideHistoryRsp();
@@ -677,8 +686,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
      */
     private void validGuideSchemeParam(AddGuideSchemeReq req) {
         //任务导调判断是否可新增/编辑
-        if (SituationGuideScheme.Type.MISSION.getCode().equals(req.getType()) && Objects.nonNull(req.getMissionId())) {
-            List<CrTask> taskList = crTaskMapper.selectByMissionId(req.getMissionId()).stream().filter(item-> StringUtils.isNotBlank(item.getMissionTemplateId())).collect(Collectors.toList());
+        boolean isMissionEdit = SituationGuideScheme.Type.MISSION.getCode().equals(req.getType()) && Objects.nonNull(req.getMissionId());
+        if (isMissionEdit) {
+            List<CrTask> taskList = crTaskMapper.selectByMissionId(req.getMissionId()).stream().filter(item -> StringUtils.isNotBlank(item.getMissionTemplateId())).collect(Collectors.toList());
             //'未下发',任务导调才可编辑
             if (!CollectionUtils.isEmpty(taskList)) {
                 throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
@@ -704,7 +714,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                 }
                 break;
             case BELONGING:
-                flag = req.getSource() == null;
+                flag = req.getTarget() == null;
                 if (flag || missionFlag) {
                     throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
                 }
@@ -755,7 +765,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         SituationGuideSceneBo situationGuideSceneBo = situationGuideSchemeMapper.selectSceneByRoomId(roomId, businessType);
         if (Objects.isNull(situationGuideSceneBo)) {
             SituationTopo situationTopo = new SituationTopo();
-            situationTopo.setElements(new HashMap<>());
+            situationTopo.setElements(Maps.newHashMap());
             return situationTopo;
         }
         if (StringUtils.isNotBlank(situationGuideSceneBo.getSceneId())) {
@@ -777,8 +787,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         AttackScreenContext screenContext = new AttackScreenContext();
         screenContext.setStartTime(screenBo.getStartTime());
         screenContext.setEndTime(screenBo.getEndTime());
-        String defenseType = null;
-        if (attack) {
+        String defenseType;
+        if (Boolean.TRUE.equals(attack)) {
             defenseType = SituationGuideScheme.AttackUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
         } else {
             defenseType = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();

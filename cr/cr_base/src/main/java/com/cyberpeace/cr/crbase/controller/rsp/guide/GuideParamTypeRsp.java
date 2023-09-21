@@ -34,6 +34,9 @@ public class GuideParamTypeRsp {
     @ApiModelProperty(value = "节点")
     private List<MissionCategoryRsp> nodeType;
 
+    @ApiModelProperty(value = "阻断节点")
+    private List<MissionCategoryRsp> blockingNodeType;
+
     @ApiModelProperty(value = "区域")
     private List<MissionCategoryRsp> areaType;
 

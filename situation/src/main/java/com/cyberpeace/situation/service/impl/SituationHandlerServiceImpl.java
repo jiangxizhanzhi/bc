@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -33,6 +34,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -216,7 +218,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 处理端口数据
 			Map<String, PortInfo> portsInfo = Maps.newHashMap();
 			JSONArray ports = (JSONArray) element.getOrDefault("ports",
-					JSONArray.parseArray(Lists.newArrayList().toString()));
+					JSON.parseArray(Lists.newArrayList().toString()));
 			for (int j = 0; j < ports.size(); j++) {
 				JSONObject port = ports.getJSONObject(j);
 				String portId = port.getString("id");
@@ -254,6 +256,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				elementInfo.setFontStyle(
 						new FontStyle(display.getText().getFill(), display.getText().getFontSize()));
 			}
+			//设置一级类型的编码
+			elementInfo.setOneCategoryCode(category);
 
 			// 写入节点列表
 			elementsInfo.put(elementId, elementInfo);
@@ -505,7 +509,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 设置动效配置
 			attackEvent.setLineStyle(
 					new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));
-			attackEvent.setLookAtTarget(new Random().nextBoolean());
+			attackEvent.setLookAtTarget(new SecureRandom().nextBoolean());
 
 			// 设置事件描述
 			String sourceIp = flowLog.getString("source_ip");
@@ -538,13 +542,13 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		JSONObject sceneTopo = topoHandlerService.getSceneTopoBySceneId(sceneId);
 		JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
 		JSONArray elements = (JSONArray) topology.getOrDefault("elements",
-				JSONArray.parseArray(Lists.newArrayList().toString()));
+				JSON.parseArray(Lists.newArrayList().toString()));
 		JSONArray areas = (JSONArray) topology.getOrDefault("areas",
-				JSONArray.parseArray(Lists.newArrayList().toString()));
+				JSON.parseArray(Lists.newArrayList().toString()));
 
 		WsMultiNodeDynamic wsEvent = null;
 		if ("compound".equals(actionType.getType()) && !areas.isEmpty() && !elements.isEmpty()
-				&& new Random().nextBoolean()) {
+				&& new SecureRandom().nextBoolean()) {
 			wsEvent = getRandomWsMultiAreaDynamic(elements, areas);
 		} else if (elements.size() >= 2) {
 			wsEvent = getRandomWsMultiElementDynamic(elements);
@@ -558,12 +562,11 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		wsEvent.setCategory("attack");
 
 		wsEvent.setType(actionType.getCode());
-		// wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
 		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()), 5,
 				LineType.getRandomValue(LineType.values())));
-		wsEvent.setLookAtTarget(new Random().nextBoolean());
+		wsEvent.setLookAtTarget(new SecureRandom().nextBoolean());
 
 		// 补充动态描述
 		wsEvent.setDescription(wsEvent.getDescription().replace("$攻击$", actionType.getDesc()));

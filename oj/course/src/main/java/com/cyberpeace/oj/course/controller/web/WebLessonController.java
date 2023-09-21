@@ -17,6 +17,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.oj.course.controller.req.CheckPointSubmitReq;
 import com.cyberpeace.oj.course.controller.req.LessonPracticeSubmitReq;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.LessonCheckPointService;
@@ -109,7 +110,7 @@ public class WebLessonController {
 	@PostMapping("/check_point/submit")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<EvaluateResult>
-			submitCheckPoint(@RequestBody @Validated LessonPracticeSubmitReq submitReq) {
+			submitCheckPoint(@RequestBody @Validated CheckPointSubmitReq submitReq) {
 		List<CheckPointAnswer> answerContexts = BeanUtils.deepCopyList(submitReq.getAnswers(),
 				CheckPointAnswer.class);
 		lessonCheckPointService.submitAnswer(submitReq.getLessonId(),

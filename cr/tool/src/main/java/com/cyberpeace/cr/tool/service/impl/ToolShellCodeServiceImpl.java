@@ -22,7 +22,7 @@ public class ToolShellCodeServiceImpl extends ServiceImpl<ToolShellCodeMapper, T
 	@Override
 	public ListRsp<ToolShellCode> selectPage(PageReqBase pageReqBase,
 			ToolShellCodeRsp toolShellCodeRsp) {
-		Page page = pageReqBase.toPageParam();
+		Page<ToolShellCode> page = pageReqBase.toPageParam();
 		IPage<ToolShellCode> result = toolShellCodeMapper
 				.list(page, toolShellCodeRsp.getAuthor(), toolShellCodeRsp.getPlatform(),
 						toolShellCodeRsp.getEdbVerified());

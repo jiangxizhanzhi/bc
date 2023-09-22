@@ -18,7 +18,7 @@ import com.cyberpeace.oj.course.dao.entity.Course;
 @Repository
 public interface CourseMapper extends BaseMapper<Course> {
 
-	IPage<Course> listByPage(Page page, @Param("courseContext") CourseContext courseContext,
+	IPage<Course> listByPage(Page<Course> page, @Param("courseContext") CourseContext courseContext,
 			@Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic);
 
 	List<String> notDeleteIdsByIds(@Param("courseIds") List<String> courseIds);

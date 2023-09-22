@@ -188,7 +188,6 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 			Map<String, List<CourseLesson>> lessons, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
 
 		Map<String, String> filePathMap = new HashMap<>();
-		Integer currentChapter = chapterOne.getIndex();
 		String chapterFileName = destFilePath + File.separator + chapterIndex + "_"
 				+ chapterOne.getName();
 		FileUtil.mkdirs(chapterFileName);

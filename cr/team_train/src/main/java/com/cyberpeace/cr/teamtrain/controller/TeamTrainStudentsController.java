@@ -202,7 +202,7 @@ public class TeamTrainStudentsController {
 					return schemeListMissionRsp;
 				}).collect(Collectors.toList());
 
-		return new BaseRsp(missionSchemeList);
+		return new BaseRsp<>(missionSchemeList);
 	}
 
 	@ApiOperation("提交任务答案")
@@ -259,7 +259,7 @@ public class TeamTrainStudentsController {
 			missionRsp.setWriteUp("");
 		}
 
-		return new BaseRsp(missionRsp);
+		return new BaseRsp<>(missionRsp);
 	}
 
 	/**
@@ -274,15 +274,15 @@ public class TeamTrainStudentsController {
 		CrCommonValidator.validateId(resource_id);
 		TimeLineData data = teamRoomService.getStudentsTimeLine(resource_id);
 
-		return new BaseRsp(data);
+		return new BaseRsp<>(data);
 	}
 
 	@ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req) {
+	public BaseRsp<Void> createMark(@RequestBody @Valid MarkAddReq req) {
 		crCommonService.addMark(req, BusinessType.TRAINING_TEAM.getCode());
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("团队对抗-学员任务矩阵")
@@ -349,7 +349,7 @@ public class TeamTrainStudentsController {
 	@ApiOperation("任务矩阵红点点击取消")
 	@GetMapping("/matrix/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp clickEvaluationBadge(
+	public BaseRsp<Void> clickEvaluationBadge(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
 		crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
@@ -445,7 +445,7 @@ public class TeamTrainStudentsController {
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp addDevice(@RequestBody TeamCommonDeviceReq teamCommonDeviceReq) {
+	public BaseRsp<Void> addDevice(@RequestBody TeamCommonDeviceReq teamCommonDeviceReq) {
 		if (StringUtils.isEmpty(teamCommonDeviceReq.getRoomId())) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
@@ -458,16 +458,16 @@ public class TeamTrainStudentsController {
 			item.setRoomId(teamCommonDeviceReq.getRoomId());
 		});
 		teamCommonDeviceService.addListToCollect(commonDeviceContextList);
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp delDevice(@RequestBody TeamCommonDeviceContext teamCommonDeviceContext) {
+	public BaseRsp<Void> delDevice(@RequestBody TeamCommonDeviceContext teamCommonDeviceContext) {
 		String resourceId = teamCommonDeviceContext.getResourceId();
 		teamCommonDeviceService.delCollect(resourceId);
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("常用资产已添加列表")
@@ -527,7 +527,7 @@ public class TeamTrainStudentsController {
 	 * @param userId
 	 * @return
 	 */
-	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
+	public BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		List<RoleUsers> roleUsersList = Lists.newArrayList();
 		crRoles.forEach(crRole -> {
@@ -593,7 +593,8 @@ public class TeamTrainStudentsController {
 			}
 
 			// 如果 已添加常用设备 包含 场景中可用设备
-			if (allCollectedCommonDevices.contains(availableDevice.getString("id"))) {
+			List<String> deviceIds = allCollectedCommonDevices.stream().map(a -> a.getDeviceId()).collect(Collectors.toList());
+			if (deviceIds.contains(availableDevice.getString("id"))) {
 				context.setOccupyFlag(1);;
 			}
 
@@ -627,7 +628,8 @@ public class TeamTrainStudentsController {
 			return new ArrayList<>();
 		}
 		List<TeamCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
-		outer: for (int i = 0; i < availableDevices.size(); i++) {
+		boolean foundCommonDevice = false;
+		for (int i = 0; i < availableDevices.size(); i++) {
 			JSONObject availableDevice = availableDevices.get(i);
 			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
 
@@ -639,7 +641,12 @@ public class TeamTrainStudentsController {
 				context.setDeviceInfo(availableDevice);
 				context.setOccupyFlag(1);
 				commonDeviceContexts.add(context);
-				continue outer;
+				foundCommonDevice = true;
+				break;
+			}
+
+			if (foundCommonDevice) {
+				break;
 			}
 		}
 		return commonDeviceContexts;

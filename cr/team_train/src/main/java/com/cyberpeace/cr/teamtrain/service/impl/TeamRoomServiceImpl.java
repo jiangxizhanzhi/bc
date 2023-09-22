@@ -120,6 +120,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	private static final String FAIL_LOG="failed to get TeamRoom with Id [{}]";
+	private static final String PERMISSION_LOG="user does not have TeamRoom Permission！roomId=[{}], userId=[{}]";
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
 
@@ -166,17 +168,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 						.toJsonObjectArray(template.getRoleConfig(), RoleListContext.class);
 				List<RoomRole> users = teamTrainRoomContext.getRoleConfig();
 				int index = 0;
-				RoleListContext teacherRole = new RoleListContext();
+				RoleListContext<MissionStageScheme> teacherRole = new RoleListContext<>();
 				// 教员
 				teacherRole.setName(TeamRoleGroup.TEACHER.getDesc());
 				teacherRole.setRoleGroup(TeamRoleGroup.TEACHER);
 				originRoles.add(0, teacherRole);
 
-				for (RoleListContext originRole : originRoles) {
+				for (RoleListContext<MissionStageScheme> originRole : originRoles) {
 					originRole.setId(null);
 
 					CrRole crRole = BeanUtils.deepCopy(originRole, CrRole.class);
-					if (users.get(index).getUsers().size() == 0) {
+					if (users.get(index).getUsers().isEmpty()) {
 						log.error("role users cannot be empty！teamRoomName=[{}]",
 								teamRoom.getName());
 						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
@@ -328,7 +330,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	public IPage<TeamRoomData> list(ListQuery listQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		Page page = listQuery.toPageParam();
+		Page<TeamRoomData> page = listQuery.toPageParam();
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 
 		return teamRoomMapper.listTeamRoom(page, listQuery);
@@ -435,7 +437,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	public TeamRoom getById(String roomId) {
 		TeamRoom room = teamRoomMapper.selectById(roomId);
 		if (room == null) {
-			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			log.error(FAIL_LOG, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		return room;
@@ -530,21 +532,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 			teamMembers.addAll(userIdList);
 
-			/*
-			// 只添加自己角色类型的用户作为群组
-			if(myRole.isTeamStudent() && role.isTeamStudent() ||
-					myRole.isTeamTeacher() && role.isTeamTeacher()) {
 
-				teamMembers.addAll(userIdList);
-
-				// 将自己的信息单独列出来
-				Optional<String> first = userIdList.stream()
-						.filter(userId -> userId.equals(currentUserId))
-						.findFirst();
-				String myUserId = first.get();
-				mineArr[0] = (buildDashboardUser(role, myUserId, userInfoMap));
-			}
-			*/
 			// 将自己的信息单独列出来
 			Optional<String> first = userIdList.stream()
 					.filter(userId -> userId.equals(currentUserId))
@@ -576,9 +564,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		// 群组封装
 		List<DashboardGroup> groups = Lists.newArrayList();
+		confirmAvatarFile(CrCommonConstants.TEAM_GROUP_AVATAR, CrCommonConstants.TEAM_GROUP_JAR_AVATAR);
 		DashboardGroup teamGroup = new DashboardGroup(RbRoleGroup.TEAM_GROUP.getMsg(),
 				RbRoleGroup.TEAM.getCode(),
-				confirmAvatarFile(CrCommonConstants.TEAM_GROUP_AVATAR, CrCommonConstants.TEAM_GROUP_JAR_AVATAR));
+				CrCommonConstants.TEAM_GROUP_AVATAR);
 		teamGroup.setMembers(teamMembers);
 		teamGroup.setId(roomId);
 		groups.add(teamGroup);
@@ -595,13 +584,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	public CrRole checkRoomPermission(String roomId, String userId) {
 		TeamRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
-			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			log.error(FAIL_LOG, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (crRole == null) {
-			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]", roomId,
+			log.error(PERMISSION_LOG, roomId,
 					userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
@@ -739,10 +728,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return teamRoomRspListRsp;
 	}
 
-	private String confirmAvatarFile(String filePath, String jarFilePath) {
+	private void confirmAvatarFile(String filePath, String jarFilePath) {
 		File file = new File(filePath);
 		if(file.exists()) {
-			return filePath;
+			return ;
 		}
 		if(!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
@@ -763,7 +752,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			throw new BusinessException(
 					CrBusinessErrorCode.NOT_PATH);
 		}
-		return filePath;
 	}
 
 	private List<DashboardUser> buildDashboardUser(CrRole role, Map<String, UserInfo> userInfoMap) {
@@ -816,14 +804,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private void permissionCheck(String roomId, String userId) {
 		TeamRoom teamRoom = getById(roomId);
 		if (teamRoom == null) {
-			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			log.error(FAIL_LOG, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
 		try {
 			crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		} catch (Exception e) {
-			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]", roomId,
+			log.error(PERMISSION_LOG, roomId,
 					userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
@@ -832,7 +820,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private void permissionCheck(String roomId, String userId, Integer roleGroup) {
 		TeamRoom teamRoom = getById(roomId);
 		if (teamRoom == null) {
-			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			log.error(FAIL_LOG, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -845,14 +833,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 
 		} catch (Exception e) {
-			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]", roomId,
+			log.error(PERMISSION_LOG, roomId,
 					userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
 	}
 
-	private LocalScene getLocalScene(String teamRoomId) {
+	public LocalScene getLocalScene(String teamRoomId) {
 		TeamRoom teamRoom = teamRoomMapper.selectById(teamRoomId);
 
 		LocalScene localScene = new LocalScene();

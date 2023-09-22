@@ -102,7 +102,7 @@ public class TeamTrainTemplateController {
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
-	public BaseRsp create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
+	public BaseRsp<Void> create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
 		// set type
 		addReq.getBaseInfo().setType(BusinessType.TRAINING_TEAM.getCode());
 		// create team template
@@ -135,7 +135,7 @@ public class TeamTrainTemplateController {
 	@ApiOperation("修改")
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
-	public BaseRsp update(@RequestBody @Validated TeamTrainTemplateModifyReq modifyReq) {
+	public BaseRsp<Void> update(@RequestBody @Validated TeamTrainTemplateModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		TeamTemplate teamTemplate = teamTemplateService.getByTemplateBusinessId(resourceId);
 		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
@@ -242,7 +242,7 @@ public class TeamTrainTemplateController {
 		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRsp.getRoleList()) {
 			teamTrainTemplateRoleRsp.initAssetMap();
 		}
-		return new BaseRsp(teamTrainTemplateRsp);
+		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
 	@ApiOperation("删除")
@@ -273,7 +273,7 @@ public class TeamTrainTemplateController {
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<ListRsp<TeamTrainTemplateRsp>> list(TeamTemplateListReq listReq) {
+	public BaseRsp<IPage<TeamTemplateData>> list(TeamTemplateListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 		// 默认时间排序
@@ -297,7 +297,7 @@ public class TeamTrainTemplateController {
 		data.convert(teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData,
 				topologyNodesStats, attackRelCount, icsRelCount, engageRelCount));
 
-		return new BaseRsp(data);
+		return new BaseRsp<>(data);
 	}
 
 	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(

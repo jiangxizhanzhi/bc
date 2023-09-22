@@ -60,14 +60,14 @@ public class AdminCourseCategoryController {
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_COURSE_STATISTICS }, logical = Logical.OR)
 	public BaseRsp<ListRsp<CourseCategoryBo>> list(@Validated CourseCategoryListReq listReq) {
-		Page page = listReq.toPageParam();
+		Page<CourseCategory> page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}
 		IPage<CourseCategoryBo> courseCategories = courseCategoryService.pageBySearch(page,
 				listReq.getPattern(), listReq.getChildren());
 
-		return new BaseRsp(PageUtil.getListResult(courseCategories));
+		return new BaseRsp<>(PageUtil.getListResult(courseCategories));
 	}
 
 	@ApiOperation("课程分类详细信息查询")
@@ -81,7 +81,7 @@ public class AdminCourseCategoryController {
 
 		CourseCategoryBo courseCategoryBo = courseCategoryService.selectById(resourceId,
 				null == children ? CommonConstant.FALSE : children);
-		return new BaseRsp(courseCategoryBo);
+		return new BaseRsp<>(courseCategoryBo);
 	}
 
 	@ApiOperation("课程分类批量删除")

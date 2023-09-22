@@ -106,7 +106,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			if (!courseIds.contains(lessonReq.getCourseId())) {
 				return new BaseRsp<>(PageUtil.getNullResult());
 			}
-			courseIds.removeAll(courseIds);
+			courseIds.clear();
 			courseIds.add(lessonReq.getCourseId());
 		}
 
@@ -115,7 +115,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			courseIds.remove(lessonReq.getExceptCourse());
 		}
 
-		Page page = lessonReq.toPageParam();
+		Page<CourseLesson> page = lessonReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}
@@ -129,7 +129,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		// 数据查询
 		IPage<AdminLessonListBo> iPage = courseLessonService.pageByContext(page, context, false);
 
-		return new BaseRsp(PageUtil.getListResult(iPage));
+		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}
 
 	@ApiOperation("后台课时详情查询接口")
@@ -143,7 +143,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		AdminLessonBo lessonDetail = courseLessonService.selectByCourseAndLesson(courseId,
 				lessonId);
-		return new BaseRsp(lessonDetail);
+		return new BaseRsp<>(lessonDetail);
 	}
 
 	@ApiOperation("课时信息新增")
@@ -168,7 +168,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
 				OperationType.CREATE, operationTarget, content);
 
-		return new BaseRsp(lesson);
+		return new BaseRsp<>(lesson);
 	}
 
 	@ApiOperation("课时信息修改")
@@ -200,14 +200,14 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
 				OperationType.UPDATE, operationTarget, content);
 
-		return new BaseRsp(lesson);
+		return new BaseRsp<>(lesson);
 
 	}
 
 	@ApiOperation("课时信息删除")
 	@DeleteMapping("/batch")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp<Boolean> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+	public BaseRsp<Integer> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
 		String lessonId = batchDeleteReq.getResourceIds().get(CommonConstant.ZERO);
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
@@ -232,7 +232,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		});
 
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("课时附件查询")
@@ -254,7 +254,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课后练习查询")
 	@GetMapping("/practice")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp<AdminLessonPracticeBo> getPracticeList(
+	public BaseRsp<List<AdminLessonPracticeBo>> getPracticeList(
 			@RequestParam("course_id") String courseId,
 			@RequestParam("lesson_id") String lessonId) {
 
@@ -264,7 +264,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		List<AdminLessonPracticeBo> practiceByLesson = courseLessonService
 				.adminLessonPractice(courseId, lessonId, authContext);
 
-		return new BaseRsp(practiceByLesson);
+		return new BaseRsp<>(practiceByLesson);
 	}
 
 	@ApiOperation("课后练习修改")
@@ -275,7 +275,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		Boolean result = courseLessonService.addLessonPractice(practiceReq.getResourceId(),
 				practiceReq.getPracticeList());
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("课时场景拓扑信息查询")
@@ -288,7 +288,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 				false);
 		TopoSceneDataBo topoSceneData = courseLessonService.getTopoScene(lessonId, null, authContext);
 
-		return new BaseRsp(topoSceneData);
+		return new BaseRsp<>(topoSceneData);
 	}
 
 	@ApiOperation("课时练习公开与隐藏")
@@ -307,7 +307,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	public BaseRsp<Boolean> importLesson(@RequestBody @Valid ImportLessonReq importLessonReq) {
 		Boolean result = courseLessonService.importLessons(importLessonReq.getCourseId(),
 				importLessonReq.getLessonIds());
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("课时新增附件上传")

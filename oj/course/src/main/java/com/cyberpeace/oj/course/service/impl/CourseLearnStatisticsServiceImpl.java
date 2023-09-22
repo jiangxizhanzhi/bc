@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	}
 
 	@Override
-	public ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page page,
+	public ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page<AdminCourseStatisticsRes> page,
 			AuthContext authContext) {
 		List<String> courseIds = null;
 		if (null != authContext) {
@@ -115,7 +116,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	}
 
 	@Override
-	public ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String courseId, Page page,
+	public ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String courseId, Page<AdminLessonStatisticsRes> page,
 			LessonStatisticsListReq pageReq) {
 		IPage<AdminLessonStatisticsRes> rsp = courseLearnStatisticsMapper.listLessonByPage(page,
 				courseId, true, pageReq.getType(), pageReq.getSearch());
@@ -124,7 +125,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		List<AdminLessonStatisticsRes> lessonPractices = courseLearnStatisticsMapper
 				.listLessonPractice(lessonIds);
 		Map<String, AdminLessonStatisticsRes> resMap = lessonPractices.stream().collect(
-				Collectors.toMap(AdminLessonStatisticsRes::getResourceId, record -> record));
+				Collectors.toMap(AdminLessonStatisticsRes::getResourceId, a -> a));
 		List<AdminLessonStatisticsRes> res = rsp.getRecords().stream().map(rspRecord -> {
 
 			AdminLessonStatisticsRes adminLessonStatisticsRes = resMap
@@ -136,7 +137,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 			String[] records = record.split("_");
 			int practiceCount = 0;
 			for (String item : records) {
-				practiceCount = practiceCount + JSONArray.parseArray(item).size();
+				practiceCount = practiceCount + JSON.parseArray(item).size();
 			}
 			rspRecord.setPracticeCount(practiceCount);
 			return rspRecord;
@@ -152,7 +153,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 
 	@Override
 	public ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
-																		  String lessonId, String usernameLike, Page page, String sort) {
+																		  String lessonId, String usernameLike, Page<AdminLessonStatisticsDetailRes> page, String sort) {
 		List<String> userIds = getUsers(organizationId, usernameLike);
 
 		if (userIds.size() == 0){
@@ -165,7 +166,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		res = res.stream().map(data -> {
 			String record = data.getRecord();
 			if(null != record) {
-				int practiceCount = JSONArray.parseArray(record).size();
+				int practiceCount = JSON.parseArray(record).size();
 				data.setPracticeCount(practiceCount);
 			}
 			if (null != data.getReportUpdateTime()){

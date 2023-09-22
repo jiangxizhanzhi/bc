@@ -70,7 +70,7 @@ public class WebClassroomController {
 
 		List<TimeScheduleBo> boList = classroomService.selectTimeList(roomListQuery, authContext);
 
-		return new BaseRsp(boList);
+		return new BaseRsp<>(boList);
 	}
 
 	@ApiOperation("课堂签到")
@@ -95,7 +95,7 @@ public class WebClassroomController {
 
 		classroomSignService.needHelp(req.getLessonId(), req.getNodeId(), req.getRoomId());
 
-		return new BaseRsp(true);
+		return new BaseRsp<>(true);
 
 	}
 
@@ -106,7 +106,7 @@ public class WebClassroomController {
 	public BaseRsp<HelpStatusBo> getHelpStatus(RemoteHelpReq req) {
 		HelpStatusBo helpStatus = classroomSignService.getHelpStatus(req.getLessonId(),
 				req.getNodeId(), req.getRoomId());
-		return new BaseRsp(helpStatus);
+		return new BaseRsp<>(helpStatus);
 	}
 
 	@ApiOperation("获取课堂聊天用户信息")

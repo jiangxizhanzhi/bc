@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamRoomRoleRes implements Serializable {
+public class TeamRoomRoleRes  {
 
 	@ApiModelProperty(value = "编号")
 	private String resourceId;

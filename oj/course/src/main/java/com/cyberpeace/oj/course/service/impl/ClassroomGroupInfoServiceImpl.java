@@ -524,7 +524,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      */
     public void enableUpdateGroup(List<ClassroomGroupInfo> groupInfos) {
         List<String> groupIds = groupInfos.stream().map(ClassroomGroupInfo::getResourceId).collect(Collectors.toList());
-//		for (ClassroomGroupInfo groupInfo : groupInfos) {
+
         List<OjLocalScene> ojLocalScene = ojLocalSceneMapper
                 .selectByGroupIds(groupIds);
         if (ojLocalScene.size() > 0) {
@@ -532,7 +532,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
                     ojLocalScene.toString());
             throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
         }
-//		}
+
     }
 
     /**
@@ -594,7 +594,6 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
         }
 
         // 场景数据查询
-//        OjLocalScene ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 
         if (localSceneMap.containsKey(groupInfo.getResourceId())) {
             JSONObject sceneData = ojLocalSceneService.getSceneData(localSceneMap.get(groupInfo.getResourceId()));

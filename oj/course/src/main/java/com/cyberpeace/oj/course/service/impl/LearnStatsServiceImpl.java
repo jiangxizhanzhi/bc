@@ -47,6 +47,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	final int topFive = 5;
 
 	final int minScore = 80; // 获取竞赛-理论赛的百分换算后的最低分数标准
+	
+	private static final String USER_ID = "user_id";
+
+	private static final String COUNT = "count";
 
 	@Autowired
 	LearnStatsMapper learnStatsMapper;
@@ -66,7 +70,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	ExecutorService es = Executors.newCachedThreadPool();
 
 	@Override
-	public ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization,
+	public ListRsp<UserStatsBo> getUserStats(Page<UserStatsBo> page, String pattern, String organization,
 			boolean isPage, String startTimeStr, String endTimeStr) {
 		// 校验并格式化起止时间
 		Date endTime = new Date();
@@ -146,7 +150,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 * @param userStatsBos 带分页数据
 	 * @return 分页后的数据
 	 */
-	private <T> ListRsp<T> pagedData(Page page, Integer total, OrderItem orderField,
+	private <T> ListRsp<T> pagedData(Page<T> page, Integer total, OrderItem orderField,
 			List<T> userStatsBos) {
 		ListRsp<T> responseData = new ListRsp<T>();
 
@@ -198,8 +202,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			userStatsRankBo.setLessonRecordCount(Lists.newArrayList());
 			learnStatsMapper.lessonRecordRank(userIds, limit).forEach(item -> {
 				userStatsRankBo.getLessonRecordUser()
-						.add(usernameMap.get(item.getString("user_id")));
-				userStatsRankBo.getLessonRecordCount().add(item.getInteger("count"));
+						.add(usernameMap.get(item.getString(USER_ID)));
+				userStatsRankBo.getLessonRecordCount().add(item.getInteger(COUNT));
 			});
 			if (log.isDebugEnabled()) {
 				log.debug("{}|lessonRecordRank cost ={}", traceId,
@@ -218,8 +222,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			learnStatsMapper.reportFinishRank(userIds, Note.NoteType.REPORT.getCode(), limit)
 					.forEach(item -> {
 						userStatsRankBo.getFinishReportUser()
-								.add(usernameMap.get(item.getString("user_id")));
-						userStatsRankBo.getFinishReportCount().add(item.getInteger("count"));
+								.add(usernameMap.get(item.getString(USER_ID)));
+						userStatsRankBo.getFinishReportCount().add(item.getInteger(COUNT));
 					});
 			if (log.isDebugEnabled()) {
 				log.debug("{}|reportFinishRank cost ={}", traceId,
@@ -237,8 +241,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			userStatsRankBo.setFinishPracticeCount(Lists.newArrayList());
 			learnStatsMapper.practiceFinishRank(userIds, limit).forEach(item -> {
 				userStatsRankBo.getFinishPracticeUser()
-						.add(usernameMap.get(item.getString("user_id")));
-				userStatsRankBo.getFinishPracticeCount().add(item.getInteger("count"));
+						.add(usernameMap.get(item.getString(USER_ID)));
+				userStatsRankBo.getFinishPracticeCount().add(item.getInteger(COUNT));
 			});
 			if (log.isDebugEnabled()) {
 				log.debug("{}|practiceFinishRank cost ={}", traceId,
@@ -278,7 +282,6 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			countDownLatch.await(300, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			log.error("task interrupted", e);
-			e.printStackTrace();
 		}
 
 		return userStatsRankBo;
@@ -314,7 +317,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	}
 
 	@Override
-	public ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page page,
+	public ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page<PersonalStatsDetail4CourseBo> page,
 			String resourceId) {
 		return PageUtil.getListResult(learnStatsMapper.learnCourseStats(page, resourceId,
 				CourseLesson.LessonType.THEORY.getCode(),
@@ -350,7 +353,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		List<String> xNames = new ArrayList<>();
 		List<Integer> yValues = new ArrayList<>();
 		Map<String, Integer> result = new HashMap<>();
-
+		String integralString ="integral";
 		// 班级积分合并
 		if (ranking_type.equals("org")) {
 			Map<String, String> childrenOrg = collectChildrenOrg(null);
@@ -365,18 +368,18 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 					integral += afterClassIntegrals.stream()
 							.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
 									.collect(Collectors.toList())
-									.contains(tmp.getString("user_id")))
-							.mapToInt(s -> Integer.parseInt(s.getString("integral"))).sum();
+									.contains(tmp.getString(USER_ID)))
+							.mapToInt(s -> Integer.parseInt(s.getString(integralString))).sum();
 					integral += lessonIntegrals.stream()
 							.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
 									.collect(Collectors.toList())
-									.contains(tmp.getString("user_id")))
-							.mapToInt(s -> Integer.parseInt(s.getString("integral"))).sum();
+									.contains(tmp.getString(USER_ID)))
+							.mapToInt(s -> Integer.parseInt(s.getString(integralString))).sum();
 					integral += examIntegrals.stream()
 							.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
 									.collect(Collectors.toList())
-									.contains(tmp.getString("user_id")))
-							.mapToInt(s -> Integer.parseInt(s.getString("count"))).sum()
+									.contains(tmp.getString(USER_ID)))
+							.mapToInt(s -> Integer.parseInt(s.getString(COUNT))).sum()
 							* CommonConstant.TEN;
 				}
 				if (integral > 0) {
@@ -526,8 +529,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	private int getSum(List<JSONObject> lessons, List<UserInfo> org_infos) {
 		return lessons.stream()
 				.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
-						.collect(Collectors.toList()).contains(tmp.getString("user_id")))
-				.mapToInt(s -> Integer.parseInt(s.getString("count"))).sum();
+						.collect(Collectors.toList()).contains(tmp.getString(USER_ID)))
+				.mapToInt(s -> Integer.parseInt(s.getString(COUNT))).sum();
 	}
 
 	private Map<String, String> collectChildrenOrg(String org) {
@@ -545,14 +548,14 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
 	private Map<String, Integer> getUserWithIntegral(List<JSONObject> afterClassIntegrals) {
 		return StreamApiUtils.toMap(afterClassIntegrals,
-				afterClassIntegral -> afterClassIntegral.getString("user_id"),
+				afterClassIntegral -> afterClassIntegral.getString(USER_ID),
 				afterClassIntegral -> Integer.parseInt(afterClassIntegral.getString("integral")));
 	}
 
 	private Map<String, Integer> getUserWithCount(List<JSONObject> examIntegrals) {
 		return StreamApiUtils.toMap(examIntegrals,
-				examIntegral -> examIntegral.getString("user_id"),
-				examIntegral -> Integer.parseInt(examIntegral.getString("count")));
+				examIntegral -> examIntegral.getString(USER_ID),
+				examIntegral -> Integer.parseInt(examIntegral.getString(COUNT)));
 	}
 
 	private void getAllChildrenOrg(List<OrgInfo> orgInfos, Map<String, String> childrenOrg) {
@@ -568,7 +571,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	}
 
 	@Override
-	public ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization,
+	public ListRsp<OrgStatsBo> getOrgStatsData(Page<OrgStatsBo> page, String pattern, String organization,
 			String startTimeStr, String endTimeStr, boolean isPage) {
 		// 获取并校验时间参数有起止时间时校验格式 否则默认取month date_type对应两个类型 1.month取当月起往前两年的时间区间
 		// 2.day取当日起往前30天的时间区间
@@ -616,8 +619,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 						.collect(Collectors.toList());
 				examCount = examUserCount.stream()
 						.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
-								.collect(Collectors.toList()).contains(tmp.get("user_id")))
-						.mapToInt(s -> Integer.parseInt(s.getString("count"))).sum();
+								.collect(Collectors.toList()).contains(tmp.get(USER_ID)))
+						.mapToInt(s -> Integer.parseInt(s.getString(COUNT))).sum();
 				orgUserCount = (int) userInfos.stream()
 						.filter(s -> StringUtils.isNotBlank(s.getOrganizationId())
 								&& s.getOrganizationId().equals(org_id))

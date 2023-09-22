@@ -1,6 +1,6 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
-import java.io.Serializable;
+
 import java.util.List;
 
 import com.cyberpeace.common.model.NameCount;
@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamTrainTemplateRsp implements Serializable {
+public class TeamTrainTemplateRsp  {
 
 	@ApiModelProperty(value = "编号")
 	private String resourceId;
@@ -37,7 +37,7 @@ public class TeamTrainTemplateRsp implements Serializable {
 	private Integer resourceOccupiedNums;
 
 	@ApiModelProperty(value = "时间轴配置")
-	private Object timeLineConfig = "{}";
+	private String timeLineConfig = "{}";
 
 	@ApiModelProperty("是否关联 ATT&CK")
 	private Boolean isAttackRelated;

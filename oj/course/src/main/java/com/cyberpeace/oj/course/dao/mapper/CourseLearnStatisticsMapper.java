@@ -21,16 +21,16 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 
 	List<Course> sumHeatByDirection(List<String> courseIds);
 
-	IPage<AdminCourseStatisticsRes> listCourseByPage(Page page,
+	IPage<AdminCourseStatisticsRes> listCourseByPage(Page<AdminCourseStatisticsRes> page,
 			@Param("courseContext") CourseContext courseContext,
 			@Param("courseIds") List<String> courseIds, @Param("isPublic") Boolean isPublic);
 
-	IPage<AdminLessonStatisticsRes> listLessonByPage(Page page, @Param("courseId") String courseId,
+	IPage<AdminLessonStatisticsRes> listLessonByPage(Page<AdminLessonStatisticsRes> page, @Param("courseId") String courseId,
 			@Param("isPublic") Boolean isPublic, Integer type, String search);
 
 	List<AdminLessonStatisticsRes> listLessonPractice(@Param("lessonIds") List<String> lessonIds);
 
-	IPage<AdminLessonStatisticsDetailRes> listLessonLearnedRecord(Page page,
+	IPage<AdminLessonStatisticsDetailRes> listLessonLearnedRecord(Page<AdminLessonStatisticsDetailRes> page,
 			@Param("userIds") List<String> userIds, @Param("lessonId") String lessonId);
 
 	List<AdminLessonStatisticsDetailRes> detailLessonByPage(@Param("lessonId") String lessonId,

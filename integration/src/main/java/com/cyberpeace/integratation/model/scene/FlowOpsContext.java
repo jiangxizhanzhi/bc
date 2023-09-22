@@ -30,7 +30,6 @@ public class FlowOpsContext extends NodeOpsContext {
         }
     }
 
-    public FlowOpsContext() {
-    }
+
 
 }

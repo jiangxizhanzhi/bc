@@ -118,7 +118,7 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	}
 
 	@Override
-	public IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin) {
+	public IPage<ToolRsp> selectPage(Page<Tool> page, ToolListQuery toolListQuery, Boolean isAdmin) {
 		IPage<Tool> result = toolMapper.list(page, toolListQuery, isAdmin);
 		return result.convert(tool -> toBo(tool, false));
 	}

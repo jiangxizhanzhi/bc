@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ToolShellCodeMapper extends BaseMapper<ToolShellCode> {
 
-	IPage<ToolShellCode> list(Page page, @Param("author") String author,
+	IPage<ToolShellCode> list(Page<ToolShellCode> page, @Param("author") String author,
 			@Param("platform") String platform, @Param("edbVerified") Boolean edbVerified);
 }

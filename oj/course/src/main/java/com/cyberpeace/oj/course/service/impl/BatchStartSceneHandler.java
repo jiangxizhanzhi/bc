@@ -90,13 +90,12 @@ public class BatchStartSceneHandler {
 			}
 
 			int preDistribution = batchNumber - tasks.size();
-			int distribution = preDistribution < groupList.size() ? preDistribution
-					: groupList.size();
-			for (int i = 0; i < distribution; i++) {
-				StartSceneBo sceneBo = groupList.remove(CommonConstant.ZERO.intValue());
+			int distribution = Math.min(preDistribution, groupList.size());
+			for (StartSceneBo sceneBo : groupList.subList(0, distribution)) {
 				tasks.put(sceneBo.getGroupId(), sceneBo);
 				startGroupList.add(sceneBo);
 			}
+			groupList=groupList.subList(distribution,groupList.size());
 
 			new Thread(new BatchStart()).start();
 		} finally {

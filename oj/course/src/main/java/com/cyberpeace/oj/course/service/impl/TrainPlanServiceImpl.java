@@ -52,7 +52,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	@Override
 	public IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo) {
 
-		Page page = trainPlanReq.toPageParam();
+		Page<TrainPlanRsp> page = trainPlanReq.toPageParam();
 		List<String> courseIds = courseMapper.selectByAuth(AuthContextUtils.constructAuth(userInfo,
 				false));
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),

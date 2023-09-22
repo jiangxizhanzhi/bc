@@ -47,7 +47,7 @@ public class TeamSituationController {
 			getTaskStatistics(@ApiParam(name = "room_id", value = "团队训练id") String room_id) {
 		CrCommonValidator.validateId(room_id);
 		TeamSituationInfo info = teamSituationService.getSituationInfo(room_id);
-		return new BaseRsp(info);
+		return new BaseRsp<>(info);
 	}
 
 	@ApiOperation("Top5训练得分")

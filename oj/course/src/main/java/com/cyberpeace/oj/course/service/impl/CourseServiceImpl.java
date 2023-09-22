@@ -230,7 +230,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public ListRsp<CourseWebBo> selectPage(Page page, CourseQueryBo courseContext,
+	public ListRsp<CourseWebBo> selectPage(Page<Course> page, CourseQueryBo courseContext,
 			AuthContext authContext, boolean isWeb) {
 		// 权限过滤
 		List<String> courseIds = null;
@@ -266,7 +266,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		if(isWeb){
 			// 常规条件过滤
-			Page pageTmp = BeanUtils.copy(page, Page.class);
+			Page<Course> pageTmp = BeanUtils.copy(page, Page.class);
 			pageTmp.setSize(courseIds.size());
 			pageTmp.setCurrent(1);
 			IPage<Course> iPage = courseMapper.listByPage(pageTmp, courseContext, courseIds,
@@ -602,32 +602,28 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		});
 
-		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+		return transactionTemplate.execute(status->  {
+			courseLessonService.saveOrUpdateBatch(lessonList);
+			lessonConfigService.saveOrUpdateBatch(configList);
 
-			@Override
-			public Boolean doInTransaction(TransactionStatus status) {
-				courseLessonService.saveOrUpdateBatch(lessonList);
-				lessonConfigService.saveOrUpdateBatch(configList);
-
-				// 试卷数据更新
-				for (Paper paper : paperList) {
-					practiceOperationRefMapper.deleteByPaper(paper.getResourceId());
-					practiceTheoryRefMapper.deleteByPaper(paper.getResourceId());
-				}
-
-				// 课后练习相关
-				if (CollectionUtils.isNotEmpty(theoryRefList)) {
-					practiceTheoryRefService.saveBatch(theoryRefList);
-				}
-				if (CollectionUtils.isNotEmpty(operationRefList)) {
-					practiceOperationRefService.saveBatch(operationRefList);
-				}
-				if (CollectionUtils.isNotEmpty(paperList)) {
-					paperService.saveOrUpdateBatch(paperList);
-				}
-
-				return saveOrUpdateBatch(courseList);
+			// 试卷数据更新
+			for (Paper paper : paperList) {
+				practiceOperationRefMapper.deleteByPaper(paper.getResourceId());
+				practiceTheoryRefMapper.deleteByPaper(paper.getResourceId());
 			}
+
+			// 课后练习相关
+			if (CollectionUtils.isNotEmpty(theoryRefList)) {
+				practiceTheoryRefService.saveBatch(theoryRefList);
+			}
+			if (CollectionUtils.isNotEmpty(operationRefList)) {
+				practiceOperationRefService.saveBatch(operationRefList);
+			}
+			if (CollectionUtils.isNotEmpty(paperList)) {
+				paperService.saveOrUpdateBatch(paperList);
+			}
+
+			return saveOrUpdateBatch(courseList);
 		});
 	}
 
@@ -911,10 +907,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			return "";
 		}
 
-		String courseNum;
-		for (int i = 1; courseMapper
-				.selectByCourseNum(courseNum = MathUtils.randomStr(length)) != null; i++) {
-			log.warn("Failed to obtain the course number for the {} time", i);
+		String courseNum= MathUtils.randomStr(length);
+		for (; courseMapper
+				.selectByCourseNum(courseNum) != null; courseNum= MathUtils.randomStr(length)) {
+			log.warn("Failed to obtain the course number for the {} time", courseNum);
 		}
 		return courseNum;
 	}

@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface ToolMapper extends BaseMapper<Tool> {
 
-    IPage<Tool> list(Page page, @Param("listQuery") ToolListQuery toolListQuery, @Param("isAdmin") Boolean isAdmin);
+    IPage<Tool> list(Page<Tool> page, @Param("listQuery") ToolListQuery toolListQuery, @Param("isAdmin") Boolean isAdmin);
 
     Tool selectByName(@NotEmpty @Param("name") String name);
 

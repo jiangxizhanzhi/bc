@@ -122,7 +122,7 @@ public class TeamTrainTeacherController {
 	public BaseRsp<EvaluationMissionRsp> getEvaluationDetail(
 			@ApiParam(name = "resource_id", value = "评估编号", required = true) String resource_id) {
 		EvaluationMissionRsp res = crTaskService.getEvaluationById(resource_id);
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("获取评分列表")
@@ -252,7 +252,7 @@ public class TeamTrainTeacherController {
 	@ApiOperation("任务裁决红点点击取消")
 	@GetMapping("/evaluation/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp clickEvaluationBadge(
+	public BaseRsp<Void> clickEvaluationBadge(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
 		crBadgeService.clickEvaluationBadge(resource_id);

@@ -71,7 +71,7 @@ public class AdminLearnStatisticController {
 	@ApiOperation("课程学习统计list")
 	@GetMapping("/course_statistics_list")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
-	public BaseRsp<List<AdminCourseStatisticsRes>> courseStatisticsList(@ApiParam(name = "listReq",
+	public BaseRsp<ListRsp<AdminCourseStatisticsRes>> courseStatisticsList(@ApiParam(name = "listReq",
 			value = "查询条件") @Valid CourseStatisticsListReq courseStatisticsListReq) {
 		CourseContext context = BeanUtils.copy(courseStatisticsListReq, CourseContext.class);
 		context.setPattern(courseStatisticsListReq.getPattern());
@@ -81,12 +81,12 @@ public class AdminLearnStatisticController {
 					.getChildrenIds(courseStatisticsListReq.getDirection(), CommonConstant.TRUE);
 			context.setDirections(childrenIds);
 		}
-		Page page = courseStatisticsListReq.toPageParam();
+		Page<AdminCourseStatisticsRes> page = courseStatisticsListReq.toPageParam();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		ListRsp<AdminCourseStatisticsRes> res = courseLearnStatisticsService
 				.courseStatisticsList(context, page, authContext);
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("课时学习统计list")
@@ -94,10 +94,10 @@ public class AdminLearnStatisticController {
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<AdminLessonStatisticsRes>>
 			lessonStatisticsList(@ApiParam @Validated LessonStatisticsListReq pageReq) {
-		Page page = pageReq.toPageParam();
+		Page<AdminLessonStatisticsRes> page = pageReq.toPageParam();
 		ListRsp<AdminLessonStatisticsRes> res = courseLearnStatisticsService
 				.LessonStatisticsList(pageReq.getCourseId(), page, pageReq);
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("课时报告统计detail")
@@ -105,10 +105,10 @@ public class AdminLearnStatisticController {
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<ListRsp<AdminLessonStatisticsDetailRes>>
 			lessonStatisticsDetail(@ApiParam @Validated LessonStatisticsDetailReq pageReq) {
-		Page page = pageReq.toPageParam();
+		Page<AdminLessonStatisticsDetailRes> page = pageReq.toPageParam();
 		ListRsp<AdminLessonStatisticsDetailRes> res = courseLearnStatisticsService
 				.LessonStatisticsDetail(pageReq.getOrgId(), pageReq.getLessonId(),
 						pageReq.getSearch(), page, pageReq.getSort());
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 }

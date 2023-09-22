@@ -47,14 +47,14 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param classroomId
 	 * @return
 	 */
-	ListRsp<ClassroomMonitorBo> selectSignList(Page page, String classroomId);
+	ListRsp<ClassroomMonitorBo> selectSignList(Page<ClassroomMonitorBo> page, String classroomId);
 
 	/**
 	 * 获取用户签到信息列表
 	 * @param classroomId
 	 * @return
 	 */
-	PageReportBo selectClassroomReport(String classroomId, String userName, Page page);
+	PageReportBo selectClassroomReport(String classroomId, String userName, Page<Object> page);
 
 	/**
 	 * 课堂学习统计
@@ -70,7 +70,7 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext classroomPracticeContext,
-			Page page);
+			Page<PracticePaperEvaluateBo> page);
 
 	/**
 	 * 课堂练习统计

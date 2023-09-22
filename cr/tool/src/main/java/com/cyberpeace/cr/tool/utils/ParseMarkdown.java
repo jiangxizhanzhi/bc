@@ -55,26 +55,18 @@ public class ParseMarkdown {
 	 * @return
 	 */
 	private List<String> loadFile() {
-		BufferedReader reader = null;
 		ArrayList<String> lines = Lists.newArrayList();
 
-		try{
-			FileInputStream fileInputStream = new FileInputStream(file);
-			reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));
+		try (FileInputStream fileInputStream = new FileInputStream(file);
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(fileInputStream, "utf-8"));) {
+
 			String tempStr;
 			while ((tempStr = reader.readLine()) != null) {
 				lines.add(tempStr);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		return lines;
 	}

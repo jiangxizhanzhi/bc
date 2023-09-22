@@ -35,7 +35,7 @@ public class CourseCategoryController {
 		List<CourseCategoryBo> categories = courseCategoryService
 				.selectAll(null != children ? children : CommonConstant.FALSE);
 
-		return new BaseRsp(categories);
+		return new BaseRsp<>(categories);
 	}
 
 }

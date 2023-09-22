@@ -37,7 +37,7 @@ public class AdminLessonConfigController {
 				CommonConstant.FALSE);
 
 		LessonConfigBo lessonConfig = lessonConfigService.getLessonConfig(courseId, authContext);
-		return new BaseRsp(lessonConfig);
+		return new BaseRsp<>(lessonConfig);
 	}
 
 	@ApiOperation("编排课时")
@@ -47,7 +47,7 @@ public class AdminLessonConfigController {
 			@ApiParam(name = "configBo", value = "课程编排信息") @RequestBody LessonConfigBo configBo) {
 
 		LessonConfigBo lessonConfigBo = lessonConfigService.updateLessonConfig(configBo);
-		return new BaseRsp(lessonConfigBo);
+		return new BaseRsp<>(lessonConfigBo);
 	}
 
 }

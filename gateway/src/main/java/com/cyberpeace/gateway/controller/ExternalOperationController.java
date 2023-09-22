@@ -91,7 +91,7 @@ public class ExternalOperationController {
 		List<String> practiceSetIds = practiceSetMapper
 				.selectByAuthContext(AuthContextUtils.constructAuth(userInfo, false));
 		if (CollectionUtils.isEmpty(practiceSetIds)) {
-			return new BaseRsp(Lists.newArrayList());
+			return new BaseRsp<>(Lists.newArrayList());
 		}
 
 		// 数据查询
@@ -102,7 +102,7 @@ public class ExternalOperationController {
 				.map(practiceSet -> BeanUtils.copy(practiceSet, ExternalPracticeSetBo.class))
 				.collect(Collectors.toList());
 
-		return new BaseRsp(practiceSetBos);
+		return new BaseRsp<>(practiceSetBos);
 	}
 
 	@AuthOjKey
@@ -143,7 +143,7 @@ public class ExternalOperationController {
 		List<ExternalOperationBo> operationBos = StreamApiUtils.map(operationList,
 				practiceOperation -> entityToExternal(practiceOperation));
 
-		return new BaseRsp(operationBos);
+		return new BaseRsp<>(operationBos);
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class ExternalOperationController {
 	public BaseRsp<ListRsp<ExternalOperationBo>> pageList(OperationPageReq req) {
 
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		Page page = req.toPageParam();
+		Page<PracticeOperation> page = req.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}
@@ -210,7 +210,7 @@ public class ExternalOperationController {
 		List<String> setIds = practiceSetService
 				.getSetIds(AuthContextUtils.constructAuth(userInfo, false), req.getPracticeSet());
 		if (CollectionUtils.isEmpty(setIds)) {
-			return new BaseRsp(PageUtil.getNullResult());
+			return new BaseRsp<>(PageUtil.getNullResult());
 		}
 		listQuery.setPracticeSetIds(setIds);
 		List<String> practiceIds = practiceOperationMapper.selectBySetIds(setIds, true);
@@ -229,7 +229,7 @@ public class ExternalOperationController {
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery, true);
 		IPage<ExternalOperationBo> convert = iPage
 				.convert(practiceOperation -> entityToExternal(practiceOperation));
-		return new BaseRsp(PageUtil.getListResult(convert));
+		return new BaseRsp<>(PageUtil.getListResult(convert));
 	}
 
 	@ApiOperation("实操习题随机获取数条")

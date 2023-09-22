@@ -24,6 +24,6 @@ public class FlowschemeReq implements Serializable {
 	/**
 	 * 
 	 */
-	private Object scheme;
+	private String scheme;
 
 }

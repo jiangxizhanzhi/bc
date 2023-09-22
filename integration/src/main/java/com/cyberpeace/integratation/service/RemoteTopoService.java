@@ -72,7 +72,7 @@ public interface RemoteTopoService {
 	 * @param topoIds
 	 * @return
 	 */
-	Boolean batchDeleteTopo(List<String> topoIds);
+	void batchDeleteTopo(List<String> topoIds);
 
 	/**
 	 * 设置topo部分启动

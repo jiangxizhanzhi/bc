@@ -13,5 +13,5 @@ import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
 @Repository
 public interface ToolGhdbMapper extends BaseMapper<ToolGhdb> {
 
-	IPage<ToolGhdb> list(Page page, @Param("author") String author, @Param("title") String title);
+	IPage<ToolGhdb> list(Page<ToolGhdb> page, @Param("author") String author, @Param("title") String title);
 }

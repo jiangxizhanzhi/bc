@@ -475,7 +475,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		List<String> userIds = JsonUtil.toJsonObjectArray(groupUserIds, String.class);
 		Boolean shared = courseLesson.getSceneShareMode().intValue() == SceneShare.SHARED.getCode();
 
-		List<WebSocketMessageContext> messageContexts = getMessageContext(userIds, courseLesson,
+		List<WebSocketMessageContext<WsMessageIdentifier,Object>> messageContexts = getMessageContext(userIds, courseLesson,
 				shared, ojEvent);
 
 		messageContexts
@@ -490,7 +490,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	 * @param ojEvent
 	 * @return
 	 */
-	private List<WebSocketMessageContext> getMessageContext(List<String> userIds,
+	private List<WebSocketMessageContext<WsMessageIdentifier,Object>> getMessageContext(List<String> userIds,
 			CourseLesson lesson, Boolean sceneShare, OjEvent ojEvent) {
 
 		// 推送数据组装

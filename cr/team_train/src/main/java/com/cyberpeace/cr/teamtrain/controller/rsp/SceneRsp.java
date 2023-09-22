@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class SceneRsp implements Serializable {
+public class SceneRsp {
 
 	private String id;
 
@@ -14,7 +14,7 @@ public class SceneRsp implements Serializable {
 
 	private String createUsername;
 
-	private List roles;
+	private List<String> roles;
 
 	private Integer type;
 

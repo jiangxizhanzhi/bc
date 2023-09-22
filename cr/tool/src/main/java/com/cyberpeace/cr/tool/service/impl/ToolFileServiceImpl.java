@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> implements ToolFileService {
 
-	private static final Logger log = LoggerFactory.getLogger("resourceImport");
+	private static final Logger importLog = LoggerFactory.getLogger("resourceImport");
 
 	private final String savePath = "tool"+ File.separator + "tool" + File.separator;
 
@@ -45,7 +45,7 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		// 工具库的附件，使用原始的附件名
 		if (!transferName) {
 			String[] ss = StringUtils.split(filePath, File.separator);
-			if (null != ss || ss.length > 0) {
+			if (ss != null && ss.length > 0) {
 				fileName = ss[ss.length - 1];
 			}
 		}
@@ -56,9 +56,8 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		try {
 			Files.copy(file, newFile);
 		} catch (IOException e) {
-			log.error("copy File {} to {}", filePath, fullPath);
+			importLog.error("copy File {} to {}", filePath, fullPath);
 			throw new BusinessException(ErrorCode.FAILED_TO_COPY_FILE);
-			//("复制文件失败: " + filePath + " ,to:" + fullPath);
 		}
 
 		return newToolFile(fileName, fileName);
@@ -79,7 +78,7 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 			newFile = FileUtil.saveFile(multipartFile, uploadPath);
 		} catch (IOException e) {
 			// 保存文件
-			log.error("[TOOL]save file{} to {} path error: {}", multipartFile.getOriginalFilename(), uploadPath,
+			importLog.error("[TOOL]save file{} to {} path error: {}", multipartFile.getOriginalFilename(), uploadPath,
 					e.getMessage());
 			throw new BusinessException(ErrorCode.FAILED_TO_SAVE_FILE);
 		}

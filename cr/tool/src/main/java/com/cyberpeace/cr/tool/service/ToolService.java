@@ -18,7 +18,7 @@ public interface ToolService extends IService<Tool> {
 	 * @param isAdmin 是否为后台访问
 	 * @return 分页工具数据
 	 */
-	IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin);
+	IPage<ToolRsp> selectPage(Page<Tool> page, ToolListQuery toolListQuery, Boolean isAdmin);
 
 	/**
 	 * 根据工具ID查询工具数据

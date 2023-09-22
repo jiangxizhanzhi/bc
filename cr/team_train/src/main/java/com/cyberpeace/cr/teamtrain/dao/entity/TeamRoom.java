@@ -89,9 +89,6 @@ public class TeamRoom extends BaseTable {
 		this.difficulty = input.getDifficult();
 		this.timeLineConfig = template.getTimeLineConfig();
 		this.enableRecording = input.getEnableRecording();
-		this.createUserId = createUserId;
-		this.modifyUserId = modifyUserId;
-		this.localSceneId = localSceneId;
 		this.logo = input.getLogo();
 	}
 

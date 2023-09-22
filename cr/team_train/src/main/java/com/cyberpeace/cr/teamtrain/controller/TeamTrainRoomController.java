@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.context.MissionStageScheme;
 import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.common.context.role.CrRoleSimple;
@@ -146,30 +147,32 @@ public class TeamTrainRoomController {
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	private static final String MISSING_LOG = "resource_id_missing";
+
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
+	public BaseRsp<StartSceneRsp> startScene(@RequestBody SceneOpsReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		teamRoomService.checkTeacherPermission(roomId, userId);
 
 		String sceneId = teamSceneService.startScene(roomId, userId);
-		return new BaseRsp(new StartSceneRsp(sceneId));
+		return new BaseRsp<>(new StartSceneRsp(sceneId));
 	}
 
 	@ApiOperation("停止场景")
 	@DeleteMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp stopScene(@RequestBody SceneOpsReq sceneStopReq) {
+	public BaseRsp<Boolean> stopScene(@RequestBody SceneOpsReq sceneStopReq) {
 		String roomId = sceneStopReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		teamRoomService.checkTeacherPermission(roomId, userId);
 
 		Boolean result = teamSceneService.stopScene(roomId);
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("查看场景")
@@ -186,21 +189,21 @@ public class TeamTrainRoomController {
 	@ApiOperation("暂停场景")
 	@PostMapping("/scene/pause")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+	public BaseRsp<Void> pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
 		teamSceneService.pauseScene(roomId);
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/scene/unpause")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
+	public BaseRsp<Void> unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
 
 		teamSceneService.unpauseScene(roomId);
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("查询流量")
@@ -219,7 +222,7 @@ public class TeamTrainRoomController {
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp startFlow(@RequestBody FlowOpsReq req) {
+	public BaseRsp<Void> startFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 1、鉴权
@@ -236,13 +239,13 @@ public class TeamTrainRoomController {
 			log.error("start flow failure,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("停止流量")
 	@PostMapping("/flow/stop")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp stopFlow(@RequestBody FlowOpsReq req) {
+	public BaseRsp<Void> stopFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 1、鉴权
@@ -259,13 +262,13 @@ public class TeamTrainRoomController {
 			log.error("stop flow failure,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.STOP_FLOW_FAILURE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("重启节点")
 	@PostMapping("/scene/node/restart")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+	public BaseRsp<Void> restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			log.error("scene not started,nodeOpsReq =[{}]", JsonUtil.toJsonString(nodeOpsReq));
@@ -277,13 +280,13 @@ public class TeamTrainRoomController {
 			log.error("failed to restart node,nodeOpsReq =[{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("重建节点")
 	@PostMapping("/scene/node/recreate")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+	public BaseRsp<Void> recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
@@ -295,7 +298,7 @@ public class TeamTrainRoomController {
 					JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("新增")
@@ -315,10 +318,7 @@ public class TeamTrainRoomController {
 				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getTrainSkill(), String.class));
 		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
 
-		// TeamTemplate teamTemplate =
-		// teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
-		// String teamTemplateName = businessTemplateMapper
-		// .selectById(teamTemplate.getBusinessTemplateId()).getName();
+
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.CREATE, teamTrainRoomReq.getName(),
 				LogContent.CR_FORMAT.format(OperationType.CREATE,
@@ -403,8 +403,7 @@ public class TeamTrainRoomController {
 
 		String roomId = opsReq.getRoomId();
 
-		String teamTemplateName = teamRoomMapper.selectById(opsReq.getRoomId())
-				.getTeamTemplateName();
+
 		TeamRoom teamRoom = teamRoomService.getById(roomId);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.DELETE, teamRoom.getName(),
@@ -449,11 +448,11 @@ public class TeamTrainRoomController {
 	@ApiOperation("修改团队训练状态")
 	@PostMapping("/start_end_team")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<Map> changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
+	public BaseRsp<Map<String,Integer>> changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
 
 		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
 
-		Map map = Maps.newHashMap();
+		Map<String,Integer> map = Maps.newHashMap();
 		map.put("training_status", status);
 
 		// 记录远程操作日志
@@ -468,11 +467,11 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询团队训练状态")
 	@GetMapping("/start_end_team")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<Map> getTrainingStatus(
+	public BaseRsp<Map<String,Integer>> getTrainingStatus(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		Integer status = teamRoomService.getTrainingStatus(resource_id);
 
-		Map map = Maps.newHashMap();
+		Map<String,Integer> map = Maps.newHashMap();
 		map.put("training_status", status);
 
 		return new BaseRsp<>(map);
@@ -621,7 +620,7 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		if (StringUtils.isBlank(resource_id)) {
-			log.error("resource_id_missing");
+			log.error(MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		// 获取该房间的角色信息
@@ -682,7 +681,7 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		if (StringUtils.isBlank(resource_id)) {
-			log.error("resource_id_missing");
+			log.error(MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
@@ -697,7 +696,7 @@ public class TeamTrainRoomController {
 	public BaseRsp<List<TrainTaskReleaseInfoRsp>> getManual(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		if (StringUtils.isBlank(resource_id)) {
-			log.error("resource_id_missing");
+			log.error(MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -722,7 +721,7 @@ public class TeamTrainRoomController {
 
 		DashboardInfo data = teamRoomService.getDashboardInfo(crRole, resource_id, userId);
 
-		return new BaseRsp(data);
+		return new BaseRsp<>(data);
 	}
 
 	@ApiOperation("团队对抗-任务导调-训练报告")
@@ -832,14 +831,12 @@ public class TeamTrainRoomController {
 	public BaseRsp<JSONObject> getMembersInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "id", value = "房间id", required = true) String id) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
 
 		List<DashboardUser> data = teamRoomService.getMembersInfo(id, resource_id);
 		JSONObject json = new JSONObject();
 		json.put("list", data);
 
-		return new BaseRsp(json);
+		return new BaseRsp<>(json);
 	}
 
 	@ApiOperation("任务删除")
@@ -872,7 +869,7 @@ public class TeamTrainRoomController {
 					if (crTaskService.getByMissions(rbMissionDeleteReq.getRoomId(), deleteMissions)
 							.size() > 0) {
 						log.error("mission is issued！missionIds=[{}] ",
-								JSONObject.toJSONString(deleteMissions));
+								JSON.toJSONString(deleteMissions));
 						throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 					}
 
@@ -913,7 +910,7 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "node_id", value = "设备id", required = true) String node_id) {
 
 		if (StringUtils.isBlank(resource_id)) {
-			log.error("resource_id_missing");
+			log.error(MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);
@@ -950,7 +947,13 @@ public class TeamTrainRoomController {
 			}
 			Date o1Time = o1.getMissionInfos().get(0).getCreateTime();
 			Date o2Time = o2.getMissionInfos().get(0).getCreateTime();
-			return o1Time.before(o2Time) ? 1 : o1Time.equals(o2Time) ? 0 : -1;
+			if (o1Time.before(o2Time)) {
+				return 1;
+			} else if (o1Time.equals(o2Time)) {
+				return 0;
+			} else {
+				return -1;
+			}
 		};
 
 		List<MissionReleaseStageInfo> sortedStages = allStages.stream()

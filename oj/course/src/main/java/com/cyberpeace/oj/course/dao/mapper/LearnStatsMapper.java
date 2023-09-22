@@ -30,7 +30,7 @@ public interface LearnStatsMapper {
 
     JSONObject practiceNumStats(@Param("user_id") String resourceId, @Param("paper_type") Integer paperType);
 
-    IPage<PersonalStatsDetail4CourseBo> learnCourseStats(Page page, @Param("user_id") String resourceId, @Param("theory_type") Integer theoryType, @Param("exp_type") Integer expType, @Param("report_code") Integer reportCode);
+    IPage<PersonalStatsDetail4CourseBo> learnCourseStats(Page<PersonalStatsDetail4CourseBo> page, @Param("user_id") String resourceId, @Param("theory_type") Integer theoryType, @Param("exp_type") Integer expType, @Param("report_code") Integer reportCode);
 
     List<JSONObject> afterClassIntegral(@Param("user_ids") List<String> users, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
 

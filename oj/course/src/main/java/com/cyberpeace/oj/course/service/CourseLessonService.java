@@ -62,7 +62,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param isWeb
 	 * @return
 	 */
-	IPage<AdminLessonListBo> pageByContext(Page page, LessonContext context, boolean isWeb);
+	IPage<AdminLessonListBo> pageByContext(Page<CourseLesson> page, LessonContext context, boolean isWeb);
 
 	/**
 	 * 课后练习公开与隐藏

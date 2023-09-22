@@ -40,7 +40,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 
 	@Override
 	public ListRsp<ToolCategory> selectPage(PageReqBase listReq) {
-		Page page = listReq.toPageParam();
+		Page<ToolCategory> page = listReq.toPageParam();
 		IPage<ToolCategory> result = toolCategoryMapper.list(page, listReq.getPattern());
 		return PageUtil.getListResult(result);
 	}

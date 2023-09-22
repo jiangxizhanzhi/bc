@@ -136,7 +136,7 @@ public class ExternalTheoryController {
 			return new BaseRsp<>(PageUtil.getNullResult());
 		}
 
-		Page page = queryParams.toPageParam();
+		Page<PracticeTheory> page = queryParams.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}

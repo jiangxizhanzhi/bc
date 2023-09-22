@@ -25,7 +25,7 @@ public class ToolGhdbServiceImpl extends ServiceImpl<ToolGhdbMapper, ToolGhdb> i
 
 	@Override
 	public ListRsp<ToolGhdb> listGhdb(PageReqBase pageReqBase, ToolGhdbRsp toolGhdbRsp) {
-		Page page = pageReqBase.toPageParam();
+		Page<ToolGhdb> page = pageReqBase.toPageParam();
 
 		IPage<ToolGhdb> result = toolGhdbMapper.list(page, toolGhdbRsp.getAuthor(),
 				toolGhdbRsp.getTitle());

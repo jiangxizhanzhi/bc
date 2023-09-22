@@ -355,14 +355,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		}
 	}
 
-	private JSONObject getTopoData(String topoId, CrRoleNodesData nodes) {
-		JSONObject topoData = localSceneService.getTopoData(topoId).getJSONObject("scene_config");
 
-		// 拓扑数据根据用户的角色，进行适当过滤
-		sceneFilterService.filterVisibleTopo(topoData, nodes);
-
-		return topoData;
-	}
 
 	private CrRoleNodesData getNodes(CrRole selfRole, List<CrRole> roleList, String roleId) {
 

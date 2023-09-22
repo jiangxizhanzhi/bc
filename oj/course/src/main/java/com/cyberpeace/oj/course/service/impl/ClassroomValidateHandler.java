@@ -28,14 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ClassroomValidateHandler {
 
-	private Integer MIN_START_TIME;
 
-	private Integer END_MAX_TIME;
 
 	@PostConstruct
 	private void init() {
-		MIN_START_TIME = Integer.parseInt(ConfigUtil.getContextProperty("oj.classroom.start.time"));
-		END_MAX_TIME = Integer.parseInt(ConfigUtil.getContextProperty("oj.classroom.end.time"));
+
 	}
 
 	@Autowired

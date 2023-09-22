@@ -1,6 +1,10 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -114,7 +118,10 @@ public class TeamTrainScoreController {
 			e.printStackTrace();
 			throw e;
 		} finally {
-			if(!new File(destHtmlPath).delete()){
+			Path filePath = Paths.get(destHtmlPath);
+			try {
+				Files.delete(filePath);
+			} catch (IOException e) {
 				log.error("failed to delete file:{}", destHtmlPath);
 			}
 		}
@@ -208,7 +215,7 @@ public class TeamTrainScoreController {
 	@ApiOperation("提交学员评分")
 	@PostMapping("/student_score")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp updateStudentScore(@ApiParam(name = "studentScoreReq",
+	public BaseRsp<Void> updateStudentScore(@ApiParam(name = "studentScoreReq",
 			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		teamRoomService.checkTeacherPermission(studentScoreReq.getRoomId(), userId);
@@ -312,7 +319,7 @@ public class TeamTrainScoreController {
 		List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList = crScoreController
 				.getTrainingRecord(resource_id, user_hash);
 
-		return new BaseRsp(missionSchemeList);
+		return new BaseRsp<>(missionSchemeList);
 	}
 
 	/**
@@ -327,10 +334,7 @@ public class TeamTrainScoreController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		TeamRoomData teamRoomdata = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
-		if (TeamRoom.TrainingStatusCode.UNOPENED.getCode()
-				.equals(teamRoomdata.getTrainingStatus())) {
-			// return new BaseRsp<>(new TrainingReport());
-		}
+
 
 		RoleQuery roleQuery = new RoleQuery(resource_id, TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);

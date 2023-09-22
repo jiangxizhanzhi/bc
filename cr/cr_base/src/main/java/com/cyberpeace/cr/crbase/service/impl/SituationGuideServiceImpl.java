@@ -78,9 +78,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     @Autowired
     private RemoteSceneService remoteSceneService;
 
-    public Integer MIN_STR_LEN = 1;
+    private static final int MIN_LEN = 1;
 
-    public Integer MAX_NAME_STR_LEN = 255;
+    private static final int MAX_NAME_LEN = 255;
 
     /**
      * 手动导调列表
@@ -337,16 +337,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         if (Objects.isNull(situationGuideMissionBo) || StringUtils.isBlank(situationGuideMissionBo.getRoleConfig())) {
             return new ArrayList<>();
         }
-        List<CrRoleConfig> crRoleConfigs = new ArrayList<>();
-        if (BusinessType.TRAINING_TEAM.getCode().equals(businessType)) {
-            crRoleConfigs = JsonUtil.toJsonObjectArray(situationGuideMissionBo.getRoleConfig(), CrRoleConfig.class);
-        } else {
-            JSONObject roleObject = JsonUtil.toJsonObject(situationGuideMissionBo.getRoleConfig(), JSONObject.class);
-            List<CrRoleConfig> redRoleResp = JsonUtil.toJsonObjectArray(roleObject.get("red_roles").toString(), CrRoleConfig.class);
-            List<CrRoleConfig> blueRoleResp = JsonUtil.toJsonObjectArray(roleObject.get("blue_roles").toString(), CrRoleConfig.class);
-            crRoleConfigs.addAll(redRoleResp);
-            crRoleConfigs.addAll(blueRoleResp);
-        }
+        //获取模版角色任务配置
+        List<CrRoleConfig> crRoleConfigs = getRoleConfigs(businessType, situationGuideMissionBo);
 
         //根据roomId获取训练下发任务,'未下发',任务导调才可编辑 (未下发无task数据)
         List<String> missionIds = crTaskMapper.selectByRoomId(roomId).stream().map(CrTask::getMissionId).collect(Collectors.toList());
@@ -370,21 +362,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                 missionStageRsp.setStageName(schemeDatum.getStage());
                 List<GuideMissionRsp> missionList = new ArrayList<>();
                 for (CrRoleConfigMission missionTemplate : schemeDatum.getMissions()) {
-                    if (missionMap.containsKey(missionTemplate.getResourceId())) {
-                        //组装训练任务,编辑状态,态势导调任务id
-                        GuideMissionRsp guideMissionRsp = new GuideMissionRsp();
-                        Mission mission = missionMap.get(missionTemplate.getResourceId());
-                        guideMissionRsp.setMissionTitle(mission.getTitle());
-                        guideMissionRsp.setMissionId(mission.getResourceId());
-
-                        Boolean isEditable = !missionIds.contains(mission.getResourceId());
-                        guideMissionRsp.setIsEditable(isEditable);
-
-                        SituationGuideScheme guideScheme = missionGuideMap.get(mission.getResourceId());
-                        guideMissionRsp.setGuideId(Objects.isNull(guideScheme) ? null : guideScheme.getResourceId());
-                        guideMissionRsp.setEventType(Objects.isNull(guideScheme) ? null : guideScheme.getEventType());
-                        missionList.add(guideMissionRsp);
+                    if (!missionMap.containsKey(missionTemplate.getResourceId())){
+                        continue;
                     }
+                    //组装训练任务,编辑状态,态势导调任务id
+                    GuideMissionRsp guideMissionRsp = getMissionRsp(missionIds, missionGuideMap, missionMap, missionTemplate);
+                    missionList.add(guideMissionRsp);
                 }
                 missionStageRsp.setMissionList(missionList);
                 stageList.add(missionStageRsp);
@@ -393,6 +376,35 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             result.add(guideRoleStageRsp);
         }
         return result;
+    }
+
+    private GuideMissionRsp getMissionRsp(List<String> missionIds, Map<String, SituationGuideScheme> missionGuideMap, Map<String, Mission> missionMap, CrRoleConfigMission missionTemplate) {
+        GuideMissionRsp guideMissionRsp = new GuideMissionRsp();
+        Mission mission = missionMap.get(missionTemplate.getResourceId());
+        guideMissionRsp.setMissionTitle(mission.getTitle());
+        guideMissionRsp.setMissionId(mission.getResourceId());
+
+        Boolean isEditable = !missionIds.contains(mission.getResourceId());
+        guideMissionRsp.setIsEditable(isEditable);
+
+        SituationGuideScheme guideScheme = missionGuideMap.get(mission.getResourceId());
+        guideMissionRsp.setGuideId(Objects.isNull(guideScheme) ? null : guideScheme.getResourceId());
+        guideMissionRsp.setEventType(Objects.isNull(guideScheme) ? null : guideScheme.getEventType());
+        return guideMissionRsp;
+    }
+
+    private List<CrRoleConfig> getRoleConfigs(Integer businessType, SituationGuideMissionBo situationGuideMissionBo) {
+        List<CrRoleConfig> crRoleConfigs = new ArrayList<>();
+        if (BusinessType.TRAINING_TEAM.getCode().equals(businessType)) {
+            crRoleConfigs = JsonUtil.toJsonObjectArray(situationGuideMissionBo.getRoleConfig(), CrRoleConfig.class);
+        } else {
+            JSONObject roleObject = JsonUtil.toJsonObject(situationGuideMissionBo.getRoleConfig(), JSONObject.class);
+            List<CrRoleConfig> redRoleResp = JsonUtil.toJsonObjectArray(roleObject.get("red_roles").toString(), CrRoleConfig.class);
+            List<CrRoleConfig> blueRoleResp = JsonUtil.toJsonObjectArray(roleObject.get("blue_roles").toString(), CrRoleConfig.class);
+            crRoleConfigs.addAll(redRoleResp);
+            crRoleConfigs.addAll(blueRoleResp);
+        }
+        return crRoleConfigs;
     }
 
     @Override
@@ -424,7 +436,6 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     @Override
     public GuideTimeDistributionRsp guideTimeDistribution(String roomId) {
         GuideTimeDistributionRsp result = new GuideTimeDistributionRsp();
-        // todo 中台提供最近24小时数据
         //获取流量采集事件和主机采集事件数量
         List<Integer> eventList = new ArrayList<>();
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
@@ -461,7 +472,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     @Override
     public GuideParamTypeRsp getParamType(String roomId, Integer businessType) {
         GuideParamTypeRsp result = new GuideParamTypeRsp();
-        if (SituationGuideScheme.Type.MANUALLY.getCode().equals(businessType)) {
+        if (BusinessType.TRAINING_TEAM.getCode().equals(businessType)) {
             List<ParamTypeRsp> eventType = new ArrayList<>();
             eventType.add(new ParamTypeRsp(SituationGuideScheme.EventType.ATTACK.getDesc(), SituationGuideScheme.EventType.ATTACK.getCode()));
             eventType.add(new ParamTypeRsp(SituationGuideScheme.EventType.DEFENSE.getDesc(), SituationGuideScheme.EventType.DEFENSE.getCode()));
@@ -538,7 +549,6 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     public ListRsp<GuideHistoryRsp> guideRecord(GuideRecordReq pageReq) {
 
         Date oneDayAgo = TimeUtil.addHours(new Date(), -24);
-        //TODO 中台导调记录
         ScreenGuideHistoryReq historyReq = new ScreenGuideHistoryReq();
         historyReq.setEventSubTypeList(Arrays.asList(SituationGuideScheme.Type.FLOW.getCode(), SituationGuideScheme.Type.FLOW.getCode()));
         historyReq.setRoomId(pageReq.getRoomId());
@@ -690,9 +700,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         if (isMissionEdit) {
             List<CrTask> taskList = crTaskMapper.selectByMissionId(req.getMissionId()).stream().filter(item -> StringUtils.isNotBlank(item.getMissionTemplateId())).collect(Collectors.toList());
             //'未下发',任务导调才可编辑
-            if (!CollectionUtils.isEmpty(taskList)) {
-                throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
-            }
+            throwExceptionError(!CollectionUtils.isEmpty(taskList));
         }
 
         //判断参数是否为空
@@ -703,24 +711,24 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             case ATTACK:
             case DEFENSE:
                 flag = req.getCategory() == null || req.getSource() == null || req.getTarget() == null || req.getResult() == null;
-                if (flag || missionFlag) {
-                    throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
-                }
+                throwExceptionError(flag || missionFlag);
                 break;
             case BLOCKING:
                 flag = req.getSource() == null || req.getTarget() == null;
-                if (flag || missionFlag) {
-                    throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
-                }
+                throwExceptionError(flag || missionFlag);
                 break;
             case BELONGING:
                 flag = req.getTarget() == null;
-                if (flag || missionFlag) {
-                    throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
-                }
+                throwExceptionError(flag || missionFlag);
                 break;
             default:
                 throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
+        }
+    }
+
+    private void throwExceptionError(boolean b) {
+        if (b) {
+            throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
         }
     }
 
@@ -758,7 +766,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     public void validateNameLen(String target, String errorCode) {
-        validateLength(target, MIN_STR_LEN, MAX_NAME_STR_LEN, errorCode);
+        validateLength(target, MIN_LEN, MAX_NAME_LEN, errorCode);
     }
 
     public SituationTopo getSituationTopoByRoomId(String roomId, Integer businessType) {

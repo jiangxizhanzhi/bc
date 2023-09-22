@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.enums.RoleGroup;
 import com.cyberpeace.common.enums.TeamRoleGroup;
-import org.apache.commons.collections.CollectionUtils;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.context.MissionStageScheme;
-import com.cyberpeace.common.context.role.CrRoleNodesData;
-import com.cyberpeace.common.context.role.CrRoleSimple;
 
 import lombok.Data;
 
@@ -160,7 +160,7 @@ public class CrRole extends BaseTable {
 	}
 
 	public void setMissionStageSchemes(List<MissionStageScheme> missionStageSchemeList) {
-		this.missionScheme = JSONObject.toJSONString(missionStageSchemeList);
+		this.missionScheme = JSON.toJSONString(missionStageSchemeList);
 	}
 
 	public CrRoleNodesData getNodeData(){

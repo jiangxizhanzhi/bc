@@ -84,7 +84,7 @@ public class CommonController {
 		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
 		attachmentBo.setFilePath(viewPath);
 
-		return new BaseRsp(attachmentBo);
+		return new BaseRsp<>(attachmentBo);
 	}
 
 	@ApiOperation("附件上传")
@@ -112,7 +112,7 @@ public class CommonController {
 		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
 		attachmentBo.setFilePath(viewPath);
 
-		return new BaseRsp(attachmentBo);
+		return new BaseRsp<>(attachmentBo);
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class CommonController {
 		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
 		attachmentBo.setFilePath(viewPath);
 
-		return new BaseRsp(attachmentBo);
+		return new BaseRsp<>(attachmentBo);
 	}
 
 	@ApiOperation("解析md压缩包")
@@ -171,9 +171,12 @@ public class CommonController {
 		}
 		// md文件内容
 		File mdFile = new File(mdFilePath);
-		if (mdFile.length() > Long.parseLong(ConfigUtil.getContextProperty("md.max.size"))) {
-			log.error("The markdown file in the archive cannot be larger than [{}] m! mdFile.length = [{}]",ConfigUtil.getContextProperty("md.max.size"), mdFile.length());
-			throw new BusinessException(ErrorCode.MD_SIZE_TOO_LARGE, Long.parseLong(ConfigUtil.getContextProperty("md.max.size"))/1048576);
+		long size = Long.parseLong(ConfigUtil.getContextProperty("md.max.size"));
+		if (mdFile.length() > size) {
+			log.error(
+					"The markdown file in the archive cannot be larger than [{}] m! mdFile.length = [{}]",
+					size, mdFile.length());
+			throw new BusinessException(ErrorCode.MD_SIZE_TOO_LARGE, size / 1048576);
 		}
 		String content = MdUtil.parseMarkdown(mdFilePath);
 		realContent = utilService.replaceMarkdownFile(content);

@@ -24,5 +24,7 @@ public class AuthContextUtils {
 
 		return authContext;
 	}
+	
+	private AuthContextUtils() {}
 
 }

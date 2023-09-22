@@ -6,9 +6,9 @@ import com.cyberpeace.common.constant.WebConstant;
 
 public class CommonContext {
 
-	private static final ThreadLocal<String> languageContext = new ThreadLocal();
-	private static final ThreadLocal<String> ipContext = new ThreadLocal();
-	private static final ThreadLocal<String> authorizationContext = new ThreadLocal();
+	private static final ThreadLocal<String> languageContext = new ThreadLocal<>();
+	private static final ThreadLocal<String> ipContext = new ThreadLocal<>();
+	private static final ThreadLocal<String> authorizationContext = new ThreadLocal<>();
 
 	private CommonContext() {
 	}

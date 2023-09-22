@@ -179,4 +179,11 @@ public interface UserSimulatorService {
 	 * @return {@code OnlineStatusRsp}
 	 */
 	OnlineStatusRsp getOnlineStatus(List<String> simulatorIds);
+
+    /**
+     * 检查在线状态
+     * @param simulatorId 仪表id
+     * @return boolean
+     */
+    void checkOnlineStatusMono(String simulatorId);
 }

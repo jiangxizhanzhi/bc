@@ -148,7 +148,7 @@ public interface LcService {
 	 * @param uuid uuid
 	 * @return {@code Integer}
 	 */
-	LcDevice getDeviceOrEmptyByUuid(String uuid);
+	LcDevice getDeviceOrExceptionByUuid(String uuid);
 
 	/**
 	 * 通过id获取设备

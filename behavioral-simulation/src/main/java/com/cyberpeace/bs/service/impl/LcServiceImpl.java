@@ -394,6 +394,11 @@ public class LcServiceImpl implements LcService {
 
 	@Override
 	public String getDeviceIdByUuid(String uuid) {
+		return getDeviceOrExceptionByUuid(uuid).getId();
+	}
+
+	@Override
+	public LcDevice getDeviceOrExceptionByUuid(String uuid) {
 		// 请求地址
 		String targetUrl = LC_HOST_PORT + DEVICE_URL;
 		// req
@@ -436,25 +441,7 @@ public class LcServiceImpl implements LcService {
 			log.error("empty device id by uuid: [{}]", uuid);
 			throw new BusinessException(BsErrorCode.EMPTY_DEVICE_ID);
 		}
-		return device.getId();
-	}
-
-	@Override
-	public LcDevice getDeviceOrEmptyByUuid(String uuid) {
-		// 请求地址
-		String targetUrl = LC_HOST_PORT + DEVICE_URL;
-		// req
-		LcDeviceReq req = new LcDeviceReq();
-		req.setUuid(uuid);
-		// get device
-		LcDevicePageRes res = LcHttpClient.post(targetUrl, req, LcDevicePageRes.class);
-		List<LcDevice> deviceList = res.getRecords();
-
-		if (CollectionUtils.isEmpty(deviceList)) {
-			return new LcDevice();
-		}
-		// get device
-		return deviceList.get(0);
+		return device;
 	}
 
 	@Override

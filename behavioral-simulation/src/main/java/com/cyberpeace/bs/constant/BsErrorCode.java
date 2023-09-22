@@ -122,4 +122,13 @@ public final class BsErrorCode {
 	 * 部分行为的录制设备与行为集合不匹配
 	 */
 	public static final String ILLEGAL_BEHAVIOR_OS = "105024";
+	/**
+	 * 设备离线
+	 */
+	public static final String DEVICE_OFFLINE = "105025";
+
+	/**
+	 * 部分设备离线
+	 */
+	public static final String SOME_DEVICE_OFFLINE = "105026";
 }

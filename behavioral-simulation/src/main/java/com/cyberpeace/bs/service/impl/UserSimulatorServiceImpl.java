@@ -446,8 +446,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		if (simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
 			throw new BusinessException(BsErrorCode.ALREADY_STARTED);
 		}
+		this.checkOnlineStatusMono(simulator);
 		start(simulator);
 	}
+
 
 	@Override
 	public void batchStartSimulator(List<String> simulatorIds) {
@@ -463,13 +465,25 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			if (simulatorList.get(0).getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
 				throw new BusinessException(BsErrorCode.ALREADY_STARTED);
 			}
+			this.checkOnlineStatusMono(simulatorList.get(0));
+			start(simulatorList.get(0));
+			return;
 		}
+		// 假设不存在异常设备
+		boolean flag = false;
 		// 不加事务
 		for (UserSimulator simulator : simulatorList) {
 			// 依次启动选中的仪表
 			if (!simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
-				start(simulator);
+				if (this.getOnlineStatusMono(simulator)) {
+					start(simulator);
+				} else {
+					flag = true;
+				}
 			}
+		}
+		if (flag) {
+			throw new BusinessException(BsErrorCode.SOME_DEVICE_OFFLINE);
 		}
 	}
 
@@ -875,15 +889,38 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		List<UserSimulator> simulatorList = this.userSimulatorMapper.selectBatchIds(simulatorIds);
 		OnlineStatusRsp rsp = new OnlineStatusRsp();
 		for (UserSimulator simulator : simulatorList) {
-			LcDevice device = this.getLcDevice(simulator);
-			if (null == device.getStatus()
-					|| BsConstants.LcDeviceStatus.OFFLINE.equals(device.getStatus())) {
+			boolean online = getOnlineStatusMono(simulator);
+			if (!online) {
 				rsp.getOffline().add(simulator.getResourceId());
 			} else {
 				rsp.getOnline().add(simulator.getResourceId());
 			}
 		}
 		return rsp;
+	}
+
+	@Override
+	public void checkOnlineStatusMono(String simulatorId) {
+		UserSimulator simulator = getOrException(simulatorId);
+		this.checkOnlineStatusMono(simulator);
+	}
+
+	private void checkOnlineStatusMono(UserSimulator simulator) {
+		if (!getOnlineStatusMono(simulator)) {
+			throw new BusinessException(BsErrorCode.DEVICE_OFFLINE);
+		}
+	}
+
+	/**
+	 * true:online
+	 * false: offline
+	 * @param simulator 仪表
+	 * @return boolean
+	 */
+	private boolean getOnlineStatusMono(UserSimulator simulator) {
+		LcDevice device = this.getLcDevice(simulator);
+		return null != device.getStatus()
+				&& !BsConstants.LcDeviceStatus.OFFLINE.equals(device.getStatus());
 	}
 
 	private void deleteSimulatorByIds(Collection<String> simulatorIds) {
@@ -1030,7 +1067,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		if (Boolean.TRUE.equals(simulator.getIsEntity())) {
 			return lcService.getDeviceOrEmptyById(simulator.getYwId());
 		} else {
-			return lcService.getDeviceOrEmptyByUuid(simulator.getDeviceId());
+			try {
+				return lcService.getDeviceOrExceptionByUuid(simulator.getDeviceId());
+			} catch (Exception e) {
+				return new LcDevice();
+			}
 		}
 	}
 

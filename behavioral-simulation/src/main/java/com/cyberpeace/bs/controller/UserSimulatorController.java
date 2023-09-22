@@ -315,4 +315,17 @@ public class UserSimulatorController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 获取单个仪表设备在线状态
+	 *
+	 * @return {@code BaseRsp<OnlineStatusRsp>}
+	 */
+	@ApiOperation("检查仪表监控是否可用")
+	@GetMapping("/check_status/mono")
+	public BaseRsp<Boolean> getDeviceOnlineStatusMono(
+			@ApiParam(value = "仪表resource_id", name = "resource_id") String resource_id) {
+		userSimulatorService.checkOnlineStatusMono(resource_id);
+		return new BaseRsp<>(true);
+	}
+
 }

@@ -209,7 +209,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         if (!CollectionUtils.isEmpty(ids)) {
             removeByIds(ids);
             LambdaQueryWrapper<SituationGuideHistory> deleteWrapper = new LambdaQueryWrapper<>();
-            deleteWrapper.in(SituationGuideHistory::getGuideId);
+            deleteWrapper.in(SituationGuideHistory::getGuideId, ids);
             situationGuideHisMapper.delete(deleteWrapper);
             return true;
         }
@@ -551,7 +551,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         List<GuideHistoryRsp> mpEventList = mpEventToGuideHistoryRsp(getMpEventList(historyReq));
 
         List<SituationGuideHistory> historyList = situationGuideHisMapper.guideRecordListByTime(pageReq.getRoomId(), oneDayAgo);
-        Set<String> sceneSet = historyList.stream().map(SituationGuideHistory::getSceneId).collect(Collectors.toSet());
+        Set<String> sceneSet = historyList.stream().map(SituationGuideHistory::getSceneId).filter(StringUtils::isNotBlank).collect(Collectors.toSet());
         Map<String, ElementInfo> elementMap = Maps.newHashMap();
 
         for (String sceneId : sceneSet) {

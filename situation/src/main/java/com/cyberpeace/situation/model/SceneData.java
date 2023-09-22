@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.model;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class SceneData implements Serializable {
+public class SceneData {
 
 	@ApiModelProperty("场景id")
 	private String sceneId;

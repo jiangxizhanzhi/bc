@@ -132,7 +132,11 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 提取自定义配置
 			Map<Integer, String> areaConfig = getNodeConfig(areaConfigMap, area.getString("id"),
 					area.getString("name"));
-			areaInfo.setConfig(areaConfig);
+			// 设置区域名称
+			String name = areaConfig.getOrDefault(SituationConfig.Attribute.NAME.getCode(), null);
+			// 设置区域颜色
+			String color = areaConfig.getOrDefault(SituationConfig.Attribute.COLOR.getCode(), null);
+			areaInfo.setConfig(name, color);
 
 			// 提取样式数据
 			Display display = JsonUtil.toJsonObject(area.getString("display_context"),
@@ -244,17 +248,20 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setHierarchy(hierarchy);
 
 			// 提取自定义配置
-			Map<Integer, String> elementConfig = getNodeConfig(elementConfigMap, elementId,
-					elementName);
-			elementInfo.setConfig(elementConfig);
+			Map<Integer, String> elementConfig = getNodeConfig(elementConfigMap, elementId,elementName);
+			// 设置节点名称
+			String name = elementConfig.getOrDefault(SituationConfig.Attribute.NAME.getCode(), null);
+			// 设置节点高度
+			String high= elementConfig.getOrDefault(SituationConfig.Attribute.HEIGHT.getCode(),null);
+			// 设置节点颜色
+			String color = elementConfig.getOrDefault(SituationConfig.Attribute.COLOR.getCode(), null);
+			elementInfo.setConfig(name, high, color);
 
 			// 提取样式数据
-			Display display = JsonUtil.toJsonObject(element.getString("display_context"),
-					Display.class);
+			Display display = JsonUtil.toJsonObject(element.getString("display_context"), Display.class);
 
 			if (display != null) {
-				elementInfo.setFontStyle(
-						new FontStyle(display.getText().getFill(), display.getText().getFontSize()));
+				elementInfo.setFontStyle(new FontStyle(display.getText().getFill(), display.getText().getFontSize()));
 			}
 			//设置一级类型的编码
 			elementInfo.setOneCategoryCode(category);

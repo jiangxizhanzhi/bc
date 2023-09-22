@@ -38,7 +38,7 @@ public class SituationConfig {
 	private String attributeValue;
 
 	public SituationConfig() {
-
+	// SituationConfig
 	}
 
 	public enum NodeType {

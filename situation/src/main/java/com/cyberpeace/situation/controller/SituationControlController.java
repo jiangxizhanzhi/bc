@@ -114,8 +114,7 @@ public class SituationControlController {
 
 	@ApiOperation("运行单个动效")
 	@PostMapping("/run_attack_message")
-	public BaseRsp<?>
-			runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq) {
+	public BaseRsp<Boolean> runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq) {
 		AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq,
 				AttackMessageReq.class);
 		String sceneId = runAttackMessageReq.getSceneId();
@@ -134,7 +133,7 @@ public class SituationControlController {
 
 	@ApiOperation("运行动效方案")
 	@PostMapping("/run_dynamic_scheme")
-	public BaseRsp<?> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq) {
+	public BaseRsp<Boolean> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq) {
 		dynamicSchemeService.validStage(dynamicSchemeReq);
 		dynamicSchemeService.validMedia(dynamicSchemeReq);
 		dynamicSchemeService.clearMedia(dynamicSchemeReq.getSceneId());
@@ -189,6 +188,8 @@ public class SituationControlController {
 	@PostMapping("/scheme/import")
 	public BaseRsp<String> importScheme(@Validated ImportDynamicSchemeReq importDynamicSchemeReq)
 			throws IOException, ZipException {
+
+		BaseRsp<String> result = new BaseRsp<>();
 		// 1. save file to temp dir
 		File localFile = FileUtil.saveFile(importDynamicSchemeReq.getFile(),
 				ZipUtil.generatePath());
@@ -201,7 +202,8 @@ public class SituationControlController {
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");
 		}
-		return new BaseRsp(resourceId);
+		result.setData(resourceId);
+		return result;
 	}
 
 }

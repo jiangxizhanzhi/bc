@@ -100,6 +100,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	public Integer VIDEO_CODE = 2;
 
+	public final String ATTACK = "attack";
+
 	@Override
 	public String addDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
 		DynamicScheme dynamicScheme = addDynamicSchemeReqToDynamicScheme(addDynamicSchemeReq);
@@ -305,7 +307,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	public void pushMediaToRoom(AttackMessageReq attackMessageBo, String code) {
 		WsAttackEffectDynamic wsAttackEffectDynamic = new WsAttackEffectDynamic();
 		wsAttackEffectDynamic.setSceneId(attackMessageBo.getSceneId());
-		wsAttackEffectDynamic.setCategory("attack");
+		wsAttackEffectDynamic.setCategory(ATTACK);
 		wsAttackEffectDynamic.setDescription(attackMessageBo.getDescription());
 		wsAttackEffectDynamic.setName("攻击效果");
 		wsAttackEffectDynamic.setType(ActionType.NONE.getCode());
@@ -363,7 +365,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds) {
 		WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageBo,
 				WsMultiNodeDynamic.class);
-		wsMultiNodeDynamic.setCategory("attack");
+		wsMultiNodeDynamic.setCategory(ATTACK);
 		for (AttackType attackType : AttackType.values()) {
 			if (attackType.getKeyWord().equals(attackMessageBo.getType())) {
 				wsMultiNodeDynamic.setType(attackType.getActionType().getCode());
@@ -438,7 +440,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 								.setName(number++ + "." + attackMessageReq.getDescription());
 						pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
 						sceneConfigService.updateScheduleById(sceneId,
-								JSONObject.toJSONString(wsAttackScheduleList));
+								JSON.toJSONString(wsAttackScheduleList));
 
 						if (attackMessageReq.getType()
 								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
@@ -457,12 +459,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						wsAttackMessageSchedule.setName("");
 						pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
 						sceneConfigService.updateScheduleById(sceneId,
-								JSONObject.toJSONString(wsAttackScheduleList));
+								JSON.toJSONString(wsAttackScheduleList));
 					}
 				}
 
 				sceneConfigService.updateScheduleById(sceneId,
-						JSONObject.toJSONString(Lists.newArrayList()));
+						JSON.toJSONString(Lists.newArrayList()));
 
 			}
 		});
@@ -523,7 +525,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		WsAttackEffectDynamic wsAttackEffectDynamicBlank = new WsAttackEffectDynamic();
 		wsAttackEffectDynamicBlank.setName("攻击效果");
 		wsAttackEffectDynamicBlank.setType(ActionType.NONE.getCode());
-		wsAttackEffectDynamicBlank.setCategory("attack");
+		wsAttackEffectDynamicBlank.setCategory(ATTACK);
 		wsAttackEffectDynamicBlank.setEffectList(new ArrayList<>());
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(
 				MessageType.AttackEffect.getDesc(), wsAttackEffectDynamicBlank);
@@ -586,7 +588,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				attackMessageReq.setResourceId(null);
 			}
 		}
-		String data = JSONObject.toJSONString(dynamicSchemeRes);
+		String data = JSON.toJSONString(dynamicSchemeRes);
 		// 4. generate data.json
 		String jsonPath = tempDir + File.separator + RESOURCE_FILE_NAME;
 		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(jsonPath),
@@ -621,28 +623,26 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		areaAndElementIds.addAll(elementInfoList.stream().map(ElementInfo::getElementId)
 				.collect(Collectors.toList()));
 
+		String errorLog="some nodes not exist, dynamic name is {}";
 		// 判断动效方案中涉及到的节点该场景中是否都存在
 		for (DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()) {
 			for (AttackMessageReq attackMessageReq : dynamicStage.getAttackMessageReqList()) {
 				if (attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 					for (MediaAnimation mediaAnimation : attackMessageReq.getMediaAnimationList()) {
 						if (!areaAndElementIds.contains(mediaAnimation.getSourceId())) {
-							log.error("some nodes not exist, dynamic name is {}",
-									dynamicSchemeReq.getName());
+							log.error(errorLog, dynamicSchemeReq.getName());
 							throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 						}
 					}
 				} else {
 					if (StringUtils.isNotEmpty(attackMessageReq.getTargetId())
 							&& !areaAndElementIds.contains(attackMessageReq.getTargetId())) {
-						log.error("some nodes not exist, dynamic name is {}",
-								dynamicSchemeReq.getName());
+						log.error(errorLog, dynamicSchemeReq.getName());
 						throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 					}
 					if (StringUtils.isNotEmpty(attackMessageReq.getSourceId())
 							&& !areaAndElementIds.contains(attackMessageReq.getSourceId())) {
-						log.error("some nodes not exist, dynamic name is {}",
-								dynamicSchemeReq.getName());
+						log.error(errorLog, dynamicSchemeReq.getName());
 						throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 					}
 				}

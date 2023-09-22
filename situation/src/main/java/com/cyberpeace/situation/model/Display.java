@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.model;
 
-import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class Display implements Serializable {
+public class Display {
 
 	@Data
 	public class Label {

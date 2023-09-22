@@ -50,16 +50,12 @@ public class AreaInfo implements Serializable {
 
 	public AreaInfo() {}
 
-	public void setConfig(Map<Integer, String> nodeConfig) {
+	public void setConfig(String name,String color) {
 
-		// 设置区域名称
-		String name = nodeConfig.getOrDefault(SituationConfig.Attribute.NAME.getCode(), null);
 		if (name != null) {
 			this.name = name;
 		}
 
-		// 设置区域颜色
-		String color = nodeConfig.getOrDefault(SituationConfig.Attribute.COLOR.getCode(), null);
 		if (color != null) {
 			this.style.setColor(color);
 		}

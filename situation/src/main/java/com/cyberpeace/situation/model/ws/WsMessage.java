@@ -1,12 +1,10 @@
 package com.cyberpeace.situation.model.ws;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class WsMessage<T> implements Serializable {
+public class WsMessage<T> {
 
 	@ApiModelProperty("消息编码")
 	private String code;

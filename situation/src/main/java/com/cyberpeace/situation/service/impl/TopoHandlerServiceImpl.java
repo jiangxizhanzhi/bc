@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
 
+	private static final String SCENE = "scene";
+
 	@Override
 	public SceneData getSceneData(String sceneId, String topoId) {
 
@@ -79,8 +82,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 			situationConfigMap = getSituationConfigMap(topoId);
 		} else {
 			sceneTopo = getSceneTopoBySceneId(sceneId);
-			topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
-			plugins = sceneTopo.getJSONObject("scene").getJSONObject("plugins");
+			topology = sceneTopo.getJSONObject(SCENE).getJSONObject("topology");
+			plugins = sceneTopo.getJSONObject(SCENE).getJSONObject("plugins");
 			situationConfigMap = getSituationConfigMap(sceneId);
 		}
 
@@ -96,16 +99,16 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		// 构造场景数据
 		SceneData sceneData = new SceneData();
 		sceneData.setSceneId(sceneId);
-		sceneData.setSceneName(topology.getJSONObject("scene").getString("name"));
-		sceneData.setSceneDesc(topology.getJSONObject("scene").getString("description"));
+		sceneData.setSceneName(topology.getJSONObject(SCENE).getString("name"));
+		sceneData.setSceneDesc(topology.getJSONObject(SCENE).getString("description"));
 		sceneData.setAreas((JSONArray) topology.getOrDefault("areas",
-				JSONArray.parseArray(Lists.newArrayList().toString())));
+				JSON.parseArray(Lists.newArrayList().toString())));
 		sceneData.setElements((JSONArray) topology.getOrDefault("elements",
-				JSONArray.parseArray(Lists.newArrayList().toString())));
+				JSON.parseArray(Lists.newArrayList().toString())));
 		sceneData.setConnections((JSONArray) topology.getOrDefault("connections",
-				JSONArray.parseArray(Lists.newArrayList().toString())));
+				JSON.parseArray(Lists.newArrayList().toString())));
 		sceneData.setPieces((JSONArray) topology.getOrDefault("pieces",
-				JSONArray.parseArray(Lists.newArrayList().toString())));
+				JSON.parseArray(Lists.newArrayList().toString())));
 		sceneData.setExtendElementInfo(extendElementInfo);
 		sceneData.setXList(Lists.newArrayList());
 		sceneData.setYList(Lists.newArrayList());

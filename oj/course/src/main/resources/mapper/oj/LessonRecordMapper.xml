@@ -36,10 +36,10 @@
                 and user_id = #{userId}
             </if>
             <if test="null != start">
-                and create_time &gt; #{start}
+                and update_time &gt; #{start}
             </if>
             <if test="null != end">
-                and create_time &lt; #{end}
+                and update_time &lt; #{end}
             </if>
         </where>
         order by create_time asc

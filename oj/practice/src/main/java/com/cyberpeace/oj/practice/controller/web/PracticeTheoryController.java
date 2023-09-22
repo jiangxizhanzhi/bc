@@ -127,10 +127,11 @@ public class PracticeTheoryController {
 
 		IPage<PracticeTheoryListBo> result = practiceTheoryService.pageByQuery(page, listQueryBo,
 				authContext);
-		if (PageUtil.getListResult(result).getList().size() > 5) {
-			return new BaseRsp(PageUtil.getListResult(result).getList().subList(0, 5));
+
+		if (result.getRecords().size() > 5) {
+			return new BaseRsp<>(result.getRecords().subList(0, 5));
 		}
-		return new BaseRsp(PageUtil.getListResult(result).getList());
+		return new BaseRsp<>(result.getRecords());
 	}
 
 	@ApiOperation("理论基础练习题提交")
@@ -214,9 +215,9 @@ public class PracticeTheoryController {
 		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService
 				.getPracticeRecord(new WebTheoryRecordReq());
 		if (practiceTheoryList.size() > 5) {
-			return new BaseRsp(practiceTheoryList.subList(0, 5));
+			return new BaseRsp<>(practiceTheoryList.subList(0, 5));
 		}
-		return new BaseRsp(practiceTheoryList);
+		return new BaseRsp<>(practiceTheoryList);
 	}
 
 	@ApiOperation("练习记录")

@@ -7,11 +7,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Data
 @ApiModel
-public class TheoryImportReq implements Serializable {
+public class TheoryImportReq {
 
 	@ApiModelProperty(name = "practice_set_id", value = "习题集编号")
 	@NotBlank

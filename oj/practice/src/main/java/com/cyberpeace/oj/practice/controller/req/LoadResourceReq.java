@@ -6,11 +6,10 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Data
 @ApiModel
-public class LoadResourceReq implements Serializable {
+public class LoadResourceReq {
 
 	@ApiModelProperty("数据文件")
 	@NotNull

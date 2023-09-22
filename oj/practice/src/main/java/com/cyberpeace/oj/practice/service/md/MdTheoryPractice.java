@@ -3,11 +3,10 @@ package com.cyberpeace.oj.practice.service.md;
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class MdTheoryPractice implements Serializable {
+public class MdTheoryPractice {
 
 	@MdHeadLine(level = 1, name = "课后习题")
 	private String title;

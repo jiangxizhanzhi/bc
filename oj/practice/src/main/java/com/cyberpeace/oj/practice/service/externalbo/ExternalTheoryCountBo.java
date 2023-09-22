@@ -31,38 +31,33 @@ public class ExternalTheoryCountBo implements Serializable {
     }
     
 	private void initShortAnswer(Map<Integer, List<TheorySimpleBo>> typeMap) {
-		int shortAnswer = typeMap
+        this.shortAnswer = typeMap
 				.getOrDefault(PracticeTheory.TheoryType.SHORT_ANSWER.getCode(), new ArrayList<>())
 				.size();
-		this.shortAnswer = shortAnswer;
 	}
     
     private void initFillBlank(Map<Integer, List<TheorySimpleBo>> typeMap) {
-        int fillBlank = typeMap
+        this.fillBlank = typeMap
                 .getOrDefault(PracticeTheory.TheoryType.FILL_BLANK.getCode(), new ArrayList<>())
                 .size();
-        this.fillBlank = fillBlank;
     }
     
 	private void initJudgement(Map<Integer, List<TheorySimpleBo>> typeMap) {
-		int judgement = typeMap
+        this.judgement = typeMap
 				.getOrDefault(PracticeTheory.TheoryType.JUDGMENT.getCode(), new ArrayList<>())
 				.size();
-		this.judgement = judgement;
 	}
     
 	private void initMultiple(Map<Integer, List<TheorySimpleBo>> typeMap) {
-		int multiple = typeMap
+        this.multiple = typeMap
 				.getOrDefault(PracticeTheory.TheoryType.MULTIPLE.getCode(), new ArrayList<>())
 				.size();
-		this.multiple = multiple;
 	}
     
 	private void initSingle(Map<Integer, List<TheorySimpleBo>> typeMap) {
-		int single = typeMap
+        this.single = typeMap
 				.getOrDefault(PracticeTheory.TheoryType.SINGLE.getCode(), Lists.newArrayList())
 				.size();
-		this.single = single;
 	}
     
     @ApiModelProperty("单选题数量")

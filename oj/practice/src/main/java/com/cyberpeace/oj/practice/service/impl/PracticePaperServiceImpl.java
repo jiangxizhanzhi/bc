@@ -182,12 +182,12 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 			paperRecordSummaryResList = paperRecordSummaryResList.subList(0, 40);
 		}
 		if (isFinish != null) {
-			paperRecordSummaryResList = StreamApiUtils.filter(paperRecordSummaryResList, paperRecordSummaryRes -> paperRecordSummaryRes.getIsFinish() == isFinish);
+			paperRecordSummaryResList = StreamApiUtils.filter(paperRecordSummaryResList, paperRecordSummaryRes -> paperRecordSummaryRes.getIsFinish().equals(isFinish));
 		}
 		for (PaperRecordSummaryRes paperRecordSummaryRes : paperRecordSummaryResList) {
 			String dayTime = TimeUtil.format6(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime()));
 			paperRecordSummaryRes.setPaperTime(TimeUtil.format9(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime())));
-			if (paperRecordSummaryRes.getIsFinish()) {
+			if (Boolean.TRUE.equals(paperRecordSummaryRes.getIsFinish())) {
 				paperRecordSummaryRes.setAccuracyRate(paperRecordSummaryRes.getRight() * 100 / paperRecordSummaryRes.getCount());
 			}
 			if (recordListMap.get(dayTime) == null) {
@@ -198,10 +198,10 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 				recordListMap.get(dayTime).add(paperRecordSummaryRes);
 			}
 		}
-		for (String time : recordListMap.keySet()) {
+		for (Map.Entry<String, List<PaperRecordSummaryRes>> entry : recordListMap.entrySet()) {
 			PaperRecordSummaryResByDay paperRecordSummaryResByDay = new PaperRecordSummaryResByDay();
-			paperRecordSummaryResByDay.setTime(time);
-			paperRecordSummaryResByDay.setSummaryRes(recordListMap.get(time));
+			paperRecordSummaryResByDay.setTime(entry.getKey());
+			paperRecordSummaryResByDay.setSummaryRes(entry.getValue());
 			sumRecordList.add(paperRecordSummaryResByDay);
 		}
 		sumRecordList.sort(Comparator.comparing(PaperRecordSummaryResByDay::getTime).reversed());

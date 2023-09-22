@@ -83,13 +83,13 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		OperationBo operationBo = practiceOperationService.selectById(resourceId,
 				AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false));
-		return new BaseRsp(operationBo);
+		return new BaseRsp<>(operationBo);
 	}
 
 	@ApiOperation("实践操作习题新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
-	public BaseRsp add(@Validated(Create.class) OperationAddReq addReq) {
+	public BaseRsp<Integer> add(@Validated(Create.class) OperationAddReq addReq) {
 
 		addReq.validate();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -105,7 +105,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 				OperationType.CREATE, LogContent.EXERCISE.getMsg(),
 				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.EXERCISE.getMsg(), addReq.getTitle()));
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("实操习题附件上传")
@@ -134,7 +134,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 				OperationType.UPDATE, LogContent.EXERCISE.getMsg(),
 				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.EXERCISE.getMsg(), updateReq.getTitle()));
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("实践操作习题删除")
@@ -225,7 +225,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		TopoSceneDataBo topoScene = practiceOperationService.getTopoScene(operationId, authContext);
-		return new BaseRsp(topoScene);
+		return new BaseRsp<>(topoScene);
 	}
 
 	@ApiOperation("隔离模式设置")
@@ -247,7 +247,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		int result = practiceOperationMapper.updateById(operation);
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result > 0);
 	}
 
 	@ApiOperation("后台场景启动测试")
@@ -320,7 +320,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 				false);
 		Boolean result = practiceOperationService.pauseScene(sceneStatusReq.getResourceId(),
 				sceneStatusReq.getStatus(), authContext);
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 }

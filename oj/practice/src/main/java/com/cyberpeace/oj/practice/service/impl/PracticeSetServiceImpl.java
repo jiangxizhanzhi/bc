@@ -224,8 +224,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 类型校验 防止习题集类型改变
 		if (null != practiceSet.getPracticeType()) {
-			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()
-					&& existSet.getPracticeCount().intValue() != CommonConstant.ZERO.intValue()) {
+			boolean flag = existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()
+					&& existSet.getPracticeCount().intValue() != CommonConstant.ZERO.intValue();
+			if (flag) {
 				log.error("set under exist practice! existSet=[{}]",
 						JsonUtil.toJsonString(existSet));
 				throw new BusinessException(OjBusinessErrorCode.SET_UNDER_EXIST_PRACTICE);
@@ -349,22 +350,18 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			}
 		}
 
-		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-
-			@Override
-			public Boolean doInTransaction(TransactionStatus status) {
-				if (CollectionUtils.isNotEmpty(theoryList)) {
-					practiceTheoryService.saveBatch(theoryList);
-				}
-				if (CollectionUtils.isNotEmpty(operationList)) {
-					practiceOperationService.saveBatch(operationList);
-				}
-				if (CollectionUtils.isNotEmpty(practiceSets)) {
-					return saveBatch(practiceSets);
-				}
-
-				return CommonConstant.TRUE;
+		return transactionTemplate.execute(status -> {
+			if (CollectionUtils.isNotEmpty(theoryList)) {
+				practiceTheoryService.saveBatch(theoryList);
 			}
+			if (CollectionUtils.isNotEmpty(operationList)) {
+				practiceOperationService.saveBatch(operationList);
+			}
+			if (CollectionUtils.isNotEmpty(practiceSets)) {
+				return saveBatch(practiceSets);
+			}
+
+			return CommonConstant.TRUE;
 		});
 	}
 
@@ -390,9 +387,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		List<PracticeOperation> operationList;
 		List<PracticeSet> setList;
 
-		EXPORT_LOG.info(System.lineSeparator() + System.lineSeparator()
-				+ "----------start export practice-----------" + System.lineSeparator());
-
+		EXPORT_LOG.info("----------start export practice-----------");
 		try {
 			// 查询要导出的习题集
 			EXPORT_LOG.info("Practice set query....");
@@ -434,8 +429,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			EXPORT_LOG.info("export {} practice set successfully", practiceSet.getName());
 		}
 
-		EXPORT_LOG.info(System.lineSeparator() + "----------end export practice-----------"
-				+ System.lineSeparator() + System.lineSeparator());
+		EXPORT_LOG.info( "----------end export practice-----------");
 		return destPath;
 	}
 

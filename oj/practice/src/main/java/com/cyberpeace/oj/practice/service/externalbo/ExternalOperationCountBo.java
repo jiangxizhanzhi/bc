@@ -34,24 +34,21 @@ public class ExternalOperationCountBo implements Serializable {
 	private Integer randoms;
 
 	private void initRandom(Map<Integer, List<PracticeOperation>> typeMap) {
-		int randoms = typeMap
+		this.randoms = typeMap
 				.getOrDefault(PracticeOperation.DynamicFlag.RANDOM.getCode(), new ArrayList<>())
 				.size();
-		this.randoms = randoms;
 	}
 
 	private void initDynamic(Map<Integer, List<PracticeOperation>> typeMap) {
-		int dynamics = typeMap
+		this.dynamics = typeMap
 				.getOrDefault(PracticeOperation.DynamicFlag.DYNAMIC.getCode(), new ArrayList<>())
 				.size();
-		this.dynamics = dynamics;
 	}
 
 	private void initStatic(Map<Integer, List<PracticeOperation>> typeMap) {
-		int statics = typeMap
+		this.statics = typeMap
 				.getOrDefault(PracticeOperation.DynamicFlag.STATIC.getCode(), new ArrayList<>())
 				.size();
-		this.statics = statics;
 	}
 
 }

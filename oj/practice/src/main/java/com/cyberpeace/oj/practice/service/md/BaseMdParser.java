@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.md;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +21,13 @@ public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String>
 
 	@Override
 	public List<TheoryBaseMd> parse(Object content) {
-		if(content == null){
-			return null;
+		if (content == null) {
+			return new ArrayList<>();
 		}
 
 		String value = (String) content;
 		if (StringUtils.isBlank(value.trim())) {
-			return null;
+			return new ArrayList<>();
 		}
 		List<TheoryBaseMd> theoryBaseMdList = Lists.newArrayList();
 		Map<String, String> titleMap = MdTheoryParser.parseKeyMap(value,

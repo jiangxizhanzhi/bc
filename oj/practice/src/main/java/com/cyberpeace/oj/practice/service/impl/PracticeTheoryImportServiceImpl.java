@@ -160,106 +160,10 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theoryList.size());
 
-		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-
-			@Override
-			public Boolean doInTransaction(TransactionStatus status) {
-				practiceSetMapper.updateById(practiceSet);
-				return saveBatch(theoryList);
-			}
+		return transactionTemplate.execute(status -> {
+			practiceSetMapper.updateById(practiceSet);
+			return saveBatch(theoryList);
 		});
-	}
-
-	/**
-	 * 实训理论习题资源导入excel数据转换
-	 *
-	 * @param excelRowData
-	 * @param practiceSetId
-	 * @param categoryId
-	 * @return
-	 */
-	private PracticeTheory ojExcelDataToEntity(List<String> excelRowData, String practiceSetId,
-											   String categoryId, String userId) {
-
-		if (StringUtils.isBlank(String.join("", excelRowData))) {
-			return null;
-		}
-
-		// 字段数据长度限制
-		String content = excelRowData.get(0);
-		practiceValidateHandler.validateFieldLength(content, MAX_CONTENT_LENGTH);
-
-		// 该条数据存在也不插入
-		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId, content);
-		if (StringUtils.isNotBlank(practiceId)) {
-			return null;
-		}
-
-		// 理论习题内容
-		PracticeTheory practiceTheory = new PracticeTheory();
-		practiceTheory.setContent(content);
-		practiceTheory.setTitle(content);
-		practiceTheory.setCategoryId(categoryId);
-		practiceTheory.setPracticeSetId(practiceSetId);
-		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
-		practiceTheory.setBuiltin(CommonConstant.TRUE);
-		practiceTheory.setCreateUserId(userId);
-		practiceTheory.setIsPublic(CommonConstant.TRUE);
-		practiceTheory.setResourceId(IDGeneratorUtil.getID());
-
-		// excel数据中题型=当前代码枚举值+1
-		Integer theoryType = handleTheoryType(excelRowData.get(1));
-		practiceTheory.setTheoryType(theoryType);
-
-		// excel数据中难度=比当前代码枚举值+1
-		practiceTheory.setDifficulty(Difficulty.PRIMARY.getCode());
-
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
-				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
-				.getCode().intValue()) {
-			String answer = handleChoiceAnswer(excelRowData.get(2));
-			practiceTheory.setAnswer(answer);
-			String option = formatOption(excelRowData, 3);
-			practiceTheory.setOption(option);
-		}
-
-		// 判断题
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
-				.getCode().intValue()) {
-			practiceValidateHandler.validateJudgementAnswer(excelRowData.get(2));
-			practiceTheory.setAnswer(excelRowData.get(2));
-			practiceTheory.setOption(JsonUtil.toJsonString(null));
-		}
-
-		// 填空题
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
-				.getCode().intValue()) {
-			String blankAnswers = handleFillBlank(excelRowData, 3);
-			practiceTheory.setBlank(blankAnswers);
-			practiceTheory.setAnswer(blankAnswers);
-		}
-
-		// 简答题
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
-				.getCode().intValue()) {
-			String shortAnswer = excelRowData.get(2);
-			String keywordsString = "";
-			if (excelRowData.size() > 3) {
-				keywordsString = excelRowData.get(3);
-			}
-			if (StringUtils.isNotBlank(keywordsString)) {
-				List<String> keywords = Lists
-						.newArrayList(keywordsString.split(PatternConstant.VERTICAL_LINE));
-				practiceTheory.setKeyword(JsonUtil.arrayToString(keywords));
-			} else {
-				practiceTheory.setKeyword(CommonConstant.EMPTY_LIST_JSON);
-			}
-
-			practiceTheory.setAnswer(shortAnswer);
-
-		}
-
-		return practiceTheory;
 	}
 
 	/**
@@ -373,7 +277,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 			Double practiceType = new Double(theoryType);
 			realType = practiceType.intValue() - 1;
 		} catch (Exception e) {
-			log.error("Parse theory type failed! value=[{}] catch error:", theoryType, e);
+			log.error("parse theory type failed! value=[{}] catch error:", theoryType, e);
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_TYPE_ERROR);
 		}
 

@@ -21,5 +21,5 @@ public class GuideStatisticsRsp implements Serializable {
     private Integer totalCount;
 
     @ApiModelProperty("导调类型")
-    List<GuideStatisticsDetailRsp> list;
+    private List<GuideStatisticsDetailRsp> list;
 }

@@ -93,7 +93,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 				OperationType.CREATE, LogContent.THEORY.getMsg(),
 				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.THEORY.getMsg(), theoryAddReq.getContent()));
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 				OperationType.UPDATE, LogContent.THEORY.getMsg(),
 				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.THEORY.getMsg(), theoryUpdateReq.getContent()));
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("获取理论基础习题详情")

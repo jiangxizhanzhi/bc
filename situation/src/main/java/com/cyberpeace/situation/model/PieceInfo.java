@@ -31,9 +31,9 @@ public class PieceInfo implements Serializable {
 	private PlaneCoordinate position;
 
 	public void setPosition2(String positionStr) {
-		JSONObject position = JsonUtil.toJsonObject(positionStr, JSONObject.class);
-		Float x = position.getFloat("x");
-		Float y = position.getFloat("y");
+		JSONObject jsonObject = JsonUtil.toJsonObject(positionStr, JSONObject.class);
+		Float x = jsonObject.getFloat("x");
+		Float y = jsonObject.getFloat("y");
 		this.position = new PlaneCoordinate(x, y);
 	}
 

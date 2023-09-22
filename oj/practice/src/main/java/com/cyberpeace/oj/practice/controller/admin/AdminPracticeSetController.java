@@ -106,7 +106,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 				OperationType.CREATE, practiceSet.getName(),
 				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.PRACTICE_SET.getMsg(), practiceSet.getName()));
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("习题集更新")
@@ -135,7 +135,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 					LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.PRACTICE_SET.getMsg(), practiceSet.getName()));
 		}
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("习题集详细信息查询")
@@ -175,7 +175,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 			}
 		});
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("分页查询习题集")
@@ -208,7 +208,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		List<PracticeSet> practiceSets = practiceSetMapper.selectByType(practiceType,
 				CommonConstant.FALSE);
 		List<PracticeSetRes> setRes = BeanUtils.deepCopyList(practiceSets, PracticeSetRes.class);
-		return new BaseRsp(setRes);
+		return new BaseRsp<>(setRes);
 
 	}
 
@@ -225,7 +225,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		File dumpFile = practiceSetService.dumpPracticeSet(ids, authContext);
 		FileUtil.setResponse(dumpFile, true, response);
 
-		return new BaseRsp(Boolean.TRUE);
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	@ApiOperation("习题集资源数据导入")
@@ -251,7 +251,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 			log.error("error file:{}:{}", realPath, e);
 			throw new BusinessException(CrBusinessErrorCode.INVALID_RESOURCE_ZIP);
 		}
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 }

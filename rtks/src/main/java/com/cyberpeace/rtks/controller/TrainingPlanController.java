@@ -72,7 +72,6 @@ public class TrainingPlanController {
 			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<List<KnowledgeTreeRes>> knowledgeTree() {
 		List<KnowledgeTreeRes> knowledgeTreeRes = trainingPlanService.getKnowledgeTree();
-
 		return new BaseRsp<>(knowledgeTreeRes);
 	}
 

@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.controller.res;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.situation.model.ElementType;
@@ -11,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class OptionsRes implements Serializable {
+public class OptionsRes {
 
 	@ApiModelProperty("动效类型")
 	private List<WebAttackType> attackTypeList;

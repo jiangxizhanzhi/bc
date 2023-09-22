@@ -46,7 +46,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.Setter;
 
-class FrameListReq<T> extends PageReqBase {
+class FrameListReq extends PageReqBase {
 
 	@ApiModelProperty(value = "所属框架id，可以为空")
 	@Getter
@@ -123,8 +123,7 @@ public class FrameController {
 		return frame;
 	}
 
-	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput,
-			Level originEntity) {
+	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput) {
 		Level frame = new Level();
 		if (!singleFrame) {
 			// 单框架模式下框架名称不可变
@@ -189,11 +188,8 @@ public class FrameController {
 	@PutMapping()
 	public BaseRsp<FrameOutput> update(@RequestBody @Validated FrameModifyInput input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
-
-		Level originEntity = getOr404(resourceId);
-
-		Level entity = getEntityFromModifyInput(input, originEntity);
-
+		getOr404(resourceId);
+		Level entity = getEntityFromModifyInput(input);
 		getService().updateById(entity);
 
 		return retrieve(resourceId);
@@ -219,8 +215,8 @@ public class FrameController {
 		IPage<Level> page = listEntity(listReq.toPageParam(), listReq.getKeyword());
 
 		List<FrameOutput> outputs = new ArrayList<>();
-		for (Level record : page.getRecords()) {
-			outputs.add(getListOutputFromEntity(record));
+		for (Level level : page.getRecords()) {
+			outputs.add(getListOutputFromEntity(level));
 		}
 
 		ListRsp<FrameOutput> listRsp = new ListRsp<>();

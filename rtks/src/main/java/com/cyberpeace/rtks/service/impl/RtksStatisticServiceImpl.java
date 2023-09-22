@@ -290,25 +290,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		mapTrainings(trainingMap, singles, BusinessType.TRAINING_SINGLE.getCode());
 		mapTrainings(trainingMap, teams, BusinessType.TRAINING_TEAM.getCode());
 		mapTrainings(trainingMap, rbs, BusinessType.RED_VS_BLUE.getCode());
-		// 获取未创建与用户相关实例的团队和红蓝的BT id
-		// Set<String> unAvailableBtIds = Sets.newHashSet();
-		// for (String businessTemplateId : businessTemplateIds) {
-		// if (!trainingMap.containsKey(businessTemplateId)) {
-		// unAvailableBtIds.add(businessTemplateId);
-		// }
-		// }
-		// if (!unAvailableBtIds.isEmpty()) {
-		// // 5.3.4：未创建相关实例的团队、红蓝也要展示在训练路径里
-		// teams = skillTrainingMapper.getTeamTemplateByBTIds(unAvailableBtIds);
-		// rbs = skillTrainingMapper.getRbTemplateByBTIds(unAvailableBtIds);
-		// mapTrainings(trainingMap, teams,
-		// BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
-		// false);
-		// mapTrainings(trainingMap, rbs,
-		// BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
-		// false);
-		// }
-
 		// get saved mission order
 		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
 		// generate new order by merge with saved order
@@ -447,11 +428,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 				map.put(businessTemplateId, Lists.newArrayList());
 			}
 			training.setTrainingType(type);
-			// training.setAvailable(available);
-			// if (!available) {
-			// // 5 代表“不可用”， 此枚举值仅在训练路径中用到
-			// training.setTrainingStatus(5);
-			// }
 			map.get(businessTemplateId).add(training);
 		});
 	}
@@ -629,42 +605,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	}
 
 	/**
-	 * 获取角色列表的所有技能点集合。
-	 *
-	 * 注意去重！
-	 * @param roles
-	 * @return
-	 */
-	private List<Skill> mergeSkillByRoles(List<Role> roles) {
-		List<Skill> skills = roles.stream().map(role -> getSkills(role.getResourceId()))
-				.flatMap(Collection::stream).collect(Collectors.toList());
-
-		if (CollectionUtils.isEmpty(skills)) {
-			return Lists.newArrayList();
-		}
-
-		return skills;
-	}
-
-	/**
-	 * 获取角色列表的所有知识点集合。
-	 *
-	 * 产品要求不去重进行计算
-	 * @param roles
-	 * @return
-	 */
-	private List<Knowledge> mergeKnowledgeByRoles(List<Role> roles) {
-		List<Knowledge> knowledges = roles.stream().map(role -> getKnowledges(role.getResourceId()))
-				.flatMap(Collection::stream).collect(Collectors.toList());
-
-		if (CollectionUtils.isEmpty(knowledges)) {
-			return Lists.newArrayList();
-		}
-
-		return knowledges;
-	}
-
-	/**
 	 * 计算知识点的完成度。
 	 * 计算方法：
 	 * 该知识点下所有课程的学习进度和课程权重的加权平均。
@@ -680,13 +620,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		ValueDataBo knowledgeDataBo = new ValueDataBo();
 		knowledgeDataBo.setContent(knowledge.getContent());
 		knowledgeDataBo.setResourceId(knowledge.getResourceId());
-		knowledgeDataBo.setWeight(userWeight ? new Double(knowledge.getWeight()) : 1);
+		knowledgeDataBo.setWeight(userWeight ? Double.valueOf(knowledge.getWeight()) : 1);
 
 		List<KnowledgeUnderCourseBo> courses = JsonUtil.toJsonObjectArray(knowledge.getCourses(),
 				KnowledgeUnderCourseBo.class);
 
 		if (CollectionUtils.isEmpty(courses)) {
-			knowledgeDataBo.setProcess(new Double(0));
+			knowledgeDataBo.setProcess((double) 0);
 			return knowledgeDataBo;
 		}
 
@@ -702,16 +642,16 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 使用权重 sum(进度 * 权重)/sum(权重) 不使用权重 则权重为1进行计算
 		List<ValueDataBo> courseProcess = studyProcessBos.stream().map(underCourseBo -> {
 			ValueDataBo dataBo = new ValueDataBo();
-			dataBo.setProcess(new Double(underCourseBo.getProcess()));
+			dataBo.setProcess(underCourseBo.getProcess());
 			Integer existWeight = underCourseBoMap.get(underCourseBo.getCourseId()).getWeight();
 			// 可能影响排错，可防止空指针报错
-			Integer weight = null == existWeight ? 1 : existWeight;
-			dataBo.setWeight(userWeight ? new Double(weight) : 1);
+			int weight = null == existWeight ? 1 : existWeight;
+			dataBo.setWeight(userWeight ? (double) weight : 1);
 			return dataBo;
 		}).collect(Collectors.toList());
 
 		if (CollectionUtils.isEmpty(courseProcess)) {
-			knowledgeDataBo.setProcess(new Double(0));
+			knowledgeDataBo.setProcess((double) 0);
 		} else {
 			double courseProcessSum = courseProcess.stream()
 					.mapToDouble(value -> MathUtils.mul(value.getProcess(), value.getWeight()))
@@ -723,37 +663,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		return knowledgeDataBo;
 
-	}
-
-	/**
-	 * 根据岗位编号查询技能点或者知识点
-	 * @param roleId
-	 * @return
-	 */
-	private List<Skill> getSkills(String roleId) {
-		Role role = roleMapper.selectById(roleId);
-		if (null == role) {
-			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
-		}
-		// List<String> resourceIds = JsonUtil.toJsonObjectArray(role.getSkillIds(),
-		// String.class);
-		// if (CollectionUtils.isNotEmpty(resourceIds)) {
-		// List<WeightBo> weights = JsonUtil.toJsonObjectArray(role.getSkillIdWeights(),
-		// WeightBo.class);
-		//
-		// Map<String, Integer> weightMap = weights.stream()
-		// .collect(Collectors.toMap(WeightBo::getId, WeightBo::getWeight));
-		// List<Skill> skills = skillMapper.selectBatchIds(resourceIds);
-		//
-		// skills.forEach(skill -> {
-		// // 无权重时 赋值为1
-		// Integer weight = weightMap.get(skill.getResourceId());
-		// // skill.setWeight(null != weight ? weight : 1);
-		// });
-		//
-		// return skills;
-		// }
-		return Lists.newArrayList();
 	}
 
 	/**

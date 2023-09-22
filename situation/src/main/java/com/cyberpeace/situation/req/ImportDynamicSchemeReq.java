@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class ImportDynamicSchemeReq implements Serializable {
+public class ImportDynamicSchemeReq {
 
 	@ApiModelProperty(value = "文件", required = true)
 	private MultipartFile file;

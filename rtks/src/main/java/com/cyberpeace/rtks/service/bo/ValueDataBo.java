@@ -18,15 +18,15 @@ public class ValueDataBo implements Serializable {
     private String content;
 
     @ApiModelProperty("进度或者得分")
-    private Double process = new Double(0);
+    private Double process = (double) 0;
 
     @ApiModelProperty("权重")
-    private Double weight = new Double(1);
+    private Double weight = 1.0;
 
     @JsonIgnore
-    private Double lessonCount = new Double(0);
+    private Double lessonCount = (double) 0;
 
     @JsonIgnore
-    private Double completeCount = new Double(0);
+    private Double completeCount = (double) 0;
 
 }

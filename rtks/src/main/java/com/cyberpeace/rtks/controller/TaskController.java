@@ -49,8 +49,7 @@ public class TaskController {
 	public BaseRsp<Task> getTask(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		Task task = taskService.getById(resource_id);
-
-		return new BaseRsp(task);
+		return new BaseRsp<>(task);
 	}
 
 	@ApiOperation("新增单条任务")
@@ -108,10 +107,9 @@ public class TaskController {
 	@ApiOperation("分页查询")
 	@GetMapping("/task/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<List<Task>> list(@Validated PageReqBase pageReqBase) {
+	public BaseRsp<ListRsp<Task>> list(@Validated PageReqBase pageReqBase) {
 		ListRsp<Task> data = taskService.page(pageReqBase);
-
-		return new BaseRsp(data);
+		return new BaseRsp<>(data);
 	}
 
 }

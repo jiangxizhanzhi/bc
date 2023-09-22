@@ -1,5 +1,4 @@
 package com.cyberpeace.rtks.controller;
-
 import java.util.List;
 
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -161,18 +160,16 @@ public class SkillController {
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<List<SkillRes>> list(@Validated PageReqBase reqBase) {
-		ListRsp<SkillRes> data = skillService.page(reqBase);
-
-		return new BaseRsp(data);
+	public BaseRsp<ListRsp<SkillRes>> list(@Validated PageReqBase reqBase) {
+		return new BaseRsp<>(skillService.page(reqBase));
 	}
 
 	@ApiOperation("添加技能时分页展示")
 	@GetMapping("/list/simple")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<List<SkillSimpleRes>> listSimple(@Validated PageReqBase reqBase) {
+	public BaseRsp<ListRsp<SkillSimpleRes>> listSimple(@Validated PageReqBase reqBase) {
 		ListRsp<SkillSimpleRes> res = skillService.pageSimple(reqBase);
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 }

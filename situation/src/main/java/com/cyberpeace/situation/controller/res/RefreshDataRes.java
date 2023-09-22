@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.controller.res;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.situation.model.ws.WsMessage;
@@ -10,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class RefreshDataRes implements Serializable {
+public class RefreshDataRes {
 
 	@ApiModelProperty("是否自动运行流量")
 	private Boolean flowAutoRunResult;

@@ -125,13 +125,9 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		List<PracticeTheory> theoryList = practiceTheoryImportService.parseRmTheory(path,
 				practiceSet);
 
-		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-
-			@Override
-			public Boolean doInTransaction(TransactionStatus status) {
-				saveOrUpdate(practiceSet);
-				return practiceTheoryService.saveBatch(theoryList);
-			}
+		return transactionTemplate.execute(status -> {
+			saveOrUpdate(practiceSet);
+			return practiceTheoryService.saveBatch(theoryList);
 		});
 	}
 

@@ -76,7 +76,7 @@ public class AdminPaperController {
 		// 习题数据查询
 		IPage<LibPracticeListBo> iPage = paperService.selectLibPractice(page, queryBo, authContext);
 
-		return new BaseRsp(PageUtil.getListResult(iPage));
+		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}
 
 	@ApiOperation("题库筛选条件查询")

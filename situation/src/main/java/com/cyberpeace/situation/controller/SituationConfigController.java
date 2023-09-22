@@ -52,11 +52,11 @@ public class SituationConfigController {
 
 	@ApiOperation("删除配置")
 	@DeleteMapping("")
-	public BaseRsp deleteConfig(SituationConfigFilterReq situationConfigFilterReq) {
+	public BaseRsp<Boolean> deleteConfig(SituationConfigFilterReq situationConfigFilterReq) {
 		List<String> situationConfigIds = situationConfigMapper.filterIds(situationConfigFilterReq);
 		if (!situationConfigIds.isEmpty()) {
 			situationConfigMapper.deleteBatchIds(situationConfigIds);
 		}
-		return new BaseRsp<>();
+		return new BaseRsp<>(true);
 	}
 }

@@ -191,13 +191,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 习题集习题 数量加一
 		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
 
-		return transactionTemplate.execute(new TransactionCallback<Integer>() {
-
-			@Override
-			public Integer doInTransaction(TransactionStatus status) {
-				practiceSetMapper.updateById(practiceSet);
-				return practiceOperationMapper.insert(practiceOperation);
-			}
+		return transactionTemplate.execute(status -> {
+			practiceSetMapper.updateById(practiceSet);
+			return practiceOperationMapper.insert(practiceOperation);
 		});
 	}
 
@@ -369,7 +365,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
-			log.error("Operation practice not found! practice_id=[{}]", resourceId);
+			log.error("operation practice not found! practice_id=[{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		OperationBo operationBo = BeanUtils.copy(operation, OperationBo.class);
@@ -955,30 +951,26 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		List<String> topoIds = practiceOperationMapper.topoIdsByIds(practiceIds);
 
-		return transactionTemplate.execute(new TransactionCallback<Integer>() {
+		return transactionTemplate.execute(status -> {
+			practiceMistakeMapper.deleteByPracticeIds(practiceIds, null);
+			practiceSolvedMapper.deleteByPracticeIds(practiceIds);
 
-			@Override
-			public Integer doInTransaction(TransactionStatus status) {
-				practiceMistakeMapper.deleteByPracticeIds(practiceIds, null);
-				practiceSolvedMapper.deleteByPracticeIds(practiceIds);
-
-				if (CollectionUtils.isNotEmpty(localSceneIds)) {
-					localSceneMapper.deleteBatchIds(localSceneIds);
-				}
-				if (CollectionUtils.isNotEmpty(ojLocalSceneIds)) {
-					ojLocalSceneMapper.deleteBatchIds(ojLocalSceneIds);
-				}
-
-				practiceSetMapper.updateById(practiceSet);
-				try {
-					remoteTopoService.batchDeleteTopo(topoIds);
-				} catch (Exception e) {
-					log.error("Operation batch delete topo failed!, topo_ids={}, catch error:",
-							JsonUtil.toJsonString(topoIds), e);
-				}
-
-				return practiceOperationMapper.deleteBatchIds(practiceIds);
+			if (CollectionUtils.isNotEmpty(localSceneIds)) {
+				localSceneMapper.deleteBatchIds(localSceneIds);
 			}
+			if (CollectionUtils.isNotEmpty(ojLocalSceneIds)) {
+				ojLocalSceneMapper.deleteBatchIds(ojLocalSceneIds);
+			}
+
+			practiceSetMapper.updateById(practiceSet);
+			try {
+				remoteTopoService.batchDeleteTopo(topoIds);
+			} catch (Exception e) {
+				log.error("Operation batch delete topo failed!, topo_ids={}, catch error:",
+						JsonUtil.toJsonString(topoIds), e);
+			}
+
+			return practiceOperationMapper.deleteBatchIds(practiceIds);
 		});
 	}
 
@@ -1359,9 +1351,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		operationIds = practiceOperationMapper.selectBySetIds(authIds,
 				authContext.getIsWeb());
-		if (CollectionUtils.isEmpty(operationIds)) {
-			return null;
-		}
 		return operationIds;
 	}
 

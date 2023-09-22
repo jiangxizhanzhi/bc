@@ -188,7 +188,7 @@ public class PracticeOperationController {
 				OperationType.STOP, LogContent.EXERCISE.getMsg(),
 				LogContent.CR_FORMAT.format(OperationType.STOP, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(sceneOperationReq.getResourceId()).getTitle()));
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("场景节点重启")
@@ -201,7 +201,7 @@ public class PracticeOperationController {
 
 		Boolean result = practiceOperationService.nodeRestart(sceneNodeReq.getResourceId(),
 				sceneNodeReq.getNodeId(), authContext);
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 
 	}
 
@@ -228,7 +228,7 @@ public class PracticeOperationController {
 				true);
 		Boolean result = practiceOperationService.pauseScene(sceneStatusReq.getResourceId(),
 				sceneStatusReq.getStatus(), authContext);
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("获取场景和拓扑信息")
@@ -307,8 +307,8 @@ public class PracticeOperationController {
 			}
 		}
 		List<OperationRecordResByDay> operationRecordResByDays = new ArrayList<>();
-		for (String time : operationRecordMap.keySet()) {
-			OperationRecordResByDay operationRecordResByDay = new OperationRecordResByDay(time, operationRecordMap.get(time));
+		for (Map.Entry<String, List<OperationRecordRes>> entry : operationRecordMap.entrySet()) {
+			OperationRecordResByDay operationRecordResByDay = new OperationRecordResByDay(entry.getKey(), entry.getValue());
 			operationRecordResByDays.add(operationRecordResByDay);
 		}
 		operationRecordResByDays.sort(Comparator.comparing(OperationRecordResByDay::getTime).reversed());

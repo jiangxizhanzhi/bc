@@ -35,9 +35,9 @@ public class SituationEventController {
 
 		// 设置消息代码
 		String messageType = MessageType.AttackEvent.getDesc();
-		if (WsMultiElementDynamic.class.isInstance(wsEvent)) {
+		if (wsEvent instanceof WsMultiElementDynamic) {
 			messageType = MessageType.AttackEventEE.getDesc();
-		} else if (WsMultiAreaDynamic.class.isInstance(wsEvent)) {
+		} else if (wsEvent instanceof WsMultiAreaDynamic) {
 			messageType = MessageType.AttackEventEA.getDesc();
 		}
 

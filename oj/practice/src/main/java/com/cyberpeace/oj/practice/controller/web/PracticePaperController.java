@@ -62,7 +62,7 @@ public class PracticePaperController {
 	@PostMapping("/create")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<PracticePaper> create(@RequestBody @Validated PracticePaperCreateReq practicePaperCreateReq) {
-		return new BaseRsp(practicePaperService.createPaper(practicePaperCreateReq));
+		return new BaseRsp<>(practicePaperService.createPaper(practicePaperCreateReq));
 	}
 
 	@ApiOperation("知识技能Top6")
@@ -85,7 +85,7 @@ public class PracticePaperController {
 	@GetMapping("/summary")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<PaperSummaryRes> getPaperSummary(@ApiParam(value = "试卷id") @RequestParam(value = "paper_id") String paperId) {
-		return new BaseRsp(practicePaperService.getPaperSummaryRes(paperId));
+		return new BaseRsp<>(practicePaperService.getPaperSummaryRes(paperId));
 	}
 
 	@ApiOperation("查看练习详情")

@@ -42,8 +42,8 @@ public class RtksResourceController {
 	@ApiOperation("导入岗位")
 	@PostMapping("/role")
 	// @RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp loadRoles(@Valid @RequestBody RtksResourceReq req) {
+	public BaseRsp<Boolean> loadRoles(@Valid @RequestBody RtksResourceReq req) {
 		rtksResourceService.load(req);
-		return new BaseRsp();
+		return new BaseRsp<>(true);
 	}
 }

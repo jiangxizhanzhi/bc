@@ -98,13 +98,9 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 			categoryList.addAll(categories);
 		}
 
-		return transactionTemplate.execute(new TransactionCallback<Integer>() {
-
-			@Override
-			public Integer doInTransaction(TransactionStatus status) {
-				updateBatchById(categoryList);
-				return practiceCategoryMapper.updateById(category);
-			}
+		return transactionTemplate.execute(status -> {
+			updateBatchById(categoryList);
+			return practiceCategoryMapper.updateById(category);
 		});
 	}
 

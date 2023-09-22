@@ -53,24 +53,6 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
-	@Autowired
-	private PracticeTheoryService practiceTheoryService;
-
-	private Integer MAX_CONTENT_LENGTH;
-
-	private Integer MAX_CATEGORY_LENGTH;
-
-	private final Boolean IS_COLLECTED = Boolean.FALSE;
-
-	@PostConstruct
-	private void init() {
-		MAX_CONTENT_LENGTH = Integer
-				.parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
-
-		MAX_CATEGORY_LENGTH = Integer
-				.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
-	}
-
 	@Override
 	public List<PracticeOperation> parseLessonOperation(String path,
 			Map<String, String> practiceTopo) {
@@ -285,10 +267,8 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		}
 
 		String[] multiContent = filedContent.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
-		List<String> contents = StreamApiUtils.map(Arrays.asList(multiContent),
-				content -> content.trim());
-		List<String> result = StreamApiUtils.filter(contents,
-				content -> StringUtils.isNotBlank(content));
+		List<String> contents = StreamApiUtils.map(Arrays.asList(multiContent), String::trim);
+		List<String> result = StreamApiUtils.filter(contents, StringUtils::isNotBlank);
 
 		return JsonUtil.arrayToString(result);
 	}

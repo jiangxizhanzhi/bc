@@ -217,8 +217,7 @@ public class LevelController {
 		if (!StringUtils.isBlank(level.getFrame())) {
 
 			LevelTreeOutput frame = frameService.getTree(level.getFrame());// 获取框架树
-			LevelTreeOutput levelTreeOutput = new LevelTreeOutput();
-			levelTreeOutput = getLevelTreeChild(frame, level.getResourceId());// 获取层级树
+			LevelTreeOutput levelTreeOutput = getLevelTreeChild(frame, level.getResourceId());// 获取层级树
 			result = levelService.checkHasRole(levelTreeOutput);
 		}
 		return result;
@@ -244,40 +243,6 @@ public class LevelController {
 		}
 
 	}
-	/*
-	protected void performBatchDelete(List<String> ids) {
-		// 验证输入层级id合法
-		List<Level> levels = levelService.getLevelsByIds(ids);
-		List<String> levelIds = new ArrayList<>();
-		for (Level level : levels) {
-			levelIds.add(level.getResourceId());
-		}
-	
-		// 如果层级下有岗位绑定，不允许删除
-		List<String> roleIds = roleService.getRoleIdsByLevelIds(ids);
-	
-	
-		if (!CollectionUtils.isEmpty(roleIds)) {
-			throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_FRAME);
-		}
-	
-		// 把待删除层级下的层级绑定到其父层级/框架上
-		// 待删除的层级-转移到的层级映射表
-		Map<String, String> changeMap = new HashMap<>();
-		for (Level level : levels) {
-			String levelId = level.getResourceId();
-			String target = getAncestorExclude(level, levelIds);
-			changeMap.put(levelId, target);
-		}
-	
-		// 更改子层级的parent属性
-		for (String levelId : changeMap.keySet()) {
-			String target = changeMap.get(levelId);
-			levelService.changeLevelId(levelId, target);
-		}
-	
-		levelService.removeByIds(levelIds);
-	}*/
 
 	/**
 	 * 给定层级(非框架) 获取其父层级/框架id 如果该id在给定levelIds数组中，则再迭代查找

@@ -1,6 +1,5 @@
 package com.cyberpeace.rtks.res;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
@@ -10,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class KnowledgeRes implements Serializable {
+public class KnowledgeRes {
 
 	@ApiModelProperty("知识点id")
 	private String resourceId;

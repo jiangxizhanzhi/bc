@@ -165,14 +165,14 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 						knowledgeRes.setCourseStudyProcessBoList(processBos);
 						double suggestDuration = relatedCourseList.stream()
 								.mapToInt(RelatedCourse::getCourseDuration).sum() / 60.0;
-						knowledgeRes.setSuggestDuration(new BigDecimal(suggestDuration)
+						knowledgeRes.setSuggestDuration(BigDecimal.valueOf(suggestDuration)
 								.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue());
 					} else if (RoleDetailRes.RELATED_COURSE_ALL.equals(relatedCourseType)) {// 查询基本课程和学习进度
 						knowledgeRes.setProcess(calculateProcess(processBos, relatedCourseList));
 						knowledgeRes.setCourseStudyProcessBoList(processBos);
 						double suggestDuration = relatedCourseList.stream()
 								.mapToInt(RelatedCourse::getCourseDuration).sum() / 60.0;
-						knowledgeRes.setSuggestDuration(new BigDecimal(suggestDuration)
+						knowledgeRes.setSuggestDuration(BigDecimal.valueOf(suggestDuration)
 								.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue());
 
 					}
@@ -195,12 +195,11 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 			tasks.add(task);
 
 		}
-
 		try {
-			List<Future<Integer>> results = exec.invokeAll(tasks);
-			results.isEmpty();
-		} catch (Exception e) {
-			e.printStackTrace();
+			exec.invokeAll(tasks);
+		} catch (InterruptedException e) {
+			log.error("checkKnowledgeRes invokeAll error");
+			Thread.currentThread().interrupt();
 		}
 
 		// 关闭线程池
@@ -257,10 +256,8 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		knowledgeListReq.setPer_page(10000);
 		Page page = knowledgeListReq.toPageParam();
 
-		List<KnowledgeRes> knowledgeResList = knowledgeMapper.listKnowledge(page, knowledgeListReq)
-				.getRecords();
-		checkKnowledgeRes(knowledgeResList, RoleDetailRes.RELATED_COURSE_ALL);
-
-		return knowledgeResList;
+		IPage<KnowledgeRes> knowledgeResIPage = knowledgeMapper.listKnowledge(page, knowledgeListReq);
+		checkKnowledgeRes(knowledgeResIPage.getRecords(), RoleDetailRes.RELATED_COURSE_ALL);
+		return knowledgeResIPage.getRecords();
 	}
 }

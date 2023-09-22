@@ -1,6 +1,5 @@
 package com.cyberpeace.oj.practice.controller.req;
 
-import java.io.Serializable;
 import java.util.List;
 
 import io.swagger.annotations.ApiModel;
@@ -9,7 +8,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("试卷新增/更新")
-public class PaperAddReq implements Serializable {
+public class PaperAddReq {
 
     @ApiModelProperty("名称")
     private String name;

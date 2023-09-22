@@ -47,33 +47,31 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 		List<TheoryLessonBo> theoryList = StreamApiUtils.map(theoryRefList, practiceTheoryRef -> {
 			PracticeTheory practiceTheory = JsonUtil.toJsonObject(practiceTheoryRef.getSnapshot(),
 					PracticeTheory.class);
-			TheoryLessonBo theoryLesonBo = BeanUtils.copy(practiceTheory, TheoryLessonBo.class);
-			// 设置原习题数据资源编号
-			// theoryLesonBo.setResourceId(practiceTheoryRef.getOriginId());
+			TheoryLessonBo theoryLessonBo = BeanUtils.copy(practiceTheory, TheoryLessonBo.class);
 
 			PracticeCategory category = practiceCategoryMapper
 					.selectById(practiceTheory.getCategoryId());
 			if (null != category) {
-				theoryLesonBo.setDirectionName(category.getName());
+				theoryLessonBo.setDirectionName(category.getName());
 			}
 
 			// 设置习题类型和题型
-			theoryLesonBo.setQuestionType(practiceTheory.getTheoryType());
-			theoryLesonBo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
-			theoryLesonBo.setRefId(practiceTheoryRef.getResourceId());
+			theoryLessonBo.setQuestionType(practiceTheory.getTheoryType());
+			theoryLessonBo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+			theoryLessonBo.setRefId(practiceTheoryRef.getResourceId());
 			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
 					.getCode().intValue()) {
 				List<BlankAnswer> answers = JsonUtil.toJsonObjectArray(practiceTheory.getAnswer(),
 						BlankAnswer.class);
-				theoryLesonBo.setBlankCount(answers.size());
+				theoryLessonBo.setBlankCount(answers.size());
 			}
 
 			// 设置答案是否展示
 			if (!viewAnswer) {
-				theoryLesonBo.setAnswer(null);
+				theoryLessonBo.setAnswer(null);
 			}
 
-			return theoryLesonBo;
+			return theoryLessonBo;
 		});
 
 		return theoryList;

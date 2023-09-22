@@ -55,20 +55,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper, PracticeTheory> implements PracticeTheoryService {
 
-    private Integer MAX_CONTENT_LENGTH;
-
-    private Integer MAX_CATEGORY_LENGTH;
-
     private final Boolean IS_COLLECTED = Boolean.FALSE;
-
-    @PostConstruct
-    private void init() {
-        MAX_CONTENT_LENGTH = Integer
-                .parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
-
-        MAX_CATEGORY_LENGTH = Integer
-                .parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
-    }
 
     @Autowired
     private PracticeSetMapper practiceSetMapper;
@@ -176,9 +163,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
         List<String> userIdList = new ArrayList<>();
         List<String> practiceIdList = new ArrayList<>();
-        for (PracticeTheory record : iPage.getRecords()) {
-            userIdList.add(record.getCreateUserId());
-            practiceIdList.add(record.getPracticeSetId());
+        for (PracticeTheory practiceTheory : iPage.getRecords()) {
+            userIdList.add(practiceTheory.getCreateUserId());
+            practiceIdList.add(practiceTheory.getPracticeSetId());
         }
 
         if (CollectionUtils.isEmpty(userIdList) || CollectionUtils.isEmpty(practiceIdList)) {
@@ -364,13 +351,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
         practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
 
-        return transactionTemplate.execute(new TransactionCallback<Integer>() {
-
-            @Override
-            public Integer doInTransaction(TransactionStatus status) {
-                practiceSetMapper.updateById(practiceSet);
-                return practiceTheoryMapper.insert(practiceTheory);
-            }
+        return transactionTemplate.execute(status -> {
+            practiceSetMapper.updateById(practiceSet);
+            return practiceTheoryMapper.insert(practiceTheory);
         });
     }
 
@@ -446,15 +429,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
                 || practiceSet.getPracticeCount() <= resourceIds.size() ? CommonConstant.ZERO
                 : practiceSet.getPracticeCount() - resourceIds.size());
 
-        return transactionTemplate.execute(new TransactionCallback<Integer>() {
-
-            @Override
-            public Integer doInTransaction(TransactionStatus status) {
-                practiceMistakeMapper.deleteByPracticeIds(resourceIds, null);
-                practiceSolvedMapper.deleteByPracticeIds(resourceIds);
-                practiceSetMapper.updateById(practiceSet);
-                return practiceTheoryMapper.deleteBatchIds(resourceIds);
-            }
+        return transactionTemplate.execute(status -> {
+            practiceMistakeMapper.deleteByPracticeIds(resourceIds, null);
+            practiceSolvedMapper.deleteByPracticeIds(resourceIds);
+            practiceSetMapper.updateById(practiceSet);
+            return practiceTheoryMapper.deleteBatchIds(resourceIds);
         });
     }
 
@@ -834,17 +813,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
     }
 
     private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
-        String[] split = theoryBaseMd.getTitle().split("\n");
-        List<String> content = Arrays.asList(split);
         Map<String, String> optionMap = JsonUtil.toJsonObject(theory.getOption(), TreeMap.class);
         String title = "";
 
         title += "    " + theory.getTitle() + System.lineSeparator() + System.lineSeparator();
 
-        Iterator iterator = optionMap.keySet().iterator();
+        Iterator<String> iterator = optionMap.keySet().iterator();
 
         while (iterator.hasNext()) {
-            String key = (String) iterator.next();
+            String key = iterator.next();
             String value = optionMap.get(key).trim();
 
             title += "    " + key + ". " + value + System.lineSeparator() + System.lineSeparator();

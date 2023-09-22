@@ -157,9 +157,8 @@ public class KnowledgeController {
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<List<KnowledgeRes>> list(@Validated KnowledgeListReq knowledgeListReq) {
+	public BaseRsp<ListRsp<KnowledgeRes>> list(@Validated KnowledgeListReq knowledgeListReq) {
 		ListRsp<KnowledgeRes> data = knowledgeService.page(knowledgeListReq);
-
-		return new BaseRsp(data);
+		return new BaseRsp<>(data);
 	}
 }

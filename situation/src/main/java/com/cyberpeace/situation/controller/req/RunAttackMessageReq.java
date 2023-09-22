@@ -70,4 +70,10 @@ public class RunAttackMessageReq implements Serializable {
 	@ApiModelProperty("防御节点")
 	private String defenseTargetId;
 
+	@ApiModelProperty("工具")
+	private String tool;
+
+	@ApiModelProperty("漏洞")
+	private String leak;
+
 }

@@ -449,11 +449,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsMultiNodeDynamic.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsMultiNodeDynamic> wsMessage;
 
-//		String type = attackMessageReq.getType();
-		//判断是否是单节点
-//		Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
-//				|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
-
 		if (elementIds.contains(attackMessageReq.getTargetId())) {
 			//设置类型为点对点
 			wsMessage = new WsMessage<>(MessageType.AttackEventEE.getDesc(), wsMultiNodeDynamic);
@@ -461,12 +456,28 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			//设置类型为点对区域
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
-//		if (isSingleNode) {
-//			//设置类型为单节点动效
-//			wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(),
-//					wsMultiNodeDynamic);
-//		}
 		pushDataToRoom(wsMessage, attackMessageReq, playback);
+
+
+		//推送攻击弹窗
+		WsAttackInfo attackInfo = new WsAttackInfo();
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(attackMessageReq.getSceneId());
+		Map<String, ElementInfo> elementInfoMap = situationTopo.getElements();
+		attackInfo.setSourceId(attackMessageReq.getSourceId());
+		attackInfo.setDesc(attackMessageReq.getDescription());
+		attackInfo.setSourceName(elementInfoMap.get(attackMessageReq.getSourceId()).getName());
+		attackInfo.setTargetName(elementInfoMap.get(attackMessageReq.getTargetId()).getName());
+		attackInfo.setAttackName(AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class).getMsg());
+		attackInfo.setLeak(attackMessageReq.getLeak());
+		attackInfo.setTool(attackMessageReq.getTool());
+		//校验漏洞是否匹配
+		List<String> leaks = elementInfoMap.get(attackMessageReq.getTargetId()).getLeakInfos().stream().map(LeakInfo::getName).collect(Collectors.toList());
+		if (leaks.contains(attackMessageReq.getLeak())) {
+			attackInfo.setTargetId(attackMessageReq.getTargetId());
+			attackInfo.setResult(AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class).getSuccessDesc());
+		}
+		WsMessage<WsAttackInfo> attackInfoWsMessage = new WsMessage<>(MessageType.AttackInfo.getDesc(), attackInfo);
+		situationHandlerService.pushDataToRoom(attackInfoWsMessage, attackMessageReq.getSceneId());
 	}
 
 	@Override
@@ -914,6 +925,18 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsDefenseDynamic.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsDefenseDynamic> wsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsDefenseDynamic);
 		pushDataToRoom(wsMessage, attackMessageReq, playback);
+
+
+		//推送防御弹窗
+		WsDefenseInfo wsDefenseInfo = new WsDefenseInfo();
+		wsDefenseInfo.setTargetId(attackMessageReq.getDefenseTargetId());
+		wsDefenseInfo.setDesc(attackMessageReq.getDescription());
+		wsDefenseInfo.setDefenseName(DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class).getMsg());
+		wsDefenseInfo.setTool(attackMessageReq.getTool());
+		wsDefenseInfo.setLeak(attackMessageReq.getLeak());
+		wsDefenseInfo.setResult(DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class).getSuccessDesc());
+		WsMessage<WsDefenseInfo> defenseInfoWsMessage = new WsMessage<>(MessageType.DefenseInfo.getDesc(), wsDefenseInfo);
+		situationHandlerService.pushDataToRoom(defenseInfoWsMessage, attackMessageReq.getSceneId());
 	}
 
 	private <T> void pushDataToRoom(T data, AttackMessageReq attackMessageReq, Boolean playback) {

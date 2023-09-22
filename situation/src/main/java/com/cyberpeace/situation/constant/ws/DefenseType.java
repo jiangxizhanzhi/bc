@@ -18,7 +18,6 @@ public enum DefenseType {
 	VULNERABILITY_PATCH_REPAIR(DefenseActionType.SYSTEM_REPAIR, "漏洞补丁修复","Vulnerability Patch Repair","vulnerability-patch-repair"),
 	INSTALL_IMMUNIZATION_TOOLS(DefenseActionType.SECURITY_REINFORCEMENT, "安装免疫工具","Install Immunization Tools","install-immunization-tools"),
 	DETECT_DEFENSE(DefenseActionType.SYSTEM_TROUBLESHOOTING_AND_ANALYSIS, "检测防御","Detect Defense","detect-defense"),
-	HOMOGENEOUS_DEFENSE(DefenseActionType.SYSTEM_REPAIR, "同质化防御","Homogeneous Defense","Homogeneous-defense"),
 	RESTORE_DEFENSE(DefenseActionType.SYSTEM_REPAIR, "恢复防御","Restore Defense","restore-defense"),
 	NETWORK_DEFENSE(DefenseActionType.SECURITY_REINFORCEMENT, "网络防御","Network defense","network-defense"),
 	SYSTEM_TROUBLESHOOTING(DefenseActionType.SYSTEM_TROUBLESHOOTING_AND_ANALYSIS, "系统排查","System Troubleshooting","system-troubleshooting"),
@@ -61,6 +60,9 @@ public enum DefenseType {
 
 	@Getter
 	private String keyWord;
+
+	@Getter
+	private String successDesc;
 
 	DefenseType(DefenseActionType defenseActionType, String cnDesc, String enDesc, String keyWord) {
 		this.defenseActionType = defenseActionType;

@@ -1,16 +1,5 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
@@ -20,8 +9,16 @@ import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author chenzhuo
@@ -46,6 +43,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String BATCH_DELETE_TOPO;
 
+	private String ELEMENT_LEAKS_URL;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -64,6 +63,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		TOPO_EXPORT = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
 
 		BATCH_DELETE_TOPO = MP_HOST + ConfigUtil.getContextProperty("scene.topo.delete.batch");
+		ELEMENT_LEAKS_URL = MP_HOST + ConfigUtil.getContextProperty("scene.topo.element.leak");
 	}
 
 	@Override
@@ -193,12 +193,16 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		List<String> notBlankIds = StreamApiUtils.filter(topoIds,
 				topoId -> StringUtils.isNotBlank(topoId));
-		if (CollectionUtils.isEmpty(notBlankIds)) {
-			return Boolean.TRUE;
+		if (CollectionUtils.isNotEmpty(notBlankIds)) {
+			String result = HttpClientUtil.delete(BATCH_DELETE_TOPO, notBlankIds, String.class);
 		}
-
-		String result = HttpClientUtil.delete(BATCH_DELETE_TOPO, notBlankIds, String.class);
 		return Boolean.TRUE;
+	}
+
+	@Override
+	public JSONObject getElementLeaks(String elementId) {
+		String targetUrl = ELEMENT_LEAKS_URL + elementId;
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
 	/**

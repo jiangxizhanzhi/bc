@@ -1,15 +1,16 @@
 package com.cyberpeace.situation.service;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.model.CategorieMap;
+import com.cyberpeace.situation.model.ElementLeak;
 import com.cyberpeace.situation.model.MpSceneData;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
+
+import java.util.List;
 
 /**
  * 场景拓扑数据处理
@@ -98,5 +99,7 @@ public interface TopoHandlerService {
 	 * @return Boolean
 	 */
 	Boolean flowAutoRun(String sceneId, MpSceneData mpSceneData, Integer interactiveType);
+
+	ElementLeak getElementLeaks(String elementId);
 
 }

@@ -64,4 +64,10 @@ public class AttackMessage extends BaseTable {
 	//防御等级
 	private Integer defenseLevel;
 
+	//工具
+	private String tool;
+
+	//漏洞
+	private String leak;
+
 }

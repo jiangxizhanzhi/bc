@@ -355,4 +355,14 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 		return localSceneService.startRandomFlow(sceneId, sceneFlowContextMap);
 	}
+
+	@Override
+	public ElementLeak getElementLeaks(String elementId) {
+		ElementLeak elementLeak = new ElementLeak();
+		JSONObject jsonObject = remoteTopoService.getElementLeaks(elementId);
+		JSONArray leaks = jsonObject.getJSONArray("leaks");
+		elementLeak.setLeakList(leaks.toJavaList(LeakInfo.class));
+		elementLeak.setOperatingSystem(jsonObject.getString("system_info"));
+		return elementLeak;
+	}
 }

@@ -8,10 +8,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.res.SceneAllDataRes;
-import com.cyberpeace.situation.model.DynamicSchemeProcess;
-import com.cyberpeace.situation.model.Instruction;
-import com.cyberpeace.situation.model.SceneData;
-import com.cyberpeace.situation.model.SituationTopo;
+import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -112,9 +109,9 @@ public class ExternalSituationController {
 
 	@ApiOperation("接收指令")
 	@PostMapping("/receive_instruction")
-	public BaseRsp	receiveInstruction(@RequestBody @Validated Instruction instruction) {
+	public BaseRsp<Boolean> receiveInstruction(@RequestBody @Validated Instruction instruction) {
 		situationTimeService.executeInstruction(instruction, convertId(instruction.getResourceId()));
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("获取场景中节点和链路数据")
@@ -129,6 +126,12 @@ public class ExternalSituationController {
 	public BaseRsp<SceneData> getTopoData(
 			@ApiParam(name = "resource_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId) {
 		return new BaseRsp<>(topoHandlerService.getSceneData(null, convertId(resourceId)));
+	}
+
+	@ApiOperation("获取节点漏洞信息")
+	@GetMapping("/element_leaks")
+	public BaseRsp<ElementLeak> getElementLeaks(@ApiParam(name = "element_id", value = "节点id", required = true) @RequestParam(value = "element_id") String elementId) {
+		return new BaseRsp<>(topoHandlerService.getElementLeaks(elementId));
 	}
 
 	private String convertId(String resourceId) {

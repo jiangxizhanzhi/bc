@@ -1,11 +1,11 @@
 package com.cyberpeace.integratation.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+
+import java.util.List;
+import java.util.Map;
 
 public interface RemoteTopoService {
 
@@ -71,4 +71,11 @@ public interface RemoteTopoService {
 	 * @return
 	 */
 	Boolean batchDeleteTopo(List<String> topoIds);
+
+	/**
+	 * 获取节点漏洞信息
+	 * @param elementId
+	 * @return
+	 */
+	JSONObject getElementLeaks(String elementId);
 }

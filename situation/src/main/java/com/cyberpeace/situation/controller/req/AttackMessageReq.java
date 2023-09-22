@@ -64,4 +64,10 @@ public class AttackMessageReq implements Serializable {
 	@ApiModelProperty("防御节点")
 	private String defenseTargetId;
 
+	@ApiModelProperty("漏洞")
+	private String leak;
+
+	@ApiModelProperty("工具")
+	private String tool;
+
 }

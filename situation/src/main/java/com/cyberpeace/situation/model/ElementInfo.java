@@ -58,6 +58,12 @@ public class ElementInfo implements Serializable {
 	@JsonProperty("modelUrl")
 	private String modelUrl;
 
+	@ApiModelProperty("漏洞数量")
+	private Integer leakCount;
+
+	@ApiModelProperty("漏洞信息")
+	private List<LeakInfo> leakInfos;
+
 	public ElementInfo(JSONObject element) {
 		this.setElementId(element.getString("id"));
 		this.setName(element.getString("name"));

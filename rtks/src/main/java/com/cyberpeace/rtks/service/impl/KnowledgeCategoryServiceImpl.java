@@ -27,9 +27,7 @@ public class KnowledgeCategoryServiceImpl extends ServiceImpl<KnowledgeCategoryM
 	@Override
 	public ListRsp<KnowledgeCategory> page(PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
-		IPage<KnowledgeCategory> result = knowledgeCategoryMapper.listKnowledgeCategory(page,
-				pageReqBase.getPattern());
-
+		IPage<KnowledgeCategory> result = knowledgeCategoryMapper.listKnowledgeCategory(page,pageReqBase.getPattern());
 		return PageUtil.getListResult(result);
 	}
 

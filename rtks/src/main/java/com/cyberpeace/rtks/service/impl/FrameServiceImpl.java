@@ -37,7 +37,7 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	@Override
 	public LevelTreeOutput getTree(String frameId) {
-		// {父级层级id:[子层级对象]}
+		// 父级层级id:[子层级对象]
 		Map<String, List<LevelTreeOutput>> levelTreeOutputMap = new HashMap<>();
 		// 所有层级输出对象
 		List<LevelTreeOutput> levelTreeOutputs = new ArrayList<>();
@@ -46,12 +46,10 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		List<Level> levels = levelMapper.getLevelsByFrameId(frameId);
 		for (Level level : levels) {
 			String parentId = level.getParent();
-			assert parentId != null;
-
-			if (!levelTreeOutputMap.containsKey(parentId)) {
-				levelTreeOutputMap.put(parentId, new ArrayList<>());
+			if (StringUtils.isBlank(parentId)) {
+				continue;
 			}
-
+			levelTreeOutputMap.computeIfAbsent(parentId, item -> new ArrayList<>());
 			LevelTreeOutput levelTreeOutput = getLevelTreeOutput(level);
 			levelTreeOutputMap.get(parentId).add(levelTreeOutput);
 			levelTreeOutputs.add(levelTreeOutput);

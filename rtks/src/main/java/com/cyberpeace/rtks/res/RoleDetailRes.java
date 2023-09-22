@@ -9,7 +9,7 @@ import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.Task;
-import com.cyberpeace.rtks.res.KnowledgeRes;
+
 import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 
@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class RoleDetailRes implements Serializable {
+public class RoleDetailRes {
 
 	public final static String TYPE_SKILL = "skill";// 只传技能关联课程
 

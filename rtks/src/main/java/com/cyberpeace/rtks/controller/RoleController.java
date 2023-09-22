@@ -268,8 +268,8 @@ public class RoleController {
 		Map<String, RoleSkillRes> mapping = roleService.mapRoleSkillCount(roleIds);
 
 		List<RoleOutput> outputs = new ArrayList<>();
-		for (Role record : page.getRecords()) {
-			RoleOutput output = getListOutputFromEntity(record);
+		for (Role role : page.getRecords()) {
+			RoleOutput output = getListOutputFromEntity(role);
 			// fill count data
 			RoleSkillRes res = mapping.get(output.getResourceId());
 			if (res != null) {

@@ -142,7 +142,7 @@ public class RtksEvaluationController {
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String roleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp rsp = new BaseRsp();
+		BaseRsp<StudyRecordBo> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(roleId)) {
 			StudyRecordBo studyRecordBo = rtksStatisticService.calculateStudyRecord(userId, roleId,
 					TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));

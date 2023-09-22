@@ -51,13 +51,13 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 			log.info("[RTKS] json parse error:" + courses);
 		}
 
-		List ids = Lists.newArrayList();
+		List<String> ids = Lists.newArrayList();
 
 		for (RelatedCourse relatedCourse : relatedCourseList) {
 			ids.add(relatedCourse.getResourceId());
 		}
 
-		if (ids.size() > 0) {
+		if (!ids.isEmpty()) {
 
 			// 先查询已存在的课程id
 			List<String> existIds = courseService.idsByNotDeleteIds(ids);

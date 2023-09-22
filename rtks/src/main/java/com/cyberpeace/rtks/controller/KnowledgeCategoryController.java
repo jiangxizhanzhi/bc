@@ -142,9 +142,7 @@ public class KnowledgeCategoryController {
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<List<KnowledgeCategory>> list(@Validated PageReqBase pageReqBase) {
-		ListRsp<KnowledgeCategory> data = knowledgeCategoryService.page(pageReqBase);
-
-		return new BaseRsp(data);
+	public BaseRsp<ListRsp<KnowledgeCategory>> list(@Validated PageReqBase pageReqBase) {
+		return new BaseRsp<>(knowledgeCategoryService.page(pageReqBase));
 	}
 }

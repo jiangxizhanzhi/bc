@@ -56,10 +56,10 @@ public class CareerManagementController {
 	@ApiOperation("添加ATT&CK 关联")
 	@PostMapping("/attack")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
-	public BaseRsp updateAttackTemplateRel(@Validated @RequestBody AttackUpdateReq updateReq) {
+	public BaseRsp<Boolean> updateAttackTemplateRel(@Validated @RequestBody AttackUpdateReq updateReq) {
 		attackService.updateRelations(updateReq.getResourceId(),
 				updateReq.getBusinessTemplateIds());
-		return new BaseRsp();
+		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("ATT&CK 框架前台")
@@ -84,18 +84,16 @@ public class CareerManagementController {
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
 	public BaseRsp<AttackDetail>
 			getAttackIcsDetail(@ApiParam(name = "resource_id", value = "技术id") String resource_id) {
-		AttackDetail res = attackIcsService.getDetailById(resource_id);
-
-		return new BaseRsp<>(res);
+		return new BaseRsp<>(attackIcsService.getDetailById(resource_id));
 	}
 
 	@ApiOperation("添加ATT&CK ICS关联")
 	@PostMapping("/attack_ics")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
-	public BaseRsp updateAttackIcsTemplateRel(@Validated @RequestBody AttackUpdateReq updateReq) {
+	public BaseRsp<Boolean> updateAttackIcsTemplateRel(@Validated @RequestBody AttackUpdateReq updateReq) {
 		attackIcsService.updateRelations(updateReq.getResourceId(),
 				updateReq.getBusinessTemplateIds());
-		return new BaseRsp();
+		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("ATT&CK ICS框架前台")
@@ -129,10 +127,10 @@ public class CareerManagementController {
 	@ApiOperation("添加Engage 关联")
 	@PostMapping("/engage")
 	@RequiresPermissions(MenuConstant.CMS_ENGAGE_FRAME)
-	public BaseRsp updateEngageTemplateRel(@Validated @RequestBody EngageUpdateReq updateReq) {
+	public BaseRsp<Boolean> updateEngageTemplateRel(@Validated @RequestBody EngageUpdateReq updateReq) {
 		engageService.updateRelations(updateReq.getResourceId(),
 				updateReq.getBusinessTemplateIds());
-		return new BaseRsp();
+		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("Engage 框架前台")

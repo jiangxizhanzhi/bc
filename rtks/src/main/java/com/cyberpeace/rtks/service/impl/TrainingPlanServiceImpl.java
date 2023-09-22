@@ -106,10 +106,11 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 		Map<String, List<KnowledgeRes>> knowledgeResMap = knowledgeResList.stream()
 				.collect(Collectors.groupingBy(KnowledgeRes::getCategory));
-		for (String key : knowledgeResMap.keySet()) {
+
+		for (Map.Entry<String, List<KnowledgeRes>> entry : knowledgeResMap.entrySet()) {
 			KnowledgeTreeRes knowledgeTreeRes = new KnowledgeTreeRes();
-			knowledgeTreeRes.setCategory(key);
-			knowledgeTreeRes.setKnowledgeResList(knowledgeResMap.get(key));
+			knowledgeTreeRes.setCategory(entry.getKey());
+			knowledgeTreeRes.setKnowledgeResList(entry.getValue());
 			knowledgeTreeResList.add(knowledgeTreeRes);
 		}
 
@@ -122,7 +123,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
-		// roleDetailRes.setCategory(roleDetailOutput.getCategoryName());
 
 		// 获取知识点的课程列表
 		List<Knowledge> knowledgeDataList = roleDetailOutput.getKnowledgeDataList();

@@ -37,9 +37,7 @@ public class AbilityController {
 	@GetMapping("/ability")
 	public BaseRsp<Ability> getAbility(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
-		Ability ability = abilityService.getById(resource_id);
-
-		return new BaseRsp(ability);
+		return new BaseRsp<>(abilityService.getById(resource_id));
 	}
 
 	@ApiOperation("新增单条能力")
@@ -75,10 +73,8 @@ public class AbilityController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/ability/list")
-	public BaseRsp<List<Ability>> list(@Validated AbilityListReq abilityListReq) {
-		ListRsp<Ability> data = abilityService.page(abilityListReq);
-
-		return new BaseRsp(data);
+	public BaseRsp<ListRsp<Ability>> list(@Validated AbilityListReq abilityListReq) {
+		return new BaseRsp<>(abilityService.page(abilityListReq));
 	}
 
 }

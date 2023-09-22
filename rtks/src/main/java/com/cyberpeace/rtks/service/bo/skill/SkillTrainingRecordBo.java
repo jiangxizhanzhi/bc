@@ -12,11 +12,11 @@ import lombok.Data;
 public class SkillTrainingRecordBo implements Serializable {
 
 	@ApiModelProperty("日期")
-	List<String> xDates = Lists.newArrayList();
+	private List<String> xDates = Lists.newArrayList();
 
 	@ApiModelProperty("完成任务数")
-	List<Integer> yMissions = Lists.newArrayList();
+	private List<Integer> yMissions = Lists.newArrayList();
 
 	@ApiModelProperty("任务训练记录")
-	List<MissionRecordBo> records = Lists.newArrayList();
+	private List<MissionRecordBo> records = Lists.newArrayList();
 }

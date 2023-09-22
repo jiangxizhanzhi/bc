@@ -10,6 +10,10 @@ import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 
 public class RtksCommonUtil {
 
+	private RtksCommonUtil() {
+		throw new IllegalStateException("Utility class");
+	}
+
 	/**
 	 * 比较编辑前后的关联关系
 	 * @param oldRel 编辑前原有的relations

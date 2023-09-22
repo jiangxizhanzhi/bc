@@ -29,5 +29,4 @@ public class TrainingRaw implements Serializable {
 
 	private Integer roleGroup;
 
-//	private Boolean available;
 }

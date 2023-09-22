@@ -38,6 +38,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,23 +82,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public ListRsp<SkillRes> page(PageReqBase skillListReq) {
-		Page page = skillListReq.toPageParam();
-
-		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
-		// fill missions
-//		for (SkillRes skillRes : result.getRecords()) {
-//			skillRes.setMissions(skillMissionRelationMapper
-//					.batchSelectMissionResBySkillId(skillRes.getResourceId()));
-//		}
-		return PageUtil.getListResult(result);
+		return PageUtil.getListResult(skillMapper.listSkill(skillListReq.toPageParam(), skillListReq));
 	}
 
 	@Override
 	public ListRsp<SkillSimpleRes> pageSimple(PageReqBase reqBase) {
-		Page page = reqBase.toPageParam();
-
-		IPage<SkillSimpleRes> result = skillMapper.pageSimple(page, reqBase);
-		return PageUtil.getListResult(result);
+		return PageUtil.getListResult(skillMapper.pageSimple(reqBase.toPageParam(), reqBase));
 	}
 
 	@Override
@@ -240,9 +230,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		List<CrTaskScore> crTaskScoreList = crTaskMapper
 				.getScoreByMissionTemplateIdAndUserId(userId, missionTemplateIds);
 		Map<String, CrTaskScore> scoreMap = Maps.newHashMap();
-		crTaskScoreList.forEach((score) -> {
-			scoreMap.put(score.getMissionTemplateId(), score);
-		});
+		crTaskScoreList.forEach((score) -> scoreMap.put(score.getMissionTemplateId(), score));
 		// calculate
 		WeightedCalculation calculation = new WeightedCalculation();
 		for (IdWeight mission : missionWeights) {
@@ -301,8 +289,8 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		Map<String, List<String>> skillMissionMap = createSkillMissionMap(skillAndMissions);
 		String skillId;
 		// fill result
-		for (SkillProcessRes record : result.getRecords()) {
-			skillId = record.getResourceId();
+		for (SkillProcessRes skillProcess : result.getRecords()) {
+			skillId = skillProcess.getResourceId();
 			if (!skillMissionMap.containsKey(skillId)) {
 				continue;
 			}
@@ -310,10 +298,10 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			for (String missionId : skillMissionMap.get(skillId)) {
 				MissionProcessBo missionProcessBo = createMissionProcessBo(missionId, missionMap,
 						scoreMap);
-				record.getMissions().add(missionProcessBo);
+				skillProcess.getMissions().add(missionProcessBo);
 				sum += missionProcessBo.getProcess();
 			}
-			record.setProcess(MathUtils.roundDivide(sum, record.getMissions().size()));
+			skillProcess.setProcess(MathUtils.roundDivide(sum, skillProcess.getMissions().size()));
 		}
 
 		return PageUtil.getListResult(result);
@@ -405,21 +393,18 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	private void mapTrainings(Map<String, TrainingRaw> map, List<TrainingRaw> trainingRaws,
 			Integer type) {
-		trainingRaws.forEach((training) -> {
+		trainingRaws.forEach(training -> {
 			training.setTrainingType(type);
 			map.put(training.getBusinessTemplateId(), training);
 		});
 	}
 
-	private Map<String, List<String>>
-			createSkillMissionMap(List<SkillAndMission> skillAndMissions) {
+	private Map<String, List<String>> createSkillMissionMap(List<SkillAndMission> skillAndMissions) {
 		Map<String, List<String>> skillMissionMap = Maps.newHashMap();
 		String skillId;
 		for (SkillAndMission skillAndMission : skillAndMissions) {
 			skillId = skillAndMission.getSkillId();
-			if (!skillMissionMap.containsKey(skillId)) {
-				skillMissionMap.put(skillId, Lists.newArrayList());
-			}
+			skillMissionMap.computeIfAbsent(skillId, item -> new ArrayList<>());
 			skillMissionMap.get(skillId).add(skillAndMission.getMissionId());
 		}
 		return skillMissionMap;
@@ -428,9 +413,6 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	private MissionProcessBo createMissionProcessBo(String missionId,
 			Map<String, MissionTemplateRes> missionMap, Map<String, CrTaskScore> scoreMap) {
 		MissionTemplateRes mission = missionMap.get(missionId);
-		// if (mission == null){
-		// return null;
-		// }
 		CrTaskScore score = scoreMap.get(missionId);
 		MissionProcessBo missionProcessBo = new MissionProcessBo();
 		missionProcessBo.setResourceId(missionId);

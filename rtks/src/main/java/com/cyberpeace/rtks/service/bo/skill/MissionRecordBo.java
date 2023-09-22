@@ -13,7 +13,7 @@ import lombok.Data;
 public class MissionRecordBo extends MissionTemplateSimple implements Serializable {
 
 	@ApiModelProperty("关联技能id")
-	List<String> skillIds = Lists.newArrayList();
+	private List<String> skillIds = Lists.newArrayList();
 
 	@ApiModelProperty("最后评分时间")
 	Date time;

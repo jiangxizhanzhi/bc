@@ -19,7 +19,7 @@ public interface LearnStatsService {
      * @param endTime
      * @return 用户学习统计
      */
-    ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization, boolean isPage, String startTime, String endTime);
+    ListRsp<UserStatsBo> getUserStats(Page<UserStatsBo> page, String pattern, String organization, boolean isPage, String startTime, String endTime);
 
     /**
      * 用户学习排行
@@ -39,7 +39,7 @@ public interface LearnStatsService {
      * @param resourceId 用户resource_id
      * @return 统计信息
      */
-    ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page page, String resourceId);
+    ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page<PersonalStatsDetail4CourseBo> page, String resourceId);
 
     /**
      * 获取班级积分排名Top10
@@ -63,5 +63,5 @@ public interface LearnStatsService {
      * @param endTime 截止时间
      * @return 用户学习统计
      */
-    ListRsp<OrgStatsBo> getOrgStatsData(Page page, String pattern, String organization, String startTime, String endTime, boolean isPage);
+    ListRsp<OrgStatsBo> getOrgStatsData(Page<OrgStatsBo> page, String pattern, String organization, String startTime, String endTime, boolean isPage);
 }

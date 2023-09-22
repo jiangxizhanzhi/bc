@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -116,7 +117,7 @@ public class AdminClassroomController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		for (String id : delReq.getIds()) {
-			Integer result = classroomService.deleteClassroom(id, authContext);
+			 classroomService.deleteClassroom(id, authContext);
 		}
 
 		return new BaseRsp<>();
@@ -174,7 +175,7 @@ public class AdminClassroomController {
 
 		Classroom insertResult = classroomService.create(classroom, authContext);
 
-		return new BaseRsp(insertResult);
+		return new BaseRsp<>(insertResult);
 	}
 
 	@ApiOperation("后台课程表信息修改")
@@ -188,7 +189,7 @@ public class AdminClassroomController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		Boolean result = classroomService.updateClassroom(classroom, authContext);
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("后台课程表信息删除")
@@ -207,10 +208,10 @@ public class AdminClassroomController {
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ListRsp<ClassroomMonitorBo>> classroomMonitor(ClassroomMonitorReq monitorReq) {
 
-		Page page = monitorReq.toPageParam();
+		Page<ClassroomMonitorBo> page = monitorReq.toPageParam();
 		ListRsp<ClassroomMonitorBo> classroomMonitorBoList = classroomService.selectSignList(page,
 				monitorReq.getClassroomId());
-		return new BaseRsp(classroomMonitorBoList);
+		return new BaseRsp<>(classroomMonitorBoList);
 
 	}
 
@@ -224,7 +225,7 @@ public class AdminClassroomController {
 			@RequestParam("user_id") String userId) {
 
 		classroomSignService.toHelp(classroomId, userId);
-		return new BaseRsp(Boolean.TRUE);
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	@ApiOperation("结束远程协助")
@@ -237,7 +238,7 @@ public class AdminClassroomController {
 			@RequestParam("user_id") String userId) {
 
 		classroomSignService.endHelp(classroomId, userId);
-		return new BaseRsp(Boolean.TRUE);
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	@ApiOperation("获取远程协助地址")
@@ -257,10 +258,10 @@ public class AdminClassroomController {
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ListRsp<ClassroomReportBo>> classroomReport(ClassroomMonitorReq reportReq) {
 
-		Page page = reportReq.toPageParam();
+		Page<Object> page = reportReq.toPageParam();
 		PageReportBo pageReportBo = classroomService
 				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern(), page);
-		return new BaseRsp(
+		return new BaseRsp<>(
 				PageUtil.getListResult(pageReportBo.getData(), page, pageReportBo.getTotal()));
 	}
 
@@ -291,7 +292,7 @@ public class AdminClassroomController {
 		classroomValidateHandler.validateLessonPracticeAuth(classroomPracticeReq.getClassroomId(),
 				authContext);
 
-		Page page = classroomPracticeReq.toPageParam();
+		Page<PracticePaperEvaluateBo> page = classroomPracticeReq.toPageParam();
 
 		ClassroomPracticeContext classroomPracticeContext = BeanUtils.copy(classroomPracticeReq,
 				ClassroomPracticeContext.class);
@@ -380,7 +381,7 @@ public class AdminClassroomController {
 			}
 		}
 
-		return new BaseRsp(Boolean.TRUE);
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	@ApiOperation("训练计划导出")

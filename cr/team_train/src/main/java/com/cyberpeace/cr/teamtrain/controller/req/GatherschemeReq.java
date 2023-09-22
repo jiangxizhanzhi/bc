@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class GatherschemeReq implements Serializable {
+public class GatherschemeReq  {
 
 	/**
 	 * 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -146,7 +147,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	}
 
 	public List<List<String>> getFormatMatrixData(String matrixData, List<Integer> scores){
-		JSONArray objects = JSONArray.parseArray(matrixData);
+		JSONArray objects = JSON.parseArray(matrixData);
 		List<List<String>> res = new ArrayList<>();
 		if(objects.size() != scores.size()){
 			throw new RemoteServiceException(ErrorCode.UNFIT_MATRIX_DATA);

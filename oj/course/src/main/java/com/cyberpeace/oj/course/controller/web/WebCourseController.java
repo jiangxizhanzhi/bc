@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +52,7 @@ public class WebCourseController {
 	@ApiOperation("前台课程列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-	public BaseRsp<List<CourseWebBo>> getWebCourse(
+	public BaseRsp<ListRsp<CourseWebBo>> getWebCourse(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
 		// 数据组装
 		CourseQueryBo context = BeanUtils.copy(listReq, CourseQueryBo.class);
@@ -62,7 +63,7 @@ public class WebCourseController {
 			context.setDirections(childrenIds);
 		}
 
-		Page page = listReq.toPageParam();
+		Page<Course> page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}
@@ -73,7 +74,7 @@ public class WebCourseController {
 
 		// 数据查询
 		ListRsp<CourseWebBo> boListRsp = courseService.selectPage(page, context, authContext, true);
-		return new BaseRsp(boListRsp);
+		return new BaseRsp<>(boListRsp);
 	}
 
 	@GetMapping("")
@@ -87,7 +88,7 @@ public class WebCourseController {
 		CourseInfoBo course = courseService.selectById(resourceId, authContext);
 
 		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);
-        return new BaseRsp(courseRes);
+        return new BaseRsp<>(courseRes);
 	}
 
 }

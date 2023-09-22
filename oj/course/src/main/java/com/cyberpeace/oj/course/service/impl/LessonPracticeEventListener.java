@@ -38,13 +38,11 @@ public class LessonPracticeEventListener extends MessageListener {
 
 		// 删除本地数据
 		OjLocalScene ojLocalScene = ojLocalSceneService.deleteLocalScene(businessId);
-		if (null == ojLocalScene) {
-			return true;
+		if (null != ojLocalScene) {
+			// 推送删除数据
+			pushMessageHandler.pushLessonPracticeMessage(pushMessageHandler.getDeleteMessage(),
+					ojLocalScene);
 		}
-
-		// 推送删除数据
-		pushMessageHandler.pushLessonPracticeMessage(pushMessageHandler.getDeleteMessage(),
-				ojLocalScene);
 		return true;
 	}
 

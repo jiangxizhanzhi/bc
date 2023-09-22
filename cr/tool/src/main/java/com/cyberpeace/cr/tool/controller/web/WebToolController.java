@@ -46,7 +46,7 @@ public class WebToolController {
 			@ApiParam(name = "listReq", value = "查询条件") @Validated WebToolListReq webToolListReq) {
 
 		Boolean isAdmin = false;
-		Page page = webToolListReq.toPageParam();
+		Page<Tool> page = webToolListReq.toPageParam();
 		ToolListQuery listQuery = BeanUtils.copy(webToolListReq, ToolListQuery.class);
 		if (webToolListReq.getCracked() != null
 				&& StringUtils.isNotBlank(webToolListReq.getCracked())) {

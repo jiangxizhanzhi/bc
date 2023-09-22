@@ -158,8 +158,9 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 
 				}
 				teamAndRBMD.setTask(roleBoList);
-				mdParser.write(teamAndRBMD, new File(taskFile.getPath() + File.separator + role.getString("name") + ".md"));
-				log.info("export team training [{}] {}.md successfully", businessTemplate.getName(), role.getString("name"));
+				String name = role.getString("name");
+				mdParser.write(teamAndRBMD, new File(taskFile.getPath() + File.separator + name + ".md"));
+				log.info("export team training [{}] {}.md successfully", businessTemplate.getName(), name);
 
 			}
 			roleBos.add(new RoleBo("学员组", roleName));

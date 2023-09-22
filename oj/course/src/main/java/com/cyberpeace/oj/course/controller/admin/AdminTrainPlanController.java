@@ -56,13 +56,13 @@ public class AdminTrainPlanController {
 	public BaseRsp<List<TrainPlanBo>> list() {
 		List<TrainPlanBo> trainPlanBos = trainPlanService
 				.trainPlanList(UserInfoContext.getUserContext());
-		return new BaseRsp(trainPlanBos);
+		return new BaseRsp<>(trainPlanBos);
 	}
 
 	@ApiOperation("训练计划列表分页查询")
 	@GetMapping("/list/page")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp<List<TrainPlanRsp>> page(@Validated TrainPlanReq trainPlanReq) {
+	public BaseRsp<ListRsp<TrainPlanRsp>> page(@Validated TrainPlanReq trainPlanReq) {
 
 		// 默认时间排序
 		trainPlanReq.setSort("-update_time");
@@ -77,7 +77,7 @@ public class AdminTrainPlanController {
 			}
 		}
 
-		return new BaseRsp(listResult);
+		return new BaseRsp<>(listResult);
 	}
 
 	@ApiOperation("新增单条训练计划")
@@ -120,7 +120,7 @@ public class AdminTrainPlanController {
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		TrainPlan assessModel = trainPlanService.getById(resource_id);
 
-		return new BaseRsp(assessModel);
+		return new BaseRsp<>(assessModel);
 	}
 
 	@ApiOperation("后台计划批量删除")
@@ -142,7 +142,7 @@ public class AdminTrainPlanController {
 				trainPlanService.removeByIds(delReq.getIds());
 
 				for (String id : ids) {
-					Integer result = classroomService.deleteClassroom(id, authContext);
+					 classroomService.deleteClassroom(id, authContext);
 				}
 			}
 		});

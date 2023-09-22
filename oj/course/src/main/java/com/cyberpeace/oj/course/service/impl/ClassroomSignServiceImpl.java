@@ -172,7 +172,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	public void toHelp(String classroomId, String userId) {
 
 		// 数据校验
-		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
+		classroomValidateHandler.validateClassroomExist(classroomId);
 		ClassroomSign classroomSign = classroomValidateHandler.validateSign(classroomId, userId);
 
 		// 更新状态
@@ -249,8 +249,8 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-		if (null == ojLocalScene) {
-			log.error("scene:[{}] is not running", ojLocalScene.getResourceId());
+		if (ojLocalScene == null) {
+			log.error("scene:[{}] is not running", groupInfo.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
 		}
 

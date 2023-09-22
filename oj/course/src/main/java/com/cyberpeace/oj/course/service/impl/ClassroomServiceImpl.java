@@ -158,8 +158,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
         CourseLesson courseLesson = courseValidateHandler
                 .validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
-//		classroomValidateHandler.validateClassroomLessonExist(classroom.getLessonId(),
-//				classroom.getOrganizationId());
+
         classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
                 classroom.getEndTime());
         classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
@@ -208,7 +207,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
                 classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
         // 唯一索引 课时+组织id唯一性校验
-//		classroomValidateHandler.validateClassroomLessonExistExcludeItself(classroom.getLessonId(), classroom.getOrganizationId(), classroom);
+
 
         // 课程权限校验
         courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
@@ -532,13 +531,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             roomListQuery.setUserId(null);
             List<Classroom> superAdminClassrooms = classroomMapper.selectAdminList(roomListQuery);
             for (Classroom classroom : superAdminClassrooms) {
-                if (classroom.getTrainPlanId() != null) {
-//					TrainPlan trainPlan = trainPlanMapper.selectById(classroom.getTrainPlanId());
-                    if (classroom.getTrainPlan() != null
-                            && classroom.getTrainPlan().getCreateUserId().equals(authContext.getUserId())
-                            && existClassroom.add(classroom.getResourceId())) {
-                        classrooms.add(classroom);
-                    }
+                if (classroom.getTrainPlanId() != null&&classroom.getTrainPlan() != null
+                        && classroom.getTrainPlan().getCreateUserId().equals(authContext.getUserId())
+                        && existClassroom.add(classroom.getResourceId())) {
+                    classrooms.add(classroom);
+
                 }
             }
         }
@@ -551,7 +548,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     @Override
-    public ListRsp<ClassroomMonitorBo> selectSignList(Page page, String classroomId) {
+    public ListRsp<ClassroomMonitorBo> selectSignList(Page<ClassroomMonitorBo> page, String classroomId) {
 
         // 基本数据校验
         Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
@@ -585,7 +582,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     @Override
-    public PageReportBo selectClassroomReport(String classroomId, String userName, Page page) {
+    public PageReportBo selectClassroomReport(String classroomId, String userName, Page<Object> page) {
 
         // 基本数据校验
         Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
@@ -778,7 +775,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     @Override
-    public ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext cpContext, Page page) {
+    public ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext cpContext, Page<PracticePaperEvaluateBo> page) {
 
         // 判断练习是否下发
         CourseLesson courseLesson = courseValidateHandler
@@ -832,7 +829,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Map<String, LessonPaperEvaluate> idToObj = StreamApiUtils.toMap(lessonPaperEvaluates,
 				LessonPaperEvaluate::getSubmitUserId, lessonPaperEvaluate -> lessonPaperEvaluate);
 
-		Map<String, String> userIdToName = Maps.newHashMap();
 		Map<String, String> OrgIdToName = Maps.newHashMap();
 
 		// 判断是否已提交
@@ -926,14 +922,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
         validateChangeClassroom(classroom);
 
-        return transactionTemplate.execute(new TransactionCallback<Integer>() {
-
-            @Override
-            public Integer doInTransaction(TransactionStatus status) {
-                // 课堂数据删除
-                classroomGroupInfoMapper.deleteByRoom(classroomId);
-                return classroomMapper.deleteById(classroomId);
-            }
+        return transactionTemplate.execute(status-> {
+            // 课堂数据删除
+            classroomGroupInfoMapper.deleteByRoom(classroomId);
+            return classroomMapper.deleteById(classroomId);
         });
     }
 
@@ -1061,7 +1053,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     @Override
     public IPage<ClassroomBo> selectPage(ClassRoomPageQuery roomListQuery,
                                          AuthContext authContext) {
-        Page page = roomListQuery.toPageParam();
+        Page<Classroom> page = roomListQuery.toPageParam();
         List<String> courseIds = courseMapper.selectByAuth(authContext);
         IPage<Classroom> result = classroomMapper.page(page, roomListQuery.getUserId(),
                 roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg(), authContext.getIsAdmin(), courseIds);
@@ -1101,7 +1093,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
             // 解析行
             TrainPlan trainPlan = parseTrainPlan(sheetData.get(i - CommonConstant.TWO),
-                    userInfo.getUserId(), cover, i, trainPlanMap);
+                    userInfo.getUserId(),  i, trainPlanMap);
 
             // 训练计划是否可覆盖 任务是否存在开始的
             validatePlanStartAndExist(trainPlan.getResourceId(), trainPlan.getName(), cover, i);
@@ -1228,12 +1220,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             //实验报告
             jsonObject.put("report_content", reportContent);
             //是否通过
+            String passed = "passed";
             if (classroomReportBo.getPassed() == null) {
-                jsonObject.put("passed", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
+                jsonObject.put(passed, ClassroomExportReportConstant.NOT_APPROVED.getMsg());
             } else if (classroomReportBo.getPassed()) {
-                jsonObject.put("passed", ClassroomExportReportConstant.YES.getMsg());
+                jsonObject.put(passed, ClassroomExportReportConstant.YES.getMsg());
             } else {
-                jsonObject.put("passed", ClassroomExportReportConstant.NO.getMsg());
+                jsonObject.put(passed, ClassroomExportReportConstant.NO.getMsg());
             }
             //评分
             if (classroomReportBo.getScore() == null) {
@@ -1299,8 +1292,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
         Map<String, List<Classroom>> orgMap = StreamApiUtils.groupBy(classrooms,
                 Classroom::getOrganizationId);
-        for (String key : orgMap.keySet()) {
-            timeIntersection(orgMap.get(key));
+        for (Map.Entry<String, List<Classroom>> entry : orgMap.entrySet()) {
+            timeIntersection(orgMap.get(entry.getKey()));
         }
     }
 
@@ -1325,20 +1318,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         }
     }
 
-    private void validateOrgLessonSame(List<Classroom> classrooms) {
-        if (CollectionUtils.isEmpty(classrooms)) {
-            return;
-        }
 
-        // 根据课时和组织去重
-        List<Classroom> distinct = StreamApiUtils.distinctByColumn(classrooms,
-                classroom -> classroom.getOrganizationId() + classroom.getLessonId());
-        if (distinct.size() < classrooms.size()) {
-            List<String> ids = StreamApiUtils.getColumn(classrooms, Classroom::getResourceId);
-            log.error("classrooms ids:[{}] is duplicate", ids.toString());
-            throw new BusinessException(OjBusinessErrorCode.DUPLICATE_DATA_ORG_LESSON);
-        }
-    }
 
     /**
      * 校验数据长度
@@ -1460,7 +1440,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      */
     private List<Classroom> getCoverRoomByPlan(String planName, String userId, boolean cover) {
         TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
-        List classroomList = Lists.newArrayList();
+        List<Classroom> classroomList = Lists.newArrayList();
 
         if (null == trainPlan) {
             return classroomList;
@@ -1635,7 +1615,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param cover
      * @return
      */
-    private TrainPlan parseTrainPlan(List<String> rowData, String userId, Boolean cover,
+    private TrainPlan parseTrainPlan(List<String> rowData, String userId,
                                      int rowIndex, Map<String, TrainPlan> trainPlanMap) {
 
         // 数据校验
@@ -1770,7 +1750,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         List<NoteEvaluate> notPassed = StreamApiUtils.filter(evaluates,
                 noteEvaluate -> !noteEvaluate.getPassed());
         gradeDistribution.setNotPass(notPassed.size());
-        if ((calculate += notPassed.size()) == total) {
+        calculate += notPassed.size();
+        if (calculate == total) {
             return gradeDistribution;
         }
 
@@ -1778,10 +1759,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         int passed = StreamApiUtils
                 .filter(evaluates,
                         noteEvaluate -> noteEvaluate.getPassed()
-                                && noteEvaluate.getScore() < new Double(CommonConstant.EIGHTY))
+                                && noteEvaluate.getScore() < CommonConstant.EIGHTY)
                 .size();
         gradeDistribution.setPass(passed);
-        if ((calculate += passed) == total) {
+        calculate += passed;
+        if (calculate == total) {
             return gradeDistribution;
         }
 
@@ -1789,11 +1771,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         int good = StreamApiUtils
                 .filter(evaluates,
                         noteEvaluate -> noteEvaluate.getPassed()
-                                && noteEvaluate.getScore() >= new Double(CommonConstant.EIGHTY)
-                                && noteEvaluate.getScore() < new Double(CommonConstant.NINETY))
+                                && noteEvaluate.getScore() >= CommonConstant.EIGHTY
+                                && noteEvaluate.getScore() < CommonConstant.NINETY)
                 .size();
         gradeDistribution.setGood(good);
-        if ((calculate += good) == total) {
+        calculate += good;
+        if (calculate == total) {
             return gradeDistribution;
         }
 
@@ -1801,18 +1784,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         int excellent = StreamApiUtils
                 .filter(evaluates,
                         noteEvaluate -> noteEvaluate.getPassed()
-                                && noteEvaluate.getScore() >= new Double(CommonConstant.NINETY)
-                                && noteEvaluate.getScore() < new Double(CommonConstant.HUNDRED))
+                                && noteEvaluate.getScore() >= CommonConstant.NINETY
+                                && noteEvaluate.getScore() < CommonConstant.HUNDRED)
                 .size();
         gradeDistribution.setExcellent(excellent);
-        if ((calculate += excellent) == total) {
+        calculate += excellent;
+        if (calculate== total) {
             return gradeDistribution;
         }
 
         // 满分
         int full = StreamApiUtils
                 .filter(evaluates, noteEvaluate -> noteEvaluate.getPassed()
-                        && noteEvaluate.getScore().equals(new Double(CommonConstant.HUNDRED)))
+                        && noteEvaluate.getScore().equals(CommonConstant.HUNDRED.doubleValue()))
                 .size();
         gradeDistribution.setFullScore(full);
         return gradeDistribution;

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service.context;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import lombok.Data;
  * 团队实例角色
  */
 @Data
-public class RoomRole {
+public class RoomRole  {
 
 	@ApiModelProperty(value = "编号")
 	private String resourceId;

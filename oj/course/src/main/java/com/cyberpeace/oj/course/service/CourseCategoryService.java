@@ -32,7 +32,7 @@ public interface CourseCategoryService extends IService<CourseCategory> {
 	 * @param children true包含子类数据 false不包含
 	 * @return
 	 */
-	IPage<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children);
+	IPage<CourseCategoryBo> pageBySearch(Page<CourseCategory> page, String pattern, Boolean children);
 
 	/**
 	 * 新增或者修改数据

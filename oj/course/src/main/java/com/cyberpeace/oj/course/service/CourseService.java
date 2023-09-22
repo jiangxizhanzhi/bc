@@ -34,7 +34,7 @@ public interface CourseService extends IService<Course> {
 	 * @param courseContext
 	 * @return
 	 */
-	ListRsp<CourseWebBo> selectPage(Page page, CourseQueryBo courseContext,
+	ListRsp<CourseWebBo> selectPage(Page<Course> page, CourseQueryBo courseContext,
 									AuthContext authContext, boolean isWeb);
 
 	/**

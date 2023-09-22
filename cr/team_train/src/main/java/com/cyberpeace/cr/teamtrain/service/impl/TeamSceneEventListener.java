@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,7 +94,7 @@ public class TeamSceneEventListener extends MessageListener {
 	 * @param businessId
 	 */
 	private void pushDataToWeb(String data, String businessId) {
-		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
+		WebSocketMessageContext<CrSceneWsMessageIdentifier,String> messageContext = crEventListenerHelper.makeContext(data,
 				businessId);
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
@@ -102,7 +103,7 @@ public class TeamSceneEventListener extends MessageListener {
 	 * 推送消息给某个角色的所有用户
 	 */
 	private void pushDataToWebByUserIds(String data, String businessId, List<String> userIds) {
-		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
+		WebSocketMessageContext<CrSceneWsMessageIdentifier,String> messageContext = crEventListenerHelper.makeContext(data,
 				businessId);
 		myWebSocketHandler.pushMessageToUsers(messageContext, userIds);
 	}

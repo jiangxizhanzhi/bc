@@ -14,7 +14,7 @@ import lombok.Data;
  * 团队训练实例模型
  */
 @Data
-public class TeamTrainRoomContext implements Serializable {
+public class TeamTrainRoomContext  {
 
 	@ApiModelProperty(required = true)
 	@NotNull

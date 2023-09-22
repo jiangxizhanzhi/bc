@@ -16,13 +16,13 @@ public interface CourseLearnStatisticsService {
 
 	HistogramRes directionHistogram(AuthContext authContext);
 
-	ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page page,
+	ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page<AdminCourseStatisticsRes> page,
 			AuthContext authContext);
 
 	ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String lessonStatisticsListReq,
-			Page page, LessonStatisticsListReq pageReq);
+			Page<AdminLessonStatisticsRes> page, LessonStatisticsListReq pageReq);
 
 	ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
-			String lessonId, String usernameLike, Page page, String sort);
+			String lessonId, String usernameLike, Page<AdminLessonStatisticsDetailRes> page, String sort);
 
 }

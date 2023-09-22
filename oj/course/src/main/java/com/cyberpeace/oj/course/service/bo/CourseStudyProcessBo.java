@@ -41,7 +41,7 @@ public class CourseStudyProcessBo {
     private Integer completeCount = 0;
 
     @ApiModelProperty("课程进度")
-    private Double process = new Double(0);
+    private Double process = 0d;
 
     @ApiModelProperty("完成学习时长")
     private Integer completeDuration = 0;

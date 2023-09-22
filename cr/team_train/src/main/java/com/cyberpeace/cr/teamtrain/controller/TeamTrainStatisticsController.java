@@ -57,8 +57,7 @@ public class TeamTrainStatisticsController {
     @ApiOperation("团队训练统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
     public BaseRsp<ListRsp<StatisticsDetail>> getAllDetail(TrainStatisticsDetailReq detailReq) {
-        Page page = detailReq.toPageParam();
-//        ListRsp<TeamStatisticsDetailBo> rsp = TeamTrainStatistics.getAllStatisticsDetail(detailReq, page);
+        Page<StatisticsDetail> page = detailReq.toPageParam();
         ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessType.TRAINING_TEAM.getCode());
         return new BaseRsp<>(rsp);
     }

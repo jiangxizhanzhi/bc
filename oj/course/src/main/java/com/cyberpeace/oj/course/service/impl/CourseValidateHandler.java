@@ -83,8 +83,7 @@ public class CourseValidateHandler {
 	 * 校验课时修改是否存在场景信息
 	 * @param courseLesson
 	 */
-	public void validateLessonUpdateSceneExist(CourseLesson courseLesson,
-			JSONObject ojSceneConfig) {
+	public void validateLessonUpdateSceneExist(CourseLesson courseLesson) {
 
 		List<OjLocalScene> webScenes = ojLocalSceneMapper
 				.selectByBusiness(courseLesson.getResourceId(), true);

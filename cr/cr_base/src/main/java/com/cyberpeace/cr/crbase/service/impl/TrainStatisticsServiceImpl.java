@@ -70,10 +70,9 @@ public class TrainStatisticsServiceImpl implements TrainStatisticsService {
         }
 
         List<String> user_ids = Lists.newArrayList(user2Tasks.keySet());
-        if (user_ids.size() == 0) {
+		if (user_ids.isEmpty()) {
             PageUtil.getListResult(rsp, page, 0);
         }
-//        Map<String, UserInfo> userid2infos = remoteUserService.getIdUserInfoMap(user_ids);
         List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(user_ids);
         Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 

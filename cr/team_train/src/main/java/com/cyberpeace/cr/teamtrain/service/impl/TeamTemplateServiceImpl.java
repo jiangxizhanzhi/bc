@@ -60,7 +60,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Override
 	public IPage<TeamTemplateData> page(ListQuery listQuery) {
-		Page page = listQuery.toPageParam();
+		Page<TeamTemplateData> page = listQuery.toPageParam();
 		if (listQuery.getIds() == null || listQuery.getIds().isEmpty()) {
 			listQuery.setIds(businessTemplateService
 					.selectAuthIdsByUserId(UserInfoContext.getUserContext().getUserId()));

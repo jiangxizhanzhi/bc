@@ -76,7 +76,7 @@ public class AdminClassroomGroupInfoController {
 
 		int result = classroomGroupInfoService.deleteClassroomArchive(deleteReq.getClassroomId(),
 				deleteReq.getGroupArchiveId());
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("使用课堂分组模板")
@@ -96,7 +96,7 @@ public class AdminClassroomGroupInfoController {
 			getGroupArchive(@RequestParam("classroom_id") String classroomId) {
 		List<ClassroomGroupArchiveBo> archives = classroomGroupInfoService
 				.selectGroupArchive(classroomId);
-		return new BaseRsp(archives);
+		return new BaseRsp<>(archives);
 	}
 
 	@ApiOperation("分组用户移动")

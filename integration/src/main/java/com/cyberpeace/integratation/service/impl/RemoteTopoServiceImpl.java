@@ -132,11 +132,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		List<MpTopoStatistic> mpTopoStatistics = JsonUtil.toJsonObjectArray(data,
 				MpTopoStatistic.class);
 
-		// if (topoIds.size() != mpTopoStatistics.size()) {
-		// log.error("batchGetTopoDigest expect {}, got {}. [{}]", topoIds.size(),
-		// mpTopoStatistics.size(), String.join(", ", topoIds));
-		// throw new RemoteServiceException();
-		// }
+
 
 		return mpTopoStatistics.stream()
 				.collect(Collectors.toMap(MpTopoStatistic::getCsceneId, mpTopoStatistic -> {
@@ -221,16 +217,15 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 	@Override
-	public Boolean batchDeleteTopo(List<String> topoIds) {
+	public void batchDeleteTopo(List<String> topoIds) {
 
 		List<String> notBlankIds = StreamApiUtils.filter(topoIds,
 				topoId -> StringUtils.isNotBlank(topoId));
 		if (CollectionUtils.isEmpty(notBlankIds)) {
-			return Boolean.TRUE;
+			return ;
 		}
 
-		String result = HttpClientUtil.delete(BATCH_DELETE_TOPO, notBlankIds, String.class);
-		return Boolean.TRUE;
+		 HttpClientUtil.delete(BATCH_DELETE_TOPO, notBlankIds, String.class);
 	}
 
 	/**

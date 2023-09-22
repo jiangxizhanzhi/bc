@@ -52,7 +52,7 @@ public class OfficeViewController {
 
 	@ApiOperation("获取课时文件流")
 	@GetMapping("/oj/lesson/handout")
-	public BaseRsp getFileStream(
+	public BaseRsp<Void> getFileStream(
 			@ApiParam(name = "fileId", value = "课时编号") @RequestParam("fileId") String lessonId,
 			HttpServletResponse response) throws FileNotFoundException {
 

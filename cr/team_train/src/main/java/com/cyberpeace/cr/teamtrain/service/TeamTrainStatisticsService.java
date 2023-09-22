@@ -23,12 +23,6 @@ public interface TeamTrainStatisticsService {
 	 */
 	List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics();
 
-	/**
-	 * 获取团队训练统计详情
-	 * @param detailReq 起止时间
-	 * @param page 分页
-	 * @return 团队训练统计详情
-	 */
-//	ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page);
+
 
 }

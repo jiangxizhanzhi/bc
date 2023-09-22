@@ -142,7 +142,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		targetUrl += String.join("&", queryParams);
 
 		JSONObject jsonResponse = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
-		List jsonArray = (List) jsonResponse.get("list");
+		List<Object> jsonArray = (List) jsonResponse.get("list");
 		List<UserInfo> userInfoList = new ArrayList<>();
 		for (Object object : jsonArray) {
 			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
@@ -165,7 +165,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	public List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 
-		List jsonArray = (List) HttpClientUtil
+		List<Object> jsonArray = (List) HttpClientUtil
 				.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class).get("list");
 
 		for (Object object : jsonArray) {
@@ -378,7 +378,6 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				}
 			}
 		}
-		// userInfo.setRoles();
 		userInfo.setOrgpaths((List<List<String>>) jsonObject.get("orgpaths"));
 		userInfo.setAdmin((int) jsonObject.get("is_admin") == 1);
 		userInfo.setSuperuser((int) jsonObject.get("is_super_user") == 1);

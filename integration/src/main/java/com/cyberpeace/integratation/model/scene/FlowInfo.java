@@ -16,7 +16,7 @@ public class FlowInfo implements Serializable {
 	}
 
 	public void setId(String flowId) {
-		this.flow_id = flowId;
+		setFlow_id(flowId);
 	}
 
 	public void setSourceIp(String sourceIp) {

@@ -40,16 +40,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TeamSituationServiceImpl implements TeamSituationService {
 
-	/**
-	 * 只支持该名称的航油团队模板
-	 */
-	private static String HANGYOU_TEMPLATE_NAME = "输油储油工艺的渗透实战";
 
-	/**
-	 * 固定的攻击路径
-	 */
-	private static List<String> DEFAULT_ROUTE = Lists.newArrayList("航油系统网站侦察", "DMZ区数据库渗透",
-			"内网OA服务器渗透", "企业办公网渗透", "核心信息服务区渗透", "安全管控区渗透", "工业控制网络渗透");
+
+
 
 	@Autowired
 	private TeamTeacherService teamTeacherService;
@@ -164,23 +157,5 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		return res;
 	}
 
-	/**
-	 * 检查阶段内是否有已提交任务
-	 *
-	 * @param stageName       阶段名称
-	 * @param stageMissionMap 阶段-任务
-	 * @param missionTaskMap  mission-task
-	 * @return boolean
-	 */
-	private boolean checkIfSubmitted(String stageName, Map<String, List<String>> stageMissionMap,
-			Map<String, List<CrTask>> missionTaskMap) {
-		for (String missionId : stageMissionMap.getOrDefault(stageName, Lists.newArrayList())) {
-			for (CrTask crTask : missionTaskMap.getOrDefault(missionId, Lists.newArrayList())) {
-				if (crTask.isSubmitted()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+
 }

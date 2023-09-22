@@ -279,13 +279,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
-			if (authContext.getIsWeb()) {
-				if (null != groupInfo) {
-					infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
-					infoBo.setGroupId(groupInfo.getResourceId());
-					// 存在课堂场景 则设置group_id用于前端简历websocket
-					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-				}
+			if (authContext.getIsWeb() && null != groupInfo) {
+				infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
+				infoBo.setGroupId(groupInfo.getResourceId());
+				// 存在课堂场景 则设置group_id用于前端简历websocket
+				ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 			}
 
 			// 查询课时场景
@@ -336,7 +334,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		lessonInfoBo.setLessonFile(attachmentBos);
 
 		// 习题数据查询
-		Paper paper = paperMapper.selectById(lesson.getPaperId());
+		paperMapper.selectById(lesson.getPaperId());
 		long practiceCount = getPracticeCount(lesson.getPaperId());
 		lessonInfoBo.setPracticeCount(Integer.parseInt(String.valueOf(practiceCount)));
 
@@ -435,7 +433,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		CourseLesson lessonExist = courseValidateHandler
 				.validateLessonExist(courseLesson.getResourceId(), false);
 		courseValidateHandler.validateLessonUpdateNameExist(lessonExist, courseLesson.getName());
-		courseValidateHandler.validateLessonUpdateSceneExist(lessonExist, ojSceneConfig);
+		courseValidateHandler.validateLessonUpdateSceneExist(lessonExist);
 
 		// 试卷数据
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
@@ -536,7 +534,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public IPage<AdminLessonListBo> pageByContext(Page page, LessonContext context, boolean isWeb) {
+	public IPage<AdminLessonListBo> pageByContext(Page<CourseLesson> page, LessonContext context, boolean isWeb) {
 
 		IPage<CourseLesson> iPage = courseLessonMapper.pageByContext(page, context, isWeb, context.getType());
 
@@ -644,13 +642,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			return lesson;
 		});
 
-		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-
-			@Override
-			public Boolean doInTransaction(TransactionStatus status) {
-				updateBatchById(lessonList);
-				return paperService.updateBatchById(papers);
-			}
+		return transactionTemplate.execute(status-> {
+			updateBatchById(lessonList);
+			return paperService.updateBatchById(papers);
 		});
 	}
 
@@ -680,13 +674,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			throw new BusinessException(OjBusinessErrorCode.REPEAT_IMPORT_SAME_LESSON_NAME);
 		}
 
-		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-
-			@Override
-			public Boolean doInTransaction(TransactionStatus status) {
-				lessonConfigService.saveBatch(lessonConfigs);
-				return saveBatch(courseLessons);
-			}
+		return transactionTemplate.execute(status-> {
+			lessonConfigService.saveBatch(lessonConfigs);
+			return saveBatch(courseLessons);
 		});
 
 	}
@@ -780,10 +770,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				practiceSolvedBos.add(solvedBo);
 
 				// 客观题统计
-				if (isObject) {
-					if (solvedBo.getSolved()) {
+				if (isObject&&solvedBo.getSolved()) {
 						correctObjectNum.addAndGet(1);
-					}
 				}
 
 				return evaluateResult;
@@ -846,7 +834,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.selectByUserAndLesson(authContext.getUserId(), lessonId);
 		EvaluateResult evaluateResult = EvaluateResult.builder().solved(null != paperEvaluate)
 				.resourceId(lessonId).totalScore(paper.getTotalScore())
-				.score(null != paperEvaluate ? paperEvaluate.getScore() : CommonConstant.ZERO)
+				.score(null != paperEvaluate ? paperEvaluate.getScore() : CommonConstant.ZERO.doubleValue())
 				.build();
 		lessonPracticeBo.setEvaluateResult(evaluateResult);
 
@@ -863,9 +851,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 
 		int objectCount = 0, subjectCount = 0, totalCount = 0;
-		for (Map.Entry entry : handlerPractice.entrySet()) {
+		for (Map.Entry<String, LessonPracticeListBo> entry : handlerPractice.entrySet()) {
 			LessonPracticeListBo val = (LessonPracticeListBo) entry.getValue();
-			if (entry.getKey() == "fill_blank" || entry.getKey() == "short_answer") {
+			if (  "fill_blank".equals(entry.getKey()) ||  "short_answer".equals(entry.getKey())) {
 				subjectCount += val.getCount();
 			} else {
 				objectCount += val.getCount();
@@ -930,7 +918,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public Boolean markLessonPractice(String lessonId, String userId, Integer level,
 			AuthContext authContext) {
-		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
+		courseValidateHandler.validateLessonExist(lessonId, false);
 
 		// 课后练习评估数据查询
 		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper.selectByUserAndLesson(userId,
@@ -1110,33 +1098,29 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 						ResourceCollection.BusinessType.LESSON.getCode()))
 				.flatMap(List::stream).collect(Collectors.toList());
 
-		transactionTemplate.execute(new TransactionCallback<Integer>() {
+		transactionTemplate.execute(status-> {
 
-			@Override
-			public Integer doInTransaction(TransactionStatus status) {
-
-				// 笔记和评论
-				resourceIds.forEach(lessonId -> commentMapper.deleteByBusinessId(lessonId));
-				resourceIds.forEach(lessonId -> noteMapper.deleteByBusiness(lessonId, null,
-						Note.NoteResourceType.LESSON.getCode()));
-				// 收藏
-				if (CollectionUtils.isNotEmpty(collectionIds)) {
-					resourceCollectionMapper.deleteBatchIds(collectionIds);
-				}
-
-				// 课堂相关
-				batchDeleteClassroom(classroomIds, authContext);
-
-				// 课后练习
-				lessonList.forEach(courseLesson -> {
-					practiceOperationRefMapper.deleteByPaper(courseLesson.getPaperId());
-					practiceTheoryRefMapper.deleteByPaper(courseLesson.getPaperId());
-				});
-
-				// 目录和场景
-				lessonConfigMapper.deleteByLessonIds(resourceIds);
-				return courseLessonMapper.deleteBatchIds(resourceIds);
+			// 笔记和评论
+			resourceIds.forEach(lessonId -> commentMapper.deleteByBusinessId(lessonId));
+			resourceIds.forEach(lessonId -> noteMapper.deleteByBusiness(lessonId, null,
+					Note.NoteResourceType.LESSON.getCode()));
+			// 收藏
+			if (CollectionUtils.isNotEmpty(collectionIds)) {
+				resourceCollectionMapper.deleteBatchIds(collectionIds);
 			}
+
+			// 课堂相关
+			batchDeleteClassroom(classroomIds, authContext);
+
+			// 课后练习
+			lessonList.forEach(courseLesson -> {
+				practiceOperationRefMapper.deleteByPaper(courseLesson.getPaperId());
+				practiceTheoryRefMapper.deleteByPaper(courseLesson.getPaperId());
+			});
+
+			// 目录和场景
+			lessonConfigMapper.deleteByLessonIds(resourceIds);
+			return courseLessonMapper.deleteBatchIds(resourceIds);
 		});
 		// 删除课件和视频
 		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
@@ -1622,17 +1606,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return paper;
 	}
 
-	/**
-	 * 讲义文件上传
-	 * @param courseId
-	 * @param handout
-	 * @return
-	 */
-	private String uploadHandout(String courseId, MultipartFile handout) {
-		String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(), courseId);
-		AttachmentBo attachmentBo = attachmentService.uploadDest(handoutPath, false, handout);
-		return attachmentBo.getFilePath();
-	}
+
 
 	@Override
 	public void createMpLog(LessonInfoBo lessonInfoBo) {

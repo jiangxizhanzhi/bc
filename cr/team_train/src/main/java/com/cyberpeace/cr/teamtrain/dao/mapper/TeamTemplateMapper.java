@@ -20,7 +20,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 @Repository
 public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 
-	IPage<TeamTemplateData> listTeamTemplate(Page page, ListQuery listQuery);
+	IPage<TeamTemplateData> listTeamTemplate(Page<TeamTemplateData> page, ListQuery listQuery);
 
 	TeamTemplate getByBusinessId(String resourceId);
 

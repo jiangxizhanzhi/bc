@@ -84,13 +84,13 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@GetMapping("/all/list")
 	@ApiOperation("分页查询全部课程信息")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp<List<CourseWebBo>> getList(
+	public BaseRsp<ListRsp<CourseWebBo>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Valid CourseListReq courseListReq) {
 
 		// 组装筛选条件
 		CourseQueryBo context = BeanUtils.copy(courseListReq, CourseQueryBo.class);
 
-		Page page = courseListReq.toPageParam();
+		Page<Course> page = courseListReq.toPageParam();
 
 		// 分类数据组装
 		if (StringUtils.isNotBlank(courseListReq.getDirection())) {
@@ -105,13 +105,13 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		authContext.setIsSuperAdmin(true);
 		// 数据查询
 		ListRsp<CourseWebBo> courseInfos = courseService.selectPage(page, context, authContext, false);
-		return new BaseRsp(courseInfos);
+		return new BaseRsp<>(courseInfos);
 	}
 
 	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp<List<CourseWebBo>>
+	public BaseRsp<ListRsp<CourseWebBo>>
 			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
 
 		// 查询数据组装
@@ -126,7 +126,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		adminQueryBo.setUserId(UserInfoContext.getUserContext().getUserId());
 
 		// 分页数据获取
-		Page page = listReq.toPageParam();
+		Page<Course> page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}
@@ -137,7 +137,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		// 数据查询
 		ListRsp<CourseWebBo> rsp = courseService.selectPage(page, adminQueryBo, authContext, false);
-		return new BaseRsp(rsp);
+		return new BaseRsp<>(rsp);
 	}
 
 	@ApiOperation("课程新增")
@@ -280,7 +280,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 				false);
 		String zipPath = courseService.dumpCourse(courseIds, authContext);
 		FileUtil.setResponse(new File(zipPath), true, response);
-		return new BaseRsp(Boolean.TRUE);
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 	@ApiOperation("后台课程数据导入")
@@ -296,7 +296,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		Boolean result = courseService.loadCourse(realPath, authContext);
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 
 	}
 

@@ -72,7 +72,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 */
 	void deleteByOrgIds(@Param("orgIds") List<String> orgIds);
 
-	IPage<Classroom> page(Page listQuery, String userId, String trainPlanId, List<String> childrenOrg, boolean isAdmin, List<String> courseIds);
+	IPage<Classroom> page(Page<Classroom> listQuery, String userId, String trainPlanId, List<String> childrenOrg, boolean isAdmin, List<String> courseIds);
 
 	List<String> selectIdsByPlanIds(List<String> ids);
 

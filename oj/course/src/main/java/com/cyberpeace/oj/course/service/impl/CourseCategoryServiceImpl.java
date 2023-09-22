@@ -67,7 +67,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	}
 
 	@Override
-	public IPage<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children) {
+	public IPage<CourseCategoryBo> pageBySearch(Page<CourseCategory> page, String pattern, Boolean children) {
 		IPage<CourseCategory> iPage = courseCategoryMapper.pageBySearch(page, pattern);
 
 		if (children) {

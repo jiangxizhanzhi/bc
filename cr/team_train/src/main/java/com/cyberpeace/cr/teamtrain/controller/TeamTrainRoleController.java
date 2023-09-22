@@ -61,7 +61,7 @@ public class TeamTrainRoleController {
 			}
 		}
 
-		return new BaseRsp(crRoleContextRsp);
+		return new BaseRsp<>(crRoleContextRsp);
 	}
 
 }

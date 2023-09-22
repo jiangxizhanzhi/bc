@@ -217,7 +217,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 			// 目录课程数据解析
 			List<String> lessonPaths = FileUtil.listFileByFile(file, 1, true);
 			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths, lessonPath -> {
-				CourseLesson courseLesson = doParseLesson(lessonPath, course, envReqs, nameMap);
+				CourseLesson courseLesson = doParseLesson(lessonPath, course, envReqs);
 				// 校验课时名称重复性
 				if (null != nameMap.putIfAbsent(courseLesson.getName(),
 						courseLesson.getResourceId())) {
@@ -243,7 +243,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 * @return
 	 */
 	private CourseLesson doParseLesson(String lessonPath, Course course,
-			Map<String, String> envReqs, Map<String, String> nameMap) {
+			Map<String, String> envReqs) {
 		log.info("Start parsing lesson information! lesson_path=[{}]", lessonPath);
 		CourseLesson courseLesson=null;
 		try {
@@ -653,8 +653,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		// 将envReq转换成key=课时名称 value=拓扑编号
 		Map<String, String> nameTopo = Maps.newHashMap();
-		for (String key : envReq.keySet()) {
-			nameTopo.put(key.split(CommonConstant.UNDER_LINE)[1], envReq.get(key));
+		for (Map.Entry<String, String> entry : envReq.entrySet()) {
+			nameTopo.put(entry.getKey().split(CommonConstant.UNDER_LINE)[1], envReq.get(entry.getKey()));
 		}
 
 		List<String> lessonIds = StreamApiUtils.map(lessons,
@@ -926,25 +926,21 @@ public class CourseImportServiceImpl implements CourseImportService {
 				.resourceId(IDGeneratorUtil.getID()).build();
 		lessonConfigs.add(courseConfig);
 
-		int index = CommonConstant.ONE;
+		final int[] index = {CommonConstant.ONE};
 
 		for (CombinedCourseImportContext courseInfo : courseInfos) {
 
 			// 处理章节
 			String chapterName = courseInfo.getChapterName();
-			LessonConfig chapterConfig = chapterMap.get(chapterName);
-
-			if (null == chapterConfig) {
-				chapterConfig = LessonConfig.builder().courseId(course.getResourceId())
+			LessonConfig chapterConfig =chapterMap.computeIfAbsent(chapterName,a->{
+				LessonConfig chapterConfig2 = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(courseConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 						.nodeType(LessonConfig.NodeType.NODE_CHAPTER.getCode()).name(chapterName)
-						.index(index).build();
-				lessonConfigs.add(chapterConfig);
-
-				index++;
-
-				chapterMap.put(chapterName, chapterConfig);
-			}
+						.index(index[0]).build();
+				lessonConfigs.add(chapterConfig2);
+				index[0]++;
+				return chapterConfig2;
+			});
 
 			String[] lessonNameList = courseInfo.getLessonName().split("_", 2);
 			String lessonName;
@@ -958,11 +954,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 			LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 					.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
 					.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(lessonName)
-					.lessonId(lessonNameMap.get(lessonName)).index(index).build();
+					.lessonId(lessonNameMap.get(lessonName)).index(index[0]).build();
 			lessonConfigs.add(lessonConfig);
 
 			// 索引加一
-			index++;
+			index[0]++;
 
 		}
 

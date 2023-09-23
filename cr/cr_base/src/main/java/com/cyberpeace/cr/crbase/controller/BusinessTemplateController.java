@@ -8,7 +8,6 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -25,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -40,7 +40,6 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.TestSceneReq;
 import com.cyberpeace.cr.crbase.controller.rsp.BusinessTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
-import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
@@ -48,6 +47,7 @@ import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
+import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
 import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -131,7 +131,7 @@ public class BusinessTemplateController {
 			return businessTemplateRsp;
 		});
 
-		return new BaseRsp(PageUtil.getListResult(data));
+		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class BusinessTemplateController {
 			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
 		Share data = businessTemplateService.getShares(resource_id);
 
-		return new BaseRsp(data);
+		return new BaseRsp<>(data);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class BusinessTemplateController {
 
 		businessTemplateService.batchSetShares(shareContext);
 
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@DeleteMapping()
@@ -211,14 +211,14 @@ public class BusinessTemplateController {
 	public BaseRsp<String> validateNamePatch(@RequestBody @Validated NameValidReq nameValidReq) {
 		businessTemplateService.validateName(nameValidReq.getName(), nameValidReq.getType(),
 				nameValidReq.getId());
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("启动后台测试场景")
 	@PostMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
-	public BaseRsp testScene(@RequestBody TestSceneReq testSceneReq) {
+	public BaseRsp<StartSceneRsp> testScene(@RequestBody TestSceneReq testSceneReq) {
 
 		String templateId = testSceneReq.getBusinessTemplateId();
 
@@ -262,7 +262,7 @@ public class BusinessTemplateController {
 			localSceneService.deleteRemoteScene(localScene);
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
-		return new BaseRsp(new StartSceneRsp(sceneId));
+		return new BaseRsp<>(new StartSceneRsp(sceneId));
 	}
 
 	@ApiOperation("查看后台测试场景")
@@ -282,7 +282,7 @@ public class BusinessTemplateController {
 	@DeleteMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
-	public BaseRsp stopTestScene(@RequestBody TestSceneReq testSceneReq) {
+	public BaseRsp<Boolean> stopTestScene(@RequestBody TestSceneReq testSceneReq) {
 		// 1.获取模板
 		String templateId = testSceneReq.getBusinessTemplateId();
 		BusinessTemplate template = ensureTemplateExist(templateId);
@@ -294,17 +294,17 @@ public class BusinessTemplateController {
 		// 4.清除本地场景数据
 		businessTemplateService.clearLocal(template);
 
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("后台测试场景重启节点")
 	@PostMapping("/testScene/node/restart")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
-	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+	public BaseRsp<Boolean> restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
-			log.error("Scene not start! resourceId = [{}]", nodeOpsReq.getResourceId());
+			log.error("Scene not started! resourceId = [{}]", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.restartNode(template.getLocalSceneId(),
@@ -313,14 +313,14 @@ public class BusinessTemplateController {
 			log.error("Node restart failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("后台测试场景重建节点")
 	@PostMapping("/testScene/node/recreate")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
-	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+	public BaseRsp<Boolean> recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
 			log.error("Scene not start! resourceId = [{}]", nodeOpsReq.getResourceId());
@@ -332,14 +332,14 @@ public class BusinessTemplateController {
 			log.error("Node recreate failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("创建启动节点")
 	@PostMapping("/node/create")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
-	public BaseRsp createNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+	public BaseRsp<Boolean> createNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
 			log.error("Scene not start! resourceId = [{}]", nodeOpsReq.getResourceId());
@@ -351,7 +351,7 @@ public class BusinessTemplateController {
 			log.error("Node recreate failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_CREATE_NODE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("批量导出场景模板")
@@ -383,7 +383,7 @@ public class BusinessTemplateController {
 	@PutMapping("/batchLoad")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
-	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
+	public BaseRsp<Boolean> batchLoad(@RequestParam("file") MultipartFile file)
 			throws IOException, ZipException {
 
 		FileUtil.validateSuffix(file, FileSunffixConstant.ZIP.getDesc());
@@ -397,7 +397,7 @@ public class BusinessTemplateController {
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("职业框架-场景模板列表")

@@ -3,16 +3,18 @@ package com.cyberpeace.common.constant;
 /**
  * rabbitmq监听的队列名统一管理
  */
-public interface RabbitmqQueueName {
+public final class RabbitmqQueueName {
 
 	/**
 	 * 场景状态变更
 	 */
-	String SCENE_STATUS_CHANGE = "";
+	public static final String SCENE_STATUS_CHANGE = "";
 
 	/**
 	 * 场景websocket动态事件
 	 */
-	String SCENE_EVENT_WEBSOCKET = "cn.cyberpeace.mp.cscene_scene_report";
+	public static final String SCENE_EVENT_WEBSOCKET = "cn.cyberpeace.mp.cscene_scene_report";
+
+	private RabbitmqQueueName() {}
 
 }

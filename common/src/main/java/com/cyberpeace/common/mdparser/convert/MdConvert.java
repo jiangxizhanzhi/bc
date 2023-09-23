@@ -41,4 +41,6 @@ public class MdConvert {
 				.collect(Collectors.toList());
 	}
 
+	private MdConvert() {}
+
 }

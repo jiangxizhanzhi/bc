@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -7,7 +9,7 @@ import lombok.Data;
  * 用户简要数据
  */
 @Data
-public class UserData {
+public class UserData implements Serializable {
 
 	@ApiModelProperty(value = "头像")
 	private String logo;

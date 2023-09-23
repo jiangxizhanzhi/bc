@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,9 +13,10 @@ import lombok.Data;
 
 public class TimeUtil {
 
-	private static final String DAY_ZH = "天";
+	private static final String FULL_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-	private static final String DAY_EN = "Day";
+	private static final String YYYY_MMDD_HHMMSS = "yyyyMMddHHmmss";
+
 
 	/**
 	 * 计算起始时间和结束时间相隔的秒数。
@@ -49,22 +49,6 @@ public class TimeUtil {
 		end = getEndOfDay(end);
 
 		return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
-	}
-
-	/**
-	 * 获取指定位数的验证码
-	 *
-	 * @param bits 验证码位数，比如bits=6代表6位的验证码
-	 * @return
-	 */
-	public static String getVerifyCode(int bits) {
-		StringBuilder stringBuilder = new StringBuilder();
-
-		for (int i = 0; i < bits; i++) {
-			stringBuilder.append(new Random().nextInt(10));
-		}
-
-		return stringBuilder.toString();
 	}
 
 	/**
@@ -172,7 +156,7 @@ public class TimeUtil {
 		if (null == time) {
 			return null;
 		}
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FULL_FORMAT);
 		Date result;
 		try {
 			result = simpleDateFormat.parse(time);
@@ -212,7 +196,7 @@ public class TimeUtil {
 		if (StringUtils.isBlank(time)) {
 			return null;
 		}
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(YYYY_MMDD_HHMMSS);
 		Date result;
 		try {
 			result = simpleDateFormat.parse(time);
@@ -233,7 +217,7 @@ public class TimeUtil {
 			return null;
 		}
 		time = time.replace("/", "-") + ":00";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FULL_FORMAT);
 		Date result;
 		try {
 			result = simpleDateFormat.parse(time);
@@ -256,7 +240,7 @@ public class TimeUtil {
 		Calendar date = Calendar.getInstance();
 		String year = String.valueOf(date.get(Calendar.YEAR));
 		time = year + time;
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(YYYY_MMDD_HHMMSS);
 		Date result;
 		try {
 			result = simpleDateFormat.parse(time);
@@ -296,7 +280,7 @@ public class TimeUtil {
 	 * @return
 	 */
 	public static String format1(Date date) {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FULL_FORMAT);
 		return simpleDateFormat.format(date);
 	}
 
@@ -318,7 +302,7 @@ public class TimeUtil {
 	 * @return
 	 */
 	public static String format3(Date date) {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(YYYY_MMDD_HHMMSS);
 		return simpleDateFormat.format(date);
 	}
 
@@ -405,7 +389,7 @@ public class TimeUtil {
 	 */
 	public static Date toZero(Date date) {
 		SimpleDateFormat simp = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
-		SimpleDateFormat simp2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat simp2 = new SimpleDateFormat(FULL_FORMAT);
 		Date result = null;
 		try {
 			result = simp2.parse(simp.format(date));
@@ -505,7 +489,7 @@ public class TimeUtil {
 	 * @return
 	 */
 	public static int getDaysBetween(Date dtBegin, Date dtEnd) {
-		return new Long((dtEnd.getTime() - dtBegin.getTime()) / 86400000).intValue() + 1;
+		return Long.valueOf((dtEnd.getTime() - dtBegin.getTime()) / 86400000).intValue() + 1;
 	}
 
 	/**
@@ -517,13 +501,12 @@ public class TimeUtil {
 	public static boolean isValidDate(String str) {
 		boolean convertSuccess = true;
 		// 指定日期格式为四位年/两位月份/两位日期，注意yyyy/MM/dd区分大小写；
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format = new SimpleDateFormat(FULL_FORMAT);
 		try {
 			// 设置lenient为false. 否则SimpleDateFormat会比较宽松地验证日期，比如2007/02/29会被接受，并转换成2007/03/01
 			format.setLenient(false);
 			format.parse(str);
 		} catch (ParseException e) {
-			// e.printStackTrace();
 			// 如果throw java.text.ParseException或者NullPointerException，就说明格式不对
 			convertSuccess = false;
 		}
@@ -597,6 +580,8 @@ public class TimeUtil {
 		builder.append(sec).append(timeUnitI18n.getSecond());
 		return builder.toString();
 	}
+
+	private TimeUtil() {}
 }
 
 @Data
@@ -628,4 +613,6 @@ class TimeUnitI18n {
 	public static TimeUnitI18n getColonTimeUnit() {
 		return new TimeUnitI18n("天 ", ":", ":", ":");
 	}
+
+	private TimeUnitI18n() {}
 }

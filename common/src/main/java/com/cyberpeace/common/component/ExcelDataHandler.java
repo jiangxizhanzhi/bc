@@ -121,7 +121,7 @@ public class ExcelDataHandler {
 	public List<List<String>> getSheetData(int startRow, int endRow) {
 
 		int rows = sheet.getPhysicalNumberOfRows();
-		int endIndex = endRow == CommonConstant.ZERO ? rows : (rows < endRow ? rows : endRow);
+		int endIndex = endRow == CommonConstant.ZERO ? rows : Math.min(rows, endRow);
 
 		if (startRow >= endIndex) {
 			return Lists.newArrayList();
@@ -283,7 +283,7 @@ public class ExcelDataHandler {
 
 		} catch (Exception e) {
 			log.error(
-					"Construct XSSFSheet object failed! file_path=[{}], sheet_name=[{}], catch error:",
+					"Construct XSSFSheet object failed! file_path=[{}], catch error:",
 					filePath, e);
 			try {
 				workbook.close();
@@ -312,10 +312,12 @@ public class ExcelDataHandler {
 			doExportExcel(data, filePath, CommonConstant.ONE.toString(), excelHeader, workbook,
 					null);
 		} finally {
-			try {
-				workbook.close();
-			} catch (IOException e) {
-				// 关闭
+			if (null != workbook) {
+				try {
+					workbook.close();
+				} catch (IOException | NullPointerException e) {
+					// 关闭
+				}
 			}
 		}
 	}
@@ -400,6 +402,12 @@ public class ExcelDataHandler {
 				// .....
 			}
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
+		} finally {
+			try {
+				wb.close();
+			} catch (Exception e) {
+				// do nothing
+			}
 		}
 
 		return file;

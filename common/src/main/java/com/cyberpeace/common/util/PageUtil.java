@@ -21,11 +21,11 @@ public class PageUtil {
 
 	public static <T, U> ListRsp transformListResult(IPage<T> page, Function<T, U> func) {
 		List<U> outputs = new ArrayList<>();
-		for (T record : page.getRecords()) {
-			outputs.add(func.apply(record));
+		for (T r : page.getRecords()) {
+			outputs.add(func.apply(r));
 		}
 
-		ListRsp ret = new ListRsp();
+		ListRsp ret = new ListRsp<>();
 
 		ret.setList(outputs);
 		ret.setTotal(page.getTotal());
@@ -98,7 +98,7 @@ public class PageUtil {
 		if (data.size() > page.getSize()) {
 			long start = (page.getCurrent() - CommonConstant.ONE) * page.getSize();
 			long end = page.getCurrent() == totalPage ? total : start + page.getSize();
-			List<K> subList = data.subList(new Long(start).intValue(), new Long(end).intValue());
+			List<K> subList = data.subList((int) start, (int) end);
 			listRsp.setList(subList);
 		} else {
 			listRsp.setList(data);

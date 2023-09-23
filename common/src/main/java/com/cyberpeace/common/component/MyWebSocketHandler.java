@@ -185,7 +185,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		// 发送chat消息
 		Set<CpWebSession> userSessions = getUserSession(identifierId, userId);
 		TextMessage toSendMessage = new TextMessage(JsonUtil.toJsonString(chatMessage));
-		if (userSessions == null) {
+		if (null == userSessions || userSessions.isEmpty()) {
 			log.warn("[wsChat]user {} cannot receive the message without a link", userId);
 		} else {
 			for (CpWebSession userSession : userSessions) {
@@ -199,13 +199,13 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
 		if (MapUtils.isEmpty(userSocketSessionMap)) {
 			log.warn("[wsChat]not find userSocketSessionMap by identifierId{}", identifierId);
-			return null;
+			return Sets.newHashSet();
 		}
 
 		Set<CpWebSession> webSocketSessions = userSocketSessionMap.get(userId);
 		if (null == webSocketSessions || webSocketSessions.isEmpty()) {
 			log.warn("[wsChat]not find webSocketSessions by userId{}", userId);
-			return null;
+			return Sets.newHashSet();
 		}
 		return webSocketSessions;
 	}

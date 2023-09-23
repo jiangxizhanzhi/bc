@@ -6,11 +6,13 @@ package com.cyberpeace.cr.crbase.service.context.scene;
  * @author SN
  * @date 2023/05/30
  */
-public interface AssetProperty {
+public final class AssetProperty {
 
-	String SYSTEM_TYPE = "system_type";
+	public static final String SYSTEM_TYPE = "system_type";
 
-	String SYSTEM_TYPE_NAME = "system_type_name";
+	public static final String SYSTEM_TYPE_NAME = "system_type_name";
 
-	String ID = "id";
+	public static final String ID = "id";
+
+	private AssetProperty() {}
 }

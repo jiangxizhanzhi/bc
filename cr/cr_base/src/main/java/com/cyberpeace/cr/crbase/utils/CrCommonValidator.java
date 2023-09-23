@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.GenericEnum;
@@ -176,8 +177,23 @@ public class CrCommonValidator {
 		}
 	}
 
+	private CrCommonValidator() {}
+
+	/**
+	 * 验证枚举code
+	 *
+	 * @param code          代码
+	 * @param authTypeClass 身份验证类型类
+	 */
+	public static <T extends GenericEnum> void validateEnumCode(Integer code,
+			Class<T> authTypeClass) {
+		if (null == code || EnumUtils.getEnumByCode(code, authTypeClass) == null) {
+			throw new BusinessException(ErrorCode.INVALID_ENUM_CODE);
+		}
+	}
+
 	public static List<String> validateAhpMatrixDataOrder(String matrixData){
-		JSONArray objects = JSONArray.parseArray(matrixData);
+		JSONArray objects = JSON.parseArray(matrixData);
 		List<String> labels = new ArrayList<>();
 		for (int j = 0; j < objects.size(); j++) {
 			JSONObject temp = objects.getJSONObject(j);
@@ -190,7 +206,7 @@ public class CrCommonValidator {
 		for (int j = 0; j < objects.size(); j++) {
 			JSONObject temp = objects.getJSONObject(j);
 			String details = temp.getString("data");
-			Object detailObjs = JSONObject.parse(details);
+			Object detailObjs = JSON.parse(details);
 			JSONObject parse = JsonUtil.toJsonObject(detailObjs.toString(), JSONObject.class);
 			List<String> currentList = new ArrayList<>();
 			for(String tmp:labels){
@@ -204,18 +220,5 @@ public class CrCommonValidator {
 			checkData.addAll(currentList);
 		}
 		return checkData;
-	}
-
-	/**
-	 * 验证枚举code
-	 *
-	 * @param code          代码
-	 * @param authTypeClass 身份验证类型类
-	 */
-	public static <T extends GenericEnum> void validateEnumCode(Integer code,
-			Class<T> authTypeClass) {
-		if (null == code || EnumUtils.getEnumByCode(code, authTypeClass) == null) {
-			throw new BusinessException(ErrorCode.INVALID_ENUM_CODE);
-		}
 	}
 }

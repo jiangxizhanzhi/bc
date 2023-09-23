@@ -3,15 +3,6 @@
 
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.RadarLabelMapper">
 
-
- <!--   <select id="countFinishedByUserIdAndType" resultType="java.lang.Integer">
-        select count(id)
-        from cr_train_record
-        where user_id = #{userId}
-          and business_type = #{type}
-          and end_time is not null
-    </select>-->
-
     <select id="selectList" resultType="com.cyberpeace.cr.crbase.dao.entity.RadarLabel">
         select * from cr_radar_label
         order by resource_id

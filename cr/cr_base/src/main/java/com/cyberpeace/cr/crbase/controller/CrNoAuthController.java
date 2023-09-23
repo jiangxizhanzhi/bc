@@ -161,13 +161,13 @@ public class CrNoAuthController {
 
 	@ApiOperation("辅助鉴权")
 	@GetMapping("/auth")
-	public BaseRsp auth(@ApiParam(name = "token", value = "jwt token") String token) {
+	public BaseRsp<Boolean> auth(@ApiParam(name = "token", value = "jwt token") String token) {
 		try {
 			remoteUserService.doAuthentication(token);
 		} catch (Exception e) {
 			log.error("authentication failed with token:[{}]", token, e);
 			throw new AuthenticationException();
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 }

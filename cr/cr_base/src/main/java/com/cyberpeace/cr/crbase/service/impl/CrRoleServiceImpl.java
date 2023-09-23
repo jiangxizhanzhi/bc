@@ -4,14 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.context.MissionStageScheme;
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
-import com.cyberpeace.common.context.role.CrRoleSimple;
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.RbRoleGroup;
-import com.cyberpeace.common.enums.RoleGroup;
-import com.cyberpeace.common.enums.TeamRoleGroup;
-import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +11,13 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleSimple;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.enums.RoleGroup;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.room.DashboardInfo;
@@ -29,6 +28,9 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.UserIdRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
@@ -113,13 +115,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		List<Mission> missionList = missionService.batchGetByRoom(roomId);
 
-		ShowWriteup showWriteup = new ShowWriteup();
-		showWriteup.setShowWriteup(true);
-		Map<String, ShowWriteup> showWriteupMap = Maps.newHashMap();
+		ShowWriteupBo showWriteupBo = new ShowWriteupBo();
+		showWriteupBo.setShowWriteup(true);
+		Map<String, ShowWriteupBo> showWriteupMap = Maps.newHashMap();
 
 		missionList.forEach(mission -> {
 			if (mission.getShowWriteup()) {
-				showWriteupMap.put(mission.getResourceId(), showWriteup);
+				showWriteupMap.put(mission.getResourceId(), showWriteupBo);
 			}
 		});
 
@@ -586,37 +588,36 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	@Override
 	public void combineRoleConst(DashboardInfo dashboardInfo) {
-		List<DashboardRole> roleConst = new ArrayList<DashboardRole>() {{
-			DashboardRole red = new DashboardRole();
-			red.setRoleType(RbRoleGroup.RED.getEnglish());
-			red.setRole(RbRoleGroup.RED.getMsg());
-			red.setRoleCode(RbRoleGroup.RED.getCode());
-			add(red);
+		List<DashboardRole> roleConst = Lists.newArrayList();
+		DashboardRole red = new DashboardRole();
+		red.setRoleType(RbRoleGroup.RED.getEnglish());
+		red.setRole(RbRoleGroup.RED.getMsg());
+		red.setRoleCode(RbRoleGroup.RED.getCode());
+		roleConst.add(red);
 
-			DashboardRole blue = new DashboardRole();
-			blue.setRoleType(RbRoleGroup.BLUE.getEnglish());
-			blue.setRole(RbRoleGroup.BLUE.getMsg());
-			blue.setRoleCode(RbRoleGroup.BLUE.getCode());
-			add(blue);
+		DashboardRole blue = new DashboardRole();
+		blue.setRoleType(RbRoleGroup.BLUE.getEnglish());
+		blue.setRole(RbRoleGroup.BLUE.getMsg());
+		blue.setRoleCode(RbRoleGroup.BLUE.getCode());
+		roleConst.add(blue);
 
-			DashboardRole white = new DashboardRole();
-			white.setRoleType(RbRoleGroup.WHITE.getEnglish());
-			white.setRole(RbRoleGroup.WHITE.getMsg());
-			white.setRoleCode(RbRoleGroup.WHITE.getCode());
-			add(white);
+		DashboardRole white = new DashboardRole();
+		white.setRoleType(RbRoleGroup.WHITE.getEnglish());
+		white.setRole(RbRoleGroup.WHITE.getMsg());
+		white.setRoleCode(RbRoleGroup.WHITE.getCode());
+		roleConst.add(white);
 
-			DashboardRole teamTeacher = new DashboardRole();
-			teamTeacher.setRoleType(TeamRoleGroup.TEACHER.getEnglish());
-			teamTeacher.setRole(TeamRoleGroup.TEACHER.getMsg());
-			teamTeacher.setRoleCode(TeamRoleGroup.TEACHER.getCode());
-			add(teamTeacher);
+		DashboardRole teamTeacher = new DashboardRole();
+		teamTeacher.setRoleType(TeamRoleGroup.TEACHER.getEnglish());
+		teamTeacher.setRole(TeamRoleGroup.TEACHER.getMsg());
+		teamTeacher.setRoleCode(TeamRoleGroup.TEACHER.getCode());
+		roleConst.add(teamTeacher);
 
-			DashboardRole teamStudent = new DashboardRole();
-			teamStudent.setRoleType(TeamRoleGroup.STUDENT.getEnglish());
-			teamStudent.setRole(TeamRoleGroup.STUDENT.getMsg());
-			teamStudent.setRoleCode(TeamRoleGroup.STUDENT.getCode());
-			add(teamStudent);
-		}};
+		DashboardRole teamStudent = new DashboardRole();
+		teamStudent.setRoleType(TeamRoleGroup.STUDENT.getEnglish());
+		teamStudent.setRole(TeamRoleGroup.STUDENT.getMsg());
+		teamStudent.setRoleCode(TeamRoleGroup.STUDENT.getCode());
+		roleConst.add(teamStudent);
 		dashboardInfo.setRoleConst(roleConst);
 	}
 

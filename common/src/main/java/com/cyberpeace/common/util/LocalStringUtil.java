@@ -50,10 +50,9 @@ public class LocalStringUtil {
 					if (lastUppercase) {
 						if (i + 1 < name.length()) {
 							char next = name.charAt(i + 1);
-							if (!Character.isUpperCase(next) && Character.isAlphabetic(next)) {
-								if (lastEntry != '_') {
-									result.append('_');
-								}
+							if (!Character.isUpperCase(next) && Character.isAlphabetic(next)
+									&& lastEntry != '_') {
+								result.append('_');
 							}
 						}
 					} else {

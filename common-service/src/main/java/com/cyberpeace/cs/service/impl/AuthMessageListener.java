@@ -116,11 +116,10 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 			log.error("message=[{}] cannot find type ", message);
 			return true;
 		}
-		// MessageListener realListener = register.;
 		boolean result = true;
-		for (Integer key : register.keySet()) {
-			AuthMessageListener realListener = register.get(key);
-			log.info("delete_class=[{}] , delete type =[{}] ", realListener.toString(), type);
+		for (AuthMessageListener realListener : register.values()) {
+			String listenerString = realListener.toString();
+			log.info("delete_class=[{}] , delete type =[{}] ", listenerString, type);
 
 			try {
 				switch (type) {

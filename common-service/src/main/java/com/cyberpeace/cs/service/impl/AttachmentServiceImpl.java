@@ -190,7 +190,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	public Boolean loadImage(String imageId, String fileName, String imageDir) {
 		// 图片附件已存在，不做操作
 		if (attachmentMapper.selectById(imageId) != null) {
-			return true;
+			return false;
 		}
 		// 复制图片
 		String originalPath = imageDir + File.separator + fileName;

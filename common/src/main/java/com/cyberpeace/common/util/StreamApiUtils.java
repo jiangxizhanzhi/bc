@@ -209,4 +209,6 @@ public class StreamApiUtils {
 		}
 		return collection.stream().collect(Collectors.toMap(keyMapper, valueMapper,mergeFunction));
 	}
+
+	private StreamApiUtils() {}
 }

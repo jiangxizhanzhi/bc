@@ -4,10 +4,9 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.enums.BusinessType;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -17,9 +16,13 @@ import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @Slf4j
 public class BusinessTemplateHandler {
+
+	private static final String NOT_IMPLEMENTED = "method not implemented, plz do not use it";
 
 	private static Map<BusinessType, BusinessTemplateHandler> register = Maps
 			.newHashMap();
@@ -74,7 +77,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
-		log.error("method not implemented, plz do not use it");
+		log.error(NOT_IMPLEMENTED);
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -84,7 +87,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
-		log.error("method not implemented, plz do not use it");
+		log.error(NOT_IMPLEMENTED);
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -93,7 +96,7 @@ public class BusinessTemplateHandler {
 	 * @param businessTemplate
 	 */
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
-		log.error("method not implemented, plz do not use it");
+		log.error(NOT_IMPLEMENTED);
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -102,9 +105,11 @@ public class BusinessTemplateHandler {
 	 * @param templateContext
 	 */
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
-		log.error("method not implemented, plz do not use it");
+		log.error(NOT_IMPLEMENTED);
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
-	public void checkBeforeDel(BusinessTemplate businessTemplate) {}
+	public void checkBeforeDel(BusinessTemplate businessTemplate) {
+		// do nothing
+	}
 }

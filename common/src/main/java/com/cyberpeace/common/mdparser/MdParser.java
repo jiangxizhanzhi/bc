@@ -134,6 +134,7 @@ public class MdParser {
                     osw.close();
                 }
             } catch (IOException e) {
+                // do nothing
             }
 
         }

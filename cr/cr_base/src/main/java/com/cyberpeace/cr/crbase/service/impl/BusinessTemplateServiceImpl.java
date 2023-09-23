@@ -44,7 +44,6 @@ import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
-import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -371,20 +370,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 
 		updateBatchById(businessTemplateList);
-	}
-
-	private BusinessTemplate getBusinessTemplate(BasicTemplate basicTemplate) {
-		BaseInfo baseInfo = basicTemplate.getBaseInfo();
-		BusinessTemplate businessTemplate = new BusinessTemplate();
-		businessTemplate.setName(baseInfo.getName());
-		businessTemplate.setDescription(baseInfo.getDescription());
-		businessTemplate.setDifficulty(baseInfo.getDifficult());
-		businessTemplate.setBusinessType(basicTemplate.getBaseInfo().getType());
-
-		businessTemplate.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-		businessTemplate.setOperationAuthIds("[]");
-		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		return businessTemplate;
 	}
 
 	@Override

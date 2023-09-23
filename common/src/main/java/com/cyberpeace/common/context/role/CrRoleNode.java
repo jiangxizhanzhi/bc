@@ -43,10 +43,6 @@ public class CrRoleNode implements Serializable {
 			this.english = english;
 		}
 
-		public boolean equals(Integer roleGroupCode) {
-			return getCode().equals(roleGroupCode);
-		}
-
 		@Override
 		public String getChinese() {
 			return this.chinese;

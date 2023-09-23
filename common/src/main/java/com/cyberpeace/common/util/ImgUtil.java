@@ -1,13 +1,5 @@
 package com.cyberpeace.common.util;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.luciad.imageio.webp.WebPReadParam;
-import lombok.extern.slf4j.Slf4j;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.FileImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,6 +8,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
+
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.luciad.imageio.webp.WebPReadParam;
+
+import com.openhtmltopdf.util.ImageUtil;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ImgUtil {
@@ -42,15 +45,15 @@ public class ImgUtil {
 
 	//获取图片的真实格式
 	public static String imgType(File file) throws IOException {
-		InputStream inputStream = new FileInputStream(file);
-		// 读取文件前几位
-		byte[] fileHeader = new byte[4];
-		int read = inputStream.read(fileHeader, 0, fileHeader.length);
-		inputStream.close();
+		String header;
+		try (InputStream inputStream = new FileInputStream(file)) {
+			// 读取文件前几位
+			byte[] fileHeader = new byte[4];
+			inputStream.read(fileHeader, 0, fileHeader.length);
 
-		// 转为十六进制字符串
-		String header = ImgUtil.bytes2Hex(fileHeader);
-
+			// 转为十六进制字符串
+			header = ImgUtil.bytes2Hex(fileHeader);
+		}
 		if (header.contains("FFD8FF")) {
 			return "jpg";
 		} else if (header.contains("89504E47")) {
@@ -160,5 +163,7 @@ public class ImgUtil {
 		}
 		return lines;
 	}
+
+	private ImgUtil() {}
 
 }

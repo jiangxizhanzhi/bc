@@ -125,7 +125,7 @@ public class MissionController {
 	@ApiOperation("后台更新任务技能点")
 	@PostMapping("/missions/radar_labels")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
-	public BaseRsp updateRadarLabel(@RequestBody @Validated LabelReq labels) {
+	public BaseRsp<Boolean> updateRadarLabel(@RequestBody @Validated LabelReq labels) {
 		// 只有超级用户有权修改
 		UserInfo user = UserInfoContext.getUserContext();
 		if (!user.isSuperuser()) {
@@ -144,7 +144,7 @@ public class MissionController {
 		}
 		missionService.updateRadarLabel(radarLabelList);
 
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("获取任务模板详情")
@@ -187,7 +187,7 @@ public class MissionController {
 				OperationType.CREATE, missionTemplateReq.getTitle());
 
 		MissionTemplateRsp missionTemplateRsp = missionTemplateToRsp(missionTemplate);
-		return new BaseRsp(missionTemplateRsp);
+		return new BaseRsp<>(missionTemplateRsp);
 	}
 
 	@ApiOperation("后台更新任务")
@@ -210,13 +210,13 @@ public class MissionController {
 				OperationType.UPDATE, modifyReq.getTitle());
 
 		MissionTemplateRsp missionTemplateRsp = missionTemplateToRsp(ret);
-		return new BaseRsp(missionTemplateRsp);
+		return new BaseRsp<>(missionTemplateRsp);
 	}
 
 	@ApiOperation("前台更新任务")
 	@PutMapping("/mission_update")
 	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
-	public BaseRsp<?>
+	public BaseRsp<Boolean>
 			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		missionModifyReq.validate();
 		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
@@ -229,7 +229,7 @@ public class MissionController {
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
 				OperationType.UPDATE, missionModifyReq.getTitle());
 
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("获取任务类型")
@@ -245,7 +245,7 @@ public class MissionController {
 	@ApiOperation("创建任务方案")
 	@PostMapping("/combat_techs")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
-	public BaseRsp<?>
+	public BaseRsp<Boolean>
 			createSchemeTemplate(@RequestBody @Validated MissionSchemeTemplateReq templateReq) {
 		// validate
 		templateReq.validate();
@@ -263,7 +263,8 @@ public class MissionController {
 	@ApiOperation("批量删除任务方案")
 	@DeleteMapping("/combat_techs/batch_destroy/")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
-	public BaseRsp<?> batchDeleteSchemeTemplate(@RequestBody @Validated BatchDeleteReq deleteReq) {
+	public BaseRsp<Boolean>
+			batchDeleteSchemeTemplate(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
 		List<MissionSchemeTemplate> missionSchemeTemplateList = missionSchemeTemplateMapper
 				.selectBatchIds(deleteReq.getIds());
@@ -283,7 +284,7 @@ public class MissionController {
 	@ApiOperation("编辑任务方案")
 	@PutMapping("/combat_techs")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
-	public BaseRsp<?> editSchemeTemplate(
+	public BaseRsp<Boolean> editSchemeTemplate(
 			@RequestBody @Validated MissionSchemeTemplateModifyReq templateModifyReq) {
 		templateModifyReq.validate();
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
@@ -324,7 +325,7 @@ public class MissionController {
 			value = "任务方案编号") @RequestParam("resource_id") @Valid @NotBlank String resourceId) {
 		MissionSchemeTemplateRsp templateRsp = missionService.getSchemeTemplateRspById(resourceId);
 		templateRsp.setRepName(remoteUserService.getById(templateRsp.getCreateUser()).getName());
-		return new BaseRsp(templateRsp);
+		return new BaseRsp<>(templateRsp);
 	}
 
 	@ApiOperation("批量导出任务方案")
@@ -354,7 +355,7 @@ public class MissionController {
 	@ApiOperation("批量导入任务方案")
 	@PutMapping("/combat_tech/load")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
-	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
+	public BaseRsp<Boolean> batchLoad(@RequestParam("file") MultipartFile file)
 			throws IOException, ZipException {
 		// 1. save file to temp dir
 		File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
@@ -366,13 +367,13 @@ public class MissionController {
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");
 		}
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("RTKS-获取任务模板列表")
 	@GetMapping("/mission_templates")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<List<MissionTemplateRes>>
+	public BaseRsp<ListRsp<MissionTemplateRes>>
 			listMissionTemplates(@Validated MissionTemplatePageReq pageReq) {
 		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService
 				.pageMissionTemplate(pageReq);

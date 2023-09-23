@@ -1,10 +1,12 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class SceneConfigRsp {
+public class SceneConfigRsp implements Serializable {
 
 	@ApiModelProperty(value = "节点数")
 	private Integer nodeCount;

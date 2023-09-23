@@ -16,7 +16,4 @@ public class BadgeBo implements Serializable {
 
 	@ApiModelProperty(value = "是否显示")
 	private Boolean show;
-
-	// @ApiModelProperty(value = "")
-	// private Integer number;
 }

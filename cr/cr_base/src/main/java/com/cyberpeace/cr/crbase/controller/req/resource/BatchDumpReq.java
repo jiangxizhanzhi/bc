@@ -10,5 +10,5 @@ import lombok.Data;
 public class BatchDumpReq implements Serializable {
 
 	@ApiModelProperty("模板id列表")
-	List<String> ids;
+	private List<String> ids;
 }

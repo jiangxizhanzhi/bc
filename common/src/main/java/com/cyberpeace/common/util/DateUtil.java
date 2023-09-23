@@ -36,4 +36,6 @@ public class DateUtil {
 		cal2.setTime(date2);
 		return cal1.get(Calendar.YEAR)==cal2.get(Calendar.YEAR);
 	}
+
+	private DateUtil() {}
 }

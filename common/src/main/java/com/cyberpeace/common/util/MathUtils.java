@@ -9,6 +9,8 @@ import com.cyberpeace.common.constant.CommonConstant;
 public class MathUtils {
 
 	private static final long serialVersionUID = -3345205828566485102L;
+	
+	private static final Random RANDOM = new Random();
 
 	// 默认除法运算精度
 	private static final Integer DEF_DIV_SCALE = 2;
@@ -29,15 +31,14 @@ public class MathUtils {
 		}
 		//数组，用于存放随机字符
 		char[] chArr = new char[len];
-		Random random = new Random();
 
 		for(int i = 0; i < len; i++){
-			chArr[i] = codes[random.nextInt(codes.length)];
+			chArr[i] = codes[RANDOM.nextInt(codes.length)];
 		}
 
 		//将数组chArr随机排序
 		for(int i = 0; i < len; i++){
-			int r = i + random.nextInt(len - i);
+			int r = i + RANDOM.nextInt(len - i);
 			char temp = chArr[i];
 			chArr[i] = chArr[r];
 			chArr[r] = temp;
@@ -109,8 +110,8 @@ public class MathUtils {
 		if (scale < 0) {
 			throw new IllegalArgumentException("The scale must be a positive integer or zero");
 		}
-		if (null == divisor || divisor.doubleValue() == new Double(0).doubleValue()) {
-			return new Double(0);
+		if (null == divisor || divisor == 0) {
+			return (double) 0;
 		}
 		BigDecimal b1 = new BigDecimal(Double.toString(DataTransferUtils.nullToZero(dividend)));
 		BigDecimal b2 = new BigDecimal(Double.toString(DataTransferUtils.nullToZero(divisor)));
@@ -124,7 +125,7 @@ public class MathUtils {
 	 * @return
 	 */
 	public static Integer ceilDivide(Double dividend, Double divisor) {
-		if (null == divisor || divisor.doubleValue() == new Double(0).doubleValue()) {
+		if (null == divisor || divisor == 0) {
 			return 0;
 		}
 		double result = divide(dividend, divisor, DEF_DIV_SCALE);
@@ -190,7 +191,7 @@ public class MathUtils {
 	 * @return
 	 */
 	public static int randomRange(int max) {
-		return new Random().nextInt(max);
+		return RANDOM.nextInt(max);
 	}
 
 	/**
@@ -222,5 +223,7 @@ public class MathUtils {
 
 		return ret;
 	}
+	
+	private MathUtils() {}
 
 }

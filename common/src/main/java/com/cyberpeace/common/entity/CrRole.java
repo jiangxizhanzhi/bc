@@ -185,11 +185,11 @@ public class CrRole extends BaseTable {
 	}
 
 	public boolean isTeamStudent() {
-		return isTeamRole() && TeamRoleGroup.STUDENT.equals(getRoleGroup());
+		return isTeamRole() && TeamRoleGroup.STUDENT.matches(getRoleGroup());
 	}
 
 	public boolean isTeamTeacher() {
-		return isTeamRole() && TeamRoleGroup.TEACHER.equals(getRoleGroup());
+		return isTeamRole() && TeamRoleGroup.TEACHER.matches(getRoleGroup());
 	}
 
 	/**

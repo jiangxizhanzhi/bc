@@ -1,11 +1,19 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.TrainStatisticsService;
@@ -13,14 +21,6 @@ import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class TrainStatisticsServiceImpl implements TrainStatisticsService {
@@ -130,20 +130,18 @@ public class TrainStatisticsServiceImpl implements TrainStatisticsService {
         for (int i=0;i < rsp.size();i++) {
             StatisticsDetail tmp = rsp.get(i);
             tmp.setOverallRank(i + 1);
-//            rsp.set(i, tmp);
 
             if (searchName && !tmp.getName().contains(userName)){
                 continue;
             }
 
-            //过滤本组织及其子组织数据
-            if (searchOrg) {
-                if (!StringUtils.equals(tmp.getOrganizationId(), organizationId) && !childrenList.contains(tmp.getOrganizationId())) {
-                    continue;
-                }
-            }
-            newRsp.add(tmp);
-        }
+			// 过滤本组织及其子组织数据
+			if (searchOrg && !StringUtils.equals(tmp.getOrganizationId(), organizationId)
+					&& !childrenList.contains(tmp.getOrganizationId())) {
+				continue;
+			}
+			newRsp.add(tmp);
+		}
 
         return PageUtil.getListResult(newRsp, page, newRsp.size());
     }

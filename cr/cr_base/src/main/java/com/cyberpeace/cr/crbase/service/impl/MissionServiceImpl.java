@@ -148,11 +148,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
-		CrRole role = crRoleMapper.selectById(roleId);
-		if (role == null) {
-			log.error("role does not exist！roleId=[{}]", roleId);
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-		}
+		CrRole role = this.getRoleOrException(roleId);
 		List<CrTask> crTasks = crTaskMapper.selectByMissionId(missionId);
 
 		if (crTasks.size() > 0) {
@@ -197,11 +193,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public void roleRelease(String roomId, String roleId, String currentUserId) {
 		List<Mission> missions = lambdaQuery().eq(Mission::getRoomId, roomId).list();
 
-		CrRole role = crRoleMapper.selectById(roleId);
-		if (role == null) {
-			log.error("role does not exist！roleId=[{}]", roleId);
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-		}
+		CrRole role = this.getRoleOrException(roleId);
 
 		List<CrTask> pendingReleaseTasks = new ArrayList<>();
 
@@ -696,11 +688,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
-		CrRole role = crRoleMapper.selectById(roleId);
-		if (role == null) {
-			log.error("role does not exist！roleId=[{}]", roleId);
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-		}
+		CrRole role = this.getRoleOrException(roleId);
 		//已下发的任务
 		List<CrTask> crTasks = crTaskMapper.selectByMissionIds(missionIds);
 
@@ -808,5 +796,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				}
 			}
 		}
+	}
+
+	private CrRole getRoleOrException(String roleId) {
+		CrRole role = crRoleMapper.selectById(roleId);
+		if (role == null) {
+			log.error("role does not exist！roleId=[{}]", roleId);
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+		return role;
 	}
 }

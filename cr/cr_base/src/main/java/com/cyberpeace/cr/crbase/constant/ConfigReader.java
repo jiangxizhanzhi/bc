@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.constant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -26,4 +27,6 @@ class ConfigReader {
 			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION, name, config);
 		}
 	}
+
+	private ConfigReader() {}
 }

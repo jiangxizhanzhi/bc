@@ -9,9 +9,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.cyberpeace.common.constant.CommonConstant;
-
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -127,7 +127,9 @@ public class ZipUtil {
 			throw new BusinessException(ErrorCode.FILE_ZIP_FAIL);
 		} finally {
 			try {
-				zos.close();
+				if (null != zos) {
+					zos.close();
+				}
 			} catch (IOException e) {
 				// io流关闭失败 不做任何操作
 			}
@@ -148,17 +150,18 @@ public class ZipUtil {
 		byte[] buf = new byte[BUFFER_SIZE];
 		// 压缩文件
 		if (sourceFile.isFile()) {
-			// 向zip输出流中添加一个zip实体，构造器中name为zip实体的文件的名字
-			zos.putNextEntry(new ZipEntry(name));
-			// copy文件到zip输出流中
-			int len;
-			FileInputStream in = new FileInputStream(sourceFile);
-			while ((len = in.read(buf)) != -1) {
-				zos.write(buf, 0, len);
+			try (FileInputStream in = new FileInputStream(sourceFile)) {
+				// 向zip输出流中添加一个zip实体，构造器中name为zip实体的文件的名字
+				zos.putNextEntry(new ZipEntry(name));
+				// copy文件到zip输出流中
+				int len;
+				while ((len = in.read(buf)) != -1) {
+					zos.write(buf, 0, len);
+				}
+			} finally {
+				// Complete the entry
+				zos.closeEntry();
 			}
-			// Complete the entry
-			zos.closeEntry();
-			in.close();
 		} else {
 			// 压缩文件夹
 			File[] listFiles = sourceFile.listFiles();
@@ -175,4 +178,6 @@ public class ZipUtil {
 			}
 		}
 	}
+
+	private ZipUtil() {}
 }

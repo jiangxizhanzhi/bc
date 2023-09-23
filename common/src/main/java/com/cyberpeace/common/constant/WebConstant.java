@@ -1,44 +1,46 @@
 package com.cyberpeace.common.constant;
 
-public interface WebConstant {
+public final class WebConstant {
 
-	String CONTENT_TYPE = "application/json;charset=UTF-8";
+	public static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
-	Integer HTTP_200 = 200;
+	public static final Integer HTTP_200 = 200;
 
-	String AUTHORIZATION_HEADER = "Authorization";
+	public static final String AUTHORIZATION_HEADER = "Authorization";
 
-	String TRACE_HEADER = "X-Request-Id";
+	public static final String TRACE_HEADER = "X-Request-Id";
 
-	String LANGUAGE = "Accept-Language";
+	public static final String LANGUAGE = "Accept-Language";
 
-	String LANGUAGE_ZH = "zh-CN";
+	public static final String LANGUAGE_ZH = "zh-CN";
 
-	String LANGUAGE_EN = "en-US";
-
-	/**
-	 * mp鉴权参数
-	 */
-	String CLIENT_ID = "clientId";
+	public static final String LANGUAGE_EN = "en-US";
 
 	/**
 	 * mp鉴权参数
 	 */
-	String CLIENT_SECRET = "clientSecret";
+	public static final String CLIENT_ID = "clientId";
 
-	String ENCODING = "UTF-8";
+	/**
+	 * mp鉴权参数
+	 */
+	public static final String CLIENT_SECRET = "clientSecret";
 
-	String PASS_THROUGH_BUSINESS_ID = "business_id";
+	public static final String ENCODING = "UTF-8";
 
-	String PASS_THROUGH_EXTENSION = "extension";
+	public static final String PASS_THROUGH_BUSINESS_ID = "business_id";
 
-	String PASS_THROUGH_OPERATOR = "operator";
+	public static final String PASS_THROUGH_EXTENSION = "extension";
 
-	Integer SCENE_ID_LENGTH = 32;
+	public static final String PASS_THROUGH_OPERATOR = "operator";
+
+	public static final Integer SCENE_ID_LENGTH = 32;
 
 	/** 外部接口使用*/
-	String OJ_HEADER_KEY = "OPT-OJ-KEY";
+	public static final String OJ_HEADER_KEY = "OPT-OJ-KEY";
 
 	/** 外部接口使用*/
-	String OJ_HEADER_KEY_VALUE = "Cmycjs1bWUHsKb8r";
+	public static final String OJ_HEADER_KEY_VALUE = "Cmycjs1bWUHsKb8r";
+
+	private WebConstant() {}
 }

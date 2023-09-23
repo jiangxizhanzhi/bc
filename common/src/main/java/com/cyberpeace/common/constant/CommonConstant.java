@@ -1,115 +1,121 @@
 package com.cyberpeace.common.constant;
 
-public interface CommonConstant {
+public final class CommonConstant {
+
+	private CommonConstant() {}
+
+	public static final String ORG = "Organization";
+
+	public static final String INDEX_HTML = "index.html";
 
 	/** 常量定义 便于后续查找代码中默认值使用*/
 
 	/** 分类的code分割符*/
-	String CODE_COMMA = ",";
+	public static final String CODE_COMMA = ",";
 
-	String PERIOD = ".";
+	public static final String PERIOD = ".";
 
-	String LEFT_PERIOD_OBLIQUE_LINE = "./";
+	public static final String LEFT_PERIOD_OBLIQUE_LINE = "./";
 
 	/** 空字符串*/
-	String BLANK_STR = "\"\"";
+	public static final String BLANK_STR = "\"\"";
 
 	/** 竖线分割符*/
-	String VERTICAL_LINE = "|";
+	public static final String VERTICAL_LINE = "|";
 
-	String UNDER_LINE = "_";
+	public static final String UNDER_LINE = "_";
 
-	String SHORT_TRANSVERSE_LINE = "-";
+	public static final String SHORT_TRANSVERSE_LINE = "-";
 
-	String LEFT_OBLIQUE_LINE = "/";
+	public static final String LEFT_OBLIQUE_LINE = "/";
 
-	Integer ZERO = 0;
+	public static final Integer ZERO = 0;
 
-	Integer ONE = 1;
+	public static final Integer ONE = 1;
 
-	int TWO = 2;
+	public static final int TWO = 2;
 
-	int THREE = 3;
+	public static final int THREE = 3;
 
-	int FOUR = 4;
+	public static final int FOUR = 4;
 
-	int FIVE = 5;
+	public static final int FIVE = 5;
 
-	int SIX = 6;
+	public static final int SIX = 6;
 
-	int NEGATIVE_ONE = -1;
+	public static final int NEGATIVE_ONE = -1;
 
-	Integer HUNDRED = 100;
+	public static final Integer HUNDRED = 100;
 
-	Integer NINE_NINE_NINE = 999;
+	public static final Integer NINE_NINE_NINE = 999;
 
-	Integer SIXTY = 60;
+	public static final Integer SIXTY = 60;
 
-	Integer EIGHTY = 80;
+	public static final Integer EIGHTY = 80;
 
-	Integer NINETY = 90;
+	public static final Integer NINETY = 90;
 
-	Integer NINE = 9;
+	public static final Integer NINE = 9;
 
-	int EIGHT = 8;
+	public static final int EIGHT = 8;
 
-	int TEN = 10;
+	public static final int TEN = 10;
 
-	int FOURTEEN = 14;
+	public static final int FOURTEEN = 14;
 
-	int FIFTEEN = 15;
+	public static final int FIFTEEN = 15;
 
-	int SIXTEEN = 16;
+	public static final int SIXTEEN = 16;
 
-	Boolean TRUE = true;
+	public static final Boolean TRUE = true;
 
-	Boolean FALSE = false;
+	public static final Boolean FALSE = false;
 
-	String EMPTY_LIST_JSON = "[]";
+	public static final String EMPTY_LIST_JSON = "[]";
 
-	String EMPTY_OBJECT = "{}";
+	public static final String EMPTY_OBJECT = "{}";
 
-	String RIGHT = "是";
+	public static final String RIGHT = "是";
 
-	String NO = "否";
+	public static final String NO = "否";
 
-	String EMPTY_STRING = "";
+	public static final String EMPTY_STRING = "";
 
-	String MD_CODING_BLOCK = "```";
+	public static final String MD_CODING_BLOCK = "```";
 
-	String MD_CODING_BLOCK_ONE = "`";
+	public static final String MD_CODING_BLOCK_ONE = "`";
 
-	String MD_CODING_SINGLE_BLOCK = "`";
+	public static final String MD_CODING_SINGLE_BLOCK = "`";
 
-	String MD_CODING_TWO_BLOCK = "``";
+	public static final String MD_CODING_TWO_BLOCK = "``";
 
-	String ONLINE = "online";
+	public static final String ONLINE = "online";
 
-	Integer THIRTY = 30;
+	public static final Integer THIRTY = 30;
 
-	Integer TWENTY_FOUR_MONTHS = 24 * 30;
+	public static final Integer TWENTY_FOUR_MONTHS = 24 * 30;
 
-	String UTF_8 = "UTF-8";
+	public static final String UTF_8 = "UTF-8";
 
-	String ADMIN_ID = "3f655d87112f4ae094bbaf70830e20aa";
+	public static final String ADMIN_ID = "3f655d87112f4ae094bbaf70830e20aa";
 
-	String SPACE = " ";
+	public static final String SPACE = " ";
 
-	String RETURN = "\n";
+	public static final String RETURN = "\n";
 
-	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
+	public static final long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
 
 	/** 底层 中台 靶场 竞赛共享目录*/
-	String SHARE_DIR = "/data/resource/export/";
+	public static final String SHARE_DIR = "/data/resource/export/";
 
-	String EXPORT_CTF_PATH = SHARE_DIR + "CTF";
+	public static final String EXPORT_CTF_PATH = SHARE_DIR + "CTF";
 
-	String EXPORT_TRAIN_PATH =  SHARE_DIR + "train/";
+	public static final String EXPORT_TRAIN_PATH =  SHARE_DIR + "train/";
 
-	String MD_IMAGE_TEMPLATE = "![](%s)";
+	public static final String MD_IMAGE_TEMPLATE = "![](%s)";
 
-	int TWO_HUNDRED_AND_FIFTY_FIVE = 255;
+	public static final int TWO_HUNDRED_AND_FIFTY_FIVE = 255;
 
-	String BACKSLASH = "\\";
+	public static final String BACKSLASH = "\\";
 
 }

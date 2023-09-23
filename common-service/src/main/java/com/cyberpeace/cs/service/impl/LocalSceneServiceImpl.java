@@ -153,7 +153,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean restartNode(String localSceneId, String nodeId) {
 		LocalScene localScene = getById(localSceneId);
 		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
-			log.error("invalid localScene {}", localSceneId);
+			log.error("invalid localScene: {}", localSceneId);
 			throw new BusinessException(ErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
@@ -170,7 +170,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean recreateNode(String localSceneId, String nodeId) {
 		LocalScene localScene = getById(localSceneId);
 		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
-			log.error("invalid localScene {}", localSceneId);
+			log.error("invalid localScene, id: [{}]", localSceneId);
 			throw new BusinessException(ErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
@@ -409,10 +409,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public JSONArray snapshotHistory(String sceneId, String imageId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
-		if (null == localScene) {
-			log.error("localScene is null,sceneId =[{}]", sceneId);
-			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
-		}
+		this.checkIfLocalSceneNull(localScene, sceneId);
 
 		return remoteSceneService.snapshotHistory(imageId);
 	}
@@ -420,10 +417,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
-		if (null == localScene) {
-			log.error("localScene is null,sceneId =[{}]", sceneId);
-			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
-		}
+		this.checkIfLocalSceneNull(localScene, sceneId);
 
 		return remoteSceneService.mergeSnapshot(snapshotContext);
 	}
@@ -431,10 +425,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
-		if (null == localScene) {
-			log.error("localScene is null,sceneId =[{}]", sceneId);
-			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
-		}
+		this.checkIfLocalSceneNull(localScene, sceneId);
 
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 		SnapshotDeleteContext deleteContext = BeanUtils.copy(sceneOpsContext,
@@ -720,5 +711,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		return localScene;
+	}
+
+	private void checkIfLocalSceneNull(LocalScene localScene, String sceneId) {
+		if (null == localScene) {
+			log.error("localScene is null,sceneId =[{}]", sceneId);
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
 	}
 }

@@ -21,7 +21,7 @@ public class CrRoleContext<T> {
 	private Map<String, MissionCompletion> missionMapping;
 
 	@ApiModelProperty(value = "题解展示状态")
-	private Map<String, ShowWriteup> showWriteupMapping;
+	private Map<String, ShowWriteupBo> showWriteupMapping;
 
 	@ApiModelProperty(value = "动态任务， 冗余")
 	private List<String> dynamic;

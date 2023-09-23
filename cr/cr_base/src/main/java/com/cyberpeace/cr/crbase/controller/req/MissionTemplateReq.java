@@ -1,5 +1,11 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
+import java.io.Serializable;
+import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -8,14 +14,10 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-import java.util.List;
 
 @Data
 @Slf4j
@@ -87,8 +89,8 @@ public class MissionTemplateReq implements Serializable {
 			// validate option
 			List<JSONObject> options = JsonUtil.toJsonObjectArray(option, JSONObject.class);
 			List<String> realOptions = Lists.newArrayList();
-			for (JSONObject option : options) {
-				String optionValue = option.getString("optionValue");
+			for (JSONObject optionObject : options) {
+				String optionValue = optionObject.getString("optionValue");
 				if (optionValue == null) {
 					log.error("Options cannot be empty!");
 					throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);

@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ListRsp<T> implements Serializable {
+public class ListRsp<T> {
 
 	@ApiModelProperty(value = "列表")
 	private List<T> list = Lists.newArrayList();

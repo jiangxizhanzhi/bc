@@ -1,15 +1,15 @@
 package com.cyberpeace.cr.crbase.service.context;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
-import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 public class TrainReportExportContext extends TrainReportContext {
@@ -66,24 +66,27 @@ public class TrainReportExportContext extends TrainReportContext {
     }
 
 	public String getKindString(Map<String, Integer> map) {
-		if (map == null || map.size() == 0)
+		if (map == null || map.size() == 0) {
 			return "";
+		}
 		return map.entrySet().stream()
 				.map(a -> "{name:'" + a.getKey() + "',value:" + a.getValue() + "}")
 				.collect(Collectors.joining(","));
 	}
 
 	public String getKindString(List<AttackTypeCount> list) {
-		if (list == null || list.size() == 0)
+		if (list == null || list.isEmpty()) {
 			return "";
+		}
 		return list.stream()
 				.map(a -> "{name:'" + a.getAttack_type() + "',value:" + a.getTimes() + "}")
 				.collect(Collectors.joining(","));
 	}
 
 	public String getTrendString(List<StudentScoreTrend> list) {
-		if (list == null || list.size() == 0)
+		if (list == null || list.isEmpty()) {
 			return "";
+		}
 		for (StudentScoreTrend trend : list) {
 			if(trend.getUserData().getRepName().getBytes().length>19) {
 				trend.getUserData().setRepName(getName(trend.getUserData().getRepName()));

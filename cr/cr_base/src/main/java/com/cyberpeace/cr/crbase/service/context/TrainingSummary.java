@@ -1,6 +1,6 @@
 package com.cyberpeace.cr.crbase.service.context;
 
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class TrainingSummary {
 	private Integer duration = 0;
 
 	public void addScore(Integer addend, Integer missionType) {
-		if (Mission.isObjective(missionType)) {
+		if (MissionBase.isObjective(missionType)) {
 			this.getScoreObjective += addend;
 		} else {
 			this.getScoreSubjective += addend;
@@ -38,7 +38,7 @@ public class TrainingSummary {
 	}
 
 	public void addTotal(Integer addend, Integer missionType) {
-		if (Mission.isObjective(missionType)) {
+		if (MissionBase.isObjective(missionType)) {
 			this.sumScoreObjective += addend;
 		} else {
 			this.sumScoreSubjective += addend;

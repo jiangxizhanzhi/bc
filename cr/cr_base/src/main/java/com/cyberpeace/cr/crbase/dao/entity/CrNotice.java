@@ -9,6 +9,7 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.constant.BaseI18n;
+
 import lombok.Data;
 import lombok.Getter;
 
@@ -76,10 +77,6 @@ public class CrNotice extends BaseTable {
             this.code = code;
             this.chinese = chinese;
             this.english = english;
-        }
-
-        public boolean equals(Integer roleGroupCode) {
-            return getCode().equals(roleGroupCode);
         }
 
         @Override

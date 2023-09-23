@@ -7,6 +7,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +55,9 @@ public class HtmlToPdfUtil {
 			// 最多执行5分钟，不然就算bug
 			proc.waitFor(5, TimeUnit.MINUTES);
 			return true;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return false;
 		} catch (Exception e) {
 			log.error("[{}] to [{}] convert pdf error", htmlFilePath, pdfFilePath, e);
 			return false;
@@ -117,13 +122,14 @@ public class HtmlToPdfUtil {
 					htmlTemplateEnum.getTemplatePath() + File.separatorChar
 							+ htmlTemplateEnum.getTemplateName(),
 					e);
-			throw new RuntimeException(e);
+			throw new BusinessException(ErrorCode.FAILED_TO_GET_HTML_TEMPLATE_INSTANCE);
 		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {}
+			if (null != writer) {
+				try {
+					writer.close();
+				} catch (IOException e) {}
+			}
 		}
-
 	}
 
 	private static void ensureDir(File file) {

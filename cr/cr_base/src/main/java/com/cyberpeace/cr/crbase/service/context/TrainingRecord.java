@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.context;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrainingRecord {
+public class TrainingRecord implements Serializable {
 
 	@ApiModelProperty(value = "时间")
 	private Date time;

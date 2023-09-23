@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -17,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -52,8 +52,6 @@ public class CrBaseController {
 	public BaseRsp<TrainingStatisticsRsp>
 			getTrainingStatistics(@ApiParam @Validated PageReqBase req) {
 
-//		TrainingStatisticsPage page = new TrainingStatisticsPage(req);
-
 		String userId = UserInfoContext.getUserContext().getUserId();
 		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, req);
 
@@ -62,18 +60,18 @@ public class CrBaseController {
 
 	@ApiOperation("获取常量配置")
 	@GetMapping("/constants_config")
-	public BaseRsp getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
+	public BaseRsp<Object> getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
 		List<CrConstantsConfig> constants = crConstantsService.getByType(type);
 		// 任务类型
 		if (type.equals(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode())) {
 			List<MissionCategoryRsp> rsp = StreamApiUtils.map(constants,
 					constant -> new MissionCategoryRsp(constant.getResourceId(),
 							constant.selectI18nName()));
-			return new BaseRsp(rsp);
+			return new BaseRsp<>(rsp);
 		} else {
 			List<CodeNameRsp> rsp = StreamApiUtils.map(constants,
 					constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName()));
-			return new BaseRsp(rsp);
+			return new BaseRsp<>(rsp);
 		}
 	}
 

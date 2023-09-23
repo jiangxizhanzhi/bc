@@ -90,7 +90,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	@Override
 	public IPage<EvalTemplate> list(@Validated EvalTemplateListQuery evalTemplateListQuery) {
 
-		Page page = evalTemplateListQuery.toPageParam();
+		Page<EvalTemplate> page = evalTemplateListQuery.toPageParam();
 
 		// 根据用户获取模板列表
         return evalTemplateMapper.listEvalTemplates(page, evalTemplateListQuery,
@@ -173,8 +173,8 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		CrCommonValidator.validateNameLen(templateName, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 
 		// 校验名称重复
-		if (evalTemplateMapper.existByNameAndUserIdAndId(templateName,
-				UserInfoContext.getUserContext().getUserId(), templateId)) {
+		if (Boolean.TRUE.equals(evalTemplateMapper.existByNameAndUserIdAndId(templateName,
+				UserInfoContext.getUserContext().getUserId(), templateId))) {
 			log.error("Name duplicate! templateName = [{}]", templateName);
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
@@ -185,15 +185,16 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 
 		// 校验LOGO文件是否存在
-		if (!attachmentService.isExist(evalTemplateBaseInfoContext.getLogoId())) {
+		if (Boolean.FALSE
+				.equals(attachmentService.isExist(evalTemplateBaseInfoContext.getLogoId()))) {
 			log.error("The logo file does not exist! logoId = [{}]", evalTemplateBaseInfoContext.getLogoId());
 			throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
 		}
 
 		// 校验测试靶场的类型是否存在
-		if (!crConstantsService.validateType(
+		if (Boolean.FALSE.equals(crConstantsService.validateType(
 				CrConstantsConfig.ConstantsType.EVALUATION_CATEGORY.getCode(),
-				evalTemplateBaseInfoContext.getCategoryCode())) {
+				evalTemplateBaseInfoContext.getCategoryCode()))) {
 			log.error("The evaluation type does not exist! categoryCode = [{}]", evalTemplateBaseInfoContext.getCategoryCode());
 			throw new BusinessException(CrBusinessErrorCode.EVAL_CATEGORY_NOT_EXIST);
 		}
@@ -227,7 +228,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		// 校验步骤配置的stage
 		List<Integer> expectStageList = ListUtil.listRangeInt(1, stageList.size());
 		if (new HashSet<>(stageList).size() != expectStageList.size()
-				|| !ListUtil.compare2List(stageList, expectStageList)) {
+				|| Boolean.TRUE.equals(!ListUtil.compare2List(stageList, expectStageList))) {
 			log.error("The configuration of the evaluation step is incorrect! expectStageList = [{}]", JsonUtil.toJsonString(stageList));
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}

@@ -1,10 +1,10 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class EvalAlgorithmRefReq {

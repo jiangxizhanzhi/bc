@@ -1,17 +1,16 @@
 package com.cyberpeace.cr.evaluation.service;
 
 
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-
-import java.util.List;
-import java.util.Map;
 
 public interface EvalRecordService extends IService<EvalRecord> {
 
@@ -33,7 +32,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @param pattern 名称模糊查询
      * @return 分页结构数据
      */
-    ListRsp<EvalRecordListRsp> pageList(Page page, String taskId, Integer status, String pattern);
+    ListRsp<EvalRecordListRsp> pageList(Page<EvalRecordListRsp> page, String taskId, Integer status, String pattern);
 
     /**
      * 已结束测评实例创建评估任务

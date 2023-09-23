@@ -1,14 +1,14 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
-import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

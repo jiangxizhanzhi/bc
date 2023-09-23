@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
+import javax.validation.constraints.NotNull;
+
 import com.cyberpeace.common.model.PageReqBase;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 public class EvalRecordListReq extends PageReqBase {

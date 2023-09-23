@@ -1,5 +1,15 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -30,16 +40,8 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Date;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -112,7 +114,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 		EvalTaskOpsContext evalTaskOpsContext = new EvalTaskOpsContext();
 
-		EvalTask evalTask = validateUser ? getTask(taskId) : getById(taskId);
+		EvalTask evalTask = Boolean.TRUE.equals(validateUser) ? getTask(taskId) : getById(taskId);
 
 		evalTaskOpsContext.setEvalTask(evalTask);
 
@@ -317,7 +319,8 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		CrCommonValidator.validateNameLen(taskName, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 
 		// 校验名称重复
-		if (evalTaskMapper.existByNameAndTemplateId(taskName, templateId, taskId)) {
+		if (Boolean.TRUE
+				.equals(evalTaskMapper.existByNameAndTemplateId(taskName, templateId, taskId))) {
 			log.error("Name duplicate! taskName = [{}], templateId = [{}], taskId = [{}]", taskName, templateId, taskId);
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}

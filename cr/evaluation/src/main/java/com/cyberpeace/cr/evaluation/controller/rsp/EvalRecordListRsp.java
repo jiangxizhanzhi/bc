@@ -1,11 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @ApiModel("评估列表数据")

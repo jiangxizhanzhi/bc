@@ -1,5 +1,19 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -25,23 +39,11 @@ import com.cyberpeace.cr.evaluation.service.EvalIndexService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Api(tags = "后台-测试靶场-指标体系")
 @RestController
@@ -65,7 +67,7 @@ public class EvalSystemIndexAdminController {
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
-	public BaseRsp<EvalSystem> addEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
+	public BaseRsp<EvalSystemReq> addEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -78,13 +80,13 @@ public class EvalSystemIndexAdminController {
 			}
 		});
 
-		return new BaseRsp(evalSystemReq);
+		return new BaseRsp<>(evalSystemReq);
 	}
 
 	@ApiOperation("编辑体系指标")
 	@PutMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
-	public BaseRsp<EvalSystem> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
+	public BaseRsp<EvalSystemReq> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
 		EvalSystem evalSystem = evalSystemService.getById(evalSystemReq.getEvalSystemId());
 		if (null == evalSystem) {
@@ -104,7 +106,7 @@ public class EvalSystemIndexAdminController {
 			}
 		});
 
-		return new BaseRsp(evalSystemReq);
+		return new BaseRsp<>(evalSystemReq);
 	}
 
 	private EvalSystem saveEvalIndex(@Validated @RequestBody EvalSystemReq evalSystemReq) {
@@ -164,11 +166,11 @@ public class EvalSystemIndexAdminController {
 	private void changeChildrenIds(List<IndexContext> secondIndexList,
 			List<EvalIndex> thirdIndexList) {
 		Map<String, String> thirdIndexMaps = StreamApiUtils.toMap(thirdIndexList,
-				EvalIndex::getEvalIndicatorId, evalIndex -> evalIndex.getResourceId());
+				EvalIndex::getEvalIndicatorId, EvalIndex::getResourceId);
 
 		for (IndexContext indexContext : secondIndexList) {
 			indexContext.setChildrenIds(indexContext.getChildrenIds().stream()
-					.map(string -> thirdIndexMaps.get(string)).collect(Collectors.toList()));
+					.map(thirdIndexMaps::get).collect(Collectors.toList()));
 		}
 	}
 
@@ -176,15 +178,15 @@ public class EvalSystemIndexAdminController {
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystemRsp> getEvalIndex(
-			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "模板id", required = true) String resourceId) {
 
-		EvalSystem evalSystem = evalSystemService.getById(resource_id);
+		EvalSystem evalSystem = evalSystemService.getById(resourceId);
 		if (null == evalSystem) {
-			log.info("EvalSystem not found! EvalSystemId=[{}]", resource_id);
+			log.info("EvalSystem not found! EvalSystemId=[{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		EvalSystemRsp evalSystemRsp = convertEvalSystemToEvalSystemRsp(evalSystem);
-		return new BaseRsp(evalSystemRsp);
+		return new BaseRsp<>(evalSystemRsp);
 	}
 
 	private EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem) {
@@ -204,7 +206,7 @@ public class EvalSystemIndexAdminController {
 	private List<EvalIndex> convertIndexReqToIndex(List<IndexContext> indexContextList,
 			Integer level) {
 
-		List<EvalIndex> evalIndexList = indexContextList.stream().map(indexReq -> {
+		return indexContextList.stream().map(indexReq -> {
 			EvalIndex evalIndex = BeanUtils.copy(indexReq, EvalIndex.class);
 
 			evalIndex.setResourceId(indexReq.getIndexId());
@@ -228,8 +230,6 @@ public class EvalSystemIndexAdminController {
 
 			return evalIndex;
 		}).collect(Collectors.toList());
-
-		return evalIndexList;
 	}
 
 	@DeleteMapping()
@@ -256,6 +256,6 @@ public class EvalSystemIndexAdminController {
 
 		IPage<EvalSystem> data = evalSystemService.page(listQuery);
 
-		return new BaseRsp(PageUtil.getListResult(data));
+		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 }

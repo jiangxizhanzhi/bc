@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
+import javax.validation.constraints.NotEmpty;
+
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
 
 @Data
 public class EvalIndexRefReq {

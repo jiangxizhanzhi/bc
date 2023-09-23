@@ -46,8 +46,8 @@ public class AlgorithmJob {
 
 		List<String> unUsedAlgorithmIds = Lists.newArrayList();
 
-		HashSet h1 = new HashSet(allAlgorithmIds);
-		HashSet h2 = new HashSet(usedAlgorithmIds);
+		HashSet<String> h1 = new HashSet<>(allAlgorithmIds);
+		HashSet<String> h2 = new HashSet<>(usedAlgorithmIds);
 		h1.removeAll(h2);
 
 		unUsedAlgorithmIds.addAll(h1);

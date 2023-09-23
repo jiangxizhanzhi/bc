@@ -1,27 +1,27 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class EvalAlgorithmRefServiceImpl extends ServiceImpl<EvalAlgorithmRefMapper, EvalAlgorithmRef> implements EvalAlgorithmRefService {
 
-    private final String PARAM_NAME = "param_name";
+    private static final String PARAM_TYPE = "param_type";
 
-    private final String PARAM_TYPE = "param_type";
-
-    private final String PARAM_VALUE = "default_value";
+    private static final String PARAM_VALUE = "default_value";
 
     @Override
     public List<Serializable> buildOtherArguments(String argumentsString) {

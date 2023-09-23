@@ -55,16 +55,16 @@ public class EvalSystemController {
 	@ApiOperation("查询体系指标")
 	@GetMapping("")
 	public BaseRsp<EvalSystemTreeRsp> getEvalIndexTree(
-			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "模板id", required = true) String resourceId) {
 
-		EvalSystem evalSystem = evalSystemService.getById(resource_id);
+		EvalSystem evalSystem = evalSystemService.getById(resourceId);
 		if (null == evalSystem) {
-			log.info("EvalSystem not found! EvalSystemId=[{}]", resource_id);
+			log.info("EvalSystem not found! EvalSystemId=[{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		EvalSystemTreeRsp evalSystemRsp = convertEvalSystemToEvalSystemTreeRsp(evalSystem);
 
-		return new BaseRsp(evalSystemRsp);
+		return new BaseRsp<>(evalSystemRsp);
 	}
 
 	private EvalSystemTreeRsp convertEvalSystemToEvalSystemTreeRsp(EvalSystem evalSystem) {
@@ -145,8 +145,7 @@ public class EvalSystemController {
 
 	private Map<String, EvalSystemTreeRsp> getMapByIndex(List<IndexContext> secondIndexes,
 			List<IndexContext> thirdIndexes) {
-		Map<String, EvalSystemTreeRsp> evalSystemTreeRspMap = evalSystemTreeRspMap = Maps
-				.newHashMap();
+		Map<String, EvalSystemTreeRsp> evalSystemTreeRspMap = Maps.newHashMap();
 		for (IndexContext indexContext : secondIndexes) {
 			EvalSystemTreeRsp evalSystemTreeRsp = convertIndexToEvalSystemTreeRsp(indexContext,
 					EvalIndex.Level.SECOND.getCode());

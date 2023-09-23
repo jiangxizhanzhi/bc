@@ -1,12 +1,14 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
-import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
+
+import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {

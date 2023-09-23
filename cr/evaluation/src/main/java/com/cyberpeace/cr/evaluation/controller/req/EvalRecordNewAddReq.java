@@ -1,15 +1,17 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class EvalRecordNewAddReq implements Serializable {

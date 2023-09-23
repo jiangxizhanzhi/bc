@@ -1,16 +1,16 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import com.cyberpeace.common.util.JsonUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
@@ -19,6 +19,8 @@ import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -62,7 +64,7 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 		Boolean stopResult = localSceneService.stopScene(localScene);
 
 		// 停止场景失败时的处理
-		if (!stopResult) {
+		if (Boolean.FALSE.equals(stopResult)) {
 			log.error("Failed to stop scene! localScene = [{}]", JsonUtil.toJsonString(localScene));
 			throw new BusinessException(ErrorCode.FAILED_TO_STOP_SCENE);
 		}
@@ -73,7 +75,7 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 	@Override
 	public ElementFlowListContext getElementFlowListContext(
 			EvalTaskFlowListQuery evalTaskFlowListQuery, EvalTask evalTask) {
-		Page page = evalTaskFlowListQuery.toPageParam();
+		Page<ElementFlow> page = evalTaskFlowListQuery.toPageParam();
 
 		ElementFlowListContext context = BeanUtils.copy(evalTaskFlowListQuery,
 				ElementFlowListContext.class);

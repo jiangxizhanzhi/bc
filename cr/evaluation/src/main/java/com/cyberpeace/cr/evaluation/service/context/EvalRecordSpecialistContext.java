@@ -1,10 +1,9 @@
 package com.cyberpeace.cr.evaluation.service.context;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Data
 public class EvalRecordSpecialistContext implements Serializable {

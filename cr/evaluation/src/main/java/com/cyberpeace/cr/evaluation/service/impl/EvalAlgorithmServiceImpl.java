@@ -37,11 +37,10 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 
 	@Override
 	public Integer selectUsedNum(List<String> ids) {
-		Integer num = evalAggregationMapper.selectAlgorithmNum(ids)
+		return evalAggregationMapper.selectAlgorithmNum(ids)
 				+ evalCollectionMapper.selectAlgorithmSum(ids)
 				+ evalIndexMapper.selectAlgorithmSum(ids)
 				+ evalIndicatorMapper.selectAlgorithmSum(ids);
-		return num;
 	}
 
 	@Override
@@ -64,7 +63,7 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	@Override
 	public IPage<EvalAlgorithm> page(EvalListQuery listQuery) {
 
-		Page page = listQuery.toPageParam();
+		Page<EvalAlgorithm> page = listQuery.toPageParam();
 
         return evalAlgorithmMapper.listEvalAlgorithm(page, listQuery);
 	}

@@ -1,17 +1,19 @@
 package com.cyberpeace.cr.evaluation.utils;
 
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 public class MatrixData {
 
     public static double [][] getFormatMatrixData(String matrixData){
-        JSONArray objects = JSONArray.parseArray(matrixData);
+		JSONArray objects = JSON.parseArray(matrixData);
         double [][] res = new double[objects.size()][];
         for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject = objects.getJSONObject(i);

@@ -1,18 +1,21 @@
 package com.cyberpeace.config.log4j;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import com.cyberpeace.common.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.helpers.OptionConverter;
 import org.apache.log4j.spi.LoggingEvent;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public class CustomLogAppender extends FileAppender {
@@ -50,8 +53,9 @@ public class CustomLogAppender extends FileAppender {
         activateOptions();
     }
 
+    @Override
     protected void setQWForFiles(Writer writer) {
-        qw = new CustomCountingQuietWriter(writer, errorHandler, this.encoding);
+        qw = new CustomCountingQuietWriter(writer, errorHandler);
     }
 
     public void setMaxFileSize(String maxFileSize) {

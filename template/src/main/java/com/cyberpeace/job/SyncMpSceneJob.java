@@ -78,7 +78,7 @@ public class SyncMpSceneJob {
 					localScene.getUserId());
 
 			SceneStatusEnum statusEnum = SceneStatusCompute.compute(scene);
-			if (!statusEnum.isClose()) {
+			if (Boolean.FALSE.equals(statusEnum.isClose())) {
 				return;
 			}
 		} catch (RemoteServiceException e) {
@@ -92,10 +92,10 @@ public class SyncMpSceneJob {
 			}
 		}
 
-		if (isOj(localScene.getBusinessCode())) {
+		if (Boolean.TRUE.equals(isOj(localScene.getBusinessCode()))) {
 			ojLocalSceneService.deleteLocalScene(localScene.getBusinessInstanceId());
 
-		} else if (isClassroom(localScene.getBusinessCode())) {
+		} else if (Boolean.TRUE.equals(isClassroom(localScene.getBusinessCode()))) {
 			deleteClassScene(localScene);
 		}
 	}

@@ -25,7 +25,7 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 
 		Integer row = 0;
 
-		if (isCollection) {
+		if (Boolean.TRUE.equals(isCollection)) {
 			ResourceCollection collection = BeanUtils.copy(collectionContext,
 					ResourceCollection.class);
 			row = resourceCollectionMapper.insert(collection);

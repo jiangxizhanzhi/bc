@@ -6,7 +6,6 @@ import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryReq;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.GuideHistoryRsp;
 import com.cyberpeace.cr.crbase.service.GuideHistoryService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +39,7 @@ public class SituationPlaybackController {
 		return new BaseRsp<>(guideHistoryService.getEventTimeList(roomId, businessType));
 	}
 
-	@ApiModelProperty("单个执行")
+	@ApiOperation("单个执行")
 	@PostMapping("/execute")
 	public BaseRsp<Boolean> execute(@RequestBody @Validated ExecGuideHisRep execGuideHisRep) {
 		return new BaseRsp<>(guideHistoryService.execute(execGuideHisRep));

@@ -1,8 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
-import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -26,7 +24,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -171,7 +168,7 @@ public class WebNoteController {
 		// 文件路径处理
 		String viewPath = utilService.handlerFileUrl(uploadFile.getFilePath());
 		uploadFile.setFilePath(viewPath);
-		return new BaseRsp(uploadFile);
+		return new BaseRsp<>(uploadFile);
 	}
 
 	@ApiOperation("实验报告保存/更新")

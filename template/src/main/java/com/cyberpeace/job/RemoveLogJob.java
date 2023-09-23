@@ -24,6 +24,9 @@ public class RemoveLogJob {
             dos.writeBytes("exit\n");
             dos.flush();
             p.waitFor();
+        }catch (InterruptedException e) {
+            log.warn("Interrupted!", e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             log.error("Exec shell error! command=[{}], catch error:", cmd, e);
         } finally {

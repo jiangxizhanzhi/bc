@@ -203,19 +203,19 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             String currentDate = TimeUtil.format8(date);
             dates.add(currentDate);
             List<LessonRecord> courseRecordLists = courseRecordMap.get(currentDate);
-            if (courseRecordLists == null || courseRecordLists.size() == 0) {
+            if (CollectionUtils.isEmpty(courseRecordLists)) {
                 courseRecords.add(0);
             } else {
                 courseRecords.add(courseRecordLists.size());
             }
             List<Note> finishReportLists = finishReportMap.get(currentDate);
-            if (finishReportLists == null || finishReportLists.size() == 0) {
+            if (CollectionUtils.isEmpty(finishReportLists)) {
                 reportRecords.add(0);
             } else {
                 reportRecords.add(finishReportLists.size());
             }
             List<NoteEvaluate> reportAverageLists = reportAverageMap.get(currentDate);
-            if (reportAverageLists == null || reportAverageLists.size() == 0) {
+            if (CollectionUtils.isEmpty(reportAverageLists)) {
                 reportAverageRecords.add(0.0d);
             } else {
                 double asDouble = reportAverageLists.stream().mapToDouble(NoteEvaluate::getScore).average().getAsDouble();
@@ -332,10 +332,10 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         note.setUserName(userInfo.getUserName());
         if (note.getResourceType() != null) {
             String themeName = note.getThemeName();
-            if (note.getResourceType() == Note.NoteResourceType.OPTION.getCode()) {
+            if (note.getResourceType().equals(Note.NoteResourceType.OPTION.getCode())) {
                 note.setThemeName(EXERCISE.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
             }
-            if (note.getResourceType() == Note.NoteResourceType.THEORY.getCode()) {
+            if (note.getResourceType().equals(Note.NoteResourceType.THEORY.getCode())) {
                 note.setThemeName(THEORY.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
             }
         }

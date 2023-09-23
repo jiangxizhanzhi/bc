@@ -35,7 +35,7 @@ public interface NoteService extends IService<Note> {
      * @param noteListQuery
      * @return
      */
-    IPage<NoteListBo> pageByUserNameAndContent(Page page, AdminNoteListQuery noteListQuery, Boolean isWeb);
+    IPage<NoteListBo> pageByUserNameAndContent(Page<NoteListBo> page, AdminNoteListQuery noteListQuery, Boolean isWeb);
 
     /**
      * 实验报告保存和更新

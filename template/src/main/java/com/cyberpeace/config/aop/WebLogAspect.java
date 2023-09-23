@@ -43,12 +43,9 @@ public class WebLogAspect {
             //参数值和参数名称是顺序是一致的
             Map<String, Object> map = new LinkedHashMap<>();
             for (int i = 0; i < parameterNames.length; i++) {
-                // 获取每个参数值
-                if (Objects.nonNull(args[i])) {
-                    //过滤掉参数类型为 HttpServletResponse
-                    if (args[i] instanceof HttpServletResponse) {
-                        continue;
-                    }
+                // 获取每个参数值,过滤掉参数类型为 HttpServletResponse
+                if ((Objects.nonNull(args[i])) && (args[i] instanceof HttpServletResponse)) {
+                    continue;
                 }
                 // 添加到LinkedHashMap中
                 map.put(parameterNames[i], args[i]);

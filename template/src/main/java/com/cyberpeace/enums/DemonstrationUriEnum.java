@@ -1,6 +1,7 @@
 package com.cyberpeace.enums;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.DateUtil;
 
@@ -62,19 +63,19 @@ public enum DemonstrationUriEnum {
 
         @Override
         public String deal(String content) {
-            List<JSONObject> list = JSONObject.parseArray(content, JSONObject.class);
+            List<JSONObject> list = JSON.parseArray(content, JSONObject.class);
             String date = DateUtil.DateToString(new Date(),"yyyy-MM-dd");
             for (JSONObject jsonObject : list) {
                 jsonObject.put("create_time",date);
             }
-            return JSONObject.toJSONString(list);
+            return JSON.toJSONString(list);
         }
     }
     public static class SituationTrendServiceImpl implements DemonstrationService{
 
         @Override
         public String deal(String content) {
-            JSONObject trend = JSONObject.parseObject(content);
+            JSONObject trend = JSON.parseObject(content);
             List<String> xDates = new ArrayList<>();
             Calendar calendar = Calendar.getInstance();
             for (int i = 0; i < 10; i++) {

@@ -28,9 +28,9 @@ public class SystemUseStatusJob {
 	private boolean insertSystemUseStatus;
 
 	@PostConstruct
-	public void init() {{
+	public void init() {
 		insertSystemUseStatus = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.insertSystemUseStatus"));
-	}}
+	}
 
 	@Scheduled(fixedRate =  5 * 60 * 1000)
 	public void insertSystemUseStatus() {

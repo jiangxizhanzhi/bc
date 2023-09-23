@@ -16,16 +16,16 @@ public class CustomCountingQuietWriter extends QuietWriter {
     protected String encoding;
 
 
-    public CustomCountingQuietWriter(Writer writer, ErrorHandler eh, String encoding) {
+    public CustomCountingQuietWriter(Writer writer, ErrorHandler eh) {
         super(writer, eh);
         this.encoding = "utf-8";
     }
 
+    @Override
     public void write(String string) {
         try {
             this.out.write(string);
-//            this.count += (long)string.getBytes(this.encoding).length;
-            this.count += (long)string.length();
+            this.count += string.length();
         } catch (IOException var3) {
             this.errorHandler.error("Write failure.", var3, 1);
         }

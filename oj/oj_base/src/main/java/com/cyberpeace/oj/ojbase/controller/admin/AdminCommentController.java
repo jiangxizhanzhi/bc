@@ -62,13 +62,13 @@ public class AdminCommentController {
 	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
 	public BaseRsp<ListRsp<CommentBo>>
 			parentList(@ApiParam @Validated PageCommentReq pageCommentReq) {
-		Page page = pageCommentReq.toPageParam();
+		Page<CommentBo> page = pageCommentReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
 		}
 		ListRsp<CommentBo> listRsp = commentService.pageParentComment(page,
 				pageCommentReq.getBusinessType(), pageCommentReq.getPattern());
-		return new BaseRsp(listRsp);
+		return new BaseRsp<>(listRsp);
 	}
 
 	@ApiOperation("分页查询二级留言")
@@ -76,13 +76,13 @@ public class AdminCommentController {
 	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
 	public BaseRsp<ListRsp<CommentBo>>
 			childrenList(@ApiParam @Validated PageChildrenCommentReq pageChildrenCommentReq) {
-		Page page = pageChildrenCommentReq.toPageParam();
+		Page<CommentBo> page = pageChildrenCommentReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.CREATE_TIME, false);
 		}
 		ListRsp<CommentBo> listRsp = commentService.pageChildrenComment(page,
 				pageChildrenCommentReq.getResourceId());
-		return new BaseRsp(listRsp);
+		return new BaseRsp<>(listRsp);
 	}
 
 }

@@ -1,13 +1,5 @@
 package com.cyberpeace.demo.ws;
 
-import java.util.Date;
-
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -16,9 +8,15 @@ import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.model.DemoWsMessage;
 import com.cyberpeace.model.DemoWsMessageIdentifier;
 import com.cyberpeace.rtks.dao.entity.Task;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
 
 @Api(tags = "template的demo")
 @RestController
@@ -49,7 +47,7 @@ public class TemplateDemoController {
 
 		myWebSocketHandler.pushMessage(messageContext, false);
 
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("测试websocket消息发送2")
@@ -67,6 +65,6 @@ public class TemplateDemoController {
 
 		myWebSocketHandler.pushMessage(messageContext, true);
 
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 }

@@ -1,11 +1,9 @@
 package com.cyberpeace.config.auth;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.config.filter.FilterConfig;
 import com.cyberpeace.enums.DemonstrationUriEnum;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 public class DemonstrationFilter implements Filter {
@@ -49,11 +46,11 @@ public class DemonstrationFilter implements Filter {
                         }
                         contentCache.put(filePath,content);
                     }
-                    BaseRsp baseRsp = new BaseRsp(JSONObject.parse(content));
+                    BaseRsp<Object> baseRsp = new BaseRsp<>(JSON.parse(content));
                     // 如果是名单内请求，直接返回固定数据
                     response.setCharacterEncoding("UTF-8");
                     response.setContentType("text/plain;charset=UTF-8");
-                    response.getWriter().write(JSONObject.toJSONString(baseRsp));
+                    response.getWriter().write(JSON.toJSONString(baseRsp));
                     return;
                 }
 

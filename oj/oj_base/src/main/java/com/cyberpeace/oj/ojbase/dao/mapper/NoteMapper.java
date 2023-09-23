@@ -17,7 +17,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 
 	Note selectByCondition(@Param("context") NoteUniqueContext context);
 
-	IPage<Note> pageByUserIdsAndContent(Page page,
+	IPage<Note> pageByUserIdsAndContent(Page<Note> page,
 			@Param("noteListQuery") NoteListQuery noteListQuery,
 			@Param("isPublic") Boolean isPublic,
 			@Param("isSubmit") Boolean isSubmit);

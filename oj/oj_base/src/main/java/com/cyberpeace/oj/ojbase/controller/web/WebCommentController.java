@@ -49,7 +49,7 @@ public class WebCommentController {
 		ListRsp<CommentBo> listRsp = commentService.pageComment(page,
 				pageCommentReq.getBusinessId(), pageCommentReq.getBusinessType(), true);
 
-		return new BaseRsp(listRsp);
+		return new BaseRsp<>(listRsp);
 	}
 
 	@ApiOperation("留言点赞")

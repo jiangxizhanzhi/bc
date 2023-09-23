@@ -78,9 +78,9 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 	/**
 	 * 是否开启录屏
 	 * @param topoId
-	 * @param record
+	 * @param enableRecording
 	 * @return
 	 */
-	JSONObject switchScreenRecord(String topoId, Boolean record);
+	JSONObject switchScreenRecord(String topoId, Boolean enableRecording);
 
 }

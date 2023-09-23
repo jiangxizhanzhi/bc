@@ -1,18 +1,9 @@
 package com.cyberpeace.job;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.GuavaCacheUtil;
@@ -26,12 +17,19 @@ import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.google.common.cache.Cache;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 场景自动关闭定时任务
@@ -91,7 +89,7 @@ public class SceneJob {
 		// 目前只有实训的课程表
 		for (LocalScene localScene : sceneList) {
 			try {
-				CountDown(localScene);
+				countDown(localScene);
 			} catch (Exception e) {
 				log.error(
 						"Description Scene countdown notification failed to be pushed! local_scene_id=[{}], catch error:",
@@ -100,7 +98,7 @@ public class SceneJob {
 		}
 	}
 
-	private void CountDown(LocalScene localScene) {
+	private void countDown(LocalScene localScene) {
 
 		// 如果消息已推送 不重复推送
 		if (null != sceneCache.getIfPresent(localScene.getResourceId())) {

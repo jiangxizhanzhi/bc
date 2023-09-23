@@ -18,6 +18,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.service.CommentService;
 import com.cyberpeace.oj.ojbase.service.bo.CommentBo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -150,7 +151,7 @@ public class CommentServiceImpl implements CommentService {
 		commentLike.setCommentId(commentId);
 		commentLike.setUserId(userId);
 
-		return isLike ? commentLikeMapper.insert(commentLike)
+		return Boolean.TRUE.equals(isLike) ? commentLikeMapper.insert(commentLike)
 				: commentLikeMapper.deleteByUserAndId(userId, commentId);
 	}
 
@@ -163,7 +164,7 @@ public class CommentServiceImpl implements CommentService {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				// 获取所有应删除的id
 				List<String> childrenIds = commentMapper.selectIdsByParent(commentIds);
-				while (childrenIds != null && childrenIds.size() > 0) {
+				while (CollectionUtils.isNotEmpty(childrenIds)) {
 					commentIds.addAll(childrenIds);
 					childrenIds = commentMapper.selectIdsByParent(childrenIds);
 				}

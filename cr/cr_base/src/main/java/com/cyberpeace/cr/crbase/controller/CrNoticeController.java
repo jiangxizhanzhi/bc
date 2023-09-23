@@ -1,21 +1,23 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.util.List;
+
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
 import com.cyberpeace.cr.crbase.service.CrNoticeService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags = "公告")
 @RestController
@@ -53,9 +55,9 @@ public class CrNoticeController {
 	@RequiresPermissions(
 			value = { MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
-	public BaseRsp delete(@RequestBody CrNoticeReq crNoticeReq) {
+	public BaseRsp<Boolean> delete(@RequestBody CrNoticeReq crNoticeReq) {
 		crNoticeService.remveAndNotice(crNoticeReq.getResourceId());
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("红蓝查询")

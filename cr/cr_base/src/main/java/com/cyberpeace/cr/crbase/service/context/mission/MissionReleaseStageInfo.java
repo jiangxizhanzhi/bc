@@ -1,13 +1,6 @@
 package com.cyberpeace.cr.crbase.service.context.mission;
 
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.context.UserData;
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +8,17 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.context.UserData;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 @Data
-public class MissionReleaseStageInfo {
+public class MissionReleaseStageInfo implements Serializable {
 
 	@ApiModelProperty(value = "阶段")
 	private String stage;

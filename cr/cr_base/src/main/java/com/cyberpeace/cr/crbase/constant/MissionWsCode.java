@@ -4,25 +4,27 @@ package com.cyberpeace.cr.crbase.constant;
  * ws推送code
  * 不限于任务相关
  */
-public interface MissionWsCode {
+public final class MissionWsCode {
 
-	Integer RVB_MISSION_CODE = 1;
+	public static final Integer RVB_MISSION_CODE = 1;
 
-	Integer TEAM_MISSION_CODE = 2;
+	public static final Integer TEAM_MISSION_CODE = 2;
 
-	Integer MISSION_WS_UPDATE_STATUS = 3;
+	public static final Integer MISSION_WS_UPDATE_STATUS = 3;
 
-	Integer NOTICE_Code = 4;
+	public static final Integer NOTICE_Code = 4;
 
-	Integer EXERCISE_PAPER_CODE = 5;
+	public static final Integer EXERCISE_PAPER_CODE = 5;
 
 	/**
 	 * 任务下发
 	 */
-	Integer MISSION_RELEASE = 7;
+	public static final Integer MISSION_RELEASE = 7;
 
 	/**
 	 * 新的任务提交
 	 */
-	Integer MISSION_SUBMISSION = 8;
+	public static final Integer MISSION_SUBMISSION = 8;
+
+	private MissionWsCode() {}
 }

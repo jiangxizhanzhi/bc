@@ -5,15 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
-import com.cyberpeace.cr.crbase.service.context.scene.AssetProperty;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
@@ -23,7 +23,11 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionOption;
-import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.scene.AssetProperty;
 import com.cyberpeace.cs.service.context.IdNameType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -35,21 +39,7 @@ public class CrCommonUtil {
 
 	private static final String NULL = "null";
 
-	/**
-	 * 控制最终存入数据库的 role_config 和 missions_scheme json 只包含哪些字段
-	 */
-	public static <T> String roleConfig2DbJson(T roleConfig) {
-		SimplePropertyPreFilter missionFilter = new SimplePropertyPreFilter(
-				CrRoleConfigMission.class, "resource_id");
-		SimplePropertyPreFilter schemeFilter = new SimplePropertyPreFilter(
-				CrRoleConfigSchemeStage.class, "stage", "missions");
-		SimplePropertyPreFilter roleFilter = new SimplePropertyPreFilter(CrRoleConfig.class, "name",
-				"asset_nodes", "visible_nodes", "missions_scheme");
-		SerializeConfig config = new SerializeConfig();
-		config.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
-		return JSONObject.toJSONString(roleConfig, config,
-				new SimplePropertyPreFilter[] { missionFilter, schemeFilter, roleFilter });
-	}
+	private CrCommonUtil() {}
 
 	/**
 	 * 从 roleConfig 读取 任务模板id 列表
@@ -289,5 +279,21 @@ public class CrCommonUtil {
 			}
 		}
 		return userDataList;
+	}
+
+	/**
+	 * 控制最终存入数据库的 role_config 和 missions_scheme json 只包含哪些字段
+	 */
+	public static <T> String roleConfig2DbJson(T roleConfig) {
+		SimplePropertyPreFilter missionFilter = new SimplePropertyPreFilter(
+				CrRoleConfigMission.class, "resource_id");
+		SimplePropertyPreFilter schemeFilter = new SimplePropertyPreFilter(
+				CrRoleConfigSchemeStage.class, "stage", "missions");
+		SimplePropertyPreFilter roleFilter = new SimplePropertyPreFilter(CrRoleConfig.class, "name",
+				"asset_nodes", "visible_nodes", "missions_scheme");
+		SerializeConfig config = new SerializeConfig();
+		config.setPropertyNamingStrategy(PropertyNamingStrategy.SnakeCase);
+		return JSON.toJSONString(roleConfig, config,
+				new SimplePropertyPreFilter[] { missionFilter, schemeFilter, roleFilter });
 	}
 }

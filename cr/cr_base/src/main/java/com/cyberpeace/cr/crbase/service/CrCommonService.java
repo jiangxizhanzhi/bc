@@ -2,7 +2,6 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.dao.entity.CrMark;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
@@ -19,13 +18,6 @@ public interface CrCommonService {
 	 * @return 监控列表
 	 */
 	List<MonitorSession> getMonitorSessions(String localSceneId, String studentId);
-
-	/**
-	 * 判断中台scene是否已经停止
-	 * @param sceneData 场景数据
-	 * @return 场景是否停止
-	 */
-//	Boolean isStopped(JSONObject sceneData);
 
 	/**
 	 * 校验前端输入的 role config

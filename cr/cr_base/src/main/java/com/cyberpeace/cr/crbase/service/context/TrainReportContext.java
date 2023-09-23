@@ -1,22 +1,23 @@
 package com.cyberpeace.cr.crbase.service.context;
 
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+
 import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.enums.TeamRoleGroup;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.score.GetScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Data
 public class TrainReportContext {
@@ -101,8 +102,6 @@ public class TrainReportContext {
 		long start = scoreTrendReq.getStartTime().getTime();
 		long end = scoreTrendReq.getEndTime().getTime();
 		// 需求改回 永远输出年月日格式
-		// boolean isSameYear = DateUtil.isSameYear(scoreTrendReq.getStartTime(),
-		// scoreTrendReq.getEndTime());
 		boolean isSameYear = false;
 		// 间隔
 		long interval = (end - start) / scoreTrendReq.getScoreCount();

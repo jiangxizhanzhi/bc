@@ -25,5 +25,5 @@ public class TrainingStatisticsRsp implements Serializable {
 	private ListRsp<TrainingData> relation;
 
 	@ApiModelProperty(value = "训练类型分布")
-	Map<Integer, Integer> trainingTypeMap;
+	private Map<Integer, Integer> trainingTypeMap;
 }

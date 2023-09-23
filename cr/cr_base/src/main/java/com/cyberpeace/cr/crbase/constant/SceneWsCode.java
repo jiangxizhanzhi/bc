@@ -6,15 +6,17 @@ package com.cyberpeace.cr.crbase.constant;
  * @author SN
  * @date 2023/06/30
  */
-public interface SceneWsCode {
+public final class SceneWsCode {
 
 	/**
 	 * 场景更新
 	 */
-	Integer SCENE_UPDATED = 6;
+	public static final Integer SCENE_UPDATED = 6;
 
     /**
      * 场景关闭
      */
-    Integer SCENE_STOPPED = 9;
+	public static final Integer SCENE_STOPPED = 9;
+
+	private SceneWsCode() {}
 }

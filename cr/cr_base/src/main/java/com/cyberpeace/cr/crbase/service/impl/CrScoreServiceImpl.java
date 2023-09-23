@@ -4,10 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.context.MissionStageScheme;
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.RbRoleGroup;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -16,9 +12,12 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleSimple;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
@@ -27,8 +26,6 @@ import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
-import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.score.*;
 import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
@@ -39,6 +36,8 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -332,8 +331,6 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 						DateUtil.DateToString(taskLogRsp.getCreateTime(), "MM-dd HH:mm:ss"));
 			}
 		}
-//		Map<String, List<TaskLogRsp>> taskLogMap = taskLogRsps.stream()
-//				.collect(Collectors.groupingBy(TaskLogRsp::getUserId));
 
 		List<StudentScoreTrend> scoreTrends = new ArrayList<>();
 		List<GetScoreRsp> getScoreRsps = new ArrayList<>();
@@ -399,8 +396,6 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	@Override
 	public List<UserSkillScoreContext> getSkillScoreList(String roomId, ArrayList<Integer> roles) {
 		List<CrTask> taskList = crTaskService.getByRoomId(roomId);
-		Map<String, List<CrTask>> taskMap = taskList.stream()
-				.collect(Collectors.groupingBy(CrTask::getUserId));
 		Set<String> missionIds = taskList.stream().map(CrTask::getMissionId)
 				.collect(Collectors.toSet());
 		List<Mission> missions = CollectionUtils.isEmpty(missionIds) ? new ArrayList<>()
@@ -479,17 +474,4 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return kindMap;
 	}
 
-	public void getTrainRecord(List<CrRole> crRoles, List<CrTask> taskList,
-			Map<String, Mission> missionMap) {
-		Map<String, List<CrTask>> taskMap = taskList.stream()
-				.collect(Collectors.groupingBy(CrTask::getUserId));
-		for (CrRole crRole : crRoles) {
-			List<MissionStageScheme> missionStageSchemes = crRole.getMissionStageSchemes();
-			for (String userId : crRole.getUserIdList()) {
-				List<CrTask> userTaskList = taskMap.get(userId);
-
-			}
-		}
-
-	}
 }

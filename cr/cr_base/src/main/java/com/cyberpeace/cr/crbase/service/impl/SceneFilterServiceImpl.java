@@ -9,17 +9,19 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
-import com.cyberpeace.common.context.role.CrRoleNode;
-import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.google.common.collect.Sets;
 
 import lombok.Data;
 
 @Service
 public class SceneFilterServiceImpl implements SceneFilterService {
+
+	private static final String TOPOLOGY = "topology";
 
 	@Override
 	public void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes) {
@@ -31,14 +33,14 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 				.collect(Collectors.toList());
 		List<String> assetNodeIds = nodes.getAssetNodes().stream().map(CrRoleNode::getId)
 				.collect(Collectors.toList());
-		JSONArray elements = topoData.getJSONObject("topology").getJSONArray("elements");
+		JSONArray elements = topoData.getJSONObject(TOPOLOGY).getJSONArray("elements");
 
 		filterElements(topoData, elements, visibleNodeIds, assetNodeIds);
 		removeInvalidConnections(topoData, elements);
 
 		// remove empty areas
-		JSONArray areas = topoData.getJSONObject("topology").getJSONArray("areas");
-		JSONArray pieces = topoData.getJSONObject("topology").getJSONArray("pieces");
+		JSONArray areas = topoData.getJSONObject(TOPOLOGY).getJSONArray("areas");
+		JSONArray pieces = topoData.getJSONObject(TOPOLOGY).getJSONArray("pieces");
 		filterAreas(areas, pieces, elements);
 	}
 
@@ -121,7 +123,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 	 * @param elements 剩余的节点
 	 */
 	private void removeInvalidConnections(JSONObject topoData, JSONArray elements) {
-		JSONArray connections = topoData.getJSONObject("topology").getJSONArray("connections");
+		JSONArray connections = topoData.getJSONObject(TOPOLOGY).getJSONArray("connections");
 		Set<String> existingPorts = Sets.newHashSet();
 		// collect existing ports
 		for (int i = 0; i < elements.size(); i++) {

@@ -3,9 +3,9 @@ package com.cyberpeace.cr.crbase.service.context.mission;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.constant.TrainI18n;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 
 import lombok.Data;
 
@@ -15,14 +15,14 @@ import lombok.Data;
 @Data
 public class TrainingManualTeam {
 
-	private StringBuffer text;
+	private StringBuilder text;
 
 	private List<CrRoleMissionSchemeStage> stages;
 
 	private Map<String, Mission> missionMap;
 
 	public TrainingManualTeam(List<CrRoleMissionSchemeStage> stages, Map<String, Mission> missionMap) {
-		this.text = new StringBuffer();
+		this.text = new StringBuilder();
 		this.stages = stages;
 		this.missionMap = missionMap;
 	}

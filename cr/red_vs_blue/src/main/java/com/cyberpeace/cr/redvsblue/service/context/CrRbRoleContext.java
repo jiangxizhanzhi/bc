@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
-import com.cyberpeace.cr.crbase.service.context.role.ShowWriteup;
+import com.cyberpeace.cr.crbase.service.context.role.ShowWriteupBo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class CrRbRoleContext {
 	private Map<String, MissionCompletion> missionMapping;
 
 	@ApiModelProperty(value = "题解显示状态")
-	private Map<String, ShowWriteup> showWriteupMapping;
+	private Map<String, ShowWriteupBo> showWriteupMapping;
 
 	@ApiModelProperty(value = "动态任务")
 	private List<String> dynamic;

@@ -9,10 +9,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.exception.evaluate.RemoteException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -25,8 +23,6 @@ import com.google.common.collect.Maps;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.accessibility.AccessibleValue;
 
 interface ZiguanConstants {
 
@@ -197,13 +193,13 @@ interface ZiguanConstants {
 	};
 }
 
-interface RoleGroupNames {
+final class RoleGroupNames {
 
-	String STUDENT = "学员组";
+	public static final String STUDENT = "学员组";
 
-	String RED = "红方";
+	public static final String RED = "红方";
 
-	String BLUE = "蓝方";
+	public static final String BLUE = "蓝方";
 }
 
 /**
@@ -629,7 +625,7 @@ public class MDParser {
 			template.setAnswer(JsonUtil.arrayToString(answers));
 		}
 		// writeup
-		handleWriteup(template, missionDir, missionTitle);
+		handleWriteup(template, missionDir);
 		// return
 		template.setResourceId(IDGeneratorUtil.getID());
 		template.setCreateUserId(CommonConstant.ADMIN_ID);
@@ -655,7 +651,7 @@ public class MDParser {
 	 * @param missionDir
 	 * @param missionTitle
 	 */
-	private void handleWriteup(MissionTemplate template, String missionDir, String missionTitle) {
+	private void handleWriteup(MissionTemplate template, String missionDir) {
 		List<String> attachments = Lists.newArrayList();
 		StringBuilder ret = new StringBuilder();
 		List<String> lines = Lists.newArrayList();
@@ -666,7 +662,6 @@ public class MDParser {
 		} else {
 			log.warn(String.format("writeup md file missing: [%s]", writeupFile.getAbsolutePath()));
 		}
-		String regex = String.format(PatternConstant.WRITEUP_IMG_MD, IMG_DIR);
 		for (String line : lines) {
 			// match img like ![](./img/1.png) ---> ./img/1.png
 			String img = LocalStringUtil.getFirstMatchStr(line,

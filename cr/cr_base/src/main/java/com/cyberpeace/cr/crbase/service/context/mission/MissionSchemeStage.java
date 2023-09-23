@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.context.mission;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -14,7 +15,7 @@ import lombok.Data;
  * 任务编排阶段
  */
 @Data
-public class MissionSchemeStage {
+public class MissionSchemeStage implements Serializable {
 
 	@ApiModelProperty(value = "阶段名", required = true)
 	private String stage;
@@ -39,7 +40,7 @@ public class MissionSchemeStage {
 }
 
 @Data
-class MissionSchemeMission {
+class MissionSchemeMission implements Serializable {
 
 	@ApiModelProperty(value = "任务标题", required = true)
 	private String title;

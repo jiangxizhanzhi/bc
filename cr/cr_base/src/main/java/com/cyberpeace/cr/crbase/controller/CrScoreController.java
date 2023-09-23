@@ -1,5 +1,18 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.sql.Timestamp;
+import java.util.IntSummaryStatistics;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -10,40 +23,27 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
 import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
-import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
-import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.sql.Timestamp;
-import java.util.IntSummaryStatistics;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Api(tags = "团队训练评分")
 @RestController
@@ -158,12 +158,6 @@ public class CrScoreController {
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 
-		// if (studentScoreReq.getComment().length() >
-		// CrScore.ScoreValue.MAX_COMMENT_LEN.getCode()) {
-		// log.error("comment length out of range！comment length=[{}]",
-		// studentScoreReq.getComment().length());
-		// throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
-		// }
 
 		CrScore crScore = crScoreService.getByRoomIdAndUser(studentScoreReq.getRoomId(),
 				studentScoreReq.getUser());
@@ -428,8 +422,8 @@ public class CrScoreController {
 		String extra = trainRecord.getExtra();
 		JSONObject missionsRecord = new JSONObject();
 		if (StringUtils.isNotEmpty(extra)) {
-			JSONObject jsonObject = new JSONObject();
-			jsonObject = JSONObject.parseObject(extra);
+			JSONObject jsonObject;
+			jsonObject = JSON.parseObject(extra);
 			if (jsonObject != null) {
 				missionsRecord = (JSONObject) jsonObject.get("missions_record");
 			}

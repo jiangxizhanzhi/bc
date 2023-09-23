@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -8,6 +7,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Slf4j
@@ -42,7 +42,7 @@ public class SubmitEvaluationReq {
 			this.score = new Integer(score);
 			if (this.score < 0) {
 				log.error("score = [{}]", score);
-				throw new RuntimeException();
+				throw new BusinessException(CrBusinessErrorCode.INVALID_SCORE);
 			}
 		} catch (Exception e) {
 			log.error("Invalid score, supposed to be non-negative integer! score = [{}]", score);

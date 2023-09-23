@@ -13,8 +13,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-
 import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
@@ -58,6 +58,7 @@ public class TaskMatrix {
     private Integer finalScore;
 
     public TaskMatrix() {
+		// do nothing
     }
 
     public void setTime(TrainingTimeCost timeCost){

@@ -7,7 +7,7 @@ import lombok.Data;
  * 题解开放状态
  */
 @Data
-public class ShowWriteup {
+public class ShowWriteupBo {
 
 	@ApiModelProperty(value = "是否开放题解")
 	private Boolean showWriteup;

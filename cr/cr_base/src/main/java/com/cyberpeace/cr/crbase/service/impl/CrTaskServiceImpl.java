@@ -4,9 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.cr.crbase.dao.mapper.*;
-import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +29,10 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.IndustrySituationService;
+import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -374,11 +373,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		}
 
 		// 多选题答案校验
-		if (mission.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
-			if (answer.equals(CommonConstant.EMPTY_LIST_JSON)) {
-				log.error("answer of multi choice question cant be empty");
-				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
-			}
+		if (mission.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())
+				&& answer.equals(CommonConstant.EMPTY_LIST_JSON)) {
+			log.error("answer of multi choice question cant be empty");
+			throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 		}
 
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);

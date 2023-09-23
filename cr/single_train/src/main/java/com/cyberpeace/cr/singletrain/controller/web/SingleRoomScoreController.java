@@ -90,44 +90,44 @@ public class SingleRoomScoreController {
 	 * 5.4弃用
 	 * /single_train/single_train/record/detail 替代
 	 *
-	 * @param resource_id 资源id
+	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<JSONObject>}
 	 */
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<JSONObject> getHistoryDetail(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.SINGLE_ROLE_GROUP_CODE);
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+		RoleQuery roleQuery = new RoleQuery(resourceId, CrRole.SINGLE_ROLE_GROUP_CODE);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
+		MissionReport missionReport = crScoreController.getTrainingMissionReport(resourceId,
 				crRoleList);
 
 		// 单兵训练仅有一个用户, 角色仅关联一个用户
-		String user_hash = crRoleList.get(0).getUserIdList().get(0);
+		String userHash = crRoleList.get(0).getUserIdList().get(0);
 
-		List<Integer> radars = crRoleService.getRadar(resource_id, user_hash);
+		List<Integer> radars = crRoleService.getRadar(resourceId, userHash);
 
 		List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList = crScoreController
-				.getTrainingRecord(resource_id, user_hash);
+				.getTrainingRecord(resourceId, userHash);
 
-		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
-		List<StageExport> StageExports = getStageExports(missionSchemeList);
-		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
+		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resourceId, userHash);
+		List<StageExport> stageExports = getStageExports(missionSchemeList);
+		TrainRecord trainRecord = trainRecordService.getByRoomId(resourceId);
 
 		JSONObject data = new JSONObject();
 		data.put("task_count", gettaskCount(missionReport));
 		data.put("radar", radars);
-		data.put("stages", StageExports);
+		data.put("stages", stageExports);
 		data.put("total_score", studentScoreRsp.getTrainingSummary().getSumScoreObjective());
 		data.put("create_time", trainRecord.getEndTime());
 		data.put("title", crScoreController.getTitle(trainRecord.getRoomName()));
-		data.put("resource_id", resource_id);
+		data.put("resource_id", resourceId);
 		data.put("score", studentScoreRsp.getTrainingSummary().getGetScoreObjective());
 
 		// 用户信息
-		UserInfo userInfo = remoteUserService.getById(user_hash);
+		UserInfo userInfo = remoteUserService.getById(userHash);
 		data.put("user_id", userInfo.getUserId());
 		data.put("username", userInfo.getUserName());
 		// 获取用户LOGO
@@ -137,7 +137,7 @@ public class SingleRoomScoreController {
 			throw new RemoteServiceException();
 		}
 
-		return new BaseRsp(data);
+		return new BaseRsp<>(data);
 	}
 
 	@ApiOperation("训练记录导出为PDF")
@@ -190,7 +190,7 @@ public class SingleRoomScoreController {
 			log.error("failed to export pdf: {}", destHtmlPath);
 			throw e;
 		} finally {
-			if (!FileUtil.deleteDir(directory)) {
+			if (Boolean.FALSE.equals(FileUtil.deleteDir(directory))) {
 				log.error("failed to delete dir: {}", directory);
 			}
 		}
@@ -201,11 +201,11 @@ public class SingleRoomScoreController {
 	@GetMapping("/record/detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<RecordDetail> getRecordDetail(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-		if (StringUtils.isBlank(resource_id)) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		RecordDetail detail = singleRoomService.getRecordDetail(resource_id);
+		RecordDetail detail = singleRoomService.getRecordDetail(resourceId);
 		return new BaseRsp<>(detail);
 	}
 
@@ -222,15 +222,15 @@ public class SingleRoomScoreController {
 	private List<StageExport>
 			getStageExports(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
 
-		List<StageExport> StageExports = Lists.newArrayList();
+		List<StageExport> stageExports = Lists.newArrayList();
 
 		for (MissionSchemeObject<TrainingRecordMissionRsp> missionSchemeObject : missionSchemeList) {
-			StageExport StageExport = new StageExport(missionSchemeObject);
+			StageExport stageExport = new StageExport(missionSchemeObject);
 
-			StageExports.add(StageExport);
+			stageExports.add(stageExport);
 		}
 
-		return StageExports;
+		return stageExports;
 	}
 
 }

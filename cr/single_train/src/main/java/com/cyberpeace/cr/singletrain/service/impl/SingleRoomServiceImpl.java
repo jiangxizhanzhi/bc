@@ -80,6 +80,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Service
 public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleRoom> implements SingleRoomService {
@@ -123,6 +124,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	private static final String DATA_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+	private static final String SCHEME_DATA_FIELD = "scheme_data";
+
+	private static final String RESOURCE_ID_FIELD = "resource_id";
+
 	/**
 	 * 创建单兵训练
 	 *
@@ -134,7 +141,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 已存在运行中训练, 返回
 		SingleRoomBo singleRoomBo = getRoomInfo(businessTemplateId);
 		if (singleRoomBo.getRoomInfo() != null) {
-			log.error("scene start repeat: businessTemplateId = [{}]",businessTemplateId);
+			log.error("scene start repeat: businessTemplateId = [{}]", businessTemplateId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
 		}
 
@@ -177,8 +184,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 							userId);
 
 					trainRecordService.saveRecord(businessTemplate.getName(), businessTemplateId,
-							room.getResourceId(), userId,
-							BusinessType.TRAINING_SINGLE.getCode());
+							room.getResourceId(), userId, BusinessType.TRAINING_SINGLE.getCode());
 				}
 			});
 		} catch (Exception e) {
@@ -246,8 +252,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.getCrRoleMissionByRoomIdAndUserId(singleRoom.getResourceId(), userId);
 		schemeData.forEach(missionStage -> missionStage.getMissions().forEach(mission -> mission
 				.setFinished(missionsRecord.getString(mission.getResourceId()) != null)));
-		singleTemplateBo.getMissionsScheme().put("scheme_data",
-				JSONArray.toJSON(schemeData, serializeConfig));
+		singleTemplateBo.getMissionsScheme().put(SCHEME_DATA_FIELD,
+				JSON.toJSON(schemeData, serializeConfig));
 
 		// 生成数据
 		SingleRoomInfoBo singleRoomInfoBo = new SingleRoomInfoBo();
@@ -334,13 +340,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.map(date -> date.substring(date.indexOf("-") + 1)).collect(Collectors.toList());
 
 		// 当前页训练数据resource_id
-		List<String> template_ids = selectResult.getRecords().stream()
+		List<String> templateIds = selectResult.getRecords().stream()
 				.map(singleRoomList -> singleRoomList.getBusinessTemplate().getResourceId())
 				.collect(Collectors.toList());
 
 		// 查询训练使用统计
-		List<SingleTrainStats> dateStats = singleRoomMapper.singleTrainStats(template_ids,
-				dateRange, BusinessType.TRAINING_SINGLE.getCode());
+		List<SingleTrainStats> dateStats = singleRoomMapper.singleTrainStats(templateIds, dateRange,
+				BusinessType.TRAINING_SINGLE.getCode());
 		Map<String, List<Integer>> trainStats = dateStats.stream().collect(
 				Collectors.toMap(SingleTrainStats::getBusinessTemplateId, singleTrainStats -> {
 					List<SingleTrainStats> currentTrainHistory = dateStats.stream()
@@ -367,10 +373,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 		// get attack engage relation
 		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
-				.countAttackRel(template_ids);
-		Map<String, List<NameCount>> icsRelCount = rtksRelatedService.countIcsRel(template_ids);
+				.countAttackRel(templateIds);
+		Map<String, List<NameCount>> icsRelCount = rtksRelatedService.countIcsRel(templateIds);
 		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
-				.countEngageRel(template_ids);
+				.countEngageRel(templateIds);
 
 		// 拓展额外数据
 		List<SingleRoomListBo> singleRoomListBoList = Lists.newArrayList();
@@ -475,7 +481,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				JSONObject.class);
 		JSONObject missionRecord = trainRecord.getJSONObject(missionId);
 		if (missionRecord != null) {
-			missionRecord.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+			missionRecord.put("time", new SimpleDateFormat(DATA_FORMAT)
 					.format(new Date(missionRecord.getLong("time"))));
 
 			// 去除多余字段
@@ -500,7 +506,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		if (roomObject == null) {
-			log.error("room_not_exist_submit_mission: businessTemplateId = [{}]",businessTemplateId);
+			log.error("room_not_exist_submit_mission: businessTemplateId = [{}]",
+					businessTemplateId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION);
 		}
 
@@ -510,15 +517,16 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.eq(MissionBase::getResourceId, requestData.getMissionResourceId())
 				.eq(MissionBase::getCreateUserId, userId).one();
 		if (mission == null) {
-			log.error("mission is null: RoomId = [{}],ResourceId= [{}]",roomObject.getResourceId(), requestData.getMissionResourceId());
+			log.error("mission is null: RoomId = [{}],ResourceId= [{}]", roomObject.getResourceId(),
+					requestData.getMissionResourceId());
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 		// 多选题答案校验
-		if (mission.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
-			if (requestData.getAnswer().equals(CommonConstant.EMPTY_LIST_JSON)) {
-				log.error("answer not nullable");
-				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
-			}
+		if (mission.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())
+				&& (requestData.getAnswer().equals(CommonConstant.EMPTY_LIST_JSON))) {
+			log.error("answer not nullable");
+			throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
+
 		}
 
 		// 写入任务记录
@@ -551,13 +559,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 获取任务方案
 		JSONArray schemeData = JsonUtil
 				.toJsonObject(singleTemplate.getMissionsScheme(), JSONObject.class)
-				.getJSONArray("scheme_data");
+				.getJSONArray(SCHEME_DATA_FIELD);
 		if (schemeData == null) {
-			return null;
+			return Collections.emptyList();
 		}
 
 		// 构建数据
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATA_FORMAT);
 		List<TrainRecordBo> trainRecordBos = Lists.newArrayList();
 		SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
@@ -572,13 +580,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 			for (JSONObject _m : stage.getJSONArray("missions").toJavaList(JSONObject.class)) {
 				MissionRecordBo missionRecordBo = new MissionRecordBo();
-				missionRecordBo.setResourceId(_m.getString("resource_id"));
+				missionRecordBo.setResourceId(_m.getString(RESOURCE_ID_FIELD));
 				missionRecordBo.setTitle(_m.getString("title"));
 				missionRecordBo.setDescription(_m.getString("description"));
 
 				if (trainRecord != null) {
 					JSONObject missionRecord = trainRecord
-							.getJSONObject(_m.getString("resource_id"));
+							.getJSONObject(_m.getString(RESOURCE_ID_FIELD));
 					// 时间戳 -> 日期字符串
 					if (missionRecord != null) {
 						missionRecord.put("time",
@@ -616,7 +624,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 获取任务方案
 		JSONArray schemeData = JsonUtil
 				.toJsonObject(singleTemplate.getMissionsScheme(), JSONObject.class)
-				.getJSONArray("scheme_data");
+				.getJSONArray(SCHEME_DATA_FIELD);
 		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(),
 				JSONObject.class);
 		StringBuilder trainRecordMd = new StringBuilder();
@@ -624,8 +632,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.append(" </center> \n\n");
 		trainRecordMd.append(String.format("###### %s: ", TrainI18n.PEOPLE))
 				.append(UserInfoContext.getUserContext().getUserName()).append("\n\n");
-		trainRecordMd.append(String.format("###### %s: ", TrainI18n.TIME)).append(
-				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(singleRoom.getStartTime()))
+		trainRecordMd.append(String.format("###### %s: ", TrainI18n.TIME))
+				.append(new SimpleDateFormat(DATA_FORMAT).format(singleRoom.getStartTime()))
 				.append("\n\n\n");
 		trainRecordMd.append(String.format("## %s%n%n", TrainI18n.SCENE_DESC))
 				.append(businessTemplate.getDescription()).append("\n\n");
@@ -645,7 +653,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 						.append(mission.getString("description")).append("\n\n")
 						.append(String.format("> %s%n%n", TrainI18n.MY_RECORD));
 				JSONObject singleMissionRecord = trainRecord
-						.getJSONObject(mission.getString("resource_id"));
+						.getJSONObject(mission.getString(RESOURCE_ID_FIELD));
 				if (singleMissionRecord != null) {
 					trainRecordMd
 							.append(singleMissionRecord
@@ -841,7 +849,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		}
 		// 场景实际已被删除，清除本地脏数据
 		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
-		if (data.isStopped()) {
+		if (Boolean.TRUE.equals(data.isStopped())) {
 			clearLocal(room);
 			return null;
 		}
@@ -925,7 +933,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		// 无运行中训练、训练已完成
 		if (singleRoom == null || singleRoom.getIsFinish()) {
-			log.error("room not exist error: businessTemplateId = [{}]",businessTemplateId);
+			log.error("room not exist error: businessTemplateId = [{}]", businessTemplateId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -948,7 +956,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(),
 				userId);
 		if (crRole == null) {
-			log.error("crRole not exist error: ResourceId = [{}]",singleRoom.getResourceId());
+			log.error("crRole not exist error: ResourceId = [{}]", singleRoom.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 
@@ -966,8 +974,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, score);
 				}
 				trainRecordService.updateEndDate(businessTemplateId, userId,
-						BusinessType.TRAINING_SINGLE.getCode(),
-						JsonUtil.toJsonString(extraRecord));
+						BusinessType.TRAINING_SINGLE.getCode(), JsonUtil.toJsonString(extraRecord));
 
 				// 设置当前训练已完成
 				singleRoom.setIsFinish(true);
@@ -1027,8 +1034,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			missionRecordCol = new JSONObject();
 		} else {
 			detail.setScore(extra.getInteger(SingleRoom.CrTrainRecordFields.SCORE));
-			missionRecordCol = extra
-					.getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
+			missionRecordCol = extra.getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
 		}
 		// 不包含任务
 		if (missionList.isEmpty()) {
@@ -1076,8 +1082,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					missionBo.setUserAnswer(
 							CrCommonUtil.getHandledAnswer(userAnswer, mission.getType()));
 					// judge
-					if (crTaskService.judgeObjective(userAnswer, mission.getAnswer(),
-							mission.getType())) {
+					if (Boolean.TRUE.equals(crTaskService.judgeObjective(userAnswer,
+							mission.getAnswer(), mission.getType()))) {
 						CrCommonUtil.integratePoints(pointsGet, points);
 						successful += 1;
 						missionBo.setStatus(CrTask.SingleTaskStatus.SUCCESS.getCode());

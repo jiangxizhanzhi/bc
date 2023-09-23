@@ -3,21 +3,21 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.RbRoleGroup;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleSimple;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.mission.RedBlueTaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
-import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbDirectorService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
@@ -52,7 +52,8 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 		// count
 		Integer released = crTaskList.size();
 		Integer total = roles.stream().mapToInt(CrRoleSimple::getTaskCount).sum();
-		Integer submitted = crTaskList.stream().mapToInt(task -> task.isSubmitted() ? 1 : 0).sum();
+		Integer submitted = crTaskList.stream()
+				.mapToInt(task -> Boolean.TRUE.equals(task.isSubmitted()) ? 1 : 0).sum();
 		long waiting = crTaskList.stream()
 				.filter(task -> task.getStatus().equals(CrTask.TaskStatus.WAIT.getCode())).count();
 

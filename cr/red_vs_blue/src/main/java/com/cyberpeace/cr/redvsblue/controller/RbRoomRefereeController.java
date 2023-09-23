@@ -75,8 +75,8 @@ public class RbRoomRefereeController {
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbRoleIdNameType>> getRoleList(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
-		List<RbRoleIdNameType> res = rbRefereeService.getRoleList(resource_id);
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resourceId) {
+		List<RbRoleIdNameType> res = rbRefereeService.getRoleList(resourceId);
 		return new BaseRsp<>(res);
 	}
 
@@ -96,9 +96,9 @@ public class RbRoomRefereeController {
 	@GetMapping("/evaluation/detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<EvaluationMissionRsp> getEvaluationDetail(
-			@ApiParam(name = "resource_id", value = "评估编号", required = true) String resource_id) {
-		EvaluationMissionRsp res = crTaskService.getEvaluationById(resource_id);
-		return new BaseRsp(res);
+			@ApiParam(name = "resource_id", value = "评估编号", required = true) String resourceId) {
+		EvaluationMissionRsp res = crTaskService.getEvaluationById(resourceId);
+		return new BaseRsp<>(res);
 	}
 
 	/**
@@ -170,8 +170,8 @@ public class RbRoomRefereeController {
 	@GetMapping("/get_user_list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<UserRole>> getUserList(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		List<UserRole> data = rbRoomService.getUserList(resource_id);
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resourceId) {
+		List<UserRole> data = rbRoomService.getUserList(resourceId);
 
 		return new BaseRsp<>(data);
 	}
@@ -184,9 +184,9 @@ public class RbRoomRefereeController {
 	@GetMapping("/get_statistical_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskStatisticsInfo> getStatisticalInfo(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		TaskStatisticsInfo res = crTaskService.getTaskStatisticsInfoByRoomId(resource_id);
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		TaskStatisticsInfo res = crTaskService.getTaskStatisticsInfoByRoomId(resourceId);
 		return new BaseRsp<>(res);
 	}
 
@@ -213,9 +213,9 @@ public class RbRoomRefereeController {
 	@GetMapping("/sessions")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MonitorSession>> getSessions(
-			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id) {
-		CrCommonValidator.validateId(room_id);
-		List<MonitorSession> res = rbRefereeService.getMonitorSessions(room_id);
+			@ApiParam(name = "room_id", value = "训练实例id", required = true) String roomId) {
+		CrCommonValidator.validateId(roomId);
+		List<MonitorSession> res = rbRefereeService.getMonitorSessions(roomId);
 		return new BaseRsp<>(res);
 	}
 
@@ -223,10 +223,10 @@ public class RbRoomRefereeController {
 	@GetMapping("/score/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<StudentScoreListRsp>> getScoreList(
-			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
-		rbRoomService.checkRefereePermission(resource_id,
+			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resourceId) {
+		rbRoomService.checkRefereePermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
-		List<StudentScoreListRsp> res = rbRefereeService.getScoreList(resource_id);
+		List<StudentScoreListRsp> res = rbRefereeService.getScoreList(resourceId);
 		return new BaseRsp<>(res);
 	}
 
@@ -234,19 +234,19 @@ public class RbRoomRefereeController {
 	@GetMapping("/evaluation/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<BadgeBo> ifShowEvaluationBadge(
-			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		BadgeBo res = crBadgeService.getEvaluationBadge(resource_id);
+			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		BadgeBo res = crBadgeService.getEvaluationBadge(resourceId);
 		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("任务裁决红点点击取消")
 	@GetMapping("/evaluation/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp clickEvaluationBadge(
-			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		crBadgeService.clickEvaluationBadge(resource_id);
+	public BaseRsp<Boolean> clickEvaluationBadge(
+			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		crBadgeService.clickEvaluationBadge(resourceId);
 		return new BaseRsp<>();
 	}
 

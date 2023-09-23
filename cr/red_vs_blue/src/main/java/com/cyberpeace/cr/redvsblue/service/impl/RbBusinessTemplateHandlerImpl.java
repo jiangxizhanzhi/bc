@@ -2,11 +2,11 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -56,12 +56,10 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		List<JSONObject> blueRoleRsps = JsonUtil
 				.toJsonObjectArray(roleObject.get("blue_roles").toString(), JSONObject.class);
 
-		redRoleRsps.forEach(jsonObject -> {
-			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
-		});
-		blueRoleRsps.forEach(jsonObject -> {
-			missionService.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme"));
-		});
+		redRoleRsps.forEach(jsonObject -> missionService
+				.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme")));
+		blueRoleRsps.forEach(jsonObject -> missionService
+				.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme")));
 
 		RbTemplate rbTemplate = new RbTemplate();
 		BaseInfo baseInfo = basicTemplate.getBaseInfo();
@@ -120,7 +118,6 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	@Override
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		RbTemplate template = BeanUtils.copy(templateContext, RbTemplate.class);
-		// skill字段名不统一， todo
 		template.setPreSkill(templateContext.getPreSkills());
 		template.setTrainSkill(templateContext.getTrainSkills());
 		rbTemplateMapper.insert(template);

@@ -1,10 +1,10 @@
 package com.cyberpeace.cr.redvsblue.service.bo;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
 
 @Data
 @ApiModel("红蓝对抗个人排名统计信息")

@@ -1,7 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service.context.evaluation;
 
-import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cs.service.context.IdNameType;
 
 import lombok.Data;

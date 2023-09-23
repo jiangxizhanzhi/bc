@@ -2,18 +2,19 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
@@ -90,7 +91,7 @@ public class RbSceneEventListener extends MessageListener {
 	 * @param businessId
 	 */
 	private void pushDataToWeb(String data, String businessId) {
-		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
+		WebSocketMessageContext<CrSceneWsMessageIdentifier, Object> messageContext = crEventListenerHelper.makeContext(data,
 				businessId);
 		webSocketHandler.pushMessage(messageContext, true);
 	}
@@ -99,7 +100,7 @@ public class RbSceneEventListener extends MessageListener {
 	 * 推送消息给某个角色的所有用户
 	 */
 	private void pushDataToWebByUserIds(String data, String businessId, List<String> userIds) {
-		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
+		WebSocketMessageContext<CrSceneWsMessageIdentifier, Object> messageContext = crEventListenerHelper.makeContext(data,
 				businessId);
 		webSocketHandler.pushMessageToUsers(messageContext, userIds);
 	}

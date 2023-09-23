@@ -1,14 +1,23 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSituationService;
 import com.cyberpeace.cr.redvsblue.service.context.RbSituation;
@@ -16,14 +25,8 @@ import com.cyberpeace.cr.redvsblue.service.context.RbSituationServer;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -83,7 +86,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 		roleQuery.setRoleGroup(RbRoleGroup.RED.getCode());
 		List<CrRole> redRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 		for (CrRole redRole : redRoleList) {
-			List<JSONObject> visibleNodes = JSONObject.parseObject(redRole.getNodes())
+			List<JSONObject> visibleNodes = JSON.parseObject(redRole.getNodes())
 					.getObject("visibleNodes", List.class);
 			for (JSONObject visibleNode : visibleNodes) {
 				String nodeId = visibleNode.getString("id");
@@ -98,7 +101,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 		roleQuery.setRoleGroup(RbRoleGroup.BLUE.getCode());
 		List<CrRole> blueRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 		for (CrRole blueRole : blueRoleList) {
-			List<JSONObject> visibleNodes = JSONObject.parseObject(blueRole.getNodes())
+			List<JSONObject> visibleNodes = JSON.parseObject(blueRole.getNodes())
 					.getObject("visibleNodes", List.class);
 			for (JSONObject visibleNode : visibleNodes) {
 				String nodeId = visibleNode.getString("id");

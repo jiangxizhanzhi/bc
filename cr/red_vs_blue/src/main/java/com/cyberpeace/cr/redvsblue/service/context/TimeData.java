@@ -42,16 +42,16 @@ public class TimeData {
 
 		List<String> xDataList = Lists.newArrayList();
 		Long times = (realEndTime.getTime() - startTime.getTime()) / 1000 / step;
-		List<Date> timeList = Lists.newArrayList();
+		List<Date> dateList = Lists.newArrayList();
 		if (times < 1) {
-			timeList.add(realEndTime);
+			dateList.add(realEndTime);
 		} else {
-			timeList.add(startTime);
+			dateList.add(startTime);
 
 			Date itemTime = startTime;
 			for (int i = 0; i < times.intValue(); i++) {
 				itemTime = TimeUtil.addMins(itemTime, step / 60);
-				timeList.add(itemTime);
+				dateList.add(itemTime);
 
 				// 计算时长
 				Integer hours = (step / 60) * (i + 1) / 60;
@@ -60,12 +60,12 @@ public class TimeData {
 				xDataList.add(hours + ":" + String.format("%02d", minutes));
 
 			}
-			timeList.add(realEndTime);
+			dateList.add(realEndTime);
 
 		}
 
 		this.xData = xDataList;
-		this.timeList = timeList;
+		this.timeList = dateList;
 		running = 0;
 		if (this.status > 0) {
 			Long longRunning = (realEndTime.getTime() - startTime.getTime()) / 1000;
@@ -84,7 +84,7 @@ public class TimeData {
 		// 索引指针
 		Integer pointIndex = 0;
 		// 累加值
-		Integer accumulatedValue = 0;
+		Integer accumulateValue = 0;
 
 		Collections.sort(objWithTimes);
 
@@ -101,7 +101,7 @@ public class TimeData {
 							break;
 						}
 						// 指定统计字段，否则统计次数
-						accumulatedValue += objWithTimes.get(index).getValue();
+						accumulateValue += objWithTimes.get(index).getValue();
 
 						// 统计到最后一位
 						if (index == objWithTimes.size() - 1) {
@@ -115,11 +115,11 @@ public class TimeData {
 				if (this.endTime != null && timePoint.after(this.endTime)) {
 					yData.add(0);
 				} else {
-					yData.add(accumulatedValue);
+					yData.add(accumulateValue);
 				}
 			}
 		}
-		this.accumulatedValue = accumulatedValue;
+		this.accumulatedValue = accumulateValue;
 		return yData;
 	}
 }

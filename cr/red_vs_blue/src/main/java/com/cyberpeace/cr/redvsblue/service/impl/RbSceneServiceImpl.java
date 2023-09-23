@@ -1,5 +1,16 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -33,17 +44,8 @@ import com.cyberpeace.cs.service.context.scene.*;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -233,7 +235,7 @@ public class RbSceneServiceImpl implements RbSceneService {
         }
         LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
         Boolean stopResult = localSceneService.stopScene(localScene);
-        if (stopResult) {
+		if (Boolean.TRUE.equals(stopResult)) {
             // 记录复盘用的scene_id
             // 是否需要更新replay_scene_id。训练未结束，更新；训练已结束，场景开始时间在训练结束之前才更新。
             // 只有训练已结束且场景开启时间在训练结束之后，才不更新
@@ -293,8 +295,8 @@ public class RbSceneServiceImpl implements RbSceneService {
         }
 
         // 2、 场景开启的状态下发送mp暂停请求
-        if (localSceneService.ensureSceneStarted(room.getLocalSceneId())
-                && !localSceneService.pauseScene(room.getLocalSceneId())) {
+		if (Boolean.TRUE.equals(localSceneService.ensureSceneStarted(room.getLocalSceneId()))
+				&& Boolean.TRUE.equals(!localSceneService.pauseScene(room.getLocalSceneId()))) {
             log.error("Failed to pause scene, roomId:{}", roomId);
             throw new BusinessException(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE);
         }
@@ -324,8 +326,8 @@ public class RbSceneServiceImpl implements RbSceneService {
             throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
         }
         // 2、 如果mp场景存在，发送mp解除暂停请求
-        if (localSceneService.ensureSceneStarted(room.getLocalSceneId())
-                && !localSceneService.unpauseScene(room.getLocalSceneId())) {
+		if (Boolean.TRUE.equals(localSceneService.ensureSceneStarted(room.getLocalSceneId()))
+				&& Boolean.TRUE.equals(!localSceneService.unpauseScene(room.getLocalSceneId()))) {
             log.error("Failed to unpause scene, roomId:{}", roomId);
             throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE);
         }
@@ -364,15 +366,15 @@ public class RbSceneServiceImpl implements RbSceneService {
             log.error("Time management not exist, roomId:{}", room.getResourceId());
             throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
         }
-        if (management.isStopped()) {
+		if (Boolean.TRUE.equals(management.isStopped())) {
             log.error("Train is over, roomId:{}", room.getResourceId());
             throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
         }
-        if (flag.equals(PAUSE_FLAG) && management.isPaused()) {
+		if (flag.equals(PAUSE_FLAG) && Boolean.TRUE.equals(management.isPaused())) {
             log.error("Train is already paused, roomId:{}", room.getResourceId());
             throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
         }
-        if (flag.equals(UNPAUSE_FLAG) && !management.isPaused()) {
+		if (flag.equals(UNPAUSE_FLAG) && Boolean.TRUE.equals(!management.isPaused())) {
             log.error("Train is not paused, roomId:{}", room.getResourceId());
             throw new BusinessException(ErrorCode.NOT_PAUSED);
         }
@@ -490,7 +492,7 @@ public class RbSceneServiceImpl implements RbSceneService {
         }
         // 场景实际已被删除，清除本地脏数据
         SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
-        if (data.isStopped()) {
+		if (Boolean.TRUE.equals(data.isStopped())) {
             clearLocal(room);
             return null;
         }

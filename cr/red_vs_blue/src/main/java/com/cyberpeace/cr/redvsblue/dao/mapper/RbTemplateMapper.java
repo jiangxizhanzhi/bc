@@ -17,7 +17,7 @@ public interface RbTemplateMapper extends BaseMapper<RbTemplate> {
 
 	RbTemplate selectByBusinessTemplateId(String businessTemplateId);
 
-	IPage<RbTemplateData> listRbTemplate(Page page, ListQuery listQuery);
+	IPage<RbTemplateData> listRbTemplate(Page<RbTemplateData> page, ListQuery listQuery);
 
 	List<RbTemplate> getRbTemplateByBusinessIds(List<String> ids);
 

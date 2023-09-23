@@ -1,16 +1,33 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.mdparser.MdParser;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.convert.BusinessTypeConvert;
-import com.cyberpeace.cr.crbase.service.context.md.*;
+import com.cyberpeace.cr.crbase.service.context.md.TeamAndRBMD;
+import com.cyberpeace.cr.crbase.service.context.md.TrainMD;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
@@ -18,17 +35,6 @@ import com.cyberpeace.cr.crbase.service.impl.ExportTrainMDServiceImpl;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cs.service.context.RoleBo;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
@@ -52,7 +58,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 	@Override
 	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {
 
-		if(businessTemplateList.size() == 0){
+		if (businessTemplateList.isEmpty()){
 			return;
 		}
 		//获取红蓝对抗模板
@@ -74,7 +80,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			List<RoleBo> roleBos = new ArrayList<>();
 			List<String> roleName = new ArrayList<>();
 			JSONArray roleList = new JSONArray();
-			JSONObject roleObject = JSONObject.parseObject(rbTemplate.getRoleConfig());
+			JSONObject roleObject = JSON.parseObject(rbTemplate.getRoleConfig());
 			JSONArray redList = roleObject.getJSONArray("red_roles");
 			for(int i = 0;i< redList.size();i++){
 				JSONObject role = redList.getJSONObject(i);

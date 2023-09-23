@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
+import java.util.Date;
+
 import com.cyberpeace.common.model.BaseTable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 public class RbTimeManagementRsp extends BaseTable {

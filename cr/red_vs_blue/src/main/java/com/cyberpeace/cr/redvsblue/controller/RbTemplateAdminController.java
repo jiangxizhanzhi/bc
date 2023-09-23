@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
@@ -23,6 +22,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -39,7 +40,6 @@ import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
-import com.cyberpeace.common.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateAddReq;
@@ -130,7 +130,7 @@ public class RbTemplateAdminController {
 	@ApiOperation("修改")
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
-	public BaseRsp update(@RequestBody @Validated RbTemplateModifyReq modifyReq) {
+	public BaseRsp<Boolean> update(@RequestBody @Validated RbTemplateModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		RbTemplate rbTemplate = rbTemplateService.getRbTemplateByBusinessId(resourceId);
 		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
@@ -188,11 +188,11 @@ public class RbTemplateAdminController {
 	@GetMapping()
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
-	public BaseRsp<RbTemplateRsp> getRbTemplate(String resource_id) {
+	public BaseRsp<RbTemplateRsp> getRbTemplate(String resourceId) {
 
-		businessTemplateService.checkPermission(resource_id,
+		businessTemplateService.checkPermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
-		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resource_id);
+		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resourceId);
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());

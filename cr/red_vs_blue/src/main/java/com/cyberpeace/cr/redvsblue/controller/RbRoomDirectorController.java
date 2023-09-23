@@ -1,6 +1,23 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import com.alibaba.fastjson.JSONObject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.context.MissionStageScheme;
@@ -50,26 +67,11 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Api(tags = "红蓝对抗导演")
@@ -141,17 +143,17 @@ public class RbRoomDirectorController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<ExercisePaperRsp> getExercisePapern(
 			@RequestParam("resource_id") String businessTemplateId,
-			@RequestParam("group_hash") Integer group_hash) {
+			@RequestParam("group_hash") Integer groupHash) {
 
-		RoleQuery roleQuery = new RoleQuery(businessTemplateId, group_hash);
+		RoleQuery roleQuery = new RoleQuery(businessTemplateId, groupHash);
 
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		ExercisePaperRsp exercisePaperRsp = new ExercisePaperRsp();
 		exercisePaperRsp.setExercisePaper("");
-		if (crRoles.size() > 0) {
+		if (!crRoles.isEmpty()) {
 			exercisePaperRsp.setExercisePaper(crRoles.get(0).getExercisePaper());
 		}
-		return new BaseRsp(exercisePaperRsp);
+		return new BaseRsp<>(exercisePaperRsp);
 	}
 
 	/**
@@ -253,10 +255,10 @@ public class RbRoomDirectorController {
 
 					}
 
-					if (crTaskService.getByMissions(rbMissionDeleteReq.getRoomId(), deleteMissions)
-							.size() > 0) {
+					if (!crTaskService.getByMissions(rbMissionDeleteReq.getRoomId(), deleteMissions)
+							.isEmpty()) {
 						log.error("mission is issued！missionIds=[{}] ",
-								JSONObject.toJSONString(deleteMissions));
+								JSON.toJSONString(deleteMissions));
 						throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 					}
 
@@ -293,7 +295,7 @@ public class RbRoomDirectorController {
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<CrRbRoleContext> getRoles(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
 		CrRbRoleContext crRbRoleContext = new CrRbRoleContext();
 		List<GroupData> groups = Lists.newArrayList();
 		List<String> dynamics = Lists.newArrayList();
@@ -306,7 +308,7 @@ public class RbRoomDirectorController {
 			List<GroupRole> childRoleInfoList = Lists.newArrayList();
 			String roleGroupName = roleGroup.getDesc();
 
-			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id,
+			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resourceId,
 					roleGroup);
 
 			crRbRoleContext.setMissionMapping(crRoleContext.getMissionMapping());
@@ -317,7 +319,7 @@ public class RbRoomDirectorController {
 					CrRoleContext.class);
 
 			// 获取下发mission的id列表
-			List<CrTask> crTasks = crTaskService.getByRoomId(resource_id);
+			List<CrTask> crTasks = crTaskService.getByRoomId(resourceId);
 			List<String> missionIds = StreamApiUtils.getColumn(crTasks, CrTask::getMissionId);
 
 			// 遍历每一个角色
@@ -403,7 +405,7 @@ public class RbRoomDirectorController {
 		crRbRoleContext.setDynamic(dynamics);
 		crRbRoleContext.setGroups(groups);
 
-		return new BaseRsp(crRbRoleContext);
+		return new BaseRsp<>(crRbRoleContext);
 	}
 
 	/**
@@ -414,16 +416,16 @@ public class RbRoomDirectorController {
 	@GetMapping("/mission_timeline")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getMissionTimeline(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		TimeLineData data = rbRoomService.getMissionTimeline(resource_id);
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		TimeLineData data = rbRoomService.getMissionTimeline(resourceId);
 		return new BaseRsp<>(data);
 	}
 
 	@ApiOperation("停止演习")
 	@PostMapping("/stop")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp stop(@RequestBody SceneOpsReq opsReq) {
+	public BaseRsp<Boolean> stop(@RequestBody SceneOpsReq opsReq) {
 		String roomId = opsReq.getRoomId();
 		if (roomId == null) {
 			log.error("room_id is null");
@@ -443,7 +445,7 @@ public class RbRoomDirectorController {
 			log.error("time management is null, room_id:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
 		}
-		if (management.isStopped()) {
+		if (Boolean.TRUE.equals(management.isStopped())) {
 			log.error("time management is stopped, room_id:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
@@ -468,15 +470,15 @@ public class RbRoomDirectorController {
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.STOP, room.getName());
 
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("红蓝对抗-任务导调-任务进度")
 	@GetMapping("/mission/progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RedBlueTaskReleaseProgress> getMissionStatistics(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-		RedBlueTaskReleaseProgress res = rbDirectorService.getTaskReleaseProgress(resource_id);
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+		RedBlueTaskReleaseProgress res = rbDirectorService.getTaskReleaseProgress(resourceId);
 		return new BaseRsp<>(res);
 	}
 
@@ -510,18 +512,18 @@ public class RbRoomDirectorController {
 	@GetMapping("/mission/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<TrainTaskReleaseInfoContext>> getMissionList(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
 
-		if (StringUtils.isBlank(resource_id)) {
+		if (StringUtils.isBlank(resourceId)) {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		List<TrainTaskReleaseInfoContext> list = new ArrayList<>();
 		// 获取该房间的角色信息
-		List<TrainTaskReleaseInfoRsp> red = crRoleService.getTrainTaskReleaseInfoList(resource_id,
+		List<TrainTaskReleaseInfoRsp> red = crRoleService.getTrainTaskReleaseInfoList(resourceId,
 				RbRoleGroup.RED.getCode());
 		list.add(new TrainTaskReleaseInfoContext("red", red));
-		List<TrainTaskReleaseInfoRsp> blue = crRoleService.getTrainTaskReleaseInfoList(resource_id,
+		List<TrainTaskReleaseInfoRsp> blue = crRoleService.getTrainTaskReleaseInfoList(resourceId,
 				RbRoleGroup.BLUE.getCode());
 		list.add(new TrainTaskReleaseInfoContext("blue", blue));
 		return new BaseRsp<>(list);
@@ -531,18 +533,18 @@ public class RbRoomDirectorController {
 	 * 获取复盘时间轴
 	 * 传入用户id，则展示事件，否则只提供开始时间、结束时间
 	 *
-	 * @param resource_id 资源id
-	 * @param user_id     用户id
+	 * @param resourceId 资源id
+	 * @param userId     用户id
 	 * @return {@code BaseRsp<TimeLineData>}
 	 */
 	@ApiOperation("导演-复盘时间轴")
 	@GetMapping("/replay/timeline")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getReviewTimeLine(
-			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resource_id,
-			@ApiParam(name = "user_id", value = "用户id", required = false) String user_id) {
-		CrCommonValidator.validateId(resource_id);
-		TimeLineData res = rbRoomService.getReplayTimeline(resource_id, user_id);
+			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resourceId,
+			@ApiParam(name = "user_id", value = "用户id", required = false) String userId) {
+		CrCommonValidator.validateId(resourceId);
+		TimeLineData res = rbRoomService.getReplayTimeline(resourceId, userId);
 		return new BaseRsp<>(res);
 	}
 
@@ -550,16 +552,16 @@ public class RbRoomDirectorController {
 	 * 满足复盘条件，返回scene_id
 	 * 不满足复盘条件，返回错误提示
 	 *
-	 * @param resource_id 资源id
+	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<String>}
 	 */
 	@ApiOperation("查询复盘所需scene_id")
 	@GetMapping("/replay/enable")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> isReplayEnabled(
-			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		String res = rbDirectorService.getReplaySceneId(resource_id);
+			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		String res = rbDirectorService.getReplaySceneId(resourceId);
 		return new BaseRsp<>(res);
 	}
 

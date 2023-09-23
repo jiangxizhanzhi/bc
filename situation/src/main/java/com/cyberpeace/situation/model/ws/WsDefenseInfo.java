@@ -18,4 +18,6 @@ public class WsDefenseInfo implements Serializable {
 	private String leak;
 
 	private String result;
+
+	private Integer durationTime;
 }

@@ -470,6 +470,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		attackInfo.setAttackName(AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class).getMsg());
 		attackInfo.setLeak(attackMessageReq.getLeak());
 		attackInfo.setTool(attackMessageReq.getTool());
+		attackInfo.setDurationTime(attackMessageReq.getDurationTime());
 		//校验漏洞是否匹配
 		List<String> leaks = elementInfoMap.get(attackMessageReq.getTargetId()).getLeakInfos().stream().map(LeakInfo::getName).collect(Collectors.toList());
 		if (leaks.contains(attackMessageReq.getLeak())) {
@@ -935,6 +936,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsDefenseInfo.setTool(attackMessageReq.getTool());
 		wsDefenseInfo.setLeak(attackMessageReq.getLeak());
 		wsDefenseInfo.setResult(DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class).getSuccessDesc());
+		wsDefenseInfo.setDurationTime(attackMessageReq.getDurationTime());
 		WsMessage<WsDefenseInfo> defenseInfoWsMessage = new WsMessage<>(MessageType.DefenseInfo.getDesc(), wsDefenseInfo);
 		situationHandlerService.pushDataToRoom(defenseInfoWsMessage, attackMessageReq.getSceneId());
 	}
@@ -946,7 +948,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			wsRealisticSceneDynamic.setStep(attackMessageReq.getStep());
 			situationHandlerService.pushDataToRealisticScene(attackMessageReq.getSceneId(), wsRealisticSceneDynamic);
 		}
-		if(!playback){
+		if(Boolean.FALSE.equals(playback)){
 			//如果不是回放则会增加一条动效历史
 			attackMessageHistoryService.add(attackMessageReq);
 		}

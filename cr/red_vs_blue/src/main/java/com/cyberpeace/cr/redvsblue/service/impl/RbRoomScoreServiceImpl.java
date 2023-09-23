@@ -6,19 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.RbRoleGroup;
-import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
@@ -26,9 +28,9 @@ import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
-import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
@@ -70,6 +72,12 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+	
+	private static final String TIME_STAMP = "time_stamp";
+	
+	private static final String TOTAL_SCORE = "total_score";
+	
+	private static final String X_DATA = "x_data";
 
 	@Override
 	public List<RoleScore> getRoleScoreInfo(String roomId) {
@@ -102,14 +110,14 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		for (CrTask task : taskList) {
 			if (redRoles.contains(task.getRoleId())) {
 				redTaskCount++;
-				if (task.isFinished()) {
+				if (Boolean.TRUE.equals(task.isFinished())) {
 					redFinishedTaskCount++;
 					redScore += task.getScore();
 				}
 
 			} else {
 				blueTaskCount++;
-				if (task.isFinished()) {
+				if (Boolean.TRUE.equals(task.isFinished())) {
 					blueFinishedTaskCount++;
 					blueScore += task.getScore();
 				}
@@ -139,7 +147,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		// 未开始
 		if (rbTimeManagement == null) {
 			timeDate = new TimeData(0, rbRoomData.getStartTime(), endtime, endtime);
-		} else if (rbTimeManagement.isStopped()) {
+		} else if (Boolean.TRUE.equals(rbTimeManagement.isStopped())) {
 			// 已结束
 			timeDate = new TimeData(2, rbTimeManagement.getCreateTime(),
 					rbTimeManagement.getUpdateTime(), endtime);
@@ -199,8 +207,8 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 		JSONObject json = new JSONObject();
 		json.put("ranking_data", rankDataList);
-		json.put("time_stamp", System.currentTimeMillis() / 1000);
-		json.put("total_score", total);
+		json.put(TIME_STAMP, System.currentTimeMillis() / 1000);
+		json.put(TOTAL_SCORE, total);
 
 		return json;
 	}
@@ -279,7 +287,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		JSONObject json = new JSONObject();
 
 		json.put("ranking_data", rankDataList);
-		json.put("time_stamp", System.currentTimeMillis() / 1000);
+		json.put(TIME_STAMP, System.currentTimeMillis() / 1000);
 		json.put("mission_data", missionDataList);
 
 		return json;
@@ -296,11 +304,11 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		JSONObject json = new JSONObject();
 
 		json.put("status", timeData.getStatus());
-		json.put("time_stamp", System.currentTimeMillis() / 1000);
+		json.put(TIME_STAMP, System.currentTimeMillis() / 1000);
 		json.put("start_time", timeData.getStartTime());
 		json.put("running", timeData.getRunning());
-		json.put("total_score", timeData.getAccumulatedValue());
-		json.put("x_data", timeData.getXData());
+		json.put(TOTAL_SCORE, timeData.getAccumulatedValue());
+		json.put(X_DATA, timeData.getXData());
 		json.put("y_data", yData);
 
 		return json;
@@ -337,11 +345,11 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		JSONObject json = new JSONObject();
 
 		json.put("status", timeData.getStatus());
-		json.put("time_stamp", System.currentTimeMillis() / 1000);
+		json.put(TIME_STAMP, System.currentTimeMillis() / 1000);
 		json.put("start_time", timeData.getStartTime());
 		json.put("running", timeData.getRunning());
-		json.put("total_score", 0);
-		json.put("x_data", timeData.getXData());
+		json.put(TOTAL_SCORE, 0);
+		json.put(X_DATA, timeData.getXData());
 
 		List<Integer> yRedData = getScoreProgress(timeData, roomId,	RbRoleGroup.RED);
 
@@ -396,7 +404,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		json.put("total_mission", crTasks.size());
 		json.put("completed_mission", finishedTasks.size());
 		json.put("total_members", roleUserIds.getUserIds().size());
-		json.put("x_data", timeData.getXData());
+		json.put(X_DATA, timeData.getXData());
 		json.put("y_total", totalProgressYData);
 		json.put("y_complete", completedProgressYData);
 
@@ -451,7 +459,8 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 				pc -> pc);
 
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
-		for (String key : userCounterHashMap.keySet()) {
+		for (Map.Entry<String, UserCounter> entry: userCounterHashMap.entrySet()) {
+			String key = entry.getKey();
 			if (!userInfoMap.containsKey(key)) {
 				continue;
 			}

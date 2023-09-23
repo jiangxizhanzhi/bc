@@ -1,5 +1,24 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -14,7 +33,10 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
@@ -55,27 +77,11 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Api(tags = "红蓝对抗实例")
 @Slf4j
@@ -123,7 +129,7 @@ public class RbRoomController {
     @ApiOperation("新增")
     @PostMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-    public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
+    public BaseRsp<RbRoomRsp> create(@RequestBody @Validated RbRoomReq rbRoomReq) {
         // 校验
         rbRoomReq.validate();
 
@@ -149,9 +155,9 @@ public class RbRoomController {
     @GetMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<RbRoomRsp> getRbRoom(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-        crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
-        RbRoomRsp rsp = rbRoomService.getRoomRsp(resource_id);
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+        crRoleService.checkPermission(resourceId, UserInfoContext.getUserContext().getUserId());
+        RbRoomRsp rsp = rbRoomService.getRoomRsp(resourceId);
         return new BaseRsp<>(rsp);
     }
 
@@ -159,9 +165,9 @@ public class RbRoomController {
     @GetMapping("get_role")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<BaseRole> getRbRoomRole(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-        CrCommonValidator.validateId(resource_id);
-        CrRole role = crRoleService.checkPermission(resource_id,
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+        CrCommonValidator.validateId(resourceId);
+        CrRole role = crRoleService.checkPermission(resourceId,
                 UserInfoContext.getUserContext().getUserId());
         BaseRole res = new BaseRole();
         res.setRoleGroup(role.getRoleGroup());
@@ -172,8 +178,8 @@ public class RbRoomController {
     @GetMapping("train_introduction")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<RbRoomRsp> getTrainIntroduction(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-        RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+        RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resourceId);
 
         RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
 
@@ -186,7 +192,7 @@ public class RbRoomController {
 
         rbRoomRsp.setNodesCount(
                 topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
-        return new BaseRsp(rbRoomRsp);
+        return new BaseRsp<>(rbRoomRsp);
     }
 
     @ApiOperation("列表查询")
@@ -208,13 +214,13 @@ public class RbRoomController {
     @GetMapping("/dashboard_info")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<DashboardInfo> getDashboardInfo(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
         String userId = UserInfoContext.getUserContext().getUserId();
-        CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+        CrRole crRole = rbRoomService.checkRoomPermission(resourceId, userId);
 
-        DashboardInfo data = rbRoomService.getDashboardInfo(crRole, resource_id, userId);
+        DashboardInfo data = rbRoomService.getDashboardInfo(crRole, resourceId, userId);
 
-        return new BaseRsp(data);
+        return new BaseRsp<>(data);
     }
 
     /**
@@ -226,44 +232,44 @@ public class RbRoomController {
     @GetMapping("/members_info")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<JSONObject> getMembersInfo(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
             @ApiParam(name = "id", value = "角色id", required = true) String id) {
         String userId = UserInfoContext.getUserContext().getUserId();
-        CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+        rbRoomService.checkRoomPermission(resourceId, userId);
 
         if (id.contains("_")) {
             String[] strings = id.split("_");
             id = strings[strings.length - 1];
         }
-        List<DashboardUser> data = rbRoomService.getMembersInfo(id, resource_id);
+        List<DashboardUser> data = rbRoomService.getMembersInfo(id, resourceId);
         JSONObject json = new JSONObject();
         json.put("list", data);
 
-        return new BaseRsp(json);
+        return new BaseRsp<>(json);
     }
 
     @ApiOperation("红蓝对抗-训练手册")
     @GetMapping("/manual")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>> getManual(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-        if (StringUtils.isBlank(resource_id)) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+        if (StringUtils.isBlank(resourceId)) {
             log.error("resource_id_missing");
             throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
         }
         String userId = UserInfoContext.getUserContext().getUserId();
-        CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+        CrRole crRole = rbRoomService.checkRoomPermission(resourceId, userId);
         if (!crRole.isRvbStaff()) {
             log.error("role is forbidden");
             throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
         }
 
         Map<String, List<TrainTaskReleaseInfoRsp>> res = new HashMap<>();
-        List<TrainTaskReleaseInfoRsp> redManuals = crRoleService.getTrainManual(resource_id,
-                RbRoleGroup.RED.getCode());
-        redManuals = mergeStageByCreateTime(redManuals);
-        List<TrainTaskReleaseInfoRsp> blueManuals = crRoleService.getTrainManual(resource_id,
-                RbRoleGroup.BLUE.getCode());
+		List<TrainTaskReleaseInfoRsp> redManuals = crRoleService.getTrainManual(resourceId,
+				RbRoleGroup.RED.getCode());
+		redManuals = mergeStageByCreateTime(redManuals);
+		List<TrainTaskReleaseInfoRsp> blueManuals = crRoleService.getTrainManual(resourceId,
+				RbRoleGroup.BLUE.getCode());
         blueManuals = mergeStageByCreateTime(blueManuals);
         res.put("red", redManuals);
         res.put("blue", blueManuals);
@@ -314,8 +320,6 @@ public class RbRoomController {
         }
 
         RbRoom rbRoom = rbRoomService.getById(roomId);
-        // String rbTemplateName =
-        // rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
         remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
                 OperationType.DELETE, rbRoom.getName(), LogContent.CR_FORMAT.format(
                         OperationType.DELETE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoom.getName()));
@@ -351,11 +355,11 @@ public class RbRoomController {
     @GetMapping("/get_time_management")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<RbTimeManagementRsp> getTimeManagement(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
 
-        RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(resource_id);
+        RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(resourceId);
         if (rbTimeManagement == null) {
-            return new BaseRsp(null);
+            return new BaseRsp<>(null);
         }
         RbTimeManagementRsp rbTimeManagementRsp = BeanUtils.copy(rbTimeManagement,
                 RbTimeManagementRsp.class);
@@ -381,7 +385,7 @@ public class RbRoomController {
             rbTimeManagementRsp.setCurrentCombatTime(currentCombatTime);
         }
 
-        return new BaseRsp(rbTimeManagementRsp);
+        return new BaseRsp<>(rbTimeManagementRsp);
     }
 
     /**
@@ -426,19 +430,19 @@ public class RbRoomController {
         remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
                 OperationType.START, rbRoom.getName());
 
-        return new BaseRsp(rbTimeManagementRsp);
+        return new BaseRsp<>(rbTimeManagementRsp);
     }
 
     @ApiOperation("获取设备占用情况")
     @GetMapping("/device")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<List<RbDeviceContext>> getDevices(
-            @ApiParam(value = "room_id", name = "红蓝对抗id", required = true) String room_id,
+            @ApiParam(value = "room_id", name = "红蓝对抗id", required = true) String roomId,
             @ApiParam(value = "standard_device", name = "主机",
-                    required = false) String standard_device) {
+                    required = false) String standardDevice) {
 
-        List<RbDeviceContext> ret = rbDeviceService.getByRoomIdAndOptionalDevice(room_id,
-                standard_device);
+		List<RbDeviceContext> ret = rbDeviceService.getByRoomIdAndOptionalDevice(roomId,
+				standardDevice);
 
         return new BaseRsp<>(ret);
     }
@@ -447,17 +451,17 @@ public class RbRoomController {
     @GetMapping("/mission/getTrainReports")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<TrainReportContext> getTrainReports(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
             @ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
         //开始时间  结束时间从训练记录表取
-        RbTimeManagement management = rbTimeManagementService.getByRoomId(resource_id);
-        RbRoom rbRoom = rbRoomService.getById(resource_id);
+		RbTimeManagement management = rbTimeManagementService.getByRoomId(resourceId);
+		RbRoom rbRoom = rbRoomService.getById(resourceId);
         if (scoreCount == null || scoreCount == 0) {
             scoreCount = 10;
         }
         ScoreTrendReq scoreTrendReq = initScoreTrendReq(management,
                 rbRoom.getStartTime(), rbRoom.getEndTime(), scoreCount, rbRoom.getReplaySceneId());
-        TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
+        TrainReportContext trainReport = crScoreService.getTrainReport(resourceId, Lists
                         .newArrayList(RbRoleGroup.RED.getCode(), RbRoleGroup.BLUE.getCode()),
                 scoreTrendReq);
         //训练未开始，训练时间显示的是创建训练填写的训练开始时间，训练时长是训练模板设置的推荐时长
@@ -499,16 +503,16 @@ public class RbRoomController {
     @ApiOperation("红蓝对抗-任务导调-训练报告导出")
     @GetMapping("/mission/TrainReportsPdf")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-    public void TrainReportsPdf(HttpServletResponse httpServletResponse,
-                                @ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+    public void trainReportsPdf(HttpServletResponse httpServletResponse,
+                                @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
                                 @ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
-        TrainReportContext originData = this.getTrainReports(resource_id, scoreCount).getData();
+        TrainReportContext originData = this.getTrainReports(resourceId, scoreCount).getData();
         TrainReportExportContext data = BeanUtils.deepCopy(originData,
                 TrainReportExportContext.class);
         data.initExport();
         Path destHtmlPathObj = Paths.get(AttachmentPath.REDVSBLUE.getDesc(),
-                String.format("%s-%s", resource_id, UserInfoContext.getUserContext().getUserId()),
-                String.format("%s.html", resource_id));
+                String.format("%s-%s", resourceId, UserInfoContext.getUserContext().getUserId()),
+                String.format("%s.html", resourceId));
         FileUtil.copyDirectory(HtmlTemplateEnum.REDBLUE.getTemplatePath() + "/img",
                 AttachmentPath.REDVSBLUE.getDesc(), true);
         FileUtil.copyDirectory(HtmlTemplateEnum.REDBLUE.getTemplatePath() + "/js",
@@ -538,7 +542,7 @@ public class RbRoomController {
             log.error("failed to export pdf: {}", destHtmlPath);
             throw e;
         } finally {
-            if (!FileUtil.deleteDir(directory)) {
+			if (Boolean.FALSE.equals(FileUtil.deleteDir(directory))) {
                 log.error("failed to delete dir: {}", directory);
             }
         }
@@ -590,7 +594,12 @@ public class RbRoomController {
             }
             Date o1Time = o1.getMissionInfos().get(0).getCreateTime();
             Date o2Time = o2.getMissionInfos().get(0).getCreateTime();
-            return o1Time.before(o2Time) ? 1 : o1Time.equals(o2Time) ? 0 : -1;
+            
+            if (o1Time.equals(o2Time)) {
+                return 0;
+            }
+            
+            return o1Time.before(o2Time) ? 1 : -1;
         };
 
         List<MissionReleaseStageInfo> sortedStages = allStages.stream()

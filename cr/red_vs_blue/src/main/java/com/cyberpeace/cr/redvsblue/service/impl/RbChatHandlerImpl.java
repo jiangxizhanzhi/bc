@@ -2,13 +2,13 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
 import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
 import com.google.common.collect.Lists;

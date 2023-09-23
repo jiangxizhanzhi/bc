@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.RbRoleGroup;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.NameCount;
@@ -64,9 +64,8 @@ public class RbTemplateController {
 		IPage<RbTemplateData> data = rbTemplateService.page(listQuery);
 
 		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
-				data.getRecords().stream().map(rbTemplateData -> rbTemplateData.getTopoId())
-						.collect(Collectors.toList()));
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(data
+				.getRecords().stream().map(RbTemplateData::getTopoId).collect(Collectors.toList()));
 
 		// get attack engage relation
 		List<String> businessTemplateIds = data.getRecords().stream()
@@ -98,11 +97,11 @@ public class RbTemplateController {
 			rspList.add(rspElement);
 		}
 
-		ListRsp res = PageUtil.getListResult(data);
+		ListRsp<RbTemplateListRsp> res = PageUtil.getListResult(data);
 		// 替换返回数据
 		res.setList(rspList);
 
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 	private RbTemplateListRsp getRbTemplateRspByBaseInfoData(RbTemplateData rbTemplateData,

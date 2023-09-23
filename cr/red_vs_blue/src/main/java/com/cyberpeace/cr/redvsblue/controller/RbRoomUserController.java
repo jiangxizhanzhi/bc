@@ -29,7 +29,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
-import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -107,14 +106,17 @@ public class RbRoomUserController {
 
 	@Autowired
 	private CrScoreService crScoreService;
+
+	private static final String RESOURCE_ID_MISSING_LOG = "resource id missing";
+
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<Map> getRunningStatus(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		Integer status = rbRoomService.getTrainingStatus(resource_id);
+	public BaseRsp<Map<String, Integer>> getRunningStatus(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resourceId) {
+		Integer status = rbRoomService.getTrainingStatus(resourceId);
 
-		Map map = Maps.newHashMap();
+		Map<String, Integer> map = Maps.newHashMap();
 		map.put("time_management_status", status);
 
 		return new BaseRsp<>(map);
@@ -129,12 +131,12 @@ public class RbRoomUserController {
 	@GetMapping("/get_mission_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionInfoRsp>> getMissionInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		// 获取下发的任务内容
-		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(resource_id, userId);
+		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(resourceId, userId);
 		List<MissionInfoRsp> missionInfoRsps = tasks.stream().map(taskContext -> {
 
 			// 获取评估状态
@@ -151,7 +153,7 @@ public class RbRoomUserController {
 			Integer evaluateStatus = taskContext.getStatus();
 
 			// 未提交过
-			if (taskSubmits == null || taskSubmits.size() == 0) {
+			if (taskSubmits == null || taskSubmits.isEmpty()) {
 				evaluateStatus = CrTask.TaskStatus.RELEASED.getCode();
 			}
 			// 已提交过，获取任务驳回记录
@@ -174,7 +176,7 @@ public class RbRoomUserController {
 			MissionInfoRsp missionInfoRsp = BeanUtils.copy(taskContext.getMission(),
 					MissionInfoRsp.class);
 
-			if (!taskContext.getMission().getShowWriteup()) {
+			if (Boolean.FALSE.equals(taskContext.getMission().getShowWriteup())) {
 				missionInfoRsp.setWriteUp("");
 			}
 
@@ -206,7 +208,7 @@ public class RbRoomUserController {
 			return missionInfoRsp;
 		}).collect(Collectors.toList());
 
-		return new BaseRsp(missionInfoRsps);
+		return new BaseRsp<>(missionInfoRsps);
 	}
 
 	@ApiOperation("开始答题")
@@ -251,12 +253,14 @@ public class RbRoomUserController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskService.submitMissions(submitMissionsReq.getResourceId(),
-						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer(),submitMissionsReq.getRemark());
+						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer(),
+						submitMissionsReq.getRemark());
 				rbRefereeService.notifySubmission(submitMissionsReq.getMissionHash());
 			}
 		});
-		//态势导调动效推送
-		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(), MissionWsCode.RVB_MISSION_CODE);
+		// 态势导调动效推送
+		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(),
+				MissionWsCode.RVB_MISSION_CODE);
 		return new BaseRsp<>();
 	}
 
@@ -302,24 +306,24 @@ public class RbRoomUserController {
 	@GetMapping("/task/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskMatrix> getTaskMatrix(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
+			@ApiParam(name = "user_id", value = "用户id", required = true) String userId) {
 
-		if (StringUtils.isBlank(resource_id)) {
-			log.error("resource_id_missing");
+		if (StringUtils.isBlank(resourceId)) {
+			log.error(RESOURCE_ID_MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		if (StringUtils.isBlank(user_id)) {
-			user_id = UserInfoContext.getUserContext().getUserId();
+		if (StringUtils.isBlank(userId)) {
+			userId = UserInfoContext.getUserContext().getUserId();
 			// 查看自己的任务矩阵之后去掉任务矩阵红点标记
-			crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
-					user_id);
+			crBadgeService.removeBadge(resourceId, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+					userId);
 		}
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
-		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resourceId, userId);
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resourceId, userId);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resourceId, userId);
 		rbTaskMatrix.setFinalScore(crScore == null ? 0 : crScore.getFinalScore());
-		rbTaskMatrix.setTime(rbTimeManagementService.getTimeCostLong(resource_id));
+		rbTaskMatrix.setTime(rbTimeManagementService.getTimeCostLong(resourceId));
 		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}
@@ -328,20 +332,20 @@ public class RbRoomUserController {
 	@GetMapping("/task/replayUserTaskInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskMatrix> replayUserTaskInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
+			@ApiParam(name = "user_id", value = "用户id", required = true) String userId) {
 
-		if (StringUtils.isBlank(resource_id)) {
-			log.error("resource_id_missing");
+		if (StringUtils.isBlank(resourceId)) {
+			log.error(RESOURCE_ID_MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		if (StringUtils.isBlank(user_id)) {
-			user_id = UserInfoContext.getUserContext().getUserId();
+		if (StringUtils.isBlank(userId)) {
+			userId = UserInfoContext.getUserContext().getUserId();
 		}
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
-		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
-		rbTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resourceId, userId);
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resourceId, userId);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resourceId, userId);
+		rbTaskMatrix.setFinalScore(crScore == null ? 0 : crScore.getFinalScore());
 		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.REPLAY.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}
@@ -350,9 +354,9 @@ public class RbRoomUserController {
 	@GetMapping("/task/matrix/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> ifShowMissionMatrixBadge(@ApiParam(name = "resource_id",
-			value = "红蓝对抗训练id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		Boolean res = crBadgeService.ifExist(resource_id,
+			value = "红蓝对抗训练id", required = true) String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		Boolean res = crBadgeService.ifExist(resourceId,
 				CrBadge.BadgeType.MISSION_RELEASE.getCode(),
 				UserInfoContext.getUserContext().getUserId());
 		return new BaseRsp<>(res);
@@ -361,10 +365,10 @@ public class RbRoomUserController {
 	@ApiOperation("任务矩阵红点点击取消")
 	@GetMapping("/matrix/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp clickEvaluationBadge(@ApiParam(name = "resource_id", value = "红蓝对抗训练id",
-			required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+	public BaseRsp<Boolean> clickEvaluationBadge(@ApiParam(name = "resource_id", value = "红蓝对抗训练id",
+			required = true) String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		crBadgeService.removeBadge(resourceId, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
 				UserInfoContext.getUserContext().getUserId());
 		return new BaseRsp<>();
 	}
@@ -373,23 +377,24 @@ public class RbRoomUserController {
 	@GetMapping("/task/replayUserTimeInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<ScreenRecordUserRole>> replyUserTimeInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-			@ApiParam(name = "node_id", value = "设备id", required = true) String node_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
+			@ApiParam(name = "node_id", value = "设备id", required = true) String nodeId) {
 
-		if (StringUtils.isBlank(resource_id)) {
-			log.error("resource_id_missing");
+		if (StringUtils.isBlank(resourceId)) {
+			log.error(RESOURCE_ID_MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		RbRoom room = rbRoomService.getById(resource_id);
+		RbRoom room = rbRoomService.getById(resourceId);
 		if (!room.isEnded()) {
 			log.error("rb room [{}] not ended", room.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.PLZ_REPLAY_AFTER_TRAINING_ENDS);
 		}
-		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
-				room.getReplaySceneId(), node_id,Lists.newArrayList(RbRoleGroup.RED.getCode(), RbRoleGroup.BLUE.getCode()));
+		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resourceId,
+				room.getReplaySceneId(), nodeId,
+				Lists.newArrayList(RbRoleGroup.RED.getCode(), RbRoleGroup.BLUE.getCode()));
 
 		// 得到场景真实结束时间
-		Date actualEndTime = rbTimeManagementService.getActualEndTime(resource_id);
+		Date actualEndTime = rbTimeManagementService.getActualEndTime(resourceId);
 		// 过滤出结束时间之前的数据
 		resList = screenService.filterBeforeActualEndTime(resList, actualEndTime);
 
@@ -399,9 +404,9 @@ public class RbRoomUserController {
 	@ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req) {
+	public BaseRsp<Boolean> createMark(@RequestBody @Valid MarkAddReq req) {
 		crCommonService.addMark(req, BusinessType.RED_VS_BLUE.getCode());
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	/**
@@ -412,20 +417,20 @@ public class RbRoomUserController {
 	@GetMapping("/get_time_line")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getTimeLine(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		TimeLineData data = rbRoomService.getStudentsTimeLine(resource_id);
-		return new BaseRsp(data);
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resourceId) {
+		TimeLineData data = rbRoomService.getStudentsTimeLine(resourceId);
+		return new BaseRsp<>(data);
 	}
 
 	@ApiOperation("获取任务详情")
 	@GetMapping("/get_mission_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<MissionRsp> getMissionDetail(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-			@ApiParam(name = "mission_id", value = "任务id", required = true) String mission_id) {
+	public BaseRsp<MissionInfoRsp> getMissionDetail(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
+			@ApiParam(name = "mission_id", value = "任务id", required = true) String missionId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		TaskContext taskContext = crTaskService.getByMissionAndUser(mission_id, userId);
+		TaskContext taskContext = crTaskService.getByMissionAndUser(missionId, userId);
 
 		MissionInfoRsp missionRsp = new MissionInfoRsp();
 		missionRsp.setResourceId(taskContext.getMission().getRoomId());
@@ -439,15 +444,15 @@ public class RbRoomUserController {
 		missionRsp.setDescription(taskContext.getMission().getDescription());
 		missionRsp.setUserAnswer(taskContext.getUserAnswer());
 		missionRsp.setRemark(taskContext.getRemark());
-		if (!taskContext.getMission().getShowWriteup()) {
+		if (Boolean.FALSE.equals(taskContext.getMission().getShowWriteup())) {
 			missionRsp.setWriteUp("");
 		}
-		List<CrTaskRejectRsp> rejectLogs = crTaskService.getTaskRejctsByTaskId(resource_id);
+		List<CrTaskRejectRsp> rejectLogs = crTaskService.getTaskRejctsByTaskId(resourceId);
 		missionRsp.setRejectLog(rejectLogs);
 		missionRsp.setEvaluateStatus(
 				CollectionUtils.isEmpty(rejectLogs) ? CrTask.TaskStatus.RELEASED.getCode()
 						: taskContext.getStatus());
 		missionRsp.initUserMissionStatus(taskContext);
-		return new BaseRsp(missionRsp);
+		return new BaseRsp<>(missionRsp);
 	}
 }

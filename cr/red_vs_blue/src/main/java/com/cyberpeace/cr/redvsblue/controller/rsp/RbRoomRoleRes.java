@@ -1,14 +1,14 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.google.common.collect.Lists;
+
 import lombok.Data;
 
 @Data
-public class RbRoomRoleRes implements Serializable {
+public class RbRoomRoleRes {
 
 	private String resourceId;
 

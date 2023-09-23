@@ -1,9 +1,10 @@
 package com.cyberpeace.cr.redvsblue.controller.req;
 
-import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;
-import lombok.Data;
-
 import java.util.List;
+
+import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;
+
+import lombok.Data;
 
 @Data
 public class RbCommonDeviceReq {

@@ -3,19 +3,19 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
-import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 

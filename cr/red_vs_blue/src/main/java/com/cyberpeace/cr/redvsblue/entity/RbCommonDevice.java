@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.redvsblue.entity;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.*;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 @TableName("cr_rb_common_device")

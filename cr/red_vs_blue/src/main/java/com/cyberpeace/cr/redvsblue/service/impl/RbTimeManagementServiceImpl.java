@@ -149,7 +149,7 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 		if (timeManagement == null) {
 			return TimeUtil.duration2String(0L);
 		}
-		if (timeManagement.isStopped()) {
+		if (Boolean.TRUE.equals(timeManagement.isStopped())) {
 			return TimeUtil.getColonTimeInterval(timeManagement.getCreateTime(),
 					timeManagement.getUpdateTime());
 		} else {

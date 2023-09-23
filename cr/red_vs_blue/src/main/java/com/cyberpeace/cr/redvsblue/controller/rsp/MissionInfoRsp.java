@@ -1,16 +1,16 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class MissionInfoRsp implements Serializable {
+public class MissionInfoRsp {
 
 	@ApiModelProperty("任务id")
 	private String resourceId;

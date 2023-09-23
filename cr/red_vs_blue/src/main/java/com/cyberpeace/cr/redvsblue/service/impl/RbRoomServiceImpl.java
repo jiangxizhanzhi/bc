@@ -7,11 +7,6 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.context.MissionStageScheme;
-import com.cyberpeace.common.context.role.CrRoleNode;
-import com.cyberpeace.common.context.role.CrRoleNodesData;
-import com.cyberpeace.common.enums.RbRoleGroup;
-import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +21,12 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.ListRsp;
@@ -41,19 +42,21 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRoleRes;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
-import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
-import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
@@ -103,6 +106,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
+	
+	private static final String ROOM_NOT_GET_LOG_FORMAT = "failed to get RbRoom with Id [{}]";
 
 	@Override
 	public Integer getTrainingStatus(String roomId) {
@@ -113,7 +118,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Override
 	public List<RbRoom> getByIds(List<String> roomIds) {
-		if (roomIds.size() == 0) {
+		if (roomIds.isEmpty()) {
 			return Lists.newArrayList();
 		}
 		return rbRoomMapper.selectBatchIds(roomIds);
@@ -128,7 +133,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	public IPage<RbRoomData> list(ListQuery listQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		Page page = listQuery.toPageParam();
+		Page<RbRoomData> page = listQuery.toPageParam();
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 
 		return rbRoomMapper.listRbRoom(page, listQuery);
@@ -184,7 +189,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
 					}
 					// 前端传的数据的问题
-					if (users.get(index).getUsers().size() == 0) {
+					if (users.get(index).getUsers().isEmpty()) {
 						index += 2;
 					}
 
@@ -280,25 +285,17 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		List<String> whiteMembers = Lists.newArrayList();
 
 		for (CrRole crRole : crRoles) {
-			// 如果是红方或蓝方角色
-			if (myRole.isRvbStudent()) {
-				// 如果自己也是红蓝角色，并且不是己方角色，直接跳过
-				if (!crRole.getRoleGroup().equals(myRole.getRoleGroup()) && crRole.isRvbStudent()) {
-					continue;
-				}
+			// 如果用户本身是红方或蓝方角色，并且该角色不是己方角色，直接跳过
+			if (myRole.isRvbStudent() && (!crRole.getRoleGroup().equals(myRole.getRoleGroup())
+					&& crRole.isRvbStudent())) {
+				continue;
+
 			}
 
 			// 获取所有用户
 			List<String> roleUserIds = crRole.getUserIdList();
 			userIds.addAll(roleUserIds);
-			/*
-			if (!crRole.isBlueStudent()) {
-				redMembers.addAll(roleUserIds);
-			}
-			if (!crRole.isRedStudent()) {
-				blueMembers.addAll(roleUserIds);
-			}
-			*/
+
 			if (crRole.isBlueStudent()) {
 				blueMembers.addAll(roleUserIds);
 			}
@@ -317,7 +314,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				dashboardUser.setId(userId);
 				dashboardUser.setStatus("online");
 				dashboardUser.setSign("");
-				// dashboardUser.setRole(getFullRoleName(crRole));
 				if (crRole.isBlueStudent()) {
 					dashboardUser.setRoleType(RbRoleGroup.BLUE.getEnglish());
 					dashboardUser.setRole(RbRoleGroup.BLUE.getMsg());
@@ -331,7 +327,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				if(!crRole.isBlueStudent() && !crRole.isRedStudent()) {
 					dashboardUser.setRoleType(RbRoleGroup.WHITE.getEnglish());
 					dashboardUser.setRole(crRole.getName());
-					// dashboardUser.setRoleCode(CrRole.RbRoleGroup.WHITE.getCode());
 				}
 
 				// 找到当前用户角色
@@ -481,10 +476,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		if (!StringUtils.isBlank(rbRoomContext.getDescription())) {
 			rbRoom.setDescription(rbRoomContext.getDescription());
 		}
-		if (rbRoomContext.getPreSkill() != null && rbRoomContext.getPreSkill().size() > 0) {
+		if (rbRoomContext.getPreSkill() != null && !rbRoomContext.getPreSkill().isEmpty()) {
 			rbRoom.setPreSkill(JsonUtil.toJsonString(rbRoomContext.getPreSkill()));
 		}
-		if (rbRoomContext.getTrainSkill() != null && rbRoomContext.getTrainSkill().size() > 0) {
+		if (rbRoomContext.getTrainSkill() != null && !rbRoomContext.getTrainSkill().isEmpty()) {
 			rbRoom.setTrainSkill(JsonUtil.toJsonString(rbRoomContext.getTrainSkill()));
 		}
 		if (rbRoomContext.getStartTime() != null) {
@@ -512,7 +507,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				updateById(rbRoom);
 				if (rbRoomContext.getRoleConfig() != null
-						&& rbRoomContext.getRoleConfig().size() > 0) {
+						&& !rbRoomContext.getRoleConfig().isEmpty()) {
 
 					Map<String, RoomRole> roomRoleMap = rbRoomContext.getRoleConfig().stream()
 							.collect(Collectors.toMap(RoomRole::getResourceId, bo -> bo));
@@ -523,7 +518,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 					crRoleList.forEach(crRole -> {
 						List<String> users = roomRoleMap.get(crRole.getResourceId()).getUsers();
-						if (users.size() == 0) {
+						if (users.isEmpty()) {
 							log.error("role users cannot be empty！rbRoomName=[{}]",
 									rbRoom.getName());
 							throw new BusinessException(
@@ -541,7 +536,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	private void permissionCheck(String roomId, String userId, RbRoleGroup roleGroup) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
-			log.error("failed to get RbRoom with Id [{}]", roomId);
+			log.error(ROOM_NOT_GET_LOG_FORMAT, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -568,7 +563,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		RbRoom rbRoom = getById(roomId);
 
 		if (rbRoom == null) {
-			log.error("failed to get RbRoom with Id [{}]", roomId);
+			log.error(ROOM_NOT_GET_LOG_FORMAT, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -595,7 +590,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		RbRoom rbRoom = getById(roomId);
 
 		if (rbRoom == null) {
-			log.error("failed to get RbRoom with Id [{}]", roomId);
+			log.error(ROOM_NOT_GET_LOG_FORMAT, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -706,8 +701,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				.countEngageRel(businessTemplateIds);
 
 		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
-				data.getRecords().stream().map(rbRoomData -> rbRoomData.getCopyedTopoId())
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+				.batchGetTopoDigest(data.getRecords().stream().map(RbRoomData::getCopyedTopoId)
 						.collect(Collectors.toList()));
 
 		// get roles and users
@@ -763,7 +758,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	public void checkStudentPermission(String roomId, String userId) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
-			log.error("failed to get RbRoom with Id [{}]", roomId);
+			log.error(ROOM_NOT_GET_LOG_FORMAT, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -830,7 +825,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	public CrRole checkRoomPermission(String roomId, String userId) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
-			log.error("failed to get RbRoom with Id [{}]", roomId);
+			log.error(ROOM_NOT_GET_LOG_FORMAT, roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 

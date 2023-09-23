@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class RbRoomRsp implements Serializable {
+public class RbRoomRsp {
 
 	@ApiModelProperty(value = "红蓝对抗房间id")
 	private String resourceId;

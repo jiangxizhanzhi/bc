@@ -1,14 +1,12 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class EvalTemplateListRsp implements Serializable {
+public class EvalTemplateListRsp {
 
 	@ApiModelProperty(value = "测评靶场模板id")
 	private String resourceId;

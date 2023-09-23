@@ -17,5 +17,7 @@ import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataCont
 public interface EvalVariableRefProbeDataMapper extends BaseMapper<EvalVariableRefProbeData> {
     List<EvalVariableRefProbeDataContext> selectVariableProbeDataResult(@Param("variable_id") String variableId);
 
-    Page<EvalVariableDataPageRsp> selectVariableProbeData(@Param("page") Page page, @Param("variable_id") String variableId);
+	Page<EvalVariableDataPageRsp> selectVariableProbeData(
+			@Param("page") Page<EvalVariableDataPageRsp> page,
+			@Param("variable_id") String variableId);
 }

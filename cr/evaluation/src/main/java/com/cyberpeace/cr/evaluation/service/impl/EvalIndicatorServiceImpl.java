@@ -3,7 +3,6 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -17,6 +16,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAggregationMapper;
@@ -105,15 +106,15 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 	public void deleteAggregationAndCollection(List<String> evalIndicatorIds) {
 		List<String> evalAggregationIds = StreamApiUtils.map(
 				evalAggregationMapper.selectIdsByEvalIndicatorIds(evalIndicatorIds),
-				evalAggregation -> evalAggregation.getResourceId());
+				EvalAggregation::getResourceId);
 		List<String> evalCollectionIds = StreamApiUtils.map(
 				evalCollectionMapper.selectIdsByEvalIndicatorIds(evalIndicatorIds),
-				evalCollectionContext -> evalCollectionContext.getResourceId());
+				EvalCollection::getResourceId);
 
-		if (evalAggregationIds.size() > 0) {
+		if (!evalAggregationIds.isEmpty()) {
 			evalAggregationMapper.deleteBatchIds(evalAggregationIds);
 		}
-		if (evalCollectionIds.size() > 0) {
+		if (!evalCollectionIds.isEmpty()) {
 			evalCollectionMapper.deleteBatchIds(evalCollectionIds);
 		}
 	}
@@ -132,7 +133,7 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 
 	@Override
 	public IPage<EvalIndicator> page(EvalListQuery listQuery) {
-		Page page = listQuery.toPageParam();
+		Page<EvalIndicator> page = listQuery.toPageParam();
 
 		return evalIndicatorMapper.listEvalIndicator(page, listQuery);
 	}

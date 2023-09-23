@@ -1,11 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class EvalVariableGraphRsp implements Serializable {

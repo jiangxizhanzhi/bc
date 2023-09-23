@@ -3,7 +3,6 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,12 +12,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowUpdate;
 import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
@@ -29,7 +31,6 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.service.context.FlowUpdateContext;
 import com.cyberpeace.cs.service.context.WsMessageBO;
-import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.google.common.collect.Lists;
 
@@ -154,8 +155,8 @@ public class EvalSceneEventListener extends MessageListener {
 		EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
 
 		if (evalTemplate != null) {
-			WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
-					templateId);
+			WebSocketMessageContext<CrSceneWsMessageIdentifier, Object> messageContext = crEventListenerHelper
+					.makeContext(data, templateId);
 			webSocketHandler.pushMessageToUsers(messageContext,
 					Lists.newArrayList(evalTemplate.getCreateUserId()));
 		}

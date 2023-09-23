@@ -29,7 +29,7 @@ public class EvalIndexServiceImpl extends ServiceImpl<EvalIndexMapper, EvalIndex
 		List<EvalIndex> evalIndexList = evalIndexMapper.selectListBySystemIdAndLevel(systemId,
 				level);
 
-		List<IndexContext> indexContextList = evalIndexList.stream().map(evalIndex -> {
+		return evalIndexList.stream().map(evalIndex -> {
 			IndexContext indexContext = BeanUtils.copy(evalIndex, IndexContext.class);
 
 			indexContext.setIndexId(evalIndex.getResourceId());
@@ -40,8 +40,6 @@ public class EvalIndexServiceImpl extends ServiceImpl<EvalIndexMapper, EvalIndex
 
 			return indexContext;
 		}).collect(Collectors.toList());
-
-		return indexContextList;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -12,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class EvalTemplateRsp extends EvalTemplateListRsp implements Serializable {
+public class EvalTemplateRsp extends EvalTemplateListRsp {
 
 	@ApiModelProperty(value = "是否录屏")
 	private Boolean enableRecording;

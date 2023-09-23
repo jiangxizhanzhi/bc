@@ -1,6 +1,20 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.alibaba.fastjson.JSONArray;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -25,25 +39,11 @@ import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
 import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
 import com.cyberpeace.cr.evaluation.utils.MatrixData;
 import com.cyberpeace.integratation.service.RemotePythonService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
 
 @Slf4j
 @Api(tags = "前台-测试靶场-算法管理")
@@ -118,7 +118,7 @@ public class EvalAlgorithmRefController {
 			evalAlgorithmRefMapper.updateById(evalAlgorithmRef);
 		}
 		BeanUtils.copyProperties(evalAlgorithmRef, res);
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 	void checkMatrixData(EvalAlgorithmRefReq req, EvalAlgorithmEditRsp res,
@@ -165,8 +165,8 @@ public class EvalAlgorithmRefController {
 					required = true) @RequestParam(name = "type") Integer type) {
 
 		EvalAlgorithmRsp evalAlgorithmRsp;
-		if (EvalAlgorithm.Type.valid(type)) {
-			if (type.equals(EvalAlgorithm.Type.AGGREGATING_ALGORITHM.getCode())) {
+		if (EvalAlgorithm.Type.valid(type)
+				&& (type.equals(EvalAlgorithm.Type.AGGREGATING_ALGORITHM.getCode()))) {
 				LambdaQueryWrapper<EvalIndexRef> queryWrapper = new LambdaQueryWrapper<>();
 				queryWrapper.eq(EvalIndexRef::getAlgorithmId, resourceId);
 				List<EvalIndexRef> evalIndexRefs = evalIndexRefMapper.selectList(queryWrapper);
@@ -194,14 +194,13 @@ public class EvalAlgorithmRefController {
 				}
 				evalAlgorithmRsp.setMatrixData(JsonUtil.toJsonString(choicesNew));
 
-				// evalAlgorithmRsp.setMatrixData(evalIndexRef.getMatrixData());
 				evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithmRef.getResourceId());
 				evalAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(
 						evalIndexRef.getAlgorithmParams(), AlgorithmParamContext.class));
 				evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
 
-				return new BaseRsp(evalAlgorithmRsp);
-			}
+				return new BaseRsp<>(evalAlgorithmRsp);
+
 
 		}
 		EvalVariableRef evalVariableRef;

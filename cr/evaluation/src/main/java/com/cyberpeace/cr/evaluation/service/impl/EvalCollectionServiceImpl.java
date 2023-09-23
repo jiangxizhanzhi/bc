@@ -43,16 +43,13 @@ public class EvalCollectionServiceImpl extends ServiceImpl<EvalCollectionMapper,
 		List<EvalCollection> evalCollectionList = evalCollectionMapper
 				.selectIdsByEvalIndicatorIds(Lists.newArrayList(evalIndicatorId));
 
-		List<EvalCollectionContext> EvalCollectionContexts = evalCollectionList.stream()
-				.map(evalCollection -> {
-					EvalCollectionContext evalCollectionContext = BeanUtils.copy(evalCollection,
-							EvalCollectionContext.class);
+		return evalCollectionList.stream().map(evalCollection -> {
+			EvalCollectionContext evalCollectionContext = BeanUtils.copy(evalCollection,
+					EvalCollectionContext.class);
 
-					evalCollectionContext.setEvalCollectionId(evalCollection.getResourceId());
+			evalCollectionContext.setEvalCollectionId(evalCollection.getResourceId());
 
-					return evalCollectionContext;
-				}).collect(Collectors.toList());
-
-		return EvalCollectionContexts;
+			return evalCollectionContext;
+		}).collect(Collectors.toList());
 	}
 }

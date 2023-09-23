@@ -1,5 +1,16 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -12,7 +23,6 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
@@ -22,17 +32,8 @@ import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
 import com.cyberpeace.cr.evaluation.utils.MatrixData;
 import com.cyberpeace.integratation.service.RemotePythonService;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -42,16 +43,10 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	private RemotePythonService remotePythonService;
 
 	@Autowired
-	private TransactionTemplate transactionTemplate;
-
-	@Autowired
 	private EvalVariableRefService evalVariableRefService;
 
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
-
-	@Autowired
-	private EvalAlgorithmMapper evalAlgorithmMapper;
 
 	@Autowired
 	private EvalVariableRefMapper evalVariableRefMapper;
@@ -75,7 +70,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 	private Integer indexAhpPerform(String matrixData, List<Integer> data) {
 		int res = 0;
-		JSONArray objects = JSONArray.parseArray(matrixData);
+		JSONArray objects = JSON.parseArray(matrixData);
 		if (objects.size() != data.size()) {
 			throw new RemoteServiceException(ErrorCode.UNFIT_MATRIX_DATA);
 		}

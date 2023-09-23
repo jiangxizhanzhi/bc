@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
@@ -9,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class EvalTaskTimeNodesRsp implements Serializable {
+public class EvalTaskTimeNodesRsp {
 
 	@ApiModelProperty("测评任务Id")
 	private String taskId;

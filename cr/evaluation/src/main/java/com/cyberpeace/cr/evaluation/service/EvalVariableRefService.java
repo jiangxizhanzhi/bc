@@ -1,5 +1,9 @@
 package com.cyberpeace.cr.evaluation.service;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
@@ -10,10 +14,6 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
@@ -52,7 +52,7 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
      * @param variableId 变量项id
      * @return 探针原始数据分页信息
      */
-    ListRsp<EvalVariableDataPageRsp> originData(Page page, String variableId);
+    ListRsp<EvalVariableDataPageRsp> originData(Page<EvalVariableDataPageRsp> page, String variableId);
 
     /**
      * 获取评估结果变量项信息

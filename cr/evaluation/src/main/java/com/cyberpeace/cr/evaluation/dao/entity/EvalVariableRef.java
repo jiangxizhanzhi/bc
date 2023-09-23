@@ -1,14 +1,15 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+
 import lombok.Data;
 import lombok.Getter;
-
-import java.util.Date;
 
 @Data
 @TableName("cr_eval_variable_ref")
@@ -108,11 +109,6 @@ public class EvalVariableRef extends BaseTable {
      * 评分结束时间
      */
     private Date markEndTime;
-
-//    /**
-//     * 执行轮次
-//     */
-//    private Integer exeCycle;
 
     public enum Progress implements GenericEnum {
         NOT_START(1, "未开始"),

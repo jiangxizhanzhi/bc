@@ -1,7 +1,7 @@
 package com.cyberpeace.cr.evaluation.utils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
 
 public class AHPComputeWeight {
 
@@ -77,7 +77,6 @@ public class AHPComputeWeight {
             d = 0.0;
             sum = 0;
             // 获取向量
-            //int index = 0;
             for (int j = 0; j < N; j++) {
                 double t = 0.0;
                 for (int l = 0; l < N; l++) {

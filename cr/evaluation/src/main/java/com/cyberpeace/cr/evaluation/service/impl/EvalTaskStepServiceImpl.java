@@ -1,5 +1,13 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
@@ -13,14 +21,8 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -50,7 +52,7 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	public Boolean startStep(EvalTaskStep evalTaskStep) {
 
 		// 关闭的任务步骤不允许操作
-		if (!evalTaskMapper.isNotFinished(evalTaskStep.getTaskId())) {
+		if (Boolean.FALSE.equals(evalTaskMapper.isNotFinished(evalTaskStep.getTaskId()))) {
 			log.error("The evaluation task is not running! TaskId = [{}]", evalTaskStep.getTaskId());
 			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_RUNNING);
 		}
@@ -64,7 +66,8 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		// 校验，只有前序步骤完成才能启动此步骤
 		Integer stage = evalTaskStep.getStage();
 		String taskId = evalTaskStep.getTaskId();
-		if (stage > 1 && evalTaskStepMapper.isNotFinished(taskId, (stage - 1))) {
+		if (stage > 1
+				&& Boolean.TRUE.equals(evalTaskStepMapper.isNotFinished(taskId, (stage - 1)))) {
 			log.error("Preceding evaluation step is not finished! stage = [{}], taskId = [{}]", stage, taskId);
 			throw new BusinessException(CrBusinessErrorCode.PRECEDING_STEP_NOT_FINISHED);
 		}
@@ -78,7 +81,7 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	public Boolean stopStep(EvalTaskStep evalTaskStep) {
 
 		// 关闭的任务步骤不允许操作
-		if (!evalTaskMapper.isNotFinished(evalTaskStep.getTaskId())) {
+		if (Boolean.FALSE.equals(evalTaskMapper.isNotFinished(evalTaskStep.getTaskId()))) {
 			log.error("The evaluation task is not running! TaskId = [{}]", evalTaskStep.getTaskId());
 			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_RUNNING);
 		}

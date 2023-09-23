@@ -41,7 +41,7 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 				List<String> indexIds = evalIndexMapper.selectIdsByEvalSystemIds(evalSystemIds);
 
 				evalSystemMapper.deleteBatchIds(evalSystemIds);
-				if (indexIds.size() > 0) {
+				if (!indexIds.isEmpty()) {
 					evalIndexMapper.deleteBatchIds(indexIds);
 				}
 
@@ -54,7 +54,7 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 	@Override
 	public IPage<EvalSystem> page(EvalListQuery listQuery) {
 
-		Page page = listQuery.toPageParam();
+		Page<EvalSystem> page = listQuery.toPageParam();
 
         return evalSystemMapper.listEvalSystems(page, listQuery);
 	}

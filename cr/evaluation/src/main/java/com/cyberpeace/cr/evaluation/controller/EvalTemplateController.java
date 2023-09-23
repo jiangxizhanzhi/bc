@@ -1,11 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.cyberpeace.common.context.user.OperationUserInfo;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -15,11 +11,17 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.context.user.OperationUserInfo;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
@@ -34,12 +36,11 @@ import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import java.util.List;
 
 @Api(tags = "靶场测评-模板")
 @RestController
@@ -152,7 +153,7 @@ public class EvalTemplateController {
 		EvalTemplateTaskListRsp evalTemplateTaskListRsp = new EvalTemplateTaskListRsp();
 
 		evalTemplateTaskListRsp
-				.setTaskList(evalTemplateService.listTask(evalTemplate, isFinished));;
+				.setTaskList(evalTemplateService.listTask(evalTemplate, isFinished));
 
 		if (StringUtils.isNotEmpty(evalTemplate.getCurrentTaskId())) {
 			evalTemplateTaskListRsp.setCurrentTaskId(evalTemplate.getCurrentTaskId());

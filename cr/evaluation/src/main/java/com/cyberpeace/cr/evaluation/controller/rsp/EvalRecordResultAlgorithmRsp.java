@@ -1,14 +1,14 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
+import java.util.List;
+
 import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.List;
-
 @Data
-public class EvalRecordResultAlgorithmRsp implements Serializable {
+public class EvalRecordResultAlgorithmRsp {
     @ApiModelProperty("ID")
     private String resourceId;
 

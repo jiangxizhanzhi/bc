@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
+import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class EvalRecordScoreRsp  {

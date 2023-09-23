@@ -1,5 +1,16 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -23,17 +34,8 @@ import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataContext;
 import com.cyberpeace.integratation.model.evaluation.*;
 import com.cyberpeace.integratation.service.RemotePythonService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -53,9 +55,15 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
-    private static final int onceFormatSize = 1000;
+    private static final int ONCE_FORMAT_SIZE = 1000;
 
-    private static final int formatValueLengthLimit = 65535;
+    private static final int FORMAT_VALUE_LENGTH_LIMIT = 65535;
+
+    private static final String CODE_LOG_FORMAT = "code: %s";
+
+    private static final String OTHER_ARG_LOG_FORMAT = "other arguments: %s";
+
+    private static final String DATA_ARG_LOG_FORMAT = "data argument: %s";
 
     @Override
     public String startVariableAlgorithm(EvalVariableRef evalVariableRef,
@@ -103,7 +111,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
                 .ge(EvalProbeData::getCollectionTime, evalRecord.getStartTime())
                 .le(EvalProbeData::getCollectionTime, evalRecord.getEndTime())
                 .orderByAsc(EvalProbeData::getCollectionTime)
-                .last(String.format("limit %s, %s", limit, onceFormatSize))
+                .last(String.format("limit %s, %s", limit, ONCE_FORMAT_SIZE))
                 .list();
 
         // 时间范围内无采集数据情况
@@ -125,9 +133,9 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams());
 
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(CODE_LOG_FORMAT, evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(OTHER_ARG_LOG_FORMAT, otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(DATA_ARG_LOG_FORMAT, JsonUtil.toJsonString(data)));
 
         // 运行匹配算法
         List<String> formatReturn;
@@ -145,7 +153,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         for (int i = 0; i < formatReturn.size(); i++) {
             String formatValue = formatReturn.get(i);
             // 格式化算法返回值长度过长
-            if (formatValue.length() > formatValueLengthLimit) {
+            if (formatValue.length() > FORMAT_VALUE_LENGTH_LIMIT) {
                 return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FORMAT_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
             }
             EvalVariableRefProbeData object = new EvalVariableRefProbeData();
@@ -160,8 +168,8 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         }
 
         evalVariableRefProbeDataService.saveBatch(evalVariableRefProbeDataList);
-        if (perFormatSize == onceFormatSize) {
-            return executeFormat(evalVariableRef, evalAlgorithmRef, evalRecord, evalTask, limit + onceFormatSize);
+        if (perFormatSize == ONCE_FORMAT_SIZE) {
+            return executeFormat(evalVariableRef, evalAlgorithmRef, evalRecord, evalTask, limit + ONCE_FORMAT_SIZE);
         }
 
         return null;
@@ -173,7 +181,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.MATCHING.getCode())) {
             EvalLog.info(evalRecord, evalVariableRef, "match algorithm has been completed, continue.");
-            return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+            return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
         }
 
         List<EvalVariableRefProbeDataContext> evalVariableRefProbeDataContextList = evalVariableRefProbeDataService
@@ -192,9 +200,9 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMatchParams());
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(CODE_LOG_FORMAT, evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(OTHER_ARG_LOG_FORMAT, otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(DATA_ARG_LOG_FORMAT, JsonUtil.toJsonString(data)));
 
         // 运行匹配算法
         List<Integer> matchReturn;
@@ -234,10 +242,10 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         EvalLog.info(evalRecord, evalVariableRef, "match algorithm completed.");
-        return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+        return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
     }
 
-    private String startMark(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+    private String startMark(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMarkAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "mark algorithm start...");
 
@@ -262,9 +270,9 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMarkParams());
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.debug(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(CODE_LOG_FORMAT, evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(OTHER_ARG_LOG_FORMAT, otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(DATA_ARG_LOG_FORMAT, JsonUtil.toJsonString(data)));
 
         // 运行评分算法
         Integer score;

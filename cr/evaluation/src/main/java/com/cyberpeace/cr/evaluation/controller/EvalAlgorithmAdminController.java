@@ -1,5 +1,19 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -26,23 +40,11 @@ import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Api(tags = "后台-测试靶场-算法管理")
@@ -74,7 +76,7 @@ public class EvalAlgorithmAdminController {
 		evalAlgorithm.setBuiltin(EvalAlgorithm.Builtin.FORMAT_ALGORITHM.getCode());
 		evalAlgorithmService.save(evalAlgorithm);
 
-		return new BaseRsp(evalAlgorithm);
+		return new BaseRsp<>(evalAlgorithm);
 	}
 
 	private EvalAlgorithm convertEvalAlgorithmReqToEvalAlgorithm(EvalAlgorithmReq req) {
@@ -124,7 +126,7 @@ public class EvalAlgorithmAdminController {
 	@PutMapping("")
 	@ApiOperation("编辑算法")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
-	public BaseRsp<String> editAlgorithm(@RequestBody EvalAlgorithmReq req) {
+	public BaseRsp<EvalAlgorithm> editAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
 		String evalAlgorithmId = req.getEvalAlgorithmId();
 		checkAlgorithmMode(evalAlgorithmId);
@@ -159,7 +161,7 @@ public class EvalAlgorithmAdminController {
 
 		}
 
-		return new BaseRsp(evalAlgorithm);
+		return new BaseRsp<>(evalAlgorithm);
 	}
 
 	private void checkAlgorithmMode(String evalAlgorithmId) {
@@ -182,7 +184,7 @@ public class EvalAlgorithmAdminController {
 	@DeleteMapping("")
 	@ApiOperation("批量删除")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
-	public BaseRsp batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
+	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
 		List<String> selectUsedAlgorithmIds = evalAlgorithmService
 				.selectUsedAlgorithmIds(deleteReq.getIds());
@@ -197,7 +199,7 @@ public class EvalAlgorithmAdminController {
 			throw new BusinessException(CrBusinessErrorCode.BUILTIN_ALGORITHM_FORBID_DELETE_ERROR);
 		}
 		// 如果都是未使用，直接删除，存在已使用，则先修改已使用算法的状态，再删除其他所有算法
-		if (selectUsedAlgorithmIds.size() > 0) {
+		if (!selectUsedAlgorithmIds.isEmpty()) {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 				@Override
@@ -211,18 +213,18 @@ public class EvalAlgorithmAdminController {
 			evalAlgorithmService.delete(deleteReq.getIds());
 		}
 
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("查询算法")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
-			@ApiParam(name = "resource_id", value = "id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "id", required = true) String resourceId) {
 
-		EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(resource_id);
+		EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(resourceId);
 		if (null == evalAlgorithm) {
-			log.info("EvalAlgorithm not found! evalAlgorithmId=[{}]", resource_id);
+			log.info("EvalAlgorithm not found! evalAlgorithmId=[{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -232,7 +234,7 @@ public class EvalAlgorithmAdminController {
 				JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(), AlgorithmParamContext.class));
 		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
 
-		return new BaseRsp(evalAlgorithmRsp);
+		return new BaseRsp<>(evalAlgorithmRsp);
 	}
 
 	/**
@@ -259,7 +261,7 @@ public class EvalAlgorithmAdminController {
 			return evalAlgorithmRsp;
 		}).collect(Collectors.toList());
 
-		return new BaseRsp(rsp);
+		return new BaseRsp<>(rsp);
 	}
 
 	@ApiOperation("获取全部算法")
@@ -282,7 +284,7 @@ public class EvalAlgorithmAdminController {
 			return evalAlgorithmRsp;
 		}).collect(Collectors.toList());
 
-		return new BaseRsp(evalAlgorithmRsps);
+		return new BaseRsp<>(evalAlgorithmRsps);
 	}
 
 	@ApiOperation("列表查询")
@@ -309,7 +311,7 @@ public class EvalAlgorithmAdminController {
 			return evalAlgorithmRsp;
 		});
 
-		return new BaseRsp(PageUtil.getListResult(data));
+		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
 }

@@ -1,10 +1,10 @@
 package com.cyberpeace.cr.evaluation.service.context;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class EvalRecordIndexRefContext implements Serializable {

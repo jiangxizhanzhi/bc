@@ -1,6 +1,26 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -40,26 +60,8 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -762,7 +764,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 执行指标项
         EvalLog.info(evalRecord, "calculate indexes start...");
-        startIndexes(evalRecord, evalTask);
+        startIndexes(evalRecord);
         EvalLog.info(evalRecord, "calculate indexes completed.");
 
         // 添加当前执行结果到结果轮次表中
@@ -938,7 +940,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     }
 
-    private void startIndexes(EvalRecord evalRecord, EvalTask evalTask) {
+    private void startIndexes(EvalRecord evalRecord) {
 
         // 体系下指标项
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, evalRecord.getResourceId()).list();
@@ -1049,7 +1051,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         List<MpCollectionEvent> collectionEventList = Lists.newArrayList();
         // 第一次、非迭代调用, 并且分页不为第一页. 视作数据同步过程中断
-        if (isFirstCall && !collectionEventPageContext.getPage().equals(1L)) {
+		if (Boolean.TRUE.equals(isFirstCall) && !collectionEventPageContext.getPage().equals(1L)) {
             // es需要循环数次跳过已同步数据
             if (evalVariableRefService.ES_PROBES.contains(collectionEventPageContext.getProbeId())) {
                 EvalLog.info(evalRecord, evalVariableRef, "synced data skipping...");

@@ -1,13 +1,14 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
-import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
@@ -65,7 +66,7 @@ public class SingleSceneEventListener extends MessageListener {
 		identifier.setPath(WsPath.CR_SCENE);
 		identifier.setBusiness_id(businessId);
 
-		WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext.builder().data(data)
 				.messageIdentifier(identifier).build();
 
 		myWebSocketHandler.pushMessage(messageContext, true);

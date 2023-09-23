@@ -65,8 +65,6 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
 		SingleTrainTemplateReq requestData = (SingleTrainTemplateReq) basicTemplate;
 		singleTemplate.setMissionsScheme(JsonUtil.toJsonString(requestData.getMissionsScheme()));
-		// todo save missions -> return mission_id ? ->
-		// singleTemplate.setMissionSchemeId(mission_id)
 
 		singleTemplateService.save(singleTemplate);
 

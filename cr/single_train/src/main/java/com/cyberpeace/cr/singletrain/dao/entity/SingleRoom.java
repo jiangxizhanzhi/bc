@@ -64,48 +64,54 @@ public class SingleRoom extends BaseTable {
 	private String userId;
 
 	/**
-	 * 单兵训练在{@link com.cyberpeace.cr.crbase.dao.entity.TrainRecord#extra}中记录的json字符串使用字段名
+	 * 单兵训练在{@link com.cyberpeace.cr.crbase.dao.entity.TrainRecord}extra字段中记录的json字符串使用字段名
 	 */
-	public interface CrTrainRecordFields {
+	public static final class CrTrainRecordFields {
+
 		/**
 		 * 训练总分
 		 */
-		String SCORE = "score";
+		public static final String SCORE = "score";
 
 		/**
 		 * 任务训练记录。 训练关闭时, {@link SingleRoom#trainingRecord} 内容记录到此字段
 		 */
-		String MISSIONS_RECORD = "missions_record";
+		public static final String MISSIONS_RECORD = "missions_record";
+
+		private CrTrainRecordFields() {}
 	}
 
 	/**
 	 * {@link SingleRoom#trainingRecord} json字符串字段名
 	 */
-	public interface MissionsRecordFields {
+	public static final class MissionsRecordFields {
+
 		/**
 		 * 提交时间
 		 */
-		String TIME = "time";
+		public static final String TIME = "time";
 
 		/**
 		 * 任务得分
 		 */
-		String SCORE = "score";
+		public static final String SCORE = "score";
 
 		/**
 		 * 任务结果(得分)
 		 */
-		String RESULT = "result";
+		public static final String RESULT = "result";
 
 		/**
 		 * 用户提交答案
 		 */
-		String ANSWER = "answer";
+		public static final String ANSWER = "answer";
 
 		/**
 		 * 用户答题记录
 		 */
-		String RECORD = "record";
+		public static final String RECORD = "record";
+
+		private MissionsRecordFields() {}
 	}
 
 }

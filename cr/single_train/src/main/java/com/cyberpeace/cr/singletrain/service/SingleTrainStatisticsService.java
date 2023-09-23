@@ -2,12 +2,8 @@ package com.cyberpeace.cr.singletrain.service;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.singletrain.controller.req.SingleTrainStatisticsDetailReq;
 import com.cyberpeace.cr.singletrain.service.bo.SingleOrganizationStatisticsBo;
 import com.cyberpeace.cr.singletrain.service.bo.SinglePersonalStatisticsBo;
-import com.cyberpeace.cr.singletrain.service.bo.SingleStatisticsDetailBo;
 
 public interface SingleTrainStatisticsService{
 
@@ -22,13 +18,5 @@ public interface SingleTrainStatisticsService{
 	 * @return 单兵训练组织排名
 	 */
 	List<SingleOrganizationStatisticsBo> getOrganizationRankStatistics();
-
-	/**
-	 * 获取单兵训练统计详情
-	 * @param detailReq 起止时间
-	 * @param page 分页
-	 * @return 单兵训练统计分页数据
-	 */
-//	ListRsp<SingleStatisticsDetailBo> getAllStatisticsDetail(SingleTrainStatisticsDetailReq detailReq, Page page);
 
 }

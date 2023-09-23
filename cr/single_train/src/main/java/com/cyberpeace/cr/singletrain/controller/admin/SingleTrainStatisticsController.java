@@ -57,7 +57,7 @@ public class SingleTrainStatisticsController {
     @ApiOperation("单兵训练统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
     public BaseRsp<ListRsp<StatisticsDetail>> getAllDetail(TrainStatisticsDetailReq detailReq) {
-        Page page = detailReq.toPageParam();
+        Page<StatisticsDetail> page = detailReq.toPageParam();
         ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessType.TRAINING_SINGLE.getCode());
         return new BaseRsp<>(rsp);
     }

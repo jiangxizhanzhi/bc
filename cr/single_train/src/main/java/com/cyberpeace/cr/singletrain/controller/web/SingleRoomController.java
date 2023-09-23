@@ -103,8 +103,8 @@ public class SingleRoomController {
 	@GetMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SceneViewContext> getScene(
-			@ApiParam(name = "resource_id", value = "业务模板id", required = true) String resource_id) {
-		SceneViewContext context = singleRoomService.viewScene(resource_id);
+			@ApiParam(name = "resource_id", value = "业务模板id", required = true) String resourceId) {
+		SceneViewContext context = singleRoomService.viewScene(resourceId);
 
 		return new BaseRsp<>(context);
 	}
@@ -117,7 +117,7 @@ public class SingleRoomController {
 		Boolean deleteRoom = singleRoomService.deleteRoom(req.getResourceId());
 
 		// 记录远程操作日志
-		if (deleteRoom) {
+		if (Boolean.TRUE.equals(deleteRoom)) {
 			remoteLogService.addCrLog(UserInfoContext.getUserContext(),
 					OperationModule.SINGLE_TRAIN, OperationType.STOP,
 					singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName());
@@ -185,7 +185,7 @@ public class SingleRoomController {
 	@ApiOperation("重启节点")
 	@PostMapping("/scene/node/restart")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
-	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+	public BaseRsp<Boolean> restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom room = singleRoomService
 				.getByBusinessTemplateIdAndUserId(nodeOpsReq.getResourceId(), userId);
@@ -195,17 +195,17 @@ public class SingleRoomController {
 		}
 		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed_to_restart_node: LocalSceneId = [{}]", room.getLocalSceneId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("重建节点")
 	@PostMapping("/scene/node/recreate")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
-	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+	public BaseRsp<Boolean> recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom room = singleRoomService
 				.getByBusinessTemplateIdAndUserId(nodeOpsReq.getResourceId(), userId);
@@ -215,11 +215,11 @@ public class SingleRoomController {
 		}
 		Boolean result = localSceneService.recreateNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed_to_restart_node: LocalSceneId = [{}]", room.getLocalSceneId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
-		return new BaseRsp();
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("训练历史")
@@ -242,11 +242,11 @@ public class SingleRoomController {
 	@GetMapping("/mission/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleMatrixProgressRsp> getMissionMatrix(
-			@ApiParam(name = "resource_id", value = "单兵模板id", required = true) String resource_id) {
-		if (StringUtils.isBlank(resource_id)) {
+			@ApiParam(name = "resource_id", value = "单兵模板id", required = true) String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		SingleMatrixProgressRsp res = singleRoomService.getMatrixRsp(resource_id);
+		SingleMatrixProgressRsp res = singleRoomService.getMatrixRsp(resourceId);
 		return new BaseRsp<>(res);
 	}
 
@@ -276,9 +276,9 @@ public class SingleRoomController {
 	@GetMapping("/os/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<List<IdNameType>> getOsNames(
-			@ApiParam(name = "resource_id", value = "单兵训练id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		List<IdNameType> res = singleRoomService.getOsNames(resource_id);
+			@ApiParam(name = "resource_id", value = "单兵训练id", required = true) String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		List<IdNameType> res = singleRoomService.getOsNames(resourceId);
 		return new BaseRsp<>(res);
 	}
 }

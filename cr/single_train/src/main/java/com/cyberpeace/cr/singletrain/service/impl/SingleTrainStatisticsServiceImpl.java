@@ -45,7 +45,6 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         List<SingleOrganizationStatisticsBo> rsp = Lists.newArrayList();
 
 		List<UserInfo> userInfos = remoteUserService.getAllUsers();
-//		List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
         List<String> userIds = Lists.newArrayList();
         Map<String, UserInfo> id2User = new HashMap<>();
 
@@ -68,7 +67,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         }
 
         // 没有用户，返回
-        if (userIds.size() == 0) {
+		if (userIds.isEmpty()) {
             return rsp;
         }
 
@@ -84,10 +83,10 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
 
         if (null != personalStatistics) {
             for (TrainingPersonalStatistics personalStatistic : personalStatistics) {
-                String user_id = personalStatistic.getUserId();
+                String userId = personalStatistic.getUserId();
 
                 // 判断user是否还存在
-                UserInfo user = id2User.get(user_id);
+                UserInfo user = id2User.get(userId);
                 if (null == user){
                     continue;
                 }
@@ -109,9 +108,9 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
                 singleOrganizationStatistics.setOrgId(tmp.getKey());
                 singleOrganizationStatistics.setOrgName(org2Name.get(tmp.getKey()));
 
-                double AverageScore = BigDecimal.valueOf((double) tmp.getValue() / org2TotalUser.get(tmp.getKey())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                double averageScore = BigDecimal.valueOf(tmp.getValue() / org2TotalUser.get(tmp.getKey())).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-                singleOrganizationStatistics.setAverageScore(AverageScore);
+                singleOrganizationStatistics.setAverageScore(averageScore);
                 rsp.add(singleOrganizationStatistics);
             }
         }
@@ -137,12 +136,12 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         );
 
         if (null != personalStatistics) {
-            List<String> user_ids = personalStatistics.stream().map(TrainingPersonalStatistics::getUserId).collect(Collectors.toList());
-            if (user_ids.size() == 0) {
+            List<String> userIds = personalStatistics.stream().map(TrainingPersonalStatistics::getUserId).collect(Collectors.toList());
+			if (userIds.isEmpty()) {
                 return rsp;
             }
 
-            List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(user_ids);
+            List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
             Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 
             for (TrainingPersonalStatistics personalStatistic : personalStatistics) {
@@ -167,121 +166,4 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         }
         return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
     }
-
-//    @Override
-//    public ListRsp<SingleStatisticsDetailBo> getAllStatisticsDetail(SingleTrainStatisticsDetailReq detailReq, Page page) {
-//        List<SingleStatisticsDetailBo> rsp = Lists.newArrayList();
-//
-//        String userName = detailReq.getPattern();
-//        boolean searchName = StringUtils.isNotBlank(userName);
-//        String organizationId = detailReq.getOrganization();
-//        boolean searchOrg = StringUtils.isNotBlank(organizationId);
-//
-//
-//        List<Integer> statusList = Lists.newArrayList();
-//        // 已完成的任务
-//        Integer successCode = CrTask.SingleTaskStatus.SUCCESS.getCode();
-//        Integer failCode = CrTask.SingleTaskStatus.FAIL.getCode();
-//        statusList.add(successCode);
-//        statusList.add(failCode);
-//
-//        List<CrTask> personalTotalStatistics = crTaskMapper.selectByStatusListAndType(
-//                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode()
-//        );
-//        //时间过滤
-//        if (StringUtils.isNotEmpty(detailReq.getStartTime()) && StringUtils.isNotEmpty(detailReq.getEndTime())) {
-//            Date startTime = java.sql.Date.valueOf(detailReq.getStartTime());
-//            Date endTime = java.sql.Date.valueOf(detailReq.getEndTime());
-//            personalTotalStatistics = personalTotalStatistics.stream().filter(personalTotalStatistic -> startTime.before(personalTotalStatistic.getCreateTime()) && personalTotalStatistic.getCreateTime().before(endTime)).collect(Collectors.toList());
-//        }
-//        Map<String, List<CrTask>> user2Tasks = new HashMap<>();
-//        for (CrTask personStatistic : personalTotalStatistics) {
-//            String userId = personStatistic.getUserId();
-//            List<CrTask> tmpList = user2Tasks.get(userId);
-//            if (null == tmpList) {
-//                tmpList = Lists.newArrayList();
-//            }
-//            tmpList.add(personStatistic);
-//            user2Tasks.put(userId, tmpList);
-//        }
-//
-//        List<String> user_ids = Lists.newArrayList(user2Tasks.keySet());
-//        if (user_ids.size() == 0) {
-//            PageUtil.getListResult(rsp, page, 0);
-//        }
-////        Map<String, UserInfo> userid2infos = remoteUserService.getIdUserInfoMap(user_ids);
-//        List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(user_ids);
-//        Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
-//
-//        for (Map.Entry<String, List<CrTask>> tmp : user2Tasks.entrySet()) {
-//            String userId = tmp.getKey();
-//
-//            UserInfo tmpUser = userid2infos.get(userId);
-//
-//            // 用户已经不存在
-//            if (null == tmpUser) {
-//                continue;
-//            }
-//
-//
-//            List<CrTask> taskList = tmp.getValue();
-//
-//            SingleStatisticsDetailBo tmpDetailBo = new SingleStatisticsDetailBo();
-//            tmpDetailBo.setName(tmpUser.getName());
-//            tmpDetailBo.setUsername(tmpUser.getUserName());
-//            tmpDetailBo.setOrganizationData(tmpUser.getOrganizationData());
-//            tmpDetailBo.setOrganizationId(tmpUser.getOrganizationId());
-//            tmpDetailBo.setUserId(userId);
-//            tmpDetailBo.setRoles(tmpUser.getRoles());
-//
-//
-//
-//            tmpDetailBo.setTaskNum(taskList.size());
-//            Integer totalScore = taskList.stream().mapToInt(CrTask::getScore).sum();
-//            tmpDetailBo.setTotalScore(totalScore);
-//
-//            Map<String, List<CrTask>> trainTimeMap = taskList.stream().collect(Collectors.groupingBy(CrTask::getRoomId));
-//            tmpDetailBo.setTrainTimes(trainTimeMap.size());
-//
-//            Map<Integer, List<CrTask>> groupTaskMap = taskList.stream().collect(Collectors.groupingBy(CrTask::getStatus));
-//            int correctSize = groupTaskMap.get(successCode) == null ? 0 : groupTaskMap.get(successCode).size();
-//            double accuracy = BigDecimal.valueOf((double) correctSize / taskList.size()).setScale(2, RoundingMode.HALF_UP).doubleValue();
-//            tmpDetailBo.setTaskAccuracy(accuracy);
-//
-//            rsp.add(tmpDetailBo);
-//        }
-//
-//        List<SingleStatisticsDetailBo> newRsp = Lists.newArrayList();
-//
-//        //按分数排序后再按照用户名自然排序
-//        rsp = rsp.stream().sorted(Comparator.comparing(SingleStatisticsDetailBo::getTotalScore, Comparator.reverseOrder())
-//                .thenComparing(SingleStatisticsDetailBo::getName, Comparator.naturalOrder())).collect(Collectors.toList());
-//
-//        //获取子组织列表
-//        List<String> childrenList = new ArrayList<>();
-//        if (searchOrg) {
-//            childrenList.addAll(remoteOrganizationService.childrenList(organizationId, Boolean.TRUE));
-//        }
-//
-//        // 增加综合排名
-//        for (int i=0;i < rsp.size();i++) {
-//            SingleStatisticsDetailBo tmp = rsp.get(i);
-//            tmp.setOverallRank(i + 1);
-////            rsp.set(i, tmp);
-//
-//            if (searchName && !tmp.getName().contains(userName)){
-//                continue;
-//            }
-//
-//            //过滤本组织及其子组织数据
-//            if (searchOrg) {
-//                if (!StringUtils.equals(tmp.getOrganizationId(), organizationId) && !childrenList.contains(tmp.getOrganizationId())) {
-//                    continue;
-//                }
-//            }
-//            newRsp.add(tmp);
-//        }
-//
-//        return PageUtil.getListResult(newRsp, page, newRsp.size());
-//    }
 }

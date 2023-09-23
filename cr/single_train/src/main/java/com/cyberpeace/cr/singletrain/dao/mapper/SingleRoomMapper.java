@@ -2,7 +2,6 @@ package com.cyberpeace.cr.singletrain.dao.mapper;
 
 import java.util.List;
 
-import com.cyberpeace.cr.singletrain.service.bo.SingleRoomData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -21,7 +20,7 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	SingleRoom getSingleRoom(@Param("business_template_id") String businessTemplateId,
 			@Param("user_id") String userId);
 
-	IPage<SingleRoomList> singleTrainSearch(@Param("page") Page page,
+	IPage<SingleRoomList> singleTrainSearch(@Param("page") Page<SingleRoomList> page,
 			@Param("user_id") String userId, @Param("pattern") String pattern,
 			@Param("category") Integer category, @Param("difficult") Integer difficult,
 			@Param("business_type") Integer businessType);

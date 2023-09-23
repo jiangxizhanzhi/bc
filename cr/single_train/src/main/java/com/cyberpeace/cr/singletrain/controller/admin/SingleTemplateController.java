@@ -69,7 +69,7 @@ public class SingleTemplateController {
 	@PostMapping
 	@ApiOperation("单兵训练模板创建")
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
-	public BaseRsp create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
+	public BaseRsp<Boolean> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`
 		SingleTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,
 				SingleTrainTemplateReq.class);
@@ -105,7 +105,7 @@ public class SingleTemplateController {
 	@PatchMapping
 	@ApiOperation("单兵训练模板更新")
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
-	public BaseRsp
+	public BaseRsp<Boolean>
 			update(@RequestBody SingleTrainTemplateUpdateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`
 		SingleTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,

@@ -1,13 +1,5 @@
 package com.cyberpeace.job;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -15,8 +7,14 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.rtks.dao.mapper.UserRoleMapper;
 import com.cyberpeace.rtks.service.RtksSituationService;
 import com.cyberpeace.rtks.service.bo.UserRoleContext;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -53,7 +51,7 @@ public class RtksSituationJob {
 			UserInfoContext.setUserContext(userInfo);
 			try {
 				// cal match & record
-				match = rtksSituationService.recordSituation(userId, userInfo.getName(),
+				rtksSituationService.recordSituation(userId, userInfo.getName(),
 						roleContext.getRoleId(), roleContext.getRoleName());
 			} catch (Exception e) {
 				log.error(String.format("rtks situation job failed with userId:[%s], roleId: [%s]",

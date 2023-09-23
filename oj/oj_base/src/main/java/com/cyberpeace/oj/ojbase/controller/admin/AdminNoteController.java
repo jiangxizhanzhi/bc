@@ -48,7 +48,7 @@ public class AdminNoteController {
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<NoteListBo>> list(AdminListNoteReq noteReq) {
 
-		Page page = noteReq.toPageParam();
+		Page<NoteListBo> page = noteReq.toPageParam();
 		AdminNoteListQuery noteListQuery = BeanUtils.copy(noteReq, AdminNoteListQuery.class);
 		noteListQuery.setUserId(UserInfoContext.getUserContext().getUserId());
 

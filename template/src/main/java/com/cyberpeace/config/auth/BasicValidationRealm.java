@@ -1,7 +1,13 @@
 package com.cyberpeace.config.auth;
 
-import java.util.Set;
-
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.rtks.dao.entity.UserRole;
+import com.cyberpeace.rtks.service.UserRelateService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -14,15 +20,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.rtks.dao.entity.UserRole;
-import com.cyberpeace.rtks.service.UserRelateService;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -36,9 +34,6 @@ public class BasicValidationRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
 
         UserInfo userInfo = UserInfoContext.getUserContext();
-
-        // 设置角色 todo roles非string
-        // simpleAuthorizationInfo.addRoles(userInfo.getRoles());
 
         // 以菜单作为权限控制
         simpleAuthorizationInfo.addStringPermissions(userInfo.getPermissions());

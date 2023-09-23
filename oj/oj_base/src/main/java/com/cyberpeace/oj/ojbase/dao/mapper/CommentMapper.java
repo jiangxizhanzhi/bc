@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface CommentMapper extends BaseMapper<Comment> {
 
-	IPage<Comment> firstByResource(Page page, @Param("businessId") String resource,
+	IPage<Comment> firstByResource(Page<Comment> page, @Param("businessId") String resource,
 			@Param("businessType") Integer businessType);
 
 	List<Comment> selectByParent(@Param("parent") String parent);
@@ -25,7 +25,7 @@ public interface CommentMapper extends BaseMapper<Comment> {
 
 	List<String> selectIdsByParent(@Param("parents") List<String> parents);
 
-	IPage<Comment> selectAllByParent(Page page, @Param("parentId") String parentId);
+	IPage<Comment> selectAllByParent(Page<Comment> page, @Param("parentId") String parentId);
 
-	IPage<Comment> selectParent(Page page,@Param("businessType") Integer businessType,@Param("content") String content);
+	IPage<Comment> selectParent(Page<Comment> page,@Param("businessType") Integer businessType,@Param("content") String content);
 }

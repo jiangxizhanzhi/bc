@@ -35,39 +35,25 @@ public class TestController {
 	String testTopoId = "1dd035784f5b44869c4e96aa07c31fd5";
 
 	@PostMapping("/copytopo")
-	public BaseRsp createTopo() {
+	public BaseRsp<String> createTopo() {
 		String result = remoteTopoService.copyTopo(testTopoId);
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@GetMapping("topoStatistic")
-	public BaseRsp topoStatistic() {
+	public BaseRsp<TopoDigest> topoStatistic() {
 		TopoDigest digest = remoteTopoService.getTopoDigest(testTopoId);
 
-		return new BaseRsp(digest);
+		return new BaseRsp<>(digest);
 	}
 
 	@PostMapping
 	public BaseRsp<Boolean> convertHtml(@RequestBody DemoReq1 demoReq) {
 		boolean result = HtmlToPdfUtil.convert(demoReq.getHtmlFilePath(), demoReq.getPdfFilePath());
 
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
-	//
-	// @GetMapping("/startScene")
-	// public BaseRsp<String> startScene() {
-	// String sceneId = remoteSceneService.startScene(, null);
-	// return new BaseRsp<>(sceneId);
-	// }
-
-	// @GetMapping("/stopScene")
-	// public BaseRsp<Boolean> stopScene() {
-	// Boolean result =
-	// remoteSceneService.stopScene("b3304280b0a14d5aa7cd4dcf03ddd8f", null);
-	//
-	// return new BaseRsp<>(result);
-	// }
 
 	@PostMapping("/add_mp_log")
 	public BaseRsp addMpLog() {

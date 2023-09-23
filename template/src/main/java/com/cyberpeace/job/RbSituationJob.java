@@ -1,10 +1,12 @@
 package com.cyberpeace.job;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.util.ConnectionUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbSituationService;
 import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,7 +46,22 @@ public class RbSituationJob {
 
 	Map<String, Date> dateMap = new HashMap<>();
 
-	private final String RbSituationExchange = "situation";
+	private static final String RBSITUATIONEXCHANGE = "situation";
+
+	private static final String ERRORLOG = "An error occurred in the Rabbit MQ connection, host:[{}],port:[{}],userName:[{}],password:[{}]";
+
+	private String mqHost;
+	private String mqPort;
+	private String userName;
+	private String password;
+
+	@PostConstruct
+	public void init() {
+		mqHost = SystemPropUtil.getProp("MQ_HOST");
+		mqPort = SystemPropUtil.getProp("MQ_PORT");
+		userName = SystemPropUtil.getProp("MQ_USERNAME");
+		password = SystemPropUtil.getProp("MQ_PASSWORD");
+	}
 
 	@Scheduled(fixedRate = 2000)
 	public void checkRecord() {
@@ -72,47 +90,63 @@ public class RbSituationJob {
 	}
 
 	public void analysisFlowLogs(List<JSONObject> flowLogs, String sceneId) throws Exception {
-		// 1、获取到连接
-		Connection connection = ConnectionUtil.getConnection();
-		// 2、从连接中创建通道，使用通道才能完成消息相关的操作
-		Channel channel = connection.createChannel();
-		int count = 1;
-		for(JSONObject flowLog: flowLogs){
-			Date lastTime = dateMap.get(sceneId);
-			Date time = TimeUtil.toDate1(flowLog.getString("time"));
-			if (lastTime == null || lastTime.before(time)) {
-				dateMap.put(sceneId, time);
-			}else {
-				continue;
+		Connection connection = null;
+		Channel channel = null;
+		try	{
+			// 1、获取到连接
+			connection = ConnectionUtil.getConnection();
+			// 2、从连接中创建通道，使用通道才能完成消息相关的操作
+			channel = connection.createChannel();
+			int count = 1;
+			for(JSONObject flowLog: flowLogs){
+				Date lastTime = dateMap.get(sceneId);
+				Date time = TimeUtil.toDate1(flowLog.getString("time"));
+				if (lastTime == null || lastTime.before(time)) {
+					dateMap.put(sceneId, time);
+				}else {
+					continue;
+				}
+				if(count > 3){
+					continue;
+				}
+				JSONObject rbSituationAttack = new JSONObject();
+				rbSituationAttack.put("line_style",1);
+				rbSituationAttack.put("src_action",1);
+				rbSituationAttack.put("dst_action",1);
+				rbSituationAttack.put("first_view",false);
+				String enDesc = flowLog.getJSONObject("attack_info").getString("attack_type");
+				MpEventType mpEventType = MpEventType.getEnumByEnDesc(enDesc, MpEventType.class);
+				if (mpEventType == null) {
+					mpEventType = MpEventType.UNKNOWN;
+				}
+				rbSituationAttack.put("attack_type",mpEventType.getMsg());
+				rbSituationAttack.put("src_node", flowLog.getString("source_node_id"));
+				rbSituationAttack.put("dst_node", flowLog.getString("target_node_id"));
+				Map<String , Object> msgMap = new HashMap<>();
+				msgMap.put("type", "mShowAttack");
+				msgMap.put("scene", sceneId);
+				msgMap.put("data", JSON.toJSON(rbSituationAttack));
+				JSONObject msgObject = new JSONObject(msgMap);
+				channel.basicPublish(RBSITUATIONEXCHANGE, sceneId, null,
+						msgObject.toString().getBytes(StandardCharsets.UTF_8));
+				count++;
+				Thread.sleep(900);
 			}
-			if(count > 3){
-				continue;
+
+		} catch (InterruptedException e) {
+			log.warn("Interrupted!", e);
+			Thread.currentThread().interrupt();
+		} catch (Exception e) {
+			log.error(ERRORLOG,	mqHost, mqPort, userName, password);
+		}finally {
+			if (channel != null) {
+				channel.close();
 			}
-			JSONObject rbSituationAttack = new JSONObject();
-			rbSituationAttack.put("line_style",1);
-			rbSituationAttack.put("src_action",1);
-			rbSituationAttack.put("dst_action",1);
-			rbSituationAttack.put("first_view",false);
-			String enDesc = flowLog.getJSONObject("attack_info").getString("attack_type");
-			MpEventType mpEventType = MpEventType.getEnumByEnDesc(enDesc, MpEventType.class);
-			if (mpEventType == null) {
-				mpEventType = MpEventType.UNKNOWN;
+			if (connection != null) {
+				connection.close();
 			}
-			rbSituationAttack.put("attack_type",mpEventType.getMsg());
-			rbSituationAttack.put("src_node", flowLog.getString("source_node_id"));
-			rbSituationAttack.put("dst_node", flowLog.getString("target_node_id"));
-			Map<String , Object> msgMap = new HashMap<>();
-			msgMap.put("type", "mShowAttack");
-			msgMap.put("scene", sceneId);
-			msgMap.put("data", JSONObject.toJSON(rbSituationAttack));
-			JSONObject msgObject = new JSONObject(msgMap);
-			channel.basicPublish(RbSituationExchange, sceneId, null,
-					msgObject.toString().getBytes(StandardCharsets.UTF_8));
-			count++;
-			Thread.sleep(900);
 		}
-		channel.close();
-		connection.close();
+
 	}
 
 	public void score(List<JSONObject> flowLogs) throws Exception {
@@ -142,14 +176,26 @@ public class RbSituationJob {
 		msg.put("scene", sceneId);
 		msg.put("data", data);
 		JSONObject msgObject = new JSONObject(msg);
-		// 1、获取到连接
-		Connection connection = ConnectionUtil.getConnection();
-		// 2、从连接中创建通道，使用通道才能完成消息相关的操作
-		Channel channel = connection.createChannel();
-		channel.basicPublish(RbSituationExchange, sceneId, null,
-				msgObject.toString().getBytes());
-		channel.close();
-		connection.close();
+
+		Connection connection = null;
+		Channel channel = null;
+		try {
+			// 1、获取到连接
+			connection = ConnectionUtil.getConnection();
+			// 2、从连接中创建通道，使用通道才能完成消息相关的操作
+			channel = connection.createChannel();
+			channel.basicPublish(RBSITUATIONEXCHANGE, sceneId, null,
+					msgObject.toString().getBytes());
+		} catch (Exception e) {
+			log.error(ERRORLOG,	mqHost, mqPort, userName, password);
+		}finally {
+			if (channel != null) {
+				channel.close();
+			}
+			if (connection != null) {
+				connection.close();
+			}
+		}
 
 	}
 

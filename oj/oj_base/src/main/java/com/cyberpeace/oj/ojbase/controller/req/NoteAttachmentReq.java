@@ -5,11 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.Serializable;
-
 @Data
 @ApiModel
-public class NoteAttachmentReq implements Serializable {
+public class NoteAttachmentReq {
 
 	@ApiModelProperty(name = "note_type", value = "笔记类型 笔记类型 1=笔记 2=实验报告")
 	private Integer noteType;

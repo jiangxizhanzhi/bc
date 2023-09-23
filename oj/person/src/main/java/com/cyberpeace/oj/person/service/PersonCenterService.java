@@ -19,7 +19,7 @@ public interface PersonCenterService {
 	 * @param userId 用户ID
 	 * @return
 	 */
-	IPage<PersonComment> pageComment(Page page, String userId, String parent,
+	IPage<PersonComment> pageComment(Page<PersonComment> page, String userId, String parent,
 			AuthContext authContext);
 
 	/**
@@ -29,7 +29,7 @@ public interface PersonCenterService {
 	 * @param userId 用户ID
 	 * @return
 	 */
-	IPage<PersonNote> pageNotes(Page page, String userId, AuthContext authContext,
+	IPage<PersonNote> pageNotes(Page<PersonNote> page, String userId, AuthContext authContext,
 								Integer businessType, Integer practiceType);
 
 	/**
@@ -39,7 +39,7 @@ public interface PersonCenterService {
 	 * @param userId 用户ID
 	 * @return
 	 */
-	IPage<PersonCollection> pageCollections(Page page, String userId, String type,
+	IPage<PersonCollection> pageCollections(Page<PersonCollection> page, String userId, String type,
 			AuthContext authContext, Integer practiceType);
 
 	/**

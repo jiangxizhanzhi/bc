@@ -1,7 +1,6 @@
 package com.cyberpeace.oj.person.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -24,7 +23,6 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,14 +32,11 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -50,8 +45,6 @@ import java.util.List;
 @RequestMapping("/oj/person")
 @RequiresAuthentication
 public class PersonController {
-
-	private static final Logger LOG = LoggerFactory.getLogger(PersonController.class);
 
 	@Autowired
 	private PersonCenterService personCenterService;
@@ -72,7 +65,7 @@ public class PersonController {
 	@GetMapping("/comments")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonComment>> listComments(@ApiParam @Validated PageReqBase pageReq) {
-		Page page = pageReq.toPageParam();
+		Page<PersonComment> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -87,7 +80,7 @@ public class PersonController {
 	@GetMapping("/replies")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonComment>> listReplies(@ApiParam @Validated PageReqBase pageReq) {
-		Page page = pageReq.toPageParam();
+		Page<PersonComment> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -102,7 +95,7 @@ public class PersonController {
 	@GetMapping("/notes")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonNote>> listNotes(@ApiParam @Validated PageNoteReq pageReq) {
-		Page page = pageReq.toPageParam();
+		Page<PersonNote> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -119,7 +112,7 @@ public class PersonController {
 	public BaseRsp<ListRsp<PersonCollection>> listCollections(
 			@ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type,
 			@RequestParam(value = "practiceType", required = false) Integer practiceType) {
-		Page page = pageReq.toPageParam();
+		Page<PersonCollection> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		// 权限数据获取
@@ -223,7 +216,7 @@ public class PersonController {
 		if (StringUtils.isBlank(pageReq.getSort())) {
 			pageReq.setSort("-update_time");
 		}
-		Page page = pageReq.toPageParam();
+		Page<PersonalMistakeRes> page = pageReq.toPageParam();
 
 		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
 		ListRsp<PersonalMistakeRes> listResult = PageUtil.getListResult(personalMistakeResList, page, personalMistakeResList.size());
@@ -255,11 +248,11 @@ public class PersonController {
 		List<CollectionPracticeBo> resortedCollections = new ArrayList<>();
 		for(String resourceId : resourceIds) {
 			for(CollectionPracticeBo collectionPracticeBo : collectionPracticeBos) {
-				if(!resourceId.equals(collectionPracticeBo.getResourceId())) {
-					continue;
+				if(resourceId.equals(collectionPracticeBo.getResourceId())) {
+					resortedCollections.add(collectionPracticeBo);
+					break;
 				}
-				resortedCollections.add(collectionPracticeBo);
-				break;
+
 			}
 		}
 		return resortedCollections;

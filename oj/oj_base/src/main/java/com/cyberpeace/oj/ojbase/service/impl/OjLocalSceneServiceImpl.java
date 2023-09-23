@@ -1,31 +1,19 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.SceneStatusEnum;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneEvent;
+import com.cyberpeace.common.enums.SceneEventStatus;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.common.enums.SceneEvent;
-import com.cyberpeace.common.enums.SceneEventStatus;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -44,8 +32,18 @@ import com.cyberpeace.oj.ojbase.service.bo.MonitorInfoBo;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -155,7 +153,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		}
 
 		JSONArray elements = topology.getJSONArray(JsonKeyConstant.ELEMENTS);
-		if (null == elements || elements.size() <= 0) {
+		if (null == elements || elements.isEmpty()) {
 			return topo;
 		}
 
@@ -237,22 +235,21 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	@Override
 	public Boolean deleteLocalAndRemoteScene(OjLocalScene ojLocalScene) {
 
-		if (null == ojLocalScene) {
-			return true;
+		if (null != ojLocalScene) {
+			// 删除中台场景
+			LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+			localSceneService.deleteRemoteScene(localScene);
+
+			// 删除本地场景
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
+					ojLocalSceneMapper.deleteById(ojLocalScene.getResourceId());
+					localSceneMapper.deleteById(localScene.getResourceId());
+				}
+			});
 		}
-		// 删除中台场景
-		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-		localSceneService.deleteRemoteScene(localScene);
-
-		// 删除本地场景
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				ojLocalSceneMapper.deleteById(ojLocalScene.getResourceId());
-				localSceneMapper.deleteById(localScene.getResourceId());
-			}
-		});
 
 		return true;
 	}
@@ -309,7 +306,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			return startMessage;
 		}
 
-		return null;
+		return new JSONObject();
 	}
 
 	@Override
@@ -321,7 +318,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		boolean flag = StringUtils.isNotBlank(limitCount)
 				&& startCount.intValue() > Integer.parseInt(limitCount);
 
-		if (null != createCount || createCount.intValue() != CommonConstant.ZERO.intValue()) {
+		if (null != createCount && createCount.intValue() != CommonConstant.ZERO.intValue()) {
 			flag |= StringUtils.isNotBlank(limitCount)
 					&& (startCount + createCount) > Integer.parseInt(limitCount);
 		}
@@ -345,10 +342,14 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		sceneData.put(JsonKeyConstant.STATUS, localScene.getSceneStatus());
 
 		// 设置场景共享类型
-		Integer share = localScene.getBusinessCode().intValue() == BusinessCode.CLASSROOM
-				.getCode() ? SceneShare.GROUP.getCode()
-						: ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
-								: SceneShare.PRIVATE.getCode();
+		Integer share  = null;
+		if (localScene.getBusinessCode().intValue() == BusinessCode.CLASSROOM.getCode()) {
+			share = SceneShare.GROUP.getCode();
+		} else if (Boolean.TRUE.equals(ojLocalScene.getShared())) {
+			share = SceneShare.SHARED.getCode();
+		} else {
+			share = SceneShare.PRIVATE.getCode();
+		}
 		sceneData.put(JsonKeyConstant.SCENE_SHARE_MODE, share);
 
 		// 开始时间和结束时间
@@ -411,8 +412,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	}
 
 	@Override
-	public JSONObject switchScreenRecord(String topoId, Boolean record) {
-		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId, record);
+	public JSONObject switchScreenRecord(String topoId, Boolean enableRecording) {
+		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId, enableRecording);
 		return remoteTopoService.sync(JsonUtil.java2JsonObject(context));
 	}
 }

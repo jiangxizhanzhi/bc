@@ -28,7 +28,7 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
      * @return
      */
     IPage<PersonComment> selectCommentByUser(
-            Page page,
+            Page<PersonComment> page,
             @Param("userId") String userId,
             @Param("parent") String parent,
             @Param("businessIds") List<String> businessIds);
@@ -42,7 +42,7 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
      * @return
      */
     IPage<PersonNote> selectNoteByUser(
-            Page page,
+            Page<PersonNote> page,
             @Param("userId") String userId,
             @Param("noteType") Integer noteType,
             @Param("businessIds") List<String> businessIds,
@@ -66,7 +66,7 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
      * @return
      */
     IPage<PersonCollection> selectByUser(
-            Page page,
+            Page<PersonCollection> page,
             @Param("userId") String userId,
             @Param("businessType") String businessType,
             @Param("businessIds") List<String> businessIds,

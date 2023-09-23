@@ -1,9 +1,7 @@
 package com.cyberpeace.oj.person.controller.req;
 
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.PageReqBase;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data

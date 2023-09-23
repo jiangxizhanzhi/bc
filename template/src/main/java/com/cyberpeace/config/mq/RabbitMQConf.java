@@ -1,7 +1,9 @@
 package com.cyberpeace.config.mq;
 
-import java.util.List;
-
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.cs.service.impl.AuthMessageListener;
+import com.cyberpeace.cs.service.impl.MessageListener;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -11,10 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.cs.service.impl.AuthMessageListener;
-import com.cyberpeace.cs.service.impl.MessageListener;
-import com.google.common.collect.Lists;
+import java.util.List;
 
 @Configuration
 public class RabbitMQConf {
@@ -189,8 +188,8 @@ public class RabbitMQConf {
 
 	private String[] getQueues(List<String> queues) {
 		String[] result = new String[queues.size()];
-		for (int i = 0; i < queues.size();) {
-			result[i] = queues.get(i++);
+		for (int i = 0; i < queues.size(); i++) {
+			result[i] = queues.get(i);
 		}
 
 		return result;

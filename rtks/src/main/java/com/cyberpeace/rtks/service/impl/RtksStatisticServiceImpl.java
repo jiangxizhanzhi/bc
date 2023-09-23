@@ -192,7 +192,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
 				TimeUtil.getStartOfDay(endTime));
 		Map<String, List<LessonRecord>> recordMap = records.stream().collect(Collectors
-				.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getCreateTime())));
+				.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getUpdateTime())));
 
 		List<Knowledge> knowledgeIds = getKnowledges(roleId);
 		if (CollectionUtils.isEmpty(knowledgeIds)) {

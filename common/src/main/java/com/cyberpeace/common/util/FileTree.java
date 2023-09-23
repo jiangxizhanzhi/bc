@@ -7,11 +7,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 指代文件系统中的一个文件夹
@@ -59,15 +60,8 @@ public class FileTree {
 	 * @param pathName 子目录名 不允许多级
 	 */
 	private FileTree getOrAddDir(String pathName) {
-		FileTree childTree = dirMap.get(pathName);
-
-		if (childTree == null) {
-			String fullPath = getFullPath(pathName);
-			childTree = new FileTree(fullPath);
-			dirMap.put(pathName, childTree);
-		}
-
-		return childTree;
+		dirMap.putIfAbsent(pathName, new FileTree(getFullPath(pathName)));
+		return dirMap.get(pathName);
 	}
 
 	/**
@@ -126,12 +120,11 @@ public class FileTree {
 
 			File file = addFile(filePath);
 
-			OutputStream output = new FileOutputStream(file);
-			for (int i = 0; i < entry.getSize(); i++) {
-				output.write(zipInputStream.read());
+			try (OutputStream output = new FileOutputStream(file)) {
+				for (int i = 0; i < entry.getSize(); i++) {
+					output.write(zipInputStream.read());
+				}
 			}
-			output.close();
-
 		}
 	}
 
@@ -145,31 +138,31 @@ public class FileTree {
 
 	private void compress(ZipOutputStream zos, BufferedOutputStream bos) throws IOException {
 
-		for (String dirName : dirMap.keySet()) {
-			FileTree childTree = dirMap.get(dirName);
+		for (FileTree childTree : dirMap.values()) {
 			childTree.compress(zos, bos);
 		}
 		// 忽略空文件夹
 
-		Map<String, File> fileMap = getFileMap();
-		for (String fileName : fileMap.keySet()) {
+		Map<String, File> map = getFileMap();
+		for (String fileName : map.keySet()) {
 			String filePath = getFullPath(fileName);
 			zos.putNextEntry(new ZipEntry(filePath));
 
 			File file = getFileByName(fileName);
-			FileInputStream fos = new FileInputStream(file);
-			BufferedInputStream bis = new BufferedInputStream(fos);
+			try (FileInputStream fos = new FileInputStream(file);
+					BufferedInputStream bis = new BufferedInputStream(fos)) {
 
-			while (true) {
-				int tag = bis.read();
-				if (tag == -1) {
-					break;
+				while (true) {
+					int tag = bis.read();
+					if (tag == -1) {
+						break;
+					}
+					bos.write(tag);
 				}
-				bos.write(tag);
-			}
 
-			bis.close();
-			fos.close();
+				bis.close();
+				fos.close();
+			}
 		}
 	}
 

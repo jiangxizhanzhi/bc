@@ -76,4 +76,6 @@ public class ShellUtils {
 
 	}
 
+	private ShellUtils() {}
+
 }

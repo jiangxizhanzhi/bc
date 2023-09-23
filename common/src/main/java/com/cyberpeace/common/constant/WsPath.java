@@ -70,4 +70,6 @@ public class WsPath {
 		}
 		return cache.contains(path);
 	}
+
+	private WsPath() {}
 }

@@ -18,4 +18,6 @@ public class HttpclientContext {
 	public static void removeContext() {
 		context.remove();
 	}
+
+	private HttpclientContext() {}
 }

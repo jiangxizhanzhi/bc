@@ -1,11 +1,13 @@
 package com.cyberpeace.common.constant;
 
-public interface MdConstant {
+public final class MdConstant {
 
-	String ONLY_URL_IMG = "![](%s)";
+	public static final String ONLY_URL_IMG = "![](%s)";
 
-	String IMG = "![%s](%s)";
+	public static final String IMG = "![%s](%s)";
 
-	String ONLY_DESCRIPTION_IMG = "![%s]()";
+	public static final String ONLY_DESCRIPTION_IMG = "![%s]()";
+
+	private MdConstant() {}
 
 }

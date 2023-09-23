@@ -45,4 +45,6 @@ public class EnumUtils {
 				.collect(Collectors.toList());
 	}
 
+	private EnumUtils() {}
+
 }

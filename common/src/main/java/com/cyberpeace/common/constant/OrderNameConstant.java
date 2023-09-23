@@ -1,9 +1,11 @@
 package com.cyberpeace.common.constant;
 
-public interface OrderNameConstant {
+public final class OrderNameConstant {
 
-	String UPDATE_TIME = "update_time";
+	public static final String UPDATE_TIME = "update_time";
 
-	String CREATE_TIME = "create_time";
+	public static final String CREATE_TIME = "create_time";
+
+	private OrderNameConstant() {}
 
 }

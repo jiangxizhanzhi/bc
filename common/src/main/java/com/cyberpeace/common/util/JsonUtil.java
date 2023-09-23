@@ -48,11 +48,11 @@ public class JsonUtil {
 			return Lists.newArrayList();
 		}
 
-		return JSONObject.parseArray(text, clazz);
+		return JSON.parseArray(text, clazz);
 	}
 
 	public static <T> T toJsonObject(String text, Class<T> clazz) {
-		return JSONObject.parseObject(text, clazz);
+		return JSON.parseObject(text, clazz);
 	}
 
 	@SneakyThrows
@@ -71,7 +71,7 @@ public class JsonUtil {
 		} finally {
 			bR.close();
 		}
-		return JSONObject.parseObject(responseStrBuilder.toString(), clazz);
+		return JSON.parseObject(responseStrBuilder.toString(), clazz);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class JsonUtil {
 		if (null == objArr) {
 			return "[]";
 		}
-		return JSONArray.toJSONString(objArr, SerializerFeature.WriteNullStringAsEmpty);
+		return JSON.toJSONString(objArr, SerializerFeature.WriteNullStringAsEmpty);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static JSONArray stringToArray(String text) {
-		return JSONArray.parseArray(text);
+		return JSON.parseArray(text);
 	}
 
 	public static <T> T toJsonTObject(String text, TypeReference<T> type, Feature... features) {
@@ -135,7 +135,7 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static <T> JSONObject java2JsonObject(T source) {
-		return (JSONObject) JSONObject.toJSON(source);
+		return (JSONObject) JSON.toJSON(source);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class JsonUtil {
 	public static <T> JSONObject java2JsonObject(T source, PropertyNamingStrategy namingStrategy) {
 		SerializeConfig config = new SerializeConfig();
 		config.setPropertyNamingStrategy(namingStrategy);
-		return (JSONObject) JSONObject.toJSON(source, config);
+		return (JSONObject) JSON.toJSON(source, config);
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class JsonUtil {
 		}
 		SerializeConfig config = new SerializeConfig();
 		config.setPropertyNamingStrategy(namingStrategy);
-		return JSONArray.toJSONString(objArr, config, SerializerFeature.WriteNullStringAsEmpty);
+		return JSON.toJSONString(objArr, config, SerializerFeature.WriteNullStringAsEmpty);
 	}
 
 	/**

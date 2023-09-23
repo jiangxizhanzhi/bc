@@ -44,12 +44,12 @@ public enum RbRoleGroup implements GenericEnum, BaseI18n, RoleGroup {
         this.english = english;
     }
 
-    public boolean equals(Integer roleGroupCode) {
+    public boolean matches(Integer roleGroupCode) {
         return getCode().equals(roleGroupCode);
     }
 
     public static boolean isRvbStudentRole(Integer roleGroupCode) {
-        return RED.equals(roleGroupCode) || BLUE.equals(roleGroupCode);
+        return RED.matches(roleGroupCode) || BLUE.matches(roleGroupCode);
     }
 
     public static List<RbRoleGroup> studentRoleGroups() {

@@ -1,8 +1,8 @@
 package com.cyberpeace.common.model;
 
-import net.sf.sevenzipjbinding.*;
-
 import java.io.*;
+
+import net.sf.sevenzipjbinding.*;
 
 /**
  * @Author xuxz
@@ -11,7 +11,6 @@ import java.io.*;
 public class ExtractCallback implements IArchiveExtractCallback {
 
 
-    private int index;
     private IInArchive inArchive;
     private String ourDir;
 
@@ -23,22 +22,24 @@ public class ExtractCallback implements IArchiveExtractCallback {
 
     @Override
     public void setCompleted(long arg0) throws SevenZipException {
+        // do nothing 
     }
 
     @Override
     public void setTotal(long arg0) throws SevenZipException {
+        // do nothing 
     }
 
     @Override
     public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) throws SevenZipException {
-        this.index = index;
         final String path = (String) inArchive.getProperty(index, PropID.PATH);
         final boolean isFolder = (boolean) inArchive.getProperty(index, PropID.IS_FOLDER);
 
         File file1 = new File(ourDir + File.separator+ path);
         File parentFile;
         if (!file1.exists() && isFolder) {
-            if (!(parentFile = file1.getParentFile()).exists()) {
+            parentFile = file1.getParentFile();
+            if (!parentFile.exists()) {
                 parentFile.mkdirs();
             }
             if (!file1.isFile()) {
@@ -61,11 +62,12 @@ public class ExtractCallback implements IArchiveExtractCallback {
 
     @Override
     public void prepareOperation(ExtractAskMode arg0) throws SevenZipException {
+        // do nothing 
     }
 
     @Override
     public void setOperationResult(ExtractOperationResult extractOperationResult) throws SevenZipException {
-
+        // do nothing 
     }
 
     public static boolean save2File(File file, byte[] msg) throws FileNotFoundException {
@@ -79,18 +81,17 @@ public class ExtractCallback implements IArchiveExtractCallback {
             fos.write(msg);
             fos.flush();
             return true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+			try {
+				if (null != fos) {
+					fos.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
     }
 

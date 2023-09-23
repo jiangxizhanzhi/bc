@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -64,7 +64,7 @@ public class ListUtil {
 				}
 				builder.append(obj);
 			} else {
-				builder.append(JSONObject.toJSONString(obj));
+				builder.append(JSON.toJSONString(obj));
 			}
 		}
 
@@ -90,7 +90,7 @@ public class ListUtil {
 				}
 				builder.append(obj).append("\n");
 			} else {
-				builder.append(JSONObject.toJSONString(obj)).append("\n");
+				builder.append(JSON.toJSONString(obj)).append("\n");
 			}
 		}
 

@@ -1,5 +1,8 @@
 package com.cyberpeace.common.util;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
@@ -9,7 +12,7 @@ public class ConnectionUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Connection getConnection() throws Exception {
+	public static Connection getConnection() throws IOException, TimeoutException {
 		//定义连接工厂
 		ConnectionFactory factory = new ConnectionFactory();
 		//设置服务地址
@@ -24,4 +27,6 @@ public class ConnectionUtil {
 		Connection connection = factory.newConnection();
 		return connection;
 	}
+
+	private ConnectionUtil() {}
 }

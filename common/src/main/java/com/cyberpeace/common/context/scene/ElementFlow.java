@@ -86,13 +86,13 @@ public class ElementFlow implements Serializable {
 
 	public void setCommonStatus(Integer taskStatus) {
 
-		Integer commonStatus = CommonStatusEnum.ACTIVE.getCode();
+		Integer statusCode = CommonStatusEnum.ACTIVE.getCode();
 
 		if (taskStatus.equals(TaskStatusEnum.STOPPED.getCode())
 				|| taskStatus.equals(TaskStatusEnum.ZERO.getCode())) {
-			commonStatus = CommonStatusEnum.FREE.getCode();
+			statusCode = CommonStatusEnum.FREE.getCode();
 		}
-		this.commonStatus = commonStatus;
+		this.commonStatus = statusCode;
 	}
 
 }

@@ -25,7 +25,7 @@ public enum TeamRoleGroup implements GenericEnum, RoleGroup, BaseI18n {
         this.english = english;
     }
 
-    public boolean equals(Integer roleGroupCode) {
+    public boolean matches(Integer roleGroupCode) {
         return getCode().equals(roleGroupCode);
     }
 

@@ -26,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileUtil {
 
+	private FileUtil() {}
+
 	/**
 	 * 校验允许的类型
 	 * @param file
@@ -137,7 +139,9 @@ public class FileUtil {
 			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
 		} finally {
 			try {
-				br.close();
+				if (null != br) {
+					br.close();
+				}
 			} catch (IOException e) {
 				// 不做任何处理
 			} catch (NullPointerException e) {
@@ -213,8 +217,12 @@ public class FileUtil {
 			throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
 		} finally {
 			try {
-				input.close();
-				output.close();
+				if (null != input) {
+					input.close();
+				}
+				if (null != output) {
+					output.close();
+				}
 			} catch (Exception e) {
 				// 不管
 			}
@@ -242,7 +250,6 @@ public class FileUtil {
 				osw.close();
 			} catch (IOException e) {
 				log.error("failed to close OutputStreamWriter", e);
-				throw new IOException(e);
 			}
 		}
 	}
@@ -268,12 +275,13 @@ public class FileUtil {
 			log.error("File write failed! dest_file_path=[{}], catch error:", destFilePath, e);
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		} finally {
-			try {
-				out.close();
-			} catch (Exception e) {
-				// 关不掉算了
+			if (null != out) {
+				try {
+					out.close();
+				} catch (Exception e) {
+					// 关不掉算了
+				}
 			}
-
 		}
 	}
 
@@ -316,7 +324,7 @@ public class FileUtil {
 				log.error("setResponse error:", e);
 			}
 
-			if (delete && null != file && file.exists()) {
+			if (delete.equals(Boolean.TRUE) && null != file && file.exists()) {
 				file.delete();
 			}
 		}

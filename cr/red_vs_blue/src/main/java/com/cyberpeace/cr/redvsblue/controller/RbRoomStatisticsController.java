@@ -221,6 +221,8 @@ public class RbRoomStatisticsController {
 			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
+		if (RbRoleGroup.RED_BLUE.matches(role_type)) {
+			return new BaseRsp(getRbScoreProgress_6(resource_id, role_type, userId));
 		if (RbRoleGroup.RED_BLUE.equals(roleType)) {
 			return new BaseRsp<>(getRbScoreProgress_6(resourceId, roleType, userId));
 		}

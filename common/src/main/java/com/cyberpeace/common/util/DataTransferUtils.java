@@ -21,9 +21,11 @@ public class DataTransferUtils {
 	 */
 	public static Double nullToZero(Double num) {
 		if (null == num) {
-			num = new Double(0);
+			num = (double) 0;
 		}
 		return num;
 	}
+
+	private DataTransferUtils() {}
 
 }

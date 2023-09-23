@@ -58,7 +58,7 @@ public class SceneController {
 
 		Boolean result = localSceneService.nodeSnapshot(localScene,
 				BeanUtils.copy(snapShotReq, CreateSnapshotContext.class));
-		return new BaseRsp(result);
+		return new BaseRsp<>(result);
 	}
 
 	@DeleteMapping("/node/snapshot")

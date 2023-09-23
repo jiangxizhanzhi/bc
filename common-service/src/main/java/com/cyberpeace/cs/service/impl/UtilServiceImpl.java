@@ -142,8 +142,6 @@ public class UtilServiceImpl implements UtilService {
 
 		List<String> realPathList = LocalStringUtil.getMatchUrlStr(filterCodeContent,
 				PatternConstant.MARKDOWN_IMAGE_MD_URL);
-//		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
-//				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
 		realPathList.addAll(matchSrcList);
 
 		// 文件拷贝到nginx可转发目录 同时生成nginx转发地址

@@ -36,4 +36,6 @@ public class SceneStatusCompute {
 		return SceneStatusEnum.INIT;
 	}
 
+	private SceneStatusCompute() {}
+
 }

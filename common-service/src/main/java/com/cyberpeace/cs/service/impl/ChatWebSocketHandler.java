@@ -141,7 +141,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		// 信息数据转换
 		String payload = (String) message.getPayload();
 		JSONObject chatData = JSON.parseObject(payload);
-		ChatContent chatContent = JSONObject.toJavaObject((JSON) chatData.get(JsonKeyConstant.DATA),
+		ChatContent chatContent = JSON.toJavaObject((JSON) chatData.get(JsonKeyConstant.DATA),
 				ChatContent.class);
 		ChatMessage chatMessage = contentToMessage(chatContent, senderInfo.getName());
 

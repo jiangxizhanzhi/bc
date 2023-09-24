@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
-import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -25,6 +22,7 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomOpsReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomTrainSubmitReq;
@@ -32,15 +30,19 @@ import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
-import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
-import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.SingleMissionBo;
+import com.cyberpeace.cr.singletrain.service.bo.SingleRoomBo;
+import com.cyberpeace.cr.singletrain.service.bo.SingleRoomListBo;
+import com.cyberpeace.cr.singletrain.service.bo.TrainRecordBo;
 import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -103,7 +105,8 @@ public class SingleRoomController {
 	@GetMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SceneViewContext> getScene(
-			@ApiParam(name = "resource_id", value = "业务模板id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "业务模板id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		SceneViewContext context = singleRoomService.viewScene(resourceId);
 
 		return new BaseRsp<>(context);
@@ -242,7 +245,8 @@ public class SingleRoomController {
 	@GetMapping("/mission/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleMatrixProgressRsp> getMissionMatrix(
-			@ApiParam(name = "resource_id", value = "单兵模板id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "单兵模板id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
@@ -276,7 +280,8 @@ public class SingleRoomController {
 	@GetMapping("/os/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<List<IdNameType>> getOsNames(
-			@ApiParam(name = "resource_id", value = "单兵训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "单兵训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		CrCommonValidator.validateId(resourceId);
 		List<IdNameType> res = singleRoomService.getOsNames(resourceId);
 		return new BaseRsp<>(res);

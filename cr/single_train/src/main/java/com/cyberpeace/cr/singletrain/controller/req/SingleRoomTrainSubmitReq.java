@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.singletrain.controller.req;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class SingleRoomTrainSubmitReq implements Serializable {

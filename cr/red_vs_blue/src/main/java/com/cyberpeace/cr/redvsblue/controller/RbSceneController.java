@@ -121,8 +121,10 @@ public class RbSceneController {
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbSceneViewContext> getScene(
-			@ApiParam(name = "room_id", value = "红蓝对抗实例id", required = true) String roomId,
-			@ApiParam(name = "role_id", value = "角色id", required = false) String roleId) {
+			@ApiParam(name = "room_id", value = "红蓝对抗实例id", required = true) @RequestParam(
+					value = "room_id", required = true) String roomId,
+			@ApiParam(name = "role_id", value = "角色id", required = false) @RequestParam(
+					value = "role_id", required = false) String roleId) {
 		RbSceneViewContext context = rbSceneService.viewScene(roomId, roleId);
 
 		return new BaseRsp<>(context);
@@ -181,7 +183,8 @@ public class RbSceneController {
 	@GetMapping("flow")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<FlowRsp> getFlowList(
-			@ApiParam(name = "room_id", value = "团队训练id", required = true) String roomId) {
+			@ApiParam(name = "room_id", value = "团队训练id", required = true) @RequestParam(
+					value = "room_id", required = true) String roomId) {
 
 		List<Flow> flows = rbSceneService.getFlowList(roomId);
 		FlowRsp ret = new FlowRsp();
@@ -301,7 +304,8 @@ public class RbSceneController {
 	@GetMapping("/device/count")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getDeviceStatistics(
-			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
@@ -322,7 +326,8 @@ public class RbSceneController {
 	@GetMapping("/device/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONArray> getDeviceList(
-			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resourceId,
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 		if (StringUtils.isBlank(resourceId)) {
@@ -336,7 +341,8 @@ public class RbSceneController {
 	@GetMapping("/device/common_device/not_yet")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbCommonDeviceContext>> getNotYetCommonDevices(
-			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resourceId,
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 
@@ -399,7 +405,8 @@ public class RbSceneController {
 	@GetMapping("/device/common_device/already")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbCommonDeviceContext>> getAlreadyCommonDevices(
-			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resourceId,
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 		// 2.拉取场景中可用 设备

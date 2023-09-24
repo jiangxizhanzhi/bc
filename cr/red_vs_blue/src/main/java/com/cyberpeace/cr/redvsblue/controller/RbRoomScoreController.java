@@ -96,7 +96,8 @@ public class RbRoomScoreController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId,
-			@ApiParam(name = "role_group", value = "角色id", required = true) Integer roleGroup) {
+			@ApiParam(name = "role_group", value = "角色id", required = true) @RequestParam(
+					value = "role_group", required = true) Integer roleGroup) {
 		JSONObject data = getTrainRecordJsonObject(roomId, roleGroup);
 		data.put("username", UserInfoContext.getUserContext().getUserName());
 		data.put("title", crScoreController.getTitle(rbRoomService.getById(roomId).getName()));
@@ -183,8 +184,10 @@ public class RbRoomScoreController {
 	@GetMapping("/student_score")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<StudentScoreRsp> getStudentScore(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resourceId,
-			@ApiParam(name = "user_hash", value = "用户id", required = true) String userHash) {
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "user_hash", value = "用户id", required = true) @RequestParam(
+					value = "user_hash", required = true) String userHash) {
 		rbRoomService.checkRefereePermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
 
@@ -253,8 +256,10 @@ public class RbRoomScoreController {
 	@GetMapping("/get_user_mission_dynamic")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resourceId,
-			@ApiParam(name = "student_id", value = "用户id", required = true) String studentId) {
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "student_id", value = "用户id", required = true) @RequestParam(
+					value = "student_id", required = true) String studentId) {
 		rbRoomService.checkRefereePermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
 
@@ -273,8 +278,10 @@ public class RbRoomScoreController {
 	@GetMapping("/get_training_mission_report")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<MissionReport> getTrainingMissionReport(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resourceId,
-			@ApiParam(name = "role_group", value = "角色id", required = true) Integer roleGroup) {
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "role_group", value = "角色id", required = true) @RequestParam(
+					value = "role_group", required = true) Integer roleGroup) {
 		rbRoomService.checkRefereePermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
 
@@ -296,8 +303,10 @@ public class RbRoomScoreController {
 	@GetMapping("/get_training_record")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionSchemeObject<TrainingRecordMissionRsp>>> getTrainingRecord(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resourceId,
-			@ApiParam(name = "user_hash", value = "用户id", required = true) String userHash) {
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "user_hash", value = "用户id", required = true) @RequestParam(
+					value = "user_hash", required = true) String userHash) {
 		rbRoomService.checkRefereePermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
 
@@ -316,8 +325,10 @@ public class RbRoomScoreController {
 	@GetMapping("/get_training_report")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TrainingReport> getTrainingReport(
-			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resourceId,
-			@ApiParam(name = "role_group", value = "角色id", required = true) Integer roleGroup) {
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "role_group", value = "角色id", required = true) @RequestParam(
+					value = "role_group", required = true) Integer roleGroup) {
 
 		rbRoomService.checkRefereePermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
@@ -358,7 +369,8 @@ public class RbRoomScoreController {
 	@GetMapping("/get_role_score_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RoleScore>> getRoleScoreInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		List<RoleScore> data = rbRoomScoreService.getRoleScoreInfo(resourceId);
 
 		return new BaseRsp<>(data);
@@ -373,7 +385,8 @@ public class RbRoomScoreController {
 	@GetMapping("/missions_statistics")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionsStatistic>> getMissionsStatistics(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		rbRoomService.checkDirectorPermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());
 

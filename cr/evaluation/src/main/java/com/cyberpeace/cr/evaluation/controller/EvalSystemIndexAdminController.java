@@ -178,7 +178,8 @@ public class EvalSystemIndexAdminController {
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystemRsp> getEvalIndex(
-			@ApiParam(name = "resource_id", value = "模板id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "模板id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 
 		EvalSystem evalSystem = evalSystemService.getById(resourceId);
 		if (null == evalSystem) {

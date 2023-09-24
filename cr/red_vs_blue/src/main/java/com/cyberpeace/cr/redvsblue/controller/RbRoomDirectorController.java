@@ -295,7 +295,8 @@ public class RbRoomDirectorController {
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<CrRbRoleContext> getRoles(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		CrRbRoleContext crRbRoleContext = new CrRbRoleContext();
 		List<GroupData> groups = Lists.newArrayList();
 		List<String> dynamics = Lists.newArrayList();
@@ -416,7 +417,8 @@ public class RbRoomDirectorController {
 	@GetMapping("/mission_timeline")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getMissionTimeline(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		CrCommonValidator.validateId(resourceId);
 		TimeLineData data = rbRoomService.getMissionTimeline(resourceId);
 		return new BaseRsp<>(data);
@@ -477,7 +479,8 @@ public class RbRoomDirectorController {
 	@GetMapping("/mission/progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RedBlueTaskReleaseProgress> getMissionStatistics(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		RedBlueTaskReleaseProgress res = rbDirectorService.getTaskReleaseProgress(resourceId);
 		return new BaseRsp<>(res);
 	}
@@ -512,7 +515,8 @@ public class RbRoomDirectorController {
 	@GetMapping("/mission/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<TrainTaskReleaseInfoContext>> getMissionList(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 
 		if (StringUtils.isBlank(resourceId)) {
 			log.error("resource_id_missing");
@@ -541,8 +545,10 @@ public class RbRoomDirectorController {
 	@GetMapping("/replay/timeline")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getReviewTimeLine(
-			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resourceId,
-			@ApiParam(name = "user_id", value = "用户id", required = false) String userId) {
+			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "user_id", value = "用户id", required = false) @RequestParam(
+					value = "user_id", required = false) String userId) {
 		CrCommonValidator.validateId(resourceId);
 		TimeLineData res = rbRoomService.getReplayTimeline(resourceId, userId);
 		return new BaseRsp<>(res);
@@ -559,7 +565,8 @@ public class RbRoomDirectorController {
 	@GetMapping("/replay/enable")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> isReplayEnabled(
-			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		CrCommonValidator.validateId(resourceId);
 		String res = rbDirectorService.getReplaySceneId(resourceId);
 		return new BaseRsp<>(res);

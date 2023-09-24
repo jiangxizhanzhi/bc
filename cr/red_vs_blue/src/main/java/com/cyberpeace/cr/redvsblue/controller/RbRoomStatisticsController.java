@@ -8,6 +8,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
@@ -62,7 +63,8 @@ public class RbRoomStatisticsController {
 	@GetMapping("/rb_time_data")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeDataRsp> getRbTimeData(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		TimeData data = rbRoomScoreService.getRbTimeData(resourceId);
 
 		TimeDataRsp timeDataRsp = new TimeDataRsp();
@@ -83,8 +85,10 @@ public class RbRoomStatisticsController {
 	@GetMapping("/team_mission_category")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<XYData> getRbMissionCategory(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam(
+					value = "role_type", required = true) Integer roleType) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		permissionCheckTeacherOrGroup(resourceId, userId, roleType);
@@ -102,8 +106,10 @@ public class RbRoomStatisticsController {
 	@GetMapping("/team_leader_board")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbLeaderBoard(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam(
+					value = "role_type", required = true) Integer roleType) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		permissionCheckTeacherOrGroup(resourceId, userId, roleType);
@@ -122,8 +128,10 @@ public class RbRoomStatisticsController {
 	@GetMapping("/team_members_ranking")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMembersRanking(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam(
+					value = "role_type", required = true) Integer roleType) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		permissionCheckTeacherOrGroup(resourceId, userId, roleType);
@@ -142,8 +150,10 @@ public class RbRoomStatisticsController {
 	@GetMapping("/team_mission_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMissionEvaluation(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam(
+					value = "role_type", required = true) Integer roleType) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		permissionCheckTeacherOrGroup(resourceId, userId, roleType);
@@ -162,7 +172,8 @@ public class RbRoomStatisticsController {
 	@GetMapping("/missions_statistics")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionsStatistic>> getMissionsStatistics(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		List<MissionsStatistic> missionsStatistics = Lists.newArrayList();
 		List<String> allUserIds = Lists.newArrayList();
 
@@ -197,8 +208,10 @@ public class RbRoomStatisticsController {
 	@GetMapping("/team_mission_progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMissionProgress(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam(
+					value = "role_type", required = true) Integer roleType) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		permissionCheckTeacherOrGroup(resourceId, userId, roleType);
@@ -217,8 +230,10 @@ public class RbRoomStatisticsController {
 	@GetMapping("/team_score_progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbScoreProgress(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "role_type", value = "角色类型", required = true) Integer roleType) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "role_type", value = "角色类型", required = true) @RequestParam(
+					value = "role_type", required = true) Integer roleType) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		if (RbRoleGroup.RED_BLUE.matches(roleType)) {

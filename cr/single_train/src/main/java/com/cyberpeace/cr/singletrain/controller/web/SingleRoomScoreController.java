@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -31,10 +32,8 @@ import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
-import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
@@ -45,6 +44,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.bo.record.RecordDetail;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -97,7 +97,8 @@ public class SingleRoomScoreController {
 	@GetMapping("/history_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<JSONObject> getHistoryDetail(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		RoleQuery roleQuery = new RoleQuery(resourceId, CrRole.SINGLE_ROLE_GROUP_CODE);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
@@ -201,7 +202,8 @@ public class SingleRoomScoreController {
 	@GetMapping("/record/detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<RecordDetail> getRecordDetail(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}

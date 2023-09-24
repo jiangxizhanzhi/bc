@@ -1,11 +1,12 @@
 package com.cyberpeace.cr.singletrain.controller.req;
 
+import java.io.Serializable;
+
+import javax.validation.constraints.NotNull;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Data
 @ApiModel("任务提交")

@@ -1,12 +1,13 @@
 package com.cyberpeace.cr.singletrain.service.bo;
 
+import java.io.Serializable;
+import java.util.List;
+
 import com.alibaba.fastjson.JSONObject;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.List;
 
 @Data
 @ApiModel("单兵训练统计信息")

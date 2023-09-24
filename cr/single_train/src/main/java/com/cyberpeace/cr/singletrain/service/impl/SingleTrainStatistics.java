@@ -2,11 +2,11 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;

@@ -2,26 +2,28 @@ package com.cyberpeace.cr.singletrain.controller.admin;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
-import com.cyberpeace.common.enums.BusinessType;
-import com.cyberpeace.cr.crbase.service.TrainStatisticsService;
-import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
-import com.cyberpeace.cr.singletrain.service.SingleTrainStatisticsService;
-import com.cyberpeace.cr.singletrain.service.bo.SingleOrganizationStatisticsBo;
-import com.cyberpeace.cr.singletrain.service.bo.SinglePersonalStatisticsBo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
+import com.cyberpeace.cr.crbase.service.TrainStatisticsService;
+import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
+import com.cyberpeace.cr.singletrain.service.SingleTrainStatisticsService;
+import com.cyberpeace.cr.singletrain.service.bo.SingleOrganizationStatisticsBo;
+import com.cyberpeace.cr.singletrain.service.bo.SinglePersonalStatisticsBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "单兵训练统计")
 @RestController

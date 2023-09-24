@@ -155,7 +155,8 @@ public class RbRoomController {
     @GetMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<RbRoomRsp> getRbRoom(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                    value = "resource_id", required = true) String resourceId) {
         crRoleService.checkPermission(resourceId, UserInfoContext.getUserContext().getUserId());
         RbRoomRsp rsp = rbRoomService.getRoomRsp(resourceId);
         return new BaseRsp<>(rsp);
@@ -165,7 +166,8 @@ public class RbRoomController {
     @GetMapping("get_role")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<BaseRole> getRbRoomRole(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                    value = "resource_id", required = true) String resourceId) {
         CrCommonValidator.validateId(resourceId);
         CrRole role = crRoleService.checkPermission(resourceId,
                 UserInfoContext.getUserContext().getUserId());
@@ -178,7 +180,8 @@ public class RbRoomController {
     @GetMapping("train_introduction")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<RbRoomRsp> getTrainIntroduction(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                    value = "resource_id", required = true) String resourceId) {
         RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resourceId);
 
         RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
@@ -214,7 +217,8 @@ public class RbRoomController {
     @GetMapping("/dashboard_info")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<DashboardInfo> getDashboardInfo(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                    value = "resource_id", required = true) String resourceId) {
         String userId = UserInfoContext.getUserContext().getUserId();
         CrRole crRole = rbRoomService.checkRoomPermission(resourceId, userId);
 
@@ -232,7 +236,8 @@ public class RbRoomController {
     @GetMapping("/members_info")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<JSONObject> getMembersInfo(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                    value = "resource_id", required = true) String resourceId,
             @ApiParam(name = "id", value = "角色id", required = true) String id) {
         String userId = UserInfoContext.getUserContext().getUserId();
         rbRoomService.checkRoomPermission(resourceId, userId);
@@ -252,7 +257,8 @@ public class RbRoomController {
     @GetMapping("/manual")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>> getManual(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                    value = "resource_id", required = true) String resourceId) {
         if (StringUtils.isBlank(resourceId)) {
             log.error("resource_id_missing");
             throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
@@ -355,7 +361,8 @@ public class RbRoomController {
     @GetMapping("/get_time_management")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<RbTimeManagementRsp> getTimeManagement(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                    value = "resource_id", required = true) String resourceId) {
 
         RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(resourceId);
         if (rbTimeManagement == null) {
@@ -436,10 +443,11 @@ public class RbRoomController {
     @ApiOperation("获取设备占用情况")
     @GetMapping("/device")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-    public BaseRsp<List<RbDeviceContext>> getDevices(
-            @ApiParam(value = "room_id", name = "红蓝对抗id", required = true) String roomId,
-            @ApiParam(value = "standard_device", name = "主机",
-                    required = false) String standardDevice) {
+	public BaseRsp<List<RbDeviceContext>> getDevices(
+			@ApiParam(value = "room_id", name = "红蓝对抗id", required = true) @RequestParam(
+					value = "room_id", required = true) String roomId,
+			@ApiParam(value = "standard_device", name = "主机", required = false) @RequestParam(
+					value = "standard_device", required = false) String standardDevice) {
 
 		List<RbDeviceContext> ret = rbDeviceService.getByRoomIdAndOptionalDevice(roomId,
 				standardDevice);
@@ -451,7 +459,8 @@ public class RbRoomController {
     @GetMapping("/mission/getTrainReports")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public BaseRsp<TrainReportContext> getTrainReports(
-            @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
+            @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                    value = "resource_id", required = true) String resourceId,
             @ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
         //开始时间  结束时间从训练记录表取
 		RbTimeManagement management = rbTimeManagementService.getByRoomId(resourceId);
@@ -504,7 +513,8 @@ public class RbRoomController {
     @GetMapping("/mission/TrainReportsPdf")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
     public void trainReportsPdf(HttpServletResponse httpServletResponse,
-                                @ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
+                                @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+                                        value = "resource_id", required = true) String resourceId,
                                 @ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
         TrainReportContext originData = this.getTrainReports(resourceId, scoreCount).getData();
         TrainReportExportContext data = BeanUtils.deepCopy(originData,

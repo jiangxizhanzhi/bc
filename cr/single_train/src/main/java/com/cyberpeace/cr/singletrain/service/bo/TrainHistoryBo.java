@@ -1,10 +1,10 @@
 package com.cyberpeace.cr.singletrain.service.bo;
 
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 @ApiModel("训练历史")

@@ -1,12 +1,13 @@
 package com.cyberpeace.cr.singletrain.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 
 @Mapper
 @Repository

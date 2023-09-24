@@ -9,6 +9,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.constant.ErrorCode;
@@ -55,7 +56,8 @@ public class EvalSystemController {
 	@ApiOperation("查询体系指标")
 	@GetMapping("")
 	public BaseRsp<EvalSystemTreeRsp> getEvalIndexTree(
-			@ApiParam(name = "resource_id", value = "模板id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "模板id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 
 		EvalSystem evalSystem = evalSystemService.getById(resourceId);
 		if (null == evalSystem) {

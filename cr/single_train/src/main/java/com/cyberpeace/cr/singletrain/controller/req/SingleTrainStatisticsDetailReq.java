@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.singletrain.controller.req;
 
 import com.cyberpeace.common.model.PageReqBase;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

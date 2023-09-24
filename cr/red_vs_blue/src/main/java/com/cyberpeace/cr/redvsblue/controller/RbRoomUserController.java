@@ -113,7 +113,8 @@ public class RbRoomUserController {
 	@GetMapping("/get_running_status")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Map<String, Integer>> getRunningStatus(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		Integer status = rbRoomService.getTrainingStatus(resourceId);
 
 		Map<String, Integer> map = Maps.newHashMap();
@@ -131,7 +132,8 @@ public class RbRoomUserController {
 	@GetMapping("/get_mission_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionInfoRsp>> getMissionInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 
@@ -306,8 +308,10 @@ public class RbRoomUserController {
 	@GetMapping("/task/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskMatrix> getTaskMatrix(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "user_id", value = "用户id", required = true) String userId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "user_id", value = "用户id", required = true) @RequestParam(
+					value = "user_id", required = true) String userId) {
 
 		if (StringUtils.isBlank(resourceId)) {
 			log.error(RESOURCE_ID_MISSING_LOG);
@@ -332,8 +336,10 @@ public class RbRoomUserController {
 	@GetMapping("/task/replayUserTaskInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskMatrix> replayUserTaskInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "user_id", value = "用户id", required = true) String userId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "user_id", value = "用户id", required = true) @RequestParam(
+					value = "user_id", required = true) String userId) {
 
 		if (StringUtils.isBlank(resourceId)) {
 			log.error(RESOURCE_ID_MISSING_LOG);
@@ -353,8 +359,9 @@ public class RbRoomUserController {
 	@ApiOperation("红蓝对抗-学员任务矩阵-是否显示红点标记")
 	@GetMapping("/task/matrix/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<Boolean> ifShowMissionMatrixBadge(@ApiParam(name = "resource_id",
-			value = "红蓝对抗训练id", required = true) String resourceId) {
+	public BaseRsp<Boolean> ifShowMissionMatrixBadge(
+			@ApiParam(name = "resource_id", value = "红蓝对抗训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		CrCommonValidator.validateId(resourceId);
 		Boolean res = crBadgeService.ifExist(resourceId,
 				CrBadge.BadgeType.MISSION_RELEASE.getCode(),
@@ -365,8 +372,9 @@ public class RbRoomUserController {
 	@ApiOperation("任务矩阵红点点击取消")
 	@GetMapping("/matrix/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<Boolean> clickEvaluationBadge(@ApiParam(name = "resource_id", value = "红蓝对抗训练id",
-			required = true) String resourceId) {
+	public BaseRsp<Boolean> clickEvaluationBadge(
+			@ApiParam(name = "resource_id", value = "红蓝对抗训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		CrCommonValidator.validateId(resourceId);
 		crBadgeService.removeBadge(resourceId, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
 				UserInfoContext.getUserContext().getUserId());
@@ -377,8 +385,10 @@ public class RbRoomUserController {
 	@GetMapping("/task/replayUserTimeInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<ScreenRecordUserRole>> replyUserTimeInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "node_id", value = "设备id", required = true) String nodeId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "node_id", value = "设备id", required = true) @RequestParam(
+					value = "node_id", required = true) String nodeId) {
 
 		if (StringUtils.isBlank(resourceId)) {
 			log.error(RESOURCE_ID_MISSING_LOG);
@@ -417,7 +427,8 @@ public class RbRoomUserController {
 	@GetMapping("/get_time_line")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getTimeLine(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 		TimeLineData data = rbRoomService.getStudentsTimeLine(resourceId);
 		return new BaseRsp<>(data);
 	}
@@ -426,8 +437,10 @@ public class RbRoomUserController {
 	@GetMapping("/get_mission_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<MissionInfoRsp> getMissionDetail(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resourceId,
-			@ApiParam(name = "mission_id", value = "任务id", required = true) String missionId) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId,
+			@ApiParam(name = "mission_id", value = "任务id", required = true) @RequestParam(
+					value = "mission_id", required = true) String missionId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		TaskContext taskContext = crTaskService.getByMissionAndUser(missionId, userId);

@@ -220,7 +220,8 @@ public class EvalAlgorithmAdminController {
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
-			@ApiParam(name = "resource_id", value = "id", required = true) String resourceId) {
+			@ApiParam(name = "resource_id", value = "id", required = true) @RequestParam(
+					value = "resource_id", required = true) String resourceId) {
 
 		EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(resourceId);
 		if (null == evalAlgorithm) {

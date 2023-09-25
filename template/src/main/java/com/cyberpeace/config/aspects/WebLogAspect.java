@@ -1,4 +1,4 @@
-package com.cyberpeace.config.aop;
+package com.cyberpeace.config.aspects;
 
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,9 @@ public class WebLogAspect {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Pointcut("execution(* com.cyberpeace..*.controller..*.*(..))")
-    public void webLog(){}
+    public void webLog(){
+        // Do nothing
+    }
 
 
     @Around(value = "webLog()")

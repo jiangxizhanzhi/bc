@@ -17,6 +17,7 @@ public class RemoteAdExceptionAspect {
 
     @Pointcut("execution(* com.cyberpeace.integratation.service.RemoteAdService.*(..))")
     public void operlog(){
+        // Do nothing
     }
 
     @AfterThrowing(value = "operlog()", throwing = "e")

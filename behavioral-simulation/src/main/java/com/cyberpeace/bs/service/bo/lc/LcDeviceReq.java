@@ -26,7 +26,7 @@ public class LcDeviceReq implements Serializable {
 	/**
 	 * 大小
 	 */
-	private Integer size = 99999;
+	private Integer size = 1000;
 
 	/**
 	 * 项目id

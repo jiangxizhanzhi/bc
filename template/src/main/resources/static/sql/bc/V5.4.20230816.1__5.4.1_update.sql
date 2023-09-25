@@ -136,3 +136,23 @@ ALTER TABLE `cr_eval_template`
 ALTER TABLE `cr_rb_room` ADD COLUMN `scene_id_record` text null comment '训练过程中的所有场景id';
 
 ALTER TABLE `cr_team_room` ADD COLUMN `scene_id_record` text null comment '训练过程中的所有场景id';
+
+ALTER TABLE cr_role MODIFY COLUMN nodes TEXT DEFAULT NULL COMMENT '角色节点';
+
+ALTER TABLE oj_course MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';
+ALTER TABLE cr_business_template MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';
+ALTER TABLE oj_note MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';
+ALTER TABLE oj_paper MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';
+ALTER TABLE oj_practice_set MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';
+ALTER TABLE cr_eval_template MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';
+
+ALTER TABLE oj_course MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
+ALTER TABLE cr_business_template MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
+ALTER TABLE oj_note MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
+ALTER TABLE oj_paper MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
+ALTER TABLE oj_practice_set MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
+ALTER TABLE cr_eval_template MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
+
+ALTER TABLE cr_tool_tool MODIFY COLUMN introduction TEXT;
+
+UPDATE `system_property` SET  `content` = 'true' WHERE `id` = 2;

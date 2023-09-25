@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.compress.utils.Lists;
 
 import com.cyberpeace.bs.constant.BsErrorCode;
-import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
+import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -34,7 +34,7 @@ public class UserModelAddBo extends UserModelBase implements Serializable {
 	 * 行为
 	 */
 	@ApiModelProperty(value = "访问行为")
-	private List<BehaviorSimple> behaviors;
+	private List<Behavior> behaviors;
 
 	/**
 	 * 是否限制带宽
@@ -69,6 +69,12 @@ public class UserModelAddBo extends UserModelBase implements Serializable {
 		// 访问习惯不可为null
 		if(this.getAccessHabit() == null){
 			this.setAccessHabit(Lists.newArrayList());
+		}
+		// 不允许有不同操作系统的行为
+		for (Behavior behavior : this.behaviors) {
+			if (!behavior.getAccessOs().equals(this.getAccessOs())) {
+				throw new BusinessException(BsErrorCode.ILLEGAL_BEHAVIOR_OS_UM);
+			}
 		}
 	}
 }

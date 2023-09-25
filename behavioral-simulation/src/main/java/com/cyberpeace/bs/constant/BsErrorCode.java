@@ -131,4 +131,9 @@ public final class BsErrorCode {
 	 * 部分设备离线
 	 */
 	public static final String SOME_DEVICE_OFFLINE = "105026";
+
+	/**
+	 * 部分行为的录制设备与行为模型不匹配
+	 */
+	public static final String ILLEGAL_BEHAVIOR_OS_UM = "105027";
 }

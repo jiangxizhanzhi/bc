@@ -17,7 +17,7 @@
     </select>
 
     <select id="countByCategory" resultType="com.cyberpeace.cr.crbase.service.context.guide.AttackTypeCountGroup">
-        select event_type as category , count(*) as `count` from situation_guide_scheme
+        select category as category , count(*) as `count` from situation_guide_history
         <where>
             <if test="roomId != null and roomId != ''">
                 room_id = #{roomId}
@@ -25,7 +25,7 @@
             <if test="eventType != null">
                 and `event_type` = #{eventType}
             </if>
-            group by event_type
+            group by category
         </where>
     </select>
 

@@ -601,7 +601,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             resultList.add(guideHistoryRsp);
         }
         resultList.addAll(mpEventList);
-        resultList.sort(Comparator.comparing(item -> item.getCreateTime().getTime()));
+        resultList.sort(Comparator.comparing(GuideHistoryRsp::getCreateTime).reversed());
         return PageUtil.getListResult(resultList, pageReq.toPageParam(), resultList.size());
     }
 

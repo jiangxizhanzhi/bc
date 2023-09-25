@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.situation.constant.Color;
 import com.cyberpeace.situation.constant.LineType;
 import com.cyberpeace.situation.constant.SituationErrorCode;
@@ -78,6 +79,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Autowired
 	private AttackMessageHistoryMapper attackMessageHistoryMapper;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	//允许上传的图片格式
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
@@ -298,7 +302,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		optionsRes.setAttackTypeList(StreamApiUtils.map(Lists.newArrayList(AttackType.values()),
 				attackType -> new WebAttackType(attackType.getKeyWord(), attackType.getMsg(),
 						attackType.getActionType().getType(), attackType.getActionType().isSource(),
-						attackType.getActionType().isDurationTime())));
+						attackType.getActionType().isDurationTime(), attackType.getLeak(), attackType.getTool())));
 		//获取线型
 		optionsRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),
 				lineType -> new LocalType(lineType.getCode(), lineType.getMsg())));
@@ -307,7 +311,19 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				color -> new LocalType(color.getCode(), color.getMsg())));
 		//获取防御类型
 		optionsRes.setDefenseList(StreamApiUtils.map(Lists.newArrayList(DefenseType.values()),
-				defenseType -> new LocalType(defenseType.getMsg(), defenseType.getKeyWord())));
+				defenseType -> new WebDefenseType(defenseType.getMsg(), defenseType.getKeyWord(),
+						defenseType.getLeak(), defenseType.getTool())));
+		//获取工具列表
+		List<String> attackTools = Arrays.stream(AttackType.values())
+										 .map(AttackType::getTool)
+										 .collect(Collectors.toList());
+		List<String> defenseTools = Arrays.stream(DefenseType.values())
+										  .map(DefenseType::getTool)
+										  .collect(Collectors.toList());
+		attackTools.addAll(defenseTools);
+		attackTools = new ArrayList<>(new HashSet<>(attackTools));
+		Collections.sort(attackTools);
+		optionsRes.setTools(attackTools);
 	}
 
 	@Override
@@ -331,6 +347,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				elementInfo -> new ElementType(elementInfo.getElementId(), elementInfo.getName()));
 		Collections.sort(elementTypeList);
 		optionsRes.setElementList(elementTypeList);
+		List<String> leaks = remoteTopoService.getAllLeak().toJavaList(String.class);
+		Collections.sort(leaks);
+		optionsRes.setLeaks(leaks);
 	}
 
 	public DynamicScheme

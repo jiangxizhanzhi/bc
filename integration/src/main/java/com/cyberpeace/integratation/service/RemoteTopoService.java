@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -78,4 +79,6 @@ public interface RemoteTopoService {
 	 * @return
 	 */
 	JSONObject getElementLeaks(String elementId);
+
+	JSONArray getAllLeak();
 }

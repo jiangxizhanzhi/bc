@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
@@ -45,6 +46,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String ELEMENT_LEAKS_URL;
 
+	private String ALL_LEAKS_URL;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -64,6 +67,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		BATCH_DELETE_TOPO = MP_HOST + ConfigUtil.getContextProperty("scene.topo.delete.batch");
 		ELEMENT_LEAKS_URL = MP_HOST + ConfigUtil.getContextProperty("scene.topo.element.leak");
+		ALL_LEAKS_URL = MP_HOST + ConfigUtil.getContextProperty("scene.topo.all.leak");
 	}
 
 	@Override
@@ -203,6 +207,11 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	public JSONObject getElementLeaks(String elementId) {
 		String targetUrl = ELEMENT_LEAKS_URL + elementId;
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONArray getAllLeak() {
+		return HttpClientUtil.rawGet(ALL_LEAKS_URL, JSONArray.class);
 	}
 
 	/**

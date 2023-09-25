@@ -25,5 +25,5 @@ public class WsAttackInfo implements Serializable {
 
 	private String result;
 
-	private Integer durationTime;
+	private Integer duration;
 }

@@ -63,14 +63,6 @@ public interface DynamicSchemeService {
 	void getRemoteOption(OptionsRes optionsRes, String sceneId, Boolean isInstance);
 
 	/**
-	 * 推送多媒体动效数据至房间
-	 * @param attackMessageBo 多媒体动效数据
-	 * @param code 当前场景运行的动效方案的code
-	 */
-	void pushMediaToRoom(AttackMessageReq attackMessageBo, String code, Boolean playback);
-
-
-	/**
 	 * 推送动效方案数据
 	 * @param dynamicSchemeReq 动效方案数据
 	 * @param stageName 阶段名称（继续运行动效方案时传该值）

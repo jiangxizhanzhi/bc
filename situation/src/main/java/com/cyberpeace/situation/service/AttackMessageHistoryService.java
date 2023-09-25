@@ -16,7 +16,7 @@ public interface AttackMessageHistoryService {
 	 * 新增动效历史
 	 * @param attackMessageReq 动效数据
 	 */
-	void add(AttackMessageReq attackMessageReq);
+	void add(AttackMessageReq attackMessageReq, Boolean attackSuccess);
 
 	/**
 	 * 获取当前场景攻击手段Top5

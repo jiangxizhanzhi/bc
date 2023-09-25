@@ -47,17 +47,15 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	private MyWebSocketHandler myWebSocketHandler;
 
 	@Override
-	public void add(AttackMessageReq attackMessageReq) {
+	public void add(AttackMessageReq attackMessageReq, Boolean attackSuccess) {
 		if (attackMessageReq.getAttackOrDefense() == null || attackMessageReq.getAttackOrDefense().equals("attack")) {
-			List<AttackMessageHistory> attackMessageHistories = attackMessageHistoryMapper.getDynamicByNodeIdByHighDefenseLevel(attackMessageReq.getTargetId());
-			if (attackMessageHistories.size() > 0) {
+			if (Boolean.FALSE.equals(attackSuccess)) {
 				AttackMessageHistory attackMessageHistory = attackMessageBoToAttackMessageHistory(attackMessageReq, false);
 				attackMessageHistoryMapper.insert(attackMessageHistory);
 				return;
 			}
 		}
 		AttackMessageHistory attackMessageHistory = attackMessageBoToAttackMessageHistory(attackMessageReq, true);
-//		attackMessageHistory.setResourceId(IDGeneratorUtil.getID());
 		attackMessageHistoryMapper.insert(attackMessageHistory);
 	}
 

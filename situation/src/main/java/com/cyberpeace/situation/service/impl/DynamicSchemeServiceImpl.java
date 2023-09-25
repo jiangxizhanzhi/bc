@@ -3,7 +3,6 @@ package com.cyberpeace.situation.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
@@ -344,84 +343,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	/**
-	 * 推送多媒体动效消息
-	 */
-	@Override
-	public void pushMediaToRoom(AttackMessageReq attackMessageBo, String code, Boolean playback) {
-		WsAttackEffectDynamic wsAttackEffectDynamic = new WsAttackEffectDynamic();
-		//设置场景编号
-		wsAttackEffectDynamic.setSceneId(attackMessageBo.getSceneId());
-		//设置事件类别
-		wsAttackEffectDynamic.setCategory("attack");
-		//设置事件描述
-		wsAttackEffectDynamic.setDescription(attackMessageBo.getDescription());
-		//设置事件名称
-		wsAttackEffectDynamic.setName("攻击效果");
-		//设置事件类型
-		wsAttackEffectDynamic.setType(ActionType.NONE.getCode());
-		List<AttackEffect> attackEffectList = new ArrayList<>();
-		for (MediaAnimation mediaAnimation : attackMessageBo.getMediaAnimationList()) {
-			//拷贝类型
-			AttackEffect attackEffect = BeanUtils.copy(mediaAnimation, AttackEffect.class);
-			//设置节点id
-			attackEffect.setElementId(mediaAnimation.getSourceId());
-
-			// 判断是图片还是视频
-			String fileSuffix = FileUtil.getFileSuffix(mediaAnimation.getUrl()).toLowerCase();
-			//获取图片后缀
-			List<String> pictureTypeList = Arrays
-					.asList(PICTURE_TYPE.toLowerCase().split(CommonConstant.CODE_COMMA));
-			//获取视频后缀
-			List<String> videoTypeList = Arrays
-					.asList(VIDEO_TYPE.toLowerCase().split(CommonConstant.CODE_COMMA));
-			if (pictureTypeList.contains(fileSuffix)) {
-				//设置多媒体动效类型为图片
-				attackEffect.setMediaType(PICTURE_CODE);
-			} else if (videoTypeList.contains(fileSuffix)) {
-				//设置多媒体类型为视频
-				attackEffect.setMediaType(VIDEO_CODE);
-			} else {
-				//不合法的文件类型
-				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
-			}
-			//设置多媒体路径
-			attackEffect.setMediaUrl(mediaAnimation.getUrl());
-			//设置线的颜色
-			attackEffect.setLineStyle(new LineStyle("#FFFFFF", 3, "straight"));
-			attackEffectList.add(attackEffect);
-		}
-		//设置动效列表
-		wsAttackEffectDynamic.setEffectList(attackEffectList);
-		//构造消息数据
-		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(
-				MessageType.AttackEffect.getDesc(), wsAttackEffectDynamic);
-		//推送动效数据
-		situationHandlerService.pushDataToRoom(wsMessage, attackMessageBo.getSceneId());
-		if(!playback){
-			//如果不是回放则会增加一条动效历史
-			attackMessageBo.setTargetId(null);
-			attackMessageHistoryService.add(attackMessageBo);
-		}
-
-		Thread thread = new Thread(new Runnable() {
-
-			@SneakyThrows
-			@Override
-			public void run() {
-				// 持续时间结束后清除该多媒体动效
-				Thread.sleep(attackMessageBo.getDurationTime() * 1000);
-				// 判断当前是否有其他动效正在运行
-				if (sceneConfigService.isCurrentScheme(attackMessageBo.getSceneId(), code)) {
-					//清除多媒体动效
-					clearMedia(attackMessageBo.getSceneId());
-				}
-			}
-		});
-		thread.start();
-
-	}
-
-	/**
 	 * 推送普通动效数据至房间
 	 * @param attackMessageReq 普通动效数据
 	 * @param elementIds 当前场景节点id列表
@@ -456,7 +377,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			//设置类型为点对区域
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
-		pushDataToRoom(wsMessage, attackMessageReq, playback);
+
 
 
 		//推送攻击弹窗
@@ -470,12 +391,16 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		attackInfo.setAttackName(AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class).getMsg());
 		attackInfo.setLeak(attackMessageReq.getLeak());
 		attackInfo.setTool(attackMessageReq.getTool());
-		attackInfo.setDurationTime(attackMessageReq.getDurationTime());
+		attackInfo.setDuration(attackMessageReq.getDurationTime());
 		//校验漏洞是否匹配
 		List<String> leaks = elementInfoMap.get(attackMessageReq.getTargetId()).getLeakInfos().stream().map(LeakInfo::getName).collect(Collectors.toList());
 		if (leaks.contains(attackMessageReq.getLeak())) {
 			attackInfo.setTargetId(attackMessageReq.getTargetId());
 			attackInfo.setResult(AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class).getSuccessDesc());
+
+			pushDataToRoom(wsMessage, attackMessageReq, playback, true);
+		} else {
+			pushDataToRoom(wsMessage, attackMessageReq, playback, false);
 		}
 		WsMessage<WsAttackInfo> attackInfoWsMessage = new WsMessage<>(MessageType.AttackInfo.getDesc(), attackInfo);
 		situationHandlerService.pushDataToRoom(attackInfoWsMessage, attackMessageReq.getSceneId());
@@ -925,7 +850,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						   .getDefenseActionType().getCode());
 		wsDefenseDynamic.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsDefenseDynamic> wsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsDefenseDynamic);
-		pushDataToRoom(wsMessage, attackMessageReq, playback);
+		pushDataToRoom(wsMessage, attackMessageReq, playback, null);
 
 
 		//推送防御弹窗
@@ -936,12 +861,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsDefenseInfo.setTool(attackMessageReq.getTool());
 		wsDefenseInfo.setLeak(attackMessageReq.getLeak());
 		wsDefenseInfo.setResult(DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class).getSuccessDesc());
-		wsDefenseInfo.setDurationTime(attackMessageReq.getDurationTime());
+		wsDefenseInfo.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsDefenseInfo> defenseInfoWsMessage = new WsMessage<>(MessageType.DefenseInfo.getDesc(), wsDefenseInfo);
 		situationHandlerService.pushDataToRoom(defenseInfoWsMessage, attackMessageReq.getSceneId());
 	}
 
-	private <T> void pushDataToRoom(T data, AttackMessageReq attackMessageReq, Boolean playback) {
+	private <T> void pushDataToRoom(T data, AttackMessageReq attackMessageReq, Boolean playback, Boolean attackSuccess) {
 		situationHandlerService.pushDataToRoom(data, attackMessageReq.getSceneId());
 		if (attackMessageReq.getStep() != null) {
 			WsRealisticSceneDynamic wsRealisticSceneDynamic = new WsRealisticSceneDynamic();
@@ -950,7 +875,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 		if(Boolean.FALSE.equals(playback)){
 			//如果不是回放则会增加一条动效历史
-			attackMessageHistoryService.add(attackMessageReq);
+			attackMessageHistoryService.add(attackMessageReq, attackSuccess);
 		}
 	}
 

@@ -88,15 +88,15 @@ public class SituationGuideController {
     @ApiOperation("执行测试")
     @PostMapping("/guide_test")
     @RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
-    public BaseRsp<Boolean> guideTest(@RequestBody @Validated GuideImplementReq req) {
-        return new BaseRsp<>(situationGuideService.guideImplement(req, true));
+    public BaseRsp<Boolean> guideTest(@RequestBody @Validated AddGuideSchemeReq req) {
+        return new BaseRsp<>(situationGuideService.guideTest(req));
     }
 
     @ApiOperation("执行导调")
     @PostMapping("/implement")
     @RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
     public BaseRsp<Boolean> guideImplement(@RequestBody @Validated GuideImplementReq req) {
-        return new BaseRsp<>(situationGuideService.guideImplement(req, false));
+        return new BaseRsp<>(situationGuideService.guideImplement(req));
     }
 
     @ApiOperation("任务导调列表")

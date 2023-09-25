@@ -232,7 +232,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public Boolean guideImplement(GuideImplementReq req, boolean isTest) {
+    public Boolean guideImplement(GuideImplementReq req) {
         SituationGuideScheme guideScheme = getById(req.getResourceId());
         if (Objects.isNull(guideScheme)) {
             return false;
@@ -247,11 +247,18 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         his.setCreateTime(new Date());
         his.setUpdateTime(new Date());
         his.setSceneId(sceneId);
-        //非测试状态 新增历史记录
-        if (!isTest) {
-            situationGuideHisMapper.insert(his);
-        }
-        return pushDataToRoomByGuide(req.getIsInstance(), his);
+        situationGuideHisMapper.insert(his);
+
+        return pushDataToRoomByGuide(Boolean.TRUE, his);
+    }
+
+    @Override
+    public Boolean guideTest(AddGuideSchemeReq req) {
+        String sceneId = viewScene(req.getRoomId());
+        //增加历史记录
+        SituationGuideHistory his = BeanUtils.copy(req, SituationGuideHistory.class);
+        his.setSceneId(sceneId);
+        return pushDataToRoomByGuide(Boolean.TRUE, his);
     }
 
 

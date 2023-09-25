@@ -21,7 +21,9 @@ public interface SituationGuideService {
 
     Boolean deleteGuideScheme(List<String> ids);
 
-    Boolean guideImplement(GuideImplementReq req, boolean isTest);
+    Boolean guideImplement(GuideImplementReq req);
+
+    Boolean guideTest(AddGuideSchemeReq req);
 
     SituationGuideHistory getGuideHisByMissionId(String missionId, String taskId);
 

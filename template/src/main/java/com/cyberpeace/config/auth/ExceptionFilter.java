@@ -84,6 +84,9 @@ public class ExceptionFilter implements Filter {
 			e = (Exception) e.getCause().getCause();
 		}
 
+		if ( e.getMessage().contains("104021")) {
+			e = new BusinessException("104021");
+		}
 		if (e instanceof BindException) {
 			parseArgumentNotValidException(servletResponse, (BindException) e);
 		} else if (e instanceof UnauthorizedException) {

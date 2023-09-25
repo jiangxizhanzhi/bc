@@ -361,6 +361,9 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		ElementLeak elementLeak = new ElementLeak();
 		JSONObject jsonObject = remoteTopoService.getElementLeaks(elementId);
 		JSONArray leaks = jsonObject.getJSONArray("leaks");
+		if (leaks == null) {
+			return null;
+		}
 		elementLeak.setLeakList(leaks.toJavaList(LeakInfo.class));
 		elementLeak.setOperatingSystem(jsonObject.getString("system_info"));
 		return elementLeak;

@@ -312,7 +312,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		//获取防御类型
 		optionsRes.setDefenseList(StreamApiUtils.map(Lists.newArrayList(DefenseType.values()),
 				defenseType -> new WebDefenseType(defenseType.getMsg(), defenseType.getKeyWord(),
-						defenseType.getLeak(), defenseType.getTool())));
+						defenseType.getTool())));
 		//获取工具列表
 		List<String> attackTools = Arrays.stream(AttackType.values())
 										 .map(AttackType::getTool)
@@ -324,6 +324,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		attackTools = new ArrayList<>(new HashSet<>(attackTools));
 		Collections.sort(attackTools);
 		optionsRes.setTools(attackTools);
+
+		List<String> leaks = Arrays.stream(AttackType.values())
+								   .map(AttackType::getLeak)
+								   .distinct()
+								   .collect(Collectors.toList());
+		Collections.sort(leaks);
+		optionsRes.setLeaks(leaks);
 	}
 
 	@Override
@@ -347,9 +354,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				elementInfo -> new ElementType(elementInfo.getElementId(), elementInfo.getName()));
 		Collections.sort(elementTypeList);
 		optionsRes.setElementList(elementTypeList);
-		List<String> leaks = remoteTopoService.getAllLeak().toJavaList(String.class);
-		Collections.sort(leaks);
-		optionsRes.setLeaks(leaks);
+//		List<String> leaks = remoteTopoService.getAllLeak().toJavaList(String.class);
+//		Collections.sort(leaks);
+//		optionsRes.setLeaks(leaks);
 	}
 
 	public DynamicScheme

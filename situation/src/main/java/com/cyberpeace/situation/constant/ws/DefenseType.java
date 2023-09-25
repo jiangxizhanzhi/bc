@@ -85,8 +85,4 @@ public enum DefenseType {
 	public String getMsg() {
 		return CommonContext.isChinese() ? cnDesc : enDesc;
 	}
-
-	public String getLeak() {
-		return "漏洞";
-	}
 }

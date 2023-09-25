@@ -592,16 +592,16 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             if (SituationGuideScheme.EventType.ATTACK.getCode().equals(his.getEventType())) {
                 guideHistoryRsp.setActionType(SituationGuideScheme.EventType.ATTACK.getDesc());
                 SituationGuideScheme.AttackUrlEnum attackUrlEnum = SituationGuideScheme.AttackUrlEnum.getEnumByCode(his.getCategory());
-                guideHistoryRsp.setCategory(Collections.singletonList(attackUrlEnum.name()));
+                guideHistoryRsp.setCategory(Collections.singletonList(attackUrlEnum.getMsg()));
             } else if (SituationGuideScheme.EventType.DEFENSE.getCode().equals(his.getEventType())) {
                 guideHistoryRsp.setActionType(SituationGuideScheme.EventType.DEFENSE.getDesc());
                 SituationGuideScheme.DefenseUrlEnum defenseUrlEnum = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(his.getCategory());
-                guideHistoryRsp.setCategory(Collections.singletonList(defenseUrlEnum.name()));
+                guideHistoryRsp.setCategory(Collections.singletonList(defenseUrlEnum.getMsg()));
             }
             resultList.add(guideHistoryRsp);
         }
         resultList.addAll(mpEventList);
-        resultList.sort(Comparator.comparing(item -> item.getCreateTime().getTime()));
+        resultList.sort(Comparator.comparing(GuideHistoryRsp::getCreateTime).reversed());
         return PageUtil.getListResult(resultList, pageReq.toPageParam(), resultList.size());
     }
 

@@ -67,6 +67,9 @@ public class CrNoAuthController {
 
 	@Autowired
 	private MissionSituationService missionSituationService;
+	
+	@Autowired
+	private IndustrySituationService industrySituationService;
 
 	@ApiOperation("批量导入资管模板")
 	@PostMapping("/batchLoadMD")
@@ -169,5 +172,13 @@ public class CrNoAuthController {
 			throw new AuthenticationException();
 		}
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("触发行业态势动效demo")
+	@GetMapping("/ts/demo")
+	public BaseRsp<Boolean> demoEffect(@ApiParam(name = "room_id", value = "训练房间编号") String room_id,
+			@ApiParam(name = "ts_id", value = "特效代号，输入0触发全部") Integer ts_id) {
+		Boolean res = industrySituationService.doDemoEffect(room_id, ts_id);
+		return new BaseRsp<>(res);
 	}
 }

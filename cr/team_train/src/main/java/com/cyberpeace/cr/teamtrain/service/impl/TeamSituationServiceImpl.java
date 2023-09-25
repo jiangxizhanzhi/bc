@@ -16,10 +16,13 @@ import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.model.EntranceBo;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.SituationRouteStatus;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.MissionSituation;
 import com.cyberpeace.cr.crbase.model.situation.SituationRouteBo;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.MissionSituationService;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -40,9 +43,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TeamSituationServiceImpl implements TeamSituationService {
 
-
-
-
+	@Autowired
+	private MissionService missionService;
 
 	@Autowired
 	private TeamTeacherService teamTeacherService;
@@ -64,7 +66,7 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		TeamRoom room = teamRoomService.getById(roomId);
 		EntranceBo res = new EntranceBo();
 		res.setShow(StringUtils.isNotBlank(room.getAreaPath()));
-		res.setUrl("/ts/industry/AviationOil/?businessId=" + roomId);
+		res.setUrl("/ts/industry/AviationOil?businessId=" + roomId);
 		res.setWsUrl(String.format("%s?business_id=%s&token=", WsPath.INDUSTRY_SITUATION, roomId));
 		return res;
 	}
@@ -100,23 +102,35 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		// 攻击路径
 		TeamRoom room = teamRoomService.getById(roomId);
 		List<String> route = JsonUtil.toJsonObjectArray(room.getAreaPath(), String.class);
-		// submitted missions
-		List<String> submittedMissionIds = taskList.stream().filter(task -> task.isSubmitted())
-				.map(CrTask::getMissionTemplateId).distinct().collect(Collectors.toList());
-		List<MissionSituation> situationList = missionSituationService.getBatchByIds(submittedMissionIds);
-		Set<String> lightedAreas = situationList.stream().map(MissionSituation::getArea)
-				.collect(Collectors.toSet());
+		// missions
+		List<Mission> missionList = missionService.batchGetByRoom(roomId);
+		List<String> missionTemplateIds = missionList.stream().map(Mission::getMissionTemplateId)
+				.collect(Collectors.toList());
+		List<MissionSituation> situationList = missionSituationService
+				.getBatchByIds(missionTemplateIds);
+		// submitted mission templates
+		Set<String> submittedMtIds = taskList.stream().filter(CrTask::isSubmitted)
+				.map(CrTask::getMissionTemplateId).collect(Collectors.toSet());
+		// successful mission templates
+		Set<String> successfulMtIds = taskList.stream().filter(CrTask::isSuccess)
+				.map(CrTask::getMissionTemplateId).collect(Collectors.toSet());
+		Map<String, List<String>> areaMap = Maps.newHashMap();
+		for (MissionSituation situation : situationList) {
+			areaMap.putIfAbsent(situation.getArea(), Lists.newArrayList());
+			areaMap.get(situation.getArea()).add(situation.getMissionTemplateId());
+		}
 
 		List<SituationRouteBo> routeBoList = Lists.newArrayList();
 		for (String areaName : route) {
 			SituationRouteBo bo = new SituationRouteBo();
 			bo.setNode(areaName);
-			bo.setAttacked(lightedAreas.contains(areaName));
+			bo.setStatus(this.getAreaStatus(areaName, areaMap, submittedMtIds, successfulMtIds));
 			routeBoList.add(bo);
 		}
 		res.setRoute(routeBoList);
 		return res;
 	}
+
 
 	@Override
 	public List<StudentScoreVo> getTop5Score(String roomId) {
@@ -157,5 +171,21 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		return res;
 	}
 
+	private Integer getAreaStatus(String areaName, Map<String, List<String>> areaMap,
+			Set<String> submittedMtIds, Set<String> successfulMtIds) {
+		List<String> mtIds = areaMap.get(areaName);
+		if (null == mtIds || mtIds.isEmpty()) {
+			return SituationRouteStatus.NOT_ATTACKED;
+		}
+		if (successfulMtIds.containsAll(mtIds)) {
+			return SituationRouteStatus.CONQUERED;
+		}
+		for (String mtId : mtIds) {
+			if (submittedMtIds.contains(mtId)) {
+				return SituationRouteStatus.UNDER_ATTACK;
+			}
+		}
+		return SituationRouteStatus.NOT_ATTACKED;
+	}
 
 }

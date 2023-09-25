@@ -176,7 +176,7 @@
                 #{setId}
             </foreach>
             <if test="isWeb != null and isWeb">
-                and `public`=#{isWeb}
+                and `public` = #{isWeb}
             </if>
             <if test="pattern != null and pattern != ''">
                 <bind name="knowledgePattern" value="'%' + pattern + '%'"/>

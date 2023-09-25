@@ -75,8 +75,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		// 校验并格式化起止时间
 		Date endTime = new Date();
 		Date startTime;
-		if (null != endTimeStr && !endTimeStr.isEmpty())
+		if (null != endTimeStr && !endTimeStr.isEmpty()) {
 			endTime = TimeUtil.toDate2(endTimeStr);
+		}
 		startTime = getDefaultStartTime(startTimeStr, endTime);
 		startTimeStr = TimeUtil.format6(startTime);
 		endTimeStr = TimeUtil.format6(endTime);

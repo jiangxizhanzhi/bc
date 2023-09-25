@@ -9,4 +9,8 @@ public interface IndustrySituationService {
 	 * @param missionTemplateId
 	 */
 	boolean pushSituationWs(String roomId, String missionTemplateId);
+
+	boolean pushSituationWs(String businessId, Integer tsId);
+
+	boolean doDemoEffect(String businessId, Integer tsId);
 }

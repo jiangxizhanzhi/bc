@@ -45,7 +45,4 @@ public class PlaybackOptionRsp implements Serializable {
 	@ApiModelProperty("节点列表")
 	private List<MissionCategoryRsp> nodeList;
 
-	@ApiModelProperty("区域列表")
-	private List<MissionCategoryRsp> areaList;
-
 }

@@ -265,6 +265,8 @@ public class TeamTrainTeacherController {
 	public BaseRsp<PlaybackOptionRsp> getAllOption(@ApiParam(name = "room_id", value = "房间ID") @RequestParam("room_id") String roomId) {
 		TimeLineData res = teamTeacherService.getReplayTimeline(roomId, null);
 		PlaybackOptionRsp playbackOptionRsp = guideHistoryService.getAllOption(roomId);
+		playbackOptionRsp.setRoleType(null);
+		playbackOptionRsp.setBelongingEventNames(null);
 		playbackOptionRsp.setStartTime(TimeUtil.format1(res.getStartTime()));
 		playbackOptionRsp.setEndTime(TimeUtil.format1(res.getEndTime()));
 
@@ -274,12 +276,12 @@ public class TeamTrainTeacherController {
 		List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
 														 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
 														 .collect(Collectors.toList());
-		playbackOptionRsp.setNodeList(nodeList);
 		//区域信息
 		List<MissionCategoryRsp> areaList = situationTopo.getAreas().values().stream()
 														 .map(areaInfo -> new MissionCategoryRsp(areaInfo.getAreaId(), "area-" + areaInfo.getAreaId()))
 														 .collect(Collectors.toList());
-		playbackOptionRsp.setAreaList(areaList);
+		nodeList.addAll(areaList);
+		playbackOptionRsp.setNodeList(nodeList);
 		return new BaseRsp<>(playbackOptionRsp);
 	}
 }

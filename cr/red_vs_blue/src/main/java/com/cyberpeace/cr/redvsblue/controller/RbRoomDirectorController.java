@@ -1,22 +1,5 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.WsPath;
@@ -67,11 +50,26 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Api(tags = "红蓝对抗导演")
@@ -587,12 +585,12 @@ public class RbRoomDirectorController {
 		List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
 														 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
 														 .collect(Collectors.toList());
-		playbackOptionRsp.setNodeList(nodeList);
 		//区域信息
 		List<MissionCategoryRsp> areaList = situationTopo.getAreas().values().stream()
 														 .map(areaInfo -> new MissionCategoryRsp(areaInfo.getAreaId(), "area-" + areaInfo.getAreaId()))
 														 .collect(Collectors.toList());
-		playbackOptionRsp.setAreaList(areaList);
+		nodeList.addAll(areaList);
+		playbackOptionRsp.setNodeList(nodeList);
 		return new BaseRsp<>(playbackOptionRsp);
 	}
 }

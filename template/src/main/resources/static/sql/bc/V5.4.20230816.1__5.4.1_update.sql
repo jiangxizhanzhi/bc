@@ -152,3 +152,7 @@ ALTER TABLE oj_note MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预�
 ALTER TABLE oj_paper MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
 ALTER TABLE oj_practice_set MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
 ALTER TABLE cr_eval_template MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有前台预览权限的组织id';
+
+ALTER TABLE cr_tool_tool MODIFY COLUMN introduction TEXT;
+
+UPDATE `system_property` SET  `content` = 'true' WHERE `id` = 2;

@@ -136,3 +136,5 @@ ALTER TABLE `cr_eval_template`
 ALTER TABLE `cr_rb_room` ADD COLUMN `scene_id_record` text null comment '训练过程中的所有场景id';
 
 ALTER TABLE `cr_team_room` ADD COLUMN `scene_id_record` text null comment '训练过程中的所有场景id';
+
+ALTER TABLE cr_role MODIFY COLUMN nodes TEXT DEFAULT NULL COMMENT '角色节点';

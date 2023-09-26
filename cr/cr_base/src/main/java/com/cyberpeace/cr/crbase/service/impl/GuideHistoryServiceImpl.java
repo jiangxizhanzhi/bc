@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cr.crbase.controller.req.guide.ExecGuideHisRep;
+import com.cyberpeace.cr.crbase.controller.req.guide.ExecGuideHisReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryReq;
 import com.cyberpeace.cr.crbase.controller.rsp.PlaybackOptionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
@@ -120,13 +120,6 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 					belongingScreenBo.getSource(), null, null, belongingScreenBo.getRole()));
 		}
 
-		String topoId = null;
-		topoId = situationGuideHisMapper.getTopoIdByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
-		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
-			situationGuideHistory.setSceneId(topoId);
-			situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
-		}
-
 		//处理成前端展示类型
 		List<GuideHistoryRsp> guideHistoryRspList = new ArrayList<>();
 		Map<String, Map<String, ElementInfo>> sceneElementMap = new HashMap<>();
@@ -172,10 +165,17 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			//获取目标节点名称、ip
 			if (StringUtils.isNotEmpty(situationGuideHistory.getTarget())) {
 				guideHistoryRsp.setTargetName(elementInfoMap.get(situationGuideHistory.getSource()).getName());
-				guideHistoryRsp.setTargetName(getElementIp(elementInfoMap.get(situationGuideHistory.getSource())));
-				guideHistoryRsp.setTargetIp(situationGuideHistory.getTarget());
+				guideHistoryRsp.setTargetIp(getElementIp(elementInfoMap.get(situationGuideHistory.getSource())));
+				guideHistoryRsp.setTargetId(situationGuideHistory.getTarget());
 			}
 			guideHistoryRspList.add(guideHistoryRsp);
+		}
+
+		String topoId = null;
+		topoId = situationGuideHisMapper.getTopoIdByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
+		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
+			situationGuideHistory.setSceneId(topoId);
+			situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
 		}
 
 		//获取中台数据,处理数据
@@ -223,9 +223,9 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 	}
 
 	@Override
-	public Boolean execute(ExecGuideHisRep execGuideHisRep) {
-		List<SituationGuideHistory> situationGuideHistoryList = situationGuideService.guideHistoryRspToSituationGuideHistory(Collections.singletonList(execGuideHisRep));
-		String topoId = situationGuideHisMapper.getTopoIdByRoom(execGuideHisRep.getRoomId(), execGuideHisRep.getBusinessType());
+	public Boolean execute(ExecGuideHisReq execGuideHisReq) {
+		List<SituationGuideHistory> situationGuideHistoryList = situationGuideService.guideHistoryRspToSituationGuideHistory(Collections.singletonList(execGuideHisReq));
+		String topoId = situationGuideHisMapper.getTopoIdByRoom(execGuideHisReq.getRoomId(), execGuideHisReq.getBusinessType());
 		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
 			situationGuideHistory.setSceneId(topoId);
 			situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);

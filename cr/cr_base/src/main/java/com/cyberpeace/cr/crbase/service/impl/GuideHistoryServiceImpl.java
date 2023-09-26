@@ -83,6 +83,14 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		ScreenBo defenseScreenBo = screenGuideHistoryReq.getDefenseScreenBo();
 		ScreenBo blockingScreenBo = screenGuideHistoryReq.getBlockingScreenBo();
 		ScreenBo belongingScreenBo = screenGuideHistoryReq.getBelongingScreenBo();
+
+		//设置过滤条件中的开始时间、结束时间
+		String startTime = screenGuideHistoryReq.getStartTime();
+		String endTime = screenGuideHistoryReq.getEndTime();
+		setScreenBoTime(attackScreenBo, startTime, endTime);
+		setScreenBoTime(defenseScreenBo, startTime, endTime);
+		setScreenBoTime(blockingScreenBo, startTime, endTime);
+		setScreenBoTime(belongingScreenBo, startTime, endTime);
 		//攻击
 		if (attackScreenBo != null) {
 			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getEventSubTypeList(),
@@ -234,6 +242,13 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			}
 		}
 		return "";
+	}
+
+	private void setScreenBoTime(ScreenBo screenBo, String startTime, String endTime) {
+		if (screenBo != null) {
+			screenBo.setStartTime(TimeUtil.toDate1(screenBo.getStartTime()).before(TimeUtil.toDate1(startTime)) ? screenBo.getStartTime() : startTime);
+			screenBo.setEndTime(TimeUtil.toDate1(screenBo.getEndTime()).before(TimeUtil.toDate1(endTime)) ? endTime : screenBo.getEndTime());
+		}
 	}
 
 }

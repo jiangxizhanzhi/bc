@@ -35,4 +35,13 @@ public class ScreenGuideHistoryReq implements Serializable {
 	@ApiModelProperty("归属筛选条件")
 	private ScreenBo belongingScreenBo;
 
+	@ApiModelProperty("开始时间")
+	private String startTime;
+
+	@ApiModelProperty("结束时间")
+	private String endTime;
+
+	@ApiModelProperty("速率")
+	private long rate;
+
 }

@@ -583,20 +583,18 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         for (SituationGuideHistory his : historyList) {
             GuideHistoryRsp guideHistoryRsp = new GuideHistoryRsp();
             guideHistoryRsp.setEventName(his.getEventName());
-            SituationGuideScheme.ConditionType conditionType = SituationGuideScheme.ConditionType.getEnumByCode(his.getTriggerCondition());
-            guideHistoryRsp.setTriggerType(Objects.isNull(conditionType) ? null : conditionType.getDesc());
+            SituationGuideScheme.Type triggerType = SituationGuideScheme.Type.getTypeByCode(his.getType());
+            guideHistoryRsp.setTriggerType(Objects.isNull(triggerType) ? null : triggerType.getDesc());
             ElementInfo sourceElement = elementMap.get(his.getSource());
             ElementInfo targetElement = elementMap.get(his.getTarget());
             guideHistoryRsp.setSourceName(Objects.isNull(sourceElement) ? his.getSource() : sourceElement.getName());
             guideHistoryRsp.setTargetName(Objects.isNull(targetElement) ? his.getTarget() : targetElement.getName());
             guideHistoryRsp.setCreateTime(his.getCreateTime());
-
+            guideHistoryRsp.setActionType(SituationGuideScheme.EventType.getEventTypeByCode(his.getEventType()).getMsg());
             if (SituationGuideScheme.EventType.ATTACK.getCode().equals(his.getEventType())) {
-                guideHistoryRsp.setActionType(SituationGuideScheme.EventType.ATTACK.getDesc());
                 SituationGuideScheme.AttackUrlEnum attackUrlEnum = SituationGuideScheme.AttackUrlEnum.getEnumByCode(his.getCategory());
                 guideHistoryRsp.setCategory(Collections.singletonList(attackUrlEnum.getMsg()));
             } else if (SituationGuideScheme.EventType.DEFENSE.getCode().equals(his.getEventType())) {
-                guideHistoryRsp.setActionType(SituationGuideScheme.EventType.DEFENSE.getDesc());
                 SituationGuideScheme.DefenseUrlEnum defenseUrlEnum = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(his.getCategory());
                 guideHistoryRsp.setCategory(Collections.singletonList(defenseUrlEnum.getMsg()));
             }

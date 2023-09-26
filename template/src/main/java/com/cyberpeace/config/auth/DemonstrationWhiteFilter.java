@@ -23,7 +23,7 @@ import com.google.common.cache.CacheBuilder;
 public class DemonstrationWhiteFilter implements Filter {
 
 
-    private String demo = SystemPropUtil.getProp("WhiteDemo");
+    private String demo = SystemPropUtil.getProp("WHITE_DEMO");
     private String cache = SystemPropUtil.getProp("CACHE_OPEN");
 
     private Cache<String,String> contentCache= CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build();

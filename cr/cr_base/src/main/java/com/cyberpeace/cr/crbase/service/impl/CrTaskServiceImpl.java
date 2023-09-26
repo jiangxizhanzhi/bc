@@ -452,11 +452,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				}
 
 				//插入态势导调历史记录
-				boolean missionSubmitFlag = SituationGuideScheme.ConditionType.MISSION_SUBMIT.getCode().equals(guideHis.getTriggerCondition());
-				boolean missionSuccessFlag = SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition()) && CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(task.getStatus());
-				boolean missionFlag = missionSubmitFlag || missionSuccessFlag;
-				if (Objects.nonNull(guideHis) && StringUtils.isNotBlank(guideHis.getSceneId()) && missionFlag) {
-					situationGuideHisMapper.insert(guideHis);
+				if (Objects.nonNull(guideHis) && StringUtils.isNotBlank(guideHis.getSceneId())) {
+					boolean missionSubmitFlag = SituationGuideScheme.ConditionType.MISSION_SUBMIT.getCode().equals(guideHis.getTriggerCondition());
+					boolean missionSuccessFlag = SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition()) && CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(task.getStatus());
+					if (missionSubmitFlag || missionSuccessFlag) {
+						situationGuideHisMapper.insert(guideHis);
+					}
 				}
 			}
 		});

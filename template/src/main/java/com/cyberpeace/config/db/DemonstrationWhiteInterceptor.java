@@ -15,7 +15,7 @@ import java.util.Properties;
 		args = { MappedStatement.class, Object.class }) })
 public class DemonstrationWhiteInterceptor implements Interceptor {
 
-	private String demo = SystemPropUtil.getProp("WhiteDemo");
+	private String demo = SystemPropUtil.getProp("WHITE_DEMO");
 
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {

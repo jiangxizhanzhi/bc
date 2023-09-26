@@ -43,11 +43,7 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 		valid(topoId);
 		SituationTime situationTime = situationTimeMapper.selectByTopoId(topoId);
 		Integer runTime = situationTime.getRunTime();
-//		HashMap<String, Integer> map = new HashMap<>();
-//		map.put("minute", runTime / 60 % 60);
-//		map.put("hour", runTime / (60 * 60) % 24);
-		String runTimeString = "已运行 " + (runTime / (60 * 60 * 24)) + "天" + (runTime / (60 * 60) % 24) + "小时" + (runTime / 60 % 60) + "分";
-		return runTimeString;
+		return "已运行 " + (runTime / (60 * 60 * 24)) + "天" + (runTime / (60 * 60) % 24) + "小时" + (runTime / 60 % 60) + "分";
 	}
 
 	@Override

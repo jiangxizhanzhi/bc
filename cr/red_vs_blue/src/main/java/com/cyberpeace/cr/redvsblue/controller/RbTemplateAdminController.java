@@ -188,7 +188,7 @@ public class RbTemplateAdminController {
 	@GetMapping()
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
-	public BaseRsp<RbTemplateRsp> getRbTemplate(String resourceId) {
+	public BaseRsp<RbTemplateRsp> getRbTemplate(@RequestParam("resource_id") String resourceId) {
 
 		businessTemplateService.checkPermission(resourceId,
 				UserInfoContext.getUserContext().getUserId());

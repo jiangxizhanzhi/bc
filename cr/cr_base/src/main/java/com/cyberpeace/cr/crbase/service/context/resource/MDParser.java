@@ -24,173 +24,165 @@ import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-interface ZiguanConstants {
+final class ZiguanConstants {
 
-	Integer JUDGEMENT_TYPE = 0;
+	public static final Integer JUDGEMENT_TYPE = 0;
 
-	Integer SINGLE_CHOICE_TYPE = 1;
+	public static final Integer SINGLE_CHOICE_TYPE = 1;
 
-	Integer MULTI_CHOICE_TYPE = 2;
+	public static final Integer MULTI_CHOICE_TYPE = 2;
 
-	Map<String, Integer> MISSION_TYPE_MAPPING = new HashMap<String, Integer>() {
+	static final Map<String, Integer> MISSION_TYPE_MAPPING = Maps.newHashMap();
 
-		{
-			put("判断", JUDGEMENT_TYPE);
-			put("单选", SINGLE_CHOICE_TYPE);
-			put("多选", MULTI_CHOICE_TYPE);
-			put("填空", 3);
-			put("问答", 4);
-			put("攻击", 5);
-			put("防御", 6);
-			put("文件", 7);
-		}
-	};
+	static {
+		MISSION_TYPE_MAPPING.put("判断", JUDGEMENT_TYPE);
+		MISSION_TYPE_MAPPING.put("单选", SINGLE_CHOICE_TYPE);
+		MISSION_TYPE_MAPPING.put("多选", MULTI_CHOICE_TYPE);
+		MISSION_TYPE_MAPPING.put("填空", 3);
+		MISSION_TYPE_MAPPING.put("问答", 4);
+		MISSION_TYPE_MAPPING.put("攻击", 5);
+		MISSION_TYPE_MAPPING.put("防御", 6);
+		MISSION_TYPE_MAPPING.put("文件", 7);
+	}
 
-	String CORRECT = "A";
+	public static final String CORRECT = "A";
 
-	String WRONG = "B";
+	public static final String WRONG = "B";
 
-	Map<String, String> JUDGEMENT_ANSWER_MAPPING = new HashMap<String, String>() {
+	static final Map<String, String> JUDGEMENT_ANSWER_MAPPING = Maps.newHashMap();
+	static {
+		JUDGEMENT_ANSWER_MAPPING.put("正确", CORRECT);
+		JUDGEMENT_ANSWER_MAPPING.put("错误", WRONG);
+	}
 
-		{
-			put("正确", CORRECT);
-			put("错误", WRONG);
-		}
-	};
+	public static final Integer SINGLE_TRAIN = 1;
 
-	Integer SINGLE_TRAIN = 1;
+	public static final Integer TEAM_TRAIN = 3;
 
-	Integer TEAM_TRAIN = 3;
+	public static final Integer RVB = 4;
 
-	Integer RVB = 4;
+	static final Map<String, Integer> CE_TYPE_MAPPING = Maps.newHashMap();
 
-	Map<String, Integer> CE_TYPE_MAPPING = new HashMap<String, Integer>() {
+	static {
+		CE_TYPE_MAPPING.put("单兵训练", SINGLE_TRAIN);
+		CE_TYPE_MAPPING.put("团队训练", TEAM_TRAIN);
+		CE_TYPE_MAPPING.put("红蓝对抗", RVB);
+	}
 
-		{
-			put("单兵训练", SINGLE_TRAIN);
-			put("团队训练", TEAM_TRAIN);
-			put("红蓝对抗", RVB);
-		}
-	};
+	public static final String TEMPLATE_NAME = "name";
 
-	String TEMPLATE_NAME = "name";
+	public static final String DESCRIPTION = "description";
 
-	String DESCRIPTION = "description";
+	public static final String TYPE = "type";
 
-	String TYPE = "type";
+	public static final String CATEGORY = "category";
 
-	String CATEGORY = "category";
+	public static final String DIFFICULTY = "difficulty";
 
-	String DIFFICULTY = "difficulty";
+	public static final String DURATION_TIME = "duration_time";
 
-	String DURATION_TIME = "duration_time";
+	public static final String PRE_SKILL = "pre_skill";
 
-	String PRE_SKILL = "pre_skill";
+	public static final String TRAIN_SKILL = "train_skill";
 
-	String TRAIN_SKILL = "train_skill";
+	public static final String ROLE_INFO = "role_info";
 
-	String ROLE_INFO = "role_info";
+	static final Map<String, String> TEMPLATE_BASE_INFO_FIELDS = Maps.newHashMap();
 
-	Map<String, String> TEMPLATE_BASE_INFO_FIELDS = new HashMap<String, String>() {
+	static {
+		TEMPLATE_BASE_INFO_FIELDS.put("场景名称", TEMPLATE_NAME);
+		TEMPLATE_BASE_INFO_FIELDS.put("场景描述", DESCRIPTION);
+		TEMPLATE_BASE_INFO_FIELDS.put("场景类型", TYPE);
+		TEMPLATE_BASE_INFO_FIELDS.put("训练类型", CATEGORY);
+		TEMPLATE_BASE_INFO_FIELDS.put("训练难度", DIFFICULTY);
+		TEMPLATE_BASE_INFO_FIELDS.put("建议时间", DURATION_TIME);
+		TEMPLATE_BASE_INFO_FIELDS.put("LOGO", "logo");
+		TEMPLATE_BASE_INFO_FIELDS.put("前置技能", PRE_SKILL);
+		TEMPLATE_BASE_INFO_FIELDS.put("训练目标", TRAIN_SKILL);
+		TEMPLATE_BASE_INFO_FIELDS.put("场景角色", ROLE_INFO);
+		TEMPLATE_BASE_INFO_FIELDS.put("GIS坐标", "GIS_coordinate");
+		TEMPLATE_BASE_INFO_FIELDS.put("APT组织", "APT_org");
 
-		{
-			put("场景名称", TEMPLATE_NAME);
-			put("场景描述", DESCRIPTION);
-			put("场景类型", TYPE);
-			put("训练类型", CATEGORY);
-			put("训练难度", DIFFICULTY);
-			put("建议时间", DURATION_TIME);
-			put("LOGO", "logo");
-			put("前置技能", PRE_SKILL);
-			put("训练目标", TRAIN_SKILL);
-			put("场景角色", ROLE_INFO);
-			put("GIS坐标", "GIS_coordinate");
-			put("APT组织", "APT_org");
+	}
 
-		}
-	};
+	public static final String MISSION_TITLE = "title";
 
-	String MISSION_TITLE = "title";
+	public static final String SCORE = "score";
 
-	String SCORE = "score";
+	public static final String SKILL_POINTS = "skillPoints";
 
-	String SKILL_POINTS = "skillPoints";
+	public static final String OPTION = "option";
 
-	String OPTION = "option";
+	public static final String ANSWER = "answer";
 
-	String ANSWER = "answer";
+	static final Map<String, String> MISSION_TEMPLATE_FIELDS = Maps.newHashMap();
 
-	Map<String, String> MISSION_TEMPLATE_FIELDS = new HashMap<String, String>() {
+	static {
+		MISSION_TEMPLATE_FIELDS.put("任务名称", MISSION_TITLE);
+		MISSION_TEMPLATE_FIELDS.put("简述", DESCRIPTION);
+		MISSION_TEMPLATE_FIELDS.put("任务分类", CATEGORY);
+		MISSION_TEMPLATE_FIELDS.put("分数", SCORE);
+		MISSION_TEMPLATE_FIELDS.put("技能点", SKILL_POINTS);
+		MISSION_TEMPLATE_FIELDS.put("题目类型", TYPE);
+		MISSION_TEMPLATE_FIELDS.put("题目选项", OPTION);
+		MISSION_TEMPLATE_FIELDS.put("答案", ANSWER);
+	}
 
-		{
-			put("任务名称", MISSION_TITLE);
-			put("简述", DESCRIPTION);
-			put("任务分类", CATEGORY);
-			put("分数", SCORE);
-			put("技能点", SKILL_POINTS);
-			put("题目类型", TYPE);
-			put("题目选项", OPTION);
-			put("答案", ANSWER);
-		}
-	};
+	static final Map<String, String> DEFAULT_MISSION_CATEGORIES = Maps.newHashMap();
 
-	Map<String, String> DEFAULT_MISSION_CATEGORIES = new HashMap<String, String>() {
+	static {
+		DEFAULT_MISSION_CATEGORIES.put("情报侦查研判", "05b739fc686a073756399f79c34039b5");
+		DEFAULT_MISSION_CATEGORIES.put("密码破解", "1102f907c7650ad541c381f59c700f5f");
+		DEFAULT_MISSION_CATEGORIES.put("终端渗透控制", "2eec84346538e972a962b165e499f52d");
+		DEFAULT_MISSION_CATEGORIES.put("威胁发现和检测", "2f4f15de59cd2dbadc5d8a582e9f6849");
+		DEFAULT_MISSION_CATEGORIES.put("内网渗透控制", "3b6e90254227833303d908336b105ade");
+		DEFAULT_MISSION_CATEGORIES.put("网络应用控制破解", "446bbba739678a4e6e103e7d214d55aa");
+		DEFAULT_MISSION_CATEGORIES.put("网络侦查", "6753aa8cad6fa9760308871e707ea033");
+		DEFAULT_MISSION_CATEGORIES.put("反侦查", "8568759a4d514ff730ed6eb1721a2f22");
+		DEFAULT_MISSION_CATEGORIES.put("漏洞挖掘利用", "a2e58506b8d588d7e1cef85f7350728a");
+		DEFAULT_MISSION_CATEGORIES.put("应急响应", "a7914af4e20435cb7ad7b8b4ae0bac6a");
+		DEFAULT_MISSION_CATEGORIES.put("网站渗透控制", "b27501c31132b288df1bef259e2625e6");
+		DEFAULT_MISSION_CATEGORIES.put("系统加固", "bd43486dee157d5e5106d547801e2ea2");
+		DEFAULT_MISSION_CATEGORIES.put("数据分析", "c4173e927825d4ff52b112e268fb01ad");
+		DEFAULT_MISSION_CATEGORIES.put("技术反制", "d0cf5fc50285e1b64c1dfc3adb9ba39d");
+		DEFAULT_MISSION_CATEGORIES.put("隐蔽能力", "dff8a9b76f5536babae3d4c22943004d");
+	}
 
-		{
-			put("情报侦查研判", "05b739fc686a073756399f79c34039b5");
-			put("密码破解", "1102f907c7650ad541c381f59c700f5f");
-			put("终端渗透控制", "2eec84346538e972a962b165e499f52d");
-			put("威胁发现和检测", "2f4f15de59cd2dbadc5d8a582e9f6849");
-			put("内网渗透控制", "3b6e90254227833303d908336b105ade");
-			put("网络应用控制破解", "446bbba739678a4e6e103e7d214d55aa");
-			put("网络侦查", "6753aa8cad6fa9760308871e707ea033");
-			put("反侦查", "8568759a4d514ff730ed6eb1721a2f22");
-			put("漏洞挖掘利用", "a2e58506b8d588d7e1cef85f7350728a");
-			put("应急响应", "a7914af4e20435cb7ad7b8b4ae0bac6a");
-			put("网站渗透控制", "b27501c31132b288df1bef259e2625e6");
-			put("系统加固", "bd43486dee157d5e5106d547801e2ea2");
-			put("数据分析", "c4173e927825d4ff52b112e268fb01ad");
-			put("技术反制", "d0cf5fc50285e1b64c1dfc3adb9ba39d");
-			put("隐蔽能力", "dff8a9b76f5536babae3d4c22943004d");
-		}
-	};
+	public static final String VISIBLE_NODES = "visibleNodes";
 
-	String VISIBLE_NODES = "visibleNodes";
+	public static final String ASSET_NODES = "assetNodes";
 
-	String ASSET_NODES = "assetNodes";
+	static final Map<String, String> ROLE_NODES_CATEGORY = Maps.newHashMap();
 
-	Map<String, String> ROLE_NODES_CATEGORY = new HashMap<String, String>() {
+	static {
+		ROLE_NODES_CATEGORY.put("战争迷雾", VISIBLE_NODES);
+		ROLE_NODES_CATEGORY.put("用户资产", ASSET_NODES);
+	}
 
-		{
-			put("战争迷雾", VISIBLE_NODES);
-			put("用户资产", ASSET_NODES);
-		}
-	};
+	public static final String NODE_COLL = "节点集合";
 
-	String NODE_COLL = "节点集合";
+	public static final String MISSION_COLL = "任务集合";
 
-	String MISSION_COLL = "任务集合";
+	static final Map<String, Integer> DIFFICULTY_CHOICE = Maps.newHashMap();
 
-	Map<String, Integer> DIFFICULTY_CHOICE = new HashMap<String, Integer>() {
+	static {
+		DIFFICULTY_CHOICE.put("低", 1);
+		DIFFICULTY_CHOICE.put("中", 2);
+		DIFFICULTY_CHOICE.put("高", 3);
+	}
 
-		{
-			put("低", 1);
-			put("中", 2);
-			put("高", 3);
-		}
-	};
+	static final Map<String, Integer> BUSINESS_CATEGORIES = Maps.newHashMap();
 
-	Map<String, Integer> BUSINESS_CATEGORIES = new HashMap<String, Integer>() {
+	static {
+		BUSINESS_CATEGORIES.put("渗透测试", 1);
+		BUSINESS_CATEGORIES.put("运维防护", 2);
+		BUSINESS_CATEGORIES.put("系统仿真", 3);
+		BUSINESS_CATEGORIES.put("综合场景", 4);
+		BUSINESS_CATEGORIES.put("其他", 5);
 
-		{
-			put("渗透测试", 1);
-			put("运维防护", 2);
-			put("系统仿真", 3);
-			put("综合场景", 4);
-			put("其他", 5);
+	}
 
-		}
-	};
+	private ZiguanConstants() {}
 }
 
 final class RoleGroupNames {
@@ -200,6 +192,8 @@ final class RoleGroupNames {
 	public static final String RED = "红方";
 
 	public static final String BLUE = "蓝方";
+
+	private RoleGroupNames() {}
 }
 
 /**
@@ -268,7 +262,7 @@ public class MDParser {
 
 	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(()->"");
 	//字段
-	public static ThreadLocal<String> filedErrorMsg = ThreadLocal.withInitial(()->"");
+	public static ThreadLocal<String> fieldErrorMsg = ThreadLocal.withInitial(() -> "");
 
 	public MDParser(String dirPath, String topoId) {
 		this.dirPath = dirPath;
@@ -289,11 +283,12 @@ public class MDParser {
 	public void loadDealError(String businessTemplateId) {
 		try {
 			load(businessTemplateId);
-		}catch (Exception e) {
-			throw new RemoteServiceException("file parse Exception file: "+fileErrorMsg.get()+"  filed: "+filedErrorMsg.get());
+		} catch (Exception e) {
+			throw new RemoteServiceException("file parse Exception file: " + fileErrorMsg.get()
+					+ "  filed: " + fieldErrorMsg.get());
 		} finally {
 			fileErrorMsg.remove();
-			filedErrorMsg.remove();
+			fieldErrorMsg.remove();
 		}
 	}
 	/**
@@ -564,7 +559,7 @@ public class MDParser {
 					log.warn(String.format("%s folder not exist", missionTitle));
 					continue;
 				}
-				String missionTemplateId = parseMission(missionDir, missionTitle);
+				String missionTemplateId = parseMission(missionDir);
 				missions.add(new Mission(missionTemplateId));
 			}
 			schemeData.add(new SchemeDatum(stageName, missions));
@@ -576,9 +571,8 @@ public class MDParser {
 	/**
 	 * 解析任务信息
 	 * @param missionDir
-	 * @param missionTitle
 	 */
-	private String parseMission(String missionDir, String missionTitle) {
+	private String parseMission(String missionDir) {
 		// read
 		String missionText = stripMd(missionDir + SEP + MISSION_MD_FILE);
 		Map<String, String> missionData = parseText(missionText, LINE_SEP + H3,
@@ -649,7 +643,6 @@ public class MDParser {
 	/**
 	 * 读取并处理 writeup 中的图片
 	 * @param missionDir
-	 * @param missionTitle
 	 */
 	private void handleWriteup(MissionTemplate template, String missionDir) {
 		List<String> attachments = Lists.newArrayList();
@@ -920,29 +913,30 @@ class GroupRoles {
 
 	private List<Role> blue = Lists.newArrayList();
 }
-class MsgMap<K,V> extends HashMap<K,V>{
+
+class MsgMap<K, V> extends HashMap<K, V> {
 
 	private Map<String, String> mapping;
 
 	public MsgMap(Map<String, String> mapping) {
 		super();
 		this.mapping = new HashMap<>();
-		if (mapping!=null) {
+		if (mapping != null) {
 			for (Entry<String, String> entry : mapping.entrySet()) {
-				this.mapping.put(entry.getValue(),entry.getKey());
+				this.mapping.put(entry.getValue(), entry.getKey());
 			}
 		}
 	}
 
 	@Override
 	public V get(Object key) {
-		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(),key.toString()));
+		MDParser.fieldErrorMsg.set(mapping.getOrDefault(key.toString(), key.toString()));
 		return super.get(key);
 	}
 
 	@Override
 	public V getOrDefault(Object key, V defaultValue) {
-		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(),key.toString()));
+		MDParser.fieldErrorMsg.set(mapping.getOrDefault(key.toString(), key.toString()));
 		return super.getOrDefault(key, defaultValue);
 	}
 }

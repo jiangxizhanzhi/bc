@@ -2021,3 +2021,5 @@ ALTER TABLE cr_eval_variable_ref  add column `type` int(1) DEFAULT 1 COMMENT '�
 -- ----------------------------
 ALTER TABLE `cr_role` ADD COLUMN `nodes_snapshot` text NULL COMMENT '角色节点快照' AFTER `nodes`;
 UPDATE `cr_role` SET `nodes_snapshot`=`cr_role`.`nodes` WHERE `nodes` is not null;
+
+ALTER TABLE cr_role MODIFY COLUMN nodes TEXT DEFAULT NULL COMMENT '角色节点';

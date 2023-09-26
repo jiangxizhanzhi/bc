@@ -1,8 +1,10 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,8 +159,16 @@ public class EvalSceneEventListener extends MessageListener {
 		if (evalTemplate != null) {
 			WebSocketMessageContext<CrSceneWsMessageIdentifier, Object> messageContext = crEventListenerHelper
 					.makeContext(data, templateId);
-			webSocketHandler.pushMessageToUsers(messageContext,
-					Lists.newArrayList(evalTemplate.getCreateUserId()));
+			if (AuthTable.AuthType.ALL_SHARE_MODE.getCode().equals(evalTemplate.getOperationAuthType())) {
+				webSocketHandler.pushMessage(messageContext,
+						true);
+			} else {
+				ArrayList<String> userIds = Lists.newArrayList(JsonUtil.toJsonObjectArray(evalTemplate.getOperationAuthIds(), String.class));
+				userIds.add(evalTemplate.getCreateUserId());
+				webSocketHandler.pushMessageToUsers(messageContext,
+						userIds);
+			}
+
 		}
 
 	}

@@ -35,11 +35,15 @@ public class SituationTime extends BaseTable {
 	@ApiModelProperty("开始时间")
 	private Date startTime;
 
+	@ApiModelProperty("运行时间(秒)")
+	private Integer runTime;
+
 	public SituationTime() {
 		this.astronomicalTime = new Date();
 		this.combatTime = new Date();
 		this.rate = 1;
 		this.status = Status.UNOPENED.getCode();
+		this.runTime = 0;
 	}
 
 	public enum Status implements GenericEnum {

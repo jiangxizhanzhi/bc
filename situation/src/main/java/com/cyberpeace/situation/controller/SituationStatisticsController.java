@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @Api(tags = "态势统计")
 @RestController
@@ -92,7 +91,7 @@ public class SituationStatisticsController {
 
 	@ApiOperation("运行时间")
 	@GetMapping("/run_time")
-	public BaseRsp<Map<String, Integer>> getRunTime(
+	public BaseRsp<String> getRunTime(
 			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
 		return new BaseRsp<>(situationTimeService.getRunTime(sceneId));
 	}

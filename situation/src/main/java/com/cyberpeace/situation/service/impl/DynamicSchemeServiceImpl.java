@@ -24,10 +24,8 @@ import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.dao.entity.AttackMessage;
 import com.cyberpeace.situation.dao.entity.AttackMessageHistory;
 import com.cyberpeace.situation.dao.entity.DynamicScheme;
-import com.cyberpeace.situation.dao.mapper.AttackMessageHistoryMapper;
-import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;
-import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
-import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
+import com.cyberpeace.situation.dao.entity.SituationTime;
+import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.*;
@@ -82,6 +80,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private SituationTimeService situationTimeService;
+
+	@Autowired
+	private SituationTimeMapper situationTimeMapper;
 
 	//允许上传的图片格式
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
@@ -862,11 +866,61 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Override
 	public void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback){
+		situationTimeService.addRunTime(attackMessageBo.getSceneId(), attackMessageBo.getDurationTime());
 		if ("defense".equals(attackMessageBo.getAttackOrDefense())) {
 			pushDefenseToRoom(attackMessageBo, playback);
 		} else {
 			pushAttackToRoom(attackMessageBo, elementIds, playback);
 		}
+	}
+
+	@Override
+	public void executeInstruction(Instruction instruction, String topoId) {
+		situationTimeService.valid(topoId);
+		SituationTime situationTime = situationTimeMapper.selectByTopoId(topoId);
+		situationTimeService.handleSituationTime(situationTime);
+		if (situationTime.getStatus().equals(SituationTime.Status.FINISH.getCode())) {
+			throw new BusinessException(SituationErrorCode.THIS_SCENE_HAS_ENDED);
+		}
+		if (instruction.getCode().equals(Instruction.InstructionType.START.getCode())) {
+			situationTime.setStatus(SituationTime.Status.RUNNING.getCode());
+			situationTime.setStartTime(new Date());
+			if (instruction.getCombatTime() != null) {
+				situationTime.setCombatTime(instruction.getCombatTime());
+			}
+			if (instruction.getAstronomicalTime() != null) {
+				situationTime.setAstronomicalTime(instruction.getAstronomicalTime());
+			}
+			situationTimeMapper.updateById(situationTime);
+		} else if (instruction.getCode().equals(Instruction.InstructionType.FINISH.getCode())) {
+			situationTime.setStatus(SituationTime.Status.FINISH.getCode());
+			situationTimeMapper.updateById(situationTime);
+		} else if (instruction.getCode().equals(Instruction.InstructionType.PAUSE.getCode())) {
+			situationTime.setStatus(SituationTime.Status.PAUSE.getCode());
+			situationTimeMapper.updateById(situationTime);
+			sceneConfigService.clearSceneCode(topoId);
+		} else if (instruction.getCode().equals(Instruction.InstructionType.CONTINUE.getCode())) {
+			DynamicSchemeProcess dynamicSchemeProcess = sceneConfigService.getDynamicSchemeCache(topoId);
+			if (dynamicSchemeProcess != null) {
+				pushDynamicSchemeToRoom(dynamicSchemeProcess.getDynamicSchemeReq(),
+						dynamicSchemeProcess.getStageName(), dynamicSchemeProcess.getAttackMessageDescription());
+			}
+			situationTime.setStatus(SituationTime.Status.RUNNING.getCode());
+			situationTimeMapper.updateById(situationTime);
+		} else if (instruction.getCode().equals(Instruction.InstructionType.RATE.getCode())) {
+			situationTime.setRate(instruction.getRate());
+			situationTimeMapper.updateById(situationTime);
+		} else if (instruction.getCode().equals(Instruction.InstructionType.ADJUST.getCode())) {
+			if (instruction.getAstronomicalTime() != null) {
+				situationTime.setAstronomicalTime(instruction.getAstronomicalTime());
+			}
+			if (instruction.getCombatTime() != null) {
+				situationTime.setCombatTime(instruction.getCombatTime());
+			}
+			situationTimeMapper.updateById(situationTime);
+		}
+		WsMessage<SituationTime> wsMessage = new WsMessage<>(MessageType.SituationTime.getDesc(), situationTime);
+		situationHandlerService.pushDataToRoom(wsMessage, topoId);
 	}
 
 	public void pushDefenseToRoom(AttackMessageReq attackMessageReq, Boolean playback) {

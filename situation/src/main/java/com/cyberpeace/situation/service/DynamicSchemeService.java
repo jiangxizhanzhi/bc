@@ -6,6 +6,7 @@ import com.cyberpeace.situation.controller.req.DynamicSchemeReq;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
+import com.cyberpeace.situation.model.Instruction;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 
 import java.io.IOException;
@@ -149,4 +150,6 @@ public interface DynamicSchemeService {
 
 
 	void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback);
+
+	public void executeInstruction(Instruction instruction, String topoId);
 }

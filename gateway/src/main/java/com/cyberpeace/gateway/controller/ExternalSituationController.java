@@ -110,7 +110,7 @@ public class ExternalSituationController {
 	@ApiOperation("接收指令")
 	@PostMapping("/receive_instruction")
 	public BaseRsp<Boolean> receiveInstruction(@RequestBody @Validated Instruction instruction) {
-		situationTimeService.executeInstruction(instruction, convertId(instruction.getResourceId()));
+		dynamicSchemeService.executeInstruction(instruction, convertId(instruction.getResourceId()));
 		return new BaseRsp<>();
 	}
 

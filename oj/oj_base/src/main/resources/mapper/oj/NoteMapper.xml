@@ -44,7 +44,7 @@
     <update id="updateById">
         update oj_note
         <set>
-            content = #{content}
+            content = #{content},update_time = now()
             <if test="operationAuthType != null">
                 , operation_auth_type = #{operationAuthType}
             </if>
@@ -64,7 +64,7 @@
     <update id="updateNote">
         update oj_note
         <set>
-            content = #{content}
+            content = #{content},update_time = now()
             <if test="operationAuthType != null">
                 , operation_auth_type = #{operationAuthType}
             </if>
@@ -154,7 +154,7 @@
     <update id="updateReportByID">
         update oj_note
         <set>
-            content = #{content}, is_submit = #{isSubmit}
+            content = #{content}, is_submit = #{isSubmit},update_time = now()
             <if test="operationAuthType != null">
                 , operation_auth_type = #{operationAuthType}
             </if>

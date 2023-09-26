@@ -7,6 +7,5 @@ public class SituationRoomBo {
 
     private String roomId;
 
-    private String localSceneId;
-
+    private Integer trainingStatus;
 }

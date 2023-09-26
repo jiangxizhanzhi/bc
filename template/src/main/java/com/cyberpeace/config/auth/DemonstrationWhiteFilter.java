@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.threadlocal.ThreadLocalContext;
 import com.cyberpeace.enums.DemonstrationWhiteUriEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ResourceUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -18,10 +19,12 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+@Slf4j
 public class DemonstrationWhiteFilter implements Filter {
 
 
-    private String demo = SystemPropUtil.getProp("WhiteDemo");
+    private String demo = SystemPropUtil.getProp("WHITE_DEMO");
+    private String cache = SystemPropUtil.getProp("CACHE_OPEN");
 
     private Cache<String,String> contentCache= CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build();
 
@@ -39,7 +42,7 @@ public class DemonstrationWhiteFilter implements Filter {
                 file = ResourceUtils.getFile(demonstrationUriEnum.getSystemPath());
             }
             if (file.exists()) {
-                String content =contentCache.getIfPresent(filePath);
+                String content ="open".equals(cache)?contentCache.getIfPresent(filePath):null;
                 if (content==null) {
                     content = FileUtil.getContent(file);
                     contentCache.put(filePath,content);
@@ -47,6 +50,9 @@ public class DemonstrationWhiteFilter implements Filter {
                 JSONArray jsonArray = JSON.parseArray(content);
                 if (jsonArray.contains(uri)) {
                     ThreadLocalContext.whiteUpdateThreadLocal.set(true);
+                } else {
+                    log.info("current uri is ====>"+uri);
+
                 }
             }
         }

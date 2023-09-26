@@ -680,18 +680,18 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
     @Override
-    public List<SituationGuideHistory> guideHistoryRspToSituationGuideHistory(List<GuideHistoryRsp> guideHistoryRspList) {
+    public List<SituationGuideHistory> guideHistoryRspToSituationGuideHistory(List<ExecGuideHisReq> guideHistoryRspList) {
         List<SituationGuideHistory> situationGuideHistoryList = new ArrayList<>();
-        for (GuideHistoryRsp guideHistoryRsp : guideHistoryRspList) {
-            for (Integer category : guideHistoryRsp.getCategoryCode()) {
+        for (ExecGuideHisReq execGuideHisReq : guideHistoryRspList) {
+            for (Integer category : execGuideHisReq.getCategoryCode()) {
                 SituationGuideHistory situationGuideHistory = new SituationGuideHistory();
-                situationGuideHistory.setEventName(guideHistoryRsp.getEventName());
+                situationGuideHistory.setEventName(execGuideHisReq.getEventName());
                 situationGuideHistory.setCategory(category);
-                situationGuideHistory.setEventType(guideHistoryRsp.getActionCode());
-                situationGuideHistory.setSource(guideHistoryRsp.getSourceId());
-                situationGuideHistory.setTarget(guideHistoryRsp.getTargetId());
-                situationGuideHistory.setResult(guideHistoryRsp.getResult());
-                situationGuideHistory.setRole(guideHistoryRsp.getRole());
+                situationGuideHistory.setEventType(execGuideHisReq.getActionCode());
+                situationGuideHistory.setSource(execGuideHisReq.getSourceId());
+                situationGuideHistory.setTarget(execGuideHisReq.getTargetId());
+                situationGuideHistory.setResult(execGuideHisReq.getResult());
+                situationGuideHistory.setRole(execGuideHisReq.getRole());
                 situationGuideHistoryList.add(situationGuideHistory);
             }
         }
@@ -804,13 +804,17 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         AttackScreenContext screenContext = new AttackScreenContext();
         screenContext.setStartTime(screenBo.getStartTime());
         screenContext.setEndTime(screenBo.getEndTime());
-        String defenseType;
-        if (Boolean.TRUE.equals(attack)) {
-            defenseType = SituationGuideScheme.AttackUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
+        if (null != screenBo.getCategory()) {
+            String defenseType;
+            if (Boolean.TRUE.equals(attack)) {
+                defenseType = SituationGuideScheme.AttackUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
+            } else {
+                defenseType = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
+            }
+            screenContext.setDefenseTypes(Collections.singletonList(defenseType));
         } else {
-            defenseType = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(screenBo.getCategory()).getMsg();
+            screenContext.setDefenseTypes(null);
         }
-        screenContext.setDefenseTypes(Collections.singletonList(defenseType));
         if (screenBo.getEventName() != null) {
             screenContext.setEventName(Collections.singletonList(screenBo.getEventName()));
         } else {

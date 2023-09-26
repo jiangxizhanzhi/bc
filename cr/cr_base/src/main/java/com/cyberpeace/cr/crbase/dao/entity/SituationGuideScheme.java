@@ -349,8 +349,8 @@ public class SituationGuideScheme extends BaseTable {
      */
     public enum BlockingAndBelongingUrlEnum {
 
-        BLOCKING("阻断", "", ""),
-        BELONGING ("归属", "", "");
+        BLOCKING("阻断", "/cpms/guide/阻断.gif", ""),
+        BELONGING ("归属", "/cpms/guide/归属-红.gif", "/cpms/guide/归属-蓝.gif");
 
         @Getter
         private final String name;

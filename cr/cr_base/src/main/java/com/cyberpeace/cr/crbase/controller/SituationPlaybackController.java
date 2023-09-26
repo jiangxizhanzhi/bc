@@ -3,7 +3,7 @@ package com.cyberpeace.cr.crbase.controller;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.cr.crbase.controller.req.guide.ExecGuideHisRep;
+import com.cyberpeace.cr.crbase.controller.req.guide.ExecGuideHisReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryReq;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.GuideHistoryRsp;
 import com.cyberpeace.cr.crbase.service.GuideHistoryService;
@@ -41,8 +41,8 @@ public class SituationPlaybackController {
 	@ApiOperation("单个执行")
 	@PostMapping("/execute")
 	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
-	public BaseRsp<Boolean> execute(@RequestBody @Validated ExecGuideHisRep execGuideHisRep) {
-		return new BaseRsp<>(guideHistoryService.execute(execGuideHisRep));
+	public BaseRsp<Boolean> execute(@RequestBody @Validated ExecGuideHisReq execGuideHisReq) {
+		return new BaseRsp<>(guideHistoryService.execute(execGuideHisReq));
 	}
 
 }

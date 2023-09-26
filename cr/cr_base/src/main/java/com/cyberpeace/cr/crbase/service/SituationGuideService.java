@@ -47,5 +47,5 @@ public interface SituationGuideService {
 
     List<GuideHistoryRsp> mpEventToGuideHistoryRsp(List<MpEvent> mpEventList);
 
-    List<SituationGuideHistory> guideHistoryRspToSituationGuideHistory(List<GuideHistoryRsp> guideHistoryRspList);
+    List<SituationGuideHistory> guideHistoryRspToSituationGuideHistory(List<ExecGuideHisReq> guideHistoryRspList);
 }

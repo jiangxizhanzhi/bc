@@ -59,4 +59,14 @@ public class FilterConfig {
 		filterRegistrationBean.addUrlPatterns("/*");
 		return filterRegistrationBean;
 	}
+	@Bean
+	public FilterRegistrationBean demonstrationWhiteFilter() {
+
+		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+		filterRegistrationBean.setOrder(100);
+		filterRegistrationBean.setFilter(new DemonstrationWhiteFilter());
+		filterRegistrationBean.setName("demonstrationWhiteFilter");
+		filterRegistrationBean.addUrlPatterns("/*");
+		return filterRegistrationBean;
+	}
 }

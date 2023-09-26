@@ -45,6 +45,7 @@ public class MybatisConfig {
 
 		// 自定义session，需要手动添加拦截器
 		configuration.addInterceptor(paginationInterceptor());
+		configuration.addInterceptor(demonstrationWhiteInterceptor());
 		sqlSessionFactory.setConfiguration(configuration);
 		sqlSessionFactory.setGlobalConfig(globalConfig());
 		sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
@@ -78,6 +79,10 @@ public class MybatisConfig {
 	@Bean
 	public SqlSessionTemplate sqlSessionTemplate() throws Exception {
 		return new SqlSessionTemplate(sqlSessionFactory());
+	}
+
+	public DemonstrationWhiteInterceptor demonstrationWhiteInterceptor() {
+		return new DemonstrationWhiteInterceptor();
 	}
 
 	@Bean

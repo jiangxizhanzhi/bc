@@ -10,6 +10,7 @@ import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.guide.*;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
@@ -237,6 +238,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         if (Objects.isNull(guideScheme)) {
             return false;
         }
+        //校验训练是否开启
+        checkRoomOpening(guideScheme);
         String sceneId = viewScene(guideScheme.getRoomId());
 
         //增加历史记录
@@ -255,7 +258,6 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     @Override
     public Boolean guideTest(AddGuideSchemeReq req) {
         String sceneId = viewScene(req.getRoomId());
-        //增加历史记录
         SituationGuideHistory his = BeanUtils.copy(req, SituationGuideHistory.class);
         his.setSceneId(sceneId);
         return pushDataToRoomByGuide(Boolean.TRUE, his);
@@ -797,7 +799,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return localScene.getMpSceneId();
     }
 
-    //转化攻击、防御的筛选条件
+    /**
+     * 转化攻击、防御的筛选条件
+     */
     private AttackScreenContext screenToAttackScreenContext(ScreenBo screenBo, Boolean attack) {
         AttackScreenContext screenContext = new AttackScreenContext();
         screenContext.setStartTime(screenBo.getStartTime());
@@ -817,5 +821,30 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         screenContext.setSourceNodeIds(Collections.singletonList(screenBo.getSource()));
         screenContext.setTargetNodeIds(Collections.singletonList(screenBo.getTarget()));
         return screenContext;
+    }
+
+    public void checkRoomOpening(SituationGuideScheme guideScheme) {
+        SituationRoomBo situationRoomBo = situationGuideSchemeMapper.selectRoomTrainStatus(guideScheme.getRoomId(), guideScheme.getBusinessType());
+
+        if (BusinessType.TRAINING_TEAM.getCode().equals(guideScheme.getBusinessType())) {
+            if (situationRoomBo.getTrainingStatus().equals(0)) {
+                log.error("teamTrain not begin! roomId=[{}]", guideScheme.getRoomId());
+                throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+            } else if (situationRoomBo.getTrainingStatus().equals(2)) {
+                log.error("teamTrain is over! roomId=[{}]", guideScheme.getRoomId());
+                throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+            }
+        } else {
+            if (situationRoomBo.getTrainingStatus().equals(4)) {
+                log.error("RedVsBlueTrain not begin! roomId=[{}]", guideScheme.getRoomId());
+                throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+            } else if (situationRoomBo.getTrainingStatus().equals(1)) {
+                log.error("RedVsBlueTrain is paused! roomId=[{}]", guideScheme.getRoomId());
+                throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
+            } else if (situationRoomBo.getTrainingStatus().equals(0)) {
+                log.error("RedVsBlueTrain is over! roomId=[{}]", guideScheme.getRoomId());
+                throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+            }
+        }
     }
 }

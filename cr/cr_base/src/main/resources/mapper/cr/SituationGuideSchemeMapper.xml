@@ -23,15 +23,15 @@
         WHERE a.resource_id = #{roomId}
     </select>
 
-    <select id="selectRoomType" resultType="com.cyberpeace.cr.crbase.service.context.guide.SituationRoomBo">
-        select resource_id roomId,local_scene_id from
+    <select id="selectRoomTrainStatus" resultType="com.cyberpeace.cr.crbase.service.context.guide.SituationRoomBo">
+        select resource_id roomId,training_status from
         <if test="businessType == 3 ">
             cr_team_room
         </if>
         <if test="businessType == 4 ">
             cr_rb_room
         </if>
-        WHERE resource_id = #{roomId}
+        WHERE resource_id = #{roomId} limit 1
     </select>
 
     <select id="selectSceneByRoomId" resultType="com.cyberpeace.cr.crbase.service.context.guide.SituationGuideSceneBo">

@@ -558,6 +558,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (template == null) {
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
 		}
+		if (template.getReadAuthType()==null) {
+			template.setReadAuthType(2);
+		}
 		// 2. 生成导出模型, 包含 template, missions
 		ResourceDumpContext<Object> context = businessTemplateHandler.dumpBusiness(template);
 		context.setBusinessTemplate(template);

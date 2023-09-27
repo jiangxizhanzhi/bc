@@ -61,7 +61,7 @@
                 and event_type = #{eventType}
             </if>
             <if test="startTime != null">
-                and update_time &gt; #{startTime}
+                and update_time &gt;= #{startTime}
             </if>
             <if test="endTime != null">
                 and update_time &lt; #{endTime}

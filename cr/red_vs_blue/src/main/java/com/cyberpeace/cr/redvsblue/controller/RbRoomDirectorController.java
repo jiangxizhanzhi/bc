@@ -604,7 +604,10 @@ public class RbRoomDirectorController {
 		TimeLineData res = rbRoomService.getReplayTimeline(roomId, null);
 		timeLineRsp.setStartTime(TimeUtil.format1(res.getStartTime()));
 		timeLineRsp.setEndTime(TimeUtil.format1(res.getEndTime()));
-		timeLineRsp.setEventTimeList(guideHistoryService.getEventTimeList(roomId, BusinessType.RED_VS_BLUE.getCode()));
+		List<String> eventTimeList = guideHistoryService.getEventTimeList(roomId, BusinessType.RED_VS_BLUE.getCode());
+		eventTimeList = eventTimeList.stream().filter(time -> TimeUtil.toDate1(time).after(TimeUtil.toDate1(timeLineRsp.getStartTime()))
+				&& TimeUtil.toDate1(time).before(TimeUtil.toDate1(timeLineRsp.getEndTime()))).collect(Collectors.toList());
+		timeLineRsp.setEventTimeList(eventTimeList);
 		return new BaseRsp<>(timeLineRsp);
 	}
 }

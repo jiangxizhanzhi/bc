@@ -80,7 +80,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		List<String> userIds = roles.stream().map(CrRole::getUserIdList).flatMap(Collection::stream).filter(a->!UserInfoContext.getUserContext().getUserId().equals(a)).collect(Collectors.toList());
 		notice.setNoticeUsers(JsonUtil.toJsonString(userIds));
 		this.save(notice);
-		webSocketPushService.notice(userIds,MissionWsCode.NOTICE_Code,crNoticeReq.getRoomId(),WsPath.NOTICE);
+		webSocketPushService.notice(userIds,MissionWsCode.NOTICE_CODE,crNoticeReq.getRoomId(),WsPath.NOTICE);
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		//删除通知需要通知相关用户删除红点
 		List<String> userIds = JsonUtil.toJsonObjectArray(notice.getNoticeUsers(), String.class);
 		if (CollectionUtils.isNotEmpty(userIds)) {
-			webSocketPushService.notice(userIds,MissionWsCode.NOTICE_Code,notice.getRoomId(),WsPath.NOTICE);
+			webSocketPushService.notice(userIds,MissionWsCode.NOTICE_CODE,notice.getRoomId(),WsPath.NOTICE);
 		}
 	}
 

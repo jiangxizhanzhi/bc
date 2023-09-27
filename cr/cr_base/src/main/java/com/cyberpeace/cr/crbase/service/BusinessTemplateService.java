@@ -75,9 +75,8 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * 训练模板删除
 	 *
 	 * @param businessTemplateIds 训练业务模板id列表
-	 * @return 布尔值
 	 */
-	Boolean batchDelete(List<String> businessTemplateIds);
+	void batchDelete(List<String> businessTemplateIds);
 
 	/**
 	 * 关闭后台测试场景之后删除本地数据

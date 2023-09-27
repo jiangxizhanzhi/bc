@@ -1,11 +1,12 @@
 package com.cyberpeace.situation.controller;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
-import com.cyberpeace.situation.req.FlowLogReq;
 import com.cyberpeace.situation.controller.req.SceneConfigReq;
 import com.cyberpeace.situation.controller.req.SceneIdListReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
@@ -29,6 +29,7 @@ import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
+import com.cyberpeace.situation.req.FlowLogReq;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
@@ -36,6 +37,7 @@ import com.cyberpeace.situation.service.TopoHandlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "态势拓扑")
 @Slf4j
@@ -55,6 +57,10 @@ public class SituationController {
 
 	@Autowired
 	private DynamicSchemeService dynamicSchemeService;
+
+	@Autowired
+	@Qualifier("taskExecutor")
+	private Executor executor;
 
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
@@ -272,21 +278,19 @@ public class SituationController {
 
 		for (String sceneId : sceneIdListReq.getSceneIds()) {
 
-			MpSceneData mpSceneData;
-
-			try {
-				mpSceneData = topoHandlerService.getMpSceneData(sceneId);
-			} catch (Exception e) {
-				mpSceneData = null;
-			}
-
-			if (topoHandlerService.checkSceneStatus(mpSceneData)) {
-				continue;
-			}
-
-			dynamicSchemeService.clearSceneData(sceneId);
+			executor.execute(() -> {
+				MpSceneData mpSceneData;
+				try {
+					mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+				} catch (Exception e) {
+					mpSceneData = null;
+				}
+				if (topoHandlerService.checkSceneStatus(mpSceneData)) {
+					return;
+				}
+				dynamicSchemeService.clearSceneData(sceneId);
+			});
 		}
-
 		return new BaseRsp<>(true);
 	}
 }

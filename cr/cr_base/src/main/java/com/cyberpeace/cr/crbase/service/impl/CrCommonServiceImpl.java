@@ -1,5 +1,13 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
@@ -9,10 +17,12 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrMark;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.CrMarkMapper;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.role.*;
@@ -21,7 +31,6 @@ import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.context.scene.Port;
 import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.cs.service.context.scene.SceneDataImpl;
 import com.cyberpeace.cs.service.context.scene.SceneElement;
@@ -29,14 +38,8 @@ import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -53,6 +56,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 
 	@Autowired
 	private CrMarkMapper crMarkMapper;
+
+	@Autowired
+	private CrTaskService crTaskService;
 
 	@Override
 	public List<MonitorSession> getMonitorSessions(String localSceneId, String studentId) {
@@ -81,9 +87,8 @@ public class CrCommonServiceImpl implements CrCommonService {
 		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 		Map<String, String> ipMap = Maps.newHashMap();
 		for (SceneElement element : data.getTopology().getElements()) {
-			for (Port port : element.getPorts()) {
-				ipMap.put(element.getId(), port.getIp());
-				break;
+			if (!element.getPorts().isEmpty()) {
+				ipMap.put(element.getId(), element.getPorts().get(0).getIp());
 			}
 		}
 		// 3.1 批量获取用户信息
@@ -195,6 +200,7 @@ public class CrCommonServiceImpl implements CrCommonService {
 		mark.setEvidence(JsonUtil.arrayToString(req.getEvidence()));
 
 		crMarkMapper.insert(mark);
+		this.pushMarkWs(req.getRoomId(), MissionWsCode.CR_MARK_CREATE);
 	}
 
 	@Override
@@ -206,4 +212,12 @@ public class CrCommonServiceImpl implements CrCommonService {
     public List<CrMark> getMarkByRoomIdAndUserId(String roomId, String userId) {
 		return crMarkMapper.selectByRoomIdAndUserId(roomId, userId);
     }
+
+	/**
+	 * push标记ws
+	 * 暂时借用mission 的ws
+	 */
+	private void pushMarkWs(String businessId, Integer code){
+		crTaskService.pushMissionWS(businessId, code);
+	}
 }

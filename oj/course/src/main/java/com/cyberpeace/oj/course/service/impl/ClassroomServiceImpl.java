@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -351,8 +352,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 // 课程表数据查询
                 List<Classroom> classrooms = classroomMapper.selectListByCourse(publicCourseIds,
                         roomListQuery);
+				ClassroomInfo info = getInfo(classrooms);
                 classroomBos = StreamApiUtils.map(classrooms,
-                        this::entityToBo);
+						classroom -> entityToBo(classroom, info));
             }
         }
 
@@ -542,8 +544,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         // 过滤已删除组织关联数据
         List<String> orgs = remoteOrganizationService.childrenList("", true);
         classrooms = classrooms.stream().filter(classroom -> orgs.contains(classroom.getOrganizationId())).collect(Collectors.toList());
+		ClassroomInfo info = getInfo(classrooms);
 
-        return StreamApiUtils.map(classrooms, this::entityToBo);
+		return StreamApiUtils.map(classrooms, c -> entityToBo(c, info));
     }
 
     @Override
@@ -1056,8 +1059,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         List<String> courseIds = courseMapper.selectByAuth(authContext);
         IPage<Classroom> result = classroomMapper.page(page, roomListQuery.getUserId(),
                 roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg(), authContext.getIsAdmin(), courseIds);
-
-        return result.convert(this::entityToBo);
+		ClassroomInfo info = getInfo(result.getRecords());
+		return result.convert(classroom -> entityToBo(classroom, info));
 
     }
 
@@ -1889,18 +1892,80 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         return monitorBo;
     }
 
+	private ClassroomInfo getInfo(List<Classroom> classroomList) {
+		ClassroomInfo info = new ClassroomInfo();
+		if (classroomList.isEmpty()) {
+			return info;
+		}
+		// course
+		List<String> courseIds = StreamApiUtils.map(classroomList, Classroom::getCourseId);
+		List<Course> courseList = courseMapper.selectBatchIds(courseIds);
+		for (Course course : courseList) {
+			info.courseMap.put(course.getResourceId(), course);
+		}
+		// lesson
+		List<String> lessonIds = StreamApiUtils.map(classroomList, Classroom::getLessonId);
+		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(lessonIds);
+		for (CourseLesson lesson : lessonList) {
+			info.lessonMap.put(lesson.getResourceId(), lesson);
+		}
+		// train_plan
+		List<String> trainPlanIds = StreamApiUtils.map(classroomList, Classroom::getTrainPlanId);
+		if (!trainPlanIds.isEmpty()) {
+			List<TrainPlan> trainPlanList = trainPlanMapper.selectBatchIds(trainPlanIds);
+			for (TrainPlan trainPlan : trainPlanList) {
+				info.trainPlanMap.put(trainPlan.getResourceId(), trainPlan);
+			}
+		}
+		setOrgInfo(info, classroomList);
+
+		return info;
+	}
+
+	private void setOrgInfo(ClassroomInfo info, List<Classroom> classroomList) {
+		// org
+		List<String> orgIds = StreamApiUtils.map(classroomList, Classroom::getOrganizationId);
+		String current;
+		JSONObject org;
+		String orgName;
+		String orgPath;
+		String parent;
+		for (String orgId : orgIds) {
+			current = orgId;
+			while (StringUtils.isNotBlank(current)) {
+				if (info.orgParentMap.containsKey(current)) {
+					break;
+				}
+				org = remoteOrganizationService.getById(current);
+				if (null != org) {
+					orgName = org.getString(JsonKeyConstant.NAME);
+					orgPath = org.getString(JsonKeyConstant.PATH);
+					parent = org.getString(JsonKeyConstant.PARENT);
+				} else {
+					orgName = "";
+					orgPath = "";
+					parent = "";
+				}
+				info.orgNameMap.put(current, orgName);
+				info.orgPathMap.put(current, orgPath);
+				info.orgParentMap.put(current, parent);
+				current = parent;
+			}
+		}
+	}
+
     /**
      * 实体类转换为bo
      *
      * @param classroom
      * @return
      */
-    private ClassroomBo entityToBo(Classroom classroom) {
+	private ClassroomBo entityToBo(Classroom classroom, ClassroomInfo info) {
 
         ClassroomBo classroomBo = BeanUtils.copy(classroom, ClassroomBo.class);
 
         // 课程数据组装
-        Course course = courseMapper.selectById(classroom.getCourseId());
+		Course course = info.courseMap.get(classroom.getCourseId());
         if (course == null) {
             log.error("Course not found! course_id=[{}]", classroom.getCourseId());
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -1909,7 +1974,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         classroomBo.setCourseType(course.getCourseType());
 
         // 课时数据组装
-        CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
+		CourseLesson lesson = info.lessonMap.get(classroom.getLessonId());
         if (lesson == null) {
             log.error("Lesson not found! lesson_id=[{}]", classroom.getLessonId());
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -1918,25 +1983,52 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         classroomBo.setLessonType(lesson.getType());
 
         // 组织信息
-        String orgName = remoteOrganizationService.orgNameById(classroom.getOrganizationId());
+		String orgName = info.orgNameMap.get(classroom.getOrganizationId());
         classroomBo.setOrganizationName(orgName);
 
-        String orgPath = remoteOrganizationService.getOrgPath(classroom.getOrganizationId());
+		String orgPath = info.orgPathMap.get(classroom.getOrganizationId());
         classroomBo.setOrgPath(orgPath);
 
-        List<String> parentIds = remoteOrganizationService
-                .getParentIds(classroom.getOrganizationId());
+		List<String> parentIds = info.getOrgParents(classroom.getOrganizationId());
         classroomBo.setParentOrgIds(parentIds);
 
-        // 计划数据
-        if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
-            TrainPlan trainPlan = trainPlanMapper.selectById(classroom.getTrainPlanId());
-            classroomBo.setTrainPlanName(trainPlan.getName());
-        }
+		// 计划数据
+		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+			TrainPlan trainPlan = info.trainPlanMap.get(classroom.getTrainPlanId());
+			classroomBo.setTrainPlanName(null == trainPlan ? "" : trainPlan.getName());
+		}
 
         // 日程类型
         classroomBo.setClassify(ClassroomType.CLASS.getCode());
         return classroomBo;
     }
 
+}
+
+class ClassroomInfo {
+
+	Map<String, Course> courseMap = Maps.newHashMap();
+
+	Map<String, CourseLesson> lessonMap = Maps.newHashMap();
+
+	Map<String, TrainPlan> trainPlanMap = Maps.newHashMap();
+
+	Map<String, String> orgNameMap = Maps.newHashMap();
+
+	Map<String, String> orgPathMap = Maps.newHashMap();
+
+	Map<String, String> orgParentMap = Maps.newHashMap();
+
+	public List<String> getOrgParents(String orgId) {
+		List<String> res = Lists.newArrayList();
+		if (StringUtils.isBlank(orgId)) {
+			return res;
+		}
+		String current = orgId;
+		while (StringUtils.isNotBlank(current)) {
+			res.add(current);
+			current = this.orgParentMap.get(current);
+		}
+		return res;
+	}
 }

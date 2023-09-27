@@ -228,7 +228,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				String portId = port.getString("id");
 				sceneData.getPortElementMap().put(portId, elementId);
 
-				PortInfo portInfo = BeanUtils.deepCopy(port, PortInfo.class);
+				PortInfo portInfo = BeanUtils.copy(port, PortInfo.class);
 				portInfo.setPortId(portId);
 
 				portsInfo.put(portId, portInfo);

@@ -430,8 +430,8 @@ public class RbRoomController {
         rbTimeManagementRsp.setRedVsBlue(timeManagement.getRoomId());
 
         // 记录远程操作日志
-        remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE, OperationType.START, rbRoom.getName(),
-                LogContent.CR_FORMAT.format(OperationType.START, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoom.getName()));
+        remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+                OperationType.START, rbRoom.getName());
 
         return new BaseRsp<>(rbTimeManagementRsp);
     }

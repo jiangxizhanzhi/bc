@@ -16,7 +16,6 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -166,8 +165,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		Course courseRsp = courseService.addCourse(userId, course);
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.CREATE, course.getName(),
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.COURSE_FORMAT.getMsg(), course.getName()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.CREATE, courseRsp.getName());
 
 		return new BaseRsp<>(courseRsp);
 	}
@@ -185,9 +184,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		Course courseRsp = courseService.updateCourse(userId, course);
 
 		course = courseService.getById(updateReq.getResourceId());
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+				OperationType.UPDATE, course.getName());
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.UPDATE, course.getName(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.COURSE_FORMAT.getMsg(), course.getName()));
 		return new BaseRsp<>(courseRsp);
 	}
 
@@ -222,8 +221,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		courseList.forEach(course -> {
 			if (course != null) {
-				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.DELETE, course.getName(),
-						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.COURSE_FORMAT.getMsg(), course.getName()));
+				remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+						OperationType.DELETE, course.getName());
 			}
 		});
 

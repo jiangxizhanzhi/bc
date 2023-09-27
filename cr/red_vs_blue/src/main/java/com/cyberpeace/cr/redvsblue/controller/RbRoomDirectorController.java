@@ -46,7 +46,6 @@ import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
 import com.cyberpeace.cs.service.context.scene.SceneData;
-import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -469,8 +468,8 @@ public class RbRoomDirectorController {
 		}
 
 		// 记录远程操作日志
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE, OperationType.STOP, room.getName(),
-				LogContent.CR_FORMAT.format(OperationType.STOP, LogContent.RB_TRAIN_ROOM.getMsg(), room.getName()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.STOP, room.getName());
 
 		return new BaseRsp<>();
 	}

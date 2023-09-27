@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
@@ -328,8 +329,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
      * @return
      */
     private PersonNote noteToBo(PersonNote note) {
-        UserInfo userInfo = remoteUserService.getById(note.getUserId());
-        note.setUserName(userInfo.getUserName());
+        // 用户只可能是当前用户
+        // 这个接口真的需要用户名吗？
+        note.setUserName(UserInfoContext.getUserContext().getUserName());
         if (note.getResourceType() != null) {
             String themeName = note.getThemeName();
             if (note.getResourceType().equals(Note.NoteResourceType.OPTION.getCode())) {

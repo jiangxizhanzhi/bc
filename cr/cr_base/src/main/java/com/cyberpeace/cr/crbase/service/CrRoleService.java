@@ -130,7 +130,7 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roleId 角色id
 	 * @return 其能看到的分组角色列表
 	 */
-	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
+	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId, Integer roleGroup, Integer businessType);
 
 	/**
 	 * 获取某用户在单个训练中的雷达图

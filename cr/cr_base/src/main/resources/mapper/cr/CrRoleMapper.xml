@@ -105,14 +105,28 @@
         business_type
         from cr_role
         where room_id = #{roomId}
-      <if test="roleId != null and roleId != ''">
-          and (role_group like #{roleId}
-          or resource_id = #{roleId}
-          <if test="roleId == '7'.toString()">
-              or role_group in (1,2,3)
-          </if>
-          )
-      </if>
+        <if test="businessType == 3">
+            <choose>
+            <when test="roleGroup != null and roleGroup != ''">
+                and (role_group = #{roleGroup} or role_group =1 )
+            </when>
+            <otherwise>
+                <bind name="userIds" value="'%' + roleId + '%'"/>
+                and (user_ids like #{userIds} or role_group =1 )
+            </otherwise>
+            </choose>
+        </if>
+        <if test="businessType == 4">
+            <choose>
+                <when test="roleGroup != null and roleGroup != ''">
+                    and (role_group = #{roleGroup} or role_group in (1, 2, 3))
+                </when>
+                <otherwise>
+                    <bind name="userIds" value="'%' + roleId + '%'"/>
+                    and (user_ids like #{userIds} or role_group in (1, 2, 3))
+                </otherwise>
+            </choose>
+        </if>
     </select>
     <select id="selectByRoomIdAndMissionId" resultType="com.cyberpeace.common.entity.CrRole">
         <bind name="mission_id" value="'%' + missionId + '%'"/>

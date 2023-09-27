@@ -41,6 +41,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(tags = "oj-前台理论基础练习相关")
@@ -128,7 +129,9 @@ public class PracticeTheoryController {
 		IPage<PracticeTheoryListBo> result = practiceTheoryService.pageByQuery(page, listQueryBo,
 				authContext);
 
-		if (result.getRecords().size() > 5) {
+		if (result == null) {
+			return new BaseRsp<>(new ArrayList<>());
+		} else if ( result.getRecords().size() > 5) {
 			return new BaseRsp<>(result.getRecords().subList(0, 5));
 		}
 		return new BaseRsp<>(result.getRecords());

@@ -16,7 +16,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -82,16 +81,14 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
 		}
 
-		//校验用户权限
+		// 校验用户权限
 		EvalTemplate evalTemplate = evalTemplateMapper.selectById(evalTask.getTemplateId());
-		if (AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode().equals(evalTemplate.getOperationAuthType())) {
-			List<String> authIds = evalTemplate.getAuthIds();
-			if (!authIds.contains(UserInfoContext.getUserContext().getUserId())) {
-				log.error("Permission denied! taskId = [{}], UserId = [{}]", taskId, UserInfoContext.getUserContext().getUserId());
-				throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-			}
+		String currentId = UserInfoContext.getUserContext().getUserId();
+		if (!evalTemplate.isFree2Operate() && !evalTemplate.getCreateUserId().equals(currentId)
+				&& !evalTemplate.getOperationAuthIds().contains(currentId)) {
+			log.error("Permission denied! taskId = [{}], UserId = [{}]", taskId, currentId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
-
 		return evalTask;
 	}
 

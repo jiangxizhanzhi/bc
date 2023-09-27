@@ -12,7 +12,7 @@ public final class MissionWsCode {
 
 	public static final Integer MISSION_WS_UPDATE_STATUS = 3;
 
-	public static final Integer NOTICE_Code = 4;
+	public static final Integer NOTICE_CODE = 4;
 
 	public static final Integer EXERCISE_PAPER_CODE = 5;
 
@@ -25,6 +25,12 @@ public final class MissionWsCode {
 	 * 新的任务提交
 	 */
 	public static final Integer MISSION_SUBMISSION = 8;
+
+	/**
+	 * 新增标记
+	 */
+	public static final Integer CR_MARK_CREATE = 9;
+
 
 	private MissionWsCode() {}
 }

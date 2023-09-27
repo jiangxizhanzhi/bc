@@ -600,11 +600,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
 		List<DashboardUser> friend = Lists.newArrayList();
-		Integer roleGroup = null;
-		if (roleId.contains("_")) {
-			String[] strings = roleId.split("_");
-			roleGroup = Integer.valueOf(strings[strings.length - 1]);
-		}
+		//团队训练目前只有一个群,默认设置为大群所有人
+		Integer roleGroup = 2;
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, roleId, roleGroup, BusinessType.TRAINING_TEAM.getCode());
 		final List<String> userIds = new ArrayList<>();
 		crRoles.forEach(role -> userIds.addAll(role.getUserIdList()));

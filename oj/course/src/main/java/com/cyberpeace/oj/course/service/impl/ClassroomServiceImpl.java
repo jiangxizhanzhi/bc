@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -353,7 +352,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 List<Classroom> classrooms = classroomMapper.selectListByCourse(publicCourseIds,
                         roomListQuery);
                 classroomBos = StreamApiUtils.map(classrooms,
-                        classroom -> entityToBo(classroom));
+                        this::entityToBo);
             }
         }
 
@@ -365,13 +364,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         // 竞赛赛事
         List<ClassroomBo> adClassroom = adClassroom(roomListQuery.getStartTime(),
                 roomListQuery.getEndTime(),
-                authContext.getSuperAdmin() ? CommonConstant.EMPTY_STRING
+                Boolean.TRUE.equals(authContext.getSuperAdmin()) ? CommonConstant.EMPTY_STRING
                         : authContext.getUserId());
         classroomBos.addAll(adClassroom);
 
         // 根据开始时间转换为map
         List<ClassroomBo> splitTimeBos = StreamApiUtils.flatMap(classroomBos,
-                classroomBo -> splitTimeByDay(classroomBo));
+                this::splitTimeByDay);
         Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(splitTimeBos,
                 classroomBo -> TimeUtil.format6(classroomBo.getStartTime()));
 
@@ -527,7 +526,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         List<Classroom> classrooms = classroomMapper.selectList(roomListQuery);
         Set<String> existClassroom = classrooms.stream().map(Classroom::getResourceId).collect(Collectors.toSet());
         //管理员用户增加admin用户在自己创建的计划中的创建的计划
-        if (authContext.getIsAdmin()) {
+        if (Boolean.TRUE.equals(authContext.getIsAdmin())) {
             roomListQuery.setUserId(null);
             List<Classroom> superAdminClassrooms = classroomMapper.selectAdminList(roomListQuery);
             for (Classroom classroom : superAdminClassrooms) {
@@ -635,7 +634,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         // 查询所有笔记
         List<Note> notes = new ArrayList<>();
         // 仅统计签到过的用户
-        if (signUsers.size() != 0) {
+        if (!signUsers.isEmpty()) {
             NoteListQuery listQuery = NoteListQuery.builder()
                     .noteType(Note.NoteType.REPORT.getCode())
                     .businessId(courseLesson.getResourceId())
@@ -829,7 +828,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Map<String, LessonPaperEvaluate> idToObj = StreamApiUtils.toMap(lessonPaperEvaluates,
 				LessonPaperEvaluate::getSubmitUserId, lessonPaperEvaluate -> lessonPaperEvaluate);
 
-		Map<String, String> OrgIdToName = Maps.newHashMap();
+		Map<String, String> orgIdToName = Maps.newHashMap();
 
 		// 判断是否已提交
 		Boolean isCommitted = cpContext.getIsCommit();
@@ -878,10 +877,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			// 组织信息查询
 			String organizationId = userInfo.getOrganizationId();
 			if (null != organizationId) {
-				String orgName = OrgIdToName.get(organizationId);
+				String orgName = orgIdToName.get(organizationId);
 				if (null == orgName) {
 					orgName = remoteOrganizationService.orgNameById(userInfo.getOrganizationId());
-					OrgIdToName.put(organizationId, orgName);
+                    orgIdToName.put(organizationId, orgName);
 				}
 				practicePaperEvaluateBo.setOrganizationName(orgName);
 			}
@@ -1058,7 +1057,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         IPage<Classroom> result = classroomMapper.page(page, roomListQuery.getUserId(),
                 roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg(), authContext.getIsAdmin(), courseIds);
 
-        return result.convert(classroom -> entityToBo(classroom));
+        return result.convert(this::entityToBo);
 
     }
 
@@ -1171,7 +1170,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
         //过滤实验报告为空的情况
         List<ClassroomReportBo> filterData = StreamApiUtils.filter(data, classroomReportBo -> classroomReportBo.getContent() != null);
-        if (filterData.size() == 0) {
+        if (filterData.isEmpty()) {
             log.error("[{}] report is empty", classroomId);
             throw new BusinessException(OjBusinessErrorCode.NO_REPORT_CAN_BE_EXPORTED);
         }
@@ -1223,7 +1222,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             String passed = "passed";
             if (classroomReportBo.getPassed() == null) {
                 jsonObject.put(passed, ClassroomExportReportConstant.NOT_APPROVED.getMsg());
-            } else if (classroomReportBo.getPassed()) {
+            } else if (Boolean.TRUE.equals(classroomReportBo.getPassed())) {
                 jsonObject.put(passed, ClassroomExportReportConstant.YES.getMsg());
             } else {
                 jsonObject.put(passed, ClassroomExportReportConstant.NO.getMsg());
@@ -1246,20 +1245,33 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             jsonObject.put("evaluate_comment_title", ClassroomExportReportConstant.EVALUATE_COMMENT_TITLE.getMsg());
             String destHtmlPath = baseClassroomPath + File.separator + personName + ".html";
             HtmlToPdfUtil.getHtmlTemplateInstance(jsonObject, HtmlTemplateEnum.LESSON, destHtmlPath);
+
             // 在同目录下生成pdf
             String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
                     + "pdf";
             HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
             File pdfFile = new File(destPdfPath);
-            pdfFile.renameTo(new File(baseClassroomPath + File.separator + initPersonName + ".pdf"));
+            String destPdfFilePath = baseClassroomPath + File.separator + initPersonName + ".pdf";
+            boolean pdfFileRenameBoolean = pdfFile.renameTo(new File(destPdfFilePath));
+            if (!Boolean.TRUE.equals(pdfFileRenameBoolean)){
+                log.warn("destPdfPath:[{}] renameTO destPdfFilePath:[{}] failed", destPdfPath, destPdfFilePath);
+            }
             //删除html文件
             FileUtil.deleteDir(new File(destHtmlPath));
+
             File baseClassroomFile = new File(baseClassroomPath);
-            baseClassroomFile.renameTo(new File(htmlPath + File.separator + initPersonName));
+            String htmlPersonNamePath = htmlPath + File.separator + initPersonName;
+            boolean baseClassRenameBoolean = baseClassroomFile.renameTo(new File(htmlPersonNamePath));
+            if (!Boolean.TRUE.equals(baseClassRenameBoolean)) {
+                log.warn("baseClassroomPath:[{}] renameTO htmlPersonNamePath:[{}] failed", htmlPath, htmlPersonNamePath);
+            }
         }
         File zipFile = new File(ZipUtil.toZip(htmlPath));
         String zipPath = basePath + File.separator + initLessonName + ClassroomExportReportConstant.LABORATORY_REPORT_SUFFIX.getMsg();
-        zipFile.renameTo(new File(zipPath));
+        boolean renameBoolean = zipFile.renameTo(new File(zipPath));
+        if (!Boolean.TRUE.equals(renameBoolean)) {
+            log.warn("htmlPath:[{}] renameTO zipPath:[{}] failed", htmlPath, zipPath);
+        }
         FileUtil.deleteDir(new File(htmlPath));
         return zipPath;
     }
@@ -1517,7 +1529,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         }
 
         CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
-        if (!courseLesson.getIsPublic()) {
+        if (!Boolean.TRUE.equals(courseLesson.getIsPublic())) {
             log.error("courseLesson :[{}] isn't public", courseLesson.getResourceId());
             throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_PUBLIC, rowIndex);
         }
@@ -1678,7 +1690,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         }
 
         Map<String, String> noteUserMap = StreamApiUtils.toMap(notes, Note::getResourceId,
-                note -> note.getUserId());
+                Note::getUserId);
 
         // 用户数据查询
         List<String> noteUserIds = StreamApiUtils.map(notes, Note::getUserId);
@@ -1823,7 +1835,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 .businessType(Note.NoteResourceType.LESSON.getCode())
                 .noteType(Note.NoteType.REPORT.getCode()).userId(userInfo.getUserId()).build();
         NoteBo noteBo = noteService.selectByUnique(uniqueContext);
-        if (null != noteBo && noteBo.getIsSubmit() != null && noteBo.getIsSubmit()) {
+        if (null != noteBo && Boolean.TRUE.equals(noteBo.getIsSubmit())) {
             reportBo.setContent(noteBo.getContent());
             reportBo.setSubmitTime(noteBo.getUpdateTime());
             reportBo.setNoteId(noteBo.getResourceId());
@@ -1871,7 +1883,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         ClassroomSign classroomSign = userSignMap.get(userInfo.getUserId());
         monitorBo.setSignIn(null != classroomSign);
         monitorBo.setNeedHelp(
-                null != classroomSign ? StringUtils.isNotBlank(classroomSign.getNodeId()) : false);
+                null != classroomSign && StringUtils.isNotBlank(classroomSign.getNodeId()));
         monitorBo.setSignInTime(null != classroomSign ? classroomSign.getSignInTime() : null);
 
         return monitorBo;

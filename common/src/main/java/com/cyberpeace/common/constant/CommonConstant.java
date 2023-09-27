@@ -103,7 +103,7 @@ public final class CommonConstant {
 
 	public static final String RETURN = "\n";
 
-	public static final long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
+	public static final long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024L;
 
 	/** 底层 中台 靶场 竞赛共享目录*/
 	public static final String SHARE_DIR = "/data/resource/export/";

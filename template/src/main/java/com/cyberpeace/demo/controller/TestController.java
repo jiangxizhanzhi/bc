@@ -2,6 +2,7 @@ package com.cyberpeace.demo.controller;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -56,12 +57,12 @@ public class TestController {
 	}
 
 	@PostMapping("/add_mp_log")
-	public BaseRsp addMpLog() {
+	public BaseRsp<Boolean> addMpLog() {
 
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		remoteLogService.addCrLog(userInfo, OperationModule.SINGLE_TRAIN, OperationType.STOP,"测试对象");
-
-		return new BaseRsp();
+		remoteLogService.addOjLog(userInfo, OperationModule.SINGLE_TRAIN, OperationType.STOP, "测试对象",
+				LogContent.CR_FORMAT.format(OperationType.STOP, LogContent.SINGLE_TRAIN_ROOM.getMsg(), "测试对象"));
+		return new BaseRsp<>(true);
 	}
 
 }

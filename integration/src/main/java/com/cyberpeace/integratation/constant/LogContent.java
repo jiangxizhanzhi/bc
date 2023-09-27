@@ -21,6 +21,7 @@ public enum LogContent implements BaseI18n {
 	TEAM_TRAIN_TEMPLATE("Team train template","团队训练模板"),
 	RB_ROOM_TEMPLATE("Cyber Wargame template","红蓝对抗模板"),
 
+	SINGLE_TRAIN_ROOM("Single Train scene","单兵训练场景"),
 	TEAM_TRAIN_ROOM("Team Train scene","团队训练场景"),
 	RB_TRAIN_ROOM("Cyber Wargame scene","红蓝对抗场景"),
 	RANGE_TEST_ROOM("Range Test scene","靶场测评场景"),
@@ -34,7 +35,10 @@ public enum LogContent implements BaseI18n {
 	TASK("Task", "岗位职责"),
 	CORRECT("correctly", "正确"),
 	INCORRECT("incorrectly", "错误"),
-	BATCH_DELETE_FORMAT("Batch delete %s", "批量删除 %s");
+	BATCH_DELETE_FORMAT("Batch delete %s", "批量删除 %s"),
+
+	MISSION("Train Mission", "训练任务"),
+	TOOL("Tool","工具库");
 
 	@Getter
 	private final String english;

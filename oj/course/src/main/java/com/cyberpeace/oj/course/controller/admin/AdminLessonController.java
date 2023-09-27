@@ -164,9 +164,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
 		String operationTarget = courseName + "-" + lesson.getName();
-		String content = LogContent.COURSE_FORMAT.format(courseName, lesson.getName());
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
-				OperationType.CREATE, operationTarget, content);
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.CREATE, operationTarget,
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.COURSE_FORMAT.getMsg(), operationTarget));
 
 		return new BaseRsp<>(lesson);
 	}
@@ -196,9 +195,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
 		String operationTarget = courseName + "-" + lesson.getName();
-		String content = LogContent.COURSE_FORMAT.format(courseName, lesson.getName());
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
-				OperationType.UPDATE, operationTarget, content);
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.UPDATE, operationTarget,
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.COURSE_FORMAT.getMsg(), operationTarget));
 
 		return new BaseRsp<>(lesson);
 
@@ -225,12 +223,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		courseLessonList.forEach(courseLesson -> {
 			if (courseLesson != null) {
 				String operationTarget = courseName + "-" + courseLesson.getName();
-				String content = LogContent.COURSE_FORMAT.format(courseName, courseLesson.getName());
-				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
-						OperationType.DELETE, operationTarget, content);
+				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.DELETE, operationTarget,
+						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.COURSE_FORMAT.getMsg(), operationTarget));
 			}
 		});
-
 
 		return new BaseRsp<>(result);
 	}

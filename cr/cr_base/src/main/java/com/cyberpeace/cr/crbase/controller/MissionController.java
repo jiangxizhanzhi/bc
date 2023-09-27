@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.integratation.constant.LogContent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -183,8 +184,8 @@ public class MissionController {
 
 		MissionTemplate missionTemplate = missionService.addMissionTemplate(toAddMissionTemplate);
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-				OperationType.CREATE, missionTemplateReq.getTitle());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.CREATE, missionTemplateReq.getTitle(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.MISSION.getMsg(), missionTemplateReq.getTitle()));
 
 		MissionTemplateRsp missionTemplateRsp = missionTemplateToRsp(missionTemplate);
 		return new BaseRsp<>(missionTemplateRsp);
@@ -206,8 +207,8 @@ public class MissionController {
 		MissionTemplate ret = missionService
 				.getByMissionTemplateId(toUpdateMissionTemplate.getResourceId());
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-				OperationType.UPDATE, modifyReq.getTitle());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.UPDATE, modifyReq.getTitle(),
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.MISSION.getMsg(), modifyReq.getTitle()));
 
 		MissionTemplateRsp missionTemplateRsp = missionTemplateToRsp(ret);
 		return new BaseRsp<>(missionTemplateRsp);
@@ -226,8 +227,8 @@ public class MissionController {
 		Mission toUpdateMission = requestToMission(missionModifyReq);
 		missionService.updateById(toUpdateMission);
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-				OperationType.UPDATE, missionModifyReq.getTitle());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.UPDATE, missionModifyReq.getTitle(),
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.MISSION.getMsg(), missionModifyReq.getTitle()));
 
 		return new BaseRsp<>();
 	}
@@ -254,8 +255,8 @@ public class MissionController {
 		MissionSchemeTemplate schemeTemplate = requestToSchemeTemplate(templateReq);
 		missionService.addSchemeTemplate(schemeTemplate);
 
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-				OperationType.CREATE, templateReq.getTitle());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.CREATE, templateReq.getTitle(),
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.MISSION.getMsg(), templateReq.getTitle()));
 
 		return new BaseRsp<>();
 	}
@@ -273,8 +274,8 @@ public class MissionController {
 
 		missionSchemeTemplateList.forEach(missionSchemeTemplate -> {
 			if (missionSchemeTemplate != null) {
-				remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-						OperationType.DELETE, missionSchemeTemplate.getTitle());
+				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.DELETE, missionSchemeTemplate.getTitle(),
+						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.MISSION.getMsg(), missionSchemeTemplate.getTitle()));
 			}
 		});
 
@@ -292,8 +293,9 @@ public class MissionController {
 
 		MissionSchemeTemplate missionSchemeTemplate = missionSchemeTemplateMapper
 				.selectById(templateModifyReq.getResourceId());
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-				OperationType.UPDATE, missionSchemeTemplate.getTitle());
+
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.UPDATE, missionSchemeTemplate.getTitle(),
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.MISSION.getMsg(), missionSchemeTemplate.getTitle()));
 
 		return new BaseRsp<>();
 	}

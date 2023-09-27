@@ -2,6 +2,7 @@ package com.cyberpeace.common.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -111,8 +112,8 @@ public class TimeUtil {
 	 * @return
 	 */
 	public static int getCurrentHour() {
-		Date date = new Date();
-		return date.getHours();
+		LocalTime currentTime = LocalTime.now();
+		return currentTime.getHour();
 	}
 
 	public static int hours2Now(Date date) {
@@ -489,7 +490,9 @@ public class TimeUtil {
 	 * @return
 	 */
 	public static int getDaysBetween(Date dtBegin, Date dtEnd) {
-		return Long.valueOf((dtEnd.getTime() - dtBegin.getTime()) / 86400000).intValue() + 1;
+		long milliseconds = dtEnd.getTime() - dtBegin.getTime();
+		int days = (int) (milliseconds / 86400000); // 将除法结果转换为整数类型
+		return days + 1; // 包括首尾日期
 	}
 
 	/**
@@ -518,7 +521,7 @@ public class TimeUtil {
 	 */
 	public static String getDay() {
 		SimpleDateFormat sd = new SimpleDateFormat("dd");
-		return sd.format(new Date()).toString();
+		return sd.format(new Date());
 	}
 
 	/**

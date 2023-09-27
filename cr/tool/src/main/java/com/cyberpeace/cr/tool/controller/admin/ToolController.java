@@ -18,7 +18,6 @@ import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -82,8 +81,8 @@ public class ToolController {
 		toolService.validateToolNameExist(tool);
 		toolService.save(tool);
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TOOL, OperationType.CREATE, tool.getName(),
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.TOOL.getMsg(), tool.getName()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,
+				OperationType.CREATE, tool.getName());
 
 		return new BaseRsp<>();
 	}
@@ -96,8 +95,9 @@ public class ToolController {
 		toolService.validateEditToolNameExist(tool);
 		toolService.updateById(tool);
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TOOL, OperationType.UPDATE, tool.getName(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TOOL.getMsg(), tool.getName()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,
+				OperationType.UPDATE, tool.getName());
+
 		return new BaseRsp<>();
 	}
 
@@ -112,8 +112,8 @@ public class ToolController {
 
 		toolList.forEach(tool -> {
 			if (tool != null) {
-				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TOOL, OperationType.DELETE, tool.getName(),
-						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TOOL.getMsg(), tool.getName()));
+				remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,
+						OperationType.DELETE, tool.getName());
 			}
 		});
 

@@ -1613,7 +1613,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		String operationTarget = lessonInfoBo.getCourseName() + "-" + lessonInfoBo.getName();
 		String content = LogContent.COURSE_FORMAT.format(lessonInfoBo.getCourseName(),
 				lessonInfoBo.getName());
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
-				OperationType.STUDY, operationTarget, content);
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,OperationType.STUDY, operationTarget,
+				LogContent.CR_FORMAT.format(OperationType.CREATE, "", content));
 	}
 }

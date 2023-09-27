@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.integratation.constant.LogContent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -76,8 +75,8 @@ public class SingleRoomController {
 		SingleRoomBo singleRoomBo = singleRoomService.createRoom(req.getResourceId());
 
 		// 记录远程操作日志
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN, OperationType.START, singleRoomBo.getEventData().getName(),
-				LogContent.CR_FORMAT.format(OperationType.START, LogContent.SINGLE_TRAIN_ROOM.getMsg(), singleRoomBo.getEventData().getName()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN,
+				OperationType.START, singleRoomBo.getEventData().getName());
 
 		return new BaseRsp<>(singleRoomBo);
 	}
@@ -122,9 +121,9 @@ public class SingleRoomController {
 
 		// 记录远程操作日志
 		if (Boolean.TRUE.equals(deleteRoom)) {
-			String name = singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName();
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.SINGLE_TRAIN, OperationType.STOP, name,
-					LogContent.CR_FORMAT.format(OperationType.STOP, LogContent.SINGLE_TRAIN_ROOM.getMsg(), name));
+			remoteLogService.addCrLog(UserInfoContext.getUserContext(),
+					OperationModule.SINGLE_TRAIN, OperationType.STOP,
+					singleRoomService.getRoomInfo(req.getResourceId()).getEventData().getName());
 		}
 		return new BaseRsp<>(deleteRoom);
 	}

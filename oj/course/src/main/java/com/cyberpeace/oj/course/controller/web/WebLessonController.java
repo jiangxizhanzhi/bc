@@ -58,9 +58,6 @@ public class WebLessonController {
                 CommonConstant.TRUE);
         LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, roomId, learnedType ,authContext);
 
-		// 记录远程操作日志
-		courseLessonService.createMpLog(infoBo);
-
 		return new BaseRsp<>(infoBo);
 	}
 

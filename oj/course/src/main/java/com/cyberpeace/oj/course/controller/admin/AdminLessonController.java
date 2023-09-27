@@ -149,7 +149,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp<CourseLesson> add(@Validated(Create.class) LessonAddReq lessonAddReq) {
+	public BaseRsp<CourseLesson>
+	add(@Validated(Create.class) LessonAddReq lessonAddReq) {
 
 		// 数据转换
 		CourseLesson courseLesson = addReqToEntity(lessonAddReq);
@@ -164,8 +165,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
 		String operationTarget = courseName + "-" + lesson.getName();
+		String content = LogContent.COURSE_FORMAT.format(courseName, lesson.getName());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.CREATE, operationTarget,
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.COURSE_FORMAT.getMsg(), operationTarget));
+				LogContent.CR_FORMAT.format(OperationType.CREATE, " ", content));
 
 		return new BaseRsp<>(lesson);
 	}
@@ -195,8 +197,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
 		String operationTarget = courseName + "-" + lesson.getName();
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.UPDATE, operationTarget,
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.COURSE_FORMAT.getMsg(), operationTarget));
+		String content = LogContent.COURSE_FORMAT.format(courseName, lesson.getName());
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,OperationType.UPDATE, operationTarget,
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, "", content));
 
 		return new BaseRsp<>(lesson);
 
@@ -223,8 +226,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		courseLessonList.forEach(courseLesson -> {
 			if (courseLesson != null) {
 				String operationTarget = courseName + "-" + courseLesson.getName();
+				String content = LogContent.COURSE_FORMAT.format(courseName, courseLesson.getName());
 				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE, OperationType.DELETE, operationTarget,
-						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.COURSE_FORMAT.getMsg(), operationTarget));
+						LogContent.CR_FORMAT.format(OperationType.DELETE, "", content));
 			}
 		});
 

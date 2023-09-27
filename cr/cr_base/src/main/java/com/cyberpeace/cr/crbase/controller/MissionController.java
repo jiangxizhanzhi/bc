@@ -184,8 +184,8 @@ public class MissionController {
 
 		MissionTemplate missionTemplate = missionService.addMissionTemplate(toAddMissionTemplate);
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.CREATE, missionTemplateReq.getTitle(),
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.MISSION.getMsg(), missionTemplateReq.getTitle()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.CREATE, missionTemplateReq.getTitle());
 
 		MissionTemplateRsp missionTemplateRsp = missionTemplateToRsp(missionTemplate);
 		return new BaseRsp<>(missionTemplateRsp);
@@ -207,8 +207,8 @@ public class MissionController {
 		MissionTemplate ret = missionService
 				.getByMissionTemplateId(toUpdateMissionTemplate.getResourceId());
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.UPDATE, modifyReq.getTitle(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.MISSION.getMsg(), modifyReq.getTitle()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.UPDATE, modifyReq.getTitle());
 
 		MissionTemplateRsp missionTemplateRsp = missionTemplateToRsp(ret);
 		return new BaseRsp<>(missionTemplateRsp);
@@ -227,8 +227,8 @@ public class MissionController {
 		Mission toUpdateMission = requestToMission(missionModifyReq);
 		missionService.updateById(toUpdateMission);
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.UPDATE, missionModifyReq.getTitle(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.MISSION.getMsg(), missionModifyReq.getTitle()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.UPDATE, missionModifyReq.getTitle());
 
 		return new BaseRsp<>();
 	}
@@ -255,8 +255,8 @@ public class MissionController {
 		MissionSchemeTemplate schemeTemplate = requestToSchemeTemplate(templateReq);
 		missionService.addSchemeTemplate(schemeTemplate);
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.CREATE, templateReq.getTitle(),
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.MISSION.getMsg(), templateReq.getTitle()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.CREATE, templateReq.getTitle());
 
 		return new BaseRsp<>();
 	}
@@ -274,8 +274,8 @@ public class MissionController {
 
 		missionSchemeTemplateList.forEach(missionSchemeTemplate -> {
 			if (missionSchemeTemplate != null) {
-				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.DELETE, missionSchemeTemplate.getTitle(),
-						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.MISSION.getMsg(), missionSchemeTemplate.getTitle()));
+				remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+						OperationType.DELETE, missionSchemeTemplate.getTitle());
 			}
 		});
 
@@ -293,9 +293,8 @@ public class MissionController {
 
 		MissionSchemeTemplate missionSchemeTemplate = missionSchemeTemplateMapper
 				.selectById(templateModifyReq.getResourceId());
-
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.UPDATE, missionSchemeTemplate.getTitle(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.MISSION.getMsg(), missionSchemeTemplate.getTitle()));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
+				OperationType.UPDATE, missionSchemeTemplate.getTitle());
 
 		return new BaseRsp<>();
 	}

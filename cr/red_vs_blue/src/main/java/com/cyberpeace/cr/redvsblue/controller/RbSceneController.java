@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.integratation.constant.LogContent;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -149,9 +148,8 @@ public class RbSceneController {
 			lock.unlock();
 		}
 		// 记录远程操作日志
-		String name = rbRoomService.getById(roomId).getName();
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,OperationType.PAUSE, name,
-				LogContent.CR_FORMAT.format(OperationType.PAUSE, LogContent.RB_TRAIN_ROOM.getMsg(), name));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.PAUSE, rbRoomService.getById(roomId).getName());
 
 		return new BaseRsp<>(ret);
 	}
@@ -175,9 +173,8 @@ public class RbSceneController {
 		}
 
 		// 记录远程操作日志
-		String name = rbRoomService.getById(roomId).getName();
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE, OperationType.UNPAUSE, name,
-				LogContent.CR_FORMAT.format(OperationType.UNPAUSE, LogContent.RB_TRAIN_ROOM.getMsg(), name));
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+				OperationType.UNPAUSE, rbRoomService.getById(roomId).getName());
 
 		return new BaseRsp<>(ret);
 	}

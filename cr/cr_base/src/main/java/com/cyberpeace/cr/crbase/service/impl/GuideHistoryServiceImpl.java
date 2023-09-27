@@ -217,7 +217,9 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		List<String> sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
 		if (CollectionUtils.isNotEmpty(sceneIds)) {
 			JSONArray eventTimeArray = remoteSceneService.getEventTimeList(StringUtils.join(sceneIds, ","));
-			eventTimes.addAll(eventTimeArray.toJavaList(JSONObject.class).stream().map(eventTime -> eventTime.getString("time")).collect(Collectors.toList()));
+			if (eventTimeArray != null) {
+				eventTimes.addAll(eventTimeArray.toJavaList(JSONObject.class).stream().map(eventTime -> eventTime.getString("time")).collect(Collectors.toList()));
+			}
 		}
 		return eventTimes;
 	}
@@ -246,8 +248,8 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 
 	private void setScreenBoTime(ScreenBo screenBo, String startTime, String endTime) {
 		if (screenBo != null) {
-			screenBo.setStartTime(TimeUtil.toDate1(screenBo.getStartTime()).before(TimeUtil.toDate1(startTime)) ? screenBo.getStartTime() : startTime);
-			screenBo.setEndTime(TimeUtil.toDate1(screenBo.getEndTime()).before(TimeUtil.toDate1(endTime)) ? endTime : screenBo.getEndTime());
+			screenBo.setStartTime(TimeUtil.toDate1(screenBo.getStartTime()).before(TimeUtil.toDate1(startTime)) ? startTime : screenBo.getStartTime());
+			screenBo.setEndTime(TimeUtil.toDate1(screenBo.getEndTime()).before(TimeUtil.toDate1(endTime)) ? screenBo.getEndTime() : endTime);
 		}
 	}
 

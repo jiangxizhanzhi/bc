@@ -34,7 +34,8 @@ public class SituationPlaybackController {
 	@PostMapping("/refresh")
 	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
 	public BaseRsp<List<GuideHistoryRsp>> refresh(@RequestBody @Validated ScreenGuideHistoryReq screenGuideHistoryReq) {
-		screenGuideHistoryReq.setEndTime(TimeUtil.format1(TimeUtil.addSeconds(TimeUtil.toDate1(screenGuideHistoryReq.getStartTime()), screenGuideHistoryReq.getRate() * 5)));
+		//前端6秒调一次接口
+		screenGuideHistoryReq.setEndTime(TimeUtil.format1(TimeUtil.addSeconds(TimeUtil.toDate1(screenGuideHistoryReq.getStartTime()), screenGuideHistoryReq.getRate() * 6)));
 		return new BaseRsp<>(guideHistoryService.getRecord(screenGuideHistoryReq));
 	}
 

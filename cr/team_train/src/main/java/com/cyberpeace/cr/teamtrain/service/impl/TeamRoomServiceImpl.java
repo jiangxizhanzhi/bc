@@ -600,8 +600,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
 		List<DashboardUser> friend = Lists.newArrayList();
-
-		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, null);
+		Integer roleGroup = null;
+		if (roleId.contains("_")) {
+			String[] strings = roleId.split("_");
+			roleGroup = Integer.valueOf(strings[strings.length - 1]);
+		}
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, roleId, roleGroup, BusinessType.TRAINING_TEAM.getCode());
 		final List<String> userIds = new ArrayList<>();
 		crRoles.forEach(role -> userIds.addAll(role.getUserIdList()));
 

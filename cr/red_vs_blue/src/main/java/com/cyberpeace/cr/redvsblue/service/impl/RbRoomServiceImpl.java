@@ -223,8 +223,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
 		List<DashboardUser> friend = Lists.newArrayList();
 		List<String> userIds = Lists.newArrayList();
-
-		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
+		Integer roleGroup = null;
+		if (roleId.contains("_")) {
+			String[] strings = roleId.split("_");
+			roleGroup = Integer.valueOf(strings[strings.length - 1]);
+		}
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, roleId, roleGroup, BusinessType.RED_VS_BLUE.getCode());
 
 		for (CrRole crRole : crRoles) {
 			List<String> roleUserIds = crRole.getUserIdList();

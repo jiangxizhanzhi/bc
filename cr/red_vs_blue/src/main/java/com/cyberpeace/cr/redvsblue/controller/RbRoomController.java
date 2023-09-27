@@ -242,10 +242,6 @@ public class RbRoomController {
         String userId = UserInfoContext.getUserContext().getUserId();
         rbRoomService.checkRoomPermission(resourceId, userId);
 
-        if (id.contains("_")) {
-            String[] strings = id.split("_");
-            id = strings[strings.length - 1];
-        }
         List<DashboardUser> data = rbRoomService.getMembersInfo(id, resourceId);
         JSONObject json = new JSONObject();
         json.put("list", data);

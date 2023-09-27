@@ -433,8 +433,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId) {
-		return crRoleMapper.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
+	public List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId, Integer roleGroup, Integer businessType) {
+		return crRoleMapper.selectCrRoleByRoomIdAndRoleId(roomId, roleId, roleGroup,businessType);
 	}
 
 	@Override

@@ -8,8 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,8 +57,12 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.cs.service.context.scene.SceneDataImpl;
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -98,8 +105,15 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private RtksRelatedService rtksRelatedService;
 
 	@Autowired
+	private RemoteLogService remoteLogService;
+
+	@Autowired
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
+
+	@Autowired
+	@Qualifier("taskExecutor")
+	private Executor executor;
 
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
@@ -373,60 +387,22 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public Boolean batchDelete(List<String> businessTemplateIds) {
-
+	public void batchDelete(List<String> businessTemplateIds) {
+		if (CollectionUtils.isEmpty(businessTemplateIds)) {
+			return;
+		}
+		UserInfo userInfo = UserInfoContext.getUserContext();
 		List<BusinessTemplate> businessTemplates = businessTemplateMapper
 				.selectBatchIds(businessTemplateIds);
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				for (BusinessTemplate businessTemplate : businessTemplates) {
-					// 校验是否符合删除条件
-					BusinessTemplateHandler handler = businessTemplateHandler
-							.getHandler(businessTemplate.getBusinessType());
-					handler.checkBeforeDel(businessTemplate);
-					// 先删除测试场景
-					if (StringUtils.isNotBlank(businessTemplate.getLocalSceneId())) {
-						LocalScene localScene = localSceneService
-								.getById(businessTemplate.getLocalSceneId());
-
-						if (localScene != null
-								&& StringUtils.isNotBlank(localScene.getMpSceneId())) {
-							try {
-								localSceneService.deleteRemoteScene(localScene);
-							} catch (Exception e) {
-								log.error(String.format(
-										"failed to delete test scene [%s] of business template [%s]",
-										localScene.getMpSceneId(),
-										businessTemplate.getResourceId()));
-								// do nothing
-							}
-						}
-						// 删除测试场景的localScene
-						localSceneService.removeById(businessTemplate.getLocalSceneId());
-					}
-					// 删除中台拓扑
-					try {
-						localSceneService.deleteTopo(businessTemplate.getTopoId());
-					} catch (Exception e) {
-						log.error(String.format(
-								"failed to delete topo [%s] of business template [%s]",
-								businessTemplate.getTopoId(), businessTemplate.getResourceId()));
-						// do nothing
-					}
-					// 删除模板相关其他
-					handler.deleteTemplateRelated(businessTemplate);
-				}
-				// 删除模板
-				businessTemplateMapper.deleteBatchIds(businessTemplateIds);
-				// 删除attack、engage关联
-				rtksRelatedService.clearAttackRel(businessTemplateIds);
-				rtksRelatedService.clearEngageRel(businessTemplateIds);
-			}
+		if (businessTemplates.isEmpty()) {
+			return;
+		}
+		executor.execute(() -> {
+			// 删除
+			this.deleteBatch(businessTemplates);
+			// 审计log
+			this.addBatchDeleteLog(businessTemplates, userInfo);
 		});
-
-		return true;
 	}
 
 	@Override
@@ -683,5 +659,85 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
 		return sceneData;
+	}
+
+	private void deleteBatch(List<BusinessTemplate> businessTemplates) {
+		List<String> businessTemplateIds = StreamApiUtils.map(businessTemplates,
+				BusinessTemplate::getResourceId);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				for (BusinessTemplate businessTemplate : businessTemplates) {
+					// 校验是否符合删除条件
+					BusinessTemplateHandler handler = businessTemplateHandler
+							.getHandler(businessTemplate.getBusinessType());
+					handler.checkBeforeDel(businessTemplate);
+					// 先删除测试场景
+					if (StringUtils.isNotBlank(businessTemplate.getLocalSceneId())) {
+						LocalScene localScene = localSceneService
+								.getById(businessTemplate.getLocalSceneId());
+
+						if (localScene != null
+								&& StringUtils.isNotBlank(localScene.getMpSceneId())) {
+							try {
+								localSceneService.deleteRemoteScene(localScene);
+							} catch (Exception e) {
+								log.error(String.format(
+										"failed to delete test scene [%s] of business template [%s]",
+										localScene.getMpSceneId(),
+										businessTemplate.getResourceId()));
+								// do nothing
+							}
+						}
+						// 删除测试场景的localScene
+						localSceneService.removeById(businessTemplate.getLocalSceneId());
+					}
+					// 删除中台拓扑
+					try {
+						localSceneService.deleteTopo(businessTemplate.getTopoId());
+					} catch (Exception e) {
+						log.error(String.format(
+								"failed to delete topo [%s] of business template [%s]",
+								businessTemplate.getTopoId(), businessTemplate.getResourceId()));
+						// do nothing
+					}
+					// 删除模板相关其他
+					handler.deleteTemplateRelated(businessTemplate);
+				}
+				// 删除模板
+				businessTemplateMapper.deleteBatchIds(businessTemplateIds);
+				// 删除attack、engage关联
+				rtksRelatedService.clearAttackRel(businessTemplateIds);
+				rtksRelatedService.clearEngageRel(businessTemplateIds);
+			}
+		});
+	}
+
+	private void addBatchDeleteLog(List<BusinessTemplate> businessTemplateList, UserInfo userInfo) {
+		if (businessTemplateList.isEmpty()) {
+			return;
+		}
+		BusinessTemplate businessTemplate = businessTemplateList.get(0);
+		Integer businessType = businessTemplate.getBusinessType();
+		OperationModule module = null;
+		String msg = "";
+		if (Objects.equals(businessType, BusinessType.TRAINING_SINGLE.getCode())) {
+			module = OperationModule.SINGLE_TRAIN;
+			msg = LogContent.SINGLE_TRAIN_TEMPLATE.getMsg();
+		} else if (Objects.equals(businessType, BusinessType.TRAINING_TEAM.getCode())) {
+			module = OperationModule.TEAM_TRAIN;
+			msg = LogContent.TEAM_TRAIN_TEMPLATE.getMsg();
+		} else if (Objects.equals(businessType, BusinessType.RED_VS_BLUE.getCode())) {
+			module = OperationModule.RED_VS_BLUE;
+			msg = LogContent.RB_ROOM_TEMPLATE.getMsg();
+		}
+
+		List<String> names = StreamApiUtils.getColumn(businessTemplateList,
+				BusinessTemplate::getName);
+		remoteLogService.addOjLog(userInfo, module, OperationType.DELETE,
+				LogContent.BATCH_DELETE_FORMAT.format(msg),
+				LogContent.CR_FORMAT.format(OperationType.DELETE, msg, names.toString()));
 	}
 }

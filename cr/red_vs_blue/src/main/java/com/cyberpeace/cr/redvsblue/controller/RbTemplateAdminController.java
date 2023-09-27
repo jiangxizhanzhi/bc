@@ -91,8 +91,6 @@ public class RbTemplateAdminController {
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
-	@Autowired
-	private RemoteSceneService remoteSceneService;
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
@@ -168,19 +166,7 @@ public class RbTemplateAdminController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		List<BusinessTemplate> businessTemplates = businessTemplateMapper
-				.selectBatchIds(deleteReq.getIds());
 		rbTemplateService.batchDelete(deleteReq.getIds());
-
-		if (null != businessTemplates) {
-			List<String> columns = StreamApiUtils.getColumn(businessTemplates,
-					BusinessTemplate::getName);
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-					OperationType.DELETE,
-					LogContent.BATCH_DELETE_FORMAT.format(LogContent.RB_ROOM_TEMPLATE.getMsg()),
-					LogContent.CR_FORMAT.format(OperationType.DELETE,
-							LogContent.RB_ROOM_TEMPLATE.getMsg(), columns.toString()));
-		}
 		return new BaseRsp<>();
 	}
 

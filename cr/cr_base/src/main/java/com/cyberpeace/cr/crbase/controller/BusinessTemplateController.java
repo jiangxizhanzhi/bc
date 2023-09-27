@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -53,9 +51,6 @@ import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.constant.LogContent;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -171,37 +166,8 @@ public class BusinessTemplateController {
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
-		List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(deleteReq.getIds());
-
-		Boolean flag = businessTemplateService.batchDelete(deleteReq.getIds());
-
-		businessTemplateList.forEach(businessTemplate -> {
-			if (businessTemplate != null) {
-				String templateName = businessTemplate.getName();
-				Integer businessType = businessTemplate.getBusinessType();
-
-				OperationModule module = null;
-				String msg = "";
-
-				if (Objects.equals(businessType, BusinessType.TRAINING_SINGLE.getCode())) {
-					module = OperationModule.SINGLE_TRAIN;
-					msg = LogContent.SINGLE_TRAIN_TEMPLATE.getMsg();
-				} else if (Objects.equals(businessType, BusinessType.TRAINING_TEAM.getCode())) {
-					module = OperationModule.TEAM_TRAIN;
-					msg = LogContent.TEAM_TRAIN_TEMPLATE.getMsg();
-				} else if (Objects.equals(businessType, BusinessType.RED_VS_BLUE.getCode())) {
-					module = OperationModule.RED_VS_BLUE;
-					msg = LogContent.RB_ROOM_TEMPLATE.getMsg();
-				}
-
-
-				remoteLogService.addOjLog(UserInfoContext.getUserContext(), module,
-						OperationType.DELETE, templateName,
-						LogContent.CR_FORMAT.format(OperationType.DELETE, msg, templateName));
-			}
-		});
-
-		return new BaseRsp<>(flag);
+		businessTemplateService.batchDelete(deleteReq.getIds());
+		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("校验模板名字")

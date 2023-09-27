@@ -22,7 +22,6 @@ import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -249,24 +248,7 @@ public class TeamTrainTemplateController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-
-		List<BusinessTemplate> businessTemplateList = businessTemplateService
-				.listByIds(deleteReq.getIds());
-
 		teamTemplateService.batchDelete(deleteReq.getIds());
-
-		List<String> teamTrainTemplateName = StreamApiUtils.getColumn(businessTemplateList,
-				BusinessTemplate::getName);
-
-		if (businessTemplateList != null) {
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-					OperationType.DELETE,
-					LogContent.BATCH_DELETE_FORMAT.format(LogContent.TEAM_TRAIN_TEMPLATE.getMsg()),
-					LogContent.CR_FORMAT.format(OperationType.DELETE,
-							LogContent.TEAM_TRAIN_TEMPLATE.getMsg(),
-							teamTrainTemplateName.toString()));
-		} ;
-
 		return new BaseRsp<>();
 	}
 

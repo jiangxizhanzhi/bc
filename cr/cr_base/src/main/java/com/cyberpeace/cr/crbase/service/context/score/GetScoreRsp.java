@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Data
 public class GetScoreRsp implements Serializable {
@@ -95,6 +97,11 @@ public class GetScoreRsp implements Serializable {
 
 	private Integer abilityScoreRate;
 
+	/**
+	 * 评分界面，每颗星代表多少分
+	 */
+	public static final Integer SCORE_PER_STAR = 4;
+
 	public GetScoreRsp() {}
 
 	public GetScoreRsp(UserData userData, List<CrTask> userTaskList,
@@ -120,11 +127,10 @@ public class GetScoreRsp implements Serializable {
 				.mapToInt(CrTask::getScore).sum();
 		CrScore crScore = scoreMap.getOrDefault(userId, new CrScore());
 		this.abilityScore = JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class)
-				.stream().filter(a -> a != null).mapToInt(Integer::intValue).sum();
-		this.abilityScoreList = JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class);
-		if (CollectionUtils.isEmpty(this.abilityScoreList)) {
-			this.abilityScoreList = Arrays.asList(0, 0, 0, 0, 0);
-		}
+				.stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum() * SCORE_PER_STAR;
+		List<Integer> scoreList = JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class);
+		scoreList = CollectionUtils.isEmpty(scoreList) ? Arrays.asList(0, 0, 0, 0, 0) : scoreList;
+		this.abilityScoreList = scoreList.stream().map(item -> item * SCORE_PER_STAR).collect(Collectors.toList());
 		this.scoreRemark = crScore.getComment();
 		this.synthesisScore = scoreMap.containsKey(userId) ? scoreMap.get(userId).getFinalScore()
 				: 0;

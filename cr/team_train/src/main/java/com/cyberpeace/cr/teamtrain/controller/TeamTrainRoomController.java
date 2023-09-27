@@ -459,8 +459,10 @@ public class TeamTrainRoomController {
 		OperationType operationType = Objects.equals(status,
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
 						: OperationType.START;
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName());
+		String name = teamRoomService.getById(resourceIdReq.getResourceId()).getName();
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN, operationType, name,
+				LogContent.CR_FORMAT.format(operationType, LogContent.TEAM_TRAIN_ROOM.getMsg(), name));
+
 		return new BaseRsp<>(map);
 	}
 

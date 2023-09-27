@@ -223,6 +223,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
 		List<DashboardUser> friend = Lists.newArrayList();
 		List<String> userIds = Lists.newArrayList();
+		//_4为红方,_5蓝方,_7白方(sql查询条件_7)
 		Integer roleGroup = null;
 		if (roleId.contains("_")) {
 			String[] strings = roleId.split("_");

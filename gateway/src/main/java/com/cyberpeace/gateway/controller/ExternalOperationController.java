@@ -115,7 +115,7 @@ public class ExternalOperationController {
 		List<ExternalPracticeCategoryBo> categoryBos = BeanUtils.deepCopyList(categoryList,
 				ExternalPracticeCategoryBo.class);
 
-		if(StringUtils.isEmpty(practiceSetId)) {
+		if(!StringUtils.hasText(practiceSetId)) {
 			return new BaseRsp<>(categoryBos);
 		}
 

@@ -121,6 +121,16 @@ public class EvalTaskController {
 	@PostMapping("/stop")
 	public BaseRsp<Boolean> stopEvalTask(@RequestBody @Validated EvalTaskStopReq evalTaskStopReq) {
 
+		// 用template获取当前task，用于多用户共有测评模板的情况
+		String currentTaskId = evalTemplateService.getTemplate(evalTaskStopReq.getTemplateId())
+				.getCurrentTaskId();
+		if (StringUtils.isNotBlank(currentTaskId)) {
+			evalTaskStopReq.setTaskId(currentTaskId);
+		} else {
+			log.info("no active task for template: [{}]", evalTaskStopReq.getTemplateId());
+			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
+		}
+
 		EvalTaskOpsContext evalTaskOpsContext = evalTaskService
 				.getEvalTaskOpsContext(evalTaskStopReq.getTaskId(), true);
 		EvalTask evalTask = evalTaskOpsContext.getEvalTask();

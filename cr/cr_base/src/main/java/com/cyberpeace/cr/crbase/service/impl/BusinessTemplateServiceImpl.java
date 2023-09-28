@@ -397,12 +397,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (businessTemplates.isEmpty()) {
 			return;
 		}
-		executor.execute(() -> {
-			// 删除
-			this.deleteBatch(businessTemplates);
-			// 审计log
-			this.addBatchDeleteLog(businessTemplates, userInfo);
-		});
+		// 删除
+		this.deleteBatch(businessTemplates);
+		// 审计log
+		this.addBatchDeleteLog(businessTemplates, userInfo);
 	}
 
 	@Override

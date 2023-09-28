@@ -155,7 +155,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (StringUtils.isNotBlank(template.getSituationConfig())) {
 			IndustrySituationConfig config = JsonUtil.toJsonObject(template.getSituationConfig(),
 					IndustrySituationConfig.class);
-			teamRoom.setAreaPath(JsonUtil.arrayToString(config.getArea_path()));
+			teamRoom.setAreaPath(JsonUtil.arrayToString(config.getStage_path()));
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

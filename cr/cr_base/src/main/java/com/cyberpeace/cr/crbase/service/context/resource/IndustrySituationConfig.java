@@ -15,5 +15,5 @@ public class IndustrySituationConfig implements Serializable {
 
 	private List<IndustrySituationTask> task;
 
-	private List<String> area_path;
+	private List<String> stage_path;
 }

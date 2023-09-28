@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.model.EntranceBo;
@@ -18,8 +20,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.SituationRouteStatus;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.dao.entity.MissionSituation;
 import com.cyberpeace.cr.crbase.model.situation.SituationRouteBo;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
@@ -102,29 +102,21 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		// 攻击路径
 		TeamRoom room = teamRoomService.getById(roomId);
 		List<String> route = JsonUtil.toJsonObjectArray(room.getAreaPath(), String.class);
-		// missions
-		List<Mission> missionList = missionService.batchGetByRoom(roomId);
-		List<String> missionTemplateIds = missionList.stream().map(Mission::getMissionTemplateId)
-				.collect(Collectors.toList());
-		List<MissionSituation> situationList = missionSituationService
-				.getBatchByIds(missionTemplateIds);
 		// submitted mission templates
-		Set<String> submittedMtIds = taskList.stream().filter(CrTask::isSubmitted)
-				.map(CrTask::getMissionTemplateId).collect(Collectors.toSet());
+		Set<String> submittedMissionIds = taskList.stream().filter(CrTask::isSubmitted)
+				.map(CrTask::getMissionId).collect(Collectors.toSet());
 		// successful mission templates
-		Set<String> successfulMtIds = taskList.stream().filter(CrTask::isSuccess)
-				.map(CrTask::getMissionTemplateId).collect(Collectors.toSet());
-		Map<String, List<String>> areaMap = Maps.newHashMap();
-		for (MissionSituation situation : situationList) {
-			areaMap.putIfAbsent(situation.getArea(), Lists.newArrayList());
-			areaMap.get(situation.getArea()).add(situation.getMissionTemplateId());
-		}
+		Set<String> successfulMissionIds = taskList.stream().filter(CrTask::isSuccess)
+				.map(CrTask::getMissionId).collect(Collectors.toSet());
+		// stage:mt
+		Map<String, List<String>> stageMissionMap = this.getStageMissionMap(roles);
 
 		List<SituationRouteBo> routeBoList = Lists.newArrayList();
-		for (String areaName : route) {
+		for (String nodeName : route) {
 			SituationRouteBo bo = new SituationRouteBo();
-			bo.setNode(areaName);
-			bo.setStatus(this.getAreaStatus(areaName, areaMap, submittedMtIds, successfulMtIds));
+			bo.setNode(nodeName);
+			bo.setStatus(this.getRouteNodeStatus(nodeName, stageMissionMap, submittedMissionIds,
+					successfulMissionIds));
 			routeBoList.add(bo);
 		}
 		res.setRoute(routeBoList);
@@ -171,21 +163,40 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		return res;
 	}
 
-	private Integer getAreaStatus(String areaName, Map<String, List<String>> areaMap,
-			Set<String> submittedMtIds, Set<String> successfulMtIds) {
-		List<String> mtIds = areaMap.get(areaName);
-		if (null == mtIds || mtIds.isEmpty()) {
+	private Integer getRouteNodeStatus(String nodeName, Map<String, List<String>> stageMap,
+			Set<String> submittedMissionIds, Set<String> successfulMissionIds) {
+		List<String> missionIds = stageMap.get(nodeName);
+		if (null == missionIds || missionIds.isEmpty()) {
 			return SituationRouteStatus.NOT_ATTACKED;
 		}
-		if (successfulMtIds.containsAll(mtIds)) {
+		if (successfulMissionIds.containsAll(missionIds)) {
 			return SituationRouteStatus.CONQUERED;
 		}
-		for (String mtId : mtIds) {
-			if (submittedMtIds.contains(mtId)) {
+		for (String missionId : missionIds) {
+			if (submittedMissionIds.contains(missionId)) {
 				return SituationRouteStatus.UNDER_ATTACK;
 			}
 		}
 		return SituationRouteStatus.NOT_ATTACKED;
 	}
 
+	/**
+	 * 获取stage和mission templateId 的对应关系
+	 *
+	 * @param roles
+	 * @return {@code Map<String, List<String>>}
+	 */
+	private Map<String, List<String>> getStageMissionMap(List<CrRoleSimple> roles) {
+		// stage:mission map
+		Map<String, List<String>> stageMissionMap = Maps.newHashMap();
+		for (CrRoleSimple role : roles) {
+			for (CrRoleMissionSchemeStage stage : role.getMissionScheme()) {
+				stageMissionMap.put(stage.getStage(), stage.getMissions());
+				if (CollectionUtils.isNotEmpty(stage.getDynamic())) {
+					stageMissionMap.get(stage.getStage()).addAll(stage.getDynamic());
+				}
+			}
+		}
+		return stageMissionMap;
+	}
 }

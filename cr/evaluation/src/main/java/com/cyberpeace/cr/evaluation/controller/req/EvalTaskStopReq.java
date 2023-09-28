@@ -13,7 +13,6 @@ public class EvalTaskStopReq {
 	private String templateId;
 
 	@ApiModelProperty(value = "测评任务Id", required = true)
-	@NotNull
 	private String taskId;
 
 	@ApiModelProperty(value = "测评任务名称", required = false)

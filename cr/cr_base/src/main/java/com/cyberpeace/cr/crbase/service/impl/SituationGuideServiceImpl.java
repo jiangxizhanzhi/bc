@@ -559,7 +559,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
         Date oneDayAgo = TimeUtil.addHours(new Date(), -24);
         ScreenGuideHistoryReq historyReq = new ScreenGuideHistoryReq();
-        historyReq.setEventSubTypeList(Arrays.asList(SituationGuideScheme.Type.FLOW.getCode(), SituationGuideScheme.Type.FLOW.getCode()));
+        historyReq.setEventSubTypeList(Arrays.asList(SituationGuideScheme.Type.FLOW.getCode(), SituationGuideScheme.Type.HOST.getCode()));
         historyReq.setRoomId(pageReq.getRoomId());
         historyReq.setBusinessType(pageReq.getBusinessType());
         ScreenBo screenBo = new ScreenBo();
@@ -820,8 +820,10 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         } else {
             screenContext.setEventName(null);
         }
-        screenContext.setSourceNodeIds(Collections.singletonList(screenBo.getSource()));
-        screenContext.setTargetNodeIds(Collections.singletonList(screenBo.getTarget()));
+        List<String> sourceNodeIds = StringUtils.isBlank(screenBo.getSource()) ? null : Collections.singletonList(screenBo.getSource());
+        screenContext.setSourceNodeIds(sourceNodeIds);
+        List<String> targetNodeIds = StringUtils.isBlank(screenBo.getSource()) ? null : Collections.singletonList(screenBo.getTarget());
+        screenContext.setTargetNodeIds(targetNodeIds);
         return screenContext;
     }
 

@@ -92,6 +92,7 @@ public class ExternalTheoryController {
 		return new BaseRsp<>(setBoList);
 	}
 
+	@AuthOjKey
 	@ApiOperation("理论基础分类-全量获取")
 	@GetMapping("/category/list")
 	public BaseRsp<List<ExternalPracticeCategoryBo>> getCategoryList(
@@ -103,7 +104,7 @@ public class ExternalTheoryController {
 		List<ExternalPracticeCategoryBo> categoryBoList = BeanUtils.deepCopyList(categoryList,
 				ExternalPracticeCategoryBo.class);
 
-		if(StringUtils.isEmpty(practiceSetId)) {
+		if(!StringUtils.hasText(practiceSetId)) {
 			return new BaseRsp<>(categoryBoList);
 		}
 

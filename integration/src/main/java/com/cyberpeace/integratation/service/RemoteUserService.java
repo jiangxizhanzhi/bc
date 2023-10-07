@@ -73,4 +73,6 @@ public interface RemoteUserService {
 	 * @return 用户信息
 	 */
 	UserInfo searchUserByUserIdInUserList(String userId, List<UserInfo> userInfos);
+
+	Boolean isDemoOpen();
 }

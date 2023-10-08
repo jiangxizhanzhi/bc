@@ -24,7 +24,7 @@
         </set>
         <where>
             end_time is null
-            and room_id = #{room_id}
+            and room_id = #{roomId}
         </where>
     </update>
     <update id="updateEndTimeByRoomId">

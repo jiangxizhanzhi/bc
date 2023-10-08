@@ -303,8 +303,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				localSceneService.removeById(singleRoom.getLocalSceneId());
 				singleRoomMapper.deleteById(singleRoom);
-				trainRecordService.updateEndDate(singleRoom.getResourceId(),
-						BusinessType.TRAINING_SINGLE.getCode());
+				trainRecordService.updateEndTimeAndExtra(singleRoom.getResourceId(), "");
 			}
 		});
 		return true;
@@ -973,8 +972,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				if (!extraRecord.isEmpty()) {
 					extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, score);
 				}
-				trainRecordService.updateEndDate(businessTemplateId, userId,
-						BusinessType.TRAINING_SINGLE.getCode(), JsonUtil.toJsonString(extraRecord));
+				trainRecordService.updateEndTimeAndExtra(singleRoom.getResourceId(),
+						JsonUtil.toJsonString(extraRecord));
 
 				// 设置当前训练已完成
 				singleRoom.setIsFinish(true);

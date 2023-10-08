@@ -14,41 +14,17 @@
             #{business_type}
         </where>
     </update>
-    <update id="setEndTime">
+    <update id="setEndTimeAndExtra">
         update cr_train_record
         <set>
-            end_time = now()
+            end_time = #{endTime}
             <if test="extra != null and extra != ''">
                 , extra = #{extra}
             </if>
         </set>
         <where>
             end_time is null
-            and business_template_id = #{business_template_id} and user_id = #{user_id} and business_type =
-            #{business_type}
-        </where>
-    </update>
-    <update id="setEndTimeByRoomId">
-        update cr_train_record
-        <set>
-            end_time = now()
-            <if test="extra != null and extra != ''">
-                , extra = #{extra}
-            </if>
-        </set>
-        <where>
-            end_time is null
-            and room_id = #{room_id} and business_type = #{business_type}
-        </where>
-    </update>
-    <update id="batchEnd">
-        update cr_train_record
-        <set>
-            end_time = now()
-        </set>
-        <where>
-            business_template_id = #{businessTemplateId}
-            and end_time is null
+            and room_id = #{room_id}
         </where>
     </update>
     <update id="updateEndTimeByRoomId">

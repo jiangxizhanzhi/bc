@@ -69,6 +69,8 @@ public class EvalTemplateController {
 		EvalTemplate evalTemplate = new EvalTemplate();
 
 		reqToTemplate(evaTemplateAddReq, evalTemplate);
+		// 设置模板创建者
+		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		evalTemplateService.save(evalTemplate);
 
@@ -193,7 +195,6 @@ public class EvalTemplateController {
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
 
 		// 设置模板用户
-		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		if (evaTemplateAddReq.getOperationAuthType().equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())) {
 			evalTemplate.setOperationAuthIds(
 					JsonUtil.arrayToString(evaTemplateAddReq.getAuthUserIds()));

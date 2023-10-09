@@ -352,6 +352,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //根据roomId获取训练下发任务,'未下发',任务导调才可编辑 (未下发无task数据)
         List<String> missionIds = crTaskMapper.selectByRoomId(roomId).stream().map(CrTask::getMissionId).collect(Collectors.toList());
 
+        //根据roomId获取历史记录中已触发的导调任务
+        LambdaQueryWrapper<SituationGuideHistory> hisWrapper = new LambdaQueryWrapper<>();
+        hisWrapper.eq(SituationGuideHistory::getRoomId, roomId);
+        hisWrapper.eq(SituationGuideHistory::getType, SituationGuideScheme.Type.MISSION.getCode());
+        List<String> guideIdList = StreamApiUtils.map(situationGuideHisMapper.selectList(hisWrapper), SituationGuideHistory::getGuideId);
+
         //获取训练房间所有导调任务
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getRoomId, roomId);
@@ -374,8 +380,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                     if (!missionMap.containsKey(missionTemplate.getResourceId())){
                         continue;
                     }
-                    //组装训练任务,编辑状态,态势导调任务id
-                    GuideMissionRsp guideMissionRsp = getMissionRsp(missionIds, missionGuideMap, missionMap, missionTemplate);
+                    //组装训练任务,编辑状态,是否触发,态势导调任务id
+                    GuideMissionRsp guideMissionRsp = getMissionRsp(missionIds, missionGuideMap, missionMap, guideIdList, missionTemplate);
                     missionList.add(guideMissionRsp);
                 }
                 missionStageRsp.setMissionList(missionList);
@@ -387,7 +393,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result;
     }
 
-    private GuideMissionRsp getMissionRsp(List<String> missionIds, Map<String, SituationGuideScheme> missionGuideMap, Map<String, Mission> missionMap, CrRoleConfigMission missionTemplate) {
+    private GuideMissionRsp getMissionRsp(List<String> missionIds, Map<String, SituationGuideScheme> missionGuideMap, Map<String, Mission> missionMap, List<String> guideIdList, CrRoleConfigMission missionTemplate) {
         GuideMissionRsp guideMissionRsp = new GuideMissionRsp();
         Mission mission = missionMap.get(missionTemplate.getResourceId());
         guideMissionRsp.setMissionTitle(mission.getTitle());
@@ -399,6 +405,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         SituationGuideScheme guideScheme = missionGuideMap.get(mission.getResourceId());
         guideMissionRsp.setGuideId(Objects.isNull(guideScheme) ? null : guideScheme.getResourceId());
         guideMissionRsp.setEventType(Objects.isNull(guideScheme) ? null : guideScheme.getEventType());
+
+        Boolean isTriggered= !Objects.isNull(guideScheme) && guideIdList.contains(guideScheme.getResourceId());
+        guideMissionRsp.setIsTriggered(isTriggered);
         return guideMissionRsp;
     }
 

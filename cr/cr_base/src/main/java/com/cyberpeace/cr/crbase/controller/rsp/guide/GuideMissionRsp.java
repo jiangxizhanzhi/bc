@@ -3,13 +3,11 @@ package com.cyberpeace.cr.crbase.controller.rsp.guide;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
  * @author myy
  */
 @Data
-public class GuideMissionRsp implements Serializable {
+public class GuideMissionRsp {
 
     @ApiModelProperty("事件类型")
     private Integer eventType;
@@ -26,4 +24,6 @@ public class GuideMissionRsp implements Serializable {
     @ApiModelProperty("是否可编辑")
     private Boolean isEditable;
 
+    @ApiModelProperty("是否触发")
+    private Boolean isTriggered;
 }

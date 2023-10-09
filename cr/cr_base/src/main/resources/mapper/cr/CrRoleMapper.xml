@@ -107,13 +107,12 @@
         where room_id = #{roomId}
         <if test="businessType == 3">
             <choose>
-            <when test="roleGroup != null and roleGroup != ''">
-                and (role_group = #{roleGroup} or role_group =1 )
-            </when>
-            <otherwise>
-                <bind name="userIds" value="'%' + roleId + '%'"/>
-                and (user_ids like #{userIds} or role_group =1 )
-            </otherwise>
+                <when test="roleGroup != null and roleGroup != ''">
+                    and (role_group = #{roleGroup} or role_group = 1)
+                </when>
+                <otherwise>
+                    and resource_id = #{roleId}
+                </otherwise>
             </choose>
         </if>
         <if test="businessType == 4">
@@ -122,8 +121,7 @@
                     and (role_group = #{roleGroup} or role_group in (1, 2, 3))
                 </when>
                 <otherwise>
-                    <bind name="userIds" value="'%' + roleId + '%'"/>
-                    and (user_ids like #{userIds} or role_group in (1, 2, 3))
+                    and resource_id = #{roleId}
                 </otherwise>
             </choose>
         </if>

@@ -47,6 +47,7 @@ import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.score.RecordStatistics;
+import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
@@ -1188,9 +1189,11 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		} else {
 			// training started
 			result = getMatrixProgress(room);
-			result.setTimeCost(TimeUtil.getIntervalSeconds(room.getCreateTime(), new Date()));
+			TrainingTimeCost trainingTimeCost = trainRecordService
+					.getTimeCostLong(room.getResourceId());
+			result.setStarted(trainingTimeCost.getRunning());
+			result.setTimeCost(trainingTimeCost.getTimeCost());
 			// 提交之后认为训练已停止
-			result.setStarted(!room.getIsFinish());
 		}
 		// set user_info
 		result.setUserId(userId);

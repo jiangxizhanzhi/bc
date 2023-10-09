@@ -532,12 +532,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject missionsRecord = JsonUtil.toJsonObject(roomObject.getTrainingRecord(),
 				JSONObject.class);
 
-		JSONObject record = new JSONObject();
-		record.put(SingleRoom.MissionsRecordFields.TIME, new Date());
-		record.put(SingleRoom.MissionsRecordFields.ANSWER, requestData.getAnswer());
-		record.put(SingleRoom.MissionsRecordFields.RECORD, requestData.getTrainingRecord());
+		JSONObject recordJson = new JSONObject();
+		recordJson.put(SingleRoom.MissionsRecordFields.TIME, new Date());
+		recordJson.put(SingleRoom.MissionsRecordFields.ANSWER, requestData.getAnswer());
+		recordJson.put(SingleRoom.MissionsRecordFields.RECORD, requestData.getTrainingRecord());
 
-		missionsRecord.put(requestData.getMissionResourceId(), record);
+		missionsRecord.put(requestData.getMissionResourceId(), recordJson);
 
 		roomObject.setTrainingRecord(JsonUtil.toJsonString(missionsRecord));
 		updateById(roomObject);
@@ -1189,7 +1189,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			// training started
 			result = getMatrixProgress(room);
 			result.setTimeCost(TimeUtil.getIntervalSeconds(room.getCreateTime(), new Date()));
-			result.setStarted(true);
+			// 提交之后认为训练已停止
+			result.setStarted(!room.getIsFinish());
 		}
 		// set user_info
 		result.setUserId(userId);

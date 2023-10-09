@@ -371,6 +371,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				}
 			}
 		});
+		// 推送ws
+		if (teamRoom.isEnded()) {
+			crTaskService.pushStatusWs(roomId, TeamRoom.TrainingStatusCode.ENDED.getCode());
+		}
 		return teamRoom.getTrainingStatus();
 	}
 

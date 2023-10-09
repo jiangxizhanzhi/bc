@@ -331,7 +331,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             result.addAll(attackTypeCountList.stream().map(attackTypeCount -> new AttackTopFiveRsp(attackTypeCount.getAttack_type(), attackTypeCount.getTimes())).collect(Collectors.toList()));
         }
         //排序，取Top5
-        result.sort(Comparator.comparingInt(AttackTopFiveRsp::getCount));
+        result.sort(Comparator.comparingInt(AttackTopFiveRsp::getCount).reversed());
         if (result.size() < 5) {
             return result;
         }

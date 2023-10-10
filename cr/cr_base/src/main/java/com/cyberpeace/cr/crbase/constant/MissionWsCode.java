@@ -31,6 +31,11 @@ public final class MissionWsCode {
 	 */
 	public static final Integer CR_MARK_CREATE = 9;
 
+	/**
+	 * 态势导调页面刷新
+	 */
+	public static final Integer SITUATION_GUIDE = 10;
+
 
 	private MissionWsCode() {}
 }

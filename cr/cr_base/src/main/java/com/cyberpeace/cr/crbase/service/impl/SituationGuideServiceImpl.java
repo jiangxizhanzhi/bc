@@ -1,5 +1,16 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -46,17 +57,8 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -318,18 +320,30 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Override
     public List<AttackTopFiveRsp> attackTop5(String roomId) {
+        Map<String, Integer> cntMap = Maps.newHashMap();
         //获取任务导调和手动导调记录
         List<AttackTypeCountGroup> attackTypeCountGroupList = situationGuideHisMapper.countByCategory(roomId, SituationGuideScheme.EventType.ATTACK.getCode());
-        List<AttackTopFiveRsp> result = attackTypeCountGroupList.stream()
-                .map(attackTypeCountGroup -> new AttackTopFiveRsp(SituationGuideScheme.AttackUrlEnum.getEnumByCode(attackTypeCountGroup.getCategory()).getMsg(), attackTypeCountGroup.getCount()))
-                .collect(Collectors.toList());
+		for (AttackTypeCountGroup attackTypeCountGroup : attackTypeCountGroupList) {
+			String name = SituationGuideScheme.AttackUrlEnum
+					.getEnumByCode(attackTypeCountGroup.getCategory()).getMsg();
+			cntMap.put(name, attackTypeCountGroup.getCount());
+		}
         //获取主机采集事件和流量采集事件
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
         if (localScene != null) {
             JSONArray attackCountList = remoteSceneService.getAttackTypeCountGroup(localScene.getMpSceneId());
             List<AttackTypeCount> attackTypeCountList = attackCountList.toJavaList(AttackTypeCount.class);
-            result.addAll(attackTypeCountList.stream().map(attackTypeCount -> new AttackTopFiveRsp(attackTypeCount.getAttack_type(), attackTypeCount.getTimes())).collect(Collectors.toList()));
+			for (AttackTypeCount attackTypeCount : attackTypeCountList) {
+				String name = attackTypeCount.getAttack_type();
+				if (cntMap.containsKey(name)) {
+					cntMap.put(name, cntMap.get(name) + attackTypeCount.getTimes());
+				} else {
+					cntMap.put(name, attackTypeCount.getTimes());
+				}
+			}
         }
+		List<AttackTopFiveRsp> result = StreamApiUtils.map(cntMap.entrySet(),
+				entry -> new AttackTopFiveRsp(entry.getKey(), entry.getValue()));
         //排序，取Top5
         result.sort(Comparator.comparingInt(AttackTopFiveRsp::getCount).reversed());
         if (result.size() < 5) {

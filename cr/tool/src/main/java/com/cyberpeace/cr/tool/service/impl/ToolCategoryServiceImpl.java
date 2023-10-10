@@ -51,6 +51,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		return toolCategoryMapper.selectList(null);
 	}
 
+	@Override
 	public List<WebToolCategoryRsp> webSelectAll() {
 		List<ToolCategory> toolCategories = selectAll();
 

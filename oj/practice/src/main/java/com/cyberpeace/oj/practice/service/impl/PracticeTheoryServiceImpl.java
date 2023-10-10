@@ -797,7 +797,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         if (CollectionUtils.isEmpty(userIds)) {
             return new ArrayList<>();
         }
-        Map<String, String> userIdNameMap = StreamApiUtils.toMap(userInfoList, UserInfo::getUserId, UserInfo::getUserName);
+        Map<String, String> userIdNameMap = StreamApiUtils.toMap(userInfoList, UserInfo::getUserId, UserInfo::getName);
         List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectTop5(resourceId, userIds);
 
         if (practiceSolveds.size() > 0) {

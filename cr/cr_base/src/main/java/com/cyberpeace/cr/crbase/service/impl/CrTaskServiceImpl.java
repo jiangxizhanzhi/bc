@@ -439,7 +439,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		//任务导调
 		SituationGuideHistory guideHis = situationGuideService.getGuideHisByMissionId(missionId, task.getResourceId());
+		//是否触发态势导调动效和页面刷新
 		final Boolean[] pushDataFlag = {false};
+		if (Objects.nonNull(guideHis) && StringUtils.isNotBlank(guideHis.getSceneId())) {
+			boolean missionSubmitFlag = SituationGuideScheme.ConditionType.MISSION_SUBMIT.getCode().equals(guideHis.getTriggerCondition());
+			boolean missionSuccessFlag = SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition()) && CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(task.getStatus());
+			pushDataFlag[0] = missionSubmitFlag || missionSuccessFlag;
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -452,15 +458,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				if (mission.isObjective()) {
 					crTaskLogMapper.insert(evaluateLog);
 				}
-
-				//插入态势导调历史记录
-				if (Objects.nonNull(guideHis) && StringUtils.isNotBlank(guideHis.getSceneId())) {
-					boolean missionSubmitFlag = SituationGuideScheme.ConditionType.MISSION_SUBMIT.getCode().equals(guideHis.getTriggerCondition());
-					boolean missionSuccessFlag = SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition()) && CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(task.getStatus());
-					if (missionSubmitFlag || missionSuccessFlag) {
-						situationGuideHisMapper.insert(guideHis);
-						pushDataFlag[0] = true;
-					}
+				if (Boolean.TRUE.equals(pushDataFlag[0])) {
+					situationGuideHisMapper.insert(guideHis);
 				}
 			}
 		});
@@ -471,7 +470,6 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			industrySituationService.pushSituationWs(task.getRoomId(), task.getMissionTemplateId());
 		}
 		if (Boolean.TRUE.equals(pushDataFlag[0])){
-			// 触发态势导调动效和页面刷新
 			situationGuideService.pushDataToRoomByGuide(null, guideHis);
 			this.pushGuideRefreshWs(task.getRoomId());
 		}
@@ -525,6 +523,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		//任务导调
 		SituationGuideHistory guideHis = situationGuideService.getGuideHisByMissionId(task.getMissionId(), task.getResourceId());
+		//是否新增态势导调和动效
+		final Boolean[] pushDataFlag = {false};
+		if (Objects.nonNull(guideHis) && StringUtils.isNotBlank(guideHis.getSceneId())
+				&& SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition())
+				&& CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(evaluateStatus)) {
+			pushDataFlag[0] = true;
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -536,9 +541,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				crTaskLogMapper.insert(evaluationLog);
 
 				//插入态势导调历史记录
-				if (Objects.nonNull(guideHis) && StringUtils.isNotBlank(guideHis.getSceneId())
-						&& SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition())
-						&& CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(evaluateStatus)) {
+				if (Boolean.TRUE.equals(pushDataFlag[0])){
 					situationGuideHisMapper.insert(guideHis);
 				}
 			}
@@ -549,12 +552,11 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				&& !oldStatus.equals(CrTask.TaskStatus.SUCCESS.getCode())
 				&& evaluateStatus.equals(CrTask.TaskStatus.SUCCESS.getCode())) {
 			industrySituationService.pushSituationWs(task.getRoomId(), task.getMissionTemplateId());
-			if (SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode()
-					.equals(guideHis.getTriggerCondition())) {
-				// 态势导调动效
-				situationGuideService.pushDataToRoomByGuide(null, guideHis);
-				this.pushGuideRefreshWs(task.getRoomId());
-			}
+		}
+
+		if (Boolean.TRUE.equals(pushDataFlag[0])){
+			situationGuideService.pushDataToRoomByGuide(null, guideHis);
+			this.pushGuideRefreshWs(task.getRoomId());
 		}
 	}
 

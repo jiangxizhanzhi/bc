@@ -28,6 +28,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
@@ -470,7 +471,9 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			industrySituationService.pushSituationWs(task.getRoomId(), task.getMissionTemplateId());
 		}
 		if (Boolean.TRUE.equals(pushDataFlag[0])){
+			// 触发态势导调动效和页面刷新
 			situationGuideService.pushDataToRoomByGuide(null, guideHis);
+			this.pushGuideRefreshWs(task.getRoomId());
 		}
 	}
 
@@ -546,9 +549,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				&& !oldStatus.equals(CrTask.TaskStatus.SUCCESS.getCode())
 				&& evaluateStatus.equals(CrTask.TaskStatus.SUCCESS.getCode())) {
 			industrySituationService.pushSituationWs(task.getRoomId(), task.getMissionTemplateId());
+			if (SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode()
+					.equals(guideHis.getTriggerCondition())) {
+				// 态势导调动效
+				situationGuideService.pushDataToRoomByGuide(null, guideHis);
+				this.pushGuideRefreshWs(task.getRoomId());
+			}
 		}
-		// 态势导调动效
-		situationGuideService.pushDataToRoomByGuide(null, guideHis);
 	}
 
 	@Override
@@ -793,6 +800,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public void submitMissions(String roomId, String missionId, String answer, String remark) {
 		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "",remark);
+	}
+	
+	private void pushGuideRefreshWs(String roomId){
+		this.pushMissionWS(roomId, MissionWsCode.SITUATION_GUIDE);
 	}
 
 }

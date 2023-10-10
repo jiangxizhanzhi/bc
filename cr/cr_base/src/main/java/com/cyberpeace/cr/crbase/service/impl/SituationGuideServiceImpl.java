@@ -519,7 +519,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             result.setEventType(Arrays.stream(SituationGuideScheme.EventType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
         }
 
-        result.setResultType(Arrays.stream(SituationGuideScheme.ResultType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
+
+        result.setResultType(Arrays.stream(SituationGuideScheme.ResultType.values()).filter(item -> !SituationGuideScheme.ResultType.UNKNOWN.getCode().equals(item.getCode())).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
         result.setRoleType(Arrays.stream(SituationGuideScheme.RoleType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
         result.setConditionType(Arrays.stream(SituationGuideScheme.ConditionType.values()).map(item -> new ParamTypeRsp(item.getDesc(), item.getCode())).collect(Collectors.toList()));
 

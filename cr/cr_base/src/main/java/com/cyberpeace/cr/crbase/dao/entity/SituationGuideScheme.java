@@ -1,15 +1,17 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
+import java.util.Arrays;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.constant.BaseI18n;
+
 import lombok.Data;
 import lombok.Getter;
-
-import java.util.Arrays;
 
 /**
  * 态势导调方案表
@@ -235,22 +237,23 @@ public class SituationGuideScheme extends BaseTable {
 
     /**
      * 攻击类型url枚举
+     * attack.mitre.org/tactics/enterprise/
      */
     public enum AttackUrlEnum implements BaseI18n {
-        RECONNAISSANCE(1, "侦察", "Reconnaissance", "对手正试图收集可用于规划未来行动的信息。", "/cpms/guide/1.侦察.gif", "", "reconnaissance", "compound"),
-        RESOURCE_DEVELOPMENT(2, "资源开发", "Resource Development", "攻击者正在尝试建立可用于支持操作的资源。", "/cpms/guide/2.资源开发.gif", "", "resource development", "element"),
-        INITIAL_VISIT(3, "初始访问", "Initial Access", "攻击者正试图进入您的网络。", "/cpms/guide/3.初始访问.gif", "", "initial access", "element"),
-        IMPLEMENT(4, "执行", "Execution", "攻击者正在尝试运行恶意代码。", "/cpms/guide/4.执行.gif", "", "execution", "element"),
-        PERSISTENCE(5, "持久化", "Persistence", "对手正试图保持他们的立足点。", "/cpms/guide/5.持久化.gif", "", "persistence", "element"),
-        PRIVACY_IMPROVEMENT(6, "特权提升", "Privilege Escalation", "攻击者正在尝试获取更高级别的权限。", "/cpms/guide/6.特权提升.gif", "", "privilege escalation", "element"),
-        ESCAPE_DEFENSE(7, "逃避防御", "Defense Evasion", "对手试图避免被检测到。", "/cpms/guide/7.逃避防御.gif", "", "defense evasion", "element"),
-        ACCORDING_INTERVIEW(8, "凭据访问", "Credential Access", "攻击者试图窃取帐户名和密码。", "/cpms/guide/8.凭据访问.gif", "", "credential access", "element"),
-        ATTACK_DISCOVER(9, "发现", "Discovery", "对手正在尝试找出您的环境。", "/cpms/guide/9.访问.gif", "", "discovery", "element"),
-        MOVE_HORIZONTALLY(10, "横向移动", "Lateral Movement", "攻击者正在尝试在您的环境中移动。", "/cpms/guide/10.横向移动.gif", "", "lateral movement", "element"),
-        COLLECT_MESSAGE(11, "信息收集", "Collection", "对手正试图收集与其目标相关的数据。", "/cpms/guide/11.信息收集.gif", "", "collection", "element"),
-        COMMAND_CONTROL(12, "命令与控制", "Command and Control", "攻击者正试图与受感染的系统进行通信以控制它们。", "/cpms/guide/12.命令与控制.gif", "", "command and control", "element"),
-        INFORMATION_THEFT(13, "信息盗取", "Exfiltration", "攻击者试图窃取数据。", "/cpms/guide/13.信息盗取.gif", "", "exfiltration", "element"),
-        INFLUENCE(14, "影响", "Impact", "攻击者试图操纵、中断或破坏您的系统和数据。", "/cpms/guide/14.影响.gif", "", "impact", "element");
+        RECONNAISSANCE(1, "侦察", "Reconnaissance", "对手正试图收集可用于规划未来行动的信息。", "The adversary is trying to gather information they can use to plan future operations.","/cpms/guide/1.侦察.gif", "", "reconnaissance", "compound"),
+        RESOURCE_DEVELOPMENT(2, "资源开发", "Resource Development", "攻击者正在尝试建立可用于支持操作的资源。", "The adversary is trying to establish resources they can use to support operations.","/cpms/guide/2.资源开发.gif", "", "resource development", "element"),
+        INITIAL_VISIT(3, "初始访问", "Initial Access", "攻击者正试图进入您的网络。", "The adversary is trying to get into your network.","/cpms/guide/3.初始访问.gif", "", "initial access", "element"),
+        EXECUTION(4, "执行", "Execution", "攻击者正在尝试运行恶意代码。", "The adversary is trying to run malicious code.","/cpms/guide/4.执行.gif", "", "execution", "element"),
+        PERSISTENCE(5, "持久化", "Persistence", "对手正试图保持他们的立足点。", "The adversary is trying to maintain their foothold.","/cpms/guide/5.持久化.gif", "", "persistence", "element"),
+        PRIVILEGE_ESCALATION(6, "特权提升", "Privilege Escalation", "攻击者正在尝试获取更高级别的权限。","The adversary is trying to gain higher-level permissions.", "/cpms/guide/6.特权提升.gif", "", "privilege escalation", "element"),
+        DEFENSE_EVASION(7, "逃避防御", "Defense Evasion", "对手试图避免被检测到。", "The adversary is trying to avoid being detected.","/cpms/guide/7.逃避防御.gif", "", "defense evasion", "element"),
+        CREDENTIAL_ACCESS(8, "凭据访问", "Credential Access", "攻击者试图窃取帐户名和密码。", "The adversary is trying to steal account names and passwords.","/cpms/guide/8.凭据访问.gif", "", "credential access", "element"),
+        DISCOVERY(9, "发现", "Discovery", "对手正在尝试找出您的环境。", "The adversary is trying to figure out your environment.","/cpms/guide/9.访问.gif", "", "discovery", "element"),
+        LATERAL_MOVEMENT(10, "横向移动", "Lateral Movement", "攻击者正在尝试在您的环境中移动。","The adversary is trying to move through your environment.", "/cpms/guide/10.横向移动.gif", "", "lateral movement", "element"),
+        COLLECTION(11, "信息收集", "Collection", "对手正试图收集与其目标相关的数据。", "The adversary is trying to gather data of interest to their goal.","/cpms/guide/11.信息收集.gif", "", "collection", "element"),
+        COMMAND_AND_CONTROL(12, "命令与控制", "Command and Control", "攻击者正试图与受感染的系统进行通信以控制它们。", "The adversary is trying to communicate with compromised systems to control them.","/cpms/guide/12.命令与控制.gif", "", "command and control", "element"),
+        EXFILTRATION(13, "信息盗取", "Exfiltration", "攻击者试图窃取数据。", "The adversary is trying to steal data.","/cpms/guide/13.信息盗取.gif", "", "exfiltration", "element"),
+        IMPACT(14, "影响", "Impact", "攻击者试图操纵、中断或破坏您的系统和数据。", "The adversary is trying to manipulate, interrupt, or destroy your systems and data.", "/cpms/guide/14.影响.gif", "", "impact", "element");
 
         @Getter
         private final Integer code;
@@ -262,7 +265,10 @@ public class SituationGuideScheme extends BaseTable {
         private final String english;
 
         @Getter
-        private final String desc;
+        private final String descZh;
+
+        @Getter
+        private final String descEn;
 
         @Getter
         private final String successUrl;
@@ -276,16 +282,21 @@ public class SituationGuideScheme extends BaseTable {
         @Getter
         private final String type;
 
-        AttackUrlEnum(Integer code, String chinese, String english, String desc, String successUrl, String failUrl,
-                      String mpCode, String type) {
-            this.code = code;
-            this.chinese = chinese;
-            this.english = english;
-            this.desc = desc;
-            this.successUrl = successUrl;
-            this.failUrl = failUrl;
-            this.mpCode = mpCode;
-            this.type = type;
+		AttackUrlEnum(Integer code, String chinese, String english, String descZh, String descEn,
+				String successUrl, String failUrl, String mpCode, String type) {
+			this.code = code;
+			this.chinese = chinese;
+			this.english = english;
+			this.descZh = descZh;
+            this.descEn = descEn;
+			this.successUrl = successUrl;
+			this.failUrl = failUrl;
+			this.mpCode = mpCode;
+			this.type = type;
+		}
+
+        public String getDesc() {
+            return CommonContext.isChinese() ? this.descZh : this.descEn;
         }
 
         public static AttackUrlEnum getEnumByCode(Integer code) {
@@ -298,42 +309,57 @@ public class SituationGuideScheme extends BaseTable {
 
     /**
      * 防御类型url枚举
+     * engage.mitre.org/matrix/
      */
     public enum DefenseUrlEnum implements BaseI18n {
-        PLANNING(15, "规划", "Plan", "确定操作并将其与所需的最终状态对齐。", "/cpms/guide/15.规划.gif", "", "plan"),
-        COLLECT(16, "收集", "Collect", "收集对手工具，观察战术，并收集有关对手活动的其他原始情报。", "/cpms/guide/16.收集.gif", "", "collect"),
-        DEFENSE_DISCOVER(17, "发现", "Detect", "建立或保持对对手活动的意识。", "/cpms/guide/17.发现.gif", "", "detect"),
-        DEFENSE(18, "防御", "Prevent", "停止对手按预期执行其操作的全部或部分能力。", "/cpms/guide/18.防御.gif", "", "prevent"),
-        MOVEMENT(19, "转移", "Direct", "鼓励或阻止对手按预期进行操作。", "/cpms/guide/19.转移.gif", "", "direct"),
-        DESTROY(20, "破坏", "Disrupt", "损害对手按预期执行操作的能力。", "/cpms/guide/20.破坏.gif", "", "disrupt"),
-        ENSURE(21, "保证", "Reassure", "为欺骗性组件添加真实性，以使对手相信环境是真实的。", "/cpms/guide/21.保证.gif", "", "reassure"),
-        EXCITATION(22, "激励", "Motivate", "鼓励对手执行部分或全部任务。", "/cpms/guide/22.激励.gif", "", "motivate"),
-        ANALYZE(23, "分析", "Analyze", "回顾性审查从操作中获得的信息。", "/cpms/guide/23.分析.gif", "", "analyze");
+        PLANNING(15, "规划", "Plan", "确定操作并将其与所需的最终状态对齐。", "Identify and align an operation with a desired end-state.", "/cpms/guide/15.规划.gif", "", "plan"),
+        COLLECT(16, "收集", "Collect", "收集对手工具，观察战术，并收集有关对手活动的其他原始情报。", "Gather adversary tools, observe tactics, and collect other raw intelligence about the adversary’s activity.", "/cpms/guide/16.收集.gif", "", "collect"),
+        DEFENSE_DISCOVER(17, "发现", "Detect", "建立或保持对对手活动的意识。", "Establish or maintain awareness regarding adversary activity.", "/cpms/guide/17.发现.gif", "", "detect"),
+        DEFENSE(18, "防御", "Prevent", "停止对手按预期执行其操作的全部或部分能力。", "Stop all or part of the adversary’s ability to conduct their operation as intended.", "/cpms/guide/18.防御.gif", "", "prevent"),
+        MOVEMENT(19, "转移", "Direct", "鼓励或阻止对手按预期进行操作。", "Encourage or discourage the adversary from conducting their operation as intended.", "/cpms/guide/19.转移.gif", "", "direct"),
+        DESTROY(20, "破坏", "Disrupt", "损害对手按预期执行操作的能力。", "Impair an adversary’s ability to conduct their operation as intended.", "/cpms/guide/20.破坏.gif", "", "disrupt"),
+        ENSURE(21, "保证", "Reassure", "为欺骗性组件添加真实性，以使对手相信环境是真实的。", "Add authenticity to deceptive components to convince an adversary that an environment is real.", "/cpms/guide/21.保证.gif", "", "reassure"),
+        EXCITATION(22, "激励", "Motivate", "鼓励对手执行部分或全部任务。", "Encourage an adversary to conduct part or all of their mission.", "/cpms/guide/22.激励.gif", "", "motivate"),
+        ANALYZE(23, "分析", "Analyze", "回顾性审查从操作中获得的信息。", "Retrospective review of information gained from an operation.", "/cpms/guide/23.分析.gif", "", "analyze");
 
-        @Getter
-        private final Integer code;
-        @Getter
-        private final String chinese;
-        @Getter
-        private final String english;
-        @Getter
-        private final String desc;
-        @Getter
-        private final String successUrl;
-        @Getter
-        private final String failUrl;
-        @Getter
-        private final String mpCode;
+		@Getter
+		private final Integer code;
 
-        DefenseUrlEnum(Integer code, String chinese, String english, String desc, String successUrl, String failUrl,
-                       String mpCode) {
-            this.code = code;
-            this.chinese = chinese;
-            this.english = english;
-            this.desc = desc;
-            this.successUrl = successUrl;
-            this.failUrl = failUrl;
-            this.mpCode = mpCode;
+		@Getter
+		private final String chinese;
+
+		@Getter
+		private final String english;
+
+		@Getter
+		private final String descZh;
+
+		@Getter
+		private final String descEn;
+
+		@Getter
+		private final String successUrl;
+
+		@Getter
+		private final String failUrl;
+
+		@Getter
+		private final String mpCode;
+
+		DefenseUrlEnum(Integer code, String chinese, String english, String descZh, String descEn,
+				String successUrl, String failUrl, String mpCode) {
+			this.code = code;
+			this.chinese = chinese;
+			this.english = english;
+			this.descZh = descZh;
+			this.descEn = descEn;
+			this.successUrl = successUrl;
+			this.failUrl = failUrl;
+			this.mpCode = mpCode;
+		}
+
+        public String getDesc() {
+            return CommonContext.isChinese() ? this.descZh : this.descEn;
         }
 
         public static DefenseUrlEnum getEnumByCode(Integer code) {

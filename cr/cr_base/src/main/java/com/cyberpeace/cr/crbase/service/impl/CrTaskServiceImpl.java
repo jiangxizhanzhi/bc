@@ -438,6 +438,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		//任务导调
 		SituationGuideHistory guideHis = situationGuideService.getGuideHisByMissionId(missionId, task.getResourceId());
+		final Boolean[] pushDataFlag = {false};
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -457,6 +458,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 					boolean missionSuccessFlag = SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode().equals(guideHis.getTriggerCondition()) && CrTaskSubmit.EvaluateStatus.SUCCESS.getCode().equals(task.getStatus());
 					if (missionSubmitFlag || missionSuccessFlag) {
 						situationGuideHisMapper.insert(guideHis);
+						pushDataFlag[0] = true;
 					}
 				}
 			}
@@ -467,8 +469,9 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				&& task.getStatus().equals(CrTask.TaskStatus.SUCCESS.getCode())) {
 			industrySituationService.pushSituationWs(task.getRoomId(), task.getMissionTemplateId());
 		}
-
-		situationGuideService.pushDataToRoomByGuide(null, guideHis);
+		if (Boolean.TRUE.equals(pushDataFlag[0])){
+			situationGuideService.pushDataToRoomByGuide(null, guideHis);
+		}
 	}
 
 	@Override

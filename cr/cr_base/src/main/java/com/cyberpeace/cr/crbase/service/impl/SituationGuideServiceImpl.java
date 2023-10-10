@@ -136,6 +136,11 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         validGuideSchemeParam(req);
         SituationGuideScheme situationGuideScheme = BeanUtils.copy(req, SituationGuideScheme.class);
         situationGuideScheme.setResourceId(IDGeneratorUtil.getID());
+        //任务导调 触发条件为空,默认为任务判断成功
+        if (SituationGuideScheme.Type.MISSION.getCode().equals(situationGuideScheme.getType())) {
+            Integer triggerCondition = Objects.nonNull(situationGuideScheme.getTriggerCondition()) ? situationGuideScheme.getTriggerCondition() : SituationGuideScheme.ConditionType.MISSION_SUCCESS.getCode();
+            situationGuideScheme.setTriggerCondition(triggerCondition);
+        }
         save(situationGuideScheme);
         return situationGuideScheme.getResourceId();
     }
@@ -636,8 +641,14 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         sceneEventContext.setPage(1);
         sceneEventContext.setPageSize(1000);
         //获取该训练过程中的所有场景id
-        String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
-        List<String> sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(screenGuideHistoryReq.getRoomId());
+        List<String> sceneIds;
+        if (localScene != null) {
+            sceneIds = Collections.singletonList(localScene.getMpSceneId());
+        } else {
+            String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
+            sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
+        }
         if (CollectionUtils.isEmpty(sceneIds)) {
             return new ArrayList<>();
         }

@@ -437,7 +437,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskSubmit.setScore(task.getScore());
 		crTaskSubmit.setEvaluateStatus(task.getStatus());
 
-		//任务导调
+		//任务导调(任务导调已触发guideHis为null)
 		SituationGuideHistory guideHis = situationGuideService.getGuideHisByMissionId(missionId, task.getResourceId());
 		//是否触发态势导调动效和页面刷新
 		final Boolean[] pushDataFlag = {false};
@@ -521,7 +521,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.actionCode(evaluateStatusToActionCode.get(evaluateStatus)).userId(currentUserId)
 				.build();
 
-		//任务导调
+		//任务导调(任务导调已触发guideHis为null)
 		SituationGuideHistory guideHis = situationGuideService.getGuideHisByMissionId(task.getMissionId(), task.getResourceId());
 		//是否新增态势导调和动效
 		final Boolean[] pushDataFlag = {false};

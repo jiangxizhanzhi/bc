@@ -276,7 +276,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getMissionId, missionId);
         SituationGuideScheme guideScheme = situationGuideSchemeMapper.selectOne(queryWrapper);
-        if (Objects.isNull(guideScheme)) {
+
+        LambdaQueryWrapper<SituationGuideHistory> hisWrapper = new LambdaQueryWrapper<>();
+        hisWrapper.eq(SituationGuideHistory::getMissionId, missionId);
+        hisWrapper.eq(SituationGuideHistory::getTaskId, taskId);
+        Integer existHis = situationGuideHisMapper.selectCount(hisWrapper);
+
+        if (Objects.isNull(guideScheme) || existHis > 0) {
             return null;
         }
         SituationGuideHistory guideHis = BeanUtils.copy(guideScheme, SituationGuideHistory.class);

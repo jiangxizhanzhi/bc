@@ -542,7 +542,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         List<MissionCategoryRsp> blockingNodeType=new ArrayList<>();
         for (ElementInfo elementInfo : situationTopo.getElements().values()) {
             MissionCategoryRsp missionCategoryRsp = new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName());
-            if (Objects.nonNull(elementInfo.getOneCategoryCode()) && 4 == elementInfo.getOneCategoryCode()) {
+            //安防设备一级类型为4; 防火墙:一级类型为3,二级类型为52
+            if (4 == elementInfo.getOneCategoryCode() || (3 == elementInfo.getOneCategoryCode() && 52 == elementInfo.getSecondCategoryCode())) {
                 blockingNodeType.add(missionCategoryRsp);
             }
             nodeList.add(missionCategoryRsp);

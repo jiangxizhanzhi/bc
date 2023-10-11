@@ -266,6 +266,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			//设置一级类型的编码
 			elementInfo.setOneCategoryCode(category);
 
+			//设置二级类型的编码
+			elementInfo.setSecondCategoryCode(category2);
+
 			// 写入节点列表
 			elementsInfo.put(elementId, elementInfo);
 		}

@@ -144,4 +144,15 @@
             </if>
         </where>
     </select>
+
+    <select id="getReplaySceneId" resultType="java.lang.String">
+        select replay_scene_id from
+        <if test="businessType == 3 ">
+            cr_team_room
+        </if>
+        <if test="businessType == 4 ">
+            cr_rb_room
+        </if>
+        WHERE resource_id = #{roomId}
+    </select>
 </mapper>

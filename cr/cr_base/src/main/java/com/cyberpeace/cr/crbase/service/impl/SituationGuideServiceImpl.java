@@ -1,16 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -57,8 +46,17 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -647,19 +645,22 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //默认返回前1000条数据
         sceneEventContext.setPage(1);
         sceneEventContext.setPageSize(1000);
-        //获取该训练过程中的所有场景id
+        //获取复盘场景id
         LocalScene localScene = localSceneService.getByBusinessInstanceId(screenGuideHistoryReq.getRoomId());
-        List<String> sceneIds;
+        String sceneId;
         if (localScene != null) {
-            sceneIds = Collections.singletonList(localScene.getMpSceneId());
+            sceneId = localScene.getMpSceneId();
         } else {
-            String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
-            sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
+            sceneId = situationGuideHisMapper.getReplaySceneId(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
+            if (StringUtils.isBlank(sceneId)) {
+                log.info("This training [{}] hasn't start a scene, no scene to replay.", screenGuideHistoryReq.getRoomId());
+                throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
+            }
         }
-        if (CollectionUtils.isEmpty(sceneIds)) {
+        if (StringUtils.isBlank(sceneId)) {
             return new ArrayList<>();
         }
-        sceneEventContext.setSceneId(StringUtils.join(sceneIds, ","));
+        sceneEventContext.setSceneId(sceneId);
         //是否查询流量事件
         sceneEventContext.setFlow(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.FLOW.getCode()));
         //是否查询主机事件

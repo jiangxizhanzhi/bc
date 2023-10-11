@@ -156,3 +156,20 @@ ALTER TABLE cr_eval_template MODIFY COLUMN read_auth_ids TEXT  COMMENT '拥有�
 ALTER TABLE cr_tool_tool MODIFY COLUMN introduction TEXT;
 
 UPDATE `system_property` SET  `content` = 'true' WHERE `id` = 2;
+
+
+-- ----------------------------
+-- Table structure for cr_rb_time
+-- ----------------------------
+CREATE TABLE `cr_rb_time`  (
+                               `id` int(11) NOT NULL AUTO_INCREMENT,
+                               `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源id',
+                               `room_id` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '红蓝实例id',
+                               `astronomical_time` datetime NULL DEFAULT NULL COMMENT '天文时间',
+                               `combat_time` datetime NULL DEFAULT NULL COMMENT '作战时间',
+                               `rate` int(11) DEFAULT NULL COMMENT '速率',
+                               `update_time` datetime NOT NULL,
+                               `create_time` datetime NOT NULL,
+                                PRIMARY KEY (`id`) USING BTREE,
+                                UNIQUE INDEX `room_id`(`room_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;

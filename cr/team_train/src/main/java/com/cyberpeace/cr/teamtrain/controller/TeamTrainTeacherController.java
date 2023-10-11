@@ -37,6 +37,7 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -48,6 +49,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例-教员")
+@Slf4j
 @RestController
 @RequestMapping("/cr/training_team/training_team_teacher")
 public class TeamTrainTeacherController {
@@ -274,7 +276,12 @@ public class TeamTrainTeacherController {
 
 		//根据拓扑id获取节点信息
 		TeamRoom teamRoom = teamRoomService.getById(roomId);
-		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(teamRoom.getCopyedTopoId(), false);
+		String sceneId = teamRoom.getReplaySceneId();
+		if (StringUtils.isBlank(sceneId)) {
+			log.info("This training [{}] hasn't start a scene, no scene to replay.", roomId);
+			throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
+		}
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(sceneId, true);
 		List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
 														 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
 														 .collect(Collectors.toList());

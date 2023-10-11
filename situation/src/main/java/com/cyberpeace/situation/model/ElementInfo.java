@@ -60,6 +60,9 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("一级类型code")
 	private Integer oneCategoryCode;
 
+	@ApiModelProperty("二级类型code")
+	private Integer secondCategoryCode;
+
 	public ElementInfo(JSONObject element) {
 		this.setElementId(element.getString("id"));
 		this.setName(element.getString("name"));

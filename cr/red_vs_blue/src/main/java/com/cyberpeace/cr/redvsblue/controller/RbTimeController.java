@@ -47,6 +47,7 @@ public class RbTimeController {
         rbTime.setAstronomicalTime(rbTimeReq.getAstronomicalTime());
         rbTime.setRate(rbTimeReq.getRate());
         rbTime.setCombatTime(rbTimeReq.getCombatTime());
+        rbTime.setRoomId(rbTimeReq.getRoomId());
         rbTimeMapper.insert(rbTime);
         return new BaseRsp<>(rbTime);
     }

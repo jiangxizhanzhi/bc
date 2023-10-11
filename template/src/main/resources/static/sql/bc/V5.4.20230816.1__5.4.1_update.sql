@@ -166,7 +166,7 @@ CREATE TABLE `cr_rb_time`  (
                                `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源id',
                                `room_id` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '红蓝实例id',
                                `astronomical_time` datetime NULL DEFAULT NULL COMMENT '天文时间',
-                               `combat_time` datetime NULL DEFAULT NULL COMMENT '作战时间',
+                               `combat_time` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '作战时间',
                                `rate` int(11) DEFAULT NULL COMMENT '速率',
                                `update_time` datetime NOT NULL,
                                `create_time` datetime NOT NULL,

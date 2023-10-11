@@ -24,6 +24,6 @@ public class RbTimeReq implements Serializable {
 
 	@ApiModelProperty(required = true, value = "作战时间")
 	@NotNull
-	private Date combatTime;
+	private String combatTime;
 
 }

@@ -418,7 +418,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		attackInfo.setDesc(attackMessageReq.getDescription());
 		attackInfo.setSourceName(elementInfoMap.get(attackMessageReq.getSourceId()).getName());
 		attackInfo.setTargetName(elementInfoMap.get(attackMessageReq.getTargetId()).getName());
-		attackInfo.setAttackName(AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class).getMsg());
+		AttackType attackType = AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class);
+		if (attackType != null) {
+			attackInfo.setAttackName(attackType.getMsg());
+		}
 		attackInfo.setLeak(attackMessageReq.getLeak());
 		attackInfo.setTool(attackMessageReq.getTool());
 		attackInfo.setDuration(attackMessageReq.getDurationTime());
@@ -426,7 +429,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		List<String> leaks = elementInfoMap.get(attackMessageReq.getTargetId()).getLeakInfos().stream().map(LeakInfo::getName).collect(Collectors.toList());
 		if (leaks.contains(attackMessageReq.getLeak())) {
 			attackInfo.setTargetId(attackMessageReq.getTargetId());
-			attackInfo.setResult(AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class).getSuccessDesc());
+			attackType = AttackType.getEnumByKeyWord(attackMessageReq.getType(), AttackType.class);
+			if (attackType != null) {
+				attackInfo.setResult(attackType.getSuccessDesc());
+			}
 
 			pushDataToRoom(wsMessage, attackMessageReq, playback, true);
 		} else {
@@ -925,9 +931,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	public void pushDefenseToRoom(AttackMessageReq attackMessageReq, Boolean playback) {
 		WsDefenseDynamic wsDefenseDynamic = BeanUtils.copy(attackMessageReq, WsDefenseDynamic.class);
-		wsDefenseDynamic.setDefenseType(
-				DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class)
-						   .getDefenseActionType().getCode());
+		DefenseType defenseType = DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class);
+		if (defenseType != null) {
+			wsDefenseDynamic.setDefenseType(defenseType.getDefenseActionType().getCode());
+		}
 		wsDefenseDynamic.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsDefenseDynamic> wsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsDefenseDynamic);
 		pushDataToRoom(wsMessage, attackMessageReq, playback, null);
@@ -937,10 +944,16 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		WsDefenseInfo wsDefenseInfo = new WsDefenseInfo();
 		wsDefenseInfo.setTargetId(attackMessageReq.getDefenseTargetId());
 		wsDefenseInfo.setDesc(attackMessageReq.getDescription());
-		wsDefenseInfo.setDefenseName(DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class).getMsg());
+		defenseType = DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class);
+		if (defenseType != null) {
+			wsDefenseInfo.setDefenseName(defenseType.getMsg());
+		}
 		wsDefenseInfo.setTool(attackMessageReq.getTool());
 		wsDefenseInfo.setLeak(attackMessageReq.getLeak());
-		wsDefenseInfo.setResult(DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class).getSuccessDesc());
+		defenseType = DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class);
+		if (defenseType != null) {
+			wsDefenseInfo.setResult(defenseType.getSuccessDesc());
+		}
 		wsDefenseInfo.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsDefenseInfo> defenseInfoWsMessage = new WsMessage<>(MessageType.DefenseInfo.getDesc(), wsDefenseInfo);
 		situationHandlerService.pushDataToRoom(defenseInfoWsMessage, attackMessageReq.getSceneId());

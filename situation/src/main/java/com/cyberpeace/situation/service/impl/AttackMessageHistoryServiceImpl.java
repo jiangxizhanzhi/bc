@@ -147,8 +147,10 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 			if (targetId != null && !targetId.equals("")) {
 				attackLog.setTargetName(getNameById(sceneId, targetId));
 			}
-			attackLog.setAttackType(AttackType.getEnumByKeyWord(attackLog.getAttackType(), AttackType.class)
-											  .getMsg());
+			AttackType attackType = AttackType.getEnumByKeyWord(attackLog.getAttackType(), AttackType.class);
+			if (attackType != null) {
+				attackLog.setAttackType(attackType.getMsg());
+			}
 		}
 		return attackLogList;
 	}
@@ -169,8 +171,12 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		//设置名称
 		defenseLogList.forEach(defenseLog -> defenseLog.setHostName(getNameById(sceneId, defenseLog.getHostId())));
 		//设置防御类型
-		defenseLogList.forEach(defenseLog -> defenseLog.setDefenseType(DefenseType.getEnumByKeyWord(defenseLog.getDefenseType(), DefenseType.class)
-																				  .getMsg()));
+		defenseLogList.forEach(defenseLog -> {
+			DefenseType defenseType = DefenseType.getEnumByKeyWord(defenseLog.getDefenseType(), DefenseType.class);
+			if (defenseType != null) {
+				defenseLog.setDefenseType(defenseType.getMsg());
+			}
+		});
 		return defenseLogList;
 	}
 

@@ -164,8 +164,8 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			}
 			//获取目标节点名称、ip
 			if (StringUtils.isNotEmpty(situationGuideHistory.getTarget())) {
-				guideHistoryRsp.setTargetName(elementInfoMap.get(situationGuideHistory.getSource()).getName());
-				guideHistoryRsp.setTargetIp(getElementIp(elementInfoMap.get(situationGuideHistory.getSource())));
+				guideHistoryRsp.setTargetName(elementInfoMap.get(situationGuideHistory.getTarget()).getName());
+				guideHistoryRsp.setTargetIp(getElementIp(elementInfoMap.get(situationGuideHistory.getTarget())));
 				guideHistoryRsp.setTargetId(situationGuideHistory.getTarget());
 			}
 			guideHistoryRspList.add(guideHistoryRsp);

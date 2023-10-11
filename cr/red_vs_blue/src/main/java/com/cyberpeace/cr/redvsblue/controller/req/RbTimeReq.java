@@ -11,9 +11,6 @@ import java.util.Date;
 public class RbTimeReq implements Serializable {
 
 	@ApiModelProperty(required = true, value = "资源id")
-	private String resourceId;
-
-	@ApiModelProperty(required = true, value = "资源id")
 	@NotNull
 	private String roomId;
 

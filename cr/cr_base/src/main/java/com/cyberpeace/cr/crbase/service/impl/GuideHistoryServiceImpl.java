@@ -3,9 +3,10 @@ package com.cyberpeace.cr.crbase.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.guide.ExecGuideHisReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryReq;
 import com.cyberpeace.cr.crbase.controller.rsp.PlaybackOptionRsp;
@@ -171,11 +172,8 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			guideHistoryRspList.add(guideHistoryRsp);
 		}
 
-		String topoId = null;
-		topoId = situationGuideHisMapper.getTopoIdByRoom(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
 		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
-			situationGuideHistory.setSceneId(topoId);
-			situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
+			situationGuideService.pushDataToRoomByGuide(true, situationGuideHistory);
 		}
 
 		//获取中台数据,处理数据
@@ -190,7 +188,6 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		for (MpEvent mpEvent : mpEventList) {
 			for (String category : mpEvent.getAttCks()) {
 				SituationGuideHistory situationGuideHistory = new SituationGuideHistory();
-				situationGuideHistory.setSceneId(topoId);
 				situationGuideHistory.setCategory(attCk.get(category));
 				situationGuideHistory.setEventName(mpEvent.getEventName());
 				situationGuideHistory.setEventType(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getCode());
@@ -199,7 +196,7 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 				//中台没有攻击结果和归属，赋一个默认值
 				situationGuideHistory.setResult(SituationGuideScheme.ResultType.SUCCESS.getCode());
 				situationGuideHistory.setRole(SituationGuideScheme.RoleType.RED.getCode());
-				situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
+				situationGuideService.pushDataToRoomByGuide(true, situationGuideHistory);
 			}
 		}
 
@@ -212,14 +209,15 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 	@Override
 	public List<String> getEventTimeList(String roomId, Integer businessType) {
 		List<String> eventTimes = situationGuideHisMapper.getEventTimes(roomId);
-		//获取该训练过程中的所有场景id
-		String sceneIdsRecord = situationGuideHisMapper.getSceneIdsByRoom(roomId, businessType);
-		List<String> sceneIds = JsonUtil.toJsonObjectArray(sceneIdsRecord, String.class);
-		if (CollectionUtils.isNotEmpty(sceneIds)) {
-			JSONArray eventTimeArray = remoteSceneService.getEventTimeList(StringUtils.join(sceneIds, ","));
-			if (eventTimeArray != null) {
-				eventTimes.addAll(eventTimeArray.toJavaList(JSONObject.class).stream().map(eventTime -> eventTime.getString("time")).collect(Collectors.toList()));
-			}
+		//获取复盘id
+		String sceneId = situationGuideHisMapper.getReplaySceneId(roomId, businessType);
+		if (StringUtils.isBlank(sceneId)) {
+			log.info("This training [{}] hasn't start a scene, no scene to replay.", roomId);
+			throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
+		}
+		JSONArray eventTimeArray = remoteSceneService.getEventTimeList(sceneId);
+		if (eventTimeArray != null) {
+			eventTimes.addAll(eventTimeArray.toJavaList(JSONObject.class).stream().map(eventTime -> eventTime.getString("time")).collect(Collectors.toList()));
 		}
 		return eventTimes;
 	}

@@ -43,4 +43,6 @@ public interface SituationGuideHisMapper extends BaseMapper<SituationGuideHistor
 
     String getTopoIdByRoom(@Param("roomId") String roomId, @Param("businessType") Integer businessType);
 
+    String getReplaySceneId(@Param("roomId") String roomId, @Param("businessType") Integer businessType);
+
 }

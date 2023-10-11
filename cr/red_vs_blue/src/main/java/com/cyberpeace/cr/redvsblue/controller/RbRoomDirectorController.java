@@ -582,7 +582,12 @@ public class RbRoomDirectorController {
 
 		//根据拓扑id获取节点信息
 		RbRoom rbRoom = rbRoomService.getById(roomId);
-		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(rbRoom.getCopyedTopoId(), false);
+		String sceneId = rbRoom.getReplaySceneId();
+		if (StringUtils.isBlank(sceneId)) {
+			log.info("This training [{}] hasn't start a scene, no scene to replay.", roomId);
+			throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
+		}
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(sceneId, true);
 		List<MissionCategoryRsp> nodeList = situationTopo.getElements().values().stream()
 														 .map(elementInfo -> new MissionCategoryRsp(elementInfo.getElementId(), elementInfo.getName()))
 														 .collect(Collectors.toList());

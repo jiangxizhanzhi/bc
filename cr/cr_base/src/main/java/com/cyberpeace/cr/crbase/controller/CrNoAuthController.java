@@ -15,6 +15,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchLoadMdReq;
@@ -164,11 +165,17 @@ public class CrNoAuthController {
 
 	@ApiOperation("辅助鉴权")
 	@GetMapping("/auth")
-	public BaseRsp<Boolean> auth(@ApiParam(name = "token", value = "jwt token") String token) {
+	public BaseRsp<Boolean> auth(@ApiParam(name = "token", value = "jwt token") String token,
+			@ApiParam(name = "admin_required", value = "check if is admin") Boolean admin_required) {
+		UserInfo userInfo;
 		try {
-			remoteUserService.doAuthentication(token);
+			userInfo = remoteUserService.doAuthentication(token);
 		} catch (Exception e) {
 			log.error("authentication failed with token:[{}]", token, e);
+			throw new AuthenticationException();
+		}
+		// 检查是否是admin用户
+		if (null != admin_required && admin_required.equals(Boolean.TRUE) && !userInfo.isSuperuser()) {
 			throw new AuthenticationException();
 		}
 		return new BaseRsp<>();

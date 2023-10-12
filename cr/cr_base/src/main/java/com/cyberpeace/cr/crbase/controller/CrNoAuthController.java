@@ -176,6 +176,7 @@ public class CrNoAuthController {
 		}
 		// 检查是否是admin用户
 		if (null != admin_required && admin_required.equals(Boolean.TRUE) && !userInfo.isSuperuser()) {
+			log.error("[{}] is not superuser/admin", userInfo.getName());
 			throw new AuthenticationException();
 		}
 		return new BaseRsp<>();

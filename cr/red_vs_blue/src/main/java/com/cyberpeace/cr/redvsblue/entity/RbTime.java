@@ -19,7 +19,7 @@ public class RbTime extends BaseTable {
 
 	private Date astronomicalTime;
 
-	private Date combatTime;
+	private String combatTime;
 
 	private Integer rate;
 

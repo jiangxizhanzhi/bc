@@ -57,7 +57,8 @@ public class WebLessonController {
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.TRUE);
         LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, roomId, learnedType ,authContext);
-
+		// 记录远程操作日志
+		courseLessonService.createMpLog(infoBo);
 		return new BaseRsp<>(infoBo);
 	}
 

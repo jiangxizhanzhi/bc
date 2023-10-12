@@ -46,4 +46,10 @@ public class SituationGuideListRsp implements Serializable {
 	@ApiModelProperty("是否可执行")
 	private Boolean isExecuted = true;
 
+    @ApiModelProperty("归属角色")
+    private Integer role;
+
+    @ApiModelProperty("归属角色名称")
+    private String roleName;
+
 }

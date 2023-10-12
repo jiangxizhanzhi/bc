@@ -102,6 +102,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             situationGuideListRsp.setSource(item.getSource());
             situationGuideListRsp.setTarget(item.getTarget());
             situationGuideListRsp.setBusinessType(item.getBusinessType());
+            situationGuideListRsp.setRole(item.getRole());
+            SituationGuideScheme.RoleType roleType = SituationGuideScheme.RoleType.getRoleTypeByCode(item.getRole());
+            situationGuideListRsp.setRoleName(Objects.isNull(roleType) ? "" : roleType.getDesc());
             return situationGuideListRsp;
         });
         ListRsp<SituationGuideListRsp> result = PageUtil.getListResult(page);

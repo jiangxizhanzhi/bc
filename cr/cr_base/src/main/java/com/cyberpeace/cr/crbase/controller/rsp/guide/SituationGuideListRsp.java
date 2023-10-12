@@ -43,4 +43,7 @@ public class SituationGuideListRsp implements Serializable {
     @ApiModelProperty("靶标目标名称")
     private String targetName;
 
+	@ApiModelProperty("是否可执行")
+	private Boolean isExecuted = true;
+
 }

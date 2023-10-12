@@ -27,6 +27,8 @@ import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.PortInfo;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -52,6 +55,9 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	Cache<String, Map<String, ElementInfo>> sceneElementCache = CacheBuilder.newBuilder()
+																  .expireAfterAccess(1, TimeUnit.HOURS).build();
 
 	@Override
 	public PlaybackOptionRsp getAllOption(String roomId) {
@@ -132,14 +138,13 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 
 		//处理成前端展示类型
 		List<GuideHistoryRsp> guideHistoryRspList = new ArrayList<>();
-		Map<String, Map<String, ElementInfo>> sceneElementMap = new HashMap<>();
 		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
 			//获取场景内的节点信息
-			Map<String, ElementInfo> elementInfoMap = sceneElementMap.get(situationGuideHistory.getSceneId());
+			Map<String, ElementInfo> elementInfoMap = sceneElementCache.getIfPresent(situationGuideHistory.getSceneId());
 			if (elementInfoMap == null) {
 				SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(situationGuideHistory.getSceneId(), true);
 				elementInfoMap = situationTopo.getElements();
-				sceneElementMap.put(situationGuideHistory.getSceneId(), elementInfoMap);
+				sceneElementCache.put(situationGuideHistory.getSceneId(), elementInfoMap);
 			}
 			//获取记录攻防类型
 			String category = null;

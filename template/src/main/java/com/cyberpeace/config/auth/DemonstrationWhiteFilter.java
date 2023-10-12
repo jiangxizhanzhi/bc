@@ -33,7 +33,7 @@ public class DemonstrationWhiteFilter implements Filter {
     private Boolean demoOpen=false;
     private Cache<String,String> contentCache= CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build();
     private long now= 0L;
-    private String BLACK_ENABLE_URL;
+
 
 
 
@@ -52,6 +52,7 @@ public class DemonstrationWhiteFilter implements Filter {
         }
         // 继续处理其他请求
         filterChain.doFilter(servletRequest, servletResponse);
+        ThreadLocalContext.whiteUpdateThreadLocal.set(false);
     }
     private void dealDemoOpen(HttpServletRequest request) throws IOException{
         // 获取请求的路径或其他条件，判断是否为名单内请求

@@ -34,7 +34,7 @@ public class DemonstrationWhiteInterceptor implements Interceptor {
 			demoOpen= remoteUserService.isDemoOpen();
 			now=System.currentTimeMillis();
 		}
-		if (Boolean.TRUE.equals(demoOpen)||"open".equals(demo)
+		if ((Boolean.TRUE.equals(demoOpen)||"open".equals(demo))
 				&& Boolean.FALSE.equals(ThreadLocalContext.whiteUpdateThreadLocal.get())
 				&& !SqlCommandType.SELECT.equals(sqlCommandType)) {
 			throw new BusinessException(SituationErrorCode.DEMONSTRATION_FORBID_UPDATE);

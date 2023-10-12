@@ -17,13 +17,13 @@ import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
-import com.cyberpeace.cr.crbase.dao.entity.SituationGuideScheme;
+import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideSchemeMapper;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
-import com.cyberpeace.cr.crbase.service.WsMultiNodeGuide;
+import com.cyberpeace.situation.model.ws.WsMultiNodeEffect;
 import com.cyberpeace.cr.crbase.service.context.guide.*;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
@@ -304,7 +304,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         }
         String sceneId = his.getSceneId();
         List<String> elementIds = getElementIds(sceneId, isInstance);
-        WsMultiNodeGuide wsMultiNodeGuide = new WsMultiNodeGuide();
+        WsMultiNodeEffect wsMultiNodeGuide = new WsMultiNodeEffect();
         wsMultiNodeGuide.setSceneId(his.getSceneId());
         wsMultiNodeGuide.setDuration(3);
         wsMultiNodeGuide.setName(his.getEventName());
@@ -320,7 +320,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         lineStyle.setWidth(3);
         wsMultiNodeGuide.setLineStyle(lineStyle);
 
-        WsMessage<WsMultiNodeGuide> wsMessage;
+        WsMessage<WsMultiNodeEffect> wsMessage;
         if (elementIds.contains(his.getTarget())) {
             wsMessage = new WsMessage<>(MessageType.DirectorSchedulingEE.getDesc(), wsMultiNodeGuide);
         } else {

@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.dao.entity;
+package com.cyberpeace.situation.constant;
 
 import java.util.Arrays;
 
@@ -302,6 +302,13 @@ public class SituationGuideScheme extends BaseTable {
         public static AttackUrlEnum getEnumByCode(Integer code) {
             return Arrays.stream(AttackUrlEnum.values())
                     .filter(item -> item.getCode().equals(code))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        public static AttackUrlEnum getEnumByEnglish(String english) {
+            return Arrays.stream(AttackUrlEnum.values())
+                    .filter(item -> item.getEnglish().equals(english))
                     .findFirst()
                     .orElse(null);
         }

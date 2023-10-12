@@ -20,4 +20,7 @@ public class RefreshDataRes {
 	@ApiModelProperty("流量事件")
 	private List<WsMessage> flowEvents;
 
+	@ApiModelProperty("主机采集事件")
+	private List<WsMessage> hostEvents;
+
 }

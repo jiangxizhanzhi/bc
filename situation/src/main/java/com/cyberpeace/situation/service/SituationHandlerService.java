@@ -152,4 +152,11 @@ public interface SituationHandlerService {
 	 * 获取处理后的态势数
 	 */
 	SituationTopo getSituationTopoBySceneId(String sceneId, Boolean instance);
+
+	/**
+	 * 推送主机采集事件到3D拓扑
+	 * @param sceneId 场景id
+	 * @return {@code List<WsMessage>}
+	 */
+	List<WsMessage> pushHostEvents(String sceneId);
 }

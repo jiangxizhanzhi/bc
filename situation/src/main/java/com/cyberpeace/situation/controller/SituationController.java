@@ -262,6 +262,8 @@ public class SituationController {
 			FlowLogReq flowLogReq = new FlowLogReq(sceneId);
 			refreshDataRes.setFlowEvents(situationHandlerService.pushFlowEvents(flowLogReq));
 		}
+		// 推送主机采集事件
+		refreshDataRes.setHostEvents(situationHandlerService.pushHostEvents(sceneId));
 
 		// 推送节点链路状态
 		if (linkStatus) {

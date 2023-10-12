@@ -66,6 +66,11 @@ public class RbRoom extends BaseTable {
 	 */
 	private String sceneIdRecord;
 
+	/**
+	 * 保存用户的授时设置
+	 */
+	private String timeSetting;
+
 	public RbRoom() {
 
 	}

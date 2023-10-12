@@ -14,7 +14,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.AttackCodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.GuideHistoryRsp;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
-import com.cyberpeace.cr.crbase.dao.entity.SituationGuideScheme;
+import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.service.GuideHistoryService;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;

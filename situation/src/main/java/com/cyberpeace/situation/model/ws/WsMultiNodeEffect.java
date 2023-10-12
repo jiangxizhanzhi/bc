@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.service;
+package com.cyberpeace.situation.model.ws;
 
 import com.cyberpeace.situation.model.LineStyle;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class WsMultiNodeGuide implements Serializable {
+public class WsMultiNodeEffect implements Serializable {
 
     @ApiModelProperty("场景id")
     private String sceneId;

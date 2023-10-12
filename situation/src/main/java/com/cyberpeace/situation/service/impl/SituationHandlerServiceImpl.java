@@ -1,5 +1,20 @@
 package com.cyberpeace.situation.service.impl;
 
+import static com.cyberpeace.situation.constant.SituationConstants.DEFAULT_LINE_WIDTH;
+
+import java.security.SecureRandom;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -12,6 +27,9 @@ import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.integratation.model.mp.MpHostEvent;
+import com.cyberpeace.integratation.model.scene.SceneEventHostListReq;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.MessageType;
@@ -26,19 +44,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
-import java.security.SecureRandom;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import static com.cyberpeace.situation.constant.SituationConstants.DEFAULT_LINE_WIDTH;
 
 @Slf4j
 @Service
@@ -48,9 +56,21 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	private TopoHandlerService topoHandlerService;
 
 	@Autowired
+	private RemoteSceneService remoteSceneService;
+
+	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	/**
+	 * 记录流量事件最后时间
+	 */
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.DAYS).build();
+
+	/**
+	 * 记录主机采集事件最后时间
+	 */
+	Cache<String, Date> lastTimeCacheHostEvent = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
 	@Override
@@ -694,6 +714,67 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			sceneData = topoHandlerService.getSceneData(sceneId, null);
 		}
 		return getSituationTopo(sceneData);
+	}
+
+	@Override
+	public List<WsMessage> pushHostEvents(String sceneId) {
+		// 获取主机事件日志
+		SceneEventHostListReq req = new SceneEventHostListReq(sceneId);
+		List<MpHostEvent> hostEventList = remoteSceneService.getHostEventList(req);
+
+		// 处理流量日志
+		List<WsMessage> wsSingleNodeDynamics = getHostEventList(hostEventList, sceneId);
+
+		// 分批推送消息
+		batchPushDataToRoom(sceneId, wsSingleNodeDynamics, 5, 5);
+
+		return wsSingleNodeDynamics;
+	}
+
+	private List<WsMessage> getHostEventList(List<MpHostEvent> hostEventList, String sceneId) {
+		List<WsMessage> messageList = Lists.newArrayList();
+
+		Date lastTime = lastTimeCacheHostEvent.getIfPresent(sceneId);
+		// 倒序，事件早的在前
+		for (MpHostEvent event : Lists.reverse(hostEventList)) {
+			Date time = event.getTime();
+
+			// 如果时间小于缓存值，跳过不处理
+			if (lastTime != null && (lastTime.after(time) || lastTime.equals(time))) {
+				continue;
+			}
+
+			// 当缓存值为空或此日志时间大于缓存值时，更新缓存值
+			Date currentLastTime = lastTimeCacheHostEvent.getIfPresent(sceneId);
+			if (currentLastTime == null || currentLastTime.before(time)) {
+				lastTimeCacheHostEvent.put(sceneId, time);
+			}
+
+			// 多个攻击类型触发多个动效
+			for (String attack : event.getAtt_cks()) {
+				// 获取类型
+				Integer category = SituationGuideScheme.AttackUrlEnum.getEnumByEnglish(attack)
+						.getCode();
+
+				WsMultiNodeEffect effect = new WsMultiNodeEffect();
+				effect.setSceneId(sceneId);
+				effect.setDuration(3);
+				effect.setName(event.getEventName());
+				effect.setCategory(category);
+				effect.setEventType(SituationGuideScheme.EventType.ATTACK.getCode());
+				effect.setSourceId(event.getTargetNodeId());
+				effect.setTargetId(event.getTargetNodeId());
+				effect.setResult(SituationGuideScheme.ResultType.SUCCESS.getCode());
+				effect.setRole(SituationGuideScheme.RoleType.RED.getCode());
+				effect.setLineStyle(new LineStyle("#FF0000", 3, "straight"));
+				// 生成消息
+				WsMessage<WsMultiNodeEffect> wsMessage = new WsMessage<>(
+						MessageType.DirectorSchedulingEE.getDesc(), effect);
+				messageList.add(wsMessage);
+			}
+		}
+
+		return messageList;
 	}
 
 }

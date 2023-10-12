@@ -272,4 +272,6 @@ public interface RemoteSceneService {
 
 	JSONArray getEventList(SceneEventContext sceneEventContext);
 
+	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);
+
 }

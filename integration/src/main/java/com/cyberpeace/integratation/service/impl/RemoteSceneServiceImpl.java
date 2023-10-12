@@ -1,5 +1,17 @@
 package com.cyberpeace.integratation.service.impl;
 
+import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -15,17 +27,8 @@ import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Lists;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
-
-import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
 @Slf4j
 @Service
@@ -126,6 +129,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String EVENT_LIST_URL;
 
+	private String HOST_EVENT_LIST;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -222,6 +227,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		EVENT_TIME_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.time");
 
 		EVENT_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.list");
+
+		HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
 	}
 
 	@Override
@@ -612,6 +619,13 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				JsonUtil.toJsonString(sceneEventContext, PropertyNamingStrategy.SnakeCase),
 				JSONObject.class);
 		return jsonObject.getJSONArray("list");
+	}
+
+	@Override
+	public List<MpHostEvent> getHostEventList(SceneEventHostListReq req) {
+		String listData =  HttpClientUtil.rawGetByParam(req, HOST_EVENT_LIST, JSONObject.class)
+				.getString("list");
+		return JsonUtil.toJsonObjectArray(listData, MpHostEvent.class);
 	}
 
 }

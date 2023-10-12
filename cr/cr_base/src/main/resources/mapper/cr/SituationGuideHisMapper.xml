@@ -48,8 +48,8 @@
         from situation_guide_history
         <where>
             1=1
-            <if test="roomId != null and roomId != ''">
-                and room_id = #{roomId}
+            <if test="sceneId != null and sceneId != ''">
+                and scene_id = #{sceneId}
             </if>
             <if test="typeList != null and typeList.size > 0">
                 and `type` in
@@ -154,5 +154,50 @@
             cr_rb_room
         </if>
         WHERE resource_id = #{roomId}
+    </select>
+
+    <select id="getEventTimeByScreen" resultType="java.lang.String">
+        select update_time
+        from situation_guide_history
+        <where>
+            1=1
+            <if test="sceneId != null and sceneId != ''">
+                and scene_id = #{sceneId}
+            </if>
+            <if test="typeList != null and typeList.size > 0">
+                and `type` in
+                <foreach collection="typeList" item="type" separator="," close=")" open="(">
+                    #{type}
+                </foreach>
+            </if>
+            <if test="eventType != null">
+                and event_type = #{eventType}
+            </if>
+            <if test="startTime != null">
+                and update_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and update_time &lt; #{endTime}
+            </if>
+            <if test="eventName != null and eventName != ''">
+                <bind name="eventName" value="'%' + eventName + '%'"/>
+                and event_name like #{eventName}
+            </if>
+            <if test="category != null">
+                and category = #{category}
+            </if>
+            <if test="sourceId != null and sourceId != ''">
+                and `source` = #{sourceId}
+            </if>
+            <if test="targetId != null and targetId != ''">
+                and target = #{targetId}
+            </if>
+            <if test="result != null">
+                and `result` = #{result}
+            </if>
+            <if test="role != null">
+                and `role` = #{role}
+            </if>
+        </where>
     </select>
 </mapper>

@@ -618,7 +618,6 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             elementMap.putAll(situationTopo.getElements());
         }
 
-        historyList.sort(Comparator.comparingLong(item -> item.getCreateTime().getTime()));
         List<GuideHistoryRsp> resultList = new ArrayList<>();
         for (SituationGuideHistory his : historyList) {
             GuideHistoryRsp guideHistoryRsp = new GuideHistoryRsp();
@@ -651,45 +650,10 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     @Override
     public List<MpEvent> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq) {
-
-        SceneEventContext sceneEventContext = new SceneEventContext();
-        //默认返回前1000条数据
-        sceneEventContext.setPage(1);
-        sceneEventContext.setPageSize(1000);
-        //获取复盘场景id
-        LocalScene localScene = localSceneService.getByBusinessInstanceId(screenGuideHistoryReq.getRoomId());
-        String sceneId;
-        if (localScene != null) {
-            sceneId = localScene.getMpSceneId();
-        } else {
-            sceneId = situationGuideHisMapper.getReplaySceneId(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
-            if (StringUtils.isBlank(sceneId)) {
-                log.info("This training [{}] hasn't start a scene, no scene to replay.", screenGuideHistoryReq.getRoomId());
-                throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
-            }
-        }
-        if (StringUtils.isBlank(sceneId)) {
+        SceneEventContext sceneEventContext = screenGuideHistoryReqToSceneEventContext(screenGuideHistoryReq);
+        if (sceneEventContext == null) {
             return new ArrayList<>();
         }
-        sceneEventContext.setSceneId(sceneId);
-        //是否查询流量事件
-        sceneEventContext.setFlow(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.FLOW.getCode()));
-        //是否查询主机事件
-        sceneEventContext.setHost(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.HOST.getCode()));
-        //是否筛选攻击
-        if (screenGuideHistoryReq.getAttackScreenBo() == null) {
-            sceneEventContext.setAttack(null);
-        } else {
-            sceneEventContext.setAttack(screenToAttackScreenContext(screenGuideHistoryReq.getAttackScreenBo(), true));
-        }
-        //是否筛选防御
-        if (screenGuideHistoryReq.getDefenseScreenBo() == null) {
-            sceneEventContext.setDefense(null);
-        } else {
-            sceneEventContext.setDefense(screenToAttackScreenContext(screenGuideHistoryReq.getDefenseScreenBo(), false));
-        }
-        //中台无阻断和归属事件，不做处理
-
         //处理成前端展示类型
         JSONArray mpEventArray = remoteSceneService.getEventList(sceneEventContext);
         return mpEventArray.toJavaList(MpEvent.class);
@@ -741,7 +705,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
                 situationGuideHistory.setEventName(execGuideHisReq.getEventName());
                 situationGuideHistory.setCategory(category);
                 situationGuideHistory.setEventType(execGuideHisReq.getActionCode());
-                situationGuideHistory.setSource(execGuideHisReq.getSourceId());
+                if (SituationGuideScheme.Type.HOST.getCode().equals(execGuideHisReq.getTriggerCode())) {
+                    //由于主机采集事件没有源节点，将源节点和目的节点设为同一个
+                    situationGuideHistory.setSource(execGuideHisReq.getTargetId());
+                } else {
+                    situationGuideHistory.setSource(execGuideHisReq.getSourceId());
+                }
                 situationGuideHistory.setTarget(execGuideHisReq.getTargetId());
                 situationGuideHistory.setResult(execGuideHisReq.getResult());
                 situationGuideHistory.setRole(execGuideHisReq.getRole());
@@ -749,6 +718,48 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             }
         }
         return situationGuideHistoryList;
+    }
+
+    @Override
+    public SceneEventContext screenGuideHistoryReqToSceneEventContext(ScreenGuideHistoryTimeLineReq screenGuideHistoryReq) {
+        SceneEventContext sceneEventContext = new SceneEventContext();
+        //默认返回前1000条数据
+        sceneEventContext.setPage(1);
+        sceneEventContext.setPageSize(1000);
+        //获取复盘场景id
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(screenGuideHistoryReq.getRoomId());
+        String sceneId;
+        if (localScene != null) {
+            sceneId = localScene.getMpSceneId();
+        } else {
+            sceneId = situationGuideHisMapper.getReplaySceneId(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
+            if (StringUtils.isBlank(sceneId)) {
+                log.info("This training [{}] hasn't start a scene, no scene to replay.", screenGuideHistoryReq.getRoomId());
+                throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
+            }
+        }
+        if (StringUtils.isBlank(sceneId)) {
+            return null;
+        }
+        sceneEventContext.setSceneId(sceneId);
+        //是否查询流量事件
+        sceneEventContext.setFlow(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.FLOW.getCode()));
+        //是否查询主机事件
+        sceneEventContext.setHost(screenGuideHistoryReq.getEventSubTypeList().contains(SituationGuideScheme.Type.HOST.getCode()));
+        //是否筛选攻击
+        if (screenGuideHistoryReq.getAttackScreenBo() == null) {
+            sceneEventContext.setAttack(null);
+        } else {
+            sceneEventContext.setAttack(screenToAttackScreenContext(screenGuideHistoryReq.getAttackScreenBo(), true));
+        }
+        //是否筛选防御
+        if (screenGuideHistoryReq.getDefenseScreenBo() == null) {
+            sceneEventContext.setDefense(null);
+        } else {
+            sceneEventContext.setDefense(screenToAttackScreenContext(screenGuideHistoryReq.getDefenseScreenBo(), false));
+        }
+        //中台无阻断和归属事件，不做处理
+        return sceneEventContext;
     }
 
     /**

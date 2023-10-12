@@ -700,8 +700,14 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     public List<SituationGuideHistory> guideHistoryRspToSituationGuideHistory(List<ExecGuideHisReq> guideHistoryRspList) {
         List<SituationGuideHistory> situationGuideHistoryList = new ArrayList<>();
         for (ExecGuideHisReq execGuideHisReq : guideHistoryRspList) {
+            String sceneId = situationGuideHisMapper.getReplaySceneId(execGuideHisReq.getRoomId(), execGuideHisReq.getBusinessType());
+            if (StringUtils.isBlank(sceneId)) {
+                log.info("This training [{}] hasn't start a scene, no scene to replay.", execGuideHisReq.getRoomId());
+                throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
+            }
             for (Integer category : execGuideHisReq.getCategoryCode()) {
                 SituationGuideHistory situationGuideHistory = new SituationGuideHistory();
+                situationGuideHistory.setSceneId(sceneId);
                 situationGuideHistory.setEventName(execGuideHisReq.getEventName());
                 situationGuideHistory.setCategory(category);
                 situationGuideHistory.setEventType(execGuideHisReq.getActionCode());

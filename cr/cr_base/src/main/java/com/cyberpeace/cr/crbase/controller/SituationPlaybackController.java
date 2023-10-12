@@ -51,7 +51,7 @@ public class SituationPlaybackController {
 
 	@ApiOperation("态势复盘时间轴")
 	@PostMapping("/playback/event/time")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
 	public BaseRsp<TimeLineRsp> getTimeLine(@RequestBody @Validated ScreenGuideHistoryTimeLineReq screenGuideHistoryTimeLineReq) {
 		TimeLineRsp timeLineRsp = new TimeLineRsp();
 		timeLineRsp.setStartTime(guideHistoryService.getStartTime(screenGuideHistoryTimeLineReq));

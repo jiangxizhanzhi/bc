@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -14,7 +13,6 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.PlaybackOptionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.guide.TimeLineRsp;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
@@ -294,18 +292,4 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(playbackOptionRsp);
 	}
 
-	@ApiOperation("返回时间轴")
-	@GetMapping("/playback/event/time")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TimeLineRsp> getTimeLine(@ApiParam(name = "room_id", value = "房间ID") @RequestParam("room_id") String roomId) {
-		TimeLineRsp timeLineRsp = new TimeLineRsp();
-		TimeLineData res = teamTeacherService.getReplayTimeline(roomId, null);
-		timeLineRsp.setStartTime(TimeUtil.format1(res.getStartTime()));
-		timeLineRsp.setEndTime(TimeUtil.format1(res.getEndTime()));
-		List<String> eventTimeList = guideHistoryService.getEventTimeList(roomId, BusinessType.TRAINING_TEAM.getCode());
-		eventTimeList = eventTimeList.stream().filter(time -> TimeUtil.toDate1(time).after(TimeUtil.toDate1(timeLineRsp.getStartTime()))
-				&& TimeUtil.toDate1(time).before(TimeUtil.toDate1(timeLineRsp.getEndTime()))).collect(Collectors.toList());
-		timeLineRsp.setEventTimeList(eventTimeList);
-		return new BaseRsp<>(timeLineRsp);
-	}
 }

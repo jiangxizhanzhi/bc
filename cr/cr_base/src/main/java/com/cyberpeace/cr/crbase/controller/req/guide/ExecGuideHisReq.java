@@ -18,6 +18,9 @@ public class ExecGuideHisReq implements Serializable {
 	@ApiModelProperty("事件名称")
 	private String eventName;
 
+	@ApiModelProperty("触发类型code")
+	private Integer triggerCode;
+
 	@ApiModelProperty("攻防类型code")
 	private List<Integer> categoryCode;
 

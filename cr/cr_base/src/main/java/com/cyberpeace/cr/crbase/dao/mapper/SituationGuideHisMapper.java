@@ -21,7 +21,7 @@ public interface SituationGuideHisMapper extends BaseMapper<SituationGuideHistor
 
     List<String> getEventNameList(@Param("roomId") String roomId, @Param("eventType") Integer eventType);
 
-    List<SituationGuideHistory> getEventByScreen(@Param("roomId") String roomId,
+    List<SituationGuideHistory> getEventByScreen(@Param("sceneId") String sceneId,
                                                  @Param("typeList") List<Integer> typeList,
                                                  @Param("eventType") Integer eventType,
                                                  @Param("startTime") Date startTime,
@@ -45,4 +45,15 @@ public interface SituationGuideHisMapper extends BaseMapper<SituationGuideHistor
 
     String getReplaySceneId(@Param("roomId") String roomId, @Param("businessType") Integer businessType);
 
+    List<String> getEventTimeByScreen(@Param("sceneId") String sceneId,
+                                      @Param("typeList") List<Integer> typeList,
+                                      @Param("eventType") Integer eventType,
+                                      @Param("startTime") Date startTime,
+                                      @Param("endTime") Date endTime,
+                                      @Param("eventName") String eventName,
+                                      @Param("category") Integer category,
+                                      @Param("sourceId") String sourceId,
+                                      @Param("targetId") String targetId,
+                                      @Param("result") Integer result,
+                                      @Param("role") Integer role);
 }

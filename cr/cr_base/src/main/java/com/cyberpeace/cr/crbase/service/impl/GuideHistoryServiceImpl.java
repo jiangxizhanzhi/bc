@@ -9,18 +9,20 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.guide.ExecGuideHisReq;
 import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryReq;
+import com.cyberpeace.cr.crbase.controller.req.guide.ScreenGuideHistoryTimeLineReq;
 import com.cyberpeace.cr.crbase.controller.rsp.PlaybackOptionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.AttackCodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.GuideHistoryRsp;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
-import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.service.GuideHistoryService;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
 import com.cyberpeace.cr.crbase.service.context.guide.MpEvent;
 import com.cyberpeace.cr.crbase.service.context.guide.ScreenBo;
+import com.cyberpeace.integratation.model.scene.SceneEventContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.PortInfo;
 import com.cyberpeace.situation.model.SituationTopo;
@@ -92,30 +94,37 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		setScreenBoTime(defenseScreenBo, startTime, endTime);
 		setScreenBoTime(blockingScreenBo, startTime, endTime);
 		setScreenBoTime(belongingScreenBo, startTime, endTime);
+
+		String sceneId = situationGuideHisMapper.getReplaySceneId(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getBusinessType());
+		if (StringUtils.isBlank(sceneId)) {
+			log.info("This training [{}] hasn't start a scene, no scene to replay.", screenGuideHistoryReq.getRoomId());
+			throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
+		}
+		List<Integer> eventSubTypeList = screenGuideHistoryReq.getEventSubTypeList();
 		//攻击
 		if (attackScreenBo != null) {
-			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getEventSubTypeList(),
+			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(sceneId, eventSubTypeList,
 					SituationGuideScheme.EventType.ATTACK.getCode(), TimeUtil.toDate1(attackScreenBo.getStartTime()),
 					TimeUtil.toDate1(attackScreenBo.getEndTime()), attackScreenBo.getEventName(), attackScreenBo.getCategory(),
 					attackScreenBo.getSource(), attackScreenBo.getTarget(), attackScreenBo.getResult(), null));
 		}
 		//防御
 		if (defenseScreenBo != null) {
-			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getEventSubTypeList(),
+			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(sceneId, eventSubTypeList,
 					SituationGuideScheme.EventType.DEFENSE.getCode(), TimeUtil.toDate1(defenseScreenBo.getStartTime()),
 					TimeUtil.toDate1(defenseScreenBo.getEndTime()), defenseScreenBo.getEventName(), defenseScreenBo.getCategory(),
 					defenseScreenBo.getSource(), defenseScreenBo.getTarget(), defenseScreenBo.getResult(), null));
 		}
 		//阻断
 		if (blockingScreenBo != null) {
-			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getEventSubTypeList(),
+			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(sceneId, eventSubTypeList,
 					SituationGuideScheme.EventType.BLOCKING.getCode(), TimeUtil.toDate1(blockingScreenBo.getStartTime()),
 					TimeUtil.toDate1(blockingScreenBo.getEndTime()), blockingScreenBo.getEventName(), null,
 					blockingScreenBo.getSource(), blockingScreenBo.getTarget(), null, null));
 		}
 		//归属
 		if (belongingScreenBo != null) {
-			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(screenGuideHistoryReq.getRoomId(), screenGuideHistoryReq.getEventSubTypeList(),
+			situationGuideHistoryList.addAll(situationGuideHisMapper.getEventByScreen(sceneId, eventSubTypeList,
 					SituationGuideScheme.EventType.BELONGING.getCode(), TimeUtil.toDate1(belongingScreenBo.getStartTime()),
 					TimeUtil.toDate1(belongingScreenBo.getEndTime()), belongingScreenBo.getEventName(), null,
 					belongingScreenBo.getSource(), null, null, belongingScreenBo.getRole()));
@@ -191,7 +200,12 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 				situationGuideHistory.setCategory(attCk.get(category));
 				situationGuideHistory.setEventName(mpEvent.getEventName());
 				situationGuideHistory.setEventType(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getCode());
-				situationGuideHistory.setSource(mpEvent.getSourceNodeId());
+				if (SituationGuideScheme.Type.HOST.getMpCode().equals(mpEvent.getTriggerType())) {
+					//主机采集没有源节点，将源节点和目的节点设为同一个
+					situationGuideHistory.setSource(mpEvent.getTargetNodeId());
+				} else {
+					situationGuideHistory.setSource(mpEvent.getSourceNodeId());
+				}
 				situationGuideHistory.setTarget(mpEvent.getTargetNodeId());
 				//中台没有攻击结果和归属，赋一个默认值
 				situationGuideHistory.setResult(SituationGuideScheme.ResultType.SUCCESS.getCode());
@@ -207,15 +221,55 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 	}
 
 	@Override
-	public List<String> getEventTimeList(String roomId, Integer businessType) {
-		List<String> eventTimes = situationGuideHisMapper.getEventTimes(roomId);
+	public List<String> getEventTimeList(ScreenGuideHistoryTimeLineReq screenGuideHistoryTimeLineReq) {
+		List<String> eventTimes = new ArrayList<>();
+
+		ScreenBo attackScreenBo = screenGuideHistoryTimeLineReq.getAttackScreenBo();
+		ScreenBo defenseScreenBo = screenGuideHistoryTimeLineReq.getDefenseScreenBo();
+		ScreenBo blockingScreenBo = screenGuideHistoryTimeLineReq.getBlockingScreenBo();
+		ScreenBo belongingScreenBo = screenGuideHistoryTimeLineReq.getBelongingScreenBo();
 		//获取复盘id
-		String sceneId = situationGuideHisMapper.getReplaySceneId(roomId, businessType);
+		String sceneId = situationGuideHisMapper.getReplaySceneId(screenGuideHistoryTimeLineReq.getRoomId(), screenGuideHistoryTimeLineReq.getBusinessType());
 		if (StringUtils.isBlank(sceneId)) {
-			log.info("This training [{}] hasn't start a scene, no scene to replay.", roomId);
+			log.info("This training [{}] hasn't start a scene, no scene to replay.", screenGuideHistoryTimeLineReq.getRoomId());
 			throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
 		}
-		JSONArray eventTimeArray = remoteSceneService.getEventTimeList(sceneId);
+		List<Integer> eventSubTypeList = screenGuideHistoryTimeLineReq.getEventSubTypeList();
+		//攻击
+		if (attackScreenBo != null) {
+			eventTimes.addAll(situationGuideHisMapper.getEventTimeByScreen(sceneId, eventSubTypeList,
+					SituationGuideScheme.EventType.ATTACK.getCode(), TimeUtil.toDate1(attackScreenBo.getStartTime()),
+					TimeUtil.toDate1(attackScreenBo.getEndTime()), attackScreenBo.getEventName(), attackScreenBo.getCategory(),
+					attackScreenBo.getSource(), attackScreenBo.getTarget(), attackScreenBo.getResult(), null));
+		}
+		//防御
+		if (defenseScreenBo != null) {
+			eventTimes.addAll(situationGuideHisMapper.getEventTimeByScreen(sceneId, eventSubTypeList,
+					SituationGuideScheme.EventType.DEFENSE.getCode(), TimeUtil.toDate1(defenseScreenBo.getStartTime()),
+					TimeUtil.toDate1(defenseScreenBo.getEndTime()), defenseScreenBo.getEventName(), defenseScreenBo.getCategory(),
+					defenseScreenBo.getSource(), defenseScreenBo.getTarget(), defenseScreenBo.getResult(), null));
+		}
+		//阻断
+		if (blockingScreenBo != null) {
+			eventTimes.addAll(situationGuideHisMapper.getEventTimeByScreen(sceneId, eventSubTypeList,
+					SituationGuideScheme.EventType.BLOCKING.getCode(), TimeUtil.toDate1(blockingScreenBo.getStartTime()),
+					TimeUtil.toDate1(blockingScreenBo.getEndTime()), blockingScreenBo.getEventName(), null,
+					blockingScreenBo.getSource(), blockingScreenBo.getTarget(), null, null));
+		}
+		//归属
+		if (belongingScreenBo != null) {
+			eventTimes.addAll(situationGuideHisMapper.getEventTimeByScreen(sceneId, eventSubTypeList,
+					SituationGuideScheme.EventType.BELONGING.getCode(), TimeUtil.toDate1(belongingScreenBo.getStartTime()),
+					TimeUtil.toDate1(belongingScreenBo.getEndTime()), belongingScreenBo.getEventName(), null,
+					belongingScreenBo.getSource(), null, null, belongingScreenBo.getRole()));
+		}
+
+		SceneEventContext sceneEventContext = situationGuideService.screenGuideHistoryReqToSceneEventContext(screenGuideHistoryTimeLineReq);
+		if (sceneEventContext == null) {
+			return eventTimes;
+		}
+
+		JSONArray eventTimeArray = remoteSceneService.getEventTimeList(sceneEventContext);
 		if (eventTimeArray != null) {
 			eventTimes.addAll(eventTimeArray.toJavaList(JSONObject.class).stream().map(eventTime -> eventTime.getString("time")).collect(Collectors.toList()));
 		}
@@ -225,12 +279,66 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 	@Override
 	public Boolean execute(ExecGuideHisReq execGuideHisReq) {
 		List<SituationGuideHistory> situationGuideHistoryList = situationGuideService.guideHistoryRspToSituationGuideHistory(Collections.singletonList(execGuideHisReq));
-		String topoId = situationGuideHisMapper.getTopoIdByRoom(execGuideHisReq.getRoomId(), execGuideHisReq.getBusinessType());
 		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
-			situationGuideHistory.setSceneId(topoId);
-			situationGuideService.pushDataToRoomByGuide(false, situationGuideHistory);
+			situationGuideService.pushDataToRoomByGuide(true, situationGuideHistory);
 		}
 		return true;
+	}
+
+	@Override
+	public String getStartTime(ScreenGuideHistoryTimeLineReq screenGuideHistoryTimeLineReq) {
+		String startTime = null;
+		ScreenBo attackScreenBo = screenGuideHistoryTimeLineReq.getAttackScreenBo();
+		ScreenBo defenseScreenBo = screenGuideHistoryTimeLineReq.getDefenseScreenBo();
+		ScreenBo blockingScreenBo = screenGuideHistoryTimeLineReq.getBlockingScreenBo();
+		ScreenBo belongingScreenBo = screenGuideHistoryTimeLineReq.getBelongingScreenBo();
+
+		startTime = getStartTime(startTime, attackScreenBo);
+		startTime = getStartTime(startTime, defenseScreenBo);
+		startTime = getStartTime(startTime, blockingScreenBo);
+		startTime = getStartTime(startTime, belongingScreenBo);
+		return startTime;
+	}
+
+	@Override
+	public String getEndTime(ScreenGuideHistoryTimeLineReq screenGuideHistoryTimeLineReq) {
+		String endTime = null;
+		ScreenBo attackScreenBo = screenGuideHistoryTimeLineReq.getAttackScreenBo();
+		ScreenBo defenseScreenBo = screenGuideHistoryTimeLineReq.getDefenseScreenBo();
+		ScreenBo blockingScreenBo = screenGuideHistoryTimeLineReq.getBlockingScreenBo();
+		ScreenBo belongingScreenBo = screenGuideHistoryTimeLineReq.getBelongingScreenBo();
+
+		endTime = getEndTime(endTime, attackScreenBo);
+		endTime = getEndTime(endTime, defenseScreenBo);
+		endTime = getEndTime(endTime, blockingScreenBo);
+		endTime = getEndTime(endTime, belongingScreenBo);
+		return endTime;
+	}
+
+	private String getStartTime(String startTime, ScreenBo screenBo) {
+		if (screenBo != null) {
+			if (startTime == null) {
+				startTime = screenBo.getStartTime();
+			} else {
+				if (TimeUtil.toDate1(startTime).after(TimeUtil.toDate1(screenBo.getStartTime()))) {
+					startTime = screenBo.getStartTime();
+				}
+			}
+		}
+		return startTime;
+	}
+
+	private String getEndTime(String endTime, ScreenBo screenBo) {
+		if (screenBo != null) {
+			if (endTime == null) {
+				endTime = screenBo.getEndTime();
+			} else {
+				if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(screenBo.getStartTime()))) {
+					endTime = screenBo.getStartTime();
+				}
+			}
+		}
+		return endTime;
 	}
 
 	//获取节点ip

@@ -145,6 +145,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return false;
 		}
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
+		log.info("try to delete mp scene, sceneId:[{}], businessId:[{}]", localScene.getMpSceneId(),
+				localScene.getBusinessInstanceId());
 
 		return remoteSceneService.stopScene(sceneOpsContext);
 	}

@@ -634,6 +634,10 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
             } else if (SituationGuideScheme.EventType.DEFENSE.getCode().equals(his.getEventType())) {
                 SituationGuideScheme.DefenseUrlEnum defenseUrlEnum = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(his.getCategory());
                 guideHistoryRsp.setCategory(Collections.singletonList(defenseUrlEnum.getMsg()));
+            } else if (SituationGuideScheme.EventType.BLOCKING.getCode().equals(his.getEventType())) {
+                guideHistoryRsp.setCategory(Collections.singletonList(SituationGuideScheme.BlockingAndBelongingUrlEnum.BLOCKING.getName()));
+            } else if (SituationGuideScheme.EventType.BELONGING.getCode().equals(his.getEventType())) {
+                guideHistoryRsp.setCategory(Collections.singletonList(SituationGuideScheme.BlockingAndBelongingUrlEnum.BELONGING.getName()));
             }
             resultList.add(guideHistoryRsp);
         }

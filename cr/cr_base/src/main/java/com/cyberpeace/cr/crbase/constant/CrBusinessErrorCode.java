@@ -480,5 +480,15 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String TEMPLATE_DELETED_OR_NOT_PERMITTED = "101141";
 
+	/**
+	 * 态势回放未选择动作类型
+	 */
+	public static final String ACTION_TYPE_NOT_SELECTED = "101142";
+
+	/**
+	 * 未选择事件类型
+	 */
+	public static final String NO_EVENT_TYPE_SELECTED = "101143";
+
 	private CrBusinessErrorCode() {}
 }

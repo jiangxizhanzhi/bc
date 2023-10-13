@@ -6,11 +6,14 @@ import com.cyberpeace.situation.controller.res.SituationTimeRes;
 import com.cyberpeace.situation.dao.entity.SituationTime;
 import com.cyberpeace.situation.dao.mapper.SituationTimeMapper;
 import com.cyberpeace.situation.service.SituationTimeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@Slf4j
 @Service
 public class SituationTimeServiceImpl implements SituationTimeService {
 
@@ -34,7 +37,11 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 		if (situationTime == null) {
 			situationTime = new SituationTime();
 			situationTime.setTopoId(topoId);
-			situationTimeMapper.insert(situationTime);
+			try {
+				situationTimeMapper.insert(situationTime);
+			} catch (DataIntegrityViolationException e) {
+				log.error("duplicate topoId:[{}]", topoId);
+			}
 		}
 	}
 

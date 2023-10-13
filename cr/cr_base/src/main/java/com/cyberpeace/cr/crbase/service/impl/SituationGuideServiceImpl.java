@@ -885,7 +885,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         } else {
             screenContext.setDefenseTypes(null);
         }
-        if (screenBo.getEventName() != null) {
+        if (StringUtils.isNotEmpty(screenBo.getEventName())) {
             screenContext.setEventName(Collections.singletonList(screenBo.getEventName()));
         } else {
             screenContext.setEventName(null);

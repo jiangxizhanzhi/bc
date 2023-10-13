@@ -191,6 +191,14 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		}
 
 		//获取中台数据,处理数据
+		ScreenBo screenBo = new ScreenBo();
+		screenBo.setEventName("123");
+		if (screenGuideHistoryReq.getAttackScreenBo() == null) {
+			screenGuideHistoryReq.setAttackScreenBo(screenBo);
+		}
+		if (screenGuideHistoryReq.getDefenseScreenBo() == null) {
+			screenGuideHistoryReq.setDefenseScreenBo(screenBo);
+		}
 		List<MpEvent> mpEventList = situationGuideService.getMpEventList(screenGuideHistoryReq);
 
 		//推送动效
@@ -202,6 +210,7 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		for (MpEvent mpEvent : mpEventList) {
 			for (String category : mpEvent.getAttCks()) {
 				SituationGuideHistory situationGuideHistory = new SituationGuideHistory();
+				situationGuideHistory.setSceneId(sceneId);
 				situationGuideHistory.setCategory(attCk.get(category));
 				situationGuideHistory.setEventName(mpEvent.getEventName());
 				situationGuideHistory.setEventType(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getCode());
@@ -269,6 +278,14 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 					belongingScreenBo.getSource(), null, null, belongingScreenBo.getRole()));
 		}
 
+		ScreenBo screenBo = new ScreenBo();
+		screenBo.setEventName("123");
+		if (screenGuideHistoryTimeLineReq.getAttackScreenBo() == null) {
+			screenGuideHistoryTimeLineReq.setAttackScreenBo(screenBo);
+		}
+		if (screenGuideHistoryTimeLineReq.getDefenseScreenBo() == null) {
+			screenGuideHistoryTimeLineReq.setDefenseScreenBo(screenBo);
+		}
 		SceneEventContext sceneEventContext = situationGuideService.screenGuideHistoryReqToSceneEventContext(screenGuideHistoryTimeLineReq);
 		if (sceneEventContext == null) {
 			return eventTimes;

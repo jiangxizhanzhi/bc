@@ -67,7 +67,7 @@ public class DemonstrationWhiteFilter implements Filter {
                 contentCache.put(filePath,content);
             }
             JSONArray jsonArray = JSON.parseArray(content);
-            if (jsonArray.contains(uri)) {
+            if (jsonArray.contains(uri)||jsonArray.contains(uri+":"+request.getMethod())) {
                 ThreadLocalContext.whiteUpdateThreadLocal.set(true);
             } else {
                 log.info("current uri is ====>"+uri);

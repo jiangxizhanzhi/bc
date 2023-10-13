@@ -1,5 +1,5 @@
 [
-  "/ojj/oj/admin/course",
+  "/ojj/oj/admin/course:GET",
   "/ojj/oj/lesson",
   "/ojj/cr/red_vs_blue/referee/evaluation/badge/click",
   "/ojj/cr/training_team/training_team_teacher/evaluation/badge/click",

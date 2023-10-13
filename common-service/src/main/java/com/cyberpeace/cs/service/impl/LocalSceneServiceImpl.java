@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.mp.MpHostState;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +20,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ListUtil;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -71,6 +70,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 
 		SceneStartContext startContext = getSceneStartContext(localScene);
+		RemoteUserService remoteUserService= SpringContextUtil
+				.getBeanByClass(RemoteUserService.class);
+		Boolean demoOpen= remoteUserService.isDemoOpen();
+		if (Boolean.TRUE.equals(demoOpen)
+				&& Boolean.TRUE.equals(!ThreadLocalContext.whiteUpdateThreadLocal.get())) {//如果是演示模式且不允许访问数据库 直接返回
+			return "";
+		}
 
 		return remoteSceneService.startScene(startContext);
 	}

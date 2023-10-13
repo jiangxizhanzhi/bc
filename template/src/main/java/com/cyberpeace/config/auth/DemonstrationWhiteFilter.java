@@ -41,12 +41,9 @@ public class DemonstrationWhiteFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        if (System.currentTimeMillis()-now>1000*60*5) {
-            RemoteUserService remoteUserService= SpringContextUtil
-                    .getBeanByClass(RemoteUserService.class);
-            demoOpen= remoteUserService.isDemoOpen();
-            now=System.currentTimeMillis();
-        }
+        RemoteUserService remoteUserService= SpringContextUtil
+                .getBeanByClass(RemoteUserService.class);
+        demoOpen= remoteUserService.isDemoOpen();
         if (Boolean.TRUE.equals(demoOpen)||"open".equals(demo)) {
             dealDemoOpen(request);
         }

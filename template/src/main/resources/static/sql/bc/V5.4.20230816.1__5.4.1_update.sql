@@ -137,8 +137,6 @@ ALTER TABLE `cr_rb_room` ADD COLUMN `scene_id_record` text null comment '训练�
 
 ALTER TABLE `cr_team_room` ADD COLUMN `scene_id_record` text null comment '训练过程中的所有场景id';
 
-ALTER TABLE cr_role MODIFY COLUMN nodes TEXT DEFAULT NULL COMMENT '角色节点';
-
 ALTER TABLE oj_course MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';
 ALTER TABLE cr_business_template MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';
 ALTER TABLE oj_note MODIFY COLUMN operation_auth_ids TEXT  COMMENT '拥有后台操作权限的用户id';

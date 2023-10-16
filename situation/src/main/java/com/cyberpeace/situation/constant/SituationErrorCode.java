@@ -62,6 +62,4 @@ public interface SituationErrorCode {
 	/** 导调方案参数不合法 */
 	String INVALID_GUIDE_SCHEME = "104020";
 
-	/** 演示环境禁止增删改 */
-	String DEMONSTRATION_FORBID_UPDATE = "104021";
 }

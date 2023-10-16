@@ -1,5 +1,20 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
@@ -14,6 +29,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.OjMessage;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -29,22 +45,8 @@ import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.cyberpeace.oj.practice.service.md.TheoryBaseMd;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "resourceImport")
 @Service
@@ -130,7 +132,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	}
 
 	@Override
-	public Boolean importTheory(String practiceSetId, String filePath, String userId) {
+	public String importTheory(String practiceSetId, String filePath, String userId) {
 		// 基本数据校验
 		PracticeSet practiceSet = practiceValidateHandler.validateSetType(practiceSetId,
 				PracticeSet.PracticeType.THEORY.getCode());
@@ -148,8 +150,23 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 			}
 		});
 
+		// 返回提示：哪些题目已存在
+		List<String> existedColumns = Lists.newArrayList();
+		Set<String> contentSet = theories.stream().map(PracticeTheory::getContent)
+				.collect(Collectors.toSet());
+		for (int i = 0; i < sheetData.size(); i++) {
+			String content = sheetData.get(i).get(0);
+			if (StringUtils.isNotBlank(content) && !contentSet.contains(content)) {
+				existedColumns.add(String.valueOf(i + 2));
+			}
+		}
+		String msg = CommonConstant.EMPTY_STRING;
+		if (!existedColumns.isEmpty()) {
+			String columnIndex = String.join(CommonConstant.CODE_COMMA, existedColumns);
+			msg = String.format(OjMessage.EXCEL_IMPORT_MSG.getMsg(), columnIndex);
+		}
 		if (CollectionUtils.isEmpty(theories)) {
-			return CommonConstant.TRUE;
+			return msg;
 		}
 
 		// 根据内容去重 防止数据多插入
@@ -158,7 +175,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theoryList.size());
 
-		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+		transactionTemplate.execute(new TransactionCallback<Boolean>() {
 
 			@Override
 			public Boolean doInTransaction(TransactionStatus status) {
@@ -166,6 +183,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 				return saveBatch(theoryList);
 			}
 		});
+		return msg;
 	}
 
 	/**

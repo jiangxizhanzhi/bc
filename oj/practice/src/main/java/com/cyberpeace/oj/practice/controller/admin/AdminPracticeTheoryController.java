@@ -195,12 +195,13 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
 
 		// 执行资源数据导入
-		Boolean result = practiceTheoryImportService.importTheory(theoryImportReq.getPracticeSetId(),
+		String result = practiceTheoryImportService.importTheory(theoryImportReq.getPracticeSetId(),
 				realPath, UserInfoContext.getUserContext().getUserId());
 		// 文件删除
 		new File(realPath).deleteOnExit();
-		return new BaseRsp<>(result);
-
+		BaseRsp<Boolean> rsp = new BaseRsp<>(true);
+		rsp.setMessage(result);
+		return rsp;
 	}
 
 }

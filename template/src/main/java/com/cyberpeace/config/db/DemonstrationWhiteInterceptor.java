@@ -1,5 +1,6 @@
 package com.cyberpeace.config.db;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.threadlocal.ThreadLocalContext;
 import com.cyberpeace.common.util.SpringContextUtil;
@@ -34,7 +35,7 @@ public class DemonstrationWhiteInterceptor implements Interceptor {
 		if ((Boolean.TRUE.equals(demoOpen)||"open".equals(demo))
 				&& Boolean.FALSE.equals(ThreadLocalContext.whiteUpdateThreadLocal.get())
 				&& !SqlCommandType.SELECT.equals(sqlCommandType)) {
-			throw new BusinessException(SituationErrorCode.DEMONSTRATION_FORBID_UPDATE);
+			throw new BusinessException(ErrorCode.DEMONSTRATION_FORBID_UPDATE);
 		}
 		return invocation.proceed();
 	}

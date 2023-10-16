@@ -269,6 +269,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean pauseScene(String localSceneId) {
+		checkDemonstration();
 		LocalScene localScene = getById(localSceneId);
 		// 1. 场景已暂停，返回true
 		return pauseScene(localScene);
@@ -276,6 +277,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean unpauseScene(String localSceneId) {
+		checkDemonstration();
 		LocalScene localScene = getById(localSceneId);
 		// 1、 确认场景处于暂停状态，可以恢复
 		return unpauseScene(localScene);
@@ -725,5 +727,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		return localScene;
+	}
+
+	private void checkDemonstration() {
+		RemoteUserService remoteUserService= SpringContextUtil
+				.getBeanByClass(RemoteUserService.class);
+		Boolean demoOpen= remoteUserService.isDemoOpen();
+		if (Boolean.TRUE.equals(demoOpen)
+				&& Boolean.TRUE.equals(!ThreadLocalContext.whiteUpdateThreadLocal.get())) {//如果是演示模式且不允许访问数据库 直接返回
+
+			throw new BusinessException(ErrorCode.DEMONSTRATION_FORBID_UPDATE);
+		}
 	}
 }

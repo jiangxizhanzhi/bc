@@ -186,4 +186,7 @@ public interface ErrorCode {
 
 	/** 笔记为空*/
 	String BLANK_NOTE = "100059";
+
+	/** 演示环境禁止增删改 */
+	String DEMONSTRATION_FORBID_UPDATE = "104021";
 }

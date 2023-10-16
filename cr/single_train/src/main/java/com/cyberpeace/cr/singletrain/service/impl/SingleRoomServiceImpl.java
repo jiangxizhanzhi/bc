@@ -1186,12 +1186,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			// 训练时长为0
 			result.setTimeCost(0L);
 			result.setStarted(false);
+			result.setRunning(false);
 		} else {
 			// training started
 			result = getMatrixProgress(room);
+			result.setStarted(true);
 			TrainingTimeCost trainingTimeCost = trainRecordService
 					.getTimeCostLong(room.getResourceId());
-			result.setStarted(trainingTimeCost.getRunning());
+			result.setRunning(trainingTimeCost.getRunning());
 			result.setTimeCost(trainingTimeCost.getTimeCost());
 			// 提交之后认为训练已停止
 		}

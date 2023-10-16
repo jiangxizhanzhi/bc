@@ -20,8 +20,11 @@ public class SingleMatrixProgressRsp implements Serializable {
 	@ApiModelProperty(value = "用户头像")
 	private String userAvatar;
 
-	@ApiModelProperty(value = "训练是否开启")
+	@ApiModelProperty(value = "场景是否开启")
 	private Boolean started;
+
+	@ApiModelProperty(value = "训练是否正在运行")
+	private Boolean running;
 
 	@ApiModelProperty(value = "成功数")
 	private Integer successful;

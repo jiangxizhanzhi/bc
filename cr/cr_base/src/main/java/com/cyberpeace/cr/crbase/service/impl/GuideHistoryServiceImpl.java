@@ -355,8 +355,8 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			if (endTime == null) {
 				endTime = screenBo.getEndTime();
 			} else {
-				if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(screenBo.getStartTime()))) {
-					endTime = screenBo.getStartTime();
+				if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(screenBo.getEndTime()))) {
+					endTime = screenBo.getEndTime();
 				}
 			}
 		}

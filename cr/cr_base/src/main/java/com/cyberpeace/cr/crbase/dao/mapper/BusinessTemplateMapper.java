@@ -33,7 +33,7 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 	List<String> getExistedNames(@Param("templateNames") List<String> templateNames);
 
-	String getIdByName(@Param("templateName") String templateName);
+	BusinessTemplate getByName(@Param("templateName") String templateName);
 
 	/**
 	 * 校验模板名称

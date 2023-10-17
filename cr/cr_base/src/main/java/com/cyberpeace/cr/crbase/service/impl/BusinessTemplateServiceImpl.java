@@ -192,8 +192,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public String getIdByName(String templateName) {
-		return businessTemplateMapper.getIdByName(templateName);
+	public BusinessTemplate getByName(String templateName) {
+		return businessTemplateMapper.getByName(templateName);
 	}
 
 	@Override

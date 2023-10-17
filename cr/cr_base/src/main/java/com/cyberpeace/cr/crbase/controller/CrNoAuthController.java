@@ -25,6 +25,7 @@ import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.resource.MDParser;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Sets;
 
@@ -47,6 +48,9 @@ public class CrNoAuthController {
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Autowired
 	private MissionTemplateService missionTemplateService;
@@ -89,12 +93,14 @@ public class CrNoAuthController {
 			// 资管导入的模板不同类型没有重名，只需要用name验证是否已导入
 			String templateName = mdParser.getName();
 			boolean overWritten;
-			String businessTemplateId = businessTemplateService.getIdByName(templateName);
+			BusinessTemplate oldBt = businessTemplateService.getByName(templateName);
+			String businessTemplateId;
 			// 已存在则覆盖更新训练模板
-			if (businessTemplateId == null) {
+			if (oldBt == null) {
 				businessTemplateId = IDGeneratorUtil.getID();
 				overWritten = false;
 			} else {
+				businessTemplateId = oldBt.getResourceId();
 				log.info(String.format("Template [%s] already exists. Gonna overwrite it.",
 						templateName));
 				overWritten = true;
@@ -145,6 +151,14 @@ public class CrNoAuthController {
 
 				}
 			});
+			// 删除被覆盖的旧topo
+			if (overWritten) {
+				try {
+					remoteTopoService.deleteById(oldBt.getTopoId());
+				} catch (Exception e) {
+					log.error("failed to delete out-dated topo: [{}]", oldBt.getTopoId(), e);
+				}
+			}
 		}
 
 		return new BaseRsp<>(true);

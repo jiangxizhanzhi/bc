@@ -3,9 +3,12 @@ package com.cyberpeace.cs.service.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.impl.TraceIdContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -58,6 +61,10 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	@Qualifier("taskExecutor")
+	private Executor executor;
 
 	@Override
 	public LocalScene getByBusinessInstanceId(String businessInstanceId) {
@@ -314,6 +321,17 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		RenameTopoContext context = new RenameTopoContext(topoId, name);
 		return name.equals(
 				remoteTopoService.sync(JsonUtil.java2JsonObject(context)).getString("name"));
+	}
+
+	@Override
+	public String copyTopo(String topoId, String name) {
+		String copiedTopoId = remoteTopoService.copyTopo(topoId);
+		String traceId = TraceIdContext.getTraceId();
+		executor.execute(() -> {
+			TraceIdContext.setTraceId(traceId);
+			this.renameTopo(copiedTopoId, name);
+		});
+		return copiedTopoId;
 	}
 
 	@Override

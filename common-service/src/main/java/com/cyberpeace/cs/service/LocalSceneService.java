@@ -64,6 +64,15 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	Boolean renameTopo(String topoId, String name);
 
+	/**
+	 * 复制拓扑，并重命名
+	 *
+	 * @param topoId 拓扑id
+	 * @param name   名称
+	 * @return {@code String}
+	 */
+	String copyTopo(String topoId, String name);
+
 	Integer getNodeCount(LocalScene localScene);
 
 	Integer getNodeCount(String localSceneId);

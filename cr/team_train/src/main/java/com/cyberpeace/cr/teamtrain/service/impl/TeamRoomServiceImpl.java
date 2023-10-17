@@ -67,6 +67,7 @@ import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -115,6 +116,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private RemoteTopoService remoteTopoService;
 
 	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
 	private CrTimelineService crTimelineService;
 
 	@Autowired
@@ -148,7 +152,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		TeamRoom teamRoom = new TeamRoom(teamTrainRoomContext, template);
 		teamRoom.setCreateUserId(userId);
-		teamRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
+		teamRoom.setCopyedTopoId(localSceneService.copyTopo(businessTemplate.getTopoId(), teamRoom.getName()));
 		teamRoom.setTeamTemplateName(businessTemplate.getName());
 		teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
 		// 行业态势-攻击路径

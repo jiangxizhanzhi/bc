@@ -123,6 +123,10 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 			if (Objects.isNull(sourceElement) || Objects.isNull(targetElement)) {
 				situationGuideListRsp.setIsExecuted(false);
 			}
+
+			if(SituationGuideScheme.EventType.BELONGING.getCode().equals(situationGuideListRsp.getEventType()) && !situationGuideListRsp.getTargetName().equals(situationGuideListRsp.getTarget())){
+			    situationGuideListRsp.setIsExecuted(true);
+            }
             if (SituationGuideScheme.EventType.ATTACK.getCode().equals(situationGuideListRsp.getEventType())) {
                 SituationGuideScheme.AttackUrlEnum enumByCode = SituationGuideScheme.AttackUrlEnum.getEnumByCode(situationGuideListRsp.getCategory());
                 situationGuideListRsp.setCategoryName(enumByCode.getMsg());

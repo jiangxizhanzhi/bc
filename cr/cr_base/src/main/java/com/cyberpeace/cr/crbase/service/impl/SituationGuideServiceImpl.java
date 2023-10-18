@@ -896,7 +896,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         }
         List<String> sourceNodeIds = StringUtils.isBlank(screenBo.getSource()) ? null : Collections.singletonList(screenBo.getSource());
         screenContext.setSourceNodeIds(sourceNodeIds);
-        List<String> targetNodeIds = StringUtils.isBlank(screenBo.getSource()) ? null : Collections.singletonList(screenBo.getTarget());
+        List<String> targetNodeIds = StringUtils.isBlank(screenBo.getTarget()) ? null : Collections.singletonList(screenBo.getTarget());
         screenContext.setTargetNodeIds(targetNodeIds);
         return screenContext;
     }

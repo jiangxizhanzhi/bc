@@ -386,6 +386,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public void deleteRemoteScene(LocalScene localScene) {
+		checkDemonstration();
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 		remoteSceneService.stopScene(sceneOpsContext);
 	}

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.service.LocalSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,6 +94,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	private RemoteTopoService remoteTopoService;
 
 	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
 	private RemoteUserService remoteUserService;
 
 	@Autowired
@@ -162,7 +166,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		RbRoom rbRoom = new RbRoom(rbRoomContext, template);
 		rbRoom.setCreateUserId(userId);
-		rbRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
+		rbRoom.setCopyedTopoId(localSceneService.copyTopo(businessTemplate.getTopoId(), rbRoom.getName()));
 
 		// 复制完topo后修改部分启动状态
 		remoteTopoService.setSupportPartialStart(rbRoom.getCopyedTopoId(),

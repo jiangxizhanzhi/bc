@@ -170,11 +170,13 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	/**
 	 * 用于资管：读取某名称的模板id
 	 * 结果为null代表不存在
+	 * 假定不回存在重名
+	 * limit 1
 	 *
 	 * @param templateName 模板名称
 	 * @return 模板id
 	 */
-	String getIdByName(String templateName);
+	BusinessTemplate getByName(String templateName);
 
 	/**
 	 * 更新模板

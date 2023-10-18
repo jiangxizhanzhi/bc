@@ -140,10 +140,11 @@
         </where>
         order by update_time desc
     </select>
-    <select id="getIdByName" resultType="java.lang.String">
-        select resource_id
+    <select id="getByName" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
+        select *
         from cr_business_template
         where name = #{templateName}
+        limit 1
     </select>
     <select id="getBatchIdsByNames" resultType="java.lang.String">
         select resource_id

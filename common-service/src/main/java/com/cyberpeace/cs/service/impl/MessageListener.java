@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -148,6 +149,8 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 		boolean result = true;
 		try {
+			//演示模式允许修改
+			ThreadLocalContext.whiteUpdateThreadLocal.set(true);
 			switch (type) {
 				case SCENE_DELETE:
 					String sceneId = object.getString("data");
@@ -191,6 +194,8 @@ public class MessageListener implements ChannelAwareMessageListener {
 		} catch (Exception e) {
 			log.error("message=[{}] handler error", message, e);
 			result = false;
+		} finally {
+			ThreadLocalContext.whiteUpdateThreadLocal.set(false);
 		}
 
 		return result;

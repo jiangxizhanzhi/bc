@@ -11,6 +11,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.guide.*;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
@@ -91,6 +92,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SituationGuideScheme::getRoomId, req.getRoomId());
         queryWrapper.eq(SituationGuideScheme::getType, SituationGuideScheme.Type.MANUALLY.getCode());
+        req.setPerPage(CrCommonConstants.PER_PAGE);
         Page<SituationGuideScheme> page = page(req.toPageParam(), queryWrapper);
         page.convert(item -> {
             SituationGuideListRsp situationGuideListRsp = new SituationGuideListRsp();

@@ -101,4 +101,6 @@ public final class CrCommonConstants {
 
 	private CrCommonConstants() {}
 
+	public static final int PER_PAGE = 9999;
+
 }

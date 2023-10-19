@@ -69,14 +69,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			switchRecording(localScene.getTopoId(), localScene.getRecord());
 		}
 
+		checkDemonstration();
 		SceneStartContext startContext = getSceneStartContext(localScene);
-		RemoteUserService remoteUserService= SpringContextUtil
-				.getBeanByClass(RemoteUserService.class);
-		Boolean demoOpen= remoteUserService.isDemoOpen();
-		if (Boolean.TRUE.equals(demoOpen)
-				&& Boolean.TRUE.equals(!ThreadLocalContext.whiteUpdateThreadLocal.get())) {//如果是演示模式且不允许访问数据库 直接返回
-			return "";
-		}
+
 
 		return remoteSceneService.startScene(startContext);
 	}
@@ -146,6 +141,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean stopScene(LocalScene localScene) {
+		checkDemonstration();
 		if (null == localScene) {
 			return false;
 		}
@@ -590,6 +586,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public void updateScene(LocalScene localScene, JSONObject updateScene) {
+		checkDemonstration();
 		SceneUpdateContext context = getSceneUpdateContext(localScene);
 		context.setUpdate_scene(updateScene);
 		remoteSceneService.updateScene(context);

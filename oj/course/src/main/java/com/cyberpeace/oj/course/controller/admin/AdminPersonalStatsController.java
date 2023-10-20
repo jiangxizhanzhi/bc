@@ -119,6 +119,9 @@ public class AdminPersonalStatsController {
 			List<JSONObject> roles = item.getRoles();
 			StringBuilder role = new StringBuilder();
 			for(JSONObject obj:roles){
+				if(null == obj){
+					continue;
+				}
 				Object name = obj.get("name");
 				if(null != name){
 					role.append(name);

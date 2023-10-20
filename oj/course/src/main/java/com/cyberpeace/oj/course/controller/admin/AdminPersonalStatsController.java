@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ExcelHeader;
@@ -113,14 +114,25 @@ public class AdminPersonalStatsController {
 	public void userStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
 		ListRsp<UserStatsBo> userStats = learnStatsService.getUserStats(userStatsReq.toPageParam(), null, null,
 				false, userStatsReq.getStartTime(), userStatsReq.getEndTime());
+		List<UserStatsBo> list = userStats.getList();
+		for(UserStatsBo item:list){
+			List<JSONObject> roles = item.getRoles();
+			StringBuilder role = new StringBuilder();
+			for(JSONObject obj:roles){
+				Object name = obj.get("name");
+				if(null != name){
+					role.append(name);
+				}
+			}
+			item.setRole(role.toString());
+		}
 
-		List<String> passFields = Lists.newArrayList("roles", "reportAverage", "resourceId",
-				"username", "avatar");
+		List<String> passFields = Lists.newArrayList( "roles","resourceId", "avatar");
 		String sheetName = ExcelHeader.SHEETNAME.getHeader()[0];
 		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
 				+ CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
 
-		File file = ExcelDataHandler.exportExcel(userStats.getList(), filePath, sheetName,
+		File file = ExcelDataHandler.exportExcel(list, filePath, sheetName,
 				passFields, ExcelHeader.STUDY_STATISTIC);
 		FileUtil.setResponse(file, true, response);
 	}
@@ -129,7 +141,7 @@ public class AdminPersonalStatsController {
     public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
         ListRsp<OrgStatsBo> orgStatsData = learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), null, null,
                 userStatsReq.getStartTime(), userStatsReq.getEndTime(), false);
-        List<String> passFields = Lists.newArrayList( "resourceId", "reportAverage");
+        List<String> passFields = Lists.newArrayList( "resourceId");
         String sheetName = ExcelHeader.SHEETNAME.getHeader()[0];
         String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
                 + CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();

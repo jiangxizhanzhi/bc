@@ -6,15 +6,15 @@ public enum ExcelHeader {
 
 	SHEETNAME(new String[]{"学习数据"},new String[]{"Study data"},new String[]{"desc"}),
 
-	STUDY_STATISTIC(new String[] {"姓名", "组织", "完成课时数", "完成课后练习数", "完成实验数", "参加考试次数"},
-			new String[] {"Name", CommonConstant.ORG, "Number of classes completed",
+	STUDY_STATISTIC(new String[]{"用户名", "姓名", "组织", "角色", "完成课时数", "完成课后练习数", "完成实验数", "参加考试次数", "实验平均得分"},
+			new String[]{"UserName", "Name", CommonConstant.ORG, "Role", "Number of classes completed",
 					"Number of exercises completed after class", "Number of completed experiments",
-					"Number of examinations taken"
+					"Number of examinations taken", "Number of examinations taken", "Experimental mean score"
 			},
-			new String[] {"desc"}),
-	ORG_STUDY_STATISTIC(new String[] {"组织", "人数", "完成课时数", "完成课后练习数", "完成实验数","参加考试次数"},
-			new String[] {CommonConstant.ORG, "Participation", "Number of classes completed",
-					"Number of exercises completed after class", "Number of completed experiments","Number of examinations taken"},
+			new String[]{"desc"}),
+	ORG_STUDY_STATISTIC(new String[]{"组织", "人数", "完成课时数", "完成课后练习数", "完成实验数", "参加考试次数", "实验平均得分"},
+			new String[]{CommonConstant.ORG, "Participation", "Number of classes completed",
+					"Number of exercises completed after class", "Number of completed experiments", "Number of examinations taken", "Experimental mean score"},
 			new String[] {"desc"}),
 	TRAIN_PLAN(new String[] {"计划名称", "课程名", "课时名", "开始时间", "结束时间", "组织"},
 			new String[] {"Plan Name", "Course Name", "Course Hour Name", "Start time", "End time", CommonConstant.ORG},

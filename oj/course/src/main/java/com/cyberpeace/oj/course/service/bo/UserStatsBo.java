@@ -24,6 +24,9 @@ public class UserStatsBo extends PublicStatsBo {
     private String organizationData;
 
     @ApiModelProperty("用户角色")
+    private String role;
+
+    @ApiModelProperty("用户角色")
     private List<JSONObject> roles;
 
     @ApiModelProperty("用户头像")

@@ -344,28 +344,37 @@ public class CrSceneServiceImpl implements CrSceneService {
 	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
 			String businessId) {
 		ExecutorService exec = Executors.newCachedThreadPool();
+		UserInfo userContext = UserInfoContext.getUserContext();
 		exec.submit(() -> {
+			UserInfoContext.setUserContext(userContext);
 		for (FlowInfoContext flowContext : flows) {
-			FlowOpsContext flowOpsContext = BeanUtils.copy(flowContext,
-					com.cyberpeace.integratation.model.scene.FlowOpsContext.class);
-			flowOpsContext.setId(mpSceneId);
-			flowOpsContext.setNodeId(nodeId);
 
-			// 设置实例id
-			SceneMpContext context = new SceneMpContext();
-			context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID, businessId);
-			FlowUpdateContext flowUpdateContext = new FlowUpdateContext(mpSceneId, nodeId,
-					Lists.newArrayList(flowContext.getFlowId()));
-			context.getPass_through().put(WebConstant.PASS_THROUGH_EXTENSION,
-					JsonUtil.toJsonString(flowUpdateContext));
-			flowOpsContext.setContext(context);
+			try {
+				FlowOpsContext flowOpsContext = null;
+				flowOpsContext= new FlowOpsContext();
+				flowOpsContext.setFlow_id(flowContext.getFlowId());
+				flowOpsContext.setSource_ip(flowContext.getSourceIp());
+				flowOpsContext.setId(mpSceneId);
+				flowOpsContext.setNodeId(nodeId);
+				// 设置实例id
+				SceneMpContext context = new SceneMpContext();
+				context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID, businessId);
+				FlowUpdateContext flowUpdateContext = new FlowUpdateContext(mpSceneId, nodeId,
+						Lists.newArrayList(flowContext.getFlowId()));
+				context.getPass_through().put(WebConstant.PASS_THROUGH_EXTENSION,
+						JsonUtil.toJsonString(flowUpdateContext));
+				flowOpsContext.setContext(context);
+				Boolean result = remoteSceneService.startFlow(flowOpsContext);
 
-			Boolean result = remoteSceneService.startFlow(flowOpsContext);
-
-			if (!result) {
-				log.error("Failed to start flow! flowOpsContext = [{}]", JsonUtil.toJsonString(flowContext));
-				throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
+				if (!result) {
+					log.error("Failed to start flow! flowOpsContext = [{}]", JsonUtil.toJsonString(flowContext));
+					throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
+				}
+			} catch (Exception e) {
+				log.error(e.getMessage(),e);
+				throw e;
 			}
+
 		}
         });
 		return true;

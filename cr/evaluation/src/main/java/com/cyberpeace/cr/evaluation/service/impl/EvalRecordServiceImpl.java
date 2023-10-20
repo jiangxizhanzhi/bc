@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -192,8 +193,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         // 校验用户权限
-        if (!Objects.equals(evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId())) {
-            log.error("Permission denied! CreateUserId = [{}], UserId = [{}]", evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId());
+        EvalTemplate evalTemplate = evalTemplateService.getById(evalTask.getTemplateId());
+        Integer operationAuthType = evalTemplate.getOperationAuthType();
+        String userId = UserInfoContext.getUserContext().getUserId();
+        if (!Objects.equals(evalTask.getCreateUserId(), userId) && operationAuthType.equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode()) && !evalTemplate.getOperationAuthIds().contains(userId) && !evalTemplate.getCreateUserId().equals(userId)) {
+            log.error("Permission denied! CreateUserId = [{}], UserId = [{}]", evalTask.getCreateUserId(), userId);
             throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
         }
 

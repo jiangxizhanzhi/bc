@@ -10,11 +10,11 @@ public class PublicStatsBo implements Serializable {
     @ApiModelProperty("完成课时数量")
     private Integer lessonRecordCount = 0;
 
-    @ApiModelProperty("完成练习数量")
-    private Integer finishPracticeCount = 0;
-
     @ApiModelProperty("完成实验数量")
     private Integer finishReportCount = 0;
+
+    @ApiModelProperty("完成练习数量")
+    private Integer finishPracticeCount = 0;
 
     @ApiModelProperty("完成考试数")
     private Integer finishExamCount = 0;

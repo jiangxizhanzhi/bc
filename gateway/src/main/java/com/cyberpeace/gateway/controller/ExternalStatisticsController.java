@@ -10,6 +10,7 @@ import com.cyberpeace.situation.constant.ws.DefenseType;
 import com.cyberpeace.situation.controller.res.SituationTimeRes;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.AttackMessageHistoryService;
+import com.cyberpeace.situation.service.SituationStatisticsService;
 import com.cyberpeace.situation.service.SituationTimeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +38,37 @@ public class ExternalStatisticsController {
 
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
+
+	@Autowired
+	private SituationStatisticsService situationStatisticsService;
+
+	@ApiOperation("攻击趋势")
+	@GetMapping("/scene_trend")
+	public BaseRsp<List<SceneTrend>> getSceneTrend() {
+		return new BaseRsp<>((List) situationStatisticsService.getSceneTrendList());
+	}
+
+	@ApiOperation("攻击流量")
+	@GetMapping("/flow")
+	public BaseRsp<List<SceneTrend>> getFlow() {
+		return new BaseRsp<>((List) situationStatisticsService.getFlowList());
+	}
+
+	@ApiOperation("运行时间")
+	@GetMapping("/run_time")
+	public BaseRsp<String> getRunTime(
+			@ApiParam(name = "resource_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId) {
+		String sceneId = convertId(resourceId);
+		return new BaseRsp<>(situationTimeService.getRunTime(sceneId));
+	}
+
+	@ApiOperation("刷新节点状态")
+	@GetMapping("/refresh_node_status")
+	public void refreshNodeStatus(
+			@ApiParam(name = "resource_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId) {
+		String sceneId = convertId(resourceId);
+		attackMessageHistoryService.pushParalysisNodeStatus(sceneId);
+	}
 
 	@ApiOperation("攻击手法Top5")
 	@GetMapping("/attack_type_count_top")

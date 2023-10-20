@@ -8,6 +8,7 @@ import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsDetailRes;
 import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,7 +29,7 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	IPage<AdminLessonStatisticsRes> listLessonByPage(Page<AdminLessonStatisticsRes> page, @Param("courseId") String courseId,
 			@Param("isPublic") Boolean isPublic, Integer type, String search);
 
-	List<AdminLessonStatisticsRes> listLessonPractice(@Param("lessonIds") List<String> lessonIds);
+	List<LessonPaperEvaluate> listLessonPractice(@Param("lessonIds") List<String> lessonIds);
 
 	IPage<AdminLessonStatisticsDetailRes> listLessonLearnedRecord(Page<AdminLessonStatisticsDetailRes> page,
 			@Param("userIds") List<String> userIds, @Param("lessonId") String lessonId);

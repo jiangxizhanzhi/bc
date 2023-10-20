@@ -134,15 +134,14 @@
         </if>
     </select>
 
-    <select id="listLessonPractice" resultMap="lessonListMap">
-        select lesson_id as resource_id, group_concat(record separator '_') as record from oj_lesson_paper_evaluate
+    <select id="listLessonPractice" resultType="com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate">
+        select lesson_id, record from oj_lesson_paper_evaluate
         <if test="lessonIds != null and lessonIds.size() != 0">
-            where oj_lesson_paper_evaluate.lesson_id in
+            where lesson_id in
             <foreach collection="lessonIds" item="lessonId" separator="," open="(" close=")">
                 #{lessonId}
             </foreach>
         </if>
-        group by lesson_id
     </select>
 
     <select id="listLessonLearnedRecord" resultMap="lessonDetailMap">

@@ -3,15 +3,14 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
@@ -26,11 +25,11 @@ import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
 import com.cyberpeace.oj.course.controller.res.HistogramRes;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.LessonPaperEvaluate;
 import com.cyberpeace.oj.course.dao.mapper.CourseLearnStatisticsMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsService {
@@ -116,36 +115,37 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	}
 
 	@Override
-	public ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String courseId, Page<AdminLessonStatisticsRes> page,
-			LessonStatisticsListReq pageReq) {
+	public ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String courseId,
+			Page<AdminLessonStatisticsRes> page, LessonStatisticsListReq pageReq) {
 		IPage<AdminLessonStatisticsRes> rsp = courseLearnStatisticsMapper.listLessonByPage(page,
 				courseId, true, pageReq.getType(), pageReq.getSearch());
 		List<String> lessonIds = StreamApiUtils.map(rsp.getRecords(),
 				AdminLessonStatisticsRes::getResourceId);
-		List<AdminLessonStatisticsRes> lessonPractices = courseLearnStatisticsMapper
+		List<LessonPaperEvaluate> recordList = courseLearnStatisticsMapper
 				.listLessonPractice(lessonIds);
-		Map<String, AdminLessonStatisticsRes> resMap = lessonPractices.stream().collect(
-				Collectors.toMap(AdminLessonStatisticsRes::getResourceId, a -> a));
+		Map<String, List<LessonPaperEvaluate>> resMap = StreamApiUtils.groupBy(recordList,
+				LessonPaperEvaluate::getLessonId);
 		List<AdminLessonStatisticsRes> res = rsp.getRecords().stream().map(rspRecord -> {
 
-			AdminLessonStatisticsRes adminLessonStatisticsRes = resMap
-					.get(rspRecord.getResourceId());
-			if (null == adminLessonStatisticsRes) {
+			List<LessonPaperEvaluate> evaluateList = resMap.get(rspRecord.getResourceId());
+
+			if (null == evaluateList) {
 				return rspRecord;
 			}
-			String record = adminLessonStatisticsRes.getRecord();
-			String[] records = record.split("_");
 			int practiceCount = 0;
-			for (String item : records) {
-				practiceCount = practiceCount + JSON.parseArray(item).size();
+			for (LessonPaperEvaluate evaluate : evaluateList) {
+				String recordObject = evaluate.getRecord();
+				practiceCount = practiceCount + JSON.parseArray(recordObject).size();
 			}
 			rspRecord.setPracticeCount(practiceCount);
 			return rspRecord;
 		}).collect(Collectors.toList());
 		rsp.setRecords(res);
-		//根据完成练习次数排序
-		if(page.getOrders() != null && page.getOrders().size() >0 && ((OrderItem)page.getOrders().get(0)).getColumn().equals("practice_count")){
-			PageUtil.setPageOrder(page, "practiceCount", ((OrderItem)page.getOrders().get(0)).isAsc());
+		// 根据完成练习次数排序
+		if (page.getOrders() != null && page.getOrders().size() > 0
+				&& ((OrderItem) page.getOrders().get(0)).getColumn().equals("practice_count")) {
+			PageUtil.setPageOrder(page, "practiceCount",
+					((OrderItem) page.getOrders().get(0)).isAsc());
 			return PageUtil.getListResult(rsp.getRecords(), page, rsp.getTotal());
 		}
 		return PageUtil.getListResult(rsp);

@@ -89,7 +89,7 @@ public class HtmlToPdfUtil {
 			// FreeMarker配置
 			Configuration config = new Configuration(Configuration.VERSION_2_3_28);
 			config.setDefaultEncoding("UTF-8");
-
+			config.setClassicCompatible(true);
 			// 注意这里是模板所在文件夹，不是文件
 			config.setDirectoryForTemplateLoading(new File(htmlTemplateEnum.getTemplatePath()));
 			config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);

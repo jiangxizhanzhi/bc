@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
+import com.cyberpeace.cr.crbase.service.context.score.GetScoreRsp;
+import com.cyberpeace.cr.crbase.service.context.score.SkillScoreContext;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.collections.CollectionUtils;
 
 @Data
 public class TrainReportExportContext extends TrainReportContext {
@@ -63,7 +67,22 @@ public class TrainReportExportContext extends TrainReportContext {
 		attackTypeAllCount=getAttackTypeCount()==null?0:getAttackTypeCount().stream().mapToInt(AttackTypeCount::getTimes).sum();
 		sceneTrendSizeString = getSceneTrend()==null?"": getSceneTrend().stream().map(a->a.getData_size()+"").collect(Collectors.joining(","));
 		sceneTrendTimeString = getSceneTrend()==null?"":getSceneTrend().stream().map(a->"'"+a.getTime()+"'").collect(Collectors.joining(","));
+		dealScoreRsp(getGetScoreRsps());
+
     }
+
+	private void dealScoreRsp(List<GetScoreRsp> redGetScoreRsps) {
+		for (GetScoreRsp redGetScoreRsp : redGetScoreRsps) {
+			List<SkillScoreContext> skillScoreContextList = redGetScoreRsp.getSkillScoreContextList();
+			if (CollectionUtils.isNotEmpty(skillScoreContextList)) {
+				for (SkillScoreContext skillScoreContext : skillScoreContextList) {
+					if (skillScoreContext.getScore()!=null&&skillScoreContext.getScore()==0) {
+						skillScoreContext.setScore(null);
+					}
+				}
+			}
+		}
+	}
 
 	public String getKindString(Map<String, Integer> map) {
 		if (map == null || map.size() == 0) {

@@ -140,7 +140,7 @@ public class TrainReportContext {
 				.filter(a -> RbRoleGroup.BLUE.getCode().equals(a.getType()))
 				.collect(Collectors.toList());
 		AtomicReference<Integer> index = new AtomicReference<>(1);
-		if (isRb) {
+		if (Boolean.TRUE.equals(isRb)) {
 			redGetScoreRsps.forEach(a -> a.setIndex(index.getAndSet(index.get() + 1)));
 			index.set(1);
 			blueGetScoreRsps.forEach(a -> a.setIndex(index.getAndSet(index.get() + 1)));

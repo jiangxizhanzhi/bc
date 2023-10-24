@@ -1,5 +1,6 @@
-ALTER TABLE cr_rb_time_management ADD COLUMN length int(11) NOT NULL COMMENT '已记录训练时长';
-ALTER TABLE cr_rb_time_management ADD COLUMN recover_time datetime(6) not null comment '恢复时间';
+ALTER TABLE cr_rb_time_management ADD COLUMN length int(11) NOT NULL DEFAULT 0 COMMENT '已记录训练时长';
+ALTER TABLE cr_rb_time_management ADD COLUMN recover_time datetime(6) not null default now() comment '恢复时间';
+UPDATE cr_rb_time_management set recover_time = create_time;
 ALTER TABLE cr_rb_time_management ADD COLUMN end_time datetime(6) null comment '结束时间';
 
 CREATE TABLE `situation_guide_scheme` (

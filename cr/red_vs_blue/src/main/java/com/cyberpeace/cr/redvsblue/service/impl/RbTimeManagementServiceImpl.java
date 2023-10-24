@@ -157,14 +157,16 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 		}
 	}
 
-    @Override
-    public Date getActualEndTime(String roomId) {
+	@Override
+	public Date getActualEndTime(String roomId) {
 		RbTimeManagement management = this.getByRoomId(roomId);
-		if(null != management && management.isStopped()){
-			return management.getEndTime();
+		if (null != management && management.isStopped()) {
+			// 兼容升级到5.4.1之前就结束的训练
+			return management.getEndTime() == null ? management.getUpdateTime()
+					: management.getEndTime();
 		} else {
 			log.error("training not existing or not ended: [{}]", roomId);
 			return null;
 		}
-    }
+	}
 }

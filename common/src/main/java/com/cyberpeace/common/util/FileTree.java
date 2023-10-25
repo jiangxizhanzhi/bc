@@ -114,15 +114,13 @@ public class FileTree {
 			String filePath = entry.getName();
 
 			// 忽略文件夹本身
-			if (filePath.endsWith(SEPARATOR)) {
-				continue;
-			}
+			if (!filePath.endsWith(SEPARATOR)) {
+				File file = addFile(filePath);
 
-			File file = addFile(filePath);
-
-			try (OutputStream output = new FileOutputStream(file)) {
-				for (int i = 0; i < entry.getSize(); i++) {
-					output.write(zipInputStream.read());
+				try (OutputStream output = new FileOutputStream(file)) {
+					for (int i = 0; i < entry.getSize(); i++) {
+						output.write(zipInputStream.read());
+					}
 				}
 			}
 		}
@@ -159,9 +157,6 @@ public class FileTree {
 					}
 					bos.write(tag);
 				}
-
-				bis.close();
-				fos.close();
 			}
 		}
 	}

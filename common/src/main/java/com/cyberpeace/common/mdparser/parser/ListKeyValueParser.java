@@ -28,11 +28,11 @@ public class ListKeyValueParser implements MdContentParser<Map<String, String>, 
 		String[] items = parserValue.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
 
 		List<String> valueList = StreamApiUtils.filter(Arrays.asList(items),
-				item -> StringUtils.isNotBlank(item));
+				StringUtils::isNotBlank);
 
-		for (int i = 0; i < valueList.size(); i++) {
+		for (int i = 0; i < valueList.size(); i+=2) {
 			String key = valueList.get(i);
-			int valueIndex = i++;
+			int valueIndex = i;
 			String value = valueIndex >= valueList.size() ? "" : valueList.get(valueIndex);
 			map.put(key, value);
 		}
@@ -43,12 +43,11 @@ public class ListKeyValueParser implements MdContentParser<Map<String, String>, 
 	@Override
 	public String write(Map<String, String> map) {
 
-		String value = "";
+		StringBuilder value = new StringBuilder();
 		for (Map.Entry<String, String> entry : map.entrySet()) {
-			value += PatternConstant.MD_LIST + entry.getKey() + System.lineSeparator()
-					+ PatternConstant.SECOND_MD_LIST + entry.getValue() + System.lineSeparator();
+			value.append(PatternConstant.MD_LIST).append(entry.getKey()).append(System.lineSeparator()).append(PatternConstant.SECOND_MD_LIST).append(entry.getValue()).append(System.lineSeparator());
 		}
 
-		return LocalStringUtil.frontBackLine(value);
+		return LocalStringUtil.frontBackLine(value.toString());
 	}
 }

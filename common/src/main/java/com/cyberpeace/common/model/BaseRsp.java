@@ -9,18 +9,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BaseRsp<T> {
 
-	public T data;
+	private T data;
 
-	public String code = "OJ-000000";
+	private String code = "OJ-000000";
 
-	public String message;
+	private String message;
 
 	/**
 	 * 保留字段
 	 */
-	public String detail;
+	private String detail;
 
-	public long timestamp = System.currentTimeMillis();
+	private long timestamp = System.currentTimeMillis();
 
 	public BaseRsp(T data) {
 		this.data = data;

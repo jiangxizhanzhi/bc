@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.util.ClassUtils;
 
 import java.io.File;
+import java.net.URL;
 
 public enum HtmlTemplateEnum {
 	/** html模板枚举*/
@@ -22,8 +23,15 @@ public enum HtmlTemplateEnum {
 
 	HtmlTemplateEnum(String templateName, String templatePath) {
 		this.templateName = templateName;
-		this.templatePath = ClassUtils.getDefaultClassLoader().getResource("").getPath()
-				+ File.separatorChar + templatePath;
+		ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
+		if (classLoader != null) {
+			URL resource = classLoader.getResource("");
+			if (resource != null) {
+				this.templatePath = resource.getPath() + File.separatorChar + templatePath;
+			}
+		} else {
+			this.templatePath = File.separatorChar + templatePath;
+		}
 	}
 
 }

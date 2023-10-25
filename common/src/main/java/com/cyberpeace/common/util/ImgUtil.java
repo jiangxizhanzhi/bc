@@ -31,7 +31,7 @@ public class ImgUtil {
 		}
 
 		// Obtain a WebP ImageReader instance
-		ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();;
+		ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
 		// Configure decoding parameters
 		WebPReadParam readParam = new WebPReadParam();
 		readParam.setBypassFiltering(true);

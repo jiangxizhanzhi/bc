@@ -1,5 +1,7 @@
 package com.cyberpeace.common.model;
 
+import com.cyberpeace.common.exception.BusinessException;
+
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +16,7 @@ public class CustomFont {
 		try {
 			actionJson = Font.createFont(Font.TRUETYPE_FONT,is);
 		} catch (FontFormatException | IOException e) {
-			throw new RuntimeException(e);
+			throw new BusinessException();
 		}
 		//通过复制此 Font 对象并应用新样式和大小，创建一个新 Font 对象。
 		return actionJson.deriveFont(style,size);

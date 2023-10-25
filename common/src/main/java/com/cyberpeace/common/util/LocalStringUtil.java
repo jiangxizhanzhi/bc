@@ -184,11 +184,7 @@ public class LocalStringUtil {
 	 * @return
 	 */
 	public static List<String> getAllMatchStr(String content, String regex, Integer index) {
-
-		List<String> matchStr = getMatchStr(content, regex, index);
-
-
-		return matchStr;
+		return getMatchStr(content, regex, index);
 	}
 	/**
 	 * 数据替换

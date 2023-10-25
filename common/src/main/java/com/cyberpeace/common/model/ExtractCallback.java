@@ -49,7 +49,6 @@ public class ExtractCallback implements IArchiveExtractCallback {
         return data -> {
             try {
                 if (!isFolder) {
-                    File file = new File(ourDir + path);
                     save2File(file1, data);
                 }
 
@@ -71,27 +70,18 @@ public class ExtractCallback implements IArchiveExtractCallback {
     }
 
     public static boolean save2File(File file, byte[] msg) throws FileNotFoundException {
-        OutputStream fos = null;
-        try {
-            File parent = file.getParentFile();
-            if ((!parent.exists()) && (!parent.mkdirs())) {
-                return false;
-            }
-            fos = new FileOutputStream(file, true);
+        File parent = file.getParentFile();
+        if ((!parent.exists()) && (!parent.mkdirs())) {
+            return false;
+        }
+        try (OutputStream fos = new FileOutputStream(file, true);){
+
             fos.write(msg);
             fos.flush();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        } finally {
-			try {
-				if (null != fos) {
-					fos.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
         }
     }
 

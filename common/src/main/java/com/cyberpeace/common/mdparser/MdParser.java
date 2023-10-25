@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class MdParser {
 
-    private String HEAD_SYMBOL = "#";
+    private static final String HEAD_SYMBOL = "#";
 
     private List<String> content;
 
@@ -58,7 +59,7 @@ public class MdParser {
     public synchronized <T> T read(Class<T> cls) {
         try {
             return doRead(cls);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             log.error("Markdown file to entity failed! cls=[{}], catch error:", cls.getName(), e);
             throw new BusinessException(ErrorCode.FILE_READ_FAIL);
         }
@@ -83,14 +84,12 @@ public class MdParser {
             }
             return;
         }
+        
 
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-        OutputStreamWriter osw = null;
-
-        try {
-            osw = new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8);
-            bw = new BufferedWriter(osw);
+        try (
+             OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8);
+             BufferedWriter bw = new BufferedWriter(osw);
+             ){
 
             for (Field field : fields) {
                 MdHeadLine annotation = field.getAnnotation(MdHeadLine.class);
@@ -122,25 +121,10 @@ public class MdParser {
             log.error("Markdown content write failed！file_path=[{}], catch error:", file.getAbsolutePath(), e);
             file.delete();
             throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
-        } finally {
-            try {
-                if (null != fw) {
-                    fw.close();
-                }
-                if (null != bw) {
-                    bw.close();
-                }
-                if (osw != null) {
-                    osw.close();
-                }
-            } catch (IOException e) {
-                // do nothing
-            }
-
-        }
+        } 
     }
 
-    private <T> T doRead(Class<T> cls) throws IllegalAccessException {
+    private <T> T doRead(Class<T> cls) {
         mdKeyMap();
         Object instance = BeanUtils.instantiateClass(cls);
 
@@ -152,23 +136,21 @@ public class MdParser {
             }
 
             MdContentParser parser = parserMap.get(annotation.parser());
-            if (null == parser) {
-                continue;
-            }
+			if (parser != null) {
+				String matchLine = getAssignStr(annotation.level(), HEAD_SYMBOL)
+						+ CommonConstant.SPACE + annotation.name();
 
-            String matchLine = getAssignStr(annotation.level(), HEAD_SYMBOL) + CommonConstant.SPACE + annotation.name();
+				Object parse = parser.parse(titleMap.get(matchLine));
 
-            Object parse = parser.parse(titleMap.get(matchLine));
-
-            if (ObjectUtils.isNotEmpty(parse)) {
-                Class<? extends MdConvertEnum> convert = annotation.convert();
-                if (convert != NoConvert.class) {
-                    parse = MdConvert.convertKey(parse, convert);
-                }
-            }
-
-            field.setAccessible(true);
-            field.set(instance, parse);
+				if (ObjectUtils.isNotEmpty(parse)) {
+					Class<? extends MdConvertEnum> convert = annotation.convert();
+					if (convert != NoConvert.class) {
+						parse = MdConvert.convertKey(parse, convert);
+					}
+				}
+				ReflectionUtils.makeAccessible(field);
+				ReflectionUtils.setField(field, instance, parse);
+			}
         }
 
         return (T) instance;
@@ -208,12 +190,12 @@ public class MdParser {
 
     private String getAssignStr(int length, String str) {
 
-        String assignStr = str;
+        StringBuilder assignStr = new StringBuilder(str);
         for (int i = 1; i < length; i++) {
-            assignStr += str;
+            assignStr.append(str);
         }
 
-        return assignStr;
+        return assignStr.toString();
     }
 
     /**

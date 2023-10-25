@@ -5,7 +5,7 @@ package com.cyberpeace.common.model;
  */
 public class HttpclientContext {
 
-	private static final ThreadLocal<HttpclientModel> context = new ThreadLocal<HttpclientModel>();
+	private static final ThreadLocal<HttpclientModel> context = new ThreadLocal<>();
 
 	public static HttpclientModel getContext() {
 		return context.get();

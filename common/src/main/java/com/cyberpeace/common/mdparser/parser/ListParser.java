@@ -14,13 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 @Service
-public class ListParser implements MdContentParser<Collection, String> {
+public class ListParser implements MdContentParser<Collection<Object>, String> {
 
     @Override
-    public List<String> parse(Object content) {
+    public Collection<Object> parse(Object content) {
 
         if (ObjectUtils.isEmpty(content)) {
             return Lists.newArrayList();
@@ -37,7 +36,7 @@ public class ListParser implements MdContentParser<Collection, String> {
     }
 
     @Override
-    public String write(Collection content) {
+    public String write(Collection<Object> content) {
 
         if (ObjectUtils.isEmpty(content)) {
             return LocalStringUtil.frontBackLine(CommonConstant.EMPTY_STRING);
@@ -47,12 +46,10 @@ public class ListParser implements MdContentParser<Collection, String> {
             return LocalStringUtil.frontBackLine(CommonConstant.EMPTY_STRING);
         }
 
-        String value = "";
+        StringBuilder value = new StringBuilder();
         for (Object o : content) {
-            value = value + PatternConstant.MD_LIST
-                    + (o instanceof String ? (String) o : JsonUtil.toJsonString(o))
-                    + System.lineSeparator();
+            value.append(PatternConstant.MD_LIST).append(o instanceof String ? (String) o : JsonUtil.toJsonString(o)).append(System.lineSeparator());
         }
-        return LocalStringUtil.frontBackLine(value);
+        return LocalStringUtil.frontBackLine(value.toString());
     }
 }

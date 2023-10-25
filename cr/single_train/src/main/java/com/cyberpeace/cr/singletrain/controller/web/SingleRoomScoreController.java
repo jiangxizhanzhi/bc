@@ -150,7 +150,7 @@ public class SingleRoomScoreController {
 		data.setIndex(index);
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 		data.setTrainingTimeString(
-				DateUtil.DateToString(data.getTrainingTime(), "yyyy-MM-dd HH:mm:ss"));
+				DateUtil.dateToString(data.getTrainingTime(), "yyyy-MM-dd HH:mm:ss"));
 		data.setSubTypeString(crConstantsService.geCnNameByTypeAndCode(
 				CrConstantsConfig.ConstantsType.TRAINING_CATEGORY.getCode(), data.getSubType()));
 		data.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(

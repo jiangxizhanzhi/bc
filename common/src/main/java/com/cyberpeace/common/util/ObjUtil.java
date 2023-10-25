@@ -4,15 +4,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * 本工具类只针对简单对象处理。
@@ -59,7 +61,7 @@ public class ObjUtil {
 	 * @param obj
 	 * @return
 	 */
-	public static TreeMap<String, Object> obj2TreemapExcludeEmpty(Object obj) {
+	public static SortedMap<String, Object> obj2TreemapExcludeEmpty(Object obj) {
 		TreeMap<String, Object> result = Maps.newTreeMap();
 
 		if (null == obj) {
@@ -96,29 +98,22 @@ public class ObjUtil {
 				continue;
 			}
 
-			fields[i].setAccessible(true);
-			try {
-				fields[i].set(obj, value);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException("ObjUtil.setCertainFeildValue obj=["
-						+ JSON.toJSONString(obj) + "], field=[" + fieldName + "] error");
-			}
-
+			ReflectionUtils.makeAccessible(fields[i]);
+			ReflectionUtils.setField(fields[i],obj, value);
 			return;
 		}
 	}
 
 	public static void setFieldValue(Object obj, String fieldName, String value)
-			throws IllegalAccessException {
+			 {
 		Field[] fields = getFields(obj);
 
 		for (int i = 0; i < fields.length; i++) {
 			if (!StringUtils.equals(fields[i].getName(), fieldName)) {
 				continue;
 			}
-
-			fields[i].setAccessible(true);
-			fields[i].set(obj, value);
+			ReflectionUtils.makeAccessible(fields[i]);
+			ReflectionUtils.setField(fields[i],obj, value);
 
 			return;
 		}
@@ -149,34 +144,32 @@ public class ObjUtil {
 			}
 		}
 
-		throw new RuntimeException("ObjUtil.getCertainFieldValue obj=[" + JSON.toJSONString(obj)
-				+ "], field=[" + fieldName + "] not found");
+		throw new BusinessException();
 	}
 
 	public static Object getFieldValueByName(String fieldName, Object obj) {
 		String firstLetter = fieldName.substring(0, 1).toUpperCase();
 		try {
 			String getter = "get" + firstLetter + fieldName.substring(1);
-			Method method = obj.getClass().getMethod(getter, new Class[] {});
+			Method method = obj.getClass().getMethod(getter);
 
-			return method.invoke(obj, new Object[] {});
+			return method.invoke(obj);
 		} catch (NoSuchMethodException e) {
 			// 如果是方法未找到，可能变量是boolean类型，用is重新尝试一把
 			try {
 				String getter = "is" + firstLetter + fieldName.substring(1);
-				Method method = obj.getClass().getMethod(getter, new Class[] {});
+				Method method = obj.getClass().getMethod(getter);
 
-				return method.invoke(obj, new Object[] {});
+				return method.invoke(obj);
 			} catch (Exception e1) {
 				LOG.error("ObjUtil.getFieldValueByName error, obj=[" + obj + "],fieldName=["
 						+ fieldName + "]", e);
-				throw new RuntimeException(
-						"ObjUtil.getFieldValueByName error，fieldName=" + fieldName);
+				throw new BusinessException();
 			}
 		} catch (Exception e) {
 			LOG.error("ObjUtil.getFieldValueByName error, obj=[" + obj + "],fieldName=[" + fieldName
 					+ "]", e);
-			throw new RuntimeException("ObjUtil.getFieldValueByName error");
+			throw new BusinessException();
 		}
 	}
 

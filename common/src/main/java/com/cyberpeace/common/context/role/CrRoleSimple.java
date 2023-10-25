@@ -54,8 +54,7 @@ public class CrRoleSimple implements Serializable {
 		if (CollectionUtils.isEmpty(list)){
 			return new ArrayList<>();
 		}
-		List<String> res = list.stream().map(function).flatMap(Collection::stream).collect(Collectors.toList());
-		return res;
+		return list.stream().map(function).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 
 	public Map<String,String> getMissionIdStageMap() {

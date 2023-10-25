@@ -56,7 +56,7 @@ public class TrainReportExportContext extends TrainReportContext {
         blueMapString=getKindString(getBlueMap());
 
 
-        timeListString = getTimeList().stream().map(a->"'"+ DateUtil.DateToString(a,"yyyy-MM-dd HH:mm:ss")+"'").collect(Collectors.joining(","));
+        timeListString = getTimeList().stream().map(a->"'"+ DateUtil.dateToString(a,"yyyy-MM-dd HH:mm:ss")+"'").collect(Collectors.joining(","));
 
         redTrendsString = getTrendString(getRedTrends());
         blueTrendsString = getTrendString(getBlueTrends());

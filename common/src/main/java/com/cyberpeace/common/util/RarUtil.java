@@ -38,7 +38,7 @@ public class RarUtil {
 			// 使用回调函数
 			inArchive.extract(in, false, new ExtractCallback(inArchive, outDir));
 		} catch (Exception e) {
-
+			//do nothing
 		}
     }
 

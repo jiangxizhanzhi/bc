@@ -3,6 +3,8 @@ package com.cyberpeace.common.util;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -111,7 +113,7 @@ public class FileUtil {
 			return file.getName();
 		}
 
-		return !suffix
+		return Boolean.FALSE.equals(suffix)
 				? file.getName().substring(CommonConstant.ZERO, file.getName().lastIndexOf("."))
 				: file.getName();
 	}
@@ -122,10 +124,9 @@ public class FileUtil {
 	 * @return
 	 */
 	public static String getContent(File file) {
-		BufferedReader br = null;
 		StringBuilder builder = new StringBuilder();
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));) {
 
 			String content = "";
 			while ((content = br.readLine()) != null) {
@@ -137,16 +138,6 @@ public class FileUtil {
 			// 文件读取失败
 			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
-		} finally {
-			try {
-				if (null != br) {
-					br.close();
-				}
-			} catch (IOException e) {
-				// 不做任何处理
-			} catch (NullPointerException e) {
-				// 对象未创建空指针异常捕获，不做任何处理
-			}
 		}
 	}
 
@@ -156,11 +147,9 @@ public class FileUtil {
 	 * @return
 	 */
 	public static List<String> listContent(File file) {
-		BufferedReader br = null;
 		List<String> contentList = Lists.newArrayList();
 
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
+		try (BufferedReader br =new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));){
 
 			String content;
 			while ((content = br.readLine()) != null) {
@@ -172,14 +161,6 @@ public class FileUtil {
 			// 文件读取失败
 			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FILE_READ_FAIL, file.getPath());
-		} finally {
-			try {
-				if (br!=null) {
-					br.close();
-				}
-			} catch (IOException e) {
-				// 不做任何处理
-			}
 		}
 	}
 
@@ -204,31 +185,15 @@ public class FileUtil {
 		}
 
 		// 文件拷贝
-		FileChannel input = null;
-		FileChannel output = null;
-		try {
-			input = new FileInputStream(path).getChannel();
-			output = new FileOutputStream(dest).getChannel();
+		try (FileChannel input =new FileInputStream(path).getChannel();
+			FileChannel output = new FileOutputStream(dest).getChannel();){
 
 			output.transferFrom(input, 0, input.size());
 		} catch (Exception e) {
 			log.error("copyFile: File copy failed! path=[{}], dest=[{}], catch error:", path, dest,
 					e);
 			throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
-		} finally {
-			try {
-				if (null != input) {
-					input.close();
-				}
-				if (null != output) {
-					output.close();
-				}
-			} catch (Exception e) {
-				// 不管
-			}
-
 		}
-
 		return dest;
 	}
 
@@ -265,23 +230,14 @@ public class FileUtil {
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
 		}
-
-		BufferedWriter out = null;
-		try {
-			out = new BufferedWriter(
-					new OutputStreamWriter(new FileOutputStream(destFilePath), "UTF-8"));
+		
+		try (BufferedWriter out= new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(destFilePath),
+						StandardCharsets.UTF_8));){
 			out.write(data);
 		} catch (Exception e) {
 			log.error("File write failed! dest_file_path=[{}], catch error:", destFilePath, e);
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
-		} finally {
-			if (null != out) {
-				try {
-					out.close();
-				} catch (Exception e) {
-					// 关不掉算了
-				}
-			}
 		}
 	}
 
@@ -294,10 +250,8 @@ public class FileUtil {
 	 */
 	public static void setResponse(File file, Boolean delete, HttpServletResponse response) {
 		// 以流的形式下载文件。
-		InputStream fis = null;
-		OutputStream outputStream = null;
-		try {
-			fis = new FileInputStream(file);
+		try(InputStream fis =new FileInputStream(file);
+			OutputStream outputStream =response.getOutputStream();) {
 			byte[] buffer = new byte[fis.available()];
 			fis.read(buffer);
 
@@ -306,24 +260,12 @@ public class FileUtil {
 
 			// 设置返回
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(file.getName(),"UTF-8").replaceAll("\\+","%20"));
-			outputStream = response.getOutputStream();
+			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(file.getName(),"UTF-8").replace("\\+","%20"));
 			outputStream.write(buffer);
 			outputStream.flush();
 		} catch (IOException e) {
 			log.error("setResponse error:", e);
 		} finally {
-			try {
-				if (null != fis) {
-					fis.close();
-				}
-				if (outputStream != null) {
-					outputStream.close();
-				}
-			} catch (IOException e) {
-				log.error("setResponse error:", e);
-			}
-
 			if (delete.equals(Boolean.TRUE) && null != file && file.exists()) {
 				file.delete();
 			}
@@ -340,7 +282,7 @@ public class FileUtil {
 			File[] children = dir.listFiles();
 			assert children != null;
 			for (File file : children) {
-				if (!deleteDir(file)) {
+				if (Boolean.FALSE.equals(deleteDir(file))) {
 					log.error("failed to delete file {}", file);
 					return false;
 				}
@@ -382,7 +324,7 @@ public class FileUtil {
 			}
 			// 创建对应目录
 			if (file.isDirectory()) {
-				String pathName = self ? file.getAbsolutePath().replace(selfPre, "")
+				String pathName = Boolean.TRUE.equals(self) ? file.getAbsolutePath().replace(selfPre, "")
 						: file.getAbsolutePath().replace(noSelfPre, "");
 				File copyDir = new File(destDir, pathName);
 				copyDir.mkdirs();
@@ -391,7 +333,7 @@ public class FileUtil {
 
 			// 拷贝对应文件
 			if (file.isFile()) {
-				String pathName = self ? file.getAbsolutePath().replace(selfPre, "")
+				String pathName = Boolean.TRUE.equals(self) ? file.getAbsolutePath().replace(selfPre, "")
 						: file.getAbsolutePath().replace(noSelfPre, "");
 				copyFile(file.getAbsolutePath(), new File(destDir, pathName).getAbsolutePath(),
 						false);
@@ -414,7 +356,7 @@ public class FileUtil {
 		}
 
 		// 是包含文件过滤
-		if (!includeFile && rootFile.isFile()) {
+		if (Boolean.TRUE.equals(!includeFile) && rootFile.isFile()) {
 			return Lists.newArrayList();
 		}
 
@@ -452,12 +394,11 @@ public class FileUtil {
 			return Lists.newArrayList();
 		}
 		File[] files = rootFile.listFiles();
-
-		List<String> directions = Arrays.stream(files)
+		
+		return Arrays.stream(files)
 				.filter(file -> !file.getName().startsWith("."))
-				.filter(file -> includeFile ? true : file.isDirectory()).map(File::getAbsolutePath)
+				.filter(file -> includeFile || file.isDirectory()).map(File::getAbsolutePath)
 				.sorted().collect(Collectors.toList());
-		return directions;
 	}
 
 	/**
@@ -475,12 +416,11 @@ public class FileUtil {
 			return Lists.newArrayList();
 		}
 		File[] files = rootFile.listFiles();
-
-		List<String> directions = Arrays.stream(files)
+		
+		return  Arrays.stream(files)
 				.filter(file -> !file.getName().startsWith("."))
-				.filter(file -> includeDir ? true : file.isFile()).map(File::getName).sorted()
+				.filter(file -> includeDir|| file.isFile()).map(File::getName).sorted()
 				.collect(Collectors.toList());
-		return directions;
 	}
 
 	/**
@@ -635,7 +575,7 @@ public class FileUtil {
 
 			for (File subFile : files) {
 				if (subFile.isFile()) {
-					subFile.delete();
+					Files.delete(subFile.toPath());
 				} else {
 					FileUtils.deleteDirectory(subFile);
 				}

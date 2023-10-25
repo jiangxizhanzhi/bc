@@ -14,7 +14,7 @@ import lombok.Getter;
 public class BusinessException extends RuntimeException {
 
 	@Getter
-	private String errorMessage;
+	private  final String errorMessage;
 
 	public BusinessException(String code) {
 		super(code);
@@ -28,6 +28,7 @@ public class BusinessException extends RuntimeException {
 
 	public BusinessException() {
 		super();
+		errorMessage = "";
 	}
 
 	public static String getMessageByLanguage(String code) {

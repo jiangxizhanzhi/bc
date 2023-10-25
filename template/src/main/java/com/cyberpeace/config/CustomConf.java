@@ -3,6 +3,7 @@ package com.cyberpeace.config;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -22,8 +23,8 @@ public class CustomConf {
 	}
 
 	@Bean
-	public static PropertyPlaceholderConfigurer getConfigUtil() {
-		PropertyPlaceholderConfigurer configurer = new ConfigUtil();
+	public static PropertySourcesPlaceholderConfigurer getConfigUtil() {
+		PropertySourcesPlaceholderConfigurer configurer = new ConfigUtil();
 
 		Resource[] resources = new ClassPathResource[] {
 				new ClassPathResource("modules/integration.properties"),

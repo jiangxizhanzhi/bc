@@ -57,7 +57,7 @@ public class MdUtil {
 
 			if (content.get(index).matches(PatternConstant.PARSER_MD_TITLE)) {
 				// 标题数据获取
-				if (StringUtils.isNotBlank(key) && startIndex != CommonConstant.NEGATIVE_ONE) {
+				if (StringUtils.isNotBlank(key) ) {
 					String value = ListUtil.joinList(content, startIndex, index);
 					valueObj.put(key, value);
 				}

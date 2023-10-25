@@ -66,7 +66,7 @@ public class RoomBaseInfo {
 		this.subTypeString = EnumUtils.getEnumDescByCode(this.getSubType(), TrainTypeConvert.class);
 		this.difficultyString = EnumUtils.getEnumDescByCode(this.getDifficulty(),
 				DifficultyConvert.class);
-		this.startTimeString = DateUtil.DateToString(startTime, "");
+		this.startTimeString = DateUtil.dateToString(startTime, "");
 		this.preSkillList = StringUtils.isBlank(preSkills) ? new ArrayList<>()
 				: JsonUtil.toJsonObjectArray(preSkills, String.class);
 		this.trainSkillList = StringUtils.isBlank(trainSkills) ? new ArrayList<>()

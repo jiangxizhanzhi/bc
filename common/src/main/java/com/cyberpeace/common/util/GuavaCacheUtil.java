@@ -9,8 +9,7 @@ public class GuavaCacheUtil {
 
 	private GuavaCacheUtil() {}
 
-	public static <K, V> Cache<K, V> newInstance(long duration, TimeUnit unit, Class<K> kClass,
-			Class<V> vClass) {
+	public static <K, V> Cache<K, V> newInstance(long duration, TimeUnit unit) {
 		return CacheBuilder.newBuilder().expireAfterAccess(duration, unit).build();
 	}
 

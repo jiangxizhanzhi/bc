@@ -25,13 +25,13 @@ public class ShellUtils {
 
 		try {
 			process = Runtime.getRuntime().exec(shell);
-			BufferedReader input = new BufferedReader(
-					new InputStreamReader(process.getInputStream()));
-
-			String line;
-			while ((line = input.readLine()) != null) {
-				log.info(line);
-				processResult.add(line);
+			try (			BufferedReader input = new BufferedReader(
+					new InputStreamReader(process.getInputStream()));){
+				String line;
+				while ((line = input.readLine()) != null) {
+					log.info(line);
+					processResult.add(line);
+				}
 			}
 
 		} catch (Exception e) {
@@ -56,15 +56,15 @@ public class ShellUtils {
 
 		try {
 			process = Runtime.getRuntime().exec(shell);
-			BufferedReader input = new BufferedReader(
-					new InputStreamReader(process.getErrorStream()));
+			try (BufferedReader input = new BufferedReader(
+					new InputStreamReader(process.getErrorStream()));){
+				String line;
+				while ((line = input.readLine()) != null) {
+					log.error(line);
+					builder.append(line).append(System.lineSeparator());
+				}
 
-			String line;
-			while ((line = input.readLine()) != null) {
-				log.error(line);
-				builder.append(line).append(System.lineSeparator());
 			}
-
 		} catch (Exception e) {
 			log.error("Exec local shell failed! command=[{}]", shell, e);
 			throw new BusinessException(ErrorCode.LOCAL_SHELL_EXEC_FAILED);

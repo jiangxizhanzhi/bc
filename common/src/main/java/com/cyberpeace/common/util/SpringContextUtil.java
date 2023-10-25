@@ -26,9 +26,12 @@ public class SpringContextUtil implements ApplicationContextAware {
 	 */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		SpringContextUtil.applicationContext = applicationContext;
+		set(applicationContext);
 	}
 
+	public static void set(ApplicationContext applicationContext) {
+		SpringContextUtil.applicationContext = applicationContext;
+	}
 	@SuppressWarnings("unchecked")
 	public static <T> T getBean(String name) throws BeansException {
 		return (T) applicationContext.getBean(name);
@@ -36,7 +39,7 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getBeanByClass(Class<T> cls) throws BeansException {
-		return (T) applicationContext.getBean(cls);
+		return  applicationContext.getBean(cls);
 	}
 
 	public static <T> Map<String, T> getBeansOfType(@Nullable Class<T> type) throws BeansException {

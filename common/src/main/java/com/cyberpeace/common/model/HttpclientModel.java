@@ -58,10 +58,10 @@ public class HttpclientModel {
 		callTime = System.currentTimeMillis() - startTime;
 		// debug的时候才输出接口返回， 正常情况下输出调用时间，结果可以忽略
 		if (LOG.isDebugEnabled()) {
-			LOG.debug(LOG_FORMATTER, new Object[] { callTime, method, url, httpResponse });
+			LOG.debug(LOG_FORMATTER,callTime, method, url, httpResponse);
 		}
 		if (LOG.isInfoEnabled()) {
-			LOG.info(LOG_FORMATTER, new Object[] { callTime, method, url, "success" });
+			LOG.info(LOG_FORMATTER, callTime, method, url, "success");
 		}
 	}
 }

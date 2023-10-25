@@ -9,12 +9,12 @@ public enum ExcelHeader {
 	STUDY_STATISTIC(new String[]{"用户名", "姓名", "组织", "角色", "完成课时", "完成实验", "完成练习",  "完成考试", "实验平均得分"},
 			new String[]{"UserName", "Name", CommonConstant.ORG, "Role", "Number of classes completed",
 					"Number of exercises completed after class", "Number of completed experiments",
-					"Number of examinations taken", "Number of examinations taken", "Experimental mean score"
+					StringCommon.NUMBER_EXAMINATIONS, StringCommon.NUMBER_EXAMINATIONS, "Experimental mean score"
 			},
 			new String[]{"desc"}),
 	ORG_STUDY_STATISTIC(new String[]{"组织", "人数", "完成课时", "完成实验", "完成练习", "完成考试", "实验平均得分"},
 			new String[]{CommonConstant.ORG, "Participation", "Number of classes completed",
-					"Number of exercises completed after class", "Number of completed experiments", "Number of examinations taken", "Experimental mean score"},
+					"Number of exercises completed after class", "Number of completed experiments", StringCommon.NUMBER_EXAMINATIONS, "Experimental mean score"},
 			new String[] {"desc"}),
 	TRAIN_PLAN(new String[] {"计划名称", "课程名", "课时名", "开始时间", "结束时间", "组织"},
 			new String[] {"Plan Name", "Course Name", "Course Hour Name", "Start time", "End time", CommonConstant.ORG},
@@ -25,7 +25,7 @@ public enum ExcelHeader {
 
 	private  String[] enName;
 
-	public String[] header;
+	private String[] header;
 
 	ExcelHeader(String[] cnName, String[] enName, String[] header) {
 		this.cnName = cnName;
@@ -43,5 +43,9 @@ public enum ExcelHeader {
 
 	public String[] getHeader() {
 		return CommonContext.isChinese() ? getCnName() : getEnName();
+	}
+
+	private class StringCommon {
+		private static final String NUMBER_EXAMINATIONS= "Number of examinations taken";
 	}
 }

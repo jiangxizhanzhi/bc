@@ -1,9 +1,6 @@
 package com.cyberpeace.common.util;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -143,13 +140,14 @@ public class ListUtil {
 	public static List<Integer> listRangeInt(Integer start, Integer end) {
 		return Lists.newArrayList(IntStream.rangeClosed(start, end).iterator());
 	}
-
+	static Random random = new Random();
 	public static <T> T selectRandomValue(List<T> list) {
 
 		if (list.isEmpty()) {
 			return null;
 		}
-		return list.get((int) (Math.random() * list.size()));
+
+		return list.get(random.nextInt(list.size()));
 
 	}
 

@@ -70,11 +70,9 @@ public class ZipUtil {
 	 * @throws RuntimeException
 	 */
 	public static String toZip(String srcDir) throws RuntimeException {
-		ZipOutputStream zos = null;
 		File src = new File(srcDir);
 		String zipPath = srcDir + File.separator + src.getName() + SUFFIX;
-		try {
-			zos = new ZipOutputStream(new FileOutputStream(zipPath));
+		try (ZipOutputStream zos =new ZipOutputStream(new FileOutputStream(zipPath));){
 			File[] listFiles = new File(srcDir).listFiles();
 			assert listFiles != null;
 			for (File file : listFiles) {
@@ -87,15 +85,6 @@ public class ZipUtil {
 		} catch (Exception e) {
 			log.error("failed to Zip Directory {}", srcDir);
 			e.printStackTrace();
-		} finally {
-			if (zos != null) {
-				try {
-					zos.close();
-				} catch (IOException e) {
-					log.error("failed to close ZipOutputStream");
-					e.printStackTrace();
-				}
-			}
 		}
 		return zipPath;
 	}
@@ -111,11 +100,10 @@ public class ZipUtil {
 		// 创建文件夹
 		FileUtil.mkdirs(destDir);
 
-		ZipOutputStream zos = null;
+
 		File src = new File(srcDir);
 		String zipPath = destDir + File.separator + src.getName() + SUFFIX;
-		try {
-			zos = new ZipOutputStream(new FileOutputStream(zipPath));
+		try (ZipOutputStream zos =new ZipOutputStream(new FileOutputStream(zipPath));) {
 			File[] listFiles = src.listFiles();
 
 			for (File file : listFiles) {
@@ -125,14 +113,6 @@ public class ZipUtil {
 			log.error("toZipDest: Zip file failed! src=[{}], dest=[{}]; catch error:", srcDir,
 					destDir, e);
 			throw new BusinessException(ErrorCode.FILE_ZIP_FAIL);
-		} finally {
-			try {
-				if (null != zos) {
-					zos.close();
-				}
-			} catch (IOException e) {
-				// io流关闭失败 不做任何操作
-			}
 		}
 
 		return zipPath;

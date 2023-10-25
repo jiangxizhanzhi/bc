@@ -1,6 +1,5 @@
 package com.cyberpeace.common.model.ws;
 
-import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WebSocketMessageContext<I extends WsMessageIdentifier, M> implements Serializable {
+public class WebSocketMessageContext<I extends WsMessageIdentifier, M> {
 
 	private I messageIdentifier;
 

@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.SortedMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -171,9 +171,9 @@ public class HttpClientUtil {
 				HttpclientContext.getContext().doRemoteException(e);
 			} catch (Exception e1) {
 				LOG.error("remote error logging Exception", e1);
+				throw new RemoteServiceException();
 			} finally {
 				HttpclientContext.removeContext();
-				throw new RemoteServiceException();
 			}
 		}
 
@@ -198,7 +198,7 @@ public class HttpClientUtil {
 	private static <T> T parseHttpResponse(String httpResponse, Class<T> resultType) {
 
 		try {
-			BaseRsp baseRsp = JSON.parseObject(httpResponse, BaseRsp.class);
+			BaseRsp<Object> baseRsp = JSON.parseObject(httpResponse, BaseRsp.class);
 
 			if (!isSuccess(baseRsp)) {
 				// 只要中台的错误码不是000000，都认为是有问题的
@@ -266,7 +266,7 @@ public class HttpClientUtil {
 	 * @param baseRsp
 	 * @return
 	 */
-	private static boolean isSuccess(BaseRsp baseRsp) {
+	private static boolean isSuccess(BaseRsp<Object> baseRsp) {
 		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
 	}
 
@@ -280,7 +280,7 @@ public class HttpClientUtil {
 	 */
 	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {
 
-		TreeMap<String, Object> treeMap = ObjUtil.obj2TreemapExcludeEmpty(obj);
+		SortedMap<String, Object> treeMap = ObjUtil.obj2TreemapExcludeEmpty(obj);
 		List<BasicNameValuePair> nvps = Lists.newArrayList();
 		treeMap.forEach((key, value) -> nvps
 				.add(new BasicNameValuePair(key, JsonUtil.toJsonString(value))));

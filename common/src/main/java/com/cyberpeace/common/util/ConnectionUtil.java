@@ -24,8 +24,7 @@ public class ConnectionUtil {
 		factory.setUsername(SystemPropUtil.getProp("MQ_USERNAME"));
 		factory.setPassword(SystemPropUtil.getProp("MQ_PASSWORD"));
 		// 通过工厂获取连接
-		Connection connection = factory.newConnection();
-		return connection;
+		return factory.newConnection();
 	}
 
 	private ConnectionUtil() {}

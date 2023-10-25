@@ -2,7 +2,7 @@ package com.cyberpeace.common.model.user;
 
 public class UserInfoContext {
 
-	private static final ThreadLocal<UserInfo> userContext = new ThreadLocal();
+	private static final ThreadLocal<UserInfo> userContext = new ThreadLocal<>();
 
 	private UserInfoContext() {}
 

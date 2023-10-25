@@ -64,7 +64,7 @@ public enum DemonstrationUriEnum {
         @Override
         public String deal(String content) {
             List<JSONObject> list = JSON.parseArray(content, JSONObject.class);
-            String date = DateUtil.DateToString(new Date(),"yyyy-MM-dd");
+            String date = DateUtil.dateToString(new Date(),"yyyy-MM-dd");
             for (JSONObject jsonObject : list) {
                 jsonObject.put("create_time",date);
             }
@@ -79,7 +79,7 @@ public enum DemonstrationUriEnum {
             List<String> xDates = new ArrayList<>();
             Calendar calendar = Calendar.getInstance();
             for (int i = 0; i < 10; i++) {
-                xDates.add(DateUtil.DateToString(calendar.getTime(),"yyyy-MM-dd"));
+                xDates.add(DateUtil.dateToString(calendar.getTime(),"yyyy-MM-dd"));
                 calendar.add(Calendar.MONTH,-1);
             }
             Collections.reverse(xDates);

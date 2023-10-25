@@ -156,22 +156,23 @@ public class MyWebSocketHandler implements WebSocketHandler {
 						"businessId=[{}], userId=[{}] send ws message fail! userSession is closed!",
 						businessId, userId);
 				toBeRemoved.add(userSession);
-				continue;
+			} else {
+				String jsonMessage = JsonUtil.toJsonString(message.getData());
+				TextMessage toSendMessage = new TextMessage(jsonMessage);
+				try {
+					userSession.sendMessage(toSendMessage);
+				} catch (IOException e) {
+					log.error("businessId=[{}], userId=[{}], message=[{}] send fail!",
+							businessId, userId, jsonMessage);
+				}
+
+				if (log.isDebugEnabled()) {
+					log.debug("businessId=[{}], userId=[{}], message=[{}] send fail!",
+							businessId, userId, jsonMessage);
+				}
 			}
 
-			String jsonMessage = JsonUtil.toJsonString(message.getData());
-			TextMessage toSendMessage = new TextMessage(jsonMessage);
-			try {
-				userSession.sendMessage(toSendMessage);
-			} catch (IOException e) {
-				log.error("businessId=[{}], userId=[{}], message=[{}] send fail!",
-						businessId, userId, jsonMessage);
-			}
 
-			if (log.isDebugEnabled()) {
-				log.debug("businessId=[{}], userId=[{}], message=[{}] send fail!",
-						businessId, userId, jsonMessage);
-			}
 		}
 		// remove closed sessions
 		for (CpWebSession userSession : toBeRemoved) {

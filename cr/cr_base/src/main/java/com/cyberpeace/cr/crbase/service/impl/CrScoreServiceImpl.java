@@ -328,7 +328,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				taskLogRsp.setActionName(EnumUtils.getEnumDescByCode(taskLogRsp.getActionCode(),
 						TaskLogRsp.ActionCode.class));
 				taskLogRsp.setCreateTimeString(
-						DateUtil.DateToString(taskLogRsp.getCreateTime(), "MM-dd HH:mm:ss"));
+						DateUtil.dateToString(taskLogRsp.getCreateTime(), "MM-dd HH:mm:ss"));
 			}
 		}
 

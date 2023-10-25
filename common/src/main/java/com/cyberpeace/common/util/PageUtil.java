@@ -59,33 +59,31 @@ public class PageUtil {
 		for (Object order : page.getOrders()) {
 			// 获取对应字段
 			String column = ((OrderItem) order).getColumn();
-			if (StringUtils.isBlank(column)) {
-				continue;
-			}
+			if (!StringUtils.isBlank(column)) {
+				// 获取实体数据
+				K k = data.get(CommonConstant.ZERO);
 
-			// 获取实体数据
-			K k = data.get(CommonConstant.ZERO);
+				// 判断是否存在该字段
+				try {
+					ObjUtil.getCertainFieldValue(k, column);
+				} catch (RuntimeException e) {
+					continue;
+				}
 
-			// 判断是否存在该字段
-			try {
-				ObjUtil.getCertainFieldValue(k, column);
-			} catch (RuntimeException e) {
-				continue;
-			}
+				// 对数据排序
+				if (((OrderItem) order).isAsc()) {
+					data.sort(Comparator.comparing(classroomMonitorBo -> (ObjUtil
+							.getFieldValueByName(column, classroomMonitorBo) != null
+							? ObjUtil.getFieldValueByName(column, classroomMonitorBo)
+							: "").toString()));
 
-			// 对数据排序
-			if (((OrderItem) order).isAsc()) {
-				data.sort(Comparator.comparing(classroomMonitorBo -> (ObjUtil
-						.getFieldValueByName(column, classroomMonitorBo) != null
-								? ObjUtil.getFieldValueByName(column, classroomMonitorBo)
-								: "").toString()));
-
-			} else {
-				data.sort(Comparator.comparing(classroomMonitorBo -> (ObjUtil
-						.getFieldValueByName(column, classroomMonitorBo) != null
-								? ObjUtil.getFieldValueByName(column, classroomMonitorBo)
-								: "").toString())
-						.reversed());
+				} else {
+					data.sort(Comparator.comparing(classroomMonitorBo -> (ObjUtil
+									.getFieldValueByName(column, classroomMonitorBo) != null
+									? ObjUtil.getFieldValueByName(column, classroomMonitorBo)
+									: "").toString())
+							.reversed());
+				}
 			}
 		}
 

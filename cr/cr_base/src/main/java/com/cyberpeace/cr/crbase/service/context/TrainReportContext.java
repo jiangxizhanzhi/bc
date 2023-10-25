@@ -108,26 +108,26 @@ public class TrainReportContext {
 		timeList.add(scoreTrendReq.getStartTime());
 		if (isSameYear) {
 			timeStringList
-					.add(DateUtil.DateToString(scoreTrendReq.getStartTime(), "MM-dd HH:mm:ss"));
+					.add(DateUtil.dateToString(scoreTrendReq.getStartTime(), "MM-dd HH:mm:ss"));
 		} else {
 			timeStringList.add(
-					DateUtil.DateToString(scoreTrendReq.getStartTime(), "yyyy-MM-dd HH:mm:ss"));
+					DateUtil.dateToString(scoreTrendReq.getStartTime(), "yyyy-MM-dd HH:mm:ss"));
 		}
 		for (int i = 0; i < scoreTrendReq.getScoreCount() - 1; i++) {
 			Date date = new Date(start + interval * (i + 1));
 			timeList.add(date);
 			if (isSameYear) {
-				timeStringList.add(DateUtil.DateToString(date, "MM-dd HH:mm:ss"));
+				timeStringList.add(DateUtil.dateToString(date, "MM-dd HH:mm:ss"));
 			} else {
-				timeStringList.add(DateUtil.DateToString(date, "yyyy-MM-dd HH:mm:ss"));
+				timeStringList.add(DateUtil.dateToString(date, "yyyy-MM-dd HH:mm:ss"));
 			}
 		}
 		timeList.add(scoreTrendReq.getEndTime());
 		if (isSameYear) {
-			timeStringList.add(DateUtil.DateToString(scoreTrendReq.getEndTime(), "MM-dd HH:mm:ss"));
+			timeStringList.add(DateUtil.dateToString(scoreTrendReq.getEndTime(), "MM-dd HH:mm:ss"));
 		} else {
 			timeStringList
-					.add(DateUtil.DateToString(scoreTrendReq.getEndTime(), "yyyy-MM-dd HH:mm:ss"));
+					.add(DateUtil.dateToString(scoreTrendReq.getEndTime(), "yyyy-MM-dd HH:mm:ss"));
 		}
 
 	}

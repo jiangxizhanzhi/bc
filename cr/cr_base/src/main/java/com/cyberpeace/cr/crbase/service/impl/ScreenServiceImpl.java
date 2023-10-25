@@ -85,7 +85,7 @@ public class ScreenServiceImpl implements ScreenService {
                 if (StringUtils.isEmpty(item.getCreate_time())) {
                     return false;
                 }
-                Date createDate = DateUtil.StringToDate(item.getCreate_time(), "yyyy-MM-dd HH:mm:ss");
+                Date createDate = DateUtil.stringToDate(item.getCreate_time(), "yyyy-MM-dd HH:mm:ss");
                 return createDate.before(actualEndTime) || createDate.equals(actualEndTime);
             }).collect(Collectors.toList());
             screenRecordUserRole.setScreenRecords(collect);

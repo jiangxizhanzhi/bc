@@ -22,9 +22,7 @@ public class CpWebSession {
 		try {
 			lock.lock();
 			session.sendMessage(message);
-		} catch (IOException e) {
-			throw e;
-		} finally {
+		}  finally {
 			lock.unlock();
 		}
 	}

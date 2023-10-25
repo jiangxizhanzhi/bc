@@ -11,7 +11,7 @@ public class DateUtil {
 
 	public static final String SHOT_PATTERN = "yyyy-MM-dd";
 
-	public static String DateToString(Date date, String pattern) {
+	public static String dateToString(Date date, String pattern) {
 		if (date == null) {
 			return "";
 		}
@@ -22,7 +22,7 @@ public class DateUtil {
 		return simpleDateFormat.format(date);
 	}
 
-	public static Date StringToDate(String strDate, String pattern) {
+	public static Date stringToDate(String strDate, String pattern) {
 		SimpleDateFormat formatter = new SimpleDateFormat(pattern);
 		ParsePosition pos = new ParsePosition(0);
 		return formatter.parse(strDate, pos);

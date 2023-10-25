@@ -60,7 +60,7 @@ public class SceneJob {
 	private ClassroomMapper classroomMapper;
 
 	private Cache<String, String> sceneCache = GuavaCacheUtil.newInstance(CommonConstant.FIFTEEN,
-			TimeUnit.MINUTES, String.class, String.class);
+			TimeUnit.MINUTES);
 
 	@Scheduled(fixedRate = 15000)
 	public void closeScene() {

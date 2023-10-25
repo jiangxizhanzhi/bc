@@ -1,7 +1,6 @@
 package com.cyberpeace.common.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Map;
@@ -83,9 +82,8 @@ public class HtmlToPdfUtil {
 	public static void getHtmlTemplateInstance(Map<String, Object> data,
 			HtmlTemplateEnum htmlTemplateEnum, String templateInstancePath) {
 
-		StringWriter writer = null;
 
-		try {
+		try (StringWriter writer =  new StringWriter();){
 			// FreeMarker配置
 			Configuration config = new Configuration(Configuration.VERSION_2_3_28);
 			config.setDefaultEncoding("UTF-8");
@@ -99,14 +97,13 @@ public class HtmlToPdfUtil {
 			Template template = config.getTemplate(htmlTemplateEnum.getTemplateName());
 
 			// 模板和数据的匹配
-			writer = new StringWriter();
 			template.process(data, writer);
 			writer.flush();
 			String html = writer.toString();
 
 			File destFile = new File(templateInstancePath);
 			if (!destFile.getParentFile().exists()) {
-				boolean res = destFile.getParentFile().mkdirs();
+				 destFile.getParentFile().mkdirs();
 			}
 
 			if (destFile.exists()) {
@@ -123,12 +120,6 @@ public class HtmlToPdfUtil {
 							+ htmlTemplateEnum.getTemplateName(),
 					e);
 			throw new BusinessException(ErrorCode.FAILED_TO_GET_HTML_TEMPLATE_INSTANCE);
-		} finally {
-			if (null != writer) {
-				try {
-					writer.close();
-				} catch (IOException e) {}
-			}
 		}
 	}
 

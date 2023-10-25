@@ -24,9 +24,9 @@ public class ChatMessage {
 
 	private String content;
 
-	private final Integer cid = 0;
+	private  Integer cid = 0;
 
-	private final Boolean mine = Boolean.FALSE;
+	private  Boolean mine = Boolean.FALSE;
 
 	private String fromid;
 

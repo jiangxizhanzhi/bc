@@ -182,7 +182,7 @@ public class MathUtils {
 	 * @return
 	 */
 	public static int randomInt(Integer max) {
-		return (int) (max * Math.random());
+		return RANDOM.nextInt(max);
 	}
 
 	/**
@@ -200,8 +200,7 @@ public class MathUtils {
 	 * @return
 	 */
 	public static int ceil(Double num) {
-		double ceil = Math.ceil(num);
-		return Double.valueOf(ceil).intValue();
+		return (int) Math.ceil(num);
 	}
 
 	/**

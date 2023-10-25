@@ -83,4 +83,21 @@
             #{skillId}
         </foreach>
     </select>
+    <select id="batchSelectMissionResNameBySkillIds"
+            resultType="com.cyberpeace.rtks.service.bo.skill.MissionRes">
+        select cr_mission_template.resource_id    as resource_id,
+               cr_mission_template.title          as title,
+               cr_business_template.name          as scene_name,
+               rtks_skill_mission_relation.skill_id as skill_id
+        from rtks_skill_mission_relation
+                 left join cr_mission_template
+                           on rtks_skill_mission_relation.mission_template_id = cr_mission_template.resource_id
+                 left join cr_business_template
+                           on cr_mission_template.business_template_id = cr_business_template.resource_id
+        where rtks_skill_mission_relation.skill_id in
+        <foreach collection="skillIds" item="skillId" separator="," open="(" close=")">
+            #{skillId}
+        </foreach>
+        order by rtks_skill_mission_relation.create_time desc
+    </select>
 </mapper>

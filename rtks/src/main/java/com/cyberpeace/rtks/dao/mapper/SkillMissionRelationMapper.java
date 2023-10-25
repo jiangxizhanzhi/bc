@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.dao.mapper;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -30,6 +31,8 @@ public interface SkillMissionRelationMapper extends BaseMapper<SkillMissionRelat
 			batchSelectMissionRes(@Param("missionTemplateIds") List<String> missionTemplateIds);
 
 	List<MissionRes> batchSelectMissionResBySkillId(@Param("skillId") String skillId);
+
+	List<MissionRes> batchSelectMissionResNameBySkillIds(@Param("skillIds") Collection<String> skillIds);
 
 	List<SkillMissionRelation> batchSelect(@Param("resourceId") String resourceId);
 

@@ -1,5 +1,18 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,6 +24,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
@@ -30,19 +44,8 @@ import com.cyberpeace.rtks.service.bo.skill.*;
 import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -82,7 +85,23 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	@Override
 	public ListRsp<SkillRes> page(PageReqBase skillListReq) {
-		return PageUtil.getListResult(skillMapper.listSkill(skillListReq.toPageParam(), skillListReq));
+		Page page = skillListReq.toPageParam();
+
+		IPage<SkillRes> result = skillMapper.listSkill(page, skillListReq);
+		// fill missions
+		Set<String> skillIds = result.getRecords().stream().map(SkillRes::getResourceId)
+				.collect(Collectors.toSet());
+		if (!skillIds.isEmpty()) {
+			List<MissionRes> missionResList = skillMissionRelationMapper
+					.batchSelectMissionResNameBySkillIds(skillIds);
+			Map<String, List<MissionRes>> missionMap = StreamApiUtils.groupBy(missionResList,
+					MissionRes::getSkillId);
+			for (SkillRes skillRes : result.getRecords()) {
+				skillRes.setMissions(missionMap.getOrDefault(skillRes.getResourceId(), Lists.newArrayList()));
+			}
+		}
+
+		return PageUtil.getListResult(result);
 	}
 
 	@Override

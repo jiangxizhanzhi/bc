@@ -12,4 +12,7 @@ public class MissionRes extends MissionTemplateRes implements Serializable {
 
 	@ApiModelProperty("任务权重")
 	private Integer weight;
+
+	@ApiModelProperty("rtks技能id")
+	private String skillId;
 }

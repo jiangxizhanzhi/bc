@@ -21,26 +21,14 @@
     </resultMap>
 
 
-    <select id="listSkill" resultMap="SkillResMap">
+    <select id="listSkill" resultType="com.cyberpeace.rtks.service.bo.skill.SkillRes">
         <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
             <bind name="pattern" value="'%' + skillListReq.pattern + '%'"/>
         </if>
-        SELECT
-        rtks_skill.resource_id AS resource_id,
-        rtks_skill.content AS content,
-        cr_mission_template.title AS title,
-        cr_business_template.NAME AS scene_name,
-        cr_business_template.business_type AS scene_type,
-        cr_business_template.difficulty AS scene_difficulty,
-        rtks_skill_mission_relation.weight AS weight
-        FROM
-        rtks_skill_mission_relation
-        LEFT JOIN rtks_skill ON rtks_skill.resource_id = rtks_skill_mission_relation.skill_id
-        LEFT JOIN cr_mission_template ON rtks_skill_mission_relation.mission_template_id =
-        cr_mission_template.resource_id
-        LEFT JOIN cr_business_template ON cr_mission_template.business_template_id = cr_business_template.resource_id
-        ORDER BY
-        rtks_skill_mission_relation.create_time DESC
+        select
+        resource_id, content
+        from
+        rtks_skill
         <where>
             <if test="skillListReq.pattern != null and skillListReq.pattern != ''">
                 rtks_skill.resource_id like #{pattern}

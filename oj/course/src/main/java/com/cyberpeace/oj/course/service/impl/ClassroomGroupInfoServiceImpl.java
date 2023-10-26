@@ -171,7 +171,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
                 ClassroomGroupInfo::getGroupNo);
         Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
         List<String> groupIds = groupInfos.stream().map(ClassroomGroupInfo::getResourceId).collect(Collectors.toList());
-        Map<String, OjLocalScene> localSceneMap = ojLocalSceneMapper.selectByGroupIds(groupIds).stream().collect(Collectors.toMap(OjLocalScene::getBusinessId, OjLocalScen -> OjLocalScen));
+        Map<String, OjLocalScene> localSceneMap = CollectionUtils.isEmpty(groupIds)?new HashMap<>():ojLocalSceneMapper.selectByGroupIds(groupIds).stream().collect(Collectors.toMap(OjLocalScene::getBusinessId, OjLocalScen -> OjLocalScen));
         return StreamApiUtils.map(sorted,
                 classroomGroupInfo -> entityTBoNew(classroomGroupInfo, userInfoMap, localSceneMap));
     }

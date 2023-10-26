@@ -90,7 +90,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Autowired
 	private CrBadgeService crBadgeService;
 
-	private volatile Map<String, MissionCategoryCache> categoryCache;
+	private Map<String, MissionCategoryCache> categoryCache;
 
 	private Object lock = new Object();
 
@@ -118,7 +118,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public List<Mission> batchGet(List<String> resourceIds) {
 		List<Mission> ret = Lists.newArrayList();
-		if (resourceIds.size() == 0) {
+		if (resourceIds.isEmpty()) {
 			return ret;
 		}
 		// 返回的顺序保持输入的resourceId的顺序
@@ -151,7 +151,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		CrRole role = this.getRoleOrException(roleId);
 		List<CrTask> crTasks = crTaskMapper.selectByMissionId(missionId);
 
-		if (crTasks.size() > 0) {
+		if (!crTasks.isEmpty()) {
 			log.error("Mission released! missionId = [{}]",missionId);
 			throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 		}
@@ -225,7 +225,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		for (MissionStageScheme scheme : missionStageSchemeList) {
 			missionIds.addAll(scheme.getMissions());
 		}
-		if (checkNameDuplicate(mission.getTitle(), missionIds)) {
+		if (Boolean.TRUE.equals(checkNameDuplicate(mission.getTitle(), missionIds))) {
 			log.error("Mission name duplicates with existed missions! title = [{}]", mission.getTitle());
 			throw new BusinessException(CrBusinessErrorCode.DYNAMIC_MISSION_TITLE_DUPLICATE);
 		}
@@ -266,7 +266,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 
 		for (CrTask task : tasks) {
-			if (task.isFinished()) {
+			if (Boolean.TRUE.equals(task.isFinished())) {
 				missionMap.get(task.getMissionId()).addCompletionNum();
 			}
 		}
@@ -284,10 +284,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public Map<String, String> copyScheme(List<String> missionTemplateIds, String userId,
 			String roomId) {
 		Map<String, String> missionCopyMap = Maps.newHashMap();
-		if (missionTemplateIds.size() > 0) {
+		if (!missionTemplateIds.isEmpty()) {
 			List<MissionTemplate> missionTemplates = missionTemplateMapper
 					.selectBatchIds(missionTemplateIds);
-			if (missionTemplates.size() > 0) {
+			if (!missionTemplates.isEmpty()) {
 				List<Mission> missions = new ArrayList<>();
 
 				for (MissionTemplate missionTemplate : missionTemplates) {
@@ -316,7 +316,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrTaskLog taskLog = CrTaskLog.builder().roomId(mission.getRoomId()).missionId(missionId)
 				.userId(userId).build();
-		if (showWriteup) {
+		if (Boolean.TRUE.equals(showWriteup)) {
 			taskLog.setActionCode(CrTaskLog.ActionCode.OPEN_WRITEUP.getCode());
 		} else {
 			taskLog.setActionCode(CrTaskLog.ActionCode.CLOSE_WRITEUP.getCode());
@@ -375,7 +375,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<String> taskLogIds = crTaskLogMapper.getReleaseIdsByRoomIdAndUserId(roomId, studentId);
 
 		List<DynamicData> dynamicDataList = Lists.newArrayList();
-		if (taskLogIds.size() > 0) {
+		if (!taskLogIds.isEmpty()) {
 			List<Integer> actionCodes = Lists.newArrayList();
 			actionCodes.add(CrTaskLog.ActionCode.RELEASE.getCode());
 			actionCodes.add(CrTaskLog.ActionCode.MAN_SUCCESS.getCode());
@@ -428,7 +428,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates) {
-		if (missionTemplates == null || missionTemplates.size() == 0) {
+		if (missionTemplates == null || missionTemplates.isEmpty()) {
 			return false;
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -454,7 +454,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			stage = 0;
 		}
 
-		if (missionStageSchemeList.size() > 0) {
+		if (!missionStageSchemeList.isEmpty()) {
 			int index = 0;
 
 			for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
@@ -538,7 +538,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				trainMissions.add(missionId);
 			});
 
-			if (trainMissions.size() > 0) {
+			if (!trainMissions.isEmpty()) {
 				List<MissionTemplate> missions = missionTemplateMapper
 						.selectBatchIds(trainMissions);
 
@@ -603,7 +603,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 			// 按5.3逻辑处理重名：重名跳过
 			template.setResourceId(IDGeneratorUtil.getID());
-			if (!missionSchemeTemplateMapper.existByTitle(template.getTitle())) {
+			if (Boolean.FALSE.equals(missionSchemeTemplateMapper.existByTitle(template.getTitle()))) {
 				missionSchemeTemplateMapper.insert(template);
 			}
 		}
@@ -624,7 +624,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Override
 	public void checkSchemeTemplateTitleDuplicate(String title) {
-		if (missionSchemeTemplateMapper.existByTitle(title)) {
+		if (Boolean.TRUE.equals(missionSchemeTemplateMapper.existByTitle(title))) {
 			log.error("Mission solution name duplicate! title = [{}]", title);
 			throw new BusinessException(
 					CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE);
@@ -674,7 +674,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				break;
 			}
 		}
-		if (checkNameDuplicate(title, missionIds)) {
+		if (Boolean.TRUE.equals(checkNameDuplicate(title, missionIds))) {
 			log.error("Duplicated mission names in one stage! title = [{}], missionIds = [{}]", title, StringUtils.join(missionIds));
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
 		}
@@ -693,8 +693,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<CrTask> crTasks = crTaskMapper.selectByMissionIds(missionIds);
 
 		//过滤已下发的任务
-		if (crTasks.size() > 0) {
-			Set<String> existMissionIds = crTasks.stream().map(a -> a.getMissionId()).collect(Collectors.toSet());
+		if (!crTasks.isEmpty()) {
+			Set<String> existMissionIds = crTasks.stream().map(CrTask::getMissionId).collect(Collectors.toSet());
 			missions=missions.stream().filter(a->!existMissionIds.contains(a.getResourceId())).collect(Collectors.toList());
 			if (CollectionUtils.isEmpty(missions)) {
 				return false;

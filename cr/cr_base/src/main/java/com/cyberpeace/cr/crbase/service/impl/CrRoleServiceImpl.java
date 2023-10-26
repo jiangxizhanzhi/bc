@@ -120,7 +120,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		Map<String, ShowWriteupBo> showWriteupMap = Maps.newHashMap();
 
 		missionList.forEach(mission -> {
-			if (mission.getShowWriteup()) {
+			if (Boolean.TRUE.equals(mission.getShowWriteup())) {
 				showWriteupMap.put(mission.getResourceId(), showWriteupBo);
 			}
 		});
@@ -143,9 +143,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		for (MissionStageScheme missionStageScheme : crRole.getMissionStageSchemes()) {
 			List<Mission> missionList = missionService.batchGet(missionStageScheme.getMissions());
 
-			missionList.forEach(mission -> {
-				mission.setAnswer("");
-			});
+			missionList.forEach(mission -> mission.setAnswer(""));
 
 			List<MissionContext> missionContextList = BeanUtils.deepCopyList(missionList,
 					MissionContext.class);
@@ -276,8 +274,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return missionSchemeObjectList;
 	}
 
+	@Override
 	public Map<String, List<MissionSchemeObject<MissionContext>>> getCrRoleMissionByRoomIdAndCrRoles(String roomId, List<CrRole> crRoles) {
-		List<String> userIds = crRoles.stream().map(a -> a.getUserIdList())
+		List<String> userIds = crRoles.stream().map(CrRole::getUserIdList)
 				.flatMap(Collection::stream).collect(Collectors.toList());
 		//通过crRoles获取userId为key，crRole为value的map
 		Map<String,CrRole> userIdCrRoleMap = CrRole.getUserIdCrRoleMap(crRoles);
@@ -633,7 +632,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 				.collect(Collectors.toMap(UserIdRole::getUserId, UserIdRole::getRole, (a, b) -> a));
 
 		List<UserData> userDatas = this.getUserDatas(userIds);
-		List<UserRole> userRoleList = userDatas.stream().map(a -> {
+		return userDatas.stream().map(a -> {
 			UserRole userRole = new UserRole();
 			userRole.setResourceId(a.getResourceId());
 			userRole.setLogo(a.getLogo());
@@ -642,7 +641,6 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			userRole.setRoleName(userIdRoleMap.getOrDefault(a.getResourceId(),new CrRole()).getName());
 			return userRole;
 		}).collect(Collectors.toList());
-		return userRoleList;
 	}
 
 	@Override

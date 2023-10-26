@@ -3,9 +3,11 @@ package com.cyberpeace.cr.crbase.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeRsp;
@@ -59,7 +61,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		CrNotice notice = BeanUtils.copy(crNoticeReq, CrNotice.class);
 		notice.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		List<CrRole> roles;
-		if (!crNoticeReq.getIsRb()) {
+		if (Boolean.FALSE.equals(crNoticeReq.getIsRb())) {
 			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(1,2));
 
 		} else {
@@ -118,8 +120,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 			roles.add(1);
 			queryWrapper.lambda().in(CrNotice::getRole, roles);
 		}
-		List<CrNotice> list = this.list(queryWrapper);
-		return list;
+		return this.list(queryWrapper);
 	}
 
 
@@ -159,6 +160,8 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 				case 5:
 					list.add(3);
 					break;// 蓝方
+				default:
+					throw new BusinessException(CrBusinessErrorCode.INVALID_ROLE_INFO);
 			}
 		}
 		return list;

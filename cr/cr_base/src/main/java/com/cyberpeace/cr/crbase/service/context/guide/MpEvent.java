@@ -1,13 +1,10 @@
 package com.cyberpeace.cr.crbase.service.context.guide;
 
-import com.cyberpeace.constant.BaseI18n;
+import java.io.Serializable;
+import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.Getter;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 @Data
 public class MpEvent implements Serializable {

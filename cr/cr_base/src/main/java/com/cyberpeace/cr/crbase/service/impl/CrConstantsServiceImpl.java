@@ -22,7 +22,7 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 	@Autowired
 	private CrConstantsConfigMapper crConstantsConfigMapper;
 
-	private volatile Map<Integer, List<CrConstantsConfig>> cache = Maps.newHashMap();
+	private Map<Integer, List<CrConstantsConfig>> cache = Maps.newHashMap();
 
 	@Override
 	public List<CrConstantsConfig> getByType(Integer type) {
@@ -41,9 +41,7 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 			List<CrConstantsConfig> configs = crConstantsConfigMapper.getAll();
 			for (CrConstantsConfig config : configs) {
 				Integer type = config.getType();
-				if (!cache.containsKey(type)) {
-					cache.put(type, Lists.newArrayList());
-				}
+				cache.putIfAbsent(type, Lists.newArrayList());
 				cache.get(type).add(config);
 			}
 		}
@@ -57,7 +55,7 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 		if (cache.containsKey(type)) {
 
 			List<Integer> codeList = cache.get(type).stream()
-					.map(crConstantsConfig -> crConstantsConfig.getCode())
+					.map(CrConstantsConfig::getCode)
 					.collect(Collectors.toList());
 
 			if (codeList.contains(code)) {

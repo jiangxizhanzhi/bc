@@ -332,7 +332,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 		Boolean result = remoteSceneService.updateFlowParam(flowOpsContext);
 
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("Failed to update the flow! flowOpsContext = [{}]", JsonUtil.toJsonString(flowOpsContext));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_FLOW);
 		}
@@ -366,7 +366,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 				flowOpsContext.setContext(context);
 				Boolean result = remoteSceneService.startFlow(flowOpsContext);
 
-				if (!result) {
+				if (Boolean.FALSE.equals(result)) {
 					log.error("Failed to start flow! flowOpsContext = [{}]", JsonUtil.toJsonString(flowContext));
 					throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 				}
@@ -398,7 +398,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 		Boolean result = remoteSceneService.batchStartFlow(flowBatchOpsContext);
 
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("Failed to start flow! flowOpsContext = [{}]", JsonUtil.toJsonString(flowBatchOpsContext));
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 		}

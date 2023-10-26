@@ -42,7 +42,6 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		return BusinessType.RED_VS_BLUE;
 	}
 
-	@Override
 	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 		RbTemplateContext rbTemplateContext = BeanUtils.copy(basicTemplate,
 				RbTemplateContext.class);
@@ -77,7 +76,7 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
+	public ResourceDumpContext<RbTemplate> realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<RbTemplate> context = new ResourceDumpContext<>();
 		// 获取 rbTemplate
 		RbTemplate rbTemplate = rbTemplateService

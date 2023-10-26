@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service.context.statistics;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import lombok.Data;
  * 训练统计总体情况
  */
 @Data
-public class TrainingStatisticsRsp implements Serializable {
+public class TrainingStatisticsRsp {
 
 	@ApiModelProperty(value = "未完成训练统计")
 	private List<TrainingCountRsp> incomplete;

@@ -46,7 +46,7 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
 		List<String> missionTemplateIds = getIdsByMissionsSchemeJson(schemeJson);
-		if (missionTemplateIds.size() == 0) {
+		if (missionTemplateIds.isEmpty()) {
 			return Lists.newArrayList();
 		}
 		return missionTemplateMapper.selectBatchIds(missionTemplateIds);
@@ -115,9 +115,8 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		}
 		List<MissionTemplateRes> missionTemplateResList = missionTemplateMapper
 				.listWithBusiness(missionTemplateIds);
-		missionTemplateResList.forEach((missionTemplateRes) -> {
-			mapping.put(missionTemplateRes.getResourceId(), missionTemplateRes);
-		});
+		missionTemplateResList.forEach((missionTemplateRes) -> mapping
+				.put(missionTemplateRes.getResourceId(), missionTemplateRes));
 		return mapping;
 	}
 

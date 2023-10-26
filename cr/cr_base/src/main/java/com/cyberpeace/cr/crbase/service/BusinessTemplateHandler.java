@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.model.BaseTable;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.enums.BusinessType;
@@ -22,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BusinessTemplateHandler {
 
-	private static final String NOT_IMPLEMENTED = "method not implemented, plz do not use it";
+	private static final String NOT_IMPLEMENTED = "method not implemented, plz do not use it. ";
 
 	private static Map<BusinessType, BusinessTemplateHandler> register = Maps
 			.newHashMap();
@@ -39,24 +40,6 @@ public class BusinessTemplateHandler {
 	@PostConstruct
 	public void init() {
 		register.put(setBusinessType(), this);
-	}
-
-	public String saveBusiness(BasicTemplate basicTemplate, String businessId) {
-		BusinessType businessType = getBusinessType(
-				basicTemplate.getBaseInfo().getType());
-
-		BusinessTemplateHandler realHandler = register.get(businessType);
-
-		return realHandler.saveRealBusiness(basicTemplate, businessId);
-	}
-
-	/**
-	 * 保存实际的业务模板。如红蓝对抗、团队训练
-	 */
-	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
-		// 业务定义自己的保存操作
-		return "";
-
 	}
 
 	private BusinessType getBusinessType(Integer businessType) {
@@ -77,6 +60,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
+		template.getResourceId();
 		log.error(NOT_IMPLEMENTED);
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
@@ -87,7 +71,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
-		log.error(NOT_IMPLEMENTED);
+		log.error(NOT_IMPLEMENTED + resource.getBusinessTemplate().getName());
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -96,7 +80,7 @@ public class BusinessTemplateHandler {
 	 * @param businessTemplate
 	 */
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
-		log.error(NOT_IMPLEMENTED);
+		log.error(NOT_IMPLEMENTED + businessTemplate.getName());
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -105,7 +89,7 @@ public class BusinessTemplateHandler {
 	 * @param templateContext
 	 */
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
-		log.error(NOT_IMPLEMENTED);
+		log.error(NOT_IMPLEMENTED + templateContext.getBusinessTemplateId());
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 

@@ -64,7 +64,7 @@ public class SingleSceneEventListener extends MessageListener {
 		// 构建需要向页面推送的消息上下文
 		CrSceneWsMessageIdentifier identifier = new CrSceneWsMessageIdentifier();
 		identifier.setPath(WsPath.CR_SCENE);
-		identifier.setBusiness_id(businessId);
+		identifier.setBusinessId(businessId);
 
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext.builder().data(data)
 				.messageIdentifier(identifier).build();

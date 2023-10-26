@@ -103,15 +103,6 @@ public class CrTask extends BaseTable {
 		UNRELEASED(10, "未下发"), RELEASED(11, "已下发"), STARTED(12, "已开始"), WAIT(0, "待评估"), SUCCESS(1,
 				"成功"), FAIL(2, "失败"), REJECT(3, "驳回");
 
-		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
-				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
-
-		public static List<Integer> UNSUBMITTED_STATUS_LIST = new ArrayList<>(
-				Arrays.asList(RELEASED.getCode(), STARTED.getCode()));
-
-		public static List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(
-				Arrays.asList(WAIT.getCode(), REJECT.getCode()));
-
 		@Getter
 		private Integer code;
 

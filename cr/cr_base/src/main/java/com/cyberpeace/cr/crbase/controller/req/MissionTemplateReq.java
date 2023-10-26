@@ -72,12 +72,12 @@ public class MissionTemplateReq implements Serializable {
 				CrBusinessErrorCode.SCORE_OUT_OF_RANGE);
 
 		// validate answer
-		if (MissionBase.MissionType.ANSWER_NULLABLE_TYPE_LIST.contains(type) && answer == null) {
+		if (MissionBase.MissionType.getAnswerNullableTypeList().contains(type) && answer == null) {
 			log.error("Answer cannot be empty!");
 			throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 		}
 		// validate choice
-		if (MissionBase.MissionType.HAS_OPTION_TYPE_LIST.contains(type)) {
+		if (MissionBase.MissionType.getHasOptionTypeList().contains(type)) {
 			if (answer.equals(CommonConstant.EMPTY_LIST_JSON) || answer.isEmpty()) {
 				log.error("Answer cannot be empty!");
 				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
@@ -87,24 +87,28 @@ public class MissionTemplateReq implements Serializable {
 				throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
 			}
 			// validate option
-			List<JSONObject> options = JsonUtil.toJsonObjectArray(option, JSONObject.class);
-			List<String> realOptions = Lists.newArrayList();
-			for (JSONObject optionObject : options) {
-				String optionValue = optionObject.getString("optionValue");
-				if (optionValue == null) {
-					log.error("Options cannot be empty!");
-					throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
-				}
-				String realOption = StringUtils.strip(optionValue);
-				CrCommonValidator.validateDescLen(realOption, CrBusinessErrorCode.ILLEGAL_OPTION_LEN);
-				if (realOption.isEmpty()) {
-					throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
-				}
-				realOptions.add(realOption);
-			}
-			CrCommonValidator.checkStringListDuplicate(realOptions,
-					CrBusinessErrorCode.OPTIONS_DUPLICATE);
+			this.validateOption();
 		}
 
+	}
+
+	private void validateOption() {
+		List<JSONObject> options = JsonUtil.toJsonObjectArray(option, JSONObject.class);
+		List<String> realOptions = Lists.newArrayList();
+		for (JSONObject optionObject : options) {
+			String optionValue = optionObject.getString("optionValue");
+			if (optionValue == null) {
+				log.error("Options cannot be empty!");
+				throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
+			}
+			String realOption = StringUtils.strip(optionValue);
+			CrCommonValidator.validateDescLen(realOption, CrBusinessErrorCode.ILLEGAL_OPTION_LEN);
+			if (realOption.isEmpty()) {
+				throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
+			}
+			realOptions.add(realOption);
+		}
+		CrCommonValidator.checkStringListDuplicate(realOptions,
+				CrBusinessErrorCode.OPTIONS_DUPLICATE);
 	}
 }

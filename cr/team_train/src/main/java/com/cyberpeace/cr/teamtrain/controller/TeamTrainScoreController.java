@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cyberpeace.common.enums.TeamRoleGroup;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.compress.utils.Lists;
@@ -184,7 +185,7 @@ public class TeamTrainScoreController {
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 
 		jsonObject.put("radarLabels", radarLabels);
-		jsonObject.put("locale", crScoreController.getTemplateI18n());
+		jsonObject.put("locale", TrainingReport.TemplateI18n.getTemplateI18n());
 		jsonObject.put("user_list", userList);
 		jsonObject.put("mission_report", getTrainingMissionReport(roomId).getData());
 		jsonObject.put("report", trainingReport);
@@ -254,7 +255,7 @@ public class TeamTrainScoreController {
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<List<MissionEvaluationRsp>>
+	public BaseRsp<ListRsp<MissionEvaluationRsp>>
 			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
 
 		teamRoomService.checkTeacherPermission(missionEvaluationListReq.getRoomId(),

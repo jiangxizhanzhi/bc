@@ -1,16 +1,9 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
 import java.io.Serializable;
-import java.util.Date;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 
 @Data

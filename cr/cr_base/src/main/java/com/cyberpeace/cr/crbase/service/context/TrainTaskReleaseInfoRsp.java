@@ -1,15 +1,15 @@
 package com.cyberpeace.cr.crbase.service.context;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseInfo;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseInfo;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class TrainTaskReleaseInfoRsp implements Serializable {
@@ -33,9 +33,9 @@ public class TrainTaskReleaseInfoRsp implements Serializable {
     private Integer allCount;
 
     public void initCount() {
-        List<MissionReleaseInfo> missionList = missionStages.stream().map(a -> a.getMissionInfos()).flatMap(Collection::stream).collect(Collectors.toList());
+        List<MissionReleaseInfo> missionList = missionStages.stream().map(MissionReleaseStageInfo::getMissionInfos).flatMap(Collection::stream).collect(Collectors.toList());
         this.allCount = missionList.size();
-        this.releaseCount = (int)missionList.stream().filter(a->a.getIsRelease()).count();
+        this.releaseCount = (int)missionList.stream().filter(MissionReleaseInfo::getIsRelease).count();
 
     }
 }

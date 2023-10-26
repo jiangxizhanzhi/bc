@@ -1,5 +1,14 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -29,15 +38,8 @@ import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -137,75 +139,17 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		}
 
 		//处理成前端展示类型
-		List<GuideHistoryRsp> guideHistoryRspList = new ArrayList<>();
-		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
-			//获取场景内的节点信息
-			Map<String, ElementInfo> elementInfoMap = sceneElementCache.getIfPresent(situationGuideHistory.getSceneId());
-			if (elementInfoMap == null) {
-				SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(situationGuideHistory.getSceneId(), true);
-				elementInfoMap = situationTopo.getElements();
-				sceneElementCache.put(situationGuideHistory.getSceneId(), elementInfoMap);
-			}
-			//获取记录攻防类型
-			String category = null;
-			if (SituationGuideScheme.EventType.ATTACK.getCode().equals(situationGuideHistory.getEventType())) {
-				category = SituationGuideScheme.AttackUrlEnum.getEnumByCode(situationGuideHistory.getCategory()).getMsg();
-			} else if (SituationGuideScheme.EventType.DEFENSE.getCode().equals(situationGuideHistory.getEventType())) {
-				category = SituationGuideScheme.DefenseUrlEnum.getEnumByCode(situationGuideHistory.getCategory()).getMsg();
-			}
-			//获取事件名称、触发类型、动作类型
-			GuideHistoryRsp guideHistoryRsp = null;
-			if (category != null) {
-				guideHistoryRsp = new GuideHistoryRsp(situationGuideHistory.getEventName(),
-						EnumUtils.getEnumDescByCode(situationGuideHistory.getType(), SituationGuideScheme.Type.class),
-						EnumUtils.getEnumDescByCode(situationGuideHistory.getEventType(), SituationGuideScheme.EventType.class),
-						Arrays.asList(category));
-			} else {
-				guideHistoryRsp = new GuideHistoryRsp(situationGuideHistory.getEventName(),
-						EnumUtils.getEnumDescByCode(situationGuideHistory.getType(), SituationGuideScheme.Type.class),
-						EnumUtils.getEnumDescByCode(situationGuideHistory.getEventType(), SituationGuideScheme.EventType.class),
-						null);
-			}
-			guideHistoryRsp.setCategoryCode(Collections.singletonList(situationGuideHistory.getCategory()));
-			guideHistoryRsp.setActionCode(situationGuideHistory.getEventType());
-			guideHistoryRsp.setTriggerCode(situationGuideHistory.getType());
-			guideHistoryRsp.setResult(situationGuideHistory.getResult());
-			guideHistoryRsp.setRole(situationGuideHistory.getRole());
-			//获取源节点名称、ip
-			if (StringUtils.isNotEmpty(situationGuideHistory.getSource())) {
-				guideHistoryRsp.setSourceName(elementInfoMap.get(situationGuideHistory.getSource()).getName());
-				guideHistoryRsp.setSourceIp(getElementIp(elementInfoMap.get(situationGuideHistory.getSource())));
-				guideHistoryRsp.setSourceId(situationGuideHistory.getSource());
-			}
-			//获取目标节点名称、ip
-			if (StringUtils.isNotEmpty(situationGuideHistory.getTarget())) {
-				guideHistoryRsp.setTargetName(elementInfoMap.get(situationGuideHistory.getTarget()).getName());
-				guideHistoryRsp.setTargetIp(getElementIp(elementInfoMap.get(situationGuideHistory.getTarget())));
-				guideHistoryRsp.setTargetId(situationGuideHistory.getTarget());
-			}
-			guideHistoryRspList.add(guideHistoryRsp);
-		}
+		List<GuideHistoryRsp> guideHistoryRspList = makeGuideHistoryRsp(situationGuideHistoryList);
 
 		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
 			situationGuideService.pushDataToRoomByGuide(true, situationGuideHistory);
 		}
 
 		//获取中台数据,处理数据
-		ScreenBo screenBo = new ScreenBo();
-		screenBo.setEventName("123");
-		if (screenGuideHistoryReq.getAttackScreenBo() == null) {
-			screenGuideHistoryReq.setAttackScreenBo(screenBo);
-		}
-		if (screenGuideHistoryReq.getDefenseScreenBo() == null) {
-			screenGuideHistoryReq.setDefenseScreenBo(screenBo);
-		}
-		List<MpEvent> mpEventList = situationGuideService.getMpEventList(screenGuideHistoryReq);
+		List<MpEvent> mpEventList = getMpEventList(screenGuideHistoryReq);
 
 		//推送动效
-		Map<String, Integer> attCk = Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
-										   .collect(Collectors.toMap(SituationGuideScheme.AttackUrlEnum::getMpCode, SituationGuideScheme.AttackUrlEnum::getCode));
-		attCk.putAll(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values())
-						   .collect(Collectors.toMap(SituationGuideScheme.DefenseUrlEnum::getMpCode, SituationGuideScheme.DefenseUrlEnum::getCode)));
+		Map<String, Integer> attCk = this.getAttCkMap();
 
 		for (MpEvent mpEvent : mpEventList) {
 			for (String category : mpEvent.getAttCks()) {
@@ -379,6 +323,96 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			screenBo.setStartTime(TimeUtil.toDate1(screenBo.getStartTime()).before(TimeUtil.toDate1(startTime)) ? startTime : screenBo.getStartTime());
 			screenBo.setEndTime(TimeUtil.toDate1(screenBo.getEndTime()).before(TimeUtil.toDate1(endTime)) ? screenBo.getEndTime() : endTime);
 		}
+	}
+
+	private List<GuideHistoryRsp>
+			makeGuideHistoryRsp(List<SituationGuideHistory> situationGuideHistoryList) {
+		List<GuideHistoryRsp> guideHistoryRspList = new ArrayList<>();
+		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
+			// 获取场景内的节点信息
+			Map<String, ElementInfo> elementInfoMap = sceneElementCache
+					.getIfPresent(situationGuideHistory.getSceneId());
+			if (elementInfoMap == null) {
+				SituationTopo situationTopo = situationHandlerService
+						.getSituationTopoBySceneId(situationGuideHistory.getSceneId(), true);
+				elementInfoMap = situationTopo.getElements();
+				sceneElementCache.put(situationGuideHistory.getSceneId(), elementInfoMap);
+			}
+			// 获取记录攻防类型
+			String category = null;
+			if (SituationGuideScheme.EventType.ATTACK.getCode()
+					.equals(situationGuideHistory.getEventType())) {
+				category = SituationGuideScheme.AttackUrlEnum
+						.getEnumByCode(situationGuideHistory.getCategory()).getMsg();
+			} else if (SituationGuideScheme.EventType.DEFENSE.getCode()
+					.equals(situationGuideHistory.getEventType())) {
+				category = SituationGuideScheme.DefenseUrlEnum
+						.getEnumByCode(situationGuideHistory.getCategory()).getMsg();
+			}
+			// 获取事件名称、触发类型、动作类型
+			GuideHistoryRsp guideHistoryRsp = null;
+			if (category != null) {
+				guideHistoryRsp = new GuideHistoryRsp(situationGuideHistory.getEventName(),
+						EnumUtils.getEnumDescByCode(situationGuideHistory.getType(),
+								SituationGuideScheme.Type.class),
+						EnumUtils.getEnumDescByCode(situationGuideHistory.getEventType(),
+								SituationGuideScheme.EventType.class),
+						Arrays.asList(category));
+			} else {
+				guideHistoryRsp = new GuideHistoryRsp(situationGuideHistory.getEventName(),
+						EnumUtils.getEnumDescByCode(situationGuideHistory.getType(),
+								SituationGuideScheme.Type.class),
+						EnumUtils.getEnumDescByCode(situationGuideHistory.getEventType(),
+								SituationGuideScheme.EventType.class),
+						null);
+			}
+			guideHistoryRsp.setCategoryCode(
+					Collections.singletonList(situationGuideHistory.getCategory()));
+			guideHistoryRsp.setActionCode(situationGuideHistory.getEventType());
+			guideHistoryRsp.setTriggerCode(situationGuideHistory.getType());
+			guideHistoryRsp.setResult(situationGuideHistory.getResult());
+			guideHistoryRsp.setRole(situationGuideHistory.getRole());
+			// 获取源节点名称、ip
+			if (StringUtils.isNotEmpty(situationGuideHistory.getSource())) {
+				guideHistoryRsp.setSourceName(
+						elementInfoMap.get(situationGuideHistory.getSource()).getName());
+				guideHistoryRsp.setSourceIp(
+						getElementIp(elementInfoMap.get(situationGuideHistory.getSource())));
+				guideHistoryRsp.setSourceId(situationGuideHistory.getSource());
+			}
+			// 获取目标节点名称、ip
+			if (StringUtils.isNotEmpty(situationGuideHistory.getTarget())) {
+				guideHistoryRsp.setTargetName(
+						elementInfoMap.get(situationGuideHistory.getTarget()).getName());
+				guideHistoryRsp.setTargetIp(
+						getElementIp(elementInfoMap.get(situationGuideHistory.getTarget())));
+				guideHistoryRsp.setTargetId(situationGuideHistory.getTarget());
+			}
+			guideHistoryRspList.add(guideHistoryRsp);
+		}
+		return guideHistoryRspList;
+	}
+
+	private Map<String, Integer> getAttCkMap() {
+		Map<String, Integer> attCk = Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
+				.collect(Collectors.toMap(SituationGuideScheme.AttackUrlEnum::getMpCode,
+						SituationGuideScheme.AttackUrlEnum::getCode));
+		attCk.putAll(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values())
+				.collect(Collectors.toMap(SituationGuideScheme.DefenseUrlEnum::getMpCode,
+						SituationGuideScheme.DefenseUrlEnum::getCode)));
+		return attCk;
+	}
+
+	private List<MpEvent> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq) {
+		ScreenBo screenBo = new ScreenBo();
+		screenBo.setEventName("123");
+		if (screenGuideHistoryReq.getAttackScreenBo() == null) {
+			screenGuideHistoryReq.setAttackScreenBo(screenBo);
+		}
+		if (screenGuideHistoryReq.getDefenseScreenBo() == null) {
+			screenGuideHistoryReq.setDefenseScreenBo(screenBo);
+		}
+		return situationGuideService.getMpEventList(screenGuideHistoryReq);
 	}
 
 }

@@ -10,5 +10,5 @@ import lombok.Data;
 @Data
 public class CrSceneWsMessageIdentifier extends WsMessageIdentifier {
 
-	private String business_id;
+	private String businessId;
 }

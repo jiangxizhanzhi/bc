@@ -20,11 +20,11 @@ public class MultipleChoiceParser implements MdContentParser<String, String> {
 
 	@Override
 	public String write(String s) {
-		String str = "";
+		StringBuilder builder = new StringBuilder();
 		JSONArray options = JSON.parseArray(s);
 		for (int i = 0; i < options.size(); i++) {
-			str = str + "- " + options.getString(i) + System.lineSeparator();
+			builder.append("- ").append(options.getString(i)).append(System.lineSeparator());
 		}
-		return LocalStringUtil.frontBackLine(str);
+		return LocalStringUtil.frontBackLine(builder.toString());
 	}
 }

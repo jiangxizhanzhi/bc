@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.cache.CrRoleCache;
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.context.role.CrRoleNode;
-import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
 
@@ -85,7 +85,7 @@ public class CrEventListenerHelper {
 		// 构建需要向页面推送的消息上下文
 		CrSceneWsMessageIdentifier identifier = new CrSceneWsMessageIdentifier();
 		identifier.setPath(WsPath.CR_SCENE);
-		identifier.setBusiness_id(businessId);
+		identifier.setBusinessId(businessId);
 		return WebSocketMessageContext.builder().data(data).messageIdentifier(identifier).build();
 	}
 }

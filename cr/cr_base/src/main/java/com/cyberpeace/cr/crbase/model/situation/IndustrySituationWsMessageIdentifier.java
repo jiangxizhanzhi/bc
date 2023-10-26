@@ -12,5 +12,5 @@ import lombok.Data;
 @Data
 public class IndustrySituationWsMessageIdentifier extends WsMessageIdentifier {
 
-	private String business_id;
+	private String businessId;
 }

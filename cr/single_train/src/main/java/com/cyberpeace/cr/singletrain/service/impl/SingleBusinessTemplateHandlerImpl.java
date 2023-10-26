@@ -52,7 +52,6 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		return BusinessType.TRAINING_SINGLE;
 	}
 
-	@Override
 	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 		SingleTemplate singleTemplate = new SingleTemplate();
 		BaseInfo baseInfo = basicTemplate.getBaseInfo();
@@ -72,7 +71,7 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	}
 
 	@Override
-	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
+	public ResourceDumpContext<SingleTemplate> realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<SingleTemplate> context = new ResourceDumpContext<>();
 		// 获取 teamTemplate
 		SingleTemplate singleTemplate = singleTemplateService

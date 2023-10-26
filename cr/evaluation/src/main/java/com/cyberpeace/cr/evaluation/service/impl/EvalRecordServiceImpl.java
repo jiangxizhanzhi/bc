@@ -1530,7 +1530,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         //折线图
         data.put("evalCollectionLine", evalVariableGraphListRspList);
         //添加词条
-        data.put("locale", getTemplateI18n());
+        data.put("locale", TrainingReport.TemplateI18n.getTemplateI18n());
         return data;
     }
 
@@ -1551,16 +1551,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }).collect(Collectors.toList());
         }
         return evalCollectionContextList;
-    }
-
-    private JSONObject getTemplateI18n() {
-        JSONObject jsonObject = new JSONObject();
-
-        for (TrainingReport.TemplateI18n enumData : TrainingReport.TemplateI18n.values()) {
-            jsonObject.put(enumData.name(), enumData.getMsg());
-        }
-
-        return jsonObject;
     }
 
     private String getTitle(String name) {

@@ -53,14 +53,14 @@ public class MissionReleaseStageInfo implements Serializable {
 							.map(CrTask::getUserId).collect(Collectors.toSet());
 					// 已下发 才有是否完成用户列表
 					missionReleaseInfo.setFinishUserList(userInfoList.stream()
-							.filter(a -> crTasks.size() > 0 && userIds.contains(a.getResourceId()))
+							.filter(a -> !crTasks.isEmpty() && userIds.contains(a.getResourceId()))
 							.collect(Collectors.toList()));
 					missionReleaseInfo.setNotFinishUserList(userInfoList.stream()
-							.filter(a -> crTasks.size() > 0 && !userIds.contains(a.getResourceId()))
+							.filter(a -> !crTasks.isEmpty() && !userIds.contains(a.getResourceId()))
 							.collect(Collectors.toList()));
-					missionReleaseInfo.setIsRelease(crTasks.size() > 0);
+					missionReleaseInfo.setIsRelease(!crTasks.isEmpty());
 					//前端需要一个字段判断是否全部下发 如果有一个没有下发 就是false
-					if (crTasks.size()==0) {
+					if (crTasks.isEmpty()) {
 						this.isAllRelease = false;
 					}
 					missionReleaseInfo

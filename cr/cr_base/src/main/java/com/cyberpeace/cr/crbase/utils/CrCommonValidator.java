@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -62,7 +63,7 @@ public class CrCommonValidator {
 			}
 		}
 		try {
-			String targetStr = new String(target.getBytes("GBK"), "iso-8859-1");
+			String targetStr = new String(target.getBytes("GBK"), StandardCharsets.ISO_8859_1);
 			int len = targetStr.length();
 			if (len < minLen || len > maxLen) {
 				log.error("string's length = [{}], it < [{}] or it > [{}]", len, minLen, maxLen);

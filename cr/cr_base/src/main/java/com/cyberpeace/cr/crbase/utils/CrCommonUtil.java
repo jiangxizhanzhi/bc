@@ -160,8 +160,7 @@ public class CrCommonUtil {
 		if (StringUtils.isBlank(optionString) || optionString.equals(NULL)) {
 			return Lists.newArrayList();
 		}
-		List<MissionOption> res = JsonUtil.toJsonObjectArray(optionString, MissionOption.class);
-		return res;
+		return JsonUtil.toJsonObjectArray(optionString, MissionOption.class);
 	}
 
 	/**

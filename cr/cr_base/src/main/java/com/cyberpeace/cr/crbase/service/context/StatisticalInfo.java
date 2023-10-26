@@ -10,7 +10,7 @@ import lombok.Data;
 public class StatisticalInfo {
 
 	@ApiModelProperty(value = "统计状态")
-	private Integer statistical_state;
+	private Integer statisticalState;
 
 	@ApiModelProperty(value = "值")
 	private Integer value;

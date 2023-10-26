@@ -260,9 +260,9 @@ public class MDParser {
 	private IndustrySituationConfig situationConfig;
 
 
-	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(()->"");
+	protected static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(()->"");
 	//字段
-	public static ThreadLocal<String> fieldErrorMsg = ThreadLocal.withInitial(() -> "");
+	protected static ThreadLocal<String> fieldErrorMsg = ThreadLocal.withInitial(() -> "");
 
 	public MDParser(String dirPath, String topoId) {
 		this.dirPath = dirPath;
@@ -436,15 +436,7 @@ public class MDParser {
 				while (!line.startsWith(ENTRY_HEAD)) {
 					// 读取并分类
 					Role role = new Role(line.substring(4), iter.next().substring(6));
-					if (groupName.equals(RoleGroupNames.STUDENT)) {
-						groupRoles.getStudent().add(role);
-					}
-					if (groupName.equals(RoleGroupNames.RED)) {
-						groupRoles.getRed().add(role);
-					}
-					if (groupName.equals(RoleGroupNames.BLUE)) {
-						groupRoles.getBlue().add(role);
-					}
+					groupRoles.addRole(role, groupName);
 					if (iter.hasNext()) {
 						line = iter.next();
 					} else {
@@ -912,6 +904,18 @@ class GroupRoles {
 	private List<Role> red = Lists.newArrayList();
 
 	private List<Role> blue = Lists.newArrayList();
+
+	protected void addRole(Role role, String groupName){
+		if (groupName.equals(RoleGroupNames.STUDENT)) {
+			this.student.add(role);
+		}
+		if (groupName.equals(RoleGroupNames.RED)) {
+			this.red.add(role);
+		}
+		if (groupName.equals(RoleGroupNames.BLUE)) {
+			this.blue.add(role);
+		}
+	}
 }
 
 class MsgMap<K, V> extends HashMap<K, V> {

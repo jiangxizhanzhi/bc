@@ -42,7 +42,7 @@ import com.google.common.collect.Maps;
 @Service
 public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
-	public static Map<Integer, ExportTrainMDService> register = Maps.newHashMap();
+	protected static final Map<Integer, ExportTrainMDService> register = Maps.newHashMap();
 
 	public static final String BASE_MD_FILE = "README.md";
 
@@ -73,7 +73,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(getCode())) {
-			throw new Error("declareMessageType=[" + getCode() + "] repeat");
+			throw new BusinessException("declareMessageType=[" + getCode() + "] repeat");
 		}
 
 		register.put(getCode(), this);
@@ -87,7 +87,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	public void chooseTypeAndExportTrain(List<String> resourceIds, String path, Integer type, String sceneNumber, Boolean disableImageExport) throws IOException {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.getAllByIds(resourceIds, type);
-		if(businessTemplateList.size() == 0){
+		if(businessTemplateList.isEmpty()){
 			String ids = StringUtils.join(resourceIds, ",");
 			log.error("IDs do not exist! ids = [{}]", ids);
 			throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_ID_NOT_EXIST);

@@ -55,12 +55,12 @@ public class ExportTrainMDController {
 			path = ConfigUtil.getContextProperty("win.tmp.path");
 		} else {
 			path = CommonConstant.EXPORT_TRAIN_PATH;
-		};
+		}
 		//获取导出资源id
 		List<String> resourceIds = new ArrayList<>();
 		resourceIds.add(resourceId);
 
-		if(resourceIds.size() == 0){
+		if(resourceIds.isEmpty()){
 			File file = new File(path);
 			file.mkdirs();
 			return new BaseRsp<>(path);

@@ -141,12 +141,9 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 
 		// task events
 		for (CrTask crTask : taskList) {
-			// 仅返回操作过的任务
-			if (null == crTask.getLastSubmitTime()) {
-				continue;
-			}
 			UserInfo userInfo = userInfoMap.get(crTask.getUserId());
-			if (null == userInfo) {
+			// 仅返回操作过的任务
+			if (null == crTask.getLastSubmitTime() || null == userInfo) {
 				continue;
 			}
 			TimeLineEvent timeLineEvent = new TimeLineEvent();

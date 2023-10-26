@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.model.ListRsp;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,7 +160,7 @@ public class RbRoomScoreController {
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 
 		jsonObject.put("radarLabels", radarLabels);
-		jsonObject.put("locale", crScoreController.getTemplateI18n());
+		jsonObject.put("locale", TrainingReport.TemplateI18n.getTemplateI18n());
 		jsonObject.put("user_list", userList);
 		jsonObject.put("mission_report", getTrainingMissionReport(roomId, roleGroup).getData());
 		jsonObject.put("report", trainingReport);
@@ -238,7 +239,7 @@ public class RbRoomScoreController {
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<List<MissionEvaluationRsp>>
+	public BaseRsp<ListRsp<MissionEvaluationRsp>>
 			getMissionEvaluations(@Validated MissionEvaluationListReq missionEvaluationListReq) {
 
 		rbRoomService.checkRefereePermission(missionEvaluationListReq.getRoomId(),

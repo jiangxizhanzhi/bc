@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -56,7 +55,7 @@ public class IndustrySituationServiceImpl implements IndustrySituationService {
 	public boolean pushSituationWs(String businessId, Integer tsId) {
 		IndustrySituationWsMessageIdentifier identifier = new IndustrySituationWsMessageIdentifier();
 		identifier.setPath(WsPath.INDUSTRY_SITUATION);
-		identifier.setBusiness_id(businessId);
+		identifier.setBusinessId(businessId);
 
 		IndustrySituationEvent event = new IndustrySituationEvent();
 		event.setCode(tsId);

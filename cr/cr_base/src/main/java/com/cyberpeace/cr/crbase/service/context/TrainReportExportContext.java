@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.CommonConstant;
+import org.apache.commons.collections.CollectionUtils;
+
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.score.GetScoreRsp;
@@ -13,7 +14,6 @@ import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
 
 @Data
 public class TrainReportExportContext extends TrainReportContext {
@@ -89,7 +89,7 @@ public class TrainReportExportContext extends TrainReportContext {
 			return "";
 		}
 		return map.entrySet().stream()
-				.map(a -> "{name:'" + a.getKey() + "',value:" + a.getValue() + "}")
+				.map(a -> String.format("{name:'%s',value:%d}", a.getKey(), a.getValue()))
 				.collect(Collectors.joining(","));
 	}
 
@@ -98,7 +98,7 @@ public class TrainReportExportContext extends TrainReportContext {
 			return "";
 		}
 		return list.stream()
-				.map(a -> "{name:'" + a.getAttack_type() + "',value:" + a.getTimes() + "}")
+				.map(a -> String.format("{name:'%s',value:%d}", a.getAttack_type(), a.getTimes()))
 				.collect(Collectors.joining(","));
 	}
 

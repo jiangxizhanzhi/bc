@@ -8,7 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DateUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -101,35 +101,17 @@ public class TrainReportContext {
 	public void initTimeList(ScoreTrendReq scoreTrendReq) {
 		long start = scoreTrendReq.getStartTime().getTime();
 		long end = scoreTrendReq.getEndTime().getTime();
-		// 需求改回 永远输出年月日格式
-		boolean isSameYear = false;
 		// 间隔
 		long interval = (end - start) / scoreTrendReq.getScoreCount();
 		timeList.add(scoreTrendReq.getStartTime());
-		if (isSameYear) {
-			timeStringList
-					.add(DateUtil.dateToString(scoreTrendReq.getStartTime(), "MM-dd HH:mm:ss"));
-		} else {
-			timeStringList.add(
-					DateUtil.dateToString(scoreTrendReq.getStartTime(), "yyyy-MM-dd HH:mm:ss"));
-		}
+		timeStringList.add(TimeUtil.format1(scoreTrendReq.getStartTime()));
 		for (int i = 0; i < scoreTrendReq.getScoreCount() - 1; i++) {
 			Date date = new Date(start + interval * (i + 1));
 			timeList.add(date);
-			if (isSameYear) {
-				timeStringList.add(DateUtil.dateToString(date, "MM-dd HH:mm:ss"));
-			} else {
-				timeStringList.add(DateUtil.dateToString(date, "yyyy-MM-dd HH:mm:ss"));
-			}
+			timeStringList.add(TimeUtil.format1(date));
 		}
 		timeList.add(scoreTrendReq.getEndTime());
-		if (isSameYear) {
-			timeStringList.add(DateUtil.dateToString(scoreTrendReq.getEndTime(), "MM-dd HH:mm:ss"));
-		} else {
-			timeStringList
-					.add(DateUtil.dateToString(scoreTrendReq.getEndTime(), "yyyy-MM-dd HH:mm:ss"));
-		}
-
+		timeStringList.add(TimeUtil.format1(scoreTrendReq.getEndTime()));
 	}
 
 	public void initRbGetScoreRsps(Boolean isRb) {

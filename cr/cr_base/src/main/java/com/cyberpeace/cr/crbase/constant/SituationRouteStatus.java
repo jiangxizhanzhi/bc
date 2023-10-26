@@ -20,4 +20,6 @@ public final class SituationRouteStatus {
      * 攻击完成
      */
     public static final int CONQUERED = 3;
+
+    private SituationRouteStatus() {}
 }

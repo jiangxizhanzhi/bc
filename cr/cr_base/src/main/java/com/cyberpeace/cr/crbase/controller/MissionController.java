@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.integratation.constant.LogContent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -49,7 +48,6 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionDetail;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.controller.CommonController;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -93,17 +91,16 @@ public class MissionController {
 	@Autowired
 	private UtilService utilService;
 
-	@Autowired
-	private CommonController commonController;
-
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
 			logical = Logical.OR)
 	public BaseRsp<List<Integer>> getRadar(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
-		List<Integer> radars = crRoleService.getRadar(resource_id, user_hash);
+			@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(value = "resource_id") String resourceId,
+			@ApiParam(name = "user_hash", value = "用户id",
+					required = true) @RequestParam(value = "user_hash") String userHash) {
+		List<Integer> radars = crRoleService.getRadar(resourceId, userHash);
 
 		return new BaseRsp<>(radars);
 	}
@@ -303,7 +300,7 @@ public class MissionController {
 	@GetMapping("/combat_techs/list")
 	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_TEAM_TRAIN}, logical = Logical.OR)
-	public BaseRsp<List<MissionSchemeTemplateRsp>>
+	public BaseRsp<ListRsp<MissionSchemeTemplateRsp>>
 			listSchemeTemplate(@Validated PageReqBase pageReqBase) {
 		ListRsp<MissionSchemeTemplateRsp> schemeTemplateListRsp = missionService
 				.pageSchemeTemplateRsp(pageReqBase);
@@ -316,7 +313,7 @@ public class MissionController {
 		for (MissionSchemeTemplateRsp rsp : schemeTemplateListRsp.getList()) {
 			rsp.setRepName(idNameMap.get(rsp.getCreateUser()));
 		}
-		return new BaseRsp(schemeTemplateListRsp);
+		return new BaseRsp<>(schemeTemplateListRsp);
 	}
 
 	@ApiOperation("查询单个任务方案")
@@ -378,7 +375,7 @@ public class MissionController {
 			listMissionTemplates(@Validated MissionTemplatePageReq pageReq) {
 		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService
 				.pageMissionTemplate(pageReq);
-		return new BaseRsp(missionTemplateRspListRsp);
+		return new BaseRsp<>(missionTemplateRspListRsp);
 	}
 
 	@ApiOperation("解析md文件数据")

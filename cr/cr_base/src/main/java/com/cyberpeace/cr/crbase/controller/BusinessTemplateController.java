@@ -80,9 +80,6 @@ public class BusinessTemplateController {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Autowired
-	private RemoteLogService remoteLogService;
-
 	/**
 	 * 获取所有靶场的业务模板
 	 * @return
@@ -137,9 +134,9 @@ public class BusinessTemplateController {
 	@GetMapping("/getShares")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
-	public BaseRsp<Share> getShares(
-			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
-		Share data = businessTemplateService.getShares(resource_id);
+	public BaseRsp<Share> getShares(@ApiParam(name = "resource_id", value = "模板id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
+		Share data = businessTemplateService.getShares(resourceId);
 
 		return new BaseRsp<>(data);
 	}
@@ -196,7 +193,7 @@ public class BusinessTemplateController {
 		}
 
 		// 1、检查权限
-		checkBeforeTestingScene(templateId);
+		
 		// 2、获取模板
 		BusinessTemplate businessTemplate = ensureTemplateExist(templateId);
 
@@ -235,10 +232,10 @@ public class BusinessTemplateController {
 	@GetMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
-	public BaseRsp<SceneViewContext> getScene(
-			@ApiParam(name = "resource_id", value = "业务模板id", required = true) String resource_id) {
+	public BaseRsp<SceneViewContext> getScene(@ApiParam(name = "resource_id", value = "业务模板id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
 
-		BusinessTemplate template = ensureTemplateExist(resource_id);
+		BusinessTemplate template = ensureTemplateExist(resourceId);
 		SceneViewContext context = businessTemplateService.viewScene(template);
 
 		return new BaseRsp<>(context);
@@ -253,7 +250,7 @@ public class BusinessTemplateController {
 		String templateId = testSceneReq.getBusinessTemplateId();
 		BusinessTemplate template = ensureTemplateExist(templateId);
 		// 2.鉴权
-		checkBeforeTestingScene(templateId);
+		
 		// 3.关闭远程场景
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(templateId);
 		localSceneService.stopScene(localScene);
@@ -275,7 +272,7 @@ public class BusinessTemplateController {
 		}
 		Boolean result = localSceneService.restartNode(template.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("Node restart failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
@@ -294,7 +291,7 @@ public class BusinessTemplateController {
 		}
 		Boolean result = localSceneService.recreateNode(template.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("Node recreate failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
@@ -313,7 +310,7 @@ public class BusinessTemplateController {
 		}
 		Boolean result = localSceneService.createNode(template.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("Node recreate failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_CREATE_NODE);
 		}
@@ -339,7 +336,7 @@ public class BusinessTemplateController {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_DUMP_TEMPLATE);
 		} finally {
 			// 3. delete temp dir
-			if (!FileUtil.deleteDir(new File(tempDir))) {
+			if (Boolean.FALSE.equals(FileUtil.deleteDir(new File(tempDir)))) {
 				log.error("failed to remove temp dir :{}", tempDir);
 			}
 		}
@@ -360,7 +357,7 @@ public class BusinessTemplateController {
 		// 3. load resources
 		businessTemplateService.batchLoad(unZipPath);
 		// 4. delete temp dir
-		if (!FileUtil.deleteDir(new File(unZipPath))) {
+		if (Boolean.FALSE.equals(FileUtil.deleteDir(new File(unZipPath)))) {
 			log.error("failed to delete temp dir");
 		}
 		return new BaseRsp<>();
@@ -371,10 +368,10 @@ public class BusinessTemplateController {
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_ATTACK_FRAME,
 			MenuConstant.CMS_ENGAGE_FRAME }, logical = Logical.OR)
-	public BaseRsp<List<BusinessTemplateSimple>> pageSimple(@Validated BTPageReq btPageReq) {
+	public BaseRsp<ListRsp<BusinessTemplateSimple>> pageSimple(@Validated BTPageReq btPageReq) {
 		ListRsp<BusinessTemplateSimple> res = businessTemplateService.pageSimple(btPageReq);
 
-		return new BaseRsp(res);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("创建训练时校验用户是否拥有模板权限")
@@ -382,21 +379,17 @@ public class BusinessTemplateController {
 	@RequiresPermissions(
 			value = { MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN },
 			logical = Logical.OR)
-	public BaseRsp<Boolean> checkTemplateAccessPermission(
-			@ApiParam(value = "训练模板id", name = "resource_id") String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		boolean res = businessTemplateService.checkPermission(resource_id);
+	public BaseRsp<Boolean> checkTemplateAccessPermission(@ApiParam(value = "训练模板id",
+			name = "resource_id") @RequestParam(name = "resource_id") String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		boolean res = businessTemplateService.checkPermission(resourceId);
 		if (!res) {
 			log.error(
 					"template deleted or current user not permitted: template_id:[{}], userId:[{}]",
-					resource_id, UserInfoContext.getUserContext().getUserId());
+					resourceId, UserInfoContext.getUserContext().getUserId());
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_DELETED_OR_NOT_PERMITTED);
 		}
 		return new BaseRsp<>(true);
-	}
-
-	private void checkBeforeTestingScene(String templateId) {
-		// 暂无
 	}
 
 	private BusinessTemplate ensureTemplateExist(String templateId) {

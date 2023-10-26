@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.TrainingSummary;
-import com.cyberpeace.cr.crbase.service.context.score.TaskStatistics;
-import com.cyberpeace.cr.crbase.service.context.score.TrainingScore;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 
 import io.swagger.annotations.ApiModelProperty;

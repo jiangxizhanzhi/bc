@@ -94,7 +94,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		while (k < areas.size()) {
 			String areaPositionJson = areas.getJSONObject(k).getString("position2");
 			Area area = JsonUtil.toJsonObject(areaPositionJson, Area.class);
-			if (!area.contains(elements)) {
+			if (Boolean.FALSE.equals(area.contains(elements))) {
 				areas.remove(k);
 				filterPieces(area, pieces);
 			} else {
@@ -166,13 +166,13 @@ class Area {
 
 	private Float height;
 
-	public Boolean contains(Coordination coordination) {
+	public boolean contains(Coordination coordination) {
 		return origin.getX() <= coordination.getX() && coordination.getX() <= origin.getX() + width
 				&& origin.getY() <= coordination.getY()
 				&& coordination.getY() <= origin.getY() + height;
 	}
 
-	public Boolean contains(Object object) {
+	public boolean contains(Object object) {
 		JSONObject jsonObject = (JSONObject) object;
 		Coordination coordination = JsonUtil.toJsonObject(jsonObject.getString("position2"),
 				Coordination.class);
@@ -182,7 +182,7 @@ class Area {
 	/**
 	 * area 含有至少一个节点，不隐藏； 否则隐藏 area
 	 */
-	public Boolean contains(JSONArray elements) {
+	public boolean contains(JSONArray elements) {
 		for (Object element : elements) {
 			if (contains(element)) {
 				return true;

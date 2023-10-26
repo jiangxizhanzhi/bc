@@ -1,16 +1,15 @@
 package com.cyberpeace.cr.crbase.controller.rsp.guide;
 
+import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author myy
  */
 @Data
-public class GuideRoleStageRsp implements Serializable {
+public class GuideRoleStageRsp {
 
 	@ApiModelProperty("角色名称")
 	private String roleName;

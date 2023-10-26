@@ -54,14 +54,22 @@ public class MissionBase extends BaseTable {
 		JUDGE(0, "判断"), SINGLE_CHOICE(1, "单选"), MULTIPLE_CHOICE(2, "多选"), BLANK(3, "填空"), FAQ(4,
 				"问答"), ATTACK(5, "攻击"), DEFENCE(6, "防御"), FILE(7, "文件");
 
-		public static final List<Integer> OBJECTIVE_TYPE_LIST = new ArrayList<>(
+		private static final List<Integer> OBJECTIVE_TYPE_LIST = new ArrayList<>(
 				Arrays.asList(JUDGE.code, SINGLE_CHOICE.code, MULTIPLE_CHOICE.code, FILE.code));
 
-		public static final List<Integer> ANSWER_NULLABLE_TYPE_LIST = new ArrayList<>(
+		private static final List<Integer> ANSWER_NULLABLE_TYPE_LIST = new ArrayList<>(
 				Arrays.asList(FAQ.code, ATTACK.code, DEFENCE.code, FILE.code));
 
-		public static final List<Integer> HAS_OPTION_TYPE_LIST = new ArrayList<>(
+		private static final List<Integer> HAS_OPTION_TYPE_LIST = new ArrayList<>(
 				Arrays.asList(SINGLE_CHOICE.code, MULTIPLE_CHOICE.code));
+
+		public static List<Integer> getAnswerNullableTypeList() {
+			return ANSWER_NULLABLE_TYPE_LIST;
+		}
+
+		public static List<Integer> getHasOptionTypeList() {
+			return HAS_OPTION_TYPE_LIST;
+		}
 
 		@Getter
 		private Integer code;
@@ -75,12 +83,12 @@ public class MissionBase extends BaseTable {
 		}
 	}
 
-	public Boolean isObjective() {
+	public boolean isObjective() {
 		Integer missionType = getType();
 		return isObjective(missionType);
 	}
 
-	public static Boolean isObjective(Integer type) {
+	public static boolean isObjective(Integer type) {
 		if (type == null) {
 			return false;
 		}

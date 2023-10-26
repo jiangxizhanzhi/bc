@@ -30,7 +30,7 @@ public class TrainingSummary {
 	private Integer duration = 0;
 
 	public void addScore(Integer addend, Integer missionType) {
-		if (MissionBase.isObjective(missionType)) {
+		if (Boolean.TRUE.equals(MissionBase.isObjective(missionType))) {
 			this.getScoreObjective += addend;
 		} else {
 			this.getScoreSubjective += addend;
@@ -38,7 +38,7 @@ public class TrainingSummary {
 	}
 
 	public void addTotal(Integer addend, Integer missionType) {
-		if (MissionBase.isObjective(missionType)) {
+		if (Boolean.TRUE.equals(MissionBase.isObjective(missionType))) {
 			this.sumScoreObjective += addend;
 		} else {
 			this.sumScoreSubjective += addend;

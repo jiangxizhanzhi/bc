@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service.context.resource;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,7 @@ import lombok.Data;
  * 资源导出中间模型
  */
 @Data
-public class ResourceDumpContext<T> implements Serializable {
+public class ResourceDumpContext<T> {
 
 	private List<MissionTemplate> missions;
 

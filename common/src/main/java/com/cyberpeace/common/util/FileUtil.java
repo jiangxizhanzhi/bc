@@ -277,7 +277,7 @@ public class FileUtil {
 	 * @param dir 要删除的文件夹
 	 * @return true: 删除成功； false: 删除失败
 	 */
-	public static Boolean deleteDir(File dir) {
+	public static boolean deleteDir(File dir) {
 		if (dir.isDirectory()) {
 			File[] children = dir.listFiles();
 			assert children != null;

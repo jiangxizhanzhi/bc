@@ -3,16 +3,16 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.DateUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.DateUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.ScreenService;
 import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordRsp;
@@ -20,6 +20,8 @@ import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -34,11 +36,12 @@ public class ScreenServiceImpl implements ScreenService {
     private CrRoleService crRoleService;
 
     @Override
-	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String replaySceneId , String nodeId, Collection<Integer> groups) {
+	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String replaySceneId,
+			String nodeId, Collection<Integer> groups) {
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
         //如果场景已关闭获取上次的场景Id
-        String mpSceneId =localScene == null?replaySceneId : localScene.getMpSceneId();
-        if (StringUtils.isBlank(mpSceneId))  {
+		String mpSceneId = localScene == null ? replaySceneId : localScene.getMpSceneId();
+		if (StringUtils.isBlank(mpSceneId)) {
             return new ArrayList<>();
         }
         JSONObject jsonObject = remoteSceneService.screenrecord(mpSceneId, nodeId);
@@ -46,19 +49,20 @@ public class ScreenServiceImpl implements ScreenService {
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<>();
         }
-        List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,groups);
-        Map<String,Integer> map = new HashMap<>();
+		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId, groups);
+		Map<String, Integer> map = new HashMap<>();
         for (CrRole role : roles) {
             for (String userId : role.getUserIdList()) {
-                map.put(userId,role.getRoleGroup());
+				map.put(userId, role.getRoleGroup());
             }
         }
+		String data = jsonObject.getString("list");
         List<ScreenRecordRsp> userNodes = BeanUtils.deepCopyList(list, ScreenRecordRsp.class);
         Map<String, List<ScreenRecordRsp>> userMap = userNodes.stream().collect(Collectors.groupingBy(ScreenRecordRsp::getUser_id));
-        List<ScreenRecordUserRole> resList= new ArrayList<>();
+		List<ScreenRecordUserRole> resList = new ArrayList<>();
         for (Map.Entry<String, List<ScreenRecordRsp>> entry : userMap.entrySet()) {
             String userId = entry.getKey();
-            if (!map.containsKey(userId)){
+			if (!map.containsKey(userId)) {
                 continue;
             }
             List<ScreenRecordRsp> recordRsps = entry.getValue();
@@ -73,12 +77,12 @@ public class ScreenServiceImpl implements ScreenService {
 
     @Override
     public List<ScreenRecordUserRole> filterBeforeActualEndTime(List<ScreenRecordUserRole> screenRecordUserRoles, Date actualEndTime) {
-        if(CollectionUtils.isEmpty(screenRecordUserRoles) || actualEndTime == null) {
+		if (CollectionUtils.isEmpty(screenRecordUserRoles) || actualEndTime == null) {
             return screenRecordUserRoles;
         }
-        for(ScreenRecordUserRole screenRecordUserRole : screenRecordUserRoles) {
+		for (ScreenRecordUserRole screenRecordUserRole : screenRecordUserRoles) {
             List<ScreenRecordRsp> screenRecords = screenRecordUserRole.getScreenRecords();
-            if(CollectionUtils.isEmpty(screenRecords)) {
+			if (CollectionUtils.isEmpty(screenRecords)) {
                 continue;
             }
             List<ScreenRecordRsp> collect = screenRecords.stream().filter(item -> {

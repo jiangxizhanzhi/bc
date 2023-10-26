@@ -278,8 +278,8 @@ public class EvalTaskController {
 		EvalTask evalTask = evalTaskService.getTask(taskId);
 		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
 				.getFinishedSteps(taskId);
-		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
-		evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
+		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.SCENE_START.getMsg(), evalTask.getStartTime()));
+		evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.SCENE_END.getMsg(), evalTask.getEndTime()));
 		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);
 
 		return new BaseRsp<>(evalTaskTimeNodesRsp);

@@ -77,7 +77,7 @@ public interface CrScoreService extends IService<CrScore> {
 	 */
 	StudentScoreRsp getStudentScore(String roomId, String userId);
 
-	TrainReportContext getTrainReport(String resource_id, ArrayList<Integer> roles, ScoreTrendReq scoreTrendReq);
+	TrainReportContext getTrainReport(String resourceId, ArrayList<Integer> roles, ScoreTrendReq scoreTrendReq);
 
 	List<UserSkillScoreContext> getSkillScoreList(String roomId,ArrayList<Integer> roles);
 

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service.context.paraser;
 import java.util.Collection;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class TrainSkillParser implements MdContentParser<Collection, String> {
 
 	@Override
 	public Collection parse(Object content) {
-		return null;
+		return Lists.newArrayList();
 	}
 
 	@Override
@@ -33,12 +34,13 @@ public class TrainSkillParser implements MdContentParser<Collection, String> {
 			return LocalStringUtil.frontBackLine(CommonConstant.EMPTY_STRING);
 		}
 
-		String value = PatternConstant.MD_LIST + "DEFAULT" + System.lineSeparator();
+		StringBuilder builder = new StringBuilder();
+		builder.append(PatternConstant.MD_LIST).append("DEFAULT").append(System.lineSeparator());
 		for (Object o : content) {
-			value = value + "  " + PatternConstant.MD_LIST
-					+ (o instanceof String ? (String) o : JsonUtil.toJsonString(o))
-					+ System.lineSeparator();
+			builder.append("  ").append(PatternConstant.MD_LIST)
+					.append(o instanceof String ? (String) o : JsonUtil.toJsonString(o))
+					.append(System.lineSeparator());
 		}
-		return LocalStringUtil.frontBackLine(value);
+		return LocalStringUtil.frontBackLine(builder.toString());
 	}
 }

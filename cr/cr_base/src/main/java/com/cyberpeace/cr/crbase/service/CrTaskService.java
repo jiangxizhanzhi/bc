@@ -81,50 +81,6 @@ public interface CrTaskService {
 	List<CrTask> getByRoomIdAndUserId(String roomId, String userId);
 
 	/**
-	 * 统计某用户在某房间的task总数
-	 * @param userId
-	 * @param roomId
-	 * @return
-	 */
-	Integer countByRoomIdAndUserId(String roomId, String userId);
-
-	/**
-	 * 查询某房间完成的task
-	 * @param roomId
-	 * @return
-	 */
-	List<CrTask> getFinished(String roomId);
-
-	/**
-	 * 统计某房间完成的task数量
-	 * @param roomId
-	 * @return
-	 */
-	Integer countFinished(String roomId);
-
-	/**
-	 * 统计某房间未提交的task数量
-	 * @param roomId
-	 * @return
-	 */
-	Integer countUnsubmitted(String roomId);
-
-	/**
-	 * 统计某房间未完成的task数量
-	 * @param roomId
-	 * @return
-	 */
-	Integer countUnfinished(String roomId);
-
-	/**
-	 * 统计某用户在某房间完成的task数量
-	 * @param roomId
-	 * @param userId
-	 * @return
-	 */
-	Integer countFinishedByRoomIdAndUserId(String roomId, String userId);
-
-	/**
 	 * 查询某用户在某房间完成的task
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
@@ -170,16 +126,6 @@ public interface CrTaskService {
 	List<CrTask> getByMissions(String roomId, List<String> missionIds);
 
 	/**
-	 * 查询某房间多个用户提交的多个mission对应的task
-	 * @param roomId 房间id
-	 * @param userIds 用户id列表
-	 * @param missionIds 任务id列表
-	 * @return
-	 */
-	List<CrTask> getReportedByUserIdsAndMissions(String roomId, List<String> userIds,
-			List<String> missionIds);
-
-	/**
 	 * 统计该房间多个用户未提交的task数量
 	 * @param roomId 房间id
 	 * @param userIds 用户id列表
@@ -188,27 +134,12 @@ public interface CrTaskService {
 	Integer countUnreportedByUsers(String roomId, List<String> userIds);
 
 	/**
-	 * 判断某房间某mission是否下发
-	 * @param missionId
-	 * @return
-	 */
-	Boolean isReleasedByMission(String missionId);
-
-	/**
 	 * 查询某房间多个用户拥有的task的Id列表
 	 * @param roomId 房间id
 	 * @param userIds 用户id列表
 	 * @return Task的id列表
 	 */
 	List<String> getIdsByUserIds(String roomId, List<String> userIds);
-
-	/**
-	 * 查询某房间某用户的task的id列表
-	 * @param roomId 
-	 * @param userId
-	 * @return
-	 */
-	List<String> getIdsByOptionalUserId(String roomId, String userId);
 
 	/**
 	 * 学员提交答案
@@ -334,7 +265,7 @@ public interface CrTaskService {
 	 */
 	EvaluationMissionRsp getEvaluationById(String taskSubmitId);
 
-	TaskMatrix getTaskMatrixExcludeTimeCost(String resource_id,String userId);
+	TaskMatrix getTaskMatrixExcludeTimeCost(String resourceId,String userId);
 
 	/**
 	 * 获取任务统计数据信息通过房间id

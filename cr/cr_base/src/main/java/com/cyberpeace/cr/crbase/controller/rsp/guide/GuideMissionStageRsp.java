@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.crbase.controller.rsp.guide;
 
+import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author myy

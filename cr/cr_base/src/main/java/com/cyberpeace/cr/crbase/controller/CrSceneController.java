@@ -106,10 +106,10 @@ public class CrSceneController {
 	@GetMapping("/os/list")
 	@RequiresPermissions(value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
-	public BaseRsp<List<IdNameType>> getOsNames(
-			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		List<IdNameType> res = crSceneService.getOsNames(resource_id);
+	public BaseRsp<List<IdNameType>> getOsNames(@ApiParam(name = "resource_id", value = "训练房间id",
+			required = true) @RequestParam(value = "resource_id") String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		List<IdNameType> res = crSceneService.getOsNames(resourceId);
 		return new BaseRsp<>(res);
 	}
 

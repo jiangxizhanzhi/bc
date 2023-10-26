@@ -22,6 +22,7 @@ import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -70,9 +71,9 @@ public class CrScoreController {
 	private TrainRecordService trainRecordService;
 
 
-	public StudentScoreRsp getStudentScore(String resource_id, String user_hash) {
+	public StudentScoreRsp getStudentScore(String resourceId, String userHash) {
 
-		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(resource_id, user_hash);
+		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(resourceId, userHash);
 
 		Integer getScoreObjective = 0;
 
@@ -87,7 +88,7 @@ public class CrScoreController {
 		for (TaskContext task : taskList) {
 			Mission mission = task.getMission();
 			int score = task.getScore() == null ? 0 : task.getScore();
-			if (mission.isObjective()) {
+			if (Boolean.TRUE.equals(mission.isObjective())) {
 				getScoreObjective += score;
 				sumScoreObjective += mission.getScore();
 			} else {
@@ -102,7 +103,7 @@ public class CrScoreController {
 		trainingSummary.setGetScoreSubjective(getScoreSubjective);
 		trainingSummary.setGetScoreObjective(getScoreObjective);
 
-		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_hash);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resourceId, userHash);
 		StudentScoreRsp studentScoreRsp = new StudentScoreRsp();
 		if (crScore != null) {
 			studentScoreRsp = BeanUtils.copy(crScore, StudentScoreRsp.class);
@@ -149,7 +150,7 @@ public class CrScoreController {
 					CrScore.ScoreValue.ABILITY_SCORE_NUM.getCode());
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
-		IntSummaryStatistics stats = abilityScoreList.stream().mapToInt((x) -> x)
+		IntSummaryStatistics stats = abilityScoreList.stream().mapToInt(x -> x)
 				.summaryStatistics();
 		if (stats.getMax() > CrScore.ScoreValue.MAX_ABILITY_SCORE_VALUE.getCode()
 				|| stats.getMin() < CrScore.ScoreValue.MIN_ABILITY_SCORE_VALUE.getCode()) {
@@ -173,14 +174,14 @@ public class CrScoreController {
 
 	}
 
-	public BaseRsp<List<MissionEvaluationRsp>>
+	public BaseRsp<ListRsp<MissionEvaluationRsp>>
 			getMissionEvaluations(MissionEvaluationListReq missionEvaluationListReq) {
 
 		MissionEvaluationQuery missionEvaluationQuery = BeanUtils.copy(missionEvaluationListReq,
 				MissionEvaluationQuery.class);
 		missionEvaluationQuery.setPer_page(missionEvaluationListReq.getPerPage());
 
-		if (!missionEvaluationListReq.getIsShowEvaluated()) {
+		if (Boolean.FALSE.equals(missionEvaluationListReq.getIsShowEvaluated())) {
 			missionEvaluationQuery.setEvaluateStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
 		}
 		if (CrTaskSubmit.EvaluateType.MACHINE_EVALUATION.getCode()
@@ -226,7 +227,7 @@ public class CrScoreController {
 			return missionEvaluationRsp;
 		});
 
-		return new BaseRsp(PageUtil.getListResult(data));
+		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
 	private CrScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
@@ -241,28 +242,28 @@ public class CrScoreController {
 		return crScore;
 	}
 
-	public MissionDynamicRsp getUserMissionDynamic(String resource_id, String student_id) {
-		TaskCounter taskCounter = crRoleService.getTaskCounter(resource_id, student_id);
+	public MissionDynamicRsp getUserMissionDynamic(String resourceId, String studentId) {
+		TaskCounter taskCounter = crRoleService.getTaskCounter(resourceId, studentId);
 
 		List<StatisticalInfo> statisticalInfoList = Lists.newArrayList();
 
 		StatisticalInfo statisticalInfo = new StatisticalInfo();
-		statisticalInfo.setStatistical_state(TaskCounter.TaskType.FINISHED.getCode());
+		statisticalInfo.setStatisticalState(TaskCounter.TaskType.FINISHED.getCode());
 		statisticalInfo.setValue(taskCounter.getFinished());
 		statisticalInfoList.add(statisticalInfo);
 
 		StatisticalInfo statisticalInfo1 = new StatisticalInfo();
-		statisticalInfo1.setStatistical_state(TaskCounter.TaskType.RELEASED.getCode());
+		statisticalInfo1.setStatisticalState(TaskCounter.TaskType.RELEASED.getCode());
 		statisticalInfo1.setValue(taskCounter.getReleased());
 		statisticalInfoList.add(statisticalInfo1);
 
 		StatisticalInfo statisticalInfo2 = new StatisticalInfo();
-		statisticalInfo2.setStatistical_state(TaskCounter.TaskType.NOTRELEASED.getCode());
+		statisticalInfo2.setStatisticalState(TaskCounter.TaskType.NOTRELEASED.getCode());
 		statisticalInfo2.setValue(taskCounter.getNotReleased());
 		statisticalInfoList.add(statisticalInfo2);
 
-		List<DynamicData> dynamicDataList = missionService.getTaskLogByRoomIdAndUserId(resource_id,
-				student_id);
+		List<DynamicData> dynamicDataList = missionService.getTaskLogByRoomIdAndUserId(resourceId,
+				studentId);
 
 		MissionDynamicRsp missionDynamicRsp = new MissionDynamicRsp();
 
@@ -272,74 +273,40 @@ public class CrScoreController {
 		return missionDynamicRsp;
 	}
 
-	public MissionReport getTrainingMissionReport(String resource_id, List<CrRole> crRoleList) {
+	public MissionReport getTrainingMissionReport(String resourceId, List<CrRole> crRoleList) {
 
 		MissionReport missionReport = new MissionReport();
 
 		missionReport
-				.setMissionsCategory(crScoreService.getMissionsCategory(resource_id, crRoleList));
+				.setMissionsCategory(crScoreService.getMissionsCategory(resourceId, crRoleList));
 		missionReport.setMissionsStatistics(
-				crScoreService.getMissionsStatistics(resource_id, crRoleList));
+				crScoreService.getMissionsStatistics(resourceId, crRoleList));
 
 		return missionReport;
 	}
 
-	public List<MissionSchemeObject<TrainingRecordMissionRsp>> getTrainingRecord(String resource_id,
-			String user_hash) {
+	public List<MissionSchemeObject<TrainingRecordMissionRsp>> getTrainingRecord(String resourceId,
+			String userHash) {
 
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_hash);
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resourceId, userHash);
 		TrainRecord trainRecord = trainRecordService.getByRoomId(crRole.getRoomId());
 		JSONObject trainRecordMessage = getTrainRecordMessage(trainRecord);
 		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = crRoleService
 				.getBaseMissionByRole(crRole);
 
-		List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList = missionSchemeObjectList
-				.stream().map(bo -> {
-					MissionSchemeObject<TrainingRecordMissionRsp> schemeListMissionRsp = new MissionSchemeObject<>();
-					schemeListMissionRsp.setStage(bo.getStage());
-					schemeListMissionRsp.setDynamic(bo.getDynamic());
-
-					List<TrainingRecordMissionRsp> trainingRecordMissionRsps = BeanUtils
-							.deepCopyList(bo.getMissions(), TrainingRecordMissionRsp.class);
-
-					trainingRecordMissionRsps.forEach(trainingRecordMissionRsp -> {
-
-						CrTask crTask = crTaskService.getByUserIdAndMissionId(user_hash,
-								trainingRecordMissionRsp.getResourceId());
-
-						TrainingRecord trainingRecord = new TrainingRecord();
-						if (crTask != null) {
-							trainingRecord.setRecord(crTask.getUserAnswer());
-							trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
-							if (crTask.getBusinessType()
-									  .equals(BusinessType.TRAINING_SINGLE.getCode())){
-								if (trainRecordMessage != null && trainRecordMessage.get(crTask.getMissionId()) != null) {
-									String time = ((JSONObject) trainRecordMessage.get(crTask.getMissionId())).get("time").toString();
-									if (StringUtils.isNotEmpty(time)) {
-										trainingRecord.setTime(new Timestamp(Long.parseLong(time)));
-									}
-								}
-							}else {
-								trainingRecord.setTime(crTask.getLastSubmitTime());
-							}
-						} else {
-							trainingRecordMissionRsp
-									.setTraininStatus(CrTask.TaskStatus.UNRELEASED.getCode());
-
-						}
-						trainingRecordMissionRsp.setTrainingRecord(trainingRecord);
-
-					});
-
-					schemeListMissionRsp.setMissions(trainingRecordMissionRsps);
-
-					return schemeListMissionRsp;
-				}).collect(Collectors.toList());
-
-		return missionSchemeList;
+		return missionSchemeObjectList.stream().map(bo -> {
+			MissionSchemeObject<TrainingRecordMissionRsp> schemeListMissionRsp = new MissionSchemeObject<>();
+			schemeListMissionRsp.setStage(bo.getStage());
+			schemeListMissionRsp.setDynamic(bo.getDynamic());
+			List<TrainingRecordMissionRsp> trainingRecordMissionRsps = BeanUtils
+					.deepCopyList(bo.getMissions(), TrainingRecordMissionRsp.class);
+			this.handleRspList(trainingRecordMissionRsps, userHash, trainRecordMessage);
+			schemeListMissionRsp.setMissions(trainingRecordMissionRsps);
+			return schemeListMissionRsp;
+		}).collect(Collectors.toList());
 	}
 
-	public List<UserReport> getTrainingReport(String resource_id, List<CrRole> crRoleList) {
+	public List<UserReport> getTrainingReport(String resourceId, List<CrRole> crRoleList) {
 
 		List<String> userIds = Lists.newArrayList();
 
@@ -354,13 +321,13 @@ public class CrScoreController {
 			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
 		}
 		// 获取每个学员的任务信息
-		List<CrScore> studentScoreList = crScoreService.selectByRoomIdAndUserIds(resource_id,
+		List<CrScore> studentScoreList = crScoreService.selectByRoomIdAndUserIds(resourceId,
 				userIds);
 		Map<String, CrScore> studentScoreMap = studentScoreList.stream()
 				.collect(Collectors.toMap(CrScore::getUserId, bo -> bo));
 
 		// 获取每个学员已完成的任务数量
-		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(resource_id,
+		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(resourceId,
 				userIds);
 		Map<String, Integer> studentTaskMap = Maps.newHashMap();
 		for (CrTask crRole : finishedTasks) {
@@ -396,15 +363,6 @@ public class CrScoreController {
 		return userReportList;
 	}
 
-	public JSONObject getTemplateI18n() {
-		JSONObject jsonObject = new JSONObject();
-
-		for (TrainingReport.TemplateI18n enumData : TrainingReport.TemplateI18n.values()) {
-			jsonObject.put(enumData.name(), enumData.getMsg());
-		}
-
-		return jsonObject;
-	}
 
 	public String getTitle(String name) {
 
@@ -429,5 +387,34 @@ public class CrScoreController {
 			}
 		}
 		return missionsRecord;
+	}
+
+	private void handleRspList(List<TrainingRecordMissionRsp> trainingRecordMissionRsps,
+			String userHash, JSONObject trainRecordMessage) {
+		for (TrainingRecordMissionRsp trainingRecordMissionRsp : trainingRecordMissionRsps) {
+			CrTask crTask = crTaskService.getByUserIdAndMissionId(userHash,
+					trainingRecordMissionRsp.getResourceId());
+
+			TrainingRecord trainingRecord = new TrainingRecord();
+			if (crTask == null) {
+				trainingRecordMissionRsp.setTraininStatus(CrTask.TaskStatus.UNRELEASED.getCode());
+				continue;
+			}
+			trainingRecord.setRecord(crTask.getUserAnswer());
+			trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
+			if (crTask.getBusinessType().equals(BusinessType.TRAINING_SINGLE.getCode())) {
+				if (trainRecordMessage != null
+						&& trainRecordMessage.get(crTask.getMissionId()) != null) {
+					String time = ((JSONObject) trainRecordMessage.get(crTask.getMissionId()))
+							.get("time").toString();
+					if (StringUtils.isNotEmpty(time)) {
+						trainingRecord.setTime(new Timestamp(Long.parseLong(time)));
+					}
+				}
+			} else {
+				trainingRecord.setTime(crTask.getLastSubmitTime());
+			}
+			trainingRecordMissionRsp.setTrainingRecord(trainingRecord);
+		}
 	}
 }

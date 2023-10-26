@@ -121,7 +121,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		List<MissionCategory> missionCategories = missionService.listCategories();
 
 		Map<String, String> missionCategoryMap = missionCategories.stream()
-				.collect(Collectors.toMap(MissionCategory::getResourceId, bo -> bo.getName()));
+				.collect(Collectors.toMap(MissionCategory::getResourceId, MissionCategory::getName));
 
 		for (Mission mission : missionList) {
 			Integer count = missionsCategory
@@ -327,8 +327,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				taskLogRsp.setName(missionMap.get(taskLogRsp.getMissionId()).getTitle());
 				taskLogRsp.setActionName(EnumUtils.getEnumDescByCode(taskLogRsp.getActionCode(),
 						TaskLogRsp.ActionCode.class));
-				taskLogRsp.setCreateTimeString(
-						DateUtil.dateToString(taskLogRsp.getCreateTime(), "MM-dd HH:mm:ss"));
+				taskLogRsp.setCreateTimeString(TimeUtil.format11(taskLogRsp.getCreateTime()));
 			}
 		}
 
@@ -429,7 +428,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 						Integer.class);
 				if (!CollectionUtils.isEmpty(mPoints)) {
 					for (int i = 0; i < mPoints.size(); i++) {
-						if (crTask.isSuccess()) {
+						if (Boolean.TRUE.equals(crTask.isSuccess())) {
 							points.set(i, mPoints.get(i) + points.get(i));
 						}
 						maxPoints.set(i, mPoints.get(i) + maxPoints.get(i));

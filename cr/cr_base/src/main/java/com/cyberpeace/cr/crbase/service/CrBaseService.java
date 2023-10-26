@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
 
 public interface CrBaseService {

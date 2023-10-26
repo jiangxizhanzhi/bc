@@ -28,8 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CrBaseServiceImpl implements CrBaseService {
 
-	public static Map<BusinessCode, CrEventStatistics> register = Maps.newHashMap();
-
 	@Override
 	public TrainingStatisticsRsp getTrainingStatistics(String userId, PageReqBase pageReqBase) {
 		TrainingStatisticsPage page = new TrainingStatisticsPage(pageReqBase);
@@ -38,7 +36,7 @@ public class CrBaseServiceImpl implements CrBaseService {
 		List<TrainingCountRsp> incompleteList = Lists.newArrayList();
 		List<TrainingData> trainingDataList = Lists.newArrayList();
 		// 2. get training count
-		for (Map.Entry<BusinessCode, CrEventStatistics> entry : register.entrySet()) {
+		for (Map.Entry<BusinessCode, CrEventStatistics> entry : CrEventStatistics.getRegister().entrySet()) {
 			BusinessCode businessCode = entry.getKey();
 			CrEventStatistics statistics = entry.getValue();
 
@@ -50,7 +48,7 @@ public class CrBaseServiceImpl implements CrBaseService {
 		}
 
 		// 3. get related training list
-		for (CrEventStatistics statistics : register.values()) {
+		for (CrEventStatistics statistics : CrEventStatistics.getRegister().values()) {
 			trainingDataList.addAll(statistics.getRelatedTraining(userId));
 		}
 
@@ -106,7 +104,7 @@ class TrainingComparator implements Comparator<TrainingData> {
 
 	@Override
 	public int compare(TrainingData o1, TrainingData o2) {
-		if (asc) {
+		if (Boolean.TRUE.equals(asc)) {
 			return Long.compare(o1.getStartTime()
 								  .getTime(), o2.getStartTime()
 												.getTime());

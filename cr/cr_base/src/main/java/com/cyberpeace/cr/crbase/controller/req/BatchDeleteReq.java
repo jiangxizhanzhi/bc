@@ -19,7 +19,7 @@ public class BatchDeleteReq implements Serializable {
 	private List<String> ids;
 
 	public List<String> getIds() {
-		if (this.ids == null || this.ids.size() == 0) {
+		if (this.ids == null || this.ids.isEmpty()) {
 			log.error("Resource id missing! templateModifyReq = [{}]", JsonUtil.toJsonString(ids));
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}

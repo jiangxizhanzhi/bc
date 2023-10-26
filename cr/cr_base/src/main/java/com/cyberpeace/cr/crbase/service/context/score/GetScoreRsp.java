@@ -1,20 +1,5 @@
 package com.cyberpeace.cr.crbase.service.context.score;
 
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrScore;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.context.MissionContext;
-import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import com.cyberpeace.cr.crbase.service.context.UserData;
-import com.cyberpeace.common.context.role.CrRoleSimple;
-import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +7,24 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.cyberpeace.common.context.role.CrRoleSimple;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.context.MissionContext;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 @Data
-public class GetScoreRsp implements Serializable {
+public class GetScoreRsp {
 
 	@ApiModelProperty(value = "学员id")
 	private String userId;
@@ -148,7 +149,7 @@ public class GetScoreRsp implements Serializable {
 				continue;
 			}
 			this.allTrainScore += mission.getScore();
-			if (mission.isObjective()) {
+			if (Boolean.TRUE.equals(mission.isObjective())) {
 				this.allObjectiveScore += mission.getScore();
 			} else {
 				this.allSubjectiveScore += mission.getScore();

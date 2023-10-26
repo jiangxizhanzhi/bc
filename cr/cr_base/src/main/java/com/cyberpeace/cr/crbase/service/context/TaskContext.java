@@ -2,8 +2,6 @@ package com.cyberpeace.cr.crbase.service.context;
 
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
@@ -16,7 +14,6 @@ import lombok.Data;
 @Data
 public class TaskContext extends BaseTable {
 
-	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	private Integer score;
@@ -46,7 +43,10 @@ public class TaskContext extends BaseTable {
 	private String remark;
 
 	public boolean isFinished() {
-		return CrTask.TaskStatus.FINISHED_STATUS_LIST.contains(status);
+		boolean result = status.intValue() == CrTask.TaskStatus.SUCCESS.getCode();
+		result = result || status.intValue() == CrTask.TaskStatus.FAIL.getCode();
+
+		return result;
 	}
 
 }

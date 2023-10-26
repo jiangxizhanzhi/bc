@@ -6,5 +6,4 @@ import lombok.Data;
 public class SceneTrend {
     Integer data_size;
     String time;
-
 }

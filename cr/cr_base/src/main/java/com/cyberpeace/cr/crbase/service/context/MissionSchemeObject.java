@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service.context;
 
-import java.io.Serializable;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +9,7 @@ import lombok.Data;
  * 任务编排中间模型
  */
 @Data
-public class MissionSchemeObject<T> implements Serializable {
+public class MissionSchemeObject<T> {
 
 	@ApiModelProperty(value = "阶段名称")
 	private String stage;

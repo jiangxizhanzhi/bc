@@ -35,7 +35,7 @@ public class CrNoticeController {
 			logical = Logical.OR)
 	public BaseRsp<CrNotice> add(@RequestBody CrNoticeReq crNoticeReq) {
 		crNoticeService.notice(crNoticeReq);
-		return new BaseRsp<CrNotice>();
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("置顶取消置顶")
@@ -47,7 +47,7 @@ public class CrNoticeController {
 		CrNotice notice = crNoticeService.getById(crNoticeReq.getResourceId());
 		notice.setIsTop(crNoticeReq.getIsTop());
 		crNoticeService.updateById(notice);
-		return new BaseRsp<CrNotice>(notice);
+		return new BaseRsp<>(notice);
 	}
 
 	@ApiOperation("删除")
@@ -65,10 +65,10 @@ public class CrNoticeController {
 	@RequiresPermissions(
 			value = { MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
-	public BaseRsp<List<CrNoticeRsp>> rblist(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		List<CrNoticeRsp> res = crNoticeService.queryList(resource_id, true);
-		return new BaseRsp<List<CrNoticeRsp>>(res);
+	public BaseRsp<List<CrNoticeRsp>> rblist(@ApiParam(name = "resource_id", value = "团队训练id",
+			required = true) @RequestParam(value = "resource_id") String resourceId) {
+		List<CrNoticeRsp> res = crNoticeService.queryList(resourceId, true);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("查询是否有新消息")
@@ -77,10 +77,12 @@ public class CrNoticeController {
 			value = { MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
 	public BaseRsp<Boolean> hasNewInfo(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
-			@ApiParam(name = "is_rb", value = "是否红蓝", required = true) Boolean is_rb) {
-		Boolean res = crNoticeService.hasNewInfo(resource_id,is_rb);
-		return new BaseRsp<Boolean>(res);
+			@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(value = "resource_id") String resourceId,
+			@ApiParam(name = "is_rb", value = "是否红蓝",
+					required = true) @RequestParam(value = "is_rb") Boolean isRb) {
+		Boolean res = crNoticeService.hasNewInfo(resourceId, isRb);
+		return new BaseRsp<>(res);
 	}
 
 
@@ -90,9 +92,10 @@ public class CrNoticeController {
 			value = { MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
 	public BaseRsp<List<CrNoticeRsp>> teamList(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		List<CrNoticeRsp> res = crNoticeService.queryList(resource_id, false);
-		return new BaseRsp<List<CrNoticeRsp>>(res);
+			@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(value = "resource_id") String resourceId) {
+		List<CrNoticeRsp> res = crNoticeService.queryList(resourceId, false);
+		return new BaseRsp<>(res);
 	}
 
 }

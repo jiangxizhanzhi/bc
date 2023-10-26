@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service.context;
 
-import java.io.Serializable;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +9,7 @@ import lombok.Data;
  * 任务编排中间模型
  */
 @Data
-public class ColorMission<T> implements Serializable {
+public class ColorMission<T> {
 
 	@ApiModelProperty(value = "色调")
 	private Integer color;

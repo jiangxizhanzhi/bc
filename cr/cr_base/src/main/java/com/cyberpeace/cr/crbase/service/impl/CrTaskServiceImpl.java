@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.situation.constant.SituationGuideScheme;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,7 @@ import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -67,6 +67,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			CrTaskLog.ActionCode.MAN_FAILURE.getCode(),
 			CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
 			CrTaskLog.ActionCode.MAN_REJECT.getCode());
+
+	private static final List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
+			Arrays.asList(CrTask.TaskStatus.SUCCESS.getCode(), CrTask.TaskStatus.FAIL.getCode()));
+
+	private static final List<Integer> UNSUBMITTED_STATUS_LIST = new ArrayList<>(Arrays
+			.asList(CrTask.TaskStatus.RELEASED.getCode(), CrTask.TaskStatus.STARTED.getCode()));
+
+	private static final List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(
+			Arrays.asList(CrTask.TaskStatus.WAIT.getCode(), CrTask.TaskStatus.REJECT.getCode()));
 
 	@Autowired
 	private CrTaskMapper crTaskMapper;
@@ -120,7 +129,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public Integer batchSubmitMissions(String roomId, List<String> missionIds,
 			Map<String, String> answer) {
-		if (missionIds.size() == 0) {
+		if (missionIds.isEmpty()) {
 			return 0;
 		}
 
@@ -209,7 +218,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		for (CrTask task : taskList) {
 			missionIds.add(task.getMissionId());
 		}
-		if (missionIds.size() > 0) {
+		if (!missionIds.isEmpty()) {
 			List<Mission> missionList = missionMapper.batchSelect(missionIds);
 			Map<String, Mission> missionMap = Maps.newHashMap();
 			for (Mission mission : missionList) {
@@ -253,50 +262,15 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public Integer countByRoomIdAndUserId(String roomId, String userId) {
-		return crTaskMapper.countByRoomIdAndUserId(roomId, userId);
-	}
-
-	@Override
-	public List<CrTask> getFinished(String roomId) {
-		return crTaskMapper.selectByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.FINISHED_STATUS_LIST);
-	}
-
-	@Override
-	public Integer countFinished(String roomId) {
-		return crTaskMapper.countByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.FINISHED_STATUS_LIST);
-	}
-
-	@Override
-	public Integer countUnsubmitted(String roomId) {
-		return crTaskMapper.countByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.UNSUBMITTED_STATUS_LIST);
-	}
-
-	@Override
-	public Integer countUnfinished(String roomId) {
-		return crTaskMapper.countByRoomIdAndStatusList(roomId,
-				CrTask.TaskStatus.UNFINISHED_STATUS_LIST);
-	}
-
-	@Override
-	public Integer countFinishedByRoomIdAndUserId(String roomId, String userId) {
-		return crTaskMapper.countByRoomIdAndUserIdAndStatusList(roomId, userId,
-				CrTask.TaskStatus.FINISHED_STATUS_LIST);
-	}
-
-	@Override
 	public List<CrTask> getFinishedByRoomIdAndUserId(String roomId, String userId) {
 		return crTaskMapper.selectByRoomIdAndUserIdAndStatusList(roomId, userId,
-				CrTask.TaskStatus.FINISHED_STATUS_LIST);
+				FINISHED_STATUS_LIST);
 	}
 
 	@Override
 	public List<CrTask> getFinishedByRoomIdAndUserIds(String roomId, List<String> userIds) {
 		return crTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, userIds,
-				CrTask.TaskStatus.FINISHED_STATUS_LIST);
+				FINISHED_STATUS_LIST);
 	}
 
 	@Override
@@ -320,19 +294,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public List<CrTask> getReportedByUserIdsAndMissions(String roomId, List<String> userIds,
-			List<String> missionIds) {
-		return crTaskMapper.selectReportedByUserIdsAndMissionIds(roomId, userIds, missionIds);
-	}
-
-	@Override
 	public Integer countUnreportedByUsers(String roomId, List<String> userIds) {
 		return crTaskMapper.countUnreportedByRoomIdAndUserIds(roomId, userIds);
-	}
-
-	@Override
-	public Boolean isReleasedByMission(String missionId) {
-		return crTaskMapper.selectByMissionId(missionId) != null;
 	}
 
 	@Override
@@ -340,12 +303,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return crTaskMapper.selectIdsByRoomIdAndUserIds(roomId, userIds);
 	}
 
-	@Override
-	public List<String> getIdsByOptionalUserId(String roomId, String userId) {
-		return crTaskMapper.selectIdsByRoomIdAndUserId(roomId, userId);
-	}
-
-	private Boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType) {
+	private boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType) {
 		if (missionType.equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
 			List<String> userChoices = JsonUtil.toJsonObjectArray(userAnswer, String.class);
 			Set<String> userChoiceSet = Sets.newHashSet(userChoices);
@@ -585,7 +543,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.collect(Collectors.toList());
 
 		List<Mission> missions = Lists.newArrayList();
-		if (missionIds.size() > 0) {
+		if (!missionIds.isEmpty()) {
 			missions = missionMapper.batchSelect(missionIds);
 		}
 		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,
@@ -669,19 +627,19 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public Integer countUnfinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
-				CrTask.TaskStatus.UNFINISHED_STATUS_LIST);
+				UNFINISHED_STATUS_LIST);
 	}
 
 	@Override
 	public Integer countUnsubmittedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
-				CrTask.TaskStatus.UNSUBMITTED_STATUS_LIST);
+				UNSUBMITTED_STATUS_LIST);
 	}
 
 	@Override
 	public Integer countFinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
-				CrTask.TaskStatus.FINISHED_STATUS_LIST);
+				FINISHED_STATUS_LIST);
 	}
 
 	@Override
@@ -782,7 +740,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		Map<String, String> userInfoMap = remoteUserService.getIdNameMap(userIds);
 
 		// 未提交过
-		if (taskSubmits.size() != 0) {
+		if (!taskSubmits.isEmpty()) {
 			for (CrTaskSubmit taskSubmit : taskSubmits) {
 				if (taskSubmit.getEvaluateStatus()
 						.equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {

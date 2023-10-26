@@ -31,6 +31,7 @@ import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -225,7 +226,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Override
 	public void validateName(String name, Integer type, String resourceId) {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-		if (businessTemplateMapper.existByNameAndTypeAndId(name, type, resourceId)) {
+		if (Boolean.TRUE
+				.equals(businessTemplateMapper.existByNameAndTypeAndId(name, type, resourceId))) {
 			log.error("template name already exist！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NAME_DUPLICATE);
 		}
@@ -447,7 +449,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		ret.setTopoId(template.getTopoId());
 		// 1、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(template);
-		if (sceneData != null) {
+		if (!sceneData.isEmpty()) {
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(template.getLocalSceneId());
 			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
@@ -536,7 +538,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			template.setReadAuthType(2);
 		}
 		// 2. 生成导出模型, 包含 template, missions
-		ResourceDumpContext<Object> context = businessTemplateHandler.dumpBusiness(template);
+		ResourceDumpContext<? extends BaseTable> context = businessTemplateHandler.dumpBusiness(template);
 		context.setBusinessTemplate(template);
 
 		// 3. 获取拓扑
@@ -626,20 +628,20 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		String localSceneId = template.getLocalSceneId();
 		// localSceneId字段为空
 		if (StringUtils.isBlank(localSceneId)) {
-			return null;
+			return new JSONObject();
 		}
 		// localScene不存在，localSceneId字段是脏数据
 		LocalScene localScene = localSceneService.getById(localSceneId);
 		if (null == localScene) {
 			template.setLocalSceneId("");
 			updateById(template);
-			return null;
+			return new JSONObject();
 		}
 		// localScene 的 mpSceneId为空，localScene是脏数据
 		String mpSceneId = localScene.getMpSceneId();
 		if (StringUtils.isBlank(mpSceneId)) {
 			clearLocal(template);
-			return null;
+			return new JSONObject();
 		}
 		// 请求远程场景数据
 		JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
@@ -647,13 +649,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		// 场景数据为空，清除本地脏数据
 		if (null == sceneData) {
 			clearLocal(template);
-			return null;
+			return new JSONObject();
 		}
 		// 场景实际已被删除，清除本地脏数据
 		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
-		if (data.isStopped()) {
+		if (Boolean.TRUE.equals(data.isStopped())) {
 			clearLocal(template);
-			return null;
+			return new JSONObject();
 		}
 		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
 		return sceneData;
@@ -693,14 +695,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 						localSceneService.removeById(businessTemplate.getLocalSceneId());
 					}
 					// 删除中台拓扑
-					try {
-						localSceneService.deleteTopo(businessTemplate.getTopoId());
-					} catch (Exception e) {
-						log.error(String.format(
-								"failed to delete topo [%s] of business template [%s]",
-								businessTemplate.getTopoId(), businessTemplate.getResourceId()));
-						// do nothing
-					}
+					deleteRelatedTopo(businessTemplate);
 					// 删除模板相关其他
 					handler.deleteTemplateRelated(businessTemplate);
 				}
@@ -711,6 +706,17 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				rtksRelatedService.clearEngageRel(businessTemplateIds);
 			}
 		});
+	}
+
+	private void deleteRelatedTopo(BusinessTemplate businessTemplate){
+		try {
+			localSceneService.deleteTopo(businessTemplate.getTopoId());
+		} catch (Exception e) {
+			log.error(String.format(
+					"failed to delete topo [%s] of business template [%s]",
+					businessTemplate.getTopoId(), businessTemplate.getResourceId()));
+			// do nothing
+		}
 	}
 
 	private void addBatchDeleteLog(List<BusinessTemplate> businessTemplateList, UserInfo userInfo) {

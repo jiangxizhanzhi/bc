@@ -382,6 +382,14 @@ public class TimeUtil {
 		return simpleDateFormat.format(date);
 	}
 
+	public static String format11(Date date) {
+		if (date == null) {
+			return "";
+		}
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
+		return simpleDateFormat.format(date);
+	}
+
 	/**
 	 * 获取传入日期00:00:00的时间
 	 *

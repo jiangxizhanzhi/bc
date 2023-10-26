@@ -40,7 +40,7 @@ public enum UploadImagePermission implements GenericEnum {
 
 	public final String fileSuffix;
 
-	public final String[] menuIds;
+	final String[] menuIds;
 
 	UploadImagePermission(int type, String desc, String fileSuffix, String[] menuIds) {
 		this.code = type;

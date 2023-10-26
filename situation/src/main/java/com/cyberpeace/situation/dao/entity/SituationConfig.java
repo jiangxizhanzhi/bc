@@ -16,7 +16,7 @@ public class SituationConfig {
 	private Integer id;
 
 	@ApiModelProperty("资源id")
-	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
+	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	@ApiModelProperty("作用域")

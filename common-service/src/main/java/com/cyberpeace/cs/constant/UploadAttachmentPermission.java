@@ -38,7 +38,7 @@ public enum UploadAttachmentPermission implements GenericEnum {
 
     public final String fileSuffix;
 
-    public final String[] menuIds;
+     final String[] menuIds;
 
     UploadAttachmentPermission(int type, String desc, String fileSuffix, String[] menuIds) {
         this.code = type;

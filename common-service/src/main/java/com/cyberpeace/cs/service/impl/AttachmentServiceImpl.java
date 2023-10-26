@@ -43,19 +43,18 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 
 			List<Attachment> attachments = attachmentMapper
 					.selectBatchIds(Lists.newArrayList(attachmentArr), isWeb);
-			List<AttachmentBo> attachmentBos = StreamApiUtils.map(attachments, attachment -> {
+			return StreamApiUtils.map(attachments, attachment -> {
 				AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
 				attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
 				return attachmentBo;
 			});
-			return attachmentBos;
 		}
 		return Lists.newArrayList();
 	}
 
 	@Override
 	public List<Attachment> batchGetByIds(List<String> attachmentIds) {
-		if (attachmentIds == null || attachmentIds.size() == 0) {
+		if (attachmentIds == null || attachmentIds.isEmpty()) {
 			return Lists.newArrayList();
 		}
 		// 不根据isPublic做筛选
@@ -89,7 +88,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
 
 		String fileName = origin.getName();
-		if (renameFile) {
+		if (Boolean.TRUE.equals(renameFile)) {
 			String[] ss = StringUtils.split(fileName, ".");
 			if (ss.length > 1) {
 				// 如果文件没有后缀，不重命名，方便后期问题追踪。没有后缀对文件，一般是bug
@@ -223,7 +222,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
 
 		String fileName = file.getOriginalFilename();
-		if (renameFile) {
+		if (Boolean.TRUE.equals(renameFile)) {
 			String[] ss = StringUtils.split(fileName, ".");
 			if (ss.length > 1) {
 				// 如果文件没有后缀，不重命名，方便后期问题追踪。没有后缀对文件，一般是bug
@@ -283,7 +282,6 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	@Override
 	public Boolean isExist(String attachmentId) {
 		Attachment attachment = attachmentMapper.selectById(attachmentId);
-		return attachment != null && new File(ConfigUtil.getContextProperty("cr.local.upload.path")
-				+ "/" + attachment.getFilePath()).exists();
+		return attachment != null && new File(ConfigUtil.getContextProperty("cr.local.upload.path"),attachment.getFilePath()).exists();
 	}
 }

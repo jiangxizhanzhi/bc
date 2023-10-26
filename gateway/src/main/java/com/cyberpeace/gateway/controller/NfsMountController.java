@@ -19,11 +19,11 @@ import com.cyberpeace.gateway.controller.req.NfsUmountReq;
 @RequestMapping("/exec/nfs/mount")
 public class NfsMountController {
 
-	private String MOUNT_SHELL = "mount -t nfs -o nolock -o soft %s:%s %s";
+	private static final String MOUNT_SHELL = "mount -t nfs -o nolock -o soft %s:%s %s";
 
-	private String UMOUNT_SHELL = "umount %s";
+	private static final String UMOUNT_SHELL = "umount %s";
 
-	private String MKDIR = "mkdir -p %s";
+	private static final String MKDIR = "mkdir -p %s";
 
 	@ApiOperation("NFS目录挂载")
 	@PostMapping("/mount")

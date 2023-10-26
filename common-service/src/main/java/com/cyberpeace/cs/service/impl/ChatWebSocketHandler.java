@@ -77,7 +77,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 数据校验
-	 * @param webSocketContext
+	 * @param webSocketContext webSocketContext
 	 * @return
 	 */
 	public Boolean checkInBusiness(WebSocketConnectionContext webSocketContext) {
@@ -103,7 +103,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		}
 
 		ChatWebSocketHandler handler = getHandler(webSocketContext);
-		if (!handler.checkInBusiness(webSocketContext)) {
+		if (Boolean.FALSE.equals(handler.checkInBusiness(webSocketContext))) {
 			log.error("[wsChat]current user {} is not in the chat service {}",
 					webSocketContext.getUserId(), webSocketContext.getOriginParams());
 			throw new ChatException(ErrorCode.METHOD_ARG_NOT_VALID);
@@ -157,7 +157,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 			}
 
 			// 是否发送给自己
-			if (sendSelf()) {
+			if (Boolean.TRUE.equals(sendSelf())) {
 				sendChatMessage(connectionContext.getIdentifierId(), userId, chatMessage);
 			}
 		}

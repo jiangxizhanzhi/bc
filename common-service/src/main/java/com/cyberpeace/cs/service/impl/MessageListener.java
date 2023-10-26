@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.Channel;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class MessageListener implements ChannelAwareMessageListener {
@@ -33,11 +35,11 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	private static Map<Integer, MessageListener> register = Maps.newHashMap();
 
-	private final String SCENE_ELEMENT = "scene_element";
+	private static final String SCENE_ELEMENT = "scene_element";
 
-	private final String SCENE = "scene";
+	private static final String SCENE = "scene";
 
-	private final String SCENE_DELETE = "delete_cscene_instance";
+	private static final String SCENE_DELETE = "delete_cscene_instance";
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
@@ -45,7 +47,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
-			throw new Error("declareMessageType=[" + declareMessageType() + "] repeat");
+			throw new BusinessException();
 		}
 
 		register.put(declareMessageType(), this);
@@ -53,7 +55,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
-		String realMessage = new String(message.getBody(), WebConstant.ENCODING);
+		String realMessage = new String(message.getBody(), StandardCharsets.UTF_8);
 
 		// mq日志正常情况不输出，调试的时候再输出
 		if (log.isDebugEnabled()) {
@@ -80,20 +82,41 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	/**
 	 * 子类定义具体的消息处理方法
+	 * @param data data
+	 * @param businessId businessId
+	 * @param context context
 	 * @return
 	 */
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		return false;
 	}
-
+	/**
+	 * 子类定义具体的消息处理方法
+	 * @param data data
+	 * @param businessId businessId
+	 * @param context context
+	 * @return
+	 */
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		return false;
 	}
-
+	/**
+	 * 子类定义具体的消息处理方法
+	 * @param data data
+	 * @param businessId businessId
+	 * @param context context
+	 * @return
+	 */
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		return false;
 	}
-
+	/**
+	 * 子类定义具体的消息处理方法
+	 * @param data data
+	 * @param businessId businessId
+	 * @param context context
+	 * @return
+	 */
 	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
 		return false;
 	}

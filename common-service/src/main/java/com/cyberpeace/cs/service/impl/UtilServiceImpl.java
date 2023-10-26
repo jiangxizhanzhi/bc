@@ -70,12 +70,10 @@ public class UtilServiceImpl implements UtilService {
 			fileName = fileUrl.substring(lastIndexOf + CommonConstant.ONE);
 		}
 
-		String officeViewUrl = remoteServerEnvService.getOfficeHost() + "/view/?host="
+		return remoteServerEnvService.getOfficeHost() + "/view/?host="
 				+ remoteServerEnvService.getFileServerHost() + "&getFileInfo=" + HANDOUT_INFO_URL
 				+ "&downloadFile=" + HANDOUT_CONTENT_URL + "&fileId=" + fileId + "&fileName="
 				+ fileName;
-
-		return officeViewUrl;
 	}
 
 	@Override

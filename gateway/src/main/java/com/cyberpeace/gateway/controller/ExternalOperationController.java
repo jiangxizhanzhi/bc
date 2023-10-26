@@ -141,7 +141,7 @@ public class ExternalOperationController {
 		List<PracticeOperation> operationList = practiceOperationMapper
 				.selectBatchIds(batchReq.getResourceIds());
 		List<ExternalOperationBo> operationBos = StreamApiUtils.map(operationList,
-				practiceOperation -> entityToExternal(practiceOperation));
+				this::entityToExternal);
 
 		return new BaseRsp<>(operationBos);
 	}
@@ -228,7 +228,7 @@ public class ExternalOperationController {
 		// 条件查询
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery, true);
 		IPage<ExternalOperationBo> convert = iPage
-				.convert(practiceOperation -> entityToExternal(practiceOperation));
+				.convert(this::entityToExternal);
 		return new BaseRsp<>(PageUtil.getListResult(convert));
 	}
 
@@ -259,7 +259,7 @@ public class ExternalOperationController {
 		List<PracticeOperation> operationList = practiceOperationMapper.randomChoice(listQuery,
 				choiceReq.getCount());
 		List<ExternalOperationBo> boList = StreamApiUtils.map(operationList,
-				operation -> entityToExternal(operation));
+				this::entityToExternal);
 		for (ExternalOperationBo operationBo : boList) {
 			operationBo.setScore(choiceReq.getScore());
 		}

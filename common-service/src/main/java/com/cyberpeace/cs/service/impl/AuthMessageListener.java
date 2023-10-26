@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,29 +17,28 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.Channel;
+import java.nio.charset.StandardCharsets;
 
 @Service
-public class AuthMessageListener implements ChannelAwareMessageListener {
+public  class AuthMessageListener implements ChannelAwareMessageListener {
 
 	private static final Logger log = LoggerFactory.getLogger("mq");
 
 	private static Map<Integer, AuthMessageListener> register = Maps.newHashMap();
 
-	private final String USER = "user_delete";
+	private static final String USER = "user_delete";
 
-	private final String ROLE = "role_delete";
+	private static final String ROLE = "role_delete";
 
-	private final String ROLE_UPDATE = "role_modify";
+	private static final String ROLE_UPDATE = "role_modify";
 
-	private final String USER_UPDATE = "user_modify";
+	private static final String USER_UPDATE = "user_modify";
 
-	private final String ORG = "org_delete";
+	private static final String ORG = "org_delete";
 
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -46,7 +46,7 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
-			throw new Error("declareAuthMessageType=[" + declareMessageType() + "] repeat");
+			throw new BusinessException();
 		}
 
 		register.put(declareMessageType(), this);
@@ -54,7 +54,7 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
-		String realMessage = new String(message.getBody(), WebConstant.ENCODING);
+		String realMessage = new String(message.getBody(), StandardCharsets.UTF_8);
 
 		// mq日志正常情况不输出，调试的时候再输出
 		if (log.isDebugEnabled()) {
@@ -81,21 +81,27 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 
 	/**
 	 * 子类定义具体的消息处理方法
+	 * @param users users
 	 * @return
 	 */
-	public Boolean onUserDelete(List<String> users) {
+	public  Boolean onUserDelete(List<String> users) {
+		return true;
+	}
+
+	/**
+	 *
+	 * @param orgs orgs
+	 * @return
+	 */
+	public  Boolean onOrgDelete(List<String> orgs)  {
+		return true;
+	}
+
+	public Boolean onSceneStartProcess() {
 		return false;
 	}
 
-	public Boolean onOrgDelete(List<String> orgs) {
-		return false;
-	}
-
-	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
-		return false;
-	}
-
-	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
+	public Boolean onSceneSuccess() {
 		return false;
 	}
 

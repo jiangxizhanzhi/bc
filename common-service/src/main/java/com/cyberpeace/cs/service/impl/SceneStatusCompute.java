@@ -27,7 +27,7 @@ public class SceneStatusCompute {
 
 		// 循环判断
 		for (SceneStatusEnum constant : constants) {
-			if (!constant.isCurrent(sceneEvent, sceneEventStatus)) {
+			if (Boolean.FALSE.equals(constant.isCurrent(sceneEvent, sceneEventStatus))) {
 				continue;
 			}
 			return constant;

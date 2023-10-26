@@ -2,7 +2,6 @@ package com.cyberpeace.cs.controller;
 
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cs.controller.res.SystemUseStatusRes;
 import com.cyberpeace.cs.dao.entity.SystemProperty;
 import com.cyberpeace.cs.service.SystemPropertyService;
 import io.swagger.annotations.Api;

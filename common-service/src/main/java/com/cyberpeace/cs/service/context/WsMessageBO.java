@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class WsMessageBO<T> implements Serializable {
+public class WsMessageBO<T>  {
 
 	@ApiModelProperty("消息编码")
 	private String code;

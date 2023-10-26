@@ -34,7 +34,7 @@ public class CrRole extends BaseTable {
 	/**
 	 *
 	 */
-	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
+	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**

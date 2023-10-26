@@ -47,11 +47,11 @@ public class CommonController {
 	@Autowired
 	private UtilService utilService;
 
-	private String MD_UPLOAD_NAME_LEN;
+	private String mdUploadNameLen;
 
 	@PostConstruct
 	public void init() {
-		MD_UPLOAD_NAME_LEN = ConfigUtil.getContextProperty("md.upload.name.len.max");
+		mdUploadNameLen = ConfigUtil.getContextProperty("md.upload.name.len.max");
 	}
 
 	@ApiOperation("图片上传")
@@ -187,11 +187,11 @@ public class CommonController {
 
 	private void validateFileNameLen(String fileName) {
 		int fileNameLen = fileName == null ? 0 : fileName.length();
-		if (fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
+		if (fileNameLen > Integer.parseInt(mdUploadNameLen)) {
 			log.error("upload fileName length cannot be larger than [{}] ! name.length = [{}]",
-					MD_UPLOAD_NAME_LEN, fileNameLen);
+					mdUploadNameLen, fileNameLen);
 			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT,
-					Integer.parseInt(MD_UPLOAD_NAME_LEN));
+					Integer.parseInt(mdUploadNameLen));
 		}
 	}
 

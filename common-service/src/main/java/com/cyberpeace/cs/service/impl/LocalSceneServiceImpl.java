@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import com.alibaba.fastjson.parser.ParserConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.impl.TraceIdContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,7 +168,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
 		Boolean result = remoteSceneService.restartNode(nodeOpsContext);
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed to restart node [{}] in scene [{}]", nodeId,
 					localScene.getMpSceneId());
 			throw new BusinessException(ErrorCode.FAILED_TO_RESTART_NODE);
@@ -184,7 +185,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
 		Boolean result = remoteSceneService.recreateNode(nodeOpsContext);
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed to recreate node [{}] in scene [{}]", nodeId,
 					localScene.getMpSceneId());
 			throw new BusinessException(ErrorCode.FAILED_TO_RECREATE_NODE);
@@ -196,7 +197,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean startFlow(LocalScene localScene, String nodeId, String flowId) {
 		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
 		Boolean result = remoteSceneService.startFlow(context);
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("Failed to start flow [{}] of node [{}] in scene [{}]", flowId, nodeId,
 					localScene.getMpSceneId());
 			return false;
@@ -210,7 +211,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean stopFlow(LocalScene localScene, String nodeId, String flowId) {
 		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
 		Boolean result = remoteSceneService.stopFlow(context);
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed to stop flow [{}] of node [{}] in scene [{}]", flowId, nodeId,
 					localScene.getMpSceneId());
 			return false;
@@ -466,7 +467,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		// 2. 发送mp请求
 		Boolean result = remoteSceneService.pauseScene(getSceneOpsContext(localScene));
 
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed to pause scene [{}]", localScene.getMpSceneId());
 			return false;
 		}
@@ -485,8 +486,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		ensureScenePaused(localScene);
 		// 2、 发送mp请求
 		Boolean result = remoteSceneService.unpauseScene(getSceneOpsContext(localScene));
-
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed to unpause scene [{}]", localScene.getMpSceneId());
 			return false;
 		}
@@ -566,7 +566,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
 		Boolean result = remoteSceneService.createNode(nodeOpsContext);
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed to create node [{}] in scene [{}]", nodeId,
 					localScene.getMpSceneId());
 			throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);

@@ -35,4 +35,9 @@ public class BusinessTemplateEventListener extends AuthMessageListener {
 		return true;
 	}
 
+	@Override
+	public Boolean onOrgDelete(List<String> orgs) {
+		return true;
+	}
+
 }

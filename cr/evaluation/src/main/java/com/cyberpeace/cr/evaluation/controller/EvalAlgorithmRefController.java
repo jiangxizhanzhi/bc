@@ -131,10 +131,10 @@ public class EvalAlgorithmRefController {
 		}
 		try {
 			double[][] formatMatrixData = MatrixData.getFormatMatrixData(matrixData);
-			int N = formatMatrixData[0].length;
-			double[] weight = new double[N];
+			int n = formatMatrixData[0].length;
+			double[] weight = new double[n];
 			AHPComputeWeight instance = AHPComputeWeight.getInstance();
-			instance.weight(formatMatrixData, weight, N);
+			instance.weight(formatMatrixData, weight, n);
 			double cr = instance.getCR();
 			res.setCr(Boolean.parseBoolean(String.valueOf(cr < 0.1)));
 		} catch (RemoteServiceException e) {

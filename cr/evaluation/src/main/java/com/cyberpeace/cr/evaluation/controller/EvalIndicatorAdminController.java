@@ -109,7 +109,6 @@ public class EvalIndicatorAdminController {
 	@PostMapping("/check_consistency")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<List<String>> checkMatrixDataConsistency(@RequestBody @Validated EvalAhpAlgorithmReq evalAhpAlgorithmReq) {
-		// TODO 待填入
 		List<String> ahpMatrixDataOrder = CrCommonValidator.validateAhpMatrixDataOrder(evalAhpAlgorithmReq.getMatrixData());
 		FormatData data = new FormatData();
 		data.setData(ahpMatrixDataOrder);

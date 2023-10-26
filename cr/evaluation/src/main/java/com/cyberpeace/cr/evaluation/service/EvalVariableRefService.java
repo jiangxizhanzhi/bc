@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,16 +14,6 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
 
 public interface EvalVariableRefService extends IService<EvalVariableRef> {
-
-    /**
-     * 时间字段获取存在差异的探针
-     */
-    List<String> BASE = Arrays.asList("002", "003");
-
-    /**
-     * 由es查询的探针数据, 无法使用`page`、`per_page`分页, 需要传入`requestId`、`per_page`迭代获取
-     */
-    List<String> ES_PROBES = Arrays.asList("006", "007", "008", "009", "010");
 
     /**
      * 采集变量项目算法执行

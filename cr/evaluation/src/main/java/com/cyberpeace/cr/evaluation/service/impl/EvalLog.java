@@ -57,4 +57,6 @@ public class EvalLog {
         String newMsg = String.format(INDEX_LOG_FORMAT, evalIndexRef.getResourceId(), evalIndexRef.getName(), msg);
         debug(evalRecord, newMsg);
     }
+
+    private EvalLog() {}
 }

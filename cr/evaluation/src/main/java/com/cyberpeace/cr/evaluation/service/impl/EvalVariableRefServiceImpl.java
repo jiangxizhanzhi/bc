@@ -79,7 +79,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.FORMATTING.getCode())) {
             EvalLog.info(evalRecord, evalVariableRef, "format algorithm has been completed, continue.");
-            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord);
         }
 
         // 已经格式化数据数量
@@ -95,7 +95,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
             getBaseMapper().updateById(evalVariableRef);
 
             EvalLog.info(evalRecord, evalVariableRef, "format algorithm completed.");
-            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+            return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord);
         }
 
         return result;
@@ -175,7 +175,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return null;
     }
 
-    private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+    private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "match algorithm start...");
 
@@ -316,7 +316,6 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         evalVariableRefProbeDataList.forEach(item -> {
             result.getTime().add(item.getTime());
-            // todo 仅判断一次
             if (StringUtils.isNumeric(item.getFormattedValue())) {
                 result.getValue().add(Integer.parseInt(item.getFormattedValue()));
                 result.getIsMatched().add(item.getStatus().equals(EvalVariableRefProbeData.Status.MATCHED.getCode()));

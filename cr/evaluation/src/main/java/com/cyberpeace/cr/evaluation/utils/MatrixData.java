@@ -39,4 +39,6 @@ public class MatrixData {
         }
         return res;
     }
+
+    private MatrixData() {}
 }

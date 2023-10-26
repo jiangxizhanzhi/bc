@@ -76,7 +76,6 @@ public class EvalIndexRefController {
             EvalRecordSpecialistContext specialist = requestData.getSpecialist();
             evalIndexRef.setType(type);
             if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
-                // TODO 设置回显 speciallist的其他值
                 evalIndexRef.setSpecialistValue(specialist.getValue());
                 evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                 evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());

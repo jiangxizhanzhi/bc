@@ -46,7 +46,7 @@ public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMappe
 		List<EvalAggregation> evalAggregationList = evalAggregationMapper
 				.selectIdsByEvalIndicatorIds(Lists.newArrayList(evalIndicatorId));
 
-		List<EvalAggregationContext> evalAggregationContexts = evalAggregationList.stream()
+		return evalAggregationList.stream()
 				.map(evalAggregation -> {
 					EvalAggregationContext evalAggregationContext = BeanUtils.copy(evalAggregation,
 							EvalAggregationContext.class);
@@ -57,7 +57,5 @@ public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMappe
 
 					return evalAggregationContext;
 				}).collect(Collectors.toList());
-
-		return evalAggregationContexts;
 	}
 }

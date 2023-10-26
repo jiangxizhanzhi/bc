@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +35,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -67,6 +67,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRecord> implements EvalRecordService {
+
+	/**
+	 * 时间字段获取存在差异的探针
+	 */
+	private static final List<String> BASE = Arrays.asList("002", "003");
+
+	/**
+	 * 由es查询的探针数据, 无法使用`page`、`per_page`分页, 需要传入`requestId`、`per_page`迭代获取
+	 */
+	private static final List<String> ES_PROBES = Arrays.asList("006", "007", "008", "009", "010");
+
     @Autowired
     private EvalIndexRefService evalIndexRefService;
 
@@ -601,7 +612,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         if (!originEvalRecord.getSystemId().equals(newEvalRecord.getSystemId())) {
             return create(requestData);
         }
-        // TODO 不止3级 可修改评估方式
         Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, newEvalRecord.getResourceId()).eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode()).list().stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
         // 重复数据仅编辑一次
         Set<String> indexesSet = Sets.newHashSet();
@@ -736,7 +746,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private void deleteRelation(List<String> recordIds) {
-        // todo 算法, 同步数据, 计算结果一并删除
         evalIndexRefService.removeByIds(evalIndexRefService.lambdaQuery().in(EvalIndexRef::getRecordId, recordIds).list().stream().map(EvalIndexRef::getResourceId).collect(Collectors.toList()));
 
         evalVariableRefService.removeByIds(evalVariableRefService.lambdaQuery().in(EvalVariableRef::getRecordId, recordIds).list().stream().map(EvalVariableRef::getResourceId).collect(Collectors.toList()));
@@ -1057,7 +1066,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 第一次、非迭代调用, 并且分页不为第一页. 视作数据同步过程中断
 		if (Boolean.TRUE.equals(isFirstCall) && !collectionEventPageContext.getPage().equals(1L)) {
             // es需要循环数次跳过已同步数据
-            if (evalVariableRefService.ES_PROBES.contains(collectionEventPageContext.getProbeId())) {
+			if (ES_PROBES.contains(collectionEventPageContext.getProbeId())) {
                 EvalLog.info(evalRecord, evalVariableRef, "synced data skipping...");
                 Long currentPage = collectionEventPageContext.getPage();
                 collectionEventPageContext.setPage(1L);  // es同requestId第一次查询生成快照时传入page需要为1, 否则报错
@@ -1087,7 +1096,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 throw new RemoteServiceException();
             }
             // 读取探针采集时间
-            if (evalVariableRefService.BASE.contains(mpCollectionEvent.getProbeId())) {
+			if (BASE.contains(mpCollectionEvent.getProbeId())) {
                 JSONObject scanAttr = content.getJSONObject("scan");
                 probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
             } else if (mpCollectionEvent.getProbeId().equals("011")) {
@@ -1618,7 +1627,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalVariableRefProbeDataList.forEach(item -> {
             result.setVariableId(item.getVariableId());
             result.getTime().add(item.getTime());
-            // todo 仅判断一次
             if (StringUtils.isNumeric(item.getFormattedValue())) {
                 result.getValue().add(Integer.parseInt(item.getFormattedValue()));
                 result.getIsMatched().add(item.getStatus().equals(EvalVariableRefProbeData.Status.MATCHED.getCode()));

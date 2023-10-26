@@ -16,7 +16,6 @@ public class AHPComputeWeight {
         double[] weight = new double[n];
         AHPComputeWeight instance = AHPComputeWeight.getInstance();
         instance.weight(a, weight, n);
-        System.out.println(Arrays.toString(weight));
     }
 
     /**
@@ -68,7 +67,7 @@ public class AHPComputeWeight {
         double[] w1 = new double[N];
         // W（k+1）的归一化向量
         double[] w2 = new double[N];
-        double sum = 1.0;
+        double sum;
         double d = 1.0;
 
         // 误差

@@ -31,6 +31,7 @@ import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
 import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
 import com.cyberpeace.cr.evaluation.utils.MatrixData;
 import com.cyberpeace.integratation.service.RemotePythonService;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,21 +52,19 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	@Autowired
 	private EvalVariableRefMapper evalVariableRefMapper;
 
-	private final Map<Integer, String> int2cn = new HashMap<Integer, String>() {
-
-		{
-			put(1, "一");
-			put(2, "二");
-			put(3, "三");
-			put(4, "四");
-		}
-	};
+	private static final Map<Integer, String> INT_2_CN = new HashMap<>();
+	static {
+		INT_2_CN.put(1, "一");
+		INT_2_CN.put(2, "二");
+		INT_2_CN.put(3, "三");
+		INT_2_CN.put(4, "四");
+	}
 
 	private String getLevelText(Integer level) {
 		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
 			return Integer.toString(level);
 		}
-		return int2cn.get(level);
+		return INT_2_CN.get(level);
 	}
 
 	private Integer indexAhpPerform(String matrixData, List<Integer> data) {
@@ -78,11 +77,11 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 			return data.get(0);
 		}
 		double[][] formatMatrixData = MatrixData.getFormatMatrixData(matrixData);
-		int N = objects.size();
-		double[] weight = new double[N];
+		int n = objects.size();
+		double[] weight = new double[n];
 		AHPComputeWeight instance = AHPComputeWeight.getInstance();
-		instance.weight(formatMatrixData, weight, N);
-		for (int i = 0; i < N; i++) {
+		instance.weight(formatMatrixData, weight, n);
+		for (int i = 0; i < n; i++) {
 			res += weight[i] * data.get(i);
 		}
 		return res;
@@ -245,28 +244,22 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		});
 	}
 
-	private final Map<Integer, Map<Integer, Integer>> CYCLE_MAP = new HashMap<Integer, Map<Integer, Integer>>() {
+	private static final Map<Integer, Map<Integer, Integer>> cycleMap = new HashMap<>();
 
-		{
-			put(EvalIndexRef.DataAttr.COST.getCode(), new HashMap<Integer, Integer>() {
+	private static final Map<Integer, Integer> costMap = Maps.newHashMap();
 
-				{
-					put(1, 20);
-					put(2, 50);
-					put(3, 100);
-				}
-			});
-			put(EvalIndexRef.DataAttr.BENEFIT.getCode(), new HashMap<Integer, Integer>() {
+	private static final Map<Integer, Integer> benefitMap = Maps.newHashMap();
+	static {
+		costMap.put(1, 20);
+		costMap.put(2, 50);
+		costMap.put(3, 100);
+		cycleMap.put(EvalIndexRef.DataAttr.COST.getCode(), costMap);
 
-				{
-					put(1, 100);
-					put(2, 50);
-					put(3, 20);
-				}
-			});
-		}
-
-	};
+		benefitMap.put(1, 100);
+		benefitMap.put(2, 50);
+		benefitMap.put(3, 20);
+		cycleMap.put(EvalIndexRef.DataAttr.BENEFIT.getCode(), benefitMap);
+	}
 
 	@Override
 	public Integer thirdSpecialist(Integer datatype, Integer attribute, Integer attributeValue,
@@ -274,7 +267,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		if (datatype.equals(EvalIndexRef.DataType.PERCENT.getCode())) {
 			return value;
 		} else if (datatype.equals(EvalIndexRef.DataType.CYCLE.getCode())) {
-			Map<Integer, Integer> attrMap = CYCLE_MAP.get(EvalIndexRef.DataAttr.COST.getCode());
+			Map<Integer, Integer> attrMap = cycleMap.get(EvalIndexRef.DataAttr.COST.getCode());
 			return attrMap != null ? attrMap.getOrDefault(value, 0) : 0;
 		} else if (datatype.equals(EvalIndexRef.DataType.INTEGER.getCode())) {
 			// prd259~261页

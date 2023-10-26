@@ -60,7 +60,7 @@ public class EvalSceneEventListener extends MessageListener {
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
 
-	private List<String> FLOW_CODES = Lists.newArrayList("node_start_flow", "node_stop_flow");
+	private List<String> flowCodes = Lists.newArrayList("node_start_flow", "node_stop_flow");
 
 	@Override
 	public Integer declareMessageType() {
@@ -102,7 +102,7 @@ public class EvalSceneEventListener extends MessageListener {
 				.getJSONObject("data");
 		String callAction = message.getString("call_action");
 
-		if (callAction != null && FLOW_CODES.contains(callAction)) {
+		if (callAction != null && flowCodes.contains(callAction)) {
 			processFlowMessage(context, businessId);
 		}
 

@@ -50,10 +50,8 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 			List<String> collectionIds) {
 
 		List<EvalIndicator> evalIndicatorList = evalIndicatorReq.getEvalIndicators().stream()
-				.map(evalIndicatorContext -> {
-					return convertEvalIndicatorReqToEvalIndicator(evalIndicatorContext,
-							evalIndicatorReq, userId, collectionIds);
-				}).collect(Collectors.toList());
+				.map(evalIndicatorContext -> convertEvalIndicatorReqToEvalIndicator(evalIndicatorContext,
+						evalIndicatorReq, userId, collectionIds)).collect(Collectors.toList());
 
 		this.saveBatch(evalIndicatorList);
 	}
@@ -123,10 +121,8 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 	public void updateBatchContext(EvalIndicatorReq evalIndicatorReq,
 			List<EvalIndicatorContext> evalIndicators, String userId, List<String> collectionIds) {
 		List<EvalIndicator> evalIndicatorList = evalIndicators.stream()
-				.map(evalIndicatorContext -> {
-					return convertEvalIndicatorReqToEvalIndicator(evalIndicatorContext,
-							evalIndicatorReq, userId, collectionIds);
-				}).collect(Collectors.toList());
+				.map(evalIndicatorContext -> convertEvalIndicatorReqToEvalIndicator(evalIndicatorContext,
+						evalIndicatorReq, userId, collectionIds)).collect(Collectors.toList());
 
 		this.updateBatchById(evalIndicatorList);
 	}

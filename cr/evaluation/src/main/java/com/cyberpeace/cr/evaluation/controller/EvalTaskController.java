@@ -217,7 +217,7 @@ public class EvalTaskController {
 			taskId = evalTemplate.getCurrentTaskId();
 		}
 
-		List<EvalTaskStepContext> evalTaskStepContextList = Lists.newArrayList();
+		List<EvalTaskStepContext> evalTaskStepContextList;
 
 		// 处理模板下无任务的情况
 		if (StringUtils.isEmpty(taskId)) {

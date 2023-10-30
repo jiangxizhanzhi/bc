@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -22,6 +21,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -204,20 +204,25 @@ public class LevelController {
 			}
 		}
 
-		if (levelIds.size() == 0) {
+		if (levelIds.isEmpty()) {
 			throw new BusinessException(RtksBusinessErrorCode.UNABLE_DELETE_FRAME);
 		}
 
 		levelService.removeByIds(levelIds);
 	}
 
-	// 检查层级的子层级是否有岗位
+	/**
+	 * // 检查层级的子层级是否有岗位
+	 * @param level
+	 * @return boolean
+	 */
 	private boolean checkLevelChildren(Level level) {
 		boolean result = false;
 		if (!StringUtils.isBlank(level.getFrame())) {
-
-			LevelTreeOutput frame = frameService.getTree(level.getFrame());// 获取框架树
-			LevelTreeOutput levelTreeOutput = getLevelTreeChild(frame, level.getResourceId());// 获取层级树
+			// 获取框架树
+			LevelTreeOutput frame = frameService.getTree(level.getFrame());
+			// 获取层级树
+			LevelTreeOutput levelTreeOutput = getLevelTreeChild(frame, level.getResourceId());
 			result = levelService.checkHasRole(levelTreeOutput);
 		}
 		return result;

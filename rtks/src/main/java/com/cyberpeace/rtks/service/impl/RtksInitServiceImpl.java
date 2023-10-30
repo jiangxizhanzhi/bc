@@ -39,12 +39,11 @@ public class RtksInitServiceImpl implements RtksInitService {
 			return Lists.newArrayList();
 		}
 		List<Knowledge> initKnowledgeList = rtksInitMapper.getInitKnowledgeByIds(knowledgeIds);
-		List<String> courseIds = initKnowledgeList.stream()
+		return initKnowledgeList.stream()
 				.map(knowledge -> JsonUtil.toJsonObjectArray(knowledge.getCourses(),
 						KnowledgeUnderCourseBo.class))
 				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId).distinct()
 				.collect(Collectors.toList());
-		return courseIds;
 	}
 
 	@Override

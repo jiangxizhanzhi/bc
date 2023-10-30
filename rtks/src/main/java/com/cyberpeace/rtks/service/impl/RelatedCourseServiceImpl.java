@@ -16,8 +16,8 @@ import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
-import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.dao.entity.CourseName;
+import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.service.CourseNameService;
 import com.cyberpeace.rtks.service.RelatedCourseService;
 import com.google.common.collect.Lists;
@@ -100,7 +100,7 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 			}
 
 			// 增加远程接口的课程列表
-			if (existIds.size() > 0) {
+			if (!existIds.isEmpty()) {
 				// 查询课程或者学习情况
 				if (RoleDetailRes.RELATED_COURSE_STUDY.equals(relatedCourseType)
 						|| RoleDetailRes.RELATED_COURSE_ALL.equals(relatedCourseType)) {

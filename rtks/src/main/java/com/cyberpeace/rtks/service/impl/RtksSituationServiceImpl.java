@@ -321,7 +321,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	@Override
 	public void recordMatch(String userId, String roleId, Integer match) {
 		Boolean exist = rtksRoleMatchRecordMapper.existBy(userId, roleId);
-		if (exist) {
+		if (Boolean.TRUE.equals(exist)) {
 			rtksRoleMatchRecordMapper.updateRecord(userId, roleId, match);
 		} else {
 			rtksRoleMatchRecordMapper.insertRecord(userId, roleId, match);
@@ -341,7 +341,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				// 避免重复记录
 				Boolean qualificationLogged = rtksSituationMapper.countByUserIdAndRoleIdAndType(
 						userId, roleId, SituationLog.MatchType.QUALIFIED.getCode());
-				if (!qualificationLogged) {
+				if (Boolean.FALSE.equals(qualificationLogged)) {
 					rtksSituationMapper.createLog(userId, userName, roleId, roleName,
 							SituationLog.MatchType.QUALIFIED.getCode());
 				}
@@ -349,7 +349,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				if (match >= RtksCommonConstants.EXCELLENT_MATCH) {
 					Boolean excellenceLogged = rtksSituationMapper.countByUserIdAndRoleIdAndType(
 							userId, roleId, SituationLog.MatchType.EXCELLENT.getCode());
-					if (!excellenceLogged) {
+					if (Boolean.FALSE.equals(excellenceLogged)) {
 						rtksSituationMapper.createLog(userId, userName, roleId, roleName,
 								SituationLog.MatchType.EXCELLENT.getCode());
 					}

@@ -1,6 +1,5 @@
 package com.cyberpeace.rtks.res;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
@@ -9,7 +8,6 @@ import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.Task;
-
 import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 
@@ -19,17 +17,23 @@ import lombok.Data;
 @Data
 public class RoleDetailRes {
 
-	public final static String TYPE_SKILL = "skill";// 只传技能关联课程
+	// 只传技能关联课程
+	public static final String TYPE_SKILL = "skill";
 
-	public final static String TYPE_KNOWLEDGE = "knowledge";// 只传知识点关联课程
+	// 只传知识点关联课程
+	public static final String TYPE_KNOWLEDGE = "knowledge";
 
-	public final static String TYPE_ALL = "all";// 只传课程学习进展
+	// 只传课程学习进展
+	public static final String TYPE_ALL = "all";
 
-	public final static String RELATED_COURSE_COURSE = "course";// 只传课程
+	// 只传课程
+	public static final String RELATED_COURSE_COURSE = "course";
 
-	public final static String RELATED_COURSE_STUDY = "study";// 只传课程学习进展
+	// 只传课程学习进展
+	public static final String RELATED_COURSE_STUDY = "study";
 
-	public final static String RELATED_COURSE_ALL = "all";// 同时都传
+	// 同时都传
+	public static final String RELATED_COURSE_ALL = "all";
 
 	@ApiModelProperty(value = "岗位id")
 	private String resourceId;

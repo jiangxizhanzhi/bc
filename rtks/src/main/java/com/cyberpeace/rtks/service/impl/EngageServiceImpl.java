@@ -2,9 +2,6 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +12,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-import com.cyberpeace.rtks.dao.entity.EngageTrainRelation;
 import com.cyberpeace.rtks.dao.mapper.EngageMapper;
 import com.cyberpeace.rtks.service.EngageService;
 import com.cyberpeace.rtks.service.bo.EngageDetail;
 import com.cyberpeace.rtks.service.bo.career.*;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +35,7 @@ public class EngageServiceImpl implements EngageService {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	private volatile EngageCache cachedEngages;
+	private EngageCache cachedEngages;
 
 	@Override
 	public List<EngageCategoryBo<EngageBackBo>> getEngages() {
@@ -55,19 +49,14 @@ public class EngageServiceImpl implements EngageService {
 		// count relation
 		List<RelCount> countList = engageMapper.countRelsByEngageId();
 		Map<String, Integer> countMap = Maps.newHashMap();
-		countList.forEach((count) -> {
-			countMap.put(count.getResourceId(), count.getCount());
-		});
+		countList.forEach(count -> countMap.put(count.getResourceId(), count.getCount()));
 		// set count
-		res.forEach((category -> {
-			category.getSubCategories().forEach((subCategoryBo) -> {
-				subCategoryBo.getEngages().forEach((engageBackBo) -> {
+		res.forEach((category -> category.getSubCategories()
+				.forEach(subCategoryBo -> subCategoryBo.getEngages().forEach(engageBackBo -> {
 					if (countMap.containsKey(engageBackBo.getResourceId())) {
 						engageBackBo.setCount(countMap.get(engageBackBo.getResourceId()));
 					}
-				});
-			});
-		}));
+				}))));
 		return res;
 	}
 
@@ -82,18 +71,15 @@ public class EngageServiceImpl implements EngageService {
 			cache = cachedEngages.getEn();
 		}
 		// search
-		cache.forEach((category) -> {
-			category.getSubCategories().forEach((subCategory) -> {
-				subCategory.getEngages().forEach((engage) -> {
+		cache.forEach(category -> category.getSubCategories()
+				.forEach(subCategory -> subCategory.getEngages().forEach(engage -> {
 					if (engage.getResourceId().equals(resourceId)) {
 						detail.setCategoryName(category.getCategoryName());
 						detail.setSubCategoryName(subCategory.getSubCategoryName());
 						detail.setResourceId(engage.getResourceId());
 						detail.setName(engage.getName());
 					}
-				});
-			});
-		});
+				})));
 
 		// get related business templates
 		List<BusinessTemplateSimple> templates = engageMapper.getRelatedTemplates(resourceId);
@@ -132,15 +118,12 @@ public class EngageServiceImpl implements EngageService {
 		}
 		List<String> relatedEngageIds = engageMapper.getRelByBusinessTemplateId(businessTemplateId);
 		// set whether related
-		res.forEach((category -> {
-			category.getSubCategories().forEach((subCategoryBo -> {
-				subCategoryBo.getEngages().forEach((engageFrontBo -> {
+		res.forEach((category -> category.getSubCategories()
+				.forEach((subCategoryBo -> subCategoryBo.getEngages().forEach((engageFrontBo -> {
 					if (relatedEngageIds.contains(engageFrontBo.getResourceId())) {
 						engageFrontBo.setRelated(true);
 					}
-				}));
-			}));
-		}));
+				}))))));
 		return res;
 	}
 

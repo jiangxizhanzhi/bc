@@ -1,16 +1,7 @@
 package com.cyberpeace.rtks.controller;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
-import com.cyberpeace.rtks.service.CourseTrainService;
-import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
-import com.cyberpeace.rtks.service.bo.RoleCourseBo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -21,7 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.rtks.controller.res.OccupationCourseRes;
+import com.cyberpeace.rtks.service.CourseTrainService;
+import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
+import com.cyberpeace.rtks.service.bo.RoleCourseBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "rtks-课程训练相关")
 @RestController
@@ -67,16 +69,16 @@ public class CourseTrainController {
 				.sum();
 		int completeTheory = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeSkillBo::getCompleteTheory).sum();
-		courseRes.setTheoryPercent(MathUtils.ceilDivide(Double.valueOf(completeTheory * 100),
-				Double.valueOf(theoryCount)));
+		courseRes.setTheoryPercent(
+				MathUtils.ceilDivide((double) (completeTheory * 100), (double) theoryCount));
 
 		// 计算实验课时进度
 		int exerciseCount = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeSkillBo::getExerciseCount).sum();
 		int completeExercise = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeSkillBo::getCompleteExercise).sum();
-		courseRes.setExercisePercent(MathUtils.ceilDivide(Double.valueOf(completeExercise * 100),
-				Double.valueOf(exerciseCount)));
+		courseRes.setExercisePercent(
+				MathUtils.ceilDivide((double) (completeExercise * 100), (double) exerciseCount));
 
 		// 计算总进度
 		int count = courseKnowledges.stream().mapToInt(CourseKnowledgeSkillBo::getLessonCount)
@@ -84,7 +86,7 @@ public class CourseTrainController {
 		int completeCount = courseKnowledges.stream()
 				.mapToInt(CourseKnowledgeSkillBo::getCompleteCount).sum();
 		courseRes.setCoursePercent(
-				MathUtils.ceilDivide(Double.valueOf(completeCount * 100), Double.valueOf(count)));
+				MathUtils.ceilDivide((double) (completeCount * 100), (double) count));
 
 		courseRes.setKnowledgeBos(courseKnowledges);
 		return courseRes;

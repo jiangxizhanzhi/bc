@@ -23,13 +23,13 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.res.KnowledgeRes;
-import com.cyberpeace.rtks.res.KnowledgeTreeRes;
-import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
 import com.cyberpeace.rtks.controller.res.skill.TrainingPathRes;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeTreeRes;
+import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.service.*;
 import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
 import com.cyberpeace.rtks.service.bo.skill.SkillPagePath;
@@ -129,7 +129,7 @@ public class TrainingPlanController {
 		RoleDetailRes roleOutput = trainingPlanService.getLearningPathTree(resource_id,
 				RoleDetailRes.RELATED_COURSE_COURSE);
 
-		return new BaseRsp<RoleDetailRes>(roleOutput);
+		return new BaseRsp<>(roleOutput);
 	}
 
 	@ApiOperation("人才能力图谱（获取技能和知识点关联的课程内容(不包括课时等信息)）")
@@ -243,7 +243,7 @@ public class TrainingPlanController {
 	public BaseRsp<ListRsp<SkillProcessRes>> pageSkillProcess(@Validated PageReqBase pageReqBase) {
 		String roleId = UserInfoContext.getUserContext().getRoleId();
 		if (StringUtils.isBlank(roleId)) {
-			return new BaseRsp<>(new ListRsp<SkillProcessRes>());
+			return new BaseRsp<>(new ListRsp<>());
 		}
 		ListRsp<SkillProcessRes> result = skillService.pageSkillListByRoleId(pageReqBase, roleId);
 
@@ -259,7 +259,7 @@ public class TrainingPlanController {
 	public BaseRsp<ListRsp<SkillPagePath>> pageSkillPath(@Validated PageReqBase pageReqBase) {
 		String roleId = UserInfoContext.getUserContext().getRoleId();
 		if (StringUtils.isBlank(roleId)) {
-			return new BaseRsp<>(new ListRsp<SkillPagePath>());
+			return new BaseRsp<>(new ListRsp<>());
 		}
 		ListRsp<SkillPagePath> result = skillService.pageSkillPathByRoleId(pageReqBase, roleId);
 

@@ -34,7 +34,7 @@ public class AttackIcsServiceImpl implements AttackIcsService {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	private volatile AttackCache cachedAttacks;
+	private AttackCache cachedAttacks;
 
 	@Override
 	public List<AttackCategoryBo<AttackBackBo>> getAttacks() {
@@ -48,17 +48,13 @@ public class AttackIcsServiceImpl implements AttackIcsService {
 		// count relation
 		List<RelCount> countList = attackIcsMapper.countRelsByAttackId();
 		Map<String, Integer> countMap = Maps.newHashMap();
-		countList.forEach((count) -> {
-			countMap.put(count.getResourceId(), count.getCount());
-		});
+		countList.forEach(count -> countMap.put(count.getResourceId(), count.getCount()));
 		// set count
-		res.forEach((category -> {
-			category.getAttacks().forEach((attackBackBo -> {
-				if (countMap.containsKey(attackBackBo.getResourceId())) {
-					attackBackBo.setCount(countMap.get(attackBackBo.getResourceId()));
-				}
-			}));
-		}));
+		res.forEach((category -> category.getAttacks().forEach((attackBackBo -> {
+			if (countMap.containsKey(attackBackBo.getResourceId())) {
+				attackBackBo.setCount(countMap.get(attackBackBo.getResourceId()));
+			}
+		}))));
 
 		return res;
 	}
@@ -75,13 +71,11 @@ public class AttackIcsServiceImpl implements AttackIcsService {
 		List<String> relatedAttackIds = attackIcsMapper
 				.getRelByBusinessTemplateId(businessTemplateId);
 		// set whether related
-		res.forEach((category -> {
-			category.getAttacks().forEach((attackFrontBo -> {
-				if (relatedAttackIds.contains(attackFrontBo.getResourceId())) {
-					attackFrontBo.setRelated(true);
-				}
-			}));
-		}));
+		res.forEach((category -> category.getAttacks().forEach((attackFrontBo -> {
+			if (relatedAttackIds.contains(attackFrontBo.getResourceId())) {
+				attackFrontBo.setRelated(true);
+			}
+		}))));
 		return res;
 	}
 

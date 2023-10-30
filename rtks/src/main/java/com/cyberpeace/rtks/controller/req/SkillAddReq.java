@@ -36,11 +36,9 @@ public class SkillAddReq implements Serializable {
 			return;
 		}
 		// validate weight 1~9
-		missions.forEach((idWeight -> {
-			CrCommonValidator.validateRange(idWeight.getWeight(),
-					CrCommonConstants.MIN_MISSION_WEIGHT, CrCommonConstants.MAX_MISSION_WEIGHT,
-					RtksBusinessErrorCode.INVALID_WEIGHT);
-		}));
+		missions.forEach((idWeight -> CrCommonValidator.validateRange(idWeight.getWeight(),
+				CrCommonConstants.MIN_MISSION_WEIGHT, CrCommonConstants.MAX_MISSION_WEIGHT,
+				RtksBusinessErrorCode.INVALID_WEIGHT)));
 	}
 
 }

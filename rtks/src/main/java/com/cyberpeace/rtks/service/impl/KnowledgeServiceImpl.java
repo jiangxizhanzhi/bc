@@ -5,9 +5,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -23,15 +21,16 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
-import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
-import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
+import com.cyberpeace.rtks.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.KnowledgeCategoryService;
 import com.cyberpeace.rtks.service.KnowledgeService;
@@ -39,6 +38,8 @@ import com.cyberpeace.rtks.service.RelatedCourseService;
 import com.cyberpeace.rtks.service.bo.KnowledgeUnderCourseBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -136,7 +137,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 		// 创建一个线程池
 		ExecutorService exec = new ThreadPoolExecutor(10, 100, 60L, TimeUnit.SECONDS,
-				new LinkedBlockingQueue<Runnable>());
+				new LinkedBlockingQueue<>());
 		// 定义一个任务集合
 		List<Callable<Integer>> tasks = new ArrayList<>();
 		Callable<Integer> task = null;
@@ -242,12 +243,11 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 			return Lists.newArrayList();
 		}
 		List<Knowledge> knowledges = knowledgeMapper.selectBatchIds(knowledgeIds);
-		List<String> courseIds = knowledges.stream()
+		return knowledges.stream()
 				.map(knowledge -> JsonUtil.toJsonObjectArray(knowledge.getCourses(),
 						KnowledgeUnderCourseBo.class))
 				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId).distinct()
 				.collect(Collectors.toList());
-		return courseIds;
 	}
 
 	@Override

@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +35,10 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -63,14 +63,16 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-interface Fields {
+final class Fields {
 
-	String KNOWLEDGE = "knowledge";
+	public static final String KNOWLEDGE = "knowledge";
 
-	String SKILL = "skill";
+	public static final String SKILL = "skill";
+
+	private Fields() {}
 }
 
-class RoleListReq<T> extends PageReqBase {
+class RoleListReq extends PageReqBase {
 
 	@ApiModelProperty(value = "所属框架id，可以为空")
 	@Getter
@@ -255,7 +257,7 @@ public class RoleController {
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<ListRsp<RoleOutput>> list(RoleListReq<Role> listReq) {
+	public BaseRsp<ListRsp<RoleOutput>> list(RoleListReq listReq) {
 		if (!StringUtils.isBlank(listReq.getKeyword())) {
 
 			String newPattern = LocalStringUtil.transfer(listReq.getKeyword());
@@ -511,7 +513,7 @@ public class RoleController {
 		return outputFromRole(role, new RoleOutput());
 	}
 
-	protected IPage<Role> getPage(RoleListReq<Role> listReq) {
+	protected IPage<Role> getPage(RoleListReq listReq) {
 		String frameId;
 		if (singleFrame) {
 			// 单框架模式下 忽略所属框架筛选条件
@@ -634,24 +636,23 @@ public class RoleController {
 	 * 输出时获取职责、知识点等详细信息
 	 * */
 	private <T> List<T> getRoleRelatedObjects(List<String> relatedIds, IService<T> service) {
-		if (relatedIds.size() == 0) {
+		if (relatedIds.isEmpty()) {
 			return new ArrayList<>();
 		} else {
 			return service.listByIds(relatedIds);
 		}
 
 	}
+
 	public void validate(RoleInput roleInput) {
-		roleInput.getKnowledgeIdWeights().forEach((knowledgeIdWeight) -> {
-			CrCommonValidator.validateRange(knowledgeIdWeight.getWeight(),
-					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
-					RtksBusinessErrorCode.INVALID_WEIGHT);
-		});
-		roleInput.getSkillIdWeights().forEach((skillIdWeight) -> {
-			CrCommonValidator.validateRange(skillIdWeight.getWeight(),
-					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
-					RtksBusinessErrorCode.INVALID_WEIGHT);
-		});
+		roleInput.getKnowledgeIdWeights()
+				.forEach(knowledgeIdWeight -> CrCommonValidator.validateRange(
+						knowledgeIdWeight.getWeight(), CrCommonConstants.MIN_SKILL_WEIGHT,
+						CrCommonConstants.MAX_SKILL_WEIGHT, RtksBusinessErrorCode.INVALID_WEIGHT));
+		roleInput.getSkillIdWeights()
+				.forEach(skillIdWeight -> CrCommonValidator.validateRange(skillIdWeight.getWeight(),
+						CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
+						RtksBusinessErrorCode.INVALID_WEIGHT));
 
 		if (roleInput.getDescription() != null && roleInput.getDescription().length() > 0) {
 			CrCommonValidator.validateDescLen(roleInput.getDescription(), CrBusinessErrorCode.ILLEGAL_DESC_LEN);

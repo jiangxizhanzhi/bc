@@ -1,5 +1,14 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
@@ -12,15 +21,8 @@ import com.cyberpeace.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.LevelService;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -185,7 +187,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 			List<String> levelIds = Lists.newArrayList();
 			levelIds.add(levelTreeChild.getResourceId());
 			List<String> roleIds = roleMapper.getRoleIdsByLevelIds(levelIds);
-			if (roleIds.size() > 0) {
+			if (!roleIds.isEmpty()) {
 				return true;
 			}
 		} else {
@@ -196,7 +198,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 					List<String> levelIds = Lists.newArrayList();
 					levelIds.add(element.getResourceId());
 					List<String> roleIds = roleMapper.getRoleIdsByLevelIds(levelIds);
-					if (roleIds.size() > 0) {
+					if (!roleIds.isEmpty()) {
 						return true;
 					}
 				} else {

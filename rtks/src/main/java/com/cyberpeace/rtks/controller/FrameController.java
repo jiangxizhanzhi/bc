@@ -85,22 +85,22 @@ public class FrameController {
 
 	private Boolean singleFrame;
 
+	/**
+	 * 单框架模式下 默认的框架id
+	 */
+	private static final String DEFAULT_FRAME_ID = "default";
+
 	private void multiFrameOnly() {
-		if (singleFrame) {
+		if (Boolean.TRUE.equals(singleFrame)) {
 			throw new BusinessException(RtksBusinessErrorCode.SINGLE_FRAME_DISABLE);
 		}
 	}
 
 	private void singleFrameOnly() {
-		if (!singleFrame) {
+		if (Boolean.FALSE.equals(singleFrame)) {
 			throw new BusinessException(RtksBusinessErrorCode.MULTI_FRAME_DISABLE);
 		}
 	}
-
-	/**
-	 * 单框架模式下 默认的框架id
-	 */
-	private final String DEFAULT_FRAME_ID = "default";
 
 	@PostConstruct
 	public void init() {
@@ -125,7 +125,7 @@ public class FrameController {
 
 	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput) {
 		Level frame = new Level();
-		if (!singleFrame) {
+		if (Boolean.FALSE.equals(singleFrame)) {
 			// 单框架模式下框架名称不可变
 			frame.setName(frameModifyInput.getName());
 		}

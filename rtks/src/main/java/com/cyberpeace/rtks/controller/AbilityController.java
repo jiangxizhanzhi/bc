@@ -1,7 +1,5 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.List;
-
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +33,9 @@ public class AbilityController {
 
 	@ApiOperation("查询单条能力")
 	@GetMapping("/ability")
-	public BaseRsp<Ability> getAbility(
-			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
-		return new BaseRsp<>(abilityService.getById(resource_id));
+	public BaseRsp<Ability> getAbility(@ApiParam(name = "resource_id", value = "查询id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
+		return new BaseRsp<>(abilityService.getById(resourceId));
 	}
 
 	@ApiOperation("新增单条能力")

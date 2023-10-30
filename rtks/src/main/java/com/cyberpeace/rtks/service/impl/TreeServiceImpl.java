@@ -29,14 +29,12 @@ public class TreeServiceImpl implements TreeService {
 		if (null == existRole) {
 			return null;
 		}
-		Level level = levelMapper.selectById(existRole.getLevelId());
-		return level;
+		return levelMapper.selectById(existRole.getLevelId());
 	}
 
 	@Override
 	public List<Level> getFirstLevel(String frameId) {
-		List<Level> levels = levelMapper.getChildLevels(frameId);
-		return levels;
+		return levelMapper.getChildLevels(frameId);
 	}
 
 	@Override
@@ -50,11 +48,10 @@ public class TreeServiceImpl implements TreeService {
 
 		} else {
 			// 遍历子节点数据
-			List<Role> roles = childLevels.stream()
+
+			return childLevels.stream()
 					.map(level -> roleUnderLevel(level.getResourceId())).flatMap(Collection::stream)
 					.collect(Collectors.toList());
-
-			return roles;
 		}
 	}
 }

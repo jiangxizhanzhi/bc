@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.rtks.dao.entity.CourseName;
-import com.cyberpeace.rtks.service.CourseNameService;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -25,15 +22,18 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
+import com.cyberpeace.rtks.dao.entity.CourseName;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.entity.RoleSkillRelation;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMapper;
+import com.cyberpeace.rtks.service.CourseNameService;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.bo.Difference;
@@ -126,14 +126,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 			});
 		}
 		if ("ability".equals(type)) {
-			roleList.forEach(role -> {
-				role.setAbilityIds(deleteIds(role.getAbilityIds(), deleteReq.getIds()));
-			});
+			roleList.forEach(role -> role
+					.setAbilityIds(deleteIds(role.getAbilityIds(), deleteReq.getIds())));
 		}
 		if ("task".equals(type)) {
-			roleList.forEach(role -> {
-				role.setTaskIds(deleteIds(role.getTaskIds(), deleteReq.getIds()));
-			});
+			roleList.forEach(
+					role -> role.setTaskIds(deleteIds(role.getTaskIds(), deleteReq.getIds())));
 		}
 
 		this.updateBatchById(roleList);
@@ -238,9 +236,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 			return mapping;
 		}
 		List<RoleSkillRes> resList = roleSkillRelationMapper.countByRoleIds(roleIds);
-		resList.forEach((res) -> {
-			mapping.put(res.getRoleId(), res);
-		});
+		resList.forEach(res -> mapping.put(res.getRoleId(), res));
 		return mapping;
 	}
 
@@ -338,15 +334,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 			this.updateById(role);
 		}
 		// convert
-		List<MissionTemplateSimple> result = BeanUtils.deepCopyList(newOrder,
-				MissionTemplateSimple.class);
 
-		return result;
+		return BeanUtils.deepCopyList(newOrder,
+				MissionTemplateSimple.class);
 	}
 
-	private String deleteIds(String Ids, List<String> ids) {
+	private String deleteIds(String idJson, List<String> ids) {
 
-		List<String> originIds = JsonUtil.toJsonObjectArray(Ids, String.class);
+		List<String> originIds = JsonUtil.toJsonObjectArray(idJson, String.class);
 		originIds.removeAll(ids);
 		return JsonUtil.toJsonString(originIds);
 

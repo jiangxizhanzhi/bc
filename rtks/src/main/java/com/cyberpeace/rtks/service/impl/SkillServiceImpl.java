@@ -249,7 +249,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		List<CrTaskScore> crTaskScoreList = crTaskMapper
 				.getScoreByMissionTemplateIdAndUserId(userId, missionTemplateIds);
 		Map<String, CrTaskScore> scoreMap = Maps.newHashMap();
-		crTaskScoreList.forEach((score) -> scoreMap.put(score.getMissionTemplateId(), score));
+		crTaskScoreList.forEach(score -> scoreMap.put(score.getMissionTemplateId(), score));
 		// calculate
 		WeightedCalculation calculation = new WeightedCalculation();
 		for (IdWeight mission : missionWeights) {
@@ -364,9 +364,8 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 				businessTemplateIds);
 		// map mission-training(random one)
 		Map<String, MissionWithBT> missionBtMap = Maps.newHashMap();
-		missionWithBts.forEach(missionWithBt -> {
-			missionBtMap.put(missionWithBt.getResourceId(), missionWithBt);
-		});
+		missionWithBts.forEach(
+				missionWithBt -> missionBtMap.put(missionWithBt.getResourceId(), missionWithBt));
 		Map<String, TrainingRaw> btTrainingMap = Maps.newHashMap();
 		mapTrainings(btTrainingMap, singles,
 				BusinessType.TRAINING_SINGLE.getCode());

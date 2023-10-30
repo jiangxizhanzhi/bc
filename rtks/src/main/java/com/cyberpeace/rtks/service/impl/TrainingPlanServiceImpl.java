@@ -22,10 +22,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.res.KnowledgeRes;
-import com.cyberpeace.rtks.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
-import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
 import com.cyberpeace.rtks.controller.role.RoleOutput;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
@@ -34,6 +31,9 @@ import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
+import com.cyberpeace.rtks.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeTreeRes;
+import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
 import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
@@ -118,8 +118,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	}
 
 	@Override
-	public RoleDetailRes getRoleOutputByRoleId(String resource_id, String type) {
-		Role role = getRoleByRoleId(resource_id);
+	public RoleDetailRes getRoleOutputByRoleId(String resourceId, String type) {
+		Role role = getRoleByRoleId(resourceId);
 
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
@@ -156,8 +156,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	}
 
 	@Override
-	public RoleDetailRes getLearningPathTree(String resource_id, String type) {
-		Role role = getRoleByRoleId(resource_id);
+	public RoleDetailRes getLearningPathTree(String resourceId, String type) {
+		Role role = getRoleByRoleId(resourceId);
 		if (null == role) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
@@ -165,8 +165,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
 		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 
-		List<Level> levelList = roleMapper.selectLevelsByRoleId(resource_id);
-		if (levelList.size() > 0) {
+		List<Level> levelList = roleMapper.selectLevelsByRoleId(resourceId);
+		if (!levelList.isEmpty()) {
 			roleDetailRes.setLevelTreeOutput(getLevelTree(levelList, role.getLevelId()));
 		}
 
@@ -186,7 +186,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 		// 获取技能的任务列表
 		List<String> missionTemplateIds = roleSkillRelationMapper
-				.getMissionIdsByRoleId(resource_id);
+				.getMissionIdsByRoleId(resourceId);
 		List<MissionTemplateRes> missionTemplateResList = missionTemplateMapper
 				.listWithBusiness(missionTemplateIds);
 		List<MissionTemplateSimple> missions = BeanUtils.deepCopyList(missionTemplateResList,
@@ -210,9 +210,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 	public RoleDetailRes getRoleDetailResByRoleId(String existRoleId) {
 		Role role = getRoleByRoleId(existRoleId);
 		RoleDetailOutput roleDetailOutput = roleController.getOutputFromEntity(role);
-		RoleDetailRes roleDetailRes = BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 
-		return roleDetailRes;
+		return BeanUtils.deepCopy(roleDetailOutput, RoleDetailRes.class);
 	}
 
 	private LevelTreeOutput getLevelTree(List<Level> levelList, String levelId) {
@@ -292,9 +291,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		if (null == role) {
 			return Lists.newArrayList();
 		}
-		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
+		return JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 				String.class);
-		return knowledgeIds;
 	}
 
 }

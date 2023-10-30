@@ -121,7 +121,7 @@ public class ListUtil {
 	 * @param <T>
 	 * @return
 	 */
-	public static <T> Boolean compare2List(List<T> l1, List<T> l2) {
+	public static <T> boolean compare2List(List<T> l1, List<T> l2) {
 		if (l1.size() != l2.size()) {
 			return false;
 		}

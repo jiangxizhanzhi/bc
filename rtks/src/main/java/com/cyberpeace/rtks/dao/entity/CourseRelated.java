@@ -14,9 +14,9 @@ import lombok.Data;
 @TableName("rtks_course_related")
 public class CourseRelated {
 
-	public final static Integer RELATED_TYPE_KNOWLEDGE = 1;
+	public static final Integer RELATED_TYPE_KNOWLEDGE = 1;
 
-	public final static Integer RELATED_TYPE_SKILL = 2;
+	public static final Integer RELATED_TYPE_SKILL = 2;
 
 	private String resourceId;
 

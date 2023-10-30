@@ -3,12 +3,12 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
@@ -20,7 +20,10 @@ import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import com.cyberpeace.rtks.dao.entity.*;
+import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.dao.entity.Level;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.entity.SkillAndKnowledgeBase;
 import com.cyberpeace.rtks.dao.mapper.*;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.SkillService;
@@ -38,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RtksStatisticServiceImpl implements RtksStatisticService {
 
-	private final Integer MAX_PERCENT = 100;
+	private static final Integer MAX_PERCENT = 100;
 
 	@Autowired
 	private TreeService treeService;
@@ -143,7 +146,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private <T extends SkillAndKnowledgeBase> List<KnowledgeStudyPercentBo>
 			calculatePercent(List<T> knowledges, String userId) {
-		List<KnowledgeStudyPercentBo> percentBoList = knowledges.stream().map(knowledge -> {
+		return knowledges.stream().map(knowledge -> {
 			ValueDataBo valueDataBo = calculateKnowledgeScore(knowledge, userId,
 					null != knowledge.getWeight());
 			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(
@@ -151,7 +154,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 					MathUtils.ceil(valueDataBo.getProcess()));
 			return percentBo;
 		}).collect(Collectors.toList());
-		return percentBoList;
 	}
 
 	@Override
@@ -175,7 +177,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		// 1、获取课程学习进度
 		List<String> courseIds = skillOrKnowledgeIds.stream()
-				.map(skillOrKnowledge -> getCourseIds(skillOrKnowledge)).flatMap(Collection::stream)
+				.map(this::getCourseIds).flatMap(Collection::stream)
 				.distinct().collect(Collectors.toList());
 		List<CourseStudyProcessBo> processBoList = courseStatisticsService.statisticByIds(courseIds,
 				userId);
@@ -334,9 +336,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 				.getTrainingRecordByMissionTemplateIdsAndUserId(missionTemplateIds, userId);
 		// fill skill_id
 		for (MissionRecordBo missionRecordBo : missionRecordBoList) {
-			missionSkillRel.get(missionRecordBo.getResourceId()).forEach(missionContext -> {
-				missionRecordBo.getSkillIds().add(missionContext.getSkillId());
-			});
+			missionSkillRel.get(missionRecordBo.getResourceId())
+					.forEach(missionContext -> missionRecordBo.getSkillIds()
+							.add(missionContext.getSkillId()));
 		}
 		result.setRecords(missionRecordBoList);
 		// group by date
@@ -406,7 +408,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private List<SkillResBase> getSkillsByMission(List<MissionContext> missionContexts) {
 		List<SkillResBase> skillResBaseList = Lists.newArrayList();
-		missionContexts.forEach((mission) -> {
+		missionContexts.forEach(mission -> {
 			SkillResBase skill = new SkillResBase();
 			skill.setResourceId(mission.getSkillId());
 			skill.setContent(mission.getSkillContent());
@@ -422,7 +424,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private void mapTrainings(Map<String, List<TrainingRaw>> map, List<TrainingRaw> trainingRaws,
 			Integer type) {
-		trainingRaws.forEach((training) -> {
+		trainingRaws.forEach(training -> {
 			String businessTemplateId = training.getBusinessTemplateId();
 			if (!map.containsKey(businessTemplateId)) {
 				map.put(businessTemplateId, Lists.newArrayList());
@@ -438,7 +440,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @param rbs
 	 */
 	private void handleRbStatus(List<TrainingRaw> rbs) {
-		rbs.forEach((rb) -> {
+		rbs.forEach(rb -> {
 			Integer trainingStatus = rb.getTrainingStatus();
 			rb.setTrainingStatus(convert(trainingStatus));
 		});
@@ -467,12 +469,11 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * @return
 	 */
 	private List<String> getCourseIdsByKnowledge(List<Knowledge> knowledges) {
-		List<String> courseIds = knowledges.stream()
+		return knowledges.stream()
 				.map(knowledge -> JsonUtil.toJsonObjectArray(knowledge.getCourses(),
 						KnowledgeUnderCourseBo.class))
 				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId).distinct()
 				.collect(Collectors.toList());
-		return courseIds;
 	}
 
 	/**
@@ -657,7 +658,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 					.mapToDouble(value -> MathUtils.mul(value.getProcess(), value.getWeight()))
 					.sum();
 
-			double weightSum = courseProcess.stream().mapToDouble(value -> value.getWeight()).sum();
+			double weightSum = courseProcess.stream().mapToDouble(ValueDataBo::getWeight).sum();
 			knowledgeDataBo.setProcess(MathUtils.divide(courseProcessSum, weightSum));
 		}
 

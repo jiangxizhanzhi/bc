@@ -1,9 +1,9 @@
 package com.cyberpeace.rtks.service;
 
+import java.util.List;
+
 import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
 import com.cyberpeace.rtks.service.bo.RoleCourseBo;
-
-import java.util.List;
 
 public interface CourseTrainService {
 
@@ -22,5 +22,5 @@ public interface CourseTrainService {
 	 */
 	List<RoleCourseBo> getRoleCoursePath(String roleId, String resourceId);
 
-	List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String resource_id);
+	List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String resourceId);
 }

@@ -1,5 +1,13 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.service.CourseService;
@@ -16,13 +24,6 @@ import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
 import com.cyberpeace.rtks.service.bo.RoleCourseBo;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseTrainServiceImpl implements CourseTrainService {
@@ -67,7 +68,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService
 				.getKnowledgeByCourseId(courseIds);
 
-		List<CourseKnowledgeSkillBo> boList = courseIds.stream()
+		return courseIds.stream()
 				.filter(courseId -> null != processBoMap.get(courseId)).map(courseId -> {
 					CourseStudyProcessBo bo = processBoMap.get(courseId);
 					CourseKnowledgeSkillBo knowledgeBo = BeanUtils
@@ -84,7 +85,6 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 
 					return knowledgeBo;
 				}).collect(Collectors.toList());
-		return boList;
 	}
 
 	@Override
@@ -103,15 +103,13 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		Map<String, List<CourseRelatedRes>> courseMap = knowledgeService
 				.getKnowledgeByCourseId(courseIds);
 
-		List<CourseKnowledgeSkillBo> boList = courses.stream().map(bo -> {
+		return courses.stream().map(bo -> {
 			CourseKnowledgeSkillBo knowledgeSkillBo = BeanUtils.deepCopy(bo,
 					CourseKnowledgeSkillBo.class);
 			knowledgeSkillBo.setKnowledges(courseMap.get(bo.getResourceId()));
 
 			return knowledgeSkillBo;
 		}).collect(Collectors.toList());
-
-		return boList;
 	}
 
 	@Override

@@ -44,16 +44,13 @@ public class RoleInput implements Serializable {
 	private Integer knowledgeWeight;
 
 	public void validate() {
-		knowledgeIdWeights.forEach((knowledgeIdWeight) -> {
-			CrCommonValidator.validateRange(knowledgeIdWeight.getWeight(),
-					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
-					RtksBusinessErrorCode.INVALID_WEIGHT);
-		});
-		skillIdWeights.forEach((skillIdWeight) -> {
-			CrCommonValidator.validateRange(skillIdWeight.getWeight(),
-					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
-					RtksBusinessErrorCode.INVALID_WEIGHT);
-		});
+		knowledgeIdWeights.forEach(knowledgeIdWeight -> CrCommonValidator.validateRange(
+				knowledgeIdWeight.getWeight(), CrCommonConstants.MIN_SKILL_WEIGHT,
+				CrCommonConstants.MAX_SKILL_WEIGHT, RtksBusinessErrorCode.INVALID_WEIGHT));
+		skillIdWeights
+				.forEach(skillIdWeight -> CrCommonValidator.validateRange(skillIdWeight.getWeight(),
+						CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
+						RtksBusinessErrorCode.INVALID_WEIGHT));
 
 		if (description != null && description.length() > 0) {
 			CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);

@@ -13,9 +13,9 @@ import lombok.Data;
 @Data
 public class CourseRelatedRes implements Serializable {
 
-	public final static Integer RELATED_TYPE_KNOWLEDGE = 1;
+	public static final Integer RELATED_TYPE_KNOWLEDGE = 1;
 
-	public final static Integer RELATED_TYPE_SKILL = 2;
+	public static final Integer RELATED_TYPE_SKILL = 2;
 
 	@ApiModelProperty(value = "课程id")
 	private String resourceId;

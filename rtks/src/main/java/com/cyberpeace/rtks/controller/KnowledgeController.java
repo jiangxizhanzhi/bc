@@ -25,10 +25,10 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.controller.req.KnowledgeAddReq;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
-import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.RoleService;
@@ -66,7 +66,7 @@ public class KnowledgeController {
 		// ApiParam中的name和java参数String id的两个id必须同名
 		KnowledgeRes knowledge = knowledgeService.getKnowledgeByResourceId(resource_id);
 
-		return new BaseRsp<KnowledgeRes>(knowledge);
+		return new BaseRsp<>(knowledge);
 	}
 
 	@ApiOperation("新增单条")

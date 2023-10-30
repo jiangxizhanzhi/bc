@@ -46,9 +46,9 @@ public class CareerManagementController {
 	@ApiOperation("ATT&CK详情页")
 	@GetMapping("/attack")
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
-	public BaseRsp<AttackDetail>
-			getAttackDetail(@ApiParam(name = "resource_id", value = "技术id") String resource_id) {
-		AttackDetail res = attackService.getDetailById(resource_id);
+	public BaseRsp<AttackDetail> getAttackDetail(@ApiParam(name = "resource_id",
+			value = "技术id") @RequestParam(name = "resource_id") String resourceId) {
+		AttackDetail res = attackService.getDetailById(resourceId);
 
 		return new BaseRsp<>(res);
 	}

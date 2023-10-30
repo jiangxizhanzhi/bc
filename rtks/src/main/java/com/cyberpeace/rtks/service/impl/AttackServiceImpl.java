@@ -2,9 +2,6 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,16 +11,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-import com.cyberpeace.rtks.dao.entity.AttackTrainRelation;
 import com.cyberpeace.rtks.dao.mapper.AttackMapper;
 import com.cyberpeace.rtks.service.AttackService;
 import com.cyberpeace.rtks.service.bo.career.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +34,7 @@ public class AttackServiceImpl implements AttackService {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	private volatile AttackCache cachedAttacks;
+	private AttackCache cachedAttacks;
 
 	@Override
 	public List<AttackCategoryBo<AttackBackBo>> getAttacks() {
@@ -54,17 +48,13 @@ public class AttackServiceImpl implements AttackService {
 		// count relation
 		List<RelCount> countList = attackMapper.countRelsByAttackId();
 		Map<String, Integer> countMap = Maps.newHashMap();
-		countList.forEach((count) -> {
-			countMap.put(count.getResourceId(), count.getCount());
-		});
+		countList.forEach(count -> countMap.put(count.getResourceId(), count.getCount()));
 		// set count
-		res.forEach((category -> {
-			category.getAttacks().forEach((attackBackBo -> {
-				if (countMap.containsKey(attackBackBo.getResourceId())) {
-					attackBackBo.setCount(countMap.get(attackBackBo.getResourceId()));
-				}
-			}));
-		}));
+		res.forEach((category -> category.getAttacks().forEach((attackBackBo -> {
+			if (countMap.containsKey(attackBackBo.getResourceId())) {
+				attackBackBo.setCount(countMap.get(attackBackBo.getResourceId()));
+			}
+		}))));
 
 		return res;
 	}
@@ -80,13 +70,11 @@ public class AttackServiceImpl implements AttackService {
 		}
 		List<String> relatedAttackIds = attackMapper.getRelByBusinessTemplateId(businessTemplateId);
 		// set whether related
-		res.forEach((category -> {
-			category.getAttacks().forEach((attackFrontBo -> {
-				if (relatedAttackIds.contains(attackFrontBo.getResourceId())) {
-					attackFrontBo.setRelated(true);
-				}
-			}));
-		}));
+		res.forEach((category -> category.getAttacks().forEach((attackFrontBo -> {
+			if (relatedAttackIds.contains(attackFrontBo.getResourceId())) {
+				attackFrontBo.setRelated(true);
+			}
+		}))));
 		return res;
 	}
 
@@ -101,15 +89,13 @@ public class AttackServiceImpl implements AttackService {
 			cache = cachedAttacks.getEn();
 		}
 		// search
-		cache.forEach((category) -> {
-			category.getAttacks().forEach((attack) -> {
-				if (attack.getResourceId().equals(resourceId)) {
-					detail.setCategoryName(category.getCategoryName());
-					detail.setResourceId(attack.getResourceId());
-					detail.setName(attack.getName());
-				}
-			});
-		});
+		cache.forEach(category -> category.getAttacks().forEach(attack -> {
+			if (attack.getResourceId().equals(resourceId)) {
+				detail.setCategoryName(category.getCategoryName());
+				detail.setResourceId(attack.getResourceId());
+				detail.setName(attack.getName());
+			}
+		}));
 		// get related business templates
 		List<BusinessTemplateSimple> templates = attackMapper.getRelatedTemplates(resourceId);
 		detail.setTemplates(templates);

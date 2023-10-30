@@ -95,11 +95,10 @@ public class TaskController {
 		taskService.removeByIds(deleteReq.getIds());
 		roleService.updateBatchByDeleteRelatedIds(deleteReq, "task");
 
-		taskList.forEach(task -> {
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-					OperationType.DELETE, task.getResourceId(), LogContent.CR_FORMAT.format(
-							OperationType.DELETE, LogContent.TASK.getMsg(), task.getResourceId()));
-		});
+		taskList.forEach(task -> remoteLogService.addOjLog(UserInfoContext.getUserContext(),
+				OperationModule.RTKS, OperationType.DELETE, task.getResourceId(),
+				LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TASK.getMsg(),
+						task.getResourceId())));
 
 		return new BaseRsp<>();
 	}

@@ -40,7 +40,7 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 	public List<CourseName> selectByIds(List<String> notExistIds) {
 		List<CourseName> courseNames = Lists.newArrayList();
 
-		if (notExistIds.size() > 0) {
+		if (!notExistIds.isEmpty()) {
 			courseNames = this.listByIds(notExistIds);
 		}
 

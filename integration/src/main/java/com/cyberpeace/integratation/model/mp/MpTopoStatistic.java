@@ -2,7 +2,6 @@ package com.cyberpeace.integratation.model.mp;
 
 import java.io.Serializable;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data

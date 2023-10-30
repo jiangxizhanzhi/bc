@@ -120,7 +120,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		JSONArray orgTreeArray = HttpClientUtil.rawGet(MP_ORG_TREE_URL, JSONArray.class);
 
 		JSONObject org = getOrgIdByTree(orgNames, orgTreeArray);
-		return null != org ? org.getString(JsonKeyConstant.ID) : CommonConstant.EMPTY_STRING;
+		return org.isEmpty() ? CommonConstant.EMPTY_STRING: org.getString(JsonKeyConstant.ID) ;
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 		// 数据判断
 		if (CollectionUtils.isEmpty(orgTree)) {
-			return null;
+			return new JSONObject();
 		}
 
 		// 遍历进行匹配
@@ -154,7 +154,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 			if (StringUtils.isNotBlank(orgName) && orgName.equals(matchOrg)) {
 				JSONArray children = childObj.getJSONArray(JsonKeyConstant.CHILDREN);
 				if (CollectionUtils.isEmpty(children)) {
-					return null;
+					return new JSONObject();
 				} else {
 					return getOrgIdByTree(currentOrgList, children);
 				}
@@ -162,7 +162,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 		}
 
-		return null;
+		return new JSONObject();
 	}
 
 	/**

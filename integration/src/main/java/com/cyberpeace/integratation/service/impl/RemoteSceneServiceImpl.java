@@ -40,7 +40,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_DELETE_URL;
 
-	private String SCENE_CLEAR_URL;
 
 	private String SCENE_RETRIEVE;
 
@@ -76,7 +75,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String RISK_COUNT_URL;
 
-	private String COLLECTION_EVENT_URL;
 
 	private String COLLECTION_EVENT_DATA_URL;
 
@@ -137,7 +135,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		SCENE_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.delete");
 
-		SCENE_CLEAR_URL = MP_HOST + ConfigUtil.getContextProperty("scene.clear");
 
 		SCENE_RETRIEVE = MP_HOST + ConfigUtil.getContextProperty("scene.retrieve");
 
@@ -177,8 +174,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		RISK_COUNT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.risk.count");
 
-		COLLECTION_EVENT_URL = MP_HOST
-				+ ConfigUtil.getContextProperty("scene.probe.collection.event");
 
 		COLLECTION_EVENT_DATA_URL = MP_HOST
 				+ ConfigUtil.getContextProperty("scene.probe.collection.data");
@@ -436,17 +431,16 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 			List<String> userIds) {
 
 		JSONArray nodeSessions = getNodeSessions(sceneIds, nodeIds, userIds,
-				SessionType.ASSISTANCE.type);
+				SessionType.ASSISTANCE.getType());
 		List<Object> filterList = StreamApiUtils.filter(nodeSessions, node -> StringUtils
 				.isNotBlank(((JSONObject) node).getString(JsonKeyConstant.ASSISTANCE_URL)));
 
 		List<Object> distinct = StreamApiUtils.distinctByColumn(filterList,
 				obj -> ((JSONObject) obj).getString(JsonKeyConstant.USER_KEY));
 
-		Map<String, String> userAssistanceMap = StreamApiUtils.toMap(distinct,
+		return StreamApiUtils.toMap(distinct,
 				object -> ((JSONObject) object).getString(JsonKeyConstant.USER_KEY),
 				object -> ((JSONObject) object).getString(JsonKeyConstant.ASSISTANCE_URL));
-		return userAssistanceMap;
 	}
 
 	@Override
@@ -514,15 +508,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public JSONArray snapshotHistory(String imageId) {
 		String requestUrl = String.format(SNAPSHOT_HISTORY_URL, imageId);
 		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
-	}
-
-	@Override
-	public JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext) {
-
-		HttpClientUtil.post(SNAPSHOT_MERGE_URL,
-				JsonUtil.toJsonString(mergeSnapshotContext, PropertyNamingStrategy.SnakeCase),
-				String.class);
-		return null;
 	}
 
 	@Override

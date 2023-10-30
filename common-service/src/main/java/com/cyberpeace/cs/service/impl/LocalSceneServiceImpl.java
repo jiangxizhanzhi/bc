@@ -436,14 +436,6 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext) {
-		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
-		this.checkIfLocalSceneNull(localScene, sceneId);
-
-		return remoteSceneService.mergeSnapshot(snapshotContext);
-	}
-
-	@Override
 	public Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
 		this.checkIfLocalSceneNull(localScene, sceneId);

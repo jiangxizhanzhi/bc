@@ -272,7 +272,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Override
 	@CacheEvict(allEntries = true)
 	public void clearCache() {
-
+		// do nothing
  	}
 
 	@Override
@@ -367,7 +367,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setAvatarUrl(jsonObject.getObject("avatar", String.class));
 		userInfo.setRoles(jsonObject.getJSONArray("roles").toJavaList(JSONObject.class));
 		List<String> org_ids = jsonObject.getJSONArray("org_ids").toJavaList(String.class);
-		if (org_ids.size() > 0) {
+		if (!org_ids.isEmpty()) {
 			userInfo.setOrganizationId(org_ids.get(0));
 			JSONArray orgs = jsonObject.getJSONArray("orgs");
 

@@ -177,13 +177,6 @@ public interface RemoteSceneService {
 	JSONArray snapshotHistory(String imageId);
 
 	/**
-	 * 快照合并
-	 * @param mergeSnapshotContext
-	 * @return
-	 */
-	JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext);
-
-	/**
 	 * 快照删除
 	 * @param deleteContext
 	 * @return

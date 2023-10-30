@@ -10,5 +10,5 @@ public class MarkData implements Serializable {
 
 	private Long baseTime;
 
-	List<MarkItemData> data;
+	private List<MarkItemData> data;
 }

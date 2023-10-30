@@ -93,7 +93,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		if(minScore != null){
 			body.put("minScore",minScore);
 		}
-		if(userIds != null && userIds.size() !=0){
+		if(userIds != null && !userIds.isEmpty()){
 			body.put("user_ids",userIds.toArray(new String[userIds.size()]));
 		}
 		JSONArray jsonResponse = HttpClientUtil.post(EXAM_USER_FINISH_COUNT_URL,body,JSONArray.class);

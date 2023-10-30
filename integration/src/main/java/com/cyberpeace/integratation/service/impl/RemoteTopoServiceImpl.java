@@ -16,8 +16,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.model.SceneConfig;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
@@ -75,12 +77,6 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		TOPO_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("topo.node.list");
 
 		TOPO_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("topo.node.statistics");
-	}
-
-	@Override
-	public String create(SceneConfig sceneConfig) {
-		return IDGeneratorUtil.getID();
-		// todo
 	}
 
 	@Override
@@ -220,7 +216,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	public void batchDeleteTopo(List<String> topoIds) {
 
 		List<String> notBlankIds = StreamApiUtils.filter(topoIds,
-				topoId -> StringUtils.isNotBlank(topoId));
+				StringUtils::isNotBlank);
 		if (CollectionUtils.isEmpty(notBlankIds)) {
 			return ;
 		}

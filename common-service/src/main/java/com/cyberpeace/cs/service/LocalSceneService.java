@@ -155,14 +155,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 	JSONArray snapshotHistory(String sceneId, String imageId);
 
 	/**
-	 * 场景节点快照合并
-	 * @param sceneId
-	 * @param snapshotContext
-	 * @return
-	 */
-	JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext);
-
-	/**
 	 * 删除快照
 	 * @param sceneId
 	 * @param nodeId

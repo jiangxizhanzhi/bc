@@ -5,13 +5,10 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
 
 public interface RemoteTopoService {
-
-	String create(SceneConfig sceneConfig);
 
 	JSONObject getTopoById(String topoId);
 

@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class FormatData implements Serializable {
 
-	List<String> data;
+	private List<String> data;
 }

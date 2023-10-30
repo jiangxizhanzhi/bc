@@ -237,7 +237,7 @@ public class RbRoomStatisticsController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		if (RbRoleGroup.RED_BLUE.matches(roleType)) {
-			return new BaseRsp<>(getRbScoreProgress_6(resourceId, roleType, userId));
+			return new BaseRsp<>(getRbScoreProgress6(resourceId, roleType, userId));
 		}
 
 		permissionCheckTeacherOrGroup(resourceId, userId, roleType);
@@ -251,7 +251,7 @@ public class RbRoomStatisticsController {
 	 *  红蓝实时战况页面 正下方 红蓝得分
 	 * @return
 	 */
-	private JSONObject getRbScoreProgress_6(String resourceId, Integer roleType, String userId) {
+	private JSONObject getRbScoreProgress6(String resourceId, Integer roleType, String userId) {
 
 		rbRoomService.checkRoomPermission(resourceId, userId);
 

@@ -171,7 +171,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		List<MissionCategory> missionCategories = missionService.listCategories();
 
 		Map<String, String> missionCategoryMap = missionCategories.stream()
-				.collect(Collectors.toMap(MissionCategory::getResourceId, bo -> bo.getName()));
+				.collect(Collectors.toMap(MissionCategory::getResourceId, MissionCategory::getName));
 		for (TaskContext taskContext : taskContexts) {
 			Mission mission = taskContext.getMission();
 			Integer count = missionsCategory

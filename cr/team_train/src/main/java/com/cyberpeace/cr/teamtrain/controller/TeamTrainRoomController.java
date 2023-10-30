@@ -8,13 +8,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
-import com.cyberpeace.common.context.MissionStageScheme;
-import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
-import com.cyberpeace.common.context.role.CrRoleSimple;
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.TeamRoleGroup;
-import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -26,11 +19,17 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleSimple;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -50,14 +49,19 @@ import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
-import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.*;
-import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
+import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
 import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
@@ -179,9 +183,12 @@ public class TeamTrainRoomController {
 	@GetMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamSceneViewContext> getScene(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
-			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
-		TeamSceneViewContext context = teamSceneService.viewScene(resource_id, role_id);
+			@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "role_id", value = "角色id",
+					required = false) @RequestParam(name = "role_id", required = false) String roleId) {
+		TeamSceneViewContext context = teamSceneService.viewScene(resourceId, roleId);
+		
 
 		return new BaseRsp<>(context);
 	}
@@ -209,10 +216,10 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询流量")
 	@GetMapping("flow")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<FlowRsp> getFlowList(
-			@ApiParam(name = "room_id", value = "团队训练id", required = true) String room_id) {
+	public BaseRsp<FlowRsp> getFlowList(@ApiParam(name = "room_id", value = "团队训练id",
+			required = true) @RequestParam(name = "room_id") String roomId) {
 
-		List<Flow> flows = teamSceneService.getFlowList(room_id);
+		List<Flow> flows = teamSceneService.getFlowList(roomId);
 		FlowRsp ret = new FlowRsp();
 		ret.setData(flows);
 
@@ -229,13 +236,13 @@ public class TeamTrainRoomController {
 		teamRoomService.checkTeacherPermission(roomId, userId);
 		// 2、确认场景已开启
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
-		if (!localSceneService.ensureSceneStarted(localScene)) {
+		if (Boolean.FALSE.equals(localSceneService.ensureSceneStarted(localScene))) {
 			log.error("scene not started,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		// 3、开启流量
 		Boolean result = localSceneService.startFlow(localScene, req.getNodeId(), req.getFlowId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("start flow failure,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 		}
@@ -252,13 +259,13 @@ public class TeamTrainRoomController {
 		teamRoomService.checkTeacherPermission(roomId, userId);
 		// 2、确认场景已开启
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
-		if (!localSceneService.ensureSceneStarted(localScene)) {
+		if (Boolean.FALSE.equals(localSceneService.ensureSceneStarted(localScene))) {
 			log.error("scene not started,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		// 3、停止流量
 		Boolean result = localSceneService.stopFlow(localScene, req.getNodeId(), req.getFlowId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("stop flow failure,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.STOP_FLOW_FAILURE);
 		}
@@ -276,7 +283,7 @@ public class TeamTrainRoomController {
 		}
 		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed to restart node,nodeOpsReq =[{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
@@ -293,7 +300,7 @@ public class TeamTrainRoomController {
 		}
 		Boolean result = localSceneService.recreateNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
-		if (!result) {
+		if (Boolean.FALSE.equals(result)) {
 			log.error("failed to recreate node,nodeOpsReq =[{}]",
 					JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
@@ -358,12 +365,12 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TeamRoomRsp> getTeamRoom(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+	public BaseRsp<TeamRoomRsp> getTeamRoom(@ApiParam(name = "resource_id", value = "团队训练id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+		crRoleService.checkPermission(resourceId, UserInfoContext.getUserContext().getUserId());
 
-		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
+		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resourceId);
 
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(teamRoomData.getResourceId());
@@ -380,7 +387,7 @@ public class TeamTrainRoomController {
 		teamRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 
-		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
+		return new BaseRsp<>(teamRoomRsp);
 	}
 
 	private List<TeamRoomRoleRes> getTeamRoomRoleRes(List<CrRole> crRoles) {
@@ -467,11 +474,12 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询团队训练状态")
 	@GetMapping("/start_end_team")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<Map<String,Integer>> getTrainingStatus(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		Integer status = teamRoomService.getTrainingStatus(resource_id);
+	public BaseRsp<Map<String, Integer>>
+			getTrainingStatus(@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId) {
+		Integer status = teamRoomService.getTrainingStatus(resourceId);
 
-		Map<String,Integer> map = Maps.newHashMap();
+		Map<String, Integer> map = Maps.newHashMap();
 		map.put("training_status", status);
 
 		return new BaseRsp<>(map);
@@ -484,9 +492,9 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询团队训练学员用户列表")
 	@GetMapping("/get_user_list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<List<UserRole>> getUserList(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		List<UserRole> data = teamRoomService.getUserList(resource_id);
+	public BaseRsp<List<UserRole>> getUserList(@ApiParam(name = "resource_id", value = "团队训练id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
+		List<UserRole> data = teamRoomService.getUserList(resourceId);
 
 		return new BaseRsp<>(data);
 	}
@@ -499,10 +507,10 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询团队训练时间轴")
 	@GetMapping("/get_time_line")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TimeLineData> getTimeLine(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		TimeLineData data = teamRoomService.getTimeLine(resource_id);
+	public BaseRsp<TimeLineData> getTimeLine(@ApiParam(name = "resource_id", value = "团队训练id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		TimeLineData data = teamRoomService.getTimeLine(resourceId);
 		return new BaseRsp<>(data);
 	}
 
@@ -513,10 +521,10 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询团队训练训练手册")
 	@GetMapping("/get_training_manual")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<String> getTrainingManual(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+	public BaseRsp<String> getTrainingManual(@ApiParam(name = "resource_id", value = "团队训练id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
 
-		String data = missionService.getTeamTrainingManual(resource_id);
+		String data = missionService.getTeamTrainingManual(resourceId);
 
 		return new BaseRsp<>(data);
 	}
@@ -555,11 +563,6 @@ public class TeamTrainRoomController {
 		teamRoomService.checkTeacherPermission(crRole.getRoomId(),
 				UserInfoContext.getUserContext().getUserId());
 		teamRoomService.checkRoomOpening(crRole.getRoomId());
-
-		if (crRole == null) {
-			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-		}
 
 		missionService.release(releaseMissionReq.getMissionResourceId(),
 				releaseMissionReq.getRoleResourceId(),
@@ -616,20 +619,21 @@ public class TeamTrainRoomController {
 	@ApiOperation("团队对抗-任务导调-任务进度")
 	@GetMapping("/mission/progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TeamTaskReleaseProgress> getMissionStatistics(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+	public BaseRsp<TeamTaskReleaseProgress>
+			getMissionStatistics(@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId) {
 
-		if (StringUtils.isBlank(resource_id)) {
+		if (StringUtils.isBlank(resourceId)) {
 			log.error(MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		// 获取该房间的角色信息
-		List<CrRole> studentRoles = teamRoomService.getStudentsRoles(resource_id);
+		List<CrRole> studentRoles = teamRoomService.getStudentsRoles(resourceId);
 		// parse mission and users
 		List<CrRoleSimple> roles = studentRoles.stream().map(CrRoleSimple::new)
 				.collect(Collectors.toList());
 		// 获取该房间已下发的任务
-		List<CrTask> crTaskList = crTaskService.getByRoomId(resource_id);
+		List<CrTask> crTaskList = crTaskService.getByRoomId(resourceId);
 
 		TeamTaskReleaseProgress progress = new TeamTaskReleaseProgress();
 		// count
@@ -677,15 +681,16 @@ public class TeamTrainRoomController {
 	@ApiOperation("团队对抗-任务导调-任务列表")
 	@GetMapping("/mission/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<List<TrainTaskReleaseInfoRsp>> getMissionList(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+	public BaseRsp<List<TrainTaskReleaseInfoRsp>>
+			getMissionList(@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId) {
 
-		if (StringUtils.isBlank(resource_id)) {
+		if (StringUtils.isBlank(resourceId)) {
 			log.error(MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
-		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainTaskReleaseInfoList(resource_id,
+		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainTaskReleaseInfoList(resourceId,
 				TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(res);
 	}
@@ -693,20 +698,21 @@ public class TeamTrainRoomController {
 	@ApiOperation("团队对抗-训练手册")
 	@GetMapping("/manual")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<List<TrainTaskReleaseInfoRsp>> getManual(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-		if (StringUtils.isBlank(resource_id)) {
+	public BaseRsp<List<TrainTaskReleaseInfoRsp>>
+			getManual(@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
 			log.error(MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
-		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+		CrRole crRole = teamRoomService.checkRoomPermission(resourceId, userId);
 		if (crRole.isTeamStudent()) {
 			log.error("role team_student is forbidden");
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
-		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id,
+		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resourceId,
 				TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(mergeStageByCreateTime(res));
 	}
@@ -714,12 +720,12 @@ public class TeamTrainRoomController {
 	@ApiOperation("获取聊天框用户列表")
 	@GetMapping("/dashboard_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<DashboardInfo> getDashboardInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+	public BaseRsp<DashboardInfo> getDashboardInfo(@ApiParam(name = "resource_id", value = "训练id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+		CrRole crRole = teamRoomService.checkRoomPermission(resourceId, userId);
 
-		DashboardInfo data = teamRoomService.getDashboardInfo(crRole, resource_id, userId);
+		DashboardInfo data = teamRoomService.getDashboardInfo(crRole, resourceId, userId);
 
 		return new BaseRsp<>(data);
 	}
@@ -728,18 +734,19 @@ public class TeamTrainRoomController {
 	@GetMapping("/mission/getTrainReports")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TrainReportContext> getTrainReports(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
-		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
+		TrainRecord trainRecord = trainRecordService.getByRoomId(resourceId);
 
-		TeamRoom teamRoom = teamRoomService.getById(resource_id);
+		TeamRoom teamRoom = teamRoomService.getById(resourceId);
 		if (scoreCount == null || scoreCount == 0) {
 			scoreCount = 10;
 		}
 		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord, teamRoom.getStartTime(),
 				teamRoom.getEndTime(), scoreCount, teamRoom.getReplaySceneId());
 		// 得分趋势
-		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id,
+		TrainReportContext trainReport = crScoreService.getTrainReport(resourceId,
 				Lists.newArrayList(TeamRoleGroup.STUDENT.getCode()), scoreTrendReq);
 		// 训练未开始，训练时间显示的是创建训练填写的训练开始时间，训练时长是训练模板设置的推荐时长
 		// 训练已开始，训练时间显示的启动训练时间，训练时长是当前时间-启动训练时间
@@ -754,22 +761,23 @@ public class TeamTrainRoomController {
 							+ TrainingReport.TIME.HOUR.getMsg();
 			trainReport.getRoomBaseInfo().setTimeCost(timeCost);
 		}
-		return new BaseRsp<TrainReportContext>(trainReport);
+		return new BaseRsp<>(trainReport);
 	}
 
 	@ApiOperation("团队对抗-任务导调-训练报告导出")
 	@GetMapping("/mission/TrainReportsPdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public void TrainReportsPdf(HttpServletResponse httpServletResponse,
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
-		TrainReportContext originData = this.getTrainReports(resource_id, scoreCount).getData();
+		TrainReportContext originData = this.getTrainReports(resourceId, scoreCount).getData();
 		TrainReportExportContext data = BeanUtils.deepCopy(originData,
 				TrainReportExportContext.class);
 		data.initExport();
 		Path destHtmlPathObj = Paths.get(AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(),
-				String.format("%s-%s", resource_id, UserInfoContext.getUserContext().getUserId()),
-				String.format("%s.html", resource_id));
+				String.format("%s-%s", resourceId, UserInfoContext.getUserContext().getUserId()),
+				String.format("%s.html", resourceId));
 		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath() + "/img",
 				AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(), true);
 		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath() + "/js",
@@ -829,10 +837,11 @@ public class TeamTrainRoomController {
 	@GetMapping("/members_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<JSONObject> getMembersInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
 			@ApiParam(name = "id", value = "房间id", required = true) String id) {
 
-		List<DashboardUser> data = teamRoomService.getMembersInfo(id, resource_id);
+		List<DashboardUser> data = teamRoomService.getMembersInfo(id, resourceId);
 		JSONObject json = new JSONObject();
 		json.put("list", data);
 
@@ -906,24 +915,26 @@ public class TeamTrainRoomController {
 	@GetMapping("/task/replayUserTimeInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<ScreenRecordUserRole>> replyUserTimeInfo(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-			@ApiParam(name = "node_id", value = "设备id", required = true) String node_id) {
+			@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "node_id", value = "设备id",
+					required = true) @RequestParam(name = "node_id") String nodeId) {
 
-		if (StringUtils.isBlank(resource_id)) {
+		if (StringUtils.isBlank(resourceId)) {
 			log.error(MISSING_LOG);
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		TeamRoom teamRoom = teamRoomService.getById(resource_id);
+		TeamRoom teamRoom = teamRoomService.getById(resourceId);
 		if (!teamRoom.isEnded()) {
-			log.error("team training [{}] not ended", resource_id);
+			log.error("team training [{}] not ended", resourceId);
 			throw new BusinessException(CrBusinessErrorCode.PLZ_REPLAY_AFTER_TRAINING_ENDS);
 		}
-		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
-				teamRoom.getReplaySceneId(), node_id,
+		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resourceId,
+				teamRoom.getReplaySceneId(), nodeId,
 				Lists.newArrayList(TeamRoleGroup.STUDENT.getCode()));
 
 		// 得到场景真实结束时间
-		Date actualEndTime = trainRecordService.getActualEndTime(resource_id);
+		Date actualEndTime = trainRecordService.getActualEndTime(resourceId);
 		// 过滤出结束时间之前的数据
 		resList = screenService.filterBeforeActualEndTime(resList, actualEndTime);
 		return new BaseRsp<>(resList);

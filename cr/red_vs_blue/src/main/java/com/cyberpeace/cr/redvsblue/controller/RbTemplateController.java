@@ -79,19 +79,19 @@ public class RbTemplateController {
 
 		List<RbTemplateListRsp> rspList = Lists.newArrayList();
 		// set attack engage relation statistics
-		for (RbTemplateData record : data.getRecords()) {
-			RbTemplateListRsp rspElement = getRbTemplateRspByBaseInfoData(record,
+		for (RbTemplateData rbTemplateData : data.getRecords()) {
+			RbTemplateListRsp rspElement = getRbTemplateRspByBaseInfoData(rbTemplateData,
 					topologyNodesStats);
 			rspElement
-					.setIsAttackRelated(attackRelCount.containsKey(record.getBusinessTemplateId()));
-			rspElement.setAttackCount(attackRelCount.getOrDefault(record.getBusinessTemplateId(),
+					.setIsAttackRelated(attackRelCount.containsKey(rbTemplateData.getBusinessTemplateId()));
+			rspElement.setAttackCount(attackRelCount.getOrDefault(rbTemplateData.getBusinessTemplateId(),
 					Lists.newArrayList()));
-			rspElement.setIsIcsRelated(icsRelCount.containsKey(record.getBusinessTemplateId()));
+			rspElement.setIsIcsRelated(icsRelCount.containsKey(rbTemplateData.getBusinessTemplateId()));
 			rspElement.setIcsCount(
-					icsRelCount.getOrDefault(record.getBusinessTemplateId(), Lists.newArrayList()));
+					icsRelCount.getOrDefault(rbTemplateData.getBusinessTemplateId(), Lists.newArrayList()));
 			rspElement
-					.setIsEngageRelated(engageRelCount.containsKey(record.getBusinessTemplateId()));
-			rspElement.setEngageCount(engageRelCount.getOrDefault(record.getBusinessTemplateId(),
+					.setIsEngageRelated(engageRelCount.containsKey(rbTemplateData.getBusinessTemplateId()));
+			rspElement.setEngageCount(engageRelCount.getOrDefault(rbTemplateData.getBusinessTemplateId(),
 					Lists.newArrayList()));
 
 			rspList.add(rspElement);

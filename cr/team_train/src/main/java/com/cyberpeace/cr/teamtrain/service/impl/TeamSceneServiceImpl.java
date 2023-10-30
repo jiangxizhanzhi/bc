@@ -143,7 +143,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		// 2、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(room);
-		if (sceneData != null) {
+		if (!sceneData.isEmpty()) {
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());
@@ -190,7 +190,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		LocalScene localScene = localSceneService.getById(teamRoom.getLocalSceneId());
 
 		Boolean stopResult = localSceneService.stopScene(localScene);
-		if (stopResult) {
+		if (Boolean.TRUE.equals(stopResult)) {
 			// 记录复盘sceneId,
 			// 是否需要更新replay_scene_id。训练未结束，更新；训练已结束，场景开始时间在训练结束之前才更新。
 			// 只有训练已结束且场景开启时间在训练结束之后，才不更新
@@ -404,20 +404,20 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		String localSceneId = room.getLocalSceneId();
 		// localSceneId字段为空
 		if (StringUtils.isBlank(localSceneId)) {
-			return null;
+			return new JSONObject();
 		}
 		// localScene不存在，localSceneId字段是脏数据
 		LocalScene localScene = localSceneService.getById(localSceneId);
 		if (null == localScene) {
 			room.setLocalSceneId("");
 			teamRoomService.updateById(room);
-			return null;
+			return new JSONObject();
 		}
 		// localScene 的 mpSceneId为空，localScene是脏数据
 		String mpSceneId = localScene.getMpSceneId();
 		if (StringUtils.isBlank(mpSceneId)) {
 			clearLocal(room);
-			return null;
+			return new JSONObject();
 		}
 		// 请求远程场景数据
 		JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
@@ -427,13 +427,13 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			log.info("roomId=[{}] local has sceneId=[{}], remote is null", room.getResourceId(),
 					mpSceneId);
 			clearLocal(room);
-			return null;
+			return new JSONObject();
 		}
 		// 场景实际已被删除，清除本地脏数据
 		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
-		if (data.isStopped()) {
+		if (Boolean.TRUE.equals(data.isStopped())) {
 			clearLocal(room);
-			return null;
+			return new JSONObject();
 		}
 		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
 		return sceneData;

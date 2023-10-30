@@ -277,11 +277,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			teamRoom.setDescription(teamTrainRoomContext.getDescription());
 		}
 		if (teamTrainRoomContext.getPreSkill() != null
-				&& teamTrainRoomContext.getPreSkill().size() > 0) {
+				&& !teamTrainRoomContext.getPreSkill().isEmpty()) {
 			teamRoom.setPreSkills(JsonUtil.toJsonString(teamTrainRoomContext.getPreSkill()));
 		}
 		if (teamTrainRoomContext.getTrainSkill() != null
-				&& teamTrainRoomContext.getTrainSkill().size() > 0) {
+				&& !teamTrainRoomContext.getTrainSkill().isEmpty()) {
 			teamRoom.setTrainSkills(JsonUtil.toJsonString(teamTrainRoomContext.getTrainSkill()));
 		}
 		if (teamTrainRoomContext.getStartTime() != null) {
@@ -303,7 +303,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				updateById(teamRoom);
 				if (teamTrainRoomContext.getRoleConfig() != null
-						&& teamTrainRoomContext.getRoleConfig().size() > 0) {
+						&& !teamTrainRoomContext.getRoleConfig().isEmpty()) {
 
 					Map<String, RoomRole> roomRoleMap = teamTrainRoomContext.getRoleConfig()
 							.stream().collect(Collectors.toMap(RoomRole::getResourceId, bo -> bo));
@@ -899,7 +899,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	private void validateName(String name) {
 		// check if duplicate
-		if (teamRoomMapper.existByName(name)) {
+		if (Boolean.TRUE.equals(teamRoomMapper.existByName(name))) {
 			log.error("training name duplicate！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}

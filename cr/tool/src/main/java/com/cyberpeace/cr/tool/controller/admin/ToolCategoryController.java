@@ -46,8 +46,8 @@ public class ToolCategoryController {
 	@ApiOperation("工具分类详情")
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<ToolCategoryRsp> getDetail(@ApiParam(name = "resource_id", value = "查询id",
-			required = true) @RequestParam("resource_id") @NotBlank String resource_id) {
-		ToolCategory toolCategory = toolCategoryService.getById(resource_id);
+			required = true) @RequestParam(name = "resource_id") @NotBlank String resourceId) {
+		ToolCategory toolCategory = toolCategoryService.getById(resourceId);
 		ToolCategoryRsp toolCategoryRsp = BeanUtils.copy(toolCategory, ToolCategoryRsp.class);
 		return new BaseRsp<>(toolCategoryRsp);
 	}

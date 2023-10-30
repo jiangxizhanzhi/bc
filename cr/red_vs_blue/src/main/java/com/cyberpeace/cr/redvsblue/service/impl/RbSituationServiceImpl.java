@@ -52,11 +52,11 @@ public class RbSituationServiceImpl implements RbSituationService {
 		return rbRoomMapper.selectAllRunning();
 	}
 
-	public Map<String, String> nodeMap = new HashMap<>();
+	private final Map<String, String> nodeMap = new HashMap<>();
 
-	public String sceneId;
+	private String sceneId;
 
-	public String mpSceneId;
+	private String mpSceneId;
 
 	@Override
 	public List<RbSituationServer> getRbServerByResourceId(String resourceId) {

@@ -32,7 +32,8 @@ import java.util.List;
 public class TeamTrainStatisticsController {
 
     @Autowired
-    TeamTrainStatisticsService TeamTrainStatistics;
+    TeamTrainStatisticsService teamTrainStatistics;
+
     @Autowired
     TrainStatisticsService trainStatisticsService;
 
@@ -40,7 +41,7 @@ public class TeamTrainStatisticsController {
     @ApiOperation("团队训练个人排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
     public BaseRsp<List<TeamPersonalStatisticsBo>> getAllPersonalRank() {
-        List<TeamPersonalStatisticsBo> rsp = TeamTrainStatistics.getAllPersonalRankStatistics();
+        List<TeamPersonalStatisticsBo> rsp = teamTrainStatistics.getAllPersonalRankStatistics();
         return new BaseRsp<>(rsp);
     }
 
@@ -48,7 +49,7 @@ public class TeamTrainStatisticsController {
     @ApiOperation("团队训练组织排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
     public BaseRsp<List<TeamOrganizationStatisticsBo>> getOrganizationRank() {
-        List<TeamOrganizationStatisticsBo> rsp = TeamTrainStatistics.getOrganizationRankStatistics();
+        List<TeamOrganizationStatisticsBo> rsp = teamTrainStatistics.getOrganizationRankStatistics();
         return new BaseRsp<>(rsp);
     }
 

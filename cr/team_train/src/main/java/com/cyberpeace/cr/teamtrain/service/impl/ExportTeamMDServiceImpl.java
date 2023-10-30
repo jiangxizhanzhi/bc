@@ -53,7 +53,7 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 	@Override
 	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {
 
-		if(businessTemplateList.size() == 0){
+		if (businessTemplateList.isEmpty()){
 			return;
 		}
 		//获取团队训练模板

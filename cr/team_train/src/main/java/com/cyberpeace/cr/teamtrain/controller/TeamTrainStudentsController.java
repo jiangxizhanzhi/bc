@@ -129,12 +129,12 @@ public class TeamTrainStudentsController {
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TeamRoomRsp> getTeamRoom(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+	public BaseRsp<TeamRoomRsp> getTeamRoom(@ApiParam(name = "resource_id", value = "团队训练id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+		crRoleService.checkPermission(resourceId, UserInfoContext.getUserContext().getUserId());
 
-		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
+		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resourceId);
 
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(teamRoomData.getResourceId());
@@ -156,7 +156,7 @@ public class TeamTrainStudentsController {
 				.batchGetTopoDigest(copyedTopoIds);
 		teamRoomRsp.setNodesCount(
 				topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
-		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
+		return new BaseRsp<>(teamRoomRsp);
 	}
 
 	/**
@@ -182,13 +182,14 @@ public class TeamTrainStudentsController {
 	@ApiOperation("获取任务列表")
 	@GetMapping("/get_mission_scheme")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<List<MissionSchemeObject<SchemeListMissionRsp>>> getMissionScheme(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+	public BaseRsp<List<MissionSchemeObject<SchemeListMissionRsp>>>
+			getMissionScheme(@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		// 获取角色中的任务内容
 		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = crRoleService
-				.getCrRoleMissionByRoomIdAndUserId(resource_id, userId);
+				.getCrRoleMissionByRoomIdAndUserId(resourceId, userId);
 
 		List<MissionSchemeObject<SchemeListMissionRsp>> missionSchemeList = missionSchemeObjectList
 				.stream().map(missionSchemeObject -> {
@@ -237,11 +238,13 @@ public class TeamTrainStudentsController {
 	@GetMapping("/get_mission_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<MissionRsp> getMissionDetail(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
-			@ApiParam(name = "mission_id", value = "任务id", required = true) String mission_id) {
+			@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "mission_id", value = "任务id",
+					required = true) @RequestParam(name = "mission_id") String missionId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
-		TaskContext taskContext = crTaskService.getByMissionAndUser(mission_id, userId);
+		TaskContext taskContext = crTaskService.getByMissionAndUser(missionId, userId);
 
 		MissionRsp missionRsp = new MissionRsp();
 		missionRsp.setResourceId(taskContext.getMission().getRoomId());
@@ -255,7 +258,7 @@ public class TeamTrainStudentsController {
 		missionRsp.setDescription(taskContext.getMission().getDescription());
 		missionRsp.setRemark(taskContext.getRemark());
 		missionRsp.setUserAnswer(taskContext.getUserAnswer());
-		if (!taskContext.getMission().getShowWriteup()) {
+		if (Boolean.FALSE.equals(taskContext.getMission().getShowWriteup())) {
 			missionRsp.setWriteUp("");
 		}
 
@@ -269,10 +272,10 @@ public class TeamTrainStudentsController {
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TimeLineData> getTimeLine(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		CrCommonValidator.validateId(resource_id);
-		TimeLineData data = teamRoomService.getStudentsTimeLine(resource_id);
+	public BaseRsp<TimeLineData> getTimeLine(@ApiParam(name = "resource_id", value = "团队训练id",
+			required = true) @RequestParam(name = "resource_id") String resourceId) {
+		CrCommonValidator.validateId(resourceId);
+		TimeLineData data = teamRoomService.getStudentsTimeLine(resourceId);
 
 		return new BaseRsp<>(data);
 	}
@@ -289,25 +292,26 @@ public class TeamTrainStudentsController {
 	@GetMapping("/task/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TaskMatrix> getTaskMatrix(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+			@ApiParam(name = "resource_id", value = "训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "user_id", value = "用户id") @RequestParam(name = "user_id",
+					required = false) String userId) {
 
-		if (StringUtils.isBlank(resource_id)) {
+		if (StringUtils.isBlank(resourceId)) {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		if (StringUtils.isBlank(user_id)) {
-			user_id = UserInfoContext.getUserContext().getUserId();
+		if (StringUtils.isBlank(userId)) {
+			userId = UserInfoContext.getUserContext().getUserId();
 			// 查看自己的任务矩阵之后去掉任务矩阵红点标记
-			crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
-					user_id);
+			crBadgeService.removeBadge(resourceId, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+					userId);
 		}
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,
-				user_id);
-		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
-		teamTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
-		teamTaskMatrix.setTime(trainRecordService.getTimeCostLong(resource_id));
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resourceId, userId);
+		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resourceId, userId);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resourceId, userId);
+		teamTaskMatrix.setFinalScore(crScore == null ? 0 : crScore.getFinalScore());
+		teamTaskMatrix.setTime(trainRecordService.getTimeCostLong(resourceId));
 		teamTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(teamTaskMatrix);
 	}
@@ -454,9 +458,7 @@ public class TeamTrainStudentsController {
 		if (CollectionUtils.isEmpty(commonDeviceContextList)) {
 			throw new BusinessException(CrBusinessErrorCode.INVALID_COMMON_DEVICE);
 		}
-		commonDeviceContextList.forEach(item -> {
-			item.setRoomId(teamCommonDeviceReq.getRoomId());
-		});
+		commonDeviceContextList.forEach(item -> item.setRoomId(teamCommonDeviceReq.getRoomId()));
 		teamCommonDeviceService.addListToCollect(commonDeviceContextList);
 		return new BaseRsp<>();
 	}
@@ -474,18 +476,20 @@ public class TeamTrainStudentsController {
 	@GetMapping("/device/common_device/already")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<TeamCommonDeviceContext>> getAlreadyCommonDevices(
-			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id,
+			@ApiParam(name = "resource_id", value = "团队房间id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 		// 2.拉取场景中可用 设备
 		AssetPageReq assetPageReq = new AssetPageReq();
-		assetPageReq.setResource_id(resource_id);
+		assetPageReq.setResource_id(resourceId);
 		List<JSONObject> availableDevices = null;
 		try {
 			availableDevices = crSceneService.getAssetList(assetPageReq, true);
 		} catch (BusinessException e) {
 			if (StringUtils.isNotEmpty(e.getMessage())
-					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) { // 如果是场景未启动导致的就返回空数组
+					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) {
+				// 如果是场景未启动导致的就返回空数组
 				return new BaseRsp<>(new ArrayList<>());
 			}
 		}
@@ -493,7 +497,7 @@ public class TeamTrainStudentsController {
 		// 3.查询已添加的设备
 		String userId = UserInfoContext.getUserContext().getUserId();
 		List<TeamCommonDevice> collectedCommonDevices = teamCommonDeviceService
-				.getCollectedCommonDevices(resource_id, userId);
+				.getCollectedCommonDevices(resourceId, userId);
 
 		// 4.装配设备信息
 		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(
@@ -593,9 +597,9 @@ public class TeamTrainStudentsController {
 			}
 
 			// 如果 已添加常用设备 包含 场景中可用设备
-			List<String> deviceIds = allCollectedCommonDevices.stream().map(a -> a.getDeviceId()).collect(Collectors.toList());
+			List<String> deviceIds = allCollectedCommonDevices.stream().map(TeamCommonDevice::getDeviceId).collect(Collectors.toList());
 			if (deviceIds.contains(availableDevice.getString("id"))) {
-				context.setOccupyFlag(1);;
+				context.setOccupyFlag(1);
 			}
 
 			for (TeamTrainDeviceContext occupyDevice : occupyDevices) {

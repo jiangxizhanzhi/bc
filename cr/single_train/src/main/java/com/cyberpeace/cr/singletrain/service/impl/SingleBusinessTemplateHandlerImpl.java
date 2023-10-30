@@ -52,24 +52,6 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		return BusinessType.TRAINING_SINGLE;
 	}
 
-	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
-		SingleTemplate singleTemplate = new SingleTemplate();
-		BaseInfo baseInfo = basicTemplate.getBaseInfo();
-
-		singleTemplate.setBusinessTemplateId(businessId);
-		singleTemplate.setPreSkills(JsonUtil.toJsonString(baseInfo.getPreSkill()));
-		singleTemplate.setTrainSkills(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
-		singleTemplate.setSubType(baseInfo.getCategory());
-		singleTemplate.setDurationTime(baseInfo.getDurationTime());
-
-		SingleTrainTemplateReq requestData = (SingleTrainTemplateReq) basicTemplate;
-		singleTemplate.setMissionsScheme(JsonUtil.toJsonString(requestData.getMissionsScheme()));
-
-		singleTemplateService.save(singleTemplate);
-
-		return singleTemplate.getBusinessTemplateId();
-	}
-
 	@Override
 	public ResourceDumpContext<SingleTemplate> realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<SingleTemplate> context = new ResourceDumpContext<>();

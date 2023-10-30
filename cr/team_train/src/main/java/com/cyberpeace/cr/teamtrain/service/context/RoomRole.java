@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.teamtrain.service.context;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;

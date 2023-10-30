@@ -7,6 +7,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.constant.MenuConstant;
@@ -33,10 +34,10 @@ public class TeamSituationController {
 	@ApiOperation("是否显示行业态势入口")
 	@GetMapping("/entrance")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<EntranceBo>
-			ifShowEntrance(@ApiParam(name = "room_id", value = "团队训练id") String room_id) {
-		CrCommonValidator.validateId(room_id);
-		EntranceBo res = teamSituationService.ifShowSituation(room_id);
+	public BaseRsp<EntranceBo> ifShowEntrance(@ApiParam(name = "room_id",
+			value = "团队训练id") @RequestParam(name = "room_id") String roomId) {
+		CrCommonValidator.validateId(roomId);
+		EntranceBo res = teamSituationService.ifShowSituation(roomId);
 		return new BaseRsp<>(res);
 	}
 
@@ -44,9 +45,10 @@ public class TeamSituationController {
 	@GetMapping("/info")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamSituationInfo>
-			getTaskStatistics(@ApiParam(name = "room_id", value = "团队训练id") String room_id) {
-		CrCommonValidator.validateId(room_id);
-		TeamSituationInfo info = teamSituationService.getSituationInfo(room_id);
+			getTaskStatistics(@ApiParam(name = "room_id",
+					value = "团队训练id") @RequestParam(name = "room_id") String roomId) {
+		CrCommonValidator.validateId(roomId);
+		TeamSituationInfo info = teamSituationService.getSituationInfo(roomId);
 		return new BaseRsp<>(info);
 	}
 
@@ -54,9 +56,10 @@ public class TeamSituationController {
 	@GetMapping("/score")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<StudentScoreVo>>
-			getScore(@ApiParam(name = "room_id", value = "团队训练id") String room_id) {
-		CrCommonValidator.validateId(room_id);
-		List<StudentScoreVo> res = teamSituationService.getTop5Score(room_id);
+			getScore(@ApiParam(name = "room_id",
+					value = "团队训练id") @RequestParam(name = "room_id") String roomId) {
+		CrCommonValidator.validateId(roomId);
+		List<StudentScoreVo> res = teamSituationService.getTop5Score(roomId);
 		return new BaseRsp<>(res);
 	}
 

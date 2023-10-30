@@ -264,7 +264,7 @@ public class TeamTrainTemplateController {
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
 		// 训练场景拓扑节点数量获取
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
-				data.getRecords().stream().map(teamTemplateData -> teamTemplateData.getTopoId())
+				data.getRecords().stream().map(TeamTemplateData::getTopoId)
 						.collect(Collectors.toList()));
 		// get attack engage relations
 		List<String> businessTemplateIds = data.getRecords().stream()

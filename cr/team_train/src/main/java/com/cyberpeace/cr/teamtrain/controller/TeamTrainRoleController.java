@@ -3,14 +3,15 @@ package com.cyberpeace.cr.teamtrain.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.enums.TeamRoleGroup;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.RoleMissionRsp;
@@ -39,9 +40,11 @@ public class TeamTrainRoleController {
 	@ApiOperation("团队实例查询角色")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<CrRoleContext<RoleMissionRsp>> getRoles(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id, TeamRoleGroup.STUDENT);
+	public BaseRsp<CrRoleContext<RoleMissionRsp>>
+			getRoles(@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId) {
+		CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resourceId,
+				TeamRoleGroup.STUDENT);
 
 		CrRoleContext<RoleMissionRsp> crRoleContextRsp = BeanUtils.copy(crRoleContext,
 				CrRoleContext.class);

@@ -182,7 +182,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 
         // 2、尝试获取启动的远程场景
         JSONObject sceneData = getMpSceneData(room);
-        if (sceneData != null) {
+        if (!sceneData.isEmpty()) {
             sceneFilterService.filterVisibleTopo(sceneData, nodes);
             ret.setSceneData(sceneData);
             ret.setLocalSceneId(room.getLocalSceneId());
@@ -467,20 +467,20 @@ public class RbSceneServiceImpl implements RbSceneService {
         String localSceneId = room.getLocalSceneId();
         // localSceneId字段为空
         if (StringUtils.isBlank(localSceneId)) {
-            return null;
+            return new JSONObject();
         }
         // localScene不存在，localSceneId字段是脏数据
         LocalScene localScene = localSceneService.getById(localSceneId);
         if (null == localScene) {
             room.setLocalSceneId("");
             rbRoomService.updateById(room);
-            return null;
+            return new JSONObject();
         }
         // localScene 的 mpSceneId为空，localScene是脏数据
         String mpSceneId = localScene.getMpSceneId();
         if (StringUtils.isBlank(mpSceneId)) {
             clearLocal(room);
-            return null;
+            return new JSONObject();
         }
         // 请求远程场景数据
         JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
@@ -488,13 +488,13 @@ public class RbSceneServiceImpl implements RbSceneService {
         // 场景数据为空，清除本地脏数据
         if (null == sceneData) {
             clearLocal(room);
-            return null;
+            return new JSONObject();
         }
         // 场景实际已被删除，清除本地脏数据
         SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
 		if (Boolean.TRUE.equals(data.isStopped())) {
             clearLocal(room);
-            return null;
+            return new JSONObject();
         }
         sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
         return sceneData;

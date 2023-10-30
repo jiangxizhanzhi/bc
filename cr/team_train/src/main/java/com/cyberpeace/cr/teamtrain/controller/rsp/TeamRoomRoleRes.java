@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.UserData;

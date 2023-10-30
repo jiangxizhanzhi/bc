@@ -10,10 +10,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.enums.TeamRoleGroup;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.constant.MissionWsCode;
-import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -24,31 +20,34 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.req.MissionEvaluationListReq;
 import com.cyberpeace.cr.crbase.controller.req.StudentScoreReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
-import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.crbase.service.context.UserReport;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -199,15 +198,17 @@ public class TeamTrainScoreController {
 	@GetMapping("/student_score")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<StudentScoreRsp> getStudentScore(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
-			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+			@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "user_hash", value = "用户id",
+					required = true) @RequestParam(name = "user_hash") String userHash) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		teamRoomService.checkTeacherPermission(resource_id, userId);
+		teamRoomService.checkTeacherPermission(resourceId, userId);
 
-		StudentScoreRsp rsp = crScoreService.getStudentScore(resource_id, user_hash);
+		StudentScoreRsp rsp = crScoreService.getStudentScore(resourceId, userHash);
 		// 训练时间
-		Integer duration = teamRoomService.getDuration(resource_id);
-		String timeCost = trainRecordService.getTimeCost(resource_id);
+		Integer duration = teamRoomService.getDuration(resourceId);
+		String timeCost = trainRecordService.getTimeCost(resourceId);
 		rsp.getTrainingSummary().setDuration(duration);
 		rsp.getTrainingSummary().setTimeCost(timeCost);
 		return new BaseRsp<>(rsp);
@@ -273,11 +274,13 @@ public class TeamTrainScoreController {
 	@GetMapping("/get_user_mission_dynamic")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<MissionDynamicRsp> getUserMissionDynamic(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
-			@ApiParam(name = "student_id", value = "用户id", required = true) String student_id) {
+			@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "student_id", value = "用户id",
+					required = true) @RequestParam(name = "student_id") String studentId) {
 
-		MissionDynamicRsp missionDynamicRsp = crScoreController.getUserMissionDynamic(resource_id,
-				student_id);
+		MissionDynamicRsp missionDynamicRsp = crScoreController.getUserMissionDynamic(resourceId,
+				studentId);
 
 		return new BaseRsp<>(missionDynamicRsp);
 	}
@@ -290,12 +293,13 @@ public class TeamTrainScoreController {
 	@ApiOperation("获取任务信息统计")
 	@GetMapping("/get_training_mission_report")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<MissionReport> getTrainingMissionReport(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id, TeamRoleGroup.STUDENT);
+	public BaseRsp<MissionReport>
+			getTrainingMissionReport(@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId) {
+		RoleQuery roleQuery = new RoleQuery(resourceId, TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
+		MissionReport missionReport = crScoreController.getTrainingMissionReport(resourceId,
 				crRoleList);
 
 		return new BaseRsp<>(missionReport);
@@ -310,15 +314,17 @@ public class TeamTrainScoreController {
 	@GetMapping("/get_training_record")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<MissionSchemeObject<TrainingRecordMissionRsp>>> getTrainingRecord(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
-			@ApiParam(name = "user_hash", value = "用户id", required = true) String user_hash) {
+			@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "user_hash", value = "用户id",
+					required = true) @RequestParam(name = "user_hash") String userHash) {
 
-		if (StringUtils.isBlank(user_hash)) {
+		if (StringUtils.isBlank(userHash)) {
 			throw new BusinessException(CrBusinessErrorCode.PLZ_SPECIFY_ONE_STUDENT);
 		}
 
 		List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList = crScoreController
-				.getTrainingRecord(resource_id, user_hash);
+				.getTrainingRecord(resourceId, userHash);
 
 		return new BaseRsp<>(missionSchemeList);
 	}
@@ -331,16 +337,16 @@ public class TeamTrainScoreController {
 	@ApiOperation("获取用户训练报告")
 	@GetMapping("/get_training_report")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TrainingReport> getTrainingReport(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		TeamRoomData teamRoomdata = teamRoomService.getTeamRoomDataByRoomId(resource_id);
+	public BaseRsp<TrainingReport>
+			getTrainingReport(@ApiParam(name = "resource_id", value = "团队训练id",
+					required = true) @RequestParam(name = "resource_id") String resourceId) {
+		TeamRoomData teamRoomdata = teamRoomService.getTeamRoomDataByRoomId(resourceId);
 
 
-
-		RoleQuery roleQuery = new RoleQuery(resource_id, TeamRoleGroup.STUDENT);
+		RoleQuery roleQuery = new RoleQuery(resourceId, TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
-		List<UserReport> userReportList = crScoreController.getTrainingReport(resource_id,
+		List<UserReport> userReportList = crScoreController.getTrainingReport(resourceId,
 				crRoleList);
 
 		Date endTime = teamRoomdata.getSceneEndTime() == null ? new Date()

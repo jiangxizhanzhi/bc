@@ -42,39 +42,6 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		return BusinessType.RED_VS_BLUE;
 	}
 
-	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
-		RbTemplateContext rbTemplateContext = BeanUtils.copy(basicTemplate,
-				RbTemplateContext.class);
-
-		JSONObject roleObject = JsonUtil.toJsonObject(rbTemplateContext.getRoleList(),
-				JSONObject.class);
-
-		List<JSONObject> redRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("red_roles").toString(), JSONObject.class);
-
-		List<JSONObject> blueRoleRsps = JsonUtil
-				.toJsonObjectArray(roleObject.get("blue_roles").toString(), JSONObject.class);
-
-		redRoleRsps.forEach(jsonObject -> missionService
-				.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme")));
-		blueRoleRsps.forEach(jsonObject -> missionService
-				.missionsSchemeValidator(jsonObject.getJSONObject("missions_scheme")));
-
-		RbTemplate rbTemplate = new RbTemplate();
-		BaseInfo baseInfo = basicTemplate.getBaseInfo();
-
-		rbTemplate.setBusinessTemplateId(businessId);
-		rbTemplate.setPreSkill(JsonUtil.toJsonString(baseInfo.getPreSkill()));
-		rbTemplate.setTrainSkill(JsonUtil.toJsonString(baseInfo.getTrainSkill()));
-		rbTemplate.setSubType(baseInfo.getCategory());
-		rbTemplate.setDurationTime(baseInfo.getDurationTime());
-		rbTemplate.setRoleConfig(rbTemplateContext.getRoleList());
-
-		rbTemplateService.save(rbTemplate);
-
-		return rbTemplate.getBusinessTemplateId();
-	}
-
 	@Override
 	public ResourceDumpContext<RbTemplate> realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<RbTemplate> context = new ResourceDumpContext<>();

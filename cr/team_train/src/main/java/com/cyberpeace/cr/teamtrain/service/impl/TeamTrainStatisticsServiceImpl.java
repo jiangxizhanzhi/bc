@@ -64,7 +64,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         }
 
         // 没有用户，返回
-        if (userIds.size() == 0) {
+        if (userIds.isEmpty()) {
             return rsp;
         }
 
@@ -80,10 +80,10 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
 
         if (null != personalStatistics) {
             for (TrainingPersonalStatistics personalStatistic : personalStatistics) {
-                String user_id = personalStatistic.getUserId();
+                String userId = personalStatistic.getUserId();
 
                 // 判断user是否还存在
-                UserInfo user = id2User.get(user_id);
+                UserInfo user = id2User.get(userId);
                 if (null == user){
                     continue;
                 }
@@ -100,15 +100,15 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
             }
 
             for (Map.Entry<String, Double> tmp : org2TotalScore.entrySet()) {
-                TeamOrganizationStatisticsBo TeamOrganizationStatistics = new TeamOrganizationStatisticsBo();
+                TeamOrganizationStatisticsBo teamOrganizationStatistics = new TeamOrganizationStatisticsBo();
 
-                TeamOrganizationStatistics.setOrgId(tmp.getKey());
-                TeamOrganizationStatistics.setOrgName(org2Name.get(tmp.getKey()));
+                teamOrganizationStatistics.setOrgId(tmp.getKey());
+                teamOrganizationStatistics.setOrgName(org2Name.get(tmp.getKey()));
 
-                double AverageScore = BigDecimal.valueOf((double) tmp.getValue() / org2TotalUser.get(tmp.getKey())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                double averageScore = BigDecimal.valueOf((double) tmp.getValue() / org2TotalUser.get(tmp.getKey())).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-                TeamOrganizationStatistics.setAverageScore(AverageScore);
-                rsp.add(TeamOrganizationStatistics);
+                teamOrganizationStatistics.setAverageScore(averageScore);
+                rsp.add(teamOrganizationStatistics);
             }
         }
         //按分数排序后再按组织机构名自然排序
@@ -134,12 +134,12 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         );
 
         if (null != personalStatistics) {
-            List<String> user_ids = personalStatistics.stream().map(TrainingPersonalStatistics::getUserId).collect(Collectors.toList());
-            if (user_ids.size() == 0) {
+            List<String> userIds = personalStatistics.stream().map(TrainingPersonalStatistics::getUserId).collect(Collectors.toList());
+            if (userIds.isEmpty()) {
                 return rsp;
             }
 
-            List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(user_ids);
+            List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(userIds);
             Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 
             for (TrainingPersonalStatistics personalStatistic : personalStatistics) {
@@ -149,14 +149,14 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
                     continue;
                 }
 
-                TeamPersonalStatisticsBo TeamPersonalStatistics = new TeamPersonalStatisticsBo();
+                TeamPersonalStatisticsBo teamPersonalStatistics = new TeamPersonalStatisticsBo();
 
-                TeamPersonalStatistics.setUserId(personalStatistic.getUserId());
-                TeamPersonalStatistics.setUsername(userInfo.getUserName());
-                TeamPersonalStatistics.setTotalScore(personalStatistic.getTotalScore());
-                TeamPersonalStatistics.setName(userInfo.getName());
+                teamPersonalStatistics.setUserId(personalStatistic.getUserId());
+                teamPersonalStatistics.setUsername(userInfo.getUserName());
+                teamPersonalStatistics.setTotalScore(personalStatistic.getTotalScore());
+                teamPersonalStatistics.setName(userInfo.getName());
 
-                rsp.add(TeamPersonalStatistics);
+                rsp.add(teamPersonalStatistics);
             }
             //按分数排序后再按照用户名自然排序
             rsp = rsp.stream().sorted(Comparator.comparing(TeamPersonalStatisticsBo::getTotalScore, Comparator.reverseOrder())

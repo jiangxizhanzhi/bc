@@ -155,7 +155,7 @@ public class RbRoomUserController {
 			Integer evaluateStatus = taskContext.getStatus();
 
 			// 未提交过
-			if (taskSubmits == null || taskSubmits.isEmpty()) {
+			if (taskSubmits.isEmpty()) {
 				evaluateStatus = CrTask.TaskStatus.RELEASED.getCode();
 			}
 			// 已提交过，获取任务驳回记录

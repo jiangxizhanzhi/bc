@@ -86,8 +86,6 @@ public class RbRoom extends BaseTable {
 		this.endTime = input.getEndTime();
 		this.enableRecording = input.getEnableRecording();
 		this.difficulty = input.getDifficult();
-		this.createUserId = createUserId;
-		this.localSceneId = localSceneId;
 		this.logo = input.getLogo();
 	}
 

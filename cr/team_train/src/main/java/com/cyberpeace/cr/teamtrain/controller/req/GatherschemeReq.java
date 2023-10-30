@@ -1,7 +1,5 @@
 package com.cyberpeace.cr.teamtrain.controller.req;
 
-import java.io.Serializable;
-
 import lombok.Data;
 
 @Data

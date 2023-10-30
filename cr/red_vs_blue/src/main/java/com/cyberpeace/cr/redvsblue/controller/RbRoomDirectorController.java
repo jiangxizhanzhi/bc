@@ -189,11 +189,6 @@ public class RbRoomDirectorController {
 				UserInfoContext.getUserContext().getUserId());
 		rbRoomService.checkRoomOpening(crRole.getRoomId());
 
-		if (crRole == null) {
-			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-		}
-
 		missionService.release(releaseMissionReq.getMissionResourceId(),
 				releaseMissionReq.getRoleResourceId(),
 				UserInfoContext.getUserContext().getUserId());

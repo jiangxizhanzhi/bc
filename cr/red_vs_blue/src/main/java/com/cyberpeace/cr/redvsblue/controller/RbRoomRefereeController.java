@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.ListRsp;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +114,7 @@ public class RbRoomRefereeController {
 	@ApiOperation("获取学员的评估提交记录-弃用")
 	@GetMapping("/mission_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<List<MissionEvaluationRsp>>
+	public BaseRsp<ListRsp<MissionEvaluationRsp>>
 			getMissionEvaluations(@Validated RbMissionEvaluationListReq missionEvaluationListReq) {
 
 		MissionEvaluationQuery missionEvaluationQuery = BeanUtils.copy(missionEvaluationListReq,
@@ -161,7 +162,7 @@ public class RbRoomRefereeController {
 			return missionEvaluationRsp;
 		});
 
-		return new BaseRsp(PageUtil.getListResult(data));
+		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
 	/**

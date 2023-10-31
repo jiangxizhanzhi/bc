@@ -250,6 +250,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 			courseLesson= parseLesson(lessonPath, course, envReqs);
 		}catch (Exception e) {
+			log.info(e.getMessage(),e);
 			throw new RemoteServiceException("file parse Exception file: "+lessonPath);
 		}
 		if (null == courseLesson) {

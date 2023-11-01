@@ -148,13 +148,13 @@ public class PracticeTheoryController {
 				answerReq.getSubmitAnswer(), Boolean.FALSE);
 
 		// 记录远程操作日志
-		LogContent logContent = evaluateResult.getSolved() ? LogContent.CORRECT
+		LogContent logContent = Boolean.TRUE.equals(evaluateResult.getSolved()) ? LogContent.CORRECT
 				: LogContent.INCORRECT;
 		practiceTheoryService.createMpLog(answerReq.getResourceId(), logContent);
 
 		EvaluateResultTheory evaluateResultTheory = BeanUtils.copy(evaluateResult,
 				EvaluateResultTheory.class);
-		if (evaluateResult.getSolved()) {
+		if (Boolean.TRUE.equals(evaluateResult.getSolved())) {
 			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.SOLVED.getCode());
 		} else {
 			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.TRIED.getCode());

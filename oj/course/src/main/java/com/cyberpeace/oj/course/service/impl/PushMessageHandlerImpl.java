@@ -43,7 +43,7 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		String[] businessIdArray = ojLocalScene.getBusinessId().split(CommonConstant.CODE_COMMA);
 		LessonPracticeWsMessageIdentifier messageIdentifier = LessonPracticeWsMessageIdentifier
 				.builder().lessonId(businessIdArray[0]).practiceId(businessIdArray[1])
-				.shared(ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
+				.shared(Boolean.TRUE.equals(ojLocalScene.getShared()) ? SceneShare.SHARED.getCode()
 						: SceneShare.PRIVATE.getCode())
 				.fromWeb(ojLocalScene.getFromWeb()).build();
 		messageIdentifier.setUserId(ojLocalScene.getUserId());
@@ -82,7 +82,7 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 		OperationWsMessageIdentifier identifier = new OperationWsMessageIdentifier();
 		identifier.setFromWeb(ojLocalScene.getFromWeb());
-		identifier.setShared(ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
+		identifier.setShared(Boolean.TRUE.equals(ojLocalScene.getShared()) ? SceneShare.SHARED.getCode()
 				: SceneShare.PRIVATE.getCode());
 		identifier.setPracticeId(ojLocalScene.getBusinessId());
 		identifier.setPath(WsPath.OPERATION_SCENE);

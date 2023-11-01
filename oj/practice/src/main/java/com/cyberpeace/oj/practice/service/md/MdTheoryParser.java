@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MdTheoryParser {
 
-	private String HEAD_SYMBOL = "#";
+	private String headSymbol = "#";
 
 	private List<String> content;
 
@@ -104,7 +104,7 @@ public class MdTheoryParser {
 					continue;
 				}
 
-				String title = getAssignStr(annotation.level(), HEAD_SYMBOL) + CommonConstant.SPACE
+				String title = getAssignStr(annotation.level(), headSymbol) + CommonConstant.SPACE
 						+ annotation.name();
 
 				Object value = ObjUtil.getFieldValueByName(field.getName(), obj);
@@ -162,7 +162,7 @@ public class MdTheoryParser {
 				continue;
 			}
 
-			String matchLine = getAssignStr(annotation.level(), HEAD_SYMBOL) + CommonConstant.SPACE
+			String matchLine = getAssignStr(annotation.level(), headSymbol) + CommonConstant.SPACE
 					+ annotation.name();
 
 			Object parse = parser.parse(titleMap.get(matchLine));
@@ -308,12 +308,12 @@ public class MdTheoryParser {
 
 	private String getAssignStr(int length, String str) {
 
-		String assignStr = str;
+		StringBuilder assignStr = new StringBuilder(str);
 		for (int i = 1; i < length; i++) {
-			assignStr += str;
+			assignStr.append(str);
 		}
 
-		return assignStr;
+		return assignStr.toString();
 	}
 
 	/**

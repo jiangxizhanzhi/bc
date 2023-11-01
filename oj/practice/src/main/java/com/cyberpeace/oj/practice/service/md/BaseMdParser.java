@@ -59,25 +59,22 @@ public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String>
 
 	@Override
 	public String write(List<TheoryBaseMd> theoryBaseMds) {
-		String str = System.lineSeparator();
+		StringBuilder str = new StringBuilder(System.lineSeparator());
 		int i = 1;
 		for (TheoryBaseMd theoryBaseMd : theoryBaseMds) {
 
-			str = str + "### 题目" + i++ + System.lineSeparator() + System.lineSeparator();
-			str = str + "- 题目" + System.lineSeparator() + System.lineSeparator();
-			str = str + "  - 难度" + System.lineSeparator() + System.lineSeparator();
-			str = str + "    " + theoryBaseMd.getDifficulty() + System.lineSeparator()
-					+ System.lineSeparator();
-			str = str + "  - 方向" + System.lineSeparator() + System.lineSeparator();
-			str = str + "    " + theoryBaseMd.getCategory() + System.lineSeparator()
-					+ System.lineSeparator();
-			str = str + "  - 题目原文" + System.lineSeparator() + System.lineSeparator();
-			str = str + "    " + theoryBaseMd.getTitle().trim() + System.lineSeparator()
-					+ System.lineSeparator();
-			str = str + "- 答案" + System.lineSeparator() + System.lineSeparator();
-			str = str + "  " + theoryBaseMd.getAnswer().trim() + System.lineSeparator();
+			str.append("### 题目").append(i++).append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("- 题目").append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("  - 难度").append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("    ").append(theoryBaseMd.getDifficulty()).append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("  - 方向").append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("    ").append(theoryBaseMd.getCategory()).append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("  - 题目原文").append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("    ").append(theoryBaseMd.getTitle().trim()).append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("- 答案").append(System.lineSeparator()).append(System.lineSeparator());
+			str.append("  ").append(theoryBaseMd.getAnswer().trim()).append(System.lineSeparator());
 
 		}
-		return LocalStringUtil.frontBackLine(str);
+		return LocalStringUtil.frontBackLine(str.toString());
 	}
 }

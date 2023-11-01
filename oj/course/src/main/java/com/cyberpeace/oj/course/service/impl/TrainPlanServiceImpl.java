@@ -77,7 +77,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			queryWrapper.ne(TrainPlan::getResourceId, id);
 		}
 		List<TrainPlan> assessModel = trainPlanMapper.selectList(queryWrapper);
-		if (null != assessModel && assessModel.size()>0) {
+		if (null != assessModel && !assessModel.isEmpty()) {
 			log.error("[{}] name repeat", StreamApiUtils.getColumn(assessModel, TrainPlan::getName).toString());
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}

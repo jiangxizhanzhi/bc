@@ -271,7 +271,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 如果课时类型被修改 保留场景相关元数据
 		if (existLesson.getType() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
 				&& courseLesson.getType()
-						.equals(CourseLesson.LessonType.THEORY.getCode().intValue())) {
+						.equals(CourseLesson.LessonType.THEORY.getCode())) {
 			courseLesson.setType(existLesson.getType());
 			courseLesson.setSceneShareMode(existLesson.getSceneShareMode());
 			courseLesson.setDestroyDelay(existLesson.getDestroyDelay());
@@ -973,7 +973,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		log.info("Combined-Lesson-Import's request is: [{}]", JsonUtil.toJsonString(courseInfos));
 
-		if (null == courseInfos || courseInfos.size() == 0) {
+		if (null == courseInfos || courseInfos.isEmpty()) {
 			log.info("The request body is empty!");
 			return true;
 		}
@@ -1033,17 +1033,17 @@ public class CourseImportServiceImpl implements CourseImportService {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 
-				if (lessons.size() == 0) {
+				if (lessons.isEmpty()) {
 					log.info("All lessons have already imported");
 
 				} else {
-					if (existConfig.size() == 0) {
+					if (existConfig.isEmpty()) {
 						// 课程相关数据存储
 						courseMapper.insert(course);
 					}
 
 					// 试卷数据初始化存储
-					StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
+					StreamApiUtils.map(lessons, CourseImportServiceImpl.this::initPaper);
 					// 课时和课时目录数据存储
 					courseLessonService.saveBatch(lessons);
 				}

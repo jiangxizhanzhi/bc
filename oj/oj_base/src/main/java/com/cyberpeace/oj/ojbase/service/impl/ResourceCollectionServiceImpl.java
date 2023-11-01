@@ -57,11 +57,7 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 		List<String> collectionBusinessIds = StreamApiUtils.map(resourceCollections, ResourceCollection::getBusinessId);
 		Map<String, Boolean> collectionMap = new HashMap<>();
 		for (String businessId : businessIds) {
-			if (collectionBusinessIds.contains(businessId)) {
-				collectionMap.put(businessId, true);
-			} else {
-				collectionMap.put(businessId, false);
-			}
+			collectionMap.put(businessId, collectionBusinessIds.contains(businessId));
 		}
 		return collectionMap;
 	}

@@ -146,12 +146,9 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());
 
-		practiceTheoryList.forEach(practiceTheory -> {
-
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
-					OperationType.DELETE, LogContent.THEORY.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.THEORY.getMsg(), practiceTheory.getContent()));
-		});
+		practiceTheoryList.forEach(practiceTheory -> remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
+				OperationType.DELETE, LogContent.THEORY.getMsg(),
+				LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.THEORY.getMsg(), practiceTheory.getContent())));
 
 		return new BaseRsp<>(result);
 	}

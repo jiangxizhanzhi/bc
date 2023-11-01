@@ -115,8 +115,8 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	}
 
 	@Override
-	public ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String courseId,
-			Page<AdminLessonStatisticsRes> page, LessonStatisticsListReq pageReq) {
+	public ListRsp<AdminLessonStatisticsRes> lessonStatisticsList(String courseId,
+																  Page<AdminLessonStatisticsRes> page, LessonStatisticsListReq pageReq) {
 		IPage<AdminLessonStatisticsRes> rsp = courseLearnStatisticsMapper.listLessonByPage(page,
 				courseId, true, pageReq.getType(), pageReq.getSearch());
 		List<String> lessonIds = StreamApiUtils.map(rsp.getRecords(),
@@ -142,21 +142,21 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		}).collect(Collectors.toList());
 		rsp.setRecords(res);
 		// 根据完成练习次数排序
-		if (page.getOrders() != null && page.getOrders().size() > 0
-				&& ((OrderItem) page.getOrders().get(0)).getColumn().equals("practice_count")) {
+		if (page.getOrders() != null && !page.getOrders().isEmpty()
+				&& (page.getOrders().get(0)).getColumn().equals("practice_count")) {
 			PageUtil.setPageOrder(page, "practiceCount",
-					((OrderItem) page.getOrders().get(0)).isAsc());
+					(page.getOrders().get(0)).isAsc());
 			return PageUtil.getListResult(rsp.getRecords(), page, rsp.getTotal());
 		}
 		return PageUtil.getListResult(rsp);
 	}
 
 	@Override
-	public ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
+	public ListRsp<AdminLessonStatisticsDetailRes> lessonStatisticsDetail(String organizationId,
 																		  String lessonId, String usernameLike, Page<AdminLessonStatisticsDetailRes> page, String sort) {
 		List<String> userIds = getUsers(organizationId, usernameLike);
 
-		if (userIds.size() == 0){
+		if (userIds.isEmpty()){
 			return PageUtil.getListResult(null);
 		}
 		// 获取学习该课程的所有用户

@@ -125,10 +125,10 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		String templateData = ConfigUtil.getContextProperty("oj.flag.template.data");
 		for (int i = 0; i < count; i++) {
 			String flagPrefix = systemConfigService.getSystemConfig("flag_prefix");
-			String FLAG_LENGTH = systemConfigService.getSystemConfig("flag_length");
+			String flagLength = systemConfigService.getSystemConfig("flag_length");
 
 			String flag = String.format(templateData, flagPrefix,
-					LocalStringUtil.getRandomStr(Integer.parseInt(FLAG_LENGTH)));
+					LocalStringUtil.getRandomStr(Integer.parseInt(flagLength)));
 			flags.add(flag);
 		}
 

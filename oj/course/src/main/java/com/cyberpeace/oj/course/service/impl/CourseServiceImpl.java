@@ -218,7 +218,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
 
 		List<Course> courses = courseMapper.selectBatchIds(ids);
-		List<CourseInfoBo> infoBos = courses.stream().map(course -> courseToBo(course, true))
+		return courses.stream().map(course -> courseToBo(course, true))
 				.map(infBo -> {
 					infBo.setInterview(
 							infBo.getIsPublic() && CollectionUtils.isNotEmpty(authCourseIds)
@@ -226,7 +226,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 					return infBo;
 				}).collect(Collectors.toList());
-		return infoBos;
 	}
 
 	@Override
@@ -241,7 +240,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			}
 		}
 
-		if (authContext.getIsWeb()) {
+		if (Boolean.TRUE.equals(authContext.getIsWeb())) {
 			courseIds = StreamApiUtils.filter(courseIds, courseId -> CollectionUtils.isNotEmpty(
 					courseLessonMapper.selectByCourse(courseId, authContext.getIsWeb())));
 			if (CollectionUtils.isEmpty(courseIds)) {
@@ -252,11 +251,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		// 我的课程 系统课程 共享课程过滤
 		SpecialCourseContext specialContext = BeanUtils.copy(courseContext,
 				SpecialCourseContext.class);
-		if (!specialContext.getMyCourse() && !specialContext.getSystemCourse()
+		if (Boolean.TRUE.equals(!specialContext.getMyCourse() && !specialContext.getSystemCourse())
 				&& !specialContext.getShareCourse()) {
 			return PageUtil.getNullResult();
 		}
-		if (!specialContext.getMyCourse() || !specialContext.getShareCourse()
+		if (Boolean.TRUE.equals(!specialContext.getMyCourse() || !specialContext.getShareCourse())
 				|| !specialContext.getSystemCourse()) {
 			courseIds = courseMapper.selectSpecial(courseIds, specialContext);
 			if (CollectionUtils.isEmpty(courseIds)) {
@@ -631,7 +630,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Override
 	public List<String> duplicateCourseInspect(List<String> courseNames) {
 		List<String> duplicateName = Lists.newArrayList();
-		if (null == courseNames || courseNames.size() == 0){
+		if (null == courseNames || courseNames.isEmpty()){
 			return duplicateName;
 		}
 

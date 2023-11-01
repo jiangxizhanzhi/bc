@@ -28,13 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ClassroomValidateHandler {
 
-
-
-	@PostConstruct
-	private void init() {
-
-	}
-
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
@@ -217,8 +210,8 @@ public class ClassroomValidateHandler {
 	 */
 	public void validateLessonPracticeAuth(String classroomId, AuthContext authContext) {
 
-		boolean is_superuser = authContext.getIsSuperAdmin();
-		if (!is_superuser) {
+		boolean isSuperuser = authContext.getIsSuperAdmin();
+		if (!isSuperuser) {
 			Classroom classroom = classroomMapper.selectById(classroomId);
 			if (null == classroom) {
 				log.error("classroomId:[{}] doesn't exist", classroomId);

@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -279,7 +277,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
-			if (authContext.getIsWeb() && null != groupInfo) {
+			if (Boolean.TRUE.equals(authContext.getIsWeb()) && null != groupInfo) {
 				infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
 				infoBo.setGroupId(groupInfo.getResourceId());
 				// 存在课堂场景 则设置group_id用于前端简历websocket
@@ -463,7 +461,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Boolean updateFlag = !lessonExist.getName().equals(courseLesson.getName());
 		// 课时留言theme_name修改
 		Comment comment = new Comment();
-		if (updateFlag) {
+		if (Boolean.TRUE.equals(updateFlag)) {
 			Course course = courseMapper.selectById(courseLesson.getCourseId());
 			String themeName = course.getName() + CommonConstant.LEFT_OBLIQUE_LINE
 					+ courseLesson.getName();
@@ -479,7 +477,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				if (StringUtils.isBlank(courseLesson.getPaperId())) {
 					paperService.update(paperContext);
 				}
-				if (updateFlag) {
+				if (Boolean.TRUE.equals(updateFlag)) {
 					lessonConfigMapper.updateByCourseAndLesson(lessonConfig);
 					commentMapper.updateComment(comment);
 				}
@@ -550,7 +548,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Map<String, List<PracticeOperationRef>> operationMap = StreamApiUtils.groupBy(practiceOperationRefs, PracticeOperationRef::getPaperId);
 		List<PracticeTheoryRef> practiceTheoryRefs = practiceTheoryRefMapper.selectList(filterTheory);
 		Map<String, List<PracticeTheoryRef>> theoryMap = StreamApiUtils.groupBy(practiceTheoryRefs, PracticeTheoryRef::getPaperId);
-		IPage<AdminLessonListBo> boIPage = iPage.convert(courseLesson -> {
+		return iPage.convert(courseLesson -> {
 			// 前台没有课程列表查询 不用管是否存在课堂场景 修改sceneShareMode
 			AdminLessonListBo adminLessonListBo = BeanUtils.copy(courseLesson,
 					AdminLessonListBo.class);
@@ -602,7 +600,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 							.getCode() && CollectionUtils.isNotEmpty(noteIds));
 			return adminLessonListBo;
 		});
-		return boIPage;
 	}
 
 	private long getPracticeCount(String paperId) {
@@ -614,8 +611,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<PracticeTheoryRef> practiceTheoryRefs = practiceTheoryRefMapper.selectList(filterTheory);
 		long operationCount = practiceOperationRefs.stream().filter(practiceOperationRef -> practiceOperationRef.getPaperId().equals(paperId)).count();
 		long theoryCount = practiceTheoryRefs.stream().filter(practiceOperationRef -> practiceOperationRef.getPaperId().equals(paperId)).count();
-		long practiceCount = operationCount + theoryCount;
-		return practiceCount;
+		return operationCount + theoryCount;
 	}
 
 	@Override
@@ -753,7 +749,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 										.intValue();
 
 				EvaluateResult evaluateResult = new EvaluateResult();
-				if (isObject || submitContext.getNeedEvaluate()) {
+				if (isObject || Boolean.TRUE.equals(submitContext.getNeedEvaluate())) {
 					evaluateResult = theoryEvaluateHandler.evaluateByBusiness(
 							authContext.getUserId(), practiceTheory,
 							submitContext.getSubmitAnswer());
@@ -770,7 +766,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				practiceSolvedBos.add(solvedBo);
 
 				// 客观题统计
-				if (isObject&&solvedBo.getSolved()) {
+				if (isObject&&Boolean.TRUE.equals(solvedBo.getSolved())) {
 						correctObjectNum.addAndGet(1);
 				}
 
@@ -789,7 +785,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
 				practiceSolvedBos.add(solvedBo);
 
-				if (solvedBo.getSolved()) {
+				if (Boolean.TRUE.equals(solvedBo.getSolved())) {
 					correctObjectNum.addAndGet(1);
 				}
 				return evaluateResult;
@@ -850,9 +846,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			practiceBriefBo.setAccuracy(paperEvaluate.getAccuracy());
 		}
 
-		int objectCount = 0, subjectCount = 0, totalCount = 0;
+		int objectCount = 0;
+		int subjectCount = 0;
+		int totalCount = 0;
 		for (Map.Entry<String, LessonPracticeListBo> entry : handlerPractice.entrySet()) {
-			LessonPracticeListBo val = (LessonPracticeListBo) entry.getValue();
+			LessonPracticeListBo val = entry.getValue();
 			if (  "fill_blank".equals(entry.getKey()) ||  "short_answer".equals(entry.getKey())) {
 				subjectCount += val.getCount();
 			} else {
@@ -979,7 +977,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			OjLocalScene ojLocalScene = null;
 			ClassroomGroupInfo groupInfo = null;
 
-			if (authContext.getIsWeb()) {
+			if (Boolean.TRUE.equals(authContext.getIsWeb())) {
 				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
 				if (null != groupInfo) {
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
@@ -1206,7 +1204,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<PracticeOperation> operations = StreamApiUtils.flatMap(lessonList,
 				lesson -> practiceOperationRefService.operationByPaper(lesson.getPaperId(), true));
 		List<String> lessonPracticeTopo = StreamApiUtils.map(operations,
-				operation -> operation.getTopoId());
+				PracticeOperation::getTopoId);
 
 		List<String> lessonTopo = StreamApiUtils.map(lessonList,
 				lesson -> StringUtils.isNotBlank(lesson.getTopoId()) ? lesson.getTopoId() : null);
@@ -1227,7 +1225,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					log.error(
 							"Lesson scene delete failed! oj_local_scene_id=[{}], lesson_id=[{}], catch error:",
 							scene.getResourceId(), scene.getBusinessId(), e);
-					continue;
 				}
 			}
 		}
@@ -1597,7 +1594,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private Paper validatePaper(CourseLesson lesson, Boolean isWeb) {
 
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
-		if (isWeb && !paper.getIsPublic()) {
+		if (Boolean.TRUE.equals(isWeb) && !paper.getIsPublic()) {
 			log.error("The paper was not made public！lesson_id=[{}], paper_id=[{}]",
 					lesson.getResourceId(), lesson.getPaperId());
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);

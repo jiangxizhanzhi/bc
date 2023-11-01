@@ -45,7 +45,7 @@ public interface LearnStatsService {
      * 获取班级积分排名Top10
      * @return 统计信息
      */
-    HistogramRes getClassIntegralTopTen(String ranking_type, String orgId);
+    HistogramRes getClassIntegralTopTen(String rankingType, String orgId);
 
     /**
      * 班级学习统计排行

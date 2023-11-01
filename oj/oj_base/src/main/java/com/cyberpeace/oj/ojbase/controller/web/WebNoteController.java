@@ -108,19 +108,19 @@ public class WebNoteController {
 		if (null == noteBo || StringUtils.isBlank(noteBo.getContent())) {
 			BaseRsp<WebNoteRes> rsp = new BaseRsp<>();
 			if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
-				String template_name = "oj.report.template_en.data";
+				String templateName = "oj.report.template_en.data";
 				if (CommonContext.isChinese()) {
-					template_name = "oj.report.template.data";
+					templateName = "oj.report.template.data";
 				}
 				WebNoteRes webNoteRes = WebNoteRes.builder()
-						.content(ConfigUtil.getContextProperty(template_name)).build();
+						.content(ConfigUtil.getContextProperty(templateName)).build();
 				webNoteRes.setIsSubmit(false);
 				if (null == noteBo) {
 					rsp.setData(webNoteRes);
 					return rsp;
 				}
-				String note_content = webNoteRes.getContent();
-				noteBo.setContent(note_content);
+				String noteContent = webNoteRes.getContent();
+				noteBo.setContent(noteContent);
 
 			} else if (null == noteBo) {
 				return rsp;

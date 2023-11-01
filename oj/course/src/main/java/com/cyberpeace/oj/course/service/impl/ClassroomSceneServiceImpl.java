@@ -121,7 +121,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		//启动场景时，获取该课时最新的存活时间
 		groupInfo.setDestroyDelay(courseLesson.getDestroyDelay());
 		// 5.4.1只限制前台启动场景数量
-		if (authContext.getIsWeb()) {
+		if (Boolean.TRUE.equals(authContext.getIsWeb())) {
 			ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
 		}
 
@@ -278,7 +278,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		}
 
 		sceneHandler.finish(groupId);
-		if (sceneHandler.isFinishAll()) {
+		if (Boolean.TRUE.equals(sceneHandler.isFinishAll())) {
 			batchSceneMap.remove(classroomId);
 		}
 
@@ -498,7 +498,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		data.put(JsonKeyConstant.CODE, ojEvent.getCode());
 		data.put(JsonKeyConstant.DATA, "");
 
-		if (sceneShare) {
+		if (Boolean.TRUE.equals(sceneShare)) {
 			// 共享消息数据
 			LessonWsMessageIdentifier messageIdentifier = LessonWsMessageIdentifier.builder()
 					.lessonId(lesson.getResourceId()).fromWeb(CommonConstant.TRUE)

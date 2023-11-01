@@ -96,7 +96,7 @@ public class AdminLearnStatisticController {
 			lessonStatisticsList(@ApiParam @Validated LessonStatisticsListReq pageReq) {
 		Page<AdminLessonStatisticsRes> page = pageReq.toPageParam();
 		ListRsp<AdminLessonStatisticsRes> res = courseLearnStatisticsService
-				.LessonStatisticsList(pageReq.getCourseId(), page, pageReq);
+				.lessonStatisticsList(pageReq.getCourseId(), page, pageReq);
 		return new BaseRsp<>(res);
 	}
 
@@ -107,7 +107,7 @@ public class AdminLearnStatisticController {
 			lessonStatisticsDetail(@ApiParam @Validated LessonStatisticsDetailReq pageReq) {
 		Page<AdminLessonStatisticsDetailRes> page = pageReq.toPageParam();
 		ListRsp<AdminLessonStatisticsDetailRes> res = courseLearnStatisticsService
-				.LessonStatisticsDetail(pageReq.getOrgId(), pageReq.getLessonId(),
+				.lessonStatisticsDetail(pageReq.getOrgId(), pageReq.getLessonId(),
 						pageReq.getSearch(), page, pageReq.getSort());
 		return new BaseRsp<>(res);
 	}

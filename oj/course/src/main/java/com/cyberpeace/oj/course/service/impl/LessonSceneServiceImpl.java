@@ -91,7 +91,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
 
 		// 场景启动数据校验
-		if (authContext.getIsWeb()) {
+		if (Boolean.TRUE.equals(authContext.getIsWeb())) {
 			ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
 		}
 
@@ -113,7 +113,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		initOjLocalScene.setLocalSceneId(localScene.getResourceId());
 
 		// 场景启动
-		String sceneId = authContext.getIsWeb() ? localSceneService.startScene(localScene)
+		String sceneId = Boolean.TRUE.equals(authContext.getIsWeb()) ? localSceneService.startScene(localScene)
 				: localSceneService.testScene(localScene);
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("startScene: Scene start failed! localScene=[{}]",
@@ -286,14 +286,13 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	 * @return
 	 */
 	public OjLocalScene initLessonOjLocalScene(CourseLesson courseLesson, AuthContext authContext) {
-		OjLocalScene ojLocalScene = OjLocalScene.builder().businessId(courseLesson.getResourceId())
+
+		return OjLocalScene.builder().businessId(courseLesson.getResourceId())
 				.businessType(BusinessCode.LESSON.getCode())
 				.resourceId(IDGeneratorUtil.getID()).fromWeb(authContext.getIsWeb())
 				.shared(courseLesson.getSceneShareMode().intValue() == SceneShare.SHARED.getCode()
 						.intValue())
 				.userId(authContext.getUserId()).build();
-
-		return ojLocalScene;
 	}
 
 	/**

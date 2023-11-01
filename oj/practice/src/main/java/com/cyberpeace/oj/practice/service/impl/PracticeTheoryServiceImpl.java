@@ -42,11 +42,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,7 +53,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper, PracticeTheory> implements PracticeTheoryService {
 
-    private final Boolean IS_COLLECTED = Boolean.FALSE;
+    private static final Boolean ISCOLLECTED = Boolean.FALSE;
 
     @Autowired
     private PracticeSetMapper practiceSetMapper;
@@ -134,13 +132,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         theoryListQuery.setResourceIds(practiceIds);
 
         // 答题记录过滤习题
-        if (authContext.getIsWeb() && null != listQuery.getSolved()) {
+        if (Boolean.TRUE.equals(authContext.getIsWeb()) && null != listQuery.getSolved()) {
             List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
                     authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-                    CommonConstant.TRUE, IS_COLLECTED);
+                    CommonConstant.TRUE, ISCOLLECTED);
             List<String> triedIds = practiceSolvedMapper.selectUserAndSolved(
                     authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-                    CommonConstant.FALSE, IS_COLLECTED);
+                    CommonConstant.FALSE, ISCOLLECTED);
 
             // 求交集 空则返回为空
             if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())) {
@@ -182,7 +180,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         return iPage.convert(practiceTheory -> {
             PracticeTheoryListBo theoryListBo = BeanUtils.copy(practiceTheory, PracticeTheoryListBo.class);
 
-            if (authContext.getIsWeb()) {
+            if (Boolean.TRUE.equals(authContext.getIsWeb())) {
                 // 解题状态设置
                 if (null != listQuery.getSolved()) {
                     theoryListBo.setSolved(listQuery.getSolved());
@@ -191,7 +189,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
                     if (practiceSolved == null) {
                         theoryListBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
                     } else {
-                        theoryListBo.setSolved(practiceSolved.getSolved() ?
+                        theoryListBo.setSolved(Boolean.TRUE.equals(practiceSolved.getSolved()) ?
                                 PracticeSolved.SolvedStatus.SOLVED.getCode() : PracticeSolved.SolvedStatus.TRIED.getCode());
                     }
                 }
@@ -250,7 +248,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
             webTheoryBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
         } else {
             PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
-            if (practiceSolved.getSolved()) {
+            if (Boolean.TRUE.equals(practiceSolved.getSolved())) {
                 detailBo.setCorrectAnswer(webTheoryBo.getAnswer());
                 detailBo.setIsSolved(practiceSolved.getSolved());
                 detailBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
@@ -317,7 +315,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 //更新错题集状态
-                if (evaluateResult.getSolved()) {
+                if (Boolean.TRUE.equals(evaluateResult.getSolved())) {
                     practiceMistakeService.addCorrect(userId, practiceTheory.getResourceId(), PracticeCategory.PracticeType.THEORY.getCode());
                 } else {
                     practiceMistakeService.addIncorrect(userId, practiceTheory.getResourceId(), PracticeCategory.PracticeType.THEORY.getCode());
@@ -408,8 +406,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
         List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(setIds);
         List<String> publicIds = practiceSets.stream()
-                .filter(practiceSet -> practiceSet.getIsPublic())
-                .map(practiceSet -> practiceSet.getResourceId()).collect(Collectors.toList());
+                .filter(PracticeSet::getIsPublic)
+                .map(PracticeSet::getResourceId).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(publicIds)) {
             return Lists.newArrayList();
         }
@@ -520,8 +518,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         List<TheorySimpleBo> bos = practiceTheoryMapper.selectSimple(listQuery, true);
         Map<Integer, List<TheorySimpleBo>> typeMap = StreamApiUtils.groupBy(bos,
                 TheorySimpleBo::getTheoryType);
-        ExternalTheoryCountBo countBo = new ExternalTheoryCountBo(typeMap);
-        return countBo;
+        return new ExternalTheoryCountBo(typeMap);
     }
 
     @Override
@@ -587,15 +584,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
                 List<BlankAnswer> blankAnswers = JsonUtil.toJsonObjectArray(theory.getAnswer(),
                         BlankAnswer.class);
 
-                String answer = "";
+                StringBuilder answer = new StringBuilder();
 
                 for (int i = 0; i < blankAnswers.size(); i++) {
                     String answerValue = blankAnswers.get(i).getValue();
-                    answer += "  " + (i + 1) + ". " + answerValue + System.lineSeparator();
+                    answer.append("  ").append(i + 1).append(". ").append(answerValue).append(System.lineSeparator());
 
                 }
 
-                theoryBaseMd.setAnswer(answer.trim());
+                theoryBaseMd.setAnswer(answer.toString().trim());
                 blankList.add(theoryBaseMd);
 
             }
@@ -733,7 +730,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
                 webTheoryRecordReq.getSolved());
         //设置习题集名称
         List<String> practiceSetIds = StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getPracticeSetId);
-        if (practiceSetIds.size() == 0) {
+        if (practiceSetIds.isEmpty()) {
             return new ArrayList<>();
         }
         List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
@@ -800,7 +797,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         Map<String, String> userIdNameMap = StreamApiUtils.toMap(userInfoList, UserInfo::getUserId, UserInfo::getName);
         List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectTop5(resourceId, userIds);
 
-        if (practiceSolveds.size() > 0) {
+        if (!practiceSolveds.isEmpty()) {
             return practiceSolveds.stream().map(item -> {
                 SolvedTop5 solvedTop5 = new SolvedTop5();
                 solvedTop5.setSolved(item.getSolved());
@@ -814,9 +811,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
     private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
         Map<String, String> optionMap = JsonUtil.toJsonObject(theory.getOption(), TreeMap.class);
-        String title = "";
+        StringBuilder title = new StringBuilder();
 
-        title += "    " + theory.getTitle() + System.lineSeparator() + System.lineSeparator();
+        title.append("    ").append(theory.getTitle()).append(System.lineSeparator()).append(System.lineSeparator());
 
         Iterator<String> iterator = optionMap.keySet().iterator();
 
@@ -824,10 +821,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
             String key = iterator.next();
             String value = optionMap.get(key).trim();
 
-            title += "    " + key + ". " + value + System.lineSeparator() + System.lineSeparator();
+            title.append("    ").append(key).append(". ").append(value).append(System.lineSeparator()).append(System.lineSeparator());
         }
 
-        theoryBaseMd.setTitle(title);
+        theoryBaseMd.setTitle(title.toString());
 
     }
 }

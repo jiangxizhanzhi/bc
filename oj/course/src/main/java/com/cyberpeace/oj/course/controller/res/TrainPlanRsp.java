@@ -1,7 +1,6 @@
 package com.cyberpeace.oj.course.controller.res;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.io.Serializable;

@@ -61,7 +61,7 @@ public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 			}
 
 			Boolean solved = userAnswer.equals(realAnswer);
-			Double score = solved ? totalScore : CommonConstant.ZERO.doubleValue();
+			Double score = Boolean.TRUE.equals(solved) ? totalScore : CommonConstant.ZERO.doubleValue();
 			return EvaluateResult.builder().solved(solved).score(score).totalScore(totalScore)
 					.build();
 		}
@@ -90,7 +90,7 @@ public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 			realAnswer = StringUtils.join(realAnswerList, "");
 
 			Boolean solved = userAnswer.equals(realAnswer);
-			Double score = solved ? totalScore : CommonConstant.ZERO.doubleValue();
+			Double score = Boolean.TRUE.equals(solved) ? totalScore : CommonConstant.ZERO.doubleValue();
 			return EvaluateResult.builder().solved(solved).score(score).totalScore(totalScore)
 					.build();
 

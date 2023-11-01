@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassroomPracticeBo implements Serializable {
+public class ClassroomPracticeBo {
 
 	@ApiModelProperty("是否已发布")
 	private Boolean released=true;

@@ -138,9 +138,6 @@ public class ClassroomEventListener extends MessageListener {
 		}
 
 		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
-		if (ojLocalScene == null) {
-			return false;
-		}
 
 		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
 				.selectById(ojLocalScene.getBusinessId());

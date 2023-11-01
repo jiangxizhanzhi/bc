@@ -19,10 +19,10 @@ public interface CourseLearnStatisticsService {
 	ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page<AdminCourseStatisticsRes> page,
 			AuthContext authContext);
 
-	ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String lessonStatisticsListReq,
-			Page<AdminLessonStatisticsRes> page, LessonStatisticsListReq pageReq);
+	ListRsp<AdminLessonStatisticsRes> lessonStatisticsList(String lessonStatisticsListReq,
+														   Page<AdminLessonStatisticsRes> page, LessonStatisticsListReq pageReq);
 
-	ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
-			String lessonId, String usernameLike, Page<AdminLessonStatisticsDetailRes> page, String sort);
+	ListRsp<AdminLessonStatisticsDetailRes> lessonStatisticsDetail(String organizationId,
+																   String lessonId, String usernameLike, Page<AdminLessonStatisticsDetailRes> page, String sort);
 
 }

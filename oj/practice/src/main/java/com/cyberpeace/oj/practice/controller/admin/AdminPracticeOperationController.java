@@ -238,7 +238,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		PracticeOperation operation = practiceValidateHandler
 				.validateOperationExist(sceneShareModeReq.getResourceId());
 
-		if (operation.getDynamicEnv() && null != operation.getSceneShareMode()
+		if (Boolean.TRUE.equals(operation.getDynamicEnv() && null != operation.getSceneShareMode())
 				&& StringUtils.isNotBlank(operation.getTopoId())) {
 			practiceValidateHandler.validateOperationUpdateShareModeSceneExist(operation);
 		}

@@ -90,10 +90,8 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 			List<PracticeCategory> categories = practiceCategoryMapper
 					.selectByCode(existCategory.getCode());
 
-			categories.forEach(practiceCategory -> {
-				practiceCategory.setCode(practiceCategory.getCode().replace(existCategory.getCode(),
-						category.getCode()));
-			});
+			categories.forEach(practiceCategory -> practiceCategory.setCode(practiceCategory.getCode().replace(existCategory.getCode(),
+					category.getCode())));
 
 			categoryList.addAll(categories);
 		}
@@ -159,7 +157,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<String> categoryIds = StreamApiUtils.getColumn(categories,
 				PracticeCategory::getResourceId);
 
-		if (self) {
+		if (Boolean.TRUE.equals(self)) {
 			categoryIds.add(parentId);
 		}
 
@@ -225,7 +223,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 	 */
 	private CategoryListBo entityToListBo(PracticeCategory practiceCategory, Boolean children) {
 
-		return children ? setChildren(practiceCategory)
+		return Boolean.TRUE.equals(children) ? setChildren(practiceCategory)
 				: BeanUtils.copy(practiceCategory, CategoryListBo.class);
 	}
 

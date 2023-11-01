@@ -57,7 +57,7 @@ public class WebClassroomController {
 		Date endOfDay = TimeUtil.getEndOfDay(
 				TimeUtil.toDate2(TimeUtil.getHeadOrTailDayOfSepecificMonth(month, false)));
 
-		if (!authContext.getSuperAdmin() && StringUtils.isBlank(authContext.getOrganization())) {
+		if (Boolean.TRUE.equals(!authContext.getSuperAdmin()) && StringUtils.isBlank(authContext.getOrganization())) {
 			return new BaseRsp<>();
 		}
 

@@ -84,7 +84,7 @@ public class AdminClassroomController {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		if (!authContext.getSuperAdmin() && StringUtils.isBlank(authContext.getOrganization())) {
+		if (Boolean.TRUE.equals(!authContext.getSuperAdmin()) && StringUtils.isBlank(authContext.getOrganization())) {
 			return new BaseRsp<>();
 		}
 
@@ -99,7 +99,7 @@ public class AdminClassroomController {
 		}
 
 		// 非超级管理员仅查看自己创建的课程表
-		if (!authContext.getSuperAdmin()) {
+		if (Boolean.FALSE.equals(authContext.getSuperAdmin())) {
 			roomListQuery.setUserId(authContext.getUserId());
 		}
 
@@ -131,7 +131,7 @@ public class AdminClassroomController {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		if (!authContext.getSuperAdmin() && StringUtils.isBlank(authContext.getOrganization())) {
+		if (Boolean.TRUE.equals(!authContext.getSuperAdmin()) && StringUtils.isBlank(authContext.getOrganization())) {
 			return new BaseRsp<>();
 		}
 
@@ -146,7 +146,7 @@ public class AdminClassroomController {
 		}
 
 		// 非超级管理员仅查看自己创建的课程表
-		if (!authContext.getSuperAdmin()) {
+		if (Boolean.FALSE.equals(authContext.getSuperAdmin())) {
 			roomListQuery.setUserId(authContext.getUserId());
 		}
 

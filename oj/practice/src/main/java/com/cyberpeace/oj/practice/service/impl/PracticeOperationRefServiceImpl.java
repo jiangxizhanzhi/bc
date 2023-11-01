@@ -64,7 +64,7 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		List<PracticeOperationRef> operationRefs = practiceOperationRefMapper
 				.selectByPracticeIds(paperId, null);
 
-		List<OperationLessonBo> operationLessonBos = StreamApiUtils.map(operationRefs,
+		return StreamApiUtils.map(operationRefs,
 				practiceOperationRef -> {
 					PracticeOperation operation = JsonUtil.toJsonObject(
 							practiceOperationRef.getSnapshot(), PracticeOperation.class);
@@ -128,8 +128,6 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 
 					return operationLessonBo;
 				});
-
-		return operationLessonBos;
 	}
 
 	private PracticeRandomFlag getRandomFlag(PracticeOperation operation, String userId) {
@@ -165,11 +163,8 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		List<PracticeOperationRef> operationRefList = practiceOperationRefMapper
 				.selectByPaperId(paperId);
 		List<PracticeOperation> practiceOperationList = StreamApiUtils.map(operationRefList,
-				practiceTheoryRef -> {
-					PracticeOperation practiceOperation = JsonUtil
-							.toJsonObject(practiceTheoryRef.getSnapshot(), PracticeOperation.class);
-					return practiceOperation;
-				});
+				practiceTheoryRef -> JsonUtil
+						.toJsonObject(practiceTheoryRef.getSnapshot(), PracticeOperation.class));
 
 		practiceOperationService.exportPractice(pathname, practiceOperationList,
 				disableImageExport);

@@ -68,7 +68,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 				ctfPracticeDirs.add(tmpFile.getAbsolutePath());
 			}
 		}
-		if (ctfPracticeDirs.size() == 0) {
+		if (ctfPracticeDirs.isEmpty()) {
 			return Lists.newArrayList();
 		}
 

@@ -3,10 +3,8 @@ package com.cyberpeace.oj.practice.service.impl;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -368,7 +366,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Override
 	public List<String> duplicatePracticeSetInspect(List<String> practiceSets) {
 		List<String> duplicateName = Lists.newArrayList();
-		if (null == practiceSets || practiceSets.size() == 0) {
+		if (null == practiceSets || practiceSets.isEmpty()) {
 			return duplicateName;
 		}
 
@@ -404,7 +402,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			throw new BusinessException(OjBusinessErrorCode.OPERATION_EXPORT_QUERY_FAILED);
 		}
 
-		String destPath = newPath ? CommonConstant.SHARE_DIR + IDGeneratorUtil.getID()
+		String destPath = Boolean.TRUE.equals(newPath) ? CommonConstant.SHARE_DIR + IDGeneratorUtil.getID()
 				: CommonConstant.EXPORT_CTF_PATH;
 		EXPORT_LOG.info("Practice operation export path create successfully, path=[{}]", destPath);
 
@@ -465,7 +463,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	public List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType) {
 		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
 		authIds.remove(practiceSetId);
-		if (authIds.size() == 0) {
+		if (authIds.isEmpty()) {
 			return new ArrayList<>();
 		}
 		List<PracticeSet> practiceSets = practiceSetMapper.selectByIdsAndType(authIds, setType);
@@ -510,11 +508,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		String path = createPath(destPath, practiceSet.getName());
 		EXPORT_LOG.info("Practice set path create successfully! set_path=[{}]", path);
 
-		File README = new File(path, ResourceImportConstant.README_NAME);
+		File readme = new File(path, ResourceImportConstant.README_NAME);
 
-		if (!README.exists()) {
+		if (!readme.exists()) {
 			EXPORT_LOG.info("Start export practice set README.md, readme_path=[{}]",
-					README.getAbsolutePath());
+					readme.getAbsolutePath());
 			MdPracticeSet mdPracticeSet = entityToMd(practiceSet);
 
 			if (StringUtils.isNotBlank(practiceSet.getLogo())) {
@@ -533,7 +531,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			}
 
 			MdParser mdParser = new MdParser();
-			mdParser.write(mdPracticeSet, README);
+			mdParser.write(mdPracticeSet, readme);
 
 			EXPORT_LOG.info("export practice set README.md successfully");
 		}

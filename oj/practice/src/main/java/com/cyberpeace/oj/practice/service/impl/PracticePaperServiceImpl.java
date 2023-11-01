@@ -213,14 +213,14 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		PracticePaper practicePaper = practicePaperMapper.selectById(paperId);
 		PaperRecordSummaryRes paperRecordSummaryRes = practicePaperMapper.getPaperRecordByPaper(paperId);
 		paperRecordSummaryRes.setPaperTime(TimeUtil.format10(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime())));
-		if (paperRecordSummaryRes.getIsFinish()) {
+		if (Boolean.TRUE.equals(paperRecordSummaryRes.getIsFinish())) {
 			paperRecordSummaryRes.setAccuracyRate(paperRecordSummaryRes.getRight() * 100 / paperRecordSummaryRes.getCount());
 			paperRecordSummaryRes.setWrong(paperRecordSummaryRes.getWrong() + paperRecordSummaryRes.getNotStart());
 		}
 		PaperRecordDetailRes paperRecordDetailRes = BeanUtils.copy(paperRecordSummaryRes, PaperRecordDetailRes.class);
 		List<String> practiceRefIds = paperPracticeTheoryMapper.selectPracticeRefIdsByPaperId(paperId);
 		List<WebTheoryBo> webTheoryBoList = paperPracticeTheoryService.getPracticeDetail(practiceRefIds);
-		if (practicePaper.getIsFinish()) {
+		if (Boolean.TRUE.equals(practicePaper.getIsFinish())) {
 			webTheoryBoList.forEach(webTheoryBo -> {
 				if (webTheoryBo.getSolved().equals(PracticeSolved.SolvedStatus.NOT_START.getCode())) {
 					webTheoryBo.setSolved(PracticeSolved.SolvedStatus.TRIED.getCode());

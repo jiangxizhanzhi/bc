@@ -115,7 +115,7 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.THEORY.getCode(), practiceTheory.getResourceId()));
 
-		if (evaluateResult.getSolved()) {
+		if (Boolean.TRUE.equals(evaluateResult.getSolved())) {
 			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.SOLVED.getCode());
 			paperPracticeTheory.setSolved(PracticeSolved.SolvedStatus.SOLVED.getCode());
 		} else {
@@ -134,7 +134,7 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				//更新错题集状态
-				if (evaluateResult.getSolved()) {
+				if (Boolean.TRUE.equals(evaluateResult.getSolved())) {
 					practiceMistakeService.addCorrect(userId, paperPracticeTheory.getOriginId(), PracticeCategory.PracticeType.THEORY.getCode());
 				} else {
 					practiceMistakeService.addIncorrect(userId, paperPracticeTheory.getOriginId(), PracticeCategory.PracticeType.THEORY.getCode());

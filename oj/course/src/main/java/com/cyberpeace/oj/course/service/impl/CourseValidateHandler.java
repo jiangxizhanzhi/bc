@@ -318,20 +318,20 @@ public class CourseValidateHandler {
 	 * @param course
 	 */
 	public void validateBuiltin(Course course) {
-		if (course.getBuiltin()) {
+		if (Boolean.TRUE.equals(course.getBuiltin())) {
 			log.error("built in course [{}] can't be export", course.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.UNABLE_TO_EXPORT_BUILTIN_RESOURCE, course.getName());
 		}
 		List<CourseLesson> courseLessonList = courseLessonMapper.listByCourses(Arrays.asList(course.getResourceId()), null);
 		courseLessonList.forEach(courseLesson -> {
-			if (courseLesson.getBuiltin()) {
+			if (Boolean.TRUE.equals(courseLesson.getBuiltin())) {
 				log.error("built in lesson [{}] can't be export", courseLesson.getResourceId());
 				throw new BusinessException(OjBusinessErrorCode.COURSE_CONTAIN_BUILTIN_LESSON, course.getName(), courseLesson.getName());
 			}
 			Paper paper = paperMapper.selectById(courseLesson.getPaperId());
 			List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService.selectByPaper(paper.getResourceId(), true);
 			theoryLessonBos.forEach(theoryLessonBo -> {
-				if (theoryLessonBo.getBuiltin()) {
+				if (Boolean.TRUE.equals(theoryLessonBo.getBuiltin())) {
 					log.error("built in practice [{}] can't be export", theoryLessonBo.getResourceId());
 					throw new BusinessException(OjBusinessErrorCode.LESSON_CONTAIN_BUILTIN_PRACTICE, course.getName(), courseLesson.getName(), theoryLessonBo.getTitle());
 				}
@@ -339,7 +339,7 @@ public class CourseValidateHandler {
 			List<OperationLessonBo> operationLessonBos = practiceOperationRefService
 					.selectByPaperId(courseLesson.getResourceId(), paper.getResourceId(), true, true, null);
 			operationLessonBos.forEach(operationLessonBo -> {
-				if (operationLessonBo.getBuiltin()) {
+				if (Boolean.TRUE.equals(operationLessonBo.getBuiltin())) {
 					log.error("built in practice [{}] can't be export", operationLessonBo.getResourceId());
 					throw new BusinessException(OjBusinessErrorCode.LESSON_CONTAIN_BUILTIN_PRACTICE, course.getName(), courseLesson.getName(), operationLessonBo.getTitle());
 				}

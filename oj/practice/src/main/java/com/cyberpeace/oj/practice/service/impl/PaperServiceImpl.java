@@ -169,7 +169,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
 					true);
 
-			return iPage.convert(practiceOperation -> operationToListBo(practiceOperation));
+			return iPage.convert(this::operationToListBo);
 		}
 	}
 
@@ -186,13 +186,13 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		// 查询理论习题
 		List<PracticeTheory> theoryList = practiceTheoryMapper.selectBatchIds(pageByIds);
 		List<LibPracticeListBo> theoryBoList = StreamApiUtils.map(theoryList,
-				theory -> theoryToListBo(theory));
+				this::theoryToListBo);
 
 		// 查询实操习题
 		List<PracticeOperation> operationList = practiceOperationMapper
 				.selectBatchIds(pageByIds);
 		List<LibPracticeListBo> operationBoList = StreamApiUtils.map(operationList,
-				operation -> operationToListBo(operation));
+				this::operationToListBo);
 
 		// 数据分页
 		theoryBoList.addAll(operationBoList);
@@ -241,7 +241,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			}
 
 			theories.forEach(practiceTheory -> practiceTheory.setScore(score));
-			return StreamApiUtils.map(theories, practiceTheory -> theoryToListBo(practiceTheory));
+			return StreamApiUtils.map(theories, this::theoryToListBo);
 		} else {
 
 			// 习题集数量校验
@@ -268,7 +268,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			}
 
 			operations.forEach(operation -> operation.setScore(score));
-			return StreamApiUtils.map(operations, operation -> operationToListBo(operation));
+			return StreamApiUtils.map(operations, this::operationToListBo);
 		}
 	}
 
@@ -286,7 +286,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		}
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery, true);
 
-		return iPage.convert(practiceTheory -> theoryToListBo(practiceTheory));
+		return iPage.convert(this::theoryToListBo);
 	}
 
 	/**
@@ -371,7 +371,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 		// 生成理论习题练习
 		List<PaperPracticeContext> theoryContextList = columnMap.getOrDefault(
-				PracticeCategory.PracticeType.THEORY.getCode().intValue(), Lists.newArrayList());
+				PracticeCategory.PracticeType.THEORY.getCode(), Lists.newArrayList());
 		List<PracticeTheoryRef> theoryRefList = theoryContextToRef(theoryContextList, paper);
 		theoryRefs.addAll(theoryRefList);
 

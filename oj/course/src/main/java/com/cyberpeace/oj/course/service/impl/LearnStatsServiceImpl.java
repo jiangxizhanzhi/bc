@@ -42,11 +42,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LearnStatsServiceImpl implements LearnStatsService {
 
-	final int topTen = 10;
+	static final int TOP_TEN = 10;
 
-	final int topFive = 5;
+	static final int TOP_FIVE = 5;
 
-	final int minScore = 80; // 获取竞赛-理论赛的百分换算后的最低分数标准
+	static final int MIN_SCORE = 80; // 获取竞赛-理论赛的百分换算后的最低分数标准
 	
 	private static final String USER_ID = "user_id";
 
@@ -114,7 +114,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			userIds = new ArrayList<>();
 		}
 		List<JSONObject> examUserCount = remoteAdService.competitionListWithMinScore(startTimeStr,
-				endTimeStr, userIds, minScore);
+				endTimeStr, userIds, MIN_SCORE);
 		Map<String, Integer> examCount = getUserWithCount(examUserCount);
 
 		List<UserStatsBo> userStatsBos = Lists.newArrayList();
@@ -153,7 +153,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	 */
 	private <T> ListRsp<T> pagedData(Page<T> page, Integer total, OrderItem orderField,
 			List<T> userStatsBos) {
-		ListRsp<T> responseData = new ListRsp<T>();
+		ListRsp<T> responseData = new ListRsp<>();
 
 		if (orderField.getColumn() != null) {
 			LocalStringUtil
@@ -180,7 +180,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
 	@Override
 	public UserStatsRankBo getUserLearnRank() {
-		int limit = topFive;
+		int limit = TOP_FIVE;
 		long startTime = System.currentTimeMillis();
 		List<UserInfo> userInfos = remoteUserService.getAllUsers();
 		List<String> userIds = userInfos.stream().map(UserInfo::getUserId)
@@ -261,9 +261,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		Date endTime = new Date();
 		List<JSONObject> examIntegrals = remoteAdService.competitionListWithMinScore(
 				TimeUtil.format6(DateUtils.addDays(endTime, -CommonConstant.TWENTY_FOUR_MONTHS)),
-				TimeUtil.format6(endTime), null, minScore);
+				TimeUtil.format6(endTime), null, MIN_SCORE);
 		Map<String, Integer> integralExam = getUserWithCount(examIntegrals);
-		ArrayList<Map.Entry<String, Integer>> entries = getTopCount(integralExam, topFive);
+		ArrayList<Map.Entry<String, Integer>> entries = getTopCount(integralExam, TOP_FIVE);
 		entries.forEach(item -> {
 			if (usernameMap.get(item.getKey()) != null) {
 				userStatsRankBo.getAttendExamUser().add(usernameMap.get(item.getKey()));
@@ -326,7 +326,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	}
 
 	@Override
-	public HistogramRes getClassIntegralTopTen(String ranking_type, String orgId) {
+	public HistogramRes getClassIntegralTopTen(String rankingType, String orgId) {
 		List<UserInfo> userInfos = remoteUserService.getAllUsers();
 		List<String> userIds = userInfos.stream().map(UserInfo::getUserId)
 				.collect(Collectors.toList());
@@ -348,7 +348,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
 		// 获取竞赛的理论赛的积分数据
 		List<JSONObject> examIntegrals = remoteAdService.competitionListWithMinScore(startStr,
-				endStr, null, minScore);
+				endStr, null, MIN_SCORE);
 		Map<String, Integer> integralExam = getUserWithCount(examIntegrals);
 
 		List<String> xNames = new ArrayList<>();
@@ -356,28 +356,28 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		Map<String, Integer> result = new HashMap<>();
 		String integralString ="integral";
 		// 班级积分合并
-		if (ranking_type.equals("org")) {
+		if (rankingType.equals("org")) {
 			Map<String, String> childrenOrg = collectChildrenOrg(null);
-			Map<String, List<UserInfo>> org_users = userInfos.stream()
+			Map<String, List<UserInfo>> orgUsers = userInfos.stream()
 					.filter(item -> StringUtils.isNotBlank(item.getOrganizationId()))
 					.collect(Collectors.groupingBy(UserInfo::getOrganizationId));
 			for (Map.Entry<String, String> org : childrenOrg.entrySet()) {
-				String org_id = org.getKey();
+				String orgKey = org.getKey();
 				int integral = 0;
-				if (org_users.containsKey(org_id)) {
-					List<UserInfo> org_infos = org_users.get(org_id);
+				if (orgUsers.containsKey(orgKey)) {
+					List<UserInfo> orgInfos = orgUsers.get(orgKey);
 					integral += afterClassIntegrals.stream()
-							.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
+							.filter(tmp -> orgInfos.stream().map(UserInfo::getUserId)
 									.collect(Collectors.toList())
 									.contains(tmp.getString(USER_ID)))
 							.mapToInt(s -> Integer.parseInt(s.getString(integralString))).sum();
 					integral += lessonIntegrals.stream()
-							.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
+							.filter(tmp -> orgInfos.stream().map(UserInfo::getUserId)
 									.collect(Collectors.toList())
 									.contains(tmp.getString(USER_ID)))
 							.mapToInt(s -> Integer.parseInt(s.getString(integralString))).sum();
 					integral += examIntegrals.stream()
-							.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
+							.filter(tmp -> orgInfos.stream().map(UserInfo::getUserId)
 									.collect(Collectors.toList())
 									.contains(tmp.getString(USER_ID)))
 							.mapToInt(s -> Integer.parseInt(s.getString(COUNT))).sum()
@@ -389,7 +389,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			}
 
 			// 个人积分合并
-		} else if (ranking_type.equals("person")) {
+		} else if (rankingType.equals("person")) {
 			userInfos.forEach(user -> {
 				String userId = user.getUserId();
 				int integral = 0;
@@ -407,7 +407,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 				}
 			});
 		}
-		ArrayList<Map.Entry<String, Integer>> entries = getTopCount(result, topTen);
+		ArrayList<Map.Entry<String, Integer>> entries = getTopCount(result, TOP_TEN);
 		for (Map.Entry<String, Integer> tmp : entries) {
 			if (tmp.getValue() != 0) {
 				xNames.add(tmp.getKey());
@@ -475,39 +475,39 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
 		// 获取竞赛的理论赛参加次数排名
 		List<JSONObject> examUserCount = remoteAdService.competitionListWithMinScore(startStr,
-				endStr, null, minScore);
+				endStr, null, MIN_SCORE);
 
 		for (Map.Entry<String, String> org : childrenOrg.entrySet()) {
-			String org_id = org.getKey();
-			int org_lessons = 0;
-			int org_reports = 0;
-			int org_practices = 0;
-			int org_exams = 0;
-			if (orgUsers.containsKey(org_id)) {
-				List<UserInfo> org_infos = orgUsers.get(org_id);
-				org_lessons = getSum(lessons, org_infos);
-				org_reports = getSum(reports, org_infos);
-				org_practices = getSum(afterClassPractices, org_infos);
-				org_exams = getSum(examUserCount, org_infos);
+			String orgId = org.getKey();
+			int orgLessons = 0;
+			int orgReports = 0;
+			int orgPractices = 0;
+			int orgExams = 0;
+			if (orgUsers.containsKey(orgId)) {
+				List<UserInfo> orgInfos = orgUsers.get(orgId);
+				orgLessons = getSum(lessons, orgInfos);
+				orgReports = getSum(reports, orgInfos);
+				orgPractices = getSum(afterClassPractices, orgInfos);
+				orgExams = getSum(examUserCount, orgInfos);
 			}
-			if (org_lessons > 0) {
-				lessonMap.put(org.getValue(), org_lessons);
+			if (orgLessons > 0) {
+				lessonMap.put(org.getValue(), orgLessons);
 			}
-			if (org_reports > 0) {
-				reportMap.put(org.getValue(), org_reports);
+			if (orgReports > 0) {
+				reportMap.put(org.getValue(), orgReports);
 			}
-			if (org_practices > 0) {
-				afterClassMap.put(org.getValue(), org_practices);
+			if (orgPractices > 0) {
+				afterClassMap.put(org.getValue(), orgPractices);
 			}
-			if (org_exams > 0) {
-				examMap.put(org.getValue(), org_exams);
+			if (orgExams > 0) {
+				examMap.put(org.getValue(), orgExams);
 			}
 		}
-		ArrayList<Map.Entry<String, Integer>> lessonEntries = getTopCount(lessonMap, topFive);
-		ArrayList<Map.Entry<String, Integer>> reportEntries = getTopCount(reportMap, topFive);
+		ArrayList<Map.Entry<String, Integer>> lessonEntries = getTopCount(lessonMap, TOP_FIVE);
+		ArrayList<Map.Entry<String, Integer>> reportEntries = getTopCount(reportMap, TOP_FIVE);
 		ArrayList<Map.Entry<String, Integer>> afterClassEntries = getTopCount(afterClassMap,
-				topFive);
-		ArrayList<Map.Entry<String, Integer>> examEntries = getTopCount(examMap, topFive);
+				TOP_FIVE);
+		ArrayList<Map.Entry<String, Integer>> examEntries = getTopCount(examMap, TOP_FIVE);
 		lessonEntries.forEach(tmpLesson -> {
 			userStatsRankBo.getLessonRecordUser().add(tmpLesson.getKey());
 			userStatsRankBo.getLessonRecordCount().add(tmpLesson.getValue());
@@ -527,9 +527,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		return userStatsRankBo;
 	}
 
-	private int getSum(List<JSONObject> lessons, List<UserInfo> org_infos) {
+	private int getSum(List<JSONObject> lessons, List<UserInfo> orgInfos) {
 		return lessons.stream()
-				.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
+				.filter(tmp -> orgInfos.stream().map(UserInfo::getUserId)
 						.collect(Collectors.toList()).contains(tmp.getString(USER_ID)))
 				.mapToInt(s -> Integer.parseInt(s.getString(COUNT))).sum();
 	}
@@ -563,7 +563,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
 		for (OrgInfo org : orgInfos) {
 			List<OrgInfo> children = org.getChildren();
-			if (children.size() == 0) {
+			if (children.isEmpty()) {
 				childrenOrg.put(org.getId(), org.getPath());
 			} else {
 				getAllChildrenOrg(children, childrenOrg);
@@ -593,12 +593,12 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		List<String> userIds = userInfos.stream().map(UserInfo::getUserId)
 				.collect(Collectors.toList());
 
-		if (userIds.size() == 0) {
+		if (userIds.isEmpty()) {
 			return PageUtil.getListResult(null);
 		}
 		// 获取所有的末梢组织
 		Map<String, String> childrenOrg = collectChildrenOrg(organization);
-		Map<String, List<UserInfo>> org_users = userInfos.stream()
+		Map<String, List<UserInfo>> orgUsers = userInfos.stream()
 				.filter(item -> StringUtils.isNotBlank(item.getOrganizationId()))
 				.collect(Collectors.groupingBy(UserInfo::getOrganizationId));
 
@@ -606,25 +606,25 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		List<UserStatsBo> userStatsBos = learnStatsMapper.userStatsSelect(userIds,
 				Note.NoteType.REPORT.getCode(), startTime, endTime);
 		List<JSONObject> examUserCount = remoteAdService.competitionListWithMinScore(
-				TimeUtil.format6(startTime), TimeUtil.format6(endTime), null, minScore);
+				TimeUtil.format6(startTime), TimeUtil.format6(endTime), null, MIN_SCORE);
 		for (Map.Entry<String, String> org : childrenOrg.entrySet()) {
-			String org_id = org.getKey();
+			String orgId = org.getKey();
 			List<UserStatsBo> collect = new ArrayList<>();
 			int orgUserCount = 0;
 			int examCount = 0;
-			if (org_users.containsKey(org_id)) {
-				List<UserInfo> org_infos = org_users.get(org_id);
+			if (orgUsers.containsKey(orgId)) {
+				List<UserInfo> orgInfos = orgUsers.get(orgId);
 				collect = userStatsBos.stream()
-						.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
+						.filter(tmp -> orgInfos.stream().map(UserInfo::getUserId)
 								.collect(Collectors.toList()).contains(tmp.getResourceId()))
 						.collect(Collectors.toList());
 				examCount = examUserCount.stream()
-						.filter(tmp -> org_infos.stream().map(UserInfo::getUserId)
+						.filter(tmp -> orgInfos.stream().map(UserInfo::getUserId)
 								.collect(Collectors.toList()).contains(tmp.get(USER_ID)))
 						.mapToInt(s -> Integer.parseInt(s.getString(COUNT))).sum();
 				orgUserCount = (int) userInfos.stream()
 						.filter(s -> StringUtils.isNotBlank(s.getOrganizationId())
-								&& s.getOrganizationId().equals(org_id))
+								&& s.getOrganizationId().equals(orgId))
 						.count();
 			}
 			result.add(generateObj(collect, org.getValue(), orgUserCount, examCount));
@@ -640,10 +640,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		return pagedData(page, result.size(), orderField, result);
 	}
 
-	private OrgStatsBo generateObj(List<UserStatsBo> collect, String org_name, Integer orgUserCount,
+	private OrgStatsBo generateObj(List<UserStatsBo> collect, String orgName, Integer orgUserCount,
 			Integer examCount) {
 		OrgStatsBo res = new OrgStatsBo();
-		res.setOrganizationData(org_name);
+		res.setOrganizationData(orgName);
 		res.setOrgUserCount(orgUserCount);
 		res.setFinishPracticeCount(
 				collect.stream().mapToInt(UserStatsBo::getFinishPracticeCount).sum());

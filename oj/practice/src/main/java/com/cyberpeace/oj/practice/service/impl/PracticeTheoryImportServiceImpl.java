@@ -14,7 +14,6 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -35,8 +34,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
@@ -69,15 +66,15 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
-	private Integer MAX_CONTENT_LENGTH;
+	private Integer MAXCONTENTLENGTH;
 
-	private Integer MAX_CATEGORY_LENGTH;
+	private Integer MAXCATEGORYLENGTH;
 
 	@PostConstruct
 	private void init() {
-		MAX_CONTENT_LENGTH = Integer
+		MAXCONTENTLENGTH = Integer
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
-		MAX_CATEGORY_LENGTH = Integer
+		MAXCATEGORYLENGTH = Integer
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
 	}
 
@@ -182,7 +179,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		PracticeTheory practiceTheory = new PracticeTheory();
 		String content = excelRowData.get(0);
 		CrCommonValidator.validateLength(content, CrCommonConstants.ZERO_STR_LEN,
-				MAX_CONTENT_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+				MAXCONTENTLENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
 
 		practiceTheory.setContent(content);
 		practiceTheory.setTitle(content);
@@ -302,7 +299,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		PracticeTheory practiceTheory = new PracticeTheory();
 		String content = excelRowData.get(0);
 		CrCommonValidator.validateLength(content, CrCommonConstants.ZERO_STR_LEN,
-				MAX_CONTENT_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+				MAXCONTENTLENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
 
 		practiceTheory.setContent(content);
 		practiceTheory.setTitle(content);
@@ -328,7 +325,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		}
 		// 校验方向长度
 		CrCommonValidator.validateLength(categoryName, CrCommonConstants.ZERO_STR_LEN,
-				MAX_CATEGORY_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+				MAXCATEGORYLENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
 
 		String categoryId = practiceCategoryMapper
 				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);
@@ -538,7 +535,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	public List<PracticeTheory> mdDataToEntity(String lessonFilePath,
 			List<TheoryBaseMd> theoryBaseMdList, Integer code) {
 
-		List<PracticeTheory> practiceTheories = StreamApiUtils.map(theoryBaseMdList,
+		return StreamApiUtils.map(theoryBaseMdList,
 				theoryBaseMd -> {
 					PracticeTheory practiceTheory = BeanUtils.copy(theoryBaseMd,
 							PracticeTheory.class);
@@ -628,7 +625,6 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 					return practiceTheory;
 				});
-		return practiceTheories;
 
 	}
 
@@ -639,7 +635,9 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	 */
 	private static int[] getWeight(String[] split) {
 		int[] weights = new int[split.length];
-		int m = 100 / split.length, i = 0, sum = 0;
+		int m = 100 / split.length;
+		int i = 0;
+		int sum = 0;
 		for (; i < split.length - 1; i++) {
 			weights[i] = m;
 			sum += m;

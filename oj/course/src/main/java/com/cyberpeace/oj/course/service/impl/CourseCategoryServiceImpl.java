@@ -46,7 +46,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 				.selectChildrenByCode(courseCategory.getCode());
 
 		List<String> directionIds = StreamApiUtils.map(directions, CourseCategory::getResourceId);
-		if (self) {
+		if (Boolean.TRUE.equals(self)) {
 			directionIds.add(directionId);
 		}
 		return directionIds;
@@ -57,7 +57,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		// 查询所有
 		List<CourseCategory> allCategory = courseCategoryMapper.selectFirstLevel();
 
-		if (children) {
+		if (Boolean.TRUE.equals(children)) {
 			Map<String, List<CourseCategory>> parentMap = getParentMap(null);
 			// 递归组装数据
 			return packageCategoryList(allCategory, parentMap);
@@ -70,7 +70,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	public IPage<CourseCategoryBo> pageBySearch(Page<CourseCategory> page, String pattern, Boolean children) {
 		IPage<CourseCategory> iPage = courseCategoryMapper.pageBySearch(page, pattern);
 
-		if (children) {
+		if (Boolean.TRUE.equals(children)) {
 			Map<String, List<CourseCategory>> parentMap = getParentMap(null);
 			return iPage.convert(courseCategory -> packageCategoryBo(courseCategory, parentMap));
 		}
@@ -137,7 +137,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		if (children) {
+		if (Boolean.TRUE.equals(children)) {
 			Map<String, List<CourseCategory>> parentMap = getParentMap(courseCategory.getCode());
 			return packageCategoryBo(courseCategory, parentMap);
 		}

@@ -47,7 +47,7 @@ public class LessonOperationEvaluateHandler {
 			String lessonId) {
 
 		// 非动态环境 返回数据库答案
-		if (!practiceOperation.getDynamicEnv()
+		if (Boolean.TRUE.equals(!practiceOperation.getDynamicEnv())
 				&& StringUtils.isBlank(practiceOperation.getTopoId())) {
 			return practiceOperation.getAnswer();
 		}

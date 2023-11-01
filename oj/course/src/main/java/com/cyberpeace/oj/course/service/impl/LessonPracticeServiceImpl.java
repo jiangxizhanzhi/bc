@@ -116,7 +116,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 		CourseLesson courseLesson = validateLesson(lessonId);
 		PracticeOperation operation = validateOperation(practiceId, courseLesson);
-		if (!operation.getDynamicEnv() || StringUtils.isBlank(operation.getTopoId())) {
+		if (Boolean.TRUE.equals(!operation.getDynamicEnv()) || StringUtils.isBlank(operation.getTopoId())) {
 			log.error(
 					"Lesson practice delete failed! operation not scene! continue! lesson_id=[{}], practice_id=[{}]",
 					lessonId, practiceId);

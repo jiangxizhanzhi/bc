@@ -10,7 +10,7 @@ import lombok.Data;
 @ApiModel("课程基本信息")
 public class CourseInfoBo implements Serializable {
 
-	public final static Integer DEFAULT_WEIGHT = 1;
+	public static final Integer DEFAULT_WEIGHT = 1;
 
 	@ApiModelProperty("课程编号")
 	private String resourceId;

@@ -16,14 +16,14 @@ public class SpecialCourseContext implements Serializable {
 	private String userId;
 
 	public Boolean getMyCourse() {
-		return null == myCourse ? true : myCourse;
+		return null == myCourse || myCourse;
 	}
 
 	public Boolean getSystemCourse() {
-		return null == systemCourse ? true : systemCourse;
+		return null == systemCourse || systemCourse;
 	}
 
 	public Boolean getShareCourse() {
-		return null == shareCourse ? true : shareCourse;
+		return null == shareCourse || shareCourse;
 	}
 }

@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel
-public class LoadCourseReq implements Serializable {
+public class LoadCourseReq {
 
 	@ApiModelProperty("课程数据文件")
 	@NotNull

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -92,7 +91,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationMapper, PracticeOperation> implements PracticeOperationService {
 
-	private final Boolean IS_COLLECTED = Boolean.FALSE;
+	private static final Boolean ISCOLLECTED = Boolean.FALSE;
 
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
@@ -182,7 +181,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 数据设置
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
-		if (practiceOperation.getDynamicEnv() && null != ojSceneConfig) {
+		if (Boolean.TRUE.equals(practiceOperation.getDynamicEnv()) && null != ojSceneConfig) {
 			String topoId = localSceneService.saveTopo(ojSceneConfig,
 					BusinessCode.PRACTICE.getCode());
 			practiceOperation.setTopoId(topoId);
@@ -269,7 +268,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceValidateHandler.validateOperationUpdateTitleExist(operation,
 				updateOperation.getTitle());
 
-		if (operation.getDynamicEnv() && null != operation.getSceneShareMode()
+		if (Boolean.TRUE.equals(operation.getDynamicEnv() && null != operation.getSceneShareMode())
 				&& StringUtils.isNotBlank(operation.getTopoId())) {
 			practiceValidateHandler.validateOperationUpdateSceneExist(operation, ojSceneConfig);
 		}
@@ -282,7 +281,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			log.error("practiceOperation is null,ResourceId =[{}]", updateOperation.getResourceId());
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
+		if (Boolean.TRUE.equals(updateOperation.getDynamicEnv()) && null != ojSceneConfig) {
 			updateOperation.setTopoId(
 					localSceneService.saveTopo(ojSceneConfig, practiceOperation.getTopoId()));
 		}
@@ -304,7 +303,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				practiceOperationMapper.updateById(updateOperation);
 
-				if (updateRandom) {
+				if (Boolean.TRUE.equals(updateRandom)) {
 					practiceRandomFlagMapper.deleteByPractice(updateOperation.getResourceId(),
 							PracticeRandomFlag.FlagType.PRACTICE.getCode());
 				}
@@ -338,10 +337,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		!reqOperation.getAnswer().equals(dbOperation.getAnswer())) {
 			return true;
 		}
-		if(!reqOperation.getAttachmentId().equals(dbOperation.getAttachmentId())) {
-			return true;
-		}
-		return false;
+		return !reqOperation.getAttachmentId().equals(dbOperation.getAttachmentId());
 	}
 
 	/**
@@ -370,7 +366,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 		OperationBo operationBo = BeanUtils.copy(operation, OperationBo.class);
 
-		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
+		if (Boolean.TRUE.equals(operation.getDynamicEnv()) && StringUtils.isNotBlank(operation.getTopoId())) {
 			JSONObject sceneConfig = remoteTopoService.getTopoById(operation.getTopoId());
 			operationBo.setSceneConfigData(sceneConfig);
 		}
@@ -378,7 +374,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 获取附件信息
 		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
 
-			if (!authContext.getIsWeb()) {
+			if (Boolean.FALSE.equals(authContext.getIsWeb())) {
 				List<PracticeOperationFileBo> fileBos = getOperationFile(
 						operation.getAttachmentId());
 				operationBo.setFiles(fileBos);
@@ -534,7 +530,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			webOperationBo.setResolvedDetail(detailBo);
 		} else {
 			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
-			if (practiceSolved.getSolved()) {
+			if (Boolean.TRUE.equals(practiceSolved.getSolved())) {
 				detailBo.setCorrectAnswer(operationBo.getAnswer());
 				detailBo.setIsSolved(practiceSolved.getSolved());
 				detailBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
@@ -546,7 +542,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		// 场景数据
-		if (operationBo.getDynamicEnv() && StringUtils.isNotBlank(operationBo.getTopoId())) {
+		if (Boolean.TRUE.equals(operationBo.getDynamicEnv()) && StringUtils.isNotBlank(operationBo.getTopoId())) {
 			JSONObject sceneConfig = remoteTopoService.getTopoById(operationBo.getTopoId());
 			webOperationBo.setSceneConfigData(sceneConfig);
 
@@ -560,7 +556,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		// 题解数据获取
-		if (!webOperationBo.getWriteupPublic()) {
+		if (Boolean.FALSE.equals(webOperationBo.getWriteupPublic())) {
 			webOperationBo.setWriteup(null);
 		}
 
@@ -609,15 +605,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operationListQuery.setResourceIds(operationIds);
 
 		// 根据解题状态过滤
-		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
+		if (Boolean.TRUE.equals(authContext.getIsWeb()) && null != listQuery.getSolved()) {
 
 			// 查询已解决习题编号
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
-					CommonConstant.TRUE, IS_COLLECTED);
+					CommonConstant.TRUE, ISCOLLECTED);
 
 			// 正确取交集
-			if (listQuery.getSolved()) {
+			if (Boolean.TRUE.equals(listQuery.getSolved())) {
 				operationListQuery.getResourceIds().retainAll(solvedIds);
 			} else {
 				operationListQuery.getResourceIds().removeAll(solvedIds);
@@ -685,7 +681,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 显示知识点
 		operationListBo.setKnowledge(
 				JsonUtil.toJsonObjectArray(practiceOperation.getKnowledge(), String.class));
-		if (practiceOperation.getDynamicEnv()
+		if (Boolean.TRUE.equals(practiceOperation.getDynamicEnv())
 				&& StringUtils.isNotBlank(practiceOperation.getTopoId())) {
 			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
 					practiceOperation.getResourceId(), practiceOperation.getSceneShareMode(),
@@ -693,7 +689,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			operationListBo.setHasSceneData(null != ojLocalScene);
 		}
 
-		if (authContext.getIsWeb()) {
+		if (Boolean.TRUE.equals(authContext.getIsWeb())) {
 			if (null != solved) {
 				operationListBo.setSolved(solved);
 			} else {
@@ -768,7 +764,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public JSONObject startScene(String resourceId, AuthContext authContext) {
 
 		// 场景启动数量校验, 5.4.1只限制前台启动场景
-		if (authContext.getIsWeb()) {
+		if (Boolean.TRUE.equals(authContext.getIsWeb())) {
 			ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
 		}
 
@@ -778,7 +774,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		if (!operation.getDynamicEnv() || StringUtils.isBlank(operation.getTopoId())) {
+		if (Boolean.TRUE.equals(!operation.getDynamicEnv()) || StringUtils.isBlank(operation.getTopoId())) {
 			log.error("StartScene operation is not dynamic env! dynamic_env=[{}], topo_id=[{}]",
 					operation.getDynamicEnv(), operation.getTopoId());
 			throw new BusinessException(OjBusinessErrorCode.NON_DYNAMIC_ENVIRONMENT);
@@ -798,7 +794,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		ojLocalScene.setLocalSceneId(localScene.getResourceId());
 
 		// 场景数据启动
-		String sceneId = authContext.getIsWeb() ? localSceneService.startScene(localScene)
+		String sceneId = Boolean.TRUE.equals(authContext.getIsWeb()) ? localSceneService.startScene(localScene)
 				: localSceneService.testScene(localScene);
 		if (StringUtils.isBlank(sceneId)) {
 			log.error("Operation startScene: Scene start failed! scene_id is null");
@@ -882,7 +878,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		if (!operation.getDynamicEnv()) {
+		if (Boolean.FALSE.equals(operation.getDynamicEnv())) {
 			return null;
 		}
 
@@ -936,7 +932,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				} catch (Exception e) {
 					log.warn("Scene delete failed! local_scene_id=[{}], catch error:",
 							localScene.getResourceId(), e);
-					continue;
 				}
 			}
 		}
@@ -990,7 +985,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		dumpLoadBo.setAttachmentPath(filePathList);
 
 		// 场景
-		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
+		if (Boolean.TRUE.equals(operation.getDynamicEnv()) && StringUtils.isNotBlank(operation.getTopoId())) {
 			JSONObject topoData = remoteTopoService.exportTopo(operation.getTopoId());
 			dumpLoadBo.setTopoConfig(topoData);
 		}

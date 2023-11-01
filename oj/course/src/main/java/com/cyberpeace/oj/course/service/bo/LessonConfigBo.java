@@ -95,13 +95,12 @@ public class LessonConfigBo implements Serializable {
 		bos.add(0, lessonConfigBo);
 
 		// 转换数据
-		List<LessonConfigBo> configBos = bos.stream()
+
+		return bos.stream()
 				.filter(bo -> includeChapter ? includeChapter
 						: bo.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON.getCode()
 								.intValue())
 				.collect(Collectors.toList());
-
-		return configBos;
 
 	}
 

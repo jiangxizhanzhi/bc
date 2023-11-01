@@ -117,8 +117,8 @@ public class AdminTrainPlanController {
 	@GetMapping("/train_plan")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<TrainPlan> getAssessModel(
-			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
-		TrainPlan assessModel = trainPlanService.getById(resource_id);
+			@ApiParam(name = "resource_id", value = "查询id", required = true) String resourceId) {
+		TrainPlan assessModel = trainPlanService.getById(resourceId);
 
 		return new BaseRsp<>(assessModel);
 	}

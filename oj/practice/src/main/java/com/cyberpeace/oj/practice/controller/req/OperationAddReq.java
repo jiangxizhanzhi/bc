@@ -146,7 +146,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 			List<String> answers = JsonUtil.toJsonObjectArray(answer, String.class);
 			String[] files = StringUtils.split(attachmentId, CommonConstant.CODE_COMMA);
 			List<String> notEmptyFile = StreamApiUtils.filter(Arrays.asList(files),
-					file -> StringUtils.isNotBlank(file));
+					StringUtils::isNotBlank);
 
 			if (answers.size() != notEmptyFile.size()) {
 				log.error("answers.size() != notEmptyFile.size(),answers.size() ={}，notEmptyFile.size()={}", answers.size(), notEmptyFile.size());

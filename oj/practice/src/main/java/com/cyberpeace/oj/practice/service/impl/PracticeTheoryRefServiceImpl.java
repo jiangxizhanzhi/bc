@@ -44,7 +44,7 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 		List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper.selectByPracticeIds(paperId,
 				null);
 
-		List<TheoryLessonBo> theoryList = StreamApiUtils.map(theoryRefList, practiceTheoryRef -> {
+		return StreamApiUtils.map(theoryRefList, practiceTheoryRef -> {
 			PracticeTheory practiceTheory = JsonUtil.toJsonObject(practiceTheoryRef.getSnapshot(),
 					PracticeTheory.class);
 			TheoryLessonBo theoryLessonBo = BeanUtils.copy(practiceTheory, TheoryLessonBo.class);
@@ -73,8 +73,6 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 
 			return theoryLessonBo;
 		});
-
-		return theoryList;
 	}
 
 	@Override
@@ -90,17 +88,14 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 	public void exportLessonPractice(String pathname, String paperId) {
 		List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper.selectByPracticeIds(paperId,
 				null);
-		List<PracticeTheory> theoryList = StreamApiUtils.map(theoryRefList, practiceTheoryRef -> {
-			PracticeTheory practiceTheory = JsonUtil.toJsonObject(practiceTheoryRef.getSnapshot(),
-					PracticeTheory.class);
-			return practiceTheory;
-		});
+		List<PracticeTheory> theoryList = StreamApiUtils.map(theoryRefList, practiceTheoryRef -> JsonUtil.toJsonObject(practiceTheoryRef.getSnapshot(),
+				PracticeTheory.class));
 
 		MdTheoryParser mdTheoryParser = new MdTheoryParser();
 
 		MdTheoryPractice mdTheory = practiceSetService.exportMdTheoryPractice(pathname, theoryList);
 
-		if (theoryList.size() > 0) {
+		if (!theoryList.isEmpty()) {
 			mdTheoryParser.write(mdTheory, new File(
 					pathname + File.separator + ResourceImportConstant.PRACTICE_FILE_NAME));
 		}

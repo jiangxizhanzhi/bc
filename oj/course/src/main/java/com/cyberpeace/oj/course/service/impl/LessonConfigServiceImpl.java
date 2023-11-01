@@ -237,7 +237,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		List<LessonConfigBo> children = lessonConfigBo.getChildren();
 		if (CollectionUtils.isNotEmpty(children)) {
 			List<LessonConfigDumpBo> configDumpBos = StreamApiUtils.map(children,
-					configBo -> configToDumpBo(configBo));
+					this::configToDumpBo);
 			configDumpBo.setChildren(configDumpBos);
 		}
 
@@ -275,7 +275,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 				lessonConfig -> configToBo(lessonConfig, lessonMap));
 
 		// 前台掉用 查询学习记录
-		if (authContext.getIsWeb()) {
+		if (Boolean.TRUE.equals(authContext.getIsWeb())) {
 			List<LessonRecord> recordList = lessonRecordMapper
 					.listByLessonAndUser(authContext.getUserId(), lessonIds);
 			Map<String, List<LessonRecord>> recordMap = recordList.stream().collect(Collectors.groupingBy(LessonRecord::getLessonId));

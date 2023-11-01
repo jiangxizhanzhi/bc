@@ -367,7 +367,7 @@ public class PracticeValidateHandler {
 		}
 
 		// topo结构一致性校验
-		if (!remoteTopoService.equalTopo(topoData, operation.getTopoId())) {
+		if (Boolean.FALSE.equals(remoteTopoService.equalTopo(topoData, operation.getTopoId()))) {
 			log.error("scene is running!topoData=[{}],topoId=[{}] ", JsonUtil.toJsonString(topoData),operation.getTopoId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}

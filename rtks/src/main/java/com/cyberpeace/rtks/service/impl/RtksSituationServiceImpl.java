@@ -74,26 +74,8 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		}
 		userRankingBoList.sort(Comparator.comparing(UserRankingBo::getMatch).reversed());
 		// star of role
-		int temp = 0;
-		int sMatch;
-		for (int i = 0; i < userRankingBoList.size(); i++) {
-			sMatch = userRankingBoList.get(i).getMatch();
-			if (i < 3) {
-				if (sMatch < RtksCommonConstants.OUTSTANDING_MATCH) {
-					break;
-				} else {
-					temp = sMatch;
-					userRankingBoList.get(i).setStar(true);
-				}
-			} else {
-				// 同分处理
-				if (temp == sMatch) {
-					userRankingBoList.get(i).setStar(true);
-				} else {
-					break;
-				}
-			}
-		}
+		markStar(userRankingBoList);
+
 		result.setUserRanking(userRankingBoList);
 
 		// org ranking
@@ -356,6 +338,30 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				}
 			}
 		});
+	}
+	
+	private void markStar(List<UserRankingBo> userRankingBoList) {
+		// star of role
+		int temp = 0;
+		int sMatch;
+		for (int i = 0; i < userRankingBoList.size(); i++) {
+			sMatch = userRankingBoList.get(i).getMatch();
+			if (i < 3) {
+				if (sMatch < RtksCommonConstants.OUTSTANDING_MATCH) {
+					break;
+				} else {
+					temp = sMatch;
+					userRankingBoList.get(i).setStar(true);
+				}
+			} else {
+				// 同分处理
+				if (temp == sMatch) {
+					userRankingBoList.get(i).setStar(true);
+				} else {
+					break;
+				}
+			}
+		}
 	}
 }
 

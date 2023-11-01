@@ -121,9 +121,6 @@ public class RoleController {
 	private KnowledgeService knowledgeService;
 
 	@Autowired
-	private SkillService skillService;
-
-	@Autowired
 	private AbilityService abilityService;
 
 	@Autowired
@@ -160,7 +157,7 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
 		validate(input);
-		if (roleService.ifNameDuplicate(input.getName(), "")) {
+		if (Boolean.TRUE.equals(roleService.ifNameDuplicate(input.getName(), ""))) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
 		}
 
@@ -191,7 +188,8 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
 		validate(input);
-		if (roleService.ifNameDuplicate(input.getName(), input.getResourceId())) {
+		if (Boolean.TRUE
+				.equals(roleService.ifNameDuplicate(input.getName(), input.getResourceId()))) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
 		}
 
@@ -515,7 +513,7 @@ public class RoleController {
 
 	protected IPage<Role> getPage(RoleListReq listReq) {
 		String frameId;
-		if (singleFrame) {
+		if (Boolean.TRUE.equals(singleFrame)) {
 			// 单框架模式下 忽略所属框架筛选条件
 			frameId = null;
 		} else {
@@ -577,7 +575,7 @@ public class RoleController {
 			Consumer<List<String>> checkIds) {
 
 		// 跳过该字段
-		if (isModify && inputIds == null) {
+		if (Boolean.TRUE.equals(isModify) && inputIds == null) {
 			return null;
 		}
 
@@ -602,7 +600,7 @@ public class RoleController {
 			String originIdStr, Function<String, List<CourseConfig>> getCourseConfigs) {
 
 		// 更新时跳过该字段
-		if (isModify && inputIds == null) {
+		if (Boolean.TRUE.equals(isModify) && inputIds == null) {
 			return null;
 		}
 
@@ -614,7 +612,7 @@ public class RoleController {
 		String idsStr = JsonUtil.toJsonString(inputIds);
 
 		// 更新时字段无变化，跳过该字段
-		if (isModify && originIdStr.equals(idsStr)) {
+		if (Boolean.TRUE.equals(isModify) && originIdStr.equals(idsStr)) {
 			return null;
 		}
 

@@ -149,10 +149,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return knowledges.stream().map(knowledge -> {
 			ValueDataBo valueDataBo = calculateKnowledgeScore(knowledge, userId,
 					null != knowledge.getWeight());
-			KnowledgeStudyPercentBo percentBo = new KnowledgeStudyPercentBo(
+			return new KnowledgeStudyPercentBo(
 					valueDataBo.getResourceId(), valueDataBo.getContent(),
 					MathUtils.ceil(valueDataBo.getProcess()));
-			return percentBo;
 		}).collect(Collectors.toList());
 	}
 

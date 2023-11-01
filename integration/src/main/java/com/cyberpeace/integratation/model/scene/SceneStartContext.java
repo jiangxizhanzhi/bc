@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.model.scene;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.util.JsonUtil;
 
@@ -31,7 +32,7 @@ public class SceneStartContext extends SceneOpsContext {
 		this.scene_ttl = scene_ttl;
 	}
 
-	public void setCscene(Object cscene) {
+	public void setCscene(JSONObject cscene) {
 		this.cscene = cscene;
 	}
 
@@ -56,7 +57,7 @@ public class SceneStartContext extends SceneOpsContext {
 	 *
 	 * 该字段传入的情况下，url中拓扑id不起作用。
 	 */
-	private Object cscene;
+	private JSONObject cscene;
 
 	public void setReferenceMetaData(ReferenceMetaData referenceMetaData) {
 		this.reference_meta_data = JsonUtil.toJsonString(referenceMetaData);

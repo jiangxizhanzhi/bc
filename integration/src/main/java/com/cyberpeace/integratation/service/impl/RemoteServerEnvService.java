@@ -1,25 +1,19 @@
 package com.cyberpeace.integratation.service.impl;
 
-import com.cyberpeace.common.util.SystemPropUtil;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import com.cyberpeace.common.util.SystemPropUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class RemoteServerEnvService {
 
-	private String OFFICE_SERVER_HOST;
-
-	private String OFFICE_SERVER_PORT;
-
 	private String OFFICE_SERVER_URL;
-
-	private String FILE_SERVER_HOST;
-
-	private String FILE_SERVER_PORT;
 
 	private String FILE_SERVER_URL;
 
@@ -33,8 +27,8 @@ public class RemoteServerEnvService {
 
 	@PostConstruct
 	public void init() {
-		OFFICE_SERVER_HOST = SystemPropUtil.getProp("OFFICE_SERVER_HOST");
-		OFFICE_SERVER_PORT = SystemPropUtil.getProp("OFFICE_SERVER_PORT");
+		String OFFICE_SERVER_HOST = SystemPropUtil.getProp("OFFICE_SERVER_HOST");
+		String OFFICE_SERVER_PORT = SystemPropUtil.getProp("OFFICE_SERVER_PORT");
 
 		if (StringUtils.isNotBlank(OFFICE_SERVER_HOST) && OFFICE_SERVER_HOST.startsWith("http")) {
 			OFFICE_SERVER_URL = OFFICE_SERVER_HOST + ":" + OFFICE_SERVER_PORT;
@@ -44,8 +38,8 @@ public class RemoteServerEnvService {
 
 		log.info("Office server url=[{}]", OFFICE_SERVER_URL);
 
-		FILE_SERVER_HOST = SystemPropUtil.getProp("FILE_SERVER_HOST");
-		FILE_SERVER_PORT = SystemPropUtil.getProp("FILE_SERVER_PORT");
+		String FILE_SERVER_HOST = SystemPropUtil.getProp("FILE_SERVER_HOST");
+		String FILE_SERVER_PORT = SystemPropUtil.getProp("FILE_SERVER_PORT");
 		if (StringUtils.isNotBlank(FILE_SERVER_HOST) && FILE_SERVER_HOST.startsWith("http")) {
 			FILE_SERVER_URL = FILE_SERVER_HOST + ":" + FILE_SERVER_PORT;
 		} else {

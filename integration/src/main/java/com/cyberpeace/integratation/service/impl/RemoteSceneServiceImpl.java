@@ -1,5 +1,17 @@
 package com.cyberpeace.integratation.service.impl;
 
+import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -15,17 +27,8 @@ import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Lists;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
-
-import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
 @Slf4j
 @Service
@@ -85,8 +88,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String NODE_SNAPSHOT_URL;
 
 	private String SNAPSHOT_HISTORY_URL;
-
-	private String SNAPSHOT_MERGE_URL;
 
 	private String SNAPSHOT_DELETE_URL;
 
@@ -184,7 +185,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		NODE_SNAPSHOT_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot");
 		SNAPSHOT_HISTORY_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.history");
-		SNAPSHOT_MERGE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.merge");
 		SNAPSHOT_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.delete");
 
 		CONNECTION_STATUS_URL = mpEnvService.getMpHost()

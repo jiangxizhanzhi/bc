@@ -548,7 +548,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// ws推送消息
 			WsMessage<WsMultiElementDynamic> wsMessage = new WsMessage<>(
-					MessageType.AttackEventEE.getDesc(), attackEvent);
+					MessageType.ATTACK_EVENT_EE.getDesc(), attackEvent);
 			arrayObjects.add(wsMessage);
 		}
 
@@ -668,7 +668,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			}
 
 			// 延时发送
-			Thread.sleep(interval * 1000);
+			Thread.sleep(interval * 1000L);
 		}
 
 	}
@@ -678,7 +678,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
 
 		// 推送ws消息
-		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),
+		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NODE_STATUS.getDesc(),
 				wsNodeStatus);
 		pushDataToRoom(wsMessage, sceneId);
 
@@ -765,7 +765,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				effect.setLineStyle(new LineStyle("#FF0000", 3, "straight"));
 				// 生成消息
 				WsMessage<WsMultiNodeEffect> wsMessage = new WsMessage<>(
-						MessageType.DirectorSchedulingEE.getDesc(), effect);
+						MessageType.DIRECTOR_SCHEDULING_EE.getDesc(), effect);
 				messageList.add(wsMessage);
 			}
 		}

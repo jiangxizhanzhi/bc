@@ -1,14 +1,11 @@
 package com.cyberpeace.situation.model;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.situation.dao.entity.SituationConfig;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class AreaInfo implements Serializable {

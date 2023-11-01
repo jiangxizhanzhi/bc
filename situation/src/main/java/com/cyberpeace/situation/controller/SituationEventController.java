@@ -34,11 +34,11 @@ public class SituationEventController {
 				actionCode);
 
 		// 设置消息代码
-		String messageType = MessageType.AttackEvent.getDesc();
+		String messageType = MessageType.ATTACK_EVENT.getDesc();
 		if (wsEvent instanceof WsMultiElementDynamic) {
-			messageType = MessageType.AttackEventEE.getDesc();
+			messageType = MessageType.ATTACK_EVENT_EE.getDesc();
 		} else if (wsEvent instanceof WsMultiAreaDynamic) {
-			messageType = MessageType.AttackEventEA.getDesc();
+			messageType = MessageType.ATTACK_EVENT_EA.getDesc();
 		}
 
 		// 推送ws消息
@@ -66,7 +66,7 @@ public class SituationEventController {
 	@PostMapping("single_event")
 	public BaseRsp<WsMessage<WsSingleNodeDynamic>>
 			singleEvent(@RequestBody WsSingleNodeDynamic eventMessageReq) {
-		String code = MessageType.SingleNodeDynamic.getDesc();
+		String code = MessageType.SINGLE_NODE_DYNAMIC.getDesc();
 		String sceneId = eventMessageReq.getSceneId();
 		WsMessage<WsSingleNodeDynamic> wsMessage = new WsMessage<>(code, eventMessageReq);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
@@ -77,7 +77,7 @@ public class SituationEventController {
 	@PostMapping("media_event")
 	public BaseRsp<WsMessage<WsAttackEffectDynamic>>
 			mediaEvent(@RequestBody WsAttackEffectDynamic wsAttackEffectDynamic) {
-		String code = MessageType.AttackEffect.getDesc();
+		String code = MessageType.ATTACK_EFFECT.getDesc();
 		String sceneId = wsAttackEffectDynamic.getSceneId();
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(code, wsAttackEffectDynamic);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);

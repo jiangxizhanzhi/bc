@@ -16,7 +16,6 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -78,9 +77,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	@Autowired
 	private SceneConfigService sceneConfigService;
 
-	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
+	public static final String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
 
-	public static String VIDEO_TYPE = "MP4";
+	public static final String VIDEO_TYPE = "MP4";
 
 	public static final String RESOURCE_FILE_NAME = "data.json";
 
@@ -100,7 +99,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	public Integer VIDEO_CODE = 2;
 
-	public final String ATTACK = "attack";
+	public static final String ATTACK = "attack";
 
 	@Override
 	public String addDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
@@ -125,7 +124,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			DynamicStage dynamicStageRes = new DynamicStage();
 			dynamicStageRes.setName(dynamicStageBo.getName());
 			List<AttackMessageReq> attackMessageBoList = new ArrayList<>();
-			if (dynamicStageBo.getAttackMessageIds().size() > 0) {
+			if (!dynamicStageBo.getAttackMessageIds().isEmpty()) {
 				List<AttackMessage> attackMessageList = attackMessageMapper
 						.selectBatchIds(dynamicStageBo.getAttackMessageIds());
 				if (attackMessageList.size() < dynamicStageBo.getAttackMessageIds().size()) {
@@ -242,7 +241,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				if (attackMessageIds.size() > 0) {
+				if (!attackMessageIds.isEmpty()) {
 					attackMessageMapper.deleteBatchIds(attackMessageIds);
 				}
 				dynamicSchemeMapper.deleteById(resourceId);
@@ -338,7 +337,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsAttackEffectDynamic.setEffectList(attackEffectList);
 
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(
-				MessageType.AttackEffect.getDesc(), wsAttackEffectDynamic);
+				MessageType.ATTACK_EFFECT.getDesc(), wsAttackEffectDynamic);
 		situationHandlerService.pushDataToRoom(wsMessage, attackMessageBo.getSceneId());
 
 		Thread thread = new Thread(new Runnable() {
@@ -347,9 +346,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			@Override
 			public void run() {
 				// 持续时间结束后清除该多媒体动效
-				Thread.sleep(attackMessageBo.getDurationTime() * 1000);
+				Thread.sleep(attackMessageBo.getDurationTime() * 1000L);
 				// 判断当前是否有其他动效正在运行
-				if (sceneConfigService.isCurrentScheme(attackMessageBo.getSceneId(), code)) {
+				if (Boolean.TRUE.equals(sceneConfigService.isCurrentScheme(attackMessageBo.getSceneId(), code))) {
 					clearMedia(attackMessageBo.getSceneId());
 				}
 			}
@@ -385,12 +384,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
 
 		if (elementIds.contains(attackMessageBo.getTargetId())) {
-			wsMessage = new WsMessage<>(MessageType.AttackEventEE.getDesc(), wsMultiNodeDynamic);
+			wsMessage = new WsMessage<>(MessageType.ATTACK_EVENT_EE.getDesc(), wsMultiNodeDynamic);
 		} else {
-			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
+			wsMessage = new WsMessage<>(MessageType.ATTACK_EVENT_EA.getDesc(), wsMultiNodeDynamic);
 		}
-		if (isSingleNode) {
-			wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(),
+		if (Boolean.TRUE.equals(isSingleNode)) {
+			wsMessage = new WsMessage<>(MessageType.SINGLE_NODE_DYNAMIC.getDesc(),
 					wsMultiNodeDynamic);
 		}
 		situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeDynamic.getSceneId());
@@ -430,7 +429,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							.getAttackMessageReqList()) {
 						attackMessageReq.setSceneId(sceneId);
 						// 查看当前是否有其他动效方案正在运行
-						if (!sceneConfigService.isCurrentScheme(sceneId, code)) {
+						if (Boolean.FALSE.equals(sceneConfigService.isCurrentScheme(sceneId, code))) {
 							// 有其他方案正在运行，当前方案停止
 							state = false;
 							break;
@@ -449,11 +448,11 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							pushAttackToRoom(attackMessageReq, elementIds);
 						}
 						if (attackMessageReq.getIntervalTime() != null) {
-							Thread.sleep(attackMessageReq.getIntervalTime() * 1000);
+							Thread.sleep(attackMessageReq.getIntervalTime() * 1000L);
 						}
 
 					}
-					if (state && sceneConfigService.isCurrentScheme(sceneId, code)) {
+					if (state && Boolean.TRUE.equals(sceneConfigService.isCurrentScheme(sceneId, code))) {
 						wsAttackScheduleStage.setStatus(STAGE_HAS_BEEN_RUN);
 						wsAttackMessageSchedule.setStatus(DYNAMIC_HAS_BEEN_RUN);
 						wsAttackMessageSchedule.setName("");
@@ -528,7 +527,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsAttackEffectDynamicBlank.setCategory(ATTACK);
 		wsAttackEffectDynamicBlank.setEffectList(new ArrayList<>());
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(
-				MessageType.AttackEffect.getDesc(), wsAttackEffectDynamicBlank);
+				MessageType.ATTACK_EFFECT.getDesc(), wsAttackEffectDynamicBlank);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 	}
 
@@ -743,7 +742,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	public void pushAttackScheduleToRoom(List<WsAttackSchedule> wsAttackScheduleList,
 			String sceneId) {
 		WsMessage<List<WsAttackSchedule>> wsMessage = new WsMessage<>(
-				MessageType.AttackSchedule.getDesc(), wsAttackScheduleList);
+				MessageType.ATTACK_SCHEDULE.getDesc(), wsAttackScheduleList);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 	}
 
@@ -757,7 +756,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			}
 		}
 		try {
-			String targetStr = new String(target.getBytes("GBK"), "iso-8859-1");
+			String targetStr = new String(target.getBytes("GBK"), StandardCharsets.ISO_8859_1);
 			int len = targetStr.length();
 			if (len < minLen || len > maxLen) {
 				log.error("length of name is {}, minLen is {}, maxLen is {}", len, minLen, maxLen);

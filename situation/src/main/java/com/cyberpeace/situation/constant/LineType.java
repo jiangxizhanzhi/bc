@@ -2,6 +2,7 @@ package com.cyberpeace.situation.constant;
 
 import com.cyberpeace.common.model.CommonContext;
 
+import com.cyberpeace.common.util.MathUtil;
 import lombok.Getter;
 
 public enum LineType {
@@ -28,7 +29,7 @@ public enum LineType {
 
 	public static String getRandomValue(LineType[] values) {
 
-		return values[(int) (Math.random() * values.length)].code;
+		return values[MathUtil.getRandomInt(values.length)].code;
 
 	}
 

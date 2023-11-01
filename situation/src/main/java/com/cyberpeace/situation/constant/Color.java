@@ -2,6 +2,7 @@ package com.cyberpeace.situation.constant;
 
 import com.cyberpeace.common.model.CommonContext;
 
+import com.cyberpeace.common.util.MathUtil;
 import lombok.Getter;
 
 public enum Color {
@@ -34,13 +35,11 @@ public enum Color {
 	}
 
 	public static String getRandomValue(Color[] values) {
-
-		return values[(int) (Math.random() * values.length)].code;
+		return values[MathUtil.getRandomInt(values.length)].code;
 
 	}
 
 	public String getMsg() {
 		return CommonContext.isChinese() ? desc : enDesc;
 	}
-
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.constant;
 
+import com.cyberpeace.common.util.MathUtil;
 import lombok.Getter;
 
 public enum ElementActionStatus {
@@ -25,7 +26,7 @@ public enum ElementActionStatus {
 
 	public static String getRandomValue(ElementActionStatus[] values) {
 
-		return values[(int) (Math.random() * values.length)].code;
+		return values[MathUtil.getRandomInt(values.length)].code;
 
 	}
 

@@ -2,6 +2,7 @@ package com.cyberpeace.situation.constant;
 
 import java.util.List;
 
+import com.cyberpeace.common.util.MathUtil;
 import com.google.common.collect.Lists;
 
 import lombok.Getter;
@@ -30,7 +31,7 @@ public enum LineEffect {
 
 		List<String> effect = Lists.newArrayList();
 
-		Integer n = (int) (Math.random() * (values.length + 1));
+		Integer n = MathUtil.getRandomInt(values.length + 1);
 
 		for (int i = 1; i <= n; i++) {
 			effect.add(values[i - 1].code);

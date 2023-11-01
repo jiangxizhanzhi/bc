@@ -331,9 +331,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
         WsMessage<WsMultiNodeEffect> wsMessage;
         if (elementIds.contains(his.getTarget())) {
-            wsMessage = new WsMessage<>(MessageType.DirectorSchedulingEE.getDesc(), wsMultiNodeGuide);
+            wsMessage = new WsMessage<>(MessageType.DIRECTOR_SCHEDULING_EE.getDesc(), wsMultiNodeGuide);
         } else {
-            wsMessage = new WsMessage<>(MessageType.DirectorSchedulingEA.getDesc(), wsMultiNodeGuide);
+            wsMessage = new WsMessage<>(MessageType.DIRECTOR_SCHEDULING_EA.getDesc(), wsMultiNodeGuide);
         }
         situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeGuide.getSceneId());
         return true;

@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.constant;
 
+import com.cyberpeace.common.util.MathUtil;
 import lombok.Getter;
 
 public enum ElementStatus {
@@ -28,7 +29,7 @@ public enum ElementStatus {
 
 	public static String getRandomValue(ElementStatus[] values) {
 
-		return values[(int) (Math.random() * values.length)].code;
+		return values[MathUtil.getRandomInt(values.length)].code;
 
 	}
 

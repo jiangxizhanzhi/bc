@@ -118,7 +118,7 @@ public class SituationController {
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(flowAutoRunReq.getSceneId());
 
 		// 场景未启动时返回false
-		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+		if (Boolean.FALSE.equals(topoHandlerService.checkSceneStatus(mpSceneData))) {
 			log.error("scene is not running, scene_id is:{}", flowAutoRunReq.getSceneId());
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
@@ -146,7 +146,7 @@ public class SituationController {
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
 
 		// 校验场景状态
-		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+		if (Boolean.FALSE.equals(topoHandlerService.checkSceneStatus(mpSceneData))) {
 			return new BaseRsp<>(new SceneConfigRes(false, false, false));
 		}
 
@@ -186,7 +186,7 @@ public class SituationController {
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
 
 		// 校验场景状态
-		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+		if (Boolean.FALSE.equals(topoHandlerService.checkSceneStatus(mpSceneData))) {
 			log.error("scene is not running, scene_id is {}", sceneId);
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
@@ -204,14 +204,14 @@ public class SituationController {
 		}
 
 		// 校验场景是否允许流量事件推送
-		if (sceneConfigReq.getFlowAnalysis()
-				&& !topoHandlerService.enableFlowCollect(mpSceneData)) {
+		if (Boolean.TRUE.equals(sceneConfigReq.getFlowAnalysis())
+				&& Boolean.TRUE.equals(!topoHandlerService.enableFlowCollect(mpSceneData))) {
 			log.error("scene is not configured to collect flow, scene_id is {}", sceneId);
 			throw new BusinessException(SituationErrorCode.FLOW_COLLECTION_IS_NOT_CONFIGURED);
 		}
 
 		// 校验场景是否允许流量自动运行
-		if (sceneConfigReq.getFlowAutoRun() && !topoHandlerService.enableFlowAutoRun(mpSceneData)) {
+		if (Boolean.TRUE.equals(sceneConfigReq.getFlowAutoRun()) && Boolean.TRUE.equals(!topoHandlerService.enableFlowAutoRun(mpSceneData))) {
 			log.error("scene is not configured to run flow, scene_id is {}", sceneId);
 			throw new BusinessException(SituationErrorCode.FLOW_SIMULATION_IS_NOT_CONFIGURED);
 		}
@@ -223,7 +223,7 @@ public class SituationController {
 
 		// 推送场景配置
 		SceneConfigRes sceneConfigRes = BeanUtils.copy(sceneConfig, SceneConfigRes.class);
-		WsMessage<SceneConfigRes> wsMessage = new WsMessage<>(MessageType.SceneConfig.getDesc(),
+		WsMessage<SceneConfigRes> wsMessage = new WsMessage<>(MessageType.SCENE_CONFIG.getDesc(),
 				sceneConfigRes);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 
@@ -247,18 +247,18 @@ public class SituationController {
 		RefreshDataRes refreshDataRes = new RefreshDataRes();
 
 		// 场景未启动时返回false
-		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+		if (Boolean.FALSE.equals(topoHandlerService.checkSceneStatus(mpSceneData))) {
 			return new BaseRsp<>(refreshDataRes);
 		}
 
 		// 自动运行流量
-		if (flowAutoRun) {
+		if (Boolean.TRUE.equals(flowAutoRun)) {
 			refreshDataRes.setFlowAutoRunResult(
 					topoHandlerService.flowAutoRun(sceneId, mpSceneData, null));
 		}
 
 		// 推送流量事件
-		if (flowAnalysis) {
+		if (Boolean.TRUE.equals(flowAnalysis)) {
 			FlowLogReq flowLogReq = new FlowLogReq(sceneId);
 			refreshDataRes.setFlowEvents(situationHandlerService.pushFlowEvents(flowLogReq));
 		}
@@ -266,7 +266,7 @@ public class SituationController {
 		refreshDataRes.setHostEvents(situationHandlerService.pushHostEvents(sceneId));
 
 		// 推送节点链路状态
-		if (linkStatus) {
+		if (Boolean.TRUE.equals(linkStatus)) {
 			refreshDataRes.setLinkStatus(situationHandlerService.pushLinkStatus(sceneId));
 		}
 
@@ -287,7 +287,7 @@ public class SituationController {
 				} catch (Exception e) {
 					mpSceneData = null;
 				}
-				if (topoHandlerService.checkSceneStatus(mpSceneData)) {
+				if (Boolean.TRUE.equals(topoHandlerService.checkSceneStatus(mpSceneData))) {
 					return;
 				}
 				dynamicSchemeService.clearSceneData(sceneId);

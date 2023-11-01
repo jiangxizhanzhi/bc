@@ -1,13 +1,10 @@
 package com.cyberpeace.situation.req;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.web.multipart.MultipartFile;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class ImportDynamicSchemeReq {

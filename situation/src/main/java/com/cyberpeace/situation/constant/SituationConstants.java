@@ -3,16 +3,18 @@ package com.cyberpeace.situation.constant;
 /**
  * 态势常用常量
  */
-public interface SituationConstants {
+public final class SituationConstants {
 
     /**
      * 3D拓扑默认线宽
      */
-    Integer DEFAULT_LINE_WIDTH = 5;
+    public static final Integer DEFAULT_LINE_WIDTH = 5;
 
     /**
      * 态势Demo场景id
      */
-    String DEMO_SCENE_ID = "demo";
+    public static final String DEMO_SCENE_ID = "demo";
+
+    private SituationConstants() {}
 
 }

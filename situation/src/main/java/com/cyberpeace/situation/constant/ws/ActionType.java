@@ -2,6 +2,7 @@ package com.cyberpeace.situation.constant.ws;
 
 import java.util.Arrays;
 
+import com.cyberpeace.common.util.MathUtil;
 import lombok.Getter;
 
 public enum ActionType {
@@ -58,11 +59,11 @@ public enum ActionType {
 	}
 
 	public static Integer getRandomValue(ActionType[] values) {
-		return values[(int) (Math.random() * values.length)].code;
+		return values[MathUtil.getRandomInt(values.length)].code;
 	}
 
 	public static ActionType getRandom(ActionType[] values) {
-		return values[(int) (Math.random() * values.length)];
+		return values[MathUtil.getRandomInt(values.length)];
 	}
 
 	public static <T extends ActionType> T getEnumByCode(Integer code, Class<T> enumClass) {

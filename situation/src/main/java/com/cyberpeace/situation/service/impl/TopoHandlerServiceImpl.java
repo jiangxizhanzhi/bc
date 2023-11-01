@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.cyberpeace.integratation.model.scene.SceneEventHostListReq;
+import com.cyberpeace.common.util.MathUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -233,7 +233,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 		for (int i = 0; i < num; i++) {
 			while (true) {
-				Integer j = (int) (Math.random() * nodes.size());
+				Integer j = MathUtil.getRandomInt(nodes.size());
 				if (!indexs.contains(j)) {
 					randomNodes.add(nodes.getJSONObject(j));
 					indexs.add(j);
@@ -289,10 +289,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 			wsNodeStatus.getElementStatus()
 					.add(BeanUtils.copy(nodeStatus, ElementStatusContext.class));
 
-			nodeStatus.getConnectionStatusList().forEach(connectionStatus -> {
-				wsNodeStatus.getConnectionStatus()
-						.add(BeanUtils.copy(connectionStatus, ConnectionStatusContext.class));
-			});
+			nodeStatus.getConnectionStatusList().forEach(connectionStatus -> wsNodeStatus.getConnectionStatus()
+					.add(BeanUtils.copy(connectionStatus, ConnectionStatusContext.class)));
 
 		}
 

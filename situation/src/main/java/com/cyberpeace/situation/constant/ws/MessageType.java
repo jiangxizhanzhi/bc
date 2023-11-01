@@ -8,17 +8,17 @@ public enum MessageType {
 	 * 消息类型
 	 */
 
-	SingleNodeDynamic(1, "single_node_dynamic"),
-	MultiNodeDynamic(2, "multi_node_dynamic"),
-	AttackEvent(3, "attack_event"),
-	AttackEventEE(4, "attack_event_element-element"),
-	AttackEventEA(5, "attack_event_element-area"),
-	AttackEffect(6, "attack_effect"),
-	NodeStatus(7, "link_status"),
-	AttackSchedule(8,"attack_schedule"),
-	SceneConfig(9,"scene_config"),
-	DirectorSchedulingEE(10,"director_scheduling_element-element"),
-	DirectorSchedulingEA(11,"director_scheduling_element-area");
+	SINGLE_NODE_DYNAMIC(1, "single_node_dynamic"),
+	MULTI_NODE_DYNAMIC(2, "multi_node_dynamic"),
+	ATTACK_EVENT(3, "attack_event"),
+	ATTACK_EVENT_EE(4, "attack_event_element-element"),
+	ATTACK_EVENT_EA(5, "attack_event_element-area"),
+	ATTACK_EFFECT(6, "attack_effect"),
+	NODE_STATUS(7, "link_status"),
+	ATTACK_SCHEDULE(8,"attack_schedule"),
+	SCENE_CONFIG(9,"scene_config"),
+	DIRECTOR_SCHEDULING_EE(10,"director_scheduling_element-element"),
+	DIRECTOR_SCHEDULING_EA(11,"director_scheduling_element-area");
 
 	@Getter
 	private Integer code;

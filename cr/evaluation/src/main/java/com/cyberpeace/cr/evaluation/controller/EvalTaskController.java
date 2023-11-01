@@ -3,7 +3,6 @@ package com.cyberpeace.cr.evaluation.controller;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -138,7 +137,8 @@ public class EvalTaskController {
 
 		// 没有任务名称时，删除场景及任务
 		if (taskName == null) {
-			return new BaseRsp<>(evalTaskService.deleteTask(evalTaskOpsContext));
+			evalTaskService.deleteTask(evalTaskOpsContext);
+			return new BaseRsp<>(true);
 		}
 
 		// 存在任务名称时，关闭任务场景

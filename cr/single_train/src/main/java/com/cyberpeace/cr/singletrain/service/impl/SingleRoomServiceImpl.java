@@ -792,7 +792,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		JSONObject sceneData = getMpSceneData(room);
 		if (!sceneData.isEmpty()) {
 			ret.setSceneData(sceneData);
-			ret.setLocalSceneId(room.getLocalSceneId());
+			if (null != room) {
+				ret.setLocalSceneId(room.getLocalSceneId());
+			}
 			ret.setMpSceneId(sceneData.getString(MP_SCENE_ID_KEY));
 			return ret;
 		}

@@ -639,7 +639,8 @@ public class TeamTrainRoomController {
 		// count
 		Integer released = crTaskList.size();
 		Integer total = roles.stream().mapToInt(CrRoleSimple::getTaskCount).sum();
-		Integer submitted = crTaskList.stream().mapToInt(task -> task.isSubmitted() ? 1 : 0).sum();
+		Integer submitted = crTaskList.stream()
+				.mapToInt(task -> Boolean.TRUE.equals(task.isSubmitted()) ? 1 : 0).sum();
 		long waiting = crTaskList.stream()
 				.filter(task -> task.getStatus().equals(CrTask.TaskStatus.WAIT.getCode())).count();
 
@@ -875,8 +876,8 @@ public class TeamTrainRoomController {
 
 					}
 
-					if (crTaskService.getByMissions(rbMissionDeleteReq.getRoomId(), deleteMissions)
-							.size() > 0) {
+					if (!crTaskService.getByMissions(rbMissionDeleteReq.getRoomId(), deleteMissions)
+							.isEmpty()) {
 						log.error("mission is issued！missionIds=[{}] ",
 								JSON.toJSONString(deleteMissions));
 						throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);

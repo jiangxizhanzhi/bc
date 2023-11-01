@@ -1,22 +1,22 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.cyberpeace.common.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
-import com.cyberpeace.common.context.role.CrRoleNode;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
 
 @Data
-public class TeamTrainTemplateRoleRsp implements Serializable {
+public class TeamTrainTemplateRoleRsp {
 
 	@ApiModelProperty(value = "编号")
 	private String resourceId;

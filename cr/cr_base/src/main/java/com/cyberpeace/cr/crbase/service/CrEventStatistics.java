@@ -38,12 +38,12 @@ public class CrEventStatistics {
 	}
 
 	public TrainingCount getTrainingCount(String userId) {
-		log.error("Method not implemented! userId = [{}]", userId);
+		log.error("Method getTrainingCount not implemented! userId = [{}]", userId);
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
 	public List<TrainingData> getRelatedTraining(String userId) {
-		log.error("Method not implemented! userId = [{}]", userId);
+		log.error("Method getRelatedTraining not implemented! userId = [{}]", userId);
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

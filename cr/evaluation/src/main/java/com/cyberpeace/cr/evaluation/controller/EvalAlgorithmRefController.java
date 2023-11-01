@@ -135,7 +135,7 @@ public class EvalAlgorithmRefController {
 			double[] weight = new double[n];
 			AHPComputeWeight instance = AHPComputeWeight.getInstance();
 			instance.weight(formatMatrixData, weight, n);
-			double cr = instance.getCR();
+			double cr = instance.getCr();
 			res.setCr(Boolean.parseBoolean(String.valueOf(cr < 0.1)));
 		} catch (RemoteServiceException e) {
 			String msg;

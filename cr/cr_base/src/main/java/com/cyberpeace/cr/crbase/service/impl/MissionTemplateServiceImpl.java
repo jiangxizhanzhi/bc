@@ -115,7 +115,7 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		}
 		List<MissionTemplateRes> missionTemplateResList = missionTemplateMapper
 				.listWithBusiness(missionTemplateIds);
-		missionTemplateResList.forEach((missionTemplateRes) -> mapping
+		missionTemplateResList.forEach(missionTemplateRes -> mapping
 				.put(missionTemplateRes.getResourceId(), missionTemplateRes));
 		return mapping;
 	}

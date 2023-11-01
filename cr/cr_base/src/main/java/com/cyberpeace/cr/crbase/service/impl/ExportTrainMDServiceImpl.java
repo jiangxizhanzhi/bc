@@ -117,29 +117,16 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
-	public void exportWriteUp(String writeUp, File writeUpFile, String title){
-		FileWriter fw = null;
-		BufferedWriter bw = null;
-		try{
-			fw = new FileWriter(writeUpFile);
-			bw = new BufferedWriter(fw);
+	public void exportWriteUp(String writeUp, File writeUpFile, String title) {
+		try (FileWriter fw = new FileWriter(writeUpFile);
+				BufferedWriter bw = new BufferedWriter(fw)) {
 			bw.write(writeUp);
 			bw.flush();
 			log.info("export mission [{}] writeup.md successfully", title);
-		}catch (Exception e) {
-			log.error("Markdown content write failed！file_path=[{}], catch error:", writeUpFile.getAbsolutePath(), e);
+		} catch (Exception e) {
+			log.error("Markdown content write failed！file_path=[{}], catch error:",
+					writeUpFile.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
-		} finally {
-			try {
-				if (null != fw) {
-					fw.close();
-				}
-				if (null != bw) {
-					bw.close();
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
 		}
 	}
 

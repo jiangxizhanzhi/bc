@@ -207,7 +207,6 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	private void setImageResourceIdAndToolType(Tool tool, List<String> imageResourceId) {
 		String imageName = toStr(imageResourceId);
 		if (!StringUtils.isBlank(imageName)) {
-			// TODO: 2021/9/6 set 靶标信息
 			tool.setImageResourceId("");
 			tool.setToolType(Tool.ONLINE);
 		} else {
@@ -295,7 +294,7 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		}
 
 		String group = matcher.group(1);
-		String replace = group.replace("/", File.separator).replaceFirst(".", "");
+		String replace = group.replace("/", File.separator).replaceFirst("^\\.", "");
 		String filePath = mdFile.getParentFile().getPath() + replace;
 
 		return toolFileService.saveFile(filePath, transferName);

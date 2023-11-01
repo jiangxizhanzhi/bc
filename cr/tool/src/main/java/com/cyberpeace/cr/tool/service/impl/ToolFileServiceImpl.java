@@ -6,28 +6,28 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.util.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 import com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper;
 import com.cyberpeace.cr.tool.service.ToolFileService;
 import com.google.common.io.Files;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> implements ToolFileService {
 
 	private static final Logger importLog = LoggerFactory.getLogger("resourceImport");
 
-	private final String savePath = "tool"+ File.separator + "tool" + File.separator;
+	private static final String savePath = "tool" + File.separator + "tool" + File.separator;
 
 	private String uploadPath;
 

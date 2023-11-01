@@ -503,7 +503,7 @@ public class RbSceneServiceImpl implements RbSceneService {
     @Override
     public SceneData getSceneData(RbRoom room) {
         JSONObject sceneData = getMpSceneData(room);
-        if (sceneData == null) {
+		if (sceneData.isEmpty()) {
             return null;
         }
         return sceneData.toJavaObject(SceneDataImpl.class);

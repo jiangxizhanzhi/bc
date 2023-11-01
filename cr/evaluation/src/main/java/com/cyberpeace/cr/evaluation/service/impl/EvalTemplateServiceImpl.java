@@ -203,10 +203,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	}
 
 	@Override
-	public Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList) {
+	public void validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList) {
 
 		if (evalTaskStepConfigList.isEmpty()) {
-			return true;
+			return;
 		}
 
 		List<Integer> stageList = Lists.newArrayList();
@@ -232,8 +232,6 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			log.error("The configuration of the evaluation step is incorrect! expectStageList = [{}]", JsonUtil.toJsonString(stageList));
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}
-
-		return true;
 	}
 
 }

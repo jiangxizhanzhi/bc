@@ -237,7 +237,7 @@ public class MDParser {
 
 	private static final String TS_CODE = "situation_code";
 
-	private static final String AVIATION_TS_PATH = "/home/apps/situation/IndustrySituation/AviationOil/";
+	private static final String TS_FILE_DIR = "/home/apps/situation/";
 
 	private static final String LOGO_FILE = "/logo.png";
 
@@ -787,8 +787,9 @@ public class MDParser {
 		this.situationConfig = yaml.loadAs(configString, IndustrySituationConfig.class);
 		this.templateContext.setSituationConfig(JsonUtil.toJsonString(this.situationConfig));
 		// copy files
-		FileUtil.deleteDir(new File(AVIATION_TS_PATH));
-		FileUtil.copyDirectory(tsPath + SEP + TS_CODE, AVIATION_TS_PATH, false);
+		String aviationTsPath = TS_FILE_DIR + "IndustrySituation/AviationOil/";
+		FileUtil.deleteDir(new File(aviationTsPath));
+		FileUtil.copyDirectory(tsPath + SEP + TS_CODE, aviationTsPath, false);
 	}
 }
 

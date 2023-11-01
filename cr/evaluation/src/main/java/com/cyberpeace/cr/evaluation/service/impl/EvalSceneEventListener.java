@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -74,14 +74,14 @@ public class EvalSceneEventListener extends MessageListener {
 		String operator = JSON.parseObject(context.getPassThrough(), JSONObject.class)
 				.getString(WebConstant.PASS_THROUGH_OPERATOR);
 		if (StringUtils.isNotEmpty(operator) && operator.equals(Operator.BC.getDesc())) {
-			return true;
+			return false;
 		}
 
 		EvalTaskOpsContext evalTaskOpsContext = evalTaskService.getEvalTaskOpsContext(businessId,
 				false);
 
 		if (evalTaskOpsContext.getEvalTask() == null) {
-			return true;
+			return false;
 		}
 
 		evalTaskService.clearTaskAndScene(evalTaskOpsContext);

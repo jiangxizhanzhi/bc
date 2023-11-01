@@ -1,10 +1,12 @@
 package com.cyberpeace.cr.tool.utils;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
 
 /**
  *  解析Markdown
@@ -59,7 +61,7 @@ public class ParseMarkdown {
 
 		try (FileInputStream fileInputStream = new FileInputStream(file);
 				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(fileInputStream, "utf-8"));) {
+						new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
 
 			String tempStr;
 			while ((tempStr = reader.readLine()) != null) {

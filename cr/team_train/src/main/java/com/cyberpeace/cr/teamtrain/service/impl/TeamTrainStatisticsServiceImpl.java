@@ -3,13 +3,16 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
@@ -105,7 +108,9 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
                 teamOrganizationStatistics.setOrgId(tmp.getKey());
                 teamOrganizationStatistics.setOrgName(org2Name.get(tmp.getKey()));
 
-                double averageScore = BigDecimal.valueOf((double) tmp.getValue() / org2TotalUser.get(tmp.getKey())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+				double averageScore = BigDecimal
+						.valueOf(tmp.getValue() / org2TotalUser.get(tmp.getKey()))
+						.setScale(2, RoundingMode.HALF_UP).doubleValue();
 
                 teamOrganizationStatistics.setAverageScore(averageScore);
                 rsp.add(teamOrganizationStatistics);

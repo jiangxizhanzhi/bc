@@ -225,7 +225,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	@Override
-	public Boolean deleteTask(EvalTaskOpsContext evalTaskOpsContext) {
+	public void deleteTask(EvalTaskOpsContext evalTaskOpsContext) {
 
 		// 清除未结束的任务数据
 		if (evalTaskOpsContext.getLocalScene() != null) {
@@ -235,7 +235,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 			// 清除任务及其场景数据
 			clearTaskAndScene(evalTaskOpsContext);
-			return true;
+			return;
 
 		}
 
@@ -260,8 +260,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 						evalTaskOpsContext.getEvalTask().getCopyedTopoId(), e);
 			}
 		}
-
-		return true;
 	}
 
 	@Override

@@ -314,7 +314,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 					crRoleList.forEach(crRole -> {
 						List<String> users = roomRoleMap.get(crRole.getResourceId()).getUsers();
-						if (users.size() == 0) {
+						if (users.isEmpty()) {
 							log.error("role users cannot be empty！teamRoomName=[{}]",
 									teamRoom.getName());
 							throw new BusinessException(

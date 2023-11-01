@@ -43,9 +43,8 @@ public interface EvalTaskService extends IService<EvalTask> {
 
 	/** 删除测评靶场任务
 	 * @param evalTaskOpsContext
-	 * @return
 	 */
-	Boolean deleteTask(EvalTaskOpsContext evalTaskOpsContext);
+	void deleteTask(EvalTaskOpsContext evalTaskOpsContext);
 
 	/** 清除测评靶场任务场景相关信息
 	 * @param evalTaskOpsContext

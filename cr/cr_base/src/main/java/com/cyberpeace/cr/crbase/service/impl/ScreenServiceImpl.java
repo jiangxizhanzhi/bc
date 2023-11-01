@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.ScreenService;
 import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordRsp;
@@ -56,7 +55,6 @@ public class ScreenServiceImpl implements ScreenService {
 				map.put(userId, role.getRoleGroup());
             }
         }
-		String data = jsonObject.getString("list");
         List<ScreenRecordRsp> userNodes = BeanUtils.deepCopyList(list, ScreenRecordRsp.class);
         Map<String, List<ScreenRecordRsp>> userMap = userNodes.stream().collect(Collectors.groupingBy(ScreenRecordRsp::getUser_id));
 		List<ScreenRecordUserRole> resList = new ArrayList<>();

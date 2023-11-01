@@ -72,7 +72,7 @@ public class RbSceneEventListener extends MessageListener {
 		// 区分场景节点消息推送和节点登录信息推送
 		if (jsonData.containsKey("call_action")) {
 			pushDataToWeb(data, businessId);
-			return true;
+			return false;
 		}
 		String nodeId = jsonData.getJSONObject("scene_element").getString("id");
 		for (CrRole role : roles) {

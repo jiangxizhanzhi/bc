@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cs.service.LocalSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +63,7 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -429,27 +429,23 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	private String confirmAvatarFile(String filePath, String jarFilePath) {
 		File file = new File(filePath);
-		if(file.exists()) {
-			return filePath;
-		}
-		if(!file.getParentFile().exists()) {
-			file.getParentFile().mkdirs();
-		}
-
-		try(
-				InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(jarFilePath);
-				OutputStream outputStream = new FileOutputStream(file);
-				) {
-			int read = 0;
-			byte[] bytes = new byte[2048];
-			while((read = inputStream.read(bytes)) > 0) {
-				outputStream.write(bytes, 0, read);
+		if (!file.exists()) {
+			if (!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
 			}
-		} catch (Exception e) {
-			log.error("file not found in directory{}",
-					filePath);
-			throw new BusinessException(
-					CrBusinessErrorCode.NOT_PATH);
+
+			try (InputStream inputStream = this.getClass().getClassLoader()
+					.getResourceAsStream(jarFilePath);
+					OutputStream outputStream = new FileOutputStream(file)) {
+				int read = 0;
+				byte[] bytes = new byte[2048];
+				while ((read = inputStream.read(bytes)) > 0) {
+					outputStream.write(bytes, 0, read);
+				}
+			} catch (Exception e) {
+				log.error("file not found in directory{}", filePath);
+				throw new BusinessException(CrBusinessErrorCode.NOT_PATH);
+			}
 		}
 		return filePath;
 	}

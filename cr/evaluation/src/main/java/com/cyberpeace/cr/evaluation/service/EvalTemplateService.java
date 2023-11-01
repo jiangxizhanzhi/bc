@@ -62,8 +62,7 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 
 	/** 校验模板的步骤配置
 	 * @param evalTaskStepConfigList
-	 * @return
 	 */
-	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
+	void validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 
 }

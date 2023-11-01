@@ -1,11 +1,10 @@
 package com.cyberpeace.cr.teamtrain.service.context;
 
-import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.common.context.role.CrRoleNode;
 import com.cyberpeace.common.enums.RoleGroup;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
-import com.cyberpeace.common.context.role.CrRoleNode;
 
 import lombok.Data;
 
@@ -13,7 +12,7 @@ import lombok.Data;
  * 团队训练角色列表
  */
 @Data
-public class RoleListContext<T> implements Serializable {
+public class RoleListContext<T> {
 
 	private String Id;
 

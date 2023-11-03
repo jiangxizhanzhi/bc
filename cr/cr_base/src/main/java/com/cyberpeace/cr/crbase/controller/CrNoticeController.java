@@ -79,8 +79,8 @@ public class CrNoticeController {
 	public BaseRsp<Boolean> hasNewInfo(
 			@ApiParam(name = "resource_id", value = "团队训练id",
 					required = true) @RequestParam(value = "resource_id") String resourceId,
-			@ApiParam(name = "is_rb", value = "是否红蓝",
-					required = true) @RequestParam(value = "is_rb") Boolean isRb) {
+			@ApiParam(name = "is_rb", value = "是否红蓝", required = true) @RequestParam(
+					value = "is_rb", required = false) Boolean isRb) {
 		Boolean res = crNoticeService.hasNewInfo(resourceId, isRb);
 		return new BaseRsp<>(res);
 	}

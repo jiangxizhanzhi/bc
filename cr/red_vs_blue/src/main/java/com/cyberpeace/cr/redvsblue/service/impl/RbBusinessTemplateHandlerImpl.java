@@ -8,7 +8,6 @@ import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
@@ -24,9 +23,6 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
 	@Autowired
 	private RbTemplateMapper rbTemplateMapper;
-
-	@Autowired
-	private MissionService missionService;
 
 	@Autowired
 	private MissionTemplateService missionTemplateService;

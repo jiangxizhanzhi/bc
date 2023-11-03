@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.model.BaseTable;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.enums.BusinessType;
@@ -14,7 +13,6 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
-import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +23,7 @@ public class BusinessTemplateHandler {
 
 	private static final String NOT_IMPLEMENTED = "method not implemented, plz do not use it. ";
 
-	private static Map<BusinessType, BusinessTemplateHandler> register = Maps
+	private static final Map<BusinessType, BusinessTemplateHandler> REGISTER = Maps
 			.newHashMap();
 
 	public BusinessType setBusinessType() {
@@ -34,12 +32,14 @@ public class BusinessTemplateHandler {
 
 	public BusinessTemplateHandler getHandler(Integer type) {
 		BusinessType businessType = getBusinessType(type);
-		return register.get(businessType);
+		return REGISTER.get(businessType);
 	}
 
 	@PostConstruct
 	public void init() {
-		register.put(setBusinessType(), this);
+		if (this.setBusinessType() != null) {
+			REGISTER.put(setBusinessType(), this);
+		}
 	}
 
 	private BusinessType getBusinessType(Integer businessType) {
@@ -60,8 +60,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
-		template.getResourceId();
-		log.error(NOT_IMPLEMENTED);
+		log.error(NOT_IMPLEMENTED + template.getName());
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 

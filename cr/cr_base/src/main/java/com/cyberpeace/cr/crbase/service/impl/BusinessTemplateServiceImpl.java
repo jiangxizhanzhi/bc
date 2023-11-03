@@ -538,7 +538,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			template.setReadAuthType(2);
 		}
 		// 2. 生成导出模型, 包含 template, missions
-		ResourceDumpContext<? extends BaseTable> context = businessTemplateHandler.dumpBusiness(template);
+		ResourceDumpContext<Object> context = businessTemplateHandler.dumpBusiness(template);
 		context.setBusinessTemplate(template);
 
 		// 3. 获取拓扑

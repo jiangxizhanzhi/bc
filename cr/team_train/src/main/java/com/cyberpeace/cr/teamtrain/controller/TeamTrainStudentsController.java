@@ -238,8 +238,8 @@ public class TeamTrainStudentsController {
 	@GetMapping("/get_mission_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<MissionRsp> getMissionDetail(
-			@ApiParam(name = "resource_id", value = "团队训练id",
-					required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) @RequestParam(
+					name = "resource_id", required = false) String resourceId,
 			@ApiParam(name = "mission_id", value = "任务id",
 					required = true) @RequestParam(name = "mission_id") String missionId) {
 		String userId = UserInfoContext.getUserContext().getUserId();

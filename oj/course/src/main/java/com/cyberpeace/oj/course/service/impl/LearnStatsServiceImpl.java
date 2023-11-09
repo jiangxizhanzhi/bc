@@ -9,6 +9,13 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.impl.TraceIdContext;
@@ -65,6 +72,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
 	@Autowired
 	CourseLearnStatisticsService courseLearnStatisticsService;
+
+	@Autowired
+	private PracticeSetMapper practiceSetMapper;
 
 	ExecutorService es = Executors.newCachedThreadPool();
 
@@ -285,6 +295,29 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		}
 
 		return userStatsRankBo;
+	}
+
+	@Override
+	public List<UserStatsAddBo> getUserFinishTheoryPracticeCount() {
+		TheoryListQuery listQuery = new TheoryListQuery();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+
+		// 过滤无权限习题集
+		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		// 过滤非公开习题集i
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authSetIds.retainAll(setIds);
+		List<UserStatsAddBo> progressProportionList = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(authSetIds)) {
+			progressProportionList = learnStatsMapper.selectByGroupUser(listQuery,
+					authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
+		}
+
+		return progressProportionList;
 	}
 
 	@Override

@@ -18,6 +18,11 @@ public enum ExcelHeader {
 			new String[] {"desc"}),
 	TRAIN_PLAN(new String[] {"计划名称", "课程名", "课时名", "开始时间", "结束时间", "组织"},
 			new String[] {"Plan Name", "Course Name", "Course Hour Name", "Start time", "End time", "Organization"},
+			new String[] {"desc"}),
+	STUDY_ADD_STATISTIC(new String[] {"用户名","姓名", "组织", "完成课时", "理论题完成数"},
+			new String[] {"UserName", "Name", "Organization", "Number of classes completed",
+			"Number of theory practice completed "
+	},
 			new String[] {"desc"});
 
 

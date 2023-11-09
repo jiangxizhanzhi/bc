@@ -33,6 +33,26 @@
         group by L1.user_id;
     </select>
 
+    <select id="selectByGroupUser" resultType="com.cyberpeace.oj.course.service.bo.UserStatsAddBo">
+        select  b.submit_user_id as resource_id ,SUM(if( b.solved is null ,0,1)) as finish_theory_count
+        FROM oj_practice_theory a
+        LEFT JOIN oj_practice_solved b  on a.resource_id=b.resource_id
+        AND  b.practice_type = #{practiceType} and b.solved in (0,1)
+        <where>
+            a.practice_set_id in
+            <foreach collection="authSetIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            <if test="listQuery.questionType != null">
+                and a.theory_type = #{listQuery.questionType}
+            </if>
+            <if test="isPublic != null and isPublic">
+                and a.`public` = #{isPublic}
+            </if>
+        </where>
+        GROUP BY b.submit_user_id
+    </select>
+
     <select id="lessonRecordRank" resultType="com.alibaba.fastjson.JSONObject">
         select user_id, count(*) as `count` from oj_lesson_record
         where user_id in <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>

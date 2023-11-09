@@ -8,6 +8,7 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -32,7 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "后台-学习统计-个人统计")
 @RestController
@@ -138,6 +142,37 @@ public class AdminPersonalStatsController {
                 passFields, ExcelHeader.ORG_STUDY_STATISTIC);
         FileUtil.setResponse(file, true, response);
     }
+
+	@ApiOperation("学习数据-全部数据-附加理论题完成情况-导出")
+	@GetMapping(value = "/user-stats-data-add-export")
+	public void userStatsAddDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
+		ListRsp<UserStatsBo> userStats = learnStatsService.getUserStats(userStatsReq.toPageParam(), null, null,
+				false, userStatsReq.getStartTime(), userStatsReq.getEndTime());
+
+		List<UserStatsAddBo> res = new ArrayList<>();
+		List<UserStatsAddBo> addBoList = learnStatsService.getUserFinishTheoryPracticeCount();
+
+		Map<String, Integer> collect = addBoList.stream().collect(Collectors.toMap(UserStatsAddBo::getResourceId, UserStatsAddBo::getFinishTheoryCount));
+		List<UserStatsBo> list = userStats.getList();
+		list.forEach(item->{
+			UserStatsAddBo userStatsAddBo = new UserStatsAddBo();
+			if(collect.containsKey(item.getResourceId())){
+				userStatsAddBo.setFinishTheoryCount(collect.get(item.getResourceId()));
+			}
+			BeanUtils.copyProperties(item, userStatsAddBo);
+			res.add(userStatsAddBo);
+		});
+
+		List<String> passFields = Lists.newArrayList("roles", "reportAverage", "resourceId",
+				"avatar","finishReportCount","finishExamCount");
+		String sheetName = ExcelHeader.SHEETNAME.getHeader()[0];
+		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+				+ CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
+
+		File file = ExcelDataHandler.exportExcel(res, filePath, sheetName,
+				passFields, ExcelHeader.STUDY_ADD_STATISTIC);
+		FileUtil.setResponse(file, true, response);
+	}
 
 
 }

@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CourseBo;
+import com.cyberpeace.oj.course.service.bo.UserStatsAddBo;
 import com.cyberpeace.oj.course.service.bo.UserStatsBo;
+import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -35,4 +37,10 @@ public interface LearnStatsMapper {
     List<JSONObject> afterClassIntegral(@Param("user_ids") List<String> users, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
 
     List<JSONObject> lessonIntegral(@Param("user_ids") List<String> users, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
+
+    List<UserStatsAddBo> selectByGroupUser(@Param("listQuery") TheoryListQuery theoryListQuery,
+                                           @Param("isPublic") Boolean isPublic,
+                                           @Param("userId") String userId,
+                                           @Param("authSetIds")List<String> authSetIds,
+                                           @Param("practiceType") Integer practiceType);
 }

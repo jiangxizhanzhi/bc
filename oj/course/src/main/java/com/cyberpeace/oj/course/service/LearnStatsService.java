@@ -6,6 +6,7 @@ import com.cyberpeace.oj.course.controller.res.HistogramRes;
 import com.cyberpeace.oj.course.service.bo.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface LearnStatsService {
 
@@ -26,6 +27,8 @@ public interface LearnStatsService {
      * @return 统计信息
      */
     UserStatsRankBo getUserLearnRank();
+
+    List<UserStatsAddBo> getUserFinishTheoryPracticeCount();
 
     /**
      * 获取用户课程学习数量统计

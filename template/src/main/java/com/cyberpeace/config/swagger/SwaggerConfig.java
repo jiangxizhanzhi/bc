@@ -1,149 +1,149 @@
-package com.cyberpeace.config.swagger;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.util.ConfigUtil;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import org.springframework.util.ReflectionUtils;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.oas.annotations.EnableOpenApi;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.spring.web.plugins.WebFluxRequestHandlerProvider;
-import springfox.documentation.spring.web.plugins.WebMvcRequestHandlerProvider;
-
-@Configuration
-@EnableOpenApi
-public class SwaggerConfig {
-
-	@Bean
-	public static BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {
-		return new BeanPostProcessor() {
-
-			@Override
-			public Object postProcessAfterInitialization(Object bean, String beanName)
-					throws BeansException {
-				if (bean instanceof WebMvcRequestHandlerProvider
-						|| bean instanceof WebFluxRequestHandlerProvider) {
-					customizeSpringfoxHandlerMappings(getHandlerMappings(bean));
-				}
-				return bean;
-			}
-
-			private <T extends RequestMappingInfoHandlerMapping> void
-			customizeSpringfoxHandlerMappings(List<T> mappings) {
-				List<T> copy = mappings.stream()
-						.filter(mapping -> mapping.getPatternParser() == null)
-						.collect(Collectors.toList());
-				mappings.clear();
-				mappings.addAll(copy);
-			}
-
-			@SuppressWarnings("unchecked")
-			private List<RequestMappingInfoHandlerMapping> getHandlerMappings(Object bean) {
-				try {
-					Field field = ReflectionUtils.findField(bean.getClass(), "handlerMappings");
-					field.setAccessible(true);
-					return (List<RequestMappingInfoHandlerMapping>) field.get(bean);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		};
-	}
-
-
-	@Bean
-	public Docket apiRtks() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.rtks"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("rtks");
-	}
-
-	@Bean
-	public Docket apiTemplate() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("demo");
-	}
-
-	@Bean
-	public Docket apiCr() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cr"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("cr");
-	}
-
-	@Bean
-	public Docket apiCs() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cs"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("cs");
-	}
-
-	@Bean
-	public Docket apiOj() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("oj");
-	}
-
-	@Bean
-	public Docket apiEs() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.evaluate"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("es");
-	}
-
-	@Bean
-	public Docket apiSituation() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.situation"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("situation");
-	}
-
-	@Bean
-	public Docket apiGateway() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.gateway"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("outer");
-	}
-
-	private ApiSelectorBuilder getDocket() {
-		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
-
-		return new Docket(DocumentationType.OAS_30).apiInfo(apiInfo())
-				.enable(Boolean.parseBoolean(apiDoc))
-				.securityContexts(Arrays.asList(SecurityContext.builder()
-						.securityReferences(Arrays.asList(SecurityReference.builder()
-								.reference("Authorization")
-								.scopes(new AuthorizationScope[] {
-										new AuthorizationScope("global", "accessEverything") })
-								.build()))
-						.build()))
-				.securitySchemes(
-						Arrays.asList(new ApiKey("Authorization", "Authorization", "header")))
-				.select();
-	}
-
-	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("网络靶场项目文档").description("有问题请联系朱天尧").version("v1.0")
-				.build();
-	}
-}
+//package com.cyberpeace.config.swagger;
+//
+//import java.lang.reflect.Field;
+//import java.util.Arrays;
+//import java.util.List;
+//import java.util.stream.Collectors;
+//
+//import com.cyberpeace.common.util.ConfigUtil;
+//import org.springframework.beans.BeansException;
+//import org.springframework.beans.factory.config.BeanPostProcessor;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//
+//import org.springframework.util.ReflectionUtils;
+//import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
+//import springfox.documentation.builders.ApiInfoBuilder;
+//import springfox.documentation.builders.PathSelectors;
+//import springfox.documentation.builders.RequestHandlerSelectors;
+//import springfox.documentation.oas.annotations.EnableOpenApi;
+//import springfox.documentation.service.ApiInfo;
+//import springfox.documentation.service.ApiKey;
+//import springfox.documentation.service.AuthorizationScope;
+//import springfox.documentation.service.SecurityReference;
+//import springfox.documentation.spi.DocumentationType;
+//import springfox.documentation.spi.service.contexts.SecurityContext;
+//import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
+//import springfox.documentation.spring.web.plugins.Docket;
+//import springfox.documentation.spring.web.plugins.WebFluxRequestHandlerProvider;
+//import springfox.documentation.spring.web.plugins.WebMvcRequestHandlerProvider;
+//
+////@Configuration
+////@EnableOpenApi
+//public class SwaggerConfig {
+//
+//	@Bean
+//	public static BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {
+//		return new BeanPostProcessor() {
+//
+//			@Override
+//			public Object postProcessAfterInitialization(Object bean, String beanName)
+//					throws BeansException {
+//				if (bean instanceof WebMvcRequestHandlerProvider
+//						|| bean instanceof WebFluxRequestHandlerProvider) {
+//					customizeSpringfoxHandlerMappings(getHandlerMappings(bean));
+//				}
+//				return bean;
+//			}
+//
+//			private <T extends RequestMappingInfoHandlerMapping> void
+//			customizeSpringfoxHandlerMappings(List<T> mappings) {
+//				List<T> copy = mappings.stream()
+//						.filter(mapping -> mapping.getPatternParser() == null)
+//						.collect(Collectors.toList());
+//				mappings.clear();
+//				mappings.addAll(copy);
+//			}
+//
+//			@SuppressWarnings("unchecked")
+//			private List<RequestMappingInfoHandlerMapping> getHandlerMappings(Object bean) {
+//				try {
+//					Field field = ReflectionUtils.findField(bean.getClass(), "handlerMappings");
+//					field.setAccessible(true);
+//					return (List<RequestMappingInfoHandlerMapping>) field.get(bean);
+//				} catch (IllegalArgumentException | IllegalAccessException e) {
+//					throw new IllegalStateException(e);
+//				}
+//			}
+//		};
+//	}
+//
+//
+//	@Bean
+//	public Docket apiRtks() {
+//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.rtks"))
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+//				.groupName("rtks");
+//	}
+//
+//	@Bean
+//	public Docket apiTemplate() {
+//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+//				.groupName("demo");
+//	}
+//
+//	@Bean
+//	public Docket apiCr() {
+//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cr"))
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+//				.groupName("cr");
+//	}
+//
+//	@Bean
+//	public Docket apiCs() {
+//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cs"))
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+//				.groupName("cs");
+//	}
+//
+//	@Bean
+//	public Docket apiOj() {
+//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+//				.groupName("oj");
+//	}
+//
+//	@Bean
+//	public Docket apiEs() {
+//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.evaluate"))
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+//				.groupName("es");
+//	}
+//
+//	@Bean
+//	public Docket apiSituation() {
+//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.situation"))
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+//				.groupName("situation");
+//	}
+//
+//	@Bean
+//	public Docket apiGateway() {
+//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.gateway"))
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+//				.groupName("outer");
+//	}
+//
+//	private ApiSelectorBuilder getDocket() {
+//		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
+//
+//		return new Docket(DocumentationType.OAS_30).apiInfo(apiInfo())
+//				.enable(Boolean.parseBoolean(apiDoc))
+//				.securityContexts(Arrays.asList(SecurityContext.builder()
+//						.securityReferences(Arrays.asList(SecurityReference.builder()
+//								.reference("Authorization")
+//								.scopes(new AuthorizationScope[] {
+//										new AuthorizationScope("global", "accessEverything") })
+//								.build()))
+//						.build()))
+//				.securitySchemes(
+//						Arrays.asList(new ApiKey("Authorization", "Authorization", "header")))
+//				.select();
+//	}
+//
+//	private ApiInfo apiInfo() {
+//		return new ApiInfoBuilder().title("网络靶场项目文档").description("有问题请联系朱天尧").version("v1.0")
+//				.build();
+//	}
+//}

@@ -1200,7 +1200,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                imgUrl = "http://" + SystemPropUtil.getProp("BC_HOST") + imgUrl;
                 log.info("imgUrl:" + imgUrl);
                 mdContent = mdContent.replace(str, String.format(MdConstant.ONLY_URL_IMG, imgUrl));
             }

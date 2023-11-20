@@ -3,12 +3,14 @@ package com.cyberpeace.cs.service.context.scene;
 import java.io.Serializable;
 import java.util.List;
 
-public interface SceneElement extends Serializable {
+import lombok.Data;
 
-	String getId();
+@Data
+public class SceneElement implements Serializable {
 
-	String getName();
+	private String id;
 
-	List<Port> getPorts();
+	private String name;
+
+	private List<PortImpl> ports;
 }
-

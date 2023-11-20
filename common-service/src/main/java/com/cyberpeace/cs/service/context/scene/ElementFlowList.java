@@ -5,7 +5,10 @@ import java.util.List;
 
 import com.cyberpeace.common.context.scene.ElementFlow;
 
-public interface ElementFlowList extends Serializable {
+import lombok.Data;
 
-	List<ElementFlow> getFlows();
+@Data
+public class ElementFlowList implements Serializable {
+
+	private List<ElementFlow> flows;
 }

@@ -41,7 +41,6 @@ public class HttpclientModel {
 		if (StringUtils.isBlank(traceId)) {
 			this.traceId = IDGeneratorUtil.getID();
 			ThreadContext.put("logId", traceId);
-
 		} else {
 			this.traceId = traceId;
 		}

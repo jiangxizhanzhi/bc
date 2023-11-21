@@ -37,11 +37,15 @@ public class FileUtil {
 	 */
 	public static void validateSuffix(MultipartFile file, String... fileSuffix) {
 		if (null == file) {
-			log.error("file is null! fileSuffix=[{}]",fileSuffix);
+			log.error("file is null! fileSuffix=[{}]", Arrays.toString(fileSuffix));
 			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
 		}
 
 		String filename = file.getOriginalFilename();
+		if (filename == null) {
+			log.error("filename is null [{}]", file.getName());
+			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
+		}
 		filename = filename.toLowerCase();
 		for (String suffix : fileSuffix) {
 			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {

@@ -50,6 +50,9 @@
         <xmlworker.version>5.4.1</xmlworker.version>
         <itext-asian.version>5.2.0</itext-asian.version>
         <flying-saucer-pdf.version>9.1.22</flying-saucer-pdf.version>
+        <httpclient.version>4.5.14</httpclient.version>
+        <ganymed-ssh2.version>262</ganymed-ssh2.version>
+        <commons-compress.version>1.21</commons-compress.version>
 
         <!-- 自有模块版本号 -->
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
@@ -71,7 +74,6 @@
         <oj.practice.version>0.0.1-SNAPSHOT</oj.practice.version>
         <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
         <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
-        <aop-version>2.7.13</aop-version>
     </properties>
 
     <modules>
@@ -88,7 +90,6 @@
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>com.itextpdf</groupId>
                 <artifactId>itextpdf</artifactId>
@@ -252,6 +253,7 @@
                 <version>${knife4j.version}</version>
             </dependency>
 
+            <!-- 包含了 commons-compress 1.21 -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
@@ -267,6 +269,16 @@
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.ethz.ganymed</groupId>
+                <artifactId>ganymed-ssh2</artifactId>
+                <version>${ganymed-ssh2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

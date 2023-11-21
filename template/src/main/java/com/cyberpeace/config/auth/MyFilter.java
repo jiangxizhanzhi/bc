@@ -54,7 +54,6 @@ public class MyFilter implements Filter {
 		CommonContext.setLanguage(language);
 		CommonContext.setIp(getIpAddr(request));
 
-//		TraceIdContext.setTraceId(traceId);
 		ThreadContext.put("logId", traceId);
 
 	}

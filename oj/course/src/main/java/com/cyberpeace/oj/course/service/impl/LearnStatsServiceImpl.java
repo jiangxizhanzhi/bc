@@ -192,7 +192,6 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		}
 		UserStatsRankBo userStatsRankBo = new UserStatsRankBo();
 
-//		String traceId = TraceIdContext.getTraceId();
 		String traceId =ThreadContext.get("logId");
 		CountDownLatch countDownLatch = new CountDownLatch(3);
 

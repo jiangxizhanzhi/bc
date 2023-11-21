@@ -5,15 +5,6 @@
     </properties>
 
     <Appenders>
-        <!--这个输出控制台的配置-->
-        <console name="Console" target="SYSTEM_OUT">
-            <!--输出日志的格式-->
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %X{logId} - %m%n"/>
-            <!-- 使用自定义过滤器 -->
-            <Filters>
-                <MdcUuidFilter key="logId"/>
-            </Filters>
-        </console>
         <!-- FileAppender-->
         <RollingFile name="log" fileName="${LOG_HOME}/logs/bc.log"
                      filePattern="${LOG_HOME}/logs/bc_%d{yyyy-MM-dd}.%i.log">
@@ -98,7 +89,6 @@
     <Loggers>
         <!-- 根日志设置 -->
         <Root level="info">
-            <appender-ref ref="Console"/>
             <appender-ref ref="log">
             </appender-ref>
         </Root>
@@ -114,11 +104,6 @@
         <Logger name="eval" additivity="false" level="info">
             <appender-ref ref="eval" level="info"/>
         </Logger>
-
-        <Logger name="com.cyberpeace.oj.rtks.dao.mapper" level="DEBUG" additivity="false"/>
-        <Logger name="com.cyberpeace.cr.tool.dao.mapper" level="DEBUG" additivity="false"/>
-        <Logger name="com.cyberpeace.oj.rtks.service.impl" level="DEBUG" additivity="false"/>
-
 
     </Loggers>
 

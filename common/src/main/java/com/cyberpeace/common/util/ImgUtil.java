@@ -20,6 +20,7 @@ public class ImgUtil {
 	//webp格式的图片转成jpg格式的图片
 	public static void webpToJpg(String webpPath, String jpgPath) throws IOException {
 		if(!jpgPath.endsWith("jpg")){
+			log.error("Illegal Picture Suffix! jpgPath = [{}]", jpgPath);
 			throw new BusinessException(ErrorCode.ILLEGAL_PICTURE_SUFFIX);
 		}
 

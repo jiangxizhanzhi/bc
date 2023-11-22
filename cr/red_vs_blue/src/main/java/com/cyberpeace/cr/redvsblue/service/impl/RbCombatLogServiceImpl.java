@@ -559,7 +559,13 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			if (rbCombatLog != null){
 				throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
 			}
-			JSONObject jsonObject = JSONObject.parseObject(originalLog);
+			String[] split = originalLog.replace("{", "").replace("}", "").split(",");
+			JSONObject jsonObject = new JSONObject();
+			for (String str:split){
+				String[] strings = str.split(":");
+				jsonObject.put(strings[0],strings.length==1 ? "" : (strings.length>2? str.split("cTime")[1] : strings[1]));
+			}
+//			JSONObject jsonObject = JSONObject.parseObject(originalLog);
 			for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
 				initMap.put(entry.getKey(), entry.getValue().toString().replace("\"",""));
 			}

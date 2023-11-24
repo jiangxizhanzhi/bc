@@ -1,5 +1,7 @@
 package com.cyberpeace.bs.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.service.LcService;
+import com.cyberpeace.bs.service.bo.behavior.AppType;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
@@ -51,6 +54,16 @@ public class BehaviorController {
     }
 
     /**
+     * 查询客户端类型集合
+     * @return {@code BaseRsp<List<AppType>>}
+     */
+    @ApiOperation("获取客户端类型")
+	@GetMapping("/app")
+	public BaseRsp<List<AppType>> listApp() {
+		return new BaseRsp<>(AppType.getAppTypeList());
+	}
+
+    /**
      * 获取行为变量接口
      *
      * @param id id
@@ -60,7 +73,7 @@ public class BehaviorController {
     @GetMapping("/variable")
     public BaseRsp<VariableListBo> getVariables(@ApiParam(value = "行为id", name = "id") String id) {
         VariableListBo res = lcService.getVariableList(id);
-        return new BaseRsp(res);
+        return new BaseRsp<>(res);
     }
 
     /**

@@ -11,5 +11,6 @@
   "/ojj/oj/practice/operation/scene_update_status",
   "/ojj/oj/lesson/update_status",
   "/ojj/oj/admin/class/group_info/get",
+  "/ojj/oj/course/class/room/sign_in/",
   "/ojj/oj/lesson/delete_scene"
 ]

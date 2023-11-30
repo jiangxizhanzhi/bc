@@ -10,5 +10,6 @@
   "/ojj/oj/lesson/start_scene",
   "/ojj/oj/practice/operation/scene_update_status",
   "/ojj/oj/lesson/update_status",
+  "/ojj/oj/admin/class/group_info/get",
   "/ojj/oj/lesson/delete_scene"
 ]

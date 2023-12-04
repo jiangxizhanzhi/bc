@@ -98,16 +98,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                    <groupId>org.springframework.boot</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>logback-classic</artifactId>
-                    <groupId>ch.qos.logback</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
@@ -291,33 +281,13 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
+                <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <warName>ojj</warName>
+                    <packagingExcludes>
+                        WEB-INF/classes/env/**
+                    </packagingExcludes>
                 </configuration>
-            </plugin>
-            <plugin>
-                <!-- https://gitee.com/roseboy/classfinal -->
-                <groupId>net.roseboy</groupId>
-                <artifactId>classfinal-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <configuration>
-                    <!--                    无密码模式-->
-                    <password>bc-3b0fa6d402e34949997272131ad23dfb</password><!--加密打包之后pom.xml会被删除，不用担心在jar包里找到此密码-->
-                    <packages>com.cyberpeace</packages>
-                    <excludes>org.spring,org,com.rabbitmq,javax</excludes>
-                    <libjars>
-                        rtks-0.0.1-SNAPSHOT.jar,course-0.0.1-SNAPSHOT.jar,cr_base-0.0.1-SNAPSHOT.jar,evaluate-0.0.1-SNAPSHOT.jar,evaluation-0.0.1-SNAPSHOT.jar,oj_base-0.0.1-SNAPSHOT.jar,person-0.0.1-SNAPSHOT.jar,practice-0.0.1-SNAPSHOT.jar,red_vs_blue-0.0.1-SNAPSHOT.jar,single_train-0.0.1-SNAPSHOT.jar,situation-0.0.1-SNAPSHOT.jar,team_train-0.0.1-SNAPSHOT.jar,tool-0.0.1-SNAPSHOT.jar
-                    </libjars>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>classFinal</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

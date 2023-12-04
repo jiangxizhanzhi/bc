@@ -1,9 +1,9 @@
 package com.cyberpeace.config.db;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.threadlocal.ThreadLocalContext;
 import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.situation.constant.SituationErrorCode;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -25,7 +25,7 @@ public class DemonstrationWhiteInterceptor implements Interceptor {
 		if ("open".equals(demo)
 				&& Boolean.FALSE.equals(ThreadLocalContext.whiteUpdateThreadLocal.get())
 				&& !SqlCommandType.SELECT.equals(sqlCommandType)) {
-			throw new BusinessException(SituationErrorCode.DEMONSTRATION_FORBID_UPDATE);
+			throw new BusinessException(ErrorCode.DEMONSTRATION_FORBID_UPDATE);
 		}
 		return invocation.proceed();
 	}

@@ -1,18 +1,17 @@
 package com.cyberpeace.oj.course.controller.req;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.utils.OjCommonValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
 @ApiModel("课程新增信息")
@@ -60,13 +59,13 @@ public class CourseAddReq implements Serializable {
 		// 校验分数最大值
 		int scoreMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.score.max"));
 		if (null != score ) {
-			CrCommonValidator.validateScore(score, scoreMax, OjBusinessErrorCode.MAX_SCORE_1000);
+			OjCommonValidator.validateScore(score, scoreMax, OjBusinessErrorCode.MAX_SCORE_1000);
 		}
 		// 验证名称长度
 		if(null != lecturer && !lecturer.isEmpty()){
 			int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.min"));
 			int lenMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.max"));
-			CrCommonValidator.validateRange(lecturer.length(),lenMin, lenMax, OjBusinessErrorCode.MAX_64_CHARACTERS);
+			OjCommonValidator.validateRange(lecturer.length(),lenMin, lenMax, OjBusinessErrorCode.MAX_64_CHARACTERS);
 		}
 	}
 

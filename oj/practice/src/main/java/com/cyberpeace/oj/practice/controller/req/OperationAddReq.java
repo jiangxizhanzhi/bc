@@ -1,29 +1,25 @@
 package com.cyberpeace.oj.practice.controller.req;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
+import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.CustomValidate;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.utils.OjCommonValidator;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.baseinterface.Create;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
-import static com.cyberpeace.cr.crbase.utils.CrCommonValidator.validateLength;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Data
@@ -154,7 +150,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 						OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
 			}
 		}
-		validateLength(title, CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE,OjBusinessErrorCode.ANSWER_TOO_LONG);
+		OjCommonValidator.validateLength(title, CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE,OjBusinessErrorCode.ANSWER_TOO_LONG);
 
 	}
 }

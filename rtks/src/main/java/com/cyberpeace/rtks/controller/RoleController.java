@@ -1,32 +1,5 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotBlank;
-
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import org.apache.commons.collections.SetUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -38,7 +11,6 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -54,7 +26,7 @@ import com.cyberpeace.rtks.service.bo.skill.MissionLayout;
 import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
-
+import com.cyberpeace.rtks.util.RtksCommonValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -62,6 +34,28 @@ import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections.SetUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.util.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 interface Fields {
 
@@ -107,9 +101,6 @@ class Helper {
 public class RoleController {
 
 	@Autowired
-	MissionTemplateService missionTemplateService;
-
-	@Autowired
 	TransactionTemplate transactionTemplate;
 
 	@Autowired
@@ -138,11 +129,18 @@ public class RoleController {
 
 	private Boolean singleFrame;
 
+	private Integer MIN_SKILL_WEIGHT;
+
+	private Integer MAX_SKILL_WEIGHT;
 
 	@PostConstruct
 	public void init() {
 		String singleFrameConfig = ConfigUtil.getContextProperty("singleFrame");
 		singleFrame = Boolean.parseBoolean(singleFrameConfig);
+		MIN_SKILL_WEIGHT = Integer
+				.parseInt(ConfigUtil.getContextProperty("rtks.skill.weight.min"));
+		MAX_SKILL_WEIGHT = Integer
+				.parseInt(ConfigUtil.getContextProperty("rtks.skill.weight.max"));
 	}
 
 	protected RoleService getService() {
@@ -326,15 +324,6 @@ public class RoleController {
 		updateRoleCourse(roleId, inputIds, field);
 
 		return new BaseRsp<>(outputList);
-	}
-
-	@ApiOperation("获取任务列表")
-	@GetMapping("/missions")
-	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<List<MissionTemplateSimple>>
-			getSkillMissions(@RequestParam("resource_id") String resource_id) {
-		List<MissionTemplateSimple> res = roleService.getMissionList(resource_id);
-		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("编排任务列表")
@@ -643,22 +632,22 @@ public class RoleController {
 	}
 	public void validate(RoleInput roleInput) {
 		roleInput.getKnowledgeIdWeights().forEach((knowledgeIdWeight) -> {
-			CrCommonValidator.validateRange(knowledgeIdWeight.getWeight(),
-					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
+			RtksCommonValidator.validateRange(knowledgeIdWeight.getWeight(),
+					MIN_SKILL_WEIGHT, MAX_SKILL_WEIGHT,
 					RtksBusinessErrorCode.INVALID_WEIGHT);
 		});
 		roleInput.getSkillIdWeights().forEach((skillIdWeight) -> {
-			CrCommonValidator.validateRange(skillIdWeight.getWeight(),
-					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
+			RtksCommonValidator.validateRange(skillIdWeight.getWeight(),
+					MIN_SKILL_WEIGHT, MAX_SKILL_WEIGHT,
 					RtksBusinessErrorCode.INVALID_WEIGHT);
 		});
 
 		if (roleInput.getDescription() != null && roleInput.getDescription().length() > 0) {
-			CrCommonValidator.validateDescLen(roleInput.getDescription(), CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+			RtksCommonValidator.validateDescLen(roleInput.getDescription(), RtksBusinessErrorCode.ILLEGAL_DESC_LEN);
 		}
 
 		if (roleInput.getName() != null) {
-			CrCommonValidator.validateNameLen(roleInput.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+			RtksCommonValidator.validateNameLen(roleInput.getName(), RtksBusinessErrorCode.ILLEGAL_NAME_LEN);
 		}
 	}
 }

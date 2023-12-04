@@ -1,18 +1,7 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.enums.BusinessType;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -20,19 +9,25 @@ import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import com.cyberpeace.rtks.dao.entity.*;
+import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.dao.entity.Level;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.entity.SkillAndKnowledgeBase;
 import com.cyberpeace.rtks.dao.mapper.*;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TreeService;
 import com.cyberpeace.rtks.service.bo.*;
 import com.cyberpeace.rtks.service.bo.skill.*;
-import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,9 +46,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private RoleMapper roleMapper;
-
-	@Autowired
-	private CrTaskMapper crTaskMapper;
 
 	@Autowired
 	private TrainingEvaluationMapper trainingEvaluationMapper;
@@ -82,11 +74,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 1、计算知识点得分
 		if (knowledgeWeight != 0) {
 			knowledgeScore = calculateKnowledgeScore(roleId, userId);
-		}
-
-		// 2、计算技能得分
-		if (knowledgeWeight != MAX_PERCENT.intValue()) {
-			skillScore = calculateSkillScore(roleId, userId);
 		}
 
 		// 3、技能得分和知识点得分加权平均
@@ -239,79 +226,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		recordBo.setYCourses(yCourses);
 		recordBo.setYLessons(yLessons);
 		return recordBo;
-	}
-
-	@Override
-	public List<MissionPathBo> getTrainingPath(String userId, String roleId) {
-		Role role = roleMapper.selectById(roleId);
-		if (role == null) {
-			return Lists.newArrayList();
-		}
-		// get missions and related business template ids
-		List<MissionContext> missionContextList = roleSkillRelationMapper
-				.getMissionContextsByRoleId(roleId);
-		if (missionContextList.isEmpty()) {
-			return Lists.newArrayList();
-		}
-		// deduplicate, keep order
-		LinkedHashMap<String, MissionContext> missionMap = Maps.newLinkedHashMap();
-		Set<String> businessTemplateIds = Sets.newHashSet();
-		missionContextList.forEach((missionContext -> {
-			missionMap.put(missionContext.getMissionTemplateId(), missionContext);
-			// collect businessTemplate ids
-			businessTemplateIds.add(missionContext.getBusinessTemplateId());
-		}));
-		// collect mission-skill relations, one mission may be related to several skills
-		Map<String, List<MissionContext>> missionSkillRel = StreamApiUtils
-				.groupBy(missionContextList, MissionContext::getMissionTemplateId);
-		// collect mission completion status; true or false
-		Set<String> missionTemplateIds = missionMap.keySet();
-		List<CompletionStatus> completionStatusList = crTaskMapper
-				.getCompletionStatusByUserIdAndMissionTemplateIds(userId, missionTemplateIds);
-		Map<String, Boolean> completionStatusMap = Maps.newHashMap();
-		for (CompletionStatus mission : completionStatusList) {
-			if (mission.getStatus() > 0) {
-				completionStatusMap.put(mission.getResourceId(), true);
-			}
-		}
-		// get single training
-		List<TrainingRaw> singles = skillTrainingMapper
-				.getSingleByBusinessTemplateIdsAndUserId(userId, businessTemplateIds);
-		// get available team training
-		List<TrainingRaw> teams = skillTrainingMapper.getTeamByBusinessTemplateIdsAndUserId(userId,
-				businessTemplateIds);
-		// get available rb training
-		List<TrainingRaw> rbs = skillTrainingMapper.getRbByBusinessTemplateIdsAndUserId(userId,
-				businessTemplateIds);
-		// unify status
-		handleRbStatus(rbs);
-		// collect available trainings
-		Map<String, List<TrainingRaw>> trainingMap = Maps.newHashMap();
-		mapTrainings(trainingMap, singles, BusinessType.TRAINING_SINGLE.getCode());
-		mapTrainings(trainingMap, teams, BusinessType.TRAINING_TEAM.getCode());
-		mapTrainings(trainingMap, rbs, BusinessType.RED_VS_BLUE.getCode());
-		// get saved mission order
-		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
-		// generate new order by merge with saved order
-		List<MissionPathBo> newOrder = Lists.newArrayList();
-		for (String missionTemplateId : order) {
-			// mission does not exist or skill-mission relation deleted
-			if (!missionMap.containsKey(missionTemplateId)) {
-				continue;
-			}
-			MissionContext missionContext = missionMap.get(missionTemplateId);
-			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder,
-					completionStatusMap);
-			missionMap.remove(missionTemplateId);
-		}
-		// missions not in saved mission order
-		for (Map.Entry<String, MissionContext> entry : missionMap.entrySet()) {
-			MissionContext missionContext = entry.getValue();
-			// training template has no active training
-			addMissionBoByOrder(trainingMap, missionSkillRel, missionContext, newOrder,
-					completionStatusMap);
-		}
-		return newOrder;
 	}
 
 	@Override
@@ -507,25 +421,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		studyBo.setUnFinishedPracticeLessons(unExerciseSum);
 		return studyBo;
 	}
-
-	/**
-	 * 计算角色对应的技能得分
-	 * @return
-	 */
-	private Integer calculateSkillScore(String roleId, String userId) {
-		// 1、获取当前角色的所有技能点及权重
-		List<IdWeight> skillWeights = roleSkillRelationMapper.listByRoleId(roleId);
-		WeightedCalculation calculation = new WeightedCalculation();
-		for (IdWeight skillWight : skillWeights) {
-			// 2、获取单个技能得分
-			Double skillScore = skillService.calculateScore(skillWight.getResourceId(), userId);
-			// 3、统计
-			calculation.feed(skillWight.getWeight(), skillScore);
-		}
-		// 4、返回向上取整的分数
-		return MathUtils.ceil(calculation.solve());
-	}
-
 
 	/**
 	 * 计算角色对应的知识点得分

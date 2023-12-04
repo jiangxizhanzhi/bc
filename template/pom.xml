@@ -91,41 +91,6 @@
             <version>${oj.person.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>cr_base</artifactId>
-            <version>${cr.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>red_vs_blue</artifactId>
-            <version>${cr.redvsvblue.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>single_train</artifactId>
-            <version>${cr.single.train.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>team_train</artifactId>
-            <version>${cr.team.train.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>tool</artifactId>
-            <version>${cr.tool.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>evaluation</artifactId>
-            <version>${cr.evaluation.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.situation</groupId>
-            <artifactId>situation</artifactId>
-            <version>${situation.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.cyberpeace.gateway</groupId>
             <artifactId>gateway</artifactId>
             <version>${gateway.version}</version>

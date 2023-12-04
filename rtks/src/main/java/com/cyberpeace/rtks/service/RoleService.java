@@ -1,8 +1,5 @@
 package com.cyberpeace.rtks.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -10,9 +7,11 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.service.bo.skill.IdWeight;
-import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
+
+import java.util.List;
+import java.util.Map;
 
 public interface RoleService extends IService<Role> {
 
@@ -119,12 +118,4 @@ public interface RoleService extends IService<Role> {
 	 * @return {@code List<CourseConfigOutput>}
 	 */
 	List<CourseConfigOutput> getCourseList(String roleId);
-
-	/**
-	 * 获取任务列表
-	 *
-	 * @param roleId 角色id
-	 * @return {@code List<MissionTemplateSimple>}
-	 */
-	List<MissionTemplateSimple> getMissionList(String roleId);
 }

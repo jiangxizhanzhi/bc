@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
@@ -214,7 +213,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		String maxSize = ConfigUtil.getContextProperty("rtks.level.size");
 		if(childLevels.size() >= Integer.parseInt(maxSize)){
 			log.error("The second-floor frame is full of [{}] floors! floors = [{}]", ConfigUtil.getContextProperty("rtks.level.size"), childLevels.size());
-			throw new BusinessException(CrBusinessErrorCode.SECOND_FLOOR_FRAME_IS_FULL,maxSize);
+			throw new BusinessException(RtksBusinessErrorCode.SECOND_FLOOR_FRAME_IS_FULL,maxSize);
 		}
 	}
 

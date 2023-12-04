@@ -1,27 +1,11 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.*;
-import com.cyberpeace.common.entity.CrRole;
-import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -33,11 +17,6 @@ import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
-import com.cyberpeace.cr.redvsblue.entity.RbRoom;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
-import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
@@ -71,8 +50,19 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -140,15 +130,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
     @Autowired
     private RemoteAdService remoteAdService;
-
-    @Autowired
-    private CrRoleMapper crRoleMapper;
-
-    @Autowired
-    private TeamRoomMapper teamRoomMapper;
-
-    @Autowired
-    private RbRoomMapper rbRoomMapper;
 
     @Override
     public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -358,11 +339,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             }
         }
 
-        // 单兵 团队 红蓝对抗
-        List<ClassroomBo> crClassroom = crClassroom(roomListQuery.getStartTime(),
-                roomListQuery.getEndTime(), authContext.getUserId());
-        classroomBos.addAll(crClassroom);
-
         // 竞赛赛事
         List<ClassroomBo> adClassroom = adClassroom(roomListQuery.getStartTime(),
                 roomListQuery.getEndTime(),
@@ -448,78 +424,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 endTime, userId);
         return StreamApiUtils.map(competitionBos,
                 calendar -> BeanUtils.copy(calendar, ClassroomBo.class));
-    }
-
-    /**
-     * 团队训练 红蓝对抗
-     *
-     * @param startTime
-     * @param endTime
-     * @param userId
-     * @return
-     */
-    private List<ClassroomBo> crClassroom(Date startTime, Date endTime, String userId) {
-
-        List<ClassroomBo> classroomBos = Lists.newArrayList();
-
-        List<String> rbIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
-                BusinessType.RED_VS_BLUE.getCode());
-        if (CollectionUtils.isNotEmpty(rbIds)) {
-            List<RbRoom> rbRooms = rbRoomMapper.selectBatchIds(rbIds);
-            List<RbRoom> rooms = StreamApiUtils.filter(rbRooms,
-                    rbRoom -> startTime.before(rbRoom.getStartTime())
-                            && endTime.after(rbRoom.getStartTime()));
-            classroomBos.addAll(StreamApiUtils.map(rooms, rbRoom -> rbClassroom(rbRoom, userId)));
-        }
-
-        List<String> teamIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
-                BusinessType.TRAINING_TEAM.getCode());
-        if (CollectionUtils.isNotEmpty(teamIds)) {
-            List<TeamRoom> teamRooms = teamRoomMapper.selectBatchIds(teamIds);
-            List<TeamRoom> filter = StreamApiUtils.filter(teamRooms,
-                    teamRoom -> startTime.before(teamRoom.getStartTime())
-                            && endTime.after(teamRoom.getStartTime()));
-            classroomBos.addAll(
-                    StreamApiUtils.map(filter, teamRoom -> teamClassroom(teamRoom, userId)));
-        }
-
-        return classroomBos;
-    }
-
-    /**
-     * 团队训练房间数据转换
-     */
-    private ClassroomBo teamClassroom(TeamRoom teamRoom, String userId) {
-        ClassroomBo classroomBo = new ClassroomBo();
-        classroomBo.setName(teamRoom.getName());
-        classroomBo.setResourceId(teamRoom.getResourceId());
-        classroomBo.setClassify(ClassroomType.TEAM.getCode());
-        classroomBo.setCreateUserId(teamRoom.getCreateUserId());
-        classroomBo.setStartTime(teamRoom.getStartTime());
-        classroomBo.setEndTime(teamRoom.getEndTime());
-
-        CrRole role = crRoleMapper.getCrRoleByRoomIdAndUserId(teamRoom.getResourceId(), userId);
-        classroomBo.setRoleGroup(role.getRoleGroup());
-        return classroomBo;
-    }
-
-    /**
-     * 红蓝房间转换
-     */
-    private ClassroomBo rbClassroom(RbRoom rbRoom, String userId) {
-        ClassroomBo classroomBo = new ClassroomBo();
-        classroomBo.setClassify(ClassroomType.RB.getCode());
-        classroomBo.setName(rbRoom.getName());
-        classroomBo.setResourceId(rbRoom.getResourceId());
-
-        classroomBo.setCreateUserId(rbRoom.getCreateUserId());
-        classroomBo.setStartTime(rbRoom.getStartTime());
-        classroomBo.setEndTime(rbRoom.getEndTime());
-
-        CrRole role = crRoleMapper.getCrRoleByRoomIdAndUserId(rbRoom.getResourceId(), userId);
-        classroomBo.setRoleGroup(role.getRoleGroup());
-
-        return classroomBo;
     }
 
     @Override
@@ -1626,7 +1530,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param rowData
      * @param userId
-     * @param cover
      * @return
      */
     private TrainPlan parseTrainPlan(List<String> rowData, String userId,

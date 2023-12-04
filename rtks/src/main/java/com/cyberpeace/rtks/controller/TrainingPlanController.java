@@ -1,8 +1,24 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.List;
-import java.util.Set;
-
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
+import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
+import com.cyberpeace.rtks.dao.entity.Level;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeTreeRes;
+import com.cyberpeace.rtks.res.RoleDetailRes;
+import com.cyberpeace.rtks.service.*;
+import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
+import com.google.common.collect.Sets;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -16,29 +32,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.res.KnowledgeRes;
-import com.cyberpeace.rtks.res.KnowledgeTreeRes;
-import com.cyberpeace.rtks.res.RoleDetailRes;
-import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
-import com.cyberpeace.rtks.controller.res.skill.TrainingPathRes;
-import com.cyberpeace.rtks.dao.entity.Level;
-import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.service.*;
-import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
-import com.cyberpeace.rtks.service.bo.skill.SkillPagePath;
-import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
-import com.google.common.collect.Sets;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
+import java.util.Set;
 
 @Api(tags = "TRKS-训练计划管理")
 @RestController
@@ -211,59 +206,6 @@ public class TrainingPlanController {
 		}
 
 		return rsp;
-	}
-
-	@ApiOperation("我的职业-技能训练路径")
-	@GetMapping("/training/path")
-	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
-			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
-	public BaseRsp<TrainingPathRes> getTrainingPath() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		String roleId = UserInfoContext.getUserContext().getRoleId();
-		TrainingPathRes res = new TrainingPathRes();
-		if (StringUtils.isBlank(roleId)) {
-			res.setPath(Lists.newArrayList());
-			res.setRelated(Lists.newArrayList());
-			return new BaseRsp<>(res);
-		}
-		// get training path
-		List<MissionPathBo> trainingBoList = rtksStatisticService.getTrainingPath(userId, roleId);
-		// get all training from training path
-		res.setRelated(getAllRelatedTraining(trainingBoList));
-		res.setPath(trainingBoList);
-		return new BaseRsp<>(res);
-	}
-
-	@ApiOperation("岗位评估-技能体系清单")
-	@GetMapping("/role_evaluation/skill_list")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
-					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_PERSON_CENTER },
-			logical = Logical.OR)
-	public BaseRsp<ListRsp<SkillProcessRes>> pageSkillProcess(@Validated PageReqBase pageReqBase) {
-		String roleId = UserInfoContext.getUserContext().getRoleId();
-		if (StringUtils.isBlank(roleId)) {
-			return new BaseRsp<>(new ListRsp<SkillProcessRes>());
-		}
-		ListRsp<SkillProcessRes> result = skillService.pageSkillListByRoleId(pageReqBase, roleId);
-
-		return new BaseRsp<>(result);
-	}
-
-	@ApiOperation("岗位简介-岗位训练路径")
-	@GetMapping("/role_desc/training_path")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
-					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_PERSON_CENTER },
-			logical = Logical.OR)
-	public BaseRsp<ListRsp<SkillPagePath>> pageSkillPath(@Validated PageReqBase pageReqBase) {
-		String roleId = UserInfoContext.getUserContext().getRoleId();
-		if (StringUtils.isBlank(roleId)) {
-			return new BaseRsp<>(new ListRsp<SkillPagePath>());
-		}
-		ListRsp<SkillPagePath> result = skillService.pageSkillPathByRoleId(pageReqBase, roleId);
-
-		return new BaseRsp<>(result);
 	}
 
 	/**

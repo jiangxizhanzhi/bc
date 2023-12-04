@@ -343,4 +343,10 @@ public final class OjBusinessErrorCode {
 	/** 出题范围错误 */
 	public static final String PRACTICE_RANGE_ERROR = "102131";
 
+	/** 非法的标题长度 */
+	public static final String ILLEGAL_TITLE_LEN = "102132";
+
+	// 资源包错误
+	public static final String INVALID_RESOURCE_ZIP = "102133";
+
 }

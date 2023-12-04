@@ -78,4 +78,13 @@ public interface RtksBusinessErrorCode {
 
 	/** 岗位名称已存在 */
 	String ROLE_ALREADY_EXISTS = "103024";
+
+	/** 二层框架已满 */
+	String SECOND_FLOOR_FRAME_IS_FULL = "103025";
+
+	/** 非法的描述长度 */
+	String ILLEGAL_DESC_LEN = "103026";
+
+	/** 名称长度非法 */
+	String ILLEGAL_NAME_LEN = "103027";
 }

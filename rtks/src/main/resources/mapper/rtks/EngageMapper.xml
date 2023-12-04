@@ -66,17 +66,6 @@
         from rtks_engage_train_relation
         group by engage_id;
     </select>
-    <select id="getRelatedTemplates"
-            resultType="com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple">
-        select cr_business_template.resource_id,
-               cr_business_template.name,
-               cr_business_template.business_type as type,
-               cr_business_template.difficulty
-        from rtks_engage_train_relation
-                 left join cr_business_template
-                           on rtks_engage_train_relation.business_template_id = cr_business_template.resource_id
-        where rtks_engage_train_relation.engage_id = #{resourceId}
-    </select>
     <select id="getRelatedTemplateIds" resultType="java.lang.String">
         select business_template_id
         from rtks_engage_train_relation

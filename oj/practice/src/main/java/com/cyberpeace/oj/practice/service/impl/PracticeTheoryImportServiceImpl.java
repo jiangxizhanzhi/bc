@@ -9,13 +9,10 @@ import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
+import com.cyberpeace.oj.ojbase.utils.OjCommonValidator;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
@@ -35,8 +32,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
@@ -73,12 +68,20 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	private Integer MAX_CATEGORY_LENGTH;
 
+	private Integer ZERO_STR_LEN;
+
+	private Integer ILLEGAL_TITLE_LEN;
+
 	@PostConstruct
 	private void init() {
 		MAX_CONTENT_LENGTH = Integer
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
 		MAX_CATEGORY_LENGTH = Integer
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
+		ZERO_STR_LEN = Integer
+				.parseInt(ConfigUtil.getContextProperty("oj.str.len.zero"));
+		ILLEGAL_TITLE_LEN = Integer
+				.parseInt(ConfigUtil.getContextProperty("oj.str.len.zero"));
 	}
 
 	@Override
@@ -181,8 +184,8 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 		PracticeTheory practiceTheory = new PracticeTheory();
 		String content = excelRowData.get(0);
-		CrCommonValidator.validateLength(content, CrCommonConstants.ZERO_STR_LEN,
-				MAX_CONTENT_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+		OjCommonValidator.validateLength(content, ZERO_STR_LEN,
+				MAX_CONTENT_LENGTH, OjBusinessErrorCode.ILLEGAL_TITLE_LEN);
 
 		practiceTheory.setContent(content);
 		practiceTheory.setTitle(content);
@@ -301,8 +304,8 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 		PracticeTheory practiceTheory = new PracticeTheory();
 		String content = excelRowData.get(0);
-		CrCommonValidator.validateLength(content, CrCommonConstants.ZERO_STR_LEN,
-				MAX_CONTENT_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+		OjCommonValidator.validateLength(content, ZERO_STR_LEN,
+				MAX_CONTENT_LENGTH, OjBusinessErrorCode.ILLEGAL_TITLE_LEN);
 
 		practiceTheory.setContent(content);
 		practiceTheory.setTitle(content);
@@ -327,8 +330,8 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_DIRECTION_EMPTY_ERROR);
 		}
 		// 校验方向长度
-		CrCommonValidator.validateLength(categoryName, CrCommonConstants.ZERO_STR_LEN,
-				MAX_CATEGORY_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+		OjCommonValidator.validateLength(categoryName, ZERO_STR_LEN,
+				MAX_CATEGORY_LENGTH, OjBusinessErrorCode.ILLEGAL_TITLE_LEN);
 
 		String categoryId = practiceCategoryMapper
 				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);

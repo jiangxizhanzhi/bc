@@ -79,10 +79,8 @@
         <module>integration</module>
         <module>template</module>
         <module>gateway</module>
-        <module>cr</module>
         <module>oj</module>
         <module>common-service</module>
-        <module>situation</module>
     </modules>
 
     <dependencyManagement>

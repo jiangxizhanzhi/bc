@@ -18,7 +18,6 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -28,6 +27,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
@@ -249,7 +249,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 				throw e;
 			}
 			log.error("error file:{}:{}", realPath, e);
-			throw new BusinessException(CrBusinessErrorCode.INVALID_RESOURCE_ZIP);
+			throw new BusinessException(OjBusinessErrorCode.INVALID_RESOURCE_ZIP);
 		}
 		return new BaseRsp<>(result);
 	}

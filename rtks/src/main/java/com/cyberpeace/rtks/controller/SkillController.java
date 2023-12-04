@@ -1,16 +1,4 @@
 package com.cyberpeace.rtks.controller;
-import java.util.List;
-
-import com.cyberpeace.common.util.StreamApiUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
@@ -18,7 +6,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -30,10 +18,21 @@ import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
-
+import com.cyberpeace.rtks.util.RtksCommonValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "RTKS-技能管理")
 @RestController
@@ -79,8 +78,6 @@ public class SkillController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				// save skill
 				skillService.save(skill);
-				// save skill-mission relation
-				skillService.addMissionRelation(skill.getResourceId(), skillAddReq.getMissions());
 			}
 		});
 
@@ -100,7 +97,7 @@ public class SkillController {
 		Skill skill = skillService.getOr404(skillAddReq.getResourceId());
 		// 校验 content
 		if (StringUtils.isNotBlank(newContent) && !skill.getContent().equals(newContent)) {
-			CrCommonValidator.validateDescLen(skillAddReq.getContent(),
+			RtksCommonValidator.validateDescLen(skillAddReq.getContent(),
 					RtksBusinessErrorCode.INVALID_CONTENT);
 			skill.setContent(newContent);
 

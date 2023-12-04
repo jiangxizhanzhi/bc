@@ -1,12 +1,11 @@
 package com.cyberpeace.rtks.util;
 
-import java.util.List;
-
-import org.apache.commons.compress.utils.Lists;
-
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.rtks.service.bo.Difference;
 import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
 
 public class RtksCommonUtil {
 
@@ -63,5 +62,27 @@ public class RtksCommonUtil {
 		difference.setAdded(added);
 
 		return difference;
+	}
+
+	/**
+	 * 原地操作，去掉两个列表中相交的元素
+	 * @param l1
+	 * @param l2
+	 * @param <T>
+	 */
+	public static <T> void differ2List(List<T> l1, List<T> l2) {
+		if (l1 == null || l1.isEmpty() || l2 == null || l2.isEmpty()) {
+			return;
+		}
+		int i = 0;
+		while (i < l1.size()) {
+			int j = l2.indexOf(l1.get(i));
+			if (j > -1) {
+				l1.remove(i);
+				l2.remove(j);
+			} else {
+				i++;
+			}
+		}
 	}
 }

@@ -1,20 +1,5 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.common.util.StreamApiUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -22,8 +7,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.ObjUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -35,9 +19,21 @@ import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
 import com.cyberpeace.rtks.service.RoleService;
-
+import com.cyberpeace.rtks.util.RtksCommonValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.util.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Api(tags = "TRKS-框架层级管理")
 @RestController
@@ -61,7 +57,7 @@ public class LevelController {
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> create(@RequestBody @Validated LevelAddInput input) {
-		CrCommonValidator.validateNameLen(input.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		RtksCommonValidator.validateNameLen(input.getName(), RtksBusinessErrorCode.ILLEGAL_NAME_LEN);
 		Level entity = getEntityFromAddInput(input);
 
 		getService().save(entity);

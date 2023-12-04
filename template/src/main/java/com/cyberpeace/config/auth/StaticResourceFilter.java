@@ -1,9 +1,9 @@
 package com.cyberpeace.config.auth;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,7 +65,7 @@ public class StaticResourceFilter implements Filter {
                 }
                 if (StringUtils.isEmpty(cookie)) {
                     log.error("cookie is null , cookie = [{}]", cookie);
-                    throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+                    throw new BusinessException(ErrorCode.PERMISSION_DENIED);
                 }
             }
             httpResponse.sendRedirect(redirectUrl);

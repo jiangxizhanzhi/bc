@@ -1,12 +1,9 @@
 package com.cyberpeace.rtks.service.bo;
 
-import java.io.Serializable;
-import java.util.List;
-
-import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 public class EngageDetail implements Serializable {
@@ -23,6 +20,4 @@ public class EngageDetail implements Serializable {
 	@ApiModelProperty("子技术名称")
 	private String name;
 
-	@ApiModelProperty("关联模板")
-	private List<BusinessTemplateSimple> templates;
 }

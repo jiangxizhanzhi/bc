@@ -193,5 +193,11 @@ public final class ErrorCode {
 
 	public static final String FAILED_TO_GET_HTML_TEMPLATE_INSTANCE = "100061";
 
+	// 无权限操作
+	public static final String PERMISSION_DENIED = "100062";
+
+	/** 演示环境禁止增删改 */
+	public static final String DEMONSTRATION_FORBID_UPDATE = "100063";
+
 	private ErrorCode() {}
 }

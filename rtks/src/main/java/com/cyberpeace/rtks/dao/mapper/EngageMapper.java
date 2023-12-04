@@ -1,16 +1,14 @@
 package com.cyberpeace.rtks.dao.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.rtks.dao.entity.EngageTrainRelation;
 import com.cyberpeace.rtks.service.bo.career.EngageContext;
 import com.cyberpeace.rtks.service.bo.career.RelCount;
 import com.cyberpeace.rtks.service.bo.career.TechRelation;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Mapper
 @Repository
@@ -29,8 +27,6 @@ public interface EngageMapper {
 			@Param("businessTemplateIds") List<String> businessTemplateIds);
 
 	List<String> getRelByBusinessTemplateId(@Param("resourceId") String resourceId);
-
-	List<BusinessTemplateSimple> getRelatedTemplates(@Param("resourceId") String resourceId);
 
 	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
 

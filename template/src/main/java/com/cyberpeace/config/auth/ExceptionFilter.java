@@ -1,26 +1,5 @@
 package com.cyberpeace.config.auth;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authz.UnauthenticatedException;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.slf4j.impl.TraceIdContext;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -34,8 +13,26 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.slf4j.impl.TraceIdContext;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
@@ -84,8 +81,8 @@ public class ExceptionFilter implements Filter {
 			e = (Exception) e.getCause().getCause();
 		}
 
-		if (e.getMessage() != null && e.getMessage().contains("104021")) {
-			e = new BusinessException("104021");
+		if (e.getMessage() != null && e.getMessage().contains("100063")) {
+			e = new BusinessException("100063");
 		}
 		if (e instanceof BindException) {
 			parseArgumentNotValidException(servletResponse, (BindException) e);

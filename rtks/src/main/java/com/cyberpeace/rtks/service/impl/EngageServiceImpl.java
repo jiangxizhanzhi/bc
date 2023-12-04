@@ -1,11 +1,15 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.rtks.dao.mapper.EngageMapper;
+import com.cyberpeace.rtks.service.EngageService;
+import com.cyberpeace.rtks.service.bo.EngageDetail;
+import com.cyberpeace.rtks.service.bo.career.*;
+import com.cyberpeace.rtks.util.RtksCommonUtil;
+import com.google.common.collect.Maps;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,21 +17,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-import com.cyberpeace.rtks.dao.entity.EngageTrainRelation;
-import com.cyberpeace.rtks.dao.mapper.EngageMapper;
-import com.cyberpeace.rtks.service.EngageService;
-import com.cyberpeace.rtks.service.bo.EngageDetail;
-import com.cyberpeace.rtks.service.bo.career.*;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -94,17 +85,13 @@ public class EngageServiceImpl implements EngageService {
 				});
 			});
 		});
-
-		// get related business templates
-		List<BusinessTemplateSimple> templates = engageMapper.getRelatedTemplates(resourceId);
-		detail.setTemplates(templates);
 		return detail;
 	}
 
 	@Override
 	public void updateRelations(String resourceId, List<String> businessTemplateIds) {
 		List<String> oldRel = engageMapper.getRelatedTemplateIds(resourceId);
-		CrCommonUtil.differ2List(oldRel, businessTemplateIds);
+		RtksCommonUtil.differ2List(oldRel, businessTemplateIds);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

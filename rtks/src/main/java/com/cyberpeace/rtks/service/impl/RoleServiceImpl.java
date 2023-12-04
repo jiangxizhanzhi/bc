@@ -1,14 +1,31 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
+import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.dao.entity.CourseName;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.entity.RoleSkillRelation;
+import com.cyberpeace.rtks.dao.mapper.RoleMapper;
+import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
+import com.cyberpeace.rtks.dao.mapper.SkillMapper;
 import com.cyberpeace.rtks.service.CourseNameService;
+import com.cyberpeace.rtks.service.KnowledgeService;
+import com.cyberpeace.rtks.service.RoleService;
+import com.cyberpeace.rtks.service.bo.Difference;
+import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
+import com.cyberpeace.rtks.util.RtksCommonUtil;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -17,33 +34,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ListUtil;
-import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
-import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.dao.entity.RoleSkillRelation;
-import com.cyberpeace.rtks.dao.mapper.RoleMapper;
-import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
-import com.cyberpeace.rtks.dao.mapper.SkillMapper;
-import com.cyberpeace.rtks.service.KnowledgeService;
-import com.cyberpeace.rtks.service.RoleService;
-import com.cyberpeace.rtks.service.bo.Difference;
-import com.cyberpeace.rtks.service.bo.skill.IdWeight;
-import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
-import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
-import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
-import com.cyberpeace.rtks.util.RtksCommonUtil;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
@@ -62,9 +57,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	@Autowired
 	private SkillMapper skillMapper;
-
-	@Autowired
-	private MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private CourseNameService courseNameService;
@@ -306,42 +298,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 		}
 
 		return res;
-	}
-
-	@Override
-	public List<MissionTemplateSimple> getMissionList(String roleId) {
-
-		List<String> missionIds = this.getRelMissionIds(roleId);
-		Map<String, MissionTemplateRes> missionMapping = missionTemplateService
-				.mapWithBusiness(missionIds);
-		// merge with current order
-		Role role = this.getOr404(roleId);
-		List<String> currentMissionIds = JsonUtil.toJsonObjectArray(role.getSkillMissions(),
-				String.class);
-		List<MissionTemplateRes> newOrder = Lists.newArrayList();
-		for (String missionId : currentMissionIds) {
-			MissionTemplateRes mission = missionMapping.get(missionId);
-			if (mission != null) {
-				newOrder.add(mission);
-				missionMapping.remove(missionId);
-			}
-		}
-		for (Map.Entry<String, MissionTemplateRes> entry : missionMapping.entrySet()) {
-			newOrder.add(entry.getValue());
-		}
-		// save new order
-		List<String> newOrderIds = newOrder.stream().map(MissionTemplateRes::getResourceId)
-				.collect(Collectors.toList());
-		String newOrderJson = JsonUtil.arrayToString(newOrderIds);
-		if (!newOrderJson.equals(role.getSkillMissions())) {
-			role.setSkillMissions(JsonUtil.arrayToString(newOrderIds));
-			this.updateById(role);
-		}
-		// convert
-		List<MissionTemplateSimple> result = BeanUtils.deepCopyList(newOrder,
-				MissionTemplateSimple.class);
-
-		return result;
 	}
 
 	private String deleteIds(String Ids, List<String> ids) {

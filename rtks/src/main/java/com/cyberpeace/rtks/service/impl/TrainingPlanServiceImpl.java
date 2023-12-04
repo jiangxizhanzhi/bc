@@ -1,13 +1,5 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.exception.BusinessException;
@@ -17,15 +9,10 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.res.KnowledgeRes;
-import com.cyberpeace.rtks.res.KnowledgeTreeRes;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
-import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.controller.role.RoleDetailOutput;
 import com.cyberpeace.rtks.controller.role.RoleOutput;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
@@ -34,15 +21,24 @@ import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
+import com.cyberpeace.rtks.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeTreeRes;
+import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
-import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -56,9 +52,6 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
-
-	@Autowired
-	private MissionTemplateMapper missionTemplateMapper;
 
 	@Autowired
 	private KnowledgeMapper knowledgeMapper;
@@ -187,11 +180,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		// 获取技能的任务列表
 		List<String> missionTemplateIds = roleSkillRelationMapper
 				.getMissionIdsByRoleId(resource_id);
-		List<MissionTemplateRes> missionTemplateResList = missionTemplateMapper
-				.listWithBusiness(missionTemplateIds);
-		List<MissionTemplateSimple> missions = BeanUtils.deepCopyList(missionTemplateResList,
-				MissionTemplateSimple.class);
-		roleDetailRes.setMissions(missions);
+		roleDetailRes.setMissions(new ArrayList<>());
 
 		return roleDetailRes;
 	}

@@ -1,17 +1,12 @@
 package com.cyberpeace.rtks.controller.role;
 
-import java.io.Serializable;
-import java.util.List;
-
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class RoleInput implements Serializable {
@@ -42,26 +37,5 @@ public class RoleInput implements Serializable {
 
 	@ApiModelProperty("知识点权重（百分比）")
 	private Integer knowledgeWeight;
-
-	public void validate() {
-		knowledgeIdWeights.forEach((knowledgeIdWeight) -> {
-			CrCommonValidator.validateRange(knowledgeIdWeight.getWeight(),
-					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
-					RtksBusinessErrorCode.INVALID_WEIGHT);
-		});
-		skillIdWeights.forEach((skillIdWeight) -> {
-			CrCommonValidator.validateRange(skillIdWeight.getWeight(),
-					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
-					RtksBusinessErrorCode.INVALID_WEIGHT);
-		});
-
-		if (description != null && description.length() > 0) {
-			CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
-		}
-
-		if (name != null) {
-			CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-		}
-	}
 
 }

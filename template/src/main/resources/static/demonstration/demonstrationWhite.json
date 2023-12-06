@@ -12,5 +12,6 @@
   "/ojj/oj/lesson/update_status",
   "/ojj/oj/admin/class/group_info/get",
   "/ojj/oj/course/class/room/sign_in/",
+  "/ojj/situation/scene_config",
   "/ojj/oj/lesson/delete_scene"
 ]

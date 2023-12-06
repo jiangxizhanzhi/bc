@@ -1,13 +1,5 @@
 package com.cyberpeace.rtks.controller;
 
-import java.util.List;
-
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.rtks.service.AttackIcsService;
@@ -15,10 +7,16 @@ import com.cyberpeace.rtks.service.AttackService;
 import com.cyberpeace.rtks.service.EngageService;
 import com.cyberpeace.rtks.service.bo.EngageDetail;
 import com.cyberpeace.rtks.service.bo.career.*;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "rtks-职业管理")
 @RestController
@@ -141,4 +139,11 @@ public class CareerManagementController {
 		List<EngageCategoryBo<EngageFrontBo>> rsp = engageService.getEngagesByTraining(resource_id);
 		return new BaseRsp<>(rsp);
 	}
+
+	@ApiOperation("查看ATT&CK树形列表")
+	@GetMapping("/attack/tree")
+	public BaseRsp<List<AttackCategoryBo<FrameItemBase>>> getAttackTree() {
+		return new BaseRsp<>(attackService.getCache());
+	}
+
 }

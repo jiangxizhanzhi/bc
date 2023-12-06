@@ -169,7 +169,9 @@ public class AttackServiceImpl implements AttackService {
 				categoryBoZh = new AttackCategoryBo<>();
 				categoryBoEn = new AttackCategoryBo<>();
 				categoryBoZh.setCategoryName(attackContext.getCategoryNameZh());
+				categoryBoZh.setCode(attackContext.getCategoryId());
 				categoryBoEn.setCategoryName(attackContext.getCategoryNameEn());
+				categoryBoEn.setCode(attackContext.getCategoryId());
 				cachedAttacks.getZh().add(categoryBoZh);
 				cachedAttacks.getEn().add(categoryBoEn);
 			}

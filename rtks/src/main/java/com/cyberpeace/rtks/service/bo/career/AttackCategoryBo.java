@@ -16,6 +16,9 @@ public class AttackCategoryBo<T extends FrameItemBase> {
 	@ApiModelProperty("ATT&CK 列表")
 	private List<T> attacks;
 
+	@ApiModelProperty("类型编号")
+	private String code;
+
 	public AttackCategoryBo() {
 		attacks = Lists.newArrayList();
 	}

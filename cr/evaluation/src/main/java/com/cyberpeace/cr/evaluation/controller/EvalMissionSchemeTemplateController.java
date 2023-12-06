@@ -1,13 +1,18 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 import com.cyberpeace.cr.evaluation.controller.req.EvalMissionSchemeTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalMissionSchemeTemplateReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionSchemeTemplateListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionSchemeTemplate;
 import com.cyberpeace.cr.evaluation.service.EvalMissionSchemeTemplateService;
 import io.swagger.annotations.Api;
@@ -18,6 +23,8 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "靶场测评-技战法")
 @RestController
@@ -61,6 +68,14 @@ public class EvalMissionSchemeTemplateController {
 		evalMissionSchemeTemplate.setTemplateData(JsonUtil.toJsonString(updateEvalMissionSchemeTemplateReq.getContent()));
 		evalMissionSchemeTemplateService.updateEvalMissionSchemeTemplate(evalMissionSchemeTemplate);
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("查看技战法列表")
+	@GetMapping("/list")
+	public BaseRsp<ListRsp<EvalMissionSchemeTemplateListRsp>> getMissionSchemeTemplate(@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
+		Page evalMissionSchemeTemplatePage = pageReqBase.toPageParam();
+		List<EvalMissionSchemeTemplateListRsp> evalMissionSchemeTemplateListRspList = evalMissionSchemeTemplateService.getEvalMissionSchemeTemplateList(pageReqBase);
+		return new BaseRsp<>(PageUtil.getListResult(evalMissionSchemeTemplateListRspList, evalMissionSchemeTemplatePage, evalMissionSchemeTemplateListRspList.size()));
 	}
 
 	public EvalMissionSchemeTemplateReq entityToReq(EvalMissionSchemeTemplate evalMissionSchemeTemplate) {

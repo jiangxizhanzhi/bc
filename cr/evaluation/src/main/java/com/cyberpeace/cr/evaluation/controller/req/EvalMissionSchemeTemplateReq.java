@@ -11,7 +11,7 @@ import java.util.List;
 public class EvalMissionSchemeTemplateReq implements Serializable {
 
 	@ApiModelProperty("技战法名称")
-	private String title;
+	private String name;
 
 	@ApiModelProperty("技战法描述")
 	private String description;

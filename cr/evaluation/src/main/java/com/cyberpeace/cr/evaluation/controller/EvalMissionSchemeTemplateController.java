@@ -48,7 +48,7 @@ public class EvalMissionSchemeTemplateController {
 
 	@ApiOperation("查看技战法详情")
 	@GetMapping("")
-	public BaseRsp<EvalMissionSchemeTemplateReq> getEvalMissionSchemeTemplate(@ApiParam(name = "资源id", value = "resource_id", required = true) @RequestParam("resource_id") String resourceId) {
+	public BaseRsp<EvalMissionSchemeTemplateReq> getEvalMissionSchemeTemplate(@ApiParam(name = "resource_id", value = "资源编号", required = true) @RequestParam("resource_id") String resourceId) {
 		EvalMissionSchemeTemplate evalMissionSchemeTemplate = evalMissionSchemeTemplateService.getEvalMissionSchemeTemplate(resourceId);
 		return new BaseRsp<>(entityToReq(evalMissionSchemeTemplate));
 	}

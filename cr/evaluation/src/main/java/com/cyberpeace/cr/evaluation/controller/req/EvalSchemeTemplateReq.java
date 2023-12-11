@@ -1,6 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
-import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
+import com.cyberpeace.cr.evaluation.service.impl.bo.StageTemplateData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class EvalMissionSchemeTemplateReq implements Serializable {
+public class EvalSchemeTemplateReq implements Serializable {
 
 	@ApiModelProperty("技战法名称")
 	private String name;
@@ -23,6 +23,9 @@ public class EvalMissionSchemeTemplateReq implements Serializable {
 	private Integer templateCategory;
 
 	@ApiModelProperty("技战法内容")
-	private List<MissionSchemeStage> content;
+	private List<StageTemplateData> templateData;
+
+	@ApiModelProperty("典型攻击技战法左侧数据")
+	private String[][] content;
 
 }

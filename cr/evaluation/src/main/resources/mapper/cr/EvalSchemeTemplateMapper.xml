@@ -2,13 +2,13 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionSchemeTemplateMapper">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalSchemeTemplateMapper">
 
-    <select id="getTemplateList" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalMissionSchemeTemplate">
+    <select id="getTemplateList" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalSchemeTemplate">
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
         </if>
-        select * from cr_eval_mission_scheme_template
+        select * from cr_eval_scheme_template
         <where>
             <if test="pattern != null and pattern != ''">
                 name like #{pattern}

@@ -10,8 +10,8 @@ import lombok.Data;
 import lombok.Getter;
 
 @Data
-@TableName(value = "cr_eval_mission_scheme_template")
-public class EvalMissionSchemeTemplate extends BaseTable {
+@TableName(value = "cr_eval_scheme_template")
+public class EvalSchemeTemplate extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -30,6 +30,9 @@ public class EvalMissionSchemeTemplate extends BaseTable {
 
 	@ApiModelProperty("模板类型")
 	private Integer templateCategory;
+
+	@ApiModelProperty("典型攻击技战法左侧数据")
+	private String content;
 
 	@ApiModelProperty("创建者")
 	private String createUserId;

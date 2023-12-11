@@ -1,32 +1,24 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
+import com.cyberpeace.rtks.dao.mapper.AttackMapper;
+import com.cyberpeace.rtks.service.AttackService;
+import com.cyberpeace.rtks.service.bo.career.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-import com.cyberpeace.rtks.dao.entity.AttackTrainRelation;
-import com.cyberpeace.rtks.dao.mapper.AttackMapper;
-import com.cyberpeace.rtks.service.AttackService;
-import com.cyberpeace.rtks.service.bo.career.*;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j

@@ -4,9 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class UpdateEvalMissionSchemeTemplateReq extends EvalMissionSchemeTemplateReq{
+public class UpdateEvalMissionTemplateReq extends EvalMissionTemplateReq {
 
-	@ApiModelProperty(name = "资源id", required = true)
+	@ApiModelProperty("资源id")
 	private String resourceId;
 
 }

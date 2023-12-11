@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(tags = "rtks-职业管理")
@@ -142,8 +143,17 @@ public class CareerManagementController {
 
 	@ApiOperation("查看ATT&CK树形列表")
 	@GetMapping("/attack/tree")
-	public BaseRsp<List<AttackCategoryBo<FrameItemBase>>> getAttackTree() {
-		return new BaseRsp<>(attackService.getCache());
+	public BaseRsp<List<AttackEvalSchemeBo>> getAttackTree() {
+		List<AttackEvalSchemeBo> attackEvalSchemeBoList = new ArrayList<>();
+		List<AttackCategoryBo<FrameItemBase>> attackCategoryBoList = attackService.getCache();
+		for (AttackCategoryBo<FrameItemBase> attackCategoryBo : attackCategoryBoList) {
+			AttackEvalSchemeBo category = new AttackEvalSchemeBo();
+			category.setName(attackCategoryBo.getCategoryName());
+			category.setResourceId(attackCategoryBo.getCode());
+			category.setChildren(attackCategoryBo.getAttacks());
+			attackEvalSchemeBoList.add(category);
+		}
+		return new BaseRsp<>(attackEvalSchemeBoList);
 	}
 
 }

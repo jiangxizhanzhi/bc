@@ -22,4 +22,10 @@ public class EvalMissionSchemeTemplateListRsp implements Serializable {
 
 	@ApiModelProperty("目标数")
 	private Integer taskCount;
+
+	@ApiModelProperty("创建者")
+	private String createUserName;
+
+	@ApiModelProperty("更新时间")
+	private String updateTime;
 }

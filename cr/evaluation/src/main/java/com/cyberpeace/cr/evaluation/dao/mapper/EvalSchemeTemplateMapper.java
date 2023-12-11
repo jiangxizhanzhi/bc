@@ -1,7 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionSchemeTemplate;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalSchemeTemplate;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -10,9 +10,9 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface EvalMissionSchemeTemplateMapper extends BaseMapper<EvalMissionSchemeTemplate> {
+public interface EvalSchemeTemplateMapper extends BaseMapper<EvalSchemeTemplate> {
 
-	List<EvalMissionSchemeTemplate> getTemplateList(@Param("pattern") String pattern);
+	List<EvalSchemeTemplate> getTemplateList(@Param("pattern") String pattern);
 
 
 }

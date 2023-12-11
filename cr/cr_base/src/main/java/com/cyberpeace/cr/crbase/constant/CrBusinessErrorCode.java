@@ -490,5 +490,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String NO_EVENT_TYPE_SELECTED = "101143";
 
+	/**
+	 * 导出技战法失败
+	 */
+	public static final String FAILED_TO_EXPORT_EVAL_SCHEME_TEMPLATE = "101144";
+
 	private CrBusinessErrorCode() {}
 }

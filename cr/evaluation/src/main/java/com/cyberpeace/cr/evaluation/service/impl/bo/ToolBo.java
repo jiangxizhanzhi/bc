@@ -20,5 +20,5 @@ public class ToolBo implements Serializable {
 	private Integer executeType;
 
 	@ApiModelProperty("预定义动作")
-	private String actions;
+	private String action;
 }

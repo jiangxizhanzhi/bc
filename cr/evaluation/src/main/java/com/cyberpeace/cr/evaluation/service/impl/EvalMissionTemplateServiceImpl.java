@@ -9,11 +9,16 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
 import com.cyberpeace.cr.evaluation.service.impl.bo.ToolBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EvalMissionTemplateServiceImpl extends ServiceImpl<EvalMissionTemplateMapper, EvalMissionTemplate> implements EvalMissionTemplateService {
@@ -47,5 +52,16 @@ public class EvalMissionTemplateServiceImpl extends ServiceImpl<EvalMissionTempl
 	@Override
 	public void deleteMissionTemplate(List<String> resourceIds) {
 		evalMissionTemplateMapper.deleteBatchIds(resourceIds);
+	}
+
+	@Override
+	public List<String> getTaskIds(List<MissionScheme> missionSchemeList) {
+		List<String> resourceIds = new ArrayList<>();
+		for (MissionScheme missionScheme : missionSchemeList) {
+			for (StageData stageData : missionScheme.getStageList()) {
+				resourceIds.addAll(stageData.getTaskList().stream().map(TaskBo::getResourceId).collect(Collectors.toList()));
+			}
+		}
+		return resourceIds;
 	}
 }

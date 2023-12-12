@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionSchemeTemplateListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSchemeTemplate;
-import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,8 +19,6 @@ public interface EvalSchemeTemplateService extends IService<EvalSchemeTemplate> 
 	void updateEvalSchemeTemplate(EvalSchemeTemplate evalSchemeTemplate);
 
 	List<EvalMissionSchemeTemplateListRsp> getEvalSchemeTemplateList(PageReqBase pageReqBase);
-
-	List<String> getTaskIds(MissionScheme missionScheme);
 
 	String exportSchemeTemplate(List<String> resourceIds, String tempDir) throws IOException;
 

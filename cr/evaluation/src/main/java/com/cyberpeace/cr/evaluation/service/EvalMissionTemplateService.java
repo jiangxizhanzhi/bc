@@ -5,6 +5,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalMissionTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalMissionTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
 
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface EvalMissionTemplateService extends IService<EvalMissionTemplate
 	EvalMissionTemplateRsp getMissionTemplate(String resourceId);
 
 	void deleteMissionTemplate(List<String> resourceIds);
+
+	List<String> getTaskIds(List<MissionScheme> missionSchemeList);
 
 }

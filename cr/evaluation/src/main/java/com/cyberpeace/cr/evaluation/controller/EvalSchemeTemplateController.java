@@ -111,7 +111,7 @@ public class EvalSchemeTemplateController {
 	}
 
 	@ApiOperation("导入技战法")
-	@PostMapping("/import")
+	@PutMapping("/import")
 	public BaseRsp<String> importScheme(@RequestParam("file") MultipartFile file) throws IOException, ZipException {
 		// 1. save file to temp dir
 		File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());

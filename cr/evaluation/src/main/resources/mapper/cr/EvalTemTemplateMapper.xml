@@ -4,5 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalTemTemplateMapper">
 
-
+    <select id="selectPage" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate">
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+        </if>
+        select * from cr_eval_template_template
+        <where>
+            1 = 1
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="pattern != null and pattern != ''">
+                and `name` like #{pattern}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
 </mapper>

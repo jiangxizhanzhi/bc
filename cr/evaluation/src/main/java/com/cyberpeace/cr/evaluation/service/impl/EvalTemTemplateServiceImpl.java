@@ -142,7 +142,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 			EvalTemTemplateListRsp evalTemTemplateListRsp = BeanUtils.copy(evalTemTemplate, EvalTemTemplateListRsp.class);
 			evalTemTemplateListRsp.setUpdateTime(TimeUtil.format1(evalTemTemplate.getUpdateTime()));
 			evalTemTemplateListRsp.setNodeCount(nodeCountMap.get(evalTemTemplate.getTopoId()).getNodeCounts());
-			evalTemTemplateListRsp.setName(idNameMap.get(evalTemTemplate.getCreateUserId()));
+			evalTemTemplateListRsp.setCreateUser(idNameMap.get(evalTemTemplate.getCreateUserId()));
 			return evalTemTemplateListRsp;
 		}).collect(Collectors.toList());
 	}

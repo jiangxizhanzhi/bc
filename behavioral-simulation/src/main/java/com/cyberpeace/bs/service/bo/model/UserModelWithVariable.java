@@ -3,11 +3,12 @@ package com.cyberpeace.bs.service.bo.model;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
+
 import com.cyberpeace.bs.service.bo.behavior.BehaviorWithVariable;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.compress.utils.Lists;
 
 /**
  * 带行为变量的用户模型
@@ -29,6 +30,12 @@ public class UserModelWithVariable implements Serializable {
 	 */
 	@ApiModelProperty(value = "用户名称")
 	private String userName;
+
+	/**
+	 * 用户数量
+	 */
+	@ApiModelProperty(value = "用户数量")
+	private Integer userNum;
 
 	/**
 	 * 是否限制带宽

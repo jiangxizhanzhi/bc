@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cyberpeace.bs.dao.mapper.UserInstanceMapper">
     <insert id="insertUserInstanceBatch">
-        insert into bs_user_instance (user_name, user_type_id, user_type, start_time, end_time, access_config,
+        insert into bs_user_instance (user_name, user_type_id, user_type, user_num, start_time, end_time, access_config,
         behavior_list, behavior_variable, behavior_count, access_habit, bandwidth_limited,
         bandwidth, user_model_id, user_simulator_id, create_time)
         values
         <foreach collection="userInstanceAll" item="userInstance" separator=",">
-            (#{userInstance.userName},#{userInstance.userTypeId},#{userInstance.userType},
+            (#{userInstance.userName},#{userInstance.userTypeId},#{userInstance.userType},#{userInstance.userNum},
             #{userInstance.startTime},#{userInstance.endTime},#{userInstance.accessConfig},#{userInstance.behaviorList},
             #{userInstance.behaviorVariable},#{userInstance.behaviorCount},#{userInstance.accessHabit},
             #{userInstance.bandwidthLimited},#{userInstance.bandwidth},#{userInstance.userModelId},

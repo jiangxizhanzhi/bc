@@ -37,6 +37,11 @@ public class UserInstance implements Serializable {
     private String userType;
 
     /**
+     * 用户数量
+     */
+    private Integer userNum;
+
+    /**
      * 开始时间
      */
     private LocalTime startTime;

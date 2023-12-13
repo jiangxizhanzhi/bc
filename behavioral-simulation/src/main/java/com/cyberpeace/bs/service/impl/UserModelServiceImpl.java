@@ -231,6 +231,8 @@ public class UserModelServiceImpl implements UserModelService {
 			withVariable.setUserModelId(userModel.getResourceId());
 			// 用户名称
 			withVariable.setUserName(userModel.getUserName());
+			// 用户数量
+			withVariable.setUserNum(userModel.getUserNum());
 			// 是否限制带宽
 			withVariable.setBandwidthLimited(userModel.getBandwidthLimited());
 			// 带宽限制数值

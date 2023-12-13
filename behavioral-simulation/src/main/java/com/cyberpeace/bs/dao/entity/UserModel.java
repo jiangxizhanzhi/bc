@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+
 import lombok.Data;
 import lombok.Getter;
 
@@ -53,6 +54,11 @@ public class UserModel extends BaseTable {
      * 访问行为json
      */
     private String behaviorList;
+
+	/**
+	 * 用户数量
+	 */
+	private Integer userNum;
 
     /**
      * 访问习惯

@@ -13,6 +13,7 @@
         access_config,
         access_os,
         behavior_list,
+        user_num,
         bandwidth_limited,
         bandwidth
         from bs_user_model

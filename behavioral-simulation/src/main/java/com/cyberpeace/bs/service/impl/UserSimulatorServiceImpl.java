@@ -201,6 +201,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 		Set<String> habits = Sets.newHashSet();
 		simulator.setBandwidthLimited(false);
+		Integer userCount = 0;
 		for (UserInstance instance : userInstanceList) {
 			// get start time and end time
 			if (simulator.getStartTime() == null
@@ -221,6 +222,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 					simulator.setBandwidth(instance.getBandwidth());
 				}
 			}
+			userCount += instance.getUserNum();
 
 		}
 		// get user types
@@ -228,7 +230,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				.collect(Collectors.toSet());
 		simulator.setUserTypes(JsonUtil.toJsonString(userTypes));
 		// user count
-		simulator.setUserCount(userInstanceList.size());
+		simulator.setUserCount(userCount);
 		// behavior count
 		simulator.setBehaviorCount(
 				userInstanceList.stream().mapToInt(UserInstance::getBehaviorCount).sum());
@@ -287,11 +289,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			instance.setAccessConfig(userModel.getAccessConfig());
 			instance.setBehaviorList(userModel.getBehaviorList());
 			instance.setBehaviorVariable(JsonUtil.toJsonString(instanceAddBo.getBehaviorConfig()));
-			instance.setBehaviorCount(statistic.getBehaviorCount());
+			instance.setBehaviorCount(statistic.getBehaviorCount() * userModel.getUserNum());
 			instance.setAccessHabit(userModel.getAccessHabit());
 			instance.setBandwidthLimited(userModel.getBandwidthLimited());
 			instance.setBandwidth(userModel.getBandwidth());
 			instance.setUserModelId(userModelId);
+			instance.setUserNum(userModel.getUserNum());
 
 			instanceList.add(instance);
 		}
@@ -524,13 +527,21 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			Map<String, String> behaviorVariableMap = BsUtil
 					.getVariableMap(instance.getBehaviorVariable());
 
+			Integer loopTime = instance.getUserNum();
+			if (null == loopTime || 0 == loopTime) {
+				loopTime = 1;
+			}
 			for (BehaviorSimple behavior : behaviorList) {
-				// 最后一个task index为0
-				BsTimerTask task = new BsTimerTask(simulator, behavior.getId(), behaviorVariableMap
-						.getOrDefault(behavior.getId(), BsConstants.EMPTY_LIST_JSON));
-				// 循环执行，间隔一天，跳过当天在当前时间之前的行为
-				timer.scheduleAtFixedRate(task, BsUtil.getNextDate(behavior.getStartTime()),
-						BsConstants.MILLI_IN_A_DAY);
+				// 按用户数量重复加入行为
+				for (int i = 0; i < loopTime; i++) {
+					// 最后一个task index 为 0
+					BsTimerTask task = new BsTimerTask(simulator, behavior.getId(),
+							behaviorVariableMap.getOrDefault(behavior.getId(),
+									BsConstants.EMPTY_LIST_JSON));
+					// 循环执行，间隔一天，跳过当天在当前时间之前的行为
+					timer.scheduleAtFixedRate(task, BsUtil.getNextDate(behavior.getStartTime()),
+							BsConstants.MILLI_IN_A_DAY);
+				}
 			}
 			timerMap.get(simulator.getResourceId()).put(instance.getUserModelId(), timer);
 		}

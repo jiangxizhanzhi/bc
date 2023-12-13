@@ -29,6 +29,12 @@ public class UserModelBase implements Serializable {
 	private String userTypeId;
 
 	/**
+	 * 用户数量
+	 */
+	@ApiModelProperty(value = "用户数量")
+	private Integer userNum;
+
+	/**
 	 * 设备类型
 	 */
 	@ApiModelProperty(value = "访问设备")

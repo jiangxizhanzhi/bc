@@ -47,4 +47,9 @@ public class LcBehaviorListReqBody implements Serializable {
      * 是否实体设备
      */
     private Integer isActual;
+
+    /**
+     * 行为tag
+     */
+    private String tag;
 }

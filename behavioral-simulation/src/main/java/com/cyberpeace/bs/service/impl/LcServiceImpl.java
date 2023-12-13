@@ -151,14 +151,16 @@ public class LcServiceImpl implements LcService {
         body.setAppType(pageReq.getAppType());
         // 设置是否实体
         body.setIsActual(pageReq.getIsActual());
+        // 行为tag
+        body.setTag(pageReq.getTag());
         // 获取远程行为数据
         LcBehaviorPageRes lcBehaviorPageRes = LcHttpClient.post(targetUrl, body,
                 LcBehaviorPageRes.class);
         ListRsp<LcBehavior> res = new ListRsp<>();
         List<LcBehavior> list = Lists.newArrayList();
         // 转换为本地行为数据类型
-        for (LcBehaviorRspBo record : lcBehaviorPageRes.getRecords()) {
-            LcBehavior lcBehavior = createLcBehavior(record);
+        for (LcBehaviorRspBo rspBo : lcBehaviorPageRes.getRecords()) {
+            LcBehavior lcBehavior = createLcBehavior(rspBo);
             list.add(lcBehavior);
         }
         // 设置分页数据格式

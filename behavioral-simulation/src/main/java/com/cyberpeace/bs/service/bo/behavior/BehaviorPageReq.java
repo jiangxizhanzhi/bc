@@ -1,6 +1,7 @@
 package com.cyberpeace.bs.service.bo.behavior;
 
 import com.cyberpeace.common.model.PageReqBase;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +37,11 @@ public class BehaviorPageReq extends PageReqBase {
     @Getter
     @Setter
     private Integer appType;
+
+	@ApiModelProperty(value = "行为tag")
+	@Getter
+	@Setter
+	private String tag;
 
     /**
      * 是否实体设备

@@ -59,7 +59,7 @@ CREATE TABLE `cr_eval_scheme_template`  (
                                             `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
                                             `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
                                             PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 
 -- ----------------------------
@@ -75,6 +75,7 @@ CREATE TABLE `cr_eval_template_template`  (
                                               `condition` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '试验条件',
                                               `method` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '试验方法',
                                               `type` tinyint(1) NULL DEFAULT NULL COMMENT '测试类型',
+                                              `scheme` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务方案附件',
                                               `topo_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联topo uuid',
                                               `missions_scheme` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '任务方案',
                                               `create_user_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人id',

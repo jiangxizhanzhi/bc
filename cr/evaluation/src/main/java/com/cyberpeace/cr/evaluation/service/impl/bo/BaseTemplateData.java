@@ -26,4 +26,7 @@ public class BaseTemplateData implements Serializable {
 	@ApiModelProperty("测试类型")
 	private Integer type;
 
+	@ApiModelProperty("任务方案附件")
+	private String scheme;
+
 }

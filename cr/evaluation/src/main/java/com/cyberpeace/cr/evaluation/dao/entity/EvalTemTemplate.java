@@ -32,6 +32,9 @@ public class EvalTemTemplate extends BaseTable {
 	@ApiModelProperty("测试类型")
 	private Integer type;
 
+	@ApiModelProperty("任务方案附件")
+	private String scheme;
+
 	@ApiModelProperty("拓扑id")
 	private String topoId;
 

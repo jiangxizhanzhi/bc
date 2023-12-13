@@ -33,6 +33,11 @@ public final class FileTypeContant {
 	 */
 	public static final String HANDOUT_ATTACHMENT_TYPE = "PDF,ZIP,DOC,DOCX,PPT,PPTX";
 
+	/**
+	 * 后台测试模板
+	 */
+	public static final String MISSION_SCHEME_TYPE = "DOC,DOCX,XML,PDF,HTML";
+
 	private FileTypeContant() {}
 
 }

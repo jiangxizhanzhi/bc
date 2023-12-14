@@ -174,15 +174,25 @@
     <select id="getCntLastWeek" resultType="com.cyberpeace.oj.practice.controller.res.PracticeLastWeekRes">
         SELECT DATE(create_time) AS date, COUNT(*) AS finishedTheories, 0 AS practice_type
         FROM `oj_practice_solved`
-        WHERE create_time >= CURDATE() - INTERVAL 777 DAY AND practice_type = 0
-        and  practice_id in
+        WHERE create_time >= CURDATE() - INTERVAL 7 DAY AND practice_type = 0 and solved = 1
+        and practice_id in (
+        select resource_id from oj_practice_theory where practice_set_id in
+        <foreach collection="ids" separator="," open="(" close=")" item="Id">
+            #{Id}
+        </foreach>
+        and `public` = true)
         GROUP BY DATE(create_time)
 
         UNION ALL
 
         SELECT DATE(create_time) AS date, COUNT(*) AS finishedTheories, 2 AS practice_type
         FROM `oj_practice_solved`
-        WHERE create_time >= CURDATE() - INTERVAL 777 DAY AND practice_type = 2
+        WHERE create_time >= CURDATE() - INTERVAL 7 DAY AND practice_type = 2 and solved = 1
+        and practice_id in (select resource_id from oj_practice_theory where practice_set_id in
+        <foreach collection="ids" separator="," open="(" close=")" item="Id">
+            #{Id}
+        </foreach>
+        and `public` = true)
         GROUP BY DATE(create_time);
     </select>
 

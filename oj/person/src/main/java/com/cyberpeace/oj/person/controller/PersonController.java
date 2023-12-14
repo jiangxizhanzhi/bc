@@ -291,6 +291,7 @@ public class PersonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
 
+		ChartLineReq res = new ChartLineReq();
 		// 过滤无权限习题集
 		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
 		// 过滤非公开习题集
@@ -298,12 +299,14 @@ public class PersonController {
 				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
 		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
 		authSetIds.retainAll(setIds);
-		List<ProgressProportion> progressProportionList = new ArrayList<>();
-		List<PracticeLastWeekRes> practiceLastWeek = practiceSolvedMapper.getCntLastWeek(PracticeSet.PracticeType.THEORY.getCode());
+		if (CollectionUtils.isEmpty(authSetIds)) {
+			return new BaseRsp<>(res);
+		}
+
+		List<PracticeLastWeekRes> practiceLastWeek = practiceSolvedMapper.getCntLastWeek(PracticeSet.PracticeType.THEORY.getCode(), setIds);
 		Map<Integer, List<PracticeLastWeekRes>> group = StreamApiUtils.groupBy(practiceLastWeek, PracticeLastWeekRes::getPracticeType);
 
-		ChartLineReq res = new ChartLineReq();
-		List<String> date = practiceLastWeek.stream().map(item -> TimeUtil.format8(item.getDate())).collect(Collectors.toList());
+		List<String> date = practiceLastWeek.stream().map(item -> TimeUtil.format8(item.getDate())).sorted(Comparator.reverseOrder()).collect(Collectors.toList());
 
 		List<PracticeLastWeekRes> theoryLastWeekRes = group.getOrDefault(PracticeSet.PracticeType.THEORY.getCode(), Collections.emptyList());
 		List<PracticeLastWeekRes> operateLastWeekRes = group.getOrDefault(PracticeSet.PracticeType.OPERATION.getCode(), Collections.emptyList());

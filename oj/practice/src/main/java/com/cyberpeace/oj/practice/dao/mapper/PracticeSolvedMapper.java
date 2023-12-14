@@ -8,6 +8,7 @@ import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 
@@ -49,5 +50,5 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 
 	List<String> selectUserIdByPracticeId(@Param("practiceId") String practiceId);
 
-	List<PracticeLastWeekRes> getCntLastWeek(@Param("practiceType") Integer practiceType);
+	List<PracticeLastWeekRes> getCntLastWeek(@Param("practiceType") Integer practiceType, @NotEmpty @Param("ids") List<String> ids);
 }

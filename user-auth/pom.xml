@@ -7,7 +7,6 @@
         <groupId>com.cyberpeace</groupId>
         <artifactId>pp</artifactId>
         <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <packaging>jar</packaging>
 

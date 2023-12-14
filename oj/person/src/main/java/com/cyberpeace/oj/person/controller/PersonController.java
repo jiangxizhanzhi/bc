@@ -10,17 +10,30 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.person.controller.req.ChartLineReq;
 import com.cyberpeace.oj.person.controller.req.PageMistakeReq;
 import com.cyberpeace.oj.person.controller.req.PageNoteReq;
+import com.cyberpeace.oj.person.controller.req.TheoryReq;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
+import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.PersonalMistakeRes;
+import com.cyberpeace.oj.practice.controller.res.PracticeLastWeekRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.ProgressProportion;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import io.swagger.annotations.Api;
@@ -36,9 +49,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Api(tags = "oj-前台个人中心api")
 @RestController
@@ -54,6 +66,21 @@ public class PersonController {
 
 	@Autowired
 	private PracticeOperationService practiceOperationService;
+
+	@Autowired
+	private PracticeTheoryMapper practiceTheoryMapper;
+
+	@Autowired
+	private CourseLessonMapper courseLessonMapper;
+
+	@Autowired
+	private PracticeOperationMapper practiceOperationMapper;
+
+	@Autowired
+	private PracticeSolvedMapper practiceSolvedMapper;
+
+	@Autowired
+	private PracticeSetMapper practiceSetMapper;
 
 	@Autowired
 	RemoteUserService remoteUserService;
@@ -238,6 +265,62 @@ public class PersonController {
 	public BaseRsp<List<String>> getPracticeMistakeIds() {
 		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
 		return new BaseRsp<>(StreamApiUtils.map(personalMistakeResList, PersonalMistakeRes::getPracticeId));
+	}
+
+	@ApiOperation("习题饼图")
+	@GetMapping("/practices_pie")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
+	public BaseRsp<TheoryReq> getPracticesToPie() {
+		ProgressStatisticsRes progressStatistics = practiceTheoryService.getProgressStatistics(null);
+		ProgressProportion sum = progressStatistics.getSum();
+		List<CategoryProgressRes> categoryProgressResList = practiceOperationService.getOperationCategoryProgress();
+		int operateSum = categoryProgressResList.stream().mapToInt(CategoryProgressRes::getSum).sum();
+		int operateCnt = categoryProgressResList.stream().mapToInt(CategoryProgressRes::getCount).sum();
+		TheoryReq theoryReq = new TheoryReq();
+		theoryReq.setTotalTheories(sum.getSum());
+		theoryReq.setTotalOperates(operateSum);
+		theoryReq.setFinishedOperates(operateCnt);
+		theoryReq.setFinishedTheories(sum.getCount());
+		return new BaseRsp<>(theoryReq);
+	}
+
+	@ApiOperation("习题折线图")
+	@GetMapping("/practices_lineChart")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
+	public BaseRsp<ChartLineReq> getPracticesToLineChart() {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+
+		// 过滤无权限习题集
+		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		// 过滤非公开习题集
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authSetIds.retainAll(setIds);
+		List<ProgressProportion> progressProportionList = new ArrayList<>();
+		List<PracticeLastWeekRes> practiceLastWeek = practiceSolvedMapper.getCntLastWeek(PracticeSet.PracticeType.THEORY.getCode());
+		Map<Integer, List<PracticeLastWeekRes>> group = StreamApiUtils.groupBy(practiceLastWeek, PracticeLastWeekRes::getPracticeType);
+
+		ChartLineReq res = new ChartLineReq();
+		List<String> date = practiceLastWeek.stream().map(item -> TimeUtil.format8(item.getDate())).collect(Collectors.toList());
+
+		List<PracticeLastWeekRes> theoryLastWeekRes = group.getOrDefault(PracticeSet.PracticeType.THEORY.getCode(), Collections.emptyList());
+		List<PracticeLastWeekRes> operateLastWeekRes = group.getOrDefault(PracticeSet.PracticeType.OPERATION.getCode(), Collections.emptyList());
+
+		List<Integer> theoryCnt = getCountList(theoryLastWeekRes);
+		List<Integer> operateCnt = getCountList(operateLastWeekRes);
+
+		res.setDate(date);
+		res.setFinishedTheories(theoryCnt);
+		res.setFinishedOperates(operateCnt);
+
+		return new BaseRsp<>(res);
+	}
+
+	private List<Integer> getCountList(List<PracticeLastWeekRes> list) {
+		return list.stream().map(PracticeLastWeekRes::getDate).collect(Collectors.groupingBy(TimeUtil::format8, Collectors.counting()))
+				.values().stream().map(Long::intValue).collect(Collectors.toList());
 	}
 
 	private List<CollectionPracticeBo> resortCollections(List<CollectionPracticeBo> collectionPracticeBos, List<String> resourceIds) {

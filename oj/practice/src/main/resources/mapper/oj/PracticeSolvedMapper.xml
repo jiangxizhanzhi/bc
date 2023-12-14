@@ -171,4 +171,19 @@
           and solved = 1
     </select>
 
+    <select id="getCntLastWeek" resultType="com.cyberpeace.oj.practice.controller.res.PracticeLastWeekRes">
+        SELECT DATE(create_time) AS date, COUNT(*) AS finishedTheories, 0 AS practice_type
+        FROM `oj_practice_solved`
+        WHERE create_time >= CURDATE() - INTERVAL 777 DAY AND practice_type = 0
+        and  practice_id in
+        GROUP BY DATE(create_time)
+
+        UNION ALL
+
+        SELECT DATE(create_time) AS date, COUNT(*) AS finishedTheories, 2 AS practice_type
+        FROM `oj_practice_solved`
+        WHERE create_time >= CURDATE() - INTERVAL 777 DAY AND practice_type = 2
+        GROUP BY DATE(create_time);
+    </select>
+
 </mapper>

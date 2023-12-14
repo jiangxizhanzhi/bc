@@ -19,6 +19,18 @@ public class RoleStudyBo implements Serializable {
 	@ApiModelProperty("完成课程数")
 	private Integer finishedCourses;
 
+	@ApiModelProperty("总理论题数")
+	private Integer totalTheories;
+
+	@ApiModelProperty("完成理论题数")
+	private Integer finishedTheories;
+
+	@ApiModelProperty("总实操题数")
+	private Integer totalOperates;
+
+	@ApiModelProperty("完成实操题数")
+	private Integer finishedOperates;
+
 	@ApiModelProperty("完成理论课时数量")
 	private Integer finishedTheoryLessons;
 

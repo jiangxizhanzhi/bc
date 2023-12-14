@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.practice.controller.res.PracticeLastWeekRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
@@ -47,4 +48,6 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	List<PracticeSolved> selectTop5( @Param("practiceId") String practiceId, @Param("userIds") List<String> userIds);
 
 	List<String> selectUserIdByPracticeId(@Param("practiceId") String practiceId);
+
+	List<PracticeLastWeekRes> getCntLastWeek(@Param("practiceType") Integer practiceType);
 }

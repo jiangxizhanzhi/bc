@@ -1,0 +1,35 @@
+package com.cyberpeace.auth.service.bo;
+
+import com.cyberpeace.auth.util.UserValidator;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.util.CrCommonValidator;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+public class UserAddReq {
+
+	@ApiModelProperty(value = "用户名")
+	private String username;
+
+	@ApiModelProperty(value = "姓名")
+	private String name;
+
+	@ApiModelProperty(value = "密码")
+	private String password;
+
+	@ApiModelProperty(value = "头像")
+	private String avatar;
+
+	@ApiModelProperty(value = "是否管理员。0：非管理员，1：管理员")
+	private Boolean administrator;
+
+	public void validate(){
+		this.validatePwd();
+		CrCommonValidator.validateNameLen(this.username, ErrorCode.NAME_DUPLICATE);
+	}
+
+	protected void validatePwd(){
+		UserValidator.validatePassword(this.password);
+	}
+}

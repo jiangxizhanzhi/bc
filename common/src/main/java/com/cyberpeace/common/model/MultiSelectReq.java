@@ -12,5 +12,5 @@ import lombok.Data;
 public class MultiSelectReq implements Serializable {
 
 	@ApiModelProperty
-	private List<String> ids;
+	private List<Integer> ids;
 }

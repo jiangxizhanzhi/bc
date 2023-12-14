@@ -193,11 +193,47 @@ public final class ErrorCode {
 
 	public static final String FAILED_TO_GET_HTML_TEMPLATE_INSTANCE = "100061";
 
+	/**
+	 * 更新实例时没有传入resource_id字段
+	 */
+	public static final String RESOURCE_ID_MISSING = "101011";
+
+	/**
+	 * IP格式错误
+	 */
+	public static final String WRONG_IP_FORMAT = "101116";
+	/**
+	 * 空白用户id
+	 */
+	public static final String BLANK_USER_ID = "101131";
 	// 无权限操作
 	public static final String PERMISSION_DENIED = "100062";
 
 	/** 演示环境禁止增删改 */
 	public static final String DEMONSTRATION_FORBID_UPDATE = "100063";
+
+	/**
+	 * 旧密码错误
+	 */
+	public static final String OLD_PWD_INCORRECT = "100062";
+
+	/**
+	 * 用户令牌无效
+	 */
+	public static final String INVALID_SESSION = "100063";
+	/**
+	 * id集合为空
+	 */
+	public static final String EMPTY_IDS = "100064";
+	/**
+	 * 非法密码
+	 */
+	public static final String ILLEGAL_PWD = "100065";
+
+	/**
+	 * 用户名重复
+	 */
+	public static final String USERNAME_DUPLICATE = "100066";
 
 	private ErrorCode() {}
 }

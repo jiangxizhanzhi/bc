@@ -1,0 +1,284 @@
+package com.cyberpeace.auth.service.impl;
+
+import java.util.Map;
+
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.cyberpeace.common.model.BaseRsp;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.session.Session;
+import org.springframework.session.data.redis.RedisIndexedSessionRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.constant.AuthConstant;
+import com.cyberpeace.auth.domain.SysUser;
+import com.cyberpeace.auth.mapper.SysUserMapper;
+import com.cyberpeace.auth.security.TbUser;
+import com.cyberpeace.auth.service.SysUserService;
+import com.cyberpeace.auth.service.bo.*;
+import com.cyberpeace.auth.util.UserValidator;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.MultiSelectReq;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.PageUtil;
+
+/**
+* @author dell
+* @description 针对表【sys_user(用户表)】的数据库操作Service实现
+* @createDate 2023-11-29 17:27:18
+*/
+@Slf4j
+@Service
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+
+	private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+	@Autowired
+	private SysUserMapper sysUserMapper;
+
+	@Autowired
+	private RedisIndexedSessionRepository sessionRepository;
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Override
+	public void resetPwdself(ResetPwdSelfReq req) {
+		TbUser currentUser = getCurrentSessionUser();
+		if (null == currentUser) {
+			throw new BusinessException(ErrorCode.INTERFACE_UNAUTHORIZED);
+		}
+		SysUser user = sysUserMapper.selectById(currentUser.getUserId());
+		if (!bCryptPasswordEncoder.matches(req.getOldPwd(), user.getPassword())) {
+			throw new BusinessException(ErrorCode.OLD_PWD_INCORRECT);
+		}
+		user.setPassword(bCryptPasswordEncoder.encode(req.getNewPwd()));
+		sysUserMapper.updateById(user);
+	}
+
+	@Override
+	public void resetPwd(ResetPwdReq req) {
+		SysUser user = getOrExceptionById(req.getUserId());
+		UserValidator.validatePassword(req.getNewPwd());
+		user.setPassword(bCryptPasswordEncoder.encode(req.getNewPwd()));
+		sysUserMapper.updateById(user);
+	}
+
+	@Override
+	public void updateAvatar(String avatar, String resourceId) {
+		SysUser user = getOrExceptionById(resourceId);
+		user.setAvatar(avatar);
+		sysUserMapper.updateById(user);
+	}
+
+	@Override
+	public void updateUserEnable(UserEnableReq req) {
+		if (CollectionUtils.isEmpty(req.getIds())) {
+			throw new BusinessException(ErrorCode.EMPTY_IDS);
+		}
+		LambdaUpdateWrapper<SysUser> wrapper = new LambdaUpdateWrapper<>();
+		wrapper.in(SysUser::getId, req.getIds()).set(SysUser::getEnabled, req.getEnable());
+		sysUserMapper.update(null, wrapper);
+	}
+
+	@Override
+	public UserInfo getByUserId(String userId) {
+		SysUser user = getOrExceptionById(userId);
+		return makeUserInfo(user);
+	}
+
+	@Override
+	public UserInfo getCurrent() {
+		TbUser currentUser = getCurrentSessionUser();
+		if (null == currentUser) {
+			return null;
+		}
+		return getByUserId(currentUser.getUserId());
+	}
+
+	@Override
+	public Map<String, ? extends Session> getSessionsByUsername(String username) {
+
+		Map<String, ? extends Session> m = sessionRepository.findByPrincipalName(username);
+
+		return m;
+	}
+
+	@Override
+	public void createUser(UserAddReq req) {
+		if (sysUserMapper.existByUsername(req.getUsername())) {
+			throw new BusinessException(ErrorCode.USERNAME_DUPLICATE);
+		}
+		SysUser user = req2Entity(req);
+		sysUserMapper.insert(user);
+	}
+
+	@Override
+	public void deleteUser(MultiSelectReq req) {
+		if (CollectionUtils.isEmpty(req.getIds())) {
+			throw new BusinessException(ErrorCode.EMPTY_IDS);
+		}
+		int i = sysUserMapper.deleteBatchIds(req.getIds());
+		log.info("delete user {} success", i);
+	}
+
+	@Override
+	public void updateUser(UserModifyReq req) {
+		req.validate();
+		SysUser old = getOrExceptionById(req.getResourceId());
+		SysUser user = req2Entity(req);
+		user.setResourceId(req.getResourceId());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				sysUserMapper.updateById(user);
+				// 角色被编辑
+				if (!old.getAdministrator().equals(user.getAdministrator())) {
+					changeRole(user.getResourceId(), user.getAdministrator());
+				}
+			}
+		});
+	}
+
+	@Override
+	public UserRes getUserDetailById(String resourceId) {
+		SysUser user = getOrExceptionById(resourceId);
+		return makeUserRes(user, false);
+	}
+
+	@Override
+	public ListRsp<UserRes> pageUser(PageReqBase pageReq) {
+		Page page = pageReq.toPageParam();
+		IPage<SysUser> result = sysUserMapper.pageUser(page, pageReq.getPattern());
+		IPage<UserRes> resPage = result.convert(r -> makeUserRes(r, true));
+		return PageUtil.getListResult(resPage);
+	}
+
+	@Override
+	public UserInfo getByToken(String sessionId) {
+		Session session = sessionRepository.findById(sessionId);
+		if (null == session) {
+			throw new BusinessException(ErrorCode.INVALID_SESSION);
+		}
+		SecurityContext context = session.getRequiredAttribute(
+				HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		TbUser user = (TbUser) context.getAuthentication().getPrincipal();
+
+		return getByUserId(user.getUserId());
+	}
+
+	private SysUser getOrExceptionById(String userId) {
+		SysUser user = sysUserMapper.selectById(userId);
+		if (null == user) {
+			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+		}
+		return user;
+	}
+
+	private SysUser getOrExceptionByUsername(String username) {
+		SysUser user = sysUserMapper.selectByUsername(username);
+		if (null == user) {
+			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+		}
+		return user;
+	}
+
+	private UserInfo makeUserInfo(SysUser user) {
+		UserInfo userInfo = new UserInfo();
+		userInfo.setUserId(user.getResourceId());
+		userInfo.setAdmin(user.getAdministrator());
+		userInfo.setUserName(user.getUsername());
+		userInfo.setName(user.getName());
+		userInfo.setAvatarUrl(user.getAvatar());
+
+		return userInfo;
+	}
+
+	/**
+	 * makeuser结果
+	 *
+	 * @param user
+	 * @param showOnline 是否显示在线
+	 * @return {@code UserRes}
+	 */
+	private UserRes makeUserRes(SysUser user, boolean showOnline) {
+		UserRes userRes = new UserRes();
+		userRes.setResourceId(user.getResourceId());
+		userRes.setAdministrator(user.getAdministrator());
+		userRes.setUsername(user.getUsername());
+		userRes.setName(user.getName());
+		userRes.setAvatar(user.getAvatar());
+		if (showOnline) {
+			userRes.setOnline(isUserOnline(user.getResourceId()));
+		}
+		return userRes;
+	}
+
+	private boolean isUserOnline(String principalName) {
+		return !sessionRepository.findByPrincipalName(principalName).isEmpty();
+	}
+
+	private <T extends UserAddReq> SysUser req2Entity(T req) {
+		SysUser user = new SysUser();
+		user.setUsername(req.getUsername());
+		user.setName(req.getName());
+		if (StringUtils.isNotBlank(req.getPassword())) {
+			user.setPassword(bCryptPasswordEncoder.encode(req.getPassword()));
+		}
+		user.setAvatar(req.getAvatar());
+		if (isCurrentAdminByRedisSession()) {
+			user.setAdministrator(req.getAdministrator());
+		}
+		return user;
+	}
+
+	private boolean isCurrentAdminByDb() {
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (null == userInfo) {
+			return false;
+		}
+		return userInfo.isAdmin();
+	}
+
+	private boolean isCurrentAdminByRedisSession() {
+		TbUser user = getCurrentSessionUser();
+		if (null == user) {
+			return false;
+		}
+		return user.isAdmin();
+	}
+
+	private TbUser getCurrentSessionUser() {
+		return (TbUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
+
+	/**
+	 * 编辑用户的角色后更新session
+	 * @param userId
+	 * @param isAdmin
+	 */
+	private void changeRole(String userId, boolean isAdmin) {
+		Map<String, ? extends Session> sessionMap = sessionRepository.findByPrincipalName(userId);
+		for (Session session : sessionMap.values()) {
+			SecurityContext context = session.getAttribute(AuthConstant.SPRING_SECURITY_CONTEXT);
+			TbUser user = (TbUser) context.getAuthentication().getPrincipal();
+			user.setAdmin(isAdmin);
+			user.setRole(isAdmin);
+			session.setAttribute(AuthConstant.SPRING_SECURITY_CONTEXT, context);
+		}
+	}
+}

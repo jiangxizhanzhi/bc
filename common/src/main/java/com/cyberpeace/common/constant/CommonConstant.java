@@ -118,4 +118,15 @@ public final class CommonConstant {
 
 	public static final String BACKSLASH = "\\";
 
+	public static final Integer ZERO_STR_LEN = ConfigReader.readInt("cr.str.len.zero");
+
+	public static final Integer MIN_STR_LEN = ConfigReader.readInt("cr.str.len.min");
+
+	public static final Integer MAX_NAME_STR_LEN = ConfigReader.readInt("cr.str.len.name.max");
+
+	public static final Integer MAX_DESC_LEN = ConfigReader.readInt("cr.desc.len.max");
+
+	public static final Integer MAX_TEXT_LEN = ConfigReader.readInt("cr.text.len.max");
+
+	public static final Integer GENERATED_UUID_LENGTH = 32;
 }

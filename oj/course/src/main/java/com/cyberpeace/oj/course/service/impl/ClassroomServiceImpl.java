@@ -779,7 +779,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 					.ListByOrgId(cpContext.getOrganizationId(), true);
 			List<String> userIds = Lists.newArrayList();
 
-			// 姓名搜索
+			// 昵称搜索
 			String username = cpContext.getUsername();
 			boolean searchName = StringUtils.isNotBlank(username);
 			for (UserInfo userInfo : userInfoList) {

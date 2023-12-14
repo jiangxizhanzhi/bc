@@ -37,7 +37,7 @@ public class MpAuthenticatedUser implements Serializable {
 	private boolean enabled;
 
 	/**
-	 * 用户实际姓名
+	 * 用户实际昵称
 	 */
 	private String name;
 

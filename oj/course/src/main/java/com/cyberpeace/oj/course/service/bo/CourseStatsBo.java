@@ -32,6 +32,6 @@ public class CourseStatsBo implements Serializable {
     @ApiModelProperty("创建用户resource_id")
     private String createUserId;
 
-    @ApiModelProperty("创建用户姓名")
+    @ApiModelProperty("创建用户昵称")
     private String createUsername;
 }

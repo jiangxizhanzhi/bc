@@ -4,11 +4,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 用户姓名
+ * 用户昵称
  */
 @Data
 public class NameElement {
 
-	@ApiModelProperty(value = "用户姓名")
+	@ApiModelProperty(value = "用户昵称")
 	private String name;
 }

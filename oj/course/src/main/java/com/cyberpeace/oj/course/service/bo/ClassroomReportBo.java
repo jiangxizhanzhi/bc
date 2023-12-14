@@ -17,7 +17,7 @@ public class ClassroomReportBo implements Serializable {
 	@ApiModelProperty("用户名")
 	private String userName;
 
-	@ApiModelProperty("用户姓名")
+	@ApiModelProperty("用户昵称")
 	private String name;
 
 	@ApiModelProperty("组织编号")
@@ -41,7 +41,7 @@ public class ClassroomReportBo implements Serializable {
 	@ApiModelProperty("评分人名称")
 	private String evaluatorUserName;
 
-	@ApiModelProperty("评分人姓名")
+	@ApiModelProperty("评分人昵称")
 	private String evaluatorName;
 
 	@ApiModelProperty("评分时间")

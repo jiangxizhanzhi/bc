@@ -156,7 +156,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	/**
-	 * 姓名、用户名模糊查询
+	 * 昵称、用户名模糊查询
 	 *
 	 * @param userPageContext
 	 * @return

@@ -11,7 +11,7 @@ import lombok.Data;
 @ApiModel
 public class PracticePaperEvaluateBo implements Serializable {
 
-	@ApiModelProperty("姓名")
+	@ApiModelProperty("昵称")
 	private String name;
 
 	@ApiModelProperty("用户名")

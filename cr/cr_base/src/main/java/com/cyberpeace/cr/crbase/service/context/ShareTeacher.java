@@ -12,7 +12,7 @@ public class ShareTeacher {
 	@ApiModelProperty(value = "用户id，resource_id")
 	private String id;
 
-	@ApiModelProperty(value = "姓名")
+	@ApiModelProperty(value = "昵称")
 	private String name;
 
 	@ApiModelProperty(value = "组织id")

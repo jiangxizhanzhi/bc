@@ -24,7 +24,7 @@ public class RbDeviceContext implements Serializable {
 	@ApiModelProperty(value = "用户id")
 	private String createUserId;
 
-	@ApiModelProperty(value = "用户姓名")
+	@ApiModelProperty(value = "用户昵称")
 	private String createUser;
 
 	@ApiModelProperty(value = "创建时间")

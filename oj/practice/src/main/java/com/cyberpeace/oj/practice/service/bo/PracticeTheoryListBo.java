@@ -32,7 +32,7 @@ public class PracticeTheoryListBo implements Serializable {
 	@ApiModelProperty("创建人编号")
 	private String createUserId;
 
-	@ApiModelProperty("创建人姓名")
+	@ApiModelProperty("创建人昵称")
 	private String createUserName;
 
 	@ApiModelProperty("创建时间")

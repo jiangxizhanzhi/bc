@@ -31,7 +31,7 @@ public class ClassroomPracticeReq extends PageReqBase {
 	@ApiModelProperty("是否批改")
 	private Boolean isMark=null;
 
-	@ApiModelProperty("姓名")
+	@ApiModelProperty("昵称")
 	private String username;
 
 	public void setClassroom_id(String classroomId) {

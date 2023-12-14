@@ -28,7 +28,7 @@ public class MissionSchemeTemplateRsp {
 	@ApiModelProperty(value = "描述")
 	private String description;
 
-	@ApiModelProperty(value = "创建者姓名")
+	@ApiModelProperty(value = "创建者昵称")
 	private String repName;
 
 	@ApiModelProperty(value = "编号")

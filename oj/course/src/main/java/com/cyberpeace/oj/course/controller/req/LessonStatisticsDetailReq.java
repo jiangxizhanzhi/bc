@@ -13,7 +13,7 @@ public class LessonStatisticsDetailReq extends PageReqBase {
 	@ApiModelProperty("课时ID")
 	private String lessonId;
 
-	@ApiModelProperty("用户名、姓名查询")
+	@ApiModelProperty("用户名、昵称查询")
 	private String search;
 
 	@ApiModelProperty("组织")

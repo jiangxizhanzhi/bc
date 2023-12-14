@@ -14,7 +14,7 @@ public class OperationUserInfo implements Serializable {
 	@ApiModelProperty("用户编号")
 	private String id;
 
-	@ApiModelProperty("用户姓名")
+	@ApiModelProperty("用户昵称")
 	private String name;
 
 	@ApiModelProperty("用户名")

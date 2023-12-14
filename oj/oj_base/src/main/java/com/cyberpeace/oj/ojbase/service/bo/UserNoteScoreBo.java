@@ -16,7 +16,7 @@ public class UserNoteScoreBo implements Serializable {
 	@ApiModelProperty("用户名称")
 	private String userName;
 
-	@ApiModelProperty("姓名")
+	@ApiModelProperty("昵称")
 	private String name;
 
 	@ApiModelProperty("得分")

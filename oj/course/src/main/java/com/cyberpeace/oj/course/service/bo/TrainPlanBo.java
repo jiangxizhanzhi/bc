@@ -14,7 +14,7 @@ public class TrainPlanBo implements Serializable {
 	@ApiModelProperty("训练计划名称")
 	private String trainPlanName;
 
-	@ApiModelProperty("姓名")
+	@ApiModelProperty("昵称")
 	private String username;
 
 }

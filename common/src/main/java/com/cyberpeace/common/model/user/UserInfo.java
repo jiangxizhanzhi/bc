@@ -18,7 +18,7 @@ public class UserInfo implements Serializable {
     private String userId;
     
 	/**
-	 * 姓名（文字显示）
+	 * 昵称（文字显示）
 	 */
 	private String name;
 

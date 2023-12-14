@@ -12,7 +12,7 @@ public interface LearnStatsService {
     /**
      * 用户学习统计
      * @param page 分页信息
-     * @param pattern 用户姓名模糊查询
+     * @param pattern 用户昵称模糊查询
      * @param organization 所属组织查询
      * @param isPage 是否分页 区分导出和分页查询
      * @param startTime
@@ -57,7 +57,7 @@ public interface LearnStatsService {
     /**
      * 用户学习统计
      * @param page 分页信息
-     * @param pattern 用户姓名模糊查询
+     * @param pattern 用户昵称模糊查询
      * @param organization 所属组织查询
      * @param startTime 起始时间
      * @param endTime 截止时间

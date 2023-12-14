@@ -42,7 +42,7 @@ public class AdminLessonStatisticsDetailRes implements Serializable {
     @ApiModelProperty("用户名")
     private String userName;
 
-    @ApiModelProperty("姓名")
+    @ApiModelProperty("昵称")
     private String name;
 
 }

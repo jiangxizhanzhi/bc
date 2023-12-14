@@ -35,7 +35,7 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("创建者编号")
 	private String createUserId;
 
-	@ApiModelProperty("创建人姓名")
+	@ApiModelProperty("创建人昵称")
 	private String createUserName;
 
 	@ApiModelProperty("拓扑编号")

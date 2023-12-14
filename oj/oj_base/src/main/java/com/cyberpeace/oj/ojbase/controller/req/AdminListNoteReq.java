@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @ApiModel
 public class AdminListNoteReq extends PageReqBase {
 
-	@ApiModelProperty(name = "user_name", value = "姓名查询条件")
+	@ApiModelProperty(name = "user_name", value = "昵称查询条件")
 	private String userName;
 
 	@ApiModelProperty(name = "note_type", value = "笔记类型 笔记=1 实验报告=2")

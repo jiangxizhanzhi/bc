@@ -12,7 +12,7 @@ public class UserData {
 	@ApiModelProperty(value = "头像")
 	private String logo;
 
-	@ApiModelProperty(value = "姓名")
+	@ApiModelProperty(value = "昵称")
 	private String repName;
 
 	@ApiModelProperty(value = "编号")

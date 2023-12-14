@@ -16,7 +16,7 @@ public class SimpleUserData implements Serializable {
 	@ApiModelProperty("用户名称")
 	private String userName;
 
-	@ApiModelProperty("用户姓名")
+	@ApiModelProperty("用户昵称")
 	private String name;
 
 	@ApiModelProperty("组织编号")

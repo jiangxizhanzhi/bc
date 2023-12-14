@@ -12,7 +12,7 @@ public class RbUserData {
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
-	@ApiModelProperty(value = "用户姓名")
+	@ApiModelProperty(value = "用户昵称")
 	private String repName;
 
 	@ApiModelProperty(value = "用户编号")

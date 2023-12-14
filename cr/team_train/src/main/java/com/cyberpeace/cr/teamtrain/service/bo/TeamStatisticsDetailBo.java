@@ -18,7 +18,7 @@ public class TeamStatisticsDetailBo implements Serializable {
     @ApiModelProperty("用户名")
     private String username;
 
-    @ApiModelProperty("用户姓名")
+    @ApiModelProperty("用户昵称")
     private String name;
 
     @ApiModelProperty("用户组织信息")

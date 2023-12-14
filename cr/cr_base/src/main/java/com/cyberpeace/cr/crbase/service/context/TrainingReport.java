@@ -17,7 +17,7 @@ import lombok.Getter;
 @Data
 public class TrainingReport {
 
-	@ApiModelProperty(value = "教员姓名")
+	@ApiModelProperty(value = "教员昵称")
 	private String teacherName = "";
 
 	@ApiModelProperty(value = "场景开启时间")

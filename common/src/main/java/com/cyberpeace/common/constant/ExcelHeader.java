@@ -6,7 +6,7 @@ public enum ExcelHeader {
 
 	SHEETNAME(new String[]{"学习数据"},new String[]{"Study data"},new String[]{"desc"}),
 
-	STUDY_STATISTIC(new String[] {"姓名", "组织", "完成课时数", "完成课后练习数", "完成实验数", "参加考试次数"},
+	STUDY_STATISTIC(new String[] {"昵称", "组织", "完成课时数", "完成课后练习数", "完成实验数", "参加考试次数"},
 			new String[] {"Name", "Organization", "Number of classes completed",
 					"Number of exercises completed after class", "Number of completed experiments",
 					"Number of examinations taken"

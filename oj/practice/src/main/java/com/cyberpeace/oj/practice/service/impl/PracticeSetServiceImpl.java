@@ -493,6 +493,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return "";
 	}
 
+	@Override
+	public List<String> getAllSource() {
+		return practiceSetMapper.getAllSource();
+	}
+
 	private String doExportSet(String destPath, PracticeSet practiceSet) {
 
 		if (StringUtils.isBlank(practiceSet.getLogo())) {

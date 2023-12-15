@@ -47,13 +47,14 @@
 
     <select id="selectBySetIds" resultType="java.lang.String">
         select resource_id from oj_practice_operation
-        where practice_set_id in
-        <foreach collection="setIds" item="setId" open="(" close=")" separator=",">
-            #{setId}
-        </foreach>
-        <if test="isPublic != null and isPublic">
-            and `public` = #{isPublic}
-        </if>
+        <where>
+            <if test="setIds != null and setIds.size() > 0">
+                practice_set_id in
+                <foreach collection="setIds" item="setId" open="(" close=")" separator=",">
+                    #{setId}
+                </foreach>
+            </if>
+        </where>
         order by update_time desc, id
     </select>
 
@@ -183,5 +184,12 @@
                 and knowledge like #{knowledgePattern}
             </if>
         </where>
+    </select>
+
+    <select id="selectSolved" resultType="com.cyberpeace.oj.practice.service.bo.OperationSolved">
+        select operation.category category, sum(solved) solved, count(1) sum
+        from oj_practice_operation operation left join oj_practice_solved solved
+            on operation.resource_id = solved.practice_id and submit_user_id = #{userId}
+        group by category
     </select>
 </mapper>

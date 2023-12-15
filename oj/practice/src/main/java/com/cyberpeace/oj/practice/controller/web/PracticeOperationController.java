@@ -257,9 +257,8 @@ public class PracticeOperationController {
 	public BaseRsp<OptionStatisticsRes> getOperationStatisticsRes() {
 		OptionStatisticsRes optionStatisticsRes = new OptionStatisticsRes();
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
 		String userId = userInfo.getUserId();
-		List<String> operationIds = practiceOperationService.getOptionIdsByAuth(authContext, null);
+		List<String> operationIds = practiceOperationService.getOptionIdsByAuth(null);
 		if (CollectionUtils.isEmpty(operationIds)){
 			optionStatisticsRes.setCollection(0);
 			optionStatisticsRes.setNote(0);
@@ -348,4 +347,12 @@ public class PracticeOperationController {
 				UserInfoContext.getUserContext(), null, null);
 		return new BaseRsp<>(StreamApiUtils.map(operationRecordResList, OperationRecordRes::getPracticeId));
 	}
+
+	@ApiOperation("解题进度情况")
+	@GetMapping("/count")
+	public BaseRsp<ProgressCountRes> getCount(
+		@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
+			return new BaseRsp<>(practiceOperationService.getProgressCount(practiceSetId));
+	}
+
 }

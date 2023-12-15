@@ -58,4 +58,42 @@
             </if>
         </where>
     </select>
+
+    <select id="selectBusinessIdsByBusinessIds" resultType="java.lang.String">
+        select business_id from oj_resource_collection
+        <where>
+            1=1
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="businessType != null">
+                and business_type = #{businessType}
+            </if>
+            <if test="businessIds != null and businessIds.size() != 0">
+                and business_id in
+                <foreach collection="businessIds" item="businessId" index="index" open="(" separator="," close=")">
+                    #{businessId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="countByBusinessIds" resultType="java.lang.Integer">
+        select count(1) from oj_resource_collection
+        <where>
+            1=1
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="businessType != null">
+                and business_type = #{businessType}
+            </if>
+            <if test="businessIds != null and businessIds.size() != 0">
+                and business_id in
+                <foreach collection="businessIds" item="businessId" index="index" open="(" separator="," close=")">
+                    #{businessId}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

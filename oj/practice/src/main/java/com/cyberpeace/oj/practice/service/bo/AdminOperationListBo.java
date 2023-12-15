@@ -60,4 +60,13 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("知识点")
 	private List<String> knowledge;
 
+	@ApiModelProperty("题型")
+	private Integer category;
+
+	@ApiModelProperty("是否为真题")
+	private Boolean isTrue;
+
+	@ApiModelProperty("来源")
+	private String source;
+
 }

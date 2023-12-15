@@ -26,6 +26,9 @@ public class PracticeTheory extends PracticeBase {
 	@ApiModelProperty("简答题参考关键字")
 	private String keyword;
 
+	@ApiModelProperty("是否是真题")
+	private Boolean isTrue;
+
 	public enum TheoryType implements GenericEnum {
 
 		SINGLE(0, "single"), MULTIPLE(1, "multiple"), JUDGMENT(2, "judgment"), FILL_BLANK(3, "fill_blank"), SHORT_ANSWER(4,

@@ -38,6 +38,9 @@ public class PracticeSet extends AuthTable {
 	/** 习题集所含习题数量*/
 	private Integer practiceCount;
 
+	/** 习题集来源 */
+	private String source;
+
 	public enum PracticeType implements GenericEnum, MdConvertEnum<Integer, String> {
 
 		THEORY(0, "理论基础"), OPERATION(2, "CTF解题");

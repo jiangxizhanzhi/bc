@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.dao.mapper;
 
 import java.util.List;
 
+import com.cyberpeace.oj.practice.service.bo.OperationSolved;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -54,4 +55,6 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 
 	List<String> selectKnowledgeBySetId(@Param("setIds") List<String> setIds,
 			@Param("pattern") String pattern, @Param("isWeb") Boolean isWeb);
+
+	List<OperationSolved> selectSolved(@Param("userId") String userId);
 }

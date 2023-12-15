@@ -101,32 +101,19 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
     public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
                                                    AuthContext authContext) {
 
-        // 过滤无权限习题集
-        List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-        if (CollectionUtils.isEmpty(authSetIds)) {
-            return null;
-        }
-
-        // 过滤非公开习题集
-        List<PracticeSet> practiceSets = practiceSetMapper
-                .selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-        List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-        authSetIds.retainAll(setIds);
-        if (CollectionUtils.isEmpty(authSetIds)
-                || (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-                && !authSetIds.contains(listQuery.getPracticeSetId()))) {
-            return null;
-        }
 
         TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
         theoryListQuery.setQuestionType(listQuery.getTheoryType());
-        // 根据习题集过滤习题编号
+        List<String> authSetIds;
         if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
-            authSetIds.clear();
-            authSetIds.add(listQuery.getPracticeSetId());
+            authSetIds = Collections.singletonList(listQuery.getPracticeSetId());
+        } else {
+            authSetIds = practiceSetMapper.selectByAuthContext(authContext);
         }
-        List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-                authContext.getIsWeb());
+        if (CollectionUtils.isEmpty(authSetIds)) {
+            return null;
+        }
+        List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds, null);
 
         if (CollectionUtils.isEmpty(practiceIds)) {
             return null;
@@ -637,22 +624,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.TRUE);
 
-        // 过滤无权限习题集
-        List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-        // 过滤非公开习题集
-        List<PracticeSet> practiceSets = practiceSetMapper
-                .selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-        List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-        authSetIds.retainAll(setIds);
+        List<String> authSetIds;
         List<ProgressProportion> progressProportionList = new ArrayList<>();
         // 根据习题集过滤习题编号
         if (StringUtils.isNotBlank(practiceSetId)) {
-            if (authSetIds.contains(practiceSetId)) {
-                authSetIds.clear();
-                authSetIds.add(practiceSetId);
-            } else {
-                authSetIds.clear();
-            }
+            authSetIds = Collections.singletonList(practiceSetId);
+        } else {
+            authSetIds = practiceSetMapper.selectByAuthContext(null);
         }
         if (CollectionUtils.isNotEmpty(authSetIds)) {
             progressProportionList = practiceTheoryMapper.selectByGroupDifficulty(listQuery,
@@ -753,30 +731,18 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
      */
     @Override
     public List<String> getPracticeIdsByUserAndSet(AuthContext authContext, String practiceSetId) {
-        // 过滤无权限习题集
-        List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-        if (CollectionUtils.isEmpty(authSetIds)) {
-            return new ArrayList<>();
-        }
-
-        // 过滤非公开习题集
-        List<PracticeSet> practiceSets = practiceSetMapper
-                .selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-        List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-        authSetIds.retainAll(setIds);
-        if (CollectionUtils.isEmpty(authSetIds)
-                || (StringUtils.isNotBlank(practiceSetId)
-                && !authSetIds.contains(practiceSetId))) {
-            return new ArrayList<>();
-        }
+        List<String> authSetIds;
 
         // 根据习题集过滤习题编号
         if (StringUtils.isNotBlank(practiceSetId)) {
-            authSetIds.clear();
-            authSetIds.add(practiceSetId);
+            authSetIds = Collections.singletonList(practiceSetId);
+        } else {
+            authSetIds = practiceSetMapper.selectByAuthContext(authContext);
         }
-        List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-                authContext.getIsWeb());
+        if (CollectionUtils.isEmpty(authSetIds)) {
+            return new ArrayList<>();
+        }
+        List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds, null);
 
         if (CollectionUtils.isEmpty(practiceIds)) {
             return new ArrayList<>();
@@ -800,7 +766,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         Map<String, String> userIdNameMap = StreamApiUtils.toMap(userInfoList, UserInfo::getUserId, UserInfo::getName);
         List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectTop5(resourceId, userIds);
 
-        if (practiceSolveds.size() > 0) {
+        if (!practiceSolveds.isEmpty()) {
             return practiceSolveds.stream().map(item -> {
                 SolvedTop5 solvedTop5 = new SolvedTop5();
                 solvedTop5.setSolved(item.getSolved());

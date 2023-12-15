@@ -15,6 +15,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressCountRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.*;
@@ -214,11 +215,10 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 
 	/**
 	 * 根据用户和习题集查询所有可以看见的实操题id
-	 * @param authContext
 	 * @param practiceSetId
 	 * @return
 	 */
-	List<String> getOptionIdsByAuth(AuthContext authContext, String practiceSetId);
+	List<String> getOptionIdsByAuth(String practiceSetId);
 
 	/**
 	 * 根据用户和起止时间获取实操题解出记录
@@ -258,4 +258,6 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return {@code List<String>}
 	 */
 	List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb);
+
+	ProgressCountRes getProgressCount(String practiceSetId);
 }

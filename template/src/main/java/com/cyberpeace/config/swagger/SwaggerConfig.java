@@ -38,13 +38,6 @@ public class SwaggerConfig {
 	}
 
 	@Bean
-	public Docket apiCr() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cr"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("cr");
-	}
-
-	@Bean
 	public Docket apiCs() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cs"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
@@ -56,20 +49,6 @@ public class SwaggerConfig {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
 				.groupName("oj");
-	}
-
-	@Bean
-	public Docket apiEs() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.evaluate"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("es");
-	}
-
-	@Bean
-	public Docket apiSituation() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.situation"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("situation");
 	}
 
 	@Bean

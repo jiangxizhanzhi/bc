@@ -43,6 +43,9 @@ public interface ResourceCollectionMapper extends BaseMapper<ResourceCollection>
 	List<String> selectByBusiness(@Param("userId") String userId,
 								  @Param("businessId") String businessId, @Param("businessType") Integer businessType);
 
-	List<ResourceCollection> selectByBusinessIds(@Param("userId") String userId, @Param("businessType")Integer businessType,
+	List<String> selectBusinessIdsByBusinessIds(@Param("userId") String userId, @Param("businessType")Integer businessType,
 														@Param("businessIds") List<String> businessIds);
+
+	Integer countByBusinessIds(@Param("userId") String userId, @Param("businessType")Integer businessType,
+							   @Param("businessIds") List<String> businessIds);
 }

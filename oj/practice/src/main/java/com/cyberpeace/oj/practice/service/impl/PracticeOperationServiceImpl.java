@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.oj.practice.controller.res.ProgressCountRes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -574,35 +575,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery,
 			AuthContext authContext) {
 
-		// 过滤无权限习题集
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authIds)) {
-			return null;
-		}
-
-		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authIds)) {
-			return null;
-		}
-
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-				&& !authIds.contains(listQuery.getPracticeSetId())) {
-			return null;
-		}
-
 		// 根据习题集过滤习题编号
 		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
-			authIds.clear();
-			authIds.add(listQuery.getPracticeSetId());
-		}
 
-		List<String> operationIds = practiceOperationMapper.selectBySetIds(authIds,
-				authContext.getIsWeb());
+		List<String> operationIds ;
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+			operationIds = practiceOperationMapper.selectBySetIds(Collections.singletonList(listQuery.getPracticeSetId()), null);
+		} else {
+			operationIds = practiceOperationMapper.selectBySetIds(null,null);
+		}
 		if (CollectionUtils.isEmpty(operationIds)) {
 			return null;
 		}
@@ -1322,42 +1303,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public List<String> getOptionIdsByAuth(AuthContext authContext, String practiceSetId) {
-		List<String> operationIds = new ArrayList<>();
-		// 过滤无权限习题集
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authIds)) {
-			return operationIds;
-		}
+	public List<String> getOptionIdsByAuth(String practiceSetId) {
+		List<String> operationIds;
+		List<String> authIds = Collections.singletonList(practiceSetId);
 
-		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authIds)) {
-			return operationIds;
-		}
-
-		if (StringUtils.isNotBlank(practiceSetId)
-				&& !authIds.contains(practiceSetId)) {
-			return operationIds;
-		}
-
-		if (practiceSetId != null) {
-			authIds.clear();
-			authIds.add(practiceSetId);
-		}
-
-		operationIds = practiceOperationMapper.selectBySetIds(authIds,
-				authContext.getIsWeb());
+		operationIds = practiceOperationMapper.selectBySetIds(authIds, null);
 		return operationIds;
 	}
 
 	@Override
 	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime) {
-		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
-		List<String> operationIds = getOptionIdsByAuth(authContext, null);
+		List<String> operationIds = getOptionIdsByAuth(null);
 		return practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
 	}
 
@@ -1430,6 +1386,26 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			return res.stream().filter(s -> s.contains(pattern.getOriginPattern()))
 					.collect(Collectors.toList());
 		}
+	}
+
+	@Override
+	public ProgressCountRes getProgressCount(String practiceSetId) {
+
+		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getUserContext().getUserId());
+		Map<Integer, OperationSolved> operationSolvedMap = operationSolvedList.stream().collect(Collectors.toMap(OperationSolved::getCategory, operationSolved -> operationSolved));
+
+		ProgressCountRes progressCountRes = new ProgressCountRes();
+		OptionCountProportion maintenance = new OptionCountProportion();
+		maintenance.setCount(operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()).getSolved());
+		maintenance.setSum(operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()).getSum());
+		progressCountRes.setMaintenance(maintenance);
+
+		OptionCountProportion operation = new OptionCountProportion();
+		operation.setCount(operationSolvedMap.get(PracticeOperation.Category.OPERATION.getCode()).getSolved());
+		operation.setSum(operationSolvedMap.get(PracticeOperation.Category.OPERATION.getCode()).getSum());
+		progressCountRes.setOperation(operation);
+
+		return progressCountRes;
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

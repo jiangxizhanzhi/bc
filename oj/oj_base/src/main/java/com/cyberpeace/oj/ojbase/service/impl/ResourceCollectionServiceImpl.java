@@ -53,8 +53,7 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 
 	@Override
 	public Map<String, Boolean> selectCollectionBatchIds(String userId, Integer businessType, List<String> businessIds) {
-		List<ResourceCollection> resourceCollections = resourceCollectionMapper.selectByBusinessIds(userId, businessType, businessIds);
-		List<String> collectionBusinessIds = StreamApiUtils.map(resourceCollections, ResourceCollection::getBusinessId);
+		List<String> collectionBusinessIds = resourceCollectionMapper.selectBusinessIdsByBusinessIds(userId, businessType, businessIds);
 		Map<String, Boolean> collectionMap = new HashMap<>();
 		for (String businessId : businessIds) {
 			if (collectionBusinessIds.contains(businessId)) {
@@ -69,6 +68,6 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 	@Override
 	public Integer countCollectionByUserIdAndBusinessId(String userId, Integer businessType,
 														List<String> businessIds) {
-		return resourceCollectionMapper.selectByBusinessIds(userId, businessType, businessIds).size();
+		return resourceCollectionMapper.countByBusinessIds(userId, businessType, businessIds);
 	}
 }

@@ -8,31 +8,6 @@
 
     <select id="selectByAuthContext" resultType="java.lang.String">
         select resource_id from oj_practice_set
-        <where>
-            <if test="!authContext.isSuperAdmin">
-                <choose>
-                    <when test="authContext.isWeb">
-                        <choose>
-                            <when test="authContext.organization != null and authContext.organization != ''">
-                                <bind name="likeOrganization" value="'%' + authContext.organization + '%'"/>
-                                (create_user_id = #{authContext.userId} or (read_auth_ids like #{likeOrganization}
-                                and read_auth_type = 2) or read_auth_type = 1)
-                            </when>
-                            <otherwise>
-                                1 != 1
-                            </otherwise>
-                        </choose>
-                    </when>
-                    <otherwise>
-                        <bind name="likeUser" value="'%' + authContext.userId + '%'"/>
-                        (create_user_id = #{authContext.userId}
-                        or (operation_auth_ids like #{likeUser}
-                        and operation_auth_type = 2)
-                        or operation_auth_type = 1)
-                    </otherwise>
-                </choose>
-            </if>
-        </where>
     </select>
 
     <select id="pageByTypeAndName" resultMap="set">
@@ -199,5 +174,9 @@
                 </foreach>
             </if>
         </where>
+    </select>
+
+    <select id="getAllSource" resultType="java.lang.String">
+        select source from oj_practice_set GROUP BY source
     </select>
 </mapper>

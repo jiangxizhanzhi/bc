@@ -46,6 +46,15 @@ public class PracticeOperation extends PracticeBase {
 	@ApiModelProperty("场景存活时间")
 	private Integer destroyDelay;
 
+	@ApiModelProperty("题型")
+	private Integer category;
+
+	@ApiModelProperty("是否是真题")
+	private Boolean isTrue;
+
+	@ApiModelProperty("关联的运维题id")
+	private String maintenanceId;
+
 	public enum DynamicFlag implements GenericEnum {
 
 		STATIC(0, "静态"), DYNAMIC(1, "动态"), RANDOM(2, "随机");
@@ -57,6 +66,23 @@ public class PracticeOperation extends PracticeBase {
 		private String desc;
 
 		DynamicFlag(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
+
+	public enum Category implements GenericEnum {
+
+		OPERATION(0, "实操题"), MAINTENANCE(1, "运维题");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		Category(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

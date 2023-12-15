@@ -27,6 +27,9 @@ public class WebOperationListReq extends PageReqBase {
 	@ApiModelProperty("知识点，用逗号隔开多个知识点")
 	private List<String> knowledge;
 
+	@ApiModelProperty("来源")
+	private String source;
+
 	public void setCategory_id(String categoryId) {
 		this.categoryId = categoryId;
 	}

@@ -87,4 +87,10 @@ public class PracticeSetController {
 		return new BaseRsp<>(practiceSetService.getMorePracticeSet(authContext, resourceId, setType));
 	}
 
+	@ApiOperation("获取所有来源")
+	@GetMapping("/source/list")
+	public BaseRsp<List<String>> getAllSource() {
+		return new BaseRsp<>(practiceSetService.getAllSource());
+	}
+
 }

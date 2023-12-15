@@ -9,6 +9,7 @@ import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemTemplateRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTool;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalToolMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
@@ -40,15 +41,16 @@ public class EvalTemTemplateController {
 
 	@ApiOperation("新增任务")
 	@PostMapping("/mission")
-	public BaseRsp<String> createMission(@RequestBody @Validated EvalMissionTemplateReq evalMissionTemplateReq) {
-		return new BaseRsp<>(evalMissionTemplateService.addMissionTemplate(evalMissionTemplateReq));
+	public BaseRsp<EvalMissionTemplateRsp> createMission(@RequestBody @Validated EvalMissionTemplateReq evalMissionTemplateReq) {
+		String resourceId = evalMissionTemplateService.addMissionTemplate(evalMissionTemplateReq);
+		return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(resourceId));
 	}
 
 	@ApiOperation("修改任务")
 	@PatchMapping("/mission")
-	public BaseRsp<Boolean> updateMission(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
+	public BaseRsp<EvalMissionTemplateRsp> updateMission(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
 		evalMissionTemplateService.updateMissionTemplate(updateEvalMissionReq);
-		return new BaseRsp<>(true);
+		return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
 	}
 
 	@ApiOperation("查询任务信息")

@@ -88,5 +88,10 @@
             <version>${common.service.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sun.jna</groupId>
+            <artifactId>jna</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

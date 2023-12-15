@@ -50,6 +50,7 @@
         <xmlworker.version>5.4.1</xmlworker.version>
         <itext-asian.version>5.2.0</itext-asian.version>
         <flying-saucer-pdf.version>9.0.3</flying-saucer-pdf.version>
+        <sun.jna.version>3.0.9</sun.jna.version>
 
         <!-- 自有模块版本号 -->
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
@@ -258,6 +259,11 @@
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>${sun.jna.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,6 +1,7 @@
 package com.cyberpeace.auth.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.auth.constant.LicenseEnum;
 
 import java.util.Date;
 
@@ -13,9 +14,9 @@ public interface AuthService {
 
     String getSerialNumber();
 
-    Integer verifySystemCode();
+    LicenseEnum verifySystemCode();
 
-    Integer registerVerifyInfo(Integer timeRange, String verifyCode, Integer number);
+    LicenseEnum registerVerifyInfo(Integer timeRange, String verifyCode, Integer number);
 
     void verifyDayAdd();
 

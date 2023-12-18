@@ -3,14 +3,17 @@ package com.cyberpeace.auth.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.auth.constant.AuthConstant;
+import com.cyberpeace.auth.constant.LicenseEnum;
 import com.cyberpeace.auth.service.AuthService;
 import com.cyberpeace.auth.service.VerifyLicenseService;
 import com.cyberpeace.auth.util.AESUtil;
 import com.cyberpeace.auth.util.CommonUtil;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.EnumUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,11 +52,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Integer verifySystemCode() {
+    public LicenseEnum verifySystemCode() {
         JSONObject verifyJsonObject = getVerifyInfo();
         if (verifyJsonObject.containsKey("errorCode")) {
             log.error("errorCode: {}", verifyJsonObject.containsKey("errorCode"));
-            throw new BusinessException("系统未注册");
+            return LicenseEnum.LICENSE_NOT_ACTIVATED;
         }
         Long verifyTime = verifyJsonObject.getLong("time");
         Integer range = verifyJsonObject.getInteger("range");
@@ -63,10 +66,10 @@ public class AuthServiceImpl implements AuthService {
             //在注册有效期内
             String code = verifyJsonObject.getString("code");
             String serialNumber = getSerialNumber();
-
-            return verifyLicenseService.verifyCode(serialNumber, range, code, number);
+            Integer integer = verifyLicenseService.verifyCode(serialNumber, range, code, number);
+            return EnumUtils.getEnumByCode(integer, LicenseEnum.class);
         } else {
-            throw new BusinessException("license已过期");
+            return LicenseEnum.LICENSE_EXPIRED;
         }
     }
 
@@ -79,10 +82,10 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
-    public Integer registerVerifyInfo(Integer timeRange, String verifyCode, Integer licenseNum) {
+    public LicenseEnum registerVerifyInfo(Integer timeRange, String verifyCode, Integer licenseNum) {
         String serialNumber = getSerialNumber();
         Integer verifyResult = verifyLicenseService.verifyCode(serialNumber, timeRange, verifyCode, licenseNum);
-        if (verifyResult.equals(0)) {
+        if (LicenseEnum.SUCCESS.getCode().equals(verifyResult)) {
 
             JSONObject verifyJsonObject = new JSONObject();
             verifyJsonObject.put("time", System.currentTimeMillis());
@@ -97,14 +100,14 @@ public class AuthServiceImpl implements AuthService {
                 FileUtils.createParentDirectories(file);
                 FileUtils.writeStringToFile(file, enVerifyInfo, StandardCharsets.UTF_8);
                 log.error("register system success");
-                return verifyResult;
+                return LicenseEnum.SUCCESS;
             } catch (Exception e) {
                 log.error("register system, encrypt failed ,e: ", e);
-                return AuthConstant.VERIFY_CODE_FAILED;
+                return LicenseEnum.LICENSE_FAIL;
             }
         }
 
-        return verifyResult;
+        return LicenseEnum.LICENSE_INVALID;
     }
 
     @Override
@@ -134,7 +137,6 @@ public class AuthServiceImpl implements AuthService {
         if (!verifyFile.exists()) {
             jsonObject.put("errorCode", 1);
             log.error("系统验证码不存在，系统未注册");
-//            throw new BasException("系统验证码不存在，系统未注册");
         }
         try {
             String verifyString = FileUtils.readFileToString(verifyFile, "utf-8");
@@ -143,7 +145,6 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             jsonObject.put("errorCode", 2);
             log.error("read verify file {} failed , err {}", VERIFY_FILE_PATH, e);
-//            throw new BasException("没有获取到系统验证码，验证失败");
         }
         return jsonObject;
     }

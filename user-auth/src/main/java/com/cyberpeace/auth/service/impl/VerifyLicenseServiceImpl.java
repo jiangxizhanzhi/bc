@@ -59,14 +59,8 @@ public class VerifyLicenseServiceImpl implements VerifyLicenseService {
         LicenseInterface.GoString.ByValue code = new LicenseInterface.GoString.ByValue();
         code.p = verifyCode;
         code.n = code.p.length();
-
         int ret = LicenseInterface.INSTANCE.Verify(str, code);
-        if (0 == ret) {
-//            log.info("verify system license pass: serialNumber {} deadline {} code {}",serialNumber,range,verifyCode);
-            return ret;
-        }
-
-        log.error("verify system license failed: serialNumber {} deadline {} code {}", serialNumber, range, verifyCode);
+        log.info("verify system license pass: serialNumber {} deadline {} code {}",serialNumber,range,verifyCode);
         return ret;
     }
 

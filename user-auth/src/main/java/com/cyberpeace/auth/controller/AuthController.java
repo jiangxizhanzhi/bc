@@ -1,5 +1,7 @@
 package com.cyberpeace.auth.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.auth.constant.LicenseEnum;
 import com.cyberpeace.auth.service.AuthService;
 import com.cyberpeace.common.model.BaseRsp;
 import io.swagger.annotations.Api;
@@ -32,19 +34,19 @@ public class AuthController {
 
     @GetMapping("/verifysystem")
     @ApiOperation(value = "系统是否授权验证", notes = "系统是否授权验证")
-    public BaseRsp<Integer> verifySystemCode(){
+    public BaseRsp<JSONObject> verifySystemCode(){
 
-        Integer verifyResult = authService.verifySystemCode();
+        LicenseEnum verifyResult = authService.verifySystemCode();
 
-        return new BaseRsp<>(verifyResult);
+        return new BaseRsp<>(JSONObject.parseObject(verifyResult.toString()));
     }
 
     @GetMapping("/registerverifyinfo")
     @ApiOperation(value = "激活系统",notes = "激活系统")
-    public BaseRsp<Integer> registerVerifyInfo(@RequestParam("timeRange")Integer timeRange, @RequestParam("verifyCode") String verifyCode, @RequestParam("number") Integer number){
+    public BaseRsp<JSONObject> registerVerifyInfo(@RequestParam("timeRange")Integer timeRange, @RequestParam("verifyCode") String verifyCode, @RequestParam("number") Integer number){
 
-        Integer registerResult = authService.registerVerifyInfo(timeRange,verifyCode, number);
-        return new BaseRsp<>(registerResult);
+        LicenseEnum registerResult = authService.registerVerifyInfo(timeRange,verifyCode, number);
+        return new BaseRsp<>(JSONObject.parseObject(registerResult.toString()));
     }
 
     @GetMapping("/expireTime")

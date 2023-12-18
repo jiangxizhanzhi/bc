@@ -48,7 +48,7 @@ public final class MenuConstant {
 	public static final String WEB_CR_TOOL_GHDB = "ghdb-library";
 
     //个人中心
-	public static final String WEB_PERSON_CENTER = "personal-folder";
+	public static final String WEB_PERSON_CENTER = "personal-center";
 
     //靶场测评
 	public static final String WEB_CR_EVALUATION = "range-test-self";

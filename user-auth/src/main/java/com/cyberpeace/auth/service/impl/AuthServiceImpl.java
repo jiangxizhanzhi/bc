@@ -2,7 +2,6 @@ package com.cyberpeace.auth.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.auth.constant.AuthConstant;
 import com.cyberpeace.auth.service.AuthService;
 import com.cyberpeace.auth.service.VerifyLicenseService;
@@ -13,17 +12,12 @@ import com.cyberpeace.common.util.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * @author :   SN

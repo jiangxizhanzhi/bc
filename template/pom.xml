@@ -263,6 +263,11 @@
             <artifactId>user-auth</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.jna</groupId>
+            <artifactId>jna</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

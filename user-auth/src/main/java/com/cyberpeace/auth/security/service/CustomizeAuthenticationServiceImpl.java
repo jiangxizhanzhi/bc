@@ -2,6 +2,8 @@ package com.cyberpeace.auth.security.service;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.auth.security.TbUser;
+import com.cyberpeace.common.constant.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.mapper.SysUserMapper;
-import com.cyberpeace.auth.security.TbUser;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,12 +37,12 @@ public class CustomizeAuthenticationServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws AuthenticationException {
         if (StringUtils.isBlank(username)) {
-            throw new UsernameNotFoundException("用户名不能为空");
+            throw new UsernameNotFoundException(ErrorCode.USERNAME_NOT_NULL);
         }
         //根据用户名查询用户
 		SysUser sysUser = sysUserMapper.selectByUsername(username);
         if (sysUser == null) {
-            throw new UsernameNotFoundException("用户不存在");
+            throw new UsernameNotFoundException(ErrorCode.USER_INFO_MISSING);
         }
 		return new TbUser(sysUser);
     }

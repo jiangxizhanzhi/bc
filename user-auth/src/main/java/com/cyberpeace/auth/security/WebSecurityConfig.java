@@ -69,6 +69,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private CustomizeAuthenticationServiceImpl userDetailsService;
 
+	/**
+	 * 访问决策管理器
+	 */
+	@Resource
+	private CustomizeAccessDecisionManager accessDecisionManager;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //配置自定义认证方式
@@ -98,7 +104,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/doc.html")
 				.permitAll()
 				// 其他的都需要认证
-				.anyRequest().authenticated()
+				.anyRequest().fullyAuthenticated().accessDecisionManager(accessDecisionManager)
                 //登出
 				.and().logout()
 				// 允许所有用户
@@ -120,14 +126,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// 匿名用户访问无权限资源时的异常处理
 				.authenticationEntryPoint(authenticationEntryPoint)
                 //会话管理
-				// .and().sessionManagement()
+				 .and().sessionManagement()
 				// 同一个账号支持同时登录的最大设备数, 如果超过最大设备数，会将最早的登录设备被挤下线
-				// .maximumSessions(1)
-				// maxSessionsPreventsLogin(true). // true,则阻止用户在达到最大值会话 （int） 时进行身份验证,
-				// false:则（默认），允许进行身份验证的用户访问，并且现有用户的会话已过期
-				// .expiredSessionStrategy(sessionInformationExpiredStrategy)
+				 .maximumSessions(1)
+				// true,则阻止用户在达到最大值会话 （int） 时进行身份验证,false:则（默认），允许进行身份验证的用户访问，并且现有用户的会话已过期
+//				 maxSessionsPreventsLogin(true).
 				// 会话失效(账号被挤下线)处理逻辑
-				;
+				 .expiredSessionStrategy(sessionInformationExpiredStrategy);
     }
 
 //    /**

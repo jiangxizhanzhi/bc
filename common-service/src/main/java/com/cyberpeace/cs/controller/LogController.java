@@ -22,14 +22,12 @@ import java.io.File;
 @Api(tags = "后台日志相关api")
 @RestController
 @RequestMapping("/cs/admin/log")
-@RequiresAuthentication
 public class LogController {
 
 	@Resource
 	private LogService logService;
 	@ApiOperation("下载日志")
 	@GetMapping("/downloadLog")
-	@RequiresPermissions(MenuConstant.CMS_SYSTEM_LOG)
 	public void download(HttpServletResponse response , @ApiParam(name = "file_name",value = "文件名称",required = true) @RequestParam("file_name") String name){
 		String logLootPath = System.getProperty("catalina.base") + "/logs/";
 		File file = new File(logLootPath+name);

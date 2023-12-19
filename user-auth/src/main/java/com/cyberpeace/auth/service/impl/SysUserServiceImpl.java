@@ -132,6 +132,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			throw new BusinessException(ErrorCode.EMPTY_IDS);
 		}
 		int i = sysUserMapper.deleteBatchIds(req.getIds());
+		//todo 删除用户账号相关所有数据
 		log.info("delete user {} success", i);
 	}
 

@@ -21,15 +21,16 @@ public enum LicenseEnum implements GenericEnum {
     @Getter
     private String desc;
 
-    private LicenseEnum(int code, String message) {
+    private LicenseEnum(int code, String desc) {
         this.code = code;
-        this.desc = message;
+        this.desc = desc;
     }
 
     @Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(String.valueOf(code), desc);
+        jsonObject.put("code", code);
+        jsonObject.put("desc", desc);
         return jsonObject.toJSONString();
     }
 }

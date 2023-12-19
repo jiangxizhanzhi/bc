@@ -235,5 +235,14 @@ public final class ErrorCode {
 	 */
 	public static final String USERNAME_DUPLICATE = "100066";
 
+	/**
+	 * 用户已禁用
+	 */
+	public static final String USER_DISABLED = "100067";
+
+	/**
+	 * 用户名不能为空
+	 */
+	public static final String USERNAME_NOT_NULL = "100068";
 	private ErrorCode() {}
 }

@@ -52,7 +52,7 @@ public class CustomizeAuthenticationFailureHandler implements AuthenticationFail
         } else if (e instanceof LockedException) {
             //账号锁定
             log.error("login error account locked" + e.getMessage());
-            CommonUtil.responseJson(response, new AuthFailureRsp("账号锁定"), SC_INTERNAL_SERVER_ERROR);
+            CommonUtil.responseJson(response, new AuthFailureRsp("账号禁用"), SC_INTERNAL_SERVER_ERROR);
 
         } else if (e instanceof UsernameNotFoundException) {
             //用户不存在

@@ -3,13 +3,16 @@ package com.cyberpeace.auth.security.handler;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.cyberpeace.auth.constant.UserEnableEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -41,6 +44,9 @@ public class CustomizeAuthenticationSuccessHandler implements AuthenticationSucc
 		TbUser userDetails = (TbUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
 		SysUser sysUser = sysUserMapper.selectByUsername(userDetails.getUsername());
+		if (Objects.equals(UserEnableEnum.DISABLED.getCode(), sysUser.getEnabled())){
+			throw new LockedException("账号禁用");
+		}
         sysUserMapper.updateById(sysUser);
 
 

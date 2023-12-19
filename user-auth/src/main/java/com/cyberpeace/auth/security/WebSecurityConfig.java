@@ -101,10 +101,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/**",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
+						"/favicon.ico",
 						"/doc.html")
 				.permitAll()
 				// 其他的都需要认证
-				.anyRequest().fullyAuthenticated().accessDecisionManager(accessDecisionManager)
+				.anyRequest().authenticated()
                 //登出
 				.and().logout()
 				// 允许所有用户

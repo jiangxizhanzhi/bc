@@ -14,9 +14,9 @@ import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +52,7 @@ public class CustomizeAccessDecisionManager implements AccessDecisionManager {
                 //不是白名单中的接口，均需要登录认证后，再判断登录用户是否有权限访问接口
                 if (authentication instanceof AnonymousAuthenticationToken){
                     log.error("匿名用户拒绝访问资源：{}", requestURI);
-                    throw new BusinessException(ErrorCode.INTERFACE_UNAUTHORIZED);
+                    throw new DisabledException("账号不可用");
                 }
                 TbUser principal = (TbUser) authentication.getPrincipal();
                 //当前请求需要的权限

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
@@ -18,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +42,7 @@ public class EvalTemTemplateController {
 	private EvalToolMapper evalToolMapper;
 
 	@ApiOperation("新增任务")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@PostMapping("/mission")
 	public BaseRsp<EvalMissionTemplateRsp> createMission(@RequestBody @Validated EvalMissionTemplateReq evalMissionTemplateReq) {
 		String resourceId = evalMissionTemplateService.addMissionTemplate(evalMissionTemplateReq);
@@ -47,6 +50,7 @@ public class EvalTemTemplateController {
 	}
 
 	@ApiOperation("修改任务")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@PatchMapping("/mission")
 	public BaseRsp<EvalMissionTemplateRsp> updateMission(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
 		evalMissionTemplateService.updateMissionTemplate(updateEvalMissionReq);
@@ -54,18 +58,21 @@ public class EvalTemTemplateController {
 	}
 
 	@ApiOperation("查询任务信息")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@GetMapping("/mission")
 	public BaseRsp<EvalMissionTemplateRsp> getMission(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId) {
 		return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(resourceId));
 	}
 
 	@ApiOperation("靶场测评后台模板创建")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@PostMapping("/")
 	public BaseRsp<String> createTemplate(@RequestBody EvalTemTemplateReq evalTemTemplateReq) {
 		return new BaseRsp<>(evalTemTemplateService.createTemplate(evalTemTemplateReq));
 	}
 
 	@ApiOperation("靶场测评后台模板更新")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@PatchMapping("/")
 	public BaseRsp<Boolean> updateTemplate(@RequestBody UpdateEvalTemTemplateReq updateEvalTemTemplateReq) {
 		evalTemTemplateService.updateTemplate(updateEvalTemTemplateReq);
@@ -73,6 +80,7 @@ public class EvalTemTemplateController {
 	}
 
 	@ApiOperation("靶场测评后台模板删除")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@DeleteMapping("/")
 	public BaseRsp<Boolean> deleteTemplate(@RequestBody DeleteReq deleteReq) {
 		evalTemTemplateService.deleteTemplates(deleteReq.getIds());
@@ -80,12 +88,14 @@ public class EvalTemTemplateController {
 	}
 
 	@ApiOperation("靶场测评后台模板查询")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@GetMapping("/")
 	public BaseRsp<EvalTemTemplateRsp> getTemplate(@ApiParam(name = "resource_id", required = true, value = "模板id") @RequestParam(value = "resource_id") String resourceId) {
 		return new BaseRsp<>(evalTemTemplateService.getTemplate(resourceId));
 	}
 
 	@ApiOperation("查询靶场测评后台模板列表")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<EvalTemTemplateListRsp>> getTemplateList(@ApiParam(name = "listReq", value = "查询条件") @Validated EvalTemTemplatePageReq pageReqBase) {
 		List<EvalTemTemplateListRsp> evalTemTemplateRspList = evalTemTemplateService.getTemplateList(pageReqBase);

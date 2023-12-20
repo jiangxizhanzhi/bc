@@ -87,7 +87,9 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				evalMissionTemplateService.deleteMissionTemplate(oldResourceIds);
+				if (!oldResourceIds.isEmpty()) {
+					evalMissionTemplateService.deleteMissionTemplate(oldResourceIds);
+				}
 				localSceneService.saveTopo(topoJson, topoId);
 				evalTemTemplateMapper.updateById(evalTemTemplate);
 

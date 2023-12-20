@@ -43,7 +43,7 @@
         <mysql.connector.version>8.0.25</mysql.connector.version>
         <lombok.version>1.18.20</lombok.version>
         <springboot.test.version>2.5.2</springboot.test.version>
-        <poi-ooxml.version>5.1.0</poi-ooxml.version>
+        <poi-ooxml.version>5.2.2</poi-ooxml.version>
         <poi-version>5.1.0</poi-version>
         <freemarker.version>2.3.28</freemarker.version>
         <itextpdf.version>5.4.2</itextpdf.version>
@@ -51,6 +51,7 @@
         <itext-asian.version>5.2.0</itext-asian.version>
         <flying-saucer-pdf.version>9.0.3</flying-saucer-pdf.version>
         <sun.jna.version>3.0.9</sun.jna.version>
+        <hutool.version>5.3.7</hutool.version>
 
         <!-- 自有模块版本号 -->
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
@@ -264,6 +265,11 @@
                 <groupId>com.sun.jna</groupId>
                 <artifactId>jna</artifactId>
                 <version>${sun.jna.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

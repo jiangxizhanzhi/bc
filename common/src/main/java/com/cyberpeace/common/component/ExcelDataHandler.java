@@ -5,9 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.common.annoations.ExcelProperty;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -413,4 +416,96 @@ public class ExcelDataHandler {
 		return file;
 	}
 
+	/**
+	 * excel文件数据读取
+	 *
+	 * @param startRow 开始行读取 0从第一行开始读取
+	 * @param endRow   结束行 0=不限制结尾 非0则读取startRow-endRow之间的数据
+	 * @return
+	 */
+	public <T> List<T> getSheetData(int startRow, int endRow, Class<T> modelClass) {
+
+		int rows = sheet.getPhysicalNumberOfRows();
+		int endIndex = endRow == CommonConstant.ZERO ? rows : Math.min(rows, endRow);
+
+		if (startRow >= endIndex) {
+			return Lists.newArrayList();
+		}
+		List<T> dataList = Lists.newArrayList();
+		for (int rowIndex = startRow; rowIndex < endIndex; rowIndex++) {
+			try {
+				T data = modelClass.newInstance();
+				if (rowIndex == 0) {
+					verifyHeader(sheet.getRow(rowIndex), data);
+					continue;
+				}
+				if (rowIndex == 1){
+					continue;
+				}
+				setRowValue(sheet.getRow(rowIndex), data);
+				dataList.add(data);
+			} catch (InstantiationException | NoSuchMethodException | IllegalAccessException |
+					 InvocationTargetException e) {
+				throw new BusinessException(e.getMessage());
+			}
+		}
+
+		return dataList;
+	}
+
+	private static <T> void setRowValue(Row row, T data) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+		Class<?> klass = data.getClass();
+		Field[] fieldArray = klass.getDeclaredFields();
+		for(Field field : fieldArray){
+			if(field.isAnnotationPresent(ExcelProperty.class)){
+				int annonIndex = field.getAnnotation(ExcelProperty.class).index();
+				String fieldName = field.getName();
+				String firstLetter = fieldName.substring(0, 1).toUpperCase();
+				String methodName = "set" + firstLetter + fieldName.substring(1);
+				Method method = klass.getMethod(methodName,new Class[]{field.getType()});
+				//获取一个单元格中的数据用反射的方式将其塞进JavaBean对应的属性中保存
+				method.invoke(data,new Object[]{getCellValue(row,annonIndex)});
+			}
+		}
+	}
+	/**
+	 *  单元格中数据类型如下：
+	 *  Cell.CELL_TYPE_NUMERIC 数值型 0
+	 *  Cell.CELL_TYPE_STRING 字符串型 1
+	 *  Cell.CELL_TYPE_FORMULA 公式型 2
+	 *  Cell.CELL_TYPE_BLANK 空值 3
+	 *  Cell.CELL_TYPE_BOOLEAN 布尔型 4
+	 *  Cell.CELL_TYPE_ERROR 错误 5
+	 */
+	private static String getCellValue(Row row, int columnIndex){
+		Cell cell = row.getCell(columnIndex);
+		if (cell == null) {
+			return null;
+		}
+		Object value = null;
+		switch (cell.getCellType()) {
+			//数字类型
+			case NUMERIC: value = cell.getNumericCellValue();break;
+			//字符串类型
+			case STRING: value = cell.getStringCellValue();break;
+			//布尔类型
+			case BOOLEAN: value = cell.getBooleanCellValue();break;
+			default:break;
+		}
+		return String.valueOf(value);
+	}
+
+	private static <T> void verifyHeader(Row row, T data) {
+		Class<?> klass = data.getClass();
+		Field[] fieldArray = klass.getDeclaredFields();
+		for(Field field : fieldArray){
+			if(field.isAnnotationPresent(ExcelProperty.class)){
+				int anIndex = field.getAnnotation(ExcelProperty.class).index();
+				String anValue = field.getAnnotation(ExcelProperty.class).value();
+				if (!StringUtils.equals(anValue, getCellValue(row, anIndex))){
+					throw new BusinessException(String.format("Excel 表头第%s列值应为：%s", anIndex + 1, anValue));
+				}
+			}
+		}
+	}
 }

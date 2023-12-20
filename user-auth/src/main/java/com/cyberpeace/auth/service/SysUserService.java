@@ -3,6 +3,7 @@ package com.cyberpeace.auth.service;
 
 import java.util.Map;
 
+import com.cyberpeace.auth.controller.req.UserImportReq;
 import com.cyberpeace.common.model.BaseRsp;
 import org.springframework.session.Session;
 
@@ -75,4 +76,11 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return	返回结果
 	 */
 	void updateUserEnable(UserEnableReq req);
+
+	/**
+	 * 导入用户
+	 * @param req	用户文件
+	 * @return	导入结果
+	 */
+	BaseRsp importUser(UserImportReq req);
 }

@@ -1,9 +1,23 @@
 package com.cyberpeace.auth.service.impl;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.cyberpeace.auth.controller.req.UserImportReq;
+import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.ExcelHeader;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.DictInfo;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.DictInfoService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +50,7 @@ import com.cyberpeace.common.model.MultiSelectReq;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
 * @author dell
@@ -49,11 +64,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 	@Autowired
 	private SysUserMapper sysUserMapper;
-
 	@Autowired
 	private RedisIndexedSessionRepository sessionRepository;
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+	@Autowired
+	private AttachmentService attachmentService;
+	@Autowired
+	private UtilService utilService;
+	@Autowired
+	private DictInfoService dictInfoService;
 
 	@Override
 	public void resetPwdself(ResetPwdSelfReq req) {
@@ -92,6 +112,35 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		LambdaUpdateWrapper<SysUser> wrapper = new LambdaUpdateWrapper<>();
 		wrapper.in(SysUser::getId, req.getIds()).set(SysUser::getEnabled, req.getEnable());
 		sysUserMapper.update(null, wrapper);
+	}
+
+	@Override
+	public BaseRsp importUser(UserImportReq req) {
+		MultipartFile multipartFile = req.getFile();
+		if (null == multipartFile) {
+			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+		}
+		String originalFilename = multipartFile.getOriginalFilename();
+		if (!originalFilename.endsWith(FileSunffixConstant.XLSX.getDesc())){
+			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
+		}
+		// 文件上传
+		AttachmentBo attachmentBo = attachmentService.uploadDest(
+				AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, multipartFile);
+		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
+		ExcelDataHandler excelDataHandler = new ExcelDataHandler(viewPath, 0);
+		List<UserExcel> userExcels = excelDataHandler.getSheetData(0, 0, UserExcel.class);
+		List<DictInfo> dictInfo = dictInfoService.getDictInfo(DictInfo.KeyModel.AVATAR.getKey());
+		Random random = new Random();
+		// 转换为实体
+		List<SysUser> users = userExcels.stream().map(user -> {
+			UserAddReq userAdd = BeanUtils.copy(user, UserAddReq.class);
+			userAdd.setAdministrator(false);
+			userAdd.setAvatar(dictInfo.get(random.nextInt(dictInfo.size())).getItemValue());
+			return req2Entity(userAdd);
+		}).collect(Collectors.toList());
+		saveBatch(users);
+		return new BaseRsp<>();
 	}
 
 	@Override

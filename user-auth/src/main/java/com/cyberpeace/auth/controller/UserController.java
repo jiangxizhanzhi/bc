@@ -3,6 +3,7 @@ package com.cyberpeace.auth.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.auth.controller.req.UserImportReq;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.DictInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,5 +128,12 @@ public class UserController {
 	public BaseRsp updateUserEnable(@RequestBody UserEnableReq req) {
 		sysUserService.updateUserEnable(req);
 		return new BaseRsp();
+	}
+
+	@ApiOperation("用户导入")
+	@PostMapping("/import")
+	public BaseRsp importUser(UserImportReq req){
+
+		return sysUserService.importUser(req);
 	}
 }

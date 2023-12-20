@@ -170,6 +170,9 @@ public final class MenuConstant {
     //评估算法管理
 	public static final String CMS_CR_EVALUATION_ALGORITHM = "assessment-algorithm";
 
+	//测试验证模板管理
+	public static final String CMS_CR_EVALUATION_TEMPLATE = "assessment-template";
+
     //指标项管理
 	public static final String CMS_CR_EVALUATION_INDICATOR = "assessment-model";
 

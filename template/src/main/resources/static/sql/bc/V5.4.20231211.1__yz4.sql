@@ -14,6 +14,7 @@ CREATE TABLE `cr_eval_tool`  (
                                  `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'uuid',
                                  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '试验名称',
                                  `action` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '预定义动作',
+                                 `action` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '预定义动作',
                                  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '开始时间',
                                  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '结束时间',
                                  PRIMARY KEY (`id`) USING BTREE
@@ -85,3 +86,6 @@ CREATE TABLE `cr_eval_template_template`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 
+
+ALTER TABLE `cr_eval_template`
+    ADD COLUMN `missions_scheme` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '任务方案';

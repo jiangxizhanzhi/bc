@@ -37,6 +37,8 @@ public class EvalTemplate extends AuthTable {
 
 	private String stepConfig;
 
+	private String missionsScheme;
+
 	private Boolean enableRecording;
 
 	private String currentTaskId;

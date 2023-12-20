@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -19,12 +21,15 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 
 	@ApiModelProperty(value = "步骤配置", required = true)
 	@NotNull
-	private List<EvalTaskStepConfig> stepConfig;
+	private List<EvalTaskStepConfig> stepConfig = new ArrayList<>();
 
 	@ApiModelProperty("授权用户")
 	private List<String> authUserIds;
 
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
 	private Integer operationAuthType;
+
+	@ApiModelProperty("任务方案")
+	private MissionScheme missionsScheme;
 
 }

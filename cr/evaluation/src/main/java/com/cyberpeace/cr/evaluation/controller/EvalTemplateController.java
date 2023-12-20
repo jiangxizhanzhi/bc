@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
 
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -106,6 +107,8 @@ public class EvalTemplateController {
 
 		// 构造接口返回数据
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
+		MissionScheme missionScheme = JsonUtil.toJsonObject(evalTemplate.getMissionsScheme(), MissionScheme.class);
+		evalTemplateRsp.setMissionsScheme(missionScheme);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
 		// auth users
@@ -193,6 +196,8 @@ public class EvalTemplateController {
 		// 复制模板信息
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
+		// 设置技战法方案-任务方案
+		evalTemplate.setMissionsScheme(JsonUtil.toJsonString(evaTemplateAddReq.getMissionsScheme()));
 
 		// 设置模板用户
 		if (evaTemplateAddReq.getOperationAuthType().equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())) {

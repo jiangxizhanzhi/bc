@@ -24,7 +24,7 @@ public class EvalTemTemplate extends BaseTable {
 	private String logo;
 
 	@ApiModelProperty("试验条件")
-	private String condition;
+	private String expCondition;
 
 	@ApiModelProperty("试验方法")
 	private String method;

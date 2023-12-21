@@ -1,6 +1,7 @@
 package com.cyberpeace.bs.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,13 +15,18 @@ import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.AppType;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
+import com.cyberpeace.bs.service.bo.behavior.ClientDistribution;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
+import com.cyberpeace.bs.service.bo.lc.TypeAndCount;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +44,10 @@ import io.swagger.annotations.ApiParam;
 public class BehaviorController {
 
     @Autowired
-    LcService lcService;
+	private LcService lcService;
+
+	@Autowired
+	private CrConstantsService crConstantsService;
 
     /**
      * 行为分页列表接口
@@ -164,5 +173,38 @@ public class BehaviorController {
         String host = lcService.getLcHost();
         return new BaseRsp<>(host);
     }
+
+	/**
+	 * 获取行为客户端类型分布
+	 * 提供给配管仪表大盘页面
+	 *
+	 * @return {@code BaseRsp<String>}
+	 */
+	@ApiOperation("获取行为客户端类型分布")
+	@GetMapping("/host")
+	public BaseRsp<ClientDistribution> getBehaviorClientDistribution() {
+		List<TypeAndCount> typeList = lcService.getClientDistribution();
+		// 获取客户端类型
+		List<CrConstantsConfig> clients = crConstantsService.getByType(45);
+		ClientDistribution res = makeClientDistribution(typeList, clients);
+		return new BaseRsp<>(res);
+	}
+
+	private ClientDistribution makeClientDistribution(List<TypeAndCount> typeList,
+			List<CrConstantsConfig> clients) {
+		Map<Integer, Integer> typeCountMap = StreamApiUtils.toMap(typeList, TypeAndCount::getType,
+				TypeAndCount::getCount);
+		ClientDistribution res = new ClientDistribution();
+		Integer sum = 0;
+		for (CrConstantsConfig config : clients) {
+			String client = config.getCnName();
+			Integer count = typeCountMap.getOrDefault(config.getCode(), 0);
+			sum += count;
+			res.getClientTypes().add(client);
+			res.getCountList().add(count);
+		}
+		res.setTotal(sum);
+		return res;
+	}
 
 }

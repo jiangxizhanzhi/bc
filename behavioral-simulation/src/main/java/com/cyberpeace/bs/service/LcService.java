@@ -165,4 +165,11 @@ public interface LcService {
      * @return {@code String}
      */
     String importBehaviorByExcel(MultipartFile file);
+
+	/**
+	 * 获取行为客户端类型分布
+	 *
+	 * @return {@code ClientDistribution}
+	 */
+	List<TypeAndCount> getClientDistribution();
 }

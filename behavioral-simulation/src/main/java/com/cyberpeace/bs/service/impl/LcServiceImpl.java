@@ -124,6 +124,11 @@ public class LcServiceImpl implements LcService {
      */
     private String BANDWIDTH_SUM = "api/v1/monitor/getAll";
 
+	/**
+	 * 行为客户端分布
+	 */
+	private String CLIENT_DISTRIBUTION = "api/v1/flowcharts/client/distribution";
+
     @PostConstruct
     public void init() {
         // 获取远程服务地址
@@ -466,4 +471,14 @@ public class LcServiceImpl implements LcService {
         String rsp = LcHttpClient.uploadFile2Lc(targetUrl, file);
         return rsp;
     }
+
+	@Override
+	public List<TypeAndCount> getClientDistribution() {
+		// 请求地址
+		String targetUrl = LC_HOST_PORT + CLIENT_DISTRIBUTION;
+		// 发送请求
+		String rsp = LcHttpClient.rawGet(targetUrl, String.class);
+		List<TypeAndCount> typeAndCountList = JsonUtil.toJsonObjectArray(rsp, TypeAndCount.class);
+		return typeAndCountList;
+	}
 }

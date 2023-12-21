@@ -14,6 +14,9 @@ public class RunAttackMessageReq implements Serializable {
 	@ApiModelProperty("场景id")
 	private String sceneId;
 
+	@ApiModelProperty("模板id")
+	private String resourceId;
+
 	@ApiModelProperty("动效类型")
 	private String type;
 
@@ -46,6 +49,9 @@ public class RunAttackMessageReq implements Serializable {
 
 	@ApiModelProperty("线的颜色")
 	private String lineColor;
+
+	@ApiModelProperty("线的颜色")
+	private String lineProcessColor;
 
 	@ApiModelProperty("线的宽度")
 	private Integer lineWidth;

@@ -267,6 +267,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         his.setCreateTime(new Date());
         his.setUpdateTime(new Date());
         his.setSceneId(sceneId);
+        his.setResultContent(guideScheme.getResultContent());
         situationGuideHisMapper.insert(his);
 
         return pushDataToRoomByGuide(Boolean.TRUE, his);
@@ -314,6 +315,7 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         String sceneId = his.getSceneId();
         List<String> elementIds = getElementIds(sceneId, isInstance);
         WsMultiNodeEffect wsMultiNodeGuide = new WsMultiNodeEffect();
+        wsMultiNodeGuide.setResultContent(his.getResultContent());
         wsMultiNodeGuide.setSceneId(his.getSceneId());
         wsMultiNodeGuide.setDuration(3);
         wsMultiNodeGuide.setName(his.getEventName());

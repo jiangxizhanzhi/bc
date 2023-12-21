@@ -9,6 +9,9 @@ import java.io.Serializable;
 @Data
 public class WsMultiNodeEffect implements Serializable {
 
+    @ApiModelProperty("结果内容")
+    private String resultContent;
+
     @ApiModelProperty("场景id")
     private String sceneId;
 

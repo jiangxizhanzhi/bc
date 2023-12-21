@@ -33,6 +33,8 @@ public class AttackMessage extends BaseTable {
 
 	private String lineColor;
 
+	private String lineProcessColor;
+
 	private Integer lineWidth;
 
 	private String mediaAnimation;

@@ -29,7 +29,7 @@ public interface DynamicSchemeService {
 
 	void pushMediaToRoom(AttackMessageReq attackMessageBo, String code);
 
-	void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds);
+	void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean isStop);
 
 	void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq);
 

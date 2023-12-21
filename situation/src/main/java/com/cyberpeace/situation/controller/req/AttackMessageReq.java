@@ -41,8 +41,11 @@ public class AttackMessageReq implements Serializable {
 	@ApiModelProperty("线型")
 	private String lineType;
 
-	@ApiModelProperty("线的颜色")
+	@ApiModelProperty("连接线路颜色-线的颜色")
 	private String lineColor;
+
+	@ApiModelProperty("过程线路颜色（新增）")
+	private String lineProcessColor;
 
 	@ApiModelProperty("线的宽度")
 	private Integer lineWidth;

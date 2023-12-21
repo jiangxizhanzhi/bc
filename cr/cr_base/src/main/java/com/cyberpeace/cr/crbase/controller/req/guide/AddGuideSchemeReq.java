@@ -39,6 +39,9 @@ public class AddGuideSchemeReq implements Serializable {
     @ApiModelProperty("靶标目标")
     private String target;
 
+    @ApiModelProperty("结果内容")
+    private String resultContent;
+
     @ApiModelProperty("攻击结果 1:成功 2失败")
     private Integer result;
 

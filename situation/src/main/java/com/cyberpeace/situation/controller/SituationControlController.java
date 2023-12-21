@@ -126,7 +126,26 @@ public class SituationControlController {
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code);
 		} else {
-			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds);
+			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds, false);
+		}
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("中止单个动效")
+	@PostMapping("/stop_attack_message")
+	public BaseRsp<Boolean> stopAttackMessage(@RequestBody @Validated StopAttackMessageReq stopAttackMessageReq) {
+		AttackMessageReq attackMessageBo = BeanUtils.copy(stopAttackMessageReq,
+				AttackMessageReq.class);
+		String sceneId = stopAttackMessageReq.getSceneId();
+		dynamicSchemeService.clearMedia(sceneId);
+		dynamicSchemeService.clearRoomSchedule(sceneId);
+		String code = sceneConfigService.updateSceneCode(sceneId);
+		List<String> elementIds = dynamicSchemeService
+				.getElementIds(sceneId, stopAttackMessageReq.getIsInstance());
+		if (stopAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code);
+		} else {
+			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds, true);
 		}
 		return new BaseRsp<>();
 	}

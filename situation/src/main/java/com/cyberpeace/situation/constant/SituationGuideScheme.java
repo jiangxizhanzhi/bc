@@ -44,6 +44,8 @@ public class SituationGuideScheme extends BaseTable {
 
     private String target;
 
+    private String resultContent;
+
     private Integer result;
 
     private Integer role;

@@ -332,7 +332,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			}
 
 			attackEffect.setMediaUrl(mediaAnimation.getUrl());
-			attackEffect.setLineStyle(new LineStyle("#FFFFFF", 3, "straight"));
+			attackEffect.setLineStyle(new LineStyle("#FFFFFF", 3, "straight", null));
 			attackEffectList.add(attackEffect);
 		}
 		wsAttackEffectDynamic.setEffectList(attackEffectList);
@@ -362,9 +362,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	 * 推送其他消息
 	 */
 	@Override
-	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds) {
+	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean isStop) {
 		WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageBo,
 				WsMultiNodeDynamic.class);
+		wsMultiNodeDynamic.setId(attackMessageBo.getResourceId());
 		wsMultiNodeDynamic.setCategory(ATTACK);
 		for (AttackType attackType : AttackType.values()) {
 			if (attackType.getKeyWord().equals(attackMessageBo.getType())) {
@@ -376,7 +377,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 		wsMultiNodeDynamic.setName(null);
 		wsMultiNodeDynamic.setLineStyle(new LineStyle(attackMessageBo.getLineColor(),
-				attackMessageBo.getLineWidth(), attackMessageBo.getLineType()));
+				attackMessageBo.getLineWidth(), attackMessageBo.getLineType(), attackMessageBo.getLineProcessColor()));
 		wsMultiNodeDynamic.setDuration(attackMessageBo.getDurationTime());
 		WsMessage<WsMultiNodeDynamic> wsMessage;
 
@@ -391,6 +392,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 		if (isSingleNode) {
 			wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(),
+					wsMultiNodeDynamic);
+		}
+		if(isStop){
+			wsMessage = new WsMessage<>(MessageType.StopAttackEvent.getDesc(),
 					wsMultiNodeDynamic);
 		}
 		situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeDynamic.getSceneId());
@@ -446,7 +451,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 							pushMediaToRoom(attackMessageReq, code);
 						} else {
-							pushAttackToRoom(attackMessageReq, elementIds);
+							pushAttackToRoom(attackMessageReq, elementIds, false);
 						}
 						if (attackMessageReq.getIntervalTime() != null) {
 							Thread.sleep(attackMessageReq.getIntervalTime() * 1000);

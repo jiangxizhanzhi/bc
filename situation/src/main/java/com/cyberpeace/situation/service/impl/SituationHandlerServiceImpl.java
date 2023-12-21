@@ -169,7 +169,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 				// 区域边框数据
 				areaInfo.setStyle(new LineStyle(display.getBody().getStroke(),
-						display.getBody().getStrokeWidth(), LineType.DASHED_STRAIGHT.getCode()));
+						display.getBody().getStrokeWidth(), LineType.DASHED_STRAIGHT.getCode(), null));
 			}
 
 			// 将区域数据添加入列表
@@ -535,7 +535,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 设置动效配置
 			attackEvent.setLineStyle(
-					new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode()));
+					new LineStyle(Color.RED.getCode(), 5, LineType.DASHED_FLY.getCode(),null));
 			attackEvent.setLookAtTarget(new SecureRandom().nextBoolean());
 
 			// 设置事件描述
@@ -592,7 +592,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		// 设置动效配置
 		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()), 5,
-				LineType.getRandomValue(LineType.values())));
+				LineType.getRandomValue(LineType.values()), null));
 		wsEvent.setLookAtTarget(new SecureRandom().nextBoolean());
 
 		// 补充动态描述
@@ -762,7 +762,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				effect.setTargetId(event.getTargetNodeId());
 				effect.setResult(SituationGuideScheme.ResultType.SUCCESS.getCode());
 				effect.setRole(SituationGuideScheme.RoleType.RED.getCode());
-				effect.setLineStyle(new LineStyle("#FF0000", 3, "straight"));
+				effect.setLineStyle(new LineStyle("#FF0000", 3, "straight", null));
 				// 生成消息
 				WsMessage<WsMultiNodeEffect> wsMessage = new WsMessage<>(
 						MessageType.DirectorSchedulingEE.getDesc(), effect);

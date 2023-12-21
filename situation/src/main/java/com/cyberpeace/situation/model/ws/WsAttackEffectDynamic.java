@@ -20,6 +20,9 @@ public class WsAttackEffectDynamic implements Serializable {
 	@ApiModelProperty("事件名称")
 	private String name;
 
+	@ApiModelProperty("模板id")
+	private String id;
+
 	@ApiModelProperty("事件描述")
 	private String description;
 

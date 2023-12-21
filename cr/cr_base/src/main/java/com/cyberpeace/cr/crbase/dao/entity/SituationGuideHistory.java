@@ -44,6 +44,8 @@ public class SituationGuideHistory extends BaseTable {
 
     private String taskId;
 
+    private String resultContent;
+
     private Integer triggerCondition;
 
 }

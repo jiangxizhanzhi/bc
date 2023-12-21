@@ -13,6 +13,9 @@ public class WsMultiNodeDynamic implements Serializable {
 	@ApiModelProperty("场景id")
 	private String sceneId;
 
+	@ApiModelProperty("模板id")
+	private String id;
+
 	@ApiModelProperty("事件时间")
 	private Long time;
 

@@ -18,7 +18,8 @@ public enum MessageType {
 	AttackSchedule(8,"attack_schedule"),
 	SceneConfig(9,"scene_config"),
 	DirectorSchedulingEE(10,"director_scheduling_element-element"),
-	DirectorSchedulingEA(11,"director_scheduling_element-area");
+	DirectorSchedulingEA(11,"director_scheduling_element-area"),
+	StopAttackEvent(12,"stop_attack_event");
 
 	@Getter
 	private Integer code;

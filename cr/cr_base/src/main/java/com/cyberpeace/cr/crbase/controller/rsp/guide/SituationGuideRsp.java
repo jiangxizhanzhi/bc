@@ -63,6 +63,9 @@ public class SituationGuideRsp implements Serializable {
 	@ApiModelProperty("结果名称")
 	private String resultName;
 
+	@ApiModelProperty("结果内容")
+	private String resultContent;
+
 	@ApiModelProperty("成功链接")
 	private String successUrl;
 

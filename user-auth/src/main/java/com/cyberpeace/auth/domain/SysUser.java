@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -20,6 +21,7 @@ import lombok.Data;
 public class SysUser extends BaseTable implements Serializable {
 
 	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
+    @JsonProperty(value = "user_id")
 	private String resourceId;
 
     /**

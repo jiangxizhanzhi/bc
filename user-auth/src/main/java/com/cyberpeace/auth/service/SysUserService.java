@@ -32,15 +32,15 @@ public interface SysUserService extends IService<SysUser> {
 	 * @param userId
 	 * @return {@code UserInfo}
 	 */
-	UserInfo getByUserId(String userId);
+	SysUser getByUserId(String userId);
 
 	/**
 	 * @param token
 	 * @return {@code UserInfo}
 	 */
-	UserInfo getByToken(String token);
+	SysUser getByToken(String token);
 
-    UserInfo getCurrent();
+    SysUser getCurrent();
 
 	Map<String, ? extends Session> getSessionsByUsername(String username);
 

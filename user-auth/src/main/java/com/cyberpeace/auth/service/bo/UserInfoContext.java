@@ -1,25 +1,26 @@
 package com.cyberpeace.auth.service.bo;
 
+import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.SpringContextUtil;
 
 public class UserInfoContext {
 
-	private static final ThreadLocal<UserInfo> userContext = new ThreadLocal<>();
+	private static final ThreadLocal<SysUser> userContext = new ThreadLocal<>();
 
 	private UserInfoContext() {}
 
-	public static UserInfo getUserContext() {
+	public static SysUser getUserContext() {
 		if (userContext.get() == null) {
 			SysUserService sysUserService = SpringContextUtil.getBeanByClass(SysUserService.class);
-			UserInfo userInfo = sysUserService.getCurrent();
+			SysUser userInfo = sysUserService.getCurrent();
 			userContext.set(userInfo);
 		}
 		return userContext.get();
 	}
 
-	public static void setUserContext(UserInfo userInfo) {
+	public static void setUserContext(SysUser userInfo) {
 		userContext.set(userInfo);
 	}
 

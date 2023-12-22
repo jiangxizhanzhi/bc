@@ -26,7 +26,7 @@ public class UserRes {
 	private String avatar;
 
 	@ApiModelProperty(value = "是否管理员。0：非管理员，1：管理员")
-	private Boolean administrator;
+	private Boolean admin;
 
 	@ApiModelProperty(value = "是否禁用，0=禁用，1=可用")
 	private Integer enabled;

@@ -135,7 +135,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		// 转换为实体
 		List<SysUser> users = userExcels.stream().map(user -> {
 			UserAddReq userAdd = BeanUtils.copy(user, UserAddReq.class);
-			userAdd.setAdministrator(false);
+			userAdd.setAdmin(false);
 			userAdd.setAvatar(dictInfo.get(random.nextInt(dictInfo.size())).getItemValue());
 			return req2Entity(userAdd);
 		}).collect(Collectors.toList());
@@ -144,13 +144,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public UserInfo getByUserId(String userId) {
-		SysUser user = getOrExceptionById(userId);
-		return makeUserInfo(user);
+	public SysUser getByUserId(String userId) {
+		return getOrExceptionById(userId);
 	}
 
 	@Override
-	public UserInfo getCurrent() {
+	public SysUser getCurrent() {
 		TbUser currentUser = getCurrentSessionUser();
 		if (null == currentUser) {
 			return null;
@@ -198,8 +197,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				sysUserMapper.updateById(user);
 				// 角色被编辑
-				if (!old.getAdministrator().equals(user.getAdministrator())) {
-					changeRole(user.getResourceId(), user.getAdministrator());
+				if (!old.getAdmin().equals(user.getAdmin())) {
+					changeRole(user.getResourceId(), user.getAdmin());
 				}
 			}
 		});
@@ -220,7 +219,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public UserInfo getByToken(String sessionId) {
+	public SysUser getByToken(String sessionId) {
 		Session session = sessionRepository.findById(sessionId);
 		if (null == session) {
 			throw new BusinessException(ErrorCode.INVALID_SESSION);
@@ -251,11 +250,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	private UserInfo makeUserInfo(SysUser user) {
 		UserInfo userInfo = new UserInfo();
 		userInfo.setUserId(user.getResourceId());
-		userInfo.setAdmin(user.getAdministrator());
-		userInfo.setUserName(user.getUsername());
+		userInfo.setAdmin(user.getAdmin());
 		userInfo.setName(user.getName());
-		userInfo.setAvatarUrl(user.getAvatar());
-
+		userInfo.setUserId(user.getNotes());
 		return userInfo;
 	}
 
@@ -270,7 +267,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		UserRes userRes = new UserRes();
 		userRes.setId(user.getId());
 		userRes.setResourceId(user.getResourceId());
-		userRes.setAdministrator(user.getAdministrator());
+		userRes.setAdmin(user.getAdmin());
 		userRes.setUsername(user.getUsername());
 		userRes.setName(user.getName());
 		userRes.setAvatar(user.getAvatar());
@@ -293,7 +290,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		}
 		user.setAvatar(req.getAvatar());
 		if (isCurrentAdminByRedisSession()) {
-			user.setAdministrator(req.getAdministrator());
+			user.setAdmin(req.getAdmin());
 		}
 		user.setExpireTime(req.getExpireTime());
 		user.setNotes(req.getNotes());
@@ -301,11 +298,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	private boolean isCurrentAdminByDb() {
-		UserInfo userInfo = UserInfoContext.getUserContext();
+		SysUser userInfo = UserInfoContext.getUserContext();
 		if (null == userInfo) {
 			return false;
 		}
-		return userInfo.isAdmin();
+		return userInfo.getAdmin();
 	}
 
 	private boolean isCurrentAdminByRedisSession() {

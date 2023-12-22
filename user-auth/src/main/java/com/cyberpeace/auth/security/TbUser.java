@@ -37,14 +37,14 @@ public class TbUser implements UserDetails {
 
 	public TbUser(SysUser sysUser) {
 		String role = UserRole.USER;
-		if (Boolean.TRUE.equals(sysUser.getAdministrator())) {
+		if (Boolean.TRUE.equals(sysUser.getAdmin())) {
 			role = UserRole.ADMIN;
 		}
 		this.userId = sysUser.getResourceId();
 		this.username = sysUser.getUsername();
 		this.password = sysUser.getPassword();
 		this.roles(role);
-		this.isAdmin = sysUser.getAdministrator();
+		this.isAdmin = sysUser.getAdmin();
 	}
 
 	public void roles(String... roles) {

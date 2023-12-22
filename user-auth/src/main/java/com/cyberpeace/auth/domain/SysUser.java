@@ -50,7 +50,7 @@ public class SysUser extends BaseTable implements Serializable {
     /**
      * 是否管理员。0：非管理员，1：管理员
      */
-    private Boolean administrator;
+    private Boolean admin;
 
     /**
      * 过期时间

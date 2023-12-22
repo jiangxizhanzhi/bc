@@ -3,6 +3,7 @@ package com.cyberpeace.auth.security.handler;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.servlet.ServletException;
@@ -11,7 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.cyberpeace.auth.constant.UserEnableEnum;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,8 +51,12 @@ public class CustomizeAuthenticationSuccessHandler implements AuthenticationSucc
 		if (Objects.equals(UserEnableEnum.DISABLED.getCode(), sysUser.getEnabled())){
 			throw new LockedException("账号禁用");
 		}
+		if (sysUser.getExpireTime() != null){
+			if (sysUser.getExpireTime().before(new Date())){
+				throw new AccountExpiredException(ErrorCode.USER_EXPIRE);
+			}
+		}
         sysUserMapper.updateById(sysUser);
-
 
         HttpSession session = httpServletRequest.getSession();
         //返回json数据

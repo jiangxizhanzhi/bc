@@ -1,0 +1,28 @@
+package com.cyberpeace.scene.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.scene.dao.entity.TopologyEntity;
+import com.cyberpeace.scene.service.bo.Topology;
+
+/**
+ * @author :   辛发圣
+ * @date :   2023/12/20 16:22
+ * @desc :
+ **/
+public interface TopologyService extends IService<TopologyEntity> {
+
+    /**
+     * 根据拓扑id查询拓扑
+     *
+     * @param topologyId 拓扑id
+     * @return 拓扑信息
+     */
+    TopologyEntity getTopology(String topologyId);
+
+    /**
+     * 格式化拓扑信息
+     * @param topologyId    拓扑id
+     * @return  格式化信息
+     */
+    Topology formatTopology(String topologyId);
+}

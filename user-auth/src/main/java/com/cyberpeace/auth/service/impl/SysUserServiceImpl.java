@@ -180,7 +180,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		if (CollectionUtils.isEmpty(req.getIds())) {
 			throw new BusinessException(ErrorCode.EMPTY_IDS);
 		}
-		int i = sysUserMapper.deleteBatchIds(req.getIds());
+//		req.getIds().forEach(id->sysUserMapper.deleteById(id));
+		int i = sysUserMapper.deleteByIds(req.getIds());
 		//todo 删除用户账号相关所有数据
 		log.info("delete user {} success", i);
 	}
@@ -272,9 +273,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		userRes.setUsername(user.getUsername());
 		userRes.setName(user.getName());
 		userRes.setAvatar(user.getAvatar());
-		if (showOnline) {
-			userRes.setOnline(isUserOnline(user.getResourceId()));
-		}
 		return userRes;
 	}
 
@@ -293,6 +291,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		if (isCurrentAdminByRedisSession()) {
 			user.setAdministrator(req.getAdministrator());
 		}
+		user.setExpireTime(req.getExpireTime());
+		user.setNotes(req.getNotes());
 		return user;
 	}
 

@@ -244,5 +244,10 @@ public final class ErrorCode {
 	 * 用户名不能为空
 	 */
 	public static final String USERNAME_NOT_NULL = "100068";
+
+	/**
+	 * 用户已过期
+	 */
+	public static final String USER_EXPIRE = "100069";
 	private ErrorCode() {}
 }

@@ -65,6 +65,13 @@ public class SwaggerConfig {
 				.groupName("ua");
 	}
 
+	@Bean
+	public Docket apiScene() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.scene"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("scene");
+	}
+
 	private ApiSelectorBuilder getDocket() {
 		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
 

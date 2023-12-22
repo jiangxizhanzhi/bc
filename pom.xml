@@ -73,6 +73,7 @@
         <oj.practice.version>0.0.1-SNAPSHOT</oj.practice.version>
         <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
         <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
+        <scene.version>0.0.1-SNAPSHOT</scene.version>
     </properties>
 
     <modules>
@@ -84,6 +85,7 @@
         <module>oj</module>
         <module>common-service</module>
         <module>user-auth</module>
+        <module>scene</module>
     </modules>
 
     <dependencyManagement>

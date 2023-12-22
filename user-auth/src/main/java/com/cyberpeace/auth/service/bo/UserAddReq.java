@@ -6,6 +6,8 @@ import com.cyberpeace.common.util.CrCommonValidator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class UserAddReq {
 
@@ -23,6 +25,12 @@ public class UserAddReq {
 
 	@ApiModelProperty(value = "是否管理员。0：非管理员，1：管理员")
 	private Boolean administrator;
+
+	@ApiModelProperty(value = "过期时间")
+	private Date expireTime;
+
+	@ApiModelProperty(value = "备注")
+	private String notes;
 
 	public void validate(){
 		this.validatePwd();

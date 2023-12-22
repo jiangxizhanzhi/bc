@@ -102,10 +102,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
 						"/favicon.ico",
+						"/license/serialnumber",
+						"/license/registerverifyinfo",
 						"/doc.html")
 				.permitAll()
 				// 其他的都需要认证
 				.anyRequest().authenticated()
+				.accessDecisionManager(accessDecisionManager)
                 //登出
 				.and().logout()
 				// 允许所有用户

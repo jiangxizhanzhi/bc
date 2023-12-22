@@ -4,9 +4,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.auth.domain.SysUser;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author dell
@@ -26,6 +29,9 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
     @Select("<script><if test=\"pattern != null and pattern != ''\"><bind name=\"search\" value=\"'%' + pattern + '%'\"/></if>select * from sys_user<where><if test=\"pattern != null and pattern != ''\"> username like #{search} or name like #{search}</if></where> order by id desc</script>")
     IPage<SysUser> pageUser(@Param("page") Page page, @Param("pattern") String pattern);
+
+    @Delete("<script>delete from sys_user where id in <foreach collection='ids' item='id' open='(' separator=',' close=')'>#{id}</foreach></script>")
+    int deleteByIds(@Param("ids") List<Integer> ids);
 }
 
 

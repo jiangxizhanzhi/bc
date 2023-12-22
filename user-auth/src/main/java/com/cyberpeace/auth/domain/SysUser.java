@@ -1,6 +1,7 @@
 package com.cyberpeace.auth.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -50,6 +51,16 @@ public class SysUser extends BaseTable implements Serializable {
      * 是否管理员。0：非管理员，1：管理员
      */
     private Boolean administrator;
+
+    /**
+     * 过期时间
+     */
+    private Date expireTime;
+
+    /**
+     * 备注
+     */
+    private String notes;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

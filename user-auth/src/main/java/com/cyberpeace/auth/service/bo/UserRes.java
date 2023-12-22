@@ -3,6 +3,8 @@ package com.cyberpeace.auth.service.bo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class UserRes {
 
@@ -21,12 +23,12 @@ public class UserRes {
 	@ApiModelProperty(value = "是否管理员。0：非管理员，1：管理员")
 	private Boolean administrator;
 
-	@ApiModelProperty(value = "电话")
-	private String phone;
+	@ApiModelProperty(value = "是否禁用，0=禁用，1=可用")
+	private Integer enabled;
 
-	@ApiModelProperty(value = "邮箱")
-	private String email;
+	@ApiModelProperty(value = "过期时间")
+	private Date expireTime;
 
-	@ApiModelProperty(value = "是否在线")
-	private Boolean online;
+	@ApiModelProperty(value = "备注")
+	private String notes;
 }

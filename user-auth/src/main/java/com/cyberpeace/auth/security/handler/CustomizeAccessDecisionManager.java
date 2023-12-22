@@ -13,15 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -60,10 +60,15 @@ public class CustomizeAccessDecisionManager implements AccessDecisionManager {
                 if (user != null){
                     //判断当前用户是否已锁定
                     if (Objects.equals(UserEnableEnum.DISABLED.getCode(), user.getEnabled())){
-                        throw new BusinessException(ErrorCode.USER_DISABLED);
+                        throw new LockedException(ErrorCode.USER_DISABLED);
+                    }
+                    if (user.getExpireTime() != null){
+                        if (user.getExpireTime().before(new Date())){
+                            throw new AccountExpiredException(ErrorCode.USER_EXPIRE);
+                        }
                     }
                 }else {
-                    throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+                    throw new UsernameNotFoundException("用户不存在");
                 }
                 return;
             }

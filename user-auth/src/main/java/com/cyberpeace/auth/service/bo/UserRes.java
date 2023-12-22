@@ -11,7 +11,7 @@ public class UserRes {
 	@ApiModelProperty(value = "id")
 	private String resourceId;
 
-	@ApiModelProperty(value = "用户名")
+	@ApiModelProperty(value = "用户名", name = "username")
 	private String username;
 
 	@ApiModelProperty(value = "姓名")

@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 public class UserAddReq {
 
-	@ApiModelProperty(value = "用户名")
+	@ApiModelProperty(value = "用户名", name = "username")
 	private String username;
 
 	@ApiModelProperty(value = "姓名")

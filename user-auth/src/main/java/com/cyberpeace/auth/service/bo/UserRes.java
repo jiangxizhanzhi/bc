@@ -1,5 +1,6 @@
 package com.cyberpeace.auth.service.bo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,9 +10,13 @@ import java.util.Date;
 public class UserRes {
 
 	@ApiModelProperty(value = "id")
+	private Integer id;
+
+	@ApiModelProperty(value = "resourceId")
 	private String resourceId;
 
-	@ApiModelProperty(value = "用户名", name = "username")
+	@ApiModelProperty(value = "用户名")
+	@JsonProperty(value = "username")
 	private String username;
 
 	@ApiModelProperty(value = "姓名")

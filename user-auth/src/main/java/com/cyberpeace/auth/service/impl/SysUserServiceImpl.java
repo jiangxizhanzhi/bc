@@ -268,11 +268,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	 */
 	private UserRes makeUserRes(SysUser user, boolean showOnline) {
 		UserRes userRes = new UserRes();
+		userRes.setId(user.getId());
 		userRes.setResourceId(user.getResourceId());
 		userRes.setAdministrator(user.getAdministrator());
 		userRes.setUsername(user.getUsername());
 		userRes.setName(user.getName());
 		userRes.setAvatar(user.getAvatar());
+		userRes.setNotes(user.getNotes());
+		userRes.setExpireTime(user.getExpireTime());
+		userRes.setEnabled(user.getEnabled());
 		return userRes;
 	}
 

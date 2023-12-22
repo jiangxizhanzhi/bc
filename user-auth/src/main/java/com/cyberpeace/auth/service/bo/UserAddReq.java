@@ -3,6 +3,7 @@ package com.cyberpeace.auth.service.bo;
 import com.cyberpeace.auth.util.UserValidator;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.CrCommonValidator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 public class UserAddReq {
 
 	@ApiModelProperty(value = "用户名", name = "username")
+	@JsonProperty(value = "username")
 	private String username;
 
 	@ApiModelProperty(value = "姓名")

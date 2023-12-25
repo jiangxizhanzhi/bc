@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.auth.controller.req.UserImportReq;
+import com.cyberpeace.auth.controller.req.UserReq;
 import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.DictInfoService;
@@ -95,8 +96,8 @@ public class UserController {
 
 	@ApiOperation("用户分页列表")
 	@GetMapping("/user/list")
-	public BaseRsp<ListRsp<UserRes>> pageUser(PageReqBase pageReq) {
-		ListRsp<UserRes> rsp = sysUserService.pageUser(pageReq);
+	public BaseRsp<ListRsp<UserRes>> pageUser(UserReq req) {
+		ListRsp<UserRes> rsp = sysUserService.pageUser(req);
 		return new BaseRsp<>(rsp);
 	}
 

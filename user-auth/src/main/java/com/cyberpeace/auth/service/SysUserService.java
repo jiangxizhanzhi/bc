@@ -4,6 +4,7 @@ package com.cyberpeace.auth.service;
 import java.util.Map;
 
 import com.cyberpeace.auth.controller.req.UserImportReq;
+import com.cyberpeace.auth.controller.req.UserReq;
 import com.cyberpeace.common.model.BaseRsp;
 import org.springframework.session.Session;
 
@@ -55,7 +56,7 @@ public interface SysUserService extends IService<SysUser> {
 
 	UserRes getUserDetailById(String resourceId);
 
-	ListRsp<UserRes> pageUser(PageReqBase pageReq);
+	ListRsp<UserRes> pageUser(UserReq req);
 
 	/**
 	 * 管理员重置密码

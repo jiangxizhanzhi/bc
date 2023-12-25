@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyberpeace.auth.controller.req.UserImportReq;
+import com.cyberpeace.auth.controller.req.UserReq;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.ExcelHeader;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -50,7 +52,10 @@ import com.cyberpeace.common.model.MultiSelectReq;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
 
 /**
 * @author dell
@@ -74,6 +79,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	private UtilService utilService;
 	@Autowired
 	private DictInfoService dictInfoService;
+
+	private Integer USER_MAX;
+
+	@PostConstruct
+	public void init(){
+		USER_MAX = Integer.parseInt(ConfigUtil.getContextProperty("user.count.max"));
+	}
 
 	@Override
 	public void resetPwdself(ResetPwdSelfReq req) {
@@ -130,15 +142,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
 		ExcelDataHandler excelDataHandler = new ExcelDataHandler(viewPath, 0);
 		List<UserExcel> userExcels = excelDataHandler.getSheetData(0, 0, UserExcel.class);
+
 		List<DictInfo> dictInfo = dictInfoService.getDictInfo(DictInfo.KeyModel.AVATAR.getKey());
 		Random random = new Random();
 		// 转换为实体
 		List<SysUser> users = userExcels.stream().map(user -> {
 			UserAddReq userAdd = BeanUtils.copy(user, UserAddReq.class);
+			userAdd.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
 			userAdd.setAdmin(false);
 			userAdd.setAvatar(dictInfo.get(random.nextInt(dictInfo.size())).getItemValue());
 			return req2Entity(userAdd);
 		}).collect(Collectors.toList());
+		if (CollectionUtils.isEmpty(users)){
+			throw new BusinessException(ErrorCode.EMPTY_FILE);
+		}
+		currentUserNum(users.size());
 		saveBatch(users);
 		return new BaseRsp<>();
 	}
@@ -167,6 +185,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 	@Override
 	public void createUser(UserAddReq req) {
+		// 校验用户数量
+		currentUserNum(1);
 		if (sysUserMapper.existByUsername(req.getUsername())) {
 			throw new BusinessException(ErrorCode.USERNAME_DUPLICATE);
 		}
@@ -211,9 +231,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public ListRsp<UserRes> pageUser(PageReqBase pageReq) {
-		Page page = pageReq.toPageParam();
-		IPage<SysUser> result = sysUserMapper.pageUser(page, pageReq.getPattern());
+	public ListRsp<UserRes> pageUser(UserReq req) {
+		Page page = req.toPageParam();
+		IPage<SysUser> result = sysUserMapper.pageUser(page, req.getPattern(), req.getEnabled());
 		IPage<UserRes> resPage = result.convert(r -> makeUserRes(r, true));
 		return PageUtil.getListResult(resPage);
 	}
@@ -330,6 +350,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			user.setAdmin(isAdmin);
 			user.setRole(isAdmin);
 			session.setAttribute(AuthConstant.SPRING_SECURITY_CONTEXT, context);
+		}
+	}
+
+	private void currentUserNum(Integer insertNum){
+		int count = count() + insertNum;
+		if (USER_MAX <= count){
+			throw new BusinessException(ErrorCode.USER_MAX_NUM);
 		}
 	}
 }

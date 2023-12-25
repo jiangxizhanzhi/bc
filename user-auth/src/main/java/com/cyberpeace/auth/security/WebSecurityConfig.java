@@ -1,7 +1,9 @@
 package com.cyberpeace.auth.security;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import com.cyberpeace.common.util.ConfigUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -75,6 +77,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Resource
 	private CustomizeAccessDecisionManager accessDecisionManager;
 
+	private static final Integer maxNumSession = Integer.parseInt(ConfigUtil.getContextProperty("login.count.max"));
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //配置自定义认证方式
@@ -132,7 +136,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //会话管理
 				 .and().sessionManagement()
 				// 同一个账号支持同时登录的最大设备数, 如果超过最大设备数，会将最早的登录设备被挤下线
-				 .maximumSessions(1)
+				 .maximumSessions(maxNumSession)
 				// true,则阻止用户在达到最大值会话 （int） 时进行身份验证,false:则（默认），允许进行身份验证的用户访问，并且现有用户的会话已过期
 //				 maxSessionsPreventsLogin(true).
 				// 会话失效(账号被挤下线)处理逻辑

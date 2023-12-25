@@ -249,5 +249,10 @@ public final class ErrorCode {
 	 * 用户已过期
 	 */
 	public static final String USER_EXPIRE = "100069";
+
+	/**
+	 * 用户达到最大数量
+	 */
+	public static final String USER_MAX_NUM = "100070";
 	private ErrorCode() {}
 }

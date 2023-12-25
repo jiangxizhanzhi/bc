@@ -10,7 +10,9 @@
     </parent>
     <packaging>jar</packaging>
 
+    <groupId>com.cyberpeace</groupId>
     <artifactId>user-auth</artifactId>
+    <version>${auth.user.version}</version>
 
     <dependencies>
         <dependency>

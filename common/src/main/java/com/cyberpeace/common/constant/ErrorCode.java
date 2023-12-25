@@ -254,5 +254,21 @@ public final class ErrorCode {
 	 * 用户达到最大数量
 	 */
 	public static final String USER_MAX_NUM = "100070";
+
+	/**
+	 * 创建网络失败
+	 */
+	public static final String CREATE_NETWORK_ERROR = "100080";
+
+	/**
+	 * 场景事件溢出
+	 */
+	public static final String SCENE_EVENT_OVERFLOW = "100081";
+
+	/**
+	 * 用户场景事件溢出
+	 */
+	public static final String USER_SCENE_EVENT_OVERFLOW = "100082";
+
 	private ErrorCode() {}
 }

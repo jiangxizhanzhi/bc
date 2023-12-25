@@ -261,7 +261,7 @@
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>user-auth</artifactId>
-            <version>1.0.0</version>
+            <version>${auth.user.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jna</groupId>

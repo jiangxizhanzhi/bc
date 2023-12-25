@@ -74,6 +74,7 @@
         <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
         <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
         <scene.version>0.0.1-SNAPSHOT</scene.version>
+        <auth.user.version>0.0.1-SNAPSHOT</auth.user.version>
     </properties>
 
     <modules>

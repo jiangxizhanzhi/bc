@@ -92,6 +92,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.cyberpeace</groupId>
+            <artifactId>user-auth</artifactId>
+            <version>${auth.user.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.sun.jna</groupId>
             <artifactId>jna</artifactId>
             <scope>provided</scope>
@@ -99,6 +104,11 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

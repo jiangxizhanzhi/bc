@@ -41,6 +41,8 @@ public class ScenesController {
     @ApiOperation(value = "启动场景")
     public BaseRsp start(@ApiParam(name = "topology_id", value = "拓扑结构id") @RequestParam("topology_id") String topologyId,
                     @ApiParam(value = "实例id", name = "instance_id")@RequestParam("instance_id")String instanceId){
+        // 验证场景是否超限
+        sceneService.verify();
         sceneService.startScene(topologyId, instanceId);
         return new BaseRsp<>();
     }

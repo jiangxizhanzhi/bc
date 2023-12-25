@@ -1,6 +1,7 @@
 package com.cyberpeace.scene.service.bo.req;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -10,21 +11,27 @@ import java.io.Serializable;
  * @desc :  创建网络请求对象
  **/
 @Data
+@NoArgsConstructor
 public class CreateNetworkReq implements Serializable {
 
-    private String user;
-
-    private String project;
-
+    /**
+     * 网络名
+     */
     private String name;
 
-    private String type;
-
+    /**
+     * 网络地址
+     */
     private String cidr;
 
+    /**
+     * 网关地址
+     */
     private String gateway;
 
-    private Integer mtu;
-
-    private Integer vlan;
+    public CreateNetworkReq(String name, String cidr, String gateway) {
+        this.name = name;
+        this.cidr = cidr;
+        this.gateway = gateway;
+    }
 }

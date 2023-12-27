@@ -40,9 +40,6 @@
             <if test="practiceType != null">
                 practice_type = #{practiceType}
             </if>
-            <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
-            </if>
         </where>
     </select>
 

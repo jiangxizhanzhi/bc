@@ -33,7 +33,6 @@ import java.util.List;
 @Api(tags = "oj-前台习题集相关api")
 @RestController
 @RequestMapping("/oj/practice/set")
-@RequiresAuthentication
 public class PracticeSetController {
 
 	@Autowired
@@ -41,9 +40,6 @@ public class PracticeSetController {
 
 	@ApiOperation("获取习题集")
 	@GetMapping("/list")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
-			logical = Logical.OR)
 	public BaseRsp<ListRsp<AdminPracticeSetBo>> getList(@Validated PracticeSetPageReq setPageReq) {
 
 		// 设置默认排序
@@ -52,19 +48,13 @@ public class PracticeSetController {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
 		}
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
-
 		IPage<AdminPracticeSetBo> boIPage = practiceSetService.selectByTypeAndName(page,
-				setPageReq.getPracticeType(), setPageReq.getPattern(), authContext);
+				setPageReq.getPracticeType(), setPageReq.getPattern(), null);
 		return new BaseRsp<>(PageUtil.getListResult(boIPage));
 	}
 
 	@ApiOperation("习题集详细信息查询")
 	@GetMapping("/detail")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
-			logical = Logical.OR)
 	public BaseRsp<AdminPracticeSetBo> get(@ApiParam(name = "resource_id",
 			value = "习题集编号") @RequestParam("resource_id") String resourceId) {
 

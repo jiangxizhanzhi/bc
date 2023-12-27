@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.practice.controller.res.ProgressCountRes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +37,6 @@ import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.PatternReq;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
@@ -390,7 +390,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					.getCode().intValue()) {
 				// 查询是否已经分配附件
 				PracticeRandomFlag randomFlag = practiceRandomFlagMapper.selectByUserAndPractice(
-						UserInfoContext.getUserContext().getUserId(), resourceId,
+						UserInfoContext.getUserContext().getResourceId(), resourceId,
 						PracticeRandomFlag.FlagType.PRACTICE.getCode());
 
 				if (null == randomFlag) {
@@ -491,7 +491,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeRandomFlag randomFlag = new PracticeRandomFlag();
 		randomFlag.setFlag(flags.get(index));
 		randomFlag.setPracticeId(operation.getResourceId());
-		randomFlag.setUserId(UserInfoContext.getUserContext().getUserId());
+		randomFlag.setUserId(UserInfoContext.getUserContext().getResourceId());
 		randomFlag.setAttachmentId(strings[index]);
 		randomFlag.setType(PracticeRandomFlag.FlagType.PRACTICE.getCode());
 
@@ -590,11 +590,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operationListQuery.setResourceIds(operationIds);
 
 		// 根据解题状态过滤
-		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
+		if ( null != listQuery.getSolved()) {
 
 			// 查询已解决习题编号
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
-					authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
+					UserInfoContext.getUserContext().getResourceId(), PracticeCategory.PracticeType.OPERATION.getCode(),
 					CommonConstant.TRUE, IS_COLLECTED);
 
 			// 正确取交集
@@ -836,19 +836,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
 		if (status.intValue() == SceneStatusEnum.PAUSE.getCode().intValue()) {
 
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(),
-					OperationModule.CAPTURE_FLAG, OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
-							practiceOperationMapper.selectById(resourceId).getTitle()));
-
 			return localSceneService.pauseScene(localScene.getResourceId());
 		} else {
-
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(),
-					OperationModule.CAPTURE_FLAG, OperationType.UNPAUSE,
-					LogContent.EXERCISE.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(),
-							practiceOperationMapper.selectById(resourceId).getTitle()));
 
 			return localSceneService.unpauseScene(localScene.getResourceId());
 		}
@@ -1275,8 +1264,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public void createMpLog(String practiceId, LogContent logContent) {
 		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
 		String content = LogContent.PRACTICE_FORMAT.format(operation.getContent(), logContent);
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-				OperationType.EXERCISE, LogContent.EXERCISE.getMsg(), content);
 	}
 
 	@Override
@@ -1353,24 +1340,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				isWeb);
-
-		// 过滤习题集
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authIds)) {
-			return Lists.newArrayList();
-		}
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authIds)) {
-			return Lists.newArrayList();
-		}
-
-		List<String> practiceOperationKnowledgeList = practiceOperationMapper
-				.selectKnowledgeBySetId(authIds, pattern.getPattern(), isWeb);
+		List<String> practiceOperationKnowledgeList = practiceOperationMapper.selectAllKnowledge();
 		Map<String, Integer> knowledgeMap = Maps.newHashMap();
 		for (String knowledgeJson : practiceOperationKnowledgeList) {
 			for (String knowledge : JsonUtil.toJsonObjectArray(knowledgeJson, String.class)) {
@@ -1391,7 +1361,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public ProgressCountRes getProgressCount(String practiceSetId) {
 
-		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getUserContext().getUserId());
+		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getUserContext().getResourceId());
 		Map<Integer, OperationSolved> operationSolvedMap = operationSolvedList.stream().collect(Collectors.toMap(OperationSolved::getCategory, operationSolved -> operationSolved));
 
 		ProgressCountRes progressCountRes = new ProgressCountRes();
@@ -1610,7 +1580,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		pageReqBase.setPer_page(2147483647);
 		OperationListQueryBo listQueryBo = new OperationListQueryBo();
 		listQueryBo.setPracticeSetId(practiceSetId);
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				CommonConstant.TRUE);
 		IPage<AdminOperationListBo> practiceTheoryListBoIPage = pageByQuery(pageReqBase.toPageParam(), listQueryBo, authContext);
 		if (practiceTheoryListBoIPage == null) {

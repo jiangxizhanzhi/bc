@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.controller.web;
 
 import java.util.*;
 
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,7 +21,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PatternReq;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -55,7 +55,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Api(tags = "oj-前台实践操作练习相关api")
 @RequestMapping("/oj/practice/operation")
-@RequiresAuthentication
 public class PracticeOperationController {
 
 	@Autowired
@@ -78,9 +77,8 @@ public class PracticeOperationController {
 
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				CommonConstant.TRUE);
 		WebOperationBo operationBo = practiceOperationService.selectById(resourceId, authContext,
 				Boolean.FALSE);
@@ -90,7 +88,6 @@ public class PracticeOperationController {
 
 	@GetMapping("/knowledge/list")
 	@ApiOperation("获取知识点列表，按频次排序")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<String>> listKnowledge(PatternReq pattern) {
 		List<String> knowledgeList = practiceOperationService
 				.getKnowledgeListByFrequency(pattern, true);
@@ -99,7 +96,6 @@ public class PracticeOperationController {
 
 	@GetMapping("/list")
 	@ApiOperation("获取实践操作列表")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<ListRsp<AdminOperationListBo>> list(WebOperationListReq listReq) {
 
 		Page page = listReq.toPageParam();
@@ -117,7 +113,7 @@ public class PracticeOperationController {
 				.selectChildrenIds(listReq.getCategoryId(), CommonConstant.TRUE);
 		listQueryBo.setCategoryIds(categoryIds);
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				CommonConstant.TRUE);
 
 		IPage<AdminOperationListBo> listBoIPage = practiceOperationService.pageByQuery(page,
@@ -132,7 +128,7 @@ public class PracticeOperationController {
 	public BaseRsp<EvaluateResult> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(
-				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
+				UserInfoContext.getUserContext().getResourceId(), answerReq.getResourceId(),
 				answerReq.getSubmitAnswer(), Boolean.FALSE);
 
 		// 记录远程操作日志
@@ -148,7 +144,7 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<String>> getPracticeListIds(@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				CommonConstant.TRUE);
 		List<String> practiceIds = practiceOperationService.selectPracticeIds(authContext, practiceSetId);
 
@@ -161,13 +157,13 @@ public class PracticeOperationController {
 	public BaseRsp<JSONObject>
 			startScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				CommonConstant.TRUE);
 
 		JSONObject sceneData = practiceOperationService
 				.startScene(sceneOperationReq.getResourceId(), authContext);
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+		remoteLogService.addOjLog(UserInfoContext.getOldUserContext(), OperationModule.CAPTURE_FLAG,
 				OperationType.START, LogContent.EXERCISE.getMsg(),
 				LogContent.CR_FORMAT.format(OperationType.START, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(sceneOperationReq.getResourceId()).getTitle()));
 
@@ -179,12 +175,12 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				true);
 		Boolean result = practiceOperationService.deleteScene(sceneOperationReq.getResourceId(),
 				authContext);
 
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+		remoteLogService.addOjLog(UserInfoContext.getOldUserContext(), OperationModule.CAPTURE_FLAG,
 				OperationType.STOP, LogContent.EXERCISE.getMsg(),
 				LogContent.CR_FORMAT.format(OperationType.STOP, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(sceneOperationReq.getResourceId()).getTitle()));
 
@@ -196,7 +192,7 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> sceneNodeRestart(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				true);
 
 		Boolean result = practiceOperationService.nodeRestart(sceneNodeReq.getResourceId(),
@@ -210,7 +206,7 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> sceneNodeRecreate(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				true);
 
 		Boolean result = practiceOperationService.nodeRecreate(sceneNodeReq.getResourceId(),
@@ -224,7 +220,7 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> sceneUpdateStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				true);
 		Boolean result = practiceOperationService.pauseScene(sceneStatusReq.getResourceId(),
 				sceneStatusReq.getStatus(), authContext);
@@ -237,7 +233,7 @@ public class PracticeOperationController {
 	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
 			value = "课时编号") @RequestParam("resource_id") String operationId) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				true);
 		TopoSceneDataBo topoScene = practiceOperationService.getTopoScene(operationId, authContext);
 		return new BaseRsp<>(topoScene);
@@ -256,7 +252,7 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<OptionStatisticsRes> getOperationStatisticsRes() {
 		OptionStatisticsRes optionStatisticsRes = new OptionStatisticsRes();
-		UserInfo userInfo = UserInfoContext.getUserContext();
+		UserInfo userInfo = UserInfoContext.getOldUserContext();
 		String userId = userInfo.getUserId();
 		List<String> operationIds = practiceOperationService.getOptionIdsByAuth(null);
 		if (CollectionUtils.isEmpty(operationIds)){
@@ -274,7 +270,7 @@ public class PracticeOperationController {
 	@GetMapping("/record")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<OperationRecordRes>> getOperationRecordTop5() {
-		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getUserContext(), null, null);
+		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getOldUserContext(), null, null);
 		if (operationRecordResList.size() > 5){
 			return new BaseRsp<>(operationRecordResList.subList(0, 5));
 		}
@@ -294,7 +290,7 @@ public class PracticeOperationController {
 		endDate = endDate == null ? null : TimeUtil.getEndOfDay(endDate);
 
 		List<OperationRecordRes> operationRecordResList = practiceOperationService
-				.getOperationRecord(UserInfoContext.getUserContext(), startDate, endDate);
+				.getOperationRecord(UserInfoContext.getOldUserContext(), startDate, endDate);
 		for (OperationRecordRes operationRecordRes : operationRecordResList) {
 			String time = TimeUtil.format6(TimeUtil.toDate1(operationRecordRes.getTime()));
 			if (operationRecordMap.get(time) == null) {
@@ -333,7 +329,7 @@ public class PracticeOperationController {
 	public BaseRsp<EvaluateResult> submitAnswerAgain(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswerAgain(
-				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
+				UserInfoContext.getUserContext().getResourceId(), answerReq.getResourceId(),
 				answerReq.getSubmitAnswer());
 
 		return new BaseRsp<>(evaluateResult);
@@ -344,7 +340,7 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<String>> getRecordPracticeIds() {
 		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(
-				UserInfoContext.getUserContext(), null, null);
+				UserInfoContext.getOldUserContext(), null, null);
 		return new BaseRsp<>(StreamApiUtils.map(operationRecordResList, OperationRecordRes::getPracticeId));
 	}
 

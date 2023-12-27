@@ -1,17 +1,19 @@
 package com.cyberpeace.cs.controller;
 
 import java.io.File;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.cs.controller.res.CodeNameRsp;
+import com.cyberpeace.cs.dao.entity.ConstantsConfig;
+import com.cyberpeace.cs.service.ConstantsService;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.ErrorCode;
@@ -37,12 +39,14 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "公共服务接口")
 @RestController
 @RequestMapping("/common")
-@RequiresAuthentication
 @Slf4j
 public class CommonController {
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private ConstantsService constantsService;
 
 	@Autowired
 	private UtilService utilService;
@@ -183,6 +187,15 @@ public class CommonController {
 		extractBase.setContent(realContent);
 		extractBase.setIsExtract(Boolean.TRUE);
 		return new BaseRsp<>(extractBase);
+	}
+
+	@ApiOperation("获取常量配置")
+	@GetMapping("/constants_config")
+	public BaseRsp<Object> getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
+		List<ConstantsConfig> constants = constantsService.getByType(type);
+		List<CodeNameRsp> rsp = StreamApiUtils.map(constants,
+				constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName()));
+		return new BaseRsp<>(rsp);
 	}
 
 	private void validateFileNameLen(String fileName) {

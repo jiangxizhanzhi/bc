@@ -5,8 +5,9 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.scene.service.ContainerService;
 import com.cyberpeace.scene.service.ImageService;
-import com.cyberpeace.scene.service.bo.ImageInfo;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
+import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
+import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +39,20 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     @Override
-    public void create(CreateContainerReq req) {
+    public CreateContainersRes create(CreateContainerReq req) {
         if (Objects.isNull(req)){
             throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
         }
         //todo 待与云品台统一返回结果
-//        ImageInfo imageInfo = imageService.getImageInfo(req.getName());
-//        if (Objects.isNull(imageInfo)){
-//            throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
-//        }
-//        req.setImage(imageInfo.getUuid());
-        HttpUtil.post(CP_IMAGE, req, null);
+        ImageRes imageInfo = imageService.getImageInfo(req.getName());
+        if (Objects.isNull(imageInfo)){
+            throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
+        }
+        if (imageInfo.getTotal() >= 1){
+            req.setImage(imageInfo.getItems().get(0).getUuid());
+        }else {
+            throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
+        }
+        return HttpUtil.post(CP_IMAGE, req, CreateContainersRes.class);
     }
 }

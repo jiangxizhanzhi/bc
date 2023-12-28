@@ -6,11 +6,16 @@ import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.service.*;
+import com.cyberpeace.scene.service.bo.Net;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
+import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
+import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
 import javafx.scene.Scene;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -82,6 +87,8 @@ public class SceneJob {
                 }
                 //创建网络
                 NetworkEntity network = createNetwork(networkElement);
+                List<Net> nets = Lists.newArrayList();
+                nets.add(new Net(network.getUuid()));
                 // 创建虚拟机
                 if (topologyMap.containsKey(ImageTypeEnum.ELEMENT_TYPE_HOST.getName())){
                     TopologyElement hostElement = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_HOST.getName());
@@ -89,6 +96,7 @@ public class SceneJob {
                 // 创建容器
                 if (topologyMap.containsKey(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getName())) {
                     TopologyElement containerElement = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getName());
+                    CreateContainersRes res = containerService.create(new CreateContainerReq(containerElement.getName(), null, nets));
                 }
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e.getMessage());

@@ -2,7 +2,7 @@ package com.cyberpeace.scene.service.impl;
 
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.scene.service.ImageService;
-import com.cyberpeace.scene.service.bo.ImageInfo;
+import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -34,11 +34,11 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public ImageInfo getImageInfo(String name) {
+    public ImageRes getImageInfo(String name) {
         String url = CP_HOST + CP_IMAGE;
         if (StringUtils.isNotBlank(name)){
             url = url + "?name=" + name;
         }
-        return HttpUtil.rawGet(url, ImageInfo.class);
+        return HttpUtil.rawGet(url, ImageRes.class);
     }
 }

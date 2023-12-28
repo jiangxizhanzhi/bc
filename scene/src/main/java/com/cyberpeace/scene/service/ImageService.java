@@ -1,6 +1,6 @@
 package com.cyberpeace.scene.service;
 
-import com.cyberpeace.scene.service.bo.ImageInfo;
+import com.cyberpeace.scene.service.bo.res.ImageRes;
 
 /**
  * @author :   SN
@@ -14,5 +14,5 @@ public interface ImageService {
      * @param name  镜像名称
      * @return  镜像信息
      */
-    ImageInfo getImageInfo(String name);
+    ImageRes getImageInfo(String name);
 }

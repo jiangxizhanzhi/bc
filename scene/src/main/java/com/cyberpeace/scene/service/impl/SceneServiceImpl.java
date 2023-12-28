@@ -1,6 +1,5 @@
 package com.cyberpeace.scene.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
@@ -13,15 +12,12 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
-import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.service.NetworkService;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
 import com.cyberpeace.scene.service.bo.Topology;
-import com.cyberpeace.scene.service.bo.TopologyElement;
-import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,9 +88,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (topology == null){
             throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
         }
-        NetworkEntity network = createNetwork(topology);
-        log.info("network:{}", network);
-        return new BaseRsp<>();
+        //创建场景
+        return new BaseRsp<>(createScene(topologyId, instanceId, UserInfoContext.getUserContext().getResourceId()));
     }
 
     private SceneEntity createScene(String topologyId, String instanceId, String userId){
@@ -114,22 +109,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     }
 
     /**
-     * 创建网络
-     * @param topology  拓扑信息
-     * @return  网络实体
-     */
-    private NetworkEntity createNetwork(Topology topology){
-        String cidr = topology.getNetwork() != null ? topology.getNetwork().getCidr() : null;
-        String gateway = topology.getNetwork() != null ? topology.getNetwork().getGateway() : null;
-        String networkName = IDGeneratorUtil.getID();
-        return networkService.createNetwork(networkName, cidr, gateway);
-    }
-
-    private void createContainer(TopologyElement element, CreateContainerReq req){
-
-    }
-
-    /**
      * 验证场景并发数
      */
     @Override
@@ -139,11 +118,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (sceneCount >= MAX_SCENE_EVENT){
             throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW);
         }
-        UserInfo userInfo = UserInfoContext.getUserContext();
+        SysUser userInfo = UserInfoContext.getUserContext();
         if (Objects.isNull(userInfo)){
             throw new BusinessException(ErrorCode.INVALID_SESSION);
         }
-        int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.ACTIVE.getCode(), userInfo.getUserId()) + 1;
+        int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.ACTIVE.getCode(), userInfo.getResourceId()) + 1;
         //用户场景数超过最大值
         if (userSceneCount >= MAX_USER_SCENE_EVENT){
             throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW);

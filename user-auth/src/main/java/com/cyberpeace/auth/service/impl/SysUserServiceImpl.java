@@ -167,12 +167,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public UserInfo getCurrent() {
+	public SysUser getCurrent() {
 		TbUser currentUser = getCurrentSessionUser();
 		if (null == currentUser) {
 			return null;
 		}
-		return makeUserInfo(getByUserId(currentUser.getUserId()));
+		return getByUserId(currentUser.getUserId());
 	}
 
 	@Override
@@ -319,11 +319,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	private boolean isCurrentAdminByDb() {
-		UserInfo userInfo = UserInfoContext.getUserContext();
+		SysUser userInfo = UserInfoContext.getUserContext();
 		if (null == userInfo) {
 			return false;
 		}
-		return userInfo.isAdmin();
+		return userInfo.getAdmin();
 	}
 
 	private boolean isCurrentAdminByRedisSession() {

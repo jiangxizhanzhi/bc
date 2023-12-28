@@ -1,7 +1,9 @@
 package com.cyberpeace.scene.service.bo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -11,6 +13,8 @@ import java.io.Serializable;
  * @desc :
  **/
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Net implements Serializable {
 
     @TableField(value = "network_id")

@@ -57,6 +57,9 @@ public class NodeEntity extends BaseTable implements Serializable {
     @ApiModelProperty("节点状态，1=创建中，2=创建完成，3=销毁，4=异常")
     private Integer status;
 
+    @ApiModelProperty("节点地址")
+    private String addresses;
+
     @ApiModelProperty("创建人")
     private String userId;
 

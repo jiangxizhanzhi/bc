@@ -22,4 +22,6 @@ public class OperationListQueryBo extends PatternBase {
 
 	private String source;
 
+	private Integer category;
+
 }

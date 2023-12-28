@@ -104,9 +104,9 @@ public class PracticeOperationController {
 
 		OperationListQueryBo listQueryBo = BeanUtils.copy(listReq, OperationListQueryBo.class);
 		// 知识点
-		listQueryBo.setKnowledgeList(listReq.getKnowledge());
-
-		listQueryBo.setCategoryIds(null);
+		if (listReq.getKnowledge() != null) {
+			listQueryBo.setKnowledgeList(Arrays.asList(listReq.getKnowledge()));
+		}
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				CommonConstant.TRUE);

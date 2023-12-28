@@ -77,4 +77,6 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	List<String> getAllSource();
 
+	List<String> selectIdsBySource(@Param("source") String source);
+
 }

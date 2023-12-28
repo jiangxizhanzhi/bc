@@ -11,7 +11,6 @@ import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
 import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
-import javafx.scene.Scene;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 

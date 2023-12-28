@@ -176,4 +176,13 @@
     <select id="getAllSource" resultType="java.lang.String">
         select source from oj_practice_set GROUP BY source
     </select>
+
+    <select id="selectIdsBySource" resultType="java.lang.String">
+        select resource_id from oj_practice_set
+        <where>
+            <if test="source != null and source != ''">
+                source = #{source}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -1,10 +1,9 @@
 package com.cyberpeace.oj.practice.dao.context;
 
-import java.util.List;
-
 import com.cyberpeace.common.model.PatternBase;
-
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class OperationListQuery extends PatternBase {
@@ -21,5 +20,7 @@ public class OperationListQuery extends PatternBase {
 	 * 知识点正则
 	 */
 	private String knowledgeExp;
+
+	private String source;
 
 }

@@ -1,31 +1,11 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import com.cyberpeace.auth.service.bo.UserInfoContext;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.oj.practice.controller.res.ProgressCountRes;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
@@ -37,6 +17,7 @@ import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.PatternReq;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
@@ -49,8 +30,6 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.LogContent;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -71,6 +50,7 @@ import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressCountRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
@@ -83,8 +63,22 @@ import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author chenz
@@ -390,7 +384,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					.getCode().intValue()) {
 				// 查询是否已经分配附件
 				PracticeRandomFlag randomFlag = practiceRandomFlagMapper.selectByUserAndPractice(
-						UserInfoContext.getUserContext().getResourceId(), resourceId,
+						UserInfoContext.getUserContext().getUserId(), resourceId,
 						PracticeRandomFlag.FlagType.PRACTICE.getCode());
 
 				if (null == randomFlag) {
@@ -491,7 +485,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeRandomFlag randomFlag = new PracticeRandomFlag();
 		randomFlag.setFlag(flags.get(index));
 		randomFlag.setPracticeId(operation.getResourceId());
-		randomFlag.setUserId(UserInfoContext.getUserContext().getResourceId());
+		randomFlag.setUserId(UserInfoContext.getUserContext().getUserId());
 		randomFlag.setAttachmentId(strings[index]);
 		randomFlag.setType(PracticeRandomFlag.FlagType.PRACTICE.getCode());
 
@@ -579,11 +573,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
 
 		List<String> operationIds ;
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+		List<String> setIds = practiceSetMapper.selectIdsBySource(listQuery.getSource());
+		if (CollectionUtils.isEmpty(setIds)) {
+			return null;
+		} else if (StringUtils.isBlank(listQuery.getPracticeSetId())){
+			operationIds = practiceOperationMapper.selectBySetIds(setIds, null);
+		} else if (setIds.contains(listQuery.getPracticeSetId())) {
 			operationIds = practiceOperationMapper.selectBySetIds(Collections.singletonList(listQuery.getPracticeSetId()), null);
 		} else {
-			operationIds = practiceOperationMapper.selectBySetIds(null,null);
+			return null;
 		}
+
 		if (CollectionUtils.isEmpty(operationIds)) {
 			return null;
 		}
@@ -594,7 +594,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			// 查询已解决习题编号
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
-					UserInfoContext.getUserContext().getResourceId(), PracticeCategory.PracticeType.OPERATION.getCode(),
+					UserInfoContext.getUserContext().getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
 					CommonConstant.TRUE, IS_COLLECTED);
 
 			// 正确取交集
@@ -689,6 +689,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 		UserInfo userInfo = creatorMap.get(practiceOperation.getCreateUserId());
 		operationListBo.setCreateUserName(null != userInfo ? userInfo.getName() : "");
+		operationListBo.setSource(null != practiceSet ? practiceSet.getSource() : "");
 		return operationListBo;
 
 	}
@@ -1361,8 +1362,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public ProgressCountRes getProgressCount(String practiceSetId) {
 
-		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getUserContext().getResourceId());
+		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getUserContext().getUserId());
 		Map<Integer, OperationSolved> operationSolvedMap = operationSolvedList.stream().collect(Collectors.toMap(OperationSolved::getCategory, operationSolved -> operationSolved));
+		if (operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()) == null) {
+			operationSolvedMap.put(PracticeOperation.Category.MAINTENANCE.getCode()
+					, new OperationSolved(PracticeOperation.Category.MAINTENANCE.getCode(), 0, 0));
+		}
+		if (operationSolvedMap.get(PracticeOperation.Category.OPERATION.getCode()) == null) {
+			operationSolvedMap.put(PracticeOperation.Category.OPERATION.getCode()
+					, new OperationSolved(PracticeOperation.Category.OPERATION.getCode(), 0, 0));
+		}
 
 		ProgressCountRes progressCountRes = new ProgressCountRes();
 		OptionCountProportion maintenance = new OptionCountProportion();
@@ -1374,6 +1383,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operation.setCount(operationSolvedMap.get(PracticeOperation.Category.OPERATION.getCode()).getSolved());
 		operation.setSum(operationSolvedMap.get(PracticeOperation.Category.OPERATION.getCode()).getSum());
 		progressCountRes.setOperation(operation);
+
+		OptionCountProportion sum = new OptionCountProportion();
+		sum.setCount(maintenance.getCount() + operation.getCount());
+		sum.setSum(maintenance.getSum() + operation.getSum());
+		progressCountRes.setSum(sum);
 
 		return progressCountRes;
 	}
@@ -1580,7 +1594,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		pageReqBase.setPer_page(2147483647);
 		OperationListQueryBo listQueryBo = new OperationListQueryBo();
 		listQueryBo.setPracticeSetId(practiceSetId);
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
 		IPage<AdminOperationListBo> practiceTheoryListBoIPage = pageByQuery(pageReqBase.toPageParam(), listQueryBo, authContext);
 		if (practiceTheoryListBoIPage == null) {

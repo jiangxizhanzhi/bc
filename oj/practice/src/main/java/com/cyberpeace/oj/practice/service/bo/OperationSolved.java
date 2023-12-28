@@ -1,11 +1,15 @@
 package com.cyberpeace.oj.practice.service.bo;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OperationSolved implements Serializable {
 
 	@ApiModelProperty("题型")

@@ -187,7 +187,7 @@
     </select>
 
     <select id="selectSolved" resultType="com.cyberpeace.oj.practice.service.bo.OperationSolved">
-        select operation.category category, sum(solved) solved, count(1) sum
+        select operation.category category, sum(if(true = solved, 1, 0)) solved, count(1) sum
         from oj_practice_operation operation left join oj_practice_solved solved
             on operation.resource_id = solved.practice_id and submit_user_id = #{userId}
         group by category

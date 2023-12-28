@@ -15,4 +15,7 @@ public class ProgressCountRes implements Serializable {
 	@ApiModelProperty("操作题")
 	private OptionCountProportion operation;
 
+	@ApiModelProperty("总共")
+	private OptionCountProportion sum;
+
 }

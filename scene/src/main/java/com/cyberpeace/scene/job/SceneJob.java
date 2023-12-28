@@ -8,7 +8,6 @@ import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
-import javafx.scene.Scene;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

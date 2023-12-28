@@ -1,19 +1,15 @@
 package com.cyberpeace.oj.practice.controller.req;
 
-import java.util.List;
-
 import com.cyberpeace.common.model.PageReqBase;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @ApiModel
 public class WebOperationListReq extends PageReqBase {
-
-	@ApiModelProperty("方向")
-	private String categoryId;
 
 	@ApiModelProperty("习题集")
 	private String practiceSetId;
@@ -29,10 +25,6 @@ public class WebOperationListReq extends PageReqBase {
 
 	@ApiModelProperty("来源")
 	private String source;
-
-	public void setCategory_id(String categoryId) {
-		this.categoryId = categoryId;
-	}
 
 	public void setPractice_set_id(String practiceSetId) {
 		this.practiceSetId = practiceSetId;

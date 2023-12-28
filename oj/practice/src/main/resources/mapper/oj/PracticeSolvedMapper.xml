@@ -124,15 +124,13 @@
     </update>
 
     <select id="getOperationRecord" resultType="com.cyberpeace.oj.practice.controller.res.OperationRecordRes">
-        select practice_id, title, difficulty, solved, practice_set.name as set_name, category.name as category_name,
+        select practice_id, title, difficulty, solved, practice_set.name as set_name, knowledge,
         oj_practice_solved.update_time as `time`
         from oj_practice_solved
         inner join oj_practice_operation
         on oj_practice_solved.practice_id = oj_practice_operation.resource_id
         inner join oj_practice_set as practice_set
         on oj_practice_operation.practice_set_id = practice_set.resource_id
-        inner join oj_practice_category as category
-        on oj_practice_operation.category_id = category.resource_id
         <where>
             <if test="userId != null and userId != ''">
                 submit_user_id = #{userId}

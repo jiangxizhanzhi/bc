@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.service.NetworkService;
@@ -66,12 +67,13 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
     public NetworkEntity createNetwork(String name, String cidr, String gateway) {
         CreateNetworkReq req;
         if (StringUtils.isBlank(cidr) || StringUtils.isBlank(gateway)){
-            req = new CreateNetworkReq(DEFAULT_NAME, DEFAULT_CIDR, DEFAULT_GATEWAY);
+            String uuid = IDGeneratorUtil.getID();
+            req = new CreateNetworkReq(DEFAULT_NAME + "_" + uuid, DEFAULT_CIDR, DEFAULT_GATEWAY);
         }else {
             req = new CreateNetworkReq(name, cidr, gateway);
         }
         LambdaQueryWrapper<NetworkEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(NetworkEntity::getCidr, cidr).eq(NetworkEntity::getGateway, gateway);
+        queryWrapper.eq(NetworkEntity::getName, name);
         NetworkEntity networkEntity = getOne(queryWrapper);
         //根据网段和网关判断网络是否已创建，如果已创建，则直接返回网络信息，如果未创建，则创建网络并返回网络信息
         if (Objects.isNull(networkEntity)){

@@ -3,9 +3,11 @@ package com.cyberpeace.scene.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.auth.domain.SysUser;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.TimeUtil;
@@ -137,11 +139,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (sceneCount >= MAX_SCENE_EVENT){
             throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW);
         }
-        SysUser userInfo = com.cyberpeace.auth.service.bo.UserInfoContext.getUserContext();
+        UserInfo userInfo = UserInfoContext.getUserContext();
         if (Objects.isNull(userInfo)){
             throw new BusinessException(ErrorCode.INVALID_SESSION);
         }
-        int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.ACTIVE.getCode(), userInfo.getResourceId()) + 1;
+        int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.ACTIVE.getCode(), userInfo.getUserId()) + 1;
         //用户场景数超过最大值
         if (userSceneCount >= MAX_USER_SCENE_EVENT){
             throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW);

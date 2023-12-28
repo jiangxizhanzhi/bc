@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 
 import lombok.Data;
@@ -25,11 +26,13 @@ public class UserInfo implements Serializable {
 	/**
 	 * 用户名（对前端显示，登录使用）
 	 */
+    @JsonProperty("username")
     private String userName;
 
     /**
      * 头像地址
      */
+    @JsonProperty("avatar")
     private String avatarUrl;
 
     /**

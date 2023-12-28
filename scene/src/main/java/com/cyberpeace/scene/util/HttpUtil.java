@@ -10,7 +10,7 @@ import com.cyberpeace.common.model.HttpclientModel;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.scene.constant.enums.BaseCpRsp;
+import com.cyberpeace.scene.constant.BaseCpRsp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;

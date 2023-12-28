@@ -1,4 +1,4 @@
-package com.cyberpeace.scene.constant.enums;
+package com.cyberpeace.scene.constant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

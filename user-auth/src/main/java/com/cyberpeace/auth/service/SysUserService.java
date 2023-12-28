@@ -41,7 +41,7 @@ public interface SysUserService extends IService<SysUser> {
 	 */
 	SysUser getByToken(String token);
 
-    SysUser getCurrent();
+	UserInfo getCurrent();
 
 	Map<String, ? extends Session> getSessionsByUsername(String username);
 

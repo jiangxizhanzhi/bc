@@ -8,6 +8,7 @@ import com.cyberpeace.auth.service.bo.*;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.MultiSelectReq;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.DictInfoService;
 import io.swagger.annotations.Api;
@@ -53,8 +54,8 @@ public class UserController {
 
 	@ApiOperation("获取当前用户信息")
 	@GetMapping("/current/user/info")
-	public BaseRsp<SysUser> getCurrentUserInfo() {
-		SysUser userInfo = UserInfoContext.getUserContext();
+	public BaseRsp<UserInfo> getCurrentUserInfo() {
+		UserInfo userInfo = UserInfoContext.getUserContext();
 		return new BaseRsp<>(userInfo);
 	}
 

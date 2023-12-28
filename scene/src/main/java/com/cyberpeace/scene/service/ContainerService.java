@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service;
 
+import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
 import lombok.Data;
 
 /**
@@ -9,7 +10,7 @@ import lombok.Data;
  **/
 public interface ContainerService {
 
-    void create();
+    void create(CreateContainerReq req);
 
 
 }

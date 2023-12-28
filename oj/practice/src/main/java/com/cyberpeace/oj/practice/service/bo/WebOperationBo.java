@@ -18,4 +18,7 @@ public class WebOperationBo extends OperationBo {
 	@ApiModelProperty("习题集名称")
 	private String practiceSetName;
 
+	@ApiModelProperty("来源")
+	private String source;
+
 }

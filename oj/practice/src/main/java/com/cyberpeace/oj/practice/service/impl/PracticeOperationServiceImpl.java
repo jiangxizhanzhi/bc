@@ -561,6 +561,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeSet practiceSet = practiceSetMapper.selectById(webOperationBo.getPracticeSetId());
 		webOperationBo.setPracticeSetName(practiceSet.getName());
+		webOperationBo.setSource(practiceSet.getSource());
 
 		return webOperationBo;
 	}

@@ -1,10 +1,13 @@
 package com.cyberpeace.rtks.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
@@ -61,6 +64,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
+
+	@Autowired
+	private CourseMapper courseMapper;
 
 	@Autowired
 	private SkillTrainingMapper skillTrainingMapper;
@@ -142,12 +148,22 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	}
 
 	@Override
-	public RoleStudyBo roleKnowledgeStudyRecord(String roleId, String userId) {
-		// 1、获取用户角色关联的知识点
-		List<Knowledge> knowledgeIds = getKnowledges(roleId);
+	public RoleStudyBo roleKnowledgeStudyRecord( String userId) {
 
-		// 2、返回计算结果
-		return calculateStudy(knowledgeIds, userId);
+		return calculateMyStudy(userId);
+	}
+
+	private RoleStudyBo calculateMyStudy(String userId) {
+
+		List<String> courseIds = courseMapper.selectList(new QueryWrapper<>())
+				.stream()
+				.map(Course::getResourceId)
+				.collect(Collectors.toList());
+		List<CourseStudyProcessBo> processBoList = courseStatisticsService.statisticByIds(courseIds,
+				userId);
+
+		// 2、获取技能点对应的课程
+		return getStudyBo(processBoList);
 	}
 
 	/**
@@ -159,7 +175,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 */
 	private <T extends SkillAndKnowledgeBase> RoleStudyBo
 			calculateStudy(List<T> skillOrKnowledgeIds, String userId) {
-
 		// 1、获取课程学习进度
 		List<String> courseIds = skillOrKnowledgeIds.stream()
 				.map(skillOrKnowledge -> getCourseIds(skillOrKnowledge)).flatMap(Collection::stream)

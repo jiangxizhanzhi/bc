@@ -40,11 +40,10 @@ public interface RtksStatisticService {
 
 	/**
 	 * 针对知识点，获取用户理论课学习记录
-	 * @param roleId
 	 * @param userId
 	 * @return
 	 */
-	RoleStudyBo roleKnowledgeStudyRecord(String roleId, String userId);
+	RoleStudyBo roleKnowledgeStudyRecord( String userId);
 
 	/**
 	 * 统计用户岗位课程学习记录

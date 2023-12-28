@@ -51,7 +51,7 @@ public class WaterMarkController {
 
 	@ApiOperation("检查")
 	@GetMapping("/check")
-	public BaseRsp<Boolean> check(String mark) {
+	public BaseRsp<Boolean> check(@ApiParam(name = "mark",value = "水印名称") String mark) {
 		// mark只能包含英文空格
 		mark = mark.replaceAll(" ", "");
 		return new BaseRsp<>(isEnglishString(mark));
@@ -66,7 +66,7 @@ public class WaterMarkController {
 
 	@ApiOperation("打水印")
 	@GetMapping("/mark")
-	public BaseRsp<Boolean> listComments(String mark) {
+	public BaseRsp<Boolean> listComments(@ApiParam(name = "mark",value = "水印名称") String mark) {
 		LambdaQueryWrapper<CourseLesson> filterQuery = new LambdaQueryWrapper<>();
 		filterQuery.isNotNull(CourseLesson::getHandoutUrl);
 		filterQuery.ne(CourseLesson::getHandoutType, CourseLesson.HandoutType.MD.getCode());
@@ -93,7 +93,7 @@ public class WaterMarkController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("打水印")
+	@ApiOperation("查询进度")
 	@GetMapping("/queryProgress")
 	public BaseRsp<WaterMarkProgressRes> queryProgress() {
 		WaterMarkProgressRes waterMarkProgressRes = new WaterMarkProgressRes();

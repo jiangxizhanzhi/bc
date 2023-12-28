@@ -3,6 +3,7 @@ package com.cyberpeace.config.swagger;
 import java.util.Arrays;
 
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -73,10 +74,11 @@ public class SwaggerConfig {
 	}
 
 	private ApiSelectorBuilder getDocket() {
+		String doc = SystemPropUtil.getProp("OJJ_DOC");
 		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
 
 		return new Docket(DocumentationType.OAS_30).apiInfo(apiInfo())
-				.enable(Boolean.parseBoolean(apiDoc))
+				.enable(Boolean.parseBoolean(doc)||Boolean.parseBoolean(apiDoc))
 				.securityContexts(Arrays.asList(SecurityContext.builder()
 						.securityReferences(Arrays.asList(SecurityReference.builder()
 								.reference("Authorization")

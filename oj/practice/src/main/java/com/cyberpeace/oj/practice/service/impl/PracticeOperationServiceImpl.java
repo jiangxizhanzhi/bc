@@ -384,7 +384,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					.getCode().intValue()) {
 				// 查询是否已经分配附件
 				PracticeRandomFlag randomFlag = practiceRandomFlagMapper.selectByUserAndPractice(
-						UserInfoContext.getUserContext().getUserId(), resourceId,
+						UserInfoContext.getOldUserContext().getUserId(), resourceId,
 						PracticeRandomFlag.FlagType.PRACTICE.getCode());
 
 				if (null == randomFlag) {
@@ -485,7 +485,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeRandomFlag randomFlag = new PracticeRandomFlag();
 		randomFlag.setFlag(flags.get(index));
 		randomFlag.setPracticeId(operation.getResourceId());
-		randomFlag.setUserId(UserInfoContext.getUserContext().getUserId());
+		randomFlag.setUserId(UserInfoContext.getOldUserContext().getUserId());
 		randomFlag.setAttachmentId(strings[index]);
 		randomFlag.setType(PracticeRandomFlag.FlagType.PRACTICE.getCode());
 
@@ -594,7 +594,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			// 查询已解决习题编号
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
-					UserInfoContext.getUserContext().getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
+					UserInfoContext.getOldUserContext().getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
 					CommonConstant.TRUE, IS_COLLECTED);
 
 			// 正确取交集
@@ -1362,7 +1362,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public ProgressCountRes getProgressCount(String practiceSetId) {
 
-		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getUserContext().getUserId());
+		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getOldUserContext().getUserId());
 		Map<Integer, OperationSolved> operationSolvedMap = operationSolvedList.stream().collect(Collectors.toMap(OperationSolved::getCategory, operationSolved -> operationSolved));
 		if (operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()) == null) {
 			operationSolvedMap.put(PracticeOperation.Category.MAINTENANCE.getCode()
@@ -1594,7 +1594,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		pageReqBase.setPer_page(2147483647);
 		OperationListQueryBo listQueryBo = new OperationListQueryBo();
 		listQueryBo.setPracticeSetId(practiceSetId);
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				CommonConstant.TRUE);
 		IPage<AdminOperationListBo> practiceTheoryListBoIPage = pageByQuery(pageReqBase.toPageParam(), listQueryBo, authContext);
 		if (practiceTheoryListBoIPage == null) {

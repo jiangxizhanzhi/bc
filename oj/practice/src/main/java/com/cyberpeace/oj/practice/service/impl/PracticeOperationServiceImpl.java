@@ -1338,9 +1338,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb) {
+	public List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb, String setId) {
 
-		List<String> practiceOperationKnowledgeList = practiceOperationMapper.selectAllKnowledge();
+		List<String> practiceOperationKnowledgeList = practiceOperationMapper.selectAllKnowledge(setId);
 		Map<String, Integer> knowledgeMap = Maps.newHashMap();
 		for (String knowledgeJson : practiceOperationKnowledgeList) {
 			for (String knowledge : JsonUtil.toJsonObjectArray(knowledgeJson, String.class)) {

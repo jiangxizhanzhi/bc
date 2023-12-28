@@ -162,6 +162,11 @@
     <select id="selectAllKnowledge" resultType="java.lang.String">
         select knowledge
         from oj_practice_operation
+        <where>
+            <if test="setId != null and setId != ''">
+                practice_set_id = #{setId}
+            </if>
+        </where>
     </select>
     <select id="selectKnowledgeBySetId" resultType="java.lang.String">
         select knowledge from oj_practice_operation

@@ -7,6 +7,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
@@ -138,4 +139,5 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	List<SolvedTop5> getSolvedTop5(String resourceId);
 
+	List<ProgressPracticeRes> getProgressCategoryStatistics();
 }

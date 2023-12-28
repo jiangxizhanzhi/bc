@@ -1,0 +1,130 @@
+{
+  "jobName": "网络与信息安全管理员",
+  "level": "四级/中级工",
+  "jobDefine": "负责制定和实施网络信息安全管理制度，以技术手段隔离不良信息，及时发布预知通告，发布计算机病毒、网络病毒的危害程度、防杀措施、及补救办法。教育计算机用户和网络用户树立安全意识，主动防范病毒、黑客的侵扰，抵制不良信息；建立网络信息安全监管日志。",
+  "standardUrl": "/cpms/index/standard.docx",
+  "coverage": 65,
+  "categoryList": [
+    {
+      "categoryName": "职业道德",
+      "coverage": 2,
+      "weight": 5,
+      "courses": [
+        {
+          "courseName": "职业道德",
+          "coverage": 2,
+          "weight": 5,
+          "courseNum": 16,
+          "completePercent": 0
+        },
+        {
+          "courseName": "岗位解读",
+          "coverage": 2,
+          "weight": 5,
+          "courseNum": 16,
+          "completePercent": 0
+        }
+      ]
+    },
+    {
+      "categoryName": "基础知识",
+      "coverage": 2,
+      "weight": 15,
+      "courses": [
+        {
+          "courseName": "计算机基础",
+          "coverage": 2,
+          "weight": 5,
+          "courseNum": 4,
+          "completePercent": 0
+        },
+        {
+          "courseName": "网络基础",
+          "coverage": 2,
+          "weight": 5,
+          "courseNum": 4,
+          "completePercent": 0
+        }
+      ]
+    },
+    {
+      "categoryName": "网络与信息安全防护",
+      "coverage": 24,
+      "weight": 30,
+      "courses": [
+        {
+          "courseName": "网络安全配置与防护",
+          "coverage": 8,
+          "weight": 10,
+          "courseNum": 13,
+          "completePercent": 0
+        },
+        {
+          "courseName": "系统安全配置与防护",
+          "coverage": 5,
+          "weight": 10,
+          "courseNum": 11,
+          "completePercent": 0
+        }
+      ,
+        {
+          "courseName": "应用安全配置与防护",
+          "coverage": 11,
+          "weight": 10,
+          "courseNum": 19,
+          "completePercent": 0
+        }
+      ]
+    },
+    {
+      "categoryName": "网络与信息安全管理",
+      "coverage": 12,
+      "weight": 25,
+      "courses": [
+        {
+          "courseName": "网络安全管理",
+          "coverage": 2,
+          "weight": 5,
+          "courseNum": 16,
+          "completePercent": 0
+        },
+        {
+          "courseName": "系统安全管理",
+          "coverage": 2,
+          "weight": 10,
+          "courseNum": 16,
+          "completePercent": 0
+        }
+      ,
+        {
+          "courseName": "应用安全管理",
+          "coverage": 8,
+          "weight": 10,
+          "courseNum": 12,
+          "completePercent": 0
+        }
+      ]
+    },
+    {
+      "categoryName": "网络与信息安全处置",
+      "coverage": 16,
+      "weight": 25,
+      "courses": [
+        {
+          "courseName": "网络安全事件处置",
+          "coverage": 4,
+          "weight": 10,
+          "courseNum": 16,
+          "completePercent": 0
+        },
+        {
+          "courseName": "系统及应用安全事件",
+          "coverage": 12,
+          "weight": 15,
+          "courseNum": 16,
+          "completePercent": 0
+        }
+      ]
+    }
+  ]
+}

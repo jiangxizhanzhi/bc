@@ -108,9 +108,6 @@
                 <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>
                 and content like #{pattern}
             </if>
-            <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
-            </if>
         </where>
     </select>
 
@@ -265,6 +262,15 @@
     <select id="selectAllCategoryIds" resultMap="theory">
         SELECT distinct category_id, practice_set_id
         FROM oj_practice_theory
+    </select>
+    <select id="getProgressCategoryStatistics"
+            resultType="com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes">
+        select  c.`name` categoryName,count(1) sum,SUM(if( b.solved is null ,0,1)) count
+        FROM oj_practice_theory a
+        LEFT JOIN oj_practice_category c on a.category_id = c.resource_id
+        LEFT JOIN oj_practice_solved b  on a.resource_id=b.resource_id
+        AND b.submit_user_id = #{userId}  and b.solved in (0,1)
+        GROUP BY a.category_id
     </select>
 
 

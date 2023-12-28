@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.ProgressProportion;
@@ -88,4 +89,6 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @return
 	 */
 	List<PracticeTheory> selectAllCategoryIds();
+
+	List<ProgressPracticeRes> getProgressCategoryStatistics(@Param("userId")String userId);
 }

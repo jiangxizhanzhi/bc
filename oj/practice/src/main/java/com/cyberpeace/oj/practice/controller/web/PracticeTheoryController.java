@@ -21,6 +21,7 @@ import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
+import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.controller.res.TheoryStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
@@ -183,6 +184,13 @@ public class PracticeTheoryController {
 			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(
 					value = "practice_set_id", required = false) String practiceSetId) {
 		return new BaseRsp<>(practiceTheoryService.getProgressStatistics(practiceSetId));
+	}
+
+	@ApiOperation("获取进度统计-按方向分类")
+	@GetMapping("/progress/category")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<List<ProgressPracticeRes>> getProgressCategoryStatistics() {
+		return new BaseRsp<>(practiceTheoryService.getProgressCategoryStatistics());
 	}
 
 	@ApiOperation("统计错题、收藏、笔记数量")

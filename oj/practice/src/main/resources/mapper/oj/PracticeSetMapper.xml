@@ -91,9 +91,6 @@
                     and `name` like #{pattern}
                 </if>
             </if>
-            <if test="isPublic != null and isPublic">
-                and `public` = #{isPublic}
-            </if>
         </where>
     </select>
     <select id="selectByAuthAndPublic" resultType="java.lang.String">

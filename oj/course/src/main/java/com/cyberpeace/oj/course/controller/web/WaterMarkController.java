@@ -1,9 +1,13 @@
 package com.cyberpeace.oj.course.controller.web;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.auth.constant.LicenseEnum;
+import com.cyberpeace.auth.constant.SystemModelEnum;
+import com.cyberpeace.auth.service.AuthService;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -29,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -48,6 +53,16 @@ public class WaterMarkController {
 	CourseLessonMapper courseLessonMapper;
 
 	private static Integer progress = 0;
+	@Autowired
+	private AuthService authService;
+
+	@GetMapping("/registerverifyinfo")
+	@ApiOperation("水印权限验证")
+	public BaseRsp<Boolean> registerVerifyInfo(@RequestParam("verifyCode") String verifyCode){
+
+		LicenseEnum registerResult = authService.registerVerifyInfo(240,verifyCode, SystemModelEnum.MODEL_SY.getName());
+		return new BaseRsp<>(LicenseEnum.SUCCESS.equals(registerResult));
+	}
 
 	@ApiOperation("检查")
 	@GetMapping("/check")

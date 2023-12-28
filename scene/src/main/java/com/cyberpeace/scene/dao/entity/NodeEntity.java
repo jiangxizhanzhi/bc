@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -16,6 +18,8 @@ import java.io.Serializable;
 @Data
 @ApiModel
 @TableName("cr_node")
+@AllArgsConstructor
+@NoArgsConstructor
 public class NodeEntity extends BaseTable implements Serializable {
 
     @ApiModelProperty("节点id")
@@ -51,7 +55,7 @@ public class NodeEntity extends BaseTable implements Serializable {
     @ApiModelProperty("所属场景id")
     private String sid;
 
-    @ApiModelProperty("节点类型,1=网络，2=容器，3=虚拟机")
+    @ApiModelProperty("节点类型,1=网络，5=容器，4=虚拟机")
     private Integer type;
 
     @ApiModelProperty("节点状态，1=创建中，2=创建完成，3=销毁，4=异常")

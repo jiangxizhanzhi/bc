@@ -14,13 +14,13 @@ public interface AuthService {
 
     String getSerialNumber();
 
-    LicenseEnum verifySystemCode();
+    LicenseEnum verifySystemCode(String model);
 
-    LicenseEnum registerVerifyInfo(Integer timeRange, String verifyCode, Integer number);
+    LicenseEnum registerVerifyInfo(Integer timeRange, String verifyCode, String model);
 
     void verifyDayAdd();
 
-    JSONObject getVerifyInfo();
+    JSONObject getVerifyInfo(String model);
 
-    Date getLicenseExpireTime();
+    Date getLicenseExpireTime(String model);
 }

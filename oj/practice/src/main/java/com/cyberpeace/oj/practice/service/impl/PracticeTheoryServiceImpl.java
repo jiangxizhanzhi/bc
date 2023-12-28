@@ -21,6 +21,7 @@ import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
@@ -159,7 +160,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
             return null;
         }
 
-        Map<String, String> userInfoMap = StreamApiUtils.toMap(remoteUserService.getByIdList(userIdList), UserInfo::getUserId, UserInfo::getName);
+
         Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSetMapper.selectBatchIds(practiceIdList), PracticeSet::getResourceId, PracticeSet::getName);
         LambdaQueryWrapper<PracticeSolved> practiceSolvedQuery = new LambdaQueryWrapper<>();
         practiceSolvedQuery.eq(PracticeSolved::getSubmitUserId, authContext.getUserId());
@@ -183,9 +184,6 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
                     }
                 }
             }
-
-            String userName = userInfoMap.get(practiceTheory.getCreateUserId());
-            theoryListBo.setCreateUserName(null != userName ? userName : "");
             String practiceSetName = practiceSetMap.get(practiceTheory.getPracticeSetId());
             theoryListBo.setPracticeSetName(null != practiceSetName ? practiceSetName : "");
             return theoryListBo;
@@ -776,6 +774,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
             }).collect(Collectors.toList());
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<ProgressPracticeRes> getProgressCategoryStatistics() {
+        return practiceTheoryMapper.getProgressCategoryStatistics(UserInfoContext.getUserContext().getUserId());
     }
 
     private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {

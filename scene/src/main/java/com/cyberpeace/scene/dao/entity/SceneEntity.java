@@ -1,11 +1,13 @@
 package com.cyberpeace.scene.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -16,9 +18,10 @@ import java.util.Date;
 @Data
 @ApiModel
 @TableName("cr_scene")
-public class SceneEntity extends BaseTable {
+public class SceneEntity extends BaseTable implements Serializable {
 
     @ApiModelProperty("场景id")
+    @TableField("resource_id")
     private String resourceId;
 
     @ApiModelProperty("场景名称")

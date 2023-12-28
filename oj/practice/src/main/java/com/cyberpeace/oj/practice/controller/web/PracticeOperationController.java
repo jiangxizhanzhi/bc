@@ -41,6 +41,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -104,7 +105,7 @@ public class PracticeOperationController {
 
 		OperationListQueryBo listQueryBo = BeanUtils.copy(listReq, OperationListQueryBo.class);
 		// 知识点
-		if (listReq.getKnowledge() != null) {
+		if (StringUtils.isNotBlank(listReq.getKnowledge())) {
 			listQueryBo.setKnowledgeList(Arrays.asList(listReq.getKnowledge()));
 		}
 
@@ -244,7 +245,6 @@ public class PracticeOperationController {
 
 	@ApiOperation("收藏数量和笔记数量")
 	@GetMapping("/statistics")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<OptionStatisticsRes> getOperationStatisticsRes() {
 		OptionStatisticsRes optionStatisticsRes = new OptionStatisticsRes();
 		UserInfo userInfo = UserInfoContext.getOldUserContext();
@@ -263,7 +263,6 @@ public class PracticeOperationController {
 
 	@ApiOperation("解出记录Top5")
 	@GetMapping("/record")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<OperationRecordRes>> getOperationRecordTop5() {
 		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getOldUserContext(), null, null);
 		if (operationRecordResList.size() > 5){
@@ -274,7 +273,6 @@ public class PracticeOperationController {
 
 	@ApiOperation("所有解出记录")
 	@GetMapping("/all_record")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<OperationRecordResByDay>> getAllOperationRecord(
 			@ApiParam(name = "start_time", value = "开始时间") @RequestParam(name = "start_time", required = false) String startTime,
 			@ApiParam(name = "end_time", value = "开始时间") @RequestParam(name = "end_time", required = false) String endTime) {
@@ -320,7 +318,6 @@ public class PracticeOperationController {
 
 	@ApiOperation("再练一次状态下的提交")
 	@PostMapping("/submit_answer_again")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<EvaluateResult> submitAnswerAgain(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswerAgain(
@@ -332,7 +329,6 @@ public class PracticeOperationController {
 
 	@ApiOperation("解题记录题目id列表")
 	@GetMapping("/record_all_id")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<String>> getRecordPracticeIds() {
 		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(
 				UserInfoContext.getOldUserContext(), null, null);

@@ -17,8 +17,6 @@ public class PracticeTheoryListBo implements Serializable {
 	@ApiModelProperty("分类编号")
 	private String categoryId;
 
-	@ApiModelProperty("是否公开")
-	private Boolean isPublic;
 
 	@ApiModelProperty("习题集")
 	private String practiceSetId;

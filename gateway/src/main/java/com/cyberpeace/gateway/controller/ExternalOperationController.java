@@ -189,7 +189,7 @@ public class ExternalOperationController {
 	@ApiOperation("获取知识点列表，按频次排序")
 	public BaseRsp<List<String>> listKnowledge(PatternReq pattern) {
 		List<String> knowledgeList = practiceOperationService.getKnowledgeListByFrequency(pattern,
-				false);
+				false, null);
 		return new BaseRsp<>(knowledgeList);
 	}
 

@@ -1,16 +1,15 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
-import java.util.List;
-
-import com.cyberpeace.oj.practice.service.bo.OperationSolved;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.service.bo.OperationSolved;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
@@ -51,7 +50,7 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 
 	List<PracticeOperation> selectAllCategoryIds();
 
-	List<String> selectAllKnowledge();
+	List<String> selectAllKnowledge(@Param("setId") String setId);
 
 	List<String> selectKnowledgeBySetId(@Param("setIds") List<String> setIds,
 			@Param("pattern") String pattern, @Param("isWeb") Boolean isWeb);

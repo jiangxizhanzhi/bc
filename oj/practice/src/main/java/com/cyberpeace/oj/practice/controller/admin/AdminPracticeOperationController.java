@@ -163,7 +163,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<List<String>> listKnowledge(PatternReq pattern) {
 		List<String> knowledgeList = practiceOperationService
-				.getKnowledgeListByFrequency(pattern, false);
+				.getKnowledgeListByFrequency(pattern, false, null);
 		return new BaseRsp<>(knowledgeList);
 	}
 

@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
+//import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import org.apache.commons.collections.CollectionUtils;
@@ -50,7 +51,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		}
 
 		// 查询有权访问课程
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
 				true);
 		List<String> webCourses = courseMapper.selectByAuth(authContext);
 

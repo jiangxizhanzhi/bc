@@ -13,15 +13,17 @@
         {
           "courseName": "职业道德",
           "coverage": 2,
-          "weight": 5,
+          "weight": 2,
           "courseNum": 16,
+          "desc": "",
           "completePercent": 0
         },
         {
           "courseName": "岗位解读",
           "coverage": 2,
-          "weight": 5,
+          "weight": 3,
           "courseNum": 16,
+          "desc": "",
           "completePercent": 0
         }
       ]
@@ -36,13 +38,15 @@
           "coverage": 2,
           "weight": 5,
           "courseNum": 4,
+          "desc": "",
           "completePercent": 0
         },
         {
           "courseName": "网络基础",
           "coverage": 2,
-          "weight": 5,
+          "weight": 10,
           "courseNum": 4,
+          "desc": "",
           "completePercent": 0
         }
       ]
@@ -57,6 +61,7 @@
           "coverage": 8,
           "weight": 10,
           "courseNum": 13,
+          "desc": "",
           "completePercent": 0
         },
         {
@@ -64,6 +69,7 @@
           "coverage": 5,
           "weight": 10,
           "courseNum": 11,
+          "desc": "",
           "completePercent": 0
         }
       ,
@@ -72,6 +78,7 @@
           "coverage": 11,
           "weight": 10,
           "courseNum": 19,
+          "desc": "",
           "completePercent": 0
         }
       ]
@@ -86,6 +93,7 @@
           "coverage": 2,
           "weight": 5,
           "courseNum": 16,
+          "desc": "",
           "completePercent": 0
         },
         {
@@ -93,6 +101,7 @@
           "coverage": 2,
           "weight": 10,
           "courseNum": 16,
+          "desc": "",
           "completePercent": 0
         }
       ,
@@ -101,6 +110,7 @@
           "coverage": 8,
           "weight": 10,
           "courseNum": 12,
+          "desc": "",
           "completePercent": 0
         }
       ]
@@ -115,6 +125,7 @@
           "coverage": 4,
           "weight": 10,
           "courseNum": 16,
+          "desc": "",
           "completePercent": 0
         },
         {
@@ -122,6 +133,7 @@
           "coverage": 12,
           "weight": 15,
           "courseNum": 16,
+          "desc": "",
           "completePercent": 0
         }
       ]

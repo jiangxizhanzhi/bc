@@ -159,11 +159,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION.getCode()
 				.intValue()) {
 			List<String> practiceOperations = practiceOperationMapper.selectBySetIds(
-					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
+					Arrays.asList(practiceSet.getResourceId()), null);
 			setBo.setPracticeCount(practiceOperations.size());
 		} else {
 			List<String> theoryIds = practiceTheoryMapper.selectBySetIds(
-					Arrays.asList(practiceSet.getResourceId()), authContext.getIsWeb());
+					Arrays.asList(practiceSet.getResourceId()), null);
 			setBo.setPracticeCount(theoryIds.size());
 		}
 
@@ -182,7 +182,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	public IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType,
 			String pattern, AuthContext authContext) {
 
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+		List<String> authIds = practiceSetMapper.selectByAuthContext(null);
 		if (CollectionUtils.isEmpty(authIds)) {
 			return null;
 		}
@@ -191,14 +191,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				.build();
 		listQuery.setPattern(pattern);
 
-		IPage<PracticeSet> iPage = practiceSetMapper.pageByNameAndType(page, listQuery,
-				authContext.getIsWeb());
+		IPage<PracticeSet> iPage = practiceSetMapper.pageByNameAndType(page, listQuery, true);
 
 		// 获取习题集创建人ID、名称映射
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
 				PracticeSet::getCreateUserId);
 
-		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, authContext, userNameMap));
+		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, null, userNameMap));
 	}
 
 	@Override

@@ -26,4 +26,16 @@ public class UserInfoContext {
 	public static void removeUserContext() {
 		userContext.remove();
 	}
+
+	public static UserInfo getOldUserContext() {
+		SysUser sysUser = getUserContext();
+		UserInfo userInfo = new UserInfo();
+		userInfo.setUserId(sysUser.getResourceId());
+		userInfo.setName(sysUser.getName());
+		userInfo.setUserName(sysUser.getUsername());
+		userInfo.setAvatarUrl(sysUser.getAvatar());
+		userInfo.setAdmin(sysUser.getAdmin());
+		userInfo.setSuperuser(sysUser.getAdmin());
+		return userInfo;
+	}
 }

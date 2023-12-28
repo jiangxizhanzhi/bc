@@ -44,9 +44,9 @@ public class SYController {
 
     @GetMapping("/registerverifyinfo")
     @ApiOperation(value = "激活系统",notes = "激活系统")
-    public BaseRsp<JSONObject> registerVerifyInfo(@RequestParam("timeRange")Integer timeRange, @RequestParam("verifyCode") String verifyCode){
+    public BaseRsp<JSONObject> registerVerifyInfo( @RequestParam("verifyCode") String verifyCode){
 
-        LicenseEnum registerResult = authService.registerVerifyInfo(timeRange,verifyCode, SystemModelEnum.MODEL_SY.getName());
+        LicenseEnum registerResult = authService.registerVerifyInfo(12,verifyCode, SystemModelEnum.MODEL_SY.getName());
         return new BaseRsp<>(JSONObject.parseObject(registerResult.toString()));
     }
 

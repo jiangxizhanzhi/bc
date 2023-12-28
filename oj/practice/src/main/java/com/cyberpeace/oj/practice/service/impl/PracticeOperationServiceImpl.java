@@ -561,6 +561,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeSet practiceSet = practiceSetMapper.selectById(webOperationBo.getPracticeSetId());
 		webOperationBo.setPracticeSetName(practiceSet.getName());
+		webOperationBo.setSource(practiceSet.getSource());
 
 		return webOperationBo;
 	}
@@ -1292,17 +1293,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Override
 	public List<String> getOptionIdsByAuth(String practiceSetId) {
-		List<String> operationIds;
-		List<String> authIds = Collections.singletonList(practiceSetId);
-
-		operationIds = practiceOperationMapper.selectBySetIds(authIds, null);
-		return operationIds;
+		return practiceOperationMapper.selectBySetIds(null, null);
 	}
 
 	@Override
 	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime) {
 		List<String> operationIds = getOptionIdsByAuth(null);
-		return practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
+		List<OperationRecordRes> operationRecordResList = practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
+		operationRecordResList.forEach(operationRecordRes -> operationRecordRes.setKnowledgeList(JsonUtil.toJsonObjectArray(operationRecordRes.getKnowledge(), String.class)));
+		return operationRecordResList;
 	}
 
 	@Override

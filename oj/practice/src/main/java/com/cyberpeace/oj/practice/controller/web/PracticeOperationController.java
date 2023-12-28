@@ -120,7 +120,6 @@ public class PracticeOperationController {
 
 	@ApiOperation("实操练习解答")
 	@PostMapping("/submit_answer")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<EvaluateResult> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(
@@ -137,7 +136,6 @@ public class PracticeOperationController {
 
 	@ApiOperation("获取所有实操习题编号")
 	@GetMapping("/list/ids")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<String>> getPracticeListIds(@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),

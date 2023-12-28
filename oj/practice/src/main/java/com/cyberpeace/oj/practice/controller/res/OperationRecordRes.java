@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class OperationRecordRes implements Serializable {
@@ -14,8 +15,8 @@ public class OperationRecordRes implements Serializable {
 	@ApiModelProperty("题目名称")
 	private String title;
 
-	@ApiModelProperty("方向")
-	private String categoryName;
+	@ApiModelProperty("知识点")
+	private String knowledge;
 
 	@ApiModelProperty("习题集")
 	private String setName;
@@ -28,4 +29,7 @@ public class OperationRecordRes implements Serializable {
 
 	@ApiModelProperty("更新时间")
 	private String time;
+
+	@ApiModelProperty("知识点")
+	private List<String> knowledgeList;
 }

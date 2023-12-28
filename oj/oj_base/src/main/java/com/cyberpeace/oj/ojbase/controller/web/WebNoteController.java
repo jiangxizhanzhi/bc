@@ -1,9 +1,9 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -25,7 +25,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "oj-前台笔记相关api")
 @RestController
 @RequestMapping("/oj/note")
-@RequiresAuthentication
 @Slf4j
 public class WebNoteController {
 
@@ -55,12 +53,9 @@ public class WebNoteController {
 
 	@ApiOperation("笔记新增")
 	@PostMapping("")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
-			logical = Logical.OR)
 	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
-		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
+		noteAddContext.setUserId(UserInfoContext.getOldUserContext().getUserId());
 		//如果笔记内容为空改为删除逻辑
 		if (StringUtils.isBlank(noteReq.getContent())) {
 			noteService.deleteByBusiness(noteAddContext.getBusinessId(), noteReq.getNoteType(),
@@ -90,15 +85,12 @@ public class WebNoteController {
 
 	@ApiOperation("单条笔记查询")
 	@GetMapping("")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_ALL_COURSE,
-			MenuConstant.WEB_OJ_PRACTICE_OPERATION, MenuConstant.CMS_CLASS_ROOM },
-			logical = Logical.OR)
 	public BaseRsp<WebNoteRes> getNote(@Validated GetNoteReq getNoteReq) {
 
 		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
 				.noteType(getNoteReq.getNoteType()).businessType(getNoteReq.getResourceType())
 				.businessId(getNoteReq.getResourceId())
-				.userId(UserInfoContext.getUserContext().getUserId()).build();
+				.userId(UserInfoContext.getOldUserContext().getUserId()).build();
 		if (StringUtils.isNotBlank(getNoteReq.getUserId())) {
 			uniqueContext.setUserId(getNoteReq.getUserId());
 		}
@@ -145,8 +137,6 @@ public class WebNoteController {
 
 	@ApiOperation("实验报告/笔记文件上传")
 	@PostMapping("/upload_attachment")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-			MenuConstant.WEB_OJ_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<AttachmentBo> uploadAttachment(NoteAttachmentReq attachmentReq) {
 
 		Integer type;

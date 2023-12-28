@@ -18,18 +18,20 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPoolConfig {
 
     @Bean
-    public SceneThreadPoolExecutor threadPoolSceneExecutor(SceneService sceneService, ContainerService containerService, NetworkService networkService, HostService hostService) {
+    public SceneThreadPoolExecutor threadPoolSceneExecutor() {
         return new SceneThreadPoolExecutor(3, Math.max(Runtime.getRuntime().availableProcessors(),4), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
     }
 
     @Bean
-    public SceneJob startSceneConfig(SceneService sceneService, ContainerService containerService, NetworkService networkService, HostService hostService, TopologyService topologyService) {
+    public SceneJob startSceneConfig(SceneService sceneService, ContainerService containerService, NetworkService networkService,
+                                     HostService hostService, TopologyService topologyService, NodeService nodeService) {
         SceneJob scene = new SceneJob();
         scene.setSceneService(sceneService);
         scene.setContainerService(containerService);
         scene.setHostService(hostService);
         scene.setNetworkService(networkService);
         scene.setTopologyService(topologyService);
+        scene.setNodeService(nodeService);
         return scene;
     }
 }

@@ -14,12 +14,16 @@ import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
+import com.cyberpeace.scene.job.SceneExecutor;
+import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.NetworkService;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
 import com.cyberpeace.scene.service.bo.Topology;
+import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -46,6 +50,14 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     
     @Autowired
     private SceneMapper sceneMapper;
+
+    @Autowired
+    @Lazy
+    private SceneThreadPoolExecutor executor;
+
+    @Lazy
+    @Autowired
+    private SceneJob sceneJob;
 
     /**
      * 场景自动销毁时间 单位:小时
@@ -89,7 +101,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
         }
         //创建场景
-        return new BaseRsp<>(createScene(topologyId, instanceId, UserInfoContext.getUserContext().getResourceId()));
+        SceneEntity scene = createScene(topologyId, instanceId, UserInfoContext.getUserContext().getResourceId());
+        //提交创建场景任务
+        executor.submit(new SceneExecutor(sceneJob, topology, scene));
+        log.info("submit create scene mission, scene ：{}", scene);
+        return new BaseRsp<>(scene);
     }
 
     private SceneEntity createScene(String topologyId, String instanceId, String userId){
@@ -104,7 +120,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         scene.setTopologyId(topologyId);
         scene.setUserId(userId);
         scene.setSceneTtl(SCENE_DESTROY);
-        save(scene);
+        sceneMapper.insert(scene);
         return scene;
     }
 

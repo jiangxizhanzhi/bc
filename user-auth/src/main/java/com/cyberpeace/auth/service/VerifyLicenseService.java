@@ -7,5 +7,5 @@ package com.cyberpeace.auth.service;
  **/
 public interface VerifyLicenseService {
 
-    Integer verifyCode(String serialNumber, Integer range, String verifyCode, Integer number);
+    Integer verifyCode(String serialNumber, Integer range, String verifyCode, String model);
 }

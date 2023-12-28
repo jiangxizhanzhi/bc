@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.auth.constant.AuthConstant;
 import com.cyberpeace.auth.constant.LicenseEnum;
+import com.cyberpeace.auth.constant.SystemModelEnum;
 import com.cyberpeace.auth.service.AuthService;
 import com.cyberpeace.auth.service.VerifyLicenseService;
 import com.cyberpeace.auth.util.AESUtil;
@@ -31,7 +32,7 @@ import java.util.Date;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private static final String VERIFY_FILE_PATH = ConfigUtil.getContextProperty("license.verify.file");
+    private static final String VERIFY_FILE_PATH = ConfigUtil.getContextProperty("license.verify.file.path");
 
     @Autowired
     private VerifyLicenseService verifyLicenseService;
@@ -52,8 +53,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LicenseEnum verifySystemCode() {
-        JSONObject verifyJsonObject = getVerifyInfo();
+    public LicenseEnum verifySystemCode(String model) {
+        JSONObject verifyJsonObject = getVerifyInfo(model);
         if (verifyJsonObject.containsKey("errorCode")) {
             log.error("errorCode: {}", verifyJsonObject.containsKey("errorCode"));
             return LicenseEnum.LICENSE_NOT_ACTIVATED;
@@ -61,12 +62,12 @@ public class AuthServiceImpl implements AuthService {
         Long verifyTime = verifyJsonObject.getLong("time");
         Integer range = verifyJsonObject.getInteger("range");
         Integer day = verifyJsonObject.containsKey("day") ? verifyJsonObject.getInteger("day") : 1;
-        Integer number = verifyJsonObject.containsKey("num") ? verifyJsonObject.getInteger("num") : 5;
+        String modeled = verifyJsonObject.containsKey("model") ? verifyJsonObject.getString("model") : SystemModelEnum.MODEL_GN.getName();
         if (CommonUtil.verifyTimeValid(verifyTime, range) && day <= range * 30) {
             //在注册有效期内
             String code = verifyJsonObject.getString("code");
             String serialNumber = getSerialNumber();
-            Integer integer = verifyLicenseService.verifyCode(serialNumber, range, code, number);
+            Integer integer = verifyLicenseService.verifyCode(serialNumber, range, code, modeled);
             return EnumUtils.getEnumByCode(integer, LicenseEnum.class);
         } else {
             return LicenseEnum.LICENSE_EXPIRED;
@@ -78,25 +79,25 @@ public class AuthServiceImpl implements AuthService {
      *
      * @param timeRange
      * @param verifyCode
-     * @param licenseNum 新的激活码对应的可注册数量
+     * @param model 激活模块
      * @return
      */
     @Override
-    public LicenseEnum registerVerifyInfo(Integer timeRange, String verifyCode, Integer licenseNum) {
+    public LicenseEnum registerVerifyInfo(Integer timeRange, String verifyCode, String model) {
         String serialNumber = getSerialNumber();
-        Integer verifyResult = verifyLicenseService.verifyCode(serialNumber, timeRange, verifyCode, licenseNum);
+        Integer verifyResult = verifyLicenseService.verifyCode(serialNumber, timeRange, verifyCode, model);
         if (LicenseEnum.SUCCESS.getCode().equals(verifyResult)) {
 
             JSONObject verifyJsonObject = new JSONObject();
             verifyJsonObject.put("time", System.currentTimeMillis());
             verifyJsonObject.put("range", timeRange);
             verifyJsonObject.put("code", verifyCode);
-            verifyJsonObject.put("num", licenseNum);
+            verifyJsonObject.put("model", model);
             verifyJsonObject.put("day", 1);
 
             try {
                 String enVerifyInfo = AESUtil.encrypt(verifyJsonObject.toString());
-                File file = new File(VERIFY_FILE_PATH);
+                File file = new File(VERIFY_FILE_PATH + model + "_" + "verify.json");
                 FileUtils.createParentDirectories(file);
                 FileUtils.writeStringToFile(file, enVerifyInfo, StandardCharsets.UTF_8);
                 log.error("register system success");
@@ -131,9 +132,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public JSONObject getVerifyInfo() {
+    public JSONObject getVerifyInfo(String model) {
         JSONObject jsonObject = new JSONObject();
-        File verifyFile = new File(VERIFY_FILE_PATH);
+        File verifyFile = new File(VERIFY_FILE_PATH + model + "_" + "verify.json");
         if (!verifyFile.exists()) {
             jsonObject.put("errorCode", 1);
             log.error("系统验证码不存在，系统未注册");
@@ -150,8 +151,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Date getLicenseExpireTime() {
-        JSONObject verifyJsonObject = getVerifyInfo();
+    public Date getLicenseExpireTime(String model) {
+        JSONObject verifyJsonObject = getVerifyInfo(model);
         Long verifyTime = verifyJsonObject.getLong("time");
         Integer range = verifyJsonObject.getInteger("range");
 

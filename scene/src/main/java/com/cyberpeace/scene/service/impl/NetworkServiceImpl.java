@@ -65,6 +65,7 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
 
     @Override
     public NetworkEntity createNetwork(String name, String cidr, String gateway) {
+        log.info("create network start, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
         CreateNetworkReq req;
         if (StringUtils.isBlank(cidr) || StringUtils.isBlank(gateway)){
             String uuid = IDGeneratorUtil.getID();
@@ -79,10 +80,11 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
         if (Objects.isNull(networkEntity)){
             networkEntity = HttpUtil.post(CP_HOST + CP_NETWORK, req, NetworkEntity.class);
             if (Objects.isNull(networkEntity)){
-                log.error("创建网络失败");
+                log.error("create network failed, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
                 throw new BusinessException(ErrorCode.CREATE_NETWORK_ERROR);
             }
             save(networkEntity);
+            log.info("create network success, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
         }
         return networkEntity;
     }

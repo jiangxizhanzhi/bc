@@ -45,14 +45,14 @@ public class VerifyLicenseServiceImpl implements VerifyLicenseService {
     }
 
     @Override
-    public Integer verifyCode(String serialNumber, Integer range, String verifyCode, Integer number) {
+    public Integer verifyCode(String serialNumber, Integer range, String verifyCode, String model) {
 
         LicenseInterface.GoString.ByValue str = new LicenseInterface.GoString.ByValue();
         JSONObject strObject = new JSONObject();
         strObject.put("machinecode", serialNumber);
         strObject.put("deadline", range);
         JSONObject info = new JSONObject();
-        info.put("number", number);
+        info.put("model", model);
         strObject.put("info", info);
         str.p = strObject.toString();
         str.n = str.p.length();

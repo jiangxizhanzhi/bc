@@ -40,10 +40,10 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     public CreateContainersRes create(CreateContainerReq req) {
+        log.info("create container start req:{}", req);
         if (Objects.isNull(req)){
             throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
         }
-        //todo 待与云品台统一返回结果
         ImageRes imageInfo = imageService.getImageInfo(req.getName());
         if (Objects.isNull(imageInfo)){
             throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
@@ -53,6 +53,8 @@ public class ContainerServiceImpl implements ContainerService {
         }else {
             throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
         }
-        return HttpUtil.post(CP_IMAGE, req, CreateContainersRes.class);
+        CreateContainersRes res = HttpUtil.post(CP_IMAGE, req, CreateContainersRes.class);
+        log.info("create container end res:{}", req);
+        return res;
     }
 }

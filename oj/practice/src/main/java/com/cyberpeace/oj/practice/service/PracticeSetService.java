@@ -21,7 +21,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param authContext
      * @return
      */
-    AdminPracticeSetBo selectById(String resourceId, AuthContext authContext);
+    AdminPracticeSetBo selectById(String resourceId);
 
     /**
      * 习题集是否可访问
@@ -109,7 +109,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
 
     MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 
-    List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType);
+    List<AdminPracticeSetBo> getMorePracticeSet(String practiceSetId, Integer setType);
 
     String createImg(String setName);
 

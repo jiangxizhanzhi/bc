@@ -189,6 +189,11 @@
         select operation.category category, sum(if(true = solved, 1, 0)) solved, count(1) sum
         from oj_practice_operation operation left join oj_practice_solved solved
             on operation.resource_id = solved.practice_id and submit_user_id = #{userId}
+            <where>
+                <if test="setId != null and setId != ''">
+                    practice_set_id = #{setId}
+                </if>
+            </where>
         group by category
     </select>
 </mapper>

@@ -89,13 +89,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
 	@Override
-	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
-
-		// 无权限则无数据返回
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (!authIds.contains(resourceId)) {
-			return null;
-		}
+	public AdminPracticeSetBo selectById(String resourceId) {
 
 		PracticeSet practiceSet = practiceSetMapper.selectById(resourceId);
 		if (null == practiceSet) {
@@ -107,7 +101,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		Map<String, String> userNameMap = remoteUserService
 				.getIdNameMap(Lists.newArrayList(practiceSet.getCreateUserId()));
 
-		return entityToSetBo(practiceSet, authContext, userNameMap);
+		return entityToSetBo(practiceSet, userNameMap);
 	}
 
 	@Override
@@ -145,8 +139,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param practiceSet
 	 * @return
 	 */
-	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext,
-			Map<String, String> userNameMap) {
+	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, Map<String, String> userNameMap) {
 
 		AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
 		setBo.setLogo(utilService.handlerFileUrl(practiceSet.getLogo()));
@@ -193,7 +186,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
 				PracticeSet::getCreateUserId);
 
-		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, null, userNameMap));
+		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, userNameMap));
 	}
 
 	@Override
@@ -457,8 +450,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
-	public List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType) {
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+	public List<AdminPracticeSetBo> getMorePracticeSet(String practiceSetId, Integer setType) {
+		List<String> authIds = practiceSetMapper.selectByAuthContext(null);
 		authIds.remove(practiceSetId);
 		if (authIds.size() == 0) {
 			return new ArrayList<>();
@@ -470,7 +463,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				PracticeSet::getCreateUserId);
 
 		return StreamApiUtils.map(practiceSets,
-				practiceSet -> entityToSetBo(practiceSet, authContext, userNameMap));
+				practiceSet -> entityToSetBo(practiceSet, userNameMap));
 	}
 
 	@Override

@@ -67,9 +67,6 @@ public class PracticeSetController {
 
 	@ApiOperation("更多习题集")
 	@GetMapping("/more_set")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
-			logical = Logical.OR)
 	public BaseRsp<List<AdminPracticeSetBo>> getMorePracticeSet(
 			@ApiParam(name = "resource_id", value = "习题集编号") @RequestParam("resource_id") String resourceId,
 			@ApiParam(name = "set_type", value = "习题集类型 0=理论基础 2=实践操作") @RequestParam("set_type") Integer setType) {

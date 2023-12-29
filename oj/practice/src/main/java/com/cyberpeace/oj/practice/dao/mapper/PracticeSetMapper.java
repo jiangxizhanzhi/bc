@@ -75,7 +75,7 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	List<PracticeSet> selectInResourceIds(@Param("resourceIds") List<String> resourceIds);
 
-	List<String> getAllSource();
+	List<String> getAllSource(@Param("setType") Integer setType);
 
 	List<String> selectIdsBySource(@Param("source") String source);
 

@@ -2,8 +2,6 @@ package com.cyberpeace.oj.practice.controller.web;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -18,9 +16,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,9 +62,6 @@ public class PracticeSetController {
 
 	@ApiOperation("更多习题集")
 	@GetMapping("/more_set")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
-			logical = Logical.OR)
 	public BaseRsp<List<AdminPracticeSetBo>> getMorePracticeSet(
 			@ApiParam(name = "resource_id", value = "习题集编号") @RequestParam("resource_id") String resourceId,
 			@ApiParam(name = "set_type", value = "习题集类型 0=理论基础 2=实践操作") @RequestParam("set_type") Integer setType) {
@@ -79,8 +71,8 @@ public class PracticeSetController {
 
 	@ApiOperation("获取所有来源")
 	@GetMapping("/source/list")
-	public BaseRsp<List<String>> getAllSource() {
-		return new BaseRsp<>(practiceSetService.getAllSource());
+	public BaseRsp<List<String>> getAllSource(@ApiParam(name = "set_type", value = "习题集类型 0=理论基础 2=实践操作") @RequestParam("set_type") Integer setType) {
+		return new BaseRsp<>(practiceSetService.getAllSource(setType));
 	}
 
 }

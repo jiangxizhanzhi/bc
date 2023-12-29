@@ -171,7 +171,13 @@
     </select>
 
     <select id="getAllSource" resultType="java.lang.String">
-        select source from oj_practice_set GROUP BY source
+        select source from oj_practice_set
+        <where>
+            <if test="setType != null ">
+                practice_type = #{setType}
+            </if>
+        </where>
+        GROUP BY source
     </select>
 
     <select id="selectIdsBySource" resultType="java.lang.String">

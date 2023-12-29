@@ -30,6 +30,7 @@ import com.cyberpeace.oj.practice.controller.req.WebOperationListReq;
 import com.cyberpeace.oj.practice.controller.res.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.PracticeCountService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
@@ -72,6 +73,9 @@ public class PracticeOperationController {
 
 	@Autowired
 	private NoteService noteService;
+
+	@Autowired
+	private PracticeCountService practiceCountService;
 
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
@@ -121,6 +125,8 @@ public class PracticeOperationController {
 	@ApiOperation("实操练习解答")
 	@PostMapping("/submit_answer")
 	public BaseRsp<EvaluateResult> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
+
+		practiceCountService.add(UserInfoContext.getUserContext().getUserId());
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),

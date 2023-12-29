@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.service;
 
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
 import com.cyberpeace.rtks.service.bo.RoleCourseBo;
 
@@ -23,4 +24,13 @@ public interface CourseTrainService {
 	List<RoleCourseBo> getRoleCoursePath(String roleId, String resourceId);
 
 	List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String resource_id);
+
+	/**
+	 * 获取推荐课时
+	 *
+	 * @param resourceId
+	 * @param userId
+	 * @return
+	 */
+	List<CourseLesson> getRecommendLessons(String resourceId, String userId);
 }

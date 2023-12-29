@@ -25,4 +25,18 @@ public interface LessonRecordService {
      */
     List<String> recordBelongCourse(List<String> recordLesson, List<CourseLesson> lessons);
 
+    /**
+     * 获取用户学习记录
+     * @param userId
+     * @return
+     */
+    List<LessonRecord>  selectByUser(String userId);
+
+    /**
+     * 查询用户课程学习记录
+     * @param courseId
+     * @param userId
+     * @return
+     */
+    List<LessonRecord> selectByCourseAndUser(String courseId, String userId);
 }

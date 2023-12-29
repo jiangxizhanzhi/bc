@@ -1,9 +1,18 @@
 package com.cyberpeace.rtks.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
+import com.cyberpeace.oj.course.service.LessonRecordService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
@@ -22,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +51,11 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 
 	@Autowired
 	private CourseService courseService;
+
+	@Autowired
+	private LessonRecordService lessonRecordService;
+	@Autowired
+	private CourseLessonMapper courseLessonMapper;
 
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledge(String userId, String roleId) {
@@ -112,6 +127,29 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		}).collect(Collectors.toList());
 
 		return boList;
+	}
+
+	@Override
+	public List<CourseLesson> getRecommendLessons(String courseId, String userId) {
+		Course course = courseService.getById(courseId);
+		if(Objects.isNull(course)){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		List<LessonRecord> lessonRecords = lessonRecordService.selectByCourseAndUser(courseId,userId);
+		List<String> lessonIds = lessonRecords.stream()
+				.map(LessonRecord::getLessonId)
+				.distinct()
+				.collect(Collectors.toList());
+
+		LambdaQueryWrapper<CourseLesson> queryWrapper = new LambdaQueryWrapper<CourseLesson>()
+				.eq(CourseLesson::getCourseId, courseId)
+				.notIn(CollectionUtils.isNotEmpty(lessonIds),CourseLesson::getResourceId, lessonIds)
+				.eq(CourseLesson::getType, CourseLesson.LessonType.THEORY.getCode())
+				.orderByAsc(BaseTable::getCreateTime)
+				.last("limit 10");
+
+        return courseLessonMapper.selectList(queryWrapper);
 	}
 
 	@Override

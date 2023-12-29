@@ -32,4 +32,7 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 	@ApiModelProperty("任务方案")
 	private MissionScheme missionsScheme;
 
+	@ApiModelProperty("模板id")
+	private String templateId;
+
 }

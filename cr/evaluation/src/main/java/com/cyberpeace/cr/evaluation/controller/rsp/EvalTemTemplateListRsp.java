@@ -26,6 +26,18 @@ public class EvalTemTemplateListRsp implements Serializable {
 	@ApiModelProperty("创建者")
 	private String createUser;
 
+	@ApiModelProperty("试验条件")
+	private String expCondition;
+
+	@ApiModelProperty("试验方法")
+	private String method;
+
+	@ApiModelProperty("阶段数")
+	private Integer stageCount;
+
+	@ApiModelProperty("任务数")
+	private Integer missionCount;
+
 	@ApiModelProperty("更新时间")
 	private String updateTime;
 }

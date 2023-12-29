@@ -21,6 +21,8 @@ import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
 import com.cyberpeace.cr.evaluation.service.impl.bo.BaseTemplateData;
 import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -34,6 +36,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -142,6 +145,16 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		return evalTemTemplateList.stream()
 								  .map(evalTemTemplate -> {
 			EvalTemTemplateListRsp evalTemTemplateListRsp = BeanUtils.copy(evalTemTemplate, EvalTemTemplateListRsp.class);
+			MissionScheme missionScheme = JsonUtil
+											  .toJsonObject(evalTemTemplate.getMissionScheme(), MissionScheme.class);
+			List<StageData> stageList = missionScheme.getStageList();
+			evalTemTemplateListRsp.setStageCount(stageList.size());
+			List<List<TaskBo>> collect = stageList.stream().map(StageData::getTaskList).collect(Collectors.toList());
+			int taskCount = 0;
+			for(List<TaskBo> item :collect){
+				taskCount = taskCount +  item.size();
+			}
+			evalTemTemplateListRsp.setMissionCount(taskCount);
 			evalTemTemplateListRsp.setUpdateTime(TimeUtil.format1(evalTemTemplate.getUpdateTime()));
 			evalTemTemplateListRsp.setNodeCount(nodeCountMap.get(evalTemTemplate.getTopoId()).getNodeCounts());
 			evalTemTemplateListRsp.setCreateUser(idNameMap.get(evalTemTemplate.getCreateUserId()));

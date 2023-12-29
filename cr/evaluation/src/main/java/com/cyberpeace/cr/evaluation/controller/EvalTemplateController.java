@@ -1,7 +1,12 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate;
+import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
 import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -61,6 +66,9 @@ public class EvalTemplateController {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private EvalTemTemplateService evalTemTemplateService;
+
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("")
@@ -69,7 +77,17 @@ public class EvalTemplateController {
 
 		EvalTemplate evalTemplate = new EvalTemplate();
 
-		reqToTemplate(evaTemplateAddReq, evalTemplate);
+		evaTemplateAddReq.setStepConfig(new ArrayList<>());
+		if (null != evaTemplateAddReq.getTemplateId()) {
+			EvalTemTemplate temTemplate = evalTemTemplateService.getById(evaTemplateAddReq.getTemplateId());
+			if (null == temTemplate) {
+				throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
+			}
+			reqToTemplate(evaTemplateAddReq, evalTemplate, temTemplate);
+		} else {
+			reqToTemplate(evaTemplateAddReq, evalTemplate, null);
+		}
+
 		// 设置模板创建者
 		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
@@ -89,7 +107,7 @@ public class EvalTemplateController {
 		// 校验用户身份并获取测评靶场模板实体
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
-		reqToTemplate(evaTemplateModifyReq, evalTemplate);
+		reqToTemplate(evaTemplateModifyReq, evalTemplate, null);
 
 		evalTemplateService.updateById(evalTemplate);
 
@@ -188,7 +206,7 @@ public class EvalTemplateController {
 	}
 
 	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq,
-			EvalTemplate evalTemplate) {
+			EvalTemplate evalTemplate, EvalTemTemplate evalTemTemplate) {
 
 		// 校验测评模板配置
 		validateReq(evaTemplateAddReq);
@@ -197,7 +215,7 @@ public class EvalTemplateController {
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
 		// 设置技战法方案-任务方案
-		evalTemplate.setMissionsScheme(JsonUtil.toJsonString(evaTemplateAddReq.getMissionsScheme()));
+		evalTemplate.setMissionsScheme(null == evalTemTemplate ? JsonUtil.toJsonString(evaTemplateAddReq.getMissionsScheme()) : evalTemTemplate.getMissionScheme());
 
 		// 设置模板用户
 		if (evaTemplateAddReq.getOperationAuthType().equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())) {
@@ -206,8 +224,8 @@ public class EvalTemplateController {
 		}
 
 		// 设置模板拓扑
-		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
-				BusinessCode.RANGE_EVALUATION, evalTemplate.getTopoId()));
+		evalTemplate.setTopoId(null == evalTemTemplate ? crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
+				BusinessCode.RANGE_EVALUATION, evalTemplate.getTopoId()) : evalTemTemplate.getTopoId());
 
 		return evalTemplate;
 	}
@@ -218,9 +236,6 @@ public class EvalTemplateController {
 		EvalTemplateBaseInfoContext evalTemplateBaseInfoContext = BeanUtils.copy(evaTemplateAddReq,
 				EvalTemplateBaseInfoContext.class);
 		evalTemplateService.validateBaseInfo(evalTemplateBaseInfoContext);
-
-		// 校验测评步骤配置
-		evalTemplateService.validateStepConfig(evaTemplateAddReq.getStepConfig());
 
 		CrCommonValidator.validateEnumCode(evaTemplateAddReq.getOperationAuthType(),
 				AuthTable.AuthType.class);

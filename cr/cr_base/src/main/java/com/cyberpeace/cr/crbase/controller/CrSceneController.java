@@ -104,8 +104,11 @@ public class CrSceneController {
 	 */
 	@ApiOperation("操作系统列表, 需要开启场景(团队、红蓝)")
 	@GetMapping("/os/list")
-	@RequiresPermissions(value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+	@RequiresPermissions(
+			value = { MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+					MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
+					MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
+			logical = Logical.OR)
 	public BaseRsp<List<IdNameType>> getOsNames(
 			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);

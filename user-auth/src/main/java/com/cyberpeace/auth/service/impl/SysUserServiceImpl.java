@@ -319,7 +319,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	private boolean isCurrentAdminByDb() {
-		SysUser userInfo = UserInfoContext.getUserContext();
+		SysUser userInfo = UserInfoContext.getNewUserContext();
 		if (null == userInfo) {
 			return false;
 		}

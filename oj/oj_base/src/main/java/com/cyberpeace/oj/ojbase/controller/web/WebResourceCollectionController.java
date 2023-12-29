@@ -29,7 +29,7 @@ public class WebResourceCollectionController {
 
 		CollectionContext collectionContext = BeanUtils.copy(collectionReq,
 				CollectionContext.class);
-		collectionContext.setUserId(UserInfoContext.getOldUserContext().getUserId());
+		collectionContext.setUserId(UserInfoContext.getUserContext().getUserId());
 
 		Boolean result = resourceCollectionService.collectionResource(collectionContext,
 				collectionReq.getIsCollection());

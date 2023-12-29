@@ -66,7 +66,7 @@ public class WebCourseController {
 			@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
 		// 数据组装
 		CourseQueryBo context = BeanUtils.copy(listReq, CourseQueryBo.class);
-		context.setUserId(UserInfoContext.getOldUserContext().getUserId());
+		context.setUserId(UserInfoContext.getUserContext().getUserId());
 		if (StringUtils.isNotBlank(listReq.getDirection())) {
 			List<String> childrenIds = courseDirectionService.getChildrenIds(listReq.getDirection(),
 					CommonConstant.TRUE);
@@ -79,7 +79,7 @@ public class WebCourseController {
 		}
 
 		// 权限数据获取
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		authContext.setIsSuperAdmin(true);
 
@@ -89,7 +89,7 @@ public class WebCourseController {
 				.map(b -> {
 					CourseWebRes webRes = BeanUtils.copy(b, CourseWebRes.class);
 					List<CourseStudyProcessBo> courseStudyProcessBos = courseStatisticsService.statisticByIds(Collections.singletonList(webRes.getResourceId()),
-							UserInfoContext.getOldUserContext().getUserId());
+							UserInfoContext.getUserContext().getUserId());
 					if (CollectionUtils.isNotEmpty(courseStudyProcessBos)) {
 						webRes.setCourseStudyProcess(courseStudyProcessBos.get(0));
 					}
@@ -107,7 +107,7 @@ public class WebCourseController {
 	public BaseRsp<WebCourseRes> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") String resourceId) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		CourseInfoBo course = courseService.selectById(resourceId, authContext);
 

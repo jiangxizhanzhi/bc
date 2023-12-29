@@ -55,7 +55,7 @@ public class UserController {
 	@ApiOperation("获取当前用户信息")
 	@GetMapping("/current/user/info")
 	public BaseRsp<SysUser> getCurrentUserInfo() {
-		SysUser userInfo = UserInfoContext.getUserContext();
+		SysUser userInfo = UserInfoContext.getNewUserContext();
 		return new BaseRsp<>(userInfo);
 	}
 

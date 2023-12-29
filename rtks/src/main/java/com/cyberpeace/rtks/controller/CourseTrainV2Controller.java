@@ -30,7 +30,7 @@ public class CourseTrainV2Controller {
     public BaseRsp<List<CourseLesson>> getRecommend(@ApiParam(value = "查询id") @RequestParam(value = "course_id", required = false) String courseId) {
 
         BaseRsp<List<CourseLesson>> rsp = new BaseRsp<>();
-        List<CourseLesson> courses = courseTrainService.getRecommendLessons(courseId, UserInfoContext.getUserContext().getResourceId());
+        List<CourseLesson> courses = courseTrainService.getRecommendLessons(courseId, UserInfoContext.getNewUserContext().getResourceId());
 
         rsp.setData(courses);
         return rsp;

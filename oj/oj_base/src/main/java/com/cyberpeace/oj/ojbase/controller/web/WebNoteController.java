@@ -55,7 +55,7 @@ public class WebNoteController {
 	@PostMapping("")
 	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
-		noteAddContext.setUserId(UserInfoContext.getOldUserContext().getUserId());
+		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
 		//如果笔记内容为空改为删除逻辑
 		if (StringUtils.isBlank(noteReq.getContent())) {
 			noteService.deleteByBusiness(noteAddContext.getBusinessId(), noteReq.getNoteType(),
@@ -90,7 +90,7 @@ public class WebNoteController {
 		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
 				.noteType(getNoteReq.getNoteType()).businessType(getNoteReq.getResourceType())
 				.businessId(getNoteReq.getResourceId())
-				.userId(UserInfoContext.getOldUserContext().getUserId()).build();
+				.userId(UserInfoContext.getUserContext().getUserId()).build();
 		if (StringUtils.isNotBlank(getNoteReq.getUserId())) {
 			uniqueContext.setUserId(getNoteReq.getUserId());
 		}

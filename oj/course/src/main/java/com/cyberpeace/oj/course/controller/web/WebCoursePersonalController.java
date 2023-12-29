@@ -30,7 +30,7 @@ public class WebCoursePersonalController {
 	public BaseRsp<ListRsp<PersonalStatsDetail4CourseBo>> personalStatsDetail4Course(
 			PageReqBase pageReq) {
 		return new BaseRsp<>(
-				learnStatsService.getPersonalStatsDetail4Course(pageReq.toPageParam(), UserInfoContext.getOldUserContext().getUserId()));
+				learnStatsService.getPersonalStatsDetail4Course(pageReq.toPageParam(), UserInfoContext.getUserContext().getUserId()));
 	}
 
 }

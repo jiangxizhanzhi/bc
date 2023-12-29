@@ -48,8 +48,8 @@ public class RtksEvaluationController {
 	@ApiOperation("岗位知识点学习进度统计")
 	@GetMapping("/role/knowledge/study_record")
 	public BaseRsp<RoleStudyBo> getRoleStudyRecord() {
-		String userId = UserInfoContext.getOldUserContext().getUserId();
-		String existRoleId = UserInfoContext.getOldUserContext().getRoleId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<RoleStudyBo> rsp = new BaseRsp<>();
 		RoleStudyBo studyBo = rtksStatisticService.roleKnowledgeStudyRecord(
 				userId);
@@ -61,8 +61,8 @@ public class RtksEvaluationController {
 	@GetMapping("/role/knowledge/radar")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<List<RtksRadarBo>> getRoleKnowledgeMatch() {
-		String userId = UserInfoContext.getOldUserContext().getUserId();
-		String existRoleId = UserInfoContext.getOldUserContext().getRoleId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<List<RtksRadarBo>> baseRsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
 			List<RtksRadarBo> radarBos = rtksStatisticService.calculateRadar(existRoleId, userId);
@@ -75,8 +75,8 @@ public class RtksEvaluationController {
 	@GetMapping("/role/knowledge/percent")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<PercentRes> getKnowledgeProcessByRole() {
-		String userId = UserInfoContext.getOldUserContext().getUserId();
-		String existRoleId = UserInfoContext.getOldUserContext().getRoleId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 
 		BaseRsp<PercentRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
@@ -111,10 +111,10 @@ public class RtksEvaluationController {
 	@GetMapping("/role/match")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<String> getMatchByRole() {
-		String userId = UserInfoContext.getOldUserContext().getUserId();
-		String name = UserInfoContext.getOldUserContext().getName();
-		String existRoleId = UserInfoContext.getOldUserContext().getRoleId();
-		String roleName = UserInfoContext.getOldUserContext().getRoleName();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String name = UserInfoContext.getUserContext().getName();
+		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		String roleName = UserInfoContext.getUserContext().getRoleName();
 		BaseRsp<String> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
 			// 计算并记录匹配度
@@ -137,8 +137,8 @@ public class RtksEvaluationController {
 		if (!startValidate || !endValidate) {
 			throw new BusinessException(RtksBusinessErrorCode.TIME_FORMAT_ERROR);
 		}
-		String userId = UserInfoContext.getOldUserContext().getUserId();
-		String roleId = UserInfoContext.getOldUserContext().getRoleId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<StudyRecordBo> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(roleId)) {
 			StudyRecordBo studyRecordBo = rtksStatisticService.calculateStudyRecord(userId, roleId,
@@ -160,8 +160,8 @@ public class RtksEvaluationController {
 		if (!TimeUtil.isValidDate(startTime) || !TimeUtil.isValidDate(endTime)) {
 			throw new BusinessException(RtksBusinessErrorCode.TIME_FORMAT_ERROR);
 		}
-		String userId = UserInfoContext.getOldUserContext().getUserId();
-		String roleId = UserInfoContext.getOldUserContext().getRoleId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String roleId = UserInfoContext.getUserContext().getRoleId();
 		if (StringUtils.isBlank(roleId)) {
 			return new BaseRsp<>();
 		}

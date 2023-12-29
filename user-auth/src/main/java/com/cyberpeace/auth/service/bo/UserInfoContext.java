@@ -11,7 +11,7 @@ public class UserInfoContext {
 
 	private UserInfoContext() {}
 
-	public static SysUser getUserContext() {
+	public static SysUser getNewUserContext() {
 		if (userContext.get() == null) {
 			SysUserService sysUserService = SpringContextUtil.getBeanByClass(SysUserService.class);
 			SysUser userInfo = sysUserService.getCurrent();
@@ -28,8 +28,8 @@ public class UserInfoContext {
 		userContext.remove();
 	}
 
-	public static UserInfo getOldUserContext() {
-		SysUser sysUser = getUserContext();
+	public static UserInfo getUserContext() {
+		SysUser sysUser = getNewUserContext();
 		UserInfo userInfo = new UserInfo();
 		userInfo.setUserId(sysUser.getResourceId());
 		userInfo.setName(sysUser.getName());

@@ -4,12 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -474,8 +474,6 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
     public void createMpLog(String practiceId, LogContent logContent) {
         PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
         String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
-        remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
-                OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		}
 
 		// 查询有权访问课程
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getOldUserContext(),
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		List<String> webCourses = courseMapper.selectByAuth(authContext);
 

@@ -101,7 +101,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
         }
         //创建场景
-        SceneEntity scene = createScene(topologyId, instanceId, UserInfoContext.getUserContext().getResourceId());
+        SceneEntity scene = createScene(topologyId, instanceId, UserInfoContext.getNewUserContext().getResourceId());
         //提交创建场景任务
         executor.submit(new SceneExecutor(sceneJob, topology, scene));
         log.info("submit create scene mission, scene ：{}", scene);
@@ -134,7 +134,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (sceneCount >= MAX_SCENE_EVENT){
             throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW);
         }
-        SysUser userInfo = UserInfoContext.getUserContext();
+        SysUser userInfo = UserInfoContext.getNewUserContext();
         if (Objects.isNull(userInfo)){
             throw new BusinessException(ErrorCode.INVALID_SESSION);
         }

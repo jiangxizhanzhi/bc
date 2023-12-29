@@ -48,7 +48,6 @@ import java.util.List;
 @Api(tags = "oj-前台理论基础练习相关")
 @RestController
 @RequestMapping("/oj/practice/theory")
-@RequiresAuthentication
 @Slf4j
 public class PracticeTheoryController {
 
@@ -69,7 +68,6 @@ public class PracticeTheoryController {
 
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
 				UserInfoContext.getUserContext().getUserId(), Boolean.FALSE);
@@ -79,7 +77,6 @@ public class PracticeTheoryController {
 
 	@GetMapping("/list")
 	@ApiOperation("分页查询理论基础习题")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<ListRsp<PracticeTheoryListBo>> getList(WebTheoryListReq listReq) {
 
 		// 设置默认排序字段
@@ -107,7 +104,6 @@ public class PracticeTheoryController {
 
 	@GetMapping("/listTop5")
 	@ApiOperation("查询理论基础习题top5")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<PracticeTheoryListBo>> getListTop5(WebTheoryListReq listReq) {
 
 		// 设置默认排序字段
@@ -132,7 +128,7 @@ public class PracticeTheoryController {
 
 		if (result == null) {
 			return new BaseRsp<>(new ArrayList<>());
-		} else if ( result.getRecords().size() > 5) {
+		} else if (result.getRecords().size() > 5) {
 			return new BaseRsp<>(result.getRecords().subList(0, 5));
 		}
 		return new BaseRsp<>(result.getRecords());
@@ -140,7 +136,6 @@ public class PracticeTheoryController {
 
 	@ApiOperation("理论基础练习题提交")
 	@PostMapping("/submit_answer")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<EvaluateResultTheory>
 			submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
@@ -165,7 +160,6 @@ public class PracticeTheoryController {
 
 	@ApiOperation("获取所有理论习题编号列表")
 	@GetMapping("/list/ids")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<String>>
 			getPracticeListId(@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(
 					value = "practice_set_id", required = false) String practiceSetId) {
@@ -179,7 +173,6 @@ public class PracticeTheoryController {
 
 	@ApiOperation("获取进度统计")
 	@GetMapping("/progress")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<ProgressStatisticsRes> getProgressStatistics(
 			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(
 					value = "practice_set_id", required = false) String practiceSetId) {
@@ -188,14 +181,12 @@ public class PracticeTheoryController {
 
 	@ApiOperation("获取进度统计-按方向分类")
 	@GetMapping("/progress/category")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<ProgressPracticeRes>> getProgressCategoryStatistics() {
 		return new BaseRsp<>(practiceTheoryService.getProgressCategoryStatistics());
 	}
 
 	@ApiOperation("统计错题、收藏、笔记数量")
 	@GetMapping("/statistics")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<TheoryStatisticsRes> getTheoryStatistics() {
 		TheoryStatisticsRes theoryStatisticsRes = new TheoryStatisticsRes();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -221,7 +212,6 @@ public class PracticeTheoryController {
 
 	@ApiOperation("最近5条练习记录")
 	@GetMapping("/record")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<PracticeTheoryListBo>> getTheoryRecord() {
 		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService
 				.getPracticeRecord(new WebTheoryRecordReq());
@@ -233,7 +223,6 @@ public class PracticeTheoryController {
 
 	@ApiOperation("练习记录")
 	@GetMapping("/record_page")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<ListRsp<PracticeTheoryListBo>>
 			getTheoryRecordPage(WebTheoryRecordReq webTheoryRecordReq) {
 		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService
@@ -245,7 +234,6 @@ public class PracticeTheoryController {
 
 	@ApiOperation("获取练习记录练习id列表")
 	@GetMapping("/record_practice_ids")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<String>> getRecordIds() {
 		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService
 				.getPracticeRecord(new WebTheoryRecordReq());
@@ -255,8 +243,8 @@ public class PracticeTheoryController {
 
 	@ApiOperation("最近答题")
 	@GetMapping("/solved/top5")
-	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<List<SolvedTop5>> getSolvedTop5(@ApiParam(name = "resource_id", value = "习题编号") @RequestParam("resource_id") String resourceId) {
+	public BaseRsp<List<SolvedTop5>> getSolvedTop5(@ApiParam(name = "resource_id",
+			value = "习题编号") @RequestParam("resource_id") String resourceId) {
 		return new BaseRsp<>(practiceTheoryService.getSolvedTop5(resourceId));
 	}
 

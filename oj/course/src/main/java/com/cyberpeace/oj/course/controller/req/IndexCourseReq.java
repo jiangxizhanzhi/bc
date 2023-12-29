@@ -17,4 +17,7 @@ public class IndexCourseReq {
 
     @ApiModelProperty("完成百分比")
     private Integer completePercent;
+
+    @ApiModelProperty("描述")
+    private String desc;
 }

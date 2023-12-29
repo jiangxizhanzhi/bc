@@ -1,23 +1,5 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -40,12 +22,12 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
@@ -53,8 +35,22 @@ import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -93,13 +89,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
 	@Override
-	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
-
-		// 无权限则无数据返回
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (!authIds.contains(resourceId)) {
-			return null;
-		}
+	public AdminPracticeSetBo selectById(String resourceId) {
 
 		PracticeSet practiceSet = practiceSetMapper.selectById(resourceId);
 		if (null == practiceSet) {
@@ -111,7 +101,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		Map<String, String> userNameMap = remoteUserService
 				.getIdNameMap(Lists.newArrayList(practiceSet.getCreateUserId()));
 
-		return entityToSetBo(practiceSet, authContext, userNameMap);
+		return entityToSetBo(practiceSet, userNameMap);
 	}
 
 	@Override
@@ -149,8 +139,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param practiceSet
 	 * @return
 	 */
-	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext,
-			Map<String, String> userNameMap) {
+	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, Map<String, String> userNameMap) {
 
 		AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
 		setBo.setLogo(utilService.handlerFileUrl(practiceSet.getLogo()));
@@ -197,7 +186,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
 				PracticeSet::getCreateUserId);
 
-		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, null, userNameMap));
+		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, userNameMap));
 	}
 
 	@Override
@@ -461,8 +450,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
-	public List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType) {
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+	public List<AdminPracticeSetBo> getMorePracticeSet(String practiceSetId, Integer setType) {
+		List<String> authIds = practiceSetMapper.selectByAuthContext(null);
 		authIds.remove(practiceSetId);
 		if (authIds.size() == 0) {
 			return new ArrayList<>();
@@ -474,7 +463,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				PracticeSet::getCreateUserId);
 
 		return StreamApiUtils.map(practiceSets,
-				practiceSet -> entityToSetBo(practiceSet, authContext, userNameMap));
+				practiceSet -> entityToSetBo(practiceSet, userNameMap));
 	}
 
 	@Override
@@ -493,8 +482,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
-	public List<String> getAllSource() {
-		return practiceSetMapper.getAllSource();
+	public List<String> getAllSource(Integer setType) {
+		return practiceSetMapper.getAllSource(setType);
 	}
 
 	private String doExportSet(String destPath, PracticeSet practiceSet) {

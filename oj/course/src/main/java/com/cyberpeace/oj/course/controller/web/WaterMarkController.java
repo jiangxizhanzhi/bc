@@ -105,6 +105,7 @@ public class WaterMarkController {
 						JSON.toJSONString(courseLesson.getHandoutUrl()));
 			}
 		}
+		progress = 100;
 		return new BaseRsp<>(true);
 	}
 

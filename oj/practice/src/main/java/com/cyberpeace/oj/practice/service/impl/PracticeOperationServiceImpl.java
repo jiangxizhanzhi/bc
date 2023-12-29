@@ -1361,7 +1361,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public ProgressCountRes getProgressCount(String practiceSetId) {
 
-		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getOldUserContext().getUserId());
+		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getOldUserContext().getUserId(), practiceSetId);
 		Map<Integer, OperationSolved> operationSolvedMap = operationSolvedList.stream().collect(Collectors.toMap(OperationSolved::getCategory, operationSolved -> operationSolved));
 		if (operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()) == null) {
 			operationSolvedMap.put(PracticeOperation.Category.MAINTENANCE.getCode()

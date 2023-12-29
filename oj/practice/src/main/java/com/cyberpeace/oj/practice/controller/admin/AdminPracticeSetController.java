@@ -144,10 +144,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	public BaseRsp<AdminPracticeSetBo> get(@ApiParam(name = "resource_id",
 			value = "习题集编号") @RequestParam("resource_id") String resourceId) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				false);
-
-		AdminPracticeSetBo setBo = practiceSetService.selectById(resourceId, authContext);
+		AdminPracticeSetBo setBo = practiceSetService.selectById(resourceId);
 		return new BaseRsp<>(setBo);
 	}
 

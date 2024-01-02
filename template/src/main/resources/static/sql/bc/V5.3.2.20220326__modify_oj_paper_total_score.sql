@@ -1,1 +1,0 @@
-alter table oj_paper modify column  `total_score` double(11,1);

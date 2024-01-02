@@ -21,7 +21,6 @@ import java.util.List;
 @Api(tags = "oj-前台课程分类相关api")
 @RestController
 @RequestMapping("/oj/course/direction")
-@RequiresAuthentication
 public class CourseCategoryController {
 
 	@Autowired
@@ -29,7 +28,6 @@ public class CourseCategoryController {
 
 	@GetMapping("")
 	@ApiOperation("课程分类")
-	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp<List<CourseCategoryBo>>
 			listDirection(@RequestParam(value = "children", required = false) Boolean children) {
 		List<CourseCategoryBo> categories = courseCategoryService

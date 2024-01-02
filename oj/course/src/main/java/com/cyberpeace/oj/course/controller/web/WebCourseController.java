@@ -47,7 +47,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "oj-前台课程相关api")
 @RestController
 @RequestMapping("/oj/course")
-//@RequiresAuthentication
+
 public class WebCourseController {
 
 	@Autowired
@@ -103,7 +103,7 @@ public class WebCourseController {
 
 	@GetMapping("")
 	@ApiOperation("单条查询")
-	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+//	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<WebCourseRes> getCourse(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") String resourceId) {
 

@@ -40,6 +40,9 @@ public class PersonalStatsDetail4CourseBo implements Serializable {
     @ApiModelProperty("正在学习课时")
     private String lessonId;
 
+    @ApiModelProperty("正在学习课时名称")
+    private String lessonName;
+
     @ApiModelProperty("最近一次学习时间")
     private String createTime;
 

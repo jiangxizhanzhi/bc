@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "oj-前台课程目录相关api")
 @RestController
 @RequestMapping("/oj/lessonconfig")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class WebLessonConfigController {
 
 	@Autowired
@@ -33,7 +33,7 @@ public class WebLessonConfigController {
 
 	@GetMapping("")
 	@ApiOperation("课程目录查询")
-	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
+//	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp<LessonConfigBo> getLessonConfig(@ApiParam(name = "course_id",
 			value = "课程编号") @RequestParam("course_id") String courseId) {
 

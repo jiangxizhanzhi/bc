@@ -9,6 +9,7 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -26,6 +27,7 @@ import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
+import com.cyberpeace.oj.practice.entity.PracticeBase;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
@@ -777,6 +779,25 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
     @Override
     public List<ProgressPracticeRes> getProgressCategoryStatistics() {
         return practiceTheoryMapper.getProgressCategoryStatistics(UserInfoContext.getUserContext().getUserId());
+    }
+
+    @Override
+    public List<PracticeTheoryListBo> getRecommend(String categoryId, String userId) {
+
+        List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
+                userId, PracticeCategory.PracticeType.THEORY.getCode(),
+                null, IS_COLLECTED);
+
+        List<PracticeTheory> practiceTheories = practiceTheoryMapper.selectList(new LambdaQueryWrapper<PracticeTheory>()
+                .eq(PracticeBase::getCategoryId,categoryId)
+                .notIn(CollectionUtils.isNotEmpty(solvedIds),PracticeBase::getResourceId,solvedIds)
+                .orderByDesc(BaseTable::getUpdateTime).orderByAsc(BaseTable::getId)
+                .last("limit 10")
+        );
+
+        return practiceTheories.stream()
+                .map(practiceTheory -> BeanUtils.copy(practiceTheory, PracticeTheoryListBo.class))
+                .collect(Collectors.toList());
     }
 
     private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {

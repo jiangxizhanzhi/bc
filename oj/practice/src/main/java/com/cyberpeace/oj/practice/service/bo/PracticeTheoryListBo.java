@@ -48,4 +48,7 @@ public class PracticeTheoryListBo implements Serializable {
 	@ApiModelProperty("题目类型 0=单选 1=")
 	private Integer TheoryType;
 
+	@ApiModelProperty("是否是真题")
+	private Boolean isTrue;
+
 }

@@ -140,4 +140,12 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	List<SolvedTop5> getSolvedTop5(String resourceId);
 
 	List<ProgressPracticeRes> getProgressCategoryStatistics();
+
+	/**
+	 * 获取课程方向未做过的练习题
+	 * @param categoryId
+	 * @param userId
+	 * @return
+	 */
+	List<PracticeTheoryListBo> getRecommend(String categoryId, String userId);
 }

@@ -3,11 +3,13 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
+//import com.cyberpeace.common.model.user.UserInfoContext;
+
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
@@ -249,6 +251,18 @@ public class PracticeTheoryController {
 	public BaseRsp<List<SolvedTop5>> getSolvedTop5(@ApiParam(name = "resource_id",
 			value = "习题编号") @RequestParam("resource_id") String resourceId) {
 		return new BaseRsp<>(practiceTheoryService.getSolvedTop5(resourceId));
+	}
+
+	@GetMapping("/recommend")
+	@ApiOperation("课程详情-推荐练习")
+	public BaseRsp<List<PracticeTheoryListBo>> getRecommend(@ApiParam(name = "category_id",
+			value = "课程方向") @RequestParam("category_id") String category_id) {
+
+
+		List<PracticeTheoryListBo> result = practiceTheoryService.getRecommend( category_id,
+				UserInfoContext.getUserContext().getUserId());
+
+		return new BaseRsp<>(result);
 	}
 
 }

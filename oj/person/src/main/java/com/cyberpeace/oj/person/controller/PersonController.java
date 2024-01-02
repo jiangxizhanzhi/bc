@@ -14,6 +14,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.controller.req.PageMistakeReq;
 import com.cyberpeace.oj.person.controller.req.PageNoteReq;
+import com.cyberpeace.oj.person.controller.res.StudyCalendarRes;
 import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
@@ -38,6 +39,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -125,20 +127,18 @@ public class PersonController {
 		return new BaseRsp<>(PageUtil.getListResult(collections));
 	}
 
-	@ApiOperation("当前用户学习课程和练习记录")
-	@GetMapping("/study_records")
-	public BaseRsp<StudyRecord> courseAndPracticeRecords() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 权限数据获取
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				true);
-		return personCenterService.studyRecords(userId, authContext);
-	}
 
-	@ApiOperation("当前用户学习课程和练习记录")
+	@ApiOperation("学习统计")
 	@GetMapping("/study_statics")
 	public BaseRsp<StudyStaticsRes> studyStatics() {
 		return new BaseRsp<>(personCenterService.studyStatics());
+	}
+
+	@ApiOperation("日程表")
+	@GetMapping("/study_calendar")
+	public BaseRsp<List<StudyCalendarRes>> studyCalendar(@RequestParam(value = "startTime") String  startTime,
+												   @RequestParam(value = "endTime") String  endTime) {
+		return new BaseRsp<>(personCenterService.studyCalendar(startTime, endTime));
 	}
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")

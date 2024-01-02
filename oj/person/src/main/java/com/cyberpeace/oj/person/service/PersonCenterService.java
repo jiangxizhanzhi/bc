@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
 
@@ -70,4 +71,6 @@ public interface PersonCenterService {
 	List<CollectionPracticeBo> selectCollectionPractice(String userId, Integer practiceType);
 
 	List<String> selectCollectionResourceIds(String userId, AuthContext authContext);
+
+	StudyStaticsRes studyStatics();
 }

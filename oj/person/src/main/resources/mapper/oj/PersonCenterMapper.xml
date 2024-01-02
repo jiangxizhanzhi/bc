@@ -380,6 +380,13 @@
             where type = #{lessonType}
         </if>
     </select>
+    <select id="selectLessonAllCount" resultType="com.cyberpeace.oj.person.controller.res.StudyStaticsRes">
+        select count(distinct oj_course_lesson.resource_id) as lessonAllCount,
+               SUM(case when oj_course_lesson.type = 0 then 1 END)as theoryLessonCount ,
+               SUM(case when oj_course_lesson.type = 1 then 1 END ) as expLessonCount
+    from oj_course_lesson
+    join oj_course on oj_course.resource_id = oj_course_lesson.course_id
+    </select>
 
 
 </mapper>

@@ -2,11 +2,11 @@ package com.cyberpeace.oj.person.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.*;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -14,6 +14,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.controller.req.PageMistakeReq;
 import com.cyberpeace.oj.person.controller.req.PageNoteReq;
+import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
@@ -126,13 +127,18 @@ public class PersonController {
 
 	@ApiOperation("当前用户学习课程和练习记录")
 	@GetMapping("/study_records")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<StudyRecord> courseAndPracticeRecords() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		return personCenterService.studyRecords(userId, authContext);
+	}
+
+	@ApiOperation("当前用户学习课程和练习记录")
+	@GetMapping("/study_statics")
+	public BaseRsp<StudyStaticsRes> studyStatics() {
+		return new BaseRsp<>(personCenterService.studyStatics());
 	}
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")
@@ -147,9 +153,6 @@ public class PersonController {
 		Date startTime = DateUtils.addDays(endTime, -CommonConstant.THIRTY);
 		if (StringUtils.isEmpty(userId)){
 			userId = UserInfoContext.getUserContext().getUserId();
-		} else {
-			UserInfo userInfo = remoteUserService.getById(userId);
-			UserInfoContext.setUserContext(userInfo);
 		}
 		if (null == isWeb) {
 			isWeb = true;

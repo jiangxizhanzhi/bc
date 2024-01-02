@@ -3,10 +3,10 @@ package com.cyberpeace.oj.person.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
@@ -22,6 +22,7 @@ import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
+import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.dao.mapper.PersonCenterMapper;
 import com.cyberpeace.oj.person.service.PersonCenterService;
@@ -298,6 +299,48 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
         }
         return personCenterMapper.selectResourceIdByUser(userId, null, resourceIds);
+    }
+
+    @Override
+    public StudyStaticsRes studyStatics() {
+        StudyStaticsRes res = new StudyStaticsRes();
+        List<String> lessonIds = new ArrayList<>();
+        String userId = UserInfoContext.getUserContext().getUserId();
+
+        // 获取课程学习进度
+        StudyRecord studyRecord = personCenterMapper.selectRecordByUser(userId, lessonIds);
+        res.setLessonCount(studyRecord.getExpCount()+studyRecord.getTheoryCount());
+        res.setTheoryLessonCount(studyRecord.getExpCount());
+        res.setExpLessonCount(studyRecord.getTheoryCount());
+        StudyStaticsRes lessonCount = personCenterMapper.selectLessonAllCount();
+
+
+
+
+
+
+        // 获取用户完成课后练习的排名、得分、数量
+        List<String> users = personCenterMapper.selectDistinctUser();
+        if (users.contains(userId)) {
+            StudyRecord practiceRecord = personCenterMapper.selectPracticeByUser(userId, lessonIds);
+            if (null != practiceRecord) {
+                int practiceCount = Integer.parseInt(practiceRecord.getRecord());
+                studyRecord.setPracticeFinishCount(practiceCount);
+                double score = practiceRecord.getScore();
+                Integer practiceRanking = practiceRecord.getPracticeRanking();
+                studyRecord.setPracticeRanking(practiceRanking);
+                studyRecord.setScore(score);
+            }
+        }
+        // 获取当前用户解出的实操题和理论题个数
+        StudyRecord practiceByUser = personCenterMapper.selectSlovedPracticeByUser(userId);
+        Integer operationPracticeCount = practiceByUser.getOperationPracticeCount();
+        Integer theoryPracticeCount = practiceByUser.getTheoryPracticeCount();
+        studyRecord.setOperationPracticeCount(null == operationPracticeCount ? 0 : operationPracticeCount);
+        studyRecord.setTheoryPracticeCount(null == theoryPracticeCount ? 0 : theoryPracticeCount);
+        BaseRsp<StudyRecord> rsp = new BaseRsp<>();
+        rsp.setData(studyRecord);
+        return res;
     }
 
     /**

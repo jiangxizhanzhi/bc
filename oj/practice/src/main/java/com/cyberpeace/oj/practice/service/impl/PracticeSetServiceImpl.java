@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
@@ -51,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -61,6 +63,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private SysUserService sysUserService;
 
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
@@ -181,10 +186,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		listQuery.setPattern(pattern);
 
 		IPage<PracticeSet> iPage = practiceSetMapper.pageByNameAndType(page, listQuery, true);
-
+		List<String> userIdList = iPage.getRecords().stream().map(PracticeSet::getCreateUserId).collect(Collectors.toList());
 		// 获取习题集创建人ID、名称映射
-		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
-				PracticeSet::getCreateUserId);
+		Map<String, String> userNameMap = sysUserService.getUserNameMap(userIdList);
 
 		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, userNameMap));
 	}

@@ -1,10 +1,12 @@
 package com.cyberpeace.auth.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyberpeace.auth.controller.req.UserImportReq;
 import com.cyberpeace.auth.controller.req.UserReq;
@@ -159,6 +161,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		currentUserNum(users.size());
 		saveBatch(users);
 		return new BaseRsp<>();
+	}
+
+	@Override
+	public Map<String, String> getUserNameMap(List<String> userIdList) {
+		if (CollectionUtils.isEmpty(userIdList)){
+			return new HashMap<>();
+		}
+		QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().in(SysUser::getResourceId,userIdList);
+		List<SysUser> list = this.list(queryWrapper);
+		return list.stream().collect(Collectors.toMap(SysUser::getResourceId, SysUser::getName));
 	}
 
 	@Override

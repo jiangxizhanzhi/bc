@@ -23,6 +23,7 @@ public class PracticeSet extends AuthTable {
 	private String name;
 
 	/** 简介*/
+	@TableField("`desc`")
 	private String desc;
 
 	/** 封面*/

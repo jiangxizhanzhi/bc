@@ -33,7 +33,7 @@ import java.util.List;
 @Api(tags = "oj-前台课程表相关")
 @RestController
 @RequestMapping("/oj/course/class/room")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class WebClassroomController {
 
 	@Autowired
@@ -44,8 +44,8 @@ public class WebClassroomController {
 
 	@ApiOperation("前台课程表信息查询")
 	@GetMapping("/list")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-			MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
+//	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+//			MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
 	public BaseRsp<List<TimeScheduleBo>> listCourseSchedule(
 			@ApiParam(name = "month", value = "月份 格式xxxx-xx") @RequestParam("month") String month) {
 
@@ -75,8 +75,8 @@ public class WebClassroomController {
 
 	@ApiOperation("课堂签到")
 	@PostMapping("/sign_in")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
-			logical = Logical.OR)
+//	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
+//			logical = Logical.OR)
 	public BaseRsp<Boolean> classroomSignIn(@RequestBody @Validated ClassroomSignInReq signInReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -89,8 +89,8 @@ public class WebClassroomController {
 
 	@ApiOperation("请求远程协助")
 	@PatchMapping("/need_help")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
-			logical = Logical.OR)
+//	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
+//			logical = Logical.OR)
 	public BaseRsp<Boolean> needHelp(@RequestBody @Validated RemoteHelpReq req) {
 
 		classroomSignService.needHelp(req.getLessonId(), req.getNodeId(), req.getRoomId());
@@ -101,8 +101,8 @@ public class WebClassroomController {
 
 	@ApiOperation("获取远程协助状态")
 	@GetMapping("/help_status")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
-			logical = Logical.OR)
+//	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
+//			logical = Logical.OR)
 	public BaseRsp<HelpStatusBo> getHelpStatus(RemoteHelpReq req) {
 		HelpStatusBo helpStatus = classroomSignService.getHelpStatus(req.getLessonId(),
 				req.getNodeId(), req.getRoomId());
@@ -111,8 +111,8 @@ public class WebClassroomController {
 
 	@ApiOperation("获取课堂聊天用户信息")
 	@GetMapping("/chat/users")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
-			logical = Logical.OR)
+//	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
+//			logical = Logical.OR)
 	public BaseRsp<DashboardInfo> chatUsers(@RequestParam("room_id") String roomId) {
 
 		DashboardInfo dashboardInfo = classroomService.getChatUsers(roomId,
@@ -122,8 +122,8 @@ public class WebClassroomController {
 
 	@ApiOperation("获取聊天组用户信息")
 	@GetMapping("/chat/members_info")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-			MenuConstant.CMS_CLASS_ROOM }, logical = Logical.OR)
+//	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+//			MenuConstant.CMS_CLASS_ROOM }, logical = Logical.OR)
 	public BaseRsp<List<DashboardUser>> getGroupUsers(@RequestParam("room_id") String roomId,
 			@Param("group_id") String groupId) {
 		List<DashboardUser> dashboardUsers = classroomService.getChatGroupUsers(roomId, groupId);

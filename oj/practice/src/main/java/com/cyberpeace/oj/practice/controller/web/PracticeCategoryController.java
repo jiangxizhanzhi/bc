@@ -34,7 +34,6 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "oj-前台练习分类相关api")
 @RestController
 @RequestMapping("/oj/practice/category")
-@RequiresAuthentication
 public class PracticeCategoryController {
 
 	@Autowired

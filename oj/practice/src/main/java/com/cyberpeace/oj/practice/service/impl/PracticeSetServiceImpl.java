@@ -103,8 +103,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 		
 		// 获取习题集创建人ID、名称映射
-		Map<String, String> userNameMap = remoteUserService
-				.getIdNameMap(Lists.newArrayList(practiceSet.getCreateUserId()));
+		Map<String, String> userNameMap = sysUserService
+				.getUserNameMap(Lists.newArrayList(practiceSet.getCreateUserId()));
 
 		return entityToSetBo(practiceSet, userNameMap);
 	}

@@ -22,6 +22,9 @@ public class PracticeSet extends AuthTable {
 	/** 名称*/
 	private String name;
 
+	/** 简介*/
+	private String desc;
+
 	/** 封面*/
 	private String logo;
 

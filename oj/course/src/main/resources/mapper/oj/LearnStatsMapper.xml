@@ -100,6 +100,7 @@
                count(T3.id) as learned_exp_report,
                count(T4.id) as learned_after_class_practice,
                T5.lesson_id,
+               T2.name AS lesson_name,
                T5.learned_type,
                T5.room_id,
                T5.update_time as create_time

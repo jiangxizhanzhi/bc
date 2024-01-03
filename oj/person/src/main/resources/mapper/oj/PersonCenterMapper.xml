@@ -157,11 +157,11 @@
     </select>
 
     <select id="selectOperationPracticeByAuth" resultType="java.lang.String">
-        select resource_id from oj_practice_operation where
+        select resource_id from oj_practice_operation
     </select>
 
     <select id="selectTheoryPracticeByAuth" resultType="java.lang.String">
-        select resource_id from oj_practice_theory where
+        select resource_id from oj_practice_theory
     </select>
 
     <select id="selectPublicCourse" resultType="java.lang.String">
@@ -399,10 +399,10 @@
             resultType="com.cyberpeace.oj.person.controller.res.StudyHistoryRes">
         select CASE
                    WHEN t.content IS NOT NULL AND t.content  != '' THEN t.content
-                   ELSE s.title
+                   ELSE p.title
                    END AS `name`,
                2 as `type`,
-               DATE_FORMAT(create_time, '%Y-%m-%d') as `date`
+               DATE_FORMAT(s.create_time, '%Y-%m-%d') as `date`
         from oj_practice_solved s
                  left join oj_practice_theory t on t.resource_id = s.practice_id
                  left join oj_practice_operation p on p.resource_id = s.practice_id

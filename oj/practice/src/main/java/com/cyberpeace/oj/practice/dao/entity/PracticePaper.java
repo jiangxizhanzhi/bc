@@ -35,4 +35,9 @@ public class PracticePaper extends BaseTable {
 	private String userId;
 
 	private Integer paperType;
+
+	private String name;
+
+	//是否真题
+	private String isTrue;
 }

@@ -5,6 +5,9 @@ import lombok.Data;
 
 @Data
 public class IndexCourseReq {
+
+    String resourceId;
+
     @ApiModelProperty("课程名称")
     private String courseName;
     @ApiModelProperty("覆盖度")

@@ -11,7 +11,7 @@ import lombok.Data;
  * @desc :
  **/
 @Data
-@TableName("cr_scene_network")
+@TableName("cr_network")
 public class NetworkEntity extends BaseTable {
 
     @TableField("resource_id")
@@ -56,4 +56,12 @@ public class NetworkEntity extends BaseTable {
      * vlan
      */
     private Integer vlan;
+
+    /**
+     * 场景id
+     */
+    private String sid;
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }

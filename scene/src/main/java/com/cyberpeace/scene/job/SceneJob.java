@@ -2,17 +2,21 @@ package com.cyberpeace.scene.job;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
+import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.service.bo.Net;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
+import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
 import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
+import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 
@@ -89,6 +93,7 @@ public class SceneJob {
         log.info("start scene : {}", scene.getSceneName());
         //获取拓扑元素
         Map<String, TopologyElement> topologyMap = topologyService.getTopologyElementMap(topology);
+        SceneMapper sceneMapper = SpringContextUtil.getBeanByClass(SceneMapper.class);
         if(Objects.nonNull(topologyMap)){
             try{
                 TopologyElement networkElement = new TopologyElement();
@@ -97,12 +102,19 @@ public class SceneJob {
                     networkElement = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_INTERNET.getName());
                 }
                 //创建网络
-                NetworkEntity network = createNetwork(networkElement);
+                NetworkEntity network = createNetwork(networkElement, scene.getResourceId());
                 List<Net> nets = Lists.newArrayList();
                 nets.add(new Net(network.getUuid()));
                 // 创建虚拟机
                 if (topologyMap.containsKey(ImageTypeEnum.ELEMENT_TYPE_HOST.getName())){
                     TopologyElement hostElement = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_HOST.getName());
+                    //创建虚拟机
+                    CreateInstanceRes res = hostService.create(new CreateInstanceReq(hostElement.getName(), null, nets));
+                    NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getInstanceName(), null,
+                            null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(),
+                            SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId());
+                    //保存节点信息
+                    nodeService.save(node);
                 }
                 // 创建容器
                 if (topologyMap.containsKey(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getName())) {
@@ -111,12 +123,14 @@ public class SceneJob {
                     CreateContainersRes res = containerService.create(new CreateContainerReq(containerElement.getName(), null, nets));
                     NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getName(), null,
                             null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
-                            SceneEnum.ACTIVE.getCode(), res.getAddresses().toJSONString(), scene.getUserId());
+                            SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId());
                     //保存节点信息
                     nodeService.save(node);
                 }
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e.getMessage());
+                //更新场景状态为错误
+                sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ERROR.getCode());
                 throw new BusinessException(e.getMessage());
             }
         }
@@ -128,11 +142,11 @@ public class SceneJob {
      * @param element  元素信息
      * @return  网络实体
      */
-    private NetworkEntity createNetwork(TopologyElement element){
+    private NetworkEntity createNetwork(TopologyElement element, String sceneId){
         String cidr = element.getNetwork() != null ? element.getNetwork().getCidr() : null;
         String gateway = element.getNetwork() != null ? element.getNetwork().getGateway() : null;
         String networkName = IDGeneratorUtil.getID();
-        return networkService.createNetwork(networkName, cidr, gateway);
+        return networkService.create(networkName, cidr, gateway, sceneId);
     }
 
 }

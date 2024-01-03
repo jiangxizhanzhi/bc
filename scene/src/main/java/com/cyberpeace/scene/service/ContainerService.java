@@ -13,4 +13,5 @@ public interface ContainerService {
 
     CreateContainersRes create(CreateContainerReq req);
 
+    void delete(String containerId);
 }

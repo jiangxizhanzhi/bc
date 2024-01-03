@@ -17,11 +17,11 @@ public interface NetworkService extends IService<NetworkEntity> {
      * @param gateway 网关地址
      * @return
      */
-    NetworkEntity createNetwork(String name, String cidr, String gateway);
+    NetworkEntity create(String name, String cidr, String gateway, String sceneId);
 
     /**
      * 根据网络id删除网络
      * @param networkId 网络id
      */
-    void deleteNetwork(String networkId);
+    void delete(String networkId);
 }

@@ -63,8 +63,9 @@ public class ScenesController {
 
     @GetMapping("/destroy")
     @ApiOperation(value = "销毁场景")
-    public BaseRsp destroy(@ApiParam(name = "resource_id", value = "场景id")@RequestParam("resource_id") String resourceId){
-
+    public BaseRsp destroy(@ApiParam(name = "resource_id", value = "场景id")
+                               @RequestParam("resource_id") String resourceId){
+        sceneService.destroyScene(resourceId);
         return new BaseRsp<>();
     }
 }

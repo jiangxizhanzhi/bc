@@ -1,5 +1,8 @@
 package com.cyberpeace.scene.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModel;
@@ -23,6 +26,7 @@ import java.io.Serializable;
 public class NodeEntity extends BaseTable implements Serializable {
 
     @ApiModelProperty("节点id")
+    @TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
     private String resourceId;
 
     @ApiModelProperty("虚拟机或容器id")
@@ -67,5 +71,6 @@ public class NodeEntity extends BaseTable implements Serializable {
     @ApiModelProperty("创建人")
     private String userId;
 
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

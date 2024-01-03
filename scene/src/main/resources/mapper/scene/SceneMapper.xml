@@ -3,11 +3,24 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.scene.dao.mapper.SceneMapper">
+    <update id="updateSceneStatus">
+        update cr_scene set scene_status = #{sceneStatus} where scene_id = #{sceneId}
+    </update>
 
     <select id="selectSceneCount" resultType="java.lang.Integer">
-        select count(1) from cr_scene where scene_status = #{sceneStatus}
+        select count(1) from cr_scene where 1=1
+        <if test="sceneStatus!= null and sceneStatus!= ''">
+            <foreach item="item" collection="sceneStatus" open="(" close=")" separator=",">
+                scene_status in #{item}
+            </foreach>
+
+        </if>
         <if test="userId != null and userId != ''">
             and user_id = #{userId}
         </if>
+    </select>
+
+    <select id="selectByResourceId" resultType="com.cyberpeace.scene.dao.entity.SceneEntity">
+        select * from cr_scene where resource_id = #{resourceId}
     </select>
 </mapper>

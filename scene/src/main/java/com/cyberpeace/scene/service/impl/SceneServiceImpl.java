@@ -17,17 +17,21 @@ import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.job.SceneExecutor;
 import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.NetworkService;
+import com.cyberpeace.scene.service.NodeService;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
 import com.cyberpeace.scene.service.bo.Topology;
+import com.cyberpeace.scene.util.HttpUtil;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -41,12 +45,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
     @Autowired
     private TopologyService topologyService;
-
-    @Autowired
-    private NetworkService networkService;
-
-    @Autowired
-    private NetworkMapper networkMapper;
     
     @Autowired
     private SceneMapper sceneMapper;
@@ -59,20 +57,19 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     @Autowired
     private SceneJob sceneJob;
 
+    @Autowired
+    private NetworkService networkService;
+
+    @Autowired
+    private NetworkMapper networkMapper;
+
+    @Autowired
+    private NodeService nodeService;
+
     /**
      * 场景自动销毁时间 单位:小时
      */
     private int SCENE_DESTROY;
-
-    /**
-     * 默认网段
-     */
-    private String DEFAULT_CIDR;
-
-    /**
-     * 默认网关
-     */
-    private String DEFAULT_GATEWAY;
 
     /**
      * 最大场景并发数
@@ -87,8 +84,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     @PostConstruct
     public void init(){
         SCENE_DESTROY = Integer.parseInt(ConfigUtil.getContextProperty("scene.destroy"));
-        DEFAULT_CIDR = ConfigUtil.getContextProperty("network.cidr");
-        DEFAULT_GATEWAY = ConfigUtil.getContextProperty("network.gateway");
         MAX_SCENE_EVENT = Integer.parseInt(ConfigUtil.getContextProperty("scene.max.event"));
         MAX_USER_SCENE_EVENT = Integer.parseInt(ConfigUtil.getContextProperty("scene.max.user.event"));
     }
@@ -120,6 +115,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         scene.setTopologyId(topologyId);
         scene.setUserId(userId);
         scene.setSceneTtl(SCENE_DESTROY);
+        scene.setSceneStatus(SceneEnum.CREATE.getCode());
         sceneMapper.insert(scene);
         return scene;
     }
@@ -129,7 +125,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
      */
     @Override
     public void verify(){
-        int sceneCount = sceneMapper.selectSceneCount(SceneEnum.ACTIVE.getCode(), null);
+        int sceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), null);
         //场景数超过最大值
         if (sceneCount >= MAX_SCENE_EVENT){
             throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW);
@@ -138,11 +134,30 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (Objects.isNull(userInfo)){
             throw new BusinessException(ErrorCode.INVALID_SESSION);
         }
-        int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.ACTIVE.getCode(), userInfo.getResourceId()) + 1;
+        int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), userInfo.getResourceId()) + 1;
         //用户场景数超过最大值
         if (userSceneCount >= MAX_USER_SCENE_EVENT){
             throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW);
         }
+    }
+
+    @Override
+    public BaseRsp destroyScene(String sceneId) {
+        SceneEntity scene = sceneMapper.selectByResourceId(sceneId);
+        if (Objects.isNull(scene)){
+            throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
+        }
+        //删除网络
+        List<String> networkIds = networkMapper.selectBySceneId(sceneId);
+        if (!CollectionUtils.isEmpty(networkIds)){
+            networkIds.forEach(iter -> {
+                networkService.delete(iter);
+                networkMapper.deleteByResourceId(iter);
+            });
+        }
+        //删除节点
+        nodeService.delete(sceneId);
+        return new BaseRsp<>();
     }
 
 }

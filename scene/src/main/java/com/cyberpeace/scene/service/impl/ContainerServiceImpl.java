@@ -3,6 +3,8 @@ package com.cyberpeace.scene.service.impl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.scene.service.ContainerService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
@@ -28,14 +30,20 @@ public class ContainerServiceImpl implements ContainerService {
     /**
      * 云平台地址
      */
-    private String CP_IMAGE;
+    private String CP_HOST;
+
+    /**
+     *
+     */
+    private String CP_CONTAINER;
 
     @Autowired
     private ImageService imageService;
 
     @PostConstruct
     public void init(){
-        CP_IMAGE = ConfigUtil.getContextProperty("cp.host") + ConfigUtil.getContextProperty("cp.image");
+        CP_HOST = ConfigUtil.getContextProperty("cp.host");
+        CP_CONTAINER = ConfigUtil.getContextProperty("cp.containers");
     }
 
     @Override
@@ -48,13 +56,16 @@ public class ContainerServiceImpl implements ContainerService {
         if (Objects.isNull(imageInfo)){
             throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
         }
-        if (imageInfo.getTotal() >= 1){
-            req.setImage(imageInfo.getItems().get(0).getUuid());
-        }else {
-            throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
-        }
-        CreateContainersRes res = HttpUtil.post(CP_IMAGE, req, CreateContainersRes.class);
+        String uuid = imageInfo.getItems().get(0).getUuid();
+        req.setImage(uuid);
+        req.setName(IDGeneratorUtil.getID());
+        CreateContainersRes res = HttpUtil.post(CP_HOST + CP_CONTAINER, req, CreateContainersRes.class);
         log.info("create container end res:{}", req);
         return res;
+    }
+
+    @Override
+    public void delete(String containerId) {
+        HttpUtil.rawDelete(CP_HOST + CP_CONTAINER + "/" + containerId, String.class);
     }
 }

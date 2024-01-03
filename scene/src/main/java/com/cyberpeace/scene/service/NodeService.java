@@ -9,4 +9,6 @@ import com.cyberpeace.scene.dao.entity.NodeEntity;
  * @desc :
  **/
 public interface NodeService extends IService<NodeEntity> {
+
+    void delete(String sceneId);
 }

@@ -46,7 +46,6 @@ import java.util.List;
 @Api(tags = "oj-前台个人中心api")
 @RestController
 @RequestMapping("/oj/person")
-@RequiresAuthentication
 public class PersonController {
 
 	@Autowired
@@ -66,7 +65,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有评论")
 	@GetMapping("/comments")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonComment>> listComments(@ApiParam @Validated PageReqBase pageReq) {
 		Page<PersonComment> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -81,7 +79,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有回复")
 	@GetMapping("/replies")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonComment>> listReplies(@ApiParam @Validated PageReqBase pageReq) {
 		Page<PersonComment> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -96,7 +93,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有笔记")
 	@GetMapping("/notes")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonNote>> listNotes(@ApiParam @Validated PageNoteReq pageReq) {
 		Page<PersonNote> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -111,7 +107,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有收藏")
 	@GetMapping("/collections")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonCollection>> listCollections(
 			@ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type,
 			@RequestParam(value = "practiceType", required = false) Integer practiceType) {
@@ -143,9 +138,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_PERSON_CENTER, MenuConstant.CMS_COURSE_STATISTICS },
-			logical = Logical.OR)
 	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(
 			@RequestParam(value = "user_id", required = false) String userId,
 			@RequestParam(value = "isWeb", required = false) Boolean isWeb) {
@@ -165,7 +157,6 @@ public class PersonController {
 
 	@ApiOperation("查询收藏习题列表")
 	@GetMapping("/my_all_collection_practice")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<List<CollectionPracticeBo>> allCollectionPractice() {
 
 		// 查询收藏的理论习题
@@ -194,7 +185,6 @@ public class PersonController {
 
 	@ApiOperation("收藏理论题详情页")
 	@GetMapping("/collection_theory_practice_detail")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<WebTheoryBo> collectionTheoryRetrieve(@RequestParam(value = "resource_id") String resourceId) {
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
 				UserInfoContext.getUserContext().getUserId(), Boolean.TRUE);
@@ -203,7 +193,6 @@ public class PersonController {
 
 	@ApiOperation("收藏实操题详情页")
 	@GetMapping("/collection_operate_practice_detail")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<WebOperationBo> collectionOperateRetrieve(@RequestParam(value = "resource_id") String resourceId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
@@ -214,7 +203,6 @@ public class PersonController {
 
 	@ApiOperation("查看理论题错题页面")
 	@GetMapping("/mistake")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonalMistakeRes>> getPracticeMistake(PageMistakeReq pageReq) {
 		if (StringUtils.isBlank(pageReq.getSort())) {
 			pageReq.setSort("-update_time");
@@ -229,7 +217,6 @@ public class PersonController {
 
 	@ApiOperation("批量移除错题")
 	@DeleteMapping("/mistake")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<Boolean> bathDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		return new BaseRsp<>(practiceMistakeService.bathDelete(deleteReq.getIds(), userId));
@@ -237,7 +224,6 @@ public class PersonController {
 
 	@ApiOperation("获取错题集id列表")
 	@GetMapping("/mistake_ids")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<List<String>> getPracticeMistakeIds() {
 		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
 		return new BaseRsp<>(StreamApiUtils.map(personalMistakeResList, PersonalMistakeRes::getPracticeId));

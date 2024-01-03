@@ -7,6 +7,8 @@ import java.io.Serializable;
 @Data
 public class StudyHistoryRes implements Serializable {
 
+    private String resourceId;
+
     private String name;
 
     private Integer type;

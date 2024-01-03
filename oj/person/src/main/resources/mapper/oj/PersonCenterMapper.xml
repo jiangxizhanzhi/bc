@@ -389,7 +389,8 @@
             resultType="com.cyberpeace.oj.person.controller.res.StudyHistoryRes">
         select course_name as `name`,
                1 as `type`,
-               DATE_FORMAT(create_time, '%Y-%m-%d') as `date`
+               DATE_FORMAT(create_time, '%Y-%m-%d') as `date`,
+               course_id as resourceId
         from oj_course_study_history
         where user_id = #{userId}
           and create_time &gt;= #{startTime}
@@ -401,6 +402,10 @@
                    WHEN t.content IS NOT NULL AND t.content  != '' THEN t.content
                    ELSE p.title
                    END AS `name`,
+               CASE
+                   WHEN t.content IS NOT NULL AND t.content  != '' THEN t.resource_id
+                   ELSE p.resource_id
+                   END AS resourceId,
                2 as `type`,
                DATE_FORMAT(s.create_time, '%Y-%m-%d') as `date`
         from oj_practice_solved s

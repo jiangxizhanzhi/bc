@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.oj.practice.controller.req.ExamCreateReq;
 import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordDetailRes;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
@@ -25,4 +26,6 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	PaperRecordDetailRes getPaperRecordDetail(String paperId);
 
 	PracticePaper practiceAgain(String paperId);
+
+	PracticePaper createExam(ExamCreateReq examCreateReq);
 }

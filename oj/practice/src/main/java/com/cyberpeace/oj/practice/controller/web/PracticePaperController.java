@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
+import com.cyberpeace.oj.practice.controller.req.ExamCreateReq;
 import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.res.*;
@@ -63,6 +64,14 @@ public class PracticePaperController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<PracticePaper> create(@RequestBody @Validated PracticePaperCreateReq practicePaperCreateReq) {
 		return new BaseRsp<>(practicePaperService.createPaper(practicePaperCreateReq));
+	}
+
+
+	@ApiOperation("组卷")
+	@PostMapping("/create_exam")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<PracticePaper> createExam(@RequestBody @Validated ExamCreateReq examCreateReq) {
+		return new BaseRsp<>(practicePaperService.createExam(examCreateReq));
 	}
 
 	@ApiOperation("知识技能Top6")

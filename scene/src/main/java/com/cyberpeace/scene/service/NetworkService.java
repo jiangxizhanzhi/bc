@@ -17,7 +17,7 @@ public interface NetworkService extends IService<NetworkEntity> {
      * @param gateway 网关地址
      * @return
      */
-    NetworkEntity create(String name, String cidr, String gateway, String sceneId);
+    NetworkEntity create(String name, String cidr, String gateway, String sceneId, String pid);
 
     /**
      * 根据网络id删除网络

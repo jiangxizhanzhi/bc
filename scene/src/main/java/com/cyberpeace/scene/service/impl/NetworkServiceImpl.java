@@ -71,7 +71,7 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
     }
 
     @Override
-    public NetworkEntity create(String name, String cidr, String gateway, String sceneId) {
+    public NetworkEntity create(String name, String cidr, String gateway, String sceneId, String pid) {
         log.info("create network start, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
         CreateNetworkReq req;
         if (StringUtils.isBlank(cidr) || StringUtils.isBlank(gateway)){
@@ -90,6 +90,7 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
                 log.error("create network failed, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
                 throw new BusinessException(ErrorCode.CREATE_NETWORK_ERROR);
             }
+            networkEntity.setUser(pid);
             networkEntity.setSid(sceneId);
             save(networkEntity);
             log.info("create network success, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);

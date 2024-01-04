@@ -8,6 +8,7 @@ import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.service.HostService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
+import com.cyberpeace.scene.service.bo.res.ConsoleUrlRes;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
 import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
@@ -70,5 +71,18 @@ public class HostServiceImpl implements HostService {
     @Override
     public void delete(String instanceId) {
         HttpUtil.rawDelete(CP_HOST + CP_INSTANCES + "/" + instanceId, String.class);
+    }
+
+    @Override
+    public ConsoleUrlRes console(String instanceId) {
+        if (Objects.nonNull(instanceId)){
+            return HttpUtil.rawGet(CP_HOST + CP_INSTANCES + "/console" + "/" + instanceId, ConsoleUrlRes.class);
+        }
+        return null;
+    }
+
+    @Override
+    public String status(String instanceId) {
+        return null;
     }
 }

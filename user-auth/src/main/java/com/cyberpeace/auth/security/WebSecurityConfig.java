@@ -107,6 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui/**",
 						"/favicon.ico",
 						"/license/**",
+						"/auth/user",
 						"/doc.html")
 				.permitAll()
 				// 其他的都需要认证

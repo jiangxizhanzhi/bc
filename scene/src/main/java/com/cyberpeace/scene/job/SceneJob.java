@@ -2,6 +2,7 @@ package com.cyberpeace.scene.job;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
@@ -112,7 +113,8 @@ public class SceneJob {
                     CreateInstanceRes res = hostService.create(new CreateInstanceReq(hostElement.getName(), null, nets));
                     NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getInstanceName(), null,
                             null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(),
-                            SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId());
+                            SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), hostElement.getId());
+                    hostElement.setNodeId(res.getUuid());
                     //保存节点信息
                     nodeService.save(node);
                 }
@@ -123,12 +125,14 @@ public class SceneJob {
                     CreateContainersRes res = containerService.create(new CreateContainerReq(containerElement.getName(), null, nets));
                     NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getName(), null,
                             null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
-                            SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId());
+                            SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), containerElement.getId());
+                    containerElement.setNodeId(res.getUuid());
                     //保存节点信息
                     nodeService.save(node);
                 }
+                sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
             }catch (Exception e){
-                log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e.getMessage());
+                log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e);
                 //更新场景状态为错误
                 sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ERROR.getCode());
                 throw new BusinessException(e.getMessage());
@@ -146,7 +150,7 @@ public class SceneJob {
         String cidr = element.getNetwork() != null ? element.getNetwork().getCidr() : null;
         String gateway = element.getNetwork() != null ? element.getNetwork().getGateway() : null;
         String networkName = IDGeneratorUtil.getID();
-        return networkService.create(networkName, cidr, gateway, sceneId);
+        return networkService.create(networkName, cidr, gateway, sceneId, element.getId());
     }
 
 }

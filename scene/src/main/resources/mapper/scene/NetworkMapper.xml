@@ -9,6 +9,6 @@
     </delete>
 
     <select id="selectBySceneId" resultType="java.lang.String">
-        select resource_id from cr_network where scene_id = #{sceneId}
+        select resource_id from cr_network where sid = #{sceneId}
     </select>
 </mapper>

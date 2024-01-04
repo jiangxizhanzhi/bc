@@ -270,5 +270,10 @@ public final class ErrorCode {
 	 */
 	public static final String USER_SCENE_EVENT_OVERFLOW = "100082";
 
+	/**
+	 * 场景已存在
+	 */
+	public static final String SCENE_ALREADY_EXIST = "100083";
+
 	private ErrorCode() {}
 }

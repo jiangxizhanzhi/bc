@@ -59,4 +59,6 @@ public class TopologyElement implements Serializable {
     private String displayContext;
 
     private NetworkInfo network;
+
+    private String nodeId;
 }

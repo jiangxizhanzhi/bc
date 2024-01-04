@@ -8,6 +8,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.scene.service.ContainerService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
+import com.cyberpeace.scene.service.bo.res.ConsoleUrlRes;
 import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
 import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
@@ -67,5 +68,13 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     public void delete(String containerId) {
         HttpUtil.rawDelete(CP_HOST + CP_CONTAINER + "/" + containerId, String.class);
+    }
+
+    @Override
+    public ConsoleUrlRes console(String containerId) {
+        if (Objects.nonNull(containerId)){
+            return HttpUtil.rawGet(CP_HOST + CP_CONTAINER + "/console" + "/" + containerId, ConsoleUrlRes.class);
+        }
+        return null;
     }
 }

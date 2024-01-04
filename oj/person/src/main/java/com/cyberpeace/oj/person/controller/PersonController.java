@@ -20,6 +20,7 @@ import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
 import com.cyberpeace.oj.practice.controller.res.PersonalMistakeRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
@@ -134,6 +135,12 @@ public class PersonController {
 	public BaseRsp<List<StudyCalendarRes>> studyCalendar(@RequestParam(value = "startTime") String  startTime,
 												   @RequestParam(value = "endTime") String  endTime) {
 		return new BaseRsp<>(personCenterService.studyCalendar(startTime, endTime));
+	}
+
+	@ApiOperation("能力框架")
+	@GetMapping("/ability_framework")
+	public BaseRsp<List<ProgressPracticeRes>>  abilityFramework() {
+		return new BaseRsp<>(personCenterService.abilityFramework());
 	}
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")

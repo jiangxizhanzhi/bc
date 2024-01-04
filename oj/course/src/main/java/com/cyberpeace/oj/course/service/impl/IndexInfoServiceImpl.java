@@ -16,10 +16,14 @@ public class IndexInfoServiceImpl implements IndexInfoService {
     private static final String systemFilePath = "classpath:static/index/IndexInfo.json";
 
     @Override
-    public IndexReq getIndexInfo() throws FileNotFoundException {
+    public IndexReq getIndexInfo() {
         File file = new File(filePath);
         if (!file.exists()) {
-            file = ResourceUtils.getFile(systemFilePath);
+            try {
+                file = ResourceUtils.getFile(systemFilePath);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
         String content = FileUtil.getContent(file);
         IndexReq indexReq = JSON.parseObject(content, IndexReq.class);

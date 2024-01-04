@@ -6,5 +6,5 @@ import java.io.FileNotFoundException;
 
 public interface IndexInfoService {
 
-    IndexReq getIndexInfo() throws FileNotFoundException;
+    IndexReq getIndexInfo();
 }

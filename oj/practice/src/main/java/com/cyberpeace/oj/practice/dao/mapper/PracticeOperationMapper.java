@@ -3,6 +3,8 @@ package com.cyberpeace.oj.practice.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.OperationSolved;
@@ -56,4 +58,6 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 			@Param("pattern") String pattern, @Param("isWeb") Boolean isWeb);
 
 	List<OperationSolved> selectSolved(@Param("userId") String userId, @Param("setId") String setId);
+
+    List<OperationRecordRes> getOperationRecordList(@Param("userId")String userId);
 }

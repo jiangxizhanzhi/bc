@@ -11,10 +11,13 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.controller.req.IndexCategoryReq;
+import com.cyberpeace.oj.course.controller.req.IndexReq;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.service.IndexInfoService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -29,6 +32,8 @@ import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.dao.mapper.PersonCenterMapper;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
+import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
+import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
@@ -41,6 +46,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,6 +83,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Autowired
     private PracticeCategoryMapper practiceCategoryMapper;
+
+    @Autowired
+    IndexInfoService indexInfoService;
 
     @Override
     public IPage<PersonComment> pageComment(Page page, String userId, String parent,
@@ -349,6 +358,32 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             res.add(studyHistoryRes);
         });
         res.sort(Comparator.comparing(StudyCalendarRes::getDate));
+        return res;
+    }
+
+    @Override
+    public List<ProgressPracticeRes> abilityFramework() {
+        //理论题 30%
+        List<ProgressPracticeRes> res = practiceTheoryMapper.getProgressCategoryStatistics(UserInfoContext.getUserContext().getUserId());
+        //实操题 30%
+        List<OperationRecordRes> operationList = practiceOperationMapper.getOperationRecordList(UserInfoContext.getUserContext().getUserId());
+        //覆盖度 40%
+        List<IndexCategoryReq> categoryList = indexInfoService.getIndexInfo().getCategoryList();
+        Map<String, Integer> categoryCoverageMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getCoverage));
+
+        for (ProgressPracticeRes re : res) {
+            BigDecimal theoryCount = new BigDecimal(re.getCount()*30);
+            BigDecimal theoryRate = theoryCount.divide(new BigDecimal(re.getSum()),2,BigDecimal.ROUND_HALF_UP);
+            Integer coverage = categoryCoverageMap.getOrDefault(re.getCategoryName(), 0);
+            theoryRate = theoryRate.add(new BigDecimal(coverage*0.4));
+            if (CollectionUtils.isNotEmpty(operationList) ){
+                long count = operationList.stream().filter(a -> a.getKnowledge().contains(re.getCategoryName()) && a.getSolved()).count();
+                theoryRate = theoryRate.add(new BigDecimal(count*30/operationList.size()));
+            }
+            re.setCount(theoryRate.intValue());
+            re.setSum(100);
+        }
+
         return res;
     }
 

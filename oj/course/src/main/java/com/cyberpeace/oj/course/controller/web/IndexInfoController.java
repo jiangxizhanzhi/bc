@@ -28,7 +28,7 @@ public class IndexInfoController {
 
     @ApiOperation("获取首页信息")
     @GetMapping("/info")
-    public BaseRsp<IndexReq> info() throws FileNotFoundException {
+    public BaseRsp<IndexReq> info() {
 
         return new BaseRsp<>(indexInfoService.getIndexInfo());
     }

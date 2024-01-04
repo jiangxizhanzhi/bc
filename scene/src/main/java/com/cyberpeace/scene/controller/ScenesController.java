@@ -47,18 +47,12 @@ public class ScenesController {
         return new BaseRsp<>();
     }
 
-    @GetMapping("/rate")
-    @ApiOperation(value = "场景构建的进度")
-    public BaseRsp rate(@ApiParam(name = "resource_id", value = "场景id")@RequestParam("resource_id")String resourceId){
-
-        return new BaseRsp<>();
-    }
-
     @GetMapping("/console")
     @ApiOperation(value = "控制台接入")
-    public BaseRsp console(@ApiParam(name = "eid", value = "主机实例id")@RequestParam("eid") String eid){
+    public BaseRsp console(@ApiParam(name = "nodeId", value = "主机实例id")@RequestParam String nodeId,
+                           @ApiParam(name = "type", value = "主机类型")@RequestParam Integer type){
 
-        return new BaseRsp<>();
+        return sceneService.console(nodeId, type);
     }
 
     @GetMapping("/destroy")
@@ -67,5 +61,13 @@ public class ScenesController {
                                @RequestParam("resource_id") String resourceId){
         sceneService.destroyScene(resourceId);
         return new BaseRsp<>();
+    }
+
+    @GetMapping("/detail")
+    @ApiOperation(value = "场景详情")
+    public BaseRsp detail(@ApiParam(name = "topology_id", value = "拓扑结构id") @RequestParam("topology_id") String topologyId,
+                          @ApiParam(value = "实例id", name = "instance_id")@RequestParam("instance_id")String instanceId){
+
+        return sceneService.detail(topologyId, instanceId);
     }
 }

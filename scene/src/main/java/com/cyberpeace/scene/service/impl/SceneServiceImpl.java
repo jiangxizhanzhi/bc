@@ -7,23 +7,24 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
+import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
+import com.cyberpeace.scene.controller.rsp.SceneDetailRsp;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
+import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.job.SceneExecutor;
 import com.cyberpeace.scene.job.SceneJob;
-import com.cyberpeace.scene.service.NetworkService;
-import com.cyberpeace.scene.service.NodeService;
-import com.cyberpeace.scene.service.SceneService;
-import com.cyberpeace.scene.service.TopologyService;
+import com.cyberpeace.scene.service.*;
+import com.cyberpeace.scene.service.bo.SceneData;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.util.HttpUtil;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -66,6 +67,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     @Autowired
     private NodeService nodeService;
 
+    @Autowired
+    private HostService hostService;
+
+    @Autowired
+    private ContainerService containerService;
+
     /**
      * 场景自动销毁时间 单位:小时
      */
@@ -90,6 +97,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
     @Override
     public BaseRsp startScene(String topologyId, String instanceId) {
+        String userId = UserInfoContext.getNewUserContext().getResourceId();
+        SceneEntity instance = sceneMapper.selectByInstanceId(instanceId, userId, SceneEnum.getCodes());
+        if (!Objects.isNull(instance)){
+            throw new BusinessException(ErrorCode.SCENE_ALREADY_EXIST);
+        }
         Topology topology = topologyService.formatTopology(topologyId);
         log.info("topology：{}", topology);
         if (topology == null){
@@ -125,9 +137,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
      */
     @Override
     public void verify(){
-        int sceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), null);
+        int sceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), null) + 1;
         //场景数超过最大值
-        if (sceneCount >= MAX_SCENE_EVENT){
+        if (sceneCount > MAX_SCENE_EVENT){
             throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW);
         }
         SysUser userInfo = UserInfoContext.getNewUserContext();
@@ -136,7 +148,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }
         int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), userInfo.getResourceId()) + 1;
         //用户场景数超过最大值
-        if (userSceneCount >= MAX_USER_SCENE_EVENT){
+        if (userSceneCount > MAX_USER_SCENE_EVENT){
             throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW);
         }
     }
@@ -147,6 +159,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (Objects.isNull(scene)){
             throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
         }
+        //删除节点
+        nodeService.delete(sceneId);
         //删除网络
         List<String> networkIds = networkMapper.selectBySceneId(sceneId);
         if (!CollectionUtils.isEmpty(networkIds)){
@@ -155,9 +169,40 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 networkMapper.deleteByResourceId(iter);
             });
         }
-        //删除节点
-        nodeService.delete(sceneId);
+        sceneMapper.updateSceneStatus(sceneId, SceneEnum.DELETED.getCode());
         return new BaseRsp<>();
+    }
+
+    @Override
+    public BaseRsp detail(String topologyId, String instanceId) {
+        String userId = UserInfoContext.getNewUserContext().getResourceId();
+        SceneEntity scene = sceneMapper.selectByInstanceId(instanceId, userId, SceneEnum.getCodes());
+        SceneData sceneData = new SceneData();
+        String topo;
+        if (scene != null){
+            topo = scene.getMeta();
+        }else {
+            TopologyEntity topology = topologyService.getTopology(topologyId);
+            topo = topology.getTopology();
+        }
+        if (StringUtils.isNotBlank(topo)){
+            sceneData.setTopology(JsonUtil.toJsonObject(topo, Topology.class));
+            sceneData.setScene(scene);
+        }
+        return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
+    }
+
+    @Override
+    public BaseRsp console(String nodeId, Integer type) {
+        ConnectionRsp connectionRsp = new ConnectionRsp();
+        if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), type)){
+            connectionRsp.setConnectionUrl(hostService.console(nodeId).getUrl());
+        } else if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), type)) {
+            connectionRsp.setConnectionUrl(containerService.console(nodeId).getUrl());
+        }
+        connectionRsp.setProtocol("console");
+        connectionRsp.setNodeId(nodeId);
+        return new BaseRsp<>(connectionRsp);
     }
 
 }

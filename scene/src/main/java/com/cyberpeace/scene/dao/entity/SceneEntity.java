@@ -22,6 +22,9 @@ import java.util.Date;
 @TableName("cr_scene")
 public class SceneEntity extends BaseTable implements Serializable {
 
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
     @ApiModelProperty("场景id")
     @TableField("resource_id")
     private String resourceId;

@@ -233,8 +233,8 @@ public class HttpUtil {
             throw e;
         } catch (Exception e) {
             // 遇到不能解析的返回结果，直接报错
-            log.error("parse httpResponse error, url=[{}], result=[{}], resultType=[{}]",
-                    HttpclientContext.getContext().getUrl(), httpResponse, resultType);
+            log.error("parse httpResponse error, url=[{}], result=[{}], resultType=[{}], error: [{}]",
+                    HttpclientContext.getContext().getUrl(), httpResponse, resultType, e);
             throw new RemoteServiceException();
         } finally {
             HttpclientContext.removeContext();

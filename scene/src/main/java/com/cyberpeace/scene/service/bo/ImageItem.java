@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service.bo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -37,17 +38,6 @@ public class ImageItem implements Serializable {
     private String name;
 
     /**
-     * 镜像大小
-     */
-    private Integer size;
-
-    /**
-     * 镜像虚拟大小
-     */
-    @JsonProperty("virtual_size")
-    private Integer virtualSize;
-
-    /**
      * 镜像状态
      */
     private String status;
@@ -81,11 +71,6 @@ public class ImageItem implements Serializable {
      * 最小CPU
      */
     private Integer minCpu;
-
-    /**
-     * 镜像元数据
-     */
-    private ImageMetadata imageMetadata;
 
     /**
      * 镜像描述

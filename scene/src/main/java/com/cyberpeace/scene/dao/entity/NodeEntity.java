@@ -71,6 +71,9 @@ public class NodeEntity extends BaseTable implements Serializable {
     @ApiModelProperty("创建人")
     private String userId;
 
+    @ApiModelProperty("topo结构中的元素id")
+    private String nid;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

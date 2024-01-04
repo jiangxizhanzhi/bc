@@ -1,6 +1,7 @@
 package com.cyberpeace.scene.service.bo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.cyberpeace.scene.dao.entity.SceneEntity;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -33,4 +34,9 @@ public class Topology implements Serializable {
      * 网络信息
      */
     private NetworkInfo network;
+
+    /**
+     * 场景信息
+     */
+    private SceneEntity scene;
 }

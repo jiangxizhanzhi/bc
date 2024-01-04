@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
+//import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -218,11 +219,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 练习数据查询
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
-
-		String orgId = authContext.getOrganization();
-		infoBo.setPaperPublic(
-				null != paper.getReadAuthIds() && paper.getReadAuthIds().contains(orgId));
-
+		if (null != paper) {
+			String orgId = authContext.getOrganization();
+			infoBo.setPaperPublic(
+					null != paper.getReadAuthIds() && paper.getReadAuthIds().contains(orgId));
+		}
 		Integer countByPaper = paperService.practiceCountByPaper(lesson.getPaperId());
 		infoBo.setPracticeCount(countByPaper);
 

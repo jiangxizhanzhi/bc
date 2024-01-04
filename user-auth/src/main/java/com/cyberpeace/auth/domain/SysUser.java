@@ -60,6 +60,11 @@ public class SysUser extends BaseTable implements Serializable {
     private Date expireTime;
 
     /**
+     * 在线时间
+     */
+    private double onlineTime;
+
+    /**
      * 备注
      */
     private String notes;

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.cyberpeace.auth.constant.OnlineTimeCache;
 import com.cyberpeace.auth.constant.UserEnableEnum;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -58,6 +59,7 @@ public class CustomizeAuthenticationSuccessHandler implements AuthenticationSucc
 		}
         sysUserMapper.updateById(sysUser);
 
+		OnlineTimeCache.setLoginTime(sysUser.getResourceId(), new Date());
         HttpSession session = httpServletRequest.getSession();
         //返回json数据
         CommonUtil.responseJson(httpServletResponse, new BaseRsp(session.getId()), SC_OK);

@@ -1,11 +1,13 @@
 package com.cyberpeace.auth.service;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.auth.controller.req.UserImportReq;
 import com.cyberpeace.auth.controller.req.UserReq;
+import com.cyberpeace.auth.security.TbUser;
 import com.cyberpeace.common.model.BaseRsp;
 import org.springframework.session.Session;
 
@@ -88,4 +90,5 @@ public interface SysUserService extends IService<SysUser> {
 
     Map<String, String> getUserNameMap(List<String> userIdList);
 
+	void updateOnlineTime(Date loginTime, TbUser tbUser);
 }

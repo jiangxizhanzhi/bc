@@ -1,9 +1,6 @@
 package com.cyberpeace.auth.service.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -172,6 +169,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		queryWrapper.lambda().in(SysUser::getResourceId,userIdList);
 		List<SysUser> list = this.list(queryWrapper);
 		return list.stream().collect(Collectors.toMap(SysUser::getResourceId, SysUser::getName));
+	}
+
+	@Override
+	public void updateOnlineTime(Date loginTime,TbUser tbUser) {
+		SysUser sysUser = this.getById(tbUser.getUserId());
+		//按小时设置在线时间
+		sysUser.setOnlineTime(sysUser.getOnlineTime() + (System.currentTimeMillis() - loginTime.getTime()) / 1000 / 60 / 60);
+		this.updateById(sysUser);
 	}
 
 	@Override

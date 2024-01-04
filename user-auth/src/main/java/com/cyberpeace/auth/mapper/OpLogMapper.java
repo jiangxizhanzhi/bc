@@ -1,9 +1,9 @@
-package com.cyberpeace.oj.person.dao.mapper;
+package com.cyberpeace.auth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.oj.person.controller.req.OpLogReq;
-import com.cyberpeace.oj.person.dao.entity.OpLog;
+import com.cyberpeace.auth.controller.req.OpLogReq;
+import com.cyberpeace.auth.service.bo.OpLog;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

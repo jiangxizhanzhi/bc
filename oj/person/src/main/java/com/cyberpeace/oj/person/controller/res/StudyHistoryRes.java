@@ -14,6 +14,12 @@ public class StudyHistoryRes implements Serializable {
     private Integer type;
 
     private String date;
+
+    /**
+     * 习题 1:理论 2：实操
+     */
+    private Integer businessType;
+
     private enum TypeEnum {
 
         LESSON(1, "课程"),

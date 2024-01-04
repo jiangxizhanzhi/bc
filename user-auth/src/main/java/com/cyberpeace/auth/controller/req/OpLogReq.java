@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.person.controller.req;
+package com.cyberpeace.auth.controller.req;
 
 import java.io.Serializable;
 

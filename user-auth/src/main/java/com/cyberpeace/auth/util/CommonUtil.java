@@ -3,7 +3,10 @@ package com.cyberpeace.auth.util;
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.model.BaseRsp;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
@@ -128,5 +131,25 @@ public class CommonUtil {
             log.error("exec cmd {} exception {}",cmd,e);
             return null;
         }
+    }
+
+    public static String getIpAddr(ServletRequest servletRequest) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        if (StringUtils.isBlank(ip)) {
+            ip = "127.0.0.1";
+        }
+        return ip;
     }
 }

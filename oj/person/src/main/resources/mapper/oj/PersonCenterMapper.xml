@@ -403,6 +403,10 @@
                    ELSE p.title
                    END AS `name`,
                CASE
+                   WHEN t.content IS NOT NULL AND t.content  != '' THEN 1
+                   ELSE 2
+                   END AS businessType,
+               CASE
                    WHEN t.content IS NOT NULL AND t.content  != '' THEN t.resource_id
                    ELSE p.resource_id
                    END AS resourceId,

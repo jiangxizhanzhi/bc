@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cyberpeace.oj.person.dao.mapper.OpLogMapper">
-    <select id="getPage" resultType="com.cyberpeace.oj.person.dao.entity.OpLog">
+<mapper namespace="com.cyberpeace.auth.mapper.OpLogMapper">
+    <select id="getPage" resultType="com.cyberpeace.auth.service.bo.OpLog">
         select * from eval_op_log
         <where>
             <if test="logReq != null">

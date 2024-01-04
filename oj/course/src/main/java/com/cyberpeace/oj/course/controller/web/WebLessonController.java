@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -14,7 +15,6 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.LessonPracticeSubmitReq;

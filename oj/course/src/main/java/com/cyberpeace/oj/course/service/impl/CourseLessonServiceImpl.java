@@ -289,7 +289,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			TopologyEntity topology = topologyService.getTopology(lesson.getTopoId());
 			if (null != topology) {
 				JSONObject topoData = JSONObject.parseObject(topology.getTopology());
-				infoBo.setSceneConfigData(topoData);
+				JSONObject sceneConfig = new JSONObject();
+				sceneConfig.put("topology", topoData);
+				JSONObject configData = new JSONObject();
+				configData.put("scene_config", sceneConfig);
+				infoBo.setSceneConfigData(configData);
 			}
 
 			// 前台需要先查询课堂场景
@@ -991,7 +995,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			TopologyEntity topology = topologyService.getTopology(courseLesson.getTopoId());
 			if (null != topology) {
 				JSONObject topoData = JSONObject.parseObject(topology.getTopology());
-				topoSceneDataRes.setSceneConfigData(topoData);
+				JSONObject sceneConfig = new JSONObject();
+				sceneConfig.put("topology", topoData);
+				JSONObject configData = new JSONObject();
+				configData.put("scene_config", sceneConfig);
+				topoSceneDataRes.setSceneConfigData(configData);
 			}
 
 			// 前台需要先查询课堂场景

@@ -16,4 +16,6 @@ import java.util.List;
 public interface NodeMapper extends BaseMapper<NodeEntity> {
 
     List<NodeEntity> selectBySid(@Param("sid") String sid);
+
+    int updateStatus(@Param("resourceId") String resourceId, @Param("status") Integer status);
 }

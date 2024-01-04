@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service;
 
+import com.cyberpeace.scene.service.bo.ContainerItem;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
 import com.cyberpeace.scene.service.bo.res.ConsoleUrlRes;
 import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
@@ -17,4 +18,8 @@ public interface ContainerService {
     void delete(String containerId);
 
     ConsoleUrlRes console(String containerId);
+
+    ContainerItem getInstance(String containerId);
+
+    String getStatus(String containerId);
 }

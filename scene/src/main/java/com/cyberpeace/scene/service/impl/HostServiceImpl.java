@@ -82,7 +82,19 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public String status(String instanceId) {
+    public CreateInstanceRes getInstance(String instanceId) {
+        if (Objects.nonNull(instanceId)){
+            return HttpUtil.rawGet(CP_HOST + CP_INSTANCES + "/" + instanceId, CreateInstanceRes.class);
+        }
+        return null;
+    }
+
+    @Override
+    public String getStatus(String instanceId) {
+        CreateInstanceRes instance = getInstance(instanceId);
+        if (Objects.nonNull(instance)){
+            return instance.getVmState();
+        }
         return null;
     }
 }

@@ -6,10 +6,13 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.service.NetworkService;
 import com.cyberpeace.scene.service.bo.CPCloud;
+import com.cyberpeace.scene.service.bo.NetworkInstance;
 import com.cyberpeace.scene.service.bo.req.CreateNetworkReq;
 import com.cyberpeace.scene.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -101,5 +104,32 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
     @Override
     public void delete(String networkId) {
         HttpUtil.rawDelete(CP_HOST + CP_NETWORK + "/" + networkId, String.class);
+    }
+
+    @Override
+    public NetworkInstance getInstance(String networkId) {
+        return HttpUtil.rawGet(CP_HOST + CP_NETWORK + "/" + networkId, NetworkInstance.class);
+    }
+
+    @Override
+    public Integer getStage(String sceneId) {
+        if (StringUtils.isNotBlank(sceneId)){
+            List<NetworkEntity> networkEntities = networkMapper.selectList(new LambdaQueryWrapper<NetworkEntity>()
+                   .eq(NetworkEntity::getSid, sceneId));
+            int count = 0;
+            if (!CollectionUtils.isEmpty(networkEntities)){
+                for (NetworkEntity network : networkEntities){
+                    NetworkInstance instance = getInstance(network.getUuid());
+                    if (!Objects.isNull(instance)){
+                        if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())){
+                            count++;
+                        }
+                    }
+                }
+                Double divide = MathUtils.divide((double) networkEntities.size(), (double) count, 2);
+                return divide.intValue() * 100;
+            }
+        }
+        return 0;
     }
 }

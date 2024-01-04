@@ -7,6 +7,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.scene.service.ContainerService;
 import com.cyberpeace.scene.service.ImageService;
+import com.cyberpeace.scene.service.bo.ContainerItem;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
 import com.cyberpeace.scene.service.bo.res.ConsoleUrlRes;
 import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
@@ -29,22 +30,18 @@ import java.util.Objects;
 public class ContainerServiceImpl implements ContainerService {
 
     /**
-     * 云平台地址
+     * 容器url
      */
-    private String CP_HOST;
-
-    /**
-     *
-     */
-    private String CP_CONTAINER;
+    private String CONTAINER_URL;
 
     @Autowired
     private ImageService imageService;
 
     @PostConstruct
     public void init(){
-        CP_HOST = ConfigUtil.getContextProperty("cp.host");
-        CP_CONTAINER = ConfigUtil.getContextProperty("cp.containers");
+        String cpHost = ConfigUtil.getContextProperty("cp.host");
+        String cpContainer = ConfigUtil.getContextProperty("cp.containers");
+        CONTAINER_URL = cpHost + cpContainer;
     }
 
     @Override
@@ -60,20 +57,37 @@ public class ContainerServiceImpl implements ContainerService {
         String uuid = imageInfo.getItems().get(0).getUuid();
         req.setImage(uuid);
         req.setName(IDGeneratorUtil.getID());
-        CreateContainersRes res = HttpUtil.post(CP_HOST + CP_CONTAINER, req, CreateContainersRes.class);
+        CreateContainersRes res = HttpUtil.post(CONTAINER_URL, req, CreateContainersRes.class);
         log.info("create container end res:{}", req);
         return res;
     }
 
     @Override
     public void delete(String containerId) {
-        HttpUtil.rawDelete(CP_HOST + CP_CONTAINER + "/" + containerId, String.class);
+        HttpUtil.rawDelete(CONTAINER_URL + "/" + containerId, String.class);
     }
 
     @Override
     public ConsoleUrlRes console(String containerId) {
         if (Objects.nonNull(containerId)){
-            return HttpUtil.rawGet(CP_HOST + CP_CONTAINER + "/console" + "/" + containerId, ConsoleUrlRes.class);
+            return HttpUtil.rawGet(CONTAINER_URL + "/console" + "/" + containerId, ConsoleUrlRes.class);
+        }
+        return null;
+    }
+
+    @Override
+    public ContainerItem getInstance(String containerId) {
+        if (Objects.nonNull(containerId)){
+            return HttpUtil.rawGet(CONTAINER_URL + "/" + containerId, ContainerItem.class);
+        }
+        return null;
+    }
+
+    @Override
+    public String getStatus(String containerId) {
+        ContainerItem instance = getInstance(containerId);
+        if (!Objects.isNull(instance)){
+            return instance.getStatus();
         }
         return null;
     }

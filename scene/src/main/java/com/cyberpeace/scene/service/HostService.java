@@ -17,5 +17,7 @@ public interface HostService {
 
     ConsoleUrlRes console(String instanceId);
 
-     String status(String instanceId);
+    CreateInstanceRes getInstance(String instanceId);
+
+     String getStatus(String instanceId);
 }

@@ -182,7 +182,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (scene != null){
             topo = scene.getMeta();
         }else {
-            TopologyEntity topology = topologyService.getTopology(topologyId);
+            TopologyEntity topology = topologyService.selectTopology(topologyId);
             topo = topology.getTopology();
         }
         if (StringUtils.isNotBlank(topo)){

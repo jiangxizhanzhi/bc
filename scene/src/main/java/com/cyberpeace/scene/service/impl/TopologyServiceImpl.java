@@ -1,10 +1,13 @@
 package com.cyberpeace.scene.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
+import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
+import com.cyberpeace.scene.controller.rsp.SceneConfigRsp;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.dao.mapper.TopologyMapper;
 import com.cyberpeace.scene.service.bo.Topology;
@@ -23,15 +26,22 @@ import java.util.*;
 public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEntity> implements TopologyService {
 
     @Override
-    public TopologyEntity getTopology(String topologyId) {
+    public JSONObject getTopology(String topologyId) {
         LambdaQueryWrapper<TopologyEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TopologyEntity::getTopologyId, topologyId);
-        return getOne(wrapper);
+        TopologyEntity topology = getOne(wrapper);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("topology", JSONObject.parse(topology.getTopology()));
+        JSONObject configDataJson = new JSONObject();
+        configDataJson.put("scene_config", jsonObject);
+        return configDataJson;
     }
 
     @Override
     public Topology formatTopology(String topologyId) {
-        TopologyEntity entity = getTopology(topologyId);
+        LambdaQueryWrapper<TopologyEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TopologyEntity::getTopologyId, topologyId);
+        TopologyEntity entity = getOne(wrapper);
         if (entity != null){
             String topologyInfo = entity.getTopology();
             Topology topology = JsonUtil.toJsonObject(topologyInfo, Topology.class);
@@ -59,5 +69,12 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
             return map;
         }
         return null;
+    }
+
+    @Override
+    public TopologyEntity selectTopology(String topologyId) {
+        LambdaQueryWrapper<TopologyEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TopologyEntity::getTopologyId, topologyId);
+        return getOne(wrapper);
     }
 }

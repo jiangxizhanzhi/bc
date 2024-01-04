@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
@@ -286,14 +287,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 拓扑信息查询
 //			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
-			TopologyEntity topology = topologyService.getTopology(lesson.getTopoId());
+			JSONObject topology = topologyService.getTopology(lesson.getTopoId());
 			if (null != topology) {
-				JSONObject topoData = JSONObject.parseObject(topology.getTopology());
-				JSONObject sceneConfig = new JSONObject();
-				sceneConfig.put("topology", topoData);
-				JSONObject configData = new JSONObject();
-				configData.put("scene_config", sceneConfig);
-				infoBo.setSceneConfigData(configData);
+				infoBo.setSceneConfigData(topology);
 			}
 
 			// 前台需要先查询课堂场景
@@ -992,14 +988,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 拓扑信息查询
 //			JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());
-			TopologyEntity topology = topologyService.getTopology(courseLesson.getTopoId());
+			JSONObject topology = topologyService.getTopology(courseLesson.getTopoId());
 			if (null != topology) {
-				JSONObject topoData = JSONObject.parseObject(topology.getTopology());
-				JSONObject sceneConfig = new JSONObject();
-				sceneConfig.put("topology", topoData);
-				JSONObject configData = new JSONObject();
-				configData.put("scene_config", sceneConfig);
-				topoSceneDataRes.setSceneConfigData(configData);
+
+				topoSceneDataRes.setSceneConfigData(topology);
 			}
 
 			// 前台需要先查询课堂场景

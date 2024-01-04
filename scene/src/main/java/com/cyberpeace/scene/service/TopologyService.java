@@ -1,6 +1,8 @@
 package com.cyberpeace.scene.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
@@ -21,7 +23,7 @@ public interface TopologyService extends IService<TopologyEntity> {
      * @param topologyId 拓扑id
      * @return 拓扑信息
      */
-    TopologyEntity getTopology(String topologyId);
+    JSONObject getTopology(String topologyId);
 
     /**
      * 格式化拓扑信息
@@ -36,4 +38,6 @@ public interface TopologyService extends IService<TopologyEntity> {
      * @return  拓扑元素信息
      */
     Map<String, List<TopologyElement>> getTopologyElementMap(Topology topology);
+
+    TopologyEntity selectTopology(String topologyId);
 }

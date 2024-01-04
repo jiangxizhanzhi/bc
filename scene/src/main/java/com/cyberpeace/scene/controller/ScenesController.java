@@ -1,7 +1,9 @@
 package com.cyberpeace.scene.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
@@ -33,7 +35,7 @@ public class ScenesController {
     @GetMapping("/topology")
     @ApiOperation(value = "获取拓扑结构")
     public BaseRsp getTopology(@ApiParam(value = "拓扑结构id", name = "topology_id")@RequestParam("topology_id") String topologyId){
-        TopologyEntity topology = topologyService.getTopology(topologyId);
+        JSONObject topology = topologyService.getTopology(topologyId);
         return new BaseRsp<>(topology);
     }
 

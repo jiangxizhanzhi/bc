@@ -15,6 +15,15 @@ public class EvalTemplateListRsp {
 	@NotNull
 	private String name;
 
+	@ApiModelProperty("试验条件")
+	private String condition;
+
+	@ApiModelProperty("试验方法")
+	private String method;
+
+	@ApiModelProperty("任务方案附件")
+	private String scheme;
+
 	@ApiModelProperty(value = "测评描述")
 	private String description;
 

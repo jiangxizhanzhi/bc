@@ -125,6 +125,7 @@ public class EvalTemplateController {
 
 		// 构造接口返回数据
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
+		evalTemplateRsp.setCondition(evalTemplate.getExpCondition());
 		MissionScheme missionScheme = JsonUtil.toJsonObject(evalTemplate.getMissionsScheme(), MissionScheme.class);
 		evalTemplateRsp.setMissionsScheme(missionScheme);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
@@ -213,6 +214,7 @@ public class EvalTemplateController {
 
 		// 复制模板信息
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
+		evalTemplate.setExpCondition(evaTemplateAddReq.getCondition());
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
 		// 设置技战法方案-任务方案
 		evalTemplate.setMissionsScheme(null == evalTemTemplate ? JsonUtil.toJsonString(evaTemplateAddReq.getMissionsScheme()) : evalTemTemplate.getMissionScheme());

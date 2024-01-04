@@ -30,4 +30,13 @@ public class EvaTemplateBaseInfoReq {
 	@NotNull
 	private Boolean enableRecording;
 
+	@ApiModelProperty("试验条件")
+	private String condition;
+
+	@ApiModelProperty("试验方法")
+	private String method;
+
+	@ApiModelProperty("任务方案附件")
+	private String scheme;
+
 }

@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.scene.dao.entity.TopologyEntity;
+import com.cyberpeace.scene.service.SceneService;
+import com.cyberpeace.scene.service.TopologyService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +143,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private SceneService sceneService;
+
+	@Autowired
+	private TopologyService topologyService;
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
@@ -276,7 +285,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				&& StringUtils.isNotBlank(lesson.getTopoId())) {
 
 			// 拓扑信息查询
-			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
+//			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
+			TopologyEntity topology = topologyService.getTopology(lesson.getTopoId());
+			infoBo.setSceneConfigData(JSONObject.parseObject(topology.getTopology()));
+
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;

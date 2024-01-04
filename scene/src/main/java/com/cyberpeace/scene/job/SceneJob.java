@@ -99,16 +99,17 @@ public class SceneJob {
     public void start(Topology topology, SceneEntity scene) {
         log.info("start scene : {}", scene.getSceneName());
         //获取拓扑元素
-        Map<String, TopologyElement> topologyMap = topologyService.getTopologyElementMap(topology);
+        Map<String, List<TopologyElement>> topologyMap = topologyService.getTopologyElementMap(topology);
         SceneMapper sceneMapper = SpringContextUtil.getBeanByClass(SceneMapper.class);
         if(Objects.nonNull(topologyMap)){
             try{
                 int count = 0;
-                int size = topologyMap.size();
+                int size = topologyMap.values().stream().mapToInt(List::size).sum();
                 TopologyElement networkElement = new TopologyElement();
                 // 获取网络信息
                 if (topologyMap.containsKey(ImageTypeEnum.ELEMENT_TYPE_INTERNET.getName())){
-                    networkElement = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_INTERNET.getName());
+                    List<TopologyElement> topologyElements = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_INTERNET.getName());
+                    networkElement = topologyElements.get(0);
                 }
                 //推送进度
                 pushScenePlugin(scene, 25, 0, 2);
@@ -122,36 +123,41 @@ public class SceneJob {
 
                 // 创建虚拟机
                 if (topologyMap.containsKey(ImageTypeEnum.ELEMENT_TYPE_HOST.getName())){
-                    TopologyElement hostElement = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_HOST.getName());
-                    //创建虚拟机
-                    CreateInstanceRes res = hostService.create(new CreateInstanceReq(hostElement.getName(), null, nets));
-                    NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getInstanceName(), null,
-                            null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(),
-                            SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), hostElement.getId());
-                    hostElement.setNodeId(res.getUuid());
-                    //保存节点信息
-                    nodeService.save(node);
-                    count++;
-                    pushElement(hostElement, scene);
-                    pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
+                    List<TopologyElement> topologyElements = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_HOST.getName());
+                    for (TopologyElement hostElement : topologyElements){
+                        //创建虚拟机
+                        CreateInstanceRes res = hostService.create(new CreateInstanceReq(hostElement.getName(), null, nets));
+                        NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getInstanceName(), null,
+                                null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(),
+                                SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), hostElement.getId());
+                        hostElement.setNodeId(res.getUuid());
+                        //保存节点信息
+                        nodeService.save(node);
+                        count++;
+                        pushElement(hostElement, scene);
+                        pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
+                    }
                 }
                 // 创建容器
                 if (topologyMap.containsKey(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getName())) {
-                    TopologyElement containerElement = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getName());
-                    //创建容器
-                    CreateContainersRes res = containerService.create(new CreateContainerReq(containerElement.getName(), null, nets));
-                    NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getName(), null,
-                            null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
-                            SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), containerElement.getId());
-                    containerElement.setNodeId(res.getUuid());
-                    //保存节点信息
-                    nodeService.save(node);
-                    count++;
-                    pushElement(containerElement, scene);
-                    pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
+                    List<TopologyElement> topologyElements = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getName());
+                    for (TopologyElement containerElement : topologyElements){
+                        //创建容器
+                        CreateContainersRes res = containerService.create(new CreateContainerReq(containerElement.getName(), null, nets));
+                        NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getName(), null,
+                                null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
+                                SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), containerElement.getId());
+                        containerElement.setNodeId(res.getUuid());
+                        //保存节点信息
+                        nodeService.save(node);
+                        count++;
+                        pushElement(containerElement, scene);
+                        pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
+                    }
                 }
-
                 sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
+                //更新场景状态为运行中
+                sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ACTIVE.getCode());
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e);
                 //更新场景状态为错误

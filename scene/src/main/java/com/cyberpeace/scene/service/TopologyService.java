@@ -5,6 +5,7 @@ import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,5 +35,5 @@ public interface TopologyService extends IService<TopologyEntity> {
      * @param topology  拓扑信息
      * @return  拓扑元素信息
      */
-    Map<String, TopologyElement> getTopologyElementMap(Topology topology);
+    Map<String, List<TopologyElement>> getTopologyElementMap(Topology topology);
 }

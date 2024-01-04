@@ -12,9 +12,7 @@ import com.cyberpeace.scene.service.TopologyService;
 import com.cyberpeace.scene.service.bo.TopologyElement;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author :   SN
@@ -43,13 +41,19 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
     }
 
     @Override
-    public Map<String, TopologyElement> getTopologyElementMap(Topology topology) {
-        Map<String, TopologyElement> map = new HashMap<>();
+    public Map<String, List<TopologyElement>> getTopologyElementMap(Topology topology) {
+        Map<String, List<TopologyElement>> map = new HashMap<>();
         if (Objects.nonNull(topology)){
             for (TopologyElement element : topology.getElements()){
                 ImageTypeEnum imageType = EnumUtils.getEnumByCode(element.getType(), ImageTypeEnum.class);
                 if (Objects.nonNull(imageType)){
-                    map.put(imageType.getName(), element);
+                    if (map.containsKey(imageType.getName())){
+                        map.get(imageType.getName()).add(element);
+                    }else {
+                        List<TopologyElement> list = new ArrayList<>();
+                        list.add(element);
+                        map.put(imageType.getName(), list);
+                    }
                 }
             }
             return map;

@@ -8,6 +8,7 @@ import com.cyberpeace.oj.person.controller.res.StudyCalendarRes;
 import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
+import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 
 import java.util.Date;
 import java.util.List;
@@ -76,4 +77,7 @@ public interface PersonCenterService {
 	StudyStaticsRes studyStatics();
 
 	List<StudyCalendarRes> studyCalendar(String startTime, String endTime);
+
+	List<ProgressPracticeRes> abilityFramework();
+
 }

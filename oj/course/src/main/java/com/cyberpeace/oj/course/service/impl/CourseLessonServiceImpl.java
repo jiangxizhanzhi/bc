@@ -287,8 +287,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 拓扑信息查询
 //			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
 			TopologyEntity topology = topologyService.getTopology(lesson.getTopoId());
-			infoBo.setSceneConfigData(JSONObject.parseObject(topology.getTopology()));
-
+			if (null != topology) {
+				JSONObject topoData = JSONObject.parseObject(topology.getTopology());
+				infoBo.setSceneConfigData(topoData);
+			}
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
@@ -985,8 +987,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				&& StringUtils.isNotBlank(courseLesson.getTopoId())) {
 
 			// 拓扑信息查询
-			JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());
-			topoSceneDataRes.setSceneConfigData(topoData);
+//			JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());
+			TopologyEntity topology = topologyService.getTopology(courseLesson.getTopoId());
+			if (null != topology) {
+				JSONObject topoData = JSONObject.parseObject(topology.getTopology());
+				topoSceneDataRes.setSceneConfigData(topoData);
+			}
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;

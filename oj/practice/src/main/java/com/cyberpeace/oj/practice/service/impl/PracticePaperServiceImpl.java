@@ -10,6 +10,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.utils.OjCommonValidator;
+import com.cyberpeace.oj.practice.controller.req.ExamCreateReq;
 import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
 import com.cyberpeace.oj.practice.controller.res.*;
 import com.cyberpeace.oj.practice.dao.entity.*;
@@ -259,6 +260,12 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 				paperPracticeTheoryService.saveBatch(paperPracticeTheoryList);
 			}
 		});
+		return practicePaper;
+	}
+
+	@Override
+	public PracticePaper createExam(ExamCreateReq examCreateReq) {
+		PracticePaper practicePaper = new PracticePaper();
 		return practicePaper;
 	}
 

@@ -1,6 +1,8 @@
 package com.cyberpeace.scene.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModel;
@@ -19,6 +21,9 @@ import java.util.Date;
 @ApiModel
 @TableName("cr_scene")
 public class SceneEntity extends BaseTable implements Serializable {
+
+    @TableId(type = IdType.AUTO)
+    private Integer id;
 
     @ApiModelProperty("场景id")
     @TableField("resource_id")
@@ -53,4 +58,7 @@ public class SceneEntity extends BaseTable implements Serializable {
 
     @ApiModelProperty("场景元数据")
     private String meta;
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }

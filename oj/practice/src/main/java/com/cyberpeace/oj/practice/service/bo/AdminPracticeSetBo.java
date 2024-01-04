@@ -15,6 +15,9 @@ public class AdminPracticeSetBo extends AuthTable {
 	@ApiModelProperty("名称")
 	private String name;
 
+	@ApiModelProperty("简介")
+	private String desc;
+
 	@ApiModelProperty("logo")
 	private String logo;
 

@@ -14,9 +14,13 @@ import com.cyberpeace.scene.service.bo.req.CreateNetworkReq;
 import com.cyberpeace.scene.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -54,6 +58,9 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
      */
     private String DEFAULT_GATEWAY;
 
+    @Autowired
+    private NetworkMapper networkMapper;
+
     @PostConstruct
     public void init(){
         CP_HOST = ConfigUtil.getContextProperty("cp.host");
@@ -64,7 +71,7 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
     }
 
     @Override
-    public NetworkEntity createNetwork(String name, String cidr, String gateway) {
+    public NetworkEntity create(String name, String cidr, String gateway, String sceneId, String pid) {
         log.info("create network start, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
         CreateNetworkReq req;
         if (StringUtils.isBlank(cidr) || StringUtils.isBlank(gateway)){
@@ -83,6 +90,8 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
                 log.error("create network failed, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
                 throw new BusinessException(ErrorCode.CREATE_NETWORK_ERROR);
             }
+            networkEntity.setUser(pid);
+            networkEntity.setSid(sceneId);
             save(networkEntity);
             log.info("create network success, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
         }
@@ -90,7 +99,7 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
     }
 
     @Override
-    public void deleteNetwork(String networkId) {
-        HttpUtil.rawDelete(CP_HOST + CP_NETWORK + "/" + networkId, null);
+    public void delete(String networkId) {
+        HttpUtil.rawDelete(CP_HOST + CP_NETWORK + "/" + networkId, String.class);
     }
 }

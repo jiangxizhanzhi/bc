@@ -157,13 +157,11 @@
     </select>
 
     <select id="selectOperationPracticeByAuth" resultType="java.lang.String">
-        select resource_id from oj_practice_operation where
-        <include refid="filterByPublic"/>
+        select resource_id from oj_practice_operation
     </select>
 
     <select id="selectTheoryPracticeByAuth" resultType="java.lang.String">
-        select resource_id from oj_practice_theory where
-        <include refid="filterByPublic"/>
+        select resource_id from oj_practice_theory
     </select>
 
     <select id="selectPublicCourse" resultType="java.lang.String">
@@ -382,10 +380,40 @@
     </select>
     <select id="selectLessonAllCount" resultType="com.cyberpeace.oj.person.controller.res.StudyStaticsRes">
         select count(distinct oj_course_lesson.resource_id) as lessonAllCount,
-               SUM(case when oj_course_lesson.type = 0 then 1 END)as theoryLessonCount ,
-               SUM(case when oj_course_lesson.type = 1 then 1 END ) as expLessonCount
+               SUM(case when oj_course_lesson.type = 0 then 1 END)as theoryLessonAllCount ,
+               SUM(case when oj_course_lesson.type = 1 then 1 END ) as expLessonAllCount
     from oj_course_lesson
     join oj_course on oj_course.resource_id = oj_course_lesson.course_id
+    </select>
+    <select id="selectLessonStudyCalendar"
+            resultType="com.cyberpeace.oj.person.controller.res.StudyHistoryRes">
+        select course_name as `name`,
+               1 as `type`,
+               DATE_FORMAT(create_time, '%Y-%m-%d') as `date`,
+               course_id as resourceId
+        from oj_course_study_history
+        where user_id = #{userId}
+          and create_time &gt;= #{startTime}
+          and create_time &lt;= #{endTime}
+    </select>
+    <select id="selectParcticeStudyCalendar"
+            resultType="com.cyberpeace.oj.person.controller.res.StudyHistoryRes">
+        select CASE
+                   WHEN t.content IS NOT NULL AND t.content  != '' THEN t.content
+                   ELSE p.title
+                   END AS `name`,
+               CASE
+                   WHEN t.content IS NOT NULL AND t.content  != '' THEN t.resource_id
+                   ELSE p.resource_id
+                   END AS resourceId,
+               2 as `type`,
+               DATE_FORMAT(s.create_time, '%Y-%m-%d') as `date`
+        from oj_practice_solved s
+                 left join oj_practice_theory t on t.resource_id = s.practice_id
+                 left join oj_practice_operation p on p.resource_id = s.practice_id
+        where submit_user_id = #{userId}
+          and s.create_time &gt;= #{startTime}
+          and s.create_time &lt;= #{endTime}
     </select>
 
 

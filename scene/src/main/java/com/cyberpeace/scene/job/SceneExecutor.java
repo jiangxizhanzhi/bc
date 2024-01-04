@@ -16,12 +16,16 @@ public class SceneExecutor implements Runnable, Serializable {
 
     private Topology topology;
 
-    private SceneEntity scene;
+    SceneEntity scene;
 
     public SceneExecutor(SceneJob sceneJob, Topology topology, SceneEntity scene) {
         this.sceneJob = sceneJob;
         this.topology = topology;
         this.scene = scene;
+    }
+
+    public SceneEntity getScene(){
+        return scene;
     }
 
     @Override

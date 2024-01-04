@@ -7,6 +7,7 @@ import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.person.controller.res.StudyHistoryRes;
 import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -164,4 +165,8 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
     List<String> selectPublicCourse(@Param("courseIds") List<String> courseIds);
 
     StudyStaticsRes selectLessonAllCount();
+
+    List<StudyHistoryRes> selectLessonStudyCalendar(@Param("startTime")String startTime,@Param("endTime") String endTime,@Param("userId") String userId);
+
+    List<StudyHistoryRes> selectParcticeStudyCalendar(@Param("startTime")String startTime,@Param("endTime") String endTime,@Param("userId") String userId);
 }

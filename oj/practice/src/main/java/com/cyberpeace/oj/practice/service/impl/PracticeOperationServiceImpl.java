@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -103,6 +104,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private SysUserService sysUserService;
 
 	@Resource(name = "operation")
 	private PracticeEvaluateHandler practiceEvaluateHandler;
@@ -641,7 +645,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		Map<String, PracticeSet> practiceSetMap = StreamApiUtils.toMap(practiceSetList,
 				PracticeSet::getResourceId, item -> item);
 
-		Map<String, UserInfo> creatorMap = remoteUserService.getIdUserInfoMap(creatorIdList);
+		Map<String, String> creatorMap = sysUserService.getUserNameMap(creatorIdList);
 
 		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext,
 				listQuery.getSolved(), practiceSolvedMap, practiceSetMap, creatorMap));
@@ -660,7 +664,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
 			AuthContext authContext, Boolean solved, Map<String, PracticeSolved> practiceSolvedMap,
-			Map<String, PracticeSet> practiceSetMap, Map<String, UserInfo> creatorMap) {
+			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap) {
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
@@ -688,8 +692,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeSet practiceSet = practiceSetMap.get(practiceOperation.getPracticeSetId());
 		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
-		UserInfo userInfo = creatorMap.get(practiceOperation.getCreateUserId());
-		operationListBo.setCreateUserName(null != userInfo ? userInfo.getName() : "");
+		operationListBo.setCreateUserName( creatorMap.getOrDefault(practiceOperation.getCreateUserId(),""));
 		operationListBo.setSource(null != practiceSet ? practiceSet.getSource() : "");
 		return operationListBo;
 

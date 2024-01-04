@@ -22,7 +22,7 @@ public class PracticePaper extends BaseTable {
 	//题目难度
 	private String difficulty;
 
-	//题目类型
+	//题目类型:单选 多选等
 	private String type;
 
 	//方向选择
@@ -34,4 +34,10 @@ public class PracticePaper extends BaseTable {
 	//组卷人
 	private String userId;
 
+	private Integer paperType;
+
+	private String name;
+
+	//是否真题
+	private String isTrue;
 }

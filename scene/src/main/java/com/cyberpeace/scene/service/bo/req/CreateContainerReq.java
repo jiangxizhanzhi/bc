@@ -2,6 +2,7 @@ package com.cyberpeace.scene.service.bo.req;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.cyberpeace.scene.service.bo.Net;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,8 @@ import java.util.List;
  * @desc :
  **/
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class CreateContainerReq implements Serializable {
 
     /**

@@ -22,6 +22,8 @@ import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
+import com.cyberpeace.oj.person.controller.res.StudyCalendarRes;
+import com.cyberpeace.oj.person.controller.res.StudyHistoryRes;
 import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.dao.mapper.PersonCenterMapper;
@@ -39,10 +41,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.cyberpeace.integratation.constant.LogContent.EXERCISE;
@@ -313,33 +312,43 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         res.setTheoryLessonCount(studyRecord.getExpCount());
         res.setExpLessonCount(studyRecord.getTheoryCount());
         StudyStaticsRes lessonCount = personCenterMapper.selectLessonAllCount();
-
-
-
-
-
-
-        // 获取用户完成课后练习的排名、得分、数量
-        List<String> users = personCenterMapper.selectDistinctUser();
-        if (users.contains(userId)) {
-            StudyRecord practiceRecord = personCenterMapper.selectPracticeByUser(userId, lessonIds);
-            if (null != practiceRecord) {
-                int practiceCount = Integer.parseInt(practiceRecord.getRecord());
-                studyRecord.setPracticeFinishCount(practiceCount);
-                double score = practiceRecord.getScore();
-                Integer practiceRanking = practiceRecord.getPracticeRanking();
-                studyRecord.setPracticeRanking(practiceRanking);
-                studyRecord.setScore(score);
-            }
-        }
-        // 获取当前用户解出的实操题和理论题个数
+        res.setLessonAllCount(lessonCount.getLessonAllCount());
+        res.setTheoryLessonAllCount(lessonCount.getTheoryLessonAllCount());
+        res.setExpLessonAllCount(lessonCount.getExpLessonAllCount());
+        //获取练习正确率
         StudyRecord practiceByUser = personCenterMapper.selectSlovedPracticeByUser(userId);
         Integer operationPracticeCount = practiceByUser.getOperationPracticeCount();
         Integer theoryPracticeCount = practiceByUser.getTheoryPracticeCount();
-        studyRecord.setOperationPracticeCount(null == operationPracticeCount ? 0 : operationPracticeCount);
-        studyRecord.setTheoryPracticeCount(null == theoryPracticeCount ? 0 : theoryPracticeCount);
-        BaseRsp<StudyRecord> rsp = new BaseRsp<>();
-        rsp.setData(studyRecord);
+        res.setOperationPracticeCount(null == operationPracticeCount ? 0 : operationPracticeCount);
+        res.setTheoryPracticeCount(null == theoryPracticeCount ? 0 : theoryPracticeCount);
+        res.setPracticeCount(res.getOperationPracticeCount()+res.getTheoryPracticeCount());
+        int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
+        int operationPracticeAllCount = personCenterMapper.selectOperationPracticeByAuth().size();
+        res.setOperationPracticeAllCount(operationPracticeAllCount);
+        res.setTheoryPracticeAllCount(theoryPracticeAllCount);
+        res.setPracticeAllCount(res.getOperationPracticeAllCount()+res.getTheoryPracticeAllCount());
+        //TODO 考试通过率
+
+        return res;
+    }
+
+    @Override
+    public List<StudyCalendarRes> studyCalendar(String startTime, String endTime) {
+        String userId = UserInfoContext.getUserContext().getUserId();
+        //课时
+        List<StudyHistoryRes>  lessonList= personCenterMapper.selectLessonStudyCalendar(startTime, endTime,userId);
+        //练习
+        List<StudyHistoryRes>  parcticeList= personCenterMapper.selectParcticeStudyCalendar(startTime, endTime,userId);
+        //TODO 考试
+        List<StudyCalendarRes> res = new ArrayList<>();
+        lessonList.addAll(parcticeList);
+        lessonList.stream().collect(Collectors.groupingBy(StudyHistoryRes::getDate)).forEach((k,v)->{
+            StudyCalendarRes studyHistoryRes = new StudyCalendarRes();
+            studyHistoryRes.setDate(k);
+            studyHistoryRes.setHistoryList(v);
+            res.add(studyHistoryRes);
+        });
+        res.sort(Comparator.comparing(StudyCalendarRes::getDate));
         return res;
     }
 

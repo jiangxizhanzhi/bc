@@ -1,6 +1,7 @@
 package com.cyberpeace.scene.service.bo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class Net implements Serializable {
 
-    @TableField(value = "network_id")
-    private String networkId;
+    @JsonProperty("network_id")
+    private String network_id;
 }

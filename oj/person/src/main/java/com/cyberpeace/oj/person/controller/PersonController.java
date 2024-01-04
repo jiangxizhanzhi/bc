@@ -14,6 +14,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.controller.req.PageMistakeReq;
 import com.cyberpeace.oj.person.controller.req.PageNoteReq;
+import com.cyberpeace.oj.person.controller.res.StudyCalendarRes;
 import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
@@ -38,13 +39,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Api(tags = "oj-前台个人中心api")
 @RestController
 @RequestMapping("/oj/person")
-@RequiresAuthentication
 public class PersonController {
 
 	@Autowired
@@ -64,7 +65,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有评论")
 	@GetMapping("/comments")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonComment>> listComments(@ApiParam @Validated PageReqBase pageReq) {
 		Page<PersonComment> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -79,7 +79,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有回复")
 	@GetMapping("/replies")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonComment>> listReplies(@ApiParam @Validated PageReqBase pageReq) {
 		Page<PersonComment> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -94,7 +93,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有笔记")
 	@GetMapping("/notes")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonNote>> listNotes(@ApiParam @Validated PageNoteReq pageReq) {
 		Page<PersonNote> page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -109,7 +107,6 @@ public class PersonController {
 
 	@ApiOperation("当前用户所有收藏")
 	@GetMapping("/collections")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonCollection>> listCollections(
 			@ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type,
 			@RequestParam(value = "practiceType", required = false) Integer practiceType) {
@@ -125,27 +122,22 @@ public class PersonController {
 		return new BaseRsp<>(PageUtil.getListResult(collections));
 	}
 
-	@ApiOperation("当前用户学习课程和练习记录")
-	@GetMapping("/study_records")
-	public BaseRsp<StudyRecord> courseAndPracticeRecords() {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 权限数据获取
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				true);
-		return personCenterService.studyRecords(userId, authContext);
-	}
 
-	@ApiOperation("当前用户学习课程和练习记录")
+	@ApiOperation("学习统计")
 	@GetMapping("/study_statics")
 	public BaseRsp<StudyStaticsRes> studyStatics() {
 		return new BaseRsp<>(personCenterService.studyStatics());
 	}
 
+	@ApiOperation("日程表")
+	@GetMapping("/study_calendar")
+	public BaseRsp<List<StudyCalendarRes>> studyCalendar(@RequestParam(value = "startTime") String  startTime,
+												   @RequestParam(value = "endTime") String  endTime) {
+		return new BaseRsp<>(personCenterService.studyCalendar(startTime, endTime));
+	}
+
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_PERSON_CENTER, MenuConstant.CMS_COURSE_STATISTICS },
-			logical = Logical.OR)
 	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(
 			@RequestParam(value = "user_id", required = false) String userId,
 			@RequestParam(value = "isWeb", required = false) Boolean isWeb) {
@@ -165,7 +157,6 @@ public class PersonController {
 
 	@ApiOperation("查询收藏习题列表")
 	@GetMapping("/my_all_collection_practice")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<List<CollectionPracticeBo>> allCollectionPractice() {
 
 		// 查询收藏的理论习题
@@ -194,7 +185,6 @@ public class PersonController {
 
 	@ApiOperation("收藏理论题详情页")
 	@GetMapping("/collection_theory_practice_detail")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<WebTheoryBo> collectionTheoryRetrieve(@RequestParam(value = "resource_id") String resourceId) {
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
 				UserInfoContext.getUserContext().getUserId(), Boolean.TRUE);
@@ -203,7 +193,6 @@ public class PersonController {
 
 	@ApiOperation("收藏实操题详情页")
 	@GetMapping("/collection_operate_practice_detail")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<WebOperationBo> collectionOperateRetrieve(@RequestParam(value = "resource_id") String resourceId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
@@ -214,7 +203,6 @@ public class PersonController {
 
 	@ApiOperation("查看理论题错题页面")
 	@GetMapping("/mistake")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonalMistakeRes>> getPracticeMistake(PageMistakeReq pageReq) {
 		if (StringUtils.isBlank(pageReq.getSort())) {
 			pageReq.setSort("-update_time");
@@ -229,7 +217,6 @@ public class PersonController {
 
 	@ApiOperation("批量移除错题")
 	@DeleteMapping("/mistake")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<Boolean> bathDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		return new BaseRsp<>(practiceMistakeService.bathDelete(deleteReq.getIds(), userId));
@@ -237,7 +224,6 @@ public class PersonController {
 
 	@ApiOperation("获取错题集id列表")
 	@GetMapping("/mistake_ids")
-	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<List<String>> getPracticeMistakeIds() {
 		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
 		return new BaseRsp<>(StreamApiUtils.map(personalMistakeResList, PersonalMistakeRes::getPracticeId));

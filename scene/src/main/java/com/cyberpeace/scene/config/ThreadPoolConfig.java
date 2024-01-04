@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.config;
 
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
@@ -18,8 +19,11 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPoolConfig {
 
     @Bean
-    public SceneThreadPoolExecutor threadPoolSceneExecutor() {
-        return new SceneThreadPoolExecutor(3, Math.max(Runtime.getRuntime().availableProcessors(),4), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
+    public SceneThreadPoolExecutor threadPoolSceneExecutor(MyWebSocketHandler webSocketHandler) {
+        SceneThreadPoolExecutor sceneThreadPoolExecutor = new SceneThreadPoolExecutor(3, Math.max(Runtime.getRuntime().availableProcessors(), 4), 1,
+                TimeUnit.MINUTES, new LinkedBlockingQueue<>());
+        sceneThreadPoolExecutor.setWebSocketHandler(webSocketHandler);
+        return sceneThreadPoolExecutor;
     }
 
     @Bean

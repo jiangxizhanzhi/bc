@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.web;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
@@ -33,7 +34,6 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "oj-前台练习分类相关api")
 @RestController
 @RequestMapping("/oj/practice/category")
-@RequiresAuthentication
 public class PracticeCategoryController {
 
 	@Autowired
@@ -44,6 +44,12 @@ public class PracticeCategoryController {
 
 	@Autowired
 	private PracticeOperationService practiceOperationService;
+	@GetMapping("/listAll")
+	public BaseRsp<List<PracticeCategory>>  queryAll() {
+		return new BaseRsp<>(categoryService.list());
+	}
+
+
 
 	@ApiOperation("查询习题分类列表")
 	@ApiImplicitParams({

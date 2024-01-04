@@ -1,6 +1,7 @@
 package com.cyberpeace.auth.service;
 
 
+import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.auth.controller.req.UserImportReq;
@@ -84,4 +85,7 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return	导入结果
 	 */
 	BaseRsp importUser(UserImportReq req);
+
+    Map<String, String> getUserNameMap(List<String> userIdList);
+
 }

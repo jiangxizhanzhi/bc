@@ -2,6 +2,7 @@ package com.cyberpeace.scene.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 
 /**
@@ -11,7 +12,7 @@ import com.cyberpeace.scene.dao.entity.SceneEntity;
  **/
 public interface SceneService extends IService<SceneEntity> {
 
-    BaseRsp startScene(String topologyId, String instanceId);
+    BaseRsp startScene(SceneStartReq req);
 
     void verify();
 

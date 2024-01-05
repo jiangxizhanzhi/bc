@@ -13,17 +13,5 @@ import java.util.List;
 @Data
 public class CPCloudElement implements Serializable {
 
-    private List<String> staticRoutes;
 
-    private Integer vlanId;
-
-    private String ospfRouteId;
-
-    private String lanPortType;
-
-    private String firewallResourceId;
-
-    private List<String> hostRoutes;
-
-    private String electricPortType;
 }

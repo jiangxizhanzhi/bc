@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.auth.domain.SysUser;
@@ -10,7 +11,9 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
+import com.cyberpeace.scene.constant.enums.RoleEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
+import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
 import com.cyberpeace.scene.controller.rsp.SceneDataRsp;
 import com.cyberpeace.scene.controller.rsp.SceneDetailRsp;
@@ -21,8 +24,10 @@ import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.job.SceneExecutor;
 import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.*;
+import com.cyberpeace.scene.service.bo.ElementPort;
 import com.cyberpeace.scene.service.bo.SceneData;
 import com.cyberpeace.scene.service.bo.Topology;
+import com.cyberpeace.scene.service.bo.TopologyElement;
 import com.cyberpeace.scene.util.HttpUtil;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,33 +104,40 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     }
 
     @Override
-    public BaseRsp startScene(String topologyId, String instanceId) {
+    public BaseRsp startScene(SceneStartReq req) {
         String userId = UserInfoContext.getNewUserContext().getResourceId();
-        SceneEntity instance = sceneMapper.selectByInstanceId(instanceId, userId, SceneEnum.getCodes());
+        SceneEntity instance = sceneMapper.selectByInstanceId(req.getInstanceId(), userId, SceneEnum.getCodes());
         if (!Objects.isNull(instance)){
             throw new BusinessException(ErrorCode.SCENE_ALREADY_EXIST);
         }
-        Topology topology = topologyService.formatTopology(topologyId);
+        Topology topology = topologyService.formatTopology(req.getTopologyId());
         log.info("topology：{}", topology);
         if (topology == null){
             throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
         }
         //创建场景
-        SceneEntity scene = createScene(topologyId, instanceId, UserInfoContext.getNewUserContext().getResourceId());
+        SceneEntity scene = createScene(req.getTopologyId(), req.getInstanceId(), UserInfoContext.getNewUserContext().getResourceId(),
+                req.getInstanceType(), req.getDestroyTime());
         //提交创建场景任务
         executor.submit(new SceneExecutor(sceneJob, topology, scene));
         log.info("submit create scene mission, scene ：{}", scene);
         return new BaseRsp<>(scene);
     }
 
-    private SceneEntity createScene(String topologyId, String instanceId, String userId){
+    private SceneEntity createScene(String topologyId, String instanceId, String userId, Integer instanceType, Integer destroy){
         SceneEntity scene = new SceneEntity();
         scene.setResourceId(IDGeneratorUtil.getID());
         scene.setSceneName(IDGeneratorUtil.getID());
         Date startTime = new Date();
         scene.setStartTime(startTime);
-        Date destroyTime = TimeUtil.addHours(startTime, SCENE_DESTROY);
+        Date destroyTime;
+        if (Objects.isNull(destroy)){
+            destroyTime = TimeUtil.addHours(startTime, SCENE_DESTROY);
+        }else {
+            destroyTime = TimeUtil.addHours(startTime, destroy);
+        }
         scene.setDestroyTime(destroyTime);
+        scene.setInstanceType(instanceType);
         scene.setInstanceId(instanceId);
         scene.setTopologyId(topologyId);
         scene.setUserId(userId);
@@ -205,11 +217,46 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 sceneDataRsp.setEvent(2);
                 sceneDataRsp.setEventStatus(5);
             }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("cpcloud", setPlugin(topology));
             topology.setScene(sceneDataRsp);
             sceneData.setTopology(topology);
             sceneData.setScene(scene);
         }
         return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
+    }
+
+    private JSONObject setPlugin(Topology topology){
+        JSONObject jsonObject = new JSONObject();
+        if (Objects.isNull(topology)){
+            return jsonObject;
+        }
+        JSONObject elementsJson = new JSONObject();
+        JSONObject elementPortsJson = new JSONObject();
+        List<TopologyElement> elements = topology.getElements();
+        int sum = elements.stream().mapToInt(e -> e.getPorts().size()).sum();
+        for (TopologyElement element : elements){
+            JSONObject elementJson = new JSONObject();
+            RoleEnum roleEnum = RoleEnum.getRoleEnum(element.getType());
+            if (!Objects.isNull(roleEnum)){
+                elementJson.put("role", roleEnum.getValue());
+                elementJson.put("image_type", roleEnum.getImageType());
+                elementJson.put("electric_port_number", sum);
+            }
+            elementsJson.put(element.getId(), elementJson);
+
+
+            List<ElementPort> ports = element.getPorts();
+            for (ElementPort port : ports){
+                JSONObject elementPortJson = new JSONObject();
+                elementPortJson.put("access_modes", port.getAccessModes());
+                elementPortJson.put("resource_id", element.getNodeId());
+                elementPortsJson.put(port.getId(), elementPortJson);
+            }
+        }
+        jsonObject.put("elements", elementsJson);
+        jsonObject.put("element_ports", elementPortsJson);
+        return jsonObject;
     }
 
     @Override

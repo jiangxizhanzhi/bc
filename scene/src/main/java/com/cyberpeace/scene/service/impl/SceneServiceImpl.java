@@ -202,26 +202,30 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }
         if (StringUtils.isNotBlank(topo)){
             Topology topology = JsonUtil.toJsonObject(topo, Topology.class);
-            SceneDataRsp sceneDataRsp = new SceneDataRsp();
-            BeanUtils.copyProperties(scene, sceneDataRsp);
-            if (Objects.equals(SceneEnum.ACTIVE.getCode(), scene.getSceneStatus())){
-                sceneDataRsp.setEvent(2);
-                sceneDataRsp.setEventStatus(4);
-            } else if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())) {
-                sceneDataRsp.setEvent(2);
-                sceneDataRsp.setEventStatus(2);
-            }else if (Objects.equals(SceneEnum.DELETED.getCode(), scene.getSceneStatus())){
-                sceneDataRsp.setEvent(9);
-                sceneDataRsp.setEventStatus(4);
-            }else if (Objects.equals(SceneEnum.ERROR.getCode(), scene.getSceneStatus())){
-                sceneDataRsp.setEvent(2);
-                sceneDataRsp.setEventStatus(5);
+            if (!Objects.isNull(scene)){
+                SceneDataRsp sceneDataRsp = new SceneDataRsp();
+                BeanUtils.copyProperties(scene, sceneDataRsp);
+                if (Objects.equals(SceneEnum.ACTIVE.getCode(), scene.getSceneStatus())){
+                    sceneDataRsp.setEvent(2);
+                    sceneDataRsp.setEventStatus(4);
+                } else if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())) {
+                    sceneDataRsp.setEvent(2);
+                    sceneDataRsp.setEventStatus(2);
+                }else if (Objects.equals(SceneEnum.DELETED.getCode(), scene.getSceneStatus())){
+                    sceneDataRsp.setEvent(9);
+                    sceneDataRsp.setEventStatus(4);
+                }else if (Objects.equals(SceneEnum.ERROR.getCode(), scene.getSceneStatus())){
+                    sceneDataRsp.setEvent(2);
+                    sceneDataRsp.setEventStatus(5);
+                }
+                topology.setScene(sceneDataRsp);
             }
+
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("cpcloud", setPlugin(topology));
-            topology.setScene(sceneDataRsp);
             sceneData.setTopology(topology);
             sceneData.setScene(scene);
+            sceneData.setPlugins(jsonObject);
         }
         return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
     }

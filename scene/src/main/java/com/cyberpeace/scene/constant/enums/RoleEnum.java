@@ -9,11 +9,12 @@ import lombok.Getter;
  **/
 public enum RoleEnum {
 
-    ROLE_ONER(0, 3, "vm"),
+    ROLE_ZERO(0, 3, "vm"),
     ROLE_ONE(1, 22, "vm"),
     ROLE_TWO(2, 21, "vm"),
     ROLE_THREE(3, 23, "vm"),
-    ROLE_FOUR(4, 4, "vm");
+    ROLE_FOUR(4, 4, "vm"),
+    ROLE_FIVE(5, 4, "vm");
 
     @Getter
     private Integer code;

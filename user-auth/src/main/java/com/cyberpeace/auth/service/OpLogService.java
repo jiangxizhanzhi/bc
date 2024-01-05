@@ -7,6 +7,8 @@ import com.cyberpeace.auth.controller.req.OpLogReq;
 import com.cyberpeace.auth.security.TbUser;
 import com.cyberpeace.auth.service.bo.OpLog;
 
+import java.util.List;
+
 
 public interface OpLogService extends IService<OpLog> {
 
@@ -14,4 +16,7 @@ public interface OpLogService extends IService<OpLog> {
 
     void save(Integer module, Integer method, String target, String detail);
     void save(Integer module, Integer method, String target, String detail, TbUser user);
+
+    List<OpLog> listLastRecord(List<String> userIdList);
+
 }

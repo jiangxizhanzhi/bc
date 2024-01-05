@@ -75,9 +75,7 @@ public class SystemStaticsController {
         List<SystemRecordRes> list =new ArrayList<>();
         List<String> userIdList = userResListRsp.getList().stream().map(UserRes::getResourceId).collect(Collectors.toList());
         //根据createTime获取用户最小一次记录
-        QueryWrapper<OpLog> opLogQueryWrapper = new QueryWrapper<>();
-        opLogQueryWrapper.lambda().in(OpLog::getCreateUserId,userIdList).groupBy(OpLog::getCreateUserId).orderByAsc(OpLog::getCreateTime);
-        List<OpLog> opLogList = opLogService.list(opLogQueryWrapper);
+        List<OpLog> opLogList = opLogService.listLastRecord(userIdList);
         Map<String, OpLog> opLogMap = opLogList.stream().collect(Collectors.toMap(OpLog::getCreateUserId, Function.identity()));
         for (UserRes userRes : userResListRsp.getList()) {
             SystemRecordRes systemRecordRes = new SystemRecordRes();

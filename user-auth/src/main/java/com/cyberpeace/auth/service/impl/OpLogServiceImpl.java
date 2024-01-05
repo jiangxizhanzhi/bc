@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class OpLogServiceImpl extends ServiceImpl<OpLogMapper, OpLog> implements OpLogService {
@@ -56,5 +58,10 @@ public class OpLogServiceImpl extends ServiceImpl<OpLogMapper, OpLog> implements
         log.setUsername(sysUser.getUsername());
         log.setCreateUserId(user.getUserId());
         this.save(log);
+    }
+
+    @Override
+    public List<OpLog> listLastRecord(List<String> userIdList) {
+        return evalOpLogMapper.listLastRecord(userIdList);
     }
 }

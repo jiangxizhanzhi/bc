@@ -22,4 +22,17 @@
         </where>
         order by create_time desc
     </select>
+    <select id="listLastRecord" resultType="com.cyberpeace.auth.service.bo.OpLog">
+        SELECT *
+        FROM op_log
+        WHERE (create_user_id, create_time) IN (
+        SELECT create_user_id, MAX(create_time) AS max_log_time
+        FROM op_log
+        WHERE create_user_id in
+        <foreach item="item" index="index" collection="userIdList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY create_user_id
+        )
+    </select>
 </mapper>

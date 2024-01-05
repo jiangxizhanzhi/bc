@@ -9,8 +9,13 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import java.util.List;
+
 @Mapper
 public interface OpLogMapper extends BaseMapper<OpLog> {
 
     IPage<OpLog> getPage(@Param("page")Page toPageParam, @Param("logReq") OpLogReq logReq);
+
+    List<OpLog> listLastRecord(List<String> userIdList);
+
 }

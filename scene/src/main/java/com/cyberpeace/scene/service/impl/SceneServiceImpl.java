@@ -193,7 +193,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         String userId = UserInfoContext.getNewUserContext().getResourceId();
         SceneEntity scene = sceneMapper.selectByInstanceId(instanceId, userId, SceneEnum.getCodes());
         if (Objects.isNull(scene)){
-            return null;
+            return new BaseRsp<>();
         }
         SceneData sceneData = new SceneData();
         String topo;

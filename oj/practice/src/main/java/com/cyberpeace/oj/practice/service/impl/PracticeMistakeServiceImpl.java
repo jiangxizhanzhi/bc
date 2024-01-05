@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
@@ -15,11 +16,13 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMapper, PracticeMistake> implements PracticeMistakeService {
@@ -85,28 +88,18 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 	@Override
 	public List<PersonalMistakeRes> getPracticeMistake() {
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
-		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authSetIds)) {
-			return new ArrayList<>();
+		List<PersonalMistakeRes> theoryList = practiceMistakeMapper.selectByPracticeId( userInfo.getUserId());
+		List<PersonalMistakeRes> operationList = practiceMistakeMapper.selectOpertionByPracticeId(userInfo.getUserId());
+		if (CollectionUtils.isNotEmpty(operationList)) {
+			for (PersonalMistakeRes res : operationList) {
+				if (StringUtils.isEmpty(res.getDirection())) {
+					continue;
+				}
+				res.setDirection(JSON.parseArray(res.getDirection(), String.class).stream().collect(Collectors.joining(",")));
+			}
+			theoryList.addAll(operationList);
 		}
-
-		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authSetIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authSetIds)) {
-			return new ArrayList<>();
-		}
-
-		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-				authContext.getIsWeb());
-
-		if (CollectionUtils.isEmpty(practiceIds)) {
-			return new ArrayList<>();
-		}
-		return practiceMistakeMapper.selectByPracticeId(practiceIds, userInfo.getUserId());
+		return theoryList;
 	}
 
 	@Override

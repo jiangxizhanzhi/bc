@@ -29,4 +29,6 @@ public class PersonalMistakeRes implements Serializable {
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	private Integer practiceType;
+
 }

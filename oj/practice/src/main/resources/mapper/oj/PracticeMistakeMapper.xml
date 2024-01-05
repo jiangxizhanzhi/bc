@@ -36,23 +36,36 @@
     </select>
 
     <select id="selectByPracticeId" resultType="com.cyberpeace.oj.practice.controller.res.PersonalMistakeRes">
-        select practice_id, content, theory_type, correct, incorrect, category.name as direction, difficulty
+        select practice_id, content, theory_type, correct, incorrect, category.name as direction, difficulty,mistake.practice_type
         from oj_practice_mistake as mistake
         inner join oj_practice_theory as practice
         on mistake.practice_id = practice.resource_id
         inner join oj_practice_category as category
         on practice.category_id = category.resource_id
         <where>
-            <if test="practiceIds != null and practiceIds.size() != 0">
-                practice_id in
-                <foreach collection="practiceIds" item="practiceId" open="(" close=")" separator=",">
-                    #{practiceId}
-                </foreach>
-            </if>
+<!--            <if test="practiceIds != null and practiceIds.size() != 0">-->
+<!--                practice_id in-->
+<!--                <foreach collection="practiceIds" item="practiceId" open="(" close=")" separator=",">-->
+<!--                    #{practiceId}-->
+<!--                </foreach>-->
+<!--            </if>-->
             <if test="userId != null and userId != ''">
                 and user_id = #{userId}
             </if>
         </where>
         order by mistake.update_time desc
+    </select>
+    <select id="selectOpertionByPracticeId"
+            resultType="com.cyberpeace.oj.practice.controller.res.PersonalMistakeRes">
+        select practice_id,practice.title as content,practice.knowledge as direction,practice.category as  theory_type, correct, incorrect, difficulty,mistake.practice_type
+        from oj_practice_mistake as mistake
+        inner join oj_practice_operation as practice
+        on mistake.practice_id = practice.resource_id
+        <where>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+        </where>
+
     </select>
 </mapper>

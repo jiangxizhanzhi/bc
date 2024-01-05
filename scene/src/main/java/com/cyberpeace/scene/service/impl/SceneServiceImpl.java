@@ -204,7 +204,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             TopologyEntity topology = topologyService.selectTopology(topologyId);
             topo = topology.getTopology();
         }
-        long remainTime = (scene.getDestroyTime().getTime() - scene.getStartTime().getTime())/1000;
+        Date currentTime = new Date();
+        long remainTime = (scene.getDestroyTime().getTime() - currentTime.getTime())/1000;
         sceneData.setRemainingTime((int) remainTime);
         if (StringUtils.isNotBlank(topo)){
             Topology topology = JsonUtil.toJsonObject(topo, Topology.class);
@@ -258,7 +259,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             for (ElementPort port : ports){
                 JSONObject elementPortJson = new JSONObject();
                 if (!CollectionUtils.isEmpty(port.getAccessModes())){
-                    elementPortJson.put("access_modes", JSONArray.parse(port.getAccessModes().toString()));
+                    JSONArray accessModes = JSONArray.parseArray(port.getAccessModes().toString());
+                    accessModes.forEach(iter -> {
+                        JSONObject accessMode = JSONObject.parseObject(iter.toString());
+                        accessMode.put("id", element.getNodeId());
+                    });
+                    elementPortJson.put("access_modes", accessModes);
                 }
                 elementPortJson.put("resource_id", element.getNodeId());
                 elementPortsJson.put(port.getId(), elementPortJson);

@@ -266,7 +266,6 @@
         <dependency>
             <groupId>com.sun.jna</groupId>
             <artifactId>jna</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.scene</groupId>

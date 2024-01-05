@@ -38,16 +38,6 @@ public class FilterConfig {
 		filterRegistrationBean.addUrlPatterns("/*");
 		return filterRegistrationBean;
 	}
-	@Bean
-	public FilterRegistrationBean staticResourceFilter() {
-
-		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-		filterRegistrationBean.setOrder(107);
-		filterRegistrationBean.setFilter(new StaticResourceFilter());
-		filterRegistrationBean.setName("staticResourceFilter");
-		filterRegistrationBean.addUrlPatterns("/*");
-		return filterRegistrationBean;
-	}
 
 	@Bean
 	public FilterRegistrationBean demonstrationFilter() {

@@ -90,5 +90,5 @@ public interface SysUserService extends IService<SysUser> {
 
     Map<String, String> getUserNameMap(List<String> userIdList);
 
-	void updateOnlineTime(Date loginTime, TbUser tbUser);
+	void updateOnlineTime(Date loginTime, String userId);
 }

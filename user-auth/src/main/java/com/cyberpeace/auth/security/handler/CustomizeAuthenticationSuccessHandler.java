@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.cyberpeace.auth.constant.OnlineTimeCache;
-import com.cyberpeace.auth.constant.UserEnableEnum;
+import com.cyberpeace.auth.constant.*;
+import com.cyberpeace.auth.service.OpLogService;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,8 @@ public class CustomizeAuthenticationSuccessHandler implements AuthenticationSucc
 
 	@Autowired
 	private SysUserMapper sysUserMapper;
-
+	@Autowired
+	private OpLogService opLogService;
     @Override
 	public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse, Authentication authentication)
@@ -63,5 +64,10 @@ public class CustomizeAuthenticationSuccessHandler implements AuthenticationSucc
         HttpSession session = httpServletRequest.getSession();
         //返回json数据
         CommonUtil.responseJson(httpServletResponse, new BaseRsp(session.getId()), SC_OK);
+		// 审计日志
+		String ip = CommonUtil.getIpAddr(httpServletRequest);
+		opLogService.save(OpLogModuleEnum.USER.getType(),
+				OpLogMethodEnum.LOGIN.getType(), OpLogTarget.USER,
+				String.format(OpLogDetail.USER_LOGIN, ip));
     }
 }

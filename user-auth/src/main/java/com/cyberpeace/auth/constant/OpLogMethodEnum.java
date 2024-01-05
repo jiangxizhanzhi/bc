@@ -1,11 +1,15 @@
 package com.cyberpeace.auth.constant;
 
 public enum OpLogMethodEnum {
-    CREATE(1,"新增"),
-    DELETE(2,"删除"),
-    UPDATE(3,"修改"),
+    STUDY(1,"学习"),
+    START(2,"启动"),
+    STOP(3,"停止"),
+    PRACTICE(3,"练习"),
     LOGIN(4,"登录"),
     LOGOUT(5,"登出"),
+    PAPER(6,"组卷"),
+    MOCK(7,"模拟"),
+    MOCK_CONTINUE(8,"继续模拟"),
     ;
     Integer type;
     String desc;

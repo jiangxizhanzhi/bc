@@ -172,10 +172,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public void updateOnlineTime(Date loginTime,TbUser tbUser) {
-		SysUser sysUser = this.getById(tbUser.getUserId());
+	public void updateOnlineTime(Date loginTime,String userId) {
+		if (loginTime == null) {
+			return;
+		}
+		SysUser sysUser = this.getById(userId);
 		//按小时设置在线时间
-		sysUser.setOnlineTime(sysUser.getOnlineTime() + (System.currentTimeMillis() - loginTime.getTime()) / 1000 / 60 / 60);
+		sysUser.setOnlineTime(sysUser.getOnlineTime() + ((double) (System.currentTimeMillis() - loginTime.getTime())) / 1000 / 60 / 60);
 		this.updateById(sysUser);
 	}
 
@@ -313,6 +316,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		userRes.setNotes(user.getNotes());
 		userRes.setExpireTime(user.getExpireTime());
 		userRes.setEnabled(user.getEnabled());
+		userRes.setOnlineTime(user.getOnlineTime());
 		return userRes;
 	}
 

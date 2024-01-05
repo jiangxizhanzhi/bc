@@ -37,7 +37,7 @@ public class CustomizeSessionInformationExpiredStrategy implements SessionInform
         log.info("==============会话信息过期======================================");
         TbUser tbUser = (TbUser) event.getSessionInformation().getPrincipal();
         Date loginTime = OnlineTimeCache.remove(tbUser.getUserId());
-        sysUserService.updateOnlineTime(loginTime,tbUser);
+        sysUserService.updateOnlineTime(loginTime,tbUser.getUserId());
         HttpServletResponse httpServletResponse = event.getResponse();
 		CommonUtil.responseJson(httpServletResponse, new AuthFailureRsp("账号下线"), SC_UNAUTHORIZED);
 

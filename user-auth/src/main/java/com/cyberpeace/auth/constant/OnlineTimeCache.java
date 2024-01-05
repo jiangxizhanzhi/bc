@@ -3,11 +3,12 @@ package com.cyberpeace.auth.constant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OnlineTimeCache {
-    private static final Map<String, Date> loginTimeMap = new HashMap<>();
+    public static final Map<String, Date> loginTimeMap = new ConcurrentHashMap<>();
 
-    public static Date remove(String userId) {
+    public static  Date remove(String userId) {
         return loginTimeMap.remove(userId);
     }
 

@@ -36,4 +36,9 @@ public class UserRes {
 
 	@ApiModelProperty(value = "备注")
 	private String notes;
+
+	/**
+	 * 在线时间
+	 */
+	private double onlineTime;
 }

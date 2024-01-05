@@ -82,6 +82,7 @@ public class SystemStaticsController {
         for (UserRes userRes : userResListRsp.getList()) {
             SystemRecordRes systemRecordRes = new SystemRecordRes();
             systemRecordRes.setUsername(userRes.getUsername());
+            systemRecordRes.setTime(userRes.getOnlineTime());
             systemRecordRes.setName(userRes.getName());
             systemRecordRes.setCreateTime(opLogMap.getOrDefault(userRes.getResourceId(),new OpLog()).getCreateTime());
             systemRecordRes.setTarget(opLogMap.getOrDefault(userRes.getResourceId(),new OpLog()).getTarget());

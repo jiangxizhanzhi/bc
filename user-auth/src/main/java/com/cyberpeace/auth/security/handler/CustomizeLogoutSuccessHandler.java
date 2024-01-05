@@ -44,7 +44,7 @@ public class CustomizeLogoutSuccessHandler implements LogoutSuccessHandler {
                     String.format(OpLogDetail.USER_LOGOUT, ip),tbUser);
             log.info("==============登出======================================");
             Date loginTime = OnlineTimeCache.remove(tbUser.getUserId());
-            sysUserService.updateOnlineTime(loginTime,tbUser);
+            sysUserService.updateOnlineTime(loginTime,tbUser.getUserId());
         }
         CommonUtil.responseJson(httpServletResponse, new BaseRsp("退出成功"), SC_OK);
     }

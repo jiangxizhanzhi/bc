@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
+import com.cyberpeace.scene.controller.rsp.SceneDataRsp;
 import com.cyberpeace.scene.controller.rsp.SceneDetailRsp;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
@@ -188,7 +189,24 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             topo = topology.getTopology();
         }
         if (StringUtils.isNotBlank(topo)){
-            sceneData.setTopology(JsonUtil.toJsonObject(topo, Topology.class));
+            Topology topology = JsonUtil.toJsonObject(topo, Topology.class);
+            SceneDataRsp sceneDataRsp = new SceneDataRsp();
+            BeanUtils.copyProperties(scene, sceneDataRsp);
+            if (Objects.equals(SceneEnum.ACTIVE.getCode(), scene.getSceneStatus())){
+                sceneDataRsp.setEvent(2);
+                sceneDataRsp.setEventStatus(4);
+            } else if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())) {
+                sceneDataRsp.setEvent(2);
+                sceneDataRsp.setEventStatus(2);
+            }else if (Objects.equals(SceneEnum.DELETED.getCode(), scene.getSceneStatus())){
+                sceneDataRsp.setEvent(9);
+                sceneDataRsp.setEventStatus(4);
+            }else if (Objects.equals(SceneEnum.ERROR.getCode(), scene.getSceneStatus())){
+                sceneDataRsp.setEvent(2);
+                sceneDataRsp.setEventStatus(5);
+            }
+            topology.setScene(sceneDataRsp);
+            sceneData.setTopology(topology);
             sceneData.setScene(scene);
         }
         return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));

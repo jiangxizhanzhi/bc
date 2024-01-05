@@ -66,7 +66,7 @@ public class SystemStaticsController {
         systemStaticsRes.setTrueCount(practiceTheoryService.count(theoryQueryWrapper)+practiceOperationService.count(operationQueryWrapper));
         systemStaticsRes.setPracticeCount(practiceTheoryService.count()+practiceOperationService.count());
 
-        return new BaseRsp<>();
+        return new BaseRsp<>(systemStaticsRes);
     }
     @ApiOperation("学员行为记录")
     @GetMapping("/record/page")

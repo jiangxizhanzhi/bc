@@ -1,15 +1,18 @@
 package com.cyberpeace.oj.practice.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.oj.practice.controller.req.ExamCreateReq;
 import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordDetailRes;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryResByDay;
 import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
+import com.cyberpeace.oj.practice.dao.entity.MockPaper;
 import com.cyberpeace.oj.practice.dao.entity.PracticePaper;
-
-import java.util.List;
+import com.cyberpeace.oj.practice.service.bo.mock.MockDeleteReq;
+import com.cyberpeace.oj.practice.service.bo.mock.MockExamAddReq;
+import com.cyberpeace.oj.practice.service.bo.mock.MockExamModifyReq;
 
 public interface PracticePaperService extends IService<PracticePaper> {
 
@@ -27,5 +30,4 @@ public interface PracticePaperService extends IService<PracticePaper> {
 
 	PracticePaper practiceAgain(String paperId);
 
-	PracticePaper createExam(ExamCreateReq examCreateReq);
 }

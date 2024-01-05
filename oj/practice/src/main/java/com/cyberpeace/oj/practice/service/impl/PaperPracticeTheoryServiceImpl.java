@@ -68,12 +68,8 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 		PaperPracticeTheory paperPracticeTheory = paperPracticeTheoryMapper.selectById(practiceRefId);
 		PracticeTheory practiceTheory = JsonUtil.toJsonObject(paperPracticeTheory.getSnapshot(), PracticeTheory.class);
 		WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);
-		String practiceId = paperPracticeTheory.getOriginId();
-		Boolean isCollection = resourceCollectionService.selectByUnique(UserInfoContext.getUserContext().getUserId(),
-				ResourceCollection.BusinessType.THEORY.getCode(), practiceId);
-		PracticeTheory originPracticeTheory = practiceTheoryMapper.selectById(paperPracticeTheory.getOriginId());
 		webTheoryBo.setResourceId(practiceRefId);
-		webTheoryBo.setIsCollection(originPracticeTheory != null && isCollection);
+		webTheoryBo.setScore(paperPracticeTheory.getScore());
 		webTheoryBo.setAnswer(paperPracticeTheory.getSubmitAnswer());
 		webTheoryBo.setSolved(paperPracticeTheory.getSolved());
 		if (webTheoryBo.getTheoryType().equals(PracticeTheory.TheoryType.FILL_BLANK.getCode())) {

@@ -28,4 +28,16 @@ public class PaperPracticeTheory extends BaseTable {
 
 	/** 解题状态*/
 	private Integer solved;
+
+	/**
+	 * 标记
+	 */
+	private Boolean marked;
+
+	/**
+	 *
+	 */
+	private Integer type;
+
+	private Integer score;
 }

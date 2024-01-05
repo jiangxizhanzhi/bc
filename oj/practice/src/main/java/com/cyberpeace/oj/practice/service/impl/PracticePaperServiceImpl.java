@@ -1,24 +1,7 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.oj.ojbase.constant.Difficulty;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.utils.OjCommonValidator;
-import com.cyberpeace.oj.practice.controller.req.ExamCreateReq;
-import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
-import com.cyberpeace.oj.practice.controller.res.*;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.dao.mapper.*;
-import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
-import com.cyberpeace.oj.practice.service.PracticePaperService;
-import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +9,27 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.*;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.ojbase.constant.Difficulty;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.utils.OjCommonValidator;
+import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
+import com.cyberpeace.oj.practice.controller.res.*;
+import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.mapper.*;
+import com.cyberpeace.oj.practice.service.MockPaperService;
+import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
+import com.cyberpeace.oj.practice.service.PracticePaperService;
+import com.cyberpeace.oj.practice.service.PresetMockService;
+import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+
+import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, PracticePaper> implements PracticePaperService {
@@ -52,6 +55,12 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	@Autowired
 	private PaperPracticeTheoryMapper paperPracticeTheoryMapper;
 
+	@Autowired
+	private PresetMockService presetMockService;
+
+	@Autowired
+	private MockPaperService mockPaperService;
+
 	@Override
 	public PracticePaperCreateReq getLastPaperSetting() {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -76,42 +85,51 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	@Override
 	public PracticePaper createPaper(PracticePaperCreateReq practicePaperCreateReq) {
 		int countMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.practice.count.max"));
-		OjCommonValidator.validateRange(practicePaperCreateReq.getCount(), Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.min")),countMax,OjBusinessErrorCode.PRACTICE_RANGE_ERROR);
-		//按条件获取所有可组卷的题目
+		OjCommonValidator.validateRange(practicePaperCreateReq.getCount(),
+				Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.min")), countMax,
+				OjBusinessErrorCode.PRACTICE_RANGE_ERROR);
+		// 按条件获取所有可组卷的题目
 		PracticePaper practicePaper = new PracticePaper();
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
-		List<String> practiceIds = getPracticeIdsByQueryAndSolved(practicePaperCreateReq.getStatus(), authContext);
-		List<PracticeTheory> practiceTheorySumList =new ArrayList<>();
-		if (CollectionUtils.isNotEmpty(practiceIds)){
-			 practiceTheorySumList = practiceTheoryMapper.selectAllByCreatePaper(practicePaperCreateReq.getDifficulty(),
-					practicePaperCreateReq.getType(), practicePaperCreateReq.getDirection(), practiceIds);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		List<String> practiceIds = getPracticeIdsByQueryAndSolved(
+				practicePaperCreateReq.getStatus(), authContext);
+		List<PracticeTheory> practiceTheorySumList = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(practiceIds)) {
+			practiceTheorySumList = practiceTheoryMapper.selectAllByCreatePaper(
+					practicePaperCreateReq.getDifficulty(), practicePaperCreateReq.getType(),
+					practicePaperCreateReq.getDirection(), practiceIds);
 		}
 		if (practiceTheorySumList.size() < practicePaperCreateReq.getCount()) {
-			log.error("practiceTheorySumList.size() < practicePaperCreateReq.getCount()! practicePaperCreateReq=[{}]", JsonUtil.toJsonString(practicePaperCreateReq));
+			log.error(
+					"practiceTheorySumList.size() < practicePaperCreateReq.getCount()! practicePaperCreateReq=[{}]",
+					JsonUtil.toJsonString(practicePaperCreateReq));
 			throw new BusinessException(OjBusinessErrorCode.NOT_ENOUGH_PRACTICE);
 		}
-		//按方向进行统计并按每个方向的题目数量进行排序（产品要求组卷时各个方向的题目数量尽量一样）
+		// 按方向进行统计并按每个方向的题目数量进行排序（产品要求组卷时各个方向的题目数量尽量一样）
 		Map<String, List<PracticeTheory>> directionMap = new HashMap<>();
-		for (PracticeTheory practiceTheory: practiceTheorySumList) {
+		for (PracticeTheory practiceTheory : practiceTheorySumList) {
 			if (directionMap.get(practiceTheory.getCategoryId()) == null) {
-				directionMap.put(practiceTheory.getCategoryId(), new ArrayList<>(Arrays.asList(practiceTheory)));
+				directionMap.put(practiceTheory.getCategoryId(),
+						new ArrayList<>(Arrays.asList(practiceTheory)));
 			} else {
 				directionMap.get(practiceTheory.getCategoryId()).add(practiceTheory);
 			}
 		}
-		List<List<PracticeTheory>> practiceTheoryListByDirection = new ArrayList<>(directionMap.values());
+		List<List<PracticeTheory>> practiceTheoryListByDirection = new ArrayList<>(
+				directionMap.values());
 		practiceTheoryListByDirection.sort(Comparator.comparing(List::size));
 		List<PracticeTheory> practiceTheoryList = new ArrayList<>();
 		int sum = practicePaperCreateReq.getCount();
 		int size = practiceTheoryListByDirection.size();
-		//从题目数量少的方向依次拿题
+		// 从题目数量少的方向依次拿题
 		for (List<PracticeTheory> practiceTheories : practiceTheoryListByDirection) {
-			int count = sum/size;
+			int count = sum / size;
 			Collections.shuffle(practiceTheories);
 			if (practiceTheories.size() < count) {
 				practiceTheoryList.addAll(practiceTheories);
 				sum -= practiceTheories.size();
-			}else {
+			} else {
 				practiceTheoryList.addAll(practiceTheories.subList(0, count));
 				sum -= count;
 			}
@@ -132,7 +150,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				practicePaperMapper.insert(practicePaper);
 				List<PaperPracticeTheory> paperPracticeTheories = new ArrayList<>();
-				for (PracticeTheory practiceTheory : practiceTheoryList){
+				for (PracticeTheory practiceTheory : practiceTheoryList) {
 					PaperPracticeTheory paperPracticeTheory = new PaperPracticeTheory();
 					paperPracticeTheory.setPaperId(practicePaper.getResourceId());
 					paperPracticeTheory.setOriginId(practiceTheory.getResourceId());
@@ -260,12 +278,6 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 				paperPracticeTheoryService.saveBatch(paperPracticeTheoryList);
 			}
 		});
-		return practicePaper;
-	}
-
-	@Override
-	public PracticePaper createExam(ExamCreateReq examCreateReq) {
-		PracticePaper practicePaper = new PracticePaper();
 		return practicePaper;
 	}
 

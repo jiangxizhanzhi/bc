@@ -91,4 +91,11 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	List<PracticeTheory> selectAllCategoryIds();
 
 	List<ProgressPracticeRes> getProgressCategoryStatistics(@Param("userId")String userId);
+
+	/**
+	 * 只获取id和类型
+	 *
+	 * @return {@code List<PracticeTheory>}
+	 */
+	List<PracticeTheory> selectAllIdAndType();
 }

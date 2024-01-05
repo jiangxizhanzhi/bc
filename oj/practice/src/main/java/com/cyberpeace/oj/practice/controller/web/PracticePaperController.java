@@ -1,31 +1,33 @@
 package com.cyberpeace.oj.practice.controller.web;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
-import com.cyberpeace.oj.practice.controller.req.ExamCreateReq;
-import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
-import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
-import com.cyberpeace.oj.practice.controller.res.*;
-import com.cyberpeace.oj.practice.dao.entity.PracticePaper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticePaperMapper;
-import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
-import com.cyberpeace.oj.practice.service.PracticePaperService;
-import com.cyberpeace.oj.practice.service.PracticeTheoryService;
-import com.cyberpeace.oj.practice.service.bo.EvaluateResultTheory;
-import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.cyberpeace.oj.practice.dao.entity.MockPaper;
+import com.cyberpeace.oj.practice.service.bo.mock.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
+import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
+import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
+import com.cyberpeace.oj.practice.controller.res.*;
+import com.cyberpeace.oj.practice.dao.entity.PracticePaper;
+import com.cyberpeace.oj.practice.dao.entity.PresetMock;
+import com.cyberpeace.oj.practice.dao.mapper.PracticePaperMapper;
+import com.cyberpeace.oj.practice.service.*;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResultTheory;
+import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "oj-前台自由组卷相关api")
 @RestController
@@ -44,6 +46,12 @@ public class PracticePaperController {
 
 	@Autowired
 	private PracticePaperMapper practicePaperMapper;
+
+	@Autowired
+	private MockPaperService mockPaperService;
+
+	@Autowired
+	private PresetMockService presetMockService;
 
 	@ApiOperation("统计所有方向的做题进度")
 	@GetMapping("/category/progress")
@@ -66,12 +74,86 @@ public class PracticePaperController {
 		return new BaseRsp<>(practicePaperService.createPaper(practicePaperCreateReq));
 	}
 
-
-	@ApiOperation("组卷")
-	@PostMapping("/create_exam")
+	@ApiOperation("模拟考试模式列表")
+	@GetMapping("/mock/type/list")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<PracticePaper> createExam(@RequestBody @Validated ExamCreateReq examCreateReq) {
-		return new BaseRsp<>(practicePaperService.createExam(examCreateReq));
+	public BaseRsp<List<PresetMock>> listMockType() {
+		List<PresetMock> presetMocks = presetMockService.listAllMock(false);
+		return new BaseRsp<>(presetMocks);
+	}
+
+	@ApiOperation("模拟考试组卷")
+	@PostMapping("/mock/")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<Void> createExam(@RequestBody @Validated MockExamAddReq req) {
+		mockPaperService.createMock(req);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("真题考试创建")
+	@PostMapping("/actual")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<Void> createActualExam(@RequestBody @Validated ActualAddReq req) {
+		mockPaperService.createActualExam(req.getResourceId());
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("修改模拟考试名称")
+	@PatchMapping("/mock/")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<Void> updateExam(@RequestBody @Validated MockExamModifyReq req) {
+		mockPaperService.updateMock(req);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("删除模拟考试名称")
+	@DeleteMapping("/mock/")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<Void> deleteExam(@RequestBody @Validated MockDeleteReq req) {
+		mockPaperService.deleteMock(req);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("列出模拟考试")
+	@GetMapping("/mock/list")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<List<MockListBo>> listMockExam() {
+		List<MockListBo> res = mockPaperService.listMocks();
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("列出真题考试")
+	@DeleteMapping("/mock/actual/list")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<List<MockListBo>> listActualExam() {
+		List<MockListBo> res = mockPaperService.listActualMocks();
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("模拟考试详情")
+	@GetMapping("/mock")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<MockPaperDetail> getMockPaper(
+			@ApiParam(value = "试卷id") @RequestParam(value = "paper_id") String paperId) {
+		MockPaperDetail detail = mockPaperService.getDetail(paperId);
+		return new BaseRsp<>(detail);
+	}
+
+	@ApiOperation("(取消)标记")
+	@PostMapping("/mock/mark")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<Void> mark(@RequestBody @Validated MarkReq req) {
+		mockPaperService.mark(req);
+		return new BaseRsp<>();
+	}
+
+
+	@ApiOperation("模拟考试理论试卷概要")
+	@GetMapping("/mock/theory/summary")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<TheorySummary> getMockPaperSummary(
+			@ApiParam(value = "试卷id") @RequestParam(value = "paper_id") String paperId) {
+		return new BaseRsp<>(mockPaperService.getPaperSummaryRes(paperId));
 	}
 
 	@ApiOperation("知识技能Top6")
@@ -97,7 +179,7 @@ public class PracticePaperController {
 		return new BaseRsp<>(practicePaperService.getPaperSummaryRes(paperId));
 	}
 
-	@ApiOperation("查看练习详情")
+	@ApiOperation("查看模拟理论题详情")
 	@GetMapping("/practice_detail")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<WebTheoryBo> getWebTheoryBo(@ApiParam(value = "练习id") @RequestParam(value = "practice_id") String practiceId) {
@@ -122,9 +204,7 @@ public class PracticePaperController {
 	@GetMapping("/submit_paper")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<Boolean> submitPaper(@ApiParam(value = "试卷id") @RequestParam(value = "paper_id") String paperId) {
-		PracticePaper practicePaper = practicePaperMapper.selectById(paperId);
-		practicePaper.setIsFinish(true);
-		practicePaperMapper.updateById(practicePaper);
+		mockPaperService.submit(paperId);
 		return new BaseRsp<>(true);
 	}
 

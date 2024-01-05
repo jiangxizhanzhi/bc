@@ -6,6 +6,12 @@ import lombok.Data;
 @Data
 public class WebTheoryBo extends AdminTheoryBo {
 
+	@ApiModelProperty("是否标记")
+	private boolean marked;
+
+	@ApiModelProperty("分值")
+	private Integer score;
+
 	@ApiModelProperty("是否收藏")
 	private Boolean isCollection;
 

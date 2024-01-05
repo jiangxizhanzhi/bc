@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.oj.practice.controller.res.PracticeSolvedRes;
 import com.cyberpeace.oj.practice.dao.entity.PaperPracticeTheory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,6 @@ public interface PaperPracticeTheoryMapper extends BaseMapper<PaperPracticeTheor
 	List<PracticeSolvedRes> selectSolvedByPaperId(@Param("paperId") String paperId);
 
 	List<String> selectPracticeRefIdsByPaperId(@Param("paperId") String paperId);
+
+	List<PaperPracticeTheory> selectByPaperId(@Param("paperId") String paperId);
 }

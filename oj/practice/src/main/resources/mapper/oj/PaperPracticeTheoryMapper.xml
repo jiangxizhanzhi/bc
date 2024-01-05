@@ -5,14 +5,18 @@
 
     <select id="selectSolvedByPaperId"
             resultType="com.cyberpeace.oj.practice.controller.res.PracticeSolvedRes">
-        select resource_id as practice_id, solved
+        select resource_id as practice_id, solved, `marked`, `type`
         from oj_paper_practice_theory
         where paper_id = #{paperId}
+        order by `id`
     </select>
 
     <select id="selectPracticeRefIdsByPaperId" resultType="java.lang.String">
         select resource_id
         from oj_paper_practice_theory
         where paper_id = #{paperId}
+    </select>
+    <select id="selectByPaperId" resultType="com.cyberpeace.oj.practice.dao.entity.PaperPracticeTheory">
+        select * from oj_paper_practice_theory where paper_id = #{paperId}
     </select>
 </mapper>

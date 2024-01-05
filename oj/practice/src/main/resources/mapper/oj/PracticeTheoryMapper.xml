@@ -272,6 +272,10 @@
         AND b.submit_user_id = #{userId}  and b.solved in (0,1)
         GROUP BY a.category_id
     </select>
+    <select id="selectAllIdAndType" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+        select resource_id, theory_type
+        from oj_practice_theory
+    </select>
 
 
 </mapper>

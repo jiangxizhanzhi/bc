@@ -7,9 +7,6 @@ package com.cyberpeace.oj.ojbase.constant;
  */
 public final class OjBusinessErrorCode {
 
-	private OjBusinessErrorCode() {
-		throw new IllegalStateException("Utility class");
-	}
 
 	/** 习题集类型错误*/
 	public static final String PRACTICE_SET_TYPE_ERROR = "102001";
@@ -348,5 +345,14 @@ public final class OjBusinessErrorCode {
 
 	// 资源包错误
 	public static final String INVALID_RESOURCE_ZIP = "102133";
+
+	/**
+	 * 本真题考试已在进行中，无法创建
+	 */
+	public static final String ACTUAL_EXAM_ONGOING = "102134";
+
+	private OjBusinessErrorCode() {
+		throw new IllegalStateException("Utility class");
+	}
 
 }

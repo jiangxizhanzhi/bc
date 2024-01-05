@@ -1,11 +1,6 @@
-package com.cyberpeace.oj.practice.controller.req;
+package com.cyberpeace.oj.practice.service.bo.mock;
 
 import java.io.Serializable;
-import java.util.List;
-
-import javax.validation.constraints.Size;
-
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

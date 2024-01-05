@@ -14,6 +14,11 @@ import java.util.Map;
 public interface RemoteSceneService {
 
 	/**
+	 * 手动执行测评任务
+	 */
+	String startMission(MissionStartContext missionStartContext);
+
+	/**
 	 * 启动前台场景
 	 */
 	String startScene(SceneStartContext sceneStartContext);

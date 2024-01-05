@@ -2,69 +2,201 @@ package com.cyberpeace.oj.person.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.auth.controller.req.UserReq;
+import com.cyberpeace.auth.domain.SysUser;
+import com.cyberpeace.auth.mapper.SysUserMapper;
+import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.auth.service.bo.UserRes;
+import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.ExcelHeader;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.model.*;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
+import com.cyberpeace.oj.course.service.bo.PersonAllStatsBo;
+import com.cyberpeace.oj.course.service.bo.PersonStatsBo;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.controller.req.PageMistakeReq;
 import com.cyberpeace.oj.person.controller.req.PageNoteReq;
 import com.cyberpeace.oj.person.controller.res.StudyCalendarRes;
 import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
+import com.cyberpeace.oj.person.dao.mapper.PersonCenterMapper;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
 import com.cyberpeace.oj.practice.controller.res.PersonalMistakeRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "oj-前台个人中心api")
 @RestController
 @RequestMapping("/oj/person")
 public class PersonController {
 
-	@Autowired
-	private PersonCenterService personCenterService;
+    @Autowired
+    private PersonCenterService personCenterService;
 
-	@Autowired
-	private PracticeTheoryService practiceTheoryService;
+    @Autowired
+    private PracticeTheoryService practiceTheoryService;
 
-	@Autowired
-	private PracticeOperationService practiceOperationService;
+    @Autowired
+    private PracticeOperationService practiceOperationService;
 
-	@Autowired
-	RemoteUserService remoteUserService;
+    @Autowired
+    RemoteUserService remoteUserService;
 
-	@Autowired
-	private PracticeMistakeService practiceMistakeService;
+    @Autowired
+    private PracticeMistakeService practiceMistakeService;
 
-	@ApiOperation("当前用户所有评论")
+    @Autowired
+    LessonRecordMapper lessonRecordMapper;
+
+    @Autowired
+    PracticeSolvedMapper practiceSolvedMapper;
+
+    @Autowired
+    CourseLessonMapper courseLessonMapper;
+
+    @Autowired
+    PersonCenterMapper personCenterMapper;
+
+    @Autowired
+    private SysUserService sysUserService;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+
+    @ApiOperation("课程学习统计")
+    @GetMapping("/course-stats")
+    public BaseRsp<PersonAllStatsBo> personalStats() {
+        PersonAllStatsBo res = new PersonAllStatsBo();
+
+        List<StudyRecord> studyRecords = personCenterMapper.selectRecord();
+        StudyStaticsRes allLesson = personCenterMapper.selectLessonAllCount();
+        Integer lessonAllCount = allLesson.getLessonAllCount();
+
+        long finishCourseUser = studyRecords.stream().filter(s -> s.getCourseCount().equals(lessonAllCount)).count();
+        res.setCompleteCount((int) finishCourseUser);
+
+        List<LessonRecord> lessonRecords = lessonRecordMapper.selectList(null);
+        long studyCount = lessonRecords.stream().map(LessonRecord::getUserId).distinct().count();
+        List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectList(null);
+        long count = practiceSolveds.stream().map(PracticeSolved::getSubmitUserId).distinct().count();
+        res.setPracticePersonCount(Math.toIntExact(count));
+        res.setPracticeCount(Math.toIntExact(practiceSolveds.size()));
+        res.setStudyCount(Math.toIntExact(studyCount));
+        res.setPracticeRate(studyCount <= 0 ? 0 : Math.toIntExact(count) / Math.toIntExact(practiceSolveds.size()));
+        // TODO 模拟考试数据待统计
+        return new BaseRsp<>(res);
+    }
+
+    @ApiOperation("学习数据")
+    @GetMapping("/person-stats")
+    public BaseRsp<ListRsp<PersonStatsBo>> personalStatsDetail4Course(
+            UserReq req) {
+
+        ListRsp<UserRes> userResListRsp = sysUserService.pageUser(req);
+        List<UserRes> userInfos = userResListRsp.getList();
+        ListRsp<PersonStatsBo> rsp = new ListRsp<>();
+        long total = userResListRsp.getTotal();
+        if (userInfos.isEmpty()) {
+            return new BaseRsp<>(rsp);
+        }
+        List<PersonStatsBo> res;
+
+        res = getPersonStatsBos(userInfos);
+        rsp.setList(res);
+        rsp.setTotal(total);
+        return new BaseRsp<>(rsp);
+    }
+
+    private List<PersonStatsBo> getPersonStatsBos(List<UserRes> userInfos) {
+        List<PersonStatsBo> res;
+        List<StudyRecord> studyRecords = personCenterMapper.selectRecord();
+        Map<String, Integer> lessonMap = StreamApiUtils.toMap(studyRecords, StudyRecord::getUserId, StudyRecord::getCourseCount);
+        StudyStaticsRes allLesson = personCenterMapper.selectLessonAllCount();
+        Integer lessonAllCount = allLesson.getLessonAllCount();
+
+        List<String> userIds = StreamApiUtils.getColumn(userInfos, UserRes::getResourceId);
+        List<StudyRecord> studyRecord = personCenterMapper.selectSlovedPractice(userIds);
+        Map<String, StudyRecord> map = StreamApiUtils.toMap(studyRecord, StudyRecord::getUserId, s -> s);
+
+        int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
+        int operationPracticeAllCount = personCenterMapper.selectOperationPracticeByAuth().size();
+
+
+        res = userInfos.stream().map(s -> {
+            StudyRecord record = map.get(s.getResourceId());
+            PersonStatsBo personStatsBo = new PersonStatsBo();
+            if (null != record) {
+                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? 0 : record.getTheoryPracticeCount() / theoryPracticeAllCount);
+                personStatsBo.setOperateCorrectRate(record.getOperationPracticeCount() * operationPracticeAllCount == 0 ? 0 : record.getOperationPracticeCount() / operationPracticeAllCount);
+            }
+
+            if (lessonMap.containsKey(s.getResourceId())) {
+                personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ? 0 : lessonMap.get(s.getResourceId()) / lessonAllCount);
+            }
+            personStatsBo.setUsername(s.getUsername());
+            personStatsBo.setName(s.getName());
+            return personStatsBo;
+        }).collect(Collectors.toList());
+        return res;
+    }
+
+    @ApiOperation("学习数据-全部数据-导出")
+    @GetMapping(value = "/user-stats-data-export")
+    public void userStatsDataExport(HttpServletResponse response) {
+        List<SysUser> sysUsers = sysUserMapper.selectList(null);
+        List<UserRes> userInfos = sysUsers.stream().map(s -> {
+            UserRes userRes = new UserRes();
+            BeanUtils.copyProperties(s, userRes);
+            return userRes;
+        }).collect(Collectors.toList());
+        List<PersonStatsBo> res;
+        res = getPersonStatsBos(userInfos);
+
+        List<String> passFields = Lists.newArrayList("resourceId");
+        String sheetName = ExcelHeader.SHEETNAME.getHeader()[0];
+        String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+                + CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
+        File file = ExcelDataHandler.exportExcel(res, filePath, sheetName,
+                passFields, ExcelHeader.PERSON_STUDY_STATISTIC);
+        FileUtil.setResponse(file, true, response);
+    }
+
+
+    @ApiOperation("当前用户所有评论")
 	@GetMapping("/comments")
 	public BaseRsp<ListRsp<PersonComment>> listComments(@ApiParam @Validated PageReqBase pageReq) {
 		Page<PersonComment> page = pageReq.toPageParam();

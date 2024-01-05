@@ -279,6 +279,12 @@
         </if>
     </select>
 
+    <select id="selectRecord" resultMap="studyRecord">
+        SELECT user_id,count(lesson_id) as course_count
+			from oj_lesson_record
+			group by user_id
+    </select>
+
     <select id="selectReportCount" resultType="java.lang.Integer">
         select count(resource_id) from oj_note
         where note_type = 2 and user_id = #{userId}
@@ -315,6 +321,20 @@
                  left join oj_practice_theory t on t.resource_id = s.practice_id
                  left join oj_practice_operation p on p.resource_id = s.practice_id
         where s.submit_user_id = #{userId}
+    </select>
+
+    <select id="selectSlovedPractice" resultMap="studyRecord">
+        select s.submit_user_id as userId, count(p.resource_id) as operationPracticeCount, count(t.resource_id) as theoryPracticeCount
+        from oj_practice_solved s
+                 left join oj_practice_theory t on t.resource_id = s.practice_id
+                 left join oj_practice_operation p on p.resource_id = s.practice_id
+        <if test="userIds != null and userIds.size() > 0">
+            where s.submit_user_id in
+            <foreach collection="userIds" separator="," item="userId" open="(" close=")">
+                #{userId}
+            </foreach>
+        </if>
+        group by s.submit_user_id
     </select>
 
 

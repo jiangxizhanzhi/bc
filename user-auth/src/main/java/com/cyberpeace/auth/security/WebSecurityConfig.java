@@ -108,6 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/favicon.ico",
 						"/license/**",
 						"/auth/user",
+						"/oj/watermark",
 						"/doc.html")
 				.permitAll()
 				// 其他的都需要认证

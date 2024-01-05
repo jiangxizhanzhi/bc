@@ -1,19 +1,14 @@
 package com.cyberpeace.config.auth;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.LocalStringUtil;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -26,13 +21,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.LocalStringUtil;
+import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ExceptionFilter implements Filter {

@@ -3,6 +3,8 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.auth.constant.OpLogModuleEnum;
+import com.cyberpeace.auth.controller.AbstractOpLog;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
@@ -49,7 +51,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/oj/practice/theory")
 @Slf4j
-public class PracticeTheoryController {
+public class PracticeTheoryController extends AbstractOpLog {
 
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
@@ -265,4 +267,8 @@ public class PracticeTheoryController {
 		return new BaseRsp<>(result);
 	}
 
+	@Override
+	protected Integer getModule() {
+		return OpLogModuleEnum.THEORY.getType();
+	}
 }

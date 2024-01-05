@@ -1,7 +1,9 @@
 package com.cyberpeace.auth.constant;
 
 public enum OpLogModuleEnum {
-    USER(1,"用户管理"),;
+    USER(1,"用户管理"),
+    THEORY(2,"理论题"),
+    ;
     Integer type;
     String desc;
 

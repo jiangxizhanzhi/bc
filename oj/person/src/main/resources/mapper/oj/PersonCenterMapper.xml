@@ -222,11 +222,12 @@
     <select id="selectByUser" resultMap="base">
         select (case when oj_course_lesson.resource_id is not null then
         concat(oj_course_lesson.course_id,'/',oj_course_lesson.resource_id)
-        when oj_course.resource_id is not null then oj_course.resource_id
+--         when oj_course.resource_id is not null then oj_course.resource_id
         when oj_practice_theory.resource_id is not null then oj_practice_theory.resource_id
         when oj_practice_operation.resource_id is not null then oj_practice_operation.resource_id
         END) as resource_id,
-        (case when oj_course.name is not null then oj_course.name
+        (case
+--             when oj_course.name is not null then oj_course.name
         when oj_course_lesson.name is not null then oj_course_lesson.name
         when oj_practice_theory.title is not null then oj_practice_theory.title
         when oj_practice_theory.content is not null then oj_practice_theory.content
@@ -236,8 +237,8 @@
         oj_resource_collection.business_type as business_type,
         oj_practice_theory.theory_type practice_type
         from oj_resource_collection
-        left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and
-        oj_resource_collection.business_type = 3
+--         left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and
+--         oj_resource_collection.business_type = 3
         left join oj_course_lesson on oj_resource_collection.business_id = oj_course_lesson.resource_id and
         oj_resource_collection.business_type = 4
         left join oj_practice_theory on oj_resource_collection.business_id = oj_practice_theory.resource_id and

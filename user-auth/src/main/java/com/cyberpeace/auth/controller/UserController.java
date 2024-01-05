@@ -56,6 +56,10 @@ public class UserController {
 	@GetMapping("/current/user/info")
 	public BaseRsp<SysUser> getCurrentUserInfo() {
 		SysUser userInfo = UserInfoContext.getNewUserContext();
+		if (userInfo != null) {
+			// 不能返回密码信息
+			userInfo.setPassword("");
+		}
 		return new BaseRsp<>(userInfo);
 	}
 

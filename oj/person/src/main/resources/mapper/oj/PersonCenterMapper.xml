@@ -324,12 +324,13 @@
     </select>
 
     <select id="selectSlovedPractice" resultMap="studyRecord">
-        select s.submit_user_id as userId, count(p.resource_id) as operationPracticeCount, count(t.resource_id) as theoryPracticeCount
+        select s.submit_user_id as user_id, count(p.resource_id) as operationPracticeCount, count(t.resource_id) as theoryPracticeCount
         from oj_practice_solved s
                  left join oj_practice_theory t on t.resource_id = s.practice_id
                  left join oj_practice_operation p on p.resource_id = s.practice_id
+        where s.solved is true
         <if test="userIds != null and userIds.size() > 0">
-            where s.submit_user_id in
+            and s.submit_user_id in
             <foreach collection="userIds" separator="," item="userId" open="(" close=")">
                 #{userId}
             </foreach>

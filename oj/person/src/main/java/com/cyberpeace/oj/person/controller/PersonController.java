@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.person.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.auth.controller.req.UserReq;
@@ -52,10 +54,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "oj-前台个人中心api")
@@ -105,18 +104,18 @@ public class PersonController {
         List<StudyRecord> studyRecords = personCenterMapper.selectRecord();
         StudyStaticsRes allLesson = personCenterMapper.selectLessonAllCount();
         Integer lessonAllCount = allLesson.getLessonAllCount();
-
         long finishCourseUser = studyRecords.stream().filter(s -> s.getCourseCount().equals(lessonAllCount)).count();
-        res.setCompleteCount((int) finishCourseUser);
+		List<String> users = StreamApiUtils.getColumn(studyRecords, StudyRecord::getUserId);
+        res.setStudyCount(users.isEmpty() ? 0 : users.size());
+		res.setCompleteCount((int) finishCourseUser);
 
-        List<LessonRecord> lessonRecords = lessonRecordMapper.selectList(null);
-        long studyCount = lessonRecords.stream().map(LessonRecord::getUserId).distinct().count();
-        List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectList(null);
-        long count = practiceSolveds.stream().map(PracticeSolved::getSubmitUserId).distinct().count();
-        res.setPracticePersonCount(Math.toIntExact(count));
-        res.setPracticeCount(Math.toIntExact(practiceSolveds.size()));
-        res.setStudyCount(Math.toIntExact(studyCount));
-        res.setPracticeRate(studyCount <= 0 ? 0 : Math.toIntExact(count) / Math.toIntExact(practiceSolveds.size()));
+		LambdaQueryWrapper<PracticeSolved> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(PracticeSolved::getSolved,true );
+		List<PracticeSolved> solvedList = practiceSolvedMapper.selectList(wrapper);
+		List<String> practiceUsers = solvedList.stream().map(PracticeSolved::getSubmitUserId).distinct().collect(Collectors.toList());
+		res.setPracticePersonCount(practiceUsers.size());
+		res.setPracticeCount(solvedList.size());
+		res.setPracticeRate(solvedList.size() * practiceUsers.size() == 0 ? 0 : (solvedList.size() / practiceUsers.size()));
         // TODO 模拟考试数据待统计
         return new BaseRsp<>(res);
     }
@@ -160,12 +159,12 @@ public class PersonController {
             StudyRecord record = map.get(s.getResourceId());
             PersonStatsBo personStatsBo = new PersonStatsBo();
             if (null != record) {
-                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? 0 : record.getTheoryPracticeCount() / theoryPracticeAllCount);
-                personStatsBo.setOperateCorrectRate(record.getOperationPracticeCount() * operationPracticeAllCount == 0 ? 0 : record.getOperationPracticeCount() / operationPracticeAllCount);
+                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? 0 : record.getTheoryPracticeCount()*100 / theoryPracticeAllCount);
+                personStatsBo.setOperateCorrectRate(record.getOperationPracticeCount() * operationPracticeAllCount == 0 ? 0 : record.getOperationPracticeCount()*100 / operationPracticeAllCount);
             }
 
             if (lessonMap.containsKey(s.getResourceId())) {
-                personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ? 0 : lessonMap.get(s.getResourceId()) / lessonAllCount);
+                personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ? 0 : lessonMap.get(s.getResourceId())*100 / lessonAllCount);
             }
             personStatsBo.setUsername(s.getUsername());
             personStatsBo.setName(s.getName());

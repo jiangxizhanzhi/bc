@@ -14,7 +14,14 @@ public class EvalSceneNodeOpsReq implements Serializable {
 	@NotBlank
 	private String taskId;
 
+	@ApiModelProperty(value = "节点名称", required = true)
+	@NotBlank
+	private String nodeName;
+
 	@ApiModelProperty(value = "节点id", required = true)
 	@NotBlank
 	private String nodeId;
+
+	@ApiModelProperty(value = "节点id")
+	private String mpSceneId;
 }

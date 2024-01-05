@@ -25,7 +25,14 @@ public class EvalMissionTemplateRsp implements Serializable {
 	@ApiModelProperty("任务限时（分钟）")
 	private Integer limitTime;
 
-	@ApiModelProperty("验证结果")
+	@ApiModelProperty("验证结果 状态包含 未开始、执行、暂停、继续、中止、完成、失败 分别对应 0-6")
 	private String result;
+
+	@ApiModelProperty("开始时间")
+	private String startTime;
+
+	@ApiModelProperty("结束时间")
+	private String endTime;
+
 
 }

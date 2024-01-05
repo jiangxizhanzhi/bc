@@ -10,7 +10,6 @@ import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemTemplateRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTool;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalToolMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
@@ -98,8 +97,7 @@ public class EvalTemTemplateController {
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<EvalTemTemplateListRsp>> getTemplateList(@ApiParam(name = "listReq", value = "查询条件") @Validated EvalTemTemplatePageReq pageReqBase) {
-		List<EvalTemTemplateListRsp> evalTemTemplateRspList = evalTemTemplateService.getTemplateList(pageReqBase);
-		return new BaseRsp<>(PageUtil.getListResult(evalTemTemplateRspList, pageReqBase.toPageParam(), evalTemTemplateRspList.size()));
+		return new BaseRsp<>(evalTemTemplateService.getTemplateList(pageReqBase));
 	}
 
 	@ApiOperation("查询工具列表")

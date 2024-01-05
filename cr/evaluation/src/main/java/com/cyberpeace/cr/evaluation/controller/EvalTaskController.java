@@ -1,8 +1,11 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.constant.MissionTemplateStatus;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateMapper;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -60,6 +63,9 @@ public class EvalTaskController {
 
 	@Autowired
 	private EvalTaskStepService evalTaskStepService;
+
+	@Autowired
+	private EvalMissionTemplateMapper evalMissionTemplateMapper;
 
 	@ApiOperation("启动步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -274,10 +280,19 @@ public class EvalTaskController {
 		// 构建返回数据
 		EvalTaskTimeNodesRsp evalTaskTimeNodesRsp = new EvalTaskTimeNodesRsp();
 		evalTaskTimeNodesRsp.setTaskId(taskId);
-
-		EvalTask evalTask = evalTaskService.getTask(taskId);
-		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
-				.getFinishedSteps(taskId);
+		EvalTask evalTask = evalTaskService.getById(taskId);
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("task_Id", taskId);
+		List<EvalMissionTemplate> missionTemplates = evalMissionTemplateMapper.selectByMap(map);
+		List<EvalMissionTemplate> collect = missionTemplates.stream().filter(item -> item.getStatus() == MissionTemplateStatus.FAIL || item.getStatus() == MissionTemplateStatus.FINISH).collect(Collectors.toList());
+		collect.sort(Comparator.comparing(EvalMissionTemplate::getUpdateTime).reversed());
+		List<EvalTimeLineContext> evalTimeLineContextList = collect.stream().map(tmp -> {
+			EvalTimeLineContext evalTimeLineContext = new EvalTimeLineContext();
+			evalTimeLineContext.setStepId(tmp.getResourceId());
+			evalTimeLineContext.setTitle(tmp.getName());
+			evalTimeLineContext.setEndTime(tmp.getUpdateTime());
+			return evalTimeLineContext;
+		}).collect(Collectors.toList());
 		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
 		evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
 		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);

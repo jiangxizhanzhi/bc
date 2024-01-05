@@ -28,4 +28,10 @@ public class EvalMissionTemplate extends BaseTable {
 
 	@ApiModelProperty("验证结果")
 	private String result;
+
+	@ApiModelProperty("任务id")
+	private String taskId;
+
+	@ApiModelProperty("任务状态，默认未开始")
+	private Integer status;
 }

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalMissionTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalMissionTemplateReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
 import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
@@ -21,4 +22,5 @@ public interface EvalMissionTemplateService extends IService<EvalMissionTemplate
 
 	List<String> getTaskIds(List<MissionScheme> missionSchemeList);
 
+	EvalMissionTemplateListRsp getMissionTemplates(String resourceId);
 }

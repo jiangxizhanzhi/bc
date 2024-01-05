@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplatePageReq;
@@ -134,7 +136,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	}
 
 	@Override
-	public List<EvalTemTemplateListRsp> getTemplateList(EvalTemTemplatePageReq pageReqBase) {
+	public ListRsp<EvalTemTemplateListRsp> getTemplateList(EvalTemTemplatePageReq pageReqBase) {
 		Page page = pageReqBase.toPageParam();
 		IPage<EvalTemTemplate> iPage = evalTemTemplateMapper.selectPage(page, pageReqBase.getType(), pageReqBase.getPattern());
 		List<EvalTemTemplate> evalTemTemplateList = iPage.getRecords();
@@ -142,24 +144,25 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
 		List<String> createUserIds = evalTemTemplateList.stream().map(EvalTemTemplate::getCreateUserId).distinct().collect(Collectors.toList());
 		Map<String, String> idNameMap = remoteUserService.getIdNameMap(createUserIds);
-		return evalTemTemplateList.stream()
-								  .map(evalTemTemplate -> {
-			EvalTemTemplateListRsp evalTemTemplateListRsp = BeanUtils.copy(evalTemTemplate, EvalTemTemplateListRsp.class);
-			MissionScheme missionScheme = JsonUtil
-											  .toJsonObject(evalTemTemplate.getMissionScheme(), MissionScheme.class);
-			List<StageData> stageList = missionScheme.getStageList();
-			evalTemTemplateListRsp.setStageCount(stageList.size());
-			List<List<TaskBo>> collect = stageList.stream().map(StageData::getTaskList).collect(Collectors.toList());
-			int taskCount = 0;
-			for(List<TaskBo> item :collect){
-				taskCount = taskCount +  item.size();
-			}
-			evalTemTemplateListRsp.setMissionCount(taskCount);
-			evalTemTemplateListRsp.setUpdateTime(TimeUtil.format1(evalTemTemplate.getUpdateTime()));
-			evalTemTemplateListRsp.setNodeCount(nodeCountMap.get(evalTemTemplate.getTopoId()).getNodeCounts());
-			evalTemTemplateListRsp.setCreateUser(idNameMap.get(evalTemTemplate.getCreateUserId()));
-			return evalTemTemplateListRsp;
-		}).collect(Collectors.toList());
+		List<EvalTemTemplateListRsp> rspList = evalTemTemplateList.stream()
+				.map(evalTemTemplate -> {
+					EvalTemTemplateListRsp evalTemTemplateListRsp = BeanUtils.copy(evalTemTemplate, EvalTemTemplateListRsp.class);
+					MissionScheme missionScheme = JsonUtil
+							.toJsonObject(evalTemTemplate.getMissionScheme(), MissionScheme.class);
+					List<StageData> stageList = missionScheme.getStageList();
+					evalTemTemplateListRsp.setStageCount(stageList.size());
+					List<List<TaskBo>> collect = stageList.stream().map(StageData::getTaskList).collect(Collectors.toList());
+					int taskCount = 0;
+					for (List<TaskBo> item : collect) {
+						taskCount = taskCount + item.size();
+					}
+					evalTemTemplateListRsp.setMissionCount(taskCount);
+					evalTemTemplateListRsp.setUpdateTime(TimeUtil.format1(evalTemTemplate.getUpdateTime()));
+					evalTemTemplateListRsp.setNodeCount(nodeCountMap.get(evalTemTemplate.getTopoId()).getNodeCounts());
+					evalTemTemplateListRsp.setCreateUser(idNameMap.get(evalTemTemplate.getCreateUserId()));
+					return evalTemTemplateListRsp;
+				}).collect(Collectors.toList());
+		return PageUtil.getListResult(rspList, pageReqBase.toPageParam(), iPage.getTotal());
 	}
 
 	private String saveTopo(SceneConfigData sceneConfigData) {

@@ -495,5 +495,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String FAILED_TO_EXPORT_EVAL_SCHEME_TEMPLATE = "101144";
 
+	/**
+	 * stage名称错误
+	 */
+	public static final String ERROR_STAGE_NAME = "101145";
+
 	private CrBusinessErrorCode() {}
 }

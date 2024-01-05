@@ -38,6 +38,8 @@ public class EvalTask extends BaseTable {
 
 	private String createUserId;
 
+	private String missionScheme;
+
 	public enum Status implements GenericEnum {
 
 		RUNNING(1, "运行中"), FINISHED(2, "已结束");

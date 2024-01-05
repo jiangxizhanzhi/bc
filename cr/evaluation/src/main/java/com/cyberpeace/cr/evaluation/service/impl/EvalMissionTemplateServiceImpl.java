@@ -5,6 +5,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.evaluation.controller.req.EvalMissionTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalMissionTemplateReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateMapper;
@@ -63,5 +64,11 @@ public class EvalMissionTemplateServiceImpl extends ServiceImpl<EvalMissionTempl
 			}
 		}
 		return resourceIds;
+	}
+
+	@Override
+	public EvalMissionTemplateListRsp getMissionTemplates(String resourceId) {
+
+		return null;
 	}
 }

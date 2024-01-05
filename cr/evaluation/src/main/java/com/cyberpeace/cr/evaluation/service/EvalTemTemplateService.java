@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplatePageReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalTemTemplateReq;
@@ -21,5 +22,5 @@ public interface EvalTemTemplateService extends IService<EvalTemTemplate> {
 
 	EvalTemTemplateRsp getTemplate(String resourceId);
 
-	List<EvalTemTemplateListRsp> getTemplateList(EvalTemTemplatePageReq pageReqBase);
+	ListRsp<EvalTemTemplateListRsp> getTemplateList(EvalTemTemplatePageReq pageReqBase);
 }

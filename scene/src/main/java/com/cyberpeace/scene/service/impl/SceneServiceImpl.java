@@ -203,6 +203,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             TopologyEntity topology = topologyService.selectTopology(topologyId);
             topo = topology.getTopology();
         }
+        long remainTime = (scene.getDestroyTime().getTime() - scene.getStartTime().getTime())/1000;
+        sceneData.setRemainingTime((int) remainTime);
         if (StringUtils.isNotBlank(topo)){
             Topology topology = JsonUtil.toJsonObject(topo, Topology.class);
             SceneDataRsp sceneDataRsp = new SceneDataRsp();
@@ -221,7 +223,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 sceneDataRsp.setEventStatus(5);
             }
             topology.setScene(sceneDataRsp);
-
 
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("cpcloud", setPlugin(topology));
@@ -255,7 +256,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             List<ElementPort> ports = element.getPorts();
             for (ElementPort port : ports){
                 JSONObject elementPortJson = new JSONObject();
-                elementPortJson.put("access_modes", port.getAccessModes());
+                if (!CollectionUtils.isEmpty(port.getAccessModes())){
+                    elementPortJson.put("access_modes", port.getAccessModes());
+                }
                 elementPortJson.put("resource_id", element.getNodeId());
                 elementPortsJson.put(port.getId(), elementPortJson);
             }

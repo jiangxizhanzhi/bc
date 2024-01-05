@@ -16,6 +16,11 @@ public enum ExcelHeader {
 			new String[]{CommonConstant.ORG, "Participation", "Number of classes completed",
 					"Number of exercises completed after class", "Number of completed experiments", "Number of examinations taken", "Experimental mean score"},
 			new String[] {"desc"}),
+	PERSON_STUDY_STATISTIC(new String[]{"用户名", "姓名", "课程学习进度", "理论题正确率",  "实操题正确率", "考试通过率"},
+			new String[]{"UserName", "Name", "Course progress",
+					"Correct rate of theoretical questions", "Correct rate of real operation", "Exam pass rate"
+			},
+			new String[] {"desc"}),
 	TRAIN_PLAN(new String[] {"计划名称", "课程名", "课时名", "开始时间", "结束时间", "组织"},
 			new String[] {"Plan Name", "Course Name", "Course Hour Name", "Start time", "End time", CommonConstant.ORG},
 			new String[] {"desc"});

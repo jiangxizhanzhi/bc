@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
+import com.cyberpeace.scene.controller.rsp.SceneDetailRsp;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
@@ -292,7 +294,21 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				infoBo.setSceneConfigData(topology);
 			}
 
-			// 前台需要先查询课堂场景
+			// 场景信息查询
+			if (authContext.getIsWeb()) {
+				infoBo.setSceneShareMode(SceneShare.PRIVATE.getCode());
+				BaseRsp res = sceneService.detail(lesson.getTopoId(), lessonId);
+				if (Objects.nonNull(res.getData())) {
+					SceneDetailRsp sceneDetail = (SceneDetailRsp) res.getData();
+					if (Objects.nonNull(sceneDetail.getSceneData())) {
+						JSONObject data = new JSONObject();
+						data.put("scene",sceneDetail.getSceneData());
+						infoBo.setSceneData(data);
+					}
+				}
+			}
+
+			/*// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
 			if (authContext.getIsWeb() && null != groupInfo) {
 				infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
@@ -310,7 +326,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			if (null != ojLocalScene) {
 				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
 				infoBo.setSceneData(sceneData);
-			}
+			}*/
 		}
 
 
@@ -1006,7 +1022,20 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			}
 
 			// 查询课时场景
-			if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
+
+			if (authContext.getIsWeb()) {
+				BaseRsp res = sceneService.detail(courseLesson.getTopoId(), lessonId);
+				if (Objects.nonNull(res.getData())) {
+					SceneDetailRsp sceneDetail = (SceneDetailRsp) res.getData();
+					if (Objects.nonNull(sceneDetail.getSceneData())) {
+						JSONObject data = new JSONObject();
+						data.put("scene",sceneDetail.getSceneData());
+						topoSceneDataRes.setSceneConfigData(data);
+					}
+				}
+			}
+
+			/*if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
 				ojLocalScene = ojLocalSceneService.selectOjLocalScene(courseLesson.getResourceId(),
 						courseLesson.getSceneShareMode(), authContext);
 			}
@@ -1017,7 +1046,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					sceneData.put(JsonKeyConstant.ROOM_ID, groupInfo.getClassroomId());
 				}
 				topoSceneDataRes.setSceneData(sceneData);
-			}
+			}*/
 		}
 
 		return topoSceneDataRes;

@@ -88,6 +88,13 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
             @Param("userId") String userId, @Param("lessonIds") List<String> lessonIds);
 
     /**
+     * 获取用户课程学习数据
+     *
+     * @return
+     */
+    List<StudyRecord> selectRecord();
+
+    /**
      * 获取用户实验报告
      *
      * @param userId
@@ -112,6 +119,14 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
      * @return
      */
     StudyRecord selectSlovedPracticeByUser(@Param("userId") String userId);
+
+    /**
+     * 获取用户解出实操题、理论题数量
+     *
+     * @return
+     */
+    List<StudyRecord> selectSlovedPractice(@Param("userIds") List<String> userIds);
+
 
     /**
      * 获取distinct用户

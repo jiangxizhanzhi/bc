@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.List;
 
 import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.common.model.AuthContext;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;

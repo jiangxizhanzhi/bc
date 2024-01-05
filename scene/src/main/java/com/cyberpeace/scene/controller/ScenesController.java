@@ -3,6 +3,7 @@ package com.cyberpeace.scene.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.SceneService;
@@ -11,10 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author :   SN
@@ -41,11 +39,10 @@ public class ScenesController {
 
     @GetMapping("/start")
     @ApiOperation(value = "启动场景")
-    public BaseRsp start(@ApiParam(name = "topology_id", value = "拓扑结构id") @RequestParam("topology_id") String topologyId,
-                    @ApiParam(value = "实例id", name = "instance_id")@RequestParam("instance_id")String instanceId){
+    public BaseRsp start(@RequestBody SceneStartReq req){
         // 验证场景是否超限
         sceneService.verify();
-        sceneService.startScene(topologyId, instanceId);
+        sceneService.startScene(req.getTopologyId(), req.getInstanceId());
         return new BaseRsp<>();
     }
 

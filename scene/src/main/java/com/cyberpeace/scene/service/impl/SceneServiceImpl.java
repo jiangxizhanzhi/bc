@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -203,6 +205,21 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         connectionRsp.setProtocol("console");
         connectionRsp.setNodeId(nodeId);
         return new BaseRsp<>(connectionRsp);
+    }
+
+    @Override
+    public void repair(String filePath) {
+        File repairFile = new File(filePath);
+        if (!repairFile.exists()){
+            return;
+        }
+        log.info("Start run one click repair scene");
+        List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>().in(SceneEntity::getSceneStatus, SceneEnum.getCodes()));
+        if (!CollectionUtils.isEmpty(list)){
+            list.forEach(scene -> destroyScene(scene.getResourceId()));
+        }
+        FileUtil.deleteDir(repairFile);
+        log.info("Run one click repair scene end");
     }
 
 }

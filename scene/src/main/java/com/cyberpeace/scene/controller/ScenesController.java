@@ -42,8 +42,7 @@ public class ScenesController {
     public BaseRsp start(@RequestBody SceneStartReq req){
         // 验证场景是否超限
         sceneService.verify();
-        sceneService.startScene(req.getTopologyId(), req.getInstanceId());
-        return new BaseRsp<>();
+        return sceneService.startScene(req.getTopologyId(), req.getInstanceId());
     }
 
     @GetMapping("/console")

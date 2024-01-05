@@ -99,6 +99,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		}
 		user.setPassword(bCryptPasswordEncoder.encode(req.getNewPwd()));
 		sysUserMapper.updateById(user);
+		// 登出该用户
+		removeSessions(user.getResourceId());
 	}
 
 	@Override
@@ -107,6 +109,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		UserValidator.validatePassword(req.getNewPwd());
 		user.setPassword(bCryptPasswordEncoder.encode(req.getNewPwd()));
 		sysUserMapper.updateById(user);
+		// 登出该用户
+		removeSessions(user.getResourceId());
 	}
 
 	@Override

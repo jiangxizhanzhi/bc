@@ -22,6 +22,7 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -197,14 +198,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public Map<String, ? extends Session> getSessionsByUsername(String username) {
-
-		Map<String, ? extends Session> m = sessionRepository.findByPrincipalName(username);
-
-		return m;
-	}
-
-	@Override
 	public void createUser(UserAddReq req) {
 		// 校验用户数量
 		currentUserNum(1);
@@ -229,20 +222,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	@Override
 	public void updateUser(UserModifyReq req) {
 		req.validate();
-		SysUser old = getOrExceptionById(req.getResourceId());
+		TbUser sessionUser = this.getCurrentSessionUser();
+		if (!sessionUser.isAdmin() && !sessionUser.getUserId().equals(req.getResourceId())) {
+			throw new AccessDeniedException("");
+		}
 		SysUser user = req2Entity(req);
 		user.setResourceId(req.getResourceId());
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				sysUserMapper.updateById(user);
-				// 角色被编辑
-				if (!old.getAdmin().equals(user.getAdmin())) {
-					changeRole(user.getResourceId(), user.getAdmin());
-				}
-			}
-		});
+		sysUserMapper.updateById(user);
 	}
 
 	@Override
@@ -332,7 +318,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			user.setPassword(bCryptPasswordEncoder.encode(req.getPassword()));
 		}
 		user.setAvatar(req.getAvatar());
-		if (isCurrentAdminByRedisSession()) {
+		if (isCurrentAdmin()) {
 			user.setAdmin(req.getAdmin());
 		}
 		user.setExpireTime(req.getExpireTime());
@@ -348,38 +334,30 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		return userInfo.getAdmin();
 	}
 
-	private boolean isCurrentAdminByRedisSession() {
-		TbUser user = getCurrentSessionUser();
-		if (null == user) {
-			return false;
-		}
-		return user.isAdmin();
-	}
 
 	private TbUser getCurrentSessionUser() {
 		return (TbUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	}
-
-	/**
-	 * 编辑用户的角色后更新session
-	 * @param userId
-	 * @param isAdmin
-	 */
-	private void changeRole(String userId, boolean isAdmin) {
-		Map<String, ? extends Session> sessionMap = sessionRepository.findByPrincipalName(userId);
-		for (Session session : sessionMap.values()) {
-			SecurityContext context = session.getAttribute(AuthConstant.SPRING_SECURITY_CONTEXT);
-			TbUser user = (TbUser) context.getAuthentication().getPrincipal();
-			user.setAdmin(isAdmin);
-			user.setRole(isAdmin);
-			session.setAttribute(AuthConstant.SPRING_SECURITY_CONTEXT, context);
-		}
 	}
 
 	private void currentUserNum(Integer insertNum){
 		int count = count() + insertNum;
 		if (USER_MAX <= count){
 			throw new BusinessException(ErrorCode.USER_MAX_NUM);
+		}
+	}
+
+	private boolean isCurrentAdmin() {
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (null == userInfo) {
+			return false;
+		}
+		return userInfo.isAdmin();
+	}
+
+
+	private void removeSessions(String userId){
+		for (String sessionId : sessionRepository.findByPrincipalName(userId).keySet()) {
+			sessionRepository.deleteById(sessionId);
 		}
 	}
 }

@@ -81,7 +81,6 @@ public class RedisSessionConfig {
 		// 自定义 principal name
 		sessionRepository.setIndexResolver(
 				new DelegatingIndexResolver<>(new CustomPrincipalNameIndexResolver<>()));
-		sessionRepository.setFlushMode(FlushMode.IMMEDIATE);
 		return sessionRepository;
 	}
 }

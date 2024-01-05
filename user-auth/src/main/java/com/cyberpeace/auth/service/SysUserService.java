@@ -46,8 +46,6 @@ public interface SysUserService extends IService<SysUser> {
 
 	SysUser getCurrent();
 
-	Map<String, ? extends Session> getSessionsByUsername(String username);
-
 	/**
 	 * @param req
 	 */

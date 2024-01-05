@@ -22,11 +22,16 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Autowired
 	private RequestInterceptor requestInterceptor;
 
+	@Autowired
+	private UserRoleInterceptor userRoleInterceptor;
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(practiceGateWayInterceptor).addPathPatterns("/gateway/theory/**",
 				"/gateway/exercise/**");
 		registry.addInterceptor(requestInterceptor);
+		registry.addInterceptor(userRoleInterceptor).addPathPatterns("/auth/**",
+				"/tb/**");
 	}
 
 	@Override

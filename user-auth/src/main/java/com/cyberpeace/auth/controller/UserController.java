@@ -5,6 +5,7 @@ import com.cyberpeace.auth.controller.req.UserReq;
 import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.*;
+import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.MultiSelectReq;
@@ -45,7 +46,7 @@ public class UserController {
 
 	@ApiOperation("管理员重置密码")
 	@PostMapping("/users/resetpwd/")
-	@PreAuthorize("hasRole('admin')")
+	@AdminRequired
 	public BaseRsp resetPwd(@RequestBody ResetPwdReq req) {
 		sysUserService.resetPwd(req);
 		// logout
@@ -65,7 +66,7 @@ public class UserController {
 
 	@ApiOperation("创建用户")
 	@PostMapping("/user/")
-	@PreAuthorize("hasRole('admin')")
+	@AdminRequired
 	public BaseRsp createUser(@RequestBody UserAddReq req) {
 		req.validate();
 		sysUserService.createUser(req);
@@ -74,7 +75,7 @@ public class UserController {
 
 	@ApiOperation("删除用户")
 	@DeleteMapping("/user/")
-	@PreAuthorize("hasRole('admin')")
+	@AdminRequired
 	public BaseRsp deleteUser(@RequestBody MultiSelectReq req) {
 		sysUserService.deleteUser(req);
 		return new BaseRsp();
@@ -100,15 +101,6 @@ public class UserController {
 	public BaseRsp<ListRsp<UserRes>> pageUser(UserReq req) {
 		ListRsp<UserRes> rsp = sysUserService.pageUser(req);
 		return new BaseRsp<>(rsp);
-	}
-
-	@ApiOperation("查看在线用户")
-	@GetMapping("/online")
-	public BaseRsp<Map>
-			getOnlineUsers(@ApiParam(value = "用户username", name = "username") String username) {
-		Map<String, ? extends Session> map = sysUserService.getSessionsByUsername(username);
-
-		return new BaseRsp<>(map);
 	}
 
 	@ApiOperation("更新用户头像")

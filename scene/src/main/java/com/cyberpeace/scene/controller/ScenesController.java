@@ -37,7 +37,7 @@ public class ScenesController {
         return new BaseRsp<>(topology);
     }
 
-    @GetMapping("/start")
+    @PostMapping("/start")
     @ApiOperation(value = "启动场景")
     public BaseRsp start(@RequestBody SceneStartReq req){
         // 验证场景是否超限

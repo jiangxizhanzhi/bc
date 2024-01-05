@@ -317,9 +317,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
         // 获取课程学习进度
         StudyRecord studyRecord = personCenterMapper.selectRecordByUser(userId, lessonIds);
-        res.setLessonCount(studyRecord.getExpCount()+studyRecord.getTheoryCount());
-        res.setTheoryLessonCount(studyRecord.getTheoryCount());
-        res.setExpLessonCount(studyRecord.getExpCount());
+        res.setTheoryLessonCount(studyRecord.getTheoryCount()==null?0:studyRecord.getTheoryCount());
+        res.setExpLessonCount(studyRecord.getExpCount()==null?0:studyRecord.getExpCount());
+        res.setLessonCount(res.getExpLessonCount()+res.getTheoryLessonCount());
         StudyStaticsRes lessonCount = personCenterMapper.selectLessonAllCount();
         res.setLessonAllCount(lessonCount.getLessonAllCount());
         res.setTheoryLessonAllCount(lessonCount.getTheoryLessonAllCount());

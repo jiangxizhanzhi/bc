@@ -208,7 +208,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext) {
 
 		// 课时数据校验
-		CourseLesson lesson = courseValidateHandler.validateLessonPermission(lessonId, authContext);
+//		CourseLesson lesson = courseValidateHandler.validateLessonPermission(lessonId, authContext);
+		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 		Course course = courseMapper.selectById(courseId);
 
 		// 增加热度

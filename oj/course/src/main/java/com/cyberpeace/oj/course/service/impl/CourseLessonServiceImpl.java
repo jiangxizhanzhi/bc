@@ -1030,7 +1030,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					if (Objects.nonNull(sceneDetail.getSceneData())) {
 						JSONObject data = new JSONObject();
 						data.put("scene",sceneDetail.getSceneData());
-						topoSceneDataRes.setSceneConfigData(data);
+						topoSceneDataRes.setSceneData(data);
 					}
 				}
 			}

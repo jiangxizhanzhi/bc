@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -257,7 +258,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             for (ElementPort port : ports){
                 JSONObject elementPortJson = new JSONObject();
                 if (!CollectionUtils.isEmpty(port.getAccessModes())){
-                    elementPortJson.put("access_modes", port.getAccessModes());
+                    elementPortJson.put("access_modes", JSONArray.parse(port.getAccessModes().toString()));
                 }
                 elementPortJson.put("resource_id", element.getNodeId());
                 elementPortsJson.put(port.getId(), elementPortJson);

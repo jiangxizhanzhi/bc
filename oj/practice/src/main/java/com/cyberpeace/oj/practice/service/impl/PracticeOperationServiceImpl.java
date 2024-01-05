@@ -731,11 +731,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.OPERATION.getCode(), operation.getResourceId()));
 		try {
-			if (evaluateResult.getSolved()) {
-				practiceMistakeService.addCorrect(userId, resourceId, PracticeCategory.PracticeType.OPERATION.getCode());
-			} else {
-				practiceMistakeService.addIncorrect(userId, resourceId, PracticeCategory.PracticeType.OPERATION.getCode());
-			}
 			practiceSolvedMapper.insert(practiceSolved);
 		} catch (DuplicateKeyException e) {
 			practiceSolvedMapper.updateSolved(practiceSolved);

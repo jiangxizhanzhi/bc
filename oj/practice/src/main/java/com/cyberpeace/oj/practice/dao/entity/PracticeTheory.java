@@ -31,10 +31,10 @@ public class PracticeTheory extends PracticeBase {
 
 	public enum TheoryType implements GenericEnum {
 
-		SINGLE(0, "single"), MULTIPLE(1, "multiple"), JUDGMENT(2, "judgment"), FILL_BLANK(3, "fill_blank"), SHORT_ANSWER(4,
-				"short_answer"),
+		SINGLE(0, "单选"), MULTIPLE(1, "多选"), JUDGMENT(2, "判断"), FILL_BLANK(3, "填空"), SHORT_ANSWER(4,
+				"简答"),
 		/** 不属于基础练习本身*/
-		OPERATION(5, "operation");
+		OPERATION(5, "实操");
 
 		@Getter
 		private Integer code;
@@ -45,6 +45,14 @@ public class PracticeTheory extends PracticeBase {
 		TheoryType(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
+		}
+		public static String getDescByCode(Integer code) {
+			for (TheoryType item : TheoryType.values()) {
+				if (item.getCode().equals(code)) {
+					return item.getDesc();
+				}
+			}
+			return null;
 		}
 	}
 

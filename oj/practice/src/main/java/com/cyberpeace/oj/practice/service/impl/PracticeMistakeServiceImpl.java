@@ -89,16 +89,17 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 	public List<PersonalMistakeRes> getPracticeMistake() {
 		UserInfo userInfo = UserInfoContext.getUserContext();
 		List<PersonalMistakeRes> theoryList = practiceMistakeMapper.selectByPracticeId( userInfo.getUserId());
-		List<PersonalMistakeRes> operationList = practiceMistakeMapper.selectOpertionByPracticeId(userInfo.getUserId());
-		if (CollectionUtils.isNotEmpty(operationList)) {
-			for (PersonalMistakeRes res : operationList) {
-				if (StringUtils.isEmpty(res.getDirection())) {
-					continue;
-				}
-				res.setDirection(JSON.parseArray(res.getDirection(), String.class).stream().collect(Collectors.joining(",")));
-			}
-			theoryList.addAll(operationList);
-		}
+		//实操题
+//		List<PersonalMistakeRes> operationList = practiceMistakeMapper.selectOpertionByPracticeId(userInfo.getUserId());
+//		if (CollectionUtils.isNotEmpty(operationList)) {
+//			for (PersonalMistakeRes res : operationList) {
+//				if (StringUtils.isEmpty(res.getDirection())) {
+//					continue;
+//				}
+//				res.setDirection(JSON.parseArray(res.getDirection(), String.class).stream().collect(Collectors.joining(",")));
+//			}
+//			theoryList.addAll(operationList);
+//		}
 		return theoryList;
 	}
 

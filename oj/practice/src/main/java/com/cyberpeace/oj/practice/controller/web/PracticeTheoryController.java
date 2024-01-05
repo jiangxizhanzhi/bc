@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.web;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.auth.constant.OpLogMethodEnum;
 import com.cyberpeace.auth.constant.OpLogModuleEnum;
 import com.cyberpeace.auth.controller.AbstractOpLog;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
@@ -28,6 +29,7 @@ import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.controller.res.TheoryStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeCountService;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
@@ -76,7 +78,8 @@ public class PracticeTheoryController extends AbstractOpLog {
 	public BaseRsp<WebTheoryBo> get(@RequestParam("resource_id") @NotBlank String resourceId) {
 		WebTheoryBo theoryBo = practiceTheoryService.selectById(resourceId,
 				UserInfoContext.getUserContext().getUserId(), Boolean.FALSE);
-
+		super.log(OpLogMethodEnum.PRACTICE.getType(),
+				getLogContent(theoryBo), "");
 		return new BaseRsp<>(theoryBo);
 	}
 
@@ -270,5 +273,9 @@ public class PracticeTheoryController extends AbstractOpLog {
 	@Override
 	protected Integer getModule() {
 		return OpLogModuleEnum.THEORY.getType();
+	}
+	private String getLogContent(WebTheoryBo theoryBo) {
+		return PracticeTheory.TheoryType
+				.getDescByCode(theoryBo.getTheoryType())+"-"+theoryBo.getPracticeSetName() + "-" + theoryBo.getContent();
 	}
 }

@@ -18,5 +18,7 @@ public class IndexReq implements Serializable {
     private String standardUrl;
     @ApiModelProperty("覆盖度")
     private Integer coverage;
+
+    private String standardInfo;
     private List<IndexCategoryReq> categoryList;
 }

@@ -261,7 +261,7 @@ public final class ErrorCode {
 	public static final String CREATE_NETWORK_ERROR = "100080";
 
 	/**
-	 * 场景事件溢出
+	 * 系统场景事件溢出
 	 */
 	public static final String SCENE_EVENT_OVERFLOW = "100081";
 

@@ -146,7 +146,7 @@ public class SceneJob {
                         CreateContainersRes res = containerService.create(new CreateContainerReq(containerElement.getName(), null, nets));
                         NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getName(), null,
                                 null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
-                                SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), containerElement.getId());
+                                SceneEnum.CREATE.getCode(), null, scene.getUserId(), containerElement.getId());
                         containerElement.setNodeId(res.getUuid());
                         //保存节点信息
                         nodeService.save(node);

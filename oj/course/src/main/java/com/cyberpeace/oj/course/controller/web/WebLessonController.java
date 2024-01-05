@@ -2,6 +2,9 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.auth.constant.OpLogMethodEnum;
+import com.cyberpeace.auth.constant.OpLogModuleEnum;
+import com.cyberpeace.auth.controller.AbstractOpLog;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.model.AuthContext;
 import org.apache.shiro.authz.annotation.Logical;
@@ -38,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 //@RequiresAuthentication
 @RequestMapping("/oj/lesson")
 @Slf4j
-public class WebLessonController {
+public class WebLessonController extends AbstractOpLog {
 
 	@Autowired
 	private CourseLessonService courseLessonService;
@@ -57,8 +60,7 @@ public class WebLessonController {
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.TRUE);
         LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, roomId, learnedType ,authContext);
-		// 记录远程操作日志
-		courseLessonService.createMpLog(infoBo);
+		super.log(OpLogMethodEnum.STUDY.getType(),infoBo.getCourseName()+"-"+infoBo.getName(), "");
 		return new BaseRsp<>(infoBo);
 	}
 
@@ -170,4 +172,8 @@ public class WebLessonController {
 		return new BaseRsp<>(result);
 	}
 
+	@Override
+	protected Integer getModule() {
+		return OpLogModuleEnum.LESSON.getType();
+	}
 }

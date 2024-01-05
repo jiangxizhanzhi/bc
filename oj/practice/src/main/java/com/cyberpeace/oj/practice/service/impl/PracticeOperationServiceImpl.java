@@ -59,6 +59,7 @@ import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
+import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
@@ -161,6 +162,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PracticeMistakeMapper practiceMistakeMapper;
+
+	@Autowired
+	private PracticeMistakeService practiceMistakeService;
 
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
@@ -727,6 +731,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.OPERATION.getCode(), operation.getResourceId()));
 		try {
+			if (evaluateResult.getSolved()) {
+				practiceMistakeService.addCorrect(userId, resourceId, PracticeCategory.PracticeType.THEORY.getCode());
+			} else {
+				practiceMistakeService.addIncorrect(userId, resourceId, PracticeCategory.PracticeType.THEORY.getCode());
+			}
 			practiceSolvedMapper.insert(practiceSolved);
 		} catch (DuplicateKeyException e) {
 			practiceSolvedMapper.updateSolved(practiceSolved);

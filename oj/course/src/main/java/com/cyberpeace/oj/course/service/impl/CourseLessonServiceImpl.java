@@ -299,7 +299,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			if (authContext.getIsWeb()) {
 				infoBo.setSceneShareMode(SceneShare.PRIVATE.getCode());
 				BaseRsp res = sceneService.detail(lesson.getTopoId(), lessonId);
-				if (Objects.nonNull(res.getData())) {
+				if (Objects.nonNull(res) && Objects.nonNull(res.getData())) {
 					SceneDetailRsp sceneDetail = (SceneDetailRsp) res.getData();
 					if (Objects.nonNull(sceneDetail.getSceneData())) {
 						JSONObject data = new JSONObject();
@@ -1026,7 +1026,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			if (authContext.getIsWeb()) {
 				BaseRsp res = sceneService.detail(courseLesson.getTopoId(), lessonId);
-				if (Objects.nonNull(res.getData())) {
+				if (Objects.nonNull(res) && Objects.nonNull(res.getData())) {
 					SceneDetailRsp sceneDetail = (SceneDetailRsp) res.getData();
 					if (Objects.nonNull(sceneDetail.getSceneData())) {
 						JSONObject data = new JSONObject();

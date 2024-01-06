@@ -113,12 +113,12 @@ public class SceneJob {
                     networkElement = topologyElements.get(0);
                 }
                 //推送进度
-                pushScenePlugin(scene, 25, 0, 2);
+                pushScenePlugin(scene, 25, 0, 2, 2);
                 //创建网络
                 NetworkEntity network = createNetwork(networkElement, scene.getResourceId());
                 count++;
                 pushElement(networkElement, scene, SceneEnum.CREATE.getName());
-                pushScenePlugin(scene, 100, 0, 4);
+                pushScenePlugin(scene, 100, 0, 4, 2);
                 List<Net> nets = Lists.newArrayList();
                 nets.add(new Net(network.getUuid()));
 
@@ -136,7 +136,7 @@ public class SceneJob {
                         nodeService.save(node);
                         count++;
                         pushElement(hostElement, scene, SceneEnum.CREATE.getName());
-                        pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
+                        pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2, 2);
                     }
                 }
                 // 创建容器
@@ -153,18 +153,18 @@ public class SceneJob {
                         nodeService.save(node);
                         count++;
                         pushElement(containerElement, scene, SceneEnum.ACTIVE.getName());
-                        pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
+                        pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2, 2);
                     }
                 }
                 sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
                 //更新场景状态为运行中
                 sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ACTIVE.getCode());
-                pushScenePlugin(scene, 100, 100, 2);
+                pushScenePlugin(scene, 100, 100, 2, 4);
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e);
                 //更新场景状态为错误
                 sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ERROR.getCode());
-                pushScenePlugin(scene, 0, 0, 5);
+                pushScenePlugin(scene, 0, 0, 5, 4);
                 throw new BusinessException(e.getMessage());
             }
         }
@@ -199,7 +199,7 @@ public class SceneJob {
         log.info("push Message ===>data:{}", JSON.toJSONString(data));
         webSocketHandler.pushMessage(messageContext, true);
     }
-    private void pushScenePlugin(SceneEntity scene, Integer networkStage, Integer instanceStage, Integer processStatus){
+    private void pushScenePlugin(SceneEntity scene, Integer networkStage, Integer instanceStage, Integer processStatus, Integer eventStatus){
         try {
             WsSceneData sceneData = new WsSceneData();
             sceneData.setSceneId(scene.getResourceId());
@@ -218,7 +218,7 @@ public class SceneJob {
             wsScene.setProcessMessage(StageEnum.CREATE_INSTANCE.getStageName());
             wsScene.setProcessStatus(processStatus);
             wsScene.setEvent(2);
-            wsScene.setEventStatus(2);
+            wsScene.setEventStatus(eventStatus);
             sceneData.setScene(wsScene);
 
             WsData data = new WsData();

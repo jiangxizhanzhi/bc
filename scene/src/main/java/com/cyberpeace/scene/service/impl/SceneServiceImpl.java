@@ -243,6 +243,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         JSONObject elementPortsJson = new JSONObject();
         List<TopologyElement> elements = topology.getElements();
         int sum = elements.stream().mapToInt(e -> e.getPorts().size()).sum();
+        List<TopologyElement> newElements = new ArrayList<>();
         for (TopologyElement element : elements){
             JSONObject elementJson = new JSONObject();
             RoleEnum roleEnum = RoleEnum.getRoleEnum(element.getType());
@@ -271,10 +272,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 elementPortJson.put("event", 2);
                 elementPortJson.put("resource_id", element.getNodeId());
                 elementPortsJson.put(port.getId(), elementPortJson);
+                newElements.add(element);
             }
         }
         jsonObject.put("elements", elementsJson);
         jsonObject.put("element_ports", elementPortsJson);
+        topology.setElements(newElements);
         return jsonObject;
     }
 
@@ -293,6 +296,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 eventStatus = 2;
             }
         }
+        element.setEvent(2);
+        element.setEventStatus(eventStatus);
         jsonObject.put("ip", ip);
         jsonObject.put("event_status", eventStatus);
         return jsonObject;

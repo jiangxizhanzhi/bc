@@ -51,7 +51,7 @@ public class ScenesController  {
 
     @GetMapping("/console")
     @ApiOperation(value = "控制台接入")
-    public BaseRsp console(@ApiParam(name = "node_id", value = "主机实例id")@RequestParam String nodeId,
+    public BaseRsp console(@ApiParam(name = "node_id", value = "主机实例id")@RequestParam("node_id") String nodeId,
                            @ApiParam(name = "type", value = "主机类型")@RequestParam Integer type){
 
         return sceneService.console(nodeId, type);

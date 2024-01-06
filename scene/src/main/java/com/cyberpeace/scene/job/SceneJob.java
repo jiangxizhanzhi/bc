@@ -136,7 +136,7 @@ public class SceneJob {
                         nodeService.save(node);
                         count++;
                         pushElement(hostElement, scene, SceneEnum.CREATE.getName());
-                        pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2, 2);
+                        pushScenePlugin(scene, 100, state(size, count, 2), 2, 2);
                     }
                 }
                 // 创建容器
@@ -153,7 +153,7 @@ public class SceneJob {
                         nodeService.save(node);
                         count++;
                         pushElement(containerElement, scene, SceneEnum.ACTIVE.getName());
-                        pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2, 2);
+                        pushScenePlugin(scene, 100, state(size, count, 2), 2, 2);
                     }
                 }
                 Thread.sleep(5 * 1000);
@@ -169,7 +169,12 @@ public class SceneJob {
                 throw new BusinessException(e.getMessage());
             }
         }
-        log.error("start scene end : {}", scene.getSceneName());
+        log.info("start scene end : {}", scene.getSceneName());
+    }
+
+    private Integer state(Integer dividend, Integer divisor, Integer scale){
+        Double divide = MathUtils.divide((double) dividend, (double) divisor, scale);
+        return divide.intValue() * 100;
     }
 
     /**

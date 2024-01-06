@@ -281,59 +281,23 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     private JSONObject getStatusEvent(TopologyElement element){
         JSONObject jsonObject = new JSONObject();
         String ip = null;
-        Integer eventStatus = 4;
-        if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), element.getType())){
-            CreateInstanceRes instance = hostService.getInstance(element.getNodeId());
-            if (Objects.nonNull(instance)){
-                if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getVmState())){
-                    eventStatus = 4;
-                    JSONObject addresses = instance.getAddresses();
-                    ip = getIp(addresses);
-                }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getVmState())){
-                    eventStatus = 5;
-                } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getVmState())) {
-                    eventStatus = 2;
-                }
+        int eventStatus = 4;
+        NodeEntity node = nodeService.getOne(new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getInstanceId, element.getNodeId()));
+        if (Objects.nonNull(node)){
+            ip = node.getIp();
+            if (Objects.equals(SceneEnum.ACTIVE.getCode(), node.getStatus())){
+                eventStatus = 4;
+            }else if (Objects.equals(SceneEnum.ERROR.getCode(), node.getStatus())){
+                eventStatus = 5;
+            } else if (Objects.equals(SceneEnum.CREATE.getCode(), node.getStatus())) {
+                eventStatus = 2;
             }
-        }
-        if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), element.getType())){
-            ContainerItem instance = containerService.getInstance(element.getNodeId());
-            if (Objects.nonNull(instance)){
-                if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())){
-                    eventStatus = 4;
-                    JSONObject addresses = instance.getAddresses();
-                    ip = getIp(addresses);
-                }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getStatus())){
-                    eventStatus = 5;
-                } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getStatus())) {
-                    eventStatus = 2;
-                }
-            }
-        }
-        if (StringUtils.isNotBlank(ip)){
-            nodeMapper.updateByInstanceId(element.getNodeId(), SceneEnum.ACTIVE.getCode());
-        }else if (Objects.equals(5, eventStatus)){
-            nodeMapper.updateByInstanceId(element.getNodeId(), SceneEnum.ERROR.getCode());
         }
         jsonObject.put("ip", ip);
         jsonObject.put("event_status", eventStatus);
         return jsonObject;
     }
     
-    private String getIp(JSONObject addresses){
-        String ip = null;
-        if (Objects.isNull(addresses)){
-            return ip;
-        }
-        Set<Map.Entry<String, Object>> entries = addresses.entrySet();
-        for (Map.Entry<String, Object> entry : entries){
-            JSONObject address = JSONObject.parseObject(entry.getValue().toString());
-            if (address.containsKey("ip_address")){
-                ip = address.getString("ip_address");
-            }
-        }
-        return ip;
-    }
 
     @Override
     public BaseRsp console(String nodeId, Integer type) {

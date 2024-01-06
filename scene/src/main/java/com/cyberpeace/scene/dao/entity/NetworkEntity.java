@@ -65,7 +65,7 @@ public class NetworkEntity extends BaseTable {
     /**
      * 网络状态0:运行，1：关闭，2：创建中，3:删除，4：错误
      */
-    private Integer status;
+    private Integer networkStatus;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

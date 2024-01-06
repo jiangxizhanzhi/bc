@@ -63,6 +63,7 @@ import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
+import com.cyberpeace.scene.service.TopologyService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -90,6 +91,9 @@ import java.util.stream.Collectors;
 public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationMapper, PracticeOperation> implements PracticeOperationService {
 
 	private final Boolean IS_COLLECTED = Boolean.FALSE;
+
+	@Autowired
+	private TopologyService topologyService;
 
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
@@ -374,7 +378,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		OperationBo operationBo = BeanUtils.copy(operation, OperationBo.class);
 
 		if (operation.getDynamicEnv() && StringUtils.isNotBlank(operation.getTopoId())) {
-			JSONObject sceneConfig = remoteTopoService.getTopoById(operation.getTopoId());
+			JSONObject sceneConfig = topologyService.getTopology(operation.getTopoId());
 			operationBo.setSceneConfigData(sceneConfig);
 		}
 
@@ -550,7 +554,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 场景数据
 		if (operationBo.getDynamicEnv() && StringUtils.isNotBlank(operationBo.getTopoId())) {
-			JSONObject sceneConfig = remoteTopoService.getTopoById(operationBo.getTopoId());
+			JSONObject sceneConfig = topologyService.getTopology(operationBo.getTopoId());
 			webOperationBo.setSceneConfigData(sceneConfig);
 
 			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
@@ -868,7 +872,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 拓扑数据查询
 		TopoSceneDataBo topoSceneDataBo = new TopoSceneDataBo();
 		if (StringUtils.isNotBlank(operation.getTopoId())) {
-			JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
+			JSONObject topoData = topologyService.getTopology(operation.getTopoId());
 			topoSceneDataBo.setSceneConfigData(topoData);
 		}
 
@@ -1255,7 +1259,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.isWeb(ojLocalScene.getFromWeb()).build();
 
 		// 设置场景类型
-		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
+		JSONObject topoData = topologyService.getTopology(operation.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, BusinessCode.PRACTICE.getCode());
 		sceneMeta.setTopoData(topoData);
 

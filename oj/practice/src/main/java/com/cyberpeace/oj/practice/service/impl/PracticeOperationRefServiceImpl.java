@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.service.impl;
 import java.util.List;
 
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
+import com.cyberpeace.scene.service.TopologyService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperationRefMapper, PracticeOperationRef> implements PracticeOperationRefService {
+
+	@Autowired
+	private TopologyService topologyService;
 
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
@@ -102,7 +106,7 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 					// 场景相关数据查询
 					if (!simpleData && operation.getDynamicEnv()
 							&& StringUtils.isNotBlank(operation.getTopoId())) {
-						JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
+						JSONObject topoData = topologyService.getTopology(operation.getTopoId());
 						operationLessonBo.setSceneConfigData(topoData);
 
 						String businessId = lessonId + CommonConstant.CODE_COMMA

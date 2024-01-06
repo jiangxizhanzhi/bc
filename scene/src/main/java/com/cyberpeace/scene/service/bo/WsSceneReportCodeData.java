@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class WsSceneReportCodeData {
 
-	private String code;
+	private Integer code;
 
 	private WsData data;
 
-	public WsSceneReportCodeData(String code, WsData wsData) {
+	public WsSceneReportCodeData(Integer code, WsData wsData) {
 		this.code = code;
 		this.data = wsData;
 	}

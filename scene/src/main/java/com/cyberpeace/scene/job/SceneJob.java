@@ -184,7 +184,7 @@ public class SceneJob {
 
     private void sendMsg(WsData data, SceneEntity scene) {
 
-        WsSceneReportCodeData codeData = new WsSceneReportCodeData("", data);
+        WsSceneReportCodeData codeData = new WsSceneReportCodeData(1, data);
         String sceneContent = JsonUtil.toJsonString(codeData, PropertyNamingStrategy.SnakeCase);
 
         MyWebSocketHandler webSocketHandler = SpringContextUtil.getBeanByClass(MyWebSocketHandler.class);

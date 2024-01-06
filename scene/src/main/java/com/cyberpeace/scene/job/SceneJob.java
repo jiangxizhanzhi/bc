@@ -245,6 +245,8 @@ public class SceneJob {
         try {
             WsSceneData sceneData = new WsSceneData();
             sceneData.setSceneId(scene.getResourceId());
+            element.setEvent(2);
+            element.setEventStatus(2);
             sceneData.setSceneElement(element);
 
             WsData data = new WsData();

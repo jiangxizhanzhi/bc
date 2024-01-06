@@ -285,11 +285,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         JSONObject jsonObject = new JSONObject();
         String ip = null;
         int eventStatus = 4;
+        boolean available = false;
         NodeEntity node = nodeService.getOne(new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getInstanceId, element.getNodeId()));
         if (Objects.nonNull(node)){
             ip = node.getIp();
             if (Objects.equals(SceneEnum.ACTIVE.getCode(), node.getStatus())){
                 eventStatus = 4;
+                available = true;
             }else if (Objects.equals(SceneEnum.ERROR.getCode(), node.getStatus())){
                 eventStatus = 5;
             } else if (Objects.equals(SceneEnum.CREATE.getCode(), node.getStatus())) {
@@ -300,6 +302,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         element.setEventStatus(eventStatus);
         jsonObject.put("ip", ip);
         jsonObject.put("event_status", eventStatus);
+        jsonObject.put("available", available);
         return jsonObject;
     }
     

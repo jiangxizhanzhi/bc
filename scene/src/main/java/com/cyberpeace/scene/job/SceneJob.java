@@ -2,6 +2,7 @@ package com.cyberpeace.scene.job;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
@@ -184,7 +185,7 @@ public class SceneJob {
     private void sendMsg(WsData data, SceneEntity scene) {
 
         WsSceneReportCodeData codeData = new WsSceneReportCodeData("", data);
-        String sceneContent = JsonUtil.toJsonString(codeData);
+        String sceneContent = JsonUtil.toJsonString(codeData, PropertyNamingStrategy.SnakeCase);
 
         MyWebSocketHandler webSocketHandler = SpringContextUtil.getBeanByClass(MyWebSocketHandler.class);
         SceneWsIdentifier identifier = new SceneWsIdentifier();

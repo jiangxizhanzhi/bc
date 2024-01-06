@@ -14,21 +14,21 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.RoleEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
+import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
 import com.cyberpeace.scene.controller.rsp.SceneDataRsp;
 import com.cyberpeace.scene.controller.rsp.SceneDetailRsp;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
+import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.job.SceneExecutor;
 import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.*;
-import com.cyberpeace.scene.service.bo.ElementPort;
-import com.cyberpeace.scene.service.bo.SceneData;
-import com.cyberpeace.scene.service.bo.Topology;
-import com.cyberpeace.scene.service.bo.TopologyElement;
+import com.cyberpeace.scene.service.bo.*;
+import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
 import com.cyberpeace.scene.util.HttpUtil;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +40,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author :   SN
@@ -81,6 +79,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
     @Autowired
     private ContainerService containerService;
+
+    @Autowired
+    private NodeMapper nodeMapper;
 
     /**
      * 场景自动销毁时间 单位:小时
@@ -198,12 +199,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }
         SceneData sceneData = new SceneData();
         String topo;
-        if (scene != null){
-            topo = scene.getMeta();
-        }else {
-            TopologyEntity topology = topologyService.selectTopology(topologyId);
-            topo = topology.getTopology();
-        }
+        topo = scene.getMeta();
         Date currentTime = new Date();
         long remainTime = (scene.getDestroyTime().getTime() - currentTime.getTime())/1000;
         sceneData.setRemainingTime((int) remainTime);
@@ -214,6 +210,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             if (Objects.equals(SceneEnum.ACTIVE.getCode(), scene.getSceneStatus())){
                 sceneDataRsp.setEvent(2);
                 sceneDataRsp.setEventStatus(4);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("cpcloud", setPlugin(topology));
+                sceneData.setTopology(topology);
+                sceneData.setScene(scene);
+                sceneData.setPlugins(jsonObject);
             } else if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())) {
                 sceneDataRsp.setEvent(2);
                 sceneDataRsp.setEventStatus(2);
@@ -225,12 +226,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 sceneDataRsp.setEventStatus(5);
             }
             topology.setScene(sceneDataRsp);
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("cpcloud", setPlugin(topology));
-            sceneData.setTopology(topology);
-            sceneData.setScene(scene);
-            sceneData.setPlugins(jsonObject);
         }
         return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
     }
@@ -253,10 +248,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 elementJson.put("electric_port_number", sum);
             }
             elementsJson.put(element.getId(), elementJson);
-
-
-            List<ElementPort> ports = element.getPorts();
-            for (ElementPort port : ports){
+            JSONObject address = getStatusEvent(element);
+            for (ElementPort port : element.getPorts()){
+                port.setIp(address.getString("ip"));
+                port.setEvent(2);
+                port.setEventStatus(address.getInteger("event_status"));
                 JSONObject elementPortJson = new JSONObject();
                 if (!CollectionUtils.isEmpty(port.getAccessModes())){
                     JSONArray accessModes = JSONArray.parseArray(port.getAccessModes().toString());
@@ -266,6 +262,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                     });
                     elementPortJson.put("access_modes", accessModes);
                 }
+                elementPortJson.put("ip", address.getString("ip"));
+                elementPortJson.put("event_status", address.getInteger("event_status"));
+                elementPortJson.put("event", 2);
                 elementPortJson.put("resource_id", element.getNodeId());
                 elementPortsJson.put(port.getId(), elementPortJson);
             }
@@ -273,6 +272,63 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         jsonObject.put("elements", elementsJson);
         jsonObject.put("element_ports", elementPortsJson);
         return jsonObject;
+    }
+
+    private JSONObject getStatusEvent(TopologyElement element){
+        JSONObject jsonObject = new JSONObject();
+        String ip = null;
+        Integer eventStatus = 4;
+        if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), element.getType())){
+            CreateInstanceRes instance = hostService.getInstance(element.getNodeId());
+            if (Objects.nonNull(instance)){
+                if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getVmState())){
+                    eventStatus = 4;
+                    JSONObject addresses = instance.getAddresses();
+                    ip = getIp(addresses);
+                }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getVmState())){
+                    eventStatus = 5;
+                } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getVmState())) {
+                    eventStatus = 2;
+                }
+            }
+        }
+        if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), element.getType())){
+            ContainerItem instance = containerService.getInstance(element.getNodeId());
+            if (Objects.nonNull(instance)){
+                if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())){
+                    eventStatus = 4;
+                    JSONObject addresses = instance.getAddresses();
+                    ip = getIp(addresses);
+                }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getStatus())){
+                    eventStatus = 5;
+                } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getStatus())) {
+                    eventStatus = 2;
+                }
+            }
+        }
+        if (StringUtils.isNotBlank(ip)){
+            nodeMapper.updateByInstanceId(element.getNodeId(), SceneEnum.ACTIVE.getCode());
+        }else if (Objects.equals(5, eventStatus)){
+            nodeMapper.updateByInstanceId(element.getNodeId(), SceneEnum.ERROR.getCode());
+        }
+        jsonObject.put("ip", ip);
+        jsonObject.put("event_status", eventStatus);
+        return jsonObject;
+    }
+    
+    private String getIp(JSONObject addresses){
+        String ip = null;
+        if (Objects.isNull(addresses)){
+            return ip;
+        }
+        Set<Map.Entry<String, Object>> entries = addresses.entrySet();
+        for (Map.Entry<String, Object> entry : entries){
+            JSONObject address = JSONObject.parseObject(entry.getValue().toString());
+            if (address.containsKey("ip_address")){
+                ip = address.getString("ip_address");
+            }
+        }
+        return ip;
     }
 
     @Override
@@ -301,6 +357,19 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }
         FileUtil.deleteDir(repairFile);
         log.info("Run one click repair scene end");
+    }
+
+    @Override
+    public void autoDestroy() {
+        List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
+                .in(SceneEntity::getSceneStatus, SceneEnum.getCodes())
+                .lt(SceneEntity::getDestroyTime, new Date()));
+        if (!CollectionUtils.isEmpty(list)){
+            list.forEach(scene -> {
+                destroyScene(scene.getResourceId());
+                log.info("Destroy scene : {}", scene.getResourceId());
+            });
+        }
     }
 
 }

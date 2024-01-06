@@ -35,4 +35,8 @@ public class ElementPort implements Serializable {
     private Integer delay;
 
     private String resourceId;
+
+    private Integer event;
+
+    private Integer eventStatus;
 }

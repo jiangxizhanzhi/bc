@@ -3,6 +3,7 @@ package com.cyberpeace.scene.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
+import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.dao.mapper.NodeMapper;
@@ -14,10 +15,14 @@ import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author :   SN
@@ -36,6 +41,9 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, NodeEntity> impleme
     @Autowired
     private HostService hostService;
 
+    @Autowired
+    private TransactionTemplate template;
+
     @Override
     public void delete(String sceneId) {
         List<NodeEntity> nodes = nodeMapper.selectBySid(sceneId);
@@ -49,7 +57,7 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, NodeEntity> impleme
                 if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), node.getType())){
                     hostService.delete(node.getInstanceId());
                 }
-                nodeMapper.deleteById(node.getId());
+                nodeMapper.updateStatus(node.getResourceId(), SceneEnum.DELETED.getCode());
             }
         }
     }

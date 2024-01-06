@@ -38,4 +38,12 @@ public class SceneRepairJob {
     public void sceneRepair(){
         sceneService.repair(REPAIR_FILE);
     }
+
+    /**
+     * 自动销毁，30秒执行一次
+     */
+    @Scheduled(cron = "0/30 * * * * ?")
+    public void autoDestroy(){
+        sceneService.autoDestroy();
+    }
 }

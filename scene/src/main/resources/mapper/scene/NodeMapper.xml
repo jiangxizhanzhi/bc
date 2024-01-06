@@ -8,6 +8,10 @@
         UPDATE cr_node SET status = #{status} WHERE resource_id = #{resourceId}
     </update>
 
+    <update id="updateByInstanceId">
+        update cr_node set status = #{status} where instance_id = #{instanceId}
+    </update>
+
     <select id="selectBySid" resultType="com.cyberpeace.scene.dao.entity.NodeEntity">
         SELECT * FROM cr_node WHERE sid = #{sid}
     </select>

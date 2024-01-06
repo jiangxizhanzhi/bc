@@ -62,7 +62,7 @@ public class NodeEntity extends BaseTable implements Serializable {
     @ApiModelProperty("节点类型,1=网络，5=容器，4=虚拟机")
     private Integer type;
 
-    @ApiModelProperty("节点状态，1=创建中，2=创建完成，3=销毁，4=异常")
+    @ApiModelProperty("节点状态，0:运行，1：关闭，2：创建中，3:删除，4：错误")
     private Integer status;
 
     @ApiModelProperty("节点地址")

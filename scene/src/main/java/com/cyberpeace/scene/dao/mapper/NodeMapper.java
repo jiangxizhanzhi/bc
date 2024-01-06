@@ -18,4 +18,6 @@ public interface NodeMapper extends BaseMapper<NodeEntity> {
     List<NodeEntity> selectBySid(@Param("sid") String sid);
 
     int updateStatus(@Param("resourceId") String resourceId, @Param("status") Integer status);
+
+    int updateByInstanceId(@Param("instanceId") String instanceId, @Param("status") Integer status);
 }

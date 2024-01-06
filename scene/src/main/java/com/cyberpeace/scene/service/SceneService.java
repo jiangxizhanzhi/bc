@@ -23,4 +23,6 @@ public interface SceneService extends IService<SceneEntity> {
     BaseRsp console(String nodeId, Integer type);
 
     void repair(String filePath);
+
+    void autoDestroy();
 }

@@ -1,7 +1,7 @@
 package com.cyberpeace.oj.person.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.oj.person.controller.req.IndexCategoryReq;
 import com.cyberpeace.oj.person.controller.req.IndexCourseReq;

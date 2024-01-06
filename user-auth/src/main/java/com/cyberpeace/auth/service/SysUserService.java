@@ -42,7 +42,7 @@ public interface SysUserService extends IService<SysUser> {
 	 * @param token
 	 * @return {@code UserInfo}
 	 */
-	SysUser getByToken(String token);
+	UserInfo getByToken(String token);
 
 	SysUser getCurrent();
 

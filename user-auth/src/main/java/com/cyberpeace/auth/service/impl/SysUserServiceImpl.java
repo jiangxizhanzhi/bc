@@ -3,23 +3,8 @@ package com.cyberpeace.auth.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.cyberpeace.auth.controller.req.UserImportReq;
-import com.cyberpeace.auth.controller.req.UserReq;
-import com.cyberpeace.common.component.ExcelDataHandler;
-import com.cyberpeace.common.constant.ExcelHeader;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.dao.entity.DictInfo;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.DictInfoService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -30,32 +15,43 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.session.Session;
 import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.auth.constant.AuthConstant;
+import com.cyberpeace.auth.controller.req.UserImportReq;
+import com.cyberpeace.auth.controller.req.UserReq;
 import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.mapper.SysUserMapper;
 import com.cyberpeace.auth.security.TbUser;
 import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.*;
 import com.cyberpeace.auth.util.UserValidator;
+import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.MultiSelectReq;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.PageUtil;
-import org.springframework.util.DigestUtils;
-import org.springframework.web.multipart.MultipartFile;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.DictInfo;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.DictInfoService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 
-import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 * @author dell
@@ -250,7 +246,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public SysUser getByToken(String sessionId) {
+	public UserInfo getByToken(String sessionId) {
 		Session session = sessionRepository.findById(sessionId);
 		if (null == session) {
 			throw new BusinessException(ErrorCode.INVALID_SESSION);
@@ -259,7 +255,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 				HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 		TbUser user = (TbUser) context.getAuthentication().getPrincipal();
 
-		return getByUserId(user.getUserId());
+		return makeUserInfo(getByUserId(user.getUserId()));
 	}
 
 	private SysUser getOrExceptionById(String userId) {

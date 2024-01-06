@@ -2,7 +2,6 @@ package com.cyberpeace.config.ws;
 
 import java.util.Map;
 
-import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -11,12 +10,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.common.component.SelfDefinedWsChecker;
 import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
 import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -63,11 +63,10 @@ public class JwtHandShake implements HandshakeInterceptor {
 
 		UserInfo userInfo = null;
 
-		RemoteUserService remoteUserService = SpringContextUtil
-				.getBeanByClass(RemoteUserService.class);
+		SysUserService sysUserService = SpringContextUtil.getBeanByClass(SysUserService.class);
 
 		try {
-			userInfo = remoteUserService.doAuthentication(jwtToken);
+			userInfo = sysUserService.getByToken(jwtToken);
 		} catch (Exception e) {
 			log.error("websocket handshake fail, path {} call remote exception, error:", path, e);
 			return false;

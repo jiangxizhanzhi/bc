@@ -7,10 +7,7 @@ import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.DictInfoService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +24,7 @@ public class SystemConfigController {
     @Autowired
     private DictInfoService dictInfoService;
 
-    @RequestMapping("/query")
+    @GetMapping("/query")
     public BaseRsp<List<DictInfo>> getConfig(){
         List<DictInfo> systemConfig = dictInfoService.getDictInfo(DictInfo.KeyModel.SYSTEM_CONFIG.getKey());
         return new BaseRsp<>(systemConfig);

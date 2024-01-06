@@ -78,7 +78,7 @@ public class SystemStaticsController {
         List<String> userIdList = userList.stream().map(SysUser::getResourceId).collect(Collectors.toList());
         //根据createTime获取用户最小一次记录
         List<OpLog> opLogList = opLogService.listLastRecord(userIdList);
-        Map<String, OpLog> opLogMap = opLogList.stream().collect(Collectors.toMap(OpLog::getCreateUserId, Function.identity()));
+        Map<String, OpLog> opLogMap = opLogList.stream().collect(Collectors.toMap(OpLog::getCreateUserId, Function.identity(),(a,b)->a));
         for (SysUser userRes : userList) {
             if (!opLogMap.containsKey(userRes.getResourceId())) {
                 continue;

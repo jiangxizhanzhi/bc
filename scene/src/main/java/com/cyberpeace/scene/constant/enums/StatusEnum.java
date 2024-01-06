@@ -13,7 +13,8 @@ public enum StatusEnum implements GenericEnum {
     ACTIVE(2, "运行中", "Running"),
     CREATING(1, "创建中", "Creating"),
     FINISHED(3, "已完成", "Finished"),
-    ERROR(4, "错误", "Error");
+    ERROR(4, "错误", "Error"),
+    NETWORK_ACTIVE(2, "运行中", "ACTIVE");
 
     @Getter
     private Integer code;

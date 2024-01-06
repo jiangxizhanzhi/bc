@@ -117,7 +117,7 @@ public class SceneJob {
                 //创建网络
                 NetworkEntity network = createNetwork(networkElement, scene.getResourceId());
                 count++;
-                pushElement(networkElement, scene);
+                pushElement(networkElement, scene, SceneEnum.CREATE.getName());
                 pushScenePlugin(scene, 100, 0, 4);
                 List<Net> nets = Lists.newArrayList();
                 nets.add(new Net(network.getUuid()));
@@ -135,7 +135,7 @@ public class SceneJob {
                         //保存节点信息
                         nodeService.save(node);
                         count++;
-                        pushElement(hostElement, scene);
+                        pushElement(hostElement, scene, SceneEnum.CREATE.getName());
                         pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
                     }
                 }
@@ -152,13 +152,14 @@ public class SceneJob {
                         //保存节点信息
                         nodeService.save(node);
                         count++;
-                        pushElement(containerElement, scene);
+                        pushElement(containerElement, scene, SceneEnum.CREATE.getName());
                         pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
                     }
                 }
                 sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
                 //更新场景状态为运行中
-                sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ACTIVE.getCode());
+                sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.CREATE.getCode());
+                pushScenePlugin(scene, 100, 100, 2);
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e);
                 //更新场景状态为错误
@@ -240,7 +241,7 @@ public class SceneJob {
         return list;
     }
 
-    private void pushElement(TopologyElement element, SceneEntity scene){
+    private void pushElement(TopologyElement element, SceneEntity scene, String code){
         try {
             WsSceneData sceneData = new WsSceneData();
             sceneData.setSceneId(scene.getResourceId());

@@ -25,4 +25,6 @@ public interface SceneService extends IService<SceneEntity> {
     void repair(String filePath);
 
     void autoDestroy();
+
+    void sceneState();
 }

@@ -3,6 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.scene.dao.mapper.NetworkMapper">
+    <update id="updateStatus">
+        update cr_network set status = #{status} where resource_id = #{resourceId}
+    </update>
 
     <delete id="deleteByResourceId">
         delete from cr_network where resource_id = #{resourceId}
@@ -10,5 +13,9 @@
 
     <select id="selectBySceneId" resultType="java.lang.String">
         select resource_id from cr_network where sid = #{sceneId}
+    </select>
+
+    <select id="selectBySid" resultType="com.cyberpeace.scene.dao.entity.NetworkEntity">
+        select * from cr_network where sid = #{sceneId} and status = #{status}
     </select>
 </mapper>

@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 
 /**
  * @author :   SN
@@ -19,7 +18,7 @@ import java.io.File;
 @Slf4j
 @Component
 @EnableScheduling
-public class SceneRepairJob {
+public class SceneScheduled {
 
     private String REPAIR_FILE;
 
@@ -45,5 +44,13 @@ public class SceneRepairJob {
     @Scheduled(cron = "0/30 * * * * ?")
     public void autoDestroy(){
         sceneService.autoDestroy();
+    }
+
+    /**
+     * 场景状态检查，30秒执行一次
+     */
+    @Scheduled(cron = "0/30 * * * * ?")
+    public void sceneState(){
+        sceneService.sceneState();
     }
 }

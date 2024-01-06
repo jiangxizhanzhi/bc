@@ -12,5 +12,5 @@ public interface NodeService extends IService<NodeEntity> {
 
     void delete(String sceneId);
 
-    Integer getStage(String sceneId);
+    boolean getStage(String sceneId);
 }

@@ -156,6 +156,7 @@ public class SceneJob {
                         pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2, 2);
                     }
                 }
+                Thread.sleep(5 * 1000);
                 sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
                 //更新场景状态为运行中
                 sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ACTIVE.getCode());

@@ -1,6 +1,7 @@
 package com.cyberpeace.scene.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
@@ -14,6 +15,7 @@ import com.cyberpeace.scene.service.NodeService;
 import com.cyberpeace.scene.service.bo.ContainerItem;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ import java.util.function.Consumer;
  * @date :   2023/12/28 11:21
  * @desc :
  **/
+@Slf4j
 @Service
 public class NodeServiceImpl extends ServiceImpl<NodeMapper, NodeEntity> implements NodeService {
 
@@ -44,9 +47,6 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, NodeEntity> impleme
 
     @Autowired
     private HostService hostService;
-
-    @Autowired
-    private TransactionTemplate template;
 
     @Override
     public void delete(String sceneId) {
@@ -62,13 +62,16 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, NodeEntity> impleme
                     hostService.delete(node.getInstanceId());
                 }
                 nodeMapper.updateStatus(node.getResourceId(), SceneEnum.DELETED.getCode());
+                log.info("delete node : {}" , node.getInstanceId());
             }
         }
     }
 
     @Override
     public boolean getStage(String sceneId) {
-        List<NodeEntity> nodes = nodeMapper.selectBySid(sceneId);
+        List<NodeEntity> nodes = list(new LambdaQueryWrapper<NodeEntity>()
+                .eq(NodeEntity::getSid, sceneId)
+                .eq(NodeEntity::getStatus, SceneEnum.CREATE.getCode()));
         int count = 0;
         if (!CollectionUtils.isEmpty(nodes)){
             for (NodeEntity node : nodes){

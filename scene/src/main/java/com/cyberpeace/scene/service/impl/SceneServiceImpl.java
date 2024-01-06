@@ -354,7 +354,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     public void sceneState() {
         // 获取运行中的场景
         List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
-                .in(SceneEntity::getSceneStatus, Arrays.asList(SceneEnum.CREATE.getCode())));
+                .in(SceneEntity::getSceneStatus, Arrays.asList(SceneEnum.ACTIVE.getCode())));
         if (!CollectionUtils.isEmpty(list)){
             for (SceneEntity scene : list){
                 try {
@@ -371,7 +371,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
     private boolean networkState(SceneEntity scene){
         int count = 0;
-        List<NetworkEntity> networks = networkMapper.selectBySid(scene.getResourceId(), SceneEnum.CREATE.getCode());
+        List<NetworkEntity> networks = networkService.list(new LambdaQueryWrapper<NetworkEntity>()
+                .eq(NetworkEntity::getSid, scene.getResourceId())
+                .eq(NetworkEntity::getNetworkStatus, SceneEnum.CREATE.getCode()));
         if (!CollectionUtils.isEmpty(networks)){
             for (NetworkEntity network : networks){
                 NetworkInstance instance = networkService.getInstance(network.getUuid());

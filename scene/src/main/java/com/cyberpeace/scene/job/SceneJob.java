@@ -211,7 +211,7 @@ public class SceneJob {
             int sum = wsSceneStages.stream().mapToInt(WsSceneStage::getStagePercentage).sum();
             wsScene.setStageList(wsSceneStages);
             wsScene.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
-            int percentage = MathUtils.divide((double) (wsSceneStages.size() * 100), (double) sum, 2).intValue();
+            int percentage = MathUtils.divide((double) (wsSceneStages.size() * 100), (double) sum, 2).intValue() * 100;
             wsScene.setStagePercentage(percentage);
             wsScene.setProcessPercentage(percentage);
             wsScene.setProcess(StageEnum.CREATE_INSTANCE.getStage());

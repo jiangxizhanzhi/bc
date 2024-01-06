@@ -43,7 +43,7 @@ public class SceneScheduled {
      */
     @Scheduled(cron = "0/30 * * * * ?")
     public void autoDestroy(){
-        sceneService.autoDestroy();
+//        sceneService.autoDestroy();
     }
 
     /**

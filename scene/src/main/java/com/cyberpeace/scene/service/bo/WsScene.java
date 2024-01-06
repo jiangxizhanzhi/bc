@@ -43,14 +43,14 @@ public class WsScene implements Serializable {
 
     private String process;
 
-    @JsonProperty("process_message")
-    private String processMessage;
+    @JsonProperty("progress_message")
+    private String progressMessage;
 
-    @JsonProperty("process_status")
-    private Integer processStatus;
+    @JsonProperty("progress_status")
+    private Integer progressStatus;
 
-    @JsonProperty("process_percentage")
-    private Integer processPercentage;
+    @JsonProperty("progress_percentage")
+    private Integer progressPercentage;
 
     private String stage;
 

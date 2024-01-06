@@ -11,6 +11,4 @@ import com.cyberpeace.scene.dao.entity.NodeEntity;
 public interface NodeService extends IService<NodeEntity> {
 
     void delete(String sceneId);
-
-    boolean getStage(String sceneId);
 }

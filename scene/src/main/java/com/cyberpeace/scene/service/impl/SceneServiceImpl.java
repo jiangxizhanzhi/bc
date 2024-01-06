@@ -3,6 +3,7 @@ package com.cyberpeace.scene.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.auth.domain.SysUser;
@@ -272,7 +273,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                         JSONObject accessMode = JSONObject.parseObject(iter.toString());
                         accessMode.put("id", element.getNodeId());
                         accessMode.put("ip", address.getString("ip"));
-                        accessMode.put("available", address.getInteger("available"));
+                        accessMode.put("available", address.getBooleanValue("available"));
+                        accessMode.put("type", element.getType());
                         newAccessModes.add(accessMode);
                     });
                     elementPortJson.put("access_modes", newAccessModes);
@@ -366,9 +368,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (!CollectionUtils.isEmpty(list)){
             for (SceneEntity scene : list){
                 try {
-                    if (networkState(scene) && nodeService.getStage(scene.getResourceId())){
+                    Integer networkState = networkState(scene);
+                    Integer nodeStage = nodeStage(scene);
+                    if (Objects.equals(100, networkState) && Objects.equals(100, nodeStage)){
                         scene.setSceneStatus(SceneEnum.ACTIVE.getCode());
                         updateById(scene);
+                        pushScenePlugin(scene, networkState, nodeStage, 2, 4);
                     }
                 }catch (Exception e){
                     log.error("scene {} state error : {}", scene, e);
@@ -377,7 +382,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }
     }
 
-    private boolean networkState(SceneEntity scene){
+    private Integer networkState(SceneEntity scene){
         int count = 0;
         List<NetworkEntity> networks = networkService.list(new LambdaQueryWrapper<NetworkEntity>()
                 .eq(NetworkEntity::getSid, scene.getResourceId())
@@ -388,13 +393,99 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 if (Objects.isNull(instance)){
                     continue;
                 }
+                pushScenePlugin(scene, state(networks.size(), count, 2), 0, 2, 2);
                 if (Objects.equals(StatusEnum.NETWORK_ACTIVE.getName(), instance.getStatus())){
                     networkMapper.updateStatus(network.getUuid(), SceneEnum.ACTIVE.getCode());
                     count++;
+                    pushScenePlugin(scene, state(networks.size(), count, 2), 0, 2, 2);
                 }
             }
         }
-        return Objects.equals(networks.size(), count);
+
+        return state(networks.size(), count, 2);
+    }
+
+
+    private Integer nodeStage(SceneEntity scene) {
+        List<NodeEntity> nodes = nodeService.list(new LambdaQueryWrapper<NodeEntity>()
+                .eq(NodeEntity::getSid, scene.getResourceId())
+                .eq(NodeEntity::getStatus, SceneEnum.CREATE.getCode()));
+        int count = 0;
+        if (!CollectionUtils.isEmpty(nodes)){
+            for (NodeEntity node : nodes){
+                Integer nodeStatus = SceneEnum.CREATE.getCode();
+                String ip = null;
+                TopologyElement element = getElement(node.getInstanceId(), scene.getMeta());
+                pushScenePlugin(scene, state(nodes.size(), count, 2), 0, 2, 2);
+                if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), node.getType())){
+                    ContainerItem instance = containerService.getInstance(node.getInstanceId());
+                    if (Objects.nonNull(instance)){
+                        pushElement(element, scene, SceneEnum.CREATE.getName());
+                        if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())){
+                            nodeStatus = SceneEnum.ACTIVE.getCode();
+                            JSONObject addresses = instance.getAddresses();
+                            ip = getIp(addresses);
+                            count++;
+                            pushElement(element, scene, SceneEnum.ACTIVE.getName());
+                        }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getStatus())){
+                            nodeStatus = SceneEnum.ERROR.getCode();
+                            count++;
+                        }
+                        pushScenePlugin(scene, state(nodes.size(), count, 2), 0, 2, 2);
+                    }
+                }
+                if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), node.getType())){
+                    CreateInstanceRes instance = hostService.getInstance(node.getInstanceId());
+                    if (Objects.nonNull(instance)){
+                        if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getVmState())){
+                            nodeStatus = SceneEnum.ACTIVE.getCode();
+                            JSONObject addresses = instance.getAddresses();
+                            ip = getIp(addresses);
+                            count++;
+                        }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getVmState())){
+                            nodeStatus = SceneEnum.ERROR.getCode();
+                            count++;
+                        }
+                        pushElement(element, scene, SceneEnum.CREATE.getName());
+                        pushScenePlugin(scene, state(nodes.size(), count, 2), 0, 2, 2);
+                    }
+                }
+                node.setIp(ip);
+                node.setStatus(nodeStatus);
+                nodeService.updateById(node);
+            }
+        }
+        return state(nodes.size(), count, 2);
+    }
+
+    private TopologyElement getElement(String instanceId, String meta){
+        Topology topology = JsonUtil.toJsonObject(meta, Topology.class);
+        if (Objects.nonNull(topology)){
+            List<TopologyElement> elements = topology.getElements();
+            if (!CollectionUtils.isEmpty(elements)){
+                for (TopologyElement element : elements){
+                    if (StringUtils.equals(element.getNodeId(), instanceId)){
+                        return element;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getIp(JSONObject addresses){
+        String ip = null;
+        if (Objects.isNull(addresses)){
+            return ip;
+        }
+        Set<Map.Entry<String, Object>> entries = addresses.entrySet();
+        for (Map.Entry<String, Object> entry : entries){
+            JSONObject address = JSONObject.parseObject(entry.getValue().toString());
+            if (address.containsKey("ip_address")){
+                ip = address.getString("ip_address");
+            }
+        }
+        return ip;
     }
 
     private Integer state(Integer dividend, Integer divisor, Integer scale){
@@ -402,7 +493,23 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         return divide.intValue() * 100;
     }
 
-    private void pushScenePlugin(SceneEntity scene, Integer networkStage, Integer instanceStage, Integer processStatus){
+    private void sendMsg(WsData data, SceneEntity scene) {
+
+        WsSceneReportCodeData codeData = new WsSceneReportCodeData(1, data);
+        String sceneContent = JsonUtil.toJsonString(codeData, PropertyNamingStrategy.SnakeCase);
+
+        MyWebSocketHandler webSocketHandler = SpringContextUtil.getBeanByClass(MyWebSocketHandler.class);
+        SceneWsIdentifier identifier = new SceneWsIdentifier();
+        identifier.setBusinessId(scene.getInstanceId());
+        identifier.setUserId(scene.getUserId());
+        identifier.setPath(WsPath.CR_SCENE);
+
+        WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+                .builder().data(sceneContent).messageIdentifier(identifier).build();
+        log.info("push Message ===>data:{}", JSON.toJSONString(data));
+        webSocketHandler.pushMessage(messageContext, true);
+    }
+    private void pushScenePlugin(SceneEntity scene, Integer networkStage, Integer instanceStage, Integer processStatus, Integer eventStatus){
         try {
             WsSceneData sceneData = new WsSceneData();
             sceneData.setSceneId(scene.getResourceId());
@@ -414,14 +521,14 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             int sum = wsSceneStages.stream().mapToInt(WsSceneStage::getStagePercentage).sum();
             wsScene.setStageList(wsSceneStages);
             wsScene.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
-            int percentage = MathUtils.divide((double) (wsSceneStages.size() * 100), (double) sum, 2).intValue();
+            int percentage = MathUtils.divide((double) (wsSceneStages.size() * 100), (double) sum, 2).intValue() * 100;
             wsScene.setStagePercentage(percentage);
-            wsScene.setProcessPercentage(percentage);
+            wsScene.setProgressPercentage(percentage);
             wsScene.setProcess(StageEnum.CREATE_INSTANCE.getStage());
-            wsScene.setProcessMessage(StageEnum.CREATE_INSTANCE.getStageName());
-            wsScene.setProcessStatus(processStatus);
+            wsScene.setProgressMessage(StageEnum.CREATE_INSTANCE.getStageName());
+            wsScene.setProgressStatus(processStatus);
             wsScene.setEvent(2);
-            wsScene.setEventStatus(2);
+            wsScene.setEventStatus(eventStatus);
             sceneData.setScene(wsScene);
 
             WsData data = new WsData();
@@ -434,18 +541,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }
     }
 
-    private void sendMsg(WsData data, SceneEntity scene) {
-        MyWebSocketHandler webSocketHandler = SpringContextUtil.getBeanByClass(MyWebSocketHandler.class);
-        SceneWsIdentifier identifier = new SceneWsIdentifier();
-        identifier.setBusinessId(scene.getInstanceId());
-        identifier.setUserId(scene.getUserId());
-        identifier.setPath(WsPath.CR_SCENE);
-
-        WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
-                .builder().data(data).messageIdentifier(identifier).build();
-        log.info("push Message ===>data:{}", JSON.toJSONString(data));
-        webSocketHandler.pushMessage(messageContext, true);
-    }
 
     private List<WsSceneStage> stageList(Integer networkStage, Integer instanceStage){
         List<WsSceneStage> list = new ArrayList<>();
@@ -458,10 +553,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         return list;
     }
 
-    private void pushElement(TopologyElement element, SceneEntity scene){
+    private void pushElement(TopologyElement element, SceneEntity scene, String code){
         try {
             WsSceneData sceneData = new WsSceneData();
             sceneData.setSceneId(scene.getResourceId());
+            element.setEvent(2);
+            element.setEventStatus(2);
             sceneData.setSceneElement(element);
 
             WsData data = new WsData();

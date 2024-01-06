@@ -325,7 +325,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), type)){
             connectionRsp.setConnectionUrl(hostService.console(nodeId).getUrl());
         } else if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), type)) {
-            connectionRsp.setConnectionUrl(containerService.console(nodeId).getUrl());
+            connectionRsp.setConnectionUrl(containerService.console(nodeId));
         }
         connectionRsp.setProtocol("console");
         connectionRsp.setNodeId(nodeId);

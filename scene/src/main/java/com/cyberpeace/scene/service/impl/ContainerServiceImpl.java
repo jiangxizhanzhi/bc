@@ -68,9 +68,9 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     @Override
-    public ConsoleUrlRes console(String containerId) {
+    public String console(String containerId) {
         if (Objects.nonNull(containerId)){
-            return HttpUtil.rawGet(CONTAINER_URL + "/console" + "/" + containerId, ConsoleUrlRes.class);
+            return HttpUtil.rawGet(CONTAINER_URL + "/console" + "/" + containerId, null);
         }
         return null;
     }

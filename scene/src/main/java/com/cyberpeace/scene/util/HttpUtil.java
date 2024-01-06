@@ -228,6 +228,9 @@ public class HttpUtil {
             if (null == baseRsp.getData()) {
                 return null;
             }
+            if (resultType == null){
+                return (T) baseRsp.getData().toString();
+            }
             return JsonUtil.toJsonObject(baseRsp.getData().toString(), resultType);
         } catch (RemoteServiceException e) {
             throw e;

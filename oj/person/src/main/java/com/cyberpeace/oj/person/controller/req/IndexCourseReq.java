@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.course.controller.req;
+package com.cyberpeace.oj.person.controller.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +17,8 @@ public class IndexCourseReq {
 
     @ApiModelProperty("课程数")
     private Integer courseNum;
+
+    private Integer studyCount;
 
     @ApiModelProperty("完成百分比")
     private Integer completePercent;

@@ -2,10 +2,12 @@ package com.cyberpeace.oj.person.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.auth.controller.req.UserReq;
+import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.UserRes;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.person.controller.res.SystemRecordRes;
@@ -71,13 +73,16 @@ public class SystemStaticsController {
     @ApiOperation("学员行为记录")
     @GetMapping("/record/page")
     public BaseRsp<ListRsp<SystemRecordRes>> page(UserReq req) {
-        ListRsp<UserRes> userResListRsp = sysUserService.pageUser(req);
+        List<SysUser> userList = sysUserService.list();
         List<SystemRecordRes> list =new ArrayList<>();
-        List<String> userIdList = userResListRsp.getList().stream().map(UserRes::getResourceId).collect(Collectors.toList());
+        List<String> userIdList = userList.stream().map(SysUser::getResourceId).collect(Collectors.toList());
         //根据createTime获取用户最小一次记录
         List<OpLog> opLogList = opLogService.listLastRecord(userIdList);
         Map<String, OpLog> opLogMap = opLogList.stream().collect(Collectors.toMap(OpLog::getCreateUserId, Function.identity()));
-        for (UserRes userRes : userResListRsp.getList()) {
+        for (SysUser userRes : userList) {
+            if (!opLogMap.containsKey(userRes.getResourceId())) {
+                continue;
+            }
             SystemRecordRes systemRecordRes = new SystemRecordRes();
             systemRecordRes.setUsername(userRes.getUsername());
             systemRecordRes.setTime(userRes.getOnlineTime());
@@ -87,7 +92,7 @@ public class SystemStaticsController {
             systemRecordRes.setMethod(opLogMap.getOrDefault(userRes.getResourceId(),new OpLog()).getMethod());
             list.add(systemRecordRes);
         }
-        return new BaseRsp<>(new ListRsp<>(list, userResListRsp.getTotal(), userResListRsp.getLastPage(), userResListRsp.getCurrentPage()));
+        return new BaseRsp<>(PageUtil.pageList(list,req.getPage(),req.getPerPage()));
     }
 
 

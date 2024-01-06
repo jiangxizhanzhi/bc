@@ -11,6 +11,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.SpringContextUtil;
+import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.constant.enums.StageEnum;
@@ -181,6 +182,10 @@ public class SceneJob {
     }
 
     private void sendMsg(WsData data, SceneEntity scene) {
+
+        WsSceneReportCodeData codeData = new WsSceneReportCodeData("", data);
+        String sceneContent = JsonUtil.toJsonString(codeData);
+
         MyWebSocketHandler webSocketHandler = SpringContextUtil.getBeanByClass(MyWebSocketHandler.class);
         SceneWsIdentifier identifier = new SceneWsIdentifier();
         identifier.setBusinessId(scene.getInstanceId());
@@ -188,7 +193,7 @@ public class SceneJob {
         identifier.setPath(WsPath.CR_SCENE);
 
         WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
-                .builder().data(data).messageIdentifier(identifier).build();
+                .builder().data(sceneContent).messageIdentifier(identifier).build();
         log.info("push Message ===>data:{}", JSON.toJSONString(data));
         webSocketHandler.pushMessage(messageContext, true);
     }

@@ -261,13 +261,15 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 JSONObject elementPortJson = new JSONObject();
                 if (!CollectionUtils.isEmpty(port.getAccessModes())){
                     JSONArray accessModes = JSONArray.parseArray(port.getAccessModes().toString());
+                    JSONArray newAccessModes = new JSONArray();
                     accessModes.forEach(iter -> {
                         JSONObject accessMode = JSONObject.parseObject(iter.toString());
                         accessMode.put("id", element.getNodeId());
                         accessMode.put("ip", address.getString("ip"));
                         accessMode.put("available", address.getInteger("available"));
+                        newAccessModes.add(accessMode);
                     });
-                    elementPortJson.put("access_modes", accessModes);
+                    elementPortJson.put("access_modes", newAccessModes);
                 }
                 elementPortJson.put("ip", address.getString("ip"));
                 elementPortJson.put("event_status", address.getInteger("event_status"));

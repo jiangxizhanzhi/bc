@@ -180,17 +180,23 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         if (Objects.isNull(scene)){
             throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
         }
-        //删除节点
-        nodeService.delete(sceneId);
-        //删除网络
-        List<String> networkIds = networkMapper.selectBySceneId(sceneId);
-        if (!CollectionUtils.isEmpty(networkIds)){
-            networkIds.forEach(iter -> {
-                networkService.delete(iter);
-                networkMapper.deleteByResourceId(iter);
-            });
+        try {
+            //删除节点
+            nodeService.delete(sceneId);
+            //删除网络
+            List<String> networkIds = networkMapper.selectBySceneId(sceneId);
+            if (!CollectionUtils.isEmpty(networkIds)){
+                networkIds.forEach(iter -> {
+                    networkService.delete(iter);
+                    networkMapper.deleteByResourceId(iter);
+                });
+            }
+            sceneMapper.updateSceneStatus(sceneId, SceneEnum.DELETED.getCode());
+        }catch (Exception e){
+            log.error("delete scene:[{}], error:{}", sceneId, e);
+            throw new BusinessException(ErrorCode.SCENE_DESTROY_FAILED);
         }
-        sceneMapper.updateSceneStatus(sceneId, SceneEnum.DELETED.getCode());
+
         return new BaseRsp<>();
     }
 

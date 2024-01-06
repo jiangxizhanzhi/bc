@@ -1,17 +1,31 @@
 package com.cyberpeace.job;
 
+import com.cyberpeace.common.util.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 
 @Slf4j
 @Component
 public class RemoveLogJob {
 
+    private boolean removeLogStatus;
+
+    @PostConstruct
+    public void init() {
+        removeLogStatus = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.removeLogStatus"));
+    }
+
+
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void removeLogFiles() {
+        if (!Boolean.TRUE.equals(removeLogStatus)) {
+            log.info("dev环境下, 不检测日志文件时间超长");
+            return;
+        }
         String logRootPath = System.getProperty("catalina.base") + "/logs/";
         String cmd = String.format("find %s -type 'f' -mtime +15 | xargs rm -f", logRootPath);
         DataOutputStream dos = null;

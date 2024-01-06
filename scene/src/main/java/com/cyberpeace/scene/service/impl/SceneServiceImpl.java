@@ -362,7 +362,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     public void sceneState() {
         // 获取运行中的场景
         List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
-                .in(SceneEntity::getSceneStatus, Arrays.asList(SceneEnum.ACTIVE.getCode())));
+                .in(SceneEntity::getSceneStatus, Arrays.asList(SceneEnum.CREATE.getCode())));
         if (!CollectionUtils.isEmpty(list)){
             for (SceneEntity scene : list){
                 try {

@@ -2,6 +2,8 @@ package com.cyberpeace.scene.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.auth.constant.OpLogMethodEnum;
+import com.cyberpeace.auth.service.OpLogService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
@@ -22,14 +24,15 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "场景API", value = "场景")
 @RestController
 @RequestMapping("/scene")
-public class ScenesController {
+public class ScenesController  {
 
     @Autowired
     private TopologyService topologyService;
 
     @Autowired
     private SceneService sceneService;
-
+    @Autowired
+    private OpLogService opLogService;
     @GetMapping("/topology")
     @ApiOperation(value = "获取拓扑结构")
     public BaseRsp getTopology(@ApiParam(value = "拓扑结构id", name = "topology_id")@RequestParam("topology_id") String topologyId){
@@ -40,6 +43,7 @@ public class ScenesController {
     @PostMapping("/start")
     @ApiOperation(value = "启动场景")
     public BaseRsp start(@RequestBody SceneStartReq req){
+        opLogService.save(null, OpLogMethodEnum.START.getType(),req.getTargetName(),"启动场景");
         // 验证场景是否超限
         sceneService.verify();
         return sceneService.startScene(req);
@@ -56,7 +60,8 @@ public class ScenesController {
     @GetMapping("/destroy")
     @ApiOperation(value = "销毁场景")
     public BaseRsp destroy(@ApiParam(name = "resource_id", value = "场景id")
-                               @RequestParam("resource_id") String resourceId){
+                               @RequestParam("resource_id") String resourceId,@RequestParam(value = "target_name",required = false) String targetName){
+        opLogService.save(null, OpLogMethodEnum.STOP.getType(),targetName,"关闭场景");
         sceneService.destroyScene(resourceId);
         return new BaseRsp<>();
     }

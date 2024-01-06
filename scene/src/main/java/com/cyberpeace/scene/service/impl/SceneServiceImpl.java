@@ -221,11 +221,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             if (Objects.equals(SceneEnum.ACTIVE.getCode(), scene.getSceneStatus())){
                 sceneDataRsp.setEvent(2);
                 sceneDataRsp.setEventStatus(4);
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("cpcloud", setPlugin(topology));
-                sceneData.setTopology(topology);
-                sceneData.setScene(scene);
-                sceneData.setPlugins(jsonObject);
             } else if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())) {
                 sceneDataRsp.setEvent(2);
                 sceneDataRsp.setEventStatus(2);
@@ -236,6 +231,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 sceneDataRsp.setEvent(2);
                 sceneDataRsp.setEventStatus(5);
             }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("cpcloud", setPlugin(topology));
+            sceneData.setTopology(topology);
+            sceneData.setScene(scene);
+            sceneData.setPlugins(jsonObject);
             topology.setScene(sceneDataRsp);
         }
         return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));

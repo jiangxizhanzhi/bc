@@ -339,7 +339,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     public void autoDestroy() {
         List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
                 .in(SceneEntity::getSceneStatus, SceneEnum.getCodes())
-                .gt(SceneEntity::getDestroyTime, new Date()));
+                .lt(SceneEntity::getDestroyTime, new Date()));
         if (!CollectionUtils.isEmpty(list)){
             list.forEach(scene -> {
                 destroyScene(scene.getResourceId());

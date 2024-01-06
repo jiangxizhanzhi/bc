@@ -152,7 +152,7 @@ public class SceneJob {
                         //保存节点信息
                         nodeService.save(node);
                         count++;
-                        pushElement(containerElement, scene, SceneEnum.CREATE.getName());
+                        pushElement(containerElement, scene, SceneEnum.ACTIVE.getName());
                         pushScenePlugin(scene, 100, MathUtils.divide((double)size, (double)count, 2).intValue() * 100, 2);
                     }
                 }

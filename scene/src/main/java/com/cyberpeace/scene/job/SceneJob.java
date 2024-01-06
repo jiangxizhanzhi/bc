@@ -159,7 +159,7 @@ public class SceneJob {
                 Thread.sleep(5 * 1000);
                 sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
                 //更新场景状态为运行中
-                sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ACTIVE.getCode());
+                sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.CREATE.getCode());
                 pushScenePlugin(scene, 100, 100, 2, 4);
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e);

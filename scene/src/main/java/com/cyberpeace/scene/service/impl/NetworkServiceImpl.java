@@ -108,6 +108,9 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
 
     @Override
     public NetworkInstance getInstance(String networkId) {
+        if (StringUtils.isBlank(networkId)){
+            return null;
+        }
         return HttpUtil.rawGet(CP_HOST + CP_NETWORK + "/" + networkId, NetworkInstance.class);
     }
 

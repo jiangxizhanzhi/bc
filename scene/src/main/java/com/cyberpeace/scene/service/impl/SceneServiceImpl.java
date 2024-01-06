@@ -408,6 +408,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             wsScene.setProcess(StageEnum.CREATE_INSTANCE.getStage());
             wsScene.setProcessMessage(StageEnum.CREATE_INSTANCE.getStageName());
             wsScene.setProcessStatus(processStatus);
+            wsScene.setEvent(2);
+            wsScene.setEventStatus(2);
             sceneData.setScene(wsScene);
 
             WsData data = new WsData();

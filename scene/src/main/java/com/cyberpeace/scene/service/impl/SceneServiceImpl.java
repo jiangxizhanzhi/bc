@@ -610,6 +610,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 element.setEventStatus(2);
             }
             sceneData.setSceneElement(element);
+            sceneData.setSceneElementPortPluginData(getElementPlugin(element));
 
             WsData data = new WsData();
             data.setType("scene_element");
@@ -618,5 +619,38 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }catch (Exception e){
             log.error("push message error : {}", e);
         }
+    }
+
+    private JSONObject getElementPlugin(TopologyElement element){
+        if (Objects.nonNull(element)){
+            JSONObject address = getStatusEvent(element);
+            JSONObject elementPortsJson = new JSONObject();
+            for (ElementPort port : element.getPorts()){
+                port.setIp(address.getString("ip"));
+                port.setEvent(2);
+                port.setEventStatus(address.getInteger("event_status"));
+                JSONObject elementPortJson = new JSONObject();
+                if (!CollectionUtils.isEmpty(port.getAccessModes())){
+                    JSONArray accessModes = JSONArray.parseArray(port.getAccessModes().toString());
+                    JSONArray newAccessModes = new JSONArray();
+                    accessModes.forEach(iter -> {
+                        JSONObject accessMode = JSONObject.parseObject(iter.toString());
+                        accessMode.put("id", element.getNodeId());
+                        accessMode.put("ip", address.getString("ip"));
+                        accessMode.put("available", address.getBooleanValue("available"));
+                        accessMode.put("type", element.getType());
+                        newAccessModes.add(accessMode);
+                    });
+                    elementPortJson.put("access_modes", newAccessModes);
+                }
+                elementPortJson.put("ip", address.getString("ip"));
+                elementPortJson.put("event_status", address.getInteger("event_status"));
+                elementPortJson.put("event", 2);
+                elementPortJson.put("resource_id", element.getNodeId());
+                elementPortsJson.put(port.getId(), elementPortJson);
+            }
+            return elementPortsJson;
+        }
+        return null;
     }
 }

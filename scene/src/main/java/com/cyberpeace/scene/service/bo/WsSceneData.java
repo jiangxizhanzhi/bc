@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service.bo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -22,4 +23,7 @@ public class WsSceneData implements Serializable {
 
     @JsonProperty("scene_element")
     private TopologyElement sceneElement;
+
+    @JsonProperty("scene_element_port_plugin_data")
+    private JSONObject sceneElementPortPluginData;
 }

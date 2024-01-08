@@ -13,7 +13,8 @@ public enum SceneEnum implements GenericEnum {
     INACTIVE(1, "关闭", ""),
     CREATE(2, "创建中", "1"),
     DELETED(3, "已删除", "OJ-2"),
-    ERROR(4, "错误", "");
+    ERROR(4, "错误", ""),
+    INIT(5, "初始化", "");
 
     @Getter
     private Integer code;

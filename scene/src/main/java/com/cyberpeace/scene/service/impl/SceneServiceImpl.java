@@ -149,7 +149,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         scene.setTopologyId(topologyId);
         scene.setUserId(userId);
         scene.setSceneTtl(SCENE_DESTROY);
-        scene.setSceneStatus(SceneEnum.CREATE.getCode());
+        scene.setSceneStatus(SceneEnum.INIT.getCode());
         sceneMapper.insert(scene);
         return scene;
     }

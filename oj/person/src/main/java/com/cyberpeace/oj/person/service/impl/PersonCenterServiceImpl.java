@@ -376,7 +376,10 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             Integer coverage = categoryCoverageMap.getOrDefault(re.getCategoryName(), 0);
             theoryRate = theoryRate.add(new BigDecimal(coverage*0.4));
             if (CollectionUtils.isNotEmpty(operationList) ){
-                long count = operationList.stream().filter(a -> a.getKnowledge().contains(re.getCategoryName()) && a.getSolved()).count();
+				long count = operationList.stream()
+						.filter(a -> a.getKnowledge() != null
+								&& a.getKnowledge().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.getSolved()))
+						.count();
                 theoryRate = theoryRate.add(new BigDecimal(count*30/operationList.size()));
             }
             re.setCount(theoryRate.intValue());

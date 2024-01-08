@@ -257,6 +257,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 sceneDataRsp.setStagePercentage(nodeStage);
                 sceneDataRsp.setProgressMessage(StageEnum.CREATE_INSTANCE.getStageName());
                 sceneDataRsp.setProgressStatus(2);
+            }else {
+                sceneDataRsp.setStage(StageEnum.CREATE_NETWORK.getStage());
+                sceneDataRsp.setStageName(StageEnum.CREATE_NETWORK.getStageName());
+                sceneDataRsp.setStagePercentage(networkState);
+                sceneDataRsp.setProgressMessage(StageEnum.CREATE_NETWORK.getStageName());
+                sceneDataRsp.setProgressStatus(2);
             }
             sceneDataRsp.setProgressPercentage(percentage);
             topology.setScene(sceneDataRsp);

@@ -275,5 +275,10 @@ public final class ErrorCode {
 	 */
 	public static final String SCENE_ALREADY_EXIST = "100083";
 
+	/**
+	 * 场景销毁失败
+	 */
+	public static final String SCENE_DESTROY_FAILED = "100084";
+
 	private ErrorCode() {}
 }

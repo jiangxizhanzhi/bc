@@ -17,7 +17,7 @@ public interface ContainerService {
 
     void delete(String containerId);
 
-    ConsoleUrlRes console(String containerId);
+    String console(String containerId);
 
     ContainerItem getInstance(String containerId);
 

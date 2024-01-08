@@ -7,6 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
@@ -93,6 +94,7 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
             }
             networkEntity.setUser(pid);
             networkEntity.setSid(sceneId);
+            networkEntity.setNetworkStatus(SceneEnum.CREATE.getCode());
             save(networkEntity);
             log.info("create network success, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
         }
@@ -106,6 +108,9 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
 
     @Override
     public NetworkInstance getInstance(String networkId) {
+        if (StringUtils.isBlank(networkId)){
+            return null;
+        }
         return HttpUtil.rawGet(CP_HOST + CP_NETWORK + "/" + networkId, NetworkInstance.class);
     }
 

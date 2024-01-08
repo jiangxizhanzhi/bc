@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
@@ -25,4 +26,8 @@ public interface SceneService extends IService<SceneEntity> {
     void repair(String filePath);
 
     void autoDestroy();
+
+    void sceneState();
+
+    JSONObject getSceneJsonObject(String instanceId);
 }

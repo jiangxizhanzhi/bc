@@ -25,7 +25,8 @@ public class DictInfo extends BaseTable {
 
     public enum KeyModel{
 
-        AVATAR("avatar", "用户头像");
+        AVATAR("avatar", "用户头像"),
+        SYSTEM_CONFIG("system_config", "系统配置");
 
         private String key;
         private String itemName;

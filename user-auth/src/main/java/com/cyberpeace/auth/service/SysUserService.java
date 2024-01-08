@@ -1,6 +1,7 @@
 package com.cyberpeace.auth.service;
 
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -89,4 +90,11 @@ public interface SysUserService extends IService<SysUser> {
     Map<String, String> getUserNameMap(List<String> userIdList);
 
 	void updateOnlineTime(Date loginTime, String userId);
+
+	/**
+	 * 获取用户信息字典
+	 * @param userIds userid列表
+	 * @return {@code Map<String, UserInfo>}
+	 */
+	Map<String, UserInfo> getUserInfoMap(Collection<String> userIds);
 }

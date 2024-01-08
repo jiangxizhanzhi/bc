@@ -44,6 +44,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -184,6 +185,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
+	public Map<String, UserInfo> getUserInfoMap(Collection<String> userIds) {
+		if (CollectionUtils.isEmpty(userIds)) {
+			return new HashMap<>();
+		}
+		List<SysUser> userList = sysUserMapper.selectBatchIds(userIds);
+		return StreamApiUtils.toMap(userList, SysUser::getResourceId, this::makeUserInfo);
+	}
+
+	@Override
 	public SysUser getByUserId(String userId) {
 		return getOrExceptionById(userId);
 	}
@@ -281,6 +291,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		userInfo.setAdmin(user.getAdmin());
 		userInfo.setUserName(user.getUsername());
 		userInfo.setAvatarUrl(user.getAvatar());
+		userInfo.setSuperuser(user.getAdmin());
+
 		return userInfo;
 	}
 

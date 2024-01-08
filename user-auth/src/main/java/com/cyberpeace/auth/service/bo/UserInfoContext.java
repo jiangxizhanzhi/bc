@@ -14,14 +14,14 @@ public class UserInfoContext {
 	public static SysUser getNewUserContext() {
 		if (userContext.get() == null) {
 			SysUserService sysUserService = SpringContextUtil.getBeanByClass(SysUserService.class);
-			SysUser userInfo = sysUserService.getCurrent();
-			userContext.set(userInfo);
+			SysUser sysUser = sysUserService.getCurrent();
+			userContext.set(sysUser);
 		}
 		return userContext.get();
 	}
 
-	public static void setUserContext(SysUser userInfo) {
-		userContext.set(userInfo);
+	public static void setUserContext(SysUser user) {
+		userContext.set(user);
 	}
 
 	public static void removeUserContext() {

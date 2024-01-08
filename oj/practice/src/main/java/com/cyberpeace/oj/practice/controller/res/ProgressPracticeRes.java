@@ -14,4 +14,11 @@ public class ProgressPracticeRes implements Serializable {
 
     private Integer sum;
 
+    public ProgressPracticeRes(Integer count, Integer sum) {
+        this.count = count;
+        this.sum = sum;
+    }
+
+    public ProgressPracticeRes() {
+    }
 }

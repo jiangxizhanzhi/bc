@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.person.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -47,6 +49,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.cyberpeace.integratation.constant.LogContent.EXERCISE;
@@ -362,28 +365,34 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Override
     public List<ProgressPracticeRes> abilityFramework() {
+        List<PracticeCategory> practiceCategories = practiceCategoryMapper.selectList(new QueryWrapper<>());
         //理论题 30%
-        List<ProgressPracticeRes> res = practiceTheoryMapper.getProgressCategoryStatistics(UserInfoContext.getUserContext().getUserId());
+        List<ProgressPracticeRes> theoryList = practiceTheoryMapper.getProgressCategoryStatistics(UserInfoContext.getUserContext().getUserId());
+        Map<String, ProgressPracticeRes> theoryMap = theoryList.stream().filter(a->a.getCategoryName()!=null).collect(Collectors.toMap(ProgressPracticeRes::getCategoryName, Function.identity(), (a, b) -> a));
         //实操题 30%
         List<OperationRecordRes> operationList = practiceOperationMapper.getOperationRecordList(UserInfoContext.getUserContext().getUserId());
         //覆盖度 40%
         List<IndexCategoryReq> categoryList = indexInfoService.getIndexInfo().getCategoryList();
         Map<String, Integer> categoryCoverageMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getCoverage));
 
-        for (ProgressPracticeRes re : res) {
+        List<ProgressPracticeRes> res = new ArrayList<>();
+        for (PracticeCategory practiceCategory : practiceCategories) {
+            ProgressPracticeRes re = theoryMap.getOrDefault(practiceCategory.getName(), new ProgressPracticeRes(0,0));
+
             BigDecimal theoryCount = new BigDecimal(re.getCount()*30);
-            BigDecimal theoryRate = theoryCount.divide(new BigDecimal(re.getSum()),2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal theoryRate =re.getSum()==0?BigDecimal.ZERO: theoryCount.divide(new BigDecimal(re.getSum()),2,BigDecimal.ROUND_HALF_UP);
             Integer coverage = categoryCoverageMap.getOrDefault(re.getCategoryName(), 0);
             theoryRate = theoryRate.add(new BigDecimal(coverage*0.4));
             if (CollectionUtils.isNotEmpty(operationList) ){
-				long count = operationList.stream()
-						.filter(a -> a.getKnowledge() != null
-								&& a.getKnowledge().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.getSolved()))
-						.count();
+                long count = operationList.stream()
+                        .filter(a -> a.getKnowledge() != null
+                                && a.getKnowledge().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.getSolved()))
+                        .count();
                 theoryRate = theoryRate.add(new BigDecimal(count*30/operationList.size()));
             }
             re.setCount(theoryRate.intValue());
             re.setSum(100);
+            res.add(re);
         }
 
         return res;

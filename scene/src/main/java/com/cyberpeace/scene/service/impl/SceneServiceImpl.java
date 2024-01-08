@@ -429,8 +429,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                     pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
                 }
             }
+        }else {
+            return 100;
         }
-
         return state(count, networks.size());
     }
 
@@ -483,6 +484,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 node.setStatus(nodeStatus);
                 nodeService.updateById(node);
             }
+        }else {
+            return 100;
         }
         return state(count, nodes.size());
     }

@@ -149,14 +149,14 @@ public class SceneJob {
                     }
                 }
                 Thread.sleep(5 * 1000);
-                sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
-                //更新场景状态为运行中
-                sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.CREATE.getCode());
+                scene.setSceneStatus(SceneEnum.CREATE.getCode());
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e);
-                //更新场景状态为错误
-                sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ERROR.getCode());
+                scene.setSceneStatus(SceneEnum.ERROR.getCode());
                 throw new BusinessException(e.getMessage());
+            }finally {
+                scene.setMeta(JsonUtil.toJsonString(topology));
+                sceneService.updateById(scene);
             }
         }
         log.info("start scene end : {}", scene.getSceneName());

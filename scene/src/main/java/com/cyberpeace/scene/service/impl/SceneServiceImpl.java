@@ -399,16 +399,21 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     public void sceneState() {
         // 获取运行中的场景
         List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
-                .in(SceneEntity::getSceneStatus, Arrays.asList(SceneEnum.CREATE.getCode())));
+                .in(SceneEntity::getSceneStatus, Arrays.asList(SceneEnum.CREATE.getCode(), SceneEnum.ERROR.getCode())));
         if (!CollectionUtils.isEmpty(list)){
             for (SceneEntity scene : list){
                 try {
-                    Integer networkState = networkState(scene);
-                    Integer nodeStage = nodeStage(scene);
-                    if (Objects.equals(100, networkState) && Objects.equals(100, nodeStage)){
-                        scene.setSceneStatus(SceneEnum.ACTIVE.getCode());
-                        updateById(scene);
-                        pushScenePlugin(scene, networkState, nodeStage, 2, 4);
+                    if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())){
+                        Integer networkState = networkState(scene);
+                        Integer nodeStage = nodeStage(scene);
+                        if (Objects.equals(100, networkState) && Objects.equals(100, nodeStage)){
+                            log.info("scene start success");
+                            scene.setSceneStatus(SceneEnum.ACTIVE.getCode());
+                            updateById(scene);
+                            pushScenePlugin(scene, networkState, nodeStage, 2, 4);
+                        }
+                    }else {
+                        pushScenePlugin(scene, 0, 0, 2, 5);
                     }
                 }catch (Exception e){
                     log.error("scene {} state error : {}", scene, e);

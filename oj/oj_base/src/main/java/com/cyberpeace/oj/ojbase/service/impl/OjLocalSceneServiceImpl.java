@@ -31,6 +31,7 @@ import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.MonitorInfoBo;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+import com.cyberpeace.scene.service.SceneService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -48,6 +49,9 @@ import java.util.Map;
 @Service
 @Slf4j
 public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjLocalScene> implements OjLocalSceneService {
+
+	@Autowired
+	private SceneService sceneService;
 
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
@@ -335,8 +339,11 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 	@Override
 	public JSONObject getSceneData(OjLocalScene ojLocalScene) {
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-		JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(),
-				localScene.getUserId());
+		JSONObject sceneData = sceneService.getSceneJsonObject(ojLocalScene.getBusinessId());
+		if (sceneData == null) {
+			return null;
+		}
+
 		// 设置类型
 		sceneData.put(JsonKeyConstant.REFERENCE_TYPE, localScene.getBusinessCode());
 		sceneData.put(JsonKeyConstant.STATUS, localScene.getSceneStatus());

@@ -202,11 +202,21 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     }
 
     @Override
-    public BaseRsp detail(String topologyId, String instanceId) {
+    public JSONObject getSceneJsonObject(String instanceId) {
+        SceneData sceneData = getSceneData(instanceId);
+        if (sceneData == null) {
+            return null;
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("scene", sceneData);
+        return jsonObject;
+    }
+
+    private SceneData getSceneData(String instanceId){
         String userId = UserInfoContext.getNewUserContext().getResourceId();
         SceneEntity scene = sceneMapper.selectByInstanceId(instanceId, userId, SceneEnum.getCodes());
         if (Objects.isNull(scene)){
-            return new BaseRsp<>();
+            return null;
         }
         SceneData sceneData = new SceneData();
         String topo;
@@ -243,6 +253,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 pushScenePlugin(scene, networkState, nodeStage, 2, 4);
             }
         }
+        return sceneData;
+    }
+
+    @Override
+    public BaseRsp detail(String topologyId, String instanceId) {
+        SceneData sceneData = getSceneData(instanceId);
         return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
     }
 

@@ -456,21 +456,24 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             for (NodeEntity node : nodes){
                 Integer nodeStatus = SceneEnum.CREATE.getCode();
                 String ip = null;
+                Integer code = 2;
                 TopologyElement element = getElement(node.getInstanceId(), scene.getMeta());
                 pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
+                pushElement(element, scene, 2);
                 if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), node.getType())){
                     ContainerItem instance = containerService.getInstance(node.getInstanceId());
                     if (Objects.nonNull(instance)){
-                        pushElement(element, scene, SceneEnum.CREATE.getName());
+                        code = 2;
                         if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())){
                             nodeStatus = SceneEnum.ACTIVE.getCode();
                             JSONObject addresses = instance.getAddresses();
                             ip = getIp(addresses);
                             count++;
-                            pushElement(element, scene, SceneEnum.ACTIVE.getName());
+                            code = 4;
                         }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getStatus())){
                             nodeStatus = SceneEnum.ERROR.getCode();
                             count++;
+                            code = 5;
                         }
                         pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
                     }
@@ -483,17 +486,19 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             JSONObject addresses = instance.getAddresses();
                             ip = getIp(addresses);
                             count++;
+                            code = 4;
                         }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getVmState())){
                             nodeStatus = SceneEnum.ERROR.getCode();
                             count++;
+                            code = 5;
                         }
-                        pushElement(element, scene, SceneEnum.CREATE.getName());
                         pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
                     }
                 }
                 node.setIp(ip);
                 node.setStatus(nodeStatus);
                 nodeService.updateById(node);
+                pushElement(element, scene, code);
             }
         }else {
             return 100;
@@ -601,13 +606,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         return list;
     }
 
-    private void pushElement(TopologyElement element, SceneEntity scene, String code){
+    private void pushElement(TopologyElement element, SceneEntity scene, Integer code){
         try {
             WsSceneData sceneData = new WsSceneData();
             sceneData.setSceneId(scene.getResourceId());
             if(Objects.nonNull(element)){
                 element.setEvent(2);
-                element.setEventStatus(2);
+                element.setEventStatus(code);
             }
             sceneData.setSceneElement(element);
             sceneData.setSceneElementPortPluginData(getElementPlugin(element));

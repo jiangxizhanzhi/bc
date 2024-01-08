@@ -99,6 +99,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(
                         "/ws/*",
                         "/ws/**",
+						"/gateway/**",
                         "/captcha",
                         "/webjars/**",
                         "/swagger-resources/**",

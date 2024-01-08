@@ -1,6 +1,5 @@
 package com.cyberpeace.auth.security;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.cyberpeace.common.util.ConfigUtil;
@@ -108,6 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/favicon.ico",
 						"/license/**",
 						"/auth/user",
+						"/system_config/query",
 						"/oj/watermark/**",
 						"/doc.html")
 				.permitAll()

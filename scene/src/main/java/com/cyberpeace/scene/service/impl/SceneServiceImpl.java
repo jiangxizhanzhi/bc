@@ -246,12 +246,20 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             sceneData.setTopology(topology);
             sceneData.setScene(scene);
             sceneData.setPlugins(jsonObject);
-            topology.setScene(sceneDataRsp);
             Integer networkState = networkState(scene);
             Integer nodeStage = nodeStage(scene);
-            if (Objects.equals(100, networkState) && Objects.equals(100, nodeStage)){
-                pushScenePlugin(scene, networkState, nodeStage, 2, 4);
+            List<WsSceneStage> wsSceneStages = stageList(networkState, nodeStage);
+            Integer percentage = percentage(wsSceneStages);
+            sceneDataRsp.setStageList(wsSceneStages);
+            if (nodeStage >= networkState){
+                sceneDataRsp.setStage(StageEnum.CREATE_INSTANCE.getStage());
+                sceneDataRsp.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
+                sceneDataRsp.setStagePercentage(nodeStage);
+                sceneDataRsp.setProgressMessage(StageEnum.CREATE_INSTANCE.getStageName());
+                sceneDataRsp.setProgressStatus(2);
             }
+            sceneDataRsp.setProgressPercentage(percentage);
+            topology.setScene(sceneDataRsp);
         }
         return sceneData;
     }
@@ -538,11 +546,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             wsScene.setCreateTime(scene.getCreateTime());
             wsScene.setStage(StageEnum.CREATE_INSTANCE.getStage());
             List<WsSceneStage> wsSceneStages = stageList(networkStage, instanceStage);
-            int sum = wsSceneStages.stream().mapToInt(WsSceneStage::getStagePercentage).sum();
+            Integer percentage = percentage(wsSceneStages);
             wsScene.setStageList(wsSceneStages);
             wsScene.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
-            int percentage = state(sum, wsSceneStages.size() * 100);
-            log.info("sum:{}, size:{}, state:{}", sum, wsSceneStages.size() * 100, percentage);
             wsScene.setStagePercentage(percentage);
             wsScene.setProgressPercentage(percentage);
             wsScene.setProcess(StageEnum.CREATE_INSTANCE.getStage());
@@ -560,6 +566,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }catch (Exception e){
             log.error("push message error : {}", e);
         }
+    }
+
+    private Integer percentage(List<WsSceneStage> wsSceneStages){
+        int sum = wsSceneStages.stream().mapToInt(WsSceneStage::getStagePercentage).sum();
+        int percentage = state(sum, wsSceneStages.size() * 100);
+        log.info("sum:{}, size:{}, state:{}", sum, wsSceneStages.size() * 100, percentage);
+        return percentage;
     }
 
 

@@ -237,6 +237,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             sceneData.setScene(scene);
             sceneData.setPlugins(jsonObject);
             topology.setScene(sceneDataRsp);
+            Integer networkState = networkState(scene);
+            Integer nodeStage = nodeStage(scene);
+            if (Objects.equals(100, networkState) && Objects.equals(100, nodeStage)){
+                pushScenePlugin(scene, networkState, nodeStage, 2, 4);
+            }
         }
         return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
     }
@@ -393,16 +398,16 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 if (Objects.isNull(instance)){
                     continue;
                 }
-                pushScenePlugin(scene, state(networks.size(), count, 2), 0, 2, 2);
+                pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
                 if (Objects.equals(StatusEnum.NETWORK_ACTIVE.getName(), instance.getStatus())){
                     networkMapper.updateStatus(network.getUuid(), SceneEnum.ACTIVE.getCode());
                     count++;
-                    pushScenePlugin(scene, state(networks.size(), count, 2), 0, 2, 2);
+                    pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
                 }
             }
         }
 
-        return state(networks.size(), count, 2);
+        return state(count, networks.size());
     }
 
 
@@ -416,7 +421,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 Integer nodeStatus = SceneEnum.CREATE.getCode();
                 String ip = null;
                 TopologyElement element = getElement(node.getInstanceId(), scene.getMeta());
-                pushScenePlugin(scene, state(nodes.size(), count, 2), 0, 2, 2);
+                pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
                 if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), node.getType())){
                     ContainerItem instance = containerService.getInstance(node.getInstanceId());
                     if (Objects.nonNull(instance)){
@@ -431,7 +436,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             nodeStatus = SceneEnum.ERROR.getCode();
                             count++;
                         }
-                        pushScenePlugin(scene, state(nodes.size(), count, 2), 0, 2, 2);
+                        pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
                     }
                 }
                 if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), node.getType())){
@@ -447,7 +452,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             count++;
                         }
                         pushElement(element, scene, SceneEnum.CREATE.getName());
-                        pushScenePlugin(scene, state(nodes.size(), count, 2), 0, 2, 2);
+                        pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
                     }
                 }
                 node.setIp(ip);
@@ -455,7 +460,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 nodeService.updateById(node);
             }
         }
-        return state(nodes.size(), count, 2);
+        return state(count, nodes.size());
     }
 
     private TopologyElement getElement(String instanceId, String meta){
@@ -488,9 +493,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         return ip;
     }
 
-    private Integer state(Integer dividend, Integer divisor, Integer scale){
-        Double divide = MathUtils.divide((double) dividend, (double) divisor, scale);
-        return divide.intValue() * 100;
+    private Integer state(Integer dividend, Integer divisor){
+        return (int)(((double) dividend/divisor) * 100);
     }
 
     private void sendMsg(WsData data, SceneEntity scene) {
@@ -521,7 +525,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             int sum = wsSceneStages.stream().mapToInt(WsSceneStage::getStagePercentage).sum();
             wsScene.setStageList(wsSceneStages);
             wsScene.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
-            int percentage = MathUtils.divide((double) (wsSceneStages.size() * 100), (double) sum, 2).intValue() * 100;
+            int percentage = state(sum, wsSceneStages.size() * 100);
+            log.info("sum:{}, size:{}, state:{}", sum, wsSceneStages.size() * 100, percentage);
             wsScene.setStagePercentage(percentage);
             wsScene.setProgressPercentage(percentage);
             wsScene.setProcess(StageEnum.CREATE_INSTANCE.getStage());
@@ -557,8 +562,10 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         try {
             WsSceneData sceneData = new WsSceneData();
             sceneData.setSceneId(scene.getResourceId());
-            element.setEvent(2);
-            element.setEventStatus(2);
+            if(Objects.nonNull(element)){
+                element.setEvent(2);
+                element.setEventStatus(2);
+            }
             sceneData.setSceneElement(element);
 
             WsData data = new WsData();

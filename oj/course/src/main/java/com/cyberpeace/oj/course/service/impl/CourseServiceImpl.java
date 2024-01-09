@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.oj.practice.entity.Paper;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import org.apache.commons.collections.CollectionUtils;
@@ -89,7 +90,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	private RemoteUserService remoteUserService;
+	private SysUserService sysUserService;
 
 	@Autowired
 	private UtilService utilService;
@@ -288,8 +289,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			studyCourseList.addAll(allCourseList);
 
 			// 提取用户名映射
-			Map<String, String> userNameMap = remoteUserService.getIdNameMap(studyCourseList,
-					Course::getCreateUserId);
+			Map<String, String> userNameMap = sysUserService.getUserNameMap(StreamApiUtils.map(studyCourseList,
+					Course::getCreateUserId));
 			List<CourseWebBo> courseWebBoList = studyCourseList.stream()
 					.map(course -> transferToBo(course, authContext, userNameMap))
 					.collect(Collectors.toList());
@@ -300,8 +301,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				authContext.getIsWeb());
 
 		// 提取用户名映射
-		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
-				Course::getCreateUserId);
+		Map<String, String> userNameMap = sysUserService.getUserNameMap(StreamApiUtils.map(iPage.getRecords(),
+				Course::getCreateUserId));
 
 		IPage<CourseWebBo> webBoIPage = iPage
 				.convert(course -> transferToBo(course, authContext, userNameMap));

@@ -253,7 +253,7 @@ public class HttpUtil {
      */
     private static HttpClient getClient() {
 
-        return HttpClients.custom().setDefaultHeaders(defaultHeader()).build();
+        return HttpClients.custom().build();
     }
 
     /**

@@ -545,6 +545,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             JSONObject cpcloud = new JSONObject();
             cpcloud.put("cpcloud", getElementPlugin(element));
             sceneData.setSceneElementPortPluginData(cpcloud);
+            sceneData.setSceneElementPluginData(cpcloud);
 
             WsData data = new WsData();
             data.setType("scene_element");

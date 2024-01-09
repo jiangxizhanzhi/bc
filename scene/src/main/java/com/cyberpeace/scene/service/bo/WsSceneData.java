@@ -24,6 +24,9 @@ public class WsSceneData implements Serializable {
     @JsonProperty("scene_element")
     private TopologyElement sceneElement;
 
+    @JsonProperty("scene_element_plugin_data")
+    private JSONObject sceneElementPluginData;
+
     @JsonProperty("scene_element_port_plugin_data")
     private JSONObject sceneElementPortPluginData;
 }

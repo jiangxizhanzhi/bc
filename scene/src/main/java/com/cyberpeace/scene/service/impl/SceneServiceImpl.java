@@ -565,7 +565,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 port.setEventStatus(address.getInteger("event_status"));
                 JSONObject elementPortJson = new JSONObject();
                 if (!CollectionUtils.isEmpty(port.getAccessModes())){
-                    JSONArray accessModes = JSONArray.parseArray(port.getAccessModes().toString());
+                    JSONArray accessModes = port.getAccessModes();
                     JSONArray newAccessModes = new JSONArray();
                     accessModes.forEach(iter -> {
                         JSONObject accessMode = JSONObject.parseObject(iter.toString());

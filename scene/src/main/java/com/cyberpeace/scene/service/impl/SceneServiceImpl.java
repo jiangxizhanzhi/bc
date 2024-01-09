@@ -266,6 +266,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             }
             sceneDataRsp.setProgressPercentage(percentage);
             topology.setScene(sceneDataRsp);
+            topology.setAccessModes();
         }
         return sceneData;
     }

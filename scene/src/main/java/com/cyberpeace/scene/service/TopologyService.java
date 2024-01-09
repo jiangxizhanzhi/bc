@@ -40,4 +40,8 @@ public interface TopologyService extends IService<TopologyEntity> {
     Map<String, List<TopologyElement>> getTopologyElementMap(Topology topology);
 
     TopologyEntity selectTopology(String topologyId);
+
+    JSONObject makePlugins(Topology topology);
+
+    JSONObject getStatusEvent(TopologyElement element);
 }

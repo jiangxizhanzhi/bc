@@ -1,5 +1,16 @@
 package com.cyberpeace.scene.service.impl;
 
+import java.io.File;
+import java.util.*;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -13,11 +24,13 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.scene.constant.enums.*;
+import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
+import com.cyberpeace.scene.constant.enums.SceneEnum;
+import com.cyberpeace.scene.constant.enums.StageEnum;
+import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
 import com.cyberpeace.scene.controller.rsp.SceneDataRsp;
@@ -25,27 +38,17 @@ import com.cyberpeace.scene.controller.rsp.SceneDetailRsp;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
-import com.cyberpeace.scene.dao.entity.TopologyEntity;
+import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
-import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.job.SceneExecutor;
 import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.service.bo.*;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
-import com.cyberpeace.scene.util.HttpUtil;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author :   SN
@@ -242,7 +245,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 sceneDataRsp.setEventStatus(5);
             }
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("cpcloud", setPlugin(topology));
+			jsonObject.put("cpcloud", topologyService.makePlugins(topology));
             sceneData.setTopology(topology);
             sceneData.setScene(scene);
             sceneData.setPlugins(jsonObject);
@@ -275,83 +278,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     public BaseRsp detail(String topologyId, String instanceId) {
         SceneData sceneData = getSceneData(instanceId);
         return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
-    }
-
-    private JSONObject setPlugin(Topology topology){
-        JSONObject jsonObject = new JSONObject();
-        if (Objects.isNull(topology)){
-            return jsonObject;
-        }
-        JSONObject elementsJson = new JSONObject();
-        JSONObject elementPortsJson = new JSONObject();
-        List<TopologyElement> elements = topology.getElements();
-        int sum = elements.stream().mapToInt(e -> e.getPorts().size()).sum();
-        List<TopologyElement> newElements = new ArrayList<>();
-        for (TopologyElement element : elements){
-            JSONObject elementJson = new JSONObject();
-            RoleEnum roleEnum = RoleEnum.getRoleEnum(element.getType());
-            if (!Objects.isNull(roleEnum)){
-                elementJson.put("role", roleEnum.getValue());
-                elementJson.put("image_type", roleEnum.getImageType());
-                elementJson.put("electric_port_number", sum);
-            }
-            elementsJson.put(element.getId(), elementJson);
-            JSONObject address = getStatusEvent(element);
-            for (ElementPort port : element.getPorts()){
-                port.setIp(address.getString("ip"));
-                port.setEvent(2);
-                port.setEventStatus(address.getInteger("event_status"));
-                JSONObject elementPortJson = new JSONObject();
-                if (!CollectionUtils.isEmpty(port.getAccessModes())){
-                    JSONArray accessModes = JSONArray.parseArray(port.getAccessModes().toString());
-                    JSONArray newAccessModes = new JSONArray();
-                    accessModes.forEach(iter -> {
-                        JSONObject accessMode = JSONObject.parseObject(iter.toString());
-                        accessMode.put("id", element.getNodeId());
-                        accessMode.put("ip", address.getString("ip"));
-                        accessMode.put("available", address.getBooleanValue("available"));
-                        accessMode.put("type", element.getType());
-                        newAccessModes.add(accessMode);
-                    });
-                    elementPortJson.put("access_modes", newAccessModes);
-                }
-                elementPortJson.put("ip", address.getString("ip"));
-                elementPortJson.put("event_status", address.getInteger("event_status"));
-                elementPortJson.put("event", 2);
-                elementPortJson.put("resource_id", element.getNodeId());
-                elementPortsJson.put(port.getId(), elementPortJson);
-                newElements.add(element);
-            }
-        }
-        jsonObject.put("elements", elementsJson);
-        jsonObject.put("element_ports", elementPortsJson);
-        topology.setElements(newElements);
-        return jsonObject;
-    }
-
-    private JSONObject getStatusEvent(TopologyElement element){
-        JSONObject jsonObject = new JSONObject();
-        String ip = null;
-        int eventStatus = 4;
-        boolean available = false;
-        NodeEntity node = nodeService.getOne(new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getInstanceId, element.getNodeId()));
-        if (Objects.nonNull(node)){
-            ip = node.getIp();
-            if (Objects.equals(SceneEnum.ACTIVE.getCode(), node.getStatus())){
-                eventStatus = 4;
-                available = true;
-            }else if (Objects.equals(SceneEnum.ERROR.getCode(), node.getStatus())){
-                eventStatus = 5;
-            } else if (Objects.equals(SceneEnum.CREATE.getCode(), node.getStatus())) {
-                eventStatus = 2;
-            }
-        }
-        element.setEvent(2);
-        element.setEventStatus(eventStatus);
-        jsonObject.put("ip", ip);
-        jsonObject.put("event_status", eventStatus);
-        jsonObject.put("available", available);
-        return jsonObject;
     }
     
 
@@ -631,7 +557,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
     private JSONObject getElementPlugin(TopologyElement element){
         if (Objects.nonNull(element)){
-            JSONObject address = getStatusEvent(element);
+			JSONObject address = topologyService.getStatusEvent(element);
             JSONObject elementPortsJson = new JSONObject();
             for (ElementPort port : element.getPorts()){
                 port.setIp(address.getString("ip"));

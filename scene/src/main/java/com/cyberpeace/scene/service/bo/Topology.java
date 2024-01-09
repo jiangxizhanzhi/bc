@@ -60,7 +60,8 @@ public class Topology implements Serializable {
 					continue;
 				}
 				port.setAccessModes(StreamApiUtils.map(port.getAccessModes(),
-						a -> StringUtils.isBlank(a) ? a : a.substring(1, a.length() - 1)));
+						a -> StringUtils.isBlank(a) || !a.startsWith("\"") ? a
+								: a.substring(1, a.length() - 1)));
 			}
 		}
 	}

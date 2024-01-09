@@ -20,7 +20,7 @@ public class InitChecker {
 
 	@PostConstruct
 	public void checkList() {
-		checkMp();
+//		checkMp();
 
 		checkCr();
 

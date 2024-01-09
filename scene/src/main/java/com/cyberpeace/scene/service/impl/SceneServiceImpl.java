@@ -481,7 +481,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
                 .builder().data(sceneContent).messageIdentifier(identifier).build();
         log.info("push Message ===>data:{}", JSON.toJSONString(data));
-        webSocketHandler.pushMessage(messageContext, true);
+        // 只有单人场景，没有共享场景
+        webSocketHandler.pushMessage(messageContext, false);
     }
     private void pushScenePlugin(SceneEntity scene, Integer networkStage, Integer instanceStage, Integer processStatus, Integer eventStatus){
         try {

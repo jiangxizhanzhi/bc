@@ -1,5 +1,22 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -63,25 +80,12 @@ import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
+import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author chenz
@@ -169,6 +173,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PracticeMistakeService practiceMistakeService;
+	
+	@Autowired
+	private SceneService sceneService;
 
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
@@ -557,13 +564,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			JSONObject sceneConfig = topologyService.getTopology(operationBo.getTopoId());
 			webOperationBo.setSceneConfigData(sceneConfig);
 
-			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
-					operationBo.getResourceId(), operationBo.getSceneShareMode(), authContext);
-
-			if (null != ojLocalScene) {
-				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
-				webOperationBo.setSceneData(sceneData);
-			}
+			JSONObject sceneData = sceneService.getSceneJsonObject(resourceId);
+			webOperationBo.setSceneData(sceneData);
 		}
 
 		// 题解数据获取

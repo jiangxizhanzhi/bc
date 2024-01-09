@@ -530,7 +530,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
         if (ojLocalScene.size() > 0) {
             log.error("Group scene is running! ojLocalScene=[{}]",
                     ojLocalScene.toString());
-            throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
+            throw new BusinessException(OjBusinessErrorCode.NO_SEAT_CHANGE_WITH_RUNNING_SCENE);
         }
 
     }

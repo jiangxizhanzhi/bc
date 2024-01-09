@@ -349,4 +349,7 @@ public final class OjBusinessErrorCode {
 	// 资源包错误
 	public static final String INVALID_RESOURCE_ZIP = "102133";
 
+	// 有正在运行的场景，禁止切换座次
+	public static final String NO_SEAT_CHANGE_WITH_RUNNING_SCENE = "102134";
+
 }

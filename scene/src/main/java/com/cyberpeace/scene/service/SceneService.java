@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
+import com.cyberpeace.scene.service.bo.SceneData;
+import com.cyberpeace.scene.service.bo.ad.AdSceneStartReq;
 
 /**
  * @author :   SN
@@ -30,4 +32,8 @@ public interface SceneService extends IService<SceneEntity> {
     void sceneState();
 
     JSONObject getSceneJsonObject(String instanceId);
+
+	SceneEntity startSceneByTopo(AdSceneStartReq req);
+
+	SceneData getSceneDataBySceneId(String sceneId);
 }

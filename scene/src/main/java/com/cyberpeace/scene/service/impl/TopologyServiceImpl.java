@@ -10,7 +10,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.RoleEnum;
@@ -24,12 +28,15 @@ import com.cyberpeace.scene.service.bo.ElementPort;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author :   SN
  * @date :   2023/12/20 16:24
  * @desc :
  **/
 @Service
+@Slf4j
 public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEntity> implements TopologyService {
 
 	@Autowired
@@ -40,6 +47,9 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
         LambdaQueryWrapper<TopologyEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TopologyEntity::getTopologyId, topologyId);
 		TopologyEntity topologyEntity = getOne(wrapper);
+		if (null == topologyEntity) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
         JSONObject jsonObject = new JSONObject();
 		jsonObject.put("topology", JSONObject.parse(topologyEntity.getTopology()));
 		JSONObject pluginJson = new JSONObject();
@@ -170,5 +180,17 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
 		jsonObject.put("event_status", eventStatus);
 		jsonObject.put("available", available);
 		return jsonObject;
+	}
+
+	@Override
+	public String adCreate(JSONObject req) {
+		log.info("ad copy topo request: {}", req);
+		JSONObject topo = req.getJSONObject(JsonKeyConstant.SCENE_CONFIG)
+				.getJSONObject(JsonKeyConstant.TOPOLOGY);
+		TopologyEntity entity = new TopologyEntity();
+		entity.setTopologyId(IDGeneratorUtil.getID());
+		entity.setTopology(JsonUtil.toJsonString(topo));
+		this.save(entity);
+		return entity.getTopologyId();
 	}
 }

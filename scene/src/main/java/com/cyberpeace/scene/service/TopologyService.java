@@ -1,14 +1,13 @@
 package com.cyberpeace.scene.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author :   辛发圣
@@ -44,4 +43,11 @@ public interface TopologyService extends IService<TopologyEntity> {
     JSONObject makePlugins(Topology topology);
 
     JSONObject getStatusEvent(TopologyElement element);
+
+	/**
+	 * 提供给竞赛复制topo
+	 * @param req 请求体
+	 * @return {@code String}
+	 */
+	String adCreate(JSONObject req);
 }

@@ -1,10 +1,12 @@
 package com.cyberpeace.scene.dao.entity;
 
+import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-import lombok.Data;
 
-import java.io.Serializable;
+import lombok.Data;
 
 /**
  * @author :   SN
@@ -17,6 +19,7 @@ public class TopologyEntity extends BaseTable implements Serializable {
     /**
      * 拓扑id
      */
+	@TableId
     private String topologyId;
 
     /**

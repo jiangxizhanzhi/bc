@@ -1,20 +1,20 @@
 package com.cyberpeace.scene.controller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.auth.constant.OpLogMethodEnum;
 import com.cyberpeace.auth.service.OpLogService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
-import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
-import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * @author :   SN
@@ -31,8 +31,10 @@ public class ScenesController  {
 
     @Autowired
     private SceneService sceneService;
+
     @Autowired
     private OpLogService opLogService;
+
     @GetMapping("/topology")
     @ApiOperation(value = "获取拓扑结构")
     public BaseRsp getTopology(@ApiParam(value = "拓扑结构id", name = "topology_id")@RequestParam("topology_id") String topologyId){

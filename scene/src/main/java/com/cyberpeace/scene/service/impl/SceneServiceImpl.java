@@ -21,6 +21,7 @@ import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -39,12 +40,12 @@ import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
-import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.job.SceneExecutor;
 import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.service.bo.*;
+import com.cyberpeace.scene.service.bo.ad.AdSceneStartReq;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
 
@@ -88,9 +89,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     @Autowired
     private ContainerService containerService;
 
-    @Autowired
-    private NodeMapper nodeMapper;
-
     /**
      * 场景自动销毁时间 单位:小时
      */
@@ -113,26 +111,108 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         MAX_USER_SCENE_EVENT = Integer.parseInt(ConfigUtil.getContextProperty("scene.max.user.event"));
     }
 
-    @Override
-    public BaseRsp startScene(SceneStartReq req) {
-        String userId = UserInfoContext.getNewUserContext().getResourceId();
-        SceneEntity instance = sceneMapper.selectByInstanceId(req.getInstanceId(), userId, SceneEnum.getCodes());
-        if (!Objects.isNull(instance)){
-            throw new BusinessException(ErrorCode.SCENE_ALREADY_EXIST);
-        }
-        Topology topology = topologyService.formatTopology(req.getTopologyId());
-        log.info("topology：{}", topology);
-        if (topology == null){
-            throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
-        }
-        //创建场景
-        SceneEntity scene = createScene(req.getTopologyId(), req.getInstanceId(), UserInfoContext.getNewUserContext().getResourceId(),
-                req.getInstanceType(), req.getDestroyTime());
-        //提交创建场景任务
-        executor.submit(new SceneExecutor(sceneJob, topology, scene));
-        log.info("submit create scene mission, scene ：{}", scene);
-        return new BaseRsp<>(scene);
-    }
+	@Override
+	public BaseRsp startScene(SceneStartReq req) {
+		String userId = UserInfoContext.getNewUserContext().getResourceId();
+		SceneEntity instance = sceneMapper.selectByInstanceId(req.getInstanceId(), userId,
+				SceneEnum.getCodes());
+		if (!Objects.isNull(instance)) {
+			throw new BusinessException(ErrorCode.SCENE_ALREADY_EXIST);
+		}
+		Topology topology = topologyService.formatTopology(req.getTopologyId());
+		log.info("topology：{}", topology);
+		if (topology == null) {
+			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
+		}
+		// 创建场景
+		SceneEntity scene = createScene(req.getTopologyId(), req.getInstanceId(), userId,
+				req.getInstanceType(), req.getDestroyTime());
+		// 提交创建场景任务
+		executor.submit(new SceneExecutor(sceneJob, topology, scene));
+		log.info("submit create scene mission, scene ：{}", scene);
+		return new BaseRsp<>(scene);
+	}
+
+	@Override
+	public SceneEntity startSceneByTopo(AdSceneStartReq req) {
+		JSONObject topo = req.getScene_config().getJSONObject(JsonKeyConstant.TOPOLOGY);
+		Topology topology = topo.toJavaObject(Topology.class);
+		log.info("topology：{}", topology);
+		if (topology == null) {
+			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
+		}
+		// 创建场景
+		String instanceId = req.getContext().getRaceId() + "_" + req.getContext().getQuestionId();
+		SceneEntity scene = createScene(req.getId(), instanceId, req.getContext().getAccessUserId(),
+				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
+		// 提交创建场景任务
+		executor.submit(new SceneExecutor(sceneJob, topology, scene));
+		log.info("submit create scene mission, scene ：{}", scene);
+		return scene;
+	}
+
+	@Override
+	public SceneData getSceneDataBySceneId(String sceneId) {
+		SceneEntity scene = sceneMapper.selectByResourceId(sceneId);
+		if (Objects.isNull(scene)) {
+			return null;
+		}
+		return makeSceneData(scene);
+	}
+
+	private SceneData makeSceneData(SceneEntity scene) {
+		SceneData sceneData = new SceneData();
+		String topo;
+		topo = scene.getMeta();
+		Date currentTime = new Date();
+		long remainTime = (scene.getDestroyTime().getTime() - currentTime.getTime()) / 1000;
+		sceneData.setRemainingTime((int) remainTime);
+		if (StringUtils.isNotBlank(topo)) {
+			Topology topology = JsonUtil.toJsonObject(topo, Topology.class);
+			SceneDataRsp sceneDataRsp = new SceneDataRsp();
+			BeanUtils.copyProperties(scene, sceneDataRsp);
+			if (Objects.equals(SceneEnum.ACTIVE.getCode(), scene.getSceneStatus())) {
+				sceneDataRsp.setEvent(2);
+				sceneDataRsp.setEventStatus(4);
+			} else if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())) {
+				sceneDataRsp.setEvent(2);
+				sceneDataRsp.setEventStatus(2);
+			} else if (Objects.equals(SceneEnum.DELETED.getCode(), scene.getSceneStatus())) {
+				sceneDataRsp.setEvent(9);
+				sceneDataRsp.setEventStatus(4);
+			} else if (Objects.equals(SceneEnum.ERROR.getCode(), scene.getSceneStatus())) {
+				sceneDataRsp.setEvent(2);
+				sceneDataRsp.setEventStatus(5);
+			}
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("cpcloud", topologyService.makePlugins(topology));
+			sceneData.setTopology(topology);
+			sceneData.setScene(scene);
+			sceneData.setPlugins(jsonObject);
+			Integer networkState = networkState(scene);
+			Integer nodeStage = nodeStage(scene);
+			List<WsSceneStage> wsSceneStages = stageList(networkState, nodeStage);
+			Integer percentage = percentage(wsSceneStages);
+			sceneDataRsp.setStageList(wsSceneStages);
+			if (nodeStage >= networkState) {
+				sceneDataRsp.setStage(StageEnum.CREATE_INSTANCE.getStage());
+				sceneDataRsp.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
+				sceneDataRsp.setStagePercentage(nodeStage);
+				sceneDataRsp.setProgressMessage(StageEnum.CREATE_INSTANCE.getStageName());
+				sceneDataRsp.setProgressStatus(2);
+			} else {
+				sceneDataRsp.setStage(StageEnum.CREATE_NETWORK.getStage());
+				sceneDataRsp.setStageName(StageEnum.CREATE_NETWORK.getStageName());
+				sceneDataRsp.setStagePercentage(networkState);
+				sceneDataRsp.setProgressMessage(StageEnum.CREATE_NETWORK.getStageName());
+				sceneDataRsp.setProgressStatus(2);
+			}
+			sceneDataRsp.setProgressPercentage(percentage);
+			topology.setScene(sceneDataRsp);
+			topology.setAccessModes();
+		}
+		return sceneData;
+	}
 
     private SceneEntity createScene(String topologyId, String instanceId, String userId, Integer instanceType, Integer destroy){
         SceneEntity scene = new SceneEntity();
@@ -215,63 +295,14 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         return jsonObject;
     }
 
+
     private SceneData getSceneData(String instanceId){
         String userId = UserInfoContext.getNewUserContext().getResourceId();
         SceneEntity scene = sceneMapper.selectByInstanceId(instanceId, userId, SceneEnum.getCodes());
         if (Objects.isNull(scene)){
             return null;
         }
-        SceneData sceneData = new SceneData();
-        String topo;
-        topo = scene.getMeta();
-        Date currentTime = new Date();
-        long remainTime = (scene.getDestroyTime().getTime() - currentTime.getTime())/1000;
-        sceneData.setRemainingTime((int) remainTime);
-        if (StringUtils.isNotBlank(topo)){
-            Topology topology = JsonUtil.toJsonObject(topo, Topology.class);
-            SceneDataRsp sceneDataRsp = new SceneDataRsp();
-            BeanUtils.copyProperties(scene, sceneDataRsp);
-            if (Objects.equals(SceneEnum.ACTIVE.getCode(), scene.getSceneStatus())){
-                sceneDataRsp.setEvent(2);
-                sceneDataRsp.setEventStatus(4);
-            } else if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())) {
-                sceneDataRsp.setEvent(2);
-                sceneDataRsp.setEventStatus(2);
-            }else if (Objects.equals(SceneEnum.DELETED.getCode(), scene.getSceneStatus())){
-                sceneDataRsp.setEvent(9);
-                sceneDataRsp.setEventStatus(4);
-            }else if (Objects.equals(SceneEnum.ERROR.getCode(), scene.getSceneStatus())){
-                sceneDataRsp.setEvent(2);
-                sceneDataRsp.setEventStatus(5);
-            }
-            JSONObject jsonObject = new JSONObject();
-			jsonObject.put("cpcloud", topologyService.makePlugins(topology));
-            sceneData.setTopology(topology);
-            sceneData.setScene(scene);
-            sceneData.setPlugins(jsonObject);
-            Integer networkState = networkState(scene);
-            Integer nodeStage = nodeStage(scene);
-            List<WsSceneStage> wsSceneStages = stageList(networkState, nodeStage);
-            Integer percentage = percentage(wsSceneStages);
-            sceneDataRsp.setStageList(wsSceneStages);
-            if (nodeStage >= networkState){
-                sceneDataRsp.setStage(StageEnum.CREATE_INSTANCE.getStage());
-                sceneDataRsp.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
-                sceneDataRsp.setStagePercentage(nodeStage);
-                sceneDataRsp.setProgressMessage(StageEnum.CREATE_INSTANCE.getStageName());
-                sceneDataRsp.setProgressStatus(2);
-            }else {
-                sceneDataRsp.setStage(StageEnum.CREATE_NETWORK.getStage());
-                sceneDataRsp.setStageName(StageEnum.CREATE_NETWORK.getStageName());
-                sceneDataRsp.setStagePercentage(networkState);
-                sceneDataRsp.setProgressMessage(StageEnum.CREATE_NETWORK.getStageName());
-                sceneDataRsp.setProgressStatus(2);
-            }
-            sceneDataRsp.setProgressPercentage(percentage);
-            topology.setScene(sceneDataRsp);
-            topology.setAccessModes();
-        }
-        return sceneData;
+		return makeSceneData(scene);
     }
 
     @Override

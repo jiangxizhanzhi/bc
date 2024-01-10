@@ -106,7 +106,8 @@ public class CourseValidateHandler {
 	public void validateCoursePermission(String courseId, AuthContext authContext) {
 
 		// 查询授权
-		List<String> authIds = courseMapper.selectByAuth(authContext);
+		List<Course> courses = courseMapper.selectList(null);
+		List<String> authIds = StreamApiUtils.getColumn(courses, Course::getResourceId);
 		if (CollectionUtils.isEmpty(authIds)) {
 			log.error("course:[{}] hasn't been auth", courseId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.cyberpeace.scene.constant.CommonConstant;
 import com.cyberpeace.scene.json.JsonCommon;
 import com.cyberpeace.scene.sceneimport.parse.result.NetworkElementParseResult;
 

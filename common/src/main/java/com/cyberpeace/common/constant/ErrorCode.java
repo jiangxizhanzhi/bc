@@ -280,5 +280,50 @@ public final class ErrorCode {
 	 */
 	public static final String SCENE_DESTROY_FAILED = "100084";
 
+	/**
+	 * 获取系统序列号失败
+	 */
+	public static final String GET_SYSTEM_UUID_FAILED = "100085";
+
+	/**
+	 * 系统未激活
+	 */
+	public static final String SYSTEM_NOT_ACTIVATED = "100086";
+
+	/**
+	 * 激活已过期
+	 */
+	public static final String ACTIVATION_EXPIRED = "100087";
+
+	/**
+	 * 激活失败
+	 */
+	public static final String ACTIVATION_FAILED = "100088";
+
+	/**
+	 * 无效的激活码
+	 */
+	public static final String INVALID_ACTIVATION_CODE = "100089";
+
+	/**
+	 * 已使用的激活码
+	 */
+	public static final String USED_ACTIVATION_CODE = "100090";
+
+	/**
+	 * 系统验证码不存在，系统未注册
+	 */
+	public static final String SYSTEM_NOT_REGISTERED = "100091";
+
+	/**
+	 * 读取激活文件失败
+	 */
+	public static final String READ_ACTIVATION_FILE_FAILED = "100092";
+
+	/**
+	 * 激活的序列号与本机器不匹配
+	 */
+	public static final String ACTIVATION_CODE_NOT_MATCH = "100093";
+
 	private ErrorCode() {}
 }

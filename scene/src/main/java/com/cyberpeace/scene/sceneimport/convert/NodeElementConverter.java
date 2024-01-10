@@ -101,19 +101,19 @@ class NodeElementConverter implements IConverter {
         if (StringUtils.isNotBlank(logo)) {
             sceneConfigElementBO.setIcon2(logo);
         } else if (node.getId().toLowerCase().startsWith("router")) {
-            sceneConfigElementBO.setIcon2(CommonConstant.DefaultImageUrl.ROUTER);
+            sceneConfigElementBO.setIcon2(DefaultImageUrl.ROUTER);
             pluginElement.setRole(BaseCloudPluginSceneElementModel.Role.VIRTUAL_LAYER_3_SIMPLE_ROUTER);
             if (StringUtils.isEmpty(node.getImage()) || node.getImage().equals("默认路由")) {
                 pluginElement.setImage(TargetConstant.DefaultTargetName.DEFAULT_ROUTER);
             }
         } else if (node.getId().toLowerCase().startsWith("firewall")) {
-            sceneConfigElementBO.setIcon2(CommonConstant.DefaultImageUrl.ROUTER);
+            sceneConfigElementBO.setIcon2(DefaultImageUrl.ROUTER);
             pluginElement.setRole(BaseCloudPluginSceneElementModel.Role.VIRTUAL_LAYER_3_SIMPLE_FIREWALL);
             if (StringUtils.isEmpty(node.getImage()) || node.getImage().equals("默认防火墙")) {
                 pluginElement.setImage(TargetConstant.DefaultTargetName.DEFAULT_FIREWALL);
             }
         } else if (node.getId().toLowerCase().startsWith("server")) {
-            sceneConfigElementBO.setIcon2(CommonConstant.DefaultImageUrl.ROUTER);
+            sceneConfigElementBO.setIcon2(DefaultImageUrl.ROUTER);
             if ("npc".equals(node.getVirtualPlatform())) {
                 pluginElement.setRole(BaseCloudPluginSceneElementModel.Role.NPC);
             } else {

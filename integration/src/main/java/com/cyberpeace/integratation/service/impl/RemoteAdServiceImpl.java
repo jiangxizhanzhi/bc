@@ -1,11 +1,10 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +14,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import com.google.common.collect.Lists;
@@ -36,12 +31,16 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String COMPETITION_LIST_URL;
 
+	private String EXAM_PASS_LIST_URL;
+
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.theory_race.statistic");
 		COMPETITION_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.competition.list");
+		EXAM_PASS_LIST_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.exam.pass.list");
 	}
 
 	@Override
@@ -60,6 +59,27 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 		JSONArray competitionArray = HttpClientUtil.rawSpecialGet(formatUrl, JSONArray.class);
 		return StreamApiUtils.map(competitionArray, obj -> jsonToBo((JSONObject) obj));
+	}
+
+	@Override
+	public Map<String, String> examPassList(List<String> userIds) {
+
+		// 无竞赛环境则不调用
+		if (StringUtils.isBlank(adEnvService.getAdHost())) {
+			return new HashMap<>();
+		}
+
+		// 接口请求
+		JSONObject body = new JSONObject();
+		body.put("user_ids", userIds);
+		JSONArray jsonArray = HttpClientUtil.post(EXAM_PASS_LIST_URL, body, JSONArray.class);
+		JSONObject jsonObject = jsonArray.getJSONObject(0);
+		HashMap<String, String> map = new HashMap<>();
+		for (String key : jsonObject.keySet()) {
+			JSONObject object = jsonObject.getJSONObject(key);
+			map.put(key, object.getString("pass_rate").replace(".0",""));
+		}
+		return map;
 	}
 
 	/** 数据转换使用*/

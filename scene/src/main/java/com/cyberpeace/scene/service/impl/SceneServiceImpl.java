@@ -358,6 +358,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             for (NetworkEntity network : networks){
                 NetworkInstance instance = networkService.getInstance(network.getUuid());
                 if (Objects.isNull(instance)){
+                    log.warn("scene {} network node not found is {}", scene.getResourceId(), network.getUuid());
                     continue;
                 }
                 pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
@@ -383,14 +384,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             for (NodeEntity node : nodes){
                 Integer nodeStatus = SceneEnum.CREATE.getCode();
                 String ip = null;
-                Integer code = 2;
+                int code = 2;
                 TopologyElement element = getElement(node.getInstanceId(), scene.getMeta());
                 pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
                 pushElement(element, scene, 2);
                 if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), node.getType())){
                     ContainerItem instance = containerService.getInstance(node.getInstanceId());
                     if (Objects.nonNull(instance)){
-                        code = 2;
                         if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())){
                             nodeStatus = SceneEnum.ACTIVE.getCode();
                             JSONObject addresses = instance.getAddresses();
@@ -398,6 +398,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             count++;
                             code = 4;
                         }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getStatus())){
+                            nodeStatus = SceneEnum.ERROR.getCode();
+                            count++;
+                            code = 5;
+                        } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getStatus()) &&
+                                !DateUtil.dateComparison(node.getCreateTime(), node.getUpdateTime(), 10)) {
+                            // 节点创建时间超过10分钟，默认创建失败
                             nodeStatus = SceneEnum.ERROR.getCode();
                             count++;
                             code = 5;
@@ -415,6 +421,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             count++;
                             code = 4;
                         }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getVmState())){
+                            nodeStatus = SceneEnum.ERROR.getCode();
+                            count++;
+                            code = 5;
+                        } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getVmState()) &&
+                                !DateUtil.dateComparison(node.getCreateTime(), node.getUpdateTime(), 10)) {
+                            // 节点创建时间超过10分钟，默认创建失败
                             nodeStatus = SceneEnum.ERROR.getCode();
                             count++;
                             code = 5;

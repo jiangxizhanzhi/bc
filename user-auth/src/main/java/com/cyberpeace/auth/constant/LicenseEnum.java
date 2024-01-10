@@ -13,7 +13,8 @@ public enum LicenseEnum implements GenericEnum {
     LICENSE_FAIL(1, "失败"),
     LICENSE_INVALID(2, "无效"),
     LICENSE_EXPIRED(3, "已过期"),
-    LICENSE_NOT_ACTIVATED(4, "未激活");
+    LICENSE_NOT_ACTIVATED(4, "未激活"),
+    SERIAL_NUMBER_EXCEPTION(5, "序列号异常");
 
     @Getter
     public Integer code;

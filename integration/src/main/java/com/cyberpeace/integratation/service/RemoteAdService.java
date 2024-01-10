@@ -5,6 +5,7 @@ import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 竞赛外部接口调用
@@ -31,5 +32,13 @@ public interface RemoteAdService {
 	 * @return 用户及其参与次数的map
 	 */
 	List<JSONObject> competitionListWithMinScore(String startTime, String endTime, List<String> userIds, Integer minScore);
+
+	/**
+	 * 查询指定用户的 考试通过率
+	 *
+	 * @param userIds   用户ids
+	 * @return 用户及其参与次数的map
+	 */
+	Map<String, String> examPassList(List<String> userIds);
 
 }

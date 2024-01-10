@@ -17,6 +17,7 @@ import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.model.*;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -95,6 +96,9 @@ public class PersonController {
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private RemoteAdService remoteAdService;
+
 
     @ApiOperation("课程学习统计")
     @GetMapping("/course-stats")
@@ -154,6 +158,7 @@ public class PersonController {
         int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
         int operationPracticeAllCount = personCenterMapper.selectOperationPracticeByAuth().size();
 
+		Map<String, String> userExamPassMap = remoteAdService.examPassList(userIds);
 
         res = userInfos.stream().map(s -> {
             StudyRecord record = map.get(s.getResourceId());
@@ -166,6 +171,9 @@ public class PersonController {
             if (lessonMap.containsKey(s.getResourceId())) {
                 personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ? 0 : lessonMap.get(s.getResourceId())*100 / lessonAllCount);
             }
+            if(userExamPassMap.containsKey(s.getResourceId())){
+            	personStatsBo.setExamPassRate(Integer.parseInt(userExamPassMap.get(s.getResourceId())));
+			}
             personStatsBo.setUsername(s.getUsername());
             personStatsBo.setName(s.getName());
             return personStatsBo;

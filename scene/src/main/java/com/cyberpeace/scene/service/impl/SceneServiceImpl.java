@@ -402,8 +402,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             count++;
                             code = 5;
                         } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getStatus()) &&
-                                !DateUtil.dateComparison(node.getCreateTime(), node.getUpdateTime(), 10)) {
+                                !Boolean.TRUE.equals(DateUtil.dateComparison(node.getCreateTime(), node.getUpdateTime(), 10))) {
                             // 节点创建时间超过10分钟，默认创建失败
+                            log.error("scene {} container_node creating long time is {}", scene.getResourceId(), node.getInstanceId());
                             nodeStatus = SceneEnum.ERROR.getCode();
                             count++;
                             code = 5;
@@ -425,7 +426,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             count++;
                             code = 5;
                         } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getVmState()) &&
-                                !DateUtil.dateComparison(node.getCreateTime(), node.getUpdateTime(), 10)) {
+                                !Boolean.TRUE.equals(DateUtil.dateComparison(node.getCreateTime(), node.getUpdateTime(), 10))) {
+                            log.error("scene {} vm_node creating long time is {}", scene.getResourceId(), node.getInstanceId());
                             // 节点创建时间超过10分钟，默认创建失败
                             nodeStatus = SceneEnum.ERROR.getCode();
                             count++;

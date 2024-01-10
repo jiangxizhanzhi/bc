@@ -47,9 +47,9 @@ public class SceneScheduled {
     }
 
     /**
-     * 场景状态检查，30秒执行一次
+     * 场景状态检查，10秒执行一次
      */
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     public void sceneState(){
         sceneService.sceneState();
     }

@@ -37,5 +37,16 @@ public class DateUtil {
 		return cal1.get(Calendar.YEAR)==cal2.get(Calendar.YEAR);
 	}
 
+	/**
+	 * 比较两个日期的差值是否在指定区间内
+	 */
+	public static Boolean dateComparison (Date date1, Date date2, Integer min) {
+		long absDate = Math.abs(date1.getTime() - date2.getTime());
+		if (absDate <= 60L * 1000 * min) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+
 	private DateUtil() {}
 }

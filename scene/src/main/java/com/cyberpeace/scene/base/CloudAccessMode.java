@@ -1,0 +1,42 @@
+package com.cyberpeace.scene.base;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+
+@Data
+public class CloudAccessMode extends AccessMode {
+
+    @ApiModelProperty(value = "接入模式id")
+    private String id;
+
+    @ApiModelProperty(value = "基础协议tcp/udp")
+    private String baseProtocol;
+
+    @ApiModelProperty(value = "开启代理")
+    private Boolean proxy;
+
+    @ApiModelProperty(value = "接入ip")
+    private String accessIp;
+
+    @ApiModelProperty(value = "接入端口")
+    private Integer accessPort;
+
+    @ApiModelProperty(value = "连接url")
+    private String connectionUrl;
+
+    @ApiModelProperty(value = "连接id")
+    private String connectionId;
+
+    @ApiModelProperty(value = "连接所属用户")
+    private String connectionUser;
+
+    @ApiModelProperty(value = "代理id")
+    private String proxyId;
+
+    @ApiModelProperty(value = "是否连通")
+    private Boolean available;
+
+    @ApiModelProperty(value = "创建端口映射的id")
+    private String fwdId;
+}

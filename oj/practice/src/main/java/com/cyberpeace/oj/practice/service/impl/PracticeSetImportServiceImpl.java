@@ -101,6 +101,8 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		List<PracticeOperation> operations = StreamApiUtils.distinctByColumn(operationList,
 				PracticeOperation::getTitle);
 
+		boolean isTrue = "是".equals(practiceSet.getIsTrue());
+		operationList.forEach(a->a.setIsTrue(isTrue));
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -124,6 +126,8 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		// 习题数据导入
 		List<PracticeTheory> theoryList = practiceTheoryImportService.parseRmTheory(path,
 				practiceSet);
+		boolean isTrue = "是".equals(practiceSet.getIsTrue());
+		theoryList.forEach(a->a.setIsTrue(isTrue));
 
 		return transactionTemplate.execute(status -> {
 			saveOrUpdate(practiceSet);

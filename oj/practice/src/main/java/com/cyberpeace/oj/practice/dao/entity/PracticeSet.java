@@ -45,6 +45,9 @@ public class PracticeSet extends AuthTable {
 	/** 习题集来源 */
 	private String source;
 
+	@TableField(exist = false)
+	private String isTrue;
+
 	public enum PracticeType implements GenericEnum, MdConvertEnum<Integer, String> {
 
 		THEORY(0, "理论基础"), OPERATION(2, "CTF解题");

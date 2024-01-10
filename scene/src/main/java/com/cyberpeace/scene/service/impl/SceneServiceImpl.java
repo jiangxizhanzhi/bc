@@ -328,6 +328,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
                 .in(SceneEntity::getSceneStatus, Arrays.asList(SceneEnum.CREATE.getCode(), SceneEnum.ERROR.getCode())));
         if (!CollectionUtils.isEmpty(list)){
+            log.warn("scene status is creating and error count is {}", list.size());
             for (SceneEntity scene : list){
                 try {
                     if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())){
@@ -340,7 +341,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             pushScenePlugin(scene, networkState, nodeStage, 2, 4);
                         }
                     }else {
-                        pushScenePlugin(scene, 0, 0, 2, 5);
+                        if (Boolean.TRUE.equals(DateUtil.dateComparison(scene.getCreateTime(), scene.getUpdateTime(), 15))) {
+                            updateById(scene); // 更新修改时间
+                            // 场景错误状态超过15分钟不在推送，进度可以从业务接口中获取
+                            pushScenePlugin(scene, 0, 0, 2, 5);
+                        }
                     }
                 }catch (Exception e){
                     log.error("scene {} state error : {}", scene, e);

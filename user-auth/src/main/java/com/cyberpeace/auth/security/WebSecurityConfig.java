@@ -110,6 +110,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/auth/user",
 						"/system_config/query",
 						"/oj/watermark/**",
+						"/oj/admin/course/rm/import",
+						"/oj/admin/practice/import/rm/theory",
+						"/oj/admin/practice/import/rm/ctf",
+						"/cscenes/import_resource_center",
+						"/cr/noAuth/batchLoadMD",
+						"/exec/nfs/mount/**",
+						"/oj/admin/course/rm/import-combine",
+						"/cr/noAuth/drm/check_template_name",
+						"/oj/admin/practice/import/inspect_duplication",
+						"/oj/admin/course/import/inspect_duplication",
 						"/doc.html")
 				.permitAll()
 				// 其他的都需要认证

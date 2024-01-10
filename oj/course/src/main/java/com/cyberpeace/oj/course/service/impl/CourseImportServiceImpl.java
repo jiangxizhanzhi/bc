@@ -172,7 +172,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		course.setCourseType(CourseCategory.CourseType.BASE.getCode());
 		course.setBuiltin(CommonConstant.TRUE);
 		course.setHeat(CommonConstant.ZERO);
-		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		course.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		course.setReadAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
 		course.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		course.setOperationAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));

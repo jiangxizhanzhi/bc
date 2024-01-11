@@ -53,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.*;
@@ -272,7 +273,8 @@ public class PersonController {
 	@ApiOperation("日程表")
 	@GetMapping("/study_calendar")
 	public BaseRsp<List<StudyCalendarRes>> studyCalendar(@RequestParam(value = "startTime") String  startTime,
-												   @RequestParam(value = "endTime") String  endTime) {
+														 @RequestParam(value = "endTime") String  endTime, HttpServletRequest request) {
+		CommonContext.setAuthorization(request.getHeader("Authorization"));
 		return new BaseRsp<>(personCenterService.studyCalendar(startTime, endTime));
 	}
 

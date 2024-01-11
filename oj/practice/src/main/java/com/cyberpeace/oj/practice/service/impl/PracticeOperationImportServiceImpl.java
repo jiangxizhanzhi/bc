@@ -252,6 +252,7 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		operation.setBuiltin(CommonConstant.TRUE);
 		operation.setPracticeSetId(practiceSet.getResourceId());
 		operation.setIsPublic(CommonConstant.TRUE);
+		operation.setCategory(0);
 
 		PracticeOperation practiceOperation = operationData.toJavaObject(PracticeOperation.class);
 		operation.setTitle(practiceOperation.getTitle());

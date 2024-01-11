@@ -361,6 +361,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                 adStudyHistoryRes.setResourceId(studyHistory.getString("resource_id"));
                 adStudyHistoryRes.setName(studyHistory.getString("name"));
                 adStudyHistoryRes.setType(StudyHistoryRes.TypeEnum.EXAM.getCode());
+                adStudyHistoryRes.setDate(jsonObject.getString("key"));
                 lessonList.add(adStudyHistoryRes);
             }
         }

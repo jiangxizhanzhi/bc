@@ -175,6 +175,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		practiceSet.setPracticeCount(CommonConstant.ZERO);
+		practiceSet.setSource(practiceSet.getName());
 
 		if (StringUtils.isBlank(existSetId)) {
 			practiceSet.setResourceId(IDGeneratorUtil.getID());

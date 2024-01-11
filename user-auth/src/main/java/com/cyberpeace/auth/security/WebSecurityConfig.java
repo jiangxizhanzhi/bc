@@ -2,7 +2,7 @@ package com.cyberpeace.auth.security;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.common.util.ConfigUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,12 +11,14 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
 import com.cyberpeace.auth.security.handler.*;
 import com.cyberpeace.auth.security.service.CustomizeAuthenticationServiceImpl;
+import com.cyberpeace.common.util.ConfigUtil;
 
 
 /**
@@ -75,6 +77,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 */
 	@Resource
 	private CustomizeAccessDecisionManager accessDecisionManager;
+
+	@Autowired
+	private SessionRegistry sessionRegistry;
 
 	private static final Integer maxNumSession = Integer.parseInt(ConfigUtil.getContextProperty("login.count.max"));
 
@@ -149,6 +154,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				 .and().sessionManagement()
 				// 同一个账号支持同时登录的最大设备数, 如果超过最大设备数，会将最早的登录设备被挤下线
 				 .maximumSessions(maxNumSession)
+				 .sessionRegistry(sessionRegistry)
 				// true,则阻止用户在达到最大值会话 （int） 时进行身份验证,false:则（默认），允许进行身份验证的用户访问，并且现有用户的会话已过期
 //				 maxSessionsPreventsLogin(true).
 				// 会话失效(账号被挤下线)处理逻辑

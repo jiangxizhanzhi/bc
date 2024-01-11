@@ -1,9 +1,13 @@
 package com.cyberpeace.auth.security.handler;
 
-import com.cyberpeace.auth.security.handler.bo.AuthFailureRsp;
-import com.cyberpeace.auth.util.CommonUtil;
-import com.cyberpeace.common.model.BaseRsp;
-import lombok.extern.slf4j.Slf4j;
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,12 +15,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.cyberpeace.auth.security.handler.bo.AuthFailureRsp;
+import com.cyberpeace.auth.util.CommonUtil;
 
-import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 登录失败处理逻辑
@@ -66,7 +68,8 @@ public class CustomizeAuthenticationFailureHandler implements AuthenticationFail
         } else {
             log.error("e", e);
             //其他错误
-            CommonUtil.responseJson(response, new AuthFailureRsp("登录失败"), SC_INTERNAL_SERVER_ERROR);
+            String msg = e.getMessage() == null ? "登录失败" : e.getMessage();
+            CommonUtil.responseJson(response, new AuthFailureRsp(msg), SC_INTERNAL_SERVER_ERROR);
         }
     }
 }

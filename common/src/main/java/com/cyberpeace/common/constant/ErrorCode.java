@@ -325,5 +325,10 @@ public final class ErrorCode {
 	 */
 	public static final String ACTIVATION_CODE_NOT_MATCH = "100093";
 
+	/**
+	 * 同时登录用户达到最大数量
+	 */
+	public static final String MAX_CONCURRENT_SESSIONS = "100094";
+
 	private ErrorCode() {}
 }

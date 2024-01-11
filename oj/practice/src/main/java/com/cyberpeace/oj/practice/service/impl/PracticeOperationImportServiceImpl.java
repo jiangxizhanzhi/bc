@@ -274,6 +274,7 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 			String[] split = s.split(",");
 			for (String s1 : split) {
 				s1=s1.replaceAll("'","");
+				s1=s1.replaceAll(" ","");
 				s1=s1.replaceAll("\\[","");
 				s1=s1.replaceAll("\\]","");
 				if (StringUtils.isNotBlank(s1)) {

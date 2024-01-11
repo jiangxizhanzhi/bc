@@ -94,6 +94,15 @@ public final class ResourceCenterYmlParser {
         File file = new File(envServerYmlPath);
         if (file.exists()) {
             ImageParseResult imageParseResult = new FilePathYmlParser<>(envServerYmlPath, ImageParseResult.class).parse();
+            for (Map.Entry<String, ImageInfoParseResult> entry : imageParseResult.getServers().entrySet()) {
+
+                String logo = StringUtils.replace(envServerYmlPath, "servers.yml", "") + entry.getValue().getLOGO();
+                if (new File(logo).exists()) {
+                    String desLogo = CPMS + IDGeneratorUtil.getID() + FILE_PATH_SEPARATOR + entry.getValue().getLOGO();
+                    FileUtil.copyFile(logo, desLogo);
+                    entry.getValue().setLOGO(desLogo);
+                }
+            }
             var servers = imageParseResult.getServers();
             addAllPrivateKey(servers, envServerYmlPath);
             results.add(imageParseResult);

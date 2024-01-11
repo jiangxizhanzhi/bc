@@ -1,6 +1,8 @@
 package com.cyberpeace.scene.sceneimport.convert;
 
 import com.cyberpeace.scene.base.*;
+import com.cyberpeace.scene.constant.DefaultImageUrl;
+import com.cyberpeace.scene.constant.TargetConstant;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -10,10 +12,7 @@ import com.cyberpeace.scene.sceneimport.parse.result.NetworkElementParseResult;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @Description
@@ -43,7 +42,7 @@ class NetworkElementConverter implements IConverter {
         sceneConfigElementBO.setId(network.getId());
         sceneConfigElementBO.setType(BaseSceneElementModel.Type.SWITCH);
         //不一致 element icon2
-//        sceneConfigElementBO.setIcon2(DefaultImgUtil.pathToFdfsUrl(CommonConstant.DefaultImageUrl.SWITCHER));
+        sceneConfigElementBO.setIcon2(DefaultImageUrl.SWITCHER);
         List<BaseSceneElementPortBO> ports = new ArrayList<>();
         sceneConfigElementBO.setPorts(ports);
         sceneConfigElementBO.setDisplayContext(network.getDisplayContext());
@@ -53,7 +52,56 @@ class NetworkElementConverter implements IConverter {
             Origin origin = new Origin(formatDouble(xy[0]), formatDouble(xy[1]));
             sceneConfigElementBO.setPosition2(JsonCommon.stringify(origin));
         }
-
+        BaseCloudPluginSceneElementBO pluginElement = new BaseCloudPluginSceneElementBO();
+        pluginElement.setCidr(network.getCidr());
+        pluginElement.setGateway(network.getGateway());
+        if (network.getDhcp() == null) {
+            // dhcp 默认开启
+            pluginElement.setDhcp(true);
+        } else {
+            pluginElement.setDhcp("on".equals(network.getDhcp()) || "true".equals(network.getDhcp()));
+        }
+        if (StringUtils.isNotEmpty(network.getDhcpPool())) {
+            List<AllocationPool> allocationList = new ArrayList<>();
+            String[] allocationStrs = StringUtils.split(network.getDhcpPool(), ",");
+            if (allocationStrs != null && allocationStrs.length > 0) {
+                for (String dhcpStr : allocationStrs) {
+                    String[] dhcpStartAndEnd = StringUtils.split(dhcpStr, "-");
+                    if (dhcpStartAndEnd != null && dhcpStartAndEnd.length == 2) {
+                        AllocationPool allocationPool = new AllocationPool();
+                        allocationPool.setStart(dhcpStartAndEnd[0]);
+                        allocationPool.setEnd(dhcpStartAndEnd[1]);
+                        allocationList.add(allocationPool);
+                    }
+                }
+                if (CollectionUtils.isNotEmpty(allocationList)) {
+                    pluginElement.setAllocationPools(allocationList);
+                }
+            }
+        }
+        if (!StringUtils.isEmpty(network.getDns())) {
+            if (network.getDns().contains(",")) {
+                String[] dnsArray = StringUtils.split(network.getDns(), ",");
+                pluginElement.setDnsNameservers(Arrays.asList(dnsArray));
+            } else {
+                pluginElement.setDnsNameservers(Arrays.asList(network.getDns()));
+            }
+        }
+        pluginElement.setGateway(network.getGateway());
+        if (network.getId().toLowerCase().startsWith("internet")) {
+            // id以internet开头,则是外部网络
+            pluginElement.setRole(BaseCloudPluginSceneElementModel.Role.VIRTUAL_EXTERNAL_NETWORK);
+            pluginElement.setImage(TargetConstant.DefaultTargetName.NETWORK_EXTERNAL);
+        } else {
+            if (container.getSimpleLayer3Switch().contains(network.getId())) {
+                pluginElement.setRole(BaseCloudPluginSceneElementModel.Role.VIRTUAL_LAYER_3_SIMPLE_SWITCH);
+            } else {
+                pluginElement.setRole(BaseCloudPluginSceneElementModel.Role.VIRTUAL_LAYER_2_GATEWAY);
+            }
+            pluginElement.setImageType(BaseCloudPluginSceneElementModel.ImageType.SIMPLE);
+            pluginElement.setImage(TargetConstant.DefaultTargetName.DEFAULT_NETWORK);
+        }
+        container.putPluginElement(sceneConfigElementBO.getId(), pluginElement);
 
 
         // 判断和其他节点是否有连线

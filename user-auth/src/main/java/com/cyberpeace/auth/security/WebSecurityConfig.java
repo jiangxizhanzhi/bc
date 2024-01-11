@@ -125,6 +125,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/cr/noAuth/drm/check_template_name",
 						"/oj/admin/practice/import/inspect_duplication",
 						"/oj/admin/course/import/inspect_duplication",
+						"/scene/topology",
 						"/doc.html")
 				.permitAll()
 				// 其他的都需要认证

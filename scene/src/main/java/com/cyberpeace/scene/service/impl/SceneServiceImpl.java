@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.scene.constant.enums.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -28,10 +29,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
-import com.cyberpeace.scene.constant.enums.SceneEnum;
-import com.cyberpeace.scene.constant.enums.StageEnum;
-import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
 import com.cyberpeace.scene.controller.rsp.SceneDataRsp;
@@ -596,7 +593,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             JSONObject cpcloud = new JSONObject();
             cpcloud.put("cpcloud", getElementPlugin(element));
             sceneData.setSceneElementPortPluginData(cpcloud);
-            sceneData.setSceneElementPluginData(cpcloud);
+            sceneData.setSceneElementPluginData(makeElementPluginData(element));
 
             WsData data = new WsData();
             data.setType("scene_element");
@@ -605,6 +602,21 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }catch (Exception e){
             log.error("push message error : {}", e);
         }
+    }
+
+
+    private JSONObject makeElementPluginData(TopologyElement element) {
+        JSONObject elementJson = new JSONObject();
+        Integer portNum = element.getPorts() == null ? 0 : element.getPorts().size();
+        RoleEnum roleEnum = RoleEnum.getRoleEnum(element.getType());
+        if (!Objects.isNull(roleEnum)) {
+            elementJson.put("role", roleEnum.getValue());
+            elementJson.put("image_type", roleEnum.getImageType());
+            elementJson.put("electric_port_number", portNum);
+        }
+        JSONObject cpcloud = new JSONObject();
+        cpcloud.put(JsonKeyConstant.CP_CLOUD, elementJson);
+        return cpcloud;
     }
 
     private JSONObject getElementPlugin(TopologyElement element){

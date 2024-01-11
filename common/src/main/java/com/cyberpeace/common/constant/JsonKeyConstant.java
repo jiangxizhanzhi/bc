@@ -105,5 +105,7 @@ public final class JsonKeyConstant {
 
 	public static final String MESSAGE = "message";
 
+	public static final String CP_CLOUD = "cpcloud";
+
 	private JsonKeyConstant() {}
 }

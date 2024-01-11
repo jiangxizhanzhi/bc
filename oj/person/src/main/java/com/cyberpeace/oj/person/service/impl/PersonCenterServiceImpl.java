@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.person.controller.req.IndexCategoryReq;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -88,6 +89,8 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Autowired
     IndexInfoService indexInfoService;
+    @Autowired
+    private RemoteAdService remoteAdService;
 
     @Override
     public IPage<PersonComment> pageComment(Page page, String userId, String parent,
@@ -315,10 +318,12 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         res.setTheoryLessonAllCount(lessonCount.getTheoryLessonAllCount());
         res.setExpLessonAllCount(lessonCount.getExpLessonAllCount());
         //获取练习正确率
+        Map<String, String> userExamPassMap = remoteAdService.examPassList(Collections.singletonList(userId));
+        Integer passCount = Integer.valueOf(userExamPassMap.getOrDefault("pass_count", "0"));
         StudyRecord practiceByUser = personCenterMapper.selectSlovedPracticeByUser(userId);
         Integer operationPracticeCount = practiceByUser.getOperationPracticeCount();
         Integer theoryPracticeCount = practiceByUser.getTheoryPracticeCount();
-        res.setOperationPracticeCount(null == operationPracticeCount ? 0 : operationPracticeCount);
+        res.setOperationPracticeCount(null == operationPracticeCount ? 0+passCount : operationPracticeCount+passCount);
         res.setTheoryPracticeCount(null == theoryPracticeCount ? 0 : theoryPracticeCount);
         res.setPracticeCount(res.getOperationPracticeCount()+res.getTheoryPracticeCount());
         int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
@@ -326,7 +331,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         res.setOperationPracticeAllCount(operationPracticeAllCount);
         res.setTheoryPracticeAllCount(theoryPracticeAllCount);
         res.setPracticeAllCount(res.getOperationPracticeAllCount()+res.getTheoryPracticeAllCount());
-        //TODO 考试通过率
 
         return res;
     }

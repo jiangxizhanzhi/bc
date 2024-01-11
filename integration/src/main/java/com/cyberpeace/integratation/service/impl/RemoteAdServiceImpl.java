@@ -77,7 +77,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		HashMap<String, String> map = new HashMap<>();
 		for (String key : jsonObject.keySet()) {
 			JSONObject object = jsonObject.getJSONObject(key);
-			map.put(key, object.getString("pass_rate").replace(".0",""));
+			map.put(key, object.getString(key).replace(".0",""));
 		}
 		return map;
 	}

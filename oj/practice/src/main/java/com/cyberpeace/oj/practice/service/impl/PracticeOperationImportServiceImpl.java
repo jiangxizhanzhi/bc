@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.FileSunffixConstant;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -267,10 +269,21 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		}
 
 		String[] multiContent = filedContent.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
-		List<String> contents = StreamApiUtils.map(Arrays.asList(multiContent), String::trim);
-		List<String> result = StreamApiUtils.filter(contents, StringUtils::isNotBlank);
+		List<String> res = new ArrayList<>();
+		for (String s : multiContent) {
+			String[] split = s.split(",");
+			for (String s1 : split) {
+				s1=s1.replaceAll("'","");
+				s1=s1.replaceAll("\\[","");
+				s1=s1.replaceAll("\\]","");
+				if (StringUtils.isNotBlank(s1)) {
+					res.add(s1);
+				}
+			}
+		}
 
-		return JsonUtil.arrayToString(result);
+
+		return JSON.toJSONString(res);
 	}
 
 	/** 处理实操题答案**/

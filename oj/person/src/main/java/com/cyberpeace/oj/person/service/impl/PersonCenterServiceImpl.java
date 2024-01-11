@@ -366,7 +366,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         List<ProgressPracticeRes> res = new ArrayList<>();
         for (PracticeCategory practiceCategory : practiceCategories) {
             ProgressPracticeRes re = theoryMap.getOrDefault(practiceCategory.getName(), new ProgressPracticeRes(0,0));
-
+            if(null == re.getCategoryName()){
+                continue;
+            }
             BigDecimal theoryCount = new BigDecimal(re.getCount()*30);
             BigDecimal theoryRate =re.getSum()==0?BigDecimal.ZERO: theoryCount.divide(new BigDecimal(re.getSum()),2,BigDecimal.ROUND_HALF_UP);
             Integer coverage = categoryCoverageMap.getOrDefault(re.getCategoryName(), 0);

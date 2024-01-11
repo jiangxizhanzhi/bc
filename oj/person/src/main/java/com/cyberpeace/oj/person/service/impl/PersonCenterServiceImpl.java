@@ -110,18 +110,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                                        Integer businessType, Integer practiceType) {
         Integer noteType = Note.NoteType.NOTE.getCode();
         List<String> resourceIds = new ArrayList<>();
-        if (null != authContext) {
-            List<String> businessIds = personCenterMapper.selectByUserId(userId, noteType);
-            List<String> courseIds = courseMapper.selectByAuth(authContext);
-            List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
-            resourceIds.addAll(publicCourses);
-            List<String> lessons = personCenterMapper.selectLessonByAuth(publicCourses);
-            resourceIds.addAll(lessons);
-            resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
-            resourceIds.addAll(personCenterMapper.selectAfterclassPracticeByAuth(lessons));
-            resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
-            resourceIds.retainAll(businessIds);
-        }
         IPage<PersonNote> iPage = personCenterMapper.selectNoteByUser(page, userId, noteType,
                 resourceIds, businessType, practiceType);
         return iPage.convert(this::noteToBo);

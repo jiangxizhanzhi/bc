@@ -114,6 +114,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui/**",
 						"/favicon.ico",
 						"/license/**",
+						"/sy/**",
 						"/auth/user",
 						"/system_config/query",
 						"/oj/watermark/**",

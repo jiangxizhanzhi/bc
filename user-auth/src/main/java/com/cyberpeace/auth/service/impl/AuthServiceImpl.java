@@ -80,8 +80,10 @@ public class AuthServiceImpl implements AuthService {
 
 		// 判断系统序列号是否与系统硬件匹配
 		String currentSerialNumber = getVerifyJsonSerialNumber();
+        String modelSerialNumber = verifyJsonObject.getString("serialNumber");
 		String uuid = getSysSerialNumber();
-		if (!currentSerialNumber.contains(uuid.substring(0, 19))) {
+		if (!currentSerialNumber.contains(uuid.substring(0, 19))
+				|| !modelSerialNumber.contains(uuid.substring(0, 19))) {
 			log.error("system serial number not match");
 			return LicenseEnum.SERIAL_NUMBER_EXCEPTION;
 		}

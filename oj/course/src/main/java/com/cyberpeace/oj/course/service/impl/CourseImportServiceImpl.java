@@ -176,7 +176,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		course.setReadAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
 		course.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		course.setOperationAuthIds(JsonUtil.toJsonString(Lists.newArrayList()));
-		course.setIsPublic(CommonConstant.FALSE);
+		course.setIsPublic(CommonConstant.TRUE);
 		course.setScore(CommonConstant.ZERO);
 
 		return course;

@@ -26,7 +26,7 @@ public class UserAddReq {
 	private String avatar;
 
 	@ApiModelProperty(value = "是否管理员。false：非管理员，true：管理员")
-	private Boolean admin;
+	private Boolean admin = false;
 
 	@ApiModelProperty(value = "过期时间")
 	private Date expireTime;

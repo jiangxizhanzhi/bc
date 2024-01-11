@@ -3,7 +3,9 @@ package com.cyberpeace.oj.course.controller.admin;
 import java.io.File;
 import java.util.List;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.auth.domain.SysUser;
+import com.cyberpeace.auth.service.SysUserService;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -46,6 +48,9 @@ public class AdminCourseImportController {
 	@Autowired
 	private CourseDumpService courseDumpService;
 
+	@Autowired
+	private SysUserService sysUserService;
+
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
@@ -60,13 +65,12 @@ public class AdminCourseImportController {
 				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
 			}
 
-			UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
-			AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
-			UserInfoContext.setUserContext(userInfo);
+			SysUser sysUser = sysUserService.getByUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+			UserInfoContext.setUserContext(sysUser);
 
 			// 执行课程数据导入
 			Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),
-					courseImportReq.getEnvReqs(),courseImportReq.getOperationEnvReqs(), authContext);
+					courseImportReq.getEnvReqs(),courseImportReq.getOperationEnvReqs(), null);
 			return new BaseRsp<>(result);
 		} catch (Exception e) {
 			log.error("Course import failed! course_path=[{}] catch error:", courseImportReq.getPath(), e);

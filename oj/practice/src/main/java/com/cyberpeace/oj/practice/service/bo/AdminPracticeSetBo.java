@@ -42,4 +42,6 @@ public class AdminPracticeSetBo extends AuthTable {
 	@ApiModelProperty("授权访问人数量")
 	private Integer readCount;
 
+	@ApiModelProperty("真题标签")
+	private String tag;
 }

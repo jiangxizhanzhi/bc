@@ -48,6 +48,8 @@ public class PracticeSet extends AuthTable {
 	@TableField(exist = false)
 	private String isTrue;
 
+	private String tag;
+
 	public enum PracticeType implements GenericEnum, MdConvertEnum<Integer, String> {
 
 		THEORY(0, "理论基础"), OPERATION(2, "CTF解题");

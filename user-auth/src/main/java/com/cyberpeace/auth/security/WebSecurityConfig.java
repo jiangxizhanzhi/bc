@@ -16,9 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
+import com.cyberpeace.auth.constant.AuthSystemPropertyConstant;
 import com.cyberpeace.auth.security.handler.*;
 import com.cyberpeace.auth.security.service.CustomizeAuthenticationServiceImpl;
-import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cs.service.SystemPropertyService;
 
 
 /**
@@ -81,7 +82,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private SessionRegistry sessionRegistry;
 
-	private static final Integer maxNumSession = Integer.parseInt(ConfigUtil.getContextProperty("login.count.max"));
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -154,7 +156,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //会话管理
 				 .and().sessionManagement()
 				// 同一个账号支持同时登录的最大设备数, 如果超过最大设备数，会将最早的登录设备被挤下线
-				 .maximumSessions(maxNumSession)
+				 .maximumSessions(systemPropertyService.getSystemPropertyInt(AuthSystemPropertyConstant.MAX_LOGIN_COUNT, 1))
 				 .sessionRegistry(sessionRegistry)
 				// true,则阻止用户在达到最大值会话 （int） 时进行身份验证,false:则（默认），允许进行身份验证的用户访问，并且现有用户的会话已过期
 //				 maxSessionsPreventsLogin(true).

@@ -3,8 +3,6 @@ package com.cyberpeace.auth.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,6 +23,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.constant.AuthSystemPropertyConstant;
 import com.cyberpeace.auth.controller.req.UserImportReq;
 import com.cyberpeace.auth.controller.req.UserReq;
 import com.cyberpeace.auth.domain.SysUser;
@@ -42,13 +41,13 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.MultiSelectReq;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.DictInfoService;
+import com.cyberpeace.cs.service.SystemPropertyService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 
@@ -77,12 +76,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	@Autowired
 	private DictInfoService dictInfoService;
 
-	private Integer USER_MAX;
-
-	@PostConstruct
-	public void init(){
-		USER_MAX = Integer.parseInt(ConfigUtil.getContextProperty("user.count.max"));
-	}
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 
 	@Override
 	public void resetPwdself(ResetPwdSelfReq req) {
@@ -372,7 +367,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 	private void currentUserNum(Integer insertNum){
 		int count = count() + insertNum;
-		if (USER_MAX <= count){
+		if (systemPropertyService.getSystemPropertyInt(AuthSystemPropertyConstant.MAX_USER_COUNT, 15) < count){
 			throw new BusinessException(ErrorCode.USER_MAX_NUM);
 		}
 	}

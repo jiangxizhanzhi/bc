@@ -28,6 +28,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.service.SystemPropertyService;
+import com.cyberpeace.scene.constant.ScenePropertyConstant;
 import com.cyberpeace.scene.constant.enums.*;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
@@ -86,6 +88,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     @Autowired
     private ContainerService containerService;
 
+    @Autowired
+    private SystemPropertyService systemPropertyService;
+
     /**
      * 场景自动销毁时间 单位:小时
      */
@@ -101,12 +106,15 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
      */
     private Integer MAX_USER_SCENE_EVENT;
 
-    @PostConstruct
-    public void init(){
-        SCENE_DESTROY = Integer.parseInt(ConfigUtil.getContextProperty("scene.destroy"));
-        MAX_SCENE_EVENT = Integer.parseInt(ConfigUtil.getContextProperty("scene.max.event"));
-        MAX_USER_SCENE_EVENT = Integer.parseInt(ConfigUtil.getContextProperty("scene.max.user.event"));
-    }
+	@PostConstruct
+	public void init() {
+		SCENE_DESTROY = systemPropertyService
+				.getSystemPropertyInt(ScenePropertyConstant.SCENE_DESTROY_TIME, 2);
+		MAX_SCENE_EVENT = systemPropertyService
+				.getSystemPropertyInt(ScenePropertyConstant.MAX_SCENE_COUNT, 10);
+		MAX_USER_SCENE_EVENT = systemPropertyService
+				.getSystemPropertyInt(ScenePropertyConstant.MAX_SCENE_COUNT_PER_USER, 2);
+	}
 
 	@Override
 	public BaseRsp startScene(SceneStartReq req) {

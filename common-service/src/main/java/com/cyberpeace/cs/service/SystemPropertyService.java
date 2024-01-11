@@ -6,4 +6,6 @@ import com.cyberpeace.cs.dao.entity.SystemProperty;
 public interface SystemPropertyService extends IService<SystemProperty> {
 
 	boolean getExportBuiltin();
+
+	Integer getSystemPropertyInt(String name, Integer defaultValue);
 }

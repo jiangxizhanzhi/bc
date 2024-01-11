@@ -11,12 +11,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.auth.constant.AuthSystemPropertyConstant;
 import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.mapper.SysUserMapper;
 import com.cyberpeace.auth.security.TbUser;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cs.service.SystemPropertyService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,8 +35,8 @@ public class CustomizeAuthenticationServiceImpl implements UserDetailsService {
     @Resource
     private SysUserMapper sysUserMapper;
 
-    private static final Integer MAX_CONCURRENT_SESSIONS = Integer
-            .parseInt(ConfigUtil.getContextProperty("user.login.count.max"));
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 
     /**
 	 * 自定义登录逻
@@ -56,7 +57,8 @@ public class CustomizeAuthenticationServiceImpl implements UserDetailsService {
         }
 
         // 判断是否超过最大同时登录用户数
-		if (sessionRegistry.getAllPrincipals().size() >= MAX_CONCURRENT_SESSIONS) {
+		if (sessionRegistry.getAllPrincipals().size() >= systemPropertyService
+				.getSystemPropertyInt(AuthSystemPropertyConstant.MAX_ONLINE_USER_COUNT, 5)) {
 			Boolean isLogin = false;
 			for (Object principal : sessionRegistry.getAllPrincipals()) {
 				if (principal instanceof TbUser) {

@@ -5,7 +5,6 @@ import java.util.*;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.scene.constant.enums.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -29,6 +28,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.scene.constant.enums.*;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
 import com.cyberpeace.scene.controller.rsp.SceneDataRsp;
@@ -122,8 +122,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		// 创建场景
-		SceneEntity scene = createScene(req.getTopologyId(), req.getInstanceId(), userId,
-				req.getInstanceType(), req.getDestroyTime());
+		SceneEntity scene = createScene(req.getTopologyId(), JsonUtil.toJsonString(topology),
+				req.getInstanceId(), userId, req.getInstanceType(), req.getDestroyTime());
 		// 提交创建场景任务
 		executor.submit(new SceneExecutor(sceneJob, topology, scene));
 		log.info("submit create scene mission, scene ：{}", scene);
@@ -132,16 +132,17 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 	@Override
 	public SceneEntity startSceneByTopo(AdSceneStartReq req) {
+        log.info("ad scene start req: {}", JsonUtil.toJsonString(req));
 		JSONObject topo = req.getScene_config().getJSONObject(JsonKeyConstant.TOPOLOGY);
 		Topology topology = topo.toJavaObject(Topology.class);
-		log.info("topology：{}", topology);
 		if (topology == null) {
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		// 创建场景
 		String instanceId = req.getContext().getRaceId() + "_" + req.getContext().getQuestionId();
-		SceneEntity scene = createScene(req.getId(), instanceId, req.getContext().getAccessUserId(),
-				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
+		SceneEntity scene = createScene(req.getId(), topo.toJSONString(), instanceId,
+				req.getContext().getAccessUserId(), req.getContext().getInstanceType(),
+				req.getContext().getDestroyTime());
 		// 提交创建场景任务
 		executor.submit(new SceneExecutor(sceneJob, topology, scene));
 		log.info("submit create scene mission, scene ：{}", scene);
@@ -211,7 +212,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		return sceneData;
 	}
 
-    private SceneEntity createScene(String topologyId, String instanceId, String userId, Integer instanceType, Integer destroy){
+    private SceneEntity createScene(String topologyId, String topo, String instanceId, String userId, Integer instanceType, Integer destroy){
         SceneEntity scene = new SceneEntity();
         scene.setResourceId(IDGeneratorUtil.getID());
         scene.setSceneName(IDGeneratorUtil.getID());
@@ -227,6 +228,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         scene.setInstanceType(instanceType);
         scene.setInstanceId(instanceId);
         scene.setTopologyId(topologyId);
+        scene.setMeta(topo);
         scene.setUserId(userId);
         scene.setSceneTtl(SCENE_DESTROY);
         scene.setSceneStatus(SceneEnum.INIT.getCode());

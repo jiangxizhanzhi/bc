@@ -2,9 +2,11 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -48,10 +50,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -461,10 +461,19 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			return new ArrayList<>();
 		}
 		List<PracticeSet> practiceSets = practiceSetMapper.selectByIdsAndType(authIds, setType);
+		if(practiceSets.isEmpty()){
+			return new ArrayList<>();
+		}
 
 		// 获取习题集创建人ID、名称映射
-		Map<String, String> userNameMap = remoteUserService.getIdNameMap(practiceSets,
-				PracticeSet::getCreateUserId);
+		LambdaQueryWrapper<SysUser> userQuery = new LambdaQueryWrapper<>();
+		List<String> column = StreamApiUtils.getColumn(practiceSets, PracticeSet::getCreateUserId);
+		column = column.stream().filter(StringUtils::isNotBlank)
+				.distinct().collect(Collectors.toList());
+		userQuery.in(SysUser::getResourceId, column);
+		List<SysUser> sysUsers = sysUserService.list(userQuery);
+		Map<String, String> userNameMap = new HashMap<>();
+		sysUsers.forEach(user-> userNameMap.put(user.getResourceId(), user.getName()));
 
 		return StreamApiUtils.map(practiceSets,
 				practiceSet -> entityToSetBo(practiceSet, userNameMap));

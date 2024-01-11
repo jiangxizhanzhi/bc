@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.person.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -337,13 +339,34 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Override
     public List<StudyCalendarRes> studyCalendar(String startTime, String endTime) {
+        List<StudyCalendarRes> res = new ArrayList<>();
         String userId = UserInfoContext.getUserContext().getUserId();
         //课时
         List<StudyHistoryRes>  lessonList= personCenterMapper.selectLessonStudyCalendar(startTime, endTime,userId);
         //练习
         List<StudyHistoryRes>  parcticeList= personCenterMapper.selectParcticeStudyCalendar(startTime, endTime,userId);
         //TODO 考试
-        List<StudyCalendarRes> res = new ArrayList<>();
+        JSONArray adHistoryList= remoteAdService.queryHistoryExamList();
+        for (Object o : adHistoryList) {
+            JSONObject jsonObject = (JSONObject) o;
+            StudyCalendarRes studyHistoryRes = new StudyCalendarRes();
+            studyHistoryRes.setDate(jsonObject.getString("key"));
+            JSONArray value = jsonObject.getJSONArray("value");
+            if (value==null) {
+                continue;
+            }
+            List<StudyHistoryRes> historyList = new ArrayList<>();
+            for (Object o1 : value) {
+                JSONObject studyHistory = (JSONObject) o1;
+                StudyHistoryRes adStudyHistoryRes = new StudyHistoryRes();
+                adStudyHistoryRes.setResourceId(studyHistory.getString("resource_id"));
+                adStudyHistoryRes.setName(studyHistory.getString("name"));
+                adStudyHistoryRes.setType(StudyHistoryRes.TypeEnum.EXAM.getCode());
+                historyList.add(adStudyHistoryRes);
+            }
+            res.add(studyHistoryRes);
+        }
+
         lessonList.addAll(parcticeList);
         lessonList.stream().collect(Collectors.groupingBy(StudyHistoryRes::getDate)).forEach((k,v)->{
             StudyCalendarRes studyHistoryRes = new StudyCalendarRes();

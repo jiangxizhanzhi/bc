@@ -33,6 +33,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String EXAM_PASS_LIST_URL;
 
+	private String EXAM_HISTORY_LIST_URL;
+
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
@@ -41,6 +43,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 				+ ConfigUtil.getContextProperty("ad.competition.list");
 		EXAM_PASS_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.exam.pass.list");
+		EXAM_HISTORY_LIST_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.exam.history.list");
 	}
 
 	@Override
@@ -80,6 +84,12 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 			map.put(key, object.getString(key).replace(".0",""));
 		}
 		return map;
+	}
+
+	@Override
+	public JSONArray queryHistoryExamList() {
+		return HttpClientUtil.rawGet(EXAM_HISTORY_LIST_URL, JSONArray.class);
+
 	}
 
 	/** 数据转换使用*/

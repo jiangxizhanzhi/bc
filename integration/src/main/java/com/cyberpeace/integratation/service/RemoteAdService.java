@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 
@@ -40,5 +41,7 @@ public interface RemoteAdService {
 	 * @return 用户及其参与次数的map
 	 */
 	Map<String, String> examPassList(List<String> userIds);
+
+	JSONArray queryHistoryExamList();
 
 }

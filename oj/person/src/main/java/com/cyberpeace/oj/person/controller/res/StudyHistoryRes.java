@@ -20,7 +20,7 @@ public class StudyHistoryRes implements Serializable {
      */
     private Integer businessType;
 
-    private enum TypeEnum {
+    public enum TypeEnum {
 
         LESSON(1, "课程"),
         PRACTICE(2, "题目练习"),
@@ -28,6 +28,14 @@ public class StudyHistoryRes implements Serializable {
         private Integer code;
 
         private String desc;
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
 
         TypeEnum(Integer code, String desc) {
             this.code = code;

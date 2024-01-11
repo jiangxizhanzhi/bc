@@ -345,7 +345,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         List<StudyHistoryRes>  lessonList= personCenterMapper.selectLessonStudyCalendar(startTime, endTime,userId);
         //练习
         List<StudyHistoryRes>  parcticeList= personCenterMapper.selectParcticeStudyCalendar(startTime, endTime,userId);
-        //TODO 考试
+        // 考试
         JSONArray adHistoryList= remoteAdService.queryHistoryExamList();
         for (Object o : adHistoryList) {
             JSONObject jsonObject = (JSONObject) o;
@@ -355,16 +355,14 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             if (value==null) {
                 continue;
             }
-            List<StudyHistoryRes> historyList = new ArrayList<>();
             for (Object o1 : value) {
                 JSONObject studyHistory = (JSONObject) o1;
                 StudyHistoryRes adStudyHistoryRes = new StudyHistoryRes();
                 adStudyHistoryRes.setResourceId(studyHistory.getString("resource_id"));
                 adStudyHistoryRes.setName(studyHistory.getString("name"));
                 adStudyHistoryRes.setType(StudyHistoryRes.TypeEnum.EXAM.getCode());
-                historyList.add(adStudyHistoryRes);
+                lessonList.add(adStudyHistoryRes);
             }
-            res.add(studyHistoryRes);
         }
 
         lessonList.addAll(parcticeList);

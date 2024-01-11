@@ -256,7 +256,7 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 
 		PracticeOperation practiceOperation = operationData.toJavaObject(PracticeOperation.class);
 		operation.setTitle(practiceOperation.getTitle());
-		operation.setContent(practiceOperation.getTitle());
+		operation.setContent(practiceOperation.getContent());
 
 		return operation;
 

@@ -17,7 +17,7 @@ public interface SceneService extends IService<SceneEntity> {
 
     BaseRsp startScene(SceneStartReq req);
 
-    void verify();
+    void verify(String userId);
 
     BaseRsp destroyScene(String sceneId);
 

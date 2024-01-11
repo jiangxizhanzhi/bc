@@ -17,7 +17,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -140,14 +139,20 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 	@Override
 	public SceneEntity startSceneByTopo(AdSceneStartReq req) {
-        log.info("ad scene start req: {}", JsonUtil.toJsonString(req));
+		log.info("ad scene start req: {}", JsonUtil.toJsonString(req));
+		String instanceId = req.getContext().getRaceId() + "_" + req.getContext().getQuestionId();
+		SceneEntity instance = sceneMapper.selectByInstanceId(instanceId,
+				req.getContext().getAccessUserId(), SceneEnum.getCodes());
+		if (null != instance) {
+			throw new BusinessException(ErrorCode.SCENE_ALREADY_EXIST);
+		}
 		JSONObject topo = req.getScene_config().getJSONObject(JsonKeyConstant.TOPOLOGY);
 		Topology topology = topo.toJavaObject(Topology.class);
 		if (topology == null) {
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		// 创建场景
-		String instanceId = req.getContext().getRaceId() + "_" + req.getContext().getQuestionId();
+
 		SceneEntity scene = createScene(req.getId(), topo.toJSONString(), instanceId,
 				req.getContext().getAccessUserId(), req.getContext().getInstanceType(),
 				req.getContext().getDestroyTime());
@@ -244,26 +249,24 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         return scene;
     }
 
-    /**
-     * 验证场景并发数
-     */
-    @Override
-    public void verify(){
-        int sceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), null) + 1;
-        //场景数超过最大值
-        if (sceneCount > MAX_SCENE_EVENT){
-            throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW);
-        }
-        SysUser userInfo = UserInfoContext.getNewUserContext();
-        if (Objects.isNull(userInfo)){
-            throw new BusinessException(ErrorCode.INVALID_SESSION);
-        }
-        int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), userInfo.getResourceId()) + 1;
-        //用户场景数超过最大值
-        if (userSceneCount > MAX_USER_SCENE_EVENT){
-            throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW);
-        }
-    }
+	/**
+	 * 验证场景并发数
+	 * @param userId
+	 */
+	@Override
+	public void verify(String userId) {
+		int sceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), null) + 1;
+		// 场景数超过最大值
+		if (sceneCount > MAX_SCENE_EVENT) {
+			throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW);
+		}
+
+		int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), userId) + 1;
+		// 用户场景数超过最大值
+		if (userSceneCount > MAX_USER_SCENE_EVENT) {
+			throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW);
+		}
+	}
 
     @Override
     public BaseRsp destroyScene(String sceneId) {

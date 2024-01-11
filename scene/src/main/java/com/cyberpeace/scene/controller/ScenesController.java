@@ -1,6 +1,7 @@
 package com.cyberpeace.scene.controller;
 
 
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,9 +46,9 @@ public class ScenesController  {
     @PostMapping("/start")
     @ApiOperation(value = "启动场景")
     public BaseRsp start(@RequestBody SceneStartReq req){
-        opLogService.save(null, OpLogMethodEnum.START.getType(),req.getTargetName(),"启动场景");
         // 验证场景是否超限
-        sceneService.verify();
+        sceneService.verify(UserInfoContext.getNewUserContext().getResourceId());
+        opLogService.save(null, OpLogMethodEnum.START.getType(),req.getTargetName(),"启动场景");
         return sceneService.startScene(req);
     }
 

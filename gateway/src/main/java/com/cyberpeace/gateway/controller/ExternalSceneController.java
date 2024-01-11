@@ -1,5 +1,6 @@
 package com.cyberpeace.gateway.controller;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/gateway/topo")
 public class ExternalSceneController {
 
-	private static final String AD_PREFIX = "ad_";
-
 	@Autowired
 	private SceneService sceneService;
 
@@ -40,7 +39,7 @@ public class ExternalSceneController {
 	@ApiOperation(value = "获取拓扑结构")
 	public BaseRsp<JSONObject>
 			getTopology(@ApiParam(value = "拓扑结构id", name = "id") @RequestParam("id") String id) {
-		if (id.startsWith(AD_PREFIX)) {
+		if (id.startsWith(CommonConstant.AD_PREFIX)) {
 			TopologyEntity entity = topologyService.getById(id);
 			return new BaseRsp<>(JSON.parseObject(entity.getTopology()));
 		} else {
@@ -54,7 +53,7 @@ public class ExternalSceneController {
 	public BaseRsp<JSONObject> copyTopo(@RequestBody JSONObject req) {
 		log.info("ad copy topo request: {}", req);
 		TopologyEntity entity = new TopologyEntity();
-		entity.setTopologyId(AD_PREFIX + IDGeneratorUtil.getID());
+		entity.setTopologyId(CommonConstant.AD_PREFIX + IDGeneratorUtil.getID());
 		req.put("id", entity.getTopologyId());
 		entity.setTopology(JsonUtil.toJsonString(req));
 		topologyService.save(entity);
@@ -71,6 +70,7 @@ public class ExternalSceneController {
 	@ApiOperation("拓扑启动场景")
 	@PostMapping("/start/scene")
 	public BaseRsp<JSONObject> startSceneByTopo(@RequestBody AdSceneStartReq req) {
+		sceneService.verify(req.getContext().getAccessUserId());
 		SceneEntity scene = sceneService.startSceneByTopo(req);
 
 		return this.getSceneBySceneId(req.getContext().getAccessUserId(), scene.getResourceId());

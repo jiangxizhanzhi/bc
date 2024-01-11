@@ -129,4 +129,6 @@ public final class CommonConstant {
 	public static final Integer MAX_TEXT_LEN = ConfigReader.readInt("cr.text.len.max");
 
 	public static final Integer GENERATED_UUID_LENGTH = 32;
+
+	public static final String AD_PREFIX = "ad_";
 }

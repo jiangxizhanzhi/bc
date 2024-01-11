@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -61,18 +63,25 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
         return configDataJson;
     }
 
-    @Override
-    public Topology formatTopology(String topologyId) {
-        LambdaQueryWrapper<TopologyEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(TopologyEntity::getTopologyId, topologyId);
-        TopologyEntity entity = getOne(wrapper);
-        if (entity != null){
-            String topologyInfo = entity.getTopology();
-            Topology topology = JsonUtil.toJsonObject(topologyInfo, Topology.class);
-            return topology;
-        }
-        return null;
-    }
+	@Override
+	public Topology formatTopology(String topologyId) {
+		LambdaQueryWrapper<TopologyEntity> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(TopologyEntity::getTopologyId, topologyId);
+		TopologyEntity entity = getOne(wrapper);
+		if (entity != null) {
+			String topologyInfo = entity.getTopology();
+			Topology topology;
+			if (topologyId.startsWith(CommonConstant.AD_PREFIX)) {
+				topology = JSON.parseObject(topologyInfo)
+						.getJSONObject(JsonKeyConstant.SCENE_CONFIG)
+						.getJSONObject(JsonKeyConstant.TOPOLOGY).toJavaObject(Topology.class);
+			} else {
+				topology = JsonUtil.toJsonObject(topologyInfo, Topology.class);
+			}
+			return topology;
+		}
+		return null;
+	}
 
     @Override
     public Map<String, List<TopologyElement>> getTopologyElementMap(Topology topology) {

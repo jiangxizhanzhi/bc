@@ -115,7 +115,7 @@ public final class ResourceImportConstant {
 	/**
 	 * markdown文件中 习题集映射关系数据映射关系
 	 */
-	public static final String PRACTICE_SET_DATA_MAPPING = "{\"题库名称\":\"name\", \"题库编号\":\"resource_id\", \"题库类型\":\"practice_type\", \"LOGO\":\"logo\", \"是否真题\":\"isTrue\", \"题库说明\":\"desc\"}";
+	public static final String PRACTICE_SET_DATA_MAPPING = "{\"题库名称\":\"name\", \"题库编号\":\"resource_id\", \"题库类型\":\"practice_type\", \"LOGO\":\"logo\", \"是否真题\":\"isTrue\", \"题库说明\":\"desc\", \"真题标签\":\"tag\"}";
 
 	/**
 	 * markdown文件中 实操习题与数据映射关系

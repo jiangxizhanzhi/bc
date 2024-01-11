@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -67,7 +68,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
     private PracticeTheoryMapper practiceTheoryMapper;
 
     @Autowired
-    private RemoteUserService remoteUserService;
+    private SysUserService sysUserService;
 
     @Autowired
     private ResourceCollectionService resourceCollectionService;
@@ -756,7 +757,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
     @Override
     public List<SolvedTop5> getSolvedTop5(String resourceId) {
         List<String> userIds = practiceSolvedMapper.selectUserIdByPracticeId(resourceId);
-        List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
+        List<UserInfo> userInfoList = sysUserService.getUsers(userIds);
         userIds = StreamApiUtils.map(userInfoList, UserInfo::getUserId);
         if (CollectionUtils.isEmpty(userIds)) {
             return new ArrayList<>();

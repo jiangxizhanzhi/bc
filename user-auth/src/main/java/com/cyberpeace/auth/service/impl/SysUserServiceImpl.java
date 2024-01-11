@@ -174,6 +174,25 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
+	public List<UserInfo> getUsers(List<String> userIdList) {
+		if (CollectionUtils.isEmpty(userIdList)){
+			return new ArrayList<>();
+		}
+		QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().in(SysUser::getResourceId,userIdList);
+		List<SysUser> list = this.list(queryWrapper);
+		List<UserInfo> res = new ArrayList<>();
+		list.forEach(item -> {
+			UserInfo userInfo = new UserInfo();
+			userInfo.setName(item.getName());
+			userInfo.setUserId(item.getResourceId());
+			userInfo.setUserName(item.getUsername());
+			res.add(userInfo);
+		});
+		return res;
+	}
+
+	@Override
 	public void updateOnlineTime(Date loginTime,String userId) {
 		if (loginTime == null) {
 			return;

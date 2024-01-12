@@ -88,6 +88,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	@Override
 	public JSONArray queryHistoryExamList() {
+		log.info("ad url {}",EXAM_HISTORY_LIST_URL);
 		return HttpClientUtil.rawGet(EXAM_HISTORY_LIST_URL, JSONArray.class);
 
 	}

@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.person.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -159,7 +160,7 @@ public class PersonController {
         int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
         int operationPracticeAllCount = personCenterMapper.selectOperationPracticeByAuth().size();
 
-		Map<String, String> userExamPassMap = remoteAdService.examPassList(userIds);
+		Map<String, JSONObject> userExamPassMap = remoteAdService.examPassList(userIds);
 
         res = userInfos.stream().map(s -> {
             StudyRecord record = map.get(s.getResourceId());
@@ -173,7 +174,8 @@ public class PersonController {
                 personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ? 0 : lessonMap.get(s.getResourceId())*100 / lessonAllCount);
             }
             if(userExamPassMap.containsKey(s.getResourceId())){
-            	personStatsBo.setExamPassRate(Integer.parseInt(userExamPassMap.get(s.getResourceId())));
+				String passRate = userExamPassMap.getOrDefault(s.getResourceId(), new JSONObject()).getString("pass_rate");
+				personStatsBo.setExamPassRate(passRate==null?0:(int)Double.parseDouble(passRate));
 			}
             personStatsBo.setUsername(s.getUsername());
             personStatsBo.setName(s.getName());

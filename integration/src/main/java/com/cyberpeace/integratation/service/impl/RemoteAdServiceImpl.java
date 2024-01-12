@@ -66,7 +66,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	}
 
 	@Override
-	public Map<String, String> examPassList(List<String> userIds) {
+	public Map<String, JSONObject> examPassList(List<String> userIds) {
 
 		// 无竞赛环境则不调用
 		if (StringUtils.isBlank(adEnvService.getAdHost())) {
@@ -78,10 +78,10 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		body.put("user_ids", userIds);
 		JSONArray jsonArray = HttpClientUtil.post(EXAM_PASS_LIST_URL, body, JSONArray.class);
 		JSONObject jsonObject = jsonArray.getJSONObject(0);
-		HashMap<String, String> map = new HashMap<>();
-		for (String key : jsonObject.keySet()) {
+		HashMap<String, JSONObject> map = new HashMap<>();
+		for (String key : jsonObject.keySet()) {//key userId
 			JSONObject object = jsonObject.getJSONObject(key);
-			map.put(key, object.getString(key).replace(".0",""));
+			map.put(key, object);
 		}
 		return map;
 	}

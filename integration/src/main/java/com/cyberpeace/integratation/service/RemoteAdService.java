@@ -40,7 +40,7 @@ public interface RemoteAdService {
 	 * @param userIds   用户ids
 	 * @return 用户及其参与次数的map
 	 */
-	Map<String, String> examPassList(List<String> userIds);
+	Map<String, JSONObject> examPassList(List<String> userIds);
 
 	JSONArray queryHistoryExamList();
 

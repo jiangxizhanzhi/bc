@@ -11,6 +11,7 @@ import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.scene.base.*;
 import com.cyberpeace.scene.sceneimport.parse.result.image.AccessModeParseResult;
 import com.cyberpeace.scene.sceneimport.parse.result.image.ImageInfoParseResult;
+import lombok.var;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;

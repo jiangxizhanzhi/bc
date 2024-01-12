@@ -1,6 +1,7 @@
 package com.cyberpeace.scene.sceneimport.convert;
 
 import com.cyberpeace.scene.base.BaseCloudPluginSceneElementModel;
+import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 
 

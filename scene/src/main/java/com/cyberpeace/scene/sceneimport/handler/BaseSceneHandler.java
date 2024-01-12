@@ -49,7 +49,7 @@ public class BaseSceneHandler {
                 return;
             }
             elementPorts.forEach(elementPort -> {
-                elementPort.setElement(element);
+//                elementPort.setElement(element);
                 elementPortMap.put(elementPort.getId(), elementPort);
                 portIdElementMap.put(elementPort.getId(), element);
             });

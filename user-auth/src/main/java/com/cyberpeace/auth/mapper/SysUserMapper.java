@@ -1,15 +1,13 @@
 package com.cyberpeace.auth.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.auth.domain.SysUser;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.auth.domain.SysUser;
 
 /**
 * @author dell
@@ -28,8 +26,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
     IPage<SysUser> pageUser(@Param("page") Page page, @Param("pattern") String pattern, @Param("enabled") Integer enabled);
 
-    @Delete("<script>delete from sys_user where id in <foreach collection='ids' item='id' open='(' separator=',' close=')'>#{id}</foreach></script>")
-    int deleteByIds(@Param("ids") List<Integer> ids);
 }
 
 

@@ -3,6 +3,7 @@ package com.cyberpeace.auth.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,7 +39,6 @@ import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.MultiSelectReq;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
@@ -63,16 +63,22 @@ import lombok.extern.slf4j.Slf4j;
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
 	@Autowired
 	private SysUserMapper sysUserMapper;
+
 	@Autowired
 	private RedisIndexedSessionRepository sessionRepository;
+
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
 	@Autowired
 	private AttachmentService attachmentService;
+
 	@Autowired
 	private UtilService utilService;
+
 	@Autowired
 	private DictInfoService dictInfoService;
 
@@ -233,14 +239,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	public void deleteUser(MultiSelectReq req) {
-		if (CollectionUtils.isEmpty(req.getIds())) {
+	public void deleteUser(List<String> idList) {
+		if (CollectionUtils.isEmpty(idList)) {
 			throw new BusinessException(ErrorCode.EMPTY_IDS);
 		}
-//		req.getIds().forEach(id->sysUserMapper.deleteById(id));
-		int i = sysUserMapper.deleteByIds(req.getIds());
+		sysUserMapper.deleteBatchIds(idList);
 		//todo 删除用户账号相关所有数据
-		log.info("delete user {} success", i);
+		log.info("delete user {} success", JsonUtil.toJsonString(idList));
+
+		for (String id : idList) {
+			removeSessions(id);
+		}
 	}
 
 	@Override

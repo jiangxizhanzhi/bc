@@ -1,10 +1,16 @@
 package com.cyberpeace.scene.service.impl;
 
+import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.service.HostService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
@@ -12,12 +18,8 @@ import com.cyberpeace.scene.service.bo.res.ConsoleUrlRes;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
 import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author :   SN
@@ -37,9 +39,6 @@ public class HostServiceImpl implements HostService {
      * 云平台实例地址
      */
     private String CP_INSTANCES;
-
-    @Autowired
-    private NodeMapper nodeMapper;
 
     @Autowired
     private ImageService imageService;

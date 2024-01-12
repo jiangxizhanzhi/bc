@@ -7,6 +7,7 @@ import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.*;
 import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.IdListReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.MultiSelectReq;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -76,8 +77,8 @@ public class UserController {
 	@ApiOperation("删除用户")
 	@DeleteMapping("/user/")
 	@AdminRequired
-	public BaseRsp deleteUser(@RequestBody MultiSelectReq req) {
-		sysUserService.deleteUser(req);
+	public BaseRsp deleteUser(@RequestBody IdListReq req) {
+		sysUserService.deleteUser(req.getIds());
 		return new BaseRsp();
 	}
 

@@ -58,7 +58,7 @@ public class ContainerServiceImpl implements ContainerService {
         req.setImage(uuid);
         req.setName(IDGeneratorUtil.getID());
         CreateContainersRes res = HttpUtil.post(CONTAINER_URL, req, CreateContainersRes.class);
-        log.info("create container end res:{}", req);
+        log.info("create container end res:{}", res);
         return res;
     }
 

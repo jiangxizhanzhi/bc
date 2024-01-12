@@ -6,18 +6,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.auth.controller.req.UserImportReq;
 import com.cyberpeace.auth.controller.req.UserReq;
-import com.cyberpeace.auth.security.TbUser;
-import com.cyberpeace.common.model.BaseRsp;
-import org.springframework.session.Session;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.service.bo.*;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.MultiSelectReq;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 
 /**
@@ -52,7 +47,7 @@ public interface SysUserService extends IService<SysUser> {
 	 */
 	void createUser(UserAddReq req);
 
-	void deleteUser(MultiSelectReq req);
+	void deleteUser(List<String> idList);
 
 	void updateUser(UserModifyReq req);
 

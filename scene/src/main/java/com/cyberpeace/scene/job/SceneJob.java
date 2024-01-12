@@ -1,36 +1,30 @@
 package com.cyberpeace.scene.job;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.cyberpeace.common.component.MyWebSocketHandler;
-import com.cyberpeace.common.constant.WsPath;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.commons.compress.utils.Lists;
+
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
-import com.cyberpeace.scene.constant.enums.StageEnum;
-import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
-import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.service.*;
-import com.cyberpeace.scene.service.bo.*;
+import com.cyberpeace.scene.service.bo.Net;
+import com.cyberpeace.scene.service.bo.Topology;
+import com.cyberpeace.scene.service.bo.TopologyElement;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
 import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author :   SN
@@ -101,7 +95,6 @@ public class SceneJob {
         log.info("start scene : {}", scene.getSceneName());
         //获取拓扑元素
         Map<String, List<TopologyElement>> topologyMap = topologyService.getTopologyElementMap(topology);
-        SceneMapper sceneMapper = SpringContextUtil.getBeanByClass(SceneMapper.class);
         if(Objects.nonNull(topologyMap)){
             try{
                 int count = 0;

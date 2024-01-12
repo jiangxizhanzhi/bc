@@ -22,12 +22,15 @@ public class SceneScheduled {
 
     private String REPAIR_FILE;
 
+    private Boolean SCENE_STATE_FLAG;
+
     @Autowired
     private SceneService sceneService;
 
     @PostConstruct
     public void init(){
         REPAIR_FILE = ConfigUtil.getContextProperty("scene.repair.file");
+        SCENE_STATE_FLAG = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.scene.state"));
     }
 
     /**
@@ -51,6 +54,11 @@ public class SceneScheduled {
      */
     @Scheduled(cron = "0/10 * * * * ?")
     public void sceneState(){
-        sceneService.sceneState();
+        if (Boolean.TRUE.equals(SCENE_STATE_FLAG)) {
+            sceneService.sceneState();
+        }else {
+            // 要调试请修改dev配置为true
+            log.info("sceneService.sceneState：本地开发环境，默认不查询场景状态，会影响线上场景进度推送功能");
+        }
     }
 }

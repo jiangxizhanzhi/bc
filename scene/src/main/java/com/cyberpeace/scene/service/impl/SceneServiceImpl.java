@@ -38,6 +38,7 @@ import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
+import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.job.SceneExecutor;
 import com.cyberpeace.scene.job.SceneJob;
@@ -80,6 +81,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
     @Autowired
     private NodeService nodeService;
+
+    @Autowired
+    private NodeMapper nodeMapper;
 
     @Autowired
     private HostService hostService;
@@ -221,8 +225,27 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			sceneDataRsp.setProgressPercentage(percentage);
 			topology.setScene(sceneDataRsp);
 			topology.setAccessModes();
+            setPortIp(topology, scene.getResourceId());
 		}
 		return sceneData;
+	}
+
+	private void setPortIp(Topology topology, String sceneId) {
+		List<NodeEntity> nodeEntityList = nodeMapper.selectBySid(sceneId);
+		if (CollectionUtils.isEmpty(nodeEntityList)) {
+			return;
+		}
+		Map<String, NodeEntity> nodeMap = StreamApiUtils.toMap(nodeEntityList, NodeEntity::getNid,
+				n -> n);
+		for (TopologyElement element : topology.getElements()) {
+			NodeEntity node = nodeMap.get(element.getId());
+			if (null == node) {
+				continue;
+			}
+			for (ElementPort port : element.getPorts()) {
+				port.setIp(node.getIp());
+			}
+		}
 	}
 
     private SceneEntity createScene(String topologyId, String topo, String instanceId, String userId, Integer instanceType, Integer destroy){

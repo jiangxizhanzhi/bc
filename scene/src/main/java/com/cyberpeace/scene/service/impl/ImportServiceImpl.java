@@ -1,6 +1,8 @@
 package com.cyberpeace.scene.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.scene.base.BaseSceneElementModel;
 import com.cyberpeace.scene.base.BaseSceneTopologyBO;
@@ -31,7 +33,9 @@ public class ImportServiceImpl implements ImportService {
         List<ImageParseResult> imageInfos =ResourceCenterYmlParser.parseImageServicesYml(ymlFilePath, imageFilePath);
         BaseSceneTopologyBO convert = ResourceCenterConverter.convert(ymlParseResult, imageInfos, ymlFilePath);
         TopologyEntity topologyEntity = new TopologyEntity();
-        topologyEntity.setTopology(JSON.toJSONString(convert));
+        SerializeConfig serializeConfig=new SerializeConfig();
+        serializeConfig.propertyNamingStrategy= PropertyNamingStrategy.SnakeCase;
+        topologyEntity.setTopology(JSON.toJSONString(convert,serializeConfig));
         String topoId = IDGeneratorUtil.getID();
         topologyEntity.setTopologyId(topoId);
         topologyService.save(topologyEntity);

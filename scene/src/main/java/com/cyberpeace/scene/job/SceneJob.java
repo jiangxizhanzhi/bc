@@ -155,7 +155,7 @@ public class SceneJob {
                 scene.setSceneStatus(SceneEnum.ERROR.getCode());
                 throw new BusinessException(e.getMessage());
             }finally {
-                // scene.setMeta(JsonUtil.toJsonString(topology));
+                scene.setMeta(JsonUtil.toJsonString(topology));
                 sceneService.updateById(scene);
             }
         }

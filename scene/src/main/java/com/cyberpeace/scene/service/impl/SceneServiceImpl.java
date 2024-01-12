@@ -133,8 +133,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		// 创建场景
-		SceneEntity scene = createScene(req.getTopologyId(), JsonUtil.toJsonString(topology),
-				req.getInstanceId(), userId, req.getInstanceType(), req.getDestroyTime());
+		SceneEntity scene = createScene(req.getTopologyId(), req.getInstanceId(), userId,
+				req.getInstanceType(), req.getDestroyTime());
 		// 提交创建场景任务
 		executor.submit(new SceneExecutor(sceneJob, topology, scene));
 		log.info("submit create scene mission, scene ：{}", scene);
@@ -157,11 +157,10 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 		// 创建场景
 
-		SceneEntity scene = createScene(req.getId(), topo.toJSONString(), instanceId,
-				req.getContext().getAccessUserId(), req.getContext().getInstanceType(),
-				req.getContext().getDestroyTime());
+		SceneEntity scene = createScene(req.getId(), instanceId, req.getContext().getAccessUserId(),
+				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
 		// 提交创建场景任务
-		executor.submit(new SceneExecutor(sceneJob, topology, scene));
+		new SceneExecutor(sceneJob, topology, scene).run();
 		log.info("submit create scene mission, scene ：{}", scene);
 		return scene;
 	}
@@ -248,7 +247,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 	}
 
-    private SceneEntity createScene(String topologyId, String topo, String instanceId, String userId, Integer instanceType, Integer destroy){
+    private SceneEntity createScene(String topologyId, String instanceId, String userId, Integer instanceType, Integer destroy){
         SceneEntity scene = new SceneEntity();
         scene.setResourceId(IDGeneratorUtil.getID());
         scene.setSceneName(IDGeneratorUtil.getID());
@@ -264,7 +263,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         scene.setInstanceType(instanceType);
         scene.setInstanceId(instanceId);
         scene.setTopologyId(topologyId);
-        scene.setMeta(topo);
         scene.setUserId(userId);
         scene.setSceneTtl(SCENE_DESTROY);
         scene.setSceneStatus(SceneEnum.INIT.getCode());

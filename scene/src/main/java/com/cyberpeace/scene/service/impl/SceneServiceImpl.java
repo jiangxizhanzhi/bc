@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -93,6 +94,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
     @Autowired
     private SystemPropertyService systemPropertyService;
+
+    @Autowired
+    private MyWebSocketHandler myWebSocketHandler;
 
     /**
      * 场景自动销毁时间 单位:小时
@@ -401,6 +405,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                             scene.setSceneStatus(SceneEnum.ACTIVE.getCode());
                             updateById(scene);
                             pushScenePlugin(scene, networkState, nodeStage, 2, 4);
+                            pushCreationComplete(scene);
                         }
                     }else {
                         if (Boolean.TRUE.equals(DateUtil.dateComparison(scene.getCreateTime(), scene.getUpdateTime(), 15))) {
@@ -684,5 +689,17 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             return elementPortsJson;
         }
         return null;
+    }
+
+    private void pushCreationComplete(SceneEntity scene){
+        JSONObject message = new JSONObject();
+        message.put(JsonKeyConstant.CODE, CommonConstant.SCENE_CREATE_FINISH);
+        SceneWsIdentifier identifier = new SceneWsIdentifier();
+        identifier.setBusinessId(scene.getInstanceId());
+        identifier.setUserId(scene.getUserId());
+        identifier.setPath(WsPath.CR_SCENE);
+        WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+                .builder().data(message).messageIdentifier(identifier).build();
+        myWebSocketHandler.pushMessage(messageContext, false);
     }
 }

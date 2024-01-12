@@ -2,7 +2,9 @@ package com.cyberpeace.common.constant;
 
 public final class CommonConstant {
 
-	private CommonConstant() {}
+	public static final Object SCENE_CREATE_FINISH = "OJ-3";
+
+    private CommonConstant() {}
 
 	public static final String ORG = "Organization";
 

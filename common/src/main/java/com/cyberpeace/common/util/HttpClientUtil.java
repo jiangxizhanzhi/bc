@@ -139,6 +139,7 @@ public class HttpClientUtil {
 		String authorization = CommonContext.getAuthorization();
 		LOG.info("authorization ==> {}",authorization);
 		if (null != authorization) { // 调用竞赛接口需要
+			LOG.info("set authorization ==> {}",authorization);
 			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER,  authorization);
 		}
 		// 3、执行实际调用、返回序列化后的结果

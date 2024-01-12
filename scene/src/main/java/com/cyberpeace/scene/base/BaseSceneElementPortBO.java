@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.ArrayUtils;
@@ -45,7 +46,7 @@ public  class BaseSceneElementPortBO {
     @ApiModelProperty(value = "是否辅助端口")
     private Boolean isAuxiliary;
 
-
+    @JsonIgnore
     private BaseSceneElementBO element;
 
 

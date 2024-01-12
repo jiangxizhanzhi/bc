@@ -16,7 +16,7 @@ import java.util.List;
 public class UserEnableReq {
 
     @ApiModelProperty(value = "用户id列表")
-    private List<Integer> ids;
+    private List<String> ids;
 
     @ApiModelProperty(value = "是否启用,0=禁用，1=可用")
     private Integer enable;

@@ -124,7 +124,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			throw new BusinessException(ErrorCode.EMPTY_IDS);
 		}
 		LambdaUpdateWrapper<SysUser> wrapper = new LambdaUpdateWrapper<>();
-		wrapper.in(SysUser::getId, req.getIds()).set(SysUser::getEnabled, req.getEnable());
+		wrapper.in(SysUser::getResourceId, req.getIds()).set(SysUser::getEnabled, req.getEnable());
 		sysUserMapper.update(null, wrapper);
 	}
 

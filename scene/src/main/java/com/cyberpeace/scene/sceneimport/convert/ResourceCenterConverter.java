@@ -44,12 +44,12 @@ public class ResourceCenterConverter {
         converters.add(new NetworkElementConverter(parseResult.getNetworks()));//elements connections
         converters.add(new Node2NodeConnectConverter(parseResult.getNodes()));//connections
 //        converters.add(new DeviceInfoConverter(this.targetConverter));
-//        converters.add(new ImageInfoConverter());
-//        converters.add(new SceneFilePathConverter());
+        converters.add(new ImageInfoConverter());
+        converters.add(new SceneFilePathConverter());
         converters.add(new PortIdAndNameConvert());
-//        converters.add(new DefaultValueConverter());
+        converters.add(new DefaultValueConverter());
         converters.add(new SceneElementShapeConverter(parseResult.getShape()));//areas
-//        converters.add(new NetConfigElementConvert());
+        converters.add(new NetConfigElementConvert());
         converters.add(new ConnectionDisplayElementConvert());
         // 依次执行链路
         converters.forEach(converter -> converter.convert2BO(container));

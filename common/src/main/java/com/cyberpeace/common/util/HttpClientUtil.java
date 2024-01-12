@@ -167,6 +167,8 @@ public class HttpClientUtil {
 			// 3、记录调用日志
 			HttpclientContext.getContext().addLog(httpResponse);
 		} catch (Exception e) {
+			LOG.error("response {}",response);
+			LOG.error("remote execute exception"+e.getMessage(),e);
 			try {
 				HttpclientContext.getContext().doRemoteException(e);
 			} catch (Exception e1) {

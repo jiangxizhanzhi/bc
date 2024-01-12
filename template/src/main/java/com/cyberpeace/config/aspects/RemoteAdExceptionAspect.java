@@ -23,6 +23,7 @@ public class RemoteAdExceptionAspect {
     @AfterThrowing(value = "operlog()", throwing = "e")
     public void afterThrowing(Exception e) throws Exception {
         if (e instanceof RemoteServiceException){
+            log.error("ad remote exception"+e.getMessage(), e);
             if(null != e.getMessage()){
                 throw e;
 

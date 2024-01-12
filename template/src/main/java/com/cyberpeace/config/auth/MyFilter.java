@@ -53,6 +53,7 @@ public class MyFilter implements Filter {
 
 		CommonContext.setLanguage(language);
 		CommonContext.setIp(getIpAddr(request));
+		CommonContext.setAuthorization(((HttpServletRequest) request).getHeader("Authorization"));
 
 		TraceIdContext.setTraceId(traceId);
 	}

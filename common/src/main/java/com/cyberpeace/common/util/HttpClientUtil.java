@@ -253,10 +253,11 @@ public class HttpClientUtil {
 
 		String[] ss = StringUtils.split(mpAuthenticationParam, ",");
 		BasicHeader clientId = new BasicHeader(WebConstant.CLIENT_ID,"");
+		BasicHeader auth = new BasicHeader(WebConstant.AUTHORIZATION_HEADER,CommonContext.getAuthorization());
 
 		BasicHeader clientSecret = new BasicHeader(WebConstant.CLIENT_SECRET, "");
 
-		List<Header> defaultHeader = Arrays.asList(clientId, clientSecret);
+		List<Header> defaultHeader = Arrays.asList(clientId, clientSecret, auth);
 
 		HttpClientUtil.defaultHeaders = defaultHeader;
 

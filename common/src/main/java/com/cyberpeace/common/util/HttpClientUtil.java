@@ -252,9 +252,9 @@ public class HttpClientUtil {
 		LOG.info("read prop mpAuthenticationParam=[{}]", mpAuthenticationParam);
 
 		String[] ss = StringUtils.split(mpAuthenticationParam, ",");
-		BasicHeader clientId = new BasicHeader(WebConstant.CLIENT_ID, ss[0]);
+		BasicHeader clientId = new BasicHeader(WebConstant.CLIENT_ID,"");
 
-		BasicHeader clientSecret = new BasicHeader(WebConstant.CLIENT_SECRET, ss[1]);
+		BasicHeader clientSecret = new BasicHeader(WebConstant.CLIENT_SECRET, "");
 
 		List<Header> defaultHeader = Arrays.asList(clientId, clientSecret);
 

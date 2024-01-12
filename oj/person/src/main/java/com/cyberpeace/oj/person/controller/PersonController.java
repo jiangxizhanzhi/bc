@@ -277,7 +277,9 @@ public class PersonController {
 	public BaseRsp<List<StudyCalendarRes>> studyCalendar(@RequestParam(value = "startTime") String  startTime,
 														 @RequestParam(value = "endTime") String  endTime, HttpServletRequest request) {
 		CommonContext.setAuthorization(request.getHeader("Authorization"));
-		return new BaseRsp<>(personCenterService.studyCalendar(startTime, endTime));
+		List<StudyCalendarRes> studyCalendarRes = personCenterService.studyCalendar(startTime, endTime);
+		CommonContext.removeAuthorization();
+		return new BaseRsp<>(studyCalendarRes);
 	}
 
 	@ApiOperation("能力框架")

@@ -229,7 +229,6 @@ public class PracticeOperationController {
 
 	@ApiOperation("获取场景和拓扑信息")
 	@GetMapping("/topo_scene")
-	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
 			value = "课时编号") @RequestParam("resource_id") String operationId) {
 

@@ -321,11 +321,12 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         res.setExpLessonAllCount(lessonCount.getExpLessonAllCount());
         //获取练习正确率
         Map<String, JSONObject> userExamPassMap = remoteAdService.examPassList(Collections.singletonList(userId));
-        Integer passCount = Integer.valueOf(userExamPassMap.getOrDefault(userId, new JSONObject()).getInteger("pass_count"));
+        Integer passCount = userExamPassMap.getOrDefault(userId, new JSONObject()).getInteger("pass_count");
+        passCount=passCount==null?0:passCount;
         StudyRecord practiceByUser = personCenterMapper.selectSlovedPracticeByUser(userId);
         Integer operationPracticeCount = practiceByUser.getOperationPracticeCount();
         Integer theoryPracticeCount = practiceByUser.getTheoryPracticeCount();
-        res.setOperationPracticeCount(null == operationPracticeCount ? 0+passCount : operationPracticeCount+passCount);
+        res.setOperationPracticeCount(null == operationPracticeCount ? passCount : operationPracticeCount+passCount);
         res.setTheoryPracticeCount(null == theoryPracticeCount ? 0 : theoryPracticeCount);
         res.setPracticeCount(res.getOperationPracticeCount()+res.getTheoryPracticeCount());
         int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();

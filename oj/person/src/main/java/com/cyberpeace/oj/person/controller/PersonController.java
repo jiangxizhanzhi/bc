@@ -276,9 +276,7 @@ public class PersonController {
 	@GetMapping("/study_calendar")
 	public BaseRsp<List<StudyCalendarRes>> studyCalendar(@RequestParam(value = "startTime") String  startTime,
 														 @RequestParam(value = "endTime") String  endTime, HttpServletRequest request) {
-		CommonContext.setAuthorization(request.getHeader("Authorization"));
 		List<StudyCalendarRes> studyCalendarRes = personCenterService.studyCalendar(startTime, endTime);
-		CommonContext.removeAuthorization();
 		return new BaseRsp<>(studyCalendarRes);
 	}
 

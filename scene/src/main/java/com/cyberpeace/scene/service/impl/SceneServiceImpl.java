@@ -208,7 +208,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			sceneData.setScene(scene);
 			sceneData.setPlugins(jsonObject);
 			Integer networkState = networkState(scene, false);
-			Integer nodeStage = nodeStage(scene, false);
+			Integer nodeStage = nodeStage(networkState, scene, false);
 			List<WsSceneStage> wsSceneStages = stageList(networkState, nodeStage);
 			Integer percentage = percentage(wsSceneStages);
 			sceneDataRsp.setStageList(wsSceneStages);
@@ -398,7 +398,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 try {
                     if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())){
                         Integer networkState = networkState(scene, true);
-                        Integer nodeStage = nodeStage(scene, true);
+						Integer nodeStage = nodeStage(networkState, scene, true);
                         if (Objects.equals(100, networkState) && Objects.equals(100, nodeStage)){
                             log.info("scene start success");
                             scene.setSceneStatus(SceneEnum.ACTIVE.getCode());
@@ -451,7 +451,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 	}
 
 
-	private Integer nodeStage(SceneEntity scene, boolean pushWs) {
+	private Integer nodeStage(Integer networkState, SceneEntity scene, boolean pushWs) {
 		List<NodeEntity> nodes = nodeService.list(
 				new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getSid, scene.getResourceId())
 						.eq(NodeEntity::getStatus, SceneEnum.CREATE.getCode()));
@@ -465,7 +465,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 				if (pushWs) {
 					// ? todo
-					pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
+					pushScenePlugin(scene, networkState, state(count, nodes.size()), 2, 2);
 					pushElement(element, scene, 2);
 				}
 				if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
@@ -495,7 +495,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 							code = 5;
 						}
 						if (pushWs) {
-							pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
+							pushScenePlugin(scene, networkState, state(count, nodes.size()), 2, 2);
 						}
 
 					}

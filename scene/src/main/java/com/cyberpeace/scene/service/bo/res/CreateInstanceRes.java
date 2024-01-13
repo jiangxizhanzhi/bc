@@ -1,10 +1,13 @@
 package com.cyberpeace.scene.service.bo.res;
 
-import com.alibaba.fastjson.JSONObject;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.scene.service.bo.Net;
+
+import lombok.Data;
 
 /**
  * @author :   SN
@@ -115,4 +118,9 @@ public class CreateInstanceRes implements Serializable {
      * 磁盘
      */
     private Integer disk;
+
+	/**
+	 * 端口映射参数
+	 */
+	private List<Net> nets;
 }

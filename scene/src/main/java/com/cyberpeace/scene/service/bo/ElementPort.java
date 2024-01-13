@@ -1,11 +1,12 @@
 package com.cyberpeace.scene.service.bo;
 
-import com.alibaba.fastjson.JSONArray;
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.annotation.TableField;
+
+import lombok.Data;
 
 /**
  * @author :   SN
@@ -26,7 +27,7 @@ public class ElementPort implements Serializable {
     private Integer ingress;
 
     @TableField(value = "access_modes")
-    private JSONArray accessModes;
+	private List<JSONObject> accessModes;
 
     @TableField(value = "firewall_rules")
     private List<String> firewallRules;

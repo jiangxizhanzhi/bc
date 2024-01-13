@@ -227,7 +227,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			}
 			sceneDataRsp.setProgressPercentage(percentage);
 			topology.setScene(sceneDataRsp);
-			topology.setAccessModes();
             setPortIp(topology, scene.getResourceId());
 		}
 		return sceneData;
@@ -700,15 +699,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                 port.setEventStatus(address.getInteger("event_status"));
                 JSONObject elementPortJson = new JSONObject();
                 if (!CollectionUtils.isEmpty(port.getAccessModes())){
-                    JSONArray accessModes = port.getAccessModes();
                     JSONArray newAccessModes = new JSONArray();
-                    accessModes.forEach(iter -> {
-                        JSONObject accessMode = JSONObject.parseObject(iter.toString());
-                        accessMode.put("id", element.getNodeId());
-                        accessMode.put("ip", address.getString("ip"));
-                        accessMode.put("available", address.getBooleanValue("available"));
-                        accessMode.put("type", element.getType());
-                        newAccessModes.add(accessMode);
+					port.getAccessModes().forEach(iter -> {
+						iter.put("id", element.getNodeId());
+						iter.put("ip", address.getString("ip"));
+						iter.put("available", address.getBooleanValue("available"));
+						iter.put("type", element.getType());
+						newAccessModes.add(iter);
                     });
                     elementPortJson.put("access_modes", newAccessModes);
                 }

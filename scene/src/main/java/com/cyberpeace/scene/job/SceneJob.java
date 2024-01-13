@@ -116,7 +116,8 @@ public class SceneJob {
                     List<TopologyElement> topologyElements = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_HOST.getName());
                     for (TopologyElement hostElement : topologyElements){
                         //创建虚拟机
-                        CreateInstanceRes res = hostService.create(new CreateInstanceReq(hostElement.getName(), null, nets));
+						CreateInstanceRes res = hostService
+								.create(new CreateInstanceReq(hostElement, network));
                         NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getInstanceName(), null,
                                 null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(),
                                 SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), hostElement.getId());
@@ -131,7 +132,8 @@ public class SceneJob {
                     List<TopologyElement> topologyElements = topologyMap.get(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getName());
                     for (TopologyElement containerElement : topologyElements){
                         //创建容器
-                        CreateContainersRes res = containerService.create(new CreateContainerReq(containerElement.getName(), null, nets));
+						CreateContainersRes res = containerService
+								.create(new CreateContainerReq(containerElement, network));
                         NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getName(), null,
                                 null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
                                 SceneEnum.CREATE.getCode(), null, scene.getUserId(), containerElement.getId());

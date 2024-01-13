@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
@@ -67,10 +68,10 @@ public class HostServiceImpl implements HostService {
         return res;
     }
 
-    @Override
-    public void delete(String instanceId) {
-        HttpUtil.rawDelete(CP_HOST + CP_INSTANCES + "/" + instanceId, String.class);
-    }
+	@Override
+	public void delete(String instanceId) {
+		HttpUtil.delete(CP_HOST + CP_INSTANCES + "/" + instanceId, new JSONObject(), String.class);
+	}
 
     @Override
     public ConsoleUrlRes console(String instanceId) {

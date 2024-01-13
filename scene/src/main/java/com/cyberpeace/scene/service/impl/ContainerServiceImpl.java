@@ -1,24 +1,26 @@
 package com.cyberpeace.scene.service.impl;
 
+import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.scene.service.ContainerService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.ContainerItem;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
-import com.cyberpeace.scene.service.bo.res.ConsoleUrlRes;
 import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
 import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author :   SN
@@ -62,10 +64,10 @@ public class ContainerServiceImpl implements ContainerService {
         return res;
     }
 
-    @Override
-    public void delete(String containerId) {
-        HttpUtil.rawDelete(CONTAINER_URL + "/" + containerId, String.class);
-    }
+	@Override
+	public void delete(String containerId) {
+		HttpUtil.delete(CONTAINER_URL + "/" + containerId, new JSONObject(), String.class);
+	}
 
     @Override
     public String console(String containerId) {

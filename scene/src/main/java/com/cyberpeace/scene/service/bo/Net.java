@@ -1,12 +1,13 @@
 package com.cyberpeace.scene.service.bo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
+import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Data;
 
 /**
  * @author :   SN
@@ -14,10 +15,16 @@ import java.io.Serializable;
  * @desc :
  **/
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Net implements Serializable {
 
     @JsonProperty("network_id")
     private String network_id;
+
+	private List<NetAccessMode> access_modes = Lists.newArrayList();
+
+	public Net() {}
+
+	public Net(String network_id) {
+		this.network_id = network_id;
+	}
 }

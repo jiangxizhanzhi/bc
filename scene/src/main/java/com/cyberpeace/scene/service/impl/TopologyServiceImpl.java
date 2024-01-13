@@ -138,15 +138,13 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
 				port.setEventStatus(address.getInteger("event_status"));
 				JSONObject elementPortJson = new JSONObject();
 				if (!CollectionUtils.isEmpty(port.getAccessModes())) {
-					JSONArray accessModes = port.getAccessModes();
 					JSONArray newAccessModes = new JSONArray();
-					accessModes.forEach(iter -> {
-						JSONObject accessMode = JSONObject.parseObject(iter.toString());
-						accessMode.put("id", element.getNodeId());
-						accessMode.put("ip", address.getString("ip"));
-						accessMode.put("available", address.getBooleanValue("available"));
-						accessMode.put("type", element.getType());
-						newAccessModes.add(accessMode);
+					port.getAccessModes().forEach(iter -> {
+						iter.put("id", element.getNodeId());
+						iter.put("ip", address.getString("ip"));
+						iter.put("available", address.getBooleanValue("available"));
+						iter.put("type", element.getType());
+						newAccessModes.add(iter);
 					});
 					elementPortJson.put("access_modes", newAccessModes);
 				}
@@ -155,8 +153,8 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
 				elementPortJson.put("event", 2);
 				elementPortJson.put("resource_id", element.getNodeId());
 				elementPortsJson.put(port.getId(), elementPortJson);
-				newElements.add(element);
 			}
+			newElements.add(element);
 		}
 		jsonObject.put("elements", elementsJson);
 		jsonObject.put("element_ports", elementPortsJson);

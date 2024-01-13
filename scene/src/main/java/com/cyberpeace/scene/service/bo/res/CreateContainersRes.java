@@ -1,9 +1,12 @@
 package com.cyberpeace.scene.service.bo.res;
 
-import com.cyberpeace.scene.service.bo.ContainerItem;
-import lombok.Data;
-
 import java.io.Serializable;
+import java.util.List;
+
+import com.cyberpeace.scene.service.bo.ContainerItem;
+import com.cyberpeace.scene.service.bo.Net;
+
+import lombok.Data;
 
 /**
  * @author :   SN
@@ -12,5 +15,10 @@ import java.io.Serializable;
  **/
 @Data
 public class CreateContainersRes extends ContainerItem implements Serializable {
+
+	/**
+	 * 端口映射参数
+	 */
+	private List<Net> nets;
 
 }

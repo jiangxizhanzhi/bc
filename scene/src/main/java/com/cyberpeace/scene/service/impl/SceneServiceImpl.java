@@ -5,7 +5,6 @@ import java.util.*;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -20,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.WsPath;
@@ -207,8 +207,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			sceneData.setTopology(topology);
 			sceneData.setScene(scene);
 			sceneData.setPlugins(jsonObject);
-			Integer networkState = networkState(scene);
-			Integer nodeStage = nodeStage(scene);
+			Integer networkState = networkState(scene, false);
+			Integer nodeStage = nodeStage(scene, false);
 			List<WsSceneStage> wsSceneStages = stageList(networkState, nodeStage);
 			Integer percentage = percentage(wsSceneStages);
 			sceneDataRsp.setStageList(wsSceneStages);
@@ -398,8 +398,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             for (SceneEntity scene : list){
                 try {
                     if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())){
-                        Integer networkState = networkState(scene);
-                        Integer nodeStage = nodeStage(scene);
+                        Integer networkState = networkState(scene, true);
+                        Integer nodeStage = nodeStage(scene, true);
                         if (Objects.equals(100, networkState) && Objects.equals(100, nodeStage)){
                             log.info("scene start success");
                             scene.setSceneStatus(SceneEnum.ACTIVE.getCode());
@@ -421,103 +421,130 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }
     }
 
-    private Integer networkState(SceneEntity scene){
-        int count = 0;
-        List<NetworkEntity> networks = networkService.list(new LambdaQueryWrapper<NetworkEntity>()
-                .eq(NetworkEntity::getSid, scene.getResourceId())
-                .eq(NetworkEntity::getNetworkStatus, SceneEnum.CREATE.getCode()));
-        if (!CollectionUtils.isEmpty(networks)){
-            for (NetworkEntity network : networks){
-                NetworkInstance instance = networkService.getInstance(network.getUuid());
-                if (Objects.isNull(instance)){
-                    log.warn("scene {} network node not found is {}", scene.getResourceId(), network.getUuid());
-                    continue;
-                }
-                pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
-                if (Objects.equals(StatusEnum.NETWORK_ACTIVE.getName(), instance.getStatus())){
-                    networkMapper.updateStatus(network.getUuid(), SceneEnum.ACTIVE.getCode());
-                    count++;
-                    pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
-                }
-            }
-        }else {
-            return 100;
-        }
-        return state(count, networks.size());
-    }
+	private Integer networkState(SceneEntity scene, boolean pushWs) {
+		int count = 0;
+		List<NetworkEntity> networks = networkService.list(new LambdaQueryWrapper<NetworkEntity>()
+				.eq(NetworkEntity::getSid, scene.getResourceId())
+				.eq(NetworkEntity::getNetworkStatus, SceneEnum.CREATE.getCode()));
+		if (!CollectionUtils.isEmpty(networks)) {
+			for (NetworkEntity network : networks) {
+				NetworkInstance instance = networkService.getInstance(network.getUuid());
+				if (Objects.isNull(instance)) {
+					log.warn("scene {} network node not found is {}", scene.getResourceId(),
+							network.getUuid());
+					continue;
+				}
+				if (pushWs) {
+					pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
+				}
+				if (Objects.equals(StatusEnum.NETWORK_ACTIVE.getName(), instance.getStatus())) {
+					networkMapper.updateStatus(network.getUuid(), SceneEnum.ACTIVE.getCode());
+					count++;
+					if (pushWs) {
+						pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
+					}
+				}
+			}
+		} else {
+			return 100;
+		}
+		return state(count, networks.size());
+	}
 
 
-    private Integer nodeStage(SceneEntity scene) {
-        List<NodeEntity> nodes = nodeService.list(new LambdaQueryWrapper<NodeEntity>()
-                .eq(NodeEntity::getSid, scene.getResourceId())
-                .eq(NodeEntity::getStatus, SceneEnum.CREATE.getCode()));
-        int count = 0;
-        if (!CollectionUtils.isEmpty(nodes)){
-            for (NodeEntity node : nodes){
-                Integer nodeStatus = SceneEnum.CREATE.getCode();
-                String ip = null;
-                int code = 2;
-                TopologyElement element = getElement(node.getInstanceId(), scene.getMeta());
-                pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
-                pushElement(element, scene, 2);
-                if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), node.getType())){
-                    ContainerItem instance = containerService.getInstance(node.getInstanceId());
-                    if (Objects.nonNull(instance)){
-                        if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())){
-                            nodeStatus = SceneEnum.ACTIVE.getCode();
-                            JSONObject addresses = instance.getAddresses();
-                            ip = getIp(addresses);
-                            count++;
-                            code = 4;
-                        }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getStatus())){
-                            nodeStatus = SceneEnum.ERROR.getCode();
-                            count++;
-                            code = 5;
-                        } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getStatus()) &&
-                                !Boolean.TRUE.equals(DateUtil.dateComparison(node.getCreateTime(), node.getUpdateTime(), 10))) {
-                            // 节点创建时间超过10分钟，默认创建失败
-                            log.error("scene {} container_node creating long time is {}", scene.getResourceId(), node.getInstanceId());
-                            nodeStatus = SceneEnum.ERROR.getCode();
-                            count++;
-                            code = 5;
-                        }
-                        pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
-                    }
-                }
-                if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), node.getType())){
-                    CreateInstanceRes instance = hostService.getInstance(node.getInstanceId());
-                    if (Objects.nonNull(instance)){
-                        if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getVmState())){
-                            nodeStatus = SceneEnum.ACTIVE.getCode();
-                            JSONObject addresses = instance.getAddresses();
-                            ip = getIp(addresses);
-                            count++;
-                            code = 4;
-                        }else if (StringUtils.equals(StatusEnum.ERROR.getName(), instance.getVmState())){
-                            nodeStatus = SceneEnum.ERROR.getCode();
-                            count++;
-                            code = 5;
-                        } else if (StringUtils.equals(StatusEnum.CREATING.getName(), instance.getVmState()) &&
-                                !Boolean.TRUE.equals(DateUtil.dateComparison(node.getCreateTime(), node.getUpdateTime(), 10))) {
-                            log.error("scene {} vm_node creating long time is {}", scene.getResourceId(), node.getInstanceId());
-                            // 节点创建时间超过10分钟，默认创建失败
-                            nodeStatus = SceneEnum.ERROR.getCode();
-                            count++;
-                            code = 5;
-                        }
-                        pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
-                    }
-                }
-                node.setIp(ip);
-                node.setStatus(nodeStatus);
-                nodeService.updateById(node);
-                pushElement(element, scene, code);
-            }
-        }else {
-            return 100;
-        }
-        return state(count, nodes.size());
-    }
+	private Integer nodeStage(SceneEntity scene, boolean pushWs) {
+		List<NodeEntity> nodes = nodeService.list(
+				new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getSid, scene.getResourceId())
+						.eq(NodeEntity::getStatus, SceneEnum.CREATE.getCode()));
+		int count = 0;
+		if (!CollectionUtils.isEmpty(nodes)) {
+			for (NodeEntity node : nodes) {
+				Integer nodeStatus = SceneEnum.CREATE.getCode();
+				String ip = null;
+				int code = 2;
+				TopologyElement element = getElement(node.getInstanceId(), scene.getMeta());
+
+				if (pushWs) {
+					// ? todo
+					pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
+					pushElement(element, scene, 2);
+				}
+				if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
+						node.getType())) {
+					ContainerItem instance = containerService.getInstance(node.getInstanceId());
+					if (Objects.nonNull(instance)) {
+						if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())) {
+							nodeStatus = SceneEnum.ACTIVE.getCode();
+							JSONObject addresses = instance.getAddresses();
+							ip = getIp(addresses);
+							count++;
+							code = 4;
+						} else if (StringUtils.equals(StatusEnum.ERROR.getName(),
+								instance.getStatus())) {
+							nodeStatus = SceneEnum.ERROR.getCode();
+							count++;
+							code = 5;
+						} else if (StringUtils.equals(StatusEnum.CREATING.getName(),
+								instance.getStatus())
+								&& !Boolean.TRUE.equals(DateUtil.dateComparison(
+										node.getCreateTime(), node.getUpdateTime(), 10))) {
+							// 节点创建时间超过10分钟，默认创建失败
+							log.error("scene {} container_node creating long time is {}",
+									scene.getResourceId(), node.getInstanceId());
+							nodeStatus = SceneEnum.ERROR.getCode();
+							count++;
+							code = 5;
+						}
+						if (pushWs) {
+							pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
+						}
+
+					}
+				}
+				if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), node.getType())) {
+					CreateInstanceRes instance = hostService.getInstance(node.getInstanceId());
+					if (Objects.nonNull(instance)) {
+						if (StringUtils.equals(StatusEnum.ACTIVE.getName(),
+								instance.getVmState())) {
+							nodeStatus = SceneEnum.ACTIVE.getCode();
+							JSONObject addresses = instance.getAddresses();
+							ip = getIp(addresses);
+							count++;
+							code = 4;
+						} else if (StringUtils.equals(StatusEnum.ERROR.getName(),
+								instance.getVmState())) {
+							nodeStatus = SceneEnum.ERROR.getCode();
+							count++;
+							code = 5;
+						} else if (StringUtils.equals(StatusEnum.CREATING.getName(),
+								instance.getVmState())
+								&& !Boolean.TRUE.equals(DateUtil.dateComparison(
+										node.getCreateTime(), node.getUpdateTime(), 10))) {
+							log.error("scene {} vm_node creating long time is {}",
+									scene.getResourceId(), node.getInstanceId());
+							// 节点创建时间超过10分钟，默认创建失败
+							nodeStatus = SceneEnum.ERROR.getCode();
+							count++;
+							code = 5;
+						}
+						if (pushWs) {
+							pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
+						}
+
+					}
+				}
+				node.setIp(ip);
+				node.setStatus(nodeStatus);
+				nodeService.updateById(node);
+				if (pushWs) {
+					pushElement(element, scene, code);
+				}
+			}
+		} else {
+			return 100;
+		}
+		return state(count, nodes.size());
+	}
 
     private TopologyElement getElement(String instanceId, String meta){
         Topology topology = JsonUtil.toJsonObject(meta, Topology.class);
@@ -609,16 +636,21 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
     }
 
 
-    private List<WsSceneStage> stageList(Integer networkStage, Integer instanceStage){
-        List<WsSceneStage> list = new ArrayList<>();
-        // 初始状态
-        list.add(new WsSceneStage(StageEnum.INIT.getStage(), StageEnum.INIT.getStageName(), StageEnum.INIT.getIcon(), 100));
-        // 网络状态
-        list.add(new WsSceneStage(StageEnum.CREATE_NETWORK.getStage(), StageEnum.CREATE_NETWORK.getStageName(), StageEnum.CREATE_NETWORK.getIcon(), networkStage));
-        // 实例状态
-        list.add(new WsSceneStage(StageEnum.CREATE_INSTANCE.getStage(), StageEnum.CREATE_INSTANCE.getStageName(), StageEnum.CREATE_INSTANCE.getIcon(), instanceStage));
-        return list;
-    }
+	private List<WsSceneStage> stageList(Integer networkStage, Integer instanceStage) {
+		List<WsSceneStage> list = new ArrayList<>();
+		// 初始状态
+		list.add(new WsSceneStage(StageEnum.INIT.getStage(), StageEnum.INIT.getStageName(),
+				StageEnum.INIT.getIcon(), 100));
+		// 网络状态
+		list.add(new WsSceneStage(StageEnum.CREATE_NETWORK.getStage(),
+				StageEnum.CREATE_NETWORK.getStageName(), StageEnum.CREATE_NETWORK.getIcon(),
+				networkStage));
+		// 实例状态
+		list.add(new WsSceneStage(StageEnum.CREATE_INSTANCE.getStage(),
+				StageEnum.CREATE_INSTANCE.getStageName(), StageEnum.CREATE_INSTANCE.getIcon(),
+				instanceStage));
+		return list;
+	}
 
     private void pushElement(TopologyElement element, SceneEntity scene, Integer code){
         try {

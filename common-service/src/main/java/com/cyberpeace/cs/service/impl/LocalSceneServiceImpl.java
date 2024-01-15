@@ -63,7 +63,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	private LocalSceneMapper localSceneMapper;
 
 	@Autowired
-	@Qualifier("taskExecutor")
+	@Qualifier("asyncTaskExecutor")
 	private Executor executor;
 
 	@Override

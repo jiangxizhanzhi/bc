@@ -111,6 +111,11 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		return jsonArray.toJavaList(OpsQuestionBo.class);
 	}
 
+	@Override
+	public void clearUserData(String userId) {
+
+	}
+
 	/** 数据转换使用*/
 	private CalendarCompetitionBo jsonToBo(JSONObject json) {
 		CalendarCompetitionBo bo = new CalendarCompetitionBo();

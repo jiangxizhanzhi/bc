@@ -1,11 +1,12 @@
 package com.cyberpeace.scene.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.scene.dao.entity.SceneEntity;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.scene.dao.entity.SceneEntity;
 
 /**
  * @author :   SN
@@ -24,4 +25,6 @@ public interface SceneMapper extends BaseMapper<SceneEntity> {
     SceneEntity selectByInstanceId(@Param("instanceId") String instanceId, @Param("userId") String userId, @Param("sceneStatus") List<Integer> sceneStatus);
 
     int updateMeta(@Param("sceneId") String sceneId, @Param("meta") String meta);
+
+	List<String> selectByUserId(@Param("userId") String userId, @Param("code") Integer code);
 }

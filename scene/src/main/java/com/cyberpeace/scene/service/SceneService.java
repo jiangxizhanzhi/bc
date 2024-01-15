@@ -8,6 +8,8 @@ import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.service.bo.SceneData;
 import com.cyberpeace.scene.service.bo.ad.AdSceneStartReq;
 
+import java.util.List;
+
 /**
  * @author :   SN
  * @date :   2023/12/20 15:21
@@ -36,4 +38,6 @@ public interface SceneService extends IService<SceneEntity> {
 	SceneEntity startSceneByTopo(AdSceneStartReq req);
 
 	SceneData getSceneDataBySceneId(String sceneId);
+
+    List<String> getUndeletedSceneIdByUserId(String userId);
 }

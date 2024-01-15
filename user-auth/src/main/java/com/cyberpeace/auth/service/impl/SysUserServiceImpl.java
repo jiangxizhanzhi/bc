@@ -3,6 +3,7 @@ package com.cyberpeace.auth.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.auth.service.UserDataClearanceService;
 import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 	@Autowired
 	private SystemPropertyService systemPropertyService;
+
+	@Autowired
+	private UserDataClearanceService userDataClearanceService;
 
 	@Override
 	public void resetPwdself(ResetPwdSelfReq req) {
@@ -249,6 +253,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 		for (String id : idList) {
 			removeSessions(id);
+			userDataClearanceService.clearUserData(id);
 		}
 	}
 

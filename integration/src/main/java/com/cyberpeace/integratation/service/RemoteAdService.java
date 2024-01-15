@@ -1,13 +1,13 @@
 package com.cyberpeace.integratation.service;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 竞赛外部接口调用
@@ -47,4 +47,5 @@ public interface RemoteAdService {
 
     List<OpsQuestionBo> queryQuestionList();
 
+	void clearUserData(String userId);
 }

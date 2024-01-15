@@ -39,4 +39,10 @@
 
         </if>
     </select>
+    <select id="selectByUserId" resultType="java.lang.String">
+        select resource_id
+        from cr_scene
+        where user_id = #{userId}
+          and scene_status != #{code}
+    </select>
 </mapper>

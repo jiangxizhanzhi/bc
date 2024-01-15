@@ -128,4 +128,13 @@ public class WaterMarkController {
 		List<String> list = FileUtil.listFileNamesByDir(path, false);
 		return list.stream().filter(a -> a.endsWith(".pfg")).collect(Collectors.toList());
 	}
+
+	@ApiOperation("打水印")
+	@GetMapping("/mark/test")
+	public BaseRsp<Boolean> markTest(@ApiParam(name = "mark",value = "水印名称") String mark,
+									 @ApiParam(name = "in",value = "水印名称") String in,
+	@ApiParam(name = "out",value = "水印名称") String out) throws DocumentException, IOException {
+		WaterMarkingUtils.setPdfWatermark(in,out , mark);
+		return new BaseRsp<>(true);
+	}
 }

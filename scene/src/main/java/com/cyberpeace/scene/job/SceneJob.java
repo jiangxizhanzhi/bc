@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -156,7 +157,7 @@ public class SceneJob {
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e);
                 scene.setSceneStatus(SceneEnum.ERROR.getCode());
-                throw new BusinessException(e.getMessage());
+                throw new BusinessException(ErrorCode.FAILED_TO_CREATE_SCENE, e.getMessage());
             }finally {
                 scene.setMeta(JsonUtil.toJsonString(topology));
                 sceneService.updateById(scene);

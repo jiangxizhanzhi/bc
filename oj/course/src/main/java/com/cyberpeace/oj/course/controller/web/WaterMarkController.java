@@ -15,6 +15,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.controller.res.WaterMarkProgressRes;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -54,7 +55,8 @@ public class WaterMarkController {
 	private static final String REPAIR_FILE = ConfigUtil.getContextProperty("repair.file.path");
 	@Autowired
 	private AuthService authService;
-
+	@Autowired
+	private UtilService utilService;
 	@GetMapping("/registerverifyinfo")
 	@ApiOperation("水印权限验证")
 	public BaseRsp<Boolean> registerVerifyInfo(@RequestParam("verifyCode") String verifyCode){
@@ -97,7 +99,7 @@ public class WaterMarkController {
 				if (handoutUrl.endsWith(".pdf")) {
 					String name = new File(handoutUrl).getName();
 					out = REPAIR_FILE+"/oj/handout/"+courseLesson.getResourceId()+"/"+name;
-					WaterMarkingUtils.setPdfWatermark(handoutUrl,out , mark);
+					WaterMarkingUtils.setPdfWatermark(utilService.handlerFileUrl(handoutUrl),out , mark);
 					courseLesson.setHandoutUrl(out);
 					courseLessonMapper.updateById(courseLesson);
 				}

@@ -28,9 +28,11 @@ public class UtilServiceImpl implements UtilService {
 
 	private String HANDOUT_CONTENT_URL;
 
+	private String REPAIR_FILE;
+
 	@Autowired
 	private RemoteServerEnvService remoteServerEnvService;
-
+	
 	@PostConstruct
 	public void init() {
 		FDFS_PREFIX = ConfigUtil.getContextProperty("common.fastdfs.url.prefix");
@@ -39,12 +41,16 @@ public class UtilServiceImpl implements UtilService {
 		LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
 		HANDOUT_INFO_URL = ConfigUtil.getContextProperty("office.handout.info");
 		HANDOUT_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
+		REPAIR_FILE= ConfigUtil.getContextProperty("repair.file.path");
 	}
 
 	@Override
 	public String handlerFileUrl(String fileUrl) {
 
 		if (StringUtils.isNotBlank(fileUrl)) {
+			if (fileUrl.startsWith(REPAIR_FILE)) {
+				return fileUrl;
+			}
 			if (StringUtils.isNotBlank(FDFS_PREFIX) && fileUrl.startsWith(FDFS_START_STR)) {
 				return FDFS_PREFIX + fileUrl;
 			} else {

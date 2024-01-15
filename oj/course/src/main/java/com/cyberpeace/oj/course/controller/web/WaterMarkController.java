@@ -91,6 +91,7 @@ public class WaterMarkController {
 		for (int i = 0; i < courseLessons.size(); i++) {
 			CourseLesson courseLesson = courseLessons.get(i);
 			String out = "";
+			String in = "";
 			try {
 				String handoutUrl = courseLesson.getHandoutUrl();
 				if (StringUtils.isEmpty(handoutUrl)) {
@@ -99,14 +100,15 @@ public class WaterMarkController {
 				if (handoutUrl.endsWith(".pdf")) {
 					String name = new File(handoutUrl).getName();
 					out = REPAIR_FILE+"/oj/handout/"+courseLesson.getResourceId()+"/"+name;
-					WaterMarkingUtils.setPdfWatermark(utilService.handlerFileUrl(handoutUrl),out , mark);
+					in = utilService.handlerFileUrl(handoutUrl);
+					WaterMarkingUtils.setPdfWatermark(in,out , mark);
 					courseLesson.setHandoutUrl(out);
 					courseLessonMapper.updateById(courseLesson);
 				}
 				progress = i * 100 / courseLessons.size();
 			} catch (Exception e) {
 				log.error("pdf mark false handoutUrl {} ,out {}",
-						JSON.toJSONString(courseLesson.getHandoutUrl()),out);
+						in,out);
 				log.error(e.getMessage(),e);
 			}
 		}

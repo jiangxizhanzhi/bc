@@ -7,6 +7,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -366,9 +369,11 @@ public class WaterMarkingUtils {
     public static void setPdfWatermark(String inputPath, String outPath, String markStr)
             throws DocumentException, IOException {
         File file = new File(outPath);
+        Path path = Paths.get(outPath);
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                Files.createDirectories(path.getParent());
+                Files.createFile(path);
             } catch (IOException e) {
                 log.error(e.getMessage(),e);
             }

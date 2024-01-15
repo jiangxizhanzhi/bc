@@ -26,7 +26,7 @@ public class RemoveLogJob {
             log.info("dev环境下, 不检测日志文件时间超长");
             return;
         }
-        String logRootPath = System.getProperty("catalina.base") + "/logs/";
+        String logRootPath = "/var/log/bc/";
         String cmd = String.format("find %s -type 'f' -mtime +15 | xargs rm -f", logRootPath);
         DataOutputStream dos = null;
         try {

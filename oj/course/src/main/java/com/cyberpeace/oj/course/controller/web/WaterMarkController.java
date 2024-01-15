@@ -14,10 +14,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.WaterMarkingUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.controller.res.WaterMarkProgressRes;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -53,6 +50,8 @@ public class WaterMarkController {
 	CourseLessonMapper courseLessonMapper;
 
 	private static Integer progress = 0;
+
+	private static final String REPAIR_FILE = ConfigUtil.getContextProperty("repair.file.path");
 	@Autowired
 	private AuthService authService;
 
@@ -96,8 +95,10 @@ public class WaterMarkController {
 				}
 				if (handoutUrl.endsWith(".pdf")) {
 					String name = new File(handoutUrl).getName();
-
-					WaterMarkingUtils.setPdfWatermark(handoutUrl, "", mark);
+					String out = REPAIR_FILE+"/oj/handout/"+courseLesson.getResourceId()+"/"+name;
+					WaterMarkingUtils.setPdfWatermark(handoutUrl,out , mark);
+					courseLesson.setHandoutUrl(out);
+					courseLessonMapper.updateById(courseLesson);
 				}
 				progress = i * 100 / courseLessons.size();
 			} catch (Exception e) {

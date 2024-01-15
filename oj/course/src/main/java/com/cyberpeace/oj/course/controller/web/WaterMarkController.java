@@ -129,11 +129,11 @@ public class WaterMarkController {
 		return list.stream().filter(a -> a.endsWith(".pfg")).collect(Collectors.toList());
 	}
 
-	@ApiOperation("打水印")
+	@ApiOperation("打水印测试")
 	@GetMapping("/mark/test")
 	public BaseRsp<Boolean> markTest(@ApiParam(name = "mark",value = "水印名称") String mark,
-									 @ApiParam(name = "in",value = "水印名称") String in,
-	@ApiParam(name = "out",value = "水印名称") String out) throws DocumentException, IOException {
+									 @ApiParam(name = "in",value = "文件路径") String in,
+	@ApiParam(name = "out",value = "水印文件路径") String out) throws DocumentException, IOException {
 		WaterMarkingUtils.setPdfWatermark(in,out , mark);
 		return new BaseRsp<>(true);
 	}

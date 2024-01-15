@@ -260,4 +260,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb, String setId);
 
 	ProgressCountRes getProgressCount(String practiceSetId);
+
+    void initOps(String practiceSetId);
+
 }

@@ -13,6 +13,7 @@
       "courses": [
         {
           "courseName": "职业道德",
+          "resourceId": "PEIP01",
           "coverage": 2,
           "weight": 2,
           "courseNum": 16,
@@ -21,6 +22,7 @@
         },
         {
           "courseName": "岗位解读",
+          "resourceId": "",
           "coverage": 2,
           "weight": 3,
           "courseNum": 16,
@@ -36,6 +38,7 @@
       "courses": [
         {
           "courseName": "计算机基础",
+          "resourceId": "L3ELEMK01",
           "coverage": 2,
           "weight": 5,
           "courseNum": 4,
@@ -44,6 +47,7 @@
         },
         {
           "courseName": "网络基础",
+          "resourceId": "L4ELEMK02",
           "coverage": 2,
           "weight": 10,
           "courseNum": 4,
@@ -59,6 +63,7 @@
       "courses": [
         {
           "courseName": "网络安全配置与防护",
+            "resourceId": "L4PROT01",
           "coverage": 8,
           "weight": 10,
           "courseNum": 13,
@@ -67,6 +72,7 @@
         },
         {
           "courseName": "系统安全配置与防护",
+          "resourceId": "L4PROT02",
           "coverage": 5,
           "weight": 10,
           "courseNum": 11,
@@ -76,6 +82,7 @@
       ,
         {
           "courseName": "应用安全配置与防护",
+            "resourceId": "L4PROT03",
           "coverage": 11,
           "weight": 10,
           "courseNum": 19,
@@ -91,6 +98,7 @@
       "courses": [
         {
           "courseName": "网络安全管理",
+          "resourceId": "L4MGT01",
           "coverage": 2,
           "weight": 5,
           "courseNum": 16,
@@ -99,6 +107,7 @@
         },
         {
           "courseName": "系统安全管理",
+            "resourceId": "",
           "coverage": 2,
           "weight": 10,
           "courseNum": 16,
@@ -108,6 +117,7 @@
       ,
         {
           "courseName": "应用安全管理",
+            "resourceId": "L4MGT03",
           "coverage": 8,
           "weight": 10,
           "courseNum": 12,
@@ -123,6 +133,7 @@
       "courses": [
         {
           "courseName": "网络安全事件处置",
+          "resourceId": "L4DISPOSE01",
           "coverage": 4,
           "weight": 10,
           "courseNum": 16,
@@ -131,6 +142,7 @@
         },
         {
           "courseName": "系统及应用安全事件",
+          "resourceId": "",
           "coverage": 12,
           "weight": 15,
           "courseNum": 16,

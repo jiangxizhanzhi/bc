@@ -443,7 +443,7 @@
     </select>
     <select id="selectCourseStudyRecord" resultType="com.cyberpeace.oj.person.controller.req.IndexCourseReq">
         select oj_course.resource_id,
-            count(distinct oj_course.resource_id) as studyCount
+            count(distinct oj_lesson_record.resource_id) as studyCount
         from oj_lesson_record
                  left join oj_course on oj_course.resource_id = oj_lesson_record.course_id
         where oj_lesson_record.user_id = #{userId}

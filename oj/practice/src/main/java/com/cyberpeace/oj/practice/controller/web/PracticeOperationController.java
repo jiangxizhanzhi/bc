@@ -344,5 +344,13 @@ public class PracticeOperationController {
 		@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 			return new BaseRsp<>(practiceOperationService.getProgressCount(practiceSetId));
 	}
+	@GetMapping("/initOps")
+	@ApiOperation("获取实践操作列表")
+	public BaseRsp<Boolean> initOps(@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 
+		practiceOperationService.initOps(practiceSetId);
+
+
+		return new BaseRsp<>(true);
+	}
 }

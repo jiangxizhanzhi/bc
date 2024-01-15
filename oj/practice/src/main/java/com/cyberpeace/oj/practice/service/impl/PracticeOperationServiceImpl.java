@@ -1411,6 +1411,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return progressCountRes;
 	}
 
+	@Override
+	public void initOps(String practiceSetId) {
+
+
+
+	}
+
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {
 		EXPORT_LOG.info("Start export practice {}....", operation.getTitle());
 

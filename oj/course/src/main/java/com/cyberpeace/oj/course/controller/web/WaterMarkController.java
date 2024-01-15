@@ -93,7 +93,7 @@ public class WaterMarkController {
 			String out = "";
 			String in = "";
 			try {
-				String handoutUrl = courseLesson.getHandoutUrl();
+				String handoutUrl = courseLesson.getHandoutUrl2();
 				if (StringUtils.isEmpty(handoutUrl)) {
 					continue;
 				}

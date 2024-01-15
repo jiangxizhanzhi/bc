@@ -276,7 +276,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 			courseLesson.setDestroyDelay(existLesson.getDestroyDelay());
 			courseLesson.setTopoId(existLesson.getTopoId());
 		}
-
+		courseLesson.setHandoutUrl2(existLesson.getHandoutUrl());
 		return courseLesson;
 	}
 

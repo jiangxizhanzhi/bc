@@ -41,6 +41,9 @@ public class CourseLesson extends BaseTable {
 	@ApiModelProperty("讲义路径或者内容")
 	private String handoutUrl;
 
+	@ApiModelProperty("初始讲义路径或者内容")
+	private String handoutUrl2;
+
 	@ApiModelProperty("视频地址")
 	private String videoUrl;
 

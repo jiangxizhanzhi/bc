@@ -1,5 +1,10 @@
 package com.cyberpeace.auth.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.auth.controller.req.UserImportReq;
 import com.cyberpeace.auth.controller.req.UserReq;
 import com.cyberpeace.auth.domain.SysUser;
@@ -9,21 +14,13 @@ import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.IdListReq;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.MultiSelectReq;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.DictInfoService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.session.Session;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -84,6 +81,7 @@ public class UserController {
 
 	@ApiOperation("编辑用户")
 	@PatchMapping("/user/")
+	@AdminRequired
 	public BaseRsp updateUser(@RequestBody UserModifyReq req) {
 		sysUserService.updateUser(req);
 		return new BaseRsp();
@@ -99,6 +97,7 @@ public class UserController {
 
 	@ApiOperation("用户分页列表")
 	@GetMapping("/user/list")
+	@AdminRequired
 	public BaseRsp<ListRsp<UserRes>> pageUser(UserReq req) {
 		ListRsp<UserRes> rsp = sysUserService.pageUser(req);
 		return new BaseRsp<>(rsp);
@@ -106,6 +105,7 @@ public class UserController {
 
 	@ApiOperation("更新用户头像")
 	@GetMapping("/update/avatar")
+	@AdminRequired
 	public BaseRsp updateAvatar(@ApiParam(name = "avatar", value = "头像路径") String avatar,
 						  @ApiParam(name = "resource_id", value = "用户id") @RequestParam("resource_id") String resourceId) {
 		sysUserService.updateAvatar(avatar, resourceId);
@@ -121,6 +121,7 @@ public class UserController {
 
 	@ApiOperation("更新用户状态")
 	@PostMapping("/enable")
+	@AdminRequired
 	public BaseRsp updateUserEnable(@RequestBody UserEnableReq req) {
 		sysUserService.updateUserEnable(req);
 		return new BaseRsp();

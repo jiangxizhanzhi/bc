@@ -16,6 +16,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.impl.TraceIdContext;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -89,7 +90,7 @@ public class ExceptionFilter implements Filter {
 		}
 		if (e instanceof BindException) {
 			parseArgumentNotValidException(servletResponse, (BindException) e);
-		} else if (e instanceof UnauthorizedException) {
+		} else if (e instanceof UnauthorizedException || e instanceof AccessDeniedException) {
 			parseUnauthorizedException(servletResponse);
 		} else if (e instanceof ResourceNotFoundException) {
 			parseResourceNotFoundException(servletResponse, (ResourceNotFoundException) e);

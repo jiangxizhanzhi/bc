@@ -100,7 +100,11 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	@Override
 	public List<OpsQuestionBo> queryQuestionList() {
-		JSONArray jsonArray = HttpClientUtil.rawGet(QUESTION_LIST_URL+"?per_page=999999&page=1", JSONArray.class);
+		JSONObject jsonObject = HttpClientUtil.rawGet(QUESTION_LIST_URL+"?per_page=999999&page=1", JSONObject.class);
+		if (jsonObject==null) {
+			return new ArrayList<>();
+		}
+		JSONArray jsonArray = jsonObject.getJSONArray("list");
 		if (jsonArray==null) {
 			return new ArrayList<>();
 		}

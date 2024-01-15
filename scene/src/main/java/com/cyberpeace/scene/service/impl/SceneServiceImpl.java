@@ -413,9 +413,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                         }
                     }else {
                         if (Boolean.TRUE.equals(DateUtil.dateComparison(scene.getCreateTime(), scene.getUpdateTime(), 15))) {
-                            updateById(scene); // 更新修改时间
+							// 更新修改时间
+							updateById(scene);
                             // 场景错误状态超过15分钟不在推送，进度可以从业务接口中获取
-                            pushScenePlugin(scene, 0, 0, 2, 5);
+							Integer networkState = networkState(scene, false);
+							Integer nodeStage = nodeStage(networkState, scene, false);
+                            pushScenePlugin(scene, networkState, nodeStage, 2, 5);
                         }
                     }
                 }catch (Exception e){

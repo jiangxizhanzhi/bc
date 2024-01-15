@@ -107,5 +107,15 @@ public final class JsonKeyConstant {
 
 	public static final String CP_CLOUD = "cpcloud";
 
+	public static final String PROTOCOL = "protocol";
+
+	public static final String PORT_MAPPING = "port_mapping";
+
+	public static final String PORT = "port";
+
+	public static final String ACCESS_IP = "access_ip";
+
+	public static final String ACCESS_PORT = "access_port";
+
 	private JsonKeyConstant() {}
 }

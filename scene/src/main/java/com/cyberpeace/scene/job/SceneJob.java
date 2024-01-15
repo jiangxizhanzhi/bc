@@ -5,11 +5,16 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
@@ -17,6 +22,7 @@ import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.service.bo.Net;
+import com.cyberpeace.scene.service.bo.NetAccessMode;
 import com.cyberpeace.scene.service.bo.Topology;
 import com.cyberpeace.scene.service.bo.TopologyElement;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
@@ -122,6 +128,7 @@ public class SceneJob {
                                 null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(),
                                 SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), hostElement.getId());
                         hostElement.setNodeId(res.getUuid());
+						setPortMapping(hostElement, res.getNets());
                         //保存节点信息
                         nodeService.save(node);
                         count++;
@@ -138,6 +145,7 @@ public class SceneJob {
                                 null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
                                 SceneEnum.CREATE.getCode(), null, scene.getUserId(), containerElement.getId());
                         containerElement.setNodeId(res.getUuid());
+						setPortMapping(containerElement, res.getNets());
                         //保存节点信息
                         nodeService.save(node);
                         count++;
@@ -173,5 +181,32 @@ public class SceneJob {
         String networkName = IDGeneratorUtil.getID();
         return networkService.create(networkName, cidr, gateway, sceneId, element.getId());
     }
+
+    /**
+     * 保存端口映射数据到meta
+     *
+     * @param element
+     * @param nets
+     */
+    private void setPortMapping(TopologyElement element, List<Net> nets) {
+		if (CollectionUtils.isEmpty(element.getPorts()) || CollectionUtils.isEmpty(nets)
+				|| CollectionUtils.isEmpty(nets.get(0).getAccess_modes())) {
+			return;
+		}
+		Map<String, NetAccessMode> map = StreamApiUtils.toMap(nets.get(0).getAccess_modes(),
+				NetAccessMode::getProtocol, a -> a);
+
+		List<JSONObject> accessModes = element.getPorts().get(0).getAccessModes();
+		for (JSONObject mode : accessModes) {
+			String protocol = mode.getString(JsonKeyConstant.PROTOCOL);
+			if (StringUtils.isBlank(protocol)) {
+				continue;
+			}
+			NetAccessMode netAccessMode = map.get(protocol);
+			if (null != netAccessMode) {
+				mode.put(JsonKeyConstant.PORT_MAPPING, netAccessMode.getPort_mapping());
+			}
+		}
+	}
 
 }

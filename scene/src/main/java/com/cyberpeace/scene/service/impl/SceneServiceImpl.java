@@ -705,6 +705,14 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 						iter.put("ip", address.getString("ip"));
 						iter.put("available", address.getBooleanValue("available"));
 						iter.put("type", element.getType());
+						// 端口映射
+						if (null != iter.getJSONObject(JsonKeyConstant.PORT_MAPPING)) {
+							PortMapping portMapping = iter
+									.getJSONObject(JsonKeyConstant.PORT_MAPPING)
+									.toJavaObject(PortMapping.class);
+							iter.put(JsonKeyConstant.ACCESS_IP, portMapping.getHost());
+							iter.put(JsonKeyConstant.ACCESS_PORT, portMapping.getHost_port());
+						}
 						newAccessModes.add(iter);
                     });
                     elementPortJson.put("access_modes", newAccessModes);

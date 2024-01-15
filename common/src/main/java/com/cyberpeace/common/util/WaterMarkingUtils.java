@@ -402,7 +402,7 @@ public class WaterMarkingUtils {
             pageRect = reader.getPageSizeWithRotation(i);
             content = stamper.getOverContent(i);// 在内容上方加水印
             //content = stamper.getUnderContent(i);// 在内容下方加水印
-            gs.setFillOpacity(0.0f);
+//            gs.setFillOpacity(0.0f);
              content.setGState(gs);
             content.beginText();
             content.setRGBColorFill(128, 128, 128);

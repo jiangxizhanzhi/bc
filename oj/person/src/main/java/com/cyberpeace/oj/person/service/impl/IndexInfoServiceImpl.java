@@ -45,7 +45,7 @@ public class IndexInfoServiceImpl implements IndexInfoService {
         for (IndexCategoryReq req : indexReq.getCategoryList()) {
             if (!CollectionUtils.isEmpty(req.getCourses())) {
                 req.getCourses().forEach(course -> {
-                    course.setCompletePercent(reqMap.getOrDefault(course.getResourceId(), 0)/course.getCourseNum());
+                    course.setCompletePercent(reqMap.getOrDefault(course.getResourceId(), 0)*100/course.getCourseNum());
                 });
             }
         }

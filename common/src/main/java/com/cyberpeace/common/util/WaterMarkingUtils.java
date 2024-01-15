@@ -370,14 +370,14 @@ public class WaterMarkingUtils {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(),e);
             }
         }
         BufferedOutputStream bufferOut = null;
         try {
             bufferOut = new BufferedOutputStream(new FileOutputStream(file));
         } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(),e1);
         }
 
         // 水印的高和宽（参数可调节）
@@ -421,7 +421,7 @@ public class WaterMarkingUtils {
             bufferOut.flush();
             bufferOut.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(),e);
         }
     }
 

@@ -5,6 +5,7 @@ import java.util.*;
 import javax.annotation.PostConstruct;
 
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String EXAM_HISTORY_LIST_URL;
 
+	private String QUESTION_LIST_URL;
+
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
@@ -45,6 +48,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 				+ ConfigUtil.getContextProperty("ad.exam.pass.list");
 		EXAM_HISTORY_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.exam.history.list");
+		QUESTION_LIST_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.exam.question.list");
 	}
 
 	@Override
@@ -91,6 +96,15 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		log.info("ad url {}",EXAM_HISTORY_LIST_URL);
 		return HttpClientUtil.rawGet(EXAM_HISTORY_LIST_URL, JSONArray.class);
 
+	}
+
+	@Override
+	public List<OpsQuestionBo> queryQuestionList() {
+		JSONArray jsonArray = HttpClientUtil.rawGet(QUESTION_LIST_URL+"?per_page=999999&page=1", JSONArray.class);
+		if (jsonArray==null) {
+			return new ArrayList<>();
+		}
+		return jsonArray.toJavaList(OpsQuestionBo.class);
 	}
 
 	/** 数据转换使用*/

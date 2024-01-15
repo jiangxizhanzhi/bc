@@ -2,10 +2,13 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.integratation.service.*;
+import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -50,10 +53,6 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
-import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
@@ -173,7 +172,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PracticeMistakeService practiceMistakeService;
-	
+	@Autowired
+	private RemoteAdService remoteAdService;
 	@Autowired
 	private SceneService sceneService;
 
@@ -603,7 +603,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			return null;
 		}
 		operationListQuery.setResourceIds(operationIds);
-
+		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
+		Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
 		// 根据解题状态过滤
 		if ( null != listQuery.getSolved()) {
 
@@ -614,9 +615,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			// 正确取交集
 			if (listQuery.getSolved()) {
+				List<String> opsIds = opsQuestionBos.stream().filter(OpsQuestionBo::isPass).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
 				operationListQuery.getResourceIds().retainAll(solvedIds);
+				operationListQuery.getResourceIds().retainAll(opsIds);
 			} else {
+				List<String> opsIds = opsQuestionBos.stream().filter(a->!a.isPass()).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
 				operationListQuery.getResourceIds().removeAll(solvedIds);
+				operationListQuery.getResourceIds().removeAll(opsIds);
 			}
 
 			if (CollectionUtils.isEmpty(operationListQuery.getResourceIds())) {
@@ -629,6 +634,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			operationListQuery.setKnowledgeExp(
 					"(\"" + String.join("\"|\"", listQuery.getKnowledgeList()) + "\")");
 		}
+
+
 
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,
 				operationListQuery, authContext.getIsWeb());
@@ -656,9 +663,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				PracticeSet::getResourceId, item -> item);
 
 		Map<String, String> creatorMap = sysUserService.getUserNameMap(creatorIdList);
-
 		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext,
-				listQuery.getSolved(), practiceSolvedMap, practiceSetMap, creatorMap));
+				listQuery.getSolved(), practiceSolvedMap, practiceSetMap, creatorMap,opsMap));
 	}
 
 	/**
@@ -674,7 +680,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
 			AuthContext authContext, Boolean solved, Map<String, PracticeSolved> practiceSolvedMap,
-			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap) {
+			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap,Map<String, String> opsMap) {
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
@@ -704,6 +710,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 		operationListBo.setCreateUserName( creatorMap.getOrDefault(practiceOperation.getCreateUserId(),""));
 		operationListBo.setSource(null != practiceSet ? practiceSet.getSource() : "");
+		operationListBo.setRaceId(opsMap.getOrDefault(operationListBo.getResourceId(),""));
 		return operationListBo;
 
 	}

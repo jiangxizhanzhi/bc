@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
 
 import java.util.Date;
 import java.util.List;
@@ -43,5 +44,7 @@ public interface RemoteAdService {
 	Map<String, JSONObject> examPassList(List<String> userIds);
 
 	JSONArray queryHistoryExamList();
+
+    List<OpsQuestionBo> queryQuestionList();
 
 }

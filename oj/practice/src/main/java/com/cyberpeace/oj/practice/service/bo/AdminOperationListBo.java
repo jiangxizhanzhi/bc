@@ -69,4 +69,7 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("来源")
 	private String source;
 
+	@ApiModelProperty("比赛id")
+	private String raceId;
+
 }

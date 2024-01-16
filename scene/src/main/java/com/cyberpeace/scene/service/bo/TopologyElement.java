@@ -20,6 +20,8 @@ public class TopologyElement implements Serializable {
 
     private String name;
 
+    private String image;
+
     private Integer type;
 
     private String icon2;

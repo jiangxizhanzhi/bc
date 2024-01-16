@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -56,7 +57,11 @@ public class CreateContainerReq implements Serializable {
 		List<Net> netList = Lists.newArrayList();
 		netList.add(net);
 
-		this.name = hostElement.getName();
+		if (StringUtils.isBlank(hostElement.getImage())) {
+			this.name = hostElement.getName();
+		} else {
+			this.name = hostElement.getImage();
+		}
 		this.nets = netList;
 	}
 }

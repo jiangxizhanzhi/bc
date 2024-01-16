@@ -39,13 +39,20 @@ public class IndexInfoServiceImpl implements IndexInfoService {
             }
         }
         List<IndexCourseReq> list = personCenterMapper.selectCourseStudyRecord(UserInfoContext.getUserContext().getUserId());
-        Map<String, Integer> reqMap = list.stream().collect(Collectors.toMap(IndexCourseReq::getResourceId, IndexCourseReq::getStudyCount));
+        Map<String, IndexCourseReq> reqMap = list.stream().collect(Collectors.toMap(IndexCourseReq::getResourceId, Function.identity()));
         String content = FileUtil.getContent(file);
         IndexReq indexReq = JSON.parseObject(content, IndexReq.class);
         for (IndexCategoryReq req : indexReq.getCategoryList()) {
             if (!CollectionUtils.isEmpty(req.getCourses())) {
                 req.getCourses().forEach(course -> {
-                    course.setCompletePercent(reqMap.getOrDefault(course.getResourceId(), 0)*100/course.getCourseNum());
+                    IndexCourseReq indexCourseReq = reqMap.get(course.getResourceId());
+                    if (indexCourseReq == null) {
+                        course.setCompletePercent(0);
+                        return;
+                    }
+                    Integer studyCount = indexCourseReq.getStudyCount()==null?0:indexCourseReq.getStudyCount();
+                    course.setCompletePercent(studyCount*100/course.getCourseNum());
+                    course.setDesc(indexCourseReq.getDesc());
                 });
             }
         }

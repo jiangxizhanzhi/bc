@@ -29,7 +29,8 @@ public class ImageServiceImpl implements ImageService {
 
     @PostConstruct
     public void init(){
-        CP_HOST = ConfigUtil.getContextProperty("cp.host");
+        CP_HOST = ConfigUtil.getContextProperty("cp.host") + ":"
+                + ConfigUtil.getContextProperty("cp.port");
         CP_IMAGE = ConfigUtil.getContextProperty("cp.image");
     }
 

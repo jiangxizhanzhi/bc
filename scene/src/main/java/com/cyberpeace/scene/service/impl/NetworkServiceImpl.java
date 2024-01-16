@@ -65,11 +65,12 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
 
     @PostConstruct
     public void init(){
-        CP_HOST = ConfigUtil.getContextProperty("cp.host");
+        CP_HOST = ConfigUtil.getContextProperty("cp.host") + ":"
+                + ConfigUtil.getContextProperty("cp.port");
         CP_NETWORK = ConfigUtil.getContextProperty("cp.network");
         DEFAULT_NAME =ConfigUtil.getContextProperty("network.default.name");
-        DEFAULT_CIDR = ConfigUtil.getContextProperty("network.cidr");
-        DEFAULT_GATEWAY = ConfigUtil.getContextProperty("network.gateway");
+        DEFAULT_CIDR = ConfigUtil.getContextProperty("network.default.cidr");
+        DEFAULT_GATEWAY = ConfigUtil.getContextProperty("network.default.gateway");
     }
 
     @Override

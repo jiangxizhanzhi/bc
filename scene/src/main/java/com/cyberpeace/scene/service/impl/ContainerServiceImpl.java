@@ -40,12 +40,13 @@ public class ContainerServiceImpl implements ContainerService {
     @Autowired
     private ImageService imageService;
 
-    @PostConstruct
-    public void init(){
-        String cpHost = ConfigUtil.getContextProperty("cp.host");
-        String cpContainer = ConfigUtil.getContextProperty("cp.containers");
-        CONTAINER_URL = cpHost + cpContainer;
-    }
+	@PostConstruct
+	public void init() {
+		String cpHost = ConfigUtil.getContextProperty("cp.host") + ":"
+				+ ConfigUtil.getContextProperty("cp.port");
+		String cpContainer = ConfigUtil.getContextProperty("cp.containers");
+		CONTAINER_URL = cpHost + cpContainer;
+	}
 
     @Override
     public CreateContainersRes create(CreateContainerReq req) {

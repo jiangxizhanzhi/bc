@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -21,7 +22,6 @@ import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
 
 /**
  * @author :   SN
@@ -45,11 +45,12 @@ public class HostServiceImpl implements HostService {
     @Autowired
     private ImageService imageService;
 
-    @PostConstruct
-    public void init(){
-        CP_HOST = ConfigUtil.getContextProperty("cp.host");
-        CP_INSTANCES = ConfigUtil.getContextProperty("cp.instances");
-    }
+	@PostConstruct
+	public void init() {
+		CP_HOST = ConfigUtil.getContextProperty("cp.host") + ":"
+				+ ConfigUtil.getContextProperty("cp.port");
+		CP_INSTANCES = ConfigUtil.getContextProperty("cp.instances");
+	}
 
     @Override
     public CreateInstanceRes create(CreateInstanceReq req) {

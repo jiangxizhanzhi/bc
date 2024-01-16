@@ -163,8 +163,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
             return null;
         }
 
-
-        Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSetMapper.selectBatchIds(practiceIdList), PracticeSet::getResourceId, PracticeSet::getName);
+        List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceIdList);
+        Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getName);
+        Map<String, String> practiceSetTagMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getTag);
         LambdaQueryWrapper<PracticeSolved> practiceSolvedQuery = new LambdaQueryWrapper<>();
         practiceSolvedQuery.eq(PracticeSolved::getSubmitUserId, authContext.getUserId());
         practiceSolvedQuery.eq(PracticeSolved::getPracticeType, PracticeCategory.PracticeType.THEORY.getCode());
@@ -188,7 +189,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
                 }
             }
             String practiceSetName = practiceSetMap.get(practiceTheory.getPracticeSetId());
+            String practiceSetTagName = practiceSetTagMap.get(practiceTheory.getPracticeSetId());
             theoryListBo.setPracticeSetName(null != practiceSetName ? practiceSetName : "");
+            theoryListBo.setTag(null != practiceSetTagName ? practiceSetTagName : "");
             return theoryListBo;
         });
     }

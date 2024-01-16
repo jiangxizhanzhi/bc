@@ -51,4 +51,5 @@ public class PracticeTheoryListBo implements Serializable {
 	@ApiModelProperty("是否是真题")
 	private Boolean isTrue;
 
+	private String tag;
 }

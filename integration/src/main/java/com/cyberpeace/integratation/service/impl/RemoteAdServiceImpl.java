@@ -4,8 +4,6 @@ import java.util.*;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteAdService;
+import com.cyberpeace.integratation.service.bo.AdUserClearanceReq;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +42,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String QUESTION_LIST_URL;
 
+	private String USER_DATA_CLEAR_URL;
+
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
@@ -50,6 +56,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 				+ ConfigUtil.getContextProperty("ad.exam.history.list");
 		QUESTION_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.exam.question.list");
+		USER_DATA_CLEAR_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.user.data.clear");
 	}
 
 	@Override
@@ -113,7 +121,12 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	@Override
 	public void clearUserData(String userId) {
-
+		// 无竞赛环境则不调用
+		if (StringUtils.isBlank(adEnvService.getAdHost())) {
+			return;
+		}
+		AdUserClearanceReq body = new AdUserClearanceReq(userId);
+		HttpClientUtil.post(USER_DATA_CLEAR_URL, body, JSONObject.class);
 	}
 
 	/** 数据转换使用*/

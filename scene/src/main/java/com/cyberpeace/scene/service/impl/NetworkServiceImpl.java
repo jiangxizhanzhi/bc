@@ -99,6 +99,7 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
             networkEntity.setUser(pid);
             networkEntity.setSid(sceneId);
             networkEntity.setNetworkStatus(SceneEnum.CREATE.getCode());
+            networkEntity.setId(null);
             save(networkEntity);
             log.info("create network success, name:{}, cidr：{}, gateway:{}", name, cidr, gateway);
         }

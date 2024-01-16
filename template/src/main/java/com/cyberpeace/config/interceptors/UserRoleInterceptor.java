@@ -5,15 +5,13 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.access.AccessDeniedException;
+import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.annoations.AdminRequired;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +38,7 @@ public class UserRoleInterceptor implements HandlerInterceptor {
         }
         UserInfo userInfo = UserInfoContext.getUserContext();
         if (!userInfo.isAdmin()) {
-            throw new AccessDeniedException("需要管理员权限");
+			throw new AuthenticationException();
         }
         return true;
     }

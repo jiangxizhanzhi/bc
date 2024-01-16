@@ -407,7 +407,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                         .count();
                 theoryRate = theoryRate.add(new BigDecimal(count*30/operationList.size()));
             }
-            re.setCount(theoryRate.intValue());
+            re.setCount(theoryRate.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
             re.setSum(100);
             res.add(re);
         }

@@ -38,7 +38,7 @@
       "courses": [
         {
           "courseName": "计算机基础",
-          "resourceId": "L3ELEMK01",
+          "resourceId": "L4ELEMK01",
           "coverage": 2,
           "weight": 5,
           "courseNum": 4,
@@ -107,7 +107,7 @@
         },
         {
           "courseName": "系统安全管理",
-            "resourceId": "",
+          "resourceId": "L4MGT02",
           "coverage": 2,
           "weight": 10,
           "courseNum": 22,

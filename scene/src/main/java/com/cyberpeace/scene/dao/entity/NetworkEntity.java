@@ -1,6 +1,8 @@
 package com.cyberpeace.scene.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
@@ -14,7 +16,7 @@ import lombok.Data;
 @TableName("cr_network")
 public class NetworkEntity extends BaseTable {
 
-    @TableField("resource_id")
+    @TableId(type= IdType.ASSIGN_UUID, value = "resource_id")
     private String uuid;
 
     /**

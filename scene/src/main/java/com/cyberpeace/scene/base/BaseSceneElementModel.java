@@ -32,7 +32,8 @@ public class BaseSceneElementModel extends BaseSceneNodeModel {
         public static final int SWITCH = 1;
         public static final int ROUTER = 2;
         public static final int FIREWALL = 3;
-        public static final int TERMINAL = 4;
+        public static final int TERMINAL = 4;//虚拟机
+        public static final int DOCKER = 5;
         public static final int NPC = 7;
 
         private Type() {}

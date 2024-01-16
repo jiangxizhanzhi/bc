@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +45,7 @@ class NodeElementConverter implements IConverter {
     }
 
     private void createElementAndPort(NodeElementParseResult node, ConvertDataContainer container) {
+        ImageInfoParseResult imageInfoParseResult = container.getImageInfos().getOrDefault(node.getImage(),new ImageInfoParseResult());
         // 主表
         BaseSceneElementBO sceneConfigElementBO = new BaseSceneElementBO();
         sceneConfigElementBO.setSystemType("306");
@@ -70,7 +72,11 @@ class NodeElementConverter implements IConverter {
             sceneConfigElementBO.setInitCommands(result);
         }
         if (node.getId().startsWith("server")) {
-            sceneConfigElementBO.setType(BaseSceneElementModel.Type.TERMINAL);
+            if ("docker".equals(imageInfoParseResult.get镜像格式())){
+                sceneConfigElementBO.setType(BaseSceneElementModel.Type.DOCKER);
+            } else {
+                sceneConfigElementBO.setType(BaseSceneElementModel.Type.TERMINAL);
+            }
         } else {
             sceneConfigElementBO.setType(BaseSceneElementModel.Type.ROUTER);
         }
@@ -97,7 +103,6 @@ class NodeElementConverter implements IConverter {
         BaseCloudPluginSceneElementBO pluginElement = new BaseCloudPluginSceneElementBO();
         pluginElement.setImage(node.getImage());
         // 初步加载role imageType (部分简单靶标不会导入), 这里不一定准确
-        ImageInfoParseResult imageInfoParseResult = container.getImageInfos().getOrDefault(node.getImage(),new ImageInfoParseResult());
         String logo = imageInfoParseResult.getLOGO();
         if (StringUtils.isNotBlank(logo)) {
             sceneConfigElementBO.setIcon2(logo);

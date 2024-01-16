@@ -54,9 +54,9 @@ public class JwtHandShake implements HandshakeInterceptor {
 		Map<String, String> parametersMap = parseParameterMap(queryString);
 
 		// 2、权限校验
-		String jwtToken = parametersMap.get(TOKEN);
+		String token = parametersMap.get(TOKEN);
 
-		if (StringUtils.isBlank(jwtToken)) {
+		if (StringUtils.isBlank(token)) {
 			log.error("websocket handshake fail,path is {} token is null", path);
 			return false;
 		}
@@ -66,9 +66,9 @@ public class JwtHandShake implements HandshakeInterceptor {
 		SysUserService sysUserService = SpringContextUtil.getBeanByClass(SysUserService.class);
 
 		try {
-			userInfo = sysUserService.getByToken(jwtToken);
+			userInfo = sysUserService.getByToken(token);
 		} catch (Exception e) {
-			log.error("websocket handshake fail, path {} call remote exception, error:", path, e);
+			log.error("websocket handshake fail, path: {}, token:{}, error: {}", path, token, e.getMessage());
 			return false;
 		}
 

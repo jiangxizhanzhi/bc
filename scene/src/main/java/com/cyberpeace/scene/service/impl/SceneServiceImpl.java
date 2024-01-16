@@ -132,7 +132,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			throw new BusinessException(ErrorCode.SCENE_ALREADY_EXIST);
 		}
 		Topology topology = topologyService.formatTopology(req.getTopologyId());
-		log.info("topology：{}", topology);
+		log.info("topology：{}", JsonUtil.toJsonString(topology));
 		if (topology == null) {
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}

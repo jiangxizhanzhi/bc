@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -39,7 +40,7 @@ public class UserRoleInterceptor implements HandlerInterceptor {
         }
         UserInfo userInfo = UserInfoContext.getUserContext();
         if (!userInfo.isAdmin()) {
-            throw new BusinessException(ErrorCode.INTERFACE_UNAUTHORIZED);
+            throw new AccessDeniedException("需要管理员权限");
         }
         return true;
     }

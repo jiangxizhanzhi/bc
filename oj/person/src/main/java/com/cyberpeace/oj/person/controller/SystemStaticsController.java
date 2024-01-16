@@ -1,10 +1,23 @@
 package com.cyberpeace.oj.person.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.auth.controller.req.UserReq;
 import com.cyberpeace.auth.domain.SysUser;
+import com.cyberpeace.auth.service.OpLogService;
 import com.cyberpeace.auth.service.SysUserService;
-import com.cyberpeace.auth.service.bo.UserRes;
+import com.cyberpeace.auth.service.bo.OpLog;
+import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.PageUtil;
@@ -12,47 +25,40 @@ import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.person.controller.res.SystemRecordRes;
 import com.cyberpeace.oj.person.controller.res.SystemStaticsRes;
-import com.cyberpeace.auth.service.bo.OpLog;
-import com.cyberpeace.auth.service.OpLogService;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Api(tags = "oj-系统总览")
 @RestController
 @RequestMapping("/oj/system/statics")
 public class SystemStaticsController {
 
-    @Autowired
-    private OpLogService opLogService;
-    @Autowired
-    private SysUserService sysUserService;
+	@Autowired
+	private OpLogService opLogService;
 
-    @Autowired
-    private CourseService courseService;
+	@Autowired
+	private SysUserService sysUserService;
 
-    @Autowired
-    private CourseLessonService courseLessonService;
+	@Autowired
+	private CourseService courseService;
 
-    @Autowired
-    private PracticeTheoryService practiceTheoryService;
-    @Autowired
-    private PracticeOperationService practiceOperationService;
+	@Autowired
+	private CourseLessonService courseLessonService;
+
+	@Autowired
+	private PracticeTheoryService practiceTheoryService;
+
+	@Autowired
+	private PracticeOperationService practiceOperationService;
+
     @ApiOperation("数据统计")
     @GetMapping("/count_statics")
+	@AdminRequired
     public BaseRsp<SystemStaticsRes> countStatics() {
         SystemStaticsRes systemStaticsRes = new SystemStaticsRes();
         systemStaticsRes.setPersonCount(sysUserService.count());
@@ -72,6 +78,7 @@ public class SystemStaticsController {
     }
     @ApiOperation("学员行为记录")
     @GetMapping("/record/page")
+    @AdminRequired
     public BaseRsp<ListRsp<SystemRecordRes>> page(UserReq req) {
         List<SysUser> userList = sysUserService.list();
         List<SystemRecordRes> list =new ArrayList<>();

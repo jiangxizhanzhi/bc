@@ -31,7 +31,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 				"/gateway/exercise/**");
 		registry.addInterceptor(requestInterceptor);
 		registry.addInterceptor(userRoleInterceptor).addPathPatterns("/auth/**",
-				"/tb/**");
+				"/oj/person/**", "/cs/admin/**", "/system_config/set");
 	}
 
 	@Override

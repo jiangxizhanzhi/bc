@@ -337,6 +337,10 @@ public final class ErrorCode {
 	 * 未找到镜像
 	 */
 	public static final String IMAGE_NOT_FOUND = "100096";
+	/**
+	 * 认证失败，Session失效或错误
+	 */
+	public static final String AUTH_FAILURE = "100097";
 
-    private ErrorCode() {}
+	private ErrorCode() {}
 }

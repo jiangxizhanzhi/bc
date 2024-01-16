@@ -226,7 +226,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	public SysUser getCurrent() {
 		TbUser currentUser = getCurrentSessionUser();
 		if (null == currentUser) {
-			return null;
+			throw new BusinessException(ErrorCode.AUTH_FAILURE);
 		}
 		return getByUserId(currentUser.getUserId());
 	}

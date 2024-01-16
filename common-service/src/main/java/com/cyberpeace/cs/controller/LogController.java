@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.controller.req.LogReq;
@@ -29,6 +30,7 @@ public class LogController {
 	private LogService logService;
 	@ApiOperation("下载日志")
 	@GetMapping("/downloadLog")
+	@AdminRequired
 	public void download(HttpServletResponse response,
 			@ApiParam(name = "file_name", value = "文件名称",
 					required = true) @RequestParam("file_name") String name,
@@ -43,6 +45,7 @@ public class LogController {
 
 	@ApiOperation("运行日志")
 	@GetMapping("/logs")
+	@AdminRequired
 	public BaseRsp getRunLogs(LogReq logReq){
 		return new BaseRsp(logService.getRunLogs(logReq));
 	}

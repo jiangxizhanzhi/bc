@@ -115,7 +115,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/favicon.ico",
 						"/license/**",
 						"/sy/**",
-						"/auth/user",
 						"/system_config/query",
 						"/oj/watermark/**",
 						"/oj/admin/course/rm/import",

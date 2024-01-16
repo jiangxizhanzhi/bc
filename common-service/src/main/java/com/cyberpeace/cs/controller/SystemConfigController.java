@@ -1,15 +1,18 @@
 package com.cyberpeace.cs.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.controller.req.DictInfoReq;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.DictInfoService;
-import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import io.swagger.annotations.Api;
 
 /**
  * @author :   SN
@@ -31,6 +34,7 @@ public class SystemConfigController {
     }
 
     @PostMapping("/set")
+	@AdminRequired
     public BaseRsp<Void> setSystemConfig(@RequestBody List<DictInfoReq> dictInfoReqList) {
         // 系统内置名称、logo、版权信息
 

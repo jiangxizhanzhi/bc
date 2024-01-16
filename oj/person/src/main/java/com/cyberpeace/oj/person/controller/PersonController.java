@@ -1,5 +1,22 @@
 package com.cyberpeace.oj.person.controller;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -11,6 +28,7 @@ import com.cyberpeace.auth.mapper.SysUserMapper;
 import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.auth.service.bo.UserRes;
+import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ExcelHeader;
@@ -46,24 +64,10 @@ import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Api(tags = "oj-前台个人中心api")
 @RestController
@@ -112,6 +116,7 @@ public class PersonController {
 
     @ApiOperation("课程学习统计")
     @GetMapping("/course-stats")
+	@AdminRequired
     public BaseRsp<PersonAllStatsBo> personalStats() {
         PersonAllStatsBo res = new PersonAllStatsBo();
 
@@ -136,6 +141,7 @@ public class PersonController {
 
     @ApiOperation("学习数据")
     @GetMapping("/person-stats")
+	@AdminRequired
     public BaseRsp<ListRsp<PersonStatsBo>> personalStatsDetail4Course(
             UserReq req) {
 
@@ -197,6 +203,7 @@ public class PersonController {
 
     @ApiOperation("学习数据-全部数据-导出")
     @GetMapping(value = "/user-stats-data-export")
+	@AdminRequired
     public void userStatsDataExport(HttpServletResponse response) {
         List<SysUser> sysUsers = sysUserMapper.selectList(null);
         List<UserRes> userInfos = sysUsers.stream().map(s -> {

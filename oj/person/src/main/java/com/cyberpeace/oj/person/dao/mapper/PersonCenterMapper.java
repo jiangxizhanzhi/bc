@@ -187,4 +187,6 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
     List<StudyHistoryRes> selectParcticeStudyCalendar(@Param("startTime")String startTime,@Param("endTime") String endTime,@Param("userId") String userId);
 
     List<IndexCourseReq> selectCourseStudyRecord(String userId);
+
+    List<LessonRecord> selectByUsers(List<String> userIds);
 }

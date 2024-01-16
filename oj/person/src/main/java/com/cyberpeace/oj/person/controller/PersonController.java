@@ -20,8 +20,10 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.bo.PersonAllStatsBo;
 import com.cyberpeace.oj.course.service.bo.PersonStatsBo;
@@ -57,7 +59,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Api(tags = "oj-前台个人中心api")
@@ -91,6 +96,9 @@ public class PersonController {
 
     @Autowired
     PersonCenterMapper personCenterMapper;
+
+    @Autowired
+	CourseMapper courseMapper;
 
     @Autowired
     private SysUserService sysUserService;
@@ -148,12 +156,15 @@ public class PersonController {
 
     private List<PersonStatsBo> getPersonStatsBos(List<UserRes> userInfos) {
         List<PersonStatsBo> res;
-        List<StudyRecord> studyRecords = personCenterMapper.selectRecord();
-        Map<String, Integer> lessonMap = StreamApiUtils.toMap(studyRecords, StudyRecord::getUserId, StudyRecord::getCourseCount);
-        StudyStaticsRes allLesson = personCenterMapper.selectLessonAllCount();
-        Integer lessonAllCount = allLesson.getLessonAllCount();
-
         List<String> userIds = StreamApiUtils.getColumn(userInfos, UserRes::getResourceId);
+		List<String> courseIds = courseMapper.selectList(new QueryWrapper<>())
+				.stream()
+				.map(Course::getResourceId)
+				.collect(Collectors.toList());
+		List<LessonRecord> lessonRecords = personCenterMapper.selectByUsers(userIds);
+		Map<String, Integer> lessonMap = StreamApiUtils.toMap(lessonRecords, LessonRecord::getUserId, LessonRecord::getLearnedType);
+		Integer lessonAllCount = courseIds.size();
+
         List<StudyRecord> studyRecord = personCenterMapper.selectSlovedPractice(userIds);
         Map<String, StudyRecord> map = StreamApiUtils.toMap(studyRecord, StudyRecord::getUserId, s -> s);
 

@@ -14,10 +14,10 @@ public class PersonStatsBo implements Serializable {
     private String resourceId;
 
     @ApiModelProperty("用户姓名")
-    private String name;
+    private String username;
 
     @ApiModelProperty("用户名")
-    private String username;
+    private String name;
 
     @ApiModelProperty("课程学习进度")
     private Integer courseProgress = 0;

@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -48,14 +49,17 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     public CreateContainersRes create(CreateContainerReq req) {
-        log.info("create container start req:{}", req);
-        if (Objects.isNull(req)){
-            throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
-        }
-        ImageRes imageInfo = imageService.getImageInfo(req.getName());
-        if (Objects.isNull(imageInfo)){
-            throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
-        }
+		log.info("create container start req:{}", req);
+		if (Objects.isNull(req)) {
+			throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
+		}
+		ImageRes imageInfo = imageService.getImageInfo(req.getName());
+		if (Objects.isNull(imageInfo)) {
+			throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
+		}
+		if (imageInfo.getTotal() == 0 || CollectionUtils.isEmpty(imageInfo.getItems())) {
+			throw new BusinessException(ErrorCode.IMAGE_NOT_FOUND, req.getName());
+		}
         String uuid = imageInfo.getItems().get(0).getUuid();
         req.setImage(uuid);
         req.setName(IDGeneratorUtil.getID());

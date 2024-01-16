@@ -21,6 +21,7 @@ import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author :   SN
@@ -59,6 +60,9 @@ public class HostServiceImpl implements HostService {
         ImageRes imageInfo = imageService.getImageInfo(req.getName());
         if (Objects.isNull(imageInfo)){
             throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
+        }
+        if (imageInfo.getTotal() == 0 || CollectionUtils.isEmpty(imageInfo.getItems())) {
+            throw new BusinessException(ErrorCode.IMAGE_NOT_FOUND, req.getName());
         }
         String uuid = imageInfo.getItems().get(0).getUuid();
         req.setImage(uuid);

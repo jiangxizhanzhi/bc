@@ -333,6 +333,10 @@ public final class ErrorCode {
 	 * 启动场景失败
 	 */
 	public static final String FAILED_TO_CREATE_SCENE = "100095";
+	/**
+	 * 未找到镜像
+	 */
+	public static final String IMAGE_NOT_FOUND = "100096";
 
-	private ErrorCode() {}
+    private ErrorCode() {}
 }

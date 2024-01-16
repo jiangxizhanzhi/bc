@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.controller.web;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
@@ -45,8 +46,12 @@ public class PracticeCategoryController {
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 	@GetMapping("/listAll")
-	public BaseRsp<List<PracticeCategory>>  queryAll() {
-		return new BaseRsp<>(categoryService.list());
+	public BaseRsp<List<PracticeCategory>>  queryAll(@RequestParam(value = "practice_type",required = false) Integer practiceType) {
+		QueryWrapper<PracticeCategory> queryWrapper = new QueryWrapper<>();
+		if (practiceType !=null) {
+			queryWrapper.eq("practice_type",practiceType);
+		}
+		return new BaseRsp<>(categoryService.list(queryWrapper));
 	}
 
 
@@ -57,9 +62,6 @@ public class PracticeCategoryController {
 			@ApiImplicitParam(name = "pattern", value = "模糊搜索内容", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "children", value = "是否查询子分类", dataTypeClass = String.class)})
 	@GetMapping("/list")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_OJ_THEORY_PRACTICE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
-			logical = Logical.OR)
 	public BaseRsp<List<CategoryListBo>> list(
 			@RequestParam(value = "practice_type") Integer practiceType,
 			@RequestParam(value = "pattern", required = false) String pattern,

@@ -16,7 +16,7 @@
           "resourceId": "PEIP01",
           "coverage": 2,
           "weight": 2,
-          "courseNum": 16,
+          "courseNum": 5,
           "desc": "",
           "completePercent": 0
         },
@@ -25,7 +25,7 @@
           "resourceId": "L4ELEMK03",
           "coverage": 2,
           "weight": 3,
-          "courseNum": 16,
+          "courseNum": 6,
           "desc": "",
           "completePercent": 0
         }
@@ -50,7 +50,7 @@
           "resourceId": "L4ELEMK02",
           "coverage": 2,
           "weight": 10,
-          "courseNum": 4,
+          "courseNum": 5,
           "desc": "",
           "completePercent": 0
         }
@@ -66,7 +66,7 @@
             "resourceId": "L4PROT01",
           "coverage": 8,
           "weight": 10,
-          "courseNum": 13,
+          "courseNum": 27,
           "desc": "",
           "completePercent": 0
         },
@@ -75,7 +75,7 @@
           "resourceId": "L4PROT02",
           "coverage": 5,
           "weight": 10,
-          "courseNum": 11,
+          "courseNum": 27,
           "desc": "",
           "completePercent": 0
         }
@@ -85,7 +85,7 @@
             "resourceId": "L4PROT03",
           "coverage": 11,
           "weight": 10,
-          "courseNum": 19,
+          "courseNum": 17,
           "desc": "",
           "completePercent": 0
         }
@@ -101,7 +101,7 @@
           "resourceId": "L4MGT01",
           "coverage": 2,
           "weight": 5,
-          "courseNum": 16,
+          "courseNum": 14,
           "desc": "",
           "completePercent": 0
         },
@@ -110,7 +110,7 @@
             "resourceId": "",
           "coverage": 2,
           "weight": 10,
-          "courseNum": 16,
+          "courseNum": 22,
           "desc": "",
           "completePercent": 0
         }
@@ -120,7 +120,7 @@
             "resourceId": "L4MGT03",
           "coverage": 8,
           "weight": 10,
-          "courseNum": 12,
+          "courseNum": 11,
           "desc": "",
           "completePercent": 0
         }
@@ -136,7 +136,7 @@
           "resourceId": "L4DISPOSE01",
           "coverage": 4,
           "weight": 10,
-          "courseNum": 16,
+          "courseNum": 17,
           "desc": "",
           "completePercent": 0
         },
@@ -145,7 +145,7 @@
           "resourceId": "",
           "coverage": 12,
           "weight": 15,
-          "courseNum": 16,
+          "courseNum": 29,
           "desc": "",
           "completePercent": 0
         }

@@ -3,6 +3,7 @@ package com.cyberpeace.common.constant;
 public final class CommonConstant {
 
 	public static final Object SCENE_CREATE_FINISH = "OJ-3";
+	public static final String LOCALHOST = "127.0.0.1";
 
     private CommonConstant() {}
 

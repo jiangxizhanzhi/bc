@@ -11,6 +11,7 @@ import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
+import com.cyberpeace.scene.service.CpEnvService;
 import com.cyberpeace.scene.service.NetworkService;
 import com.cyberpeace.scene.service.bo.NetworkInstance;
 import com.cyberpeace.scene.service.bo.req.CreateNetworkReq;
@@ -63,10 +64,12 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
     @Autowired
     private NetworkMapper networkMapper;
 
+    @Autowired
+    private CpEnvService cpEnvService;
+
     @PostConstruct
     public void init(){
-        CP_HOST = ConfigUtil.getContextProperty("cp.host") + ":"
-                + ConfigUtil.getContextProperty("cp.port");
+        CP_HOST = cpEnvService.getCpHost();
         CP_NETWORK = ConfigUtil.getContextProperty("cp.network");
         DEFAULT_NAME =ConfigUtil.getContextProperty("network.default.name");
         DEFAULT_CIDR = ConfigUtil.getContextProperty("network.default.cidr");

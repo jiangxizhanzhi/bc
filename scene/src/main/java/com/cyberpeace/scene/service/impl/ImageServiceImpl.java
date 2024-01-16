@@ -1,10 +1,12 @@
 package com.cyberpeace.scene.service.impl;
 
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.scene.service.CpEnvService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.res.ImageRes;
 import com.cyberpeace.scene.util.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -27,10 +29,12 @@ public class ImageServiceImpl implements ImageService {
      */
     private String CP_IMAGE;
 
+    @Autowired
+    private CpEnvService cpEnvService;
+
     @PostConstruct
     public void init(){
-        CP_HOST = ConfigUtil.getContextProperty("cp.host") + ":"
-                + ConfigUtil.getContextProperty("cp.port");
+        CP_HOST = cpEnvService.getCpHost();
         CP_IMAGE = ConfigUtil.getContextProperty("cp.image");
     }
 

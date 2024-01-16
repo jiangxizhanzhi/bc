@@ -13,6 +13,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.scene.service.CpEnvService;
 import com.cyberpeace.scene.service.HostService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
@@ -45,10 +46,12 @@ public class HostServiceImpl implements HostService {
     @Autowired
     private ImageService imageService;
 
+	@Autowired
+	private CpEnvService cpEnvService;
+
 	@PostConstruct
 	public void init() {
-		CP_HOST = ConfigUtil.getContextProperty("cp.host") + ":"
-				+ ConfigUtil.getContextProperty("cp.port");
+		CP_HOST = cpEnvService.getCpHost();
 		CP_INSTANCES = ConfigUtil.getContextProperty("cp.instances");
 	}
 

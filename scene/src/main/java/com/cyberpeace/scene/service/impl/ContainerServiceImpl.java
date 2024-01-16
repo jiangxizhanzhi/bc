@@ -14,6 +14,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.scene.service.ContainerService;
+import com.cyberpeace.scene.service.CpEnvService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.ContainerItem;
 import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
@@ -40,10 +41,12 @@ public class ContainerServiceImpl implements ContainerService {
     @Autowired
     private ImageService imageService;
 
+	@Autowired
+	private CpEnvService cpEnvService;
+
 	@PostConstruct
 	public void init() {
-		String cpHost = ConfigUtil.getContextProperty("cp.host") + ":"
-				+ ConfigUtil.getContextProperty("cp.port");
+		String cpHost = cpEnvService.getCpHost();
 		String cpContainer = ConfigUtil.getContextProperty("cp.containers");
 		CONTAINER_URL = cpHost + cpContainer;
 	}

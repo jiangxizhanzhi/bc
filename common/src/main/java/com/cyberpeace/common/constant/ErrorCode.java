@@ -210,7 +210,7 @@ public final class ErrorCode {
 	public static final String PERMISSION_DENIED = "100062";
 
 	/** 演示环境禁止增删改 */
-	public static final String DEMONSTRATION_FORBID_UPDATE = "100063";
+	public static final String DEMONSTRATION_FORBID_UPDATE = "100163";
 
 	/**
 	 * 旧密码错误

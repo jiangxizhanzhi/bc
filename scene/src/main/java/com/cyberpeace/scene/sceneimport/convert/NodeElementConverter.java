@@ -59,6 +59,7 @@ class NodeElementConverter implements IConverter {
 
         sceneConfigElementBO.setId(node.getId());
         sceneConfigElementBO.setName(node.getName());
+        sceneConfigElementBO.setImage(node.getImage());
         if (CollectionUtils.isNotEmpty(node.getInitCommands())) {
             List<String> result = new ArrayList<>();
             for (var initCommand : node.getInitCommands()) {

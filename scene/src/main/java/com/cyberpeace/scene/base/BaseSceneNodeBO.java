@@ -21,6 +21,8 @@ public abstract class BaseSceneNodeBO{
     private String position3;
     @ApiModelProperty(value = "名称")
     private String name;
+    @ApiModelProperty(value = "镜像名称")
+    private String image;
     @ApiModelProperty(value = "描述")
     private String description;
     @ApiModelProperty(value = "显示参数")

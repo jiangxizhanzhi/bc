@@ -237,8 +237,8 @@
         oj_resource_collection.business_type as business_type,
         oj_practice_theory.theory_type practice_type
         from oj_resource_collection
---         left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and
---         oj_resource_collection.business_type = 3
+        left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and
+        oj_resource_collection.business_type = 3
         left join oj_course_lesson on oj_resource_collection.business_id = oj_course_lesson.resource_id and
         oj_resource_collection.business_type = 4
         left join oj_practice_theory on oj_resource_collection.business_id = oj_practice_theory.resource_id and

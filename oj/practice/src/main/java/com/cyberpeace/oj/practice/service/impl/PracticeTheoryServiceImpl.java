@@ -165,7 +165,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
         List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceIdList);
         Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getName);
-        Map<String, String> practiceSetTagMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getTag);
+        Map<String, String> practiceSetTagMap = practiceSets.stream().filter(a->StringUtils.isNotBlank(a.getTag())).collect(Collectors.toMap(PracticeSet::getResourceId, PracticeSet::getTag,(a,b)->b));
         LambdaQueryWrapper<PracticeSolved> practiceSolvedQuery = new LambdaQueryWrapper<>();
         practiceSolvedQuery.eq(PracticeSolved::getSubmitUserId, authContext.getUserId());
         practiceSolvedQuery.eq(PracticeSolved::getPracticeType, PracticeCategory.PracticeType.THEORY.getCode());

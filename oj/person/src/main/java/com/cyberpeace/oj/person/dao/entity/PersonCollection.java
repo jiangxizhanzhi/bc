@@ -22,4 +22,8 @@ public class PersonCollection implements Serializable {
 
   @ApiModelProperty("题型")
   private Integer practiceType;
+
+  @ApiModelProperty("比赛ID")
+  private String raceId;
+
 }

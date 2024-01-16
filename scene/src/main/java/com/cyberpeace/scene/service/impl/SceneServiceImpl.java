@@ -221,13 +221,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 				sceneDataRsp.setStage(StageEnum.CREATE_INSTANCE.getStage());
 				sceneDataRsp.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
 				sceneDataRsp.setStagePercentage(nodeStage);
-				sceneDataRsp.setProgressMessage(StageEnum.CREATE_INSTANCE.getStageName());
+				sceneDataRsp.setProcessMessage(StageEnum.CREATE_INSTANCE.getStageName());
 				sceneDataRsp.setProgressStatus(2);
 			} else {
 				sceneDataRsp.setStage(StageEnum.CREATE_NETWORK.getStage());
 				sceneDataRsp.setStageName(StageEnum.CREATE_NETWORK.getStageName());
 				sceneDataRsp.setStagePercentage(networkState);
-				sceneDataRsp.setProgressMessage(StageEnum.CREATE_NETWORK.getStageName());
+				sceneDataRsp.setProcessMessage(StageEnum.CREATE_NETWORK.getStageName());
 				sceneDataRsp.setProgressStatus(2);
 			}
 			sceneDataRsp.setProgressPercentage(percentage);
@@ -619,7 +619,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
             wsScene.setStagePercentage(percentage);
             wsScene.setProgressPercentage(percentage);
             wsScene.setProcess(StageEnum.CREATE_INSTANCE.getStage());
-            wsScene.setProgressMessage(StageEnum.CREATE_INSTANCE.getStageName());
+            wsScene.setProcessMessage(StageEnum.CREATE_INSTANCE.getStageName());
             wsScene.setProgressStatus(processStatus);
             wsScene.setEvent(2);
             wsScene.setEventStatus(eventStatus);

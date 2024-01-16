@@ -25,8 +25,8 @@ public class SceneDataRsp extends SceneEntity {
     @JsonProperty("stage_percentage")
     private Integer stagePercentage;
 
-    @JsonProperty("progress_message")
-    private String progressMessage;
+    @JsonProperty("process_message")
+    private String processMessage;
 
     @JsonProperty("progress_status")
     private Integer progressStatus;

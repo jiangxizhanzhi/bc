@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.util.CollectionUtils;
 
@@ -98,8 +97,6 @@ public class SceneJob {
      * 启动场景
      */
     public void start(Topology topology, SceneEntity scene) {
-        // 先更新状态到创建中
-        sceneService.updateStatus(scene.getResourceId(), SceneEnum.CREATE.getCode());
         log.info("start scene : {}", scene.getSceneName());
         //获取拓扑元素
         Map<String, List<TopologyElement>> topologyMap = topologyService.getTopologyElementMap(topology);
@@ -154,6 +151,7 @@ public class SceneJob {
                     }
                 }
                 Thread.sleep(5 * 1000);
+                scene.setSceneStatus(SceneEnum.CREATE.getCode());
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e.getMessage(), e);
                 scene.setSceneStatus(SceneEnum.ERROR.getCode());

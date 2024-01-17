@@ -4,18 +4,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.cyberpeace.common.constant.ErrorCode;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
@@ -184,29 +182,22 @@ public class SceneJob {
     }
 
     /**
-     * 保存端口映射数据到meta
-     *
-     * @param element
-     * @param nets
-     */
+	 * 保存端口映射数据到meta
+	 * 创建终端的接口保证access_modes顺序和个数与请求的一致
+	 *
+	 * @param element
+	 * @param nets
+	 */
     private void setPortMapping(TopologyElement element, List<Net> nets) {
 		if (CollectionUtils.isEmpty(element.getPorts()) || CollectionUtils.isEmpty(nets)
 				|| CollectionUtils.isEmpty(nets.get(0).getAccess_modes())) {
 			return;
 		}
-		Map<String, NetAccessMode> map = StreamApiUtils.toMap(nets.get(0).getAccess_modes(),
-				NetAccessMode::getProtocol, a -> a);
-
-		List<JSONObject> accessModes = element.getPorts().get(0).getAccessModes();
-		for (JSONObject mode : accessModes) {
-			String protocol = mode.getString(JsonKeyConstant.PROTOCOL);
-			if (StringUtils.isBlank(protocol)) {
-				continue;
-			}
-			NetAccessMode netAccessMode = map.get(protocol);
-			if (null != netAccessMode) {
-				mode.put(JsonKeyConstant.PORT_MAPPING, netAccessMode.getPort_mapping());
-			}
+		int length = nets.get(0).getAccess_modes().size();
+		for (int i = 0; i < length; i++) {
+			JSONObject mode = element.getPorts().get(0).getAccessModes().get(i);
+			NetAccessMode netAccessMode = nets.get(0).getAccess_modes().get(i);
+			mode.put(JsonKeyConstant.PORT_MAPPING, netAccessMode.getPort_mapping());
 		}
 	}
 

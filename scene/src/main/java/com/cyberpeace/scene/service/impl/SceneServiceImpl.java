@@ -317,7 +317,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
                     networkMapper.deleteByResourceId(iter);
                 });
             }
-            sceneMapper.updateSceneStatus(sceneId, SceneEnum.DELETED.getCode());
+//            sceneMapper.updateSceneStatus(sceneId, SceneEnum.DELETED.getCode());
+			sceneMapper.deleteByResourceId(sceneId);
         }catch (Exception e){
             log.error("delete scene:[{}], error:{}", sceneId, e);
             throw new BusinessException(ErrorCode.SCENE_DESTROY_FAILED);

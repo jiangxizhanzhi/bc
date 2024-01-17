@@ -27,4 +27,9 @@ public interface SceneMapper extends BaseMapper<SceneEntity> {
     int updateMeta(@Param("sceneId") String sceneId, @Param("meta") String meta);
 
 	List<String> selectByUserId(@Param("userId") String userId, @Param("code") Integer code);
+
+    /**
+     * @param sceneId 场景id
+     */
+    void deleteByResourceId(@Param("sceneId") String sceneId);
 }

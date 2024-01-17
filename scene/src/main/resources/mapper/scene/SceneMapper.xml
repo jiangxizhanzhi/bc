@@ -10,6 +10,11 @@
     <update id="updateMeta">
         update cr_scene set meta = #{meta} where resource_id = #{sceneId}
     </update>
+    <delete id="deleteByResourceId">
+        delete
+        from cr_scene
+        where resource_id = #{sceneId}
+    </delete>
 
     <select id="selectSceneCount" resultType="java.lang.Integer">
         select count(1) from cr_scene where 1=1

@@ -11,5 +11,5 @@ public class OpsQuestionBo implements Serializable {
     private String raceId;
     private String name;
     private String desc;
-
+    private String direction;
 }

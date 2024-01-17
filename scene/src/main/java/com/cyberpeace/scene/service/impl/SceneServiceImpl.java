@@ -185,6 +185,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		return sceneMapper.selectByUserId(userId, SceneEnum.DELETED.getCode());
 	}
 
+	@Override
+	public void updateStatus(String resourceId, Integer code) {
+		sceneMapper.updateSceneStatus(resourceId, code);
+	}
+
 	private SceneData makeSceneData(SceneEntity scene) {
 		SceneData sceneData = new SceneData();
 		String topo;

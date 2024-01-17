@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description
@@ -53,6 +50,9 @@ public class ImageInfoParseResult {
     }
 
     public List<String> getInitCommands() {
+        if(StringUtils.isBlank(this.自定义命令)) {
+            return new ArrayList<>();
+        }
         return Arrays.asList(this.自定义命令);
     }
 

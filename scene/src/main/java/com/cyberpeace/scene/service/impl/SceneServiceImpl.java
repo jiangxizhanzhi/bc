@@ -132,12 +132,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			throw new BusinessException(ErrorCode.SCENE_ALREADY_EXIST);
 		}
 		Topology topology = topologyService.formatTopology(req.getTopologyId());
-		log.info("topology：{}", JsonUtil.toJsonString(topology));
+		String topoMeta = JsonUtil.toJsonString(topology);
+		log.info("topology：{}", topoMeta);
 		if (topology == null) {
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		// 创建场景
-		SceneEntity scene = createScene(req.getTopologyId(), req.getInstanceId(), userId,
+		SceneEntity scene = createScene(req.getTopologyId(), topoMeta, req.getInstanceId(), userId,
 				req.getInstanceType(), req.getDestroyTime());
 		// 提交创建场景任务
 		executor.submit(new SceneExecutor(sceneJob, topology, scene));
@@ -160,12 +161,10 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		// 创建场景
-
-		SceneEntity scene = createScene(req.getId(), instanceId, req.getContext().getAccessUserId(),
+		SceneEntity scene = createScene(req.getId(), topo.toJSONString(), instanceId, req.getContext().getAccessUserId(),
 				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
 		executor.submit(new SceneExecutor(sceneJob, topology, scene));
 		// 生成返回数据
-		scene.setMeta(topo.toJSONString());
 		JSONObject res = new JSONObject();
 		res.put(JsonKeyConstant.SCENE_DATA, makeSceneData(scene));
 		res.put(JsonKeyConstant.ID, scene.getResourceId());
@@ -258,7 +257,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 	}
 
-    private SceneEntity createScene(String topologyId, String instanceId, String userId, Integer instanceType, Integer destroy){
+    private SceneEntity createScene(String topologyId,String topoMeta, String instanceId, String userId, Integer instanceType, Integer destroy){
         SceneEntity scene = new SceneEntity();
         scene.setResourceId(IDGeneratorUtil.getID());
         scene.setSceneName(IDGeneratorUtil.getID());
@@ -277,6 +276,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         scene.setUserId(userId);
         scene.setSceneTtl(SCENE_DESTROY);
         scene.setSceneStatus(SceneEnum.INIT.getCode());
+		scene.setMeta(topoMeta);
         sceneMapper.insert(scene);
         return scene;
     }
@@ -457,13 +457,17 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 				}
 			}
 		} else {
-			return 100;
+			return 0;
 		}
 		return state(count, networks.size());
 	}
 
 
 	private Integer nodeStage(Integer networkState, SceneEntity scene, boolean pushWs) {
+		if (networkState == 0) {
+			// 先启动网络，网络不存在，则节点一定没有启动
+			return 0;
+		}
 		List<NodeEntity> nodes = nodeService.list(
 				new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getSid, scene.getResourceId())
 						.eq(NodeEntity::getStatus, SceneEnum.CREATE.getCode()));
@@ -552,7 +556,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 				}
 			}
 		} else {
-			return 100;
+			return 0;
 		}
 		return state(count, nodes.size());
 	}

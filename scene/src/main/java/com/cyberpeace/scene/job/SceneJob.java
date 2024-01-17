@@ -154,6 +154,7 @@ public class SceneJob {
                     }
                 }
                 Thread.sleep(5 * 1000);
+                scene.setSceneStatus(SceneEnum.CREATE.getCode());
             }catch (Exception e){
                 log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e.getMessage(), e);
                 scene.setSceneStatus(SceneEnum.ERROR.getCode());

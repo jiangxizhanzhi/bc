@@ -725,6 +725,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 							iter.put(JsonKeyConstant.ACCESS_IP, portMapping.getHost());
 							iter.put(JsonKeyConstant.ACCESS_PORT, portMapping.getHost_port());
 						}
+						// 去掉rdp、ssh登录按钮
+						String protocol = iter.getString(JsonKeyConstant.PROTOCOL);
+						if ("ssh".equals(protocol) || "rdp".equals(protocol)) {
+							iter.put(JsonKeyConstant.PROXY, false);
+						}
 						newAccessModes.add(iter);
                     });
                     elementPortJson.put("access_modes", newAccessModes);

@@ -443,12 +443,18 @@
           and s.create_time &lt;= #{endTime}
     </select>
     <select id="selectCourseStudyRecord" resultType="com.cyberpeace.oj.person.controller.req.IndexCourseReq">
-        select oj_course.resource_id,
-            count(distinct oj_lesson_record.resource_id) as studyCount
-        from oj_lesson_record
-                 left join oj_course on oj_course.resource_id = oj_lesson_record.course_id
-        where oj_lesson_record.user_id = #{userId}
-        group by oj_lesson_record.course_id
+        select o.`name`, o.resource_id, t.studyCount, o.description as `desc`, g.lessonCount
+        from oj_course o
+                 LEFT JOIN (select oj_course.resource_id,
+                                   count(distinct oj_lesson_record.resource_id) as studyCount
+                            from oj_course
+                                     left join oj_lesson_record on oj_course.resource_id = oj_lesson_record.course_id
+                            where oj_lesson_record.user_id = #{userId}
+                            group by oj_lesson_record.course_id) t on o.resource_id = t.resource_id
+                 left join (select c.resource_id, count(l.course_id) as lessonCount
+                            from oj_course c
+                                     LEFT join oj_course_lesson l on c.resource_id = l.course_id
+                            group by l.course_id) g on o.resource_id = g.resource_id
     </select>
     <select id="selectByUsers" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
         select user_id,count(distinct lesson_id) as learned_type from oj_lesson_record

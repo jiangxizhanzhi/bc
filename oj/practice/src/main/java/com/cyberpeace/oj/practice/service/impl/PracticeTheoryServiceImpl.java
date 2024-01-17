@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -799,8 +800,16 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
                 .last("limit 10")
         );
 
+        QueryWrapper<PracticeSet> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(PracticeSet::getPracticeType,0);
+        List<PracticeSet> practiceSets = practiceSetMapper.selectList(queryWrapper);
+        Map<String, String> tagMap = practiceSets.stream().collect(Collectors.toMap(PracticeSet::getResourceId, PracticeSet::getTag));
         return practiceTheories.stream()
-                .map(practiceTheory -> BeanUtils.copy(practiceTheory, PracticeTheoryListBo.class))
+                .map(practiceTheory ->{
+                    PracticeTheoryListBo copy = BeanUtils.copy(practiceTheory, PracticeTheoryListBo.class);
+                    copy.setTag(tagMap.get(practiceTheory.getPracticeSetId()));
+                    return copy;
+                })
                 .collect(Collectors.toList());
     }
 

@@ -116,6 +116,7 @@ public final class JsonKeyConstant {
 	public static final String ACCESS_IP = "access_ip";
 
 	public static final String ACCESS_PORT = "access_port";
+	public static final String PROXY = "proxy";
 
-	private JsonKeyConstant() {}
+    private JsonKeyConstant() {}
 }

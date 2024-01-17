@@ -349,6 +349,23 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         List<StudyHistoryRes>  parcticeList= personCenterMapper.selectParcticeStudyCalendar(startTime, endTime,userId);
         // 考试
         JSONArray adHistoryList= remoteAdService.queryHistoryExamList();
+        dealAdHistory(adHistoryList,lessonList, StudyHistoryRes.AdEnum.EXAM);
+        //运维题历史记录
+        JSONArray adOpsHistoryList= remoteAdService.queryHistoryOpsList();
+        dealAdHistory(adOpsHistoryList,lessonList,StudyHistoryRes.AdEnum.OPS);
+
+        lessonList.addAll(parcticeList);
+        lessonList.stream().collect(Collectors.groupingBy(StudyHistoryRes::getDate)).forEach((k,v)->{
+            StudyCalendarRes studyHistoryRes = new StudyCalendarRes();
+            studyHistoryRes.setDate(k);
+            studyHistoryRes.setHistoryList(v);
+            res.add(studyHistoryRes);
+        });
+        res.sort(Comparator.comparing(StudyCalendarRes::getDate));
+        return res;
+    }
+
+    private void dealAdHistory(JSONArray adHistoryList,List<StudyHistoryRes>  lessonList,StudyHistoryRes.AdEnum adEnum) {
         for (Object o : adHistoryList) {
             JSONObject jsonObject = (JSONObject) o;
             StudyCalendarRes studyHistoryRes = new StudyCalendarRes();
@@ -360,23 +377,15 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             for (Object o1 : value) {
                 JSONObject studyHistory = (JSONObject) o1;
                 StudyHistoryRes adStudyHistoryRes = new StudyHistoryRes();
-                adStudyHistoryRes.setResourceId(studyHistory.getString("resource_id"));
-                adStudyHistoryRes.setName(studyHistory.getString("name"));
-                adStudyHistoryRes.setType(StudyHistoryRes.TypeEnum.EXAM.getCode());
+                adStudyHistoryRes.setResourceId(studyHistory.getString(adEnum.getResourceIdName()));
+                adStudyHistoryRes.setName(studyHistory.getString(adEnum.getName()));
+                adStudyHistoryRes.setType(adEnum.getType());
+                adStudyHistoryRes.setBusinessType(adEnum.getBusinessType());
+                adStudyHistoryRes.setRaceId(studyHistory.getString(adEnum.getRaceIdName()));
                 adStudyHistoryRes.setDate(jsonObject.getString("key"));
                 lessonList.add(adStudyHistoryRes);
             }
         }
-
-        lessonList.addAll(parcticeList);
-        lessonList.stream().collect(Collectors.groupingBy(StudyHistoryRes::getDate)).forEach((k,v)->{
-            StudyCalendarRes studyHistoryRes = new StudyCalendarRes();
-            studyHistoryRes.setDate(k);
-            studyHistoryRes.setHistoryList(v);
-            res.add(studyHistoryRes);
-        });
-        res.sort(Comparator.comparing(StudyCalendarRes::getDate));
-        return res;
     }
 
     @Override

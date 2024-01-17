@@ -48,4 +48,6 @@ public interface RemoteAdService {
     List<OpsQuestionBo> queryQuestionList();
 
 	void clearUserData(String userId);
+
+	JSONArray queryHistoryOpsList();
 }

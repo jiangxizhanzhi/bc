@@ -719,8 +719,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
         }
         List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
         Map<String, String> practiceSetIdNameMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getName);
+        Map<String, String> practiceSetIdTagMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getTag);
         for (PracticeTheoryListBo practiceTheoryListBo : practiceTheoryList) {
             practiceTheoryListBo.setPracticeSetName(practiceSetIdNameMap.get(practiceTheoryListBo.getPracticeSetId()));
+            practiceTheoryListBo.setTag(practiceSetIdTagMap.get(practiceTheoryListBo.getPracticeSetId()));
         }
         return practiceTheoryList;
     }

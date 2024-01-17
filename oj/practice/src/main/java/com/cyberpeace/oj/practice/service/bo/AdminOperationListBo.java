@@ -72,4 +72,6 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("比赛id")
 	private String raceId;
 
+	private String tag;
+
 }

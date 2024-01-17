@@ -58,7 +58,7 @@ public class TopoTest {
         if (CollectionUtils.isNotEmpty(topologyBO.getElements())) {
             topologyBO.getElements().forEach(e -> {
                 if (CollectionUtils.isNotEmpty(e.getPorts())) {
-                    String prefix = (e.getType() != null && e.getType() == BaseSceneElementModel.Type.TERMINAL) ? "eth0" : "E0";
+                    String prefix = (e.getType() != null && (e.getType()  == BaseSceneElementModel.Type.TERMINAL||e.getType()  == BaseSceneElementModel.Type.DOCKER)) ? "eth0" : "E0";
                     for (int i = 0; i < e.getPorts().size(); i++) {
 //                        if (container.getEntityPortId2Name().containsKey(e.getPorts().get(i).getId())) {
 //                            continue;

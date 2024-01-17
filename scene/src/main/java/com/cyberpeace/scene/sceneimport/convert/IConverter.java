@@ -12,7 +12,7 @@ interface IConverter {
     void convert2BO(ConvertDataContainer container);
 
     static String getPortId(String nodeId, Integer type, int existPortNum) {
-        if (type != null && type == BaseSceneElementModel.Type.TERMINAL) {
+        if (type != null && (type == BaseSceneElementModel.Type.TERMINAL||type == BaseSceneElementModel.Type.DOCKER)) {
             return "port_" + nodeId + "_" + (existPortNum + 1);
         } else {
             return "port_" + nodeId + "_electrical_" + (existPortNum + 1);

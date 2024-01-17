@@ -386,6 +386,9 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 			}
 			practiceTheory.setAnswer(shortAnswer);
 
+			String keyword = excelRowData.get(5);
+			practiceTheory.setKeyword(keyword);
+
 		}
 
 		practiceTheory.setScore(CommonConstant.ONE.doubleValue());

@@ -3,8 +3,7 @@ package com.cyberpeace.auth.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.auth.service.UserDataClearanceService;
-import com.cyberpeace.common.util.JsonUtil;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,6 +31,7 @@ import com.cyberpeace.auth.domain.SysUser;
 import com.cyberpeace.auth.mapper.SysUserMapper;
 import com.cyberpeace.auth.security.TbUser;
 import com.cyberpeace.auth.service.SysUserService;
+import com.cyberpeace.auth.service.UserDataClearanceService;
 import com.cyberpeace.auth.service.bo.*;
 import com.cyberpeace.auth.util.UserValidator;
 import com.cyberpeace.common.component.ExcelDataHandler;
@@ -42,6 +42,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -143,28 +144,119 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 		}
 		// 文件上传
-		AttachmentBo attachmentBo = attachmentService.uploadDest(
-				AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, multipartFile);
+		AttachmentBo attachmentBo = attachmentService
+				.uploadDest(AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, multipartFile);
 		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
 		ExcelDataHandler excelDataHandler = new ExcelDataHandler(viewPath, 0);
 		List<UserExcel> userExcels = excelDataHandler.getSheetData(0, 0, UserExcel.class);
 
+		// 转换为实体
+		List<String> errorList = Lists.newArrayList();
+		List<SysUser> users = validateUserInfo(userExcels, errorList);
+
+		// 校验用户总数
+		Integer userCount = errorList.size() + users.size();
+		currentUserNum(userCount);
+
+		// 批量导入用户
+		saveBatch(users);
+		BaseRsp baseRsp = new BaseRsp();
+		baseRsp.setMessage(
+				String.format("批量导入完成。成功导入%d名学员账号，失败%d名。", users.size(), errorList.size()));
+		baseRsp.setDetail(errorList.stream().collect(Collectors.joining("\n")));
+		return baseRsp;
+	}
+
+	private List<SysUser> validateUserInfo(List<UserExcel> userExcels, List<String> errorList) {
+
+		List<SysUser> successList = Lists.newArrayList();
+
+		// 获取所有已存在的用户名
+		List<String> occuredUsernames = sysUserMapper.getOccuredUsernames();
 		List<DictInfo> dictInfo = dictInfoService.getDictInfo(DictInfo.KeyModel.AVATAR.getKey());
 		Random random = new Random();
-		// 转换为实体
-		List<SysUser> users = userExcels.stream().map(user -> {
+
+		for (UserExcel user : userExcels) {
+
+			// 如果用户名为字符串null，则跳过
+			if (StringUtils.equals(user.getUsername(), "null")) {
+				continue;
+			}
+
+			// 用户名已存在
+			if (occuredUsernames.contains(user.getUsername())) {
+				errorList.add(String.format("用户（%s）导入异常：用户名%s已存在", user.getUsername(),
+						user.getUsername()));
+				continue;
+			}
+
+			// 用户名或姓名或密码为空
+			if (StringUtils.isBlank(user.getUsername()) || StringUtils.isBlank(user.getName())
+					|| StringUtils.isBlank(user.getPassword())) {
+				errorList.add(String.format("用户（%s）导入异常：用户名、姓名、密码不能为空", user.getUsername()));
+				continue;
+			}
+
+			// 用户名或姓名或密码为字符串null
+			if (StringUtils.equals(user.getUsername(), "null")
+					|| StringUtils.equals(user.getName(), "null")
+					|| StringUtils.equals(user.getPassword(), "null")) {
+				errorList.add(String.format("用户（%s）导入异常：用户名、姓名、密码不能为空", user.getUsername()));
+				continue;
+			}
+
+			// 用户名小于2字符或大于20字符
+			if (user.getUsername().length() < 2 || user.getUsername().length() > 20) {
+				errorList.add(String.format("用户（%s）导入异常：用户名长度必须在2-20之间", user.getUsername()));
+				continue;
+			}
+
+			// 姓名小于2字符或大于20字符
+			if (user.getName().length() < 2 || user.getName().length() > 20) {
+				errorList.add(String.format("用户（%s）导入异常：姓名长度必须在2-20之间", user.getUsername()));
+				continue;
+			}
+
+			// 密码长度低于6位,且不包含大小写字母以及数字
+			if (!user.getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$")) {
+				errorList.add(
+						String.format("用户（%s）导入异常：密码长度必须大于6位，且包含大小写字母以及数字", user.getUsername()));
+				continue;
+			}
+
+			// 状态只允许为正常或禁用或字符串null
+			if (!StringUtils.equals(user.getStatus(), "正常")
+					&& !StringUtils.equals(user.getStatus(), "禁用")
+					&& !StringUtils.equals(user.getStatus(), "null")) {
+				errorList.add(String.format("用户（%s）导入异常：状态只允许为正常或禁用", user.getUsername()));
+				continue;
+			}
+
+			// 构建用户实体
 			UserAddReq userAdd = BeanUtils.copy(user, UserAddReq.class);
 			userAdd.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
 			userAdd.setAdmin(false);
+			userAdd.setEnabled(Objects.equals(user.getStatus(), "禁用") ? 0 : 1);
+			userAdd.setNotes(Objects.equals(user.getNotes(), "null") ? null : user.getNotes());
 			userAdd.setAvatar(dictInfo.get(random.nextInt(dictInfo.size())).getItemValue());
-			return req2Entity(userAdd);
-		}).collect(Collectors.toList());
-		if (CollectionUtils.isEmpty(users)){
-			throw new BusinessException(ErrorCode.EMPTY_FILE);
+
+			successList.add(req2Entity(userAdd));
+
 		}
-		currentUserNum(users.size());
-		saveBatch(users);
-		return new BaseRsp<>();
+
+		if (CollectionUtils.isEmpty(successList) && CollectionUtils.isEmpty(errorList)) {
+			throw new BusinessException(ErrorCode.NO_VALID_USER_DATA);
+		}
+
+		// 如果要导入的用户中用户名重复，抛出异常
+		List<String> usernameList = successList.stream().map(SysUser::getUsername)
+				.collect(Collectors.toList());
+		Set<String> usernameSet = new HashSet<>(usernameList);
+		if (usernameList.size() != usernameSet.size()) {
+			throw new BusinessException(ErrorCode.DUPLICATE_USERNAME_IN_DATA);
+		}
+
+		return successList;
 	}
 
 	@Override
@@ -363,6 +455,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		}
 		user.setExpireTime(req.getExpireTime());
 		user.setNotes(req.getNotes());
+		user.setEnabled(req.getEnabled());
 		return user;
 	}
 

@@ -346,5 +346,15 @@ public final class ErrorCode {
 	 */
 	public static final String TOPO_NOT_FOUND = "100098";
 
+	/**
+	 * 未查询到有效的可导入的用户数据
+	 */
+	public static final String NO_VALID_USER_DATA = "100099";
+
+	/**
+	 * 要导入的数据中用户名存在重复
+	 */
+	public static final String DUPLICATE_USERNAME_IN_DATA = "100100";
+
 	private ErrorCode() {}
 }

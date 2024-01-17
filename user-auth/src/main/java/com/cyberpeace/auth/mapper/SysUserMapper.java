@@ -1,5 +1,7 @@
 package com.cyberpeace.auth.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -25,6 +27,9 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     boolean existByUsername(@Param("username") String username);
 
     IPage<SysUser> pageUser(@Param("page") Page page, @Param("pattern") String pattern, @Param("enabled") Integer enabled);
+
+	@Select("select username from sys_user")
+	List<String> getOccuredUsernames();
 
 }
 

@@ -164,13 +164,9 @@ public class PersonController {
     private List<PersonStatsBo> getPersonStatsBos(List<UserRes> userInfos) {
         List<PersonStatsBo> res;
         List<String> userIds = StreamApiUtils.getColumn(userInfos, UserRes::getResourceId);
-		List<String> courseIds = courseMapper.selectList(new QueryWrapper<>())
-				.stream()
-				.map(Course::getResourceId)
-				.collect(Collectors.toList());
 		List<LessonRecord> lessonRecords = personCenterMapper.selectByUsers(userIds);
 		Map<String, Integer> lessonMap = StreamApiUtils.toMap(lessonRecords, LessonRecord::getUserId, LessonRecord::getLearnedType);
-		Integer lessonAllCount = courseIds.size();
+		Integer lessonAllCount = courseLessonMapper.selectCount(new QueryWrapper<>());
 
         List<StudyRecord> studyRecord = personCenterMapper.selectSlovedPractice(userIds);
         Map<String, StudyRecord> map = StreamApiUtils.toMap(studyRecord, StudyRecord::getUserId, s -> s);

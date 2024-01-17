@@ -451,7 +451,7 @@
         group by oj_lesson_record.course_id
     </select>
     <select id="selectByUsers" resultType="com.cyberpeace.oj.course.dao.entity.LessonRecord">
-        select user_id,count(distinct course_id) as learned_type from oj_lesson_record
+        select user_id,count(distinct lesson_id) as learned_type from oj_lesson_record
         where course_id in (select resource_id from oj_course) and lesson_id in (select resource_id from oj_course_lesson)
         GROUP BY user_id
     </select>

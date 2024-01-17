@@ -341,6 +341,10 @@ public final class ErrorCode {
 	 * 认证失败，Session失效或错误
 	 */
 	public static final String AUTH_FAILURE = "100097";
+	/**
+	 * 未查询到拓扑数据
+	 */
+	public static final String TOPO_NOT_FOUND = "100098";
 
 	private ErrorCode() {}
 }

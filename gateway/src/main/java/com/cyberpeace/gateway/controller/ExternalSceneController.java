@@ -1,12 +1,14 @@
 package com.cyberpeace.gateway.controller;
 
-import com.cyberpeace.common.constant.CommonConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -41,6 +43,9 @@ public class ExternalSceneController {
 			getTopology(@ApiParam(value = "拓扑结构id", name = "id") @RequestParam("id") String id) {
 		if (id.startsWith(CommonConstant.AD_PREFIX)) {
 			TopologyEntity entity = topologyService.getById(id);
+			if (null == entity) {
+				throw new BusinessException(ErrorCode.TOPO_NOT_FOUND);
+			}
 			return new BaseRsp<>(JSON.parseObject(entity.getTopology()));
 		} else {
 			JSONObject topology = topologyService.getTopology(id);

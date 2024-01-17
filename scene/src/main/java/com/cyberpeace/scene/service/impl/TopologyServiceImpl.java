@@ -51,7 +51,7 @@ public class TopologyServiceImpl extends ServiceImpl<TopologyMapper, TopologyEnt
         wrapper.eq(TopologyEntity::getTopologyId, topologyId);
 		TopologyEntity topologyEntity = getOne(wrapper);
 		if (null == topologyEntity) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			throw new BusinessException(ErrorCode.TOPO_NOT_FOUND);
 		}
         JSONObject jsonObject = new JSONObject();
 		jsonObject.put("topology", JSONObject.parse(topologyEntity.getTopology()));

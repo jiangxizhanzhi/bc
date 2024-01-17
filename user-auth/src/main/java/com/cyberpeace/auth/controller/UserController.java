@@ -1,6 +1,9 @@
 package com.cyberpeace.auth.controller;
 
+import java.io.File;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,7 @@ import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.IdListReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.DictInfoService;
 
@@ -132,5 +136,13 @@ public class UserController {
 	public BaseRsp importUser(UserImportReq req){
 
 		return sysUserService.importUser(req);
+	}
+
+	@ApiOperation("用户导入文件模板下载")
+	@GetMapping("/import/template")
+	public void templateDownload(HttpServletResponse response){
+		String templatePath = "/cpms/template/用户导入.xlsx";
+		File file = new File(templatePath);
+		FileUtil.setResponse(file,false,response);
 	}
 }

@@ -163,9 +163,12 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 		SceneEntity scene = createScene(req.getId(), instanceId, req.getContext().getAccessUserId(),
 				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
-		// 提交创建场景任务
-		new SceneExecutor(sceneJob, topology, scene).run();
-		log.info("submit create scene mission, scene ：{}", scene);
+		try {
+			// 提交创建场景任务
+			new SceneExecutor(sceneJob, topology, scene).run();
+		} catch (Exception e) {
+			log.error("failed to start scene by topo", e);
+		}
 		return scene;
 	}
 

@@ -146,7 +146,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 	}
 
 	@Override
-	public SceneEntity startSceneByTopo(AdSceneStartReq req) {
+	public JSONObject startSceneByTopo(AdSceneStartReq req) {
 		log.info("ad scene start req: {}", JsonUtil.toJsonString(req));
 		String instanceId = req.getContext().getRaceId() + "_" + req.getContext().getQuestionId();
 		SceneEntity instance = sceneMapper.selectByInstanceId(instanceId,
@@ -163,13 +163,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 		SceneEntity scene = createScene(req.getId(), instanceId, req.getContext().getAccessUserId(),
 				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
-		try {
-			// 提交创建场景任务
-			new SceneExecutor(sceneJob, topology, scene).run();
-		} catch (Exception e) {
-			log.error("failed to start scene by topo", e);
-		}
-		return scene;
+		executor.submit(new SceneExecutor(sceneJob, topology, scene));
+		// 生成返回数据
+		scene.setMeta(topo.toJSONString());
+		JSONObject res = new JSONObject();
+		res.put(JsonKeyConstant.SCENE_DATA, makeSceneData(scene));
+		res.put(JsonKeyConstant.ID, scene.getResourceId());
+		return res;
 	}
 
 	@Override

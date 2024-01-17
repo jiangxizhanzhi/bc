@@ -1,5 +1,7 @@
 package com.cyberpeace.scene.service;
 
+import java.util.List;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.BaseRsp;
@@ -7,8 +9,6 @@ import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.service.bo.SceneData;
 import com.cyberpeace.scene.service.bo.ad.AdSceneStartReq;
-
-import java.util.List;
 
 /**
  * @author :   SN
@@ -35,7 +35,7 @@ public interface SceneService extends IService<SceneEntity> {
 
     JSONObject getSceneJsonObject(String instanceId);
 
-	SceneEntity startSceneByTopo(AdSceneStartReq req);
+	JSONObject startSceneByTopo(AdSceneStartReq req);
 
 	SceneData getSceneDataBySceneId(String sceneId);
 

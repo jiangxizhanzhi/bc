@@ -12,7 +12,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.entity.TopologyEntity;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
@@ -76,9 +75,8 @@ public class ExternalSceneController {
 	@PostMapping("/start/scene")
 	public BaseRsp<JSONObject> startSceneByTopo(@RequestBody AdSceneStartReq req) {
 		sceneService.verify(req.getContext().getAccessUserId());
-		SceneEntity scene = sceneService.startSceneByTopo(req);
-
-		return this.getSceneBySceneId(req.getContext().getAccessUserId(), scene.getResourceId());
+		JSONObject res = sceneService.startSceneByTopo(req);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("获取指定id场景实例")

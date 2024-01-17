@@ -321,6 +321,7 @@
                  left join oj_practice_theory t on t.resource_id = s.practice_id
                  left join oj_practice_operation p on p.resource_id = s.practice_id
         where s.submit_user_id = #{userId}
+          and s.solved = 1
     </select>
 
     <select id="selectSlovedPractice" resultMap="studyRecord">

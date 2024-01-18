@@ -61,12 +61,11 @@ public class SystemStaticsController {
 	@AdminRequired
     public BaseRsp<SystemStaticsRes> countStatics() {
         SystemStaticsRes systemStaticsRes = new SystemStaticsRes();
-        systemStaticsRes.setPersonCount(sysUserService.count());
+        QueryWrapper<SysUser> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.lambda().eq(SysUser::getAdmin,0);
+        systemStaticsRes.setPersonCount(sysUserService.count(userQueryWrapper));
         systemStaticsRes.setCourseCount(courseService.count());
         systemStaticsRes.setLessonCount(courseLessonService.count());
-        //TODO 真卷
-        systemStaticsRes.setTruePaperCount(sysUserService.count());
-        //TODO 还差运维题
         QueryWrapper<PracticeOperation> operationQueryWrapper = new QueryWrapper<>();
         operationQueryWrapper.lambda().eq(PracticeOperation::getIsTrue,1);
         QueryWrapper<PracticeTheory> theoryQueryWrapper = new QueryWrapper<>();

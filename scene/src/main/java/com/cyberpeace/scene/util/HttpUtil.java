@@ -1,5 +1,29 @@
 package com.cyberpeace.scene.util;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.impl.TraceIdContext;
+
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
@@ -11,32 +35,8 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.scene.constant.BaseCpRsp;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.slf4j.impl.TraceIdContext;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeMap;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author :   SN
@@ -66,6 +66,8 @@ public class HttpUtil {
         StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
 
         HttpPost post = new HttpPost(url);
+        // 创建网络、节点的请求超时设置
+        setTimeout(post);
         post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
         post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
         post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
@@ -255,6 +257,11 @@ public class HttpUtil {
 
         return HttpClients.custom().build();
     }
+
+	private static void setTimeout(HttpRequestBase http) {
+		RequestConfig config = RequestConfig.custom().setSocketTimeout(400 * 1000).build();
+		http.setConfig(config);
+	}
 
     /**
      * 默认加载的http请求头

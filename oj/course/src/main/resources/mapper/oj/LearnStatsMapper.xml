@@ -138,9 +138,21 @@
         group by r.user_id
     </select>
     <select id="getCourseInfo" resultType="com.cyberpeace.oj.course.service.bo.RoleStudyBo">
-        select count( distinct lesson_id) as course_progress, count(DISTINCT course_id) as finished_courses from oj_lesson_record
+        select count( distinct lesson_id) as course_progress from oj_lesson_record
         where user_id = #{user_id}
         and lesson_id in (SELECT resource_id from oj_course_lesson)
+    </select>
+
+
+    <select id="getCourseFinishInfo" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
+        select course_id, lesson_id from oj_lesson_record
+        where user_id = #{user_id}
+        and lesson_id in (SELECT resource_id from oj_course_lesson)
+    </select>
+
+
+    <select id="getCourseGroupInfo" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
+        select course_id, count(resource_id) as type from oj_course_lesson GROUP BY course_id
     </select>
 
 </mapper>

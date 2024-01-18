@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.dao.mapper;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CourseBo;
 import com.cyberpeace.oj.course.service.bo.RoleStudyBo;
 import com.cyberpeace.oj.course.service.bo.UserStatsBo;
@@ -39,4 +40,8 @@ public interface LearnStatsMapper {
 
 
     RoleStudyBo getCourseInfo(@Param("user_id") String resourceId);
+
+    List<CourseLesson> getCourseFinishInfo(@Param("user_id") String resourceId);
+
+    List<CourseLesson> getCourseGroupInfo();
 }

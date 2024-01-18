@@ -11,7 +11,9 @@ public class OnlineTimeCache {
     public static  Date remove(String userId) {
         return loginTimeMap.remove(userId);
     }
-
+    public static  Date update(String userId) {
+        return loginTimeMap.put(userId,new Date());
+    }
     public static void setLoginTime(String userId, Date loginTime) {
         loginTimeMap.put(userId, loginTime);
     }

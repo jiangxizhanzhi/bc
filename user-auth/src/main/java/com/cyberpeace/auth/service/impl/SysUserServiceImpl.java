@@ -291,7 +291,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 	@Override
 	public void updateOnlineTime(Date loginTime,String userId) {
-		if (loginTime == null) {
+		if (loginTime == null||loginTime.getTime()>=System.currentTimeMillis()) {
 			return;
 		}
 		SysUser sysUser = this.getById(userId);

@@ -148,6 +148,7 @@ public class PersonController {
 
         ListRsp<UserRes> userResListRsp = sysUserService.pageUser(req);
         List<UserRes> userInfos = userResListRsp.getList();
+		userInfos = userInfos.stream().filter(s-> !s.getAdmin()).collect(Collectors.toList());
         ListRsp<PersonStatsBo> rsp = new ListRsp<>();
         long total = userResListRsp.getTotal();
         if (userInfos.isEmpty()) {
@@ -208,6 +209,7 @@ public class PersonController {
             BeanUtils.copyProperties(s, userRes);
             return userRes;
         }).collect(Collectors.toList());
+		userInfos = userInfos.stream().filter(s-> !s.getAdmin()).collect(Collectors.toList());
         List<PersonStatsBo> res;
         res = getPersonStatsBos(userInfos);
 

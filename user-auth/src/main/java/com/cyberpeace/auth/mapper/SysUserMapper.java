@@ -28,6 +28,8 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
     IPage<SysUser> pageUser(@Param("page") Page page, @Param("pattern") String pattern, @Param("enabled") Integer enabled);
 
+    IPage<SysUser> pageUserFilterAdmin(@Param("page") Page page, @Param("pattern") String pattern, @Param("enabled") Integer enabled);
+
 	@Select("select username from sys_user")
 	List<String> getOccuredUsernames();
 

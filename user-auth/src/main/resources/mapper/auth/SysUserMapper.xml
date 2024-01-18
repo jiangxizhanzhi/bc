@@ -27,4 +27,20 @@
         </where>
         order by id desc
     </select>
+    <select id="pageUserFilterAdmin" resultType="com.cyberpeace.auth.domain.SysUser">
+        <if test="pattern != null and pattern != ''">
+            <bind name="search" value="'%' + pattern + '%'"/>
+        </if>
+        select * from sys_user where admin is not true
+        <where>
+            <if test="pattern != null and pattern != ''">
+                username like #{search}
+                or name like #{search}
+            </if>
+            <if test="enabled != null">
+                and enabled = #{enabled}
+            </if>
+        </where>
+        order by id desc
+    </select>
 </mapper>

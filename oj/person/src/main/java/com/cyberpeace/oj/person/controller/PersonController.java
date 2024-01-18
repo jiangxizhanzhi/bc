@@ -146,7 +146,7 @@ public class PersonController {
     public BaseRsp<ListRsp<PersonStatsBo>> personalStatsDetail4Course(
             UserReq req) {
 
-        ListRsp<UserRes> userResListRsp = sysUserService.pageUser(req);
+        ListRsp<UserRes> userResListRsp = sysUserService.pageUserFilterAdmin(req);
         List<UserRes> userInfos = userResListRsp.getList();
 		userInfos = userInfos.stream().filter(s-> !s.getAdmin()).collect(Collectors.toList());
         ListRsp<PersonStatsBo> rsp = new ListRsp<>();

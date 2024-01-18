@@ -55,6 +55,8 @@ public interface SysUserService extends IService<SysUser> {
 
 	ListRsp<UserRes> pageUser(UserReq req);
 
+	ListRsp<UserRes> pageUserFilterAdmin(UserReq req);
+
 	/**
 	 * 管理员重置密码
 	 * @param req

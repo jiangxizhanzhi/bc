@@ -376,6 +376,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
+	public ListRsp<UserRes> pageUserFilterAdmin(UserReq req) {
+		Page page = req.toPageParam();
+		IPage<SysUser> result = sysUserMapper.pageUserFilterAdmin(page, req.getPattern(), req.getEnabled());
+		IPage<UserRes> resPage = result.convert(r -> makeUserRes(r, true));
+		return PageUtil.getListResult(resPage);
+	}
+
+	@Override
 	public UserInfo getByToken(String sessionId) {
 		Session session = sessionRepository.findById(sessionId);
 		if (null == session) {

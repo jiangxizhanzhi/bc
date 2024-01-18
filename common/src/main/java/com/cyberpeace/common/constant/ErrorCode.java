@@ -356,5 +356,8 @@ public final class ErrorCode {
 	 */
 	public static final String DUPLICATE_USERNAME_IN_DATA = "100100";
 
+	/** 不支持的编码类型*/
+	public static final String UNSUPPORT_CHASET = "100101";
+
 	private ErrorCode() {}
 }

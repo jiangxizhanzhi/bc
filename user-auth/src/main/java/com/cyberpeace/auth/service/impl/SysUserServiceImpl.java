@@ -16,7 +16,6 @@ import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -41,10 +40,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.DictInfo;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -234,7 +230,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 			// 构建用户实体
 			UserAddReq userAdd = BeanUtils.copy(user, UserAddReq.class);
-			userAdd.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+			userAdd.setPassword(DesEncryptUtils.encrypt(user.getPassword()));
 			userAdd.setAdmin(false);
 			userAdd.setEnabled(Objects.equals(user.getStatus(), "禁用") ? 0 : 1);
 			userAdd.setNotes(Objects.equals(user.getNotes(), "null") ? null : user.getNotes());

@@ -8,7 +8,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.auth.constant.LicenseEnum;
 import com.cyberpeace.auth.constant.SystemModelEnum;
 import com.cyberpeace.auth.service.AuthService;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -53,6 +55,8 @@ public class WaterMarkController {
 	private static Integer progress = 0;
 
 	private static final String REPAIR_FILE = ConfigUtil.getContextProperty("repair.file.path");
+
+	private static boolean isActive=false;
 	@Autowired
 	private AuthService authService;
 	@Autowired
@@ -62,7 +66,8 @@ public class WaterMarkController {
 	public BaseRsp<Boolean> registerVerifyInfo(@RequestParam("verifyCode") String verifyCode){
 
 		LicenseEnum registerResult = authService.registerVerifyInfo(240,verifyCode, SystemModelEnum.MODEL_SY.getName());
-		return new BaseRsp<>(LicenseEnum.SUCCESS.equals(registerResult));
+		isActive =LicenseEnum.SUCCESS.equals(registerResult);
+		return new BaseRsp<>(isActive);
 	}
 
 	@ApiOperation("检查")
@@ -83,6 +88,9 @@ public class WaterMarkController {
 	@ApiOperation("打水印")
 	@GetMapping("/mark")
 	public BaseRsp<Boolean> listComments(@ApiParam(name = "mark",value = "水印名称") String mark) {
+		if (!isActive) {
+			throw new BusinessException(ErrorCode.SYSTEM_NOT_ACTIVATED);
+		}
 		LambdaQueryWrapper<CourseLesson> filterQuery = new LambdaQueryWrapper<>();
 		filterQuery.isNotNull(CourseLesson::getHandoutUrl);
 		filterQuery.ne(CourseLesson::getHandoutType, CourseLesson.HandoutType.MD.getCode());

@@ -7,23 +7,14 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.auth.service.bo.UserInfoContext;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.scene.controller.rsp.SceneConfigDataRsp;
-import com.cyberpeace.scene.controller.rsp.SceneDetailRsp;
-import com.cyberpeace.scene.dao.entity.TopologyEntity;
-import com.cyberpeace.scene.service.SceneService;
-import com.cyberpeace.scene.service.TopologyService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -31,12 +22,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.*;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
-//import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -81,6 +75,8 @@ import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.*;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.impl.LessonOperationEvaluateHandler;
+import com.cyberpeace.scene.service.SceneService;
+import com.cyberpeace.scene.service.TopologyService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -166,9 +162,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private OjLocalSceneService ojLocalSceneService;
 
 	@Autowired
-	private ClassroomGroupInfoService classroomGroupInfoService;
-
-	@Autowired
 	private UtilService utilService;
 
 	@Autowired
@@ -185,9 +178,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private ClassroomMapper classroomMapper;
-
-	@Autowired
-	private LessonPracticeSceneService lessonPracticeSceneService;
 
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
@@ -289,45 +279,18 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				&& StringUtils.isNotBlank(lesson.getTopoId())) {
 
 			// 拓扑信息查询
-//			infoBo.setSceneConfigData(remoteTopoService.getTopoById(lesson.getTopoId()));
 			JSONObject topology = topologyService.getTopology(lesson.getTopoId());
 			if (null != topology) {
 				infoBo.setSceneConfigData(topology);
 			}
 
 			// 场景信息查询
-			if (authContext.getIsWeb()) {
+			if (Boolean.TRUE.equals(authContext.getIsWeb())) {
 				infoBo.setSceneShareMode(SceneShare.PRIVATE.getCode());
-				BaseRsp res = sceneService.detail(lesson.getTopoId(), lessonId);
-				if (Objects.nonNull(res) && Objects.nonNull(res.getData())) {
-					SceneDetailRsp sceneDetail = (SceneDetailRsp) res.getData();
-					if (Objects.nonNull(sceneDetail.getSceneData())) {
-						JSONObject data = new JSONObject();
-						data.put("scene",sceneDetail.getSceneData());
-						infoBo.setSceneData(data);
-					}
-				}
-			}
+				JSONObject sceneData = sceneService.getSceneJsonObject(lessonId);
 
-			/*// 前台需要先查询课堂场景
-			OjLocalScene ojLocalScene = null;
-			if (authContext.getIsWeb() && null != groupInfo) {
-				infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
-				infoBo.setGroupId(groupInfo.getResourceId());
-				// 存在课堂场景 则设置group_id用于前端简历websocket
-				ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-			}
-
-			// 查询课时场景
-			if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
-				ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
-						lesson.getSceneShareMode(), authContext);
-			}
-
-			if (null != ojLocalScene) {
-				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
 				infoBo.setSceneData(sceneData);
-			}*/
+			}
 		}
 
 
@@ -1004,50 +967,17 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				&& StringUtils.isNotBlank(courseLesson.getTopoId())) {
 
 			// 拓扑信息查询
-//			JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());
 			JSONObject topology = topologyService.getTopology(courseLesson.getTopoId());
 			if (null != topology) {
 
 				topoSceneDataRes.setSceneConfigData(topology);
 			}
-
 			// 前台需要先查询课堂场景
-			OjLocalScene ojLocalScene = null;
-			ClassroomGroupInfo groupInfo = null;
-
-			if (authContext.getIsWeb()) {
-				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
-				if (null != groupInfo) {
-					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-				}
-			}
-
 			// 查询课时场景
-
 			if (authContext.getIsWeb()) {
-				BaseRsp res = sceneService.detail(courseLesson.getTopoId(), lessonId);
-				if (Objects.nonNull(res) && Objects.nonNull(res.getData())) {
-					SceneDetailRsp sceneDetail = (SceneDetailRsp) res.getData();
-					if (Objects.nonNull(sceneDetail.getSceneData())) {
-						JSONObject data = new JSONObject();
-						data.put("scene",sceneDetail.getSceneData());
-						topoSceneDataRes.setSceneData(data);
-					}
-				}
-			}
-
-			/*if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
-				ojLocalScene = ojLocalSceneService.selectOjLocalScene(courseLesson.getResourceId(),
-						courseLesson.getSceneShareMode(), authContext);
-			}
-
-			if (null != ojLocalScene) {
-				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
-				if (groupInfo != null) {
-					sceneData.put(JsonKeyConstant.ROOM_ID, groupInfo.getClassroomId());
-				}
+				JSONObject sceneData = sceneService.getSceneJsonObject(lessonId);
 				topoSceneDataRes.setSceneData(sceneData);
-			}*/
+			}
 		}
 
 		return topoSceneDataRes;

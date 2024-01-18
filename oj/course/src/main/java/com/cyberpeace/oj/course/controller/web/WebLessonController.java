@@ -2,21 +2,17 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
-import com.cyberpeace.auth.constant.OpLogMethodEnum;
-import com.cyberpeace.auth.constant.OpLogModuleEnum;
-import com.cyberpeace.auth.controller.AbstractOpLog;
-import com.cyberpeace.auth.service.bo.UserInfoContext;
-import com.cyberpeace.common.model.AuthContext;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.auth.constant.OpLogMethodEnum;
+import com.cyberpeace.auth.constant.OpLogModuleEnum;
+import com.cyberpeace.auth.controller.AbstractOpLog;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
@@ -38,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-前台课时相关api")
 @RestController
-//@RequiresAuthentication
 @RequestMapping("/oj/lesson")
 @Slf4j
 public class WebLessonController extends AbstractOpLog {
@@ -53,7 +48,6 @@ public class WebLessonController extends AbstractOpLog {
 	@GetMapping("")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
-//    @RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
     public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId, @RequestParam(value = "learned_type", required = true) Integer learnedType,
                                               @RequestParam("lesson_id") String lessonId, @RequestParam(value = "room_id", required = false) String roomId) {
 
@@ -68,7 +62,6 @@ public class WebLessonController extends AbstractOpLog {
 	@GetMapping("/practice_after_class")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课时编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
-//	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<LessonPracticeBo> lessonPractice(@RequestParam("resource_id") String resourceId,
 			@RequestParam("course_id") String courseId) {
 
@@ -83,7 +76,6 @@ public class WebLessonController extends AbstractOpLog {
 
 	@ApiOperation("课后练习解答")
 	@PostMapping("/submit_answer")
-//	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<EvaluateResult>
 			submitAnswer(@RequestBody @Validated LessonPracticeSubmitReq submitReq) {
 
@@ -102,7 +94,6 @@ public class WebLessonController extends AbstractOpLog {
 
     @ApiOperation("前台课时获取拓扑信息")
     @GetMapping("/scene_topo")
-//    @RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
     public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
             value = "课时编号") @RequestParam("resource_id") String lessonId, @RequestParam(value = "room_id", required = false) String roomId) {
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -113,7 +104,6 @@ public class WebLessonController extends AbstractOpLog {
 
 	@ApiOperation("前台课程场景启动")
 	@PostMapping("/start_scene")
-//	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<JSONObject>
 			startScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 
@@ -126,7 +116,6 @@ public class WebLessonController extends AbstractOpLog {
 
 	@ApiOperation("前台场景删除")
 	@DeleteMapping("/delete_scene")
-//	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated SceneOperationReq lessonSceneReq) {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
@@ -137,7 +126,6 @@ public class WebLessonController extends AbstractOpLog {
 
 	@ApiOperation("前台课时场景节点重启")
 	@PostMapping("/node_restart")
-//	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<Boolean> restartNode(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -149,7 +137,6 @@ public class WebLessonController extends AbstractOpLog {
 
 	@ApiOperation("前台课时场景节点重建")
 	@PostMapping("/node_recreate")
-//	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<Boolean> recreateNode(@RequestBody @Validated SceneNodeReq sceneNodeReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -161,7 +148,6 @@ public class WebLessonController extends AbstractOpLog {
 
 	@ApiOperation("前台课时场景暂停与恢复")
 	@PatchMapping("/update_status")
-//	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<Boolean>
 			updateSceneStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
 

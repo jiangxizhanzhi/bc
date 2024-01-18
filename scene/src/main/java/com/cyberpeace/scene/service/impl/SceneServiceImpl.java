@@ -335,6 +335,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("scene", sceneData);
+		jsonObject.put(JsonKeyConstant.REMAIN_TIME, sceneData.getRemainingTime());
         return jsonObject;
     }
 

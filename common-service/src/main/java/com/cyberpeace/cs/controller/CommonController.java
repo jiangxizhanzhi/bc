@@ -72,7 +72,7 @@ public class CommonController {
 			}
 
 			// 校验权限和文件
-			filePermission.validatePermission(false);
+//			filePermission.validatePermission(false);
 			filePermission.validateFileSuffix(fileName);
 
 		} else {
@@ -104,7 +104,7 @@ public class CommonController {
 		}
 
 		// 校验权限和文件
-		filePermission.validatePermission(false);
+//		filePermission.validatePermission(false);
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 		filePermission.validateFileSuffix(fileName);
 

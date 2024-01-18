@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.course.service.bo.PersonalStatsDetail4CourseBo;
+import com.cyberpeace.oj.course.service.bo.RoleStudyBo;
 import com.cyberpeace.oj.course.service.bo.UserStatsBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -35,4 +36,7 @@ public interface LearnStatsMapper {
     List<JSONObject> afterClassIntegral(@Param("user_ids") List<String> users, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
 
     List<JSONObject> lessonIntegral(@Param("user_ids") List<String> users, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
+
+
+    RoleStudyBo getCourseInfo(@Param("user_id") String resourceId);
 }

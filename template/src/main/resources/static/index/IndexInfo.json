@@ -4,17 +4,17 @@
   "jobDefine": "负责制定和实施网络信息安全管理制度，以技术手段隔离不良信息，及时发布预知通告，发布计算机病毒、网络病毒的危害程度、防杀措施、及补救办法。教育计算机用户和网络用户树立安全意识，主动防范病毒、黑客的侵扰，抵制不良信息；建立网络信息安全监管日志。",
   "standardInfo": "依据国家标准制定，具体详情可点击国家标准查看",
   "standardUrl": "/cpms/index/standard.pdf",
-  "coverage": 65,
+  "coverage": 0,
   "categoryList": [
     {
       "categoryName": "职业道德",
-      "coverage": 2,
+      "coverage": 0,
       "weight": 5,
       "courses": [
         {
           "courseName": "职业道德",
           "resourceId": "PEIP01",
-          "coverage": 2,
+          "coverage": 0,
           "weight": 2,
           "courseNum": 5,
           "desc": "",
@@ -23,7 +23,7 @@
         {
           "courseName": "法律法规",
           "resourceId": "L4ELEMK03",
-          "coverage": 2,
+          "coverage": 0,
           "weight": 3,
           "courseNum": 6,
           "desc": "",
@@ -33,13 +33,13 @@
     },
     {
       "categoryName": "基础知识",
-      "coverage": 2,
+      "coverage": 0,
       "weight": 15,
       "courses": [
         {
           "courseName": "计算机基础",
           "resourceId": "L4ELEMK01",
-          "coverage": 2,
+          "coverage": 0,
           "weight": 5,
           "courseNum": 4,
           "desc": "",
@@ -48,7 +48,7 @@
         {
           "courseName": "网络基础",
           "resourceId": "L4ELEMK02",
-          "coverage": 2,
+          "coverage": 0,
           "weight": 10,
           "courseNum": 5,
           "desc": "",
@@ -58,13 +58,13 @@
     },
     {
       "categoryName": "网络与信息安全防护",
-      "coverage": 24,
+      "coverage": 0,
       "weight": 30,
       "courses": [
         {
           "courseName": "网络安全配置与防护",
             "resourceId": "L4PROT01",
-          "coverage": 8,
+          "coverage": 0,
           "weight": 10,
           "courseNum": 27,
           "desc": "",
@@ -73,7 +73,7 @@
         {
           "courseName": "系统安全配置与防护",
           "resourceId": "L4PROT02",
-          "coverage": 5,
+          "coverage": 0,
           "weight": 10,
           "courseNum": 15,
           "desc": "",
@@ -83,7 +83,7 @@
         {
           "courseName": "应用安全配置与防护",
             "resourceId": "L4PROT03",
-          "coverage": 11,
+          "coverage": 0,
           "weight": 10,
           "courseNum": 17,
           "desc": "",
@@ -93,13 +93,13 @@
     },
     {
       "categoryName": "网络与信息安全管理",
-      "coverage": 12,
+      "coverage": 0,
       "weight": 25,
       "courses": [
         {
           "courseName": "网络安全管理",
           "resourceId": "L4MGT01",
-          "coverage": 2,
+          "coverage": 0,
           "weight": 5,
           "courseNum": 14,
           "desc": "",
@@ -108,7 +108,7 @@
         {
           "courseName": "系统安全管理",
           "resourceId": "L4MGT02",
-          "coverage": 2,
+          "coverage": 0,
           "weight": 10,
           "courseNum": 22,
           "desc": "",
@@ -118,7 +118,7 @@
         {
           "courseName": "应用安全管理",
             "resourceId": "L4MGT03",
-          "coverage": 8,
+          "coverage": 0,
           "weight": 10,
           "courseNum": 11,
           "desc": "",
@@ -128,13 +128,13 @@
     },
     {
       "categoryName": "网络与信息安全处置",
-      "coverage": 16,
+      "coverage": 0,
       "weight": 25,
       "courses": [
         {
           "courseName": "网络安全事件处置",
           "resourceId": "L4DISPOSE01",
-          "coverage": 4,
+          "coverage": 0,
           "weight": 10,
           "courseNum": 17,
           "desc": "",
@@ -143,7 +143,7 @@
         {
           "courseName": "系统及应用安全事件",
           "resourceId": "",
-          "coverage": 12,
+          "coverage": 0,
           "weight": 15,
           "courseNum": 29,
           "desc": "",

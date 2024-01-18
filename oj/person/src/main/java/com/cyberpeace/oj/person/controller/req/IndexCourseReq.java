@@ -13,7 +13,7 @@ public class IndexCourseReq {
     @ApiModelProperty("覆盖度")
     private Integer coverage;
     @ApiModelProperty("权重")
-    private String weight;
+    private Integer weight;
 
     @ApiModelProperty("课程数")
     private Integer courseNum;

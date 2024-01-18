@@ -42,20 +42,26 @@ public class IndexInfoServiceImpl implements IndexInfoService {
         Map<String, IndexCourseReq> reqMap = list.stream().collect(Collectors.toMap(IndexCourseReq::getResourceId, Function.identity()));
         String content = FileUtil.getContent(file);
         IndexReq indexReq = JSON.parseObject(content, IndexReq.class);
+        int cov=0;
         for (IndexCategoryReq req : indexReq.getCategoryList()) {
             if (!CollectionUtils.isEmpty(req.getCourses())) {
                 req.getCourses().forEach(course -> {
                     IndexCourseReq indexCourseReq = reqMap.get(course.getResourceId());
                     if (indexCourseReq == null) {
                         course.setCompletePercent(0);
+                        course.setCoverage(0);
                         return;
                     }
                     Integer studyCount = indexCourseReq.getStudyCount()==null?0:indexCourseReq.getStudyCount();
                     course.setCompletePercent(studyCount*100/course.getCourseNum());
                     course.setDesc(indexCourseReq.getDesc());
+                    course.setCoverage(course.getCompletePercent()*course.getWeight()/100);
+                    req.setCoverage(req.getCoverage()+course.getCoverage());
                 });
             }
+            cov+=req.getCoverage();
         }
+        indexReq.setCoverage(cov);
         return indexReq;
     }
 }

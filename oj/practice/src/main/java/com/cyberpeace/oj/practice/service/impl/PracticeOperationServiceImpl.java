@@ -616,12 +616,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			// 正确取交集
 			if (listQuery.getSolved()) {
 				List<String> opsIds = opsQuestionBos.stream().filter(OpsQuestionBo::isPass).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
+				if (CollectionUtils.isNotEmpty(opsIds)) {
+					solvedIds.addAll(opsIds);
+				}
 				operationListQuery.getResourceIds().retainAll(solvedIds);
-				operationListQuery.getResourceIds().retainAll(opsIds);
 			} else {
 				List<String> opsIds = opsQuestionBos.stream().filter(a->!a.isPass()).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
+				if (CollectionUtils.isNotEmpty(opsIds)) {
+					solvedIds.addAll(opsIds);
+				}
 				operationListQuery.getResourceIds().removeAll(solvedIds);
-				operationListQuery.getResourceIds().removeAll(opsIds);
 			}
 
 			if (CollectionUtils.isEmpty(operationListQuery.getResourceIds())) {

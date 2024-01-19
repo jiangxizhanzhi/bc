@@ -72,9 +72,12 @@ public class WebCoursePersonalController {
 		}
 		List<Course> courses = courseMapper.selectList(null);
 		List<String> collect = courses.stream().map(Course::getResourceId).distinct().collect(Collectors.toList());
-		LambdaQueryWrapper<CourseLesson> query = new LambdaQueryWrapper<>();
-		query.in(CourseLesson::getCourseId, collect);
-		List<CourseLesson> courseLessons = lessonMapper.selectList(query);
+		List<CourseLesson> courseLessons = lessonMapper.selectList(null);
+		if(!collect.isEmpty()){
+			LambdaQueryWrapper<CourseLesson> query = new LambdaQueryWrapper<>();
+			query.in(CourseLesson::getCourseId, collect);
+			courseLessons = lessonMapper.selectList(query);
+		}
 		courseInfo.setTotalCourses(courses.size());
 		courseInfo.setFinishedCourses(courseInfo.getFinishedCourses());
 		courseInfo.setCourseProgress(courseLessons.isEmpty() ? 0 : (int)Math.ceil((double)courseInfo.getCourseProgress()*100/  courseLessons.size()));

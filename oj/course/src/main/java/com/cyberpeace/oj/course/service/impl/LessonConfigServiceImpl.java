@@ -58,8 +58,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Autowired
-	private CourseLessonService courseLessonService;
+
 
 	@Override
 	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
@@ -84,10 +83,13 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		List<String> lessonIds = lessonConfigBoList.stream().filter(a -> a.getResourceId() != null).map(LessonConfigBo::getResourceId).collect(Collectors.toList());
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
 		courseLessons.forEach(a -> {
-			LessonConfigBo lessonConfigBo = lessonMap.get(a.getResourceId());
-			a.setTypeIndex(lessonConfigBo.getTypeIndex());
+			if (StringUtils.isBlank(a.getTypeIndex())) {
+				LessonConfigBo lessonConfigBo = lessonMap.get(a.getResourceId());
+				a.setTypeIndex(lessonConfigBo.getTypeIndex());
+				courseLessonMapper.updateById(a);
+			}
+
 		});
-		courseLessonService.updateBatchById(courseLessons);
 		return configBo;
 	}
 

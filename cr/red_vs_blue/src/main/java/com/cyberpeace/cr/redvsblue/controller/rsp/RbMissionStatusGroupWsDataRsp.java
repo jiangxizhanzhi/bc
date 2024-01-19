@@ -15,4 +15,7 @@ public class RbMissionStatusGroupWsDataRsp extends RbMissionStatusGroupDataRsp {
 
 	@ApiModelProperty(value = "IP")
 	private String destIp;
+
+	@ApiModelProperty(value = "节点名称")
+	private String destNode;
 }

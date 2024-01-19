@@ -32,7 +32,7 @@ public class BruteforceExtLogHandler extends AttackCombatLogHandler {
 	public Integer getSourceGroup() {
 		Integer group = super.getSourceGroup();
 		if (null != group){
-			group = CrRole.RbRoleGroup.BLUE.getCode().equals(group) ? CrRole.RbRoleGroup.RED.getCode() :CrRole.RbRoleGroup.BLUE.getCode();
+			group = CrRole.RbRoleGroup.RED.getCode().equals(group) ? CrRole.RbRoleGroup.RED.getCode() :CrRole.RbRoleGroup.BLUE.getCode();
 		}
 		return group;
 	}
@@ -41,7 +41,7 @@ public class BruteforceExtLogHandler extends AttackCombatLogHandler {
 	public Integer getDestGroup() {
 		Integer group = super.getDestGroup();
 		if (null != group){
-			group = CrRole.RbRoleGroup.BLUE.getCode().equals(group) ? CrRole.RbRoleGroup.RED.getCode() :CrRole.RbRoleGroup.BLUE.getCode();
+			group = CrRole.RbRoleGroup.RED.getCode().equals(group) ? CrRole.RbRoleGroup.RED.getCode() :CrRole.RbRoleGroup.BLUE.getCode();
 		}
 		return group;
 	}

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.dao.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class RbLostHost implements Serializable {
 	private Integer group;
 
 	@ApiModelProperty(value = "失陷时间")
-	private Date lostTime;
+	private String lostTime;
 
 	@ApiModelProperty(value = "失陷靶标名")
 	private String hostName;

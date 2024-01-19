@@ -350,6 +350,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			courseBo.setCreateTime(a.getUpdateTime());
 			courseBo.setLessonName(lesson.getName());
 			courseBo.setTypeIndex(lesson.getTypeIndex());
+			courseBo.setResourceId(a.getCourseId());
 			courseBos.add(courseBo);
 		});
 		return PageUtil.pageList(courseBos, (int)page.getCurrent(),(int)page.getSize());

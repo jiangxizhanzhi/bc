@@ -79,8 +79,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		// 设置课时和章节索引
 		setConfigTypeIndex(configBo, boMap);
 		List<LessonConfigBo> lessonConfigBoList = getLessonList(configBo,new ArrayList<>());
-		Map<String, LessonConfigBo> lessonMap = lessonConfigBoList.stream().filter(a -> a.getResourceId() != null).collect(Collectors.toMap(LessonConfigBo::getResourceId, Function.identity(), (a, b) -> a));
-		List<String> lessonIds = lessonConfigBoList.stream().filter(a -> a.getResourceId() != null).map(LessonConfigBo::getResourceId).collect(Collectors.toList());
+		Map<String, LessonConfigBo> lessonMap = lessonConfigBoList.stream().filter(a -> a.getResourceId() != null).collect(Collectors.toMap(LessonConfigBo::getLessonId, Function.identity(), (a, b) -> a));
+		List<String> lessonIds = lessonConfigBoList.stream().filter(a -> a.getResourceId() != null).map(LessonConfigBo::getLessonId).collect(Collectors.toList());
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
 		courseLessons.forEach(a -> {
 			if (StringUtils.isBlank(a.getTypeIndex())) {

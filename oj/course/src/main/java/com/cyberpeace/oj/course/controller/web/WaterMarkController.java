@@ -65,6 +65,11 @@ public class WaterMarkController {
 	@ApiOperation("水印权限验证")
 	public BaseRsp<Boolean> registerVerifyInfo(@RequestParam("verifyCode") String verifyCode){
 
+		LicenseEnum licenseEnum = authService.verifySystemCode(SystemModelEnum.MODEL_SY.getName());
+		isActive = licenseEnum.equals(LicenseEnum.SUCCESS);
+		if (isActive) {
+			return new BaseRsp<>(true) ;
+		}
 		LicenseEnum registerResult = authService.registerVerifyInfo(240,verifyCode, SystemModelEnum.MODEL_SY.getName());
 		isActive =LicenseEnum.SUCCESS.equals(registerResult);
 		return new BaseRsp<>(isActive);

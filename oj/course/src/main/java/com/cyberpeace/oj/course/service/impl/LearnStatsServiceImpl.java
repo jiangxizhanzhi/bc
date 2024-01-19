@@ -330,6 +330,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	public ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page<PersonalStatsDetail4CourseBo> page,
 			String resourceId) {
 		List<LessonRecord> lessonRecords = lessonRecordService.selectByUser(UserInfoContext.getUserContext().getUserId());
+		if (lessonRecords.isEmpty()) {
+			return PageUtil.pageList(new ArrayList<>(), (int)page.getCurrent(),(int)page.getSize());
+		}
 		lessonRecords.sort(Comparator.comparing(LessonRecord::getUpdateTime).reversed());
 		Set<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toSet());
 		List<Course> courses = courseService.listByIds(courseIds);

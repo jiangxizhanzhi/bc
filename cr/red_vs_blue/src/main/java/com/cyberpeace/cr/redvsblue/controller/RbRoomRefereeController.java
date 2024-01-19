@@ -15,16 +15,21 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.constant.RbSituationWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
+import com.cyberpeace.cr.crbase.controller.req.SubmitScanInfoReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupDataRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupWsDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -32,6 +37,8 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbWsMessageIdentifier;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.MissionStatusWs;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,13 +51,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Api(tags = "红蓝对抗裁判")
 @RestController
-@RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/referee/")
 public class RbRoomRefereeController {
 
@@ -72,8 +79,15 @@ public class RbRoomRefereeController {
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	@Autowired
+	private CrRoleMapper crRoleMapper;
+
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
+
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
+	@RequiresAuthentication
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(@Validated RbMissionEvaluationListReq missionEvaluationListReq) {
@@ -132,6 +146,7 @@ public class RbRoomRefereeController {
 	 */
 	@ApiOperation("查询红蓝对抗学员用户列表")
 	@GetMapping("/get_user_list")
+	@RequiresAuthentication
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<UserRole>> getUserList(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
@@ -146,6 +161,7 @@ public class RbRoomRefereeController {
 	 */
 	@ApiOperation("获取统计数据")
 	@GetMapping("/get_statistical_info")
+	@RequiresAuthentication
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getStatisticalInfo(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
@@ -190,8 +206,48 @@ public class RbRoomRefereeController {
 		return new BaseRsp(result);
 	}
 
+	@ApiOperation("获取中台监听scan进程")
+	@PostMapping("/submit_scan_info")
+	public BaseRsp<String> updateScanInfo(@ApiParam(name = "submitScanInfoReq",
+			value = "红蓝") @RequestBody SubmitScanInfoReq submitScanInfoReq) {
+		RbCombatLog rbCombatLog = RbCombatLog.builder().build();
+		LocalScene localScene = localSceneMapper.selectOne(LocalScene.BusinessCode.RED_VS_BLUE.getCode());
+		if (localScene == null) {
+			return new BaseRsp<>();
+		}
+		String roomId = localScene.getBusinessInstanceId();
+		List<CrRole> crRoleList = crRoleMapper.getRolesByRoom(roomId,
+				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		crRoleList = crRoleList.stream().filter(s-> s.getRoleGroup() >=4).collect(Collectors.toList());
+		Integer sourceGroup;
+		for(CrRole item:crRoleList){
+			CrRoleNodesData crRoleNodesData = item.getNodeData();
+			for (CrRoleNode crRoleNode : crRoleNodesData.getVisibleNodes()) {
+				if (submitScanInfoReq.getNodeIds().contains(crRoleNode.getId())) {
+					sourceGroup = item.getRoleGroup();
+					RbCombatLog investigationMission = rbCombatLogService.newRecord(sourceGroup, "1_情报侦察", rbCombatLog, roomId);
+					rbCombatLogService.pushMissionReferee(roomId, investigationMission, new ArrayList<>(), null);
+				}
+			}
+		}
+
+//		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
+//		identifier.setPath(WsPath.RB_COMBAT_LOG);
+//		identifier.setRoomId(roomId);
+//		MissionStatusWs data = new MissionStatusWs();
+//		data.setInvestigationMission(investigationMission);
+//		data.setCode(RbSituationWsCode.MISSION_STATUS_UPDATE_CODE);
+//		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+//				.data(JsonUtil.toJsonString(data,
+//						PropertyNamingStrategy.SnakeCase))
+//				.messageIdentifier(identifier).build();
+//		myWebSocketHandler.pushMessage(messageContext, true);
+		return new BaseRsp<>();
+	}
+
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
+	@RequiresAuthentication
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
 			value = "学员评分") @RequestBody SubmitEvaluationReq submitEvaluationReq) {
@@ -235,6 +291,7 @@ public class RbRoomRefereeController {
 
 	@ApiOperation("获取监控")
 	@GetMapping("/sessions")
+	@RequiresAuthentication
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MonitorSession>> getSessions(
 			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id) {

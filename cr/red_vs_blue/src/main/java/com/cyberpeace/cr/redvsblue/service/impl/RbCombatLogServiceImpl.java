@@ -72,7 +72,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	private MyWebSocketHandler myWebSocketHandler;
 
 	@Override
-	public void handlerLog(String syslog) {
+	public void handlerLog(String syslog) throws Exception {
 		Map<String, String> initData = new HashMap<>();
 		if (isZrSyslog(syslog)) {
 			initData = getInitDataFromZrLog(syslog);
@@ -158,21 +158,26 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		List<RbMissionStatusGroupDataRsp> blueRole = new ArrayList<>();
 
 		List<CrTask> crTasks = crTaskMapper.selectByRoomId(roomId);
-		Map<String, List<CrTask>> taskMap = StreamApiUtils.groupBy(crTasks, CrTask::getRoleId);
+//		Map<String, List<CrTask>> taskMap = StreamApiUtils.groupBy(crTasks, CrTask::getRoleId);
+		Map<String, List<CrTask>> taskMap = crTasks.stream().collect(Collectors.groupingBy(CrTask::getRoleId,  LinkedHashMap::new, Collectors.toList()));
 
 		List<CrRole> rolesByRoom = crRoleMapper.getRolesByRoom(roomId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		Map<String, CrRole> stringCrRoleMap = StreamApiUtils.toMap(rolesByRoom, CrRole::getResourceId, tmp -> tmp);
 
 		List<Mission> missions = missionMapper.selectByRoomId(roomId);
-		Map<String, String> missionMaps = StreamApiUtils.toMap(missions, Mission::getResourceId, MissionBase::getTitle);
+		missions.sort(Comparator.comparing(Mission::getTitle));
+//		Map<String, String> missionMaps = StreamApiUtils.toMap(missions, Mission::getResourceId, MissionBase::getTitle);
+		LinkedHashMap<String, String> missionMaps = missions.stream().collect(Collectors.toMap(Mission::getResourceId, MissionBase::getTitle, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 
 		for (Map.Entry<String, List<CrTask>> entry : taskMap.entrySet()) {
 			String roleId = entry.getKey();
 			CrRole crRole = stringCrRoleMap.get(roleId);
 			List<CrTask> value = entry.getValue();
-			Map<String, List<CrTask>> missons = StreamApiUtils.groupBy(value, CrTask::getMissionId);
+//			Map<String, List<CrTask>> missons = StreamApiUtils.groupBy(value, CrTask::getMissionId);
+			Map<String, List<CrTask>> missons = value.stream().collect(Collectors.groupingBy(CrTask::getMissionId,  LinkedHashMap::new, Collectors.toList()));
 			for (Map.Entry<String, List<CrTask>> mission : missons.entrySet()) {
 				List<CrTask> sorted = mission.getValue().stream().sorted(Comparator.comparing(CrTask::getUpdateTime)).collect(Collectors.toList());
+//				List<CrTask> sorted = mission.getValue();
 				CrTask task = sorted.get(sorted.size()-1);
 				if(crRole.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
 					RbMissionStatusGroupDataRsp tmp = getRbMissionStatusGroupDataRsp(missionMaps, task);
@@ -184,6 +189,8 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				}
 			}
 		}
+		redRole.sort(Comparator.comparing(RbMissionStatusGroupDataRsp::getTask));
+		blueRole.sort(Comparator.comparing(RbMissionStatusGroupDataRsp::getTask));
 		res.setRedRole(redRole);
 		res.setBlueRole(blueRole);
 		return res;
@@ -225,29 +232,36 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		String title = mission.getTitle();
 		RbCombatLog rbCombatLog = RbCombatLog.builder().build();
 		if ("1_情报侦察".equals(title)){
-			if(submitEvaluationReq.getScore() > 0){
+			if(submitEvaluationReq.getScore() >= crTask.getScore()*0.7){
 				String roomId = submitEvaluationReq.getRoomId();
-				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, crTask.getUserId());
+				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, submitEvaluationReq.getSubmitId());
 				Integer sourceGroup = crRoleByRoomIdAndUserId.getRoleGroup();
-				Integer destGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(sourceGroup) ?
-						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
-
-				String content = String.format("%s对%s的目标靶机进行情报侦察", CrCommonUtil.getGroupName(sourceGroup), CrCommonUtil.getGroupName(destGroup));
-				rbCombatLog.setRoomId(roomId);
-				rbCombatLog.setEventType(CrCommonConstants.EventType.ATTACK_MISSION.getCode());
-				rbCombatLog.setEventCategory(CrCommonConstants.EventCategory.ATTACK.getCode());
-				CrCommonConstants.Mission enumByCode = EnumUtils.getEnumByCode(EnumUtils.getEnumCodeByDesc(mission.getTitle(), CrCommonConstants.Mission.class), CrCommonConstants.Mission.class);
-				rbCombatLog.setAttackPhase(enumByCode.getStage());
-				rbCombatLog.setAttackAction(enumByCode.getAction());
-				rbCombatLog.setSourceGroup(sourceGroup);
-				rbCombatLog.setDestGroup(destGroup);
-				rbCombatLog.setEventContent(content);
-				rbCombatLogMapper.insert(rbCombatLog);
+				newRecord(sourceGroup, mission.getTitle(), rbCombatLog, roomId);
 				return rbCombatLogMapper.selectById(rbCombatLog.getResourceId());
 			}
 		}
 		return null;
 
+	}
+
+	@Override
+	public RbCombatLog newRecord(Integer sourceGroup, String title, RbCombatLog rbCombatLog, String roomId) {
+
+		Integer destGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(sourceGroup) ?
+				CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
+
+		String content = String.format("%s对%s的目标靶机进行情报侦察", CrCommonUtil.getGroupName(sourceGroup), CrCommonUtil.getGroupName(destGroup));
+		rbCombatLog.setRoomId(roomId);
+		rbCombatLog.setEventType(CrCommonConstants.EventType.ATTACK_MISSION.getCode());
+		rbCombatLog.setEventCategory(CrCommonConstants.EventCategory.ATTACK.getCode());
+		CrCommonConstants.Mission enumByCode = EnumUtils.getEnumByCode(EnumUtils.getEnumCodeByDesc(title, CrCommonConstants.Mission.class), CrCommonConstants.Mission.class);
+		rbCombatLog.setAttackPhase(enumByCode.getStage());
+		rbCombatLog.setAttackAction(enumByCode.getAction());
+		rbCombatLog.setSourceGroup(sourceGroup);
+		rbCombatLog.setDestGroup(destGroup);
+		rbCombatLog.setEventContent(content);
+		rbCombatLogMapper.insert(rbCombatLog);
+		return rbCombatLogMapper.selectById(rbCombatLog.getResourceId());
 	}
 
 
@@ -259,7 +273,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		List<RbCombatLog> combatLogList = new ArrayList<>();
 		if (Arrays.asList("5_被攻击链条复现","6_定位攻击源", "7_清除跳板").contains(mission.getTitle())){
 			Integer submitScore = submitEvaluationReq.getScore();
-			if(null != submitScore && submitScore.equals(crTask.getScore()) && submitScore.equals(mission.getScore())
+			if(null != submitScore && (submitScore >= crTask.getScore()*0.7)
 					&& !submitEvaluationReq.getEvaluateStatus().equals(CrTask.TaskStatus.REJECT.getCode())){
 				String roomId = submitEvaluationReq.getRoomId();
 				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, crTask.getUserId());
@@ -279,8 +293,9 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				rbCombatLogMapper.insert(rbCombatLog);
 				combatLogList.add(rbCombatLogMapper.selectById(rbCombatLog.getResourceId()));
 
-				if (!"7_清除跳板".equals(mission.getTitle())){
+				if (!"5_被攻击链条复现".equals(mission.getTitle())){
 					rbCombatLog.setDefensePhase(enumByCode.getStages().get(1));
+					rbCombatLog.setEventContent(CrCommonUtil.getGroupName(destGroup) + "定位攻击源并成功阻断");
 					rbCombatLog.setResourceId(null);
 					rbCombatLog.setUpdateTime(null);
 					rbCombatLog.setCreateTime(null);
@@ -310,7 +325,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		Integer enumCodeByDesc = EnumUtils.getEnumCodeByDesc(nodeName, CrCommonConstants.Mission.class);
 		if(null != enumCodeByDesc){
 			Integer score = submitEvaluationReq.getScore();
-			if (null != score && score.equals(mission.getScore()) &&
+			if (null != score && score >= mission.getScore()*0.7 &&
 					!submitEvaluationReq.getScore().equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())){
 				String roomId = submitEvaluationReq.getRoomId();
 				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, crTask.getUserId());
@@ -356,6 +371,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			missionStatusGroupDataRsp.setStatus(CrTask.TaskStatus.SUCCESS.getCode());
 			missionStatusGroupDataRsp.setGroup(crRole.getRoleGroup());
 			missionStatusGroupDataRsp.setDestIp(ip);
+			missionStatusGroupDataRsp.setDestNode(serverName);
 			return missionStatusGroupDataRsp;
 		}
 		return null;
@@ -495,7 +511,21 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	private RbCombatRecordsRsp handlerCombatData(RbCombatRecordsAllDataRsp tmpData) {
 		RbCombatRecordsRsp res = new RbCombatRecordsRsp();
-		res.setNoGroup(tmpData.getRbAttackDefenseEvents().stream().sorted(Comparator.comparing(RbAttackEvent::getEventTime).reversed()).collect(Collectors.toList()));
+		List<RbAttackEvent> collect = tmpData.getRbAttackDefenseEvents().stream().sorted(Comparator.comparing(RbAttackEvent::getEventTime).reversed()).collect(Collectors.toList());
+		List<String> tmp = new ArrayList<>();
+		List<RbAttackEvent> result = new ArrayList<>();
+		collect.forEach(item -> {
+			String eventTime = item.getEventTime();
+			String eventDescribe = item.getEventDescribe();
+			String groupType = item.getGroupType();
+			String event = eventTime + "-" + groupType + "-" + eventDescribe;
+			if(!tmp.contains(event)){
+				tmp.add(event);
+				result.add(item);
+			}
+		});
+		collect = result;
+		res.setNoGroup(collect);
 		Integer redCode = CrRole.RbRoleGroup.RED.getCode();
 		Integer blueCode = CrRole.RbRoleGroup.BLUE.getCode();
 		Map<Integer, List<RbAttackPhaseData>> attackDefenseStageByGroup = handlerAttackDefenseStage(tmpData.getRbAttackStages());
@@ -559,13 +589,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			if (rbCombatLog != null){
 				throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
 			}
-			String[] split = originalLog.replace("{", "").replace("}", "").split(",");
-			JSONObject jsonObject = new JSONObject();
-			for (String str:split){
-				String[] strings = str.split(":");
-				jsonObject.put(strings[0],strings.length==1 ? "" : (strings.length>2? str.split("cTime")[1] : strings[1]));
-			}
-//			JSONObject jsonObject = JSONObject.parseObject(originalLog);
+			JSONObject jsonObject = JSONObject.parseObject(originalLog);
 			for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
 				initMap.put(entry.getKey(), entry.getValue().toString().replace("\"",""));
 			}

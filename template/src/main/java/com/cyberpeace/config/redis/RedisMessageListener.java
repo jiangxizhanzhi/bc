@@ -6,6 +6,7 @@ import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
@@ -32,6 +33,7 @@ public class RedisMessageListener implements MessageListener {
 	@Autowired
 	private RbCombatLogService rbCombatLogService;
 
+	@SneakyThrows
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
 		// 获取消息

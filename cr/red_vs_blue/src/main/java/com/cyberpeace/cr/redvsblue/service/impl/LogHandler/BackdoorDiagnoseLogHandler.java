@@ -1,14 +1,27 @@
 package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbMaliceProcess;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbMaliceProcessMapper;
+import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 //	定义Linux后门检测日志处理类
 @Data
@@ -16,9 +29,16 @@ import org.springframework.stereotype.Service;
 public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 
 	Integer eventType = CrCommonConstants.EventType.BACKDOOR_DIAGNOSE.getCode();
+	List<RbCombatLog> tmp = new ArrayList<>();
 
 	@Autowired
 	private RbMaliceProcessMapper rbMaliceProcessMapper;
+
+	@Autowired
+	private RbCombatLogService rbCombatLogService;
+
+	@Autowired
+	private RbCombatLogMapper rbCombatLogMapper;
 
 	@Override
 	public String getCode() {
@@ -66,6 +86,25 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		return rbCombatLog.getEventContent();
 	}
 
+
+	private void setTmp(RbCombatLog rbCombatLog, Integer code, String content) {
+		LambdaQueryWrapper<RbCombatLog> filter = new LambdaQueryWrapper<>();
+		filter.eq(RbCombatLog::getRoomId, rbCombatLog.getRoomId());
+		filter.eq(RbCombatLog::getAttackPhase,code);
+		filter.eq(RbCombatLog::getDestIp, rbCombatLog.getDestIp());
+		filter.eq(RbCombatLog::getSourceIp, rbCombatLog.getSourceIp());
+		filter.eq(RbCombatLog::getEventType, rbCombatLog.getEventType());
+		List<RbCombatLog> rbCombatLogs = rbCombatLogMapper.selectList(filter);
+		if(rbCombatLogs.isEmpty()){
+			RbCombatLog exp  = new RbCombatLog();
+			BeanUtils.copyProperties(rbCombatLog, exp);
+			exp.setIsLostHost(false);
+			exp.setAttackPhase(code);
+			exp.setEventContent(content);
+			tmp.add(exp);
+		}
+	}
+
 	@Override
 	public RbAttackEvent updateAttackEvent(RbAttackEvent rbAttackEvent, RbCombatLog rbCombatLog) {
 		String sourceGroup = rbAttackEvent.getSourceGroup();
@@ -81,7 +120,19 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 
 	@Override
 	public void save() {
-		super.save();
+		RbCombatLog rbCombatLog = getCombatLog();
+		setInstance(rbCombatLog);
+		tmp = new ArrayList<>();
+		setInstance(rbCombatLog);
+		if(rbCombatLog.getAttackPhase().equals(CrCommonConstants.AttackPhase.EXPLOITATION.getCode())){
+			Integer destGroup = rbCombatLog.getDestGroup();
+			String destName = rbCombatLog.getDestName();
+			String destIp = rbCombatLog.getDestIp();
+			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)成功渗透", destGroup, destName, destIp));
+			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.COMMAND.getCode(), String.format("对%s的%s(%s)发起了 命令控制", destGroup, destName, destIp));
+			tmp.add(rbCombatLog);
+			rbCombatLogService.saveBatch(tmp);
+		}
 		saveTrojanProcess();
 	}
 
@@ -93,5 +144,58 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 			RbMaliceProcess rbMaliceProcess = new RbMaliceProcess(redVsBlue, machineId, process);
 			rbMaliceProcessMapper.insert(rbMaliceProcess);
 		}
+	}
+
+	@Override
+	public RbCombatRecordsAllDataRsp addAttackDefenseStage(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog1) {
+		if(!rbCombatLog1.getAttackPhase().equals(CrCommonConstants.AttackPhase.OTHER.getCode())){
+			for(RbCombatLog rbCombatLog:getTmp()){
+
+				RbAttackDefenseStage rbAttackDefenseStage = RbAttackDefenseStage.builder().
+						resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getSourceGroup()).attackPhase(rbCombatLog.getAttackPhase()).content(this.getAttackStageContent(rbCombatLog)).build();
+				data.getRbAttackStages().add(rbAttackDefenseStage);
+			}
+		}
+		return data;
+	}
+
+	@Override
+	public RbCombatRecordsAllDataRsp addAttackDefenseEvent(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog){
+		super.addAttackDefenseEvent(data, rbCombatLog);
+		List<RbCombatLog> res;
+		List<RbCombatLog> tmp = getTmp();
+		String sourceGroup = CrCommonUtil.getGroupName(rbCombatLog.getSourceGroup());
+		String sourceIp = rbCombatLog.getSourceIp();
+		String sourceName = rbCombatLog.getSourceName();
+		String sourceMachine = getMachineName(sourceGroup, sourceIp, sourceName);
+		String destGroup = CrCommonUtil.getGroupName(rbCombatLog.getDestGroup());
+		String destIp = rbCombatLog.getDestIp();
+		String destName = rbCombatLog.getDestName();
+		String destMachine = getMachineName(destGroup, destIp, destName);
+		RbAttackEvent rbAttackEvent = data.getRbAttackDefenseEvents().get(0);
+		String attackEventDescribe = rbAttackEvent.getEventDescribe();
+		String attackAction = EnumUtils.getEnumDescByCode(rbCombatLog.getAttackAction(), CrCommonConstants.AttackAction.class);
+		List<RbAttackEvent> result = new ArrayList<>();
+		res = tmp.stream().filter(s->!s.getResourceId().equals(rbCombatLog.getResourceId())).collect(Collectors.toList());
+		result.add(rbAttackEvent);
+		for(RbCombatLog item: res){
+			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.DELIVERY.getCode())){
+
+				attackEventDescribe = String.format("对%s发送了文件投递", destIp);
+			}
+			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.COMMAND.getCode())){
+				attackEventDescribe = String.format("%s拿到%s的【命令执行权限】", sourceGroup, destMachine);
+			}
+			RbAttackEvent temp = RbAttackEvent.builder().visible(Boolean.TRUE).resourceId(rbCombatLog.getResourceId()).
+					group(null).type(CrCommonConstants.EventCategory.ATTACK.getDesc()).groupType(String.format("%s%s",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
+					.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
+					.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
+					.action(attackAction).eventTime(TimeUtil.format1(rbCombatLog.getEventTime())).eventDescribe(attackEventDescribe).build();
+
+			result.add(temp);
+		}
+
+		data.setRbAttackDefenseEvents(result);
+		return data;
 	}
 }

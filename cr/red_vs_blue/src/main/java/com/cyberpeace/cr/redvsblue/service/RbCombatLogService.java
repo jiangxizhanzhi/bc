@@ -13,7 +13,7 @@ import java.util.Map;
 
 public interface RbCombatLogService extends IService<RbCombatLog> {
 
-	void handlerLog(String syslog);
+	void handlerLog(String syslog) throws Exception;
 
 	Boolean isZrSyslog(String syslog);
 
@@ -26,6 +26,8 @@ public interface RbCombatLogService extends IService<RbCombatLog> {
     RbMissionStatusDataRsp getMissionStatus(String roomId);
 
 	RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq);
+
+	RbCombatLog newRecord(Integer sourceGroup, String title, RbCombatLog rbCombatLog, String roomId);
 
 	List<RbCombatLog> defenseStageMission(SubmitEvaluationReq submitEvaluationReq);
 

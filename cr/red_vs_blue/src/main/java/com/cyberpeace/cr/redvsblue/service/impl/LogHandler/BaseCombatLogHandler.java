@@ -220,7 +220,7 @@ public class BaseCombatLogHandler {
 		}
 	}
 
-	public void sendMessage() {
+	public void sendMessage() throws Exception {
 		RbCombatRecordsAllDataRsp data = addData(null);
 		data.setCode(RbSituationWsCode.LOG_HANDLER_RES_CODE);
 		for (RbAttackEvent attackEvent: data.getRbAttackDefenseEvents()) {
@@ -236,7 +236,30 @@ public class BaseCombatLogHandler {
 				return;
 			}
 		}
-		pushDataToRoom(data, getRedVsBlue());
+		if(data.getRbAttackStages().size() > 1){
+			List<RbAttackDefenseStage> rbAttackStages = data.getRbAttackStages();
+			List<RbAttackEvent> rbAttackDefenseEvents = data.getRbAttackDefenseEvents();
+			for(int i=0;i<3;i++){
+				RbCombatRecordsAllDataRsp data1 = new RbCombatRecordsAllDataRsp();
+				List<RbAttackEvent> attackEvents = new ArrayList<>();
+				attackEvents.add(rbAttackDefenseEvents.get(i));
+				data1.setRbAttackDefenseEvents(attackEvents);
+				List<RbAttackDefenseStage> attackStage = new ArrayList<>();
+				attackStage.add(rbAttackStages.get(i));
+				data1.setRbAttackStages(attackStage);
+				if(!data.getLostHosts().isEmpty()){
+					data1.setLostHosts(data.getLostHosts());
+				}
+				data1.setCode(data.getCode());
+				pushDataToRoom(data1, getRedVsBlue());
+				if(i != 2){
+					Thread.sleep(5000);
+				}
+			}
+		} else {
+			pushDataToRoom(data, getRedVsBlue());
+
+		}
 	}
 
 	public RbCombatRecordsAllDataRsp addData(RbCombatRecordsAllDataRsp data) {
@@ -314,7 +337,7 @@ public class BaseCombatLogHandler {
 	public RbCombatRecordsAllDataRsp addLostHost(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog){
 		if(rbCombatLog.getIsLostHost()){
 			RbLostHost rbLostHost = RbLostHost.builder().
-					resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getDestGroup()).lostTime(rbCombatLog.getEventTime()).
+					resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getDestGroup()).lostTime(TimeUtil.format1(rbCombatLog.getEventTime())).
 					hostName(StringUtils.isBlank(rbCombatLog.getDestName()) ? rbCombatLog.getAgentName() :rbCombatLog.getDestName()).
 					hostIp(StringUtils.isBlank(rbCombatLog.getDestIp()) ? rbCombatLog.getAgentIp() : rbCombatLog.getDestIp()).build();
 			data.getLostHosts().add(rbLostHost);

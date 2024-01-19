@@ -1,9 +1,12 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.service.CourseLessonService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	@Autowired
+	private CourseLessonService courseLessonService;
+
 	@Override
 	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
 
@@ -73,7 +79,30 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 		// 设置课时和章节索引
 		setConfigTypeIndex(configBo, boMap);
+		List<LessonConfigBo> lessonConfigBoList = getLessonList(configBo,new ArrayList<>());
+		Map<String, LessonConfigBo> lessonMap = lessonConfigBoList.stream().filter(a -> a.getResourceId() != null).collect(Collectors.toMap(LessonConfigBo::getResourceId, Function.identity(), (a, b) -> a));
+		List<String> lessonIds = lessonConfigBoList.stream().filter(a -> a.getResourceId() != null).map(LessonConfigBo::getResourceId).collect(Collectors.toList());
+		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
+		courseLessons.forEach(a -> {
+			LessonConfigBo lessonConfigBo = lessonMap.get(a.getResourceId());
+			a.setTypeIndex(lessonConfigBo.getTypeIndex());
+		});
+		courseLessonService.updateBatchById(courseLessons);
 		return configBo;
+	}
+
+	private List<LessonConfigBo> getLessonList(LessonConfigBo configBo,List<LessonConfigBo> lessonConfigBoList) {
+
+		if (LessonConfig.NodeType.NODE_LESSON.getCode()==configBo.getNodeType()) {
+			lessonConfigBoList.add(configBo);
+		}
+		if (CollectionUtils.isNotEmpty(configBo.getChildren())) {
+			for (LessonConfigBo child : configBo.getChildren()) {
+				getLessonList(child,lessonConfigBoList);
+			}
+		}
+
+		return lessonConfigBoList;
 	}
 
 	@Override

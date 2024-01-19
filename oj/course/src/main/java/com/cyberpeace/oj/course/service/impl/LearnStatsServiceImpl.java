@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.InvalidParamException;
@@ -14,10 +15,11 @@ import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.res.HistogramRes;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.LearnStatsMapper;
-import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
-import com.cyberpeace.oj.course.service.LearnStatsService;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.practice.entity.Paper;
@@ -67,6 +69,13 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	@Autowired
 	CourseLearnStatisticsService courseLearnStatisticsService;
 
+	@Autowired
+	LessonRecordService lessonRecordService;
+
+	@Autowired
+	CourseLessonService courseLessonService;
+	@Autowired
+	CourseService courseService;
 	ExecutorService es = Executors.newCachedThreadPool();
 
 	@Override
@@ -320,9 +329,27 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	@Override
 	public ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page<PersonalStatsDetail4CourseBo> page,
 			String resourceId) {
-		return PageUtil.getListResult(learnStatsMapper.learnCourseStats(page, resourceId,
-				CourseLesson.LessonType.THEORY.getCode(),
-				CourseLesson.LessonType.EXPERIMENT.getCode(), Note.NoteType.REPORT.getCode()));
+		List<LessonRecord> lessonRecords = lessonRecordService.selectByUser(UserInfoContext.getUserContext().getUserId());
+		lessonRecords.sort(Comparator.comparing(LessonRecord::getUpdateTime).reversed());
+		Set<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toSet());
+		List<Course> courses = courseService.listByIds(courseIds);
+		Map<Integer, Course> courseMap = courses.stream().collect(Collectors.toMap(Course::getId, course -> course));
+		Set<String> lessonIds = lessonRecords.stream().map(LessonRecord::getLessonId).collect(Collectors.toSet());
+		List<CourseLesson> courseLessons = courseLessonService.listByIds(lessonIds);
+		Map<Integer, CourseLesson> lessonMap = courseLessons.stream().collect(Collectors.toMap(CourseLesson::getId, lesson -> lesson));
+		List<PersonalStatsDetail4CourseBo> courseBos = new ArrayList<>();
+		lessonRecords.forEach(a->{
+			PersonalStatsDetail4CourseBo courseBo = new PersonalStatsDetail4CourseBo();
+			Course course = courseMap.get(a.getCourseId());
+			CourseLesson lesson = lessonMap.get(a.getLessonId());
+			courseBo.setLessonId(a.getLessonId());
+			courseBo.setName(course.getName());
+			courseBo.setCreateTime(a.getUpdateTime());
+			courseBo.setLessonName(lesson.getName());
+			courseBo.setTypeIndex(lesson.getTypeIndex());
+			courseBos.add(courseBo);
+		});
+		return PageUtil.pageList(courseBos, (int)page.getCurrent(),(int)page.getSize());
 	}
 
 	@Override

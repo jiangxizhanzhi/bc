@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class PersonalStatsDetail4CourseBo implements Serializable {
@@ -44,11 +45,13 @@ public class PersonalStatsDetail4CourseBo implements Serializable {
     private String lessonName;
 
     @ApiModelProperty("最近一次学习时间")
-    private String createTime;
+    private Date createTime;
 
     @ApiModelProperty("课程学习类型")
     private Integer learnedType;
 
     @ApiModelProperty("课堂id")
     private String roomId;
+
+    private String typeIndex;
 }

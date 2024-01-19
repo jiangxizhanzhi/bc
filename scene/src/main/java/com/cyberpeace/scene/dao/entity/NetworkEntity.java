@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+
 import lombok.Data;
 
 /**
@@ -17,7 +18,11 @@ import lombok.Data;
 public class NetworkEntity extends BaseTable {
 
     @TableId(type= IdType.ASSIGN_UUID, value = "resource_id")
+	private String resourceId;
+
     private String uuid;
+
+	private String elementId;
 
     /**
      * 用户名

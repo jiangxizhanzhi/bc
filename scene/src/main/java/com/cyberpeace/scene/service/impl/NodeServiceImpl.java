@@ -3,9 +3,9 @@ package com.cyberpeace.scene.service.impl;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
@@ -36,22 +36,26 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, NodeEntity> impleme
     @Autowired
     private HostService hostService;
 
-    @Override
-    public void delete(String sceneId) {
-        List<NodeEntity> nodes = nodeMapper.selectBySid(sceneId);
-        if (!CollectionUtils.isEmpty(nodes)){
-            for (NodeEntity node : nodes){
-                //删除容器
-                if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), node.getType())){
-                    containerService.delete(node.getInstanceId());
-                }
-                //删除虚拟机
-                if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), node.getType())){
-                    hostService.delete(node.getInstanceId());
-                }
-                nodeMapper.updateStatus(node.getResourceId(), SceneEnum.DELETED.getCode());
-                log.info("delete node : {}" , node.getInstanceId());
-            }
-        }
-    }
+	@Override
+	public void delete(String sceneId) {
+		List<NodeEntity> nodes = nodeMapper.selectBySid(sceneId);
+		if (nodes.isEmpty()) {
+			return;
+		}
+		for (NodeEntity node : nodes) {
+			if (StringUtils.isNotBlank(node.getInstanceId())) {
+				// 删除容器
+				if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
+						node.getType())) {
+					containerService.delete(node.getInstanceId());
+				}
+				// 删除虚拟机
+				if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), node.getType())) {
+					hostService.delete(node.getInstanceId());
+				}
+			}
+			nodeMapper.updateStatus(node.getResourceId(), SceneEnum.DELETED.getCode());
+			log.info("delete node : {}", node.getInstanceId());
+		}
+	}
 }

@@ -1,14 +1,16 @@
 package com.cyberpeace.scene.job;
 
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.scene.service.SceneService;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.scene.service.SceneService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author :   SN
@@ -52,13 +54,4 @@ public class SceneScheduled {
     /**
      * 场景状态检查，10秒执行一次
      */
-    @Scheduled(cron = "0/10 * * * * ?")
-    public void sceneState(){
-        if (Boolean.TRUE.equals(SCENE_STATE_FLAG)) {
-            sceneService.sceneState();
-        }else {
-            // 要调试请修改dev配置为true
-            log.info("sceneService.sceneState：本地开发环境，默认不查询场景状态，会影响线上场景进度推送功能");
-        }
-    }
 }

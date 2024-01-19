@@ -41,12 +41,16 @@ import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
-import com.cyberpeace.scene.job.SceneExecutor;
 import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.service.bo.*;
 import com.cyberpeace.scene.service.bo.ad.AdSceneStartReq;
+import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
+import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
+import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
+import com.cyberpeace.scene.service.bo.scene.ElementStatistics;
+import com.cyberpeace.scene.service.bo.scene.SceneProcessBo;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -58,60 +62,60 @@ import lombok.extern.slf4j.Slf4j;
  **/
 @Slf4j
 @Service
-public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> implements SceneService{
+public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> implements SceneService {
 
-    @Autowired
-    private TopologyService topologyService;
-    
-    @Autowired
-    private SceneMapper sceneMapper;
+	@Autowired
+	private TopologyService topologyService;
 
-    @Autowired
-    @Lazy
-    private SceneThreadPoolExecutor executor;
+	@Autowired
+	private SceneMapper sceneMapper;
 
-    @Lazy
-    @Autowired
-    private SceneJob sceneJob;
+	@Autowired
+	@Lazy
+	private SceneThreadPoolExecutor executor;
 
-    @Autowired
-    private NetworkService networkService;
+	@Lazy
+	@Autowired
+	private SceneJob sceneJob;
 
-    @Autowired
-    private NetworkMapper networkMapper;
+	@Autowired
+	private NetworkService networkService;
 
-    @Autowired
-    private NodeService nodeService;
+	@Autowired
+	private NetworkMapper networkMapper;
 
-    @Autowired
-    private NodeMapper nodeMapper;
+	@Autowired
+	private NodeService nodeService;
 
-    @Autowired
-    private HostService hostService;
+	@Autowired
+	private NodeMapper nodeMapper;
 
-    @Autowired
-    private ContainerService containerService;
+	@Autowired
+	private HostService hostService;
 
-    @Autowired
-    private SystemPropertyService systemPropertyService;
+	@Autowired
+	private ContainerService containerService;
 
-    @Autowired
-    private MyWebSocketHandler myWebSocketHandler;
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 
-    /**
-     * 场景自动销毁时间 单位:小时
-     */
-    private int SCENE_DESTROY;
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
-    /**
-     * 最大场景并发数
-     */
-    private Integer MAX_SCENE_EVENT;
+	/**
+	 * 场景自动销毁时间 单位:小时
+	 */
+	private int SCENE_DESTROY;
 
-    /**
-     * 用户最大场景并发数
-     */
-    private Integer MAX_USER_SCENE_EVENT;
+	/**
+	 * 最大场景并发数
+	 */
+	private Integer MAX_SCENE_EVENT;
+
+	/**
+	 * 用户最大场景并发数
+	 */
+	private Integer MAX_USER_SCENE_EVENT;
 
 	@PostConstruct
 	public void init() {
@@ -140,7 +144,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		SceneEntity scene = createScene(req.getTopologyId(), req.getInstanceId(), userId,
 				req.getInstanceType(), req.getDestroyTime());
 		// 提交创建场景任务
-		executor.submit(new SceneExecutor(sceneJob, topology, scene));
+		executor.submit(() -> startScene(topology, scene));
 		log.info("submit create scene mission, scene ：{}", scene);
 		return new BaseRsp<>(scene);
 	}
@@ -163,7 +167,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 		SceneEntity scene = createScene(req.getId(), instanceId, req.getContext().getAccessUserId(),
 				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
-		executor.submit(new SceneExecutor(sceneJob, topology, scene));
+		executor.submit(() -> startScene(topology, scene));
 		// 生成返回数据
 		scene.setMeta(topo.toJSONString());
 		JSONObject res = new JSONObject();
@@ -184,6 +188,270 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 	@Override
 	public List<String> getUndeletedSceneIdByUserId(String userId) {
 		return sceneMapper.selectByUserId(userId, SceneEnum.DELETED.getCode());
+	}
+
+	/**
+	 * 验证场景并发数
+	 * @param userId
+	 */
+	@Override
+	public void verify(String userId) {
+		int sceneCount = sceneMapper.countAll() + 1;
+
+		// 场景数超过最大值
+		if (sceneCount > MAX_SCENE_EVENT) {
+			throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW, MAX_SCENE_EVENT);
+		}
+
+		int userSceneCount = sceneMapper.countByUserId(userId) + 1;
+		// 用户场景数超过最大值
+		if (userSceneCount > MAX_USER_SCENE_EVENT) {
+			throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW, MAX_USER_SCENE_EVENT);
+		}
+	}
+
+	@Override
+	public void destroyScene(String sceneId) {
+		SceneEntity scene = sceneMapper.selectByResourceId(sceneId);
+		if (Objects.isNull(scene)) {
+			return;
+		}
+		try {
+			// 删除节点
+			nodeService.delete(sceneId);
+			// 删除网络
+			List<String> networkIds = networkMapper.selectBySceneId(sceneId);
+			if (!CollectionUtils.isEmpty(networkIds)) {
+				networkIds.forEach(iter -> {
+					networkService.delete(iter);
+					networkMapper.deleteByResourceId(iter);
+				});
+			}
+			sceneMapper.deleteByResourceId(sceneId);
+		} catch (Exception e) {
+			log.error("delete scene:[{}], error:{}", sceneId, e);
+			throw new BusinessException(ErrorCode.SCENE_DESTROY_FAILED);
+		}
+	}
+
+	@Override
+	public JSONObject getSceneJsonObject(String instanceId) {
+		SceneData sceneData = getSceneData(instanceId);
+		if (sceneData == null) {
+			return null;
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("scene", sceneData);
+		jsonObject.put(JsonKeyConstant.REMAIN_TIME, sceneData.getRemainingTime());
+		return jsonObject;
+	}
+
+	private SceneData getSceneData(String instanceId) {
+		String userId = UserInfoContext.getNewUserContext().getResourceId();
+		SceneEntity scene = sceneMapper.selectByInstanceId(instanceId, userId,
+				SceneEnum.getCodes());
+		if (Objects.isNull(scene)) {
+			return null;
+		}
+		return makeSceneData(scene);
+	}
+
+	@Override
+	public BaseRsp detail(String topologyId, String instanceId) {
+		SceneData sceneData = getSceneData(instanceId);
+		return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
+	}
+
+	@Override
+	public BaseRsp console(String nodeId, Integer type) {
+		ConnectionRsp connectionRsp = new ConnectionRsp();
+		if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), type)) {
+			connectionRsp.setConnectionUrl(hostService.console(nodeId).getUrl());
+		} else if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), type)) {
+			connectionRsp.setConnectionUrl(containerService.console(nodeId));
+		}
+		connectionRsp.setProtocol("console");
+		connectionRsp.setNodeId(nodeId);
+		return new BaseRsp<>(connectionRsp);
+	}
+
+	@Override
+	public void repair(String filePath) {
+		File repairFile = new File(filePath);
+		if (!repairFile.exists()) {
+			return;
+		}
+		log.info("Start run one click repair scene");
+		List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
+				.in(SceneEntity::getSceneStatus, SceneEnum.getCodes()));
+		if (!CollectionUtils.isEmpty(list)) {
+			list.forEach(scene -> destroyScene(scene.getResourceId()));
+		}
+		FileUtil.deleteDir(repairFile);
+		log.info("Run one click repair scene end");
+	}
+
+	@Override
+	public void autoDestroy() {
+		List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
+				.in(SceneEntity::getSceneStatus, SceneEnum.getCodes())
+				.lt(SceneEntity::getDestroyTime, new Date()));
+		if (!CollectionUtils.isEmpty(list)) {
+			list.forEach(scene -> {
+				destroyScene(scene.getResourceId());
+				log.info("Destroy scene : {}", scene.getResourceId());
+			});
+		}
+	}
+
+	private void startScene(Topology topology, SceneEntity scene) {
+		// update status
+		sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.CREATE.getCode());
+		log.info("start scene : {}", scene.getResourceId());
+		if (null == topology || CollectionUtils.isEmpty(topology.getElements())) {
+			return;
+		}
+		// 获取拓扑元素
+		ElementStatistics elements = this.getElementStatistics(topology);
+		try {
+			TopologyElement networkElement = new TopologyElement();
+			// 获取网络信息
+			if (!elements.getNodes().isEmpty()) {
+				networkElement = elements.getNetworks().get(0);
+			}
+			NetworkEntity network;
+			this.pushScenePlugin(scene, 0, 0, StageEnum.CREATE_NETWORK,
+					SceneEventStatusEnum.ONGOING.getCode(), 2);
+			try {
+				// 创建网络
+				network = createNetwork(networkElement, scene.getResourceId());
+			} catch (Exception e) {
+				this.pushScenePlugin(scene, 100, 0, StageEnum.CREATE_NETWORK,
+						SceneEventStatusEnum.ERROR.getCode(), 5);
+				throw e;
+			}
+			this.pushScenePlugin(scene, 100, 0, StageEnum.CREATE_INSTANCE,
+					SceneEventStatusEnum.ONGOING.getCode(), 2);
+
+			// node count
+			int count = 0;
+			int size = elements.getNodes().size();
+
+			// 创建虚拟机和容器
+			for (TopologyElement node : elements.getNodes()) {
+				this.pushElement(node, scene, SceneEventStatusEnum.ONGOING.getCode());
+				count++;
+				try {
+					NodeEntity nodeEntity = createNode(node, scene, network);
+					node.setNodeId(nodeEntity.getInstanceId());
+					sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
+				} catch (Exception e) {
+					this.pushElement(node, scene, SceneEventStatusEnum.ERROR.getCode());
+					this.pushScenePlugin(scene, 100, state(count, size), StageEnum.CREATE_INSTANCE,
+							SceneEventStatusEnum.ERROR.getCode(), 5);
+					throw e;
+				}
+				this.pushElement(node, scene, SceneEventStatusEnum.FINISH.getCode());
+				this.pushScenePlugin(scene, 100, state(count, size), StageEnum.CREATE_INSTANCE,
+						SceneEventStatusEnum.ONGOING.getCode(), 2);
+			}
+		} catch (Exception e) {
+			log.error("Scene start failed,scene:{}, error:{}", scene.getSceneName(), e.getMessage(),
+					e);
+			sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ERROR.getCode());
+			throw new BusinessException(ErrorCode.FAILED_TO_CREATE_SCENE, e.getMessage());
+		}
+		sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ACTIVE.getCode());
+		this.pushScenePlugin(scene, 100, 100, StageEnum.CREATE_INSTANCE,
+				SceneEventStatusEnum.FINISH.getCode(), 4);
+		log.info("start scene end : {}", scene.getResourceId());
+		this.pushCreationComplete(scene);
+	}
+
+	/**
+	 * 创建网络
+	 * @param element  元素信息
+	 * @return  网络实体
+	 */
+	private NetworkEntity createNetwork(TopologyElement element, String sceneId) {
+		String cidr = element.getNetwork() != null ? element.getNetwork().getCidr() : null;
+		String gateway = element.getNetwork() != null ? element.getNetwork().getGateway() : null;
+		String networkName = IDGeneratorUtil.getID();
+		return networkService.create(networkName, cidr, gateway, sceneId, element.getId());
+	}
+
+	private NodeEntity createNode(TopologyElement element, SceneEntity scene,
+			NetworkEntity network) {
+		// 1. save node entity
+		NodeEntity entity = new NodeEntity();
+		entity.setResourceId(IDGeneratorUtil.getID());
+		entity.setSid(scene.getResourceId());
+		entity.setType(element.getType());
+		entity.setStatus(SceneEnum.CREATE.getCode());
+		entity.setUserId(scene.getUserId());
+		entity.setNid(element.getId());
+		nodeService.save(entity);
+
+		// 2.create node in cp cloud
+		try {
+			if (element.getType().equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode())) {
+				// 创建虚拟机
+				CreateInstanceRes rsp = hostService.create(new CreateInstanceReq(element, network));
+				entity.setInstanceId(rsp.getUuid());
+				entity.setName(rsp.getInstanceName());
+				entity.setCpu(rsp.getCpu());
+				entity.setMemory(rsp.getMemory());
+				entity.setDisk(rsp.getDisk());
+				entity.setTid(rsp.getImage());
+				entity.setStatus(SceneEnum.ACTIVE.getCode());
+				entity.setAddresses(rsp.getAddresses().toJSONString());
+				entity.setIp(getIp(rsp.getAddresses()));
+				// update topo
+				setPortMapping(element, rsp.getNets());
+
+			} else {
+				// container
+				CreateContainersRes rsp = containerService
+						.create(new CreateContainerReq(element, network));
+				entity.setInstanceId(rsp.getUuid());
+				entity.setName(rsp.getName());
+				entity.setCpu(rsp.getCpu());
+				entity.setMemory(rsp.getMemory());
+				entity.setDisk(rsp.getDisk());
+				entity.setTid(rsp.getImage());
+				entity.setStatus(SceneEnum.ACTIVE.getCode());
+				entity.setIp(getIp(rsp.getAddresses()));
+				// update topo
+				setPortMapping(element, rsp.getNets());
+			}
+		} catch (Exception e) {
+			entity.setStatus(SceneEnum.ERROR.getCode());
+			throw e;
+		} finally {
+			// 3.update entity
+			nodeService.updateById(entity);
+		}
+		return entity;
+	}
+
+	/**
+	 * 保存端口映射数据到meta
+	 * 创建终端的接口保证access_modes顺序和个数与请求的一致
+	 *
+	 * @param element
+	 * @param nets
+	 */
+	private void setPortMapping(TopologyElement element, List<Net> nets) {
+		if (CollectionUtils.isEmpty(element.getPorts()) || CollectionUtils.isEmpty(nets)
+				|| CollectionUtils.isEmpty(nets.get(0).getAccess_modes())) {
+			return;
+		}
+		int length = nets.get(0).getAccess_modes().size();
+		for (int i = 0; i < length; i++) {
+			JSONObject mode = element.getPorts().get(0).getAccessModes().get(i);
+			NetAccessMode netAccessMode = nets.get(0).getAccess_modes().get(i);
+			mode.put(JsonKeyConstant.PORT_MAPPING, netAccessMode.getPort_mapping());
+		}
 	}
 
 	private SceneData makeSceneData(SceneEntity scene) {
@@ -215,27 +483,21 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			sceneData.setTopology(topology);
 			sceneData.setScene(scene);
 			sceneData.setPlugins(jsonObject);
-			Integer networkState = networkState(scene, false);
-			Integer nodeStage = nodeStage(networkState, scene, false);
-			List<WsSceneStage> wsSceneStages = stageList(networkState, nodeStage);
+			SceneProcessBo processBo = getSceneProcess(scene, topology);
+			List<WsSceneStage> wsSceneStages = stageList(processBo.getNetworkState(),
+					processBo.getNodeState());
 			Integer percentage = percentage(wsSceneStages);
 			sceneDataRsp.setStageList(wsSceneStages);
-			if (nodeStage >= networkState) {
-				sceneDataRsp.setStage(StageEnum.CREATE_INSTANCE.getStage());
-				sceneDataRsp.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
-				sceneDataRsp.setStagePercentage(nodeStage);
-				sceneDataRsp.setProcessMessage(StageEnum.CREATE_INSTANCE.getStageName());
-				sceneDataRsp.setProgressStatus(2);
-			} else {
-				sceneDataRsp.setStage(StageEnum.CREATE_NETWORK.getStage());
-				sceneDataRsp.setStageName(StageEnum.CREATE_NETWORK.getStageName());
-				sceneDataRsp.setStagePercentage(networkState);
-				sceneDataRsp.setProcessMessage(StageEnum.CREATE_NETWORK.getStageName());
-				sceneDataRsp.setProgressStatus(2);
-			}
+
+			sceneDataRsp.setStage(processBo.getStageEnum().getStage());
+			sceneDataRsp.setStageName(processBo.getStageEnum().getStageName());
+			sceneDataRsp.setStagePercentage(processBo.getStagePercentage());
+			sceneDataRsp.setProcessMessage(processBo.getStageEnum().getStageName());
+			sceneDataRsp.setProgressStatus(2);
+
 			sceneDataRsp.setProgressPercentage(percentage);
 			topology.setScene(sceneDataRsp);
-            setPortIp(topology, scene.getResourceId());
+			setPortIp(topology, scene.getResourceId());
 		}
 		return sceneData;
 	}
@@ -258,396 +520,244 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 	}
 
-    private SceneEntity createScene(String topologyId, String instanceId, String userId, Integer instanceType, Integer destroy){
-        SceneEntity scene = new SceneEntity();
-        scene.setResourceId(IDGeneratorUtil.getID());
-        scene.setSceneName(IDGeneratorUtil.getID());
-        Date startTime = new Date();
-        scene.setStartTime(startTime);
-        Date destroyTime;
-        if (Objects.isNull(destroy)){
-            destroyTime = TimeUtil.addHours(startTime, SCENE_DESTROY);
-        }else {
-            destroyTime = TimeUtil.addHours(startTime, destroy);
-        }
-        scene.setDestroyTime(destroyTime);
-        scene.setInstanceType(instanceType);
-        scene.setInstanceId(instanceId);
-        scene.setTopologyId(topologyId);
-        scene.setUserId(userId);
-        scene.setSceneTtl(SCENE_DESTROY);
-        scene.setSceneStatus(SceneEnum.INIT.getCode());
-        sceneMapper.insert(scene);
-        return scene;
-    }
-
-	/**
-	 * 验证场景并发数
-	 * @param userId
-	 */
-	@Override
-	public void verify(String userId) {
-		int sceneCount = sceneMapper.countAll() + 1;
-
-		// 场景数超过最大值
-		if (sceneCount > MAX_SCENE_EVENT) {
-			throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW, MAX_SCENE_EVENT);
+	private SceneEntity createScene(String topologyId, String instanceId, String userId,
+			Integer instanceType, Integer destroy) {
+		SceneEntity scene = new SceneEntity();
+		scene.setResourceId(IDGeneratorUtil.getID());
+		scene.setSceneName(IDGeneratorUtil.getID());
+		Date startTime = new Date();
+		scene.setStartTime(startTime);
+		Date destroyTime;
+		if (Objects.isNull(destroy)) {
+			destroyTime = TimeUtil.addHours(startTime, SCENE_DESTROY);
+		} else {
+			destroyTime = TimeUtil.addHours(startTime, destroy);
 		}
-
-		int userSceneCount = sceneMapper.countByUserId(userId) + 1;
-		// 用户场景数超过最大值
-		if (userSceneCount > MAX_USER_SCENE_EVENT) {
-			throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW, MAX_USER_SCENE_EVENT);
-		}
+		scene.setDestroyTime(destroyTime);
+		scene.setInstanceType(instanceType);
+		scene.setInstanceId(instanceId);
+		scene.setTopologyId(topologyId);
+		scene.setUserId(userId);
+		scene.setSceneTtl(SCENE_DESTROY);
+		scene.setSceneStatus(SceneEnum.INIT.getCode());
+		sceneMapper.insert(scene);
+		return scene;
 	}
 
-    @Override
-    public BaseRsp destroyScene(String sceneId) {
-        SceneEntity scene = sceneMapper.selectByResourceId(sceneId);
-        if (Objects.isNull(scene)){
-            throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
-        }
-        try {
-            //删除节点
-            nodeService.delete(sceneId);
-            //删除网络
-            List<String> networkIds = networkMapper.selectBySceneId(sceneId);
-            if (!CollectionUtils.isEmpty(networkIds)){
-                networkIds.forEach(iter -> {
-                    networkService.delete(iter);
-                    networkMapper.deleteByResourceId(iter);
-                });
-            }
-//            sceneMapper.updateSceneStatus(sceneId, SceneEnum.DELETED.getCode());
-			sceneMapper.deleteByResourceId(sceneId);
-        }catch (Exception e){
-            log.error("delete scene:[{}], error:{}", sceneId, e);
-            throw new BusinessException(ErrorCode.SCENE_DESTROY_FAILED);
-        }
-
-        return new BaseRsp<>();
-    }
-
-    @Override
-    public JSONObject getSceneJsonObject(String instanceId) {
-        SceneData sceneData = getSceneData(instanceId);
-        if (sceneData == null) {
-            return null;
-        }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("scene", sceneData);
-		jsonObject.put(JsonKeyConstant.REMAIN_TIME, sceneData.getRemainingTime());
-        return jsonObject;
-    }
-
-
-    private SceneData getSceneData(String instanceId){
-        String userId = UserInfoContext.getNewUserContext().getResourceId();
-        SceneEntity scene = sceneMapper.selectByInstanceId(instanceId, userId, SceneEnum.getCodes());
-        if (Objects.isNull(scene)){
-            return null;
-        }
-		return makeSceneData(scene);
-    }
-
-    @Override
-    public BaseRsp detail(String topologyId, String instanceId) {
-        SceneData sceneData = getSceneData(instanceId);
-        return new BaseRsp<>(new SceneDetailRsp(topologyId, sceneData));
-    }
-    
-
-    @Override
-    public BaseRsp console(String nodeId, Integer type) {
-        ConnectionRsp connectionRsp = new ConnectionRsp();
-        if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), type)){
-            connectionRsp.setConnectionUrl(hostService.console(nodeId).getUrl());
-        } else if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(), type)) {
-            connectionRsp.setConnectionUrl(containerService.console(nodeId));
-        }
-        connectionRsp.setProtocol("console");
-        connectionRsp.setNodeId(nodeId);
-        return new BaseRsp<>(connectionRsp);
-    }
-
-    @Override
-    public void repair(String filePath) {
-        File repairFile = new File(filePath);
-        if (!repairFile.exists()){
-            return;
-        }
-        log.info("Start run one click repair scene");
-        List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>().in(SceneEntity::getSceneStatus, SceneEnum.getCodes()));
-        if (!CollectionUtils.isEmpty(list)){
-            list.forEach(scene -> destroyScene(scene.getResourceId()));
-        }
-        FileUtil.deleteDir(repairFile);
-        log.info("Run one click repair scene end");
-    }
-
-    @Override
-    public void autoDestroy() {
-        List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
-                .in(SceneEntity::getSceneStatus, SceneEnum.getCodes())
-                .lt(SceneEntity::getDestroyTime, new Date()));
-        if (!CollectionUtils.isEmpty(list)){
-            list.forEach(scene -> {
-                destroyScene(scene.getResourceId());
-                log.info("Destroy scene : {}", scene.getResourceId());
-            });
-        }
-    }
-
-    @Override
-    public void sceneState() {
-        // 获取运行中的场景
-        List<SceneEntity> list = list(new LambdaQueryWrapper<SceneEntity>()
-                .in(SceneEntity::getSceneStatus, Arrays.asList(SceneEnum.CREATE.getCode(), SceneEnum.ERROR.getCode())));
-        if (!CollectionUtils.isEmpty(list)){
-            log.warn("scene status is creating and error count is {}", list.size());
-            for (SceneEntity scene : list){
-                try {
-                    if (Objects.equals(SceneEnum.CREATE.getCode(), scene.getSceneStatus())){
-                        Integer networkState = networkState(scene, true);
-						Integer nodeStage = nodeStage(networkState, scene, true);
-                        if (Objects.equals(100, networkState) && Objects.equals(100, nodeStage)){
-                            log.info("scene start success");
-                            scene.setSceneStatus(SceneEnum.ACTIVE.getCode());
-                            updateById(scene);
-                            pushScenePlugin(scene, networkState, nodeStage, 2, 4);
-                            pushCreationComplete(scene);
-                        }
-                    }else {
-                        if (Boolean.TRUE.equals(DateUtil.dateComparison(scene.getCreateTime(), scene.getUpdateTime(), 15))) {
-							// 更新修改时间
-							updateById(scene);
-                            // 场景错误状态超过15分钟不在推送，进度可以从业务接口中获取
-							Integer networkState = networkState(scene, false);
-							Integer nodeStage = nodeStage(networkState, scene, false);
-                            pushScenePlugin(scene, networkState, nodeStage, 2, 5);
-                        }
-                    }
-                }catch (Exception e){
-                    log.error("scene {} state error : {}", scene, e);
-                }
-            }
-        }
-    }
-
-	private Integer networkState(SceneEntity scene, boolean pushWs) {
-		int count = 0;
+	private SceneProcessBo getSceneProcess(SceneEntity scene, Topology topology) {
+		SceneProcessBo bo = new SceneProcessBo();
+		int networkCount = 0;
+		// 其实应该只有一个
 		List<NetworkEntity> networks = networkService.list(new LambdaQueryWrapper<NetworkEntity>()
-				.eq(NetworkEntity::getSid, scene.getResourceId())
-				.eq(NetworkEntity::getNetworkStatus, SceneEnum.CREATE.getCode()));
-		if (!CollectionUtils.isEmpty(networks)) {
-			for (NetworkEntity network : networks) {
-				NetworkInstance instance = networkService.getInstance(network.getUuid());
-				if (Objects.isNull(instance)) {
-					log.warn("scene {} network node not found is {}", scene.getResourceId(),
-							network.getUuid());
-					continue;
-				}
-				if (pushWs) {
-					pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
-				}
-				if (Objects.equals(StatusEnum.NETWORK_ACTIVE.getName(), instance.getStatus())) {
-					networkMapper.updateStatus(network.getUuid(), SceneEnum.ACTIVE.getCode());
-					count++;
-					if (pushWs) {
-						pushScenePlugin(scene, state(count, networks.size()), 0, 2, 2);
-					}
-				}
+				.eq(NetworkEntity::getSid, scene.getResourceId()));
+		if (networks.isEmpty()) {
+			bo.setStageEnum(StageEnum.INIT);
+			return bo;
+		}
+		// 网络是否启动完成
+		boolean networkFlag = true;
+		for (NetworkEntity network : networks) {
+			if (network.getNetworkStatus().equals(SceneEnum.CREATE.getCode())) {
+				networkFlag = false;
+			} else if (network.getNetworkStatus().equals(SceneEnum.ERROR.getCode())) {
+				networkCount++;
+				networkFlag = false;
+			} else {
+				networkCount++;
 			}
+		}
+		// 1. 网络进度
+		bo.setNetworkState(state(networkCount, networks.size()));
+		if (!networkFlag) {
+			bo.setStageEnum(StageEnum.CREATE_NETWORK);
+			bo.setStagePercentage(bo.getNetworkState());
+			return bo;
 		} else {
-			return 100;
+			bo.setStageEnum(StageEnum.CREATE_INSTANCE);
+		}
+		// 2. 虚拟机和容器进度
+		int nodeCount = 0;
+		int nodeSize = getElementStatistics(topology).getNodes().size();
+		List<NodeEntity> nodes = nodeService.list(
+				new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getSid, scene.getResourceId()));
+		if (nodes.isEmpty()) {
+			if (nodeSize > 0) {
+				bo.setNodeState(0);
+			} else {
+				bo.setNodeState(100);
+			}
+			bo.setStagePercentage(bo.getNodeState());
+			return bo;
+		}
+		for (NodeEntity node : nodes) {
+			if (!node.getStatus().equals(SceneEnum.CREATE.getCode())) {
+				// 成功和错误都算创建了
+				nodeCount++;
+			}
+		}
+		bo.setNodeState(state(nodeCount, nodeSize));
+		bo.setStagePercentage(bo.getNodeState());
+		return bo;
+	}
+
+	private Integer networkState(SceneEntity scene) {
+		int count = 0;
+		// 其实应该只有一个
+		List<NetworkEntity> networks = networkService.list(new LambdaQueryWrapper<NetworkEntity>()
+				.eq(NetworkEntity::getSid, scene.getResourceId()));
+		if (networks.isEmpty()) {
+			return 0;
+		}
+		for (NetworkEntity network : networks) {
+			if (!network.getNetworkStatus().equals(SceneEnum.CREATE.getCode())) {
+				// 成功或失败都算进度
+				count++;
+			}
 		}
 		return state(count, networks.size());
 	}
 
-
-	private Integer nodeStage(Integer networkState, SceneEntity scene, boolean pushWs) {
+	private Integer nodeState(SceneEntity scene, Integer size) {
 		List<NodeEntity> nodes = nodeService.list(
-				new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getSid, scene.getResourceId())
-						.eq(NodeEntity::getStatus, SceneEnum.CREATE.getCode()));
+				new LambdaQueryWrapper<NodeEntity>().eq(NodeEntity::getSid, scene.getResourceId()));
 		int count = 0;
-		if (!CollectionUtils.isEmpty(nodes)) {
-			for (NodeEntity node : nodes) {
-				Integer nodeStatus = SceneEnum.CREATE.getCode();
-				String ip = null;
-				int code = 2;
-				TopologyElement element = getElement(node.getInstanceId(), scene.getMeta());
-
-				if (pushWs) {
-					// ? todo
-					pushScenePlugin(scene, networkState, state(count, nodes.size()), 2, 2);
-					pushElement(element, scene, 2);
-				}
-				if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
-						node.getType())) {
-					ContainerItem instance = containerService.getInstance(node.getInstanceId());
-					if (Objects.nonNull(instance)) {
-						if (StringUtils.equals(StatusEnum.ACTIVE.getName(), instance.getStatus())) {
-							nodeStatus = SceneEnum.ACTIVE.getCode();
-							JSONObject addresses = instance.getAddresses();
-							ip = getIp(addresses);
-							count++;
-							code = 4;
-						} else if (StringUtils.equals(StatusEnum.ERROR.getName(),
-								instance.getStatus())) {
-							nodeStatus = SceneEnum.ERROR.getCode();
-							count++;
-							code = 5;
-						} else if (StringUtils.equals(StatusEnum.CREATING.getName(),
-								instance.getStatus())
-								&& !Boolean.TRUE.equals(DateUtil.dateComparison(
-										node.getCreateTime(), node.getUpdateTime(), 10))) {
-							// 节点创建时间超过10分钟，默认创建失败
-							log.error("scene {} container_node creating long time is {}",
-									scene.getResourceId(), node.getInstanceId());
-							nodeStatus = SceneEnum.ERROR.getCode();
-							count++;
-							code = 5;
-						}
-						if (pushWs) {
-							pushScenePlugin(scene, networkState, state(count, nodes.size()), 2, 2);
-						}
-
-					}
-				}
-				if (Objects.equals(ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(), node.getType())) {
-					CreateInstanceRes instance = hostService.getInstance(node.getInstanceId());
-					if (Objects.nonNull(instance)) {
-						if (StringUtils.equals(StatusEnum.ACTIVE.getName(),
-								instance.getVmState())) {
-							nodeStatus = SceneEnum.ACTIVE.getCode();
-							JSONObject addresses = instance.getAddresses();
-							ip = getIp(addresses);
-							count++;
-							code = 4;
-						} else if (StringUtils.equals(StatusEnum.ERROR.getName(),
-								instance.getVmState())) {
-							nodeStatus = SceneEnum.ERROR.getCode();
-							count++;
-							code = 5;
-						} else if (StringUtils.equals(StatusEnum.CREATING.getName(),
-								instance.getVmState())
-								&& !Boolean.TRUE.equals(DateUtil.dateComparison(
-										node.getCreateTime(), node.getUpdateTime(), 10))) {
-							log.error("scene {} vm_node creating long time is {}",
-									scene.getResourceId(), node.getInstanceId());
-							// 节点创建时间超过10分钟，默认创建失败
-							nodeStatus = SceneEnum.ERROR.getCode();
-							count++;
-							code = 5;
-						}
-						if (pushWs) {
-							pushScenePlugin(scene, state(count, nodes.size()), 0, 2, 2);
-						}
-
-					}
-				}
-				node.setIp(ip);
-				node.setStatus(nodeStatus);
-				nodeService.updateById(node);
-				if (pushWs) {
-					pushElement(element, scene, code);
-				}
-			}
-		} else {
-			return 100;
+		if (nodes.isEmpty()) {
+			// 不考虑没有节点的场景的情况，至少有一个节点
+			return 0;
 		}
-		return state(count, nodes.size());
+		for (NodeEntity node : nodes) {
+			if (!node.getStatus().equals(SceneEnum.CREATE.getCode())) {
+				// 成功和错误都算创建了
+				count++;
+			}
+		}
+		return state(count, size);
 	}
 
-    private TopologyElement getElement(String instanceId, String meta){
-        Topology topology = JsonUtil.toJsonObject(meta, Topology.class);
-        if (Objects.nonNull(topology)){
-            List<TopologyElement> elements = topology.getElements();
-            if (!CollectionUtils.isEmpty(elements)){
-                for (TopologyElement element : elements){
-                    if (StringUtils.equals(element.getNodeId(), instanceId)){
-                        return element;
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
-    private String getIp(JSONObject addresses){
-        String ip = null;
-        if (Objects.isNull(addresses)){
-            return ip;
-        }
-        Set<Map.Entry<String, Object>> entries = addresses.entrySet();
-        for (Map.Entry<String, Object> entry : entries){
-            JSONObject address = JSONObject.parseObject(entry.getValue().toString());
-            if (address.containsKey("ip_address")){
-                ip = address.getString("ip_address");
-            }
-        }
-        return ip;
-    }
+	private TopologyElement getElement(String instanceId, String meta) {
+		Topology topology = JsonUtil.toJsonObject(meta, Topology.class);
+		if (Objects.nonNull(topology)) {
+			List<TopologyElement> elements = topology.getElements();
+			if (!CollectionUtils.isEmpty(elements)) {
+				for (TopologyElement element : elements) {
+					if (StringUtils.equals(element.getNodeId(), instanceId)) {
+						return element;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-    private Integer state(Integer dividend, Integer divisor){
-        return (int)(((double) dividend/divisor) * 100);
-    }
+	private String getIp(JSONObject addresses) {
+		String ip = null;
+		if (Objects.isNull(addresses)) {
+			return null;
+		}
+		Set<Map.Entry<String, Object>> entries = addresses.entrySet();
+		for (Map.Entry<String, Object> entry : entries) {
+			JSONObject address = JSON.parseObject(entry.getValue().toString());
+			if (address.containsKey("ip_address")) {
+				ip = address.getString("ip_address");
+			}
+		}
+		return ip;
+	}
 
-    private void sendMsg(WsData data, SceneEntity scene) {
+	private Integer state(Integer dividend, Integer divisor) {
+		return MathUtils.roundDivide(dividend * 100, divisor);
+	}
 
-        WsSceneReportCodeData codeData = new WsSceneReportCodeData(1, data);
-        String sceneContent = JsonUtil.toJsonString(codeData, PropertyNamingStrategy.SnakeCase);
+	private void sendMsg(WsData data, SceneEntity scene) {
 
-        MyWebSocketHandler webSocketHandler = SpringContextUtil.getBeanByClass(MyWebSocketHandler.class);
-        SceneWsIdentifier identifier = new SceneWsIdentifier();
-        identifier.setBusinessId(scene.getInstanceId());
-        identifier.setUserId(scene.getUserId());
-        identifier.setPath(WsPath.CR_SCENE);
+		WsSceneReportCodeData codeData = new WsSceneReportCodeData(1, data);
+		String sceneContent = JsonUtil.toJsonString(codeData, PropertyNamingStrategy.SnakeCase);
 
-        WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
-                .builder().data(sceneContent).messageIdentifier(identifier).build();
-        log.info("push Message ===>data:{}", JSON.toJSONString(data));
-        // 只有单人场景，没有共享场景
-        webSocketHandler.pushMessage(messageContext, false);
-    }
-    private void pushScenePlugin(SceneEntity scene, Integer networkStage, Integer instanceStage, Integer processStatus, Integer eventStatus){
-        try {
-            WsSceneData sceneData = new WsSceneData();
-            sceneData.setSceneId(scene.getResourceId());
-            WsScene wsScene = new WsScene();
-            wsScene.setCreateConsumeSeconds(0);
-            wsScene.setCreateTime(scene.getCreateTime());
-            wsScene.setStage(StageEnum.CREATE_INSTANCE.getStage());
-            List<WsSceneStage> wsSceneStages = stageList(networkStage, instanceStage);
-            Integer percentage = percentage(wsSceneStages);
-            wsScene.setStageList(wsSceneStages);
-            wsScene.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
-            wsScene.setStagePercentage(percentage);
-            wsScene.setProgressPercentage(percentage);
-            wsScene.setProcess(StageEnum.CREATE_INSTANCE.getStage());
-            wsScene.setProcessMessage(StageEnum.CREATE_INSTANCE.getStageName());
-            wsScene.setProgressStatus(processStatus);
-            wsScene.setEvent(2);
-            wsScene.setEventStatus(eventStatus);
-            sceneData.setScene(wsScene);
+		MyWebSocketHandler webSocketHandler = SpringContextUtil
+				.getBeanByClass(MyWebSocketHandler.class);
+		SceneWsIdentifier identifier = new SceneWsIdentifier();
+		identifier.setBusinessId(scene.getInstanceId());
+		identifier.setUserId(scene.getUserId());
+		identifier.setPath(WsPath.CR_SCENE);
 
-            WsData data = new WsData();
-            data.setData(sceneData);
-            data.setType("scene");
-            // 推送消息
-            sendMsg(data, scene);
-        }catch (Exception e){
-            log.error("push message error : {}", e);
-        }
-    }
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().data(sceneContent).messageIdentifier(identifier).build();
+		log.info("push Message ===>data:{}", JSON.toJSONString(data));
+		// 只有单人场景，没有共享场景
+		webSocketHandler.pushMessage(messageContext, false);
+	}
 
-    private Integer percentage(List<WsSceneStage> wsSceneStages){
-        int sum = wsSceneStages.stream().mapToInt(WsSceneStage::getStagePercentage).sum();
-        int percentage = state(sum, wsSceneStages.size() * 100);
-        log.info("sum:{}, size:{}, state:{}", sum, wsSceneStages.size() * 100, percentage);
-        return percentage;
-    }
+	private void pushScenePlugin(SceneEntity scene, Integer networkStage, Integer instanceStage,
+			StageEnum stageEnum, Integer eventStatus, Integer processStatus) {
+		try {
+			WsSceneData sceneData = new WsSceneData();
+			sceneData.setSceneId(scene.getResourceId());
+			WsScene wsScene = new WsScene();
+			wsScene.setCreateConsumeSeconds(0);
+			wsScene.setCreateTime(scene.getCreateTime());
+			wsScene.setStage(stageEnum.getStage());
+			List<WsSceneStage> wsSceneStages = stageList(networkStage, instanceStage);
+			Integer percentage = percentage(wsSceneStages);
+			wsScene.setStageList(wsSceneStages);
+			wsScene.setStageName(stageEnum.getStageName());
+			wsScene.setStagePercentage(percentage);
+			wsScene.setProgressPercentage(percentage);
+			wsScene.setProcess(stageEnum.getStage());
+			wsScene.setProcessMessage(stageEnum.getStageName());
+			wsScene.setProgressStatus(processStatus);
+			wsScene.setEvent(2);
+			wsScene.setEventStatus(eventStatus);
+			sceneData.setScene(wsScene);
 
+			WsData data = new WsData();
+			data.setData(sceneData);
+			data.setType("scene");
+			// 推送消息
+			sendMsg(data, scene);
+		} catch (Exception e) {
+			log.error("push message error :", e);
+		}
+	}
+
+	private void pushScenePlugin(SceneEntity scene, Integer networkStage, Integer instanceStage,
+			Integer processStatus, Integer eventStatus) {
+		try {
+			WsSceneData sceneData = new WsSceneData();
+			sceneData.setSceneId(scene.getResourceId());
+			WsScene wsScene = new WsScene();
+			wsScene.setCreateConsumeSeconds(0);
+			wsScene.setCreateTime(scene.getCreateTime());
+			wsScene.setStage(StageEnum.CREATE_INSTANCE.getStage());
+			List<WsSceneStage> wsSceneStages = stageList(networkStage, instanceStage);
+			Integer percentage = percentage(wsSceneStages);
+			wsScene.setStageList(wsSceneStages);
+			wsScene.setStageName(StageEnum.CREATE_INSTANCE.getStageName());
+			wsScene.setStagePercentage(percentage);
+			wsScene.setProgressPercentage(percentage);
+			wsScene.setProcess(StageEnum.CREATE_INSTANCE.getStage());
+			wsScene.setProcessMessage(StageEnum.CREATE_INSTANCE.getStageName());
+			wsScene.setProgressStatus(processStatus);
+			wsScene.setEvent(2);
+			wsScene.setEventStatus(eventStatus);
+			sceneData.setScene(wsScene);
+
+			WsData data = new WsData();
+			data.setData(sceneData);
+			data.setType("scene");
+			// 推送消息
+			sendMsg(data, scene);
+		} catch (Exception e) {
+			log.error("push message error : {}", e);
+		}
+	}
+
+	private Integer percentage(List<WsSceneStage> wsSceneStages) {
+		int sum = wsSceneStages.stream().mapToInt(WsSceneStage::getStagePercentage).sum();
+		int percentage = state(sum, wsSceneStages.size() * 100);
+		log.info("sum:{}, size:{}, state:{}", sum, wsSceneStages.size() * 100, percentage);
+		return percentage;
+	}
 
 	private List<WsSceneStage> stageList(Integer networkStage, Integer instanceStage) {
 		List<WsSceneStage> list = new ArrayList<>();
@@ -665,55 +775,54 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		return list;
 	}
 
-    private void pushElement(TopologyElement element, SceneEntity scene, Integer code){
-        try {
-            WsSceneData sceneData = new WsSceneData();
-            sceneData.setSceneId(scene.getResourceId());
-            if(Objects.nonNull(element)){
-                element.setEvent(2);
-                element.setEventStatus(code);
-            }
-            sceneData.setSceneElement(element);
-            JSONObject cpcloud = new JSONObject();
-            cpcloud.put("cpcloud", getElementPlugin(element));
-            sceneData.setSceneElementPortPluginData(cpcloud);
-            sceneData.setSceneElementPluginData(makeElementPluginData(element));
+	private void pushElement(TopologyElement element, SceneEntity scene, Integer code) {
+		try {
+			WsSceneData sceneData = new WsSceneData();
+			sceneData.setSceneId(scene.getResourceId());
+			if (Objects.nonNull(element)) {
+				element.setEvent(2);
+				element.setEventStatus(code);
+			}
+			sceneData.setSceneElement(element);
+			JSONObject cpcloud = new JSONObject();
+			cpcloud.put("cpcloud", getElementPlugin(element));
+			sceneData.setSceneElementPortPluginData(cpcloud);
+			sceneData.setSceneElementPluginData(makeElementPluginData(element));
 
-            WsData data = new WsData();
-            data.setType("scene_element");
-            data.setData(sceneData);
-            sendMsg(data, scene);
-        }catch (Exception e){
-            log.error("push message error : {}", e);
-        }
-    }
+			WsData data = new WsData();
+			data.setType("scene_element");
+			data.setData(sceneData);
+			sendMsg(data, scene);
+		} catch (Exception e) {
+			log.error("push message error :", e);
+		}
+	}
 
+	private JSONObject makeElementPluginData(TopologyElement element) {
+		JSONObject elementJson = new JSONObject();
+		Integer portNum = element.getPorts() == null ? 0 : element.getPorts().size();
+		RoleEnum roleEnum = RoleEnum.getRoleEnum(element.getType());
+		if (!Objects.isNull(roleEnum)) {
+			elementJson.put("role", roleEnum.getValue());
+			elementJson.put("image_type", roleEnum.getImageType());
+			elementJson.put("electric_port_number", portNum);
+		}
+		JSONObject cpcloud = new JSONObject();
+		cpcloud.put(JsonKeyConstant.CP_CLOUD, elementJson);
+		return cpcloud;
+	}
 
-    private JSONObject makeElementPluginData(TopologyElement element) {
-        JSONObject elementJson = new JSONObject();
-        Integer portNum = element.getPorts() == null ? 0 : element.getPorts().size();
-        RoleEnum roleEnum = RoleEnum.getRoleEnum(element.getType());
-        if (!Objects.isNull(roleEnum)) {
-            elementJson.put("role", roleEnum.getValue());
-            elementJson.put("image_type", roleEnum.getImageType());
-            elementJson.put("electric_port_number", portNum);
-        }
-        JSONObject cpcloud = new JSONObject();
-        cpcloud.put(JsonKeyConstant.CP_CLOUD, elementJson);
-        return cpcloud;
-    }
-
-    private JSONObject getElementPlugin(TopologyElement element){
-        if (Objects.nonNull(element)){
+	private JSONObject getElementPlugin(TopologyElement element) {
+		if (Objects.nonNull(element)) {
 			JSONObject address = topologyService.getStatusEvent(element);
-            JSONObject elementPortsJson = new JSONObject();
-            for (ElementPort port : element.getPorts()){
-                port.setIp(address.getString("ip"));
-                port.setEvent(2);
-                port.setEventStatus(address.getInteger("event_status"));
-                JSONObject elementPortJson = new JSONObject();
-                if (!CollectionUtils.isEmpty(port.getAccessModes())){
-                    JSONArray newAccessModes = new JSONArray();
+			JSONObject elementPortsJson = new JSONObject();
+			for (ElementPort port : element.getPorts()) {
+				port.setIp(address.getString("ip"));
+				port.setEvent(2);
+				port.setEventStatus(address.getInteger("event_status"));
+				JSONObject elementPortJson = new JSONObject();
+				if (!CollectionUtils.isEmpty(port.getAccessModes())) {
+					JSONArray newAccessModes = new JSONArray();
 					port.getAccessModes().forEach(iter -> {
 						iter.put("id", element.getNodeId());
 						iter.put("ip", address.getString("ip"));
@@ -733,29 +842,42 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 							iter.put(JsonKeyConstant.PROXY, false);
 						}
 						newAccessModes.add(iter);
-                    });
-                    elementPortJson.put("access_modes", newAccessModes);
-                }
-                elementPortJson.put("ip", address.getString("ip"));
-                elementPortJson.put("event_status", address.getInteger("event_status"));
-                elementPortJson.put("event", 2);
-                elementPortJson.put("resource_id", element.getNodeId());
-                elementPortsJson.put(port.getId(), elementPortJson);
-            }
-            return elementPortsJson;
-        }
-        return null;
-    }
+					});
+					elementPortJson.put("access_modes", newAccessModes);
+				}
+				elementPortJson.put("ip", address.getString("ip"));
+				elementPortJson.put("event_status", address.getInteger("event_status"));
+				elementPortJson.put("event", 2);
+				elementPortJson.put("resource_id", element.getNodeId());
+				elementPortsJson.put(port.getId(), elementPortJson);
+			}
+			return elementPortsJson;
+		}
+		return null;
+	}
 
-    private void pushCreationComplete(SceneEntity scene){
-        JSONObject message = new JSONObject();
-        message.put(JsonKeyConstant.CODE, CommonConstant.SCENE_CREATE_FINISH);
-        SceneWsIdentifier identifier = new SceneWsIdentifier();
-        identifier.setBusinessId(scene.getInstanceId());
-        identifier.setUserId(scene.getUserId());
-        identifier.setPath(WsPath.CR_SCENE);
-        WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
-                .builder().data(message).messageIdentifier(identifier).build();
-        myWebSocketHandler.pushMessage(messageContext, false);
-    }
+	private void pushCreationComplete(SceneEntity scene) {
+		JSONObject message = new JSONObject();
+		message.put(JsonKeyConstant.CODE, CommonConstant.SCENE_CREATE_FINISH);
+		SceneWsIdentifier identifier = new SceneWsIdentifier();
+		identifier.setBusinessId(scene.getInstanceId());
+		identifier.setUserId(scene.getUserId());
+		identifier.setPath(WsPath.CR_SCENE);
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().data(message).messageIdentifier(identifier).build();
+		myWebSocketHandler.pushMessage(messageContext, false);
+	}
+
+	private ElementStatistics getElementStatistics(Topology topology) {
+		ElementStatistics res = new ElementStatistics();
+		for (TopologyElement element : topology.getElements()) {
+			if (ImageTypeEnum.ELEMENT_TYPE_INTERNET.getCode().equals(element.getType())) {
+				res.getNetworks().add(element);
+			} else if (ImageTypeEnum.ELEMENT_TYPE_HOST.getCode().equals(element.getType())
+					|| ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode().equals(element.getType())) {
+				res.getNodes().add(element);
+			}
+		}
+		return res;
+	}
 }

@@ -21,7 +21,7 @@ public interface SceneService extends IService<SceneEntity> {
 
     void verify(String userId);
 
-    BaseRsp destroyScene(String sceneId);
+	void destroyScene(String sceneId);
 
     BaseRsp detail(String topologyId, String instanceId);
 
@@ -30,8 +30,6 @@ public interface SceneService extends IService<SceneEntity> {
     void repair(String filePath);
 
     void autoDestroy();
-
-    void sceneState();
 
     JSONObject getSceneJsonObject(String instanceId);
 

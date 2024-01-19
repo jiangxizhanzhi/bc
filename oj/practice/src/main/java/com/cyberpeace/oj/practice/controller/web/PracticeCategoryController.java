@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.controller.web;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,11 +11,11 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,7 +47,15 @@ public class PracticeCategoryController {
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 	@GetMapping("/listAll")
-	public BaseRsp<List<PracticeCategory>>  queryAll(@RequestParam(value = "practice_type",required = false) Integer practiceType) {
+	public BaseRsp<List<PracticeCategory>>  queryAll(@RequestParam(value = "practice_type",required = false) Integer practiceType,@RequestParam(value = "setId",required = false) String setId) {
+
+		if (StringUtils.isNotBlank(setId)) {
+			QueryWrapper<PracticeTheory> queryWrapper1= new QueryWrapper<>();
+			queryWrapper1.lambda().eq(PracticeTheory::getPracticeSetId,setId);
+			List<PracticeTheory> list = practiceTheoryService.list(queryWrapper1);
+			Set<String> cateIds = list.stream().map(PracticeTheory::getCategoryId).collect(Collectors.toSet());
+			return new BaseRsp<>(categoryService.listByIds(cateIds));
+		}
 		QueryWrapper<PracticeCategory> queryWrapper = new QueryWrapper<>();
 		if (practiceType !=null) {
 			queryWrapper.eq("practice_type",practiceType);

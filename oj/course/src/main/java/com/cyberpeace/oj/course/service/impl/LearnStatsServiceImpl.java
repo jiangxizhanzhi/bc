@@ -336,10 +336,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		lessonRecords.sort(Comparator.comparing(LessonRecord::getUpdateTime).reversed());
 		Set<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toSet());
 		List<Course> courses = courseService.listByIds(courseIds);
-		Map<Integer, Course> courseMap = courses.stream().collect(Collectors.toMap(Course::getId, course -> course));
+		Map<String, Course> courseMap = courses.stream().collect(Collectors.toMap(Course::getResourceId, course -> course));
 		Set<String> lessonIds = lessonRecords.stream().map(LessonRecord::getLessonId).collect(Collectors.toSet());
 		List<CourseLesson> courseLessons = courseLessonService.listByIds(lessonIds);
-		Map<Integer, CourseLesson> lessonMap = courseLessons.stream().collect(Collectors.toMap(CourseLesson::getId, lesson -> lesson));
+		Map<String, CourseLesson> lessonMap = courseLessons.stream().collect(Collectors.toMap(CourseLesson::getResourceId, lesson -> lesson));
 		List<PersonalStatsDetail4CourseBo> courseBos = new ArrayList<>();
 		lessonRecords.forEach(a->{
 			PersonalStatsDetail4CourseBo courseBo = new PersonalStatsDetail4CourseBo();

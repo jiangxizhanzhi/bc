@@ -50,4 +50,13 @@
         where user_id = #{userId}
           and scene_status != #{code}
     </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(*)
+        from cr_scene;
+    </select>
+    <select id="countByUserId" resultType="java.lang.Integer">
+        select count(*)
+        from cr_scene
+        where user_id = #{userId}
+    </select>
 </mapper>

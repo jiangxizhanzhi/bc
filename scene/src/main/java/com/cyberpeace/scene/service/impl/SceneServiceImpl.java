@@ -287,13 +287,14 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 	 */
 	@Override
 	public void verify(String userId) {
-		int sceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), null) + 1;
+		int sceneCount = sceneMapper.countAll() + 1;
+
 		// 场景数超过最大值
 		if (sceneCount > MAX_SCENE_EVENT) {
 			throw new BusinessException(ErrorCode.SCENE_EVENT_OVERFLOW, MAX_SCENE_EVENT);
 		}
 
-		int userSceneCount = sceneMapper.selectSceneCount(SceneEnum.getCodes(), userId) + 1;
+		int userSceneCount = sceneMapper.countByUserId(userId) + 1;
 		// 用户场景数超过最大值
 		if (userSceneCount > MAX_USER_SCENE_EVENT) {
 			throw new BusinessException(ErrorCode.USER_SCENE_EVENT_OVERFLOW, MAX_USER_SCENE_EVENT);

@@ -16,6 +16,8 @@ import com.cyberpeace.scene.dao.entity.SceneEntity;
 @Mapper
 public interface SceneMapper extends BaseMapper<SceneEntity> {
 
+    int countByUserId(@Param("userId") String userId);
+
     int selectSceneCount(@Param("sceneStatus") List<Integer> sceneStatus, @Param("userId") String userId);
 
     int updateSceneStatus(@Param("sceneId") String sceneId, @Param("sceneStatus") Integer sceneStatus);
@@ -32,4 +34,6 @@ public interface SceneMapper extends BaseMapper<SceneEntity> {
      * @param sceneId 场景id
      */
     void deleteByResourceId(@Param("sceneId") String sceneId);
+
+    int countAll();
 }

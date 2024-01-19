@@ -80,6 +80,9 @@ public class WaterMarkController {
 	public BaseRsp<Boolean> check(@ApiParam(name = "mark",value = "水印名称") String mark) {
 		// mark只能包含英文空格
 		mark = mark.replaceAll(" ", "");
+		if (StringUtils.isBlank(mark)) {
+			return new BaseRsp<>(false);
+		}
 		return new BaseRsp<>(isEnglishString(mark));
 	}
 

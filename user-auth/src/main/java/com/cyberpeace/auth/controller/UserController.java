@@ -148,7 +148,14 @@ public class UserController {
 
 	@ApiOperation("辅助鉴权")
 	@GetMapping("/token")
-	public BaseRsp<Boolean> authToken() {
+	public BaseRsp<Boolean> authToken(@ApiParam(name = "token", value = "jwt token") String token,
+									  HttpServletResponse response) {
+		try {
+			sysUserService.getByToken(token);
+		} catch (Exception e) {
+			// 修改响应码为401
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		}
 		return new BaseRsp<>();
 	}
 }

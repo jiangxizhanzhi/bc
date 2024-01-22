@@ -128,6 +128,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/oj/admin/practice/import/inspect_duplication",
 						"/oj/admin/course/import/inspect_duplication",
 						"/scene/topology",
+						"/auth/token",
 						"/doc.html")
 				.permitAll()
 				// 其他的都需要认证

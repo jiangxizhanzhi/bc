@@ -224,7 +224,7 @@ public class ExternalOperationController {
 		if (!CollectionUtils.isEmpty(req.getKnowledge())) {
 			listQuery.setKnowledgeExp("(\"" + String.join("\"|\"", req.getKnowledge()) + "\")");
 		}
-
+		listQuery.setCategory(0);
 		// 条件查询
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery, true);
 		IPage<ExternalOperationBo> convert = iPage

@@ -66,8 +66,9 @@
     <select id="randomChoice" resultMap="operation">
         select * from oj_practice_operation
         <where>
+            category = 0
             <if test="query.resourceIds != null and query.resourceIds.size() != 0">
-                resource_id in
+                and resource_id in
                 <foreach collection="query.resourceIds" item="resourceId" open="(" close=")" separator=",">
                     #{resourceId}
                 </foreach>

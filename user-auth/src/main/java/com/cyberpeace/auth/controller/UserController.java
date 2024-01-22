@@ -3,6 +3,7 @@ package com.cyberpeace.auth.controller;
 import java.io.File;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,13 +150,25 @@ public class UserController {
 	@ApiOperation("辅助鉴权")
 	@GetMapping("/token")
 	public BaseRsp<Boolean> authToken(@ApiParam(name = "token", value = "jwt token") String token,
-									  HttpServletResponse response) {
+			HttpServletResponse response, HttpServletRequest request) {
+
+		Boolean pass = true;
+
+		// 如果请求头中包含Upgrade-Insecure-Requests，直接返回401
+		if (request.getHeader("Upgrade-Insecure-Requests") != null) {
+			pass = false;
+		}
+
 		try {
 			sysUserService.getByToken(token);
 		} catch (Exception e) {
-			// 修改响应码为401
+			pass = false;
+		}
+
+		if (Boolean.FALSE.equals(pass)) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		}
+
 		return new BaseRsp<>();
 	}
 }

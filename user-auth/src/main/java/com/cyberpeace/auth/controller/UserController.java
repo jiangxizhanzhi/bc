@@ -145,4 +145,10 @@ public class UserController {
 		File file = new File(templatePath);
 		FileUtil.setResponse(file,false,response);
 	}
+
+	@ApiOperation("辅助鉴权")
+	@GetMapping("/token")
+	public BaseRsp<Boolean> authToken() {
+		return new BaseRsp<>();
+	}
 }

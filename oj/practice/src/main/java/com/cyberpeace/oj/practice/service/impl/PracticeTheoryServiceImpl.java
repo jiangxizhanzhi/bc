@@ -225,6 +225,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
         PracticeSet practiceSet = practiceSetMapper.selectById(webTheoryBo.getPracticeSetId());
         webTheoryBo.setPracticeSetName(practiceSet.getName());
+        webTheoryBo.setTag(practiceSet.getTag());
 
         if (webTheoryBo.getCategoryId()!=null) {
             PracticeCategory practiceCategory = practiceCategoryMapper.selectById(webTheoryBo.getCategoryId());

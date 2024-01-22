@@ -21,4 +21,5 @@ public class WebTheoryBo extends AdminTheoryBo {
 	@ApiModelProperty("习题集名称")
 	private String practiceSetName;
 
+	private String tag;
 }

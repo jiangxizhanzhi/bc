@@ -257,6 +257,7 @@ public class BaseCombatLogHandler {
 				data1.setRbAttackStages(attackStage);
 				if(!data.getLostHosts().isEmpty()){
 					data1.setLostHosts(data.getLostHosts());
+					data.setLostHosts(new ArrayList<>());
 				}
 				data1.setCode(data.getCode());
 				pushDataToRoom(data1, getRedVsBlue());

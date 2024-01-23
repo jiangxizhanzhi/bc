@@ -181,16 +181,16 @@ public class PersonController {
             StudyRecord record = map.get(s.getResourceId());
             PersonStatsBo personStatsBo = new PersonStatsBo();
             if (null != record) {
-                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? 0 : record.getTheoryPracticeCount()*100 / theoryPracticeAllCount);
-                personStatsBo.setOperateCorrectRate(record.getOperationPracticeCount() * operationPracticeAllCount == 0 ? 0 : record.getOperationPracticeCount()*100 / operationPracticeAllCount);
+                personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? "0%": record.getTheoryPracticeCount()*100 / theoryPracticeAllCount+"%");
+                personStatsBo.setOperateCorrectRate(record.getOperationPracticeCount() * operationPracticeAllCount == 0 ?"0%" : record.getOperationPracticeCount()*100 / operationPracticeAllCount+"%");
             }
 
             if (lessonMap.containsKey(s.getResourceId())) {
-                personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ? 0 : lessonMap.get(s.getResourceId())*100 / lessonAllCount);
+                personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ?"0%": lessonMap.get(s.getResourceId())*100 / lessonAllCount+"%");
             }
             if(userExamPassMap.containsKey(s.getResourceId())){
 				String passRate = userExamPassMap.getOrDefault(s.getResourceId(), new JSONObject()).getString("pass_rate");
-				personStatsBo.setExamPassRate(passRate==null?0:(int)Double.parseDouble(passRate));
+				personStatsBo.setExamPassRate(passRate==null?"0%":(int)Double.parseDouble(passRate)+"%");
 			}
             personStatsBo.setUsername(s.getUsername());
             personStatsBo.setName(s.getName());

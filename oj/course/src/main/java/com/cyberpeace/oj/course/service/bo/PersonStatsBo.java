@@ -20,16 +20,16 @@ public class PersonStatsBo implements Serializable {
     private String name;
 
     @ApiModelProperty("课程学习进度")
-    private Integer courseProgress = 0;
+    private String courseProgress = "0%";
 
     @ApiModelProperty("理论题正确率")
-    private Integer theoryCorrectRate = 0;
+    private String theoryCorrectRate = "0%";
 
     @ApiModelProperty("实操题正确率")
-    private Integer operateCorrectRate = 0;
+    private String operateCorrectRate = "0%";
 
     @ApiModelProperty("考试通过率")
-    private Integer examPassRate = 0;
+    private String examPassRate = "0%";
 
 
 }

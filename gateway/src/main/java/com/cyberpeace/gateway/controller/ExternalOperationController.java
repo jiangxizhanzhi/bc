@@ -2,6 +2,7 @@ package com.cyberpeace.gateway.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,7 +143,14 @@ public class ExternalOperationController {
 				.selectBatchIds(batchReq.getResourceIds());
 		List<ExternalOperationBo> operationBos = StreamApiUtils.map(operationList,
 				practiceOperation -> entityToExternal(practiceOperation));
-
+		List<String> setIds = operationBos.stream().map(ExternalOperationBo::getPracticeSetId).collect(Collectors.toList());
+		if (!CollectionUtils.isEmpty(setIds)){
+			List<PracticeSet> practiceSets = practiceSetService.listByIds(setIds);
+			Map<String, String> tagMap = practiceSets.stream().collect(Collectors.toMap(PracticeSet::getResourceId, PracticeSet::getTag));
+			operationBos.forEach(a->{
+				a.setTag(tagMap.get(a.getPracticeSetId()));
+			});
+		}
 		return new BaseRsp<>(operationBos);
 	}
 

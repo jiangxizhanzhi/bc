@@ -84,4 +84,6 @@ public class ExternalOperationBo implements Serializable {
 
 	@ApiModelProperty("随机flag文件")
 	private List<PracticeOperationFileBo> attachment;
+
+	private String tag;
 }

@@ -60,9 +60,9 @@ public class BruteforceExtLogHandler extends AttackCombatLogHandler {
 			String attackGroup = rbAttackEvent.getDestGroup();
 			Integer group = rbCombatLog.getDestGroup().equals(CrRole.RbRoleGroup.BLUE.getCode()) ? CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
 			String groupName = CrCommonUtil.getGroupName(group);
-			String sourceMachine = super.getMachineName(groupName, rbCombatLog.getSourceIp(), rbCombatLog.getSourceName());
-			String destMachine = super.getMachineName(groupName, rbCombatLog.getDestIp(), rbCombatLog.getDestName());
-			rbAttackEvent.setEventDescribe(String.format("%s通过%s对%S进行暴力破解", attackGroup, sourceMachine, destMachine));
+			String sourceMachine = super.getMachineName(attackGroup, rbCombatLog.getSourceIp(), rbCombatLog.getSourceName());
+			String destMachine = super.getMachineName(attackGroup, rbCombatLog.getDestIp(), rbCombatLog.getDestName());
+			rbAttackEvent.setEventDescribe(String.format("%s通过%s对%S进行暴力破解", groupName, sourceMachine, destMachine));
 		}
 		return rbAttackEvent;
 	}

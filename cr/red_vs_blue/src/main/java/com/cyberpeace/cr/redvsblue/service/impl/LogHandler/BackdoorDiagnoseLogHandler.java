@@ -194,7 +194,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		String destIp = rbCombatLog.getDestIp();
 		String destName = rbCombatLog.getDestName();
 		String destMachine = getMachineName(destGroup, destIp, destName);
-		RbAttackEvent rbAttackEvent = data.getRbAttackDefenseEvents().get(0);
+		RbAttackEvent rbAttackEvent = data.getRbAttackDefenseEvents().remove(data.getRbAttackDefenseEvents().size()-1);
 		String attackEventDescribe = rbAttackEvent.getEventDescribe();
 		String attackAction = EnumUtils.getEnumDescByCode(rbCombatLog.getAttackAction(), CrCommonConstants.AttackAction.class);
 		Map<String, RbAttackEvent> result = Maps.newHashMap();
@@ -222,6 +222,8 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		for(RbCombatLog sublog: subLogs) {
 			rbAttackEvents.add(result.get(sublog.getResourceId()));
 		}
+
+		data.getRbAttackDefenseEvents().addAll(rbAttackEvents);
 
 		return data;
 	}

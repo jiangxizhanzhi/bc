@@ -38,4 +38,6 @@ public interface SceneService extends IService<SceneEntity> {
 	SceneData getSceneDataBySceneId(String sceneId);
 
     List<String> getUndeletedSceneIdByUserId(String userId);
+
+    void destroySceneBatch(List<String> ids);
 }

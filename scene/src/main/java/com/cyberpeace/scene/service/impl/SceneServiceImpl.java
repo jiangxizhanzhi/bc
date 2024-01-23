@@ -190,7 +190,23 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		return sceneMapper.selectByUserId(userId, SceneEnum.DELETED.getCode());
 	}
 
-	/**
+	@Override
+	public void destroySceneBatch(List<String> ids) {
+		if (CollectionUtils.isEmpty(ids)) {
+			return;
+		}
+		for (String id : ids) {
+			executor.submit(() -> {
+				try {
+					destroyScene(id);
+				} catch (Exception e) {
+					// do nothing
+				}
+			});
+		}
+	}
+
+    /**
 	 * 验证场景并发数
 	 * @param userId
 	 */

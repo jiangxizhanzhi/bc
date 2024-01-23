@@ -15,4 +15,6 @@ public interface RbCombatLogMapper extends BaseMapper<RbCombatLog> {
 	RbCombatLog selectOneByOriginalLog(String originalLog);
 
 	List<RbCombatLog> selectOneByRoomIdAndAgentIpAndIsLostHost(@Param("roomId") String roomId, @Param("agentIp") String agentIp, @Param("isLostHost") Boolean isLostHost);
+
+	List<RbCombatLog> selectByMainLogId(@Param("mainLogId") String mainLogId);
 }

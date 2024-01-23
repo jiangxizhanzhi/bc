@@ -59,5 +59,6 @@ public class RbCombatLog extends BaseTable {
 
 	private String originalLog;
 
+	private String mainLogId;
 
 }

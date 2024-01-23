@@ -29,4 +29,15 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByMainLogId"
+            resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog">
+        select *
+        from cr_rb_combat_log
+        <where>
+            <if test="mainLogId != null and mainLogId != ''">
+                main_log_id = #{mainLogId}
+            </if>
+        </where>
+    </select>
 </mapper>

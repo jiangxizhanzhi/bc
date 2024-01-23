@@ -11,6 +11,7 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,15 +82,20 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 			exp.setIsLostHost(false);
 			exp.setAttackPhase(code);
 			exp.setEventContent(content);
+			exp.setMainLogId(rbCombatLog.getResourceId());
 			tmp.add(exp);
 		}
 	}
 
 	@Override
 	public RbCombatRecordsAllDataRsp addAttackDefenseStage(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog1) {
-		if(!rbCombatLog1.getAttackPhase().equals(CrCommonConstants.AttackPhase.OTHER.getCode())){
-			for(RbCombatLog rbCombatLog:getTmp()){
 
+		if(!rbCombatLog1.getAttackPhase().equals(CrCommonConstants.AttackPhase.OTHER.getCode())){
+
+			// 如果实时处理产生的缓存文件为空，则处理当前数据
+			List<RbCombatLog> logs = getTmp().size() > 0 ? getTmp() : Lists.newArrayList(rbCombatLog1);
+
+			for(RbCombatLog rbCombatLog:logs){
 				RbAttackDefenseStage rbAttackDefenseStage = RbAttackDefenseStage.builder().
 						resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getSourceGroup()).attackPhase(rbCombatLog.getAttackPhase()).content(rbCombatLog.getEventContent()).build();
 				data.getRbAttackStages().add(rbAttackDefenseStage);
@@ -99,10 +105,21 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 	}
 
 	@Override
+	public void clear() {
+		this.tmp = new ArrayList<>();
+	}
+
+	@Override
 	public RbCombatRecordsAllDataRsp addAttackDefenseEvent(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog){
+
+		if (rbCombatLog.getMainLogId() != null) {
+			return data;
+		}
+
 		super.addAttackDefenseEvent(data, rbCombatLog);
+
 		List<RbCombatLog> res;
-		List<RbCombatLog> tmp = getTmp();
+		List<RbCombatLog> subLogs = getTmp().isEmpty() ? rbCombatLogMapper.selectByMainLogId(rbCombatLog.getResourceId()) : getTmp();
 		String sourceGroup = CrCommonUtil.getGroupName(rbCombatLog.getSourceGroup());
 		String sourceIp = rbCombatLog.getSourceIp();
 		String sourceName = rbCombatLog.getSourceName();
@@ -115,7 +132,7 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 		String attackEventDescribe = rbAttackEvent.getEventDescribe();
 		String attackAction = EnumUtils.getEnumDescByCode(rbCombatLog.getAttackAction(), CrCommonConstants.AttackAction.class);
 		List<RbAttackEvent> result = new ArrayList<>();
-		res = tmp.stream().filter(s->!s.getResourceId().equals(rbCombatLog.getResourceId())).collect(Collectors.toList());
+		res = subLogs.stream().filter(s->!s.getResourceId().equals(rbCombatLog.getResourceId())).collect(Collectors.toList());
 		result.add(rbAttackEvent);
 		for(RbCombatLog item: res){
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.DELIVERY.getCode())){

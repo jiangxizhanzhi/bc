@@ -13,6 +13,7 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbMaliceProcess;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbMaliceProcessMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +44,11 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 	@Override
 	public String getCode() {
 		return "backdoor_diagnose";
+	}
+
+	@Override
+	public void clear() {
+		this.tmp = new ArrayList<>();
 	}
 
 	public void setSpringboardAttr() {
@@ -101,6 +107,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 			exp.setIsLostHost(false);
 			exp.setAttackPhase(code);
 			exp.setEventContent(content);
+			exp.setMainLogId(rbCombatLog.getResourceId());
 			tmp.add(exp);
 		}
 	}
@@ -149,7 +156,11 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 	@Override
 	public RbCombatRecordsAllDataRsp addAttackDefenseStage(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog1) {
 		if(!rbCombatLog1.getAttackPhase().equals(CrCommonConstants.AttackPhase.OTHER.getCode())){
-			for(RbCombatLog rbCombatLog:getTmp()){
+			// 如果实时处理产生的缓存文件为空，则处理当前数据
+
+			List<RbCombatLog> logs = getTmp().size() > 0 ? getTmp() : Lists.newArrayList(rbCombatLog1);
+
+			for(RbCombatLog rbCombatLog:logs){
 
 				RbAttackDefenseStage rbAttackDefenseStage = RbAttackDefenseStage.builder().
 						resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getSourceGroup()).attackPhase(rbCombatLog.getAttackPhase()).content(this.getAttackStageContent(rbCombatLog)).build();
@@ -161,9 +172,16 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 
 	@Override
 	public RbCombatRecordsAllDataRsp addAttackDefenseEvent(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog){
+
+		if (rbCombatLog.getMainLogId() != null) {
+			return data;
+		}
+
 		super.addAttackDefenseEvent(data, rbCombatLog);
 		List<RbCombatLog> res;
-		List<RbCombatLog> tmp = getTmp();
+
+		List<RbCombatLog> subLogs = getTmp().isEmpty() ? rbCombatLogMapper.selectByMainLogId(rbCombatLog.getResourceId()) : getTmp();
+
 		String sourceGroup = CrCommonUtil.getGroupName(rbCombatLog.getSourceGroup());
 		String sourceIp = rbCombatLog.getSourceIp();
 		String sourceName = rbCombatLog.getSourceName();
@@ -176,7 +194,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		String attackEventDescribe = rbAttackEvent.getEventDescribe();
 		String attackAction = EnumUtils.getEnumDescByCode(rbCombatLog.getAttackAction(), CrCommonConstants.AttackAction.class);
 		List<RbAttackEvent> result = new ArrayList<>();
-		res = tmp.stream().filter(s->!s.getResourceId().equals(rbCombatLog.getResourceId())).collect(Collectors.toList());
+		res = subLogs.stream().filter(s->!s.getResourceId().equals(rbCombatLog.getResourceId())).collect(Collectors.toList());
 		result.add(rbAttackEvent);
 		for(RbCombatLog item: res){
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.DELIVERY.getCode())){

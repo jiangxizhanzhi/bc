@@ -7,6 +7,7 @@ import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -97,10 +98,17 @@ public class BaseCombatLogHandler {
 		if (initData != null) {
 			combatLogHandler.setAttr();
 		}
+
+		combatLogHandler.clear();
+
 		return combatLogHandler;
 	}
 
 	public void setAttr() {
+	}
+
+	public void clear() {
+
 	}
 
 	public String getDestIp() {
@@ -195,7 +203,7 @@ public class BaseCombatLogHandler {
 	}
 
 	public RbCombatLog getCombatLog() {
-		return RbCombatLog.builder().roomId(getRedVsBlue()).eventType(getEventType()).eventCategory(getEventCategory()).attackPhase(getAttackPhase())
+		return RbCombatLog.builder().resourceId(IDGeneratorUtil.getID()).roomId(getRedVsBlue()).eventType(getEventType()).eventCategory(getEventCategory()).attackPhase(getAttackPhase())
 						  .defensePhase(getDefensePhase()).attackAction(getAttackAction()).defenseAction(getDefenseAction())
 						  .actionType(getActionType()).sourceGroup(getSourceGroup()).sourceIp(getSourceIp())
 						  .sourceName(getSourceName()).destGroup(this.getDestGroup()).destIp(getDestIp())

@@ -35,8 +35,9 @@
     </select>
 
     <select id="batchGet" resultMap="theory">
-        select * from oj_practice_theory
-        where resource_id in
+        select oj_practice_theory.*,tag from oj_practice_theory
+                 left join oj_practice_set on oj_practice_theory.practice_set_id = oj_practice_set.resource_id
+        where oj_practice_theory.resource_id in
         <foreach collection="resource_ids" item="resource_id" separator="," open="(" close=")">
             #{resource_id}
         </foreach>

@@ -3,6 +3,7 @@ package com.cyberpeace.auth.security;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,8 +12,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.session.Session;
 import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
@@ -79,8 +80,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Resource
 	private CustomizeAccessDecisionManager accessDecisionManager;
 
-	@Autowired
-	private SessionRegistry sessionRegistry;
+	@Resource
+	@Qualifier("sessionRegistry")
+	private CustomRedisSessionRegistry<? extends Session> sessionRegistry;
 
 	@Autowired
 	private SystemPropertyService systemPropertyService;
@@ -155,24 +157,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// 匿名用户访问无权限资源时的异常处理
 				.authenticationEntryPoint(authenticationEntryPoint)
                 //会话管理
-				 .and().sessionManagement()
+				.and().sessionManagement()
 				// 同一个账号支持同时登录的最大设备数, 如果超过最大设备数，会将最早的登录设备被挤下线
-				 .maximumSessions(systemPropertyService.getSystemPropertyInt(AuthSystemPropertyConstant.MAX_LOGIN_COUNT, 1))
-				 .sessionRegistry(sessionRegistry)
+				.maximumSessions(systemPropertyService
+						.getSystemPropertyInt(AuthSystemPropertyConstant.MAX_LOGIN_COUNT, 1))
+				.sessionRegistry(this.sessionRegistry)
 				// true,则阻止用户在达到最大值会话 （int） 时进行身份验证,false:则（默认），允许进行身份验证的用户访问，并且现有用户的会话已过期
 //				 maxSessionsPreventsLogin(true).
 				// 会话失效(账号被挤下线)处理逻辑
-				 .expiredSessionStrategy(sessionInformationExpiredStrategy);
+				.expiredSessionStrategy(sessionInformationExpiredStrategy);
     }
 
-//    /**
-//     * 当同一个账号只能同n个设备登录时，超过n的不能登录需要该配置
-//     * @return
-//     */
-//    @Bean
-//    HttpSessionEventPublisher httpSessionEventPublisher() {
-//        return new HttpSessionEventPublisher();
-//    }
+	// /**
+	// * 当同一个账号只能同n个设备登录时，超过n的不能登录需要该配置
+	// * @return
+	// */
+	// @Bean
+	// HttpSessionEventPublisher httpSessionEventPublisher() {
+	// return new HttpSessionEventPublisher();
+	// }
 
     @Bean
     public HttpSessionIdResolver sessionIdResolver() {

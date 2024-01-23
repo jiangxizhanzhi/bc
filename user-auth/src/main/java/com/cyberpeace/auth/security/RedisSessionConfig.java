@@ -8,7 +8,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.session.DelegatingIndexResolver;
-import org.springframework.session.FlushMode;
 import org.springframework.session.PrincipalNameIndexResolver;
 import org.springframework.session.Session;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;

@@ -43,4 +43,8 @@
         </where>
         order by id desc
     </select>
+    <select id="selectAllIds" resultType="java.lang.String">
+        select resource_id
+        from sys_user
+    </select>
 </mapper>

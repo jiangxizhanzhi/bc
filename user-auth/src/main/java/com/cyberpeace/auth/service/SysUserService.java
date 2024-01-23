@@ -96,4 +96,6 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return {@code Map<String, UserInfo>}
 	 */
 	Map<String, UserInfo> getUserInfoMap(Collection<String> userIds);
+
+	SysUser getOrExceptionByUsername(String username);
 }

@@ -4,6 +4,8 @@ public class AuthConstant {
 
 	public static final String SPRING_SECURITY_CONTEXT = "SPRING_SECURITY_CONTEXT";
 
+	public static final String EXPIRE_KEY = "org.springframework.session.security.SpringSessionBackedSessionInformation.EXPIRED";
+
 	/**系统注册状态：0：注册通过, 1：未注册*/
 	public static final int VERIFY_CODE_PASS = 0;
 	public static final int VERIFY_CODE_FAILED = 1;

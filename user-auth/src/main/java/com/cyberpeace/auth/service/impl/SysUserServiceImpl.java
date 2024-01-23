@@ -400,7 +400,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		return user;
 	}
 
-	private SysUser getOrExceptionByUsername(String username) {
+	@Override
+	public SysUser getOrExceptionByUsername(String username) {
 		SysUser user = sysUserMapper.selectByUsername(username);
 		if (null == user) {
 			throw new BusinessException(ErrorCode.USER_INFO_MISSING);

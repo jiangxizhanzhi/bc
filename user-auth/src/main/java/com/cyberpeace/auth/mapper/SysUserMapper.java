@@ -33,6 +33,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 	@Select("select username from sys_user")
 	List<String> getOccuredUsernames();
 
+	List<String> selectAllIds();
 }
 
 

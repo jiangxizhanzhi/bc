@@ -29,6 +29,9 @@ public class PracticeTheory extends PracticeBase {
 	@ApiModelProperty("是否是真题")
 	private Boolean isTrue;
 
+	@TableField(exist = false)
+	private String tag;
+
 	public enum TheoryType implements GenericEnum {
 
 		SINGLE(0, "单选"), MULTIPLE(1, "多选"), JUDGMENT(2, "判断"), FILL_BLANK(3, "填空"), SHORT_ANSWER(4,

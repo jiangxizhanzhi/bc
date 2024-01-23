@@ -1,6 +1,7 @@
 package com.cyberpeace.gateway.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
@@ -173,7 +174,8 @@ public class ExternalTheoryController {
 		if (CollectionUtils.isEmpty(setIds)) {
 			return new BaseRsp<>(Lists.newArrayList());
 		}
-
+		List<PracticeSet> practiceSets = practiceSetService.listByIds(setIds);
+		Map<String, String> tagMap = practiceSets.stream().collect(Collectors.toMap(PracticeSet::getResourceId, PracticeSet::getTag));
 		TheoryListQuery listQuery = BeanUtils.copy(queryParams, TheoryListQuery.class);
 		if (StringUtils.hasText(queryParams.getCategory())) {
 			listQuery.setCategoryIds(Lists.newArrayList(queryParams.getCategory()));
@@ -186,6 +188,7 @@ public class ExternalTheoryController {
 				queryParams.getCount());
 		for (PracticeTheory item : result) {
 			item.setScore(queryParams.getScore());
+			item.setTag(tagMap.getOrDefault(item.getPracticeSetId(), ""));
 		}
 		return new BaseRsp<>(result);
 	}

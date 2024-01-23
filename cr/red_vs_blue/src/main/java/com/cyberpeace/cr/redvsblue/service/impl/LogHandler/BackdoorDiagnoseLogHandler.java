@@ -15,6 +15,7 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbMaliceProcessMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 //	定义Linux后门检测日志处理类
@@ -195,9 +197,9 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		RbAttackEvent rbAttackEvent = data.getRbAttackDefenseEvents().get(0);
 		String attackEventDescribe = rbAttackEvent.getEventDescribe();
 		String attackAction = EnumUtils.getEnumDescByCode(rbCombatLog.getAttackAction(), CrCommonConstants.AttackAction.class);
-		List<RbAttackEvent> result = new ArrayList<>();
+		Map<String, RbAttackEvent> result = Maps.newHashMap();
 		res = subLogs.stream().filter(s->!s.getResourceId().equals(rbCombatLog.getResourceId())).collect(Collectors.toList());
-		result.add(rbAttackEvent);
+		result.put(rbCombatLog.getResourceId(), rbAttackEvent);
 		for(RbCombatLog item: res){
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.DELIVERY.getCode())){
 
@@ -212,10 +214,15 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 					.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
 					.action(attackAction).eventTime(TimeUtil.format1(rbCombatLog.getEventTime())).eventDescribe(attackEventDescribe).build();
 
-			result.add(temp);
+			result.put(item.getResourceId(), temp);
 		}
 
-		data.setRbAttackDefenseEvents(result);
+		// 依据原始顺序排序
+		List<RbAttackEvent> rbAttackEvents = Lists.newArrayList();
+		for(RbCombatLog sublog: subLogs) {
+			rbAttackEvents.add(result.get(sublog.getResourceId()));
+		}
+
 		return data;
 	}
 }

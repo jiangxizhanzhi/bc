@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
@@ -104,6 +105,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		if(rbCombatLogs.isEmpty()){
 			RbCombatLog exp  = new RbCombatLog();
 			BeanUtils.copyProperties(rbCombatLog, exp);
+			exp.setResourceId(IDGeneratorUtil.getID());
 			exp.setIsLostHost(false);
 			exp.setAttackPhase(code);
 			exp.setEventContent(content);

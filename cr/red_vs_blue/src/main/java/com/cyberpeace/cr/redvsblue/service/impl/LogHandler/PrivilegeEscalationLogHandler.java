@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
@@ -62,9 +63,9 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 		Integer destGroup = rbCombatLog.getDestGroup();
 		String destName = rbCombatLog.getDestName();
 		String destIp = rbCombatLog.getDestIp();
-		setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)成功渗透", destGroup, destName, destIp));
+		setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)发起了载荷投递", destGroup, destName, destIp));
 		tmp.add(rbCombatLog);
-		setTmp(rbCombatLog, CrCommonConstants.AttackPhase.EXPLOITATION.getCode(), String.format("对%s的%s(%s)发起了载荷投递", destGroup, destName, destIp));
+		setTmp(rbCombatLog, CrCommonConstants.AttackPhase.EXPLOITATION.getCode(), String.format("对%s的%s(%s)成功渗透", destGroup, destName, destIp));
 		rbCombatLogService.saveBatch(tmp);
 	}
 
@@ -79,6 +80,7 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 		if(rbCombatLogs.isEmpty()){
 			RbCombatLog exp  = new RbCombatLog();
 			BeanUtils.copyProperties(rbCombatLog, exp);
+			exp.setResourceId(IDGeneratorUtil.getID());
 			exp.setIsLostHost(false);
 			exp.setAttackPhase(code);
 			exp.setEventContent(content);

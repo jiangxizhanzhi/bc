@@ -139,8 +139,9 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 			Integer destGroup = rbCombatLog.getDestGroup();
 			String destName = rbCombatLog.getDestName();
 			String destIp = rbCombatLog.getDestIp();
-			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)成功渗透", destGroup, destName, destIp));
-			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.COMMAND.getCode(), String.format("对%s的%s(%s)发起了 命令控制", destGroup, destName, destIp));
+			String destGroupNmae = CrCommonUtil.getGroupName(destGroup);
+			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)发起了载荷投递", destGroupNmae, destName, destIp));
+			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.COMMAND.getCode(), String.format("对%s的%s(%s)发起了命令控制", destGroupNmae, destName, destIp));
 			tmp.add(rbCombatLog);
 			rbCombatLogService.saveBatch(tmp);
 		}

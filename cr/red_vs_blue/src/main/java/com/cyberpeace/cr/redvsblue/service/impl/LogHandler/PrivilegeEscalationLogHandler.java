@@ -65,9 +65,10 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 		Integer destGroup = rbCombatLog.getDestGroup();
 		String destName = rbCombatLog.getDestName();
 		String destIp = rbCombatLog.getDestIp();
-		setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)发起了载荷投递", destGroup, destName, destIp));
+		String destGroupNmae = CrCommonUtil.getGroupName(destGroup);
+		setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)发起了载荷投递", destGroupNmae, destName, destIp));
 		tmp.add(rbCombatLog);
-		setTmp(rbCombatLog, CrCommonConstants.AttackPhase.EXPLOITATION.getCode(), String.format("对%s的%s(%s)成功渗透", destGroup, destName, destIp));
+		setTmp(rbCombatLog, CrCommonConstants.AttackPhase.EXPLOITATION.getCode(), String.format("对%s的%s(%s)成功渗透", destGroupNmae, destName, destIp));
 		rbCombatLogService.saveBatch(tmp);
 	}
 

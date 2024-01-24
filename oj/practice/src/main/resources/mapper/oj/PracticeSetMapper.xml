@@ -46,7 +46,7 @@
     <select id="selectByName" resultType="java.lang.String">
         select resource_id
         from oj_practice_set
-        WHERE `name` = #{name}
+        WHERE `name` = #{name} and category = #{category}
     </select>
 
 

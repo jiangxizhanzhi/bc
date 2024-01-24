@@ -58,7 +58,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	@Override
 	public List<String> importRmCtfSet(String path, Map<String, String> envReqs) {
 		// 习题集数据处理
-		PracticeSet practiceSet = handlerPracticeSet(path);
+		PracticeSet practiceSet = handlerPracticeSet(path,PracticeSet.PracticeType.OPERATION.getCode());
 
 		// 遍历习题数据处理
 		List<String> ctfPracticeDirs = Lists.newArrayList();
@@ -121,7 +121,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	public boolean importRmTheorySet(String path) {
 
 		// 习题集数据插入处理
-		PracticeSet practiceSet = handlerPracticeSet(path);
+		PracticeSet practiceSet = handlerPracticeSet(path,PracticeSet.PracticeType.THEORY.getCode());
 
 		// 习题数据导入
 		List<PracticeTheory> theoryList = practiceTheoryImportService.parseRmTheory(path,
@@ -142,7 +142,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	 * @param path 习题集路径
 	 * @return
 	 */
-	private PracticeSet handlerPracticeSet(String path) {
+	private PracticeSet handlerPracticeSet(String path,Integer category) {
 
 		// 读取习题集数据信息
 		File setMarkdownFile = new File(path, ResourceImportConstant.README_NAME);
@@ -165,7 +165,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		practiceSet.setLogo(utilService.replaceFileUrl(destLogoPath));
 
 		// 名称数据校验
-		String existSetId = practiceSetMapper.selectByName(practiceSet.getName());
+		String existSetId = practiceSetMapper.selectByName(practiceSet.getName(),category);
 
 		practiceSet.setBuiltin(CommonConstant.TRUE);
 		practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);

@@ -11,11 +11,11 @@
         delete from cr_network where resource_id = #{resourceId}
     </delete>
 
-    <select id="selectBySceneId" resultType="java.lang.String">
-        select resource_id from cr_network where sid = #{sceneId}
-    </select>
 
     <select id="selectBySid" resultType="com.cyberpeace.scene.dao.entity.NetworkEntity">
         select * from cr_network where sid = #{sceneId} and network_status = #{status}
+    </select>
+    <select id="selectBySceneId" resultType="com.cyberpeace.scene.dao.entity.NetworkEntity">
+        select * from cr_network where sid = #{sceneId}
     </select>
 </mapper>

@@ -241,11 +241,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			// 删除节点
 			nodeService.delete(sceneId);
 			// 删除网络
-			List<String> networkIds = networkMapper.selectBySceneId(sceneId);
-			if (!CollectionUtils.isEmpty(networkIds)) {
-				networkIds.forEach(iter -> {
-					networkService.delete(iter);
-					networkMapper.deleteByResourceId(iter);
+			List<NetworkEntity> networks = networkMapper.selectBySceneId(sceneId);
+			if (!CollectionUtils.isEmpty(networks)) {
+				networks.forEach(iter -> {
+					if (StringUtils.isNotBlank(iter.getUuid())) {
+						networkService.delete(iter.getUuid());
+					}
+					networkMapper.deleteByResourceId(iter.getResourceId());
 				});
 			}
 			sceneMapper.deleteByResourceId(sceneId);
@@ -267,11 +269,13 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			// 删除节点
 			nodeService.delete(sceneId);
 			// 删除网络
-			List<String> networkIds = networkMapper.selectBySceneId(sceneId);
-			if (!CollectionUtils.isEmpty(networkIds)) {
-				networkIds.forEach(iter -> {
-					networkService.delete(iter);
-					networkMapper.deleteByResourceId(iter);
+			List<NetworkEntity> networks = networkMapper.selectBySceneId(sceneId);
+			if (!CollectionUtils.isEmpty(networks)) {
+				networks.forEach(iter -> {
+					if (StringUtils.isNotBlank(iter.getUuid())) {
+						networkService.delete(iter.getUuid());
+					}
+					networkMapper.deleteByResourceId(iter.getResourceId());
 				});
 			}
 		} catch (Exception e) {

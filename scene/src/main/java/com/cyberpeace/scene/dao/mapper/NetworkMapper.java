@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper
 public interface NetworkMapper extends BaseMapper<NetworkEntity> {
 
-    List<String> selectBySceneId(@Param("sceneId") String sceneId);
+    List<NetworkEntity> selectBySceneId(@Param("sceneId") String sceneId);
 
     int deleteByResourceId(@Param("resourceId") String resourceId);
 

@@ -59,4 +59,8 @@
         from cr_scene
         where user_id = #{userId}
     </select>
+    <select id="selectByRaceId" resultType="java.lang.String">
+        <bind name="search" value="'%' + raceId + '%'"/>
+        select resource_id from cr_scene where instance_id like #{search}
+    </select>
 </mapper>

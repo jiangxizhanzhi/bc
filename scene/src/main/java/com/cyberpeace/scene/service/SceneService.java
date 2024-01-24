@@ -40,4 +40,11 @@ public interface SceneService extends IService<SceneEntity> {
     List<String> getUndeletedSceneIdByUserId(String userId);
 
     void destroySceneBatch(List<String> ids);
+
+    /**
+     * 竞赛用，关闭考试的全部场景
+     *
+     * @param raceId
+     */
+    void destroySceneByRaceId(String raceId);
 }

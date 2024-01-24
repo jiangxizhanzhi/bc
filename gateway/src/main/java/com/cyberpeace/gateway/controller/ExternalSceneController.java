@@ -1,6 +1,7 @@
 package com.cyberpeace.gateway.controller;
 
 import com.cyberpeace.common.model.IdListReq;
+import com.cyberpeace.gateway.controller.req.RaceIdReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,10 +73,10 @@ public class ExternalSceneController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("删除场景")
-	@DeleteMapping("/delete/scene/batch")
-	public BaseRsp<Void> deleteSceneBatch(@RequestBody IdListReq req) {
-		sceneService.destroySceneBatch(req.getIds());
+	@ApiOperation("批量删除考试场景")
+	@DeleteMapping("/delete/scene/race")
+	public BaseRsp<Void> deleteSceneByRaceId(@RequestBody RaceIdReq req) {
+		sceneService.destroySceneByRaceId(req.getRaceId());
 		return new BaseRsp<>();
 	}
 

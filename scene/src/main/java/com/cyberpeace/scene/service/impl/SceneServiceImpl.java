@@ -141,8 +141,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		// 创建场景
-		SceneEntity scene = createScene(req.getTopologyId(), req.getInstanceId(), userId,
-				req.getInstanceType(), req.getDestroyTime());
+		SceneEntity scene = createScene(req.getTopologyId(), JsonUtil.toJsonString(topology),
+				req.getInstanceId(), userId, req.getInstanceType(), req.getDestroyTime());
 		// 提交创建场景任务
 		executor.submit(() -> startScene(topology, scene));
 		log.info("submit create scene mission, scene ：{}", scene);
@@ -165,11 +165,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 		// 创建场景
 
-		SceneEntity scene = createScene(req.getId(), instanceId, req.getContext().getAccessUserId(),
-				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
+		SceneEntity scene = createScene(req.getId(), topo.toJSONString(), instanceId,
+				req.getContext().getAccessUserId(), req.getContext().getInstanceType(),
+				req.getContext().getDestroyTime());
 		executor.submit(() -> startScene(topology, scene));
 		// 生成返回数据
-		scene.setMeta(topo.toJSONString());
 		JSONObject res = new JSONObject();
 		res.put(JsonKeyConstant.SCENE_DATA, makeSceneData(scene));
 		res.put(JsonKeyConstant.ID, scene.getResourceId());
@@ -197,16 +197,21 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 		for (String id : ids) {
 			executor.submit(() -> {
-				try {
-					destroyScene(id);
-				} catch (Exception e) {
-					// do nothing
-				}
+				destroySceneIgnoreException(id);
 			});
 		}
 	}
 
-    /**
+	@Override
+	public void destroySceneByRaceId(String raceId) {
+		if(StringUtils.isBlank(raceId)){
+			return;
+		}
+		List<String> sceneIdList = sceneMapper.selectByRaceId(raceId);
+		destroySceneBatch(sceneIdList);
+	}
+
+	/**
 	 * 验证场景并发数
 	 * @param userId
 	 */
@@ -247,6 +252,32 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		} catch (Exception e) {
 			log.error("delete scene:[{}], error:{}", sceneId, e);
 			throw new BusinessException(ErrorCode.SCENE_DESTROY_FAILED);
+		}
+	}
+
+	/**
+	 * 最终一定删除scene，保证用户可以起新场景
+	 * 用于异步接口
+	 * destroy场景ignoreexception
+	 *
+	 * @param sceneId 场景id
+	 */
+	private void destroySceneIgnoreException(String sceneId){
+		try {
+			// 删除节点
+			nodeService.delete(sceneId);
+			// 删除网络
+			List<String> networkIds = networkMapper.selectBySceneId(sceneId);
+			if (!CollectionUtils.isEmpty(networkIds)) {
+				networkIds.forEach(iter -> {
+					networkService.delete(iter);
+					networkMapper.deleteByResourceId(iter);
+				});
+			}
+		} catch (Exception e) {
+			log.error("failed to delete network or node of scene:[{}]", sceneId, e);
+		} finally {
+			sceneMapper.deleteByResourceId(sceneId);
 		}
 	}
 
@@ -536,7 +567,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 	}
 
-	private SceneEntity createScene(String topologyId, String instanceId, String userId,
+	private SceneEntity createScene(String topologyId, String topoJson,String instanceId, String userId,
 			Integer instanceType, Integer destroy) {
 		SceneEntity scene = new SceneEntity();
 		scene.setResourceId(IDGeneratorUtil.getID());
@@ -556,6 +587,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		scene.setUserId(userId);
 		scene.setSceneTtl(SCENE_DESTROY);
 		scene.setSceneStatus(SceneEnum.INIT.getCode());
+		scene.setMeta(topoJson);
 		sceneMapper.insert(scene);
 		return scene;
 	}

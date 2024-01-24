@@ -36,4 +36,7 @@ public interface SceneMapper extends BaseMapper<SceneEntity> {
     void deleteByResourceId(@Param("sceneId") String sceneId);
 
     int countAll();
+
+    List<String> selectByRaceId(@Param("raceId") String raceId);
+
 }

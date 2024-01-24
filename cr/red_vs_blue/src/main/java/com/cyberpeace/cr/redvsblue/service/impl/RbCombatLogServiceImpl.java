@@ -250,7 +250,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		if ("1_情报侦察".equals(title)){
 			if(submitEvaluationReq.getScore() >= crTask.getScore()*0.7){
 				String roomId = submitEvaluationReq.getRoomId();
-				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, submitEvaluationReq.getSubmitId());
+				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, crTask.getUserId());
 				Integer sourceGroup = crRoleByRoomIdAndUserId.getRoleGroup();
 				newRecord(sourceGroup, mission.getTitle(), rbCombatLog, roomId);
 				return rbCombatLogMapper.selectById(rbCombatLog.getResourceId());

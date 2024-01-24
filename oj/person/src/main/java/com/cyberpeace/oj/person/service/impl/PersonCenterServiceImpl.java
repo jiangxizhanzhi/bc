@@ -361,6 +361,15 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             studyHistoryRes.setHistoryList(v);
             res.add(studyHistoryRes);
         });
+        for (StudyCalendarRes re : res) {
+            List<StudyHistoryRes> historyRes = re.getHistoryList().stream().filter(a -> StudyHistoryRes.TypeEnum.PRACTICE.getCode().equals(a.getType())).collect(Collectors.toList());
+            re.setHistoryList(re.getHistoryList().stream().filter(a -> !StudyHistoryRes.TypeEnum.PRACTICE.getCode().equals(a.getType())).collect(Collectors.toList()));
+            if (CollectionUtils.isNotEmpty(historyRes)) {
+                StudyHistoryRes studyHistoryRes = historyRes.get(0);
+                studyHistoryRes.setName(studyHistoryRes.getName()+"等"+historyRes.size()+"道练习");
+                re.getHistoryList().add(studyHistoryRes);
+            }
+        }
         res.sort(Comparator.comparing(StudyCalendarRes::getDate));
         return res;
     }

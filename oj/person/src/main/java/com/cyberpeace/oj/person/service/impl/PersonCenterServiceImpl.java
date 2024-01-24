@@ -362,11 +362,17 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             res.add(studyHistoryRes);
         });
         for (StudyCalendarRes re : res) {
-            List<StudyHistoryRes> historyRes = re.getHistoryList().stream().filter(a -> StudyHistoryRes.TypeEnum.PRACTICE.getCode().equals(a.getType())).collect(Collectors.toList());
+            List<StudyHistoryRes> theoryList = re.getHistoryList().stream().filter(a -> StudyHistoryRes.TypeEnum.PRACTICE.getCode().equals(a.getType())&&1==a.getBusinessType()).collect(Collectors.toList());
+            List<StudyHistoryRes> operationList = re.getHistoryList().stream().filter(a -> StudyHistoryRes.TypeEnum.PRACTICE.getCode().equals(a.getType())&&1!=a.getBusinessType()).collect(Collectors.toList());
             re.setHistoryList(re.getHistoryList().stream().filter(a -> !StudyHistoryRes.TypeEnum.PRACTICE.getCode().equals(a.getType())).collect(Collectors.toList()));
-            if (CollectionUtils.isNotEmpty(historyRes)) {
-                StudyHistoryRes studyHistoryRes = historyRes.get(0);
-                studyHistoryRes.setName(studyHistoryRes.getName()+"等"+historyRes.size()+"道练习");
+            if (CollectionUtils.isNotEmpty(theoryList)) {
+                StudyHistoryRes studyHistoryRes = theoryList.get(0);
+                studyHistoryRes.setName(studyHistoryRes.getName()+"等"+theoryList.size()+"道理论题");
+                re.getHistoryList().add(studyHistoryRes);
+            }
+            if (CollectionUtils.isNotEmpty(operationList)) {
+                StudyHistoryRes studyHistoryRes = operationList.get(0);
+                studyHistoryRes.setName(studyHistoryRes.getName()+"等"+operationList.size()+"道实操题");
                 re.getHistoryList().add(studyHistoryRes);
             }
         }

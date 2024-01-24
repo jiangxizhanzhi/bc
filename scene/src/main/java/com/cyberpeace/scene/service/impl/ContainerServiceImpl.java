@@ -67,6 +67,7 @@ public class ContainerServiceImpl implements ContainerService {
         String uuid = imageInfo.getItems().get(0).getUuid();
         req.setImage(uuid);
         req.setName(IDGeneratorUtil.getID());
+        log.info("creating container instance, max wait time 10min, req: {}", req);
         CreateContainersRes res = HttpUtil.post(CONTAINER_URL, req, CreateContainersRes.class);
         log.info("create container end res:{}", res);
         return res;

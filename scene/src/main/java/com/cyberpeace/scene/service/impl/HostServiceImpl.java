@@ -71,6 +71,7 @@ public class HostServiceImpl implements HostService {
         String uuid = imageInfo.getItems().get(0).getUuid();
         req.setImage(uuid);
         req.setName(req.getName() + "_" + IDGeneratorUtil.getID());
+        log.info("creating vm instance, max wait time 10min, req: {}", req);
         CreateInstanceRes res = HttpUtil.post(CP_HOST + CP_INSTANCES, req, CreateInstanceRes.class);
         log.info("end create instance end res : {}", res);
         return res;

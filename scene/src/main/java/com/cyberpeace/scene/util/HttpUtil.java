@@ -259,7 +259,7 @@ public class HttpUtil {
     }
 
 	private static void setTimeout(HttpRequestBase http) {
-		RequestConfig config = RequestConfig.custom().setSocketTimeout(400 * 1000).build();
+		RequestConfig config = RequestConfig.custom().setSocketTimeout(600 * 1000).build();
 		http.setConfig(config);
 	}
 

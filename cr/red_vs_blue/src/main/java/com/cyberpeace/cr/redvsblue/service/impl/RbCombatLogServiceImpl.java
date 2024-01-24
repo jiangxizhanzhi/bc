@@ -1,5 +1,13 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import static com.cyberpeace.cr.crbase.dao.entity.CrTask.TaskStatus.FINISHED_STATUS_LIST;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -29,14 +37,11 @@ import com.cyberpeace.cr.redvsblue.service.impl.LogHandler.BaseCombatLogHandler;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.google.common.collect.Lists;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
-import static com.cyberpeace.cr.crbase.dao.entity.CrTask.TaskStatus.FINISHED_STATUS_LIST;
-
+@Slf4j
 @Service
 public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCombatLog> implements RbCombatLogService {
 
@@ -71,11 +76,22 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	private static final List<String> attackIpList = Lists.newArrayList("20.20.20.21",
+			"20.20.20.22", "20.20.20.23", "20.20.20.24", "192.168.30.120", "192.168.30.121",
+			"192.168.30.122", "192.168.30.123");
+
 	@Override
 	public void handlerLog(String syslog) throws Exception {
 		Map<String, String> initData = new HashMap<>();
 		if (isZrSyslog(syslog)) {
 			initData = getInitDataFromZrLog(syslog);
+
+			// 如果目的为攻击机IP，直接丢弃日志
+			if (attackIpList.contains(initData.get("agent_ip"))) {
+				log.info("攻击机日志，忽略处理:" + syslog);
+				return;
+			}
+
 			if (Arrays.asList("bruteforce_ext", "bruteforce_inter")
 					  .contains(initData.get("event_type"))) {
 				Map<String, String> bruteforceData = new HashMap<>();
@@ -92,11 +108,11 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		} else if (isSbSyslog(syslog)) {
 			initData = getInitDataFromSbLog(syslog);
 		} else {
-			System.out.println("未知来源的数据:" + syslog);
+			log.info("未知来源的数据:" + syslog);
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
 		if (initData.get("event_type") == null){
-			System.out.println("未知来源的数据:" + syslog);
+			log.info("未知来源的数据:" + syslog);
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
 		BaseCombatLogHandler combatLogHandler = BaseCombatLogHandler.get(initData.get("event_type"), initData, null);

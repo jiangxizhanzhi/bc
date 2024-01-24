@@ -79,12 +79,14 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 
 	@Override
 	public String getEventContent() {
+
 		if (CrCommonConstants.AttackAction.SPRINGBOARD.getCode().equals(getAttackAction())) {
 			return String.format("在%s上建立跳板", getDestName());
-		}else if (getAttackAction().equals(CrCommonConstants.AttackAction.DELIVERY.getCode())) {
+		} else if (getAttackAction().equals(CrCommonConstants.AttackAction.DELIVERY.getCode())) {
 			return String.format("对%s进行文件投递", getDestName());
 		}
-		return getInitData().get("event_content");
+
+		return super.getEventContent();
 	}
 
 	@Override

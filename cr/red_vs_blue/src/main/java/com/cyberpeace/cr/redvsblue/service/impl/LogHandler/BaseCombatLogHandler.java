@@ -176,7 +176,14 @@ public class BaseCombatLogHandler {
 	}
 
 	public String getEventContent() {
-		return initData.get("event_content");
+
+		// 获取攻防阶段
+		String phase = EventCategory.DEFENSE.getCode().equals(getEventCategory())
+				? EnumUtils.getEnumDescByCode(getDefensePhase(), DefensePhase.class)
+				: EnumUtils.getEnumDescByCode(getAttackPhase(), AttackPhase.class);
+
+		return String.format("对%s的%s(%s)发起了%s: %s", CrCommonUtil.getGroupName(getDestGroup()),
+				getDestName(), getDestIp(), phase, initData.get("event_content"));
 	}
 
 	public String getEventTime() {

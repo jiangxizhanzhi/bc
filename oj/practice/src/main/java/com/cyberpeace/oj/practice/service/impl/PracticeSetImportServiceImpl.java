@@ -165,7 +165,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		practiceSet.setLogo(utilService.replaceFileUrl(destLogoPath));
 
 		// 名称数据校验
-		String existSetId = practiceSetMapper.selectByName(practiceSet.getName(),category);
+		String existSetId = practiceSetMapper.selectByNameAndPricticeType(practiceSet.getName(),category);
 
 		practiceSet.setBuiltin(CommonConstant.TRUE);
 		practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);

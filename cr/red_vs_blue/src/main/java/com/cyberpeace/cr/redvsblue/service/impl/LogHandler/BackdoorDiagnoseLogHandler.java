@@ -96,7 +96,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 	}
 
 
-	private void setTmp(RbCombatLog rbCombatLog, Integer code, String content) {
+	private void setTmp(RbCombatLog rbCombatLog, Integer code, String content, Integer timeDiff) {
 		LambdaQueryWrapper<RbCombatLog> filter = new LambdaQueryWrapper<>();
 		filter.eq(RbCombatLog::getRoomId, rbCombatLog.getRoomId());
 		filter.eq(RbCombatLog::getAttackPhase,code);
@@ -112,6 +112,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 			exp.setAttackPhase(code);
 			exp.setEventContent(content);
 			exp.setMainLogId(rbCombatLog.getResourceId());
+			exp.setEventTime(TimeUtil.addSeconds(rbCombatLog.getEventTime(), timeDiff));
 			tmp.add(exp);
 		}
 	}
@@ -140,8 +141,8 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 			String destName = rbCombatLog.getDestName();
 			String destIp = rbCombatLog.getDestIp();
 			String destGroupNmae = CrCommonUtil.getGroupName(destGroup);
-			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)发起了载荷投递", destGroupNmae, destName, destIp));
-			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.COMMAND.getCode(), String.format("对%s的%s(%s)发起了命令控制", destGroupNmae, destName, destIp));
+			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.DELIVERY.getCode(), String.format("对%s的%s(%s)发起了载荷投递", destGroupNmae, destName, destIp), -10);
+			setTmp(rbCombatLog, CrCommonConstants.AttackPhase.COMMAND.getCode(), String.format("对%s的%s(%s)发起了命令控制", destGroupNmae, destName, destIp), -5);
 			tmp.add(rbCombatLog);
 			rbCombatLogService.saveBatch(tmp);
 		}

@@ -216,7 +216,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 					group(null).type(CrCommonConstants.EventCategory.ATTACK.getDesc()).groupType(String.format("%s%s",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
 					.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
-					.action(attackAction).eventTime(TimeUtil.format1(rbCombatLog.getEventTime())).eventDescribe(attackEventDescribe).build();
+					.action(attackAction).eventTime(TimeUtil.format1(item.getEventTime())).eventDescribe(attackEventDescribe).build();
 
 			result.put(item.getResourceId(), temp);
 		}

@@ -132,6 +132,16 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Override
 	public Map<String, String> getInitDataFromZrLog(String syslog) {
+
+		// syslog去除首尾空格
+		syslog = syslog.trim();
+
+		// 判断同样的日志是否已经处理过，处理过则不再处理
+		RbCombatLog rbCombatLog = rbCombatLogMapper.selectOneByOriginalLog(syslog);
+		if (rbCombatLog != null){
+			throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
+		}
+
 		List<String> stringList = new ArrayList<>(new HashSet<>(LocalStringUtil.getMatchStr(syslog, "(?=[ ]*)" +
 				"[0-9a-zA-Z_.]+=\"[^\"]*\"(?=[ ]*)")));
 		Map<String, String> initMap = new HashMap<>();

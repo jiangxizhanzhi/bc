@@ -59,6 +59,20 @@ public class BruteforceExtLogHandler extends AttackCombatLogHandler {
 	}
 
 	@Override
+	public String getEventContent() {
+
+		String event_content = getInitData().get("event_content");
+		String action = "暴力破解";
+		if (!StringUtils.isBlank(event_content) && event_content.contains("vsftpd")) {
+			action = action + "：vsftpd服务";
+		}
+
+		return String.format("对%s的%s(%s)发起了%s", CrCommonUtil.getGroupName(getDestGroup()),
+				getDestName(), getDestIp(), action);
+
+	}
+
+	@Override
 	public RbCombatRecordsAllDataRsp addAttackDefenseStage(RbCombatRecordsAllDataRsp data,
 			RbCombatLog rbCombatLog) {
 		if (!rbCombatLog.getAttackPhase().equals(CrCommonConstants.AttackPhase.OTHER.getCode())) {

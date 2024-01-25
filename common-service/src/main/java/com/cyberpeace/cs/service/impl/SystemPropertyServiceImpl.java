@@ -25,4 +25,9 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 		SystemProperty systemProperty = systemPropertyMapper.selectByName(name);
 		return systemProperty != null ? Integer.parseInt(systemProperty.getContent()) : defaultValue;
 	}
+
+	@Override
+	public SystemProperty getSystemProperty(String name) {
+		return systemPropertyMapper.selectByName(name);
+	}
 }

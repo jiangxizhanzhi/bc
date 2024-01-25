@@ -8,4 +8,6 @@ public interface SystemPropertyService extends IService<SystemProperty> {
 	boolean getExportBuiltin();
 
 	Integer getSystemPropertyInt(String name, Integer defaultValue);
+
+	SystemProperty getSystemProperty(String name);
 }

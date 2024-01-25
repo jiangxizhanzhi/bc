@@ -17,6 +17,8 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.dao.entity.SystemProperty;
+import com.cyberpeace.cs.service.SystemPropertyService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.controller.res.WaterMarkProgressRes;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -61,10 +63,20 @@ public class WaterMarkController {
 	private AuthService authService;
 	@Autowired
 	private UtilService utilService;
+	@Autowired
+	private SystemPropertyService systemPropertyService;
+
+	private static final String WATER_MARK = "waterMark";
+
+	@GetMapping("/queryCurrentMark")
+	@ApiOperation("获取当前水印名称")
+	public BaseRsp<String> queryCurrentMark(){
+		return new BaseRsp<>(systemPropertyService.getSystemProperty(WATER_MARK).getContent());
+	}
 	@GetMapping("/registerverifyinfo")
 	@ApiOperation("水印权限验证")
 	public BaseRsp<Boolean> registerVerifyInfo(@RequestParam("verifyCode") String verifyCode){
-
+		log.info("registerverifyinfo, verifyCode  {}",verifyCode);
 		LicenseEnum licenseEnum = authService.verifySystemCode(SystemModelEnum.MODEL_SY.getName());
 		isActive = licenseEnum.equals(LicenseEnum.SUCCESS);
 		if (isActive) {
@@ -78,6 +90,7 @@ public class WaterMarkController {
 	@ApiOperation("检查")
 	@GetMapping("/check")
 	public BaseRsp<Boolean> check(@ApiParam(name = "mark",value = "水印名称") String mark) {
+		log.info("water mark check, mark content {}",mark);
 		// mark只能包含英文空格
 		mark = mark.replaceAll(" ", "");
 		if (StringUtils.isBlank(mark)) {
@@ -96,6 +109,7 @@ public class WaterMarkController {
 	@ApiOperation("打水印")
 	@GetMapping("/mark")
 	public BaseRsp<Boolean> listComments(@ApiParam(name = "mark",value = "水印名称") String mark) {
+		log.info("water mark, mark content {}",mark);
 		if (!isActive) {
 			throw new BusinessException(ErrorCode.SYSTEM_NOT_ACTIVATED);
 		}
@@ -128,6 +142,9 @@ public class WaterMarkController {
 				log.error(e.getMessage(),e);
 			}
 		}
+		SystemProperty systemProperty = systemPropertyService.getSystemProperty(WATER_MARK);
+		systemProperty.setContent(mark);
+		systemPropertyService.updateById(systemProperty);
 		progress = 100;
 		return new BaseRsp<>(true);
 	}

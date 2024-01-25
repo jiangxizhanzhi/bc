@@ -182,8 +182,8 @@ public class BaseCombatLogHandler {
 				? EnumUtils.getEnumDescByCode(getDefensePhase(), DefensePhase.class)
 				: EnumUtils.getEnumDescByCode(getAttackPhase(), AttackPhase.class);
 
-		return String.format("对%s的%s(%s)发起了%s: %s", CrCommonUtil.getGroupName(getDestGroup()),
-				getDestName(), getDestIp(), phase, initData.get("event_content"));
+		return String.format("对%s的%s(%s)发起了%s", CrCommonUtil.getGroupName(getDestGroup()),
+				getDestName(), getDestIp(), phase);
 	}
 
 	public String getEventTime() {

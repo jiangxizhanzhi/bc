@@ -334,6 +334,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 			return PageUtil.pageList(new ArrayList<>(), (int)page.getCurrent(),(int)page.getSize());
 		}
 		lessonRecords.sort(Comparator.comparing(LessonRecord::getUpdateTime).reversed());
+		//lessonRecords 根据courseId分组取第一条
+		Map<String, LessonRecord> lessonRecordMap = lessonRecords.stream().collect(Collectors.toMap(LessonRecord::getCourseId, lessonRecord -> lessonRecord,(k1,k2)->k1));
+		lessonRecords = new ArrayList<>(lessonRecordMap.values());
+		lessonRecords.sort(Comparator.comparing(LessonRecord::getUpdateTime).reversed());
 		Set<String> courseIds = lessonRecords.stream().map(LessonRecord::getCourseId).collect(Collectors.toSet());
 		List<Course> courses = courseService.listByIds(courseIds);
 		Map<String, Course> courseMap = courses.stream().collect(Collectors.toMap(Course::getResourceId, course -> course));

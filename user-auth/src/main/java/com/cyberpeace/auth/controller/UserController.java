@@ -152,12 +152,9 @@ public class UserController {
 	public BaseRsp<Boolean> authToken(@ApiParam(name = "token", value = "jwt token") String token,
 			HttpServletResponse response, HttpServletRequest request) {
 
-		Boolean pass = true;
-
-		// 如果请求头中包含Upgrade-Insecure-Requests，直接返回401
-		if (request.getHeader("Upgrade-Insecure-Requests") != null) {
-			pass = false;
-		}
+		// 如果请求头中包含Upgrade-Insecure-Requests，且不包含Referer，则为非法请求
+		boolean pass = request.getHeader("Referer") != null
+				|| request.getHeader("Upgrade-Insecure-Requests") == null;
 
 		try {
 			sysUserService.getByToken(token);

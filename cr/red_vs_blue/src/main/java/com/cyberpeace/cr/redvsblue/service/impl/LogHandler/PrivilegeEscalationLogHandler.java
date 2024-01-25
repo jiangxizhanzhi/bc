@@ -150,7 +150,7 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 					attackEventDescribe = String.format("获取了%s命令执行权限", destIp);
 				} else if ("14.1.10.101".equals(destIp) || "15.1.10.101".equals(destIp)) {
 					attackEventDescribe = String.format("对%s进行漏洞扫描", destIp);
-				} else if ("192.168.30.23".equals(destIp) || "20.20.20.245".equals(destIp)) {
+				} else if ("192.168.30.23".equals(destIp) || "20.20.20.240".equals(destIp)) {
 					attackEventDescribe = String.format("获取了%s的控制权限", destIp);
 				} else {
 					attackEventDescribe = String.format("获取了%s的控制权限", destIp);

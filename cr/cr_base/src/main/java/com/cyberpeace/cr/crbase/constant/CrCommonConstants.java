@@ -240,9 +240,9 @@ public interface CrCommonConstants {
 	public enum Mission implements GenericEnum {
 		INTELLIGENCE_RECONNAISSANCE(1, "1_情报侦察", AttackPhase.RECONNAISSANCE.getCode(), null, AttackAction.TARGET_SCAN.getCode(),null),
 		CAPTURE_THE_FLAG(2, "夺旗", AttackPhase.ACTIONS.getCode(), null,AttackAction.HOST_FALL.getCode(), null),
-		THE_ATTACKED_CHAIN_REAPPEARS(3, "5_被攻击链条复现", null, Arrays.asList(DefensePhase.COUNTER_INVESTIGATION.getCode()),  DefenseAction.SUSPICIOUS_FILES_FOUND.getCode(), "成功复现对方攻击核心终端的完整攻击链"),
-		LOCATING_THE_ATTACK_SOURCE(4, "6_定位攻击源",null, Arrays.asList(DefensePhase.REVERSE_DELIVERY.getCode(), DefensePhase.ANTI_CONTROL.getCode()), DefenseAction.ATTACK_SOURCE_DETECTED.getCode(), "定位攻击源并成功阻断"),
-		CLEAR_RAMP(5, "7_清除跳板",null, Arrays.asList(DefensePhase.COUNTER_EXECUTION.getCode(), DefensePhase.REVERSE_OSMOSIS.getCode()), DefenseAction.REMOVE_TROJAN_HORSES.getCode(), "清除跳板文件并删除对应进程");
+		THE_ATTACKED_CHAIN_REAPPEARS(3, "5_攻击溯源", null, Arrays.asList(DefensePhase.COUNTER_INVESTIGATION.getCode()),  DefenseAction.SUSPICIOUS_FILES_FOUND.getCode(), "成功复现对方攻击核心终端的完整攻击链"),
+		LOCATING_THE_ATTACK_SOURCE(4, "6_动态阻断",null, Arrays.asList(DefensePhase.REVERSE_DELIVERY.getCode(), DefensePhase.ANTI_CONTROL.getCode()), DefenseAction.ATTACK_SOURCE_DETECTED.getCode(), "定位攻击源并成功阻断"),
+		CLEAR_RAMP(5, "7_系统恢复",null, Arrays.asList(DefensePhase.COUNTER_EXECUTION.getCode(), DefensePhase.REVERSE_OSMOSIS.getCode()), DefenseAction.REMOVE_TROJAN_HORSES.getCode(), "清除跳板文件并删除对应进程");
 
 		@Getter
 		private Integer code;

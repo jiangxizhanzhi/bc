@@ -287,7 +287,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
 		List<RbCombatLog> combatLogList = new ArrayList<>();
-		if (Arrays.asList("5_被攻击链条复现","6_定位攻击源", "7_清除跳板").contains(mission.getTitle())){
+		if (Arrays.asList("5_攻击溯源","6_动态阻断", "7_系统恢复").contains(mission.getTitle())){
 			Integer submitScore = submitEvaluationReq.getScore();
 			if(null != submitScore && (submitScore >= crTask.getScore()*0.7)
 					&& !submitEvaluationReq.getEvaluateStatus().equals(CrTask.TaskStatus.REJECT.getCode())){
@@ -309,7 +309,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				rbCombatLogMapper.insert(rbCombatLog);
 				combatLogList.add(rbCombatLogMapper.selectById(rbCombatLog.getResourceId()));
 
-				if (!"5_被攻击链条复现".equals(mission.getTitle())){
+				if (!"5_攻击溯源".equals(mission.getTitle())){
 					rbCombatLog.setDefensePhase(enumByCode.getStages().get(1));
 					rbCombatLog.setEventContent(CrCommonUtil.getGroupName(destGroup) + "定位攻击源并成功阻断");
 					rbCombatLog.setResourceId(null);

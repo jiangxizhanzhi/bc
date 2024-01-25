@@ -127,7 +127,7 @@ public class LcServiceImpl implements LcService {
 	/**
 	 * 行为客户端分布
 	 */
-	private String CLIENT_DISTRIBUTION = "api/v1/flowcharts/client/distribution";
+	private String CLIENT_DISTRIBUTION = "api/v1/client/distribution";
 
     @PostConstruct
     public void init() {

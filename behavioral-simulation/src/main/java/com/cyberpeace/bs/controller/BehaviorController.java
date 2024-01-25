@@ -181,7 +181,7 @@ public class BehaviorController {
 	 * @return {@code BaseRsp<String>}
 	 */
 	@ApiOperation("获取行为客户端类型分布")
-	@GetMapping("/host")
+	@GetMapping("/client/dist")
 	public BaseRsp<ClientDistribution> getBehaviorClientDistribution() {
 		List<TypeAndCount> typeList = lcService.getClientDistribution();
 		// 获取客户端类型

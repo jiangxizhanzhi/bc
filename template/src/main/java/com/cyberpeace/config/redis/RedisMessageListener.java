@@ -1,27 +1,24 @@
 package com.cyberpeace.config.redis;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.util.LocalStringUtil;
-import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.SneakyThrows;
 
 
 @Component
@@ -33,9 +30,15 @@ public class RedisMessageListener implements MessageListener {
 	@Autowired
 	private RbCombatLogService rbCombatLogService;
 
+	Lock lock = new ReentrantLock();
+
 	@SneakyThrows
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
+
+		// 在处理数据时，使用锁确保线程安全
+		lock.lock();
+
 		// 获取消息
 		byte[] messageBody = message.getBody();
 		// 使用值序列化器转换

@@ -389,21 +389,21 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			int size = elements.getNodes().size();
 
 			// 创建虚拟机和容器
-			for (TopologyElement node : elements.getNodes()) {
-				this.pushElement(node, scene, SceneEventStatusEnum.ONGOING.getCode(), null);
+			for (TopologyElement element : elements.getNodes()) {
+				this.pushElement(element, scene, SceneEventStatusEnum.ONGOING.getCode(), null);
 				count++;
 				NodeEntity nodeEntity;
 				try {
-					nodeEntity = createNode(node, scene, network);
-					node.setNodeId(nodeEntity.getInstanceId());
+					nodeEntity = createNode(element, scene, network);
+					element.setNodeId(nodeEntity.getInstanceId());
 					sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
 				} catch (Exception e) {
-					this.pushElement(node, scene, SceneEventStatusEnum.ERROR.getCode(), null);
+					this.pushElement(element, scene, SceneEventStatusEnum.ERROR.getCode(), null);
 					this.pushScenePlugin(scene, 100, state(count, size), StageEnum.CREATE_INSTANCE,
 							SceneEventStatusEnum.ERROR.getCode(), 5);
 					throw e;
 				}
-				this.pushElement(node, scene, SceneEventStatusEnum.FINISH.getCode(), nodeEntity.getIp());
+				this.pushElement(element, scene, SceneEventStatusEnum.FINISH.getCode(), nodeEntity.getIp());
 				this.pushScenePlugin(scene, 100, state(count, size), StageEnum.CREATE_INSTANCE,
 						SceneEventStatusEnum.ONGOING.getCode(), 2);
 			}
@@ -502,7 +502,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		for (int i = 0; i < length; i++) {
 			JSONObject mode = element.getPorts().get(0).getAccessModes().get(i);
 			NetAccessMode netAccessMode = nets.get(0).getAccess_modes().get(i);
-			mode.put(JsonKeyConstant.PORT_MAPPING, netAccessMode.getPort_mapping());
+			mode.put(JsonKeyConstant.PORT_MAPPING, JsonUtil.java2JsonObject(netAccessMode.getPort_mapping()));
 		}
 	}
 
@@ -830,7 +830,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 	private void pushElement(TopologyElement origin, SceneEntity scene, Integer code, String ip) {
 		try {
-			TopologyElement element = BeanUtils.deepCopy(origin, TopologyElement.class);
+			TopologyElement element = JsonUtil.copy(origin,TopologyElement.class);
 			WsSceneData sceneData = new WsSceneData();
 			sceneData.setSceneId(scene.getResourceId());
 			element.setEvent(2);

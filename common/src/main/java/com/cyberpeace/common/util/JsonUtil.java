@@ -54,6 +54,10 @@ public class JsonUtil {
 	public static <T> T toJsonObject(String text, Class<T> clazz) {
 		return JSON.parseObject(text, clazz);
 	}
+	
+	public static <T> T copy(T origin, Class<T> clazz) {
+		return JSON.parseObject(toJsonString(origin), clazz);
+	}
 
 	@SneakyThrows
 	public static <T> T toJsonObject(InputStream inputStream, Class<T> clazz) {

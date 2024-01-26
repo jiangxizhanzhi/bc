@@ -136,7 +136,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Override
 	public Boolean isZrSyslog(String syslog) {
-		return syslog.contains("event_type");
+		return syslog.contains("event_type") || syslog.contains("datatype");
 	}
 
 	@Override
@@ -167,6 +167,12 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				initMap.put(spStr[0], spStr[1].replace("\"","").trim());
 			}
 		}
+
+		// 如果找不到事件类型，则使用数据类型作为事件类型
+		if (initMap.get("event_type") == null) {
+			initMap.put("event_type", initMap.get("datatype"));
+		}
+
 		initMap.put("original_log", syslog);
 		return initMap;
 	}

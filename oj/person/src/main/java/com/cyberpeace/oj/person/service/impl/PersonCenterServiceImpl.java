@@ -425,7 +425,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             BigDecimal theoryCount = new BigDecimal(re.getCount()*30);
             BigDecimal theoryRate =re.getSum()==0?BigDecimal.ZERO: theoryCount.divide(new BigDecimal(re.getSum()),2,BigDecimal.ROUND_HALF_UP);
             Integer coverage = categoryCoverageMap.getOrDefault(re.getCategoryName(), 0);
-            theoryRate = theoryRate.add(new BigDecimal(coverage*0.4));
+			theoryRate = theoryRate.add(BigDecimal.valueOf(coverage*0.4));
             //实操题
             if (CollectionUtils.isNotEmpty(operationList) ){
                 BigDecimal opCount = operationList.stream()

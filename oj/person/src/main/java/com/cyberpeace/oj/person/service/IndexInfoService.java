@@ -6,4 +6,6 @@ import com.cyberpeace.oj.person.controller.req.IndexReq;
 public interface IndexInfoService {
 
     IndexReq getIndexInfo();
+
+    void setIndexInfo(String levelFileName);
 }

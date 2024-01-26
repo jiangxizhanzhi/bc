@@ -2,13 +2,15 @@ package com.cyberpeace.oj.person.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.oj.person.controller.req.IndexCategoryReq;
 import com.cyberpeace.oj.person.controller.req.IndexCourseReq;
 import com.cyberpeace.oj.person.controller.req.IndexReq;
-import com.cyberpeace.oj.person.dao.entity.StudyRecord;
 import com.cyberpeace.oj.person.dao.mapper.PersonCenterMapper;
 import com.cyberpeace.oj.person.service.IndexInfoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -21,6 +23,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class IndexInfoServiceImpl implements IndexInfoService {
     private static final String filePath = "/cpms/index/IndexInfo.json";
@@ -63,5 +66,23 @@ public class IndexInfoServiceImpl implements IndexInfoService {
         }
         indexReq.setCoverage(cov);
         return indexReq;
+    }
+
+    @Override
+    public void setIndexInfo(String levelFileName) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            log.error("build in file not found: {}", filePath);
+            throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
+        }
+        String indexFilePath = systemFilePath.replace("IndexInfo.json", levelFileName);
+        try {
+            file = ResourceUtils.getFile(indexFilePath);
+        } catch (FileNotFoundException e) {
+            log.error("get resource file error， file path: {}", indexFilePath);
+            throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
+        }
+        String indexFileAbsPath = file.getAbsolutePath();
+        FileUtil.copyFile(indexFileAbsPath, filePath, false);
     }
 }

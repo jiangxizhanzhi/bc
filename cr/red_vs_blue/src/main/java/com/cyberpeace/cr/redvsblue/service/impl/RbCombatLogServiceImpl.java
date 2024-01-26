@@ -90,42 +90,48 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		// 在处理数据时，使用锁确保线程安全
 		lock.lock();
 
-		Map<String, String> initData = new HashMap<>();
-		if (isZrSyslog(syslog)) {
-			initData = getInitDataFromZrLog(syslog);
+		try {
+			Map<String, String> initData = new HashMap<>();
+			if (isZrSyslog(syslog)) {
+				initData = getInitDataFromZrLog(syslog);
 
-			// 如果目的为攻击机IP，直接丢弃日志
-			if (attackIpList.contains(initData.get("agent_ip"))) {
-				log.info("攻击机日志，忽略处理:" + syslog);
-				return;
-			}
-
-			if (Arrays.asList("bruteforce_ext", "bruteforce_inter")
-					  .contains(initData.get("event_type"))) {
-				Map<String, String> bruteforceData = new HashMap<>();
-				bruteforceData.put("source_ip", initData.get("detail.src_ip"));
-				bruteforceData.put("dest_ip", initData.get("agent_ip"));
-				REPEATED_DATA.add(bruteforceData.toString());
-				int dataSize = new HashSet<>(REPEATED_DATA).size();
-				if (FLAG_LENGTH != dataSize){
-					FLAG_LENGTH = dataSize;
-				}else {
-					throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
+				// 如果目的为攻击机IP，直接丢弃日志
+				if (attackIpList.contains(initData.get("agent_ip"))) {
+					log.info("攻击机日志，忽略处理:" + syslog);
+					return;
 				}
+
+				if (Arrays.asList("bruteforce_ext", "bruteforce_inter")
+						.contains(initData.get("event_type"))) {
+					Map<String, String> bruteforceData = new HashMap<>();
+					bruteforceData.put("source_ip", initData.get("detail.src_ip"));
+					bruteforceData.put("dest_ip", initData.get("agent_ip"));
+					REPEATED_DATA.add(bruteforceData.toString());
+					int dataSize = new HashSet<>(REPEATED_DATA).size();
+					if (FLAG_LENGTH != dataSize) {
+						FLAG_LENGTH = dataSize;
+					} else {
+						throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
+					}
+				}
+			} else if (isSbSyslog(syslog)) {
+				initData = getInitDataFromSbLog(syslog);
+			} else {
+				log.info("未知来源的数据:" + syslog);
+				throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 			}
-		} else if (isSbSyslog(syslog)) {
-			initData = getInitDataFromSbLog(syslog);
-		} else {
-			log.info("未知来源的数据:" + syslog);
-			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
+			if (initData.get("event_type") == null) {
+				log.info("未知来源的数据:" + syslog);
+				throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
+			}
+			BaseCombatLogHandler combatLogHandler = BaseCombatLogHandler
+					.get(initData.get("event_type"), initData, null);
+			combatLogHandler.save();
+			combatLogHandler.sendMessage();
+
+		} finally {
+			lock.unlock();
 		}
-		if (initData.get("event_type") == null){
-			log.info("未知来源的数据:" + syslog);
-			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
-		}
-		BaseCombatLogHandler combatLogHandler = BaseCombatLogHandler.get(initData.get("event_type"), initData, null);
-		combatLogHandler.save();
-		combatLogHandler.sendMessage();
 	}
 
 	@Override

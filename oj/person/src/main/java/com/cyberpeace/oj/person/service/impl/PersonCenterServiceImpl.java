@@ -415,6 +415,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         //覆盖度 40%
         List<IndexCategoryReq> categoryList = indexInfoService.getIndexInfo().getCategoryList();
         Map<String, Integer> categoryCoverageMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getCoverage));
+        Map<String, Integer> categoryWeightMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getWeight));
 
         List<ProgressPracticeRes> res = new ArrayList<>();
         for (PracticeCategory practiceCategory : practiceCategories) {
@@ -422,10 +423,10 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             if(null == re.getCategoryName()){
                 continue;
             }
-            BigDecimal theoryCount = new BigDecimal(re.getCount()*30);
-            BigDecimal theoryRate =re.getSum()==0?BigDecimal.ZERO: theoryCount.divide(new BigDecimal(re.getSum()),2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal theoryRate =re.getSum()==0?BigDecimal.ZERO: BigDecimal.valueOf(re.getCount()*30.0/re.getSum());
             Integer coverage = categoryCoverageMap.getOrDefault(re.getCategoryName(), 0);
-			theoryRate = theoryRate.add(BigDecimal.valueOf(coverage*0.4));
+            Integer weight = categoryWeightMap.getOrDefault(re.getCategoryName(), 0);
+			theoryRate = theoryRate.add(BigDecimal.valueOf(coverage*40/weight));
             Integer operationCount = operationList.stream().filter(a -> a.getKnowledge() != null
                     && a.getKnowledge().contains(re.getCategoryName())).mapToInt(a -> 1).sum();
             //实操题
@@ -433,7 +434,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                 BigDecimal opCount = operationList.stream()
                         .filter(a -> a.getKnowledge() != null
                                 && a.getKnowledge().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.getSolved()))
-                        .map(a -> BigDecimal.valueOf(30.0 / operationCount).setScale(2,BigDecimal.ROUND_HALF_UP)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                        .map(a -> BigDecimal.valueOf(30.0 / operationCount)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                 theoryRate = theoryRate.add(opCount);
             }
             //运维题
@@ -441,7 +442,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                 BigDecimal opCount = opsQuestionBos.stream()
                         .filter(a -> a.getDirection() != null
                                 && a.getDirection().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.isPass()))
-                        .map(a -> BigDecimal.valueOf(30.0 /operationCount).setScale(2,BigDecimal.ROUND_HALF_UP)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                        .map(a -> BigDecimal.valueOf(30.0 /operationCount)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                 theoryRate = theoryRate.add(opCount);
             }
             re.setCount(theoryRate.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());

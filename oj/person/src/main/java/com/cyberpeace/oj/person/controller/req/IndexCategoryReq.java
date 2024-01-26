@@ -16,5 +16,5 @@ public class IndexCategoryReq implements Serializable {
     @ApiModelProperty("覆盖度")
     private Integer coverage;
     @ApiModelProperty("权重")
-    private String weight;
+    private Integer weight;
 }

@@ -827,8 +827,9 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		return list;
 	}
 
-	private void pushElement(TopologyElement element, SceneEntity scene, Integer code) {
+	private void pushElement(TopologyElement origin, SceneEntity scene, Integer code) {
 		try {
+			TopologyElement element = BeanUtils.deepCopy(origin, TopologyElement.class);
 			WsSceneData sceneData = new WsSceneData();
 			sceneData.setSceneId(scene.getResourceId());
 			if (Objects.nonNull(element)) {

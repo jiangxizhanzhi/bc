@@ -1,6 +1,8 @@
 package com.cyberpeace.cs.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Data;
@@ -11,6 +13,9 @@ import java.io.Serializable;
 @Data
 @TableName("system_property")
 public class SystemProperty implements Serializable {
+
+	@TableId
+	private String id;
 
 	private String name;
 

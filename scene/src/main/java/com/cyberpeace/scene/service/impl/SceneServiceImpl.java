@@ -390,19 +390,20 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 			// 创建虚拟机和容器
 			for (TopologyElement node : elements.getNodes()) {
-				this.pushElement(node, scene, SceneEventStatusEnum.ONGOING.getCode());
+				this.pushElement(node, scene, SceneEventStatusEnum.ONGOING.getCode(), null);
 				count++;
+				NodeEntity nodeEntity;
 				try {
-					NodeEntity nodeEntity = createNode(node, scene, network);
+					nodeEntity = createNode(node, scene, network);
 					node.setNodeId(nodeEntity.getInstanceId());
 					sceneMapper.updateMeta(scene.getResourceId(), JsonUtil.toJsonString(topology));
 				} catch (Exception e) {
-					this.pushElement(node, scene, SceneEventStatusEnum.ERROR.getCode());
+					this.pushElement(node, scene, SceneEventStatusEnum.ERROR.getCode(), null);
 					this.pushScenePlugin(scene, 100, state(count, size), StageEnum.CREATE_INSTANCE,
 							SceneEventStatusEnum.ERROR.getCode(), 5);
 					throw e;
 				}
-				this.pushElement(node, scene, SceneEventStatusEnum.FINISH.getCode());
+				this.pushElement(node, scene, SceneEventStatusEnum.FINISH.getCode(), nodeEntity.getIp());
 				this.pushScenePlugin(scene, 100, state(count, size), StageEnum.CREATE_INSTANCE,
 						SceneEventStatusEnum.ONGOING.getCode(), 2);
 			}
@@ -827,18 +828,16 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		return list;
 	}
 
-	private void pushElement(TopologyElement origin, SceneEntity scene, Integer code) {
+	private void pushElement(TopologyElement origin, SceneEntity scene, Integer code, String ip) {
 		try {
 			TopologyElement element = BeanUtils.deepCopy(origin, TopologyElement.class);
 			WsSceneData sceneData = new WsSceneData();
 			sceneData.setSceneId(scene.getResourceId());
-			if (Objects.nonNull(element)) {
-				element.setEvent(2);
-				element.setEventStatus(code);
-			}
+			element.setEvent(2);
+			element.setEventStatus(code);
 			sceneData.setSceneElement(element);
 			JSONObject cpcloud = new JSONObject();
-			cpcloud.put("cpcloud", getElementPlugin(element));
+			cpcloud.put("cpcloud", getElementPlugin(element, ip));
 			sceneData.setSceneElementPortPluginData(cpcloud);
 			sceneData.setSceneElementPluginData(makeElementPluginData(element));
 
@@ -865,48 +864,45 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		return cpcloud;
 	}
 
-	private JSONObject getElementPlugin(TopologyElement element) {
-		if (Objects.nonNull(element)) {
-			JSONObject address = topologyService.getStatusEvent(element);
-			JSONObject elementPortsJson = new JSONObject();
-			for (ElementPort port : element.getPorts()) {
-				port.setIp(address.getString("ip"));
-				port.setEvent(2);
-				port.setEventStatus(address.getInteger("event_status"));
-				JSONObject elementPortJson = new JSONObject();
-				if (!CollectionUtils.isEmpty(port.getAccessModes())) {
-					JSONArray newAccessModes = new JSONArray();
-					port.getAccessModes().forEach(iter -> {
-						iter.put("id", element.getNodeId());
-						iter.put("ip", address.getString("ip"));
-						iter.put("available", address.getBooleanValue("available"));
-						iter.put("type", element.getType());
-						// 端口映射
-						if (null != iter.getJSONObject(JsonKeyConstant.PORT_MAPPING)) {
-							PortMapping portMapping = iter
-									.getJSONObject(JsonKeyConstant.PORT_MAPPING)
-									.toJavaObject(PortMapping.class);
-							iter.put(JsonKeyConstant.ACCESS_IP, portMapping.getHost());
-							iter.put(JsonKeyConstant.ACCESS_PORT, portMapping.getHost_port());
-						}
-						// 去掉rdp、ssh登录按钮
-						String protocol = iter.getString(JsonKeyConstant.PROTOCOL);
-						if ("ssh".equals(protocol) || "rdp".equals(protocol)) {
-							iter.put(JsonKeyConstant.PROXY, false);
-						}
-						newAccessModes.add(iter);
-					});
-					elementPortJson.put("access_modes", newAccessModes);
-				}
-				elementPortJson.put("ip", address.getString("ip"));
-				elementPortJson.put("event_status", address.getInteger("event_status"));
-				elementPortJson.put("event", 2);
-				elementPortJson.put("resource_id", element.getNodeId());
-				elementPortsJson.put(port.getId(), elementPortJson);
+	private JSONObject getElementPlugin(TopologyElement element, String ip) {
+		Boolean available = element.getEventStatus().equals(SceneEventStatusEnum.FINISH.getCode());
+
+		JSONObject elementPortsJson = new JSONObject();
+		for (ElementPort port : element.getPorts()) {
+			port.setIp(ip);
+			port.setEvent(2);
+			port.setEventStatus(element.getEventStatus());
+			JSONObject elementPortJson = new JSONObject();
+			if (!CollectionUtils.isEmpty(port.getAccessModes())) {
+				JSONArray newAccessModes = new JSONArray();
+				port.getAccessModes().forEach(iter -> {
+					iter.put("id", element.getNodeId());
+					iter.put("ip", ip);
+					iter.put("available", available);
+					iter.put("type", element.getType());
+					// 端口映射
+					if (null != iter.getJSONObject(JsonKeyConstant.PORT_MAPPING)) {
+						PortMapping portMapping = iter.getJSONObject(JsonKeyConstant.PORT_MAPPING)
+								.toJavaObject(PortMapping.class);
+						iter.put(JsonKeyConstant.ACCESS_IP, portMapping.getHost());
+						iter.put(JsonKeyConstant.ACCESS_PORT, portMapping.getHost_port());
+					}
+					// 去掉rdp、ssh登录按钮
+					String protocol = iter.getString(JsonKeyConstant.PROTOCOL);
+					if ("ssh".equals(protocol) || "rdp".equals(protocol)) {
+						iter.put(JsonKeyConstant.PROXY, false);
+					}
+					newAccessModes.add(iter);
+				});
+				elementPortJson.put("access_modes", newAccessModes);
 			}
-			return elementPortsJson;
+			elementPortJson.put("ip", ip);
+			elementPortJson.put("event_status", element.getEventStatus());
+			elementPortJson.put("event", 2);
+			elementPortJson.put("resource_id", element.getNodeId());
+			elementPortsJson.put(port.getId(), elementPortJson);
 		}
-		return null;
+		return elementPortsJson;
 	}
 
 	private void pushCreationComplete(SceneEntity scene) {

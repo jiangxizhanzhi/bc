@@ -387,7 +387,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
 		CrRole crRole = crRoleMapper.selectById(crTask.getRoleId());
 		String title = mission.getTitle();
-		String[] serverNames = title.split("攻陷");
+		String[] serverNames = title.split("攻击");
 		String serverName = serverNames[serverNames.length - 1];
 		String roomId = submitEvaluationReq.getRoomId();
 		String ip = getIpByServerName(crTask, serverName, roomId);

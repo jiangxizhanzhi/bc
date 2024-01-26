@@ -3,6 +3,8 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import static com.cyberpeace.cr.crbase.dao.entity.CrTask.TaskStatus.FINISHED_STATUS_LIST;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,12 +78,18 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	Lock lock = new ReentrantLock();
+
 	private static final List<String> attackIpList = Lists.newArrayList("20.20.20.21",
 			"20.20.20.22", "20.20.20.23", "20.20.20.24", "192.168.30.120", "192.168.30.121",
 			"192.168.30.122", "192.168.30.123");
 
 	@Override
 	public void handlerLog(String syslog) throws Exception {
+
+		// 在处理数据时，使用锁确保线程安全
+		lock.lock();
+
 		Map<String, String> initData = new HashMap<>();
 		if (isZrSyslog(syslog)) {
 			initData = getInitDataFromZrLog(syslog);

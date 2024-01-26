@@ -1,8 +1,5 @@
 package com.cyberpeace.config.redis;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.Message;
@@ -30,14 +27,9 @@ public class RedisMessageListener implements MessageListener {
 	@Autowired
 	private RbCombatLogService rbCombatLogService;
 
-	Lock lock = new ReentrantLock();
-
 	@SneakyThrows
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
-
-		// 在处理数据时，使用锁确保线程安全
-		lock.lock();
 
 		// 获取消息
 		byte[] messageBody = message.getBody();

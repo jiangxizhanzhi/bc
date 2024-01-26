@@ -200,8 +200,8 @@
     <select id="getOperationRecordList"
             resultType="com.cyberpeace.oj.practice.controller.res.OperationRecordRes">
         select  a.`knowledge`,b.solved
-        FROM oj_practice_solved b
-                 JOIN oj_practice_operation a  on a.resource_id=b.resource_id
-        WHERE b.submit_user_id = #{userId}  and b.solved in (0,1) and b.practice_type =2
+        FROM oj_practice_operation a
+            LEFT JOIN oj_practice_solved b  on a.resource_id=b.resource_id
+            AND b.submit_user_id = #{userId}  and b.solved in (0,1) and practice_type =2
     </select>
 </mapper>

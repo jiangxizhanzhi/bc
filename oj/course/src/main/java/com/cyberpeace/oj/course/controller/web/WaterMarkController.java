@@ -135,7 +135,7 @@ public class WaterMarkController {
 					courseLesson.setHandoutUrl(out);
 					courseLessonMapper.updateById(courseLesson);
 				}
-				progress = i * 100 / courseLessons.size();
+				progress = (i+1) * 100 / courseLessons.size();
 			} catch (Exception e) {
 				log.error("pdf mark false handoutUrl {} ,out {}",
 						in,out);

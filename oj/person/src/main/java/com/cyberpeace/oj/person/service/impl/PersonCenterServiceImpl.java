@@ -426,12 +426,14 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             BigDecimal theoryRate =re.getSum()==0?BigDecimal.ZERO: theoryCount.divide(new BigDecimal(re.getSum()),2,BigDecimal.ROUND_HALF_UP);
             Integer coverage = categoryCoverageMap.getOrDefault(re.getCategoryName(), 0);
 			theoryRate = theoryRate.add(BigDecimal.valueOf(coverage*0.4));
+            Integer operationCount = operationList.stream().filter(a -> a.getKnowledge() != null
+                    && a.getKnowledge().contains(re.getCategoryName())).mapToInt(a -> 1).sum();
             //实操题
             if (CollectionUtils.isNotEmpty(operationList) ){
                 BigDecimal opCount = operationList.stream()
                         .filter(a -> a.getKnowledge() != null
                                 && a.getKnowledge().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.getSolved()))
-                        .map(a -> BigDecimal.valueOf(30.0 / (a.getKnowledge().split(",").length * operationList.size())).setScale(2,BigDecimal.ROUND_HALF_UP)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                        .map(a -> BigDecimal.valueOf(30.0 / operationCount).setScale(2,BigDecimal.ROUND_HALF_UP)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                 theoryRate = theoryRate.add(opCount);
             }
             //运维题
@@ -439,7 +441,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                 BigDecimal opCount = opsQuestionBos.stream()
                         .filter(a -> a.getDirection() != null
                                 && a.getDirection().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.isPass()))
-                        .map(a -> BigDecimal.valueOf(30.0 / (a.getDirection().split(",").length * operationList.size())).setScale(2,BigDecimal.ROUND_HALF_UP)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                        .map(a -> BigDecimal.valueOf(30.0 /operationCount).setScale(2,BigDecimal.ROUND_HALF_UP)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                 theoryRate = theoryRate.add(opCount);
             }
             re.setCount(theoryRate.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());

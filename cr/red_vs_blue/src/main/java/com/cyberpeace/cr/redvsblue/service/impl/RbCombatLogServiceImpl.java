@@ -366,7 +366,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		}
 		String[] nodeNames = title.split("_");
 		String nodeName = nodeNames[1];
-		String[] serverNames = title.split("攻陷");
+		String[] serverNames = title.split("攻击");
 		String serverName = serverNames[serverNames.length - 1];
 		Integer enumCodeByDesc = EnumUtils.getEnumCodeByDesc(nodeName, CrCommonConstants.Mission.class);
 		if(null != enumCodeByDesc){

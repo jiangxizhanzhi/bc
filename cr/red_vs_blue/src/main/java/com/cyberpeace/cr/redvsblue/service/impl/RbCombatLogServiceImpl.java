@@ -409,6 +409,12 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		String title = mission.getTitle();
 		String[] serverNames = title.split("攻击");
 		String serverName = serverNames[serverNames.length - 1];
+
+		// 特殊处理任务3名称
+		if (serverName.contains("并")) {
+			serverName = serverName.split("并")[0];
+		}
+
 		String roomId = submitEvaluationReq.getRoomId();
 		String ip = getIpByServerName(crTask, serverName, roomId);
 		if(crTaskSubmit.getMissionScore().equals(crTaskSubmit.getScore())){

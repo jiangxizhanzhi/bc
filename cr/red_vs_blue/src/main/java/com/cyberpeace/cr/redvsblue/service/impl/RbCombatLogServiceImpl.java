@@ -547,6 +547,23 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		LocalScene localScene = localSceneMapper.selectById(localSceneId);
 		String mpSceneId = localScene.getMpSceneId();
 		List<JSONObject> nodeInfoList = remoteSceneService.getAllElements(mpSceneId);
+		
+		// 根据角色组过滤节点信息
+		List<String> RED_NODE_ID_LIST = Lists.newArrayList("f2a24c0c-a489-48fb-8d1a-42d98896cb68",
+				"c5632f09-1940-44a9-9224-c01e08c5aab8", "db6e2baf-8c33-427a-abf9-3ce26e9771cd",
+				"1bec675b-5124-49e3-838d-a0c3aafd8e4e", "b68a3711-cb6f-430d-875b-e91b3bf80d46",
+				"a8d2fa20-f869-4d63-8801-275049671737", "e8b2e2e3-2e6f-49c8-9895-b380cd25ce0b");
+
+		if (CrRole.RbRoleGroup.RED.getCode().equals(destGroup)) {
+			nodeInfoList = nodeInfoList.stream()
+					.filter(nodeInfo -> RED_NODE_ID_LIST.contains(nodeInfo.getString("id")))
+					.collect(Collectors.toList());
+		} else {
+			nodeInfoList = nodeInfoList.stream()
+					.filter(nodeInfo -> !RED_NODE_ID_LIST.contains(nodeInfo.getString("id")))
+					.collect(Collectors.toList());
+		}
+
 		for (JSONObject nodeInfo : nodeInfoList) {
 			String nodeName = nodeInfo.getString("name");
 			if (name.equals(nodeName)) {

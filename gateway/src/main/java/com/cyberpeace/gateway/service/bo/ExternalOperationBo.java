@@ -86,4 +86,7 @@ public class ExternalOperationBo implements Serializable {
 	private List<PracticeOperationFileBo> attachment;
 
 	private String tag;
+
+	@ApiModelProperty("是否是真题")
+	private Boolean isTrue;
 }

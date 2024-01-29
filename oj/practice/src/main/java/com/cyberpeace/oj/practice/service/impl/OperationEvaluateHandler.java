@@ -83,8 +83,7 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 			return JsonUtil.arrayToString(Lists.newArrayList(randomFlag.getFlag()));
 		}
 
-		if (!practiceOperation.getDynamicEnv()
-				&& StringUtils.isBlank(practiceOperation.getTopoId())) {
+		if (!practiceOperation.getDynamicEnv()) {
 			return practiceOperation.getAnswer();
 		}
 

@@ -142,7 +142,7 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 		result.put(rbCombatLog.getResourceId(), rbAttackEvent);
 		for(RbCombatLog item: res){
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.DELIVERY.getCode())){
-				attackEventDescribe = String.format("对%s发送了文件投递", destIp);
+				attackEventDescribe = String.format("对%s发送了载荷投递", destIp);
 			}
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.EXPLOITATION.getCode())){
 

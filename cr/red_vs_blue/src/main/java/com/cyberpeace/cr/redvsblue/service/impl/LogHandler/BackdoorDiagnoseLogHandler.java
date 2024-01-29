@@ -83,7 +83,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		if (CrCommonConstants.AttackAction.SPRINGBOARD.getCode().equals(getAttackAction())) {
 			return String.format("在%s上建立跳板", getDestName());
 		} else if (getAttackAction().equals(CrCommonConstants.AttackAction.DELIVERY.getCode())) {
-			return String.format("对%s进行文件投递", getDestName());
+			return String.format("对%s进行载荷投递", getDestName());
 		}
 
 		return super.getEventContent();
@@ -92,7 +92,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 	@Override
 	public String getAttackStageContent(RbCombatLog rbCombatLog) {
 		if (CrCommonConstants.AttackAction.DELIVERY.getCode().equals(rbCombatLog.getAttackAction())) {
-			return String.format("【文件投递】%s", rbCombatLog.getEventContent());
+			return String.format("【载荷投递】%s", rbCombatLog.getEventContent());
 		}
 		return rbCombatLog.getEventContent();
 	}
@@ -207,7 +207,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		for(RbCombatLog item: res){
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.DELIVERY.getCode())){
 
-				attackEventDescribe = String.format("对%s发送了文件投递", destIp);
+				attackEventDescribe = String.format("对%s发送了载荷投递", destIp);
 			}
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.COMMAND.getCode())){
 				attackEventDescribe = String.format("%s拿到%s的【命令执行权限】", sourceGroup, destMachine);

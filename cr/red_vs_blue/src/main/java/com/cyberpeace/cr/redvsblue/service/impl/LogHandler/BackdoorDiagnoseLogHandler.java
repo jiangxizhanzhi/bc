@@ -207,7 +207,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		for(RbCombatLog item: res){
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.DELIVERY.getCode())){
 
-				attackEventDescribe = String.format("对%s发送了载荷投递", destIp);
+				attackEventDescribe = String.format("对%s发送了载荷投递", destMachine);
 			}
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.COMMAND.getCode())){
 				attackEventDescribe = String.format("%s拿到%s的【命令执行权限】", sourceGroup, destMachine);

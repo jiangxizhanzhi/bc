@@ -142,18 +142,18 @@ public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {
 		result.put(rbCombatLog.getResourceId(), rbAttackEvent);
 		for(RbCombatLog item: res){
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.DELIVERY.getCode())){
-				attackEventDescribe = String.format("对%s发送了载荷投递", destIp);
+				attackEventDescribe = String.format("对%s发送了载荷投递", destMachine);
 			}
 			if(item.getAttackPhase().equals(CrCommonConstants.AttackPhase.EXPLOITATION.getCode())){
 
 				if ("14.1.10.190".equals(destIp) || "15.1.10.72".equals(destIp)) {
-					attackEventDescribe = String.format("获取了%s命令执行权限", destIp);
+					attackEventDescribe = String.format("获取了%s命令执行权限", destMachine);
 				} else if ("14.1.10.101".equals(destIp) || "15.1.10.101".equals(destIp)) {
-					attackEventDescribe = String.format("对%s进行漏洞扫描", destIp);
+					attackEventDescribe = String.format("对%s进行漏洞扫描", destMachine);
 				} else if ("192.168.30.23".equals(destIp) || "20.20.20.240".equals(destIp)) {
-					attackEventDescribe = String.format("获取了%s的控制权限", destIp);
+					attackEventDescribe = String.format("获取了%s的控制权限", destMachine);
 				} else {
-					attackEventDescribe = String.format("获取了%s的控制权限", destIp);
+					attackEventDescribe = String.format("获取了%s的控制权限", destMachine);
 				}
 			}
 			RbAttackEvent temp = RbAttackEvent.builder().visible(Boolean.TRUE).resourceId(rbCombatLog.getResourceId()).

@@ -414,11 +414,6 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		}
 
 		String roomId = submitEvaluationReq.getRoomId();
-		if (CrRole.RbRoleGroup.BLUE.getCode().equals(crRole.getRoleGroup())) {
-			serverName = "红方" + serverName;
-		}else  {
-			serverName = "蓝方" + serverName;
-		}
 		String ip = getIpByServerName(crTask, serverName, roomId);
 		if(crTaskSubmit.getMissionScore().equals(crTaskSubmit.getScore())){
 			RbMissionStatusGroupWsDataRsp missionStatusGroupDataRsp = new RbMissionStatusGroupWsDataRsp();

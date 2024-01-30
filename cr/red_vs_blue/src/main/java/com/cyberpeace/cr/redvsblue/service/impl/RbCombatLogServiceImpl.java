@@ -1,15 +1,5 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import static com.cyberpeace.cr.crbase.dao.entity.CrTask.TaskStatus.FINISHED_STATUS_LIST;
-
-import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -40,8 +30,16 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+
+import static com.cyberpeace.cr.crbase.dao.entity.CrTask.TaskStatus.FINISHED_STATUS_LIST;
 
 @Slf4j
 @Service
@@ -416,6 +414,11 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		}
 
 		String roomId = submitEvaluationReq.getRoomId();
+		if (CrRole.RbRoleGroup.BLUE.getCode().equals(crRole.getRoleGroup())) {
+			serverName = "红方" + serverName;
+		}else  {
+			serverName = "蓝方" + serverName;
+		}
 		String ip = getIpByServerName(crTask, serverName, roomId);
 		if(crTaskSubmit.getMissionScore().equals(crTaskSubmit.getScore())){
 			RbMissionStatusGroupWsDataRsp missionStatusGroupDataRsp = new RbMissionStatusGroupWsDataRsp();

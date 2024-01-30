@@ -485,15 +485,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         // 用户只可能是当前用户
         // 这个接口真的需要用户名吗？
         note.setUserName(UserInfoContext.getUserContext().getUserName());
-        if (note.getResourceType() != null && null != note.getDifficulty()) {
-            String themeName = note.getThemeName();
-            if (note.getResourceType().equals(Note.NoteResourceType.OPTION.getCode())) {
-                note.setThemeName(EXERCISE.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
-            }
-            if (note.getResourceType().equals(Note.NoteResourceType.THEORY.getCode())) {
-                note.setThemeName(THEORY.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
-            }
-        }
         return note;
     }
 

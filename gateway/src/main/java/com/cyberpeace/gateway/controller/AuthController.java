@@ -54,7 +54,7 @@ public class AuthController {
 	@GetMapping("/jump/vuln/")
 	public void
 			access(@ApiParam(name = "token", value = "token",
-					required = false) @RequestParam("token") String token,
+					required = false) @RequestParam(value = "token", required = false) String token,
 					HttpServletResponse response) throws Exception {
 		setResponse(response, token);
 	}

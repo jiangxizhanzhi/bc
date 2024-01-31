@@ -268,7 +268,7 @@ public class PersonController {
 		Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
 				.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
 		comments.getRecords().forEach(
-				note -> note.setRaceId(opsMap.getOrDefault(note.getResourceId(), null)));
+				note -> note.setRaceId(opsMap.getOrDefault(note.getBusinessId(), null)));
 
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}

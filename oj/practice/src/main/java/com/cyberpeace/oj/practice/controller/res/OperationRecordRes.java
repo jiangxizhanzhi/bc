@@ -34,4 +34,7 @@ public class OperationRecordRes implements Serializable {
 	private List<String> knowledgeList;
 
 	private String tag;
+
+	@ApiModelProperty("题型")
+	private String category;
 }

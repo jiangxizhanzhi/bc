@@ -125,7 +125,7 @@
 
     <select id="getOperationRecord" resultType="com.cyberpeace.oj.practice.controller.res.OperationRecordRes">
         select practice_id, title, difficulty, solved, practice_set.name as set_name, knowledge,
-        oj_practice_solved.update_time as `time`,practice_set.tag as tag
+        oj_practice_solved.update_time as `time`,practice_set.tag as tag, oj_practice_operation.category as category
         from oj_practice_solved
         inner join oj_practice_operation
         on oj_practice_solved.practice_id = oj_practice_operation.resource_id

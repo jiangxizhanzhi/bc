@@ -23,10 +23,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Api(tags = "用户权限接入相关api")
 @Controller
+@RestController
 @RequestMapping("/auth/")
 public class AuthController {
 
@@ -66,8 +68,9 @@ public class AuthController {
 	public BaseRsp<PathContext> getVulnPath() {
 
 		PathContext pathContext = new PathContext();
-		pathContext.setPath(String.format("http://%s:%s%s?token=%s", WJ_IP, WJ_WEB_PORT,
-				WJ_WEB_PATH, getToken(null)));
+		String path = String.format("http://%s:%s%s?token=%s", WJ_IP, WJ_WEB_PORT, WJ_WEB_PATH,
+				getToken(null));
+		pathContext.setPath(path);
 		return new BaseRsp<>(pathContext);
 
 	}

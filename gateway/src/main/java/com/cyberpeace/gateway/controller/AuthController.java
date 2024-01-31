@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.gateway.model.PathContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -59,19 +61,23 @@ public class AuthController {
 		setResponse(response, token);
 	}
 
+	@ApiOperation("单点登录-获取漏洞挖掘平台跳转地址")
+	@GetMapping("/jump/vuln/path/")
+	public BaseRsp<PathContext> getVulnPath() {
+
+		PathContext pathContext = new PathContext();
+		pathContext.setPath(String.format("http://%s:%s%s?token=%s", WJ_IP, WJ_WEB_PORT,
+				WJ_WEB_PATH, getToken(null)));
+		return new BaseRsp<>(pathContext);
+
+	}
+
 	/**
 	 * 设置重定向返回体
 	 */
 	private void setResponse(HttpServletResponse response, String token) throws IOException {
 
-		// 优先使用当前用户token
-		String currentToken = CommonContext.getAuthorization();
-		token = currentToken == null ? token : currentToken;
-
-		// 校验token是否为空
-		if (token == null) {
-			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
-		}
+		token = getToken(token);
 
 		// 构造返回体
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
@@ -82,6 +88,20 @@ public class AuthController {
 				token);
 		response.setHeader("Location", targetUrl);
 
+	}
+
+	private String getToken(String token) {
+
+		// 优先使用当前用户token
+		String currentToken = CommonContext.getAuthorization();
+		token = currentToken == null ? token : currentToken;
+
+		// 校验token是否为空
+		if (token == null) {
+			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+		}
+
+		return token;
 	}
 
 }

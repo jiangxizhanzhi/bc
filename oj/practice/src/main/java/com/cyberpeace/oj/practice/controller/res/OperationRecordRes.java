@@ -36,5 +36,5 @@ public class OperationRecordRes implements Serializable {
 	private String tag;
 
 	@ApiModelProperty("题型")
-	private String category;
+	private Integer category;
 }

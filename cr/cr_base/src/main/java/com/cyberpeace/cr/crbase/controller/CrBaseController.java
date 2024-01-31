@@ -18,6 +18,7 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -28,6 +29,8 @@ import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
+import com.cyberpeace.integratation.model.WjRecordRsp;
+import com.cyberpeace.integratation.service.RemoteWjService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,6 +49,9 @@ public class CrBaseController {
 
 	@Autowired
 	private CrConstantsService crConstantsService;
+
+	@Autowired
+	private RemoteWjService remoteWjService;
 
 	@ApiOperation("个人中心训练统计")
 	@GetMapping("/training_statistics")
@@ -104,6 +110,15 @@ public class CrBaseController {
 			rsp.add(new CodeNameRsp(BusinessType.RED_VS_BLUE.getCode(),
 					BusinessCode.RED_VS_BLUE.getDesc()));
 		}
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("获取漏洞挖掘平台报告列表")
+	@GetMapping("/record/list/")
+	public BaseRsp<ListRsp<WjRecordRsp>> listWjRecord(@Validated PageReqBase pageReq) {
+
+		ListRsp<WjRecordRsp> rsp = remoteWjService.listWjRecord(pageReq);
+
 		return new BaseRsp<>(rsp);
 	}
 

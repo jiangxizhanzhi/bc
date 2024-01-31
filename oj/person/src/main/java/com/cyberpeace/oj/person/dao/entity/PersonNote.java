@@ -33,4 +33,6 @@ public class PersonNote extends NoteAddReq {
 
 	@ApiModelProperty("难度")
 	private Integer difficulty;
+
+	private String raceId;
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.scene.sceneimport.parse.result.image;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -46,7 +47,8 @@ public class ImageInfoParseResult {
     }
 
     public List<AccessModeParseResult> getManageAccessModes() {
-        return this.管理接入;
+        return Lists.newArrayList();
+//        return this.管理接入;
     }
 
     public List<String> getInitCommands() {

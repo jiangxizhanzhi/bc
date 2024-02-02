@@ -1385,24 +1385,32 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Override
 	public ProgressCountRes getProgressCount(String practiceSetId) {
+		// solved表不会有运维题解出记录；
+		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
+		List<String> solvedOpsIds = opsQuestionBos.stream().filter(OpsQuestionBo::isPass).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
 
 		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getUserContext().getUserId(), practiceSetId);
 		Map<Integer, OperationSolved> operationSolvedMap = operationSolvedList.stream().collect(Collectors.toMap(OperationSolved::getCategory, operationSolved -> operationSolved));
+
 		if (operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()) == null) {
 			operationSolvedMap.put(PracticeOperation.Category.MAINTENANCE.getCode()
-					, new OperationSolved(PracticeOperation.Category.MAINTENANCE.getCode(), 0, 0));
+					, new OperationSolved(PracticeOperation.Category.MAINTENANCE.getCode(), 0, 0, ""));
 		}
 		if (operationSolvedMap.get(PracticeOperation.Category.OPERATION.getCode()) == null) {
 			operationSolvedMap.put(PracticeOperation.Category.OPERATION.getCode()
-					, new OperationSolved(PracticeOperation.Category.OPERATION.getCode(), 0, 0));
+					, new OperationSolved(PracticeOperation.Category.OPERATION.getCode(), 0, 0, ""));
 		}
 
+		// 运维题
 		ProgressCountRes progressCountRes = new ProgressCountRes();
 		OptionCountProportion maintenance = new OptionCountProportion();
-		maintenance.setCount(operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()).getSolved());
+		List<String> opsIds = operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()).getIds();
+		solvedOpsIds.retainAll(opsIds);
+		maintenance.setCount(solvedOpsIds.size());
 		maintenance.setSum(operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()).getSum());
 		progressCountRes.setMaintenance(maintenance);
 
+		// 实操题
 		OptionCountProportion operation = new OptionCountProportion();
 		operation.setCount(operationSolvedMap.get(PracticeOperation.Category.OPERATION.getCode()).getSolved());
 		operation.setSum(operationSolvedMap.get(PracticeOperation.Category.OPERATION.getCode()).getSum());

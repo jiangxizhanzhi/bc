@@ -1,23 +1,12 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.sql.Wrapper;
 import java.util.*;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
-import com.cyberpeace.oj.practice.entity.Paper;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.service.*;
+import com.cyberpeace.cs.service.SystemPropertyService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -29,12 +18,14 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -44,10 +35,20 @@ import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
+import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.entity.Paper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.service.*;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
@@ -117,6 +118,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
+
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 
 	@Override
 	public Course parseRmCourse(String path) {
@@ -561,6 +565,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 课时信息
 		Map<String, String> lessonNameMap = Maps.newHashMap();
 		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs, lessonNameMap);
+		// 课时水印
+		waterMarkLessons(lessons);
 		// 课时目录
 		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, lessonNameMap);
 		// 课后练习
@@ -590,6 +596,30 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		this.deleteLessonPracticeTopo(deleteTopoIds);
 		return true;
+	}
+
+	private void waterMarkLessons(List<CourseLesson> lessons) {
+		for (CourseLesson lesson : lessons) {
+			String out = "";
+			String in = "";
+			String mark = systemPropertyService.getSystemProperty("waterMark").getContent();
+			try {
+				String handoutUrl = lesson.getHandoutUrl2();
+				if (StringUtils.isEmpty(handoutUrl)) {
+					continue;
+				}
+				if (handoutUrl.endsWith(".pdf")) {
+					String name = new File(handoutUrl).getName();
+					out = ConfigUtil.getContextProperty("repair.file.path") + "/oj/handout/"
+							+ lesson.getResourceId() + "/" + name;
+					in = utilService.handlerFileUrl(handoutUrl);
+					WaterMarkingUtils.setPdfWatermark(in, out, mark);
+					lesson.setHandoutUrl(out);
+				}
+			} catch (Exception e) {
+				log.error("failed to watermark pdf: handoutUrl {} ,out {}", in, out, e);
+			}
+		}
 	}
 
 	/**

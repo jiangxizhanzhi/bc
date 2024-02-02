@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 public class UserAddReq {
@@ -45,5 +46,11 @@ public class UserAddReq {
 
 	protected void validatePwd(){
 		UserValidator.validatePassword(this.password);
+	}
+
+	public void setDefaultAvatar() {
+		if (StringUtils.isBlank(avatar)) {
+			setAvatar("/cpms/built_in/user_logos/1.png");
+		}
 	}
 }

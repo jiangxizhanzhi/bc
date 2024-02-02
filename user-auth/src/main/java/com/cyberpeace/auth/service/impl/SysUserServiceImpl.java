@@ -326,6 +326,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		if (sysUserMapper.existByUsername(req.getUsername())) {
 			throw new BusinessException(ErrorCode.USERNAME_DUPLICATE);
 		}
+		req.setDefaultAvatar();
 		SysUser user = req2Entity(req);
 		sysUserMapper.insert(user);
 	}

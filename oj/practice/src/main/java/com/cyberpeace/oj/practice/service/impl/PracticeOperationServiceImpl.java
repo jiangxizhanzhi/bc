@@ -1334,8 +1334,55 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		List<String> operationIds = getOptionIdsByAuth(null);
 		List<OperationRecordRes> operationRecordResList = practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
 		operationRecordResList.forEach(operationRecordRes -> operationRecordRes.setKnowledgeList(JsonUtil.toJsonObjectArray(operationRecordRes.getKnowledge(), String.class)));
+
+		List<OperationRecordRes> opsRecordList = getOpsRecord(startTime, endTime);
+
+		operationRecordResList.addAll(opsRecordList);
 		return operationRecordResList;
 	}
+
+	/**
+	 * 获取运维题
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	public List<OperationRecordRes> getOpsRecord(Date startTime, Date endTime) {
+		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
+		Map<String, OpsQuestionBo> opsQuestionBoMap = opsQuestionBos.stream()
+				.filter(OpsQuestionBo::isPass)
+				.filter(o -> {
+					if (o.getEndTime() == null) {
+						// 过滤未解出的，同理isPass
+						return false;
+					}
+
+					if (startTime != null && endTime != null){
+						return startTime.before(o.getEndTime()) && endTime.after(o.getEndTime());
+					}else if (startTime != null){
+						return startTime.before(o.getEndTime());
+					}else if (endTime != null) {
+						return endTime.after(o.getEndTime());
+					}else {
+						return true;
+					}
+				})
+				.collect(Collectors.toMap(OpsQuestionBo::getResourceId, opsQuestionBo -> opsQuestionBo));
+
+		List<String> solvedOpsIds = new ArrayList<>(opsQuestionBoMap.keySet());
+		List<OperationRecordRes> operationInfoList = CollectionUtils.isEmpty(solvedOpsIds)? new ArrayList<>(): practiceSolvedMapper.getOperationInfo(solvedOpsIds);
+		operationInfoList.forEach(operationInfo -> {
+			operationInfo.setSolved(true);
+			operationInfo.setKnowledgeList(JsonUtil.toJsonObjectArray(operationInfo.getKnowledge(), String.class));
+			// 已解决的运维题必然有解决时间
+			OpsQuestionBo opsQuestionBo = opsQuestionBoMap.get(operationInfo.getPracticeId());
+			operationInfo.setTime(TimeUtil.format1(opsQuestionBo.getEndTime()));
+			operationInfo.setRaceId(opsQuestionBo.getRaceId());
+		});
+
+		return operationInfoList;
+	}
+
 
 	@Override
 	public List<CategoryProgressRes> getOperationCategoryProgress() {

@@ -47,4 +47,6 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 	List<PracticeSolved> selectTop5( @Param("practiceId") String practiceId, @Param("userIds") List<String> userIds);
 
 	List<String> selectUserIdByPracticeId(@Param("practiceId") String practiceId);
+
+	List<OperationRecordRes> getOperationInfo(@Param("operationIds") List<String> operationIds);
 }

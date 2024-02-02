@@ -37,4 +37,7 @@ public class OperationRecordRes implements Serializable {
 
 	@ApiModelProperty("题型")
 	private Integer category;
+
+	@ApiModelProperty("运维题识别id")
+	private String raceId;
 }

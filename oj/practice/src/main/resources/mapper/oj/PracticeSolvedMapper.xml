@@ -153,6 +153,24 @@
             order by oj_practice_solved.update_time desc
         </where>
     </select>
+
+    <select id="getOperationInfo" resultType="com.cyberpeace.oj.practice.controller.res.OperationRecordRes">
+        select oj_practice_operation.resource_id practice_id, title, difficulty, practice_set.name as set_name, knowledge,
+        practice_set.tag as tag, oj_practice_operation.category as category
+        from oj_practice_operation
+        left join oj_practice_set as practice_set
+        on oj_practice_operation.practice_set_id = practice_set.resource_id
+        <where>
+            <if test="operationIds != null and operationIds.size() > 0">
+                and oj_practice_operation.resource_id in
+                <foreach collection="operationIds" item="operationId" separator="," close=")" open="(">
+                    #{operationId}
+                </foreach>
+            </if>
+        </where>
+        order by oj_practice_operation.id desc
+    </select>
+
     <select id="selectUserAndIdList" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSolved">
         select * from oj_practice_solved
         where submit_user_id = #{userId}

@@ -90,6 +90,16 @@ public class TimeUtil {
 		return calendar.getTime();
 	}
 
+	public static Date getStartOfDay(String dateTime) {
+		Date date2 = toDate2(dateTime);
+		return date2 == null? null: getStartOfDay(date2);
+	}
+
+	public static Date getEndOfDay(String dateTime) {
+		Date date2 = toDate2(dateTime);
+		return date2 == null? null: getEndOfDay(date2);
+	}
+
 	/**
 	 * 获取指定天的最后一秒，23点59分59秒
 	 *

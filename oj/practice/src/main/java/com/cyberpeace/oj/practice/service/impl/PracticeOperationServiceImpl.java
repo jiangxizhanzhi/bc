@@ -604,7 +604,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 		operationListQuery.setResourceIds(operationIds);
 		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-		Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
+		Map<String, OpsQuestionBo> opsMap = opsQuestionBos.stream().collect(Collectors.toMap(OpsQuestionBo::getResourceId, item-> item, (k1, k2) -> k1));
 		// 根据解题状态过滤
 		if ( null != listQuery.getSolved()) {
 
@@ -684,7 +684,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
 			AuthContext authContext, Boolean solved, Map<String, PracticeSolved> practiceSolvedMap,
-			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap,Map<String, String> opsMap) {
+			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap,Map<String, OpsQuestionBo> opsMap) {
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
@@ -703,18 +703,26 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			if (null != solved) {
 				operationListBo.setSolved(solved);
 			} else {
+				// 不包含运维题
 				PracticeSolved practiceSolved = practiceSolvedMap
 						.get(practiceOperation.getResourceId());
 				operationListBo.setSolved(
 						null != practiceSolved ? practiceSolved.getSolved() : CommonConstant.FALSE);
 			}
 		}
+		OpsQuestionBo opsQuestionBo = opsMap.get(operationListBo.getResourceId());
+		String raceId = "";
+		if (opsQuestionBo != null) {
+			raceId =  opsQuestionBo.getRaceId();
+			// 设置运维题是否解出
+			operationListBo.setSolved(opsQuestionBo.isPass());
+		}
+		operationListBo.setRaceId(raceId);
 
 		PracticeSet practiceSet = practiceSetMap.get(practiceOperation.getPracticeSetId());
 		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 		operationListBo.setCreateUserName( creatorMap.getOrDefault(practiceOperation.getCreateUserId(),""));
 		operationListBo.setSource(null != practiceSet ? practiceSet.getSource() : "");
-		operationListBo.setRaceId(opsMap.getOrDefault(operationListBo.getResourceId(),""));
 		operationListBo.setTag(null != practiceSet ? practiceSet.getTag() : "");
 		return operationListBo;
 

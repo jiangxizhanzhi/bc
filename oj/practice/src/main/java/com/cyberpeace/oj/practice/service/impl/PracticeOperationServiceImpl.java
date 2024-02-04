@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 import com.cyberpeace.integratation.service.*;
 import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
+import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -1353,8 +1354,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.filter(OpsQuestionBo::isPass)
 				.filter(o -> {
 					if (o.getEndTime() == null) {
-						// 过滤未解出的，同理isPass
-						return false;
+						// 解出后，场景未关闭也没有结束时间
+						return true;
 					}
 
 					if (startTime != null && endTime != null){
@@ -1374,9 +1375,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operationInfoList.forEach(operationInfo -> {
 			operationInfo.setSolved(true);
 			operationInfo.setKnowledgeList(JsonUtil.toJsonObjectArray(operationInfo.getKnowledge(), String.class));
-			// 已解决的运维题必然有解决时间
+			// 已解决的运维题有解决时间
 			OpsQuestionBo opsQuestionBo = opsQuestionBoMap.get(operationInfo.getPracticeId());
-			operationInfo.setTime(TimeUtil.format1(opsQuestionBo.getEndTime()));
+			operationInfo.setTime(TimeUtil.format1(opsQuestionBo.getEndTime() == null ? new Date() : opsQuestionBo.getEndTime()));
 			operationInfo.setRaceId(opsQuestionBo.getRaceId());
 		});
 

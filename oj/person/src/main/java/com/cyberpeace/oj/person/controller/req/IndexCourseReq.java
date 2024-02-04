@@ -18,6 +18,7 @@ public class IndexCourseReq {
     @ApiModelProperty("课程数")
     private Integer courseNum;
 
+    @ApiModelProperty("已学习的课程数")
     private Integer studyCount;
 
     @ApiModelProperty("完成百分比")

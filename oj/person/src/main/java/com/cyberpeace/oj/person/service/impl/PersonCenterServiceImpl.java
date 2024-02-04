@@ -22,8 +22,8 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.person.controller.req.IndexCourseReq;
 import com.cyberpeace.oj.person.service.IndexInfoService;
-import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
@@ -414,8 +414,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
         //覆盖度 40%
         List<IndexCategoryReq> categoryList = indexInfoService.getIndexInfo().getCategoryList();
-        Map<String, Integer> categoryCoverageMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getCoverage));
-        Map<String, Integer> categoryWeightMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getWeight));
+        Map<String, List<IndexCourseReq>> categoryCoverageMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getCourses));
 
         List<ProgressPracticeRes> res = new ArrayList<>();
         for (PracticeCategory practiceCategory : practiceCategories) {
@@ -424,10 +423,12 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                 continue;
             }
             BigDecimal theoryRate =re.getSum()==0?BigDecimal.ZERO: BigDecimal.valueOf(re.getCount()*30.0/re.getSum());
-            Integer coverage = categoryCoverageMap.getOrDefault(re.getCategoryName(), 0);
-            Integer weight = categoryWeightMap.getOrDefault(re.getCategoryName(), 0);
-			theoryRate = theoryRate.add(BigDecimal.valueOf(coverage*40/weight));
-            Integer operationCount = operationList.stream().filter(a -> a.getKnowledge() != null
+            List<IndexCourseReq> coverageReqList = categoryCoverageMap.getOrDefault(re.getCategoryName(), Lists.newArrayList());
+            int courseStudyCoverage = coverageReqList.stream().mapToInt(req-> req.getStudyCount() == null ? 0: req.getStudyCount()).sum();
+            int courseNumCoverage = coverageReqList.stream().mapToInt(req -> req.getCourseNum() == null ? 0: req.getCourseNum()).sum();
+			theoryRate = theoryRate.add(BigDecimal.valueOf(courseStudyCoverage*40.0/courseNumCoverage));
+
+            int operationCount = operationList.stream().filter(a -> a.getKnowledge() != null
                     && a.getKnowledge().contains(re.getCategoryName())).mapToInt(a -> 1).sum();
             //实操题
             if (CollectionUtils.isNotEmpty(operationList) ){

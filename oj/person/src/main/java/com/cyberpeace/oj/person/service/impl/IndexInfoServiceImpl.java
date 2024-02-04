@@ -55,10 +55,18 @@ public class IndexInfoServiceImpl implements IndexInfoService {
                         course.setCoverage(0);
                         return;
                     }
-                    Integer studyCount = indexCourseReq.getStudyCount()==null?0:indexCourseReq.getStudyCount();
+                    int studyCount = indexCourseReq.getStudyCount()==null?0:indexCourseReq.getStudyCount();
                     course.setCompletePercent(studyCount*100/course.getCourseNum());
                     course.setDesc(indexCourseReq.getDesc());
-                    course.setCoverage(course.getCompletePercent()*course.getWeight()/100);
+                    course.setStudyCount(studyCount);
+
+                    int courseCoverage;
+                    if (1f > course.getCompletePercent()*course.getWeight()/100f && course.getCompletePercent()*course.getWeight()/100f > 0f) {
+                        courseCoverage = 1;
+                    } else {
+                        courseCoverage = course.getCompletePercent()*course.getWeight()/100;
+                    }
+                    course.setCoverage(courseCoverage);
                     req.setCoverage(req.getCoverage()+course.getCoverage());
                 });
             }

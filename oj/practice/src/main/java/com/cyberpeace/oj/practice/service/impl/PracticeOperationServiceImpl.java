@@ -614,18 +614,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					UserInfoContext.getUserContext().getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
 					CommonConstant.TRUE, IS_COLLECTED);
 
+			List<String> opsIds = opsQuestionBos.stream().filter(OpsQuestionBo::isPass).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
+			if (CollectionUtils.isNotEmpty(opsIds)) {
+				solvedIds.addAll(opsIds);
+			}
+
 			// 正确取交集
 			if (listQuery.getSolved()) {
-				List<String> opsIds = opsQuestionBos.stream().filter(OpsQuestionBo::isPass).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
-				if (CollectionUtils.isNotEmpty(opsIds)) {
-					solvedIds.addAll(opsIds);
-				}
 				operationListQuery.getResourceIds().retainAll(solvedIds);
 			} else {
-				List<String> opsIds = opsQuestionBos.stream().filter(a->!a.isPass()).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
-				if (CollectionUtils.isNotEmpty(opsIds)) {
-					solvedIds.addAll(opsIds);
-				}
 				operationListQuery.getResourceIds().removeAll(solvedIds);
 			}
 

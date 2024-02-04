@@ -125,7 +125,8 @@
 
     <select id="getOperationRecord" resultType="com.cyberpeace.oj.practice.controller.res.OperationRecordRes">
         select practice_id, title, difficulty, solved, practice_set.name as set_name, knowledge,
-        oj_practice_solved.update_time as `time`,practice_set.tag as tag, oj_practice_operation.category as category
+        oj_practice_solved.update_time as `time`,practice_set.tag as tag, oj_practice_operation.category as category,
+        oj_practice_operation.is_true as `isTrue`
         from oj_practice_solved
         inner join oj_practice_operation
         on oj_practice_solved.practice_id = oj_practice_operation.resource_id
@@ -156,7 +157,8 @@
 
     <select id="getOperationInfo" resultType="com.cyberpeace.oj.practice.controller.res.OperationRecordRes">
         select oj_practice_operation.resource_id practice_id, title, difficulty, practice_set.name as set_name, knowledge,
-        practice_set.tag as tag, oj_practice_operation.category as category
+        practice_set.tag as tag, oj_practice_operation.category as category,
+        oj_practice_operation.is_true as `isTrue`
         from oj_practice_operation
         left join oj_practice_set as practice_set
         on oj_practice_operation.practice_set_id = practice_set.resource_id

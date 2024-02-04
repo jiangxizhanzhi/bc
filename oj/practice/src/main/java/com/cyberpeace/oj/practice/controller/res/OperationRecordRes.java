@@ -40,4 +40,7 @@ public class OperationRecordRes implements Serializable {
 
 	@ApiModelProperty("运维题识别id")
 	private String raceId;
+
+	@ApiModelProperty("是否真题")
+	private Boolean isTrue;
 }

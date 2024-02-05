@@ -19,7 +19,6 @@ import java.util.List;
 @Api(tags = "获取系统变量")
 @RestController
 @RequestMapping("/system_property")
-@RequiresAuthentication
 @Slf4j
 public class SystemPropertyController {
 

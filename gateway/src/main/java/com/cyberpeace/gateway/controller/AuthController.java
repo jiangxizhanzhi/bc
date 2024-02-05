@@ -68,8 +68,7 @@ public class AuthController {
 	public BaseRsp<PathContext> getVulnPath() {
 
 		PathContext pathContext = new PathContext();
-		String path = String.format("http://%s:%s%s?token=%s", WJ_IP, WJ_WEB_PORT, WJ_WEB_PATH,
-				getToken(null));
+		String path = String.format("http://%s:%s%s", WJ_IP, WJ_WEB_PORT, WJ_WEB_PATH);
 		pathContext.setPath(path);
 		return new BaseRsp<>(pathContext);
 

@@ -46,6 +46,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	private String OPS_HISTORY_LIST_URL;
 
+	private String QUESTION_OPS_SOLVED_URL;
+
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
@@ -58,6 +60,8 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 				+ ConfigUtil.getContextProperty("ad.exam.history.list");
 		QUESTION_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.exam.question.list");
+		QUESTION_OPS_SOLVED_URL = adEnvService.getAdHost()
+				+ ConfigUtil.getContextProperty("ad.ops.solved.map");
 		USER_DATA_CLEAR_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.user.data.clear");
 		OPS_HISTORY_LIST_URL = adEnvService.getAdHost()
@@ -121,6 +125,11 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 			return new ArrayList<>();
 		}
 		return jsonArray.toJavaList(OpsQuestionBo.class);
+	}
+
+	@Override
+	public JSONObject queryOpsSolvedMap() {
+		return HttpClientUtil.rawGet(QUESTION_OPS_SOLVED_URL, JSONObject.class);
 	}
 
 	@Override

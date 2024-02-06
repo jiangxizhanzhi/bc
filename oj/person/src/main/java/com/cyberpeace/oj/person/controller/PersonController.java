@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -39,7 +40,6 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
-import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -169,8 +169,10 @@ public class PersonController {
 		Map<String, Integer> lessonMap = StreamApiUtils.toMap(lessonRecords, LessonRecord::getUserId, LessonRecord::getLearnedType);
 		Integer lessonAllCount = courseLessonMapper.selectCount(new QueryWrapper<>());
 
+		// 解出记录表中，不包含运维题，需要从竞赛获取
         List<StudyRecord> studyRecord = personCenterMapper.selectSlovedPractice(userIds);
         Map<String, StudyRecord> map = StreamApiUtils.toMap(studyRecord, StudyRecord::getUserId, s -> s);
+		JSONObject jsonObject = remoteAdService.queryOpsSolvedMap();
 
         int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
         int operationPracticeAllCount = personCenterMapper.selectOperationPracticeByAuth().size();
@@ -178,12 +180,17 @@ public class PersonController {
 		Map<String, JSONObject> userExamPassMap = remoteAdService.examPassList(userIds);
 
         res = userInfos.stream().map(s -> {
-            StudyRecord record = map.get(s.getResourceId());
+			JSONArray jsonArray = jsonObject.getJSONArray(s.getResourceId());
+			int opsSolved = jsonArray == null ? 0:jsonArray.size();
+			StudyRecord record = map.get(s.getResourceId());
             PersonStatsBo personStatsBo = new PersonStatsBo();
             if (null != record) {
                 personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? "0%": record.getTheoryPracticeCount()*100 / theoryPracticeAllCount+"%");
-                personStatsBo.setOperateCorrectRate(record.getOperationPracticeCount() * operationPracticeAllCount == 0 ?"0%" : record.getOperationPracticeCount()*100 / operationPracticeAllCount+"%");
-            }
+                int practiceCount = record.getOperationPracticeCount() + opsSolved;
+                personStatsBo.setOperateCorrectRate(practiceCount * operationPracticeAllCount == 0 ?"0%" : practiceCount*100 / operationPracticeAllCount+"%");
+            }else {
+				personStatsBo.setOperateCorrectRate(opsSolved * operationPracticeAllCount == 0 ?"0%" : opsSolved*100 / operationPracticeAllCount+"%");
+			}
 
             if (lessonMap.containsKey(s.getResourceId())) {
                 personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ?"0%": lessonMap.get(s.getResourceId())*100 / lessonAllCount+"%");

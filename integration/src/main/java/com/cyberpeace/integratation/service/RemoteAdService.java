@@ -50,4 +50,7 @@ public interface RemoteAdService {
 	void clearUserData(String userId);
 
 	JSONArray queryHistoryOpsList();
+
+	JSONObject queryOpsSolvedMap();
+
 }

@@ -62,9 +62,10 @@ public class ListUtil {
 				if (StringUtils.isBlank(str)) {
 					continue;
 				}
-				builder.append(obj);
+				// 多行增加换行符
+				builder.append(obj).append(System.lineSeparator());
 			} else {
-				builder.append(JSON.toJSONString(obj));
+				builder.append(JSON.toJSONString(obj)).append(System.lineSeparator());
 			}
 		}
 

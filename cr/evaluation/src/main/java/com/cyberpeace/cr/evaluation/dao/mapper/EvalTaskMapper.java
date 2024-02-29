@@ -1,14 +1,14 @@
 package com.cyberpeace.cr.evaluation.dao.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSituationListRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
+import java.util.List;
 
 @Mapper
 @Repository
@@ -30,5 +30,7 @@ public interface EvalTaskMapper extends BaseMapper<EvalTask> {
 	 */
 	Boolean existByNameAndTemplateId(@Param("taskName") String taskName,
 			@Param("templateId") String templateId, @Param("taskId") String taskId);
+
+	List<EvalSituationListRsp> getAllEvalSituation();
 
 }

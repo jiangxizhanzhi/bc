@@ -2,6 +2,7 @@ package com.cyberpeace.config.ws;
 
 import java.util.Map;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -10,11 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.common.component.SelfDefinedWsChecker;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
 import com.cyberpeace.common.util.SpringContextUtil;
 import com.google.common.collect.Maps;
@@ -61,26 +60,12 @@ public class JwtHandShake implements HandshakeInterceptor {
 			return false;
 		}
 
-		UserInfo userInfo = null;
-
-		SysUserService sysUserService = SpringContextUtil.getBeanByClass(SysUserService.class);
-
-		try {
-			userInfo = sysUserService.getByToken(token);
-		} catch (Exception e) {
-			log.error("websocket handshake fail, path: {}, token:{}, error: {}", path, token, e.getMessage());
-			return false;
-		}
-
-		if (null == userInfo || StringUtils.isBlank(userInfo.getUserId())) {
-			log.error("websocket handshake fail,path {} remote user is null", path);
-			return false;
-		}
+		String userId = UserInfoContext.getUserContext().getUserId();
 
 		parametersMap.remove(TOKEN);
 
 		// 3、进行自定义校验
-		if (!selfDefinedCheck(parametersMap, path, userInfo.getUserId())) {
+		if (!selfDefinedCheck(parametersMap, path, userId)) {
 			return false;
 		}
 
@@ -89,7 +74,7 @@ public class JwtHandShake implements HandshakeInterceptor {
 
 		WebSocketConnectionContext context = WebSocketConnectionContext.builder()
 				.originParams(parametersMap).build();
-		context.setUserId(userInfo.getUserId());
+		context.setUserId(userId);
 
 		// 透传websocket连接的上下文
 		map.put("key", context);

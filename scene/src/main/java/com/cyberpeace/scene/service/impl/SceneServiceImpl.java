@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -17,7 +18,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -129,12 +129,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 	@Override
 	public BaseRsp startScene(SceneStartReq req) {
-		String userId = UserInfoContext.getNewUserContext().getResourceId();
-		SceneEntity instance = sceneMapper.selectByInstanceId(req.getInstanceId(), userId,
-				SceneEnum.getCodes());
-		if (!Objects.isNull(instance)) {
-			throw new BusinessException(ErrorCode.SCENE_ALREADY_EXIST);
-		}
 		Topology topology = topologyService.formatTopology(req.getTopologyId());
 		log.info("topology：{}", JsonUtil.toJsonString(topology));
 		if (topology == null) {
@@ -142,7 +136,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 		// 创建场景
 		SceneEntity scene = createScene(req.getTopologyId(), JsonUtil.toJsonString(topology),
-				req.getInstanceId(), userId, req.getInstanceType(), req.getDestroyTime());
+				req.getInstanceId(), "", req.getInstanceType(), req.getDestroyTime());
 		// 提交创建场景任务
 		executor.submit(() -> startScene(topology, scene));
 		log.info("submit create scene mission, scene ：{}", scene);
@@ -298,7 +292,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 	}
 
 	private SceneData getSceneData(String instanceId) {
-		String userId = UserInfoContext.getNewUserContext().getResourceId();
+		String userId = UserInfoContext.getUserContext().getUserId();
 		SceneEntity scene = sceneMapper.selectByInstanceId(instanceId, userId,
 				SceneEnum.getCodes());
 		if (Objects.isNull(scene)) {

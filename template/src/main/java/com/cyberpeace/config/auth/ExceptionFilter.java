@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -16,13 +17,11 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.impl.TraceIdContext;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
-import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -90,7 +89,7 @@ public class ExceptionFilter implements Filter {
 		}
 		if (e instanceof BindException) {
 			parseArgumentNotValidException(servletResponse, (BindException) e);
-		} else if (e instanceof UnauthorizedException || e instanceof AccessDeniedException) {
+		} else if (e instanceof UnauthorizedException) {
 			parseUnauthorizedException(servletResponse);
 		} else if (e instanceof ResourceNotFoundException) {
 			parseResourceNotFoundException(servletResponse, (ResourceNotFoundException) e);

@@ -66,40 +66,6 @@
             <version>${integration.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>rtks</artifactId>
-            <version>${rtks.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>course</artifactId>
-            <version>${oj.course.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>practice</artifactId>
-            <version>${oj.practice.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>oj_base</artifactId>
-            <version>${oj.base.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>person</artifactId>
-            <version>${oj.person.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.gateway</groupId>
-            <artifactId>gateway</artifactId>
-            <version>${gateway.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
         </dependency>
@@ -257,15 +223,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace</groupId>
-            <artifactId>user-auth</artifactId>
-            <version>${auth.user.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jna</groupId>
-            <artifactId>jna</artifactId>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.scene</groupId>

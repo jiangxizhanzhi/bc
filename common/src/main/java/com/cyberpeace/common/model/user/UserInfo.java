@@ -16,7 +16,7 @@ public class UserInfo implements Serializable {
     /**
      * 用户id，不要使用自增数字编号（必须）
      */
-    private String userId;
+    private String userId = "default_user";
     
 	/**
 	 * 姓名（文字显示）

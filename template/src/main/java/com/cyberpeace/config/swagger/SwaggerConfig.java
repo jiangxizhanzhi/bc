@@ -24,12 +24,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 @EnableOpenApi
 public class SwaggerConfig {
 
-	@Bean
-	public Docket apiRtks() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.rtks"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("rtks");
-	}
 
 	@Bean
 	public Docket apiTemplate() {
@@ -43,27 +37,6 @@ public class SwaggerConfig {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cs"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
 				.groupName("cs");
-	}
-
-	@Bean
-	public Docket apiOj() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("oj");
-	}
-
-	@Bean
-	public Docket apiGateway() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.gateway"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("outer");
-	}
-
-	@Bean
-	public Docket apiUa() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.auth"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("ua");
 	}
 
 	@Bean

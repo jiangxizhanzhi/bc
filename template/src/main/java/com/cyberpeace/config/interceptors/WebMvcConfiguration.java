@@ -16,22 +16,13 @@ import com.cyberpeace.common.util.CustomExceptionHandlerResolver;
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
-	@Autowired
-	private PracticeGateWayInterceptor practiceGateWayInterceptor;
 
 	@Autowired
 	private RequestInterceptor requestInterceptor;
 
-	@Autowired
-	private UserRoleInterceptor userRoleInterceptor;
-
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(practiceGateWayInterceptor).addPathPatterns("/gateway/theory/**",
-				"/gateway/exercise/**");
 		registry.addInterceptor(requestInterceptor);
-		registry.addInterceptor(userRoleInterceptor).addPathPatterns("/auth/**",
-				"/oj/person/**", "/cs/admin/**", "/system_config/set", "/oj/system/statics/**", "/index/**");
 	}
 
 	@Override

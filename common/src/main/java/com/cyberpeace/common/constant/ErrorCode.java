@@ -145,10 +145,6 @@ public final class ErrorCode {
 	/** 无操作权限*/
 	public static final String INTERFACE_UNAUTHORIZED = "100047";
 
-	public static final String SCENE_NOT_EXIST_ZH = "场景不存在";
-
-	public static final String SCENE_NOT_EXIST_EN = "Scene not exist";
-
 	/** 文件删除失败*/
 	public static final String FILE_DELETE_FAILED = "100048";
 
@@ -358,6 +354,10 @@ public final class ErrorCode {
 
 	/** 不支持的编码类型*/
 	public static final String UNSUPPORT_CHASET = "100101";
+
+	public static final String SCENARIO_NOT_EXIST = "100102";
+
+	public static final String SCENARIO_NOT_READY = "1000103";
 
 	private ErrorCode() {}
 }

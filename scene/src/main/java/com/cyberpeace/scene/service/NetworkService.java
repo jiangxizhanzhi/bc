@@ -39,4 +39,6 @@ public interface NetworkService extends IService<NetworkEntity> {
      * @return  进度
      */
     Integer getStage(String sceneId);
+
+	NetworkEntity create(String sceneId);
 }

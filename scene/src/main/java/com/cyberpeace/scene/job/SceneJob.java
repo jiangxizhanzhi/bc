@@ -12,7 +12,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.scene.constant.enums.ImageTypeEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
@@ -123,9 +122,7 @@ public class SceneJob {
                         //创建虚拟机
 						CreateInstanceRes res = hostService
 								.create(new CreateInstanceReq(hostElement, network));
-                        NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getInstanceName(), null,
-                                null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_HOST.getCode(),
-                                SceneEnum.CREATE.getCode(), res.getAddresses().toJSONString(), scene.getUserId(), hostElement.getId());
+						NodeEntity node = new NodeEntity();
                         hostElement.setNodeId(res.getUuid());
 						setPortMapping(hostElement, res.getNets());
                         //保存节点信息
@@ -140,9 +137,7 @@ public class SceneJob {
                         //创建容器
 						CreateContainersRes res = containerService
 								.create(new CreateContainerReq(containerElement, network));
-                        NodeEntity node = new NodeEntity(IDGeneratorUtil.getID(), res.getUuid(), res.getName(), null,
-                                null, null, res.getCpu(), res.getMemory(), res.getDisk(), res.getImage(), scene.getResourceId(), ImageTypeEnum.ELEMENT_TYPE_CONTAINER.getCode(),
-                                SceneEnum.CREATE.getCode(), null, scene.getUserId(), containerElement.getId());
+						NodeEntity node = new NodeEntity();
                         containerElement.setNodeId(res.getUuid());
 						setPortMapping(containerElement, res.getNets());
                         //保存节点信息
@@ -157,7 +152,6 @@ public class SceneJob {
                 scene.setSceneStatus(SceneEnum.ERROR.getCode());
                 throw new BusinessException(ErrorCode.FAILED_TO_CREATE_SCENE, e.getMessage());
             }finally {
-                scene.setMeta(JsonUtil.toJsonString(topology));
                 sceneService.updateById(scene);
             }
         }

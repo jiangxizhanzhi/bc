@@ -3,9 +3,7 @@ package com.cyberpeace.scene.job;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.scene.service.SceneService;
@@ -18,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
  * @desc :
  **/
 @Slf4j
-@Component
-@EnableScheduling
+// @Component
+// @EnableScheduling
 public class SceneScheduled {
 
     private String REPAIR_FILE;

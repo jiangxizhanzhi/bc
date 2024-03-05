@@ -1,7 +1,6 @@
 package com.cyberpeace.scene.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
@@ -21,18 +20,6 @@ public class NetworkEntity extends BaseTable {
 	private String resourceId;
 
     private String uuid;
-
-	private String elementId;
-
-    /**
-     * 用户名
-     */
-    private String user;
-
-    /**
-     * 项目名
-     */
-    private String project;
 
     /**
      * 网络名
@@ -74,6 +61,4 @@ public class NetworkEntity extends BaseTable {
      */
     private Integer networkStatus;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }

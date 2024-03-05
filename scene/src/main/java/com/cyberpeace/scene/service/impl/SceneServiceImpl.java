@@ -5,7 +5,6 @@ import java.util.*;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -25,6 +24,7 @@ import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.*;
@@ -434,7 +434,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		entity.setSid(scene.getResourceId());
 		entity.setType(element.getType());
 		entity.setStatus(SceneEnum.CREATE.getCode());
-		entity.setUserId(scene.getUserId());
 		entity.setNid(element.getId());
 		nodeService.save(entity);
 
@@ -445,12 +444,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 				CreateInstanceRes rsp = hostService.create(new CreateInstanceReq(element, network));
 				entity.setInstanceId(rsp.getUuid());
 				entity.setName(rsp.getInstanceName());
-				entity.setCpu(rsp.getCpu());
-				entity.setMemory(rsp.getMemory());
-				entity.setDisk(rsp.getDisk());
 				entity.setTid(rsp.getImage());
 				entity.setStatus(SceneEnum.ACTIVE.getCode());
-				entity.setAddresses(rsp.getAddresses().toJSONString());
 				entity.setIp(getIp(rsp.getAddresses()));
 				// update topo
 				setPortMapping(element, rsp.getNets());
@@ -461,9 +456,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 						.create(new CreateContainerReq(element, network));
 				entity.setInstanceId(rsp.getUuid());
 				entity.setName(rsp.getName());
-				entity.setCpu(rsp.getCpu());
-				entity.setMemory(rsp.getMemory());
-				entity.setDisk(rsp.getDisk());
 				entity.setTid(rsp.getImage());
 				entity.setStatus(SceneEnum.ACTIVE.getCode());
 				entity.setIp(getIp(rsp.getAddresses()));
@@ -502,8 +494,7 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 	private SceneData makeSceneData(SceneEntity scene) {
 		SceneData sceneData = new SceneData();
-		String topo;
-		topo = scene.getMeta();
+		String topo = "";
 		Date currentTime = new Date();
 		long remainTime = (scene.getDestroyTime().getTime() - currentTime.getTime()) / 1000;
 		sceneData.setRemainingTime((int) remainTime);
@@ -580,13 +571,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 			destroyTime = TimeUtil.addHours(startTime, destroy);
 		}
 		scene.setDestroyTime(destroyTime);
-		scene.setInstanceType(instanceType);
-		scene.setInstanceId(instanceId);
-		scene.setTopologyId(topologyId);
-		scene.setUserId(userId);
 		scene.setSceneTtl(SCENE_DESTROY);
 		scene.setSceneStatus(SceneEnum.INIT.getCode());
-		scene.setMeta(topoJson);
 		sceneMapper.insert(scene);
 		return scene;
 	}
@@ -724,8 +710,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		MyWebSocketHandler webSocketHandler = SpringContextUtil
 				.getBeanByClass(MyWebSocketHandler.class);
 		SceneWsIdentifier identifier = new SceneWsIdentifier();
-		identifier.setBusinessId(scene.getInstanceId());
-		identifier.setUserId(scene.getUserId());
 		identifier.setPath(WsPath.CR_SCENE);
 
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
@@ -903,8 +887,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		JSONObject message = new JSONObject();
 		message.put(JsonKeyConstant.CODE, CommonConstant.SCENE_CREATE_FINISH);
 		SceneWsIdentifier identifier = new SceneWsIdentifier();
-		identifier.setBusinessId(scene.getInstanceId());
-		identifier.setUserId(scene.getUserId());
 		identifier.setPath(WsPath.CR_SCENE);
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(message).messageIdentifier(identifier).build();

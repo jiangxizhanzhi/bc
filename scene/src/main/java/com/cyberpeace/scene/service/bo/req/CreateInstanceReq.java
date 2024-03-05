@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.scene.dao.entity.ImageEntity;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
 import com.cyberpeace.scene.service.bo.AccessMode;
 import com.cyberpeace.scene.service.bo.Net;
@@ -62,6 +63,23 @@ public class CreateInstanceReq implements Serializable {
 		} else {
 			this.name = hostElement.getImage();
 		}
+		this.nets = netList;
+	}
+
+	public CreateInstanceReq(ImageEntity image, NetworkEntity network) {
+		Net net = new Net(network.getUuid());
+		NetAccessMode mode = new NetAccessMode();
+		mode.setProtocol("rdp");
+		mode.setPort(image.getPort());
+		mode.setUsername(image.getUsername());
+		mode.setPassword(image.getPassword());
+		mode.setEnable_port_mapping(true);
+
+		net.getAccess_modes().add(mode);
+		List<Net> netList = Lists.newArrayList();
+		netList.add(net);
+
+		this.name = image.getName();
 		this.nets = netList;
 	}
 

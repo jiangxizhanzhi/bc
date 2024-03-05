@@ -58,9 +58,6 @@ public class HostServiceImpl implements HostService {
     @Override
     public CreateInstanceRes create(CreateInstanceReq req) {
         log.info("start create instance req : {}", req);
-        if (Objects.isNull(req)){
-            throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
-        }
         ImageRes imageInfo = imageService.getImageInfo(req.getName());
         if (Objects.isNull(imageInfo)){
             throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);

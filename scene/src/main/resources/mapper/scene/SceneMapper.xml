@@ -63,4 +63,11 @@
         <bind name="search" value="'%' + raceId + '%'"/>
         select resource_id from cr_scene where instance_id like #{search}
     </select>
+    <select id="selectByScenario" resultType="com.cyberpeace.scene.dao.entity.SceneEntity">
+        select *
+        from cr_scene
+        where scenario = #{scenario}
+        order by id desc
+        limit 1
+    </select>
 </mapper>

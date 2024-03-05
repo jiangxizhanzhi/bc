@@ -39,4 +39,5 @@ public interface SceneMapper extends BaseMapper<SceneEntity> {
 
     List<String> selectByRaceId(@Param("raceId") String raceId);
 
+	SceneEntity selectByScenario(@Param("scenario") Integer scenario);
 }

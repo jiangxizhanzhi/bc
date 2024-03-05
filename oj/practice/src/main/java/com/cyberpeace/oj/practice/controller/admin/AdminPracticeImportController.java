@@ -3,6 +3,8 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.util.List;
 
 import com.cyberpeace.oj.practice.controller.req.DuplicatePracticeSetInspectReq;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -56,6 +58,24 @@ public class AdminPracticeImportController {
 		}
 
 		return baseRsp;
+	}
+
+	@ApiOperation("实操习题导出")
+	@GetMapping("/rm/ctf/export")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "set_id", value = "习题编号"),
+			@ApiImplicitParam(name = "practice_id", value = "习题编号"),
+			@ApiImplicitParam(name = "new_path", value = "是否生成新路径"),
+			@ApiImplicitParam(name = "disable_image_export", value = "是否禁止镜像导出") })
+	public BaseRsp<String> export(
+			@RequestParam(name = "set_id", required = false) String practiceSetId,
+			@RequestParam(name = "practice_id", required = false) String practiceId,
+			@RequestParam(name = "new_path", required = false, defaultValue = "false") Boolean newPath,
+			@RequestParam(name = "disable_image_export", required = false) Boolean disableImageExport) {
+
+		String filePath = practiceSetService.exportPracticeSet(practiceSetId, practiceId, newPath,
+				disableImageExport);
+
+		return new BaseRsp<>(filePath);
 	}
 
 

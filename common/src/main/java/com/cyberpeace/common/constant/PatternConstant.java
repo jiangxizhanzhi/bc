@@ -58,4 +58,33 @@ public interface PatternConstant {
 	String VERTICAL_LINE = "\\|";
 
 	String CODING_BLOCK = "`(?:(.*$)\\n)?([\\s\\S]*)`";
+
+	public static final String PARSER_MD_TITLE = "#{1,6}[^#]+";
+
+	/** 一级列表*/
+	public static final String MD_LIST = "- ";
+
+	/** 二级列表*/
+	public static final String SECOND_MD_LIST = "  - ";
+
+	/** 选择题答案匹配*/
+	public static final String CHOICE_ANSWER = "^[a-zA-Z|]+$";
+
+	/** 判断题答案*/
+	public static final String JUDGEMENT_ANSWER = "^[a-zA-Z]$";
+
+	/** 匹配markdown文件中的链接*/
+	public static final String MARKDOWN_URL = "[^!]\\[.*?\\]\\(.+?\\)";
+
+	/** 匹配<p></p>标签*/
+	public static final String HTML_P = "<p>(?:(?!<\\/p>)[\\s\\S])*<\\/p>";
+
+	/** 题目答案使用*/
+	public static final String ANWSER_SPLIT_STR = "-{1}[^-]+";
+
+	/** 题目属性使用*/
+	public static final String ATTRIBUTE_SPLIT_STR = " {2}-{1}[^-]+";
+
+	public static final String PARSER_THEORY_MD_TITLE = "#{1,2}[^#]+";
+
 }

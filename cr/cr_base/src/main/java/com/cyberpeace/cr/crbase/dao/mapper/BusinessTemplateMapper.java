@@ -47,4 +47,7 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 	IPage<BusinessTemplateSimple> listSimple(@Param("page") Page page, @Param("type") Integer type,
 			@Param("difficulty") Integer difficulty, @Param("pattern") String pattern);
+
+	List<BusinessTemplate> getAllByIds(@Param("resourceIds") List<String> resourceIds,
+									   @Param("type") Integer type);
 }

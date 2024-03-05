@@ -194,4 +194,32 @@ public interface OjBusinessErrorCode {
 
 	/** 第xxx行 文件内容缺失*/
 	String TIME_FORMAT_ERROR = "102063";
+
+	/** 导出resource_id错误 资源不存在*/
+    String RESOURCE_ID_NOT_EXIST = "102067";
+
+	/** 该课程包含课时没有所属章节*/
+	String LESSON_WITHOUT_CHAPTER = "102072";
+
+	/** 实操习题导出失败*/
+	String OPERATION_EXPORT_FAILED = "102068";
+
+	/** 附件数量和答案长度不一致*/
+	String PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT = "102065";
+
+	/** 课程无LOGO*/
+	String NO_DEFAULT_COURSE_LOGO = "102079";
+
+	/** 实操习题集导出失败*/
+	String OPERATION_SET_EXPORT_FAILED = "102069";
+
+	/** 实操习题查询失败*/
+	String OPERATION_EXPORT_QUERY_FAILED = "102070";
+
+	/** 部分附件缺失*/
+	String ATTACHMENT_MISSION = "102071";
+
+	/** xxx习题集无LOGO*/
+	String PRACTICE_SET_NO_LOGO = "102074";
+
 }

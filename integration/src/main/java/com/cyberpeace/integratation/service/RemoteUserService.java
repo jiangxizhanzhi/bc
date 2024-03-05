@@ -49,4 +49,11 @@ public interface RemoteUserService {
 
 	Set<String> getUserPermission(String userId);
 
+
+	/**
+	 * 获取mp所有用户
+	 * @return
+	 */
+	List<UserInfo> getAllUsers();
+
 }

@@ -87,4 +87,18 @@
         where course_id = #{courseId}
         and name = #{name}
     </select>
+    <select id="selectMinIndex" resultType="java.lang.Integer">
+        SELECT Min(`index`)  FROM `oj_lesson_config`
+        <where>
+            course_id = #{courseId}
+        </where>
+        and node_type = 2
+    </select>
+    <select id="selectChapterCount" resultType="java.lang.Integer">
+        SELECT count(resource_id)  FROM `oj_lesson_config`
+        <where>
+            course_id = #{courseId}
+        </where>
+        and node_type = 1
+    </select>
 </mapper>

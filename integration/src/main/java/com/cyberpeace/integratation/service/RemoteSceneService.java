@@ -160,4 +160,7 @@ public interface RemoteSceneService {
 	List<MpCollectionEvent>
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
 
+
+	JSONObject sceneDump(SceneDumpContext sceneDumpContext);
+
 }

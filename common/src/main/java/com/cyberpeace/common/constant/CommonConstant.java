@@ -87,4 +87,16 @@ public interface CommonConstant {
 
 	String ADMIN_ID = "3f655d87112f4ae094bbaf70830e20aa";
 
+	public static final String SPACE = " ";
+
+
+	/** 底层 中台 靶场 竞赛共享目录*/
+	String SHARE_DIR = "/data/resource/export/";
+
+	String EXPORT_CTF_PATH = SHARE_DIR + "CTF";
+
+	String MD_IMAGE_TEMPLATE = "![](%s)";
+
+	String EXPORT_TRAIN_PATH =  SHARE_DIR + "train/";
+
 }

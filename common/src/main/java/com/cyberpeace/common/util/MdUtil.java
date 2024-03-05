@@ -2,7 +2,9 @@ package com.cyberpeace.common.util;
 
 import java.io.*;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -330,5 +332,103 @@ public class MdUtil {
 				// 对象未创建空指针异常捕获，不做任何处理
 			}
 		}
+	}
+
+	public static File saveAsFileWriter(String content, String savefile) {
+		File file = new File(savefile);
+		try {
+			if (file.exists()) {
+				log.info("saveAsFileWriter file already exists: [{}]", savefile);
+			} else {
+				boolean newFileFlag = file.createNewFile();
+				if (!newFileFlag) {
+					log.info("saveAsFileWriter failed to create new file: [{}]", savefile);
+				}
+			}
+
+			try (FileWriter fileWriter = new FileWriter(file)) {
+				fileWriter.write(content);
+			}
+
+		}catch (IOException ex){
+			ex.printStackTrace();
+		}
+
+		return file;
+	}
+
+	/**
+	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
+	 * @param mdFile md文件
+	 * @param content md内容
+	 * @return
+	 */
+	public static String dumpMarkdownImages(File mdFile, String content) {
+		String img = new File(mdFile.getParentFile().getAbsolutePath(), "img").getAbsolutePath();
+		FileUtil.mkdirs(img);
+
+		// 匹配文件路径
+		String withOutCode = filterCodeContent(content);
+		List<String> matchStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
+				PatternConstant.MARKDOWN_IMAGE_MD_URL);
+
+		// 匹配文件src地址
+		List<String> matchSrcStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
+				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
+		matchStrList.addAll(matchSrcStrList);
+
+		// markdown中引用重复文件, 避免String.replace替换多次, 转为Set（zentao 9894）
+		Set<String> matchStrSet = Sets.newHashSet(matchStrList);
+
+		// 文件路径替换
+		for (String imagePath : matchStrSet) {
+			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
+			String realPath = getRealPath(imagePath);
+			File source = new File(realPath);
+			if (!source.exists()) {
+				log.error("source is not   exist! realPath = [{}]",realPath);
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
+			}
+
+			File dist = new File(img, source.getName());
+			if (!dist.exists()) {
+				FileUtil.copyFile(source.getAbsolutePath(), dist.getAbsolutePath(), false);
+			}
+
+			content = content.replace(imagePath, "img/" + dist.getName());
+		}
+
+		return content;
+	}
+
+	private static String getRealPath(String fileUrl) {
+
+		String localPrefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
+		String localParentPath = ConfigUtil.getContextProperty("cr.local.upload.path");
+
+		if (StringUtils.isNotBlank(fileUrl)) {
+			if (fileUrl.startsWith(localParentPath)) {
+				return fileUrl;
+			}
+
+			if (fileUrl.startsWith(localPrefix)) {
+				return fileUrl.replace(localPrefix, localParentPath + File.separator);
+			}
+
+			return localParentPath + File.separator + fileUrl;
+
+		}
+
+		return fileUrl;
+	}
+
+	/**
+	 * md内容写入文件 对应的文件写入md同级的img目录
+	 * @param file
+	 * @param content
+	 */
+	public static void writeMdToFile(File file, String content) {
+		String mdContent = dumpMarkdownImages(file, content);
+		FileUtil.writeToDestFile(mdContent, file.getAbsolutePath());
 	}
 }

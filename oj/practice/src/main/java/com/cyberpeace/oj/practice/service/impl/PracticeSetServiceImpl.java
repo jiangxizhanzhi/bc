@@ -5,8 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.mdparser.MdParser;
+import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -78,6 +83,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
+
+	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
@@ -701,4 +708,155 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 
 	}
+
+	@Override
+	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
+		return practiceTheoryService.exportMdTheoryPractice(path, theories);
+	}
+
+
+	@Override
+	public String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport) {
+
+		Map<String, List<PracticeOperation>> operationMap;
+		List<PracticeOperation> operationList;
+		List<PracticeSet> setList;
+
+		EXPORT_LOG.info("----------start export practice-----------");
+		try {
+			// 查询要导出的习题集
+			EXPORT_LOG.info("Practice set query....");
+			setList = setListByIds(practiceSetId, practiceId);
+			List<String> setIds = StreamApiUtils.map(setList, PracticeSet::getResourceId);
+
+			// 查询导出的习题数据
+			EXPORT_LOG.info("Practice operation query....");
+			operationList = practiceOperationService.selectExportPractice(setIds, practiceId);
+			operationMap = StreamApiUtils.groupBy(operationList,
+					PracticeOperation::getPracticeSetId);
+		} catch (Exception e) {
+			EXPORT_LOG.error("Practice operation export data query failed! catch error:", e);
+			throw new BusinessException(OjBusinessErrorCode.OPERATION_EXPORT_QUERY_FAILED);
+		}
+
+		String destPath = newPath ? CommonConstant.SHARE_DIR + IDGeneratorUtil.getID()
+				: CommonConstant.EXPORT_CTF_PATH;
+		EXPORT_LOG.info("Practice operation export path create successfully, path=[{}]", destPath);
+
+		for (PracticeSet practiceSet : setList) {
+			EXPORT_LOG.info("Start export {} practice set....", practiceSet.getName());
+
+			String setPath;
+			try {
+				setPath = doExportSet(destPath, practiceSet);
+			} catch (BusinessException e) {
+				throw e;
+			} catch (Exception e) {
+				EXPORT_LOG.error("Practice set export failed! set_name=[{}], catch error:",
+						practiceSet.getName(), e);
+				throw new BusinessException(OjBusinessErrorCode.OPERATION_SET_EXPORT_FAILED,
+						practiceSet.getName());
+			}
+
+			List<PracticeOperation> operations = operationMap.get(practiceSet.getResourceId());
+			practiceOperationService.exportPractice(setPath, operations, disableImageExport);
+
+			EXPORT_LOG.info("export {} practice set successfully", practiceSet.getName());
+		}
+
+		EXPORT_LOG.info( "----------end export practice-----------");
+		return destPath;
+	}
+
+	private List<PracticeSet> setListByIds(String setId, String practiceId) {
+
+		if (StringUtils.isNotBlank(practiceId)) {
+			List<PracticeOperation> operations = practiceListByIds(practiceId);
+
+			List<PracticeSet> setList = StreamApiUtils.map(operations,
+					operation -> practiceValidateHandler.validateSetType(
+							operation.getPracticeSetId(),
+							PracticeSet.PracticeType.OPERATION.getCode()));
+			return StreamApiUtils.distinctByColumn(setList, PracticeSet::getResourceId);
+		}
+
+		if (StringUtils.isNotBlank(setId)) {
+			return StreamApiUtils.map(Arrays.asList(setId.split(CommonConstant.CODE_COMMA)),
+					id -> practiceValidateHandler.validateSetType(id,
+							PracticeSet.PracticeType.OPERATION.getCode()));
+		}
+
+		return practiceSetMapper.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), false);
+	}
+
+	private List<PracticeOperation> practiceListByIds(String practiceId) {
+		if (StringUtils.isBlank(practiceId)) {
+			return Lists.newArrayList();
+		}
+
+		List<String> practiceIds = Lists.newArrayList(practiceId.split(CommonConstant.CODE_COMMA));
+		return StreamApiUtils.map(practiceIds,
+				id -> practiceValidateHandler.validateOperationExist(id));
+	}
+
+
+	private String doExportSet(String destPath, PracticeSet practiceSet) {
+
+		if (StringUtils.isBlank(practiceSet.getLogo())) {
+			if (new File(ResourceDumpConstant.DEFAULT_LOGO_PATH).exists()) {
+				log.warn("use default logo [{}]", ResourceDumpConstant.DEFAULT_LOGO_PATH);
+				practiceSet.setLogo(ResourceDumpConstant.DEFAULT_LOGO_PATH);
+			} else {
+				log.error("file is not exist ! path=[{}]",
+						ResourceDumpConstant.DEFAULT_LOGO_PATH);
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_NO_LOGO,
+						practiceSet.getName());
+			}
+
+		}
+		String path = createPath(destPath, practiceSet.getName());
+		EXPORT_LOG.info("Practice set path create successfully! set_path=[{}]", path);
+
+		File README = new File(path, ResourceImportConstant.README_NAME);
+
+		if (!README.exists()) {
+			EXPORT_LOG.info("Start export practice set README.md, readme_path=[{}]",
+					README.getAbsolutePath());
+			MdPracticeSet mdPracticeSet = entityToMd(practiceSet);
+
+			if (StringUtils.isNotBlank(practiceSet.getLogo())) {
+				String realPath = utilService.getRealPath(practiceSet.getLogo());
+				File destLogoFile = new File(path, ResourceImportConstant.PNG_LOGO);
+
+				if (!destLogoFile.exists()) {
+					EXPORT_LOG.info("Start export practice set logo, logo_path=[{}]",
+							destLogoFile.getAbsolutePath());
+					FileUtil.copyFile(new File(realPath), destLogoFile);
+					EXPORT_LOG.info("export practice set logo successfully");
+				}
+
+				mdPracticeSet.setLogo(String.format(CommonConstant.MD_IMAGE_TEMPLATE,
+						ResourceImportConstant.PNG_LOGO));
+			}
+
+			MdParser mdParser = new MdParser();
+			mdParser.write(mdPracticeSet, README);
+
+			EXPORT_LOG.info("export practice set README.md successfully");
+		}
+
+		return path;
+	}
+
+	private String createPath(String destPath, String setName) {
+		File setPath = new File(destPath, setName);
+		FileUtil.createPath(setPath);
+		return setPath.getAbsolutePath();
+	}
+
+	/** 数据类型转换*/
+	private MdPracticeSet entityToMd(PracticeSet practiceSet) {
+		return BeanUtils.copy(practiceSet, MdPracticeSet.class);
+	}
+
 }

@@ -119,4 +119,7 @@ public interface ErrorCode {
 
 	/** shell执行失败*/
 	String LOCAL_SHELL_EXEC_FAILED = "100041";
+
+	/** 找不到文件: [%s]*/
+	String FILE_ERROR_FAIL = "100046";
 }

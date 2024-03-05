@@ -8,6 +8,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
 import java.util.List;
 
@@ -109,4 +110,6 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param logContent
 	 */
 	void createMpLog(String practiceId, LogContent logContent);
+
+	MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 }

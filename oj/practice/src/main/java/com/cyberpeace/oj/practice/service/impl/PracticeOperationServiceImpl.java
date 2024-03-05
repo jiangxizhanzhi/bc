@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -23,6 +24,7 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -48,9 +50,12 @@ import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -139,6 +144,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
+
+
+	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -1086,7 +1094,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeOperation practiceOperation = operationData.toJavaObject(PracticeOperation.class);
 		operation.setTitle(practiceOperation.getTitle());
-		operation.setContent(practiceOperation.getTitle());
+		operation.setContent(practiceOperation.getContent());
 
 		return operation;
 
@@ -1217,5 +1225,228 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
 				OperationType.EXERCISE, LogContent.EXERCISE.getMsg(), content);
 	}
+
+	@Override
+	public List<PracticeOperation> selectExportPractice(List<String> setIds, String practiceId) {
+
+		// 查询所有的习题
+		return practiceListByIds(setIds, practiceId);
+	}
+
+
+	/**
+	 * 查询习题列表
+	 * @param setIds 习题集编号
+	 * @param practiceId 习题编号 ,分割
+	 * @return
+	 */
+	private List<PracticeOperation> practiceListByIds(List<String> setIds, String practiceId) {
+
+		List<String> practiceIds = Lists.newArrayList();
+
+		if (StringUtils.isNotBlank(practiceId)) {
+			String[] tmpIds = practiceId.split(CommonConstant.CODE_COMMA);
+			practiceIds.addAll(Arrays.asList(tmpIds));
+		} else {
+			List<String> ids = practiceOperationMapper.selectBySetIds(setIds, false);
+			practiceIds.addAll(ids);
+		}
+
+		return practiceOperationMapper.selectBatchIds(practiceIds);
+	}
+
+	@Override
+	public void exportPractice(String setPath, List<PracticeOperation> operations, Boolean disableImageExport) {
+
+		for (PracticeOperation operation : operations) {
+			try {
+				doExport(setPath, operation, disableImageExport);
+			} catch (Exception e) {
+				EXPORT_LOG.error(
+						"Practice operation export failed!, set_path=[{}], practice_name=[{}], catch error:",
+						setPath, operation.getTitle(), e);
+				throw new BusinessException(OjBusinessErrorCode.OPERATION_EXPORT_FAILED,
+						operation.getTitle());
+			}
+		}
+	}
+
+	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {
+		EXPORT_LOG.info("Start export practice {}....", operation.getTitle());
+
+		String path = createOperationPath(setPath, operation);
+
+		// README文件导出
+		File readmeFile = new File(path, ResourceImportConstant.README_NAME);
+		if (!readmeFile.exists()) {
+			MdCtfBase mdCtfBase = entityToMd(operation);
+			MdParser mdParser = new MdParser();
+			mdParser.write(mdCtfBase, readmeFile);
+		}
+		EXPORT_LOG.info("{} README.md export successfully", operation.getTitle());
+
+		// 附件导出
+		File attachmentDir = new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT);
+		exportAttachment(attachmentDir.getAbsolutePath(), operation.getAttachmentId());
+		EXPORT_LOG.info("{} attachment export successfully", operation.getTitle());
+
+		// 题解文件导出
+		if (StringUtils.isNotBlank(operation.getWriteup())) {
+			File file = new File(path, ResourceImportConstant.WRITEUP);
+			exportWriteup(file.getAbsolutePath(), operation.getWriteup());
+		}
+		EXPORT_LOG.info("{} writeup.md export successfully", operation.getTitle());
+
+		// topo和镜像导出
+		if (StringUtils.isNotBlank(operation.getTopoId())) {
+			SceneDumpContext dumpContext = exportSceneReq(operation, path, disableImageExport);
+			remoteSceneService.sceneDump(dumpContext);
+			EXPORT_LOG.info("{} topo and images export successfully", operation.getTitle());
+		}
+
+		EXPORT_LOG.info("Export practice [{}] successfully", operation.getTitle());
+	}
+
+	/**
+	 * 获取场景导出请求体
+	 * @param operation
+	 * @return
+	 */
+	private SceneDumpContext exportSceneReq(PracticeOperation operation, String practicePath, Boolean disableImageExport) {
+		SceneDumpContext dumpContext = new SceneDumpContext();
+		dumpContext.setId(operation.getTopoId());
+
+		File envPath = new File(practicePath, ResourceImportConstant.ENV);
+		dumpContext.setSingle_image_path(envPath.getAbsolutePath());
+		dumpContext.setEnv_path(envPath.getAbsolutePath());
+		dumpContext.setDisable_image_export(disableImageExport);
+
+		return dumpContext;
+	}
+
+	/**
+	 * 创建操作习题文件夹
+	 * @param setPath
+	 * @param operation
+	 * @return
+	 */
+	private String createOperationPath(String setPath, PracticeOperation operation) {
+		File practicePath = new File(setPath, operation.getTitle());
+		FileUtil.createPath(practicePath);
+
+		FileUtil.createManyPath(practicePath.getAbsolutePath(),
+				ResourceImportConstant.PRACTICE_ATTACHMENT, ResourceImportConstant.ENV,
+				ResourceImportConstant.SCRIPT, ResourceImportConstant.WRITEUP);
+
+		EXPORT_LOG.info("{} file directory create finish....", operation.getTitle());
+		return practicePath.getAbsolutePath();
+	}
+
+	/**
+	 * 数据类型转换
+	 * @param operation
+	 * @return
+	 */
+	private MdCtfBase entityToMd(PracticeOperation operation) {
+
+		MdCtfBase ctfBase = BeanUtils.copy(operation, MdCtfBase.class);
+		UserInfo byId = remoteUserService.getById(operation.getCreateUserId());
+		if (null != byId) {
+			ctfBase.setAuthor(byId.getName());
+		}
+
+		PracticeCategory category = practiceCategoryMapper.selectById(operation.getCategoryId());
+		if (null != category) {
+			ctfBase.setCategory(category.getName());
+		}
+
+		if (StringUtils.isNotBlank(operation.getKnowledge())) {
+			ctfBase.setKnowledge(
+					JsonUtil.toJsonObjectArray(operation.getKnowledge(), String.class));
+		}
+
+		List<String> answers = JsonUtil.toJsonObjectArray(operation.getAnswer(), String.class);
+
+		if (operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
+				.getCode()) {
+			MdCtfRandom copy = BeanUtils.copy(ctfBase, MdCtfRandom.class);
+			Map<String, String> fileFlag = formatterRandom(operation.getAttachmentId(), answers);
+			copy.setFlag(fileFlag);
+			return copy;
+
+		} else {
+			MdCtf copy = BeanUtils.copy(ctfBase, MdCtf.class);
+			copy.setFlag(answers);
+			return copy;
+		}
+	}
+
+	/**
+	 * 附件导出 存在不进行再次导出
+	 * @param dir
+	 * @param attachmentId
+	 */
+	private void exportAttachment(String dir, String attachmentId) {
+		if (StringUtils.isBlank(attachmentId)) {
+			return;
+		}
+
+		String[] fileIds = StringUtils.split(attachmentId, CommonConstant.CODE_COMMA);
+		for (String fileId : fileIds) {
+			Attachment attachment = attachmentMapper.selectById(fileId);
+			String realPath = utilService.getRealPath(attachment.getFilePath());
+
+			File source = new File(realPath);
+			File distFile = new File(dir, source.getName());
+			if (!distFile.exists()) {
+				FileUtil.copyFile(source, distFile);
+			}
+		}
+	}
+
+	/**
+	 * 导出题解文件
+	 * @param writeupDir
+	 * @param content
+	 */
+	private void exportWriteup(String writeupDir, String content) {
+		File writeupFile = new File(writeupDir, ResourceImportConstant.WRITEUP_MD);
+		MdUtil.writeMdToFile(writeupFile, content);
+	}
+
+	/**
+	 * 随机flag数据转换
+	 * @param attachmentId
+	 * @param answers
+	 * @return
+	 */
+	private Map<String, String> formatterRandom(String attachmentId, List<String> answers) {
+		Map<String, String> fileFlag = Maps.newTreeMap();
+		String[] files = attachmentId.split(CommonConstant.CODE_COMMA);
+
+		if (files.length != answers.size()) {
+			log.error("files.length != answers.size()! attachmentId=[{}]", attachmentId);
+			throw new BusinessException(
+					OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
+		}
+
+		for (int i = 0; i < files.length; i++) {
+			Attachment attachment = attachmentMapper.selectById(files[i]);
+			String realPath = utilService.getRealPath(attachment.getFilePath());
+
+			File file = new File(realPath);
+			if (!file.exists()) {
+				log.error("file is not exists! realPath=[{}]", realPath);
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
+			}
+
+			fileFlag.put(file.getName(), answers.get(i));
+		}
+
+		return fileFlag;
+
+	}
+
+
 
 }

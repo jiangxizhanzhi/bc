@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.integratation.model.mp.MpAuthPermission;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -48,6 +53,17 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private String ORG_INFO_LIST_URL;
 
 	private String AUTH_PERMISSION_MENUS_URL;
+
+	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
+			.expireAfterWrite(15, TimeUnit.MINUTES)
+			.build(new CacheLoader<String, List<UserInfo>>() {
+
+				@Override
+				public List<UserInfo> load(String key) {
+					return getList(null, 0L, null, null).getJSONArray("list")
+							.toJavaList(UserInfo.class);
+				}
+			});
 
 	@Autowired
 	private MpEnvService mpEnvService;
@@ -332,6 +348,18 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setAdmin(byId.isAdmin());
 
 		return userInfo;
+	}
+
+	@Override
+	public List<UserInfo> getAllUsers() {
+		List<UserInfo> res;
+		try {
+			res = allUserCache.get("allUsers");
+		} catch (ExecutionException e) {
+			log.error("executionException", e);
+			throw new BusinessException(ErrorCode.INTERNAL_ERROR);
+		}
+		return res;
 	}
 
 }

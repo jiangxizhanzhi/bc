@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 import com.cyberpeace.common.model.AuthTable;
 import lombok.Data;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class PracticeSet extends AuthTable {
 	/** 习题集所含习题数量*/
 	private Integer practiceCount;
 
-	public enum PracticeType implements GenericEnum {
+	public enum PracticeType implements GenericEnum, MdConvertEnum<Integer, String> {
 
 		THEORY(0, "理论基础"), OPERATION(2, "CTF解题");
 
@@ -52,6 +53,16 @@ public class PracticeSet extends AuthTable {
 			this.desc = desc;
 		}
 
+
+		@Override
+		public Integer to() {
+			return code;
+		}
+
+		@Override
+		public String reTo() {
+			return desc;
+		}
 	}
 
 }

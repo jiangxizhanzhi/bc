@@ -1,7 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +22,9 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
+import com.cyberpeace.oj.practice.service.md.TheoryBaseMd;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -700,6 +702,130 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
 				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
+	}
+
+	@Override
+	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
+
+		MdTheoryPractice mdTheoryPractice = new MdTheoryPractice();
+
+		List<TheoryBaseMd> singleList = Lists.newArrayList();
+
+		List<TheoryBaseMd> multipleList = Lists.newArrayList();
+
+		List<TheoryBaseMd> blankList = Lists.newArrayList();
+
+		List<TheoryBaseMd> anwserList = Lists.newArrayList();
+
+		List<TheoryBaseMd> judgeList = Lists.newArrayList();
+
+		for (PracticeTheory theory : theories) {
+			Integer code = theory.getTheoryType();
+			TheoryBaseMd theoryBaseMd = BeanUtils.copy(theory, TheoryBaseMd.class);
+
+			String difficulty = EnumUtils.getEnumDescByCode(theory.getDifficulty(),
+					Difficulty.class);
+			theoryBaseMd.setDifficulty(difficulty);
+			// 答案增加之前两个空格和换行
+			theoryBaseMd.setAnswer("  " + theory.getAnswer() + System.lineSeparator());
+
+			// 分类数据,有可能为空
+			String category = "";
+			try {
+				CategoryListBo categoryListBo = practiceCategoryService
+						.selectById(theory.getCategoryId(), false);
+				category = categoryListBo.getName();
+
+			} catch (Exception e) {
+				log.error("theory category is null . theoryId=[{}]", theory.getResourceId());
+
+			}
+
+			theoryBaseMd.setCategory(category);
+
+			// 单选需要获取选项内容
+
+			if (PracticeTheory.TheoryType.SINGLE.getCode().equals(code)) {
+				changeTitleToTheoryBaseMd(theory, theoryBaseMd);
+				singleList.add(theoryBaseMd);
+			}
+
+			// 多选需要获取选项内容,修改答案
+			if (PracticeTheory.TheoryType.MULTIPLE.getCode().equals(code)) {
+				changeTitleToTheoryBaseMd(theory, theoryBaseMd);
+
+				String anwser = theory.getAnswer().replace("|", "");
+
+				theoryBaseMd.setAnswer(anwser);
+				multipleList.add(theoryBaseMd);
+
+			}
+
+			// 填空需要修改答案
+			if (PracticeTheory.TheoryType.FILL_BLANK.getCode().equals(code)) {
+
+				List<BlankAnswer> blankAnswers = JsonUtil.toJsonObjectArray(theory.getAnswer(),
+						BlankAnswer.class);
+
+				String answer = "";
+
+				for (int i = 0; i < blankAnswers.size(); i++) {
+					String answerValue = blankAnswers.get(i).getValue();
+					answer += "  " + (i + 1) + ". " + answerValue + System.lineSeparator();
+
+				}
+
+				theoryBaseMd.setAnswer(answer.trim());
+				blankList.add(theoryBaseMd);
+
+			}
+			// 判断需要修改答案
+			if (PracticeTheory.TheoryType.JUDGMENT.getCode().equals(code)) {
+
+				String answer = theory.getAnswer().equals("A") ? "T" : "F";
+
+				theoryBaseMd.setAnswer(answer);
+
+				judgeList.add(theoryBaseMd);
+
+			}
+
+			// 简答
+			if (PracticeTheory.TheoryType.SHORT_ANSWER.getCode().equals(code)) {
+
+				anwserList.add(theoryBaseMd);
+
+			}
+			theoryBaseMd
+					.setTitle(MdTheoryParser.setRelativeFilePath(path, theoryBaseMd.getTitle()));
+
+		}
+		mdTheoryPractice.setSingleList(singleList);
+		mdTheoryPractice.setMultipleList(multipleList);
+		mdTheoryPractice.setBlankList(blankList);
+		mdTheoryPractice.setJudgeList(judgeList);
+		mdTheoryPractice.setAnwserList(anwserList);
+
+		return mdTheoryPractice;
+	}
+
+	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
+		Map<String, String> optionMap = JsonUtil.toJsonObject(theory.getOption(), TreeMap.class);
+		String title = "";
+
+		title += "    " + theory.getTitle() + System.lineSeparator() + System.lineSeparator();
+
+		Iterator<String> iterator = optionMap.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+			String value = optionMap.get(key).trim();
+
+			title += "    " + key + ". " + value + System.lineSeparator() + System.lineSeparator();
+		}
+
+		theoryBaseMd.setTitle(title);
+
 	}
 
 }

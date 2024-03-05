@@ -109,4 +109,23 @@ public interface ResourceImportConstant {
 	 * 页面导入导出数据存储文件地址
 	 */
 	String DATA_JSON = "data.json";
+
+	/**
+	 * 理论题文件名称
+	 */
+	public static final String PRACTICE_FILE_NAME = "练习.md";
+
+	/**
+	 * 理论题文件夹名称
+	 */
+	public static final String PRACTICES = "practices";
+
+	/**
+	 * 实操题文件夹名称
+	 */
+	public static final String OPERATION = "practices/operation";
+
+	public static final String WRITEUP_MD = "writeup.md";
+
+	public static final String SCRIPT = "script";
 }

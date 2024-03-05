@@ -11,6 +11,7 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.DuplicateCourseInspectReq;
 import com.cyberpeace.oj.course.controller.req.RMCombinedCourseImportReq;
+import com.cyberpeace.oj.course.service.CourseDumpService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class AdminCourseImportController {
 	@Autowired
 	private CourseService courseService;
 
+	@Autowired
+	private CourseDumpService courseDumpService;
+
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
@@ -59,6 +63,18 @@ public class AdminCourseImportController {
 				courseImportReq.getEnvReqs(), authContext);
 
 		return new BaseRsp<>(result);
+	}
+	@ApiOperation("课程导出")
+	@GetMapping("/rm/course/export")
+	public BaseRsp<String> export(
+			@RequestParam(value = "resource_id") String resourceId,
+			@RequestParam(value = "is_dump_topo", required = false, defaultValue = "0") Integer isDumpTopo,
+			@RequestParam(value = "scene_number", required = false) String sceneNumber,
+			@RequestParam(value = "disable_image_export", required = false) Boolean disableImageExport) {
+		boolean isDumpTopoVal = null != isDumpTopo && isDumpTopo == 1;
+		String filePath = courseDumpService.rMCourseDump(resourceId, isDumpTopoVal, sceneNumber, disableImageExport);
+
+		return new BaseRsp<>(filePath);
 	}
 
 	@ApiOperation("资管组合课程数据导入")

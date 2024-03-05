@@ -17,6 +17,18 @@ public class LocalStringUtil {
 
 	private LocalStringUtil() {}
 
+	/**
+	 * 前后增加换行符
+	 * @param value
+	 * @return
+	 */
+	public static String frontBackLine(String value) {
+		if (StringUtils.isBlank(value)) {
+			value = CommonConstant.EMPTY_STRING;
+		}
+		return System.lineSeparator() + value + System.lineSeparator();
+	}
+
 	public static String notEmptyString(String s, String fieldName) {
 		if (s == null) {
 			return null;
@@ -209,5 +221,20 @@ public class LocalStringUtil {
 		}
 
 		return randomStr + getRandomStr(length - randomStr.length());
+	}
+
+	/**
+	 * 根据正则表达是获取内容中的匹配数据 匹配全部
+	 * @param content
+	 * @param regex
+	 * @param index 子匹配序号
+	 * @return
+	 */
+	public static List<String> getAllMatchStr(String content, String regex, Integer index) {
+
+		List<String> matchStr = getMatchStr(content, regex, index);
+
+
+		return matchStr;
 	}
 }

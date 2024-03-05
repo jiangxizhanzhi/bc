@@ -83,6 +83,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String FLOW_RETRIEVE_URL;
 
+	private String SCENE_DUMP_URL;
+
 	@PostConstruct
 	public void init() {
 		SCENE_START_URL = mpEnvService.getMpHost()
@@ -151,6 +153,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		FLOW_RETRIEVE_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.flow.retrieve");
+
+		SCENE_DUMP_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.scene.dump");
 
 	}
 
@@ -361,4 +365,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		// todo 错误响应
 		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
 	}
+
+	@Override
+	public JSONObject sceneDump(SceneDumpContext sceneDumpContext) {
+		return HttpClientUtil.post(SCENE_DUMP_URL, sceneDumpContext, JSONObject.class);
+	}
+
 }

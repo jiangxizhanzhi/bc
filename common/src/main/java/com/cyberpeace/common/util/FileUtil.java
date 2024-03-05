@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -377,6 +378,33 @@ public class FileUtil {
 			}
 		}
 	}
+
+	public static void copyFile(File file, File destFile) {
+
+		try {
+			FileUtils.copyFile(file, destFile);
+		} catch (Exception e) {
+			log.error("File copy failed! origin_path=[{}], dest_path=[{}], catch error:",
+					file.getAbsolutePath(), destFile.getAbsolutePath(), e);
+			throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
+		}
+	}
+
+	public static void createPath(File file) {
+
+		if (file.exists()) {
+			return;
+		}
+
+		file.mkdirs();
+	}
+
+	public static void createManyPath(String parentPath, String... children) {
+		for (String child : children) {
+			createPath(new File(parentPath, child));
+		}
+	}
+
 
 	/**
 	 * 根据传入的根目录 获取对应的目录名称的文件路径列表

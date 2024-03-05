@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -105,6 +106,32 @@ public class ListUtil {
 	 */
 	public static List<Integer> listRangeInt(Integer start, Integer end) {
 		return Lists.newArrayList(IntStream.rangeClosed(start, end).iterator());
+	}
+
+	/**
+	 * 截取列表拼接成包括换行符的字符串 空字符传略过
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public static <T> String joinLineSeparatorList(List<T> objList, int start, int end) {
+
+		List<T> subList = objList.subList(start, end);
+		StringBuilder builder = new StringBuilder();
+
+		for (T obj : subList) {
+			if (obj instanceof String) {
+				String str = (String) obj;
+				if (StringUtils.isBlank(str)) {
+					continue;
+				}
+				builder.append(obj).append("\n");
+			} else {
+				builder.append(JSON.toJSONString(obj)).append("\n");
+			}
+		}
+
+		return builder.toString();
 	}
 
 }

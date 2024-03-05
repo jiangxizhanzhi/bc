@@ -17,6 +17,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeRandomFlagMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,9 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 
 	@Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
+
+	@Autowired
+	private PracticeOperationService practiceOperationService;
 
 	@Override
 	public List<OperationLessonBo> selectByPaperId(String lessonId, String paperId,
@@ -157,5 +161,21 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		PracticeOperation practiceOperation = JsonUtil.toJsonObject(operationRef.getSnapshot(),
 				PracticeOperation.class);
 		return practiceOperation;
+	}
+
+	@Override
+	public void exportLessonPractice(String pathname, String paperId, Boolean disableImageExport) {
+
+		List<PracticeOperationRef> operationRefList = practiceOperationRefMapper
+				.selectByPaperId(paperId);
+		List<PracticeOperation> practiceOperationList = StreamApiUtils.map(operationRefList,
+				practiceTheoryRef -> {
+					PracticeOperation practiceOperation = JsonUtil
+							.toJsonObject(practiceTheoryRef.getSnapshot(), PracticeOperation.class);
+					return practiceOperation;
+				});
+
+		practiceOperationService.exportPractice(pathname, practiceOperationList,
+				disableImageExport);
 	}
 }

@@ -177,4 +177,18 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param logContent
 	 */
 	void createMpLog(String practiceId, LogContent logContent);
+
+	/**
+	 * 查询要数据导出的习题
+	 * @param setIds
+	 * @param practiceId
+	 */
+	List<PracticeOperation> selectExportPractice(List<String> setIds, String practiceId);
+
+	/**
+	 * 实操习题数据导出
+	 * @param setPath
+	 * @param practiceOperations
+	 */
+	void exportPractice(String setPath, List<PracticeOperation> practiceOperations, Boolean disableImageExport);
 }

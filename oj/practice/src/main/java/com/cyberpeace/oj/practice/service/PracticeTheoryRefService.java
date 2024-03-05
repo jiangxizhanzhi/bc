@@ -25,4 +25,6 @@ public interface PracticeTheoryRefService extends IService<PracticeTheoryRef> {
 	 */
 	PracticeTheory selectByPracticeId(String paperId, String practiceId);
 
+	void exportLessonPractice(String pathname, String paperId);
+
 }

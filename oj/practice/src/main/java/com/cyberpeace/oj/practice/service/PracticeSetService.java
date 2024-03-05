@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
 import java.io.File;
 import java.util.List;
@@ -105,4 +107,16 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 * @return
 	 */
 	List<String> duplicatePracticeSetInspect(List<String> practiceSets);
+
+
+	MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
+
+	/**
+	 * 实操习题数据导出
+	 *
+	 * @param practiceSetId
+	 * @param practiceId
+	 * @return 导出的文件路径
+	 */
+	String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport);
 }

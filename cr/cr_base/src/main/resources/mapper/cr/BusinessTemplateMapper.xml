@@ -145,6 +145,15 @@
         from cr_business_template
         where name = #{templateName}
     </select>
+    <select id="getAllByIds" resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
+        select *
+        from cr_business_template
+        where resource_id in
+        <foreach collection="resourceIds" separator="," open="(" close=")" item="resource_id">
+            #{resource_id}
+        </foreach>
+        and business_type = #{type}
+    </select>
 
 
 </mapper>

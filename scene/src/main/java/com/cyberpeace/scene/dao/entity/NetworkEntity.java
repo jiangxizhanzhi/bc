@@ -22,11 +22,6 @@ public class NetworkEntity extends BaseTable {
     private String uuid;
 
     /**
-     * 网络名
-     */
-    private String name;
-
-    /**
      * 网络类型
      */
     private String type;

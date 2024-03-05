@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.scene.service.InteractivePlatformService;
-import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.bo.interactive.InteractiveSceneReq;
 import com.cyberpeace.scene.service.bo.interactive.UserLinkRsp;
 
@@ -19,9 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/interactive")
 public class InteractivePlatformController {
-
-	@Autowired
-	private SceneService sceneService;
 
 	@Autowired
 	private InteractivePlatformService interactivePlatformService;

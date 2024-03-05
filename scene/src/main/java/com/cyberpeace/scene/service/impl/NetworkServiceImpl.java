@@ -85,7 +85,6 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
 		// 1.先保存entity数据库
 		NetworkEntity entity = new NetworkEntity();
 		entity.setResourceId(IDGeneratorUtil.getID());
-		entity.setName(name);
 		entity.setSid(sceneId);
 		entity.setNetworkStatus(SceneEnum.CREATE.getCode());
 

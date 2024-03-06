@@ -186,9 +186,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 					trainRecordService.saveRecord(businessTemplate.getName(), businessTemplateId,
 							room.getResourceId(), userId,
-							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+							BusinessType.TRAINING_SINGLE.getCode(),
 							Lists.newArrayList());
-							room.getResourceId(), userId, BusinessType.TRAINING_SINGLE.getCode());
 				}
 			});
 		} catch (Exception e) {

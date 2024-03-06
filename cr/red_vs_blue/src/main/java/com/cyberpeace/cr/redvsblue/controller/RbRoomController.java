@@ -124,12 +124,6 @@ public class RbRoomController {
 	@Autowired
 	private TrainRecordService trainRecordService;
 
-	@ApiOperation("新增")
-	@PostMapping()
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
-		// 校验
-		rbRoomReq.validate();
     @Autowired
     private CrScoreService crScoreService;
 
@@ -346,13 +340,6 @@ public class RbRoomController {
 				trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 			}
 		});
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                rbSceneService.stopScene(roomId);
-                crRoleService.clearRoomRoles(roomId);
-                rbRoomService.removeById(roomId);
-            }
-        });
 
         if (StringUtils.isNotBlank(rbRoom.getCopyedTopoId())) {
             try {
@@ -458,9 +445,6 @@ public class RbRoomController {
     @GetMapping("/device")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbDeviceContext>> getDevices(
-			@ApiParam(name = "room_id", value = "红蓝对抗id", required = true) String room_id,
-			@ApiParam(name = "standard_device", value = "主机",
-					required = false) String standard_device) {
 			@ApiParam(value = "room_id", name = "红蓝对抗id", required = true) @RequestParam(
 					value = "room_id", required = true) String roomId,
 			@ApiParam(value = "standard_device", name = "主机", required = false) @RequestParam(

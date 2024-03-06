@@ -418,10 +418,6 @@ public final class CrBusinessErrorCode {
 	// 创建启动节点失败
 	public static final String FAILED_TO_CREATE_NODE = "101126";
 
-	// 排序字段错误
-	public static final String SORT_FIELD_ERROR = "101127";
-	public static final String FAILED_TO_CREATE_NODE = "101126";
-
 	// 层次分析法 关联矩阵数据包含空数据 或非数字
 	public static final String MATRIX_DATA_EMPTY_ERROR = "101127";
 
@@ -493,6 +489,9 @@ public final class CrBusinessErrorCode {
 	 * 未选择事件类型
 	 */
 	public static final String NO_EVENT_TYPE_SELECTED = "101143";
+
+	// 排序字段错误
+	public static final String SORT_FIELD_ERROR = "101144";
 
 	private CrBusinessErrorCode() {}
 }

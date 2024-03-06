@@ -63,13 +63,6 @@ public class RtksSituationJob {
 			userId = userInfo.getUserId();
 			roleContexts= userRoleMap.get(userId);
 			UserInfoContext.setUserContext(userInfo);
-			try {
-				// cal match & record
-				rtksSituationService.recordSituation(userId, userInfo.getName(),
-						roleContext.getRoleId(), roleContext.getRoleName());
-			} catch (Exception e) {
-				log.error(String.format("rtks situation job failed with userId:[%s], roleId: [%s]",
-						userId, roleContext.getRoleId()), e);
 			for(RoleMatchRecordContext roleContext:roleContexts){
 				try {
 					// cal match & record

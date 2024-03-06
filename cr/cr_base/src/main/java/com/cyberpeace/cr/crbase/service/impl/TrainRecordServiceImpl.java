@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,7 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 		trainRecord.setUserId(userId);
 		trainRecord.setBusinessType(businessType);
 		trainRecord.setStartTime(new Date());
-		if (businessType.equals(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode())) {
+		if (businessType.equals(BusinessType.TRAINING_SINGLE.getCode())) {
 			traineeIds.add(userId);
 		}
 		trainRecord.setTrainee(JsonUtil.arrayToString(traineeIds));

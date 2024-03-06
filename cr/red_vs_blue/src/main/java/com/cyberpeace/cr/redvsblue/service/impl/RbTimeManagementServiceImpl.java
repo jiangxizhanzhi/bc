@@ -3,6 +3,8 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -12,13 +14,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -145,7 +143,7 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 				save(timeManagement);
 				trainRecordService.saveRecord(room.getName(), businessTemplateId,
 						room.getResourceId(), UserInfoContext.getUserContext().getUserId(),
-						BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), studentIds);
+						BusinessType.RED_VS_BLUE.getCode(), studentIds);
 
 			}
 		});
@@ -154,7 +152,7 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	private List<String> getStudentIds(String roomId) {
 		List<String> res = Lists.newArrayList();
 		List<CrRole> roleList = crRoleService.getRolesByRoom(roomId,
-				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+				BusinessType.RED_VS_BLUE.getCode());
 		for (CrRole role : roleList) {
 			if (role.isRvbStudent()) {
 				res.addAll(JsonUtil.toJsonObjectArray(role.getUserIds(), String.class));

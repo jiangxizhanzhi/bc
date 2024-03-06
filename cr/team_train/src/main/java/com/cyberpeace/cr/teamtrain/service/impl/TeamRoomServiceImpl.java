@@ -371,8 +371,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				if (teamRoom.isOpening()) {
 					trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
 							teamRoom.getCreateUserId(),
-							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), studentIds);
-							BusinessType.TRAINING_TEAM.getCode());
+							BusinessType.TRAINING_TEAM.getCode(), studentIds);
 				} else if (teamRoom.isEnded()) {
 					trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 				}
@@ -940,7 +939,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private List<String> getStudentIds(String roomId) {
 		List<String> res = Lists.newArrayList();
 		List<CrRole> roleList = crRoleService.getRolesByRoom(roomId,
-				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+				BusinessType.TRAINING_TEAM.getCode());
 		for (CrRole role : roleList) {
 			if (role.isTeamStudent()) {
 				res.addAll(JsonUtil.toJsonObjectArray(role.getUserIds(), String.class));

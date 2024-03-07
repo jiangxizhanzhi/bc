@@ -68,6 +68,7 @@ public class CreateInstanceReq implements Serializable {
 
 	public CreateInstanceReq(ImageEntity image, NetworkEntity network) {
 		Net net = new Net(network.getUuid());
+		net.setFixed_ip(image.getIp());
 		NetAccessMode mode = new NetAccessMode();
 		mode.setProtocol("rdp");
 		mode.setPort(image.getPort());

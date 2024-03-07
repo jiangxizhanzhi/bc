@@ -20,6 +20,8 @@ public class Net implements Serializable {
     @JsonProperty("network_id")
     private String network_id;
 
+	private String fixed_ip;
+
 	private List<NetAccessMode> access_modes = Lists.newArrayList();
 
 	public Net() {}

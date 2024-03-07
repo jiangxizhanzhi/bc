@@ -26,4 +26,6 @@ public class ImageEntity {
 	private Integer port;
 
 	private Integer type;
+
+	private String ip;
 }

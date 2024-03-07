@@ -74,11 +74,11 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		scene.setSceneStatus(SceneEnum.CREATE.getCode());
 		sceneMapper.insert(scene);
 		try {
+			// create network with random id
+			NetworkEntity net = networkService.create(sceneId);
 			// select topo, get images
 			List<ImageEntity> images = imageMapper.selectByScenario(req.getScenario());
 			for (ImageEntity image : images) {
-				// create network with random id
-				NetworkEntity net = networkService.create(sceneId);
 				// create node with rdp proxy
 				NodeEntity node = createInstance(image, net);
 			}

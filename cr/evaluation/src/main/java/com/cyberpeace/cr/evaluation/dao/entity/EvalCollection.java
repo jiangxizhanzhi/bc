@@ -1,8 +1,6 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
@@ -58,5 +56,14 @@ public class EvalCollection extends BaseTable {
 	 * 评分算法参数
 	 */
 	private String scoreAlgorithmParams;
+
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private Integer score;
+
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private Integer progress;
+
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private String message;
 
 }

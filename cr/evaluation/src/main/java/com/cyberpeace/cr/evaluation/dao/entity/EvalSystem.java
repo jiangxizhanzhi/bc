@@ -52,4 +52,7 @@ public class EvalSystem extends BaseTable {
 	 */
 	@ApiModelProperty("创建者ID")
 	private String createUserId;
+
+	@ApiModelProperty("复制指标数量")
+	private Integer copyNum;
 }

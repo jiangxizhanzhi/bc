@@ -19,6 +19,8 @@ public interface EvalSystemMapper extends BaseMapper<EvalSystem> {
 	IPage<EvalSystem> listEvalSystems(Page<EvalSystem> page, EvalListQuery listQuery);
 
     boolean existByName(String name, String resourceId);
+
+    EvalSystem selectByName(String name);
 }
 
 

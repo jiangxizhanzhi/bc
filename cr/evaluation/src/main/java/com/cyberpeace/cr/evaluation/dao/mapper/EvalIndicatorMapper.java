@@ -27,4 +27,6 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 
 	Integer selectIndexUsedNum(List<String> ids);
+
+	List<EvalIndicator> selectIndexes(List<String> ids);
 }

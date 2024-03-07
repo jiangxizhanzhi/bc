@@ -61,14 +61,16 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		}
 	};
 
-	private String getLevelText(Integer level) {
+	@Override
+	public String getLevelText(Integer level) {
 		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
 			return Integer.toString(level);
 		}
 		return int2cn.get(level);
 	}
 
-	private Integer indexAhpPerform(String matrixData, List<Integer> data) {
+	@Override
+	public Integer indexAhpPerform(String matrixData, List<Integer> data) {
 		int res = 0;
 		JSONArray objects = JSON.parseArray(matrixData);
 		if (objects.size() != data.size()) {

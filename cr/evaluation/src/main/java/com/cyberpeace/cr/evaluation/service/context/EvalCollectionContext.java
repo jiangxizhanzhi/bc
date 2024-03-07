@@ -44,4 +44,10 @@ public class EvalCollectionContext {
 	@NotNull
 	private String name;
 
+	@ApiModelProperty(value = "得分", required = true)
+	private Integer score;
+
+	@ApiModelProperty(value = "错误信息", required = true)
+	private String message;
+
 }

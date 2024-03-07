@@ -1,8 +1,6 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
@@ -35,6 +33,23 @@ public class EvalIndex extends BaseTable {
 	 */
 	private Integer level;
 
+	/**
+	 * 试验分数
+	 */
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private Integer calScore;
+
+	/**
+	 * 调试分数
+	 */
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private Integer testScore;
+
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private String calMessage;
+
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
+	private String testMessage;
 	/**
 	 * 体系id
 	 */

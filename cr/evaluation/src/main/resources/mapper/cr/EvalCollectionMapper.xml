@@ -60,6 +60,14 @@
         </foreach>
     </select>
 
+    <select id="selectByEvalIndicators" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalCollection">
+        select * from cr_eval_collection
+        where eval_indicator_id in
+        <foreach collection="evalIndicatorIds" open="(" close=")" separator="," item="evalIndicatorId">
+            #{evalIndicatorId}
+        </foreach>
+    </select>
+
     <select id="getMaxId" resultType="java.lang.Integer">
         select max(id) from cr_eval_collection
     </select>

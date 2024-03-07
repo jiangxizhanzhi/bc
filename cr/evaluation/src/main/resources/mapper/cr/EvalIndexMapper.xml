@@ -33,8 +33,10 @@
     <select id="selectListBySystemIdAndLevel" resultMap="BaseResultMap">
         select *
         from cr_eval_index
-        where level = #{level}
-          and eval_system_id = #{systemId}
+        where eval_system_id = #{systemId}
+        <if test="level != null and level != ''">
+            and level = #{level}
+        </if>
     </select>
 
     <select id="selectIdsByEvalSystemIds" resultType="java.lang.String">

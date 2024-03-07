@@ -1,11 +1,15 @@
 package com.cyberpeace.cr.evaluation.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSystemTestReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemAllRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+
+import java.util.List;
 
 /**
  *
@@ -23,4 +27,12 @@ public interface EvalSystemService extends IService<EvalSystem> {
 	 * @return
 	 */
 	IPage<EvalSystem> page(EvalListQuery listQuery);
+
+	EvalSystemRsp calWithThirdIndex(List<IndexContext> thirdIndexes, String systemId, Boolean isTest);
+
+	EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem, Boolean isTest);
+
+	EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem);
+
+    EvalSystemAllRsp testWithStr(EvalSystemTestReq evalSystemTestReq);
 }

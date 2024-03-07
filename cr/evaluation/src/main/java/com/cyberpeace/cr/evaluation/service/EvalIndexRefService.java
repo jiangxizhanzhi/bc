@@ -59,4 +59,8 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
      * @return 指标项与其子级
      */
     EvalRecordResultIndexRsp resultIndex(String indexId);
+
+    Integer indexAhpPerform(String matrixData, List<Integer> data);
+
+    String getLevelText(Integer level);
 }

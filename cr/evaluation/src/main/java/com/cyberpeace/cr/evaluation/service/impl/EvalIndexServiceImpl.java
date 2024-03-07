@@ -43,6 +43,31 @@ public class EvalIndexServiceImpl extends ServiceImpl<EvalIndexMapper, EvalIndex
 	}
 
 	@Override
+	public List<IndexContext> getIndexesByEvalSystemId(String systemId, Integer level, Boolean isTest) {
+
+		List<EvalIndex> evalIndexList = evalIndexMapper.selectListBySystemIdAndLevel(systemId,
+				level);
+
+		return evalIndexList.stream().map(evalIndex -> {
+			IndexContext indexContext = BeanUtils.copy(evalIndex, IndexContext.class);
+
+			indexContext.setIndexId(evalIndex.getResourceId());
+			indexContext.setChildrenIds(
+					JsonUtil.toJsonObjectArray(evalIndex.getChildrenIds(), String.class));
+			indexContext.setAlgorithmId(evalIndex.getAggregatingAlgorithmId());
+			indexContext.setParams(evalIndex.getAggregatingAlgorithmParams());
+			if (Boolean.TRUE.equals(isTest)) {
+				indexContext.setScore(evalIndex.getTestScore());
+				indexContext.setMessage(evalIndex.getTestMessage());
+			} else {
+				indexContext.setScore(evalIndex.getCalScore());
+				indexContext.setMessage(evalIndex.getCalMessage());
+			}
+			return indexContext;
+		}).collect(Collectors.toList());
+	}
+
+	@Override
 	public void deleteBatchByEvalSystemId(String evalSystemId) {
 		evalIndexMapper.deleteBatchByEvalSystemId(evalSystemId);
 	}

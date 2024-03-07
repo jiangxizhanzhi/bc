@@ -16,6 +16,8 @@ public interface EvalIndexService extends IService<EvalIndex> {
      * @param level
      * @return
      */
+    List<IndexContext> getIndexesByEvalSystemId(String systemId, Integer level, Boolean isTest);
+
     List<IndexContext> getIndexesByEvalSystemId(String systemId, Integer level);
 
     /** 删除体系id的指标项

@@ -490,5 +490,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String NO_EVENT_TYPE_SELECTED = "101143";
 
+	/**
+	 * 指标项得分不合规
+	 */
+	public static final String INDEX_RESULT_IS_INVALID = "101144";
+
 	private CrBusinessErrorCode() {}
 }

@@ -188,28 +188,9 @@ public class EvalIndicatorAdminController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		EvalIndicatorRsp evalIndicatorRsp = convertEvalIndicatorToEvalSystemRsp(evalIndicator);
+		EvalIndicatorRsp evalIndicatorRsp = evalIndicatorService.convertEvalIndicatorToEvalSystemRsp(evalIndicator);
 
 		return new BaseRsp<>(evalIndicatorRsp);
-	}
-
-	private EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator) {
-		EvalIndicatorRsp evalSystemRsp = BeanUtils.copy(evalIndicator, EvalIndicatorRsp.class);
-
-		EvalIndicatorContext evalIndicatorContext = BeanUtils.copy(evalIndicator,
-				EvalIndicatorContext.class);
-		evalIndicatorContext.setAggregationIds(
-				JsonUtil.toJsonObjectArray(evalIndicator.getAggregationIds(), String.class));
-		evalIndicatorContext.setEvalIndicatorId(evalIndicator.getResourceId());
-
-		evalSystemRsp.setEvalIndicatorId(evalIndicator.getResourceId());
-		evalSystemRsp.setEvalCollections(
-				evalCollectionService.getContextByEvalIndicatorId(evalIndicator.getResourceId()));
-		evalSystemRsp.setEvalAggregations(
-				evalAggregationService.getContextByEvalIndicatorId(evalIndicator.getResourceId()));
-		evalSystemRsp.setEvalIndicators(Lists.newArrayList(evalIndicatorContext));
-
-		return evalSystemRsp;
 	}
 
 	@ApiOperation("列表查询")

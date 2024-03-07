@@ -41,4 +41,9 @@
         end
         as result;
     </select>
+
+    <select id="selectByName" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalSystem">
+        select * from cr_eval_system
+       where name = #{name}
+    </select>
 </mapper>

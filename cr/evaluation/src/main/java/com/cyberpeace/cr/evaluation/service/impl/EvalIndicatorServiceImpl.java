@@ -3,6 +3,10 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
+import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
+import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -44,6 +48,12 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 
 	@Autowired
 	private EvalCollectionMapper evalCollectionMapper;
+
+	@Autowired
+	private EvalCollectionService evalCollectionService;
+
+	@Autowired
+	private EvalAggregationService evalAggregationService;
 
 	@Override
 	public void saveBatchContext(EvalIndicatorReq evalIndicatorReq, String userId,
@@ -142,5 +152,26 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 	public Integer selectIndexUsedNum(List<String> ids) {
 		return evalIndicatorMapper.selectIndexUsedNum(ids);
 	}
+
+    @Override
+    public EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator) {
+
+		EvalIndicatorRsp evalSystemRsp = BeanUtils.copy(evalIndicator, EvalIndicatorRsp.class);
+
+		EvalIndicatorContext evalIndicatorContext = BeanUtils.copy(evalIndicator,
+				EvalIndicatorContext.class);
+		evalIndicatorContext.setAggregationIds(
+				JsonUtil.toJsonObjectArray(evalIndicator.getAggregationIds(), String.class));
+		evalIndicatorContext.setEvalIndicatorId(evalIndicator.getResourceId());
+
+		evalSystemRsp.setEvalIndicatorId(evalIndicator.getResourceId());
+		evalSystemRsp.setEvalCollections(
+				evalCollectionService.getContextByEvalIndicatorId(evalIndicator.getResourceId()));
+		evalSystemRsp.setEvalAggregations(
+				evalAggregationService.getContextByEvalIndicatorId(evalIndicator.getResourceId()));
+		evalSystemRsp.setEvalIndicators(Lists.newArrayList(evalIndicatorContext));
+
+		return evalSystemRsp;
+    }
 
 }

@@ -50,4 +50,12 @@
             #{id}
         </foreach>
     </select>
+
+    <select id="selectIndexes" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator">
+        select * from cr_eval_indicator
+        where resource_id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

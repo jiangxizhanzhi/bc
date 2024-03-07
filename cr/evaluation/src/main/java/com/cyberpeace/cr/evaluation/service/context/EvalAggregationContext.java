@@ -37,4 +37,9 @@ public class EvalAggregationContext {
 	@ApiModelProperty(value = "层次分析法json数组", required = false)
 	private String matrixData;
 
+	@ApiModelProperty(value = "得分", required = true)
+	private Integer score;
+
+	@ApiModelProperty(value = "错误信息", required = true)
+	private String message;
 }

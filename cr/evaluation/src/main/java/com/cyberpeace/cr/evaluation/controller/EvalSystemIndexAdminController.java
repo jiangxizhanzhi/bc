@@ -1,9 +1,33 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSystemCalReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSystemReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSystemTestReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemAllRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
+import com.cyberpeace.cr.evaluation.dao.mapper.*;
+import com.cyberpeace.cr.evaluation.service.*;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -14,36 +38,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalSystemReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalSystemMapper;
-import com.cyberpeace.cr.evaluation.service.EvalIndexService;
-import com.cyberpeace.cr.evaluation.service.EvalSystemService;
-import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
-import com.cyberpeace.cr.evaluation.service.context.IndexContext;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "后台-测试靶场-指标体系")
 @RestController
@@ -63,6 +60,27 @@ public class EvalSystemIndexAdminController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private EvalIndexMapper evalIndexMapper;
+
+	@Autowired
+	private EvalIndicatorMapper evalIndicatorMapper;
+
+	@Autowired
+	private EvalIndicatorService evalIndicatorService;
+
+	@Autowired
+	private EvalAggregationMapper evalAggregationMapper;
+
+	@Autowired
+	private EvalCollectionMapper evalCollectionMapper;
+
+	@Autowired
+	private EvalAggregationService evalAggregationService;
+
+	@Autowired
+	private EvalCollectionService evalCollectionService;
 
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
@@ -186,22 +204,8 @@ public class EvalSystemIndexAdminController {
 			log.info("EvalSystem not found! EvalSystemId=[{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		EvalSystemRsp evalSystemRsp = convertEvalSystemToEvalSystemRsp(evalSystem);
+		EvalSystemRsp evalSystemRsp = evalSystemService.convertEvalSystemToEvalSystemRsp(evalSystem);
 		return new BaseRsp<>(evalSystemRsp);
-	}
-
-	private EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem) {
-		EvalSystemRsp evalSystemRsp = BeanUtils.copy(evalSystem, EvalSystemRsp.class);
-
-		evalSystemRsp.setEvalSystemId(evalSystem.getResourceId());
-		evalSystemRsp.setFirstIndexes(evalIndexService.getIndexesByEvalSystemId(
-				evalSystem.getResourceId(), EvalIndex.Level.FIRST.getCode()));
-		evalSystemRsp.setSecondIndexes(evalIndexService.getIndexesByEvalSystemId(
-				evalSystem.getResourceId(), EvalIndex.Level.SECOND.getCode()));
-		evalSystemRsp.setThirdIndexes(evalIndexService.getIndexesByEvalSystemId(
-				evalSystem.getResourceId(), EvalIndex.Level.THIRD.getCode()));
-
-		return evalSystemRsp;
 	}
 
 	private List<EvalIndex> convertIndexReqToIndex(List<IndexContext> indexContextList,
@@ -258,5 +262,194 @@ public class EvalSystemIndexAdminController {
 		IPage<EvalSystem> data = evalSystemService.page(listQuery);
 
 		return new BaseRsp<>(PageUtil.getListResult(data));
+	}
+
+	@ApiOperation("复制体系指标")
+	@PostMapping("copy")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
+	public BaseRsp<EvalSystemReq> copyEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
+		// 复制当前已有体系 生成一条名称+【复制】的新体系数据
+		EvalSystem byId = evalSystemService.getById(evalSystemReq.getEvalSystemId());
+		if (null == byId) {
+			log.info("EvalSystem not found! EvalSystemId=[{}]", evalSystemReq.getEvalSystemId());
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		EvalSystemRsp evalSystemRsp = evalSystemService.convertEvalSystemToEvalSystemRsp(byId);
+		String jsonString = JsonUtil.toJsonString(evalSystemRsp);
+		List<IndexContext> firstIndexes = evalSystemReq.getFirstIndexes();
+		String id = IDGeneratorUtil.getID();
+		IndexContext indexContext1 = firstIndexes.get(0);
+		String indexId1 = indexContext1.getIndexId();
+		jsonString = jsonString.replaceAll(indexId1, id);
+		List<IndexContext> secondIndexes = evalSystemReq.getSecondIndexes();
+
+		List<IndexContext> thirdIndexes = evalSystemReq.getThirdIndexes();
+		for (IndexContext indexContext : thirdIndexes) {
+			String indexId = indexContext.getIndexId();
+			String currentId = IDGeneratorUtil.getID();
+			jsonString = jsonString.replaceAll(indexId, currentId);
+
+		}
+
+		for (IndexContext indexContext : secondIndexes) {
+			String indexId = indexContext.getIndexId();
+			String currentId = IDGeneratorUtil.getID();
+			jsonString = jsonString.replaceAll(indexId, currentId);
+
+		}
+		EvalSystemReq jsonObject = JsonUtil.toJsonObject(jsonString, EvalSystemReq.class);
+		Integer copyNum = byId.getCopyNum();
+		String name = jsonObject.getName();
+		StringBuffer sb = new StringBuffer();
+		for(int i = 0; i < copyNum; i++){
+			sb.append("（复制）");
+		}
+		jsonObject.setName(name + sb.toString());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				EvalSystem evalSystem = saveEvalIndex(jsonObject);
+				evalSystem.setCopyNum(copyNum + 1);
+				evalSystem.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+				evalSystemService.save(evalSystem);
+			}
+		});
+
+		return new BaseRsp<>(jsonObject);
+	}
+
+
+	@ApiOperation("查询调试体系指标")
+	@GetMapping("calculate")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
+	public BaseRsp<EvalSystemRsp> getEvalIndexByCalc(
+			@ApiParam(name = "resource_id", value = "模板id", required = true) @RequestParam(
+					value = "resource_id") String resourceId) {
+
+		EvalSystem evalSystem = evalSystemService.getById(resourceId);
+		if (null == evalSystem) {
+			log.info("EvalSystem not found! EvalSystemId=[{}]", resourceId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		EvalSystemRsp evalSystemRsp = evalSystemService.convertEvalSystemToEvalSystemRsp(evalSystem, false);
+		return new BaseRsp<>(evalSystemRsp);
+	}
+
+	@PostMapping("calculate")
+	@ApiOperation("调试")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
+	public BaseRsp<EvalSystemRsp> calculate(@RequestBody @Validated EvalSystemCalReq evalSystemCalReq) {
+		List<IndexContext> thirdIndexes = evalSystemCalReq.getThirdIndexes();
+		// 调试之前清空之前的计算结果
+		String evalSystemId = evalSystemCalReq.getEvalSystemId();
+		EvalSystem byId = evalSystemService.getById(evalSystemId);
+		if (null == byId) {
+			log.info("EvalSystem not found! EvalSystemId=[{}]", evalSystemId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		List<EvalIndex> indexList = evalIndexMapper.selectListBySystemIdAndLevel(evalSystemId, null);
+		indexList = indexList.stream().filter(s-> s.getLevel() <= EvalIndex.Level.THIRD.getCode()).collect(Collectors.toList());
+		indexList.forEach(index -> {
+			index.setCalScore(null);
+			index.setCalMessage(null);
+		});
+		evalIndexService.updateBatchById(indexList);
+
+		EvalSystemRsp rsp = evalSystemService.calWithThirdIndex(thirdIndexes, evalSystemId, false);
+
+		return new BaseRsp<>(rsp);
+	}
+
+	@PostMapping("test")
+	@ApiOperation("试验")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
+	public BaseRsp<EvalSystemAllRsp> test(@RequestBody @Validated EvalSystemTestReq evalSystemTestReq) {
+		String evalSystemId = evalSystemTestReq.getEvalSystemId();
+		EvalSystem byId = evalSystemService.getById(evalSystemId);
+		if (null == byId) {
+			log.info("EvalSystem not found! EvalSystemId=[{}]", evalSystemId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		// 试验之前清空之前的计算结果
+		clearResultBeforeCurrentTest(byId);
+
+
+		EvalSystemAllRsp result = evalSystemService.testWithStr(evalSystemTestReq);
+
+		return new BaseRsp<>(result);
+	}
+
+	private void clearResultBeforeCurrentTest(EvalSystem byId) {
+
+		List<EvalIndex> indexList = evalIndexMapper.selectListBySystemIdAndLevel(byId.getResourceId(), null);
+		indexList = indexList.stream().filter(s-> s.getLevel() <= EvalIndex.Level.THIRD.getCode()).collect(Collectors.toList());
+		List<String> indicatorIds = indexList.stream().filter(s -> EvalIndex.Level.THIRD.getCode().equals(s.getLevel())).map(EvalIndex::getEvalIndicatorId).collect(Collectors.toList());
+		indexList.forEach(index -> {
+			index.setTestScore(null);
+			index.setTestMessage(null);
+		});
+		List<EvalAggregation> evalAggregations = evalAggregationMapper.selectIdsByEvalIndicatorIds(indicatorIds);
+		evalAggregations.forEach(evalAggregation -> {
+			evalAggregation.setScore(null);
+			evalAggregation.setMessage(null);
+		});
+
+		List<EvalCollection> collects = evalCollectionMapper.selectByEvalIndicators(indicatorIds);
+		collects.forEach(evalCollection -> {
+			evalCollection.setProgress(EvalVariableRef.Progress.NOT_START.getCode());
+			evalCollection.setScore(null);
+			evalCollection.setMessage(null);
+		});
+		List<EvalIndex> finalIndexList = indexList;
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				evalIndexService.updateBatchById(finalIndexList);
+				evalAggregationService.updateBatchById(evalAggregations);
+				evalCollectionService.updateBatchById(collects);
+			}
+		});
+	}
+
+	@ApiOperation("查询体系指标All(全)")
+	@GetMapping("all")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
+	public BaseRsp<EvalSystemAllRsp> getEvalIndexAll(
+			@ApiParam(name = "resource_id", value = "模板id", required = true)
+			@RequestParam(value = "resource_id") String resourceId) {
+		// 调试时 前端展示全体系数据
+		EvalSystem evalSystem = evalSystemService.getById(resourceId);
+		if (null == evalSystem) {
+			log.info("EvalSystem not found! EvalSystemId=[{}]", resourceId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		EvalSystemRsp evalSystemRsp = evalSystemService.convertEvalSystemToEvalSystemRsp(evalSystem, true);
+		EvalSystemAllRsp rsp = new EvalSystemAllRsp();
+		BeanUtils.copyProperties(evalSystemRsp, rsp);
+		List<EvalIndex> evalIndexList = evalIndexMapper.selectListBySystemIdAndLevel(resourceId,
+				EvalIndex.Level.THIRD.getCode());
+
+		List<String> column = StreamApiUtils.getColumn(evalIndexList, EvalIndex::getEvalIndicatorId);
+		List<EvalIndicator> evalIndicators = evalIndicatorMapper.selectIndexes(column);
+		List<EvalIndex> indexList = evalIndexMapper.selectListBySystemIdAndLevel(resourceId, EvalIndex.Level.THIRD.getCode());
+		Map<String, String> collect = indexList.stream().collect(Collectors.toMap(EvalIndex::getEvalIndicatorId, EvalIndex::getResourceId));
+
+
+		evalIndicators.forEach(evalIndicator -> {
+			EvalIndicatorRsp evalIndicatorRsp = evalIndicatorService.convertEvalIndicatorToEvalSystemRsp(evalIndicator);
+			// 待前端确认返回展示格式  3级指标项 链接 聚合项和采集项时 使用的是 指标项id 非指标项resource_id
+			String connlist = evalIndicatorRsp.getConnlist();
+			connlist = connlist.replaceAll(evalIndicator.getResourceId(),collect.get(evalIndicator.getResourceId()));
+			String rspConnlist = rsp.getConnlist();
+			rsp.setConnlist(rspConnlist + connlist);
+			rsp.getFourthIndexes().addAll(evalIndicatorRsp.getEvalAggregations());
+			rsp.getFifthIndexes().addAll(evalIndicatorRsp.getEvalCollections());
+
+		});
+		return new BaseRsp<>(rsp);
 	}
 }

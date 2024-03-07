@@ -18,6 +18,6 @@ public class ConnectionReq {
 		param.setHostname(hostname);
 		param.setPort("" + port);
 		this.connection_params = param;
-		this.username = username;
+		this.username = "default";
 	}
 }

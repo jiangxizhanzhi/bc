@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -57,7 +58,7 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public CreateInstanceRes create(CreateInstanceReq req) {
-        log.info("start create instance req : {}", req);
+        log.info("start create instance req : {}", JsonUtil.toJsonString(req));
         ImageRes imageInfo = imageService.getImageInfo(req.getName());
         if (Objects.isNull(imageInfo)){
             throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
@@ -68,7 +69,7 @@ public class HostServiceImpl implements HostService {
         String uuid = imageInfo.getItems().get(0).getUuid();
         req.setImage(uuid);
         req.setName(req.getName() + "_" + IDGeneratorUtil.getID());
-        log.info("creating vm instance, max wait time 10min, req: {}", req);
+        log.info("creating vm instance, max wait time 10min, req: {}", JsonUtil.toJsonString(req));
         CreateInstanceRes res = HttpUtil.post(CP_HOST + CP_INSTANCES, req, CreateInstanceRes.class);
         log.info("end create instance end res : {}", res);
         return res;

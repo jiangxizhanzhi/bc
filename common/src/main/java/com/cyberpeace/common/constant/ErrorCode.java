@@ -357,7 +357,7 @@ public final class ErrorCode {
 
 	public static final String SCENARIO_NOT_EXIST = "100102";
 
-	public static final String SCENARIO_NOT_READY = "1000103";
+	public static final String SCENARIO_NOT_READY = "100103";
 
 	private ErrorCode() {}
 }

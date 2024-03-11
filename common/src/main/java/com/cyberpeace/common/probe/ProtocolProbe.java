@@ -1,0 +1,152 @@
+package com.cyberpeace.common.probe;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+
+import javax.net.SocketFactory;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * @Description
+ * @Author maojun
+ * @Date 2022/1/14
+ */
+@Slf4j
+public abstract class ProtocolProbe {
+
+	private String protocol;
+
+	private String host;
+
+	private int port;
+
+	public ProtocolProbe(String protocol, String host, int port) {
+		this.protocol = protocol;
+		this.host = host;
+		this.port = port;
+	}
+
+	public boolean probe() {
+		// 建立socket连接
+		Socket socket = null;
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
+		try {
+			socket = SocketFactory.getDefault().createSocket();
+			socket.setSoTimeout(2000);
+			socket.connect(new InetSocketAddress(host, port));
+			inputStream = socket.getInputStream();
+			// 和服务端交换数据
+			outputStream = socket.getOutputStream();
+			outputStream.write(this.getClientInfo());
+			outputStream.flush();
+			// 对交换得到的数据进行校验
+			byte[] result = new byte[this.getServerInfoByteNum()];
+			inputStream.read(result);
+			return this.checkServerInfo(result);
+		} catch (SocketTimeoutException e) {
+			log.info("failed to connect {}//{}:{} , read timeout", protocol, host, port);
+			return false;
+		} catch (ConnectException e) {
+			log.info("failed to connect {}//{}:{} , connect exception", protocol, host, port);
+			return false;
+		} catch (Exception e) {
+			log.error("failed to connect {}//{}:{}", protocol, host, port, e);
+			return false;
+		} finally {
+			try {
+				IOUtils.close(inputStream, outputStream, socket);
+			} catch (IOException e) {
+				log.error("failed to close socket resource,{}//{}:{}", protocol, host, port, e);
+			}
+		}
+	}
+
+	/**
+	 * 建立socket连接之后,给服务端发送的信息
+	 * @return
+	 */
+	protected abstract byte[] getClientInfo();
+
+	/**
+	 * 校验从服务端得到的信息
+	 * @param serverInfo
+	 * @return
+	 */
+	protected abstract boolean checkServerInfo(byte[] serverInfo);
+
+	/**
+	 * 从返回数据中取出用于结果判断的字节数量
+	 * @return
+	 */
+	protected int getServerInfoByteNum() {
+		return 20;
+	}
+
+}
+
+class IOUtils {
+
+	public static void close(Closeable... objects) throws IOException {
+		close(Arrays.asList(objects));
+	}
+
+	/**
+	 * Closes all given <tt>Closeable</tt>s.
+	 * @see #close(Closeable...)
+	 */
+	public static void close(Iterable<? extends Closeable> objects) throws IOException {
+		Throwable th = null;
+		for (Closeable object : objects) {
+			try {
+				if (object != null) {
+					object.close();
+				}
+			} catch (Throwable t) {
+				th = useOrSuppress(th, t);
+			}
+		}
+
+		if (th != null) {
+			throw rethrowAlways(th);
+		}
+	}
+
+	public static <T extends Throwable> T useOrSuppress(T first, T second) {
+		if (first == null) {
+			return second;
+		} else {
+			first.addSuppressed(second);
+		}
+		return first;
+	}
+
+	public static Error rethrowAlways(Throwable th) throws IOException, RuntimeException {
+		if (th == null) {
+			throw new AssertionError("rethrow argument must not be null.");
+		}
+
+		if (th instanceof IOException) {
+			throw (IOException) th;
+		}
+
+		if (th instanceof RuntimeException) {
+			throw (RuntimeException) th;
+		}
+
+		if (th instanceof Error) {
+			throw (Error) th;
+		}
+
+		throw new RuntimeException(th);
+	}
+
+}

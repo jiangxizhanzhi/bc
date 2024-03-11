@@ -359,5 +359,7 @@ public final class ErrorCode {
 
 	public static final String SCENARIO_NOT_READY = "100103";
 
+	public static final String RDP_NOT_READY = "100104";
+
 	private ErrorCode() {}
 }

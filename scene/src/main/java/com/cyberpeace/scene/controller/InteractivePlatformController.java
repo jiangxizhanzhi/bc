@@ -25,14 +25,17 @@ public class InteractivePlatformController {
 	@PostMapping("/start")
 	@ApiOperation(value = "启动场景")
 	public BaseRsp start(@RequestBody InteractiveSceneReq req) {
-		interactivePlatformService.startScene(req);
+		// 检测虚拟机rdp就绪状态
+		interactivePlatformService.checkLink(req.getScenario());
 		return new BaseRsp();
 	}
 
 	@PostMapping("/stop")
 	@ApiOperation(value = "关闭场景")
 	public BaseRsp stop(@RequestBody InteractiveSceneReq req) {
+		// 关闭旧场景，启动新场景
 		interactivePlatformService.stopScene(req);
+		interactivePlatformService.startScene(req);
 		return new BaseRsp();
 	}
 

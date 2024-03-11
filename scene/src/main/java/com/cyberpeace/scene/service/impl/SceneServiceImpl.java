@@ -74,10 +74,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 	@Lazy
 	private SceneThreadPoolExecutor executor;
 
-	@Lazy
-	@Autowired
-	private SceneJob sceneJob;
-
 	@Autowired
 	private NetworkService networkService;
 

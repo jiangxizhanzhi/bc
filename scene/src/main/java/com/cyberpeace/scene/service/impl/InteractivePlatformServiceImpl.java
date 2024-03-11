@@ -8,6 +8,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.probe.RDPProbe;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.scene.constant.enums.ImageRoleEnum;
@@ -127,6 +128,24 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			}
 		}
 		return rsp;
+	}
+
+	@Override
+	public void checkLink(Integer scenario) {
+		SceneEntity scene = sceneMapper.selectByScenario(scenario);
+		if (null == scene) {
+			throw new BusinessException(ErrorCode.SCENARIO_NOT_EXIST);
+		}
+		if (!scene.getSceneStatus().equals(SceneEnum.ACTIVE.getCode())) {
+			throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
+		}
+		List<NodeEntity> nodeList = nodeMapper.selectBySid(scene.getResourceId());
+		for (NodeEntity node : nodeList) {
+			RDPProbe rdpProbe = new RDPProbe(node.getHostname(), node.getHostPort());
+			if (!rdpProbe.probe()) {
+				throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
+			}
+		}
 	}
 
 	private NodeEntity createInstance(ImageEntity image, NetworkEntity network) {

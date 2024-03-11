@@ -10,4 +10,6 @@ public interface InteractivePlatformService {
 	void stopScene(InteractiveSceneReq req);
 
 	UserLinkRsp getUserLink(Integer scenario);
+
+    void checkLink(Integer scenario);
 }

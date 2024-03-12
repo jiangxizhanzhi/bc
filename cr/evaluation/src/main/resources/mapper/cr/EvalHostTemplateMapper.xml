@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalHostTemplateMapper">
+
+    <select id="selectByRuleId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalHostTemplate">
+        select *
+        from cr_eval_host_template
+        <where>
+            <if test="ruleId != null and ruleId != ''">
+                rule_id = #{ruleId}
+            </if>
+            order by create_time desc
+        </where>
+    </select>
+
+    <delete id="deleteByCloudTemplateIds">
+        delete from cr_eval_host_template
+        where cloud_template_id in
+        <foreach collection="cloudTemplateIds" item="cloudId" separator="," open="(" close=")">
+            #{cloudId}
+        </foreach>
+    </delete>
+</mapper>

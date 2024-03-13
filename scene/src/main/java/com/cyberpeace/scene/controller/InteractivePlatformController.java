@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.scene.service.InteractivePlatformService;
 import com.cyberpeace.scene.service.bo.interactive.InteractiveSceneReq;
+import com.cyberpeace.scene.service.bo.interactive.MailBo;
 import com.cyberpeace.scene.service.bo.interactive.UserLinkRsp;
 
 import io.swagger.annotations.Api;
@@ -45,6 +46,13 @@ public class InteractivePlatformController {
 			getUserLink(@ApiParam(value = "场景类型", name = "scenario") Integer scenario) {
 		UserLinkRsp rsp = interactivePlatformService.getUserLink(scenario);
 		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("发送邮件")
+	@PostMapping("/mail")
+	public BaseRsp sendMail(@RequestBody MailBo mailBo) {
+		interactivePlatformService.sendMail(mailBo.getContent());
+		return new BaseRsp<>();
 	}
 
 }

@@ -355,11 +355,22 @@ public final class ErrorCode {
 	/** 不支持的编码类型*/
 	public static final String UNSUPPORT_CHASET = "100101";
 
+	/**
+	 * 情景未开启
+	 */
 	public static final String SCENARIO_NOT_EXIST = "100102";
 
+	/**
+	 * 情景未就绪
+	 */
 	public static final String SCENARIO_NOT_READY = "100103";
 
+	/**
+	 * rdp服务未就绪
+	 */
 	public static final String RDP_NOT_READY = "100104";
+
+	public static final String FAILED_TO_SEND_MAIL = "100105";
 
 	private ErrorCode() {}
 }

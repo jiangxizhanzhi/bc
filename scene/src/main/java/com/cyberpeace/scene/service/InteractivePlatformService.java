@@ -12,4 +12,6 @@ public interface InteractivePlatformService {
 	UserLinkRsp getUserLink(Integer scenario);
 
     void checkLink(Integer scenario);
+
+    void sendMail(String content);
 }

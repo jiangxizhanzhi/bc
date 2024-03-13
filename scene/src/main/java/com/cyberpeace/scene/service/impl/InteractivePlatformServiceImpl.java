@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -27,8 +26,10 @@ import com.cyberpeace.scene.service.bo.interactive.UserConnectionRes;
 import com.cyberpeace.scene.service.bo.interactive.UserLinkRsp;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
+import com.cyberpeace.scene.util.JavaxJavaMailClient;
 
 import lombok.extern.slf4j.Slf4j;
+
 
 @Service
 @Slf4j
@@ -58,8 +59,6 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 	@Autowired
 	private ConnectionMapper connectionMapper;
 
-	@Autowired
-	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public void startScene(InteractiveSceneReq req) {
@@ -123,7 +122,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			UserConnectionRes connectionRes = getUserConnection(node);
 			if (node.getType().equals(ImageRoleEnum.HACKER.getCode())) {
 				rsp.setHacker(connectionRes.getUrl());
-			} else {
+			} else if (node.getType().equals(ImageRoleEnum.VICTIM.getCode())) {
 				rsp.setVictim(connectionRes.getUrl());
 			}
 		}
@@ -141,10 +140,33 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		}
 		List<NodeEntity> nodeList = nodeMapper.selectBySid(scene.getResourceId());
 		for (NodeEntity node : nodeList) {
+			// 跳过检测邮件服务器
+			if (node.getType().equals(ImageRoleEnum.SERVER.getCode())) {
+				continue;
+			}
 			RDPProbe rdpProbe = new RDPProbe(node.getHostname(), node.getHostPort());
 			if (!rdpProbe.probe()) {
 				throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
 			}
+		}
+	}
+
+	@Override
+	public void sendMail(String text) {
+		SceneEntity scene = sceneMapper
+				.selectByScenario(InteractiveScenarioEnum.RANSOMWARE.getCode());
+		NodeEntity node = nodeMapper.selectBySceneAndType(scene.getResourceId(),
+				ImageRoleEnum.SERVER.getCode());
+		Integer port = node.getHostPort();
+		if (null == port) {
+			log.error("port mapping not established");
+			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
+		}
+		try {
+			JavaxJavaMailClient.sendMail(port, text);
+		} catch (Exception e) {
+			log.error("failed to send mail", e);
+			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
 		}
 	}
 
@@ -193,10 +215,6 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		}
 		UserConnectionRes res = guacamoleService.getUserLink(connection.getConnectionId());
 		return res;
-	}
-
-	private void deleteConnection() {
-
 	}
 
 	private ConnectionEntity createConnection(NodeEntity node) {

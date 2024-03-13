@@ -15,4 +15,7 @@
     <select id="selectBySid" resultType="com.cyberpeace.scene.dao.entity.NodeEntity">
         SELECT * FROM cr_node WHERE sid = #{sid}
     </select>
+    <select id="selectBySceneAndType" resultType="com.cyberpeace.scene.dao.entity.NodeEntity">
+        select * from cr_node where sid = #{sceneId} and type = #{code}
+    </select>
 </mapper>

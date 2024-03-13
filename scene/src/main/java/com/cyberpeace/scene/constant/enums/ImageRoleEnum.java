@@ -6,7 +6,7 @@ import lombok.Getter;
 
 public enum ImageRoleEnum implements GenericEnum {
 
-	HACKER(1, "黑客机器"), VICTIM(2, "受害人机器");
+	HACKER(1, "黑客机器"), VICTIM(2, "受害人机器"), SERVER(3, "服务器");
 
 	@Getter
 	private Integer code;

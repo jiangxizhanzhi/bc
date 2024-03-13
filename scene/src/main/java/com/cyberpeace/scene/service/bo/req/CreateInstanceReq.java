@@ -72,8 +72,12 @@ public class CreateInstanceReq implements Serializable {
 		NetAccessMode mode = new NetAccessMode();
 		mode.setProtocol("rdp");
 		mode.setPort(image.getPort());
-		mode.setUsername(image.getUsername());
-		mode.setPassword(image.getPassword());
+		if (StringUtils.isNotBlank(image.getUsername())) {
+			mode.setUsername(image.getUsername());
+		}
+		if (StringUtils.isNotBlank(image.getPassword())) {
+			mode.setPassword(image.getPassword());
+		}
 		mode.setEnable_port_mapping(true);
 
 		net.getAccess_modes().add(mode);

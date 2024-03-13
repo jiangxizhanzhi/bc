@@ -113,16 +113,6 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 	 */
 	private Integer MAX_USER_SCENE_EVENT;
 
-	@PostConstruct
-	public void init() {
-		SCENE_DESTROY = systemPropertyService
-				.getSystemPropertyInt(ScenePropertyConstant.SCENE_DESTROY_TIME, 2);
-		MAX_SCENE_EVENT = systemPropertyService
-				.getSystemPropertyInt(ScenePropertyConstant.MAX_SCENE_COUNT, 10);
-		MAX_USER_SCENE_EVENT = systemPropertyService
-				.getSystemPropertyInt(ScenePropertyConstant.MAX_SCENE_COUNT_PER_USER, 2);
-	}
-
 	@Override
 	public BaseRsp startScene(SceneStartReq req) {
 		Topology topology = topologyService.formatTopology(req.getTopologyId());

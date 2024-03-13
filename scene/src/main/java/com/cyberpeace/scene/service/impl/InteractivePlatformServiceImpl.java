@@ -155,6 +155,12 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 	public void sendMail(String text) {
 		SceneEntity scene = sceneMapper
 				.selectByScenario(InteractiveScenarioEnum.RANSOMWARE.getCode());
+		if (null == scene) {
+			throw new BusinessException(ErrorCode.SCENARIO_NOT_EXIST);
+		}
+		if (!scene.getSceneStatus().equals(SceneEnum.ACTIVE.getCode())) {
+			throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
+		}
 		NodeEntity node = nodeMapper.selectBySceneAndType(scene.getResourceId(),
 				ImageRoleEnum.SERVER.getCode());
 		Integer port = node.getHostPort();

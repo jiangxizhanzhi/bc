@@ -29,9 +29,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalNodeLogMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
-import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
-import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
-import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
+import com.cyberpeace.cr.evaluation.service.impl.bo.*;
 import com.cyberpeace.integratation.model.scene.MissionStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -53,7 +51,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Api(tags = "靶场测评-技战法任务")
+@Api(tags = "靶场测评-前台-任务")
 @Slf4j
 @RestController
 @RequiresAuthentication
@@ -94,14 +92,14 @@ public class EvalMissionController {
     @ApiOperation("新增实例任务")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @PostMapping("/mission/instance")
-    public BaseRsp<EvalMissionTemplateRsp> createInstanceMission(@RequestBody @Validated EvalInstanceMissionTemplateReq evalMissionTemplateReq) {
+    public BaseRsp<Boolean> createInstanceMission(@RequestBody @Validated EvalInstanceMissionTemplateReq evalMissionTemplateReq) {
         String taskId = evalMissionTemplateReq.getTaskId();
         EvalTask evalTask = evalTaskMapper.selectById(taskId);
-        String id = setTaskMission(evalMissionTemplateReq, evalTask);
+        String resourceId = IDGeneratorUtil.getID();
+        setTaskMission(evalMissionTemplateReq, evalTask, resourceId);
 
         EvalMissionTemplate evalMissionTemplate = BeanUtils.copy(evalMissionTemplateReq, EvalMissionTemplate.class);
         evalMissionTemplate.setTools(JsonUtil.toJsonString(evalMissionTemplateReq.getTools()));
-        String resourceId = IDGeneratorUtil.getID();
         evalMissionTemplate.setResourceId(resourceId);
         EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
         evalMissionTemplateLog.setOperate(MissionTemplateStatus.NEW);
@@ -118,29 +116,23 @@ public class EvalMissionController {
                 evalMissionTemplateLogMapper.insert(evalMissionTemplateLog);
             }
         });
-        return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(id));
+        return new BaseRsp<>(true);
     }
 
 
-    private String setTaskMission(EvalInstanceMissionTemplateReq evalMissionTemplateReq, EvalTask evalTask) {
-        MissionScheme missionScheme = JsonUtil.toJsonObject(evalTask.getMissionScheme(), MissionScheme.class);
-        List<StageData> stageList = missionScheme.getStageList();
-        Map<String, StageData> stageDataMap = StreamApiUtils.toMap(stageList, StageData::getStageName, stageData -> stageData);
-        StageData stageData = stageDataMap.get(evalMissionTemplateReq.getStageName());
+    private void setTaskMission(EvalInstanceMissionTemplateReq evalMissionTemplateReq, EvalTask evalTask, String resourceId) {
+        TechniqueWarfare missionScheme = JsonUtil.toJsonObject(evalTask.getTechniqueWarfare(), TechniqueWarfare.class);
+        List<MissionData> stageList = missionScheme.getTools();
+        Map<String, MissionData> stageDataMap = StreamApiUtils.toMap(stageList, MissionData::getStageName, s-> s);
+        MissionData stageData = stageDataMap.get(evalMissionTemplateReq.getStageName());
         if (null == stageData) {
             throw new BusinessException(CrBusinessErrorCode.ERROR_STAGE_NAME);
         }
-        List<TaskBo> taskList = stageData.getTaskList();
-        TaskBo taskBo = new TaskBo();
-        String id = IDGeneratorUtil.getID();
-        taskBo.setResourceId(id);
-        taskBo.setTaskName(evalMissionTemplateReq.getName());
-        taskList.add(taskBo);
-        stageData.setTaskList(taskList);
+        List<String> taskList = stageData.getToolBoList();
+        taskList.add(resourceId);
         stageList.set(stageList.indexOf(stageData), stageData);
-        missionScheme.setStageList(stageList);
-        evalTask.setMissionScheme(JsonUtil.toJsonString(missionScheme));
-        return id;
+        missionScheme.setTools(stageList);
+        evalTask.setTechniqueWarfare(JsonUtil.toJsonString(missionScheme));
     }
 
     @ApiOperation("修改任务状态")
@@ -155,16 +147,20 @@ public class EvalMissionController {
         if(status == MissionTemplateStatus.START){
             String taskId = evalMissionTemplate.getTaskId();
             String tools = evalMissionTemplate.getTools();
-            // 工具顺序执行
+            // 工具顺序执行 TODO 确认是否多个工具
             JSONArray array = JsonUtil.stringToArray(tools);
-
+            JSONObject jsonObject = array.getJSONObject(0);
+            String node = jsonObject.getString("node");
+            String action = jsonObject.getString("action");
 
             EvalTask evalTask = evalTaskMapper.selectById(taskId);
             String mpSceneId = evalTask.getMpSceneId();
             MissionStartContext missionStartContext = new MissionStartContext();
             UserInfo userContext = UserInfoContext.getUserContext();
             missionStartContext.setId(mpSceneId);
+            missionStartContext.setNode_id(node);
             missionStartContext.setExec_user(userContext.getUserId());
+            missionStartContext.setCommand(action);
             remoteSceneService.startMission(missionStartContext);
         }
         // 状态修改 超时单独处理--
@@ -324,11 +320,11 @@ public class EvalMissionController {
     public BaseRsp<List<StageData>> getMissions(@ApiParam(name = "template_id", value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId,
                                                 @ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(value = "task_id") String taskId) {
         EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
-        String missionsScheme = evalTemplate.getMissionsScheme();
+        String missionsScheme = evalTemplate.getTechniqueWarfare();
         if (!StringUtils.isEmpty(taskId)) {
             EvalTask evalTask = evalTaskMapper.selectById(taskId);
-            if (!StringUtils.isEmpty(evalTask.getMissionScheme())) {
-                missionsScheme = evalTask.getMissionScheme();
+            if (!StringUtils.isEmpty(evalTask.getTechniqueWarfare())) {
+                missionsScheme = evalTask.getTechniqueWarfare();
             }
         }
         List<EvalMissionTemplate> evalMissionTemplates = evalMissionTemplateMapper.selectList(null);

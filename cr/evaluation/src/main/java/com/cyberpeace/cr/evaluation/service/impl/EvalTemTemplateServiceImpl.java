@@ -21,10 +21,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
-import com.cyberpeace.cr.evaluation.service.impl.bo.BaseTemplateData;
-import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
-import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
-import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
+import com.cyberpeace.cr.evaluation.service.impl.bo.*;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -65,7 +62,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	@Override
 	public String createTemplate(EvalTemTemplateReq evalTemTemplateReq) {
 		EvalTemTemplate evalTemTemplate = BeanUtils.copy(evalTemTemplateReq.getBaseData(), EvalTemTemplate.class);
-		evalTemTemplate.setMissionScheme(JsonUtil.toJsonString(evalTemTemplateReq.getMissionsScheme()));
+		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(evalTemTemplateReq.getTechniqueWarfare()));
 		evalTemTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTemTemplate.setTopoId(saveTopo(evalTemTemplateReq.getSceneConfigData()));
 		evalTemTemplateMapper.insert(evalTemTemplate);
@@ -76,12 +73,12 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	public void updateTemplate(UpdateEvalTemTemplateReq updateEvalTemTemplateReq) {
 		EvalTemTemplate oldEvalTemTemplate = evalTemTemplateMapper.selectById(updateEvalTemTemplateReq.getResourceId());
 		String topoId = oldEvalTemTemplate.getTopoId();
-		MissionScheme oldScheme = JsonUtil.toJsonObject(oldEvalTemTemplate.getMissionScheme(), MissionScheme.class);
-		List<String> oldResourceIds = evalMissionTemplateService.getTaskIds(Arrays.asList(oldScheme));
-		List<String> newResourceIds = evalMissionTemplateService.getTaskIds(Arrays.asList(updateEvalTemTemplateReq.getMissionsScheme()));
+		TechniqueWarfare oldScheme = JsonUtil.toJsonObject(oldEvalTemTemplate.getTechniqueWarfare(), TechniqueWarfare.class);
+		List<String> oldResourceIds = evalMissionTemplateService.getTaskIds(oldScheme);
+		List<String> newResourceIds = evalMissionTemplateService.getTaskIds(updateEvalTemTemplateReq.getTechniqueWarfare());
 		oldResourceIds.removeAll(newResourceIds);
 		EvalTemTemplate evalTemTemplate = BeanUtils.copy(updateEvalTemTemplateReq, EvalTemTemplate.class);
-		evalTemTemplate.setMissionScheme(JsonUtil.toJsonString(updateEvalTemTemplateReq.getMissionsScheme()));
+		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(updateEvalTemTemplateReq.getTechniqueWarfare()));
 		JSONObject topoJson = new JSONObject();
 		SceneConfigData sceneConfigData = updateEvalTemTemplateReq.getSceneConfigData();
 		topoJson.put("scene_config", sceneConfigData.getSceneConfig());
@@ -106,10 +103,11 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	public void deleteTemplates(List<String> resourceIds) {
 		List<EvalTemTemplate> evalTemTemplateList = evalTemTemplateMapper.selectBatchIds(resourceIds);
 		List<String> topoIds = evalTemTemplateList.stream().map(EvalTemTemplate::getTopoId).collect(Collectors.toList());
-		List<MissionScheme> missionSchemeList = evalTemTemplateList.stream()
-																   .map(evalTemTemplate -> JsonUtil.toJsonObject(evalTemTemplate.getMissionScheme(), MissionScheme.class))
-																   .collect(Collectors.toList());
-		List<String> missionIds = evalMissionTemplateService.getTaskIds(missionSchemeList);
+		// TODO 删除步骤待确认
+//		List<MissionScheme> missionSchemeList = evalTemTemplateList.stream()
+//																   .map(evalTemTemplate -> JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), TechniqueWarfare.class))
+//																   .collect(Collectors.toList());
+//		List<String> missionIds = evalMissionTemplateService.getTaskIds(missionSchemeList);
 
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -117,7 +115,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				remoteTopoService.batchDeleteTopo(topoIds);
-				evalMissionTemplateService.deleteMissionTemplate(missionIds);
+//				evalMissionTemplateService.deleteMissionTemplate(missionIds);
 				evalTemTemplateMapper.deleteBatchIds(resourceIds);
 			}
 		});
@@ -130,7 +128,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		EvalTemTemplateRsp evalTemTemplateRsp = new EvalTemTemplateRsp();
 		evalTemTemplateRsp.setBaseData(baseTemplateData);
 		evalTemTemplateRsp.setResourceId(resourceId);
-		evalTemTemplateRsp.setMissionsScheme(JsonUtil.toJsonObject(evalTemTemplate.getMissionScheme(), MissionScheme.class));
+		evalTemTemplateRsp.setTechniqueWarfare(JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), TechniqueWarfare.class));
 		evalTemTemplateRsp.setSceneConfigData(remoteTopoService.getTopoById(evalTemTemplate.getTopoId()));
 		return evalTemTemplateRsp;
 	}
@@ -148,7 +146,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 				.map(evalTemTemplate -> {
 					EvalTemTemplateListRsp evalTemTemplateListRsp = BeanUtils.copy(evalTemTemplate, EvalTemTemplateListRsp.class);
 					MissionScheme missionScheme = JsonUtil
-							.toJsonObject(evalTemTemplate.getMissionScheme(), MissionScheme.class);
+							.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class);
 					List<StageData> stageList = missionScheme.getStageList();
 					evalTemTemplateListRsp.setStageCount(stageList.size());
 					List<List<TaskBo>> collect = stageList.stream().map(StageData::getTaskList).collect(Collectors.toList());

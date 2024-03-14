@@ -7,7 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate;
 import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
-import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TechniqueWarfare;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -78,6 +78,7 @@ public class EvalTemplateController {
 		EvalTemplate evalTemplate = new EvalTemplate();
 
 		evaTemplateAddReq.setStepConfig(new ArrayList<>());
+		// 区分是否使用后台模板新增
 		if (null != evaTemplateAddReq.getTemplateId()) {
 			EvalTemTemplate temTemplate = evalTemTemplateService.getById(evaTemplateAddReq.getTemplateId());
 			if (null == temTemplate) {
@@ -126,8 +127,8 @@ public class EvalTemplateController {
 		// 构造接口返回数据
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
 		evalTemplateRsp.setCondition(evalTemplate.getExpCondition());
-		MissionScheme missionScheme = JsonUtil.toJsonObject(evalTemplate.getMissionsScheme(), MissionScheme.class);
-		evalTemplateRsp.setMissionsScheme(missionScheme);
+		TechniqueWarfare techniqueWarfare = JsonUtil.toJsonObject(evalTemplate.getTechniqueWarfare(), TechniqueWarfare.class);
+		evalTemplateRsp.setTechniqueWarfare(techniqueWarfare);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
 		// auth users
@@ -217,7 +218,7 @@ public class EvalTemplateController {
 		evalTemplate.setExpCondition(evaTemplateAddReq.getCondition());
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
 		// 设置技战法方案-任务方案
-		evalTemplate.setMissionsScheme(null == evalTemTemplate ? JsonUtil.toJsonString(evaTemplateAddReq.getMissionsScheme()) : evalTemTemplate.getMissionScheme());
+		evalTemplate.setTechniqueWarfare(null == evalTemTemplate ? JsonUtil.toJsonString(evaTemplateAddReq.getTechniqueWarfare()) : evalTemTemplate.getTechniqueWarfare());
 
 		// 设置模板用户
 		if (evaTemplateAddReq.getOperationAuthType().equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())) {

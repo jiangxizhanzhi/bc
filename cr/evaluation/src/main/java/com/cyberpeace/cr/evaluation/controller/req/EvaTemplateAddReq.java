@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 
-import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TechniqueWarfare;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -29,8 +29,8 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
 	private Integer operationAuthType;
 
-	@ApiModelProperty("任务方案")
-	private MissionScheme missionsScheme;
+	@ApiModelProperty("试验阶段-技战法")
+	private TechniqueWarfare techniqueWarfare;
 
 	@ApiModelProperty("模板id")
 	private String templateId;

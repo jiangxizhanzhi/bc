@@ -38,7 +38,7 @@ public class EvalTask extends BaseTable {
 
 	private String createUserId;
 
-	private String missionScheme;
+	private String techniqueWarfare;
 
 	public enum Status implements GenericEnum {
 

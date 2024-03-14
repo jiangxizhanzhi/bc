@@ -39,7 +39,7 @@ public class EvalTemTemplate extends BaseTable {
 	private String topoId;
 
 	@ApiModelProperty("任务方案")
-	private String missionScheme;
+	private String techniqueWarfare;
 
 	@ApiModelProperty("创建人id")
 	private String createUserId;

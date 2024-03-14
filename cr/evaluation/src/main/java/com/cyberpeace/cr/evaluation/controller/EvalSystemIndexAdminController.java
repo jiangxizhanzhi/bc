@@ -12,10 +12,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalSystemCalReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalSystemReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalSystemTestReq;
+import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemAllRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
@@ -267,7 +264,7 @@ public class EvalSystemIndexAdminController {
 	@ApiOperation("复制体系指标")
 	@PostMapping("copy")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
-	public BaseRsp<EvalSystemReq> copyEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
+	public BaseRsp<EvalSystemReq> copyEvalIndex(@RequestBody @Validated EvalSystemCopyReq evalSystemReq) {
 		// 复制当前已有体系 生成一条名称+【复制】的新体系数据
 		EvalSystem byId = evalSystemService.getById(evalSystemReq.getEvalSystemId());
 		if (null == byId) {
@@ -275,15 +272,13 @@ public class EvalSystemIndexAdminController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		EvalSystemRsp evalSystemRsp = evalSystemService.convertEvalSystemToEvalSystemRsp(byId);
-		String jsonString = JsonUtil.toJsonString(evalSystemRsp);
-		List<IndexContext> firstIndexes = evalSystemReq.getFirstIndexes();
-		String id = IDGeneratorUtil.getID();
-		IndexContext indexContext1 = firstIndexes.get(0);
-		String indexId1 = indexContext1.getIndexId();
-		jsonString = jsonString.replaceAll(indexId1, id);
-		List<IndexContext> secondIndexes = evalSystemReq.getSecondIndexes();
+		String indexId1 = evalSystemRsp.getFirstIndexes().get(0).getIndexId();
+		List<IndexContext> secondIndexes = evalSystemRsp.getSecondIndexes();
+		List<IndexContext> thirdIndexes = evalSystemRsp.getThirdIndexes();
 
-		List<IndexContext> thirdIndexes = evalSystemReq.getThirdIndexes();
+		String jsonString = JsonUtil.toJsonString(evalSystemRsp);
+		String id = IDGeneratorUtil.getID();
+		jsonString = jsonString.replaceAll(indexId1, id);
 		for (IndexContext indexContext : thirdIndexes) {
 			String indexId = indexContext.getIndexId();
 			String currentId = IDGeneratorUtil.getID();
@@ -300,21 +295,27 @@ public class EvalSystemIndexAdminController {
 		EvalSystemReq jsonObject = JsonUtil.toJsonObject(jsonString, EvalSystemReq.class);
 		Integer copyNum = byId.getCopyNum();
 		String name = jsonObject.getName();
-		StringBuffer sb = new StringBuffer();
-		for(int i = 0; i < copyNum; i++){
+		if(null == copyNum){
+			copyNum = 0;
+		}
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < copyNum + 1; i++){
 			sb.append("（复制）");
 		}
 		jsonObject.setName(name + sb.toString());
 
+
+		Integer finalCopyNum = copyNum;
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 				EvalSystem evalSystem = saveEvalIndex(jsonObject);
-				evalSystem.setCopyNum(copyNum + 1);
+				byId.setCopyNum(finalCopyNum + 1);
 				evalSystem.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 				evalSystemService.save(evalSystem);
+				evalSystemService.updateById(byId);
 			}
 		});
 

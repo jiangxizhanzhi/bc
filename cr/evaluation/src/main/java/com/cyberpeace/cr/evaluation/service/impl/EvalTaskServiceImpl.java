@@ -1,23 +1,5 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateMapper;
-import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
-import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
-import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -35,6 +17,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
+import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -43,8 +26,16 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -73,9 +64,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 	@Autowired
 	private EvalRecordService evalRecordService;
-
-	@Autowired
-	private EvalMissionTemplateService evalMissionTemplateService;
 
 	@Override
 	public EvalTask getTask(String taskId) {
@@ -141,28 +129,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		evalTask.setTemplateName(evalTemplate.getName());
 		evalTask.setResourceId(IDGeneratorUtil.getID());
 
-		// 复制技战法任务
-		String missionsScheme = evalTemplate.getMissionsScheme();
-		MissionScheme missionScheme = JsonUtil.toJsonObject(missionsScheme, MissionScheme.class);
-		List<StageData> stageList = missionScheme.getStageList();
-		List<EvalMissionTemplate> missions = new ArrayList<>();
-		List<StageData> collect = stageList.stream().map(stageData -> {
-			List<TaskBo> taskList = stageData.getTaskList();
-			List<TaskBo> taskRes = new ArrayList<>();
-			for (TaskBo task : taskList) {
-				EvalMissionTemplate missionTemplate = new EvalMissionTemplate();
-				missionTemplate.setName(task.getTaskName());
-				String id = IDGeneratorUtil.getID();
-				missionTemplate.setResourceId(id);
-				missions.add(missionTemplate);
-				task.setResourceId(id);
-				taskRes.add(task);
-			}
-			stageData.setTaskList(taskRes);
-			return stageData;
-		}).collect(Collectors.toList());
-		missionScheme.setStageList(collect);
-		evalTask.setMissionScheme(JsonUtil.toJsonString(missionScheme));
 
 
 		// 构建步骤对象
@@ -202,7 +168,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 					save(evalTask);
 					evalTaskStepService.saveBatch(evalTaskSteps);
 					evalTemplateMapper.updateById(evalTemplate);
-					evalMissionTemplateService.saveBatch(missions);
 				}
 			});
 

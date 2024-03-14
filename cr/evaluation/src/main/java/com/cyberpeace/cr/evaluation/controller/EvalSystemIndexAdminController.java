@@ -266,6 +266,9 @@ public class EvalSystemIndexAdminController {
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystemReq> copyEvalIndex(@RequestBody @Validated EvalSystemCopyReq evalSystemReq) {
 		// 复制当前已有体系 生成一条名称+【复制】的新体系数据
+
+		List<EvalSystem> evalSystems = evalSystemService.getBaseMapper().selectList(null);
+		List<String> names = evalSystems.stream().map(EvalSystem::getName).collect(Collectors.toList());
 		EvalSystem byId = evalSystemService.getById(evalSystemReq.getEvalSystemId());
 		if (null == byId) {
 			log.info("EvalSystem not found! EvalSystemId=[{}]", evalSystemReq.getEvalSystemId());
@@ -293,29 +296,21 @@ public class EvalSystemIndexAdminController {
 
 		}
 		EvalSystemReq jsonObject = JsonUtil.toJsonObject(jsonString, EvalSystemReq.class);
-		Integer copyNum = byId.getCopyNum();
 		String name = jsonObject.getName();
-		if(null == copyNum){
-			copyNum = 0;
+		while (names.contains(name)){
+			name = name + "（复制）";
 		}
-		StringBuilder sb = new StringBuilder();
-		for(int i = 0; i < copyNum + 1; i++){
-			sb.append("（复制）");
-		}
-		jsonObject.setName(name + sb.toString());
 
+		jsonObject.setName(name);
 
-		Integer finalCopyNum = copyNum;
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 				EvalSystem evalSystem = saveEvalIndex(jsonObject);
-				byId.setCopyNum(finalCopyNum + 1);
 				evalSystem.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 				evalSystemService.save(evalSystem);
-				evalSystemService.updateById(byId);
 			}
 		});
 

@@ -1,7 +1,4 @@
 
-ALTER TABLE cr_eval_system  add column `copy_num` INT(11) NULL  COMMENT '复制次数';
-
-
 ALTER TABLE cr_eval_index  add column `cal_score` INT(11) NULL  COMMENT '调试指标得分';
 ALTER TABLE cr_eval_index  add column `test_score` INT(11) NULL  COMMENT '试验指标得分';
 ALTER TABLE cr_eval_index  add column `score` INT(11) NULL  COMMENT '指标得分';

@@ -201,9 +201,18 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 
 		}
 
-		evalRuleTemplateDetail.setTasks(evalRuleTemplate.getTaskList());
 
-		List<EvalTaskTemplateContext> evalTaskTemplateContexts = evalStepTemplateMapper.selectIdNameByCloudTemplateId(evalRuleTemplate.getCloudTemplateId());
+		Integer integer = evalStepTemplateMapper.select1ByCloudTemplateId(evalRuleTemplate.getCloudTemplateId());
+		if (integer == null) {
+			evalRuleTemplateDetail.setTasks(evalRuleTemplate.getTaskList());
+		} else {
+			List<EvalTaskTemplateContext> evalTaskTemplateContexts = evalStepTemplateMapper.selectIdNameByCloudTemplateId(evalRuleTemplate.getCloudTemplateId());
+			Map<String, String> idNameMap = evalTaskTemplateContexts.stream().collect(Collectors.toMap(EvalTaskTemplateContext::getTaskId, EvalTaskTemplateContext::getTaskName));
+			evalRuleTemplateDetail.setTasks(evalRuleTemplate.getTaskList().stream()
+															.peek(evalTaskTemplateContext -> evalTaskTemplateContext.setTaskName(idNameMap.get(evalTaskTemplateContext.getTaskId())))
+															.collect(Collectors.toList()));
+		}
+
 		evalRuleTemplateDetail.setActions(evalActionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId()));
 		return evalRuleTemplateDetail;
 	}

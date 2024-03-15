@@ -14,4 +14,6 @@ public class EvalCloudTemplateListContext {
 	private Integer type;
 
 	private String createUserId;
+
+	private String topoId;
 }

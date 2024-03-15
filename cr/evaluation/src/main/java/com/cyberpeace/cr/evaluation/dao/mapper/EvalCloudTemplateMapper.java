@@ -17,6 +17,8 @@ public interface EvalCloudTemplateMapper extends BaseMapper<EvalCloudTemplate> {
 	List<EvalCloudTemplateListContext> selectList(@Param("type") Integer type, @Param("name") String name);
 
 	String getTopoIdById(@Param("resourceId") String resourceId);
+
+	List<String> getTopoIdsByIds(@Param("ids") List<String> ids);
 }
 
 

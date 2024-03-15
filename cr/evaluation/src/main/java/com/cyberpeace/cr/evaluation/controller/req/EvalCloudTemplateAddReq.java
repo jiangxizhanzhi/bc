@@ -16,8 +16,8 @@ public class EvalCloudTemplateAddReq implements Serializable {
 	@ApiModelProperty("基础信息")
 	private EvalCloudTemplateBaseReq baseInfo;
 
-	@ApiModelProperty("试验环境")
-	private JSONObject environment;
+	@ApiModelProperty("场景配置数据")
+	private JSONObject sceneConfigData;
 
 	@ApiModelProperty("试验步骤id列表")
 	private List<String> stepIds;

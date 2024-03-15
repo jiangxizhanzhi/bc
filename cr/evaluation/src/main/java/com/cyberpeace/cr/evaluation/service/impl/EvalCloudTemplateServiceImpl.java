@@ -1,10 +1,12 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalCloudTemplateAddReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalCloudTemplateBaseReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalCloudTemplateListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalCloudTemplateEnumRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalCloudTemplateListRsp;
@@ -12,6 +14,9 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalCloudTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalCloudTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalCloudTemplateListContext;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,22 +58,31 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
+
 	@Override
 	public void addCloudTemplate(EvalCloudTemplateAddReq evalCloudTemplateAddReq) {
 		EvalCloudTemplate evalCloudTemplate = BeanUtils.copy(evalCloudTemplateAddReq.getBaseInfo(), EvalCloudTemplate.class);
 		evalCloudTemplate.setStepIdList(evalCloudTemplateAddReq.getStepIds());
 		evalCloudTemplate.setResourceId(evalCloudTemplateAddReq.getCloudTemplateId());
-		// TODO: 2024/3/8  调用中台接口保存拓扑
-		evalCloudTemplate.setTopoId("111");
+		evalCloudTemplate.setTopoId(localSceneService.saveTopo(evalCloudTemplateAddReq.getSceneConfigData(),
+				BusinessCode.RANGE_EVALUATION.getCode()));
 		evalCloudTemplateMapper.insert(evalCloudTemplate);
 	}
 
 	@Override
 	public void modifyCloudTemplate(EvalCloudTemplateAddReq evalCloudTemplateAddReq) {
-		EvalCloudTemplate evalCloudTemplate = BeanUtils.copy(evalCloudTemplateAddReq.getBaseInfo(), EvalCloudTemplate.class);
-		evalCloudTemplate.setStepIdList(evalCloudTemplateAddReq.getStepIds());
-		// TODO: 2024/3/8  调用中台接口更新拓扑
-		evalCloudTemplateMapper.updateById(evalCloudTemplate);
+		String topoId = evalCloudTemplateMapper.getTopoIdById(evalCloudTemplateAddReq.getCloudTemplateId());
+		EvalCloudTemplate newEvalCloudTemplate = BeanUtils.copy(evalCloudTemplateAddReq.getBaseInfo(), EvalCloudTemplate.class);
+		newEvalCloudTemplate.setStepIdList(evalCloudTemplateAddReq.getStepIds());
+		newEvalCloudTemplate.setResourceId(evalCloudTemplateAddReq.getCloudTemplateId());
+		newEvalCloudTemplate.setTopoId(topoId);
+		localSceneService.saveTopo(evalCloudTemplateAddReq.getSceneConfigData(), topoId);
+		evalCloudTemplateMapper.updateById(newEvalCloudTemplate);
 	}
 
 	@Override
@@ -86,7 +100,8 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 				evalHostTemplateMapper.deleteByCloudTemplateIds(ids);
 				evalStepTemplateMapper.deleteByCloudTemplateIds(ids);
 
-				// TODO: 2024/3/8 调用中台接口删除拓扑
+				List<String> topoIds = evalCloudTemplateMapper.getTopoIdsByIds(ids);
+				remoteTopoService.batchDeleteTopo(topoIds);
 			}
 		});
 	}
@@ -96,12 +111,14 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 		List<EvalCloudTemplateListContext> cloudList = evalCloudTemplateMapper.selectList(evalCloudTemplateListReq.getType(), evalCloudTemplateListReq.getPattern());
 		List<String> createUserIds = cloudList.stream().map(EvalCloudTemplateListContext::getCreateUserId).distinct().collect(Collectors.toList());
 		Map<String, String> userMap = remoteUserService.getIdNameMap(createUserIds);
+		List<String> topoIds = cloudList.stream().map(EvalCloudTemplateListContext::getTopoId).collect(Collectors.toList());
+		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
 		return cloudList.stream().map(evalCloudTemplateListContext -> {
 			EvalCloudTemplateListRsp evalCloudTemplateListRsp = BeanUtils.copy(evalCloudTemplateListContext, EvalCloudTemplateListRsp.class);
 			evalCloudTemplateListRsp.setCloudTemplateId(evalCloudTemplateListContext.getResourceId());
 			evalCloudTemplateListRsp.setCreateUser(userMap.get(evalCloudTemplateListContext.getCreateUserId()));
 			evalCloudTemplateListRsp.setType(EnumUtils.getEnumDescByCode(evalCloudTemplateListContext.getType(), EvalCloudTemplate.TestType.class));
-			evalCloudTemplateListRsp.setNodeCount(0);
+			evalCloudTemplateListRsp.setNodeCount(nodeCountMap.get(evalCloudTemplateListContext.getTopoId()).getNodeCounts());
 			return evalCloudTemplateListRsp;
 		}).collect(Collectors.toList());
 	}
@@ -114,5 +131,17 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 		evalCloudTemplateEnumRsp.setTestType(Arrays.stream(EvalCloudTemplate.TestType.values())
 												   .map(testType -> new CodeNameRsp(testType.getCode(), testType.getDesc())).collect(Collectors.toList()));
 		return evalCloudTemplateEnumRsp;
+	}
+
+	@Override
+	public EvalCloudTemplateAddReq getCloudTemplate(String resourceId) {
+		EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(resourceId);
+		EvalCloudTemplateBaseReq evalCloudTemplateBaseReq = BeanUtils.copy(evalCloudTemplate, EvalCloudTemplateBaseReq.class);
+		EvalCloudTemplateAddReq evalCloudTemplateAddReq = new EvalCloudTemplateAddReq();
+		evalCloudTemplateAddReq.setBaseInfo(evalCloudTemplateBaseReq);
+		evalCloudTemplateAddReq.setCloudTemplateId(evalCloudTemplate.getResourceId());
+		evalCloudTemplateAddReq.setStepIds(evalCloudTemplate.getStepIdList());
+		evalCloudTemplateAddReq.setSceneConfigData(localSceneService.getTopoData(evalCloudTemplate.getTopoId()));
+		return evalCloudTemplateAddReq;
 	}
 }

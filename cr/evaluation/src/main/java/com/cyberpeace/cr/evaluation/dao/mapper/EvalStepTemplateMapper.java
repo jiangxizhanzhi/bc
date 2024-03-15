@@ -22,6 +22,8 @@ public interface EvalStepTemplateMapper extends BaseMapper<EvalStepTemplate> {
 
 	List<EvalTaskTemplateContext> selectIdNameByCloudTemplateId(@Param("cloudTemplateId") String cloudTemplateId);
 
+	Integer select1ByCloudTemplateId(@Param("cloudTemplateId") String cloudTemplateId);
+
 }
 
 

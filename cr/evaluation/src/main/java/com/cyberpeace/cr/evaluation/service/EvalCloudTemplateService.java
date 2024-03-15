@@ -21,4 +21,6 @@ public interface EvalCloudTemplateService extends IService<EvalCloudTemplate> {
 
 	EvalCloudTemplateEnumRsp getCloudTemplateEnum();
 
+	EvalCloudTemplateAddReq getCloudTemplate(String resourceId);
+
 }

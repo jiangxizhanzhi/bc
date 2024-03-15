@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalCloudTemplateMapper">
 
     <select id="selectList" resultType="com.cyberpeace.cr.evaluation.service.context.EvalCloudTemplateListContext">
-        select resource_id, `name`, target, type, create_user_id
+        select resource_id, `name`, target, type, create_user_id, topo_id
         from cr_eval_cloud_template
         <where>
             1 = 1
@@ -23,5 +23,14 @@
         select topo_id
         from cr_eval_cloud_template
         where resource_id = #{resourceId}
+    </select>
+
+    <select id="getTopoIdsByIds" resultType="java.lang.String">
+        select topo_id
+        from cr_eval_cloud_template
+        where resource_id in
+        <foreach collection="ids" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
     </select>
 </mapper>

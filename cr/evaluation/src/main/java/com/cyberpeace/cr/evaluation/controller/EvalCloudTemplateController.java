@@ -213,6 +213,12 @@ public class EvalCloudTemplateController {
 		return new BaseRsp<>(PageUtil.getListResult(evalCloudTemplateListRspList, evalCloudTemplateListReq.toPageParam(), evalCloudTemplateListRspList.size()));
 	}
 
+	@ApiOperation("查询云场景模板详情")
+	@GetMapping("")
+	public BaseRsp<EvalCloudTemplateAddReq> getCloudTemplateDetail(@ApiParam(name = "cloud_template_id", value = "云模板id") @RequestParam("cloud_template_id") String cloudTemplateId) {
+		return new BaseRsp<>(evalCloudTemplateService.getCloudTemplate(cloudTemplateId));
+	}
+
 	@ApiOperation("获取云模板基础信息相关枚举")
 	@GetMapping("/enum")
 	public BaseRsp<EvalCloudTemplateEnumRsp> getCloudTemplateEnum() {

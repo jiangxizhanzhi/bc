@@ -31,4 +31,11 @@
         from cr_eval_step_template
         where cloud_template_id = #{cloudTemplateId}
     </select>
+
+    <select id="select1ByCloudTemplateId" resultType="java.lang.Integer">
+        select 1
+        from cr_eval_step_template
+        where cloud_template_id = #{cloudTemplateId}
+        limit 1
+    </select>
 </mapper>

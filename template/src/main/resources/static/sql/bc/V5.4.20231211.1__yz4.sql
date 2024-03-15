@@ -1,8 +1,8 @@
-INSERT INTO `bc_5_4_1_yz4`.`cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (146, NULL, 1, 41, '武器工具测试', 'Weapon Tool Testing');
-INSERT INTO `bc_5_4_1_yz4`.`cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (147, NULL, 2, 41, '攻击流量分析', 'Attack Traffic Analysis');
-INSERT INTO `bc_5_4_1_yz4`.`cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (148, NULL, 3, 41, '漏洞测试', 'Vulnerability Testing');
-INSERT INTO `bc_5_4_1_yz4`.`cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (149, NULL, 4, 41, '攻防验证', 'Attack And Defense Verification');
-INSERT INTO `bc_5_4_1_yz4`.`cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (150, NULL, 5, 41, '技战法研究', 'Research On Technical Warfare Methods');
+INSERT INTO `cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (146, NULL, 1, 41, '武器工具测试', 'Weapon Tool Testing');
+INSERT INTO `cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (147, NULL, 2, 41, '攻击流量分析', 'Attack Traffic Analysis');
+INSERT INTO `cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (148, NULL, 3, 41, '漏洞测试', 'Vulnerability Testing');
+INSERT INTO `cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (149, NULL, 4, 41, '攻防验证', 'Attack And Defense Verification');
+INSERT INTO `cr_constants_config`(`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (150, NULL, 5, 41, '技战法研究', 'Research On Technical Warfare Methods');
 
 
 -- ----------------------------
@@ -38,7 +38,7 @@ CREATE TABLE `cr_eval_mission_template`  (
                                              `remaining_time` int(5) NULL DEFAULT NULL COMMENT '任务剩余时间',
                                              `result` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '验证结果',
                                              `status`  smallint(5) UNSIGNED NOT NULL DEFAULT 0 COMMENT '任务状态',
-                                             `task_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联taskid',
+                                             `task_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '关联taskid',
                                              `create_time` datetime(0) NULL DEFAULT NULL COMMENT '开始时间',
                                              `update_time` datetime(0) NULL DEFAULT NULL COMMENT '结束时间',
                                              PRIMARY KEY (`id`) USING BTREE

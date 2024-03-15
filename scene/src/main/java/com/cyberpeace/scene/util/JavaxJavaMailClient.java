@@ -41,6 +41,7 @@ public class JavaxJavaMailClient {
 		props.setProperty("mail.user", fromUser);
 		props.setProperty("mail.from", fromEmail);
 		props.setProperty("mail.smtp.ssl.enable", "true");
+		props.setProperty("mail.smtp.starttls.enable", "false");
 		props.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
 		props.setProperty("mail.smtp.socketFactory", "javax.net.ssl.SSLSocketFactory");
 		props.setProperty("mail.smtp.ssl.trust", emailHost);

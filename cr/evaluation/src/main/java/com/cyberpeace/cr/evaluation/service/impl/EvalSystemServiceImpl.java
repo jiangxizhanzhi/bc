@@ -432,6 +432,11 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 
 	private String startCollect(List<CollectWithStrContext> fifthIndex, List<EvalCollection> collects) {
 		List<String> usingAlgorithmIds = Lists.newArrayList();
+		List<String> collect = fifthIndex.stream().map(CollectWithStrContext::getResourceId).collect(Collectors.toList());
+		List<EvalCollection> evalCollects = evalCollectionMapper.selectByIds(collect);
+		Map<String, EvalCollection> collectMap = evalCollects.stream().collect(Collectors.toMap(EvalCollection::getResourceId, s -> s));
+		fifthIndex.forEach(item -> BeanUtils.copyProperties(collectMap.get(item.getResourceId()), item));
+
 		// 获取采集项所有的算法 并存成map
 		fifthIndex.forEach(evalVariableRef -> {
 			usingAlgorithmIds.add(evalVariableRef.getFormatAlgorithmId());

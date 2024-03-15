@@ -29,6 +29,8 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	List<EvalCollectionContextRsp> selectByEvalIndicatorIds(List<String> evalIndicatorIds);
 
 	List<EvalCollection> selectByEvalIndicators(List<String> evalIndicatorIds);
+
+	List<EvalCollection> selectByIds(List<String> resourceIds);
 }
 
 

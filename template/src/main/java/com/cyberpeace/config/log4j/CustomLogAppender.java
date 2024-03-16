@@ -138,26 +138,6 @@ public class CustomLogAppender extends FileAppender {
             log.error("Failed to rename [" + fileName + "] to [" + scheduledFilename + "].");
         }
 
-        // 删除过期文件
-        if (maxDaysIndex > 0) {
-            File folder = new File(file.getParent());
-            List<String> maxDaysIndexDates = getMaxDaysIndexDates();
-            for (File ff : folder.listFiles()) {
-                // 遍历目录，将日期不在备份范围内的日志删掉
-                if (ff.getName().startsWith(FileUtil.getFileName(file.getPath(), false) + "_") && !ff.getName().equals(file.getName())) {
-                    // 获取文件名带的日期时间戳
-                    String markedDate = getFileNameTime(ff);
-                    if (!maxDaysIndexDates.contains(markedDate)) {
-                        result = ff.delete();
-                    }
-                    if (result) {
-                        log.debug(ff.getName() + " -> deleted ");
-                    } else {
-                        log.error("Failed to deleted old DayRollingFileAppender file :" + ff.getName());
-                    }
-                }
-            }
-        }
 
         try {
             // This will also close the file. This is OK since multiple
@@ -169,6 +149,32 @@ public class CustomLogAppender extends FileAppender {
 
         scheduledFilename = datedFilename;
         // 更新最后更新日期戳
+
+        // 删除过期文件
+        if (maxDaysIndex > 0) {
+            File folder = new File(file.getParent());
+            List<String> maxDaysIndexDates = getMaxDaysIndexDates();
+            for (File ff : folder.listFiles()) {
+                // 遍历目录，将日期不在备份范围内的日志删掉
+                // 首次启动当前时间和上次时间不相同时，无法调用CommonConstant.ZERO模块导致项目启动失败，重新实现getFileName方法
+                if (ff.getName().startsWith(getFileName(file.getPath()) + "_") && !ff.getName().equals(file.getName())) {
+                    // 获取文件名带的日期时间戳
+                    String markedDate = getFileNameTime(ff);
+                    if (!maxDaysIndexDates.contains(markedDate)) {
+                        if (ff.delete()) {
+                            log.debug(ff.getName() + " -> deleted ");
+                        } else {
+                            log.error("Failed to deleted old DayRollingFileAppender file :" + ff.getName());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static String getFileName(String filePath) {
+        File file = new File(filePath);
+        return file.getName().substring(0, file.getName().lastIndexOf("."));
     }
 
     /**

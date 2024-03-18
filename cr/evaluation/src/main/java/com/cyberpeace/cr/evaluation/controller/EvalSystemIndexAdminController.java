@@ -467,6 +467,7 @@ public class EvalSystemIndexAdminController {
 			String evalIndicatorId = evalIndicator.getResourceId();
 			IndexContext indexContext = contextMap.get(evalIndicatorId);
 			indexContext.setChildrenIds(aggregationIds);
+			indexContext.setAlgorithmId(evalIndicator.getAggregatingAlgorithmId());
 			thirdIndex.add(indexContext);
 			String rspConnlist = rsp.getConnlist();
 			rsp.setConnlist(rspConnlist + connlist);

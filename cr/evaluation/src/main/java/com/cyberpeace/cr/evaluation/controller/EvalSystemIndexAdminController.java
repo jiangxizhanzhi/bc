@@ -35,6 +35,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -266,7 +268,7 @@ public class EvalSystemIndexAdminController {
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystemReq> copyEvalIndex(@RequestBody @Validated EvalSystemCopyReq evalSystemReq) {
 		// 复制当前已有体系 生成一条名称+【复制】的新体系数据
-
+		// 复用新增指标体系得方法 用新指标项id替换旧得 替换后得参数模拟前端入参
 		List<EvalSystem> evalSystems = evalSystemService.getBaseMapper().selectList(null);
 		List<String> names = evalSystems.stream().map(EvalSystem::getName).collect(Collectors.toList());
 		EvalSystem byId = evalSystemService.getById(evalSystemReq.getEvalSystemId());
@@ -278,6 +280,22 @@ public class EvalSystemIndexAdminController {
 		String indexId1 = evalSystemRsp.getFirstIndexes().get(0).getIndexId();
 		List<IndexContext> secondIndexes = evalSystemRsp.getSecondIndexes();
 		List<IndexContext> thirdIndexes = evalSystemRsp.getThirdIndexes();
+
+		List<IndexContext> indexesByEvalSystemId = evalIndexService.getIndexesByEvalSystemId(evalSystemReq.getEvalSystemId(), EvalIndex.Level.THIRD.getCode());
+		Map<String, String> thirdIndexMaps = StreamApiUtils.toMap(indexesByEvalSystemId,
+				IndexContext::getIndexId, IndexContext::getEvalIndicatorId);
+
+		for(IndexContext index:secondIndexes){
+			List<String> childrenIds = index.getChildrenIds();
+			List<String> replaceIds = new ArrayList<>();
+			for(String child:childrenIds){
+				String indicator = thirdIndexMaps.get(child);
+				replaceIds.add(indicator);
+
+			}
+			index.setChildrenIds(replaceIds);
+		}
+		evalSystemRsp.setSecondIndexes(secondIndexes);
 
 		String jsonString = JsonUtil.toJsonString(evalSystemRsp);
 		String id = IDGeneratorUtil.getID();
@@ -295,13 +313,15 @@ public class EvalSystemIndexAdminController {
 			jsonString = jsonString.replaceAll(indexId, currentId);
 
 		}
-		EvalSystemReq jsonObject = JsonUtil.toJsonObject(jsonString, EvalSystemReq.class);
-		String name = jsonObject.getName();
-		while (names.contains(name)){
-			name = name + "（复制）";
+		String name = evalSystemRsp.getName();
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		while (names.contains(sb.toString())){
+			sb.append("（复制）");
 		}
 
-		jsonObject.setName(name);
+		jsonString = jsonString.replaceAll(name, sb.toString());
+		EvalSystemReq jsonObject = JsonUtil.toJsonObject(jsonString, EvalSystemReq.class);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -433,19 +453,28 @@ public class EvalSystemIndexAdminController {
 		List<EvalIndicator> evalIndicators = evalIndicatorMapper.selectIndexes(column);
 		List<EvalIndex> indexList = evalIndexMapper.selectListBySystemIdAndLevel(resourceId, EvalIndex.Level.THIRD.getCode());
 		Map<String, String> collect = indexList.stream().collect(Collectors.toMap(EvalIndex::getEvalIndicatorId, EvalIndex::getResourceId));
-
-
+		List<IndexContext> thirdIndexes = evalSystemRsp.getThirdIndexes();
+		Map<String, IndexContext> contextMap = StreamApiUtils.toMap(thirdIndexes, IndexContext::getEvalIndicatorId, s -> s);
+		List<IndexContext> thirdIndex = new ArrayList<>();
 		evalIndicators.forEach(evalIndicator -> {
 			EvalIndicatorRsp evalIndicatorRsp = evalIndicatorService.convertEvalIndicatorToEvalSystemRsp(evalIndicator);
 			// 待前端确认返回展示格式  3级指标项 链接 聚合项和采集项时 使用的是 指标项id 非指标项resource_id
 			String connlist = evalIndicatorRsp.getConnlist();
 			connlist = connlist.replaceAll(evalIndicator.getResourceId(),collect.get(evalIndicator.getResourceId()));
+
+			List<String> aggregationIds = JsonUtil
+					.toJsonObjectArray(evalIndicator.getAggregationIds(), String.class);
+			String evalIndicatorId = evalIndicator.getResourceId();
+			IndexContext indexContext = contextMap.get(evalIndicatorId);
+			indexContext.setChildrenIds(aggregationIds);
+			thirdIndex.add(indexContext);
 			String rspConnlist = rsp.getConnlist();
 			rsp.setConnlist(rspConnlist + connlist);
 			rsp.getFourthIndexes().addAll(evalIndicatorRsp.getEvalAggregations());
 			rsp.getFifthIndexes().addAll(evalIndicatorRsp.getEvalCollections());
 
 		});
+		rsp.setThirdIndexes(thirdIndex);
 		return new BaseRsp<>(rsp);
 	}
 }

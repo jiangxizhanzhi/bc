@@ -371,6 +371,10 @@ public final class ErrorCode {
 	public static final String RDP_NOT_READY = "100104";
 
 	public static final String FAILED_TO_SEND_MAIL = "100105";
+	/**
+	 * 邮件服务器未就绪
+	 */
+	public static final String MAIL_SERVER_NOT_READY = "100106";
 
 	private ErrorCode() {}
 }

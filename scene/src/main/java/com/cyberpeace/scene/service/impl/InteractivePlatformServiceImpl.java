@@ -1,6 +1,8 @@
 package com.cyberpeace.scene.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.probe.RDPProbe;
+import com.cyberpeace.common.probe.SMTPProbe;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.scene.constant.enums.ImageRoleEnum;
@@ -139,14 +142,21 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
 		}
 		List<NodeEntity> nodeList = nodeMapper.selectBySid(scene.getResourceId());
+		// 先检查一般的机器，再检查邮件服务器
+		nodeList = nodeList.stream().sorted(Comparator.comparing(NodeEntity::getType))
+				.collect(Collectors.toList());
 		for (NodeEntity node : nodeList) {
-			// 跳过检测邮件服务器
+			// 检测邮件服务器
 			if (node.getType().equals(ImageRoleEnum.SERVER.getCode())) {
-				continue;
-			}
-			RDPProbe rdpProbe = new RDPProbe(node.getHostname(), node.getHostPort());
-			if (!rdpProbe.probe()) {
-				throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
+				SMTPProbe smtpProbe = new SMTPProbe(node.getHostname(), node.getHostPort());
+				if (!smtpProbe.probe()) {
+					throw new BusinessException(ErrorCode.MAIL_SERVER_NOT_READY);
+				}
+			} else {
+				RDPProbe rdpProbe = new RDPProbe(node.getHostname(), node.getHostPort());
+				if (!rdpProbe.probe()) {
+					throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
+				}
 			}
 		}
 	}

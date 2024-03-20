@@ -5,13 +5,12 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -435,6 +434,45 @@ public class FileUtil {
 		}
 
 		return allDir;
+	}
+
+	public static TreeMap<Integer, List<String>> mapFileByFile(File rootFile, Integer depth, Boolean includeFile) {
+
+		// 文件校验返回
+		if (!rootFile.exists() || depth == null) {
+			return new TreeMap<>();
+		}
+
+		// 是包含文件过滤
+		if (!includeFile && rootFile.isFile()) {
+			return new TreeMap<>();
+		}
+
+		// 根据审读计算是否继续往下
+		if (depth > 0) {
+			depth--;
+		} else {
+			return new TreeMap<>();
+		}
+
+		// 遍历文件返回
+		File[] files = rootFile.listFiles();
+		TreeMap<Integer, List<String>> allDir =  new TreeMap<>(new Comparator<Integer>() {
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				return o2 - o1; // 降序排列
+			}
+		});
+		if (files == null) {
+			return new TreeMap<>();
+		}
+		for (File file : files) {
+			allDir.getOrDefault(depth+1, Lists.newArrayList()).add(file.getAbsolutePath());
+			Map<Integer, List<String>>  childrenDirs = mapFileByFile(file, depth, includeFile);
+			allDir.putAll(childrenDirs);
+		}
+
+		return  allDir;
 	}
 
 	/**

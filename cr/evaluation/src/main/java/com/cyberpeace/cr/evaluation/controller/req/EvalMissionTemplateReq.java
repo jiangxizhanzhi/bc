@@ -4,6 +4,7 @@ import com.cyberpeace.cr.evaluation.service.impl.bo.ToolBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
 public class EvalMissionTemplateReq implements Serializable {
 
 	@ApiModelProperty("任务名称")
+	@NotNull
 	private String name;
 
 	@ApiModelProperty("实施步骤")

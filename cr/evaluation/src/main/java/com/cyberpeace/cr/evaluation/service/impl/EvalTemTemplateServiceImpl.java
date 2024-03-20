@@ -26,19 +26,20 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMapper, EvalTemTemplate> implements EvalTemTemplateService {
 
 	@Autowired
@@ -103,11 +104,6 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	public void deleteTemplates(List<String> resourceIds) {
 		List<EvalTemTemplate> evalTemTemplateList = evalTemTemplateMapper.selectBatchIds(resourceIds);
 		List<String> topoIds = evalTemTemplateList.stream().map(EvalTemTemplate::getTopoId).collect(Collectors.toList());
-		// TODO 删除步骤待确认
-//		List<MissionScheme> missionSchemeList = evalTemTemplateList.stream()
-//																   .map(evalTemTemplate -> JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), TechniqueWarfare.class))
-//																   .collect(Collectors.toList());
-//		List<String> missionIds = evalMissionTemplateService.getTaskIds(missionSchemeList);
 
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -115,7 +111,6 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				remoteTopoService.batchDeleteTopo(topoIds);
-//				evalMissionTemplateService.deleteMissionTemplate(missionIds);
 				evalTemTemplateMapper.deleteBatchIds(resourceIds);
 			}
 		});
@@ -136,27 +131,35 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	@Override
 	public ListRsp<EvalTemTemplateListRsp> getTemplateList(EvalTemTemplatePageReq pageReqBase) {
 		Page page = pageReqBase.toPageParam();
+		List<EvalTemTemplateListRsp> rspList = new ArrayList<>();
 		IPage<EvalTemTemplate> iPage = evalTemTemplateMapper.selectPage(page, pageReqBase.getType(), pageReqBase.getPattern());
 		List<EvalTemTemplate> evalTemTemplateList = iPage.getRecords();
+		if(evalTemTemplateList.isEmpty()){
+			return PageUtil.getListResult(rspList, pageReqBase.toPageParam(), iPage.getTotal());
+		}
 		List<String> topoIds = evalTemTemplateList.stream().map(EvalTemTemplate::getTopoId).collect(Collectors.toList());
 		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
 		List<String> createUserIds = evalTemTemplateList.stream().map(EvalTemTemplate::getCreateUserId).distinct().collect(Collectors.toList());
 		Map<String, String> idNameMap = remoteUserService.getIdNameMap(createUserIds);
-		List<EvalTemTemplateListRsp> rspList = evalTemTemplateList.stream()
+		rspList = evalTemTemplateList.stream()
 				.map(evalTemTemplate -> {
 					EvalTemTemplateListRsp evalTemTemplateListRsp = BeanUtils.copy(evalTemTemplate, EvalTemTemplateListRsp.class);
 					MissionScheme missionScheme = JsonUtil
 							.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class);
-					List<StageData> stageList = missionScheme.getStageList();
-					evalTemTemplateListRsp.setStageCount(stageList.size());
-					List<List<TaskBo>> collect = stageList.stream().map(StageData::getTaskList).collect(Collectors.toList());
-					int taskCount = 0;
-					for (List<TaskBo> item : collect) {
-						taskCount = taskCount + item.size();
+					evalTemTemplateListRsp.setMissionCount(0);
+					evalTemTemplateListRsp.setStageCount(0);
+					if(null == missionScheme && !missionScheme.getStageList().isEmpty()){
+						List<StageData> stageList = missionScheme.getStageList();
+						evalTemTemplateListRsp.setStageCount(stageList.size());
+						List<List<TaskBo>> collect = stageList.stream().map(StageData::getTaskList).collect(Collectors.toList());
+						int taskCount = 0;
+						for (List<TaskBo> item : collect) {
+							taskCount = taskCount + item.size();
+						}
+						evalTemTemplateListRsp.setMissionCount(taskCount);
 					}
-					evalTemTemplateListRsp.setMissionCount(taskCount);
 					evalTemTemplateListRsp.setUpdateTime(TimeUtil.format1(evalTemTemplate.getUpdateTime()));
-					evalTemTemplateListRsp.setNodeCount(nodeCountMap.get(evalTemTemplate.getTopoId()).getNodeCounts());
+					evalTemTemplateListRsp.setNodeCount(nodeCountMap.containsKey(evalTemTemplate.getTopoId()) ? nodeCountMap.get(evalTemTemplate.getTopoId()).getNodeCounts() : 0);
 					evalTemTemplateListRsp.setCreateUser(idNameMap.get(evalTemTemplate.getCreateUserId()));
 					return evalTemTemplateListRsp;
 				}).collect(Collectors.toList());

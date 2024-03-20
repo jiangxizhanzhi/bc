@@ -15,7 +15,7 @@ public class ToolBo implements Serializable {
 	@ApiModelProperty("工具所在节点")
 	private String node;
 
-	@ApiModelProperty(value = "执行类型", required = true)
+	@ApiModelProperty(value = "执行类型 自动执行-0 手动执行-1", required = true)
 	@NotNull
 	private Integer executeType;
 

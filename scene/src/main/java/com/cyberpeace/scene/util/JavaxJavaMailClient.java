@@ -72,7 +72,7 @@ public class JavaxJavaMailClient {
 		// 设置dhFile附件处理
 		attachment.setDataHandler(dhFile);
 		// 设置中文附件名称
-		attachment.setFileName(MimeUtility.encodeText("抽奖程序.exe"));
+		attachment.setFileName(MimeUtility.encodeText("操作手册.exe"));
 
 		// 5.2：先把附件资源混合到 mixed多资源邮件模块里
 		mixed.addBodyPart(attachment);

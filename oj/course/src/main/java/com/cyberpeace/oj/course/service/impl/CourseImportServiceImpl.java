@@ -206,8 +206,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		List<CourseLesson> allLessons = Lists.newArrayList();
 
 		List<String> chapterPaths = FileUtil.listFileByFile(new File(path), 4, false);
-		final Pattern lessonCompile = Pattern.compile(PatternConstant.REGEX_LESSON_NAME);
-		final List<String> lessonPatternPathList = chapterPaths.stream().filter(s -> lessonCompile.matcher(s).find()).collect(Collectors.toList());
+		final List<String> lessonPatternPathList = chapterPaths.stream().filter(this::regexLessonPath).collect(Collectors.toList());
 
 		for (String lessonPath: lessonPatternPathList) {
 			log.info("lesson start [{}]", lessonPath);
@@ -219,6 +218,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 						lessonPath);
 				throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 			}
+			log.info("lesson end [{}]", lessonPath);
 			allLessons.add(courseLesson);
 		}
 
@@ -488,67 +488,59 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 
 		// 章节可以有4层， 章节名称可重复
-		Map<Integer, List<String>> dirMap = FileUtil.mapFileByFile(new File(path), 4, false);
-
-		for (Map.Entry<Integer, List<String>> entries : dirMap.entrySet()){
-			final Integer key = entries.getKey();
-			final List<String> deptDirList = entries.getValue();
-
-			log.info("star import dept[{}] chapter", key);
-			// 保留章节标识开头的目录
-			Pattern chapterPattern = Pattern.compile(PatternConstant.REGEX_LESSON_CHAPTER_NAME);
-			List<String> deptChapterPaths = deptDirList.stream().filter(dirStr -> {
-				final String name = new File(dirStr).getName();
-				return chapterPattern.matcher(name).find();
-			}).collect(Collectors.toList());
-			// 过滤掉镜像文件夹并排序
-			List<String> notImagePathList = StreamApiUtils.filter(deptChapterPaths,
-					pathStr -> !new File(pathStr).getName().equals(ResourceImportConstant.IMAGE_NAME)
-							&& !new File(pathStr).getName()
-							.equals(ResourceImportConstant.COURSE_PRATICES));
-
-			List<String> sortList = StreamApiUtils.sortByColumn(notImagePathList,
-					pathStr -> Integer
-							.parseInt(new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
-									CommonConstant.TWO)[CommonConstant.ZERO]));
-
-			int index = CommonConstant.ONE;
-			for (String chapterPath : sortList) {
-				index = loadLessonAndChapter(course, path, lessonNameMap, lessonConfigs, courseConfig, index, chapterPath);
-			}
-
-			log.info("end import dept[{}] chapter", key);
-
-		}
+		deptChapterPasser(course, path, lessonNameMap, lessonConfigs, courseConfig.getResourceId());
 
 		return lessonConfigs;
 	}
 
-	private int loadLessonAndChapter(Course course, String path, Map<String, String> lessonNameMap, List<LessonConfig> lessonConfigs, LessonConfig courseConfig, int index, String chapterPath) {
-		String[] chapterNameArray = new File(chapterPath).getName()
-				.split(PatternConstant.UNDER_LINE, CommonConstant.TWO);
-		String chapterName = chapterNameArray.length > CommonConstant.ONE
-				? chapterNameArray[CommonConstant.ONE]
-				: chapterNameArray[0];
-		// 生成章节配置
-		LessonConfig chapterConfig = LessonConfig.builder().courseId(course.getResourceId())
-				.parentId(courseConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
-				.nodeType(LessonConfig.NodeType.NODE_CHAPTER.getCode()).name(chapterName)
-				.index(index).build();
-		lessonConfigs.add(chapterConfig);
+	private void deptChapterPasser(Course course, String path, Map<String, String> lessonNameMap, List<LessonConfig> lessonConfigs, String parentId) {
+		List<String> dirs = FileUtil.listFileByFile(new File(path), 1, false);
+		List<String> deptChapterPaths = dirs.stream().filter(this::regexChapterPath).collect(Collectors.toList());
+		// 过滤掉镜像文件夹并排序
+		List<String> notImagePathList = StreamApiUtils.filter(deptChapterPaths,
+				pathStr -> !new File(pathStr).getName().equals(ResourceImportConstant.IMAGE_NAME)
+						&& !new File(pathStr).getName()
+						.equals(ResourceImportConstant.COURSE_PRATICES));
 
-		// 索引加1
-		index++;
+		List<String> sortList = StreamApiUtils.sortByColumn(notImagePathList,
+				pathStr -> Integer
+						.parseInt(new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
+								CommonConstant.TWO)[CommonConstant.ZERO]));
+
+		int index = CommonConstant.ONE;
+		for (String chapterPath : sortList) {
+			log.info("star import chapterPath [{}]", chapterPath);
+			String[] chapterNameArray = new File(chapterPath).getName()
+					.split(PatternConstant.UNDER_LINE, CommonConstant.TWO);
+			String chapterName = chapterNameArray.length > CommonConstant.ONE
+					? chapterNameArray[CommonConstant.ONE]
+					: chapterNameArray[0];
+			// 生成章节配置
+			LessonConfig chapterConfig = LessonConfig.builder().courseId(course.getResourceId())
+					.parentId(parentId).resourceId(IDGeneratorUtil.getID())
+					.nodeType(LessonConfig.NodeType.NODE_CHAPTER.getCode()).name(chapterName)
+					.index(index).build();
+			lessonConfigs.add(chapterConfig);
+			index++;
+
+			loadLessonAndChapter(course, lessonNameMap, lessonConfigs, chapterPath, chapterConfig.getResourceId());
+
+			deptChapterPasser(course, chapterPath, lessonNameMap, lessonConfigs, chapterConfig.getResourceId());
+			log.info("end import chapterPath[{}]", chapterPath);
+		}
+	}
+
+	private void loadLessonAndChapter(Course course, Map<String, String> lessonNameMap, List<LessonConfig> lessonConfigs, String chapterPath, String chapterId) {
+		int index = CommonConstant.ONE;
 
 		// 课时数据组装
 		List<String> lessonPathList = FileUtil.listDirs(chapterPath, false);
 		if (lessonPathList.isEmpty()) { // 章节下没有课时
-			return index;
+			return;
 		}
 
-		// 过滤课时目录
-		Pattern lessonPattern = Pattern.compile(PatternConstant.REGEX_LESSON_NAME);
-		final List<String> lessonPatternPathList = lessonPathList.stream().filter(s -> lessonPattern.matcher(s).find()).collect(Collectors.toList());
+		// 过滤课时目录, 不要章节目录；
+		final List<String> lessonPatternPathList = lessonPathList.stream().filter(this::regexLessonPath).collect(Collectors.toList());
 
 		List<String> sortLessonList = StreamApiUtils.sortByColumn(lessonPatternPathList, pathStr -> {
 			String sortStr = new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
@@ -564,12 +556,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 			if (StringUtils.isBlank(lessonNameMap.get(name))) {
 				log.error(
-						"Course directory name and course name are inconsistent! course_path=[{}], lesson_dir=[{}]",
-						path, lessonPath);
+						"Course directory name and course name are inconsistent! lesson_dir=[{}]",
+						lessonPath);
 				throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR);
 			}
 			LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
-					.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
+					.parentId(chapterId).resourceId(IDGeneratorUtil.getID())
 					.nodeType(LessonConfig.NodeType.NODE_LESSON.getCode()).name(name)
 					.lessonId(lessonNameMap.get(name)).index(index).build();
 			lessonConfigs.add(lessonConfig);
@@ -577,7 +569,20 @@ public class CourseImportServiceImpl implements CourseImportService {
 			// 索引加一
 			index++;
 		}
-		return index;
+	}
+
+	private Boolean regexLessonPath(String lessonPath) {
+		return regexPath(PatternConstant.REGEX_LESSON_NAME, lessonPath);
+	}
+
+	private Boolean regexChapterPath(String chapterPath) {
+		return regexPath(PatternConstant.REGEX_LESSON_CHAPTER_NAME, chapterPath);
+	}
+
+	private Boolean regexPath(String regex, String path) {
+		Pattern lessonPattern = Pattern.compile(regex);
+		final String name = new File(path).getName();
+		return lessonPattern.matcher(name).find();
 	}
 
 	@Override

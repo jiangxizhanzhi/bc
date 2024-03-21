@@ -106,5 +106,11 @@ public final class PatternConstant {
 	/** 匹配<p></p>标签*/
 	public static final String HTML_P = "<p>(?:(?!<\\/p>)[\\s\\S])*<\\/p>";
 
+	/*课时开头匹配*/
+	public static final String REGEX_LESSON_NAME = "^\\d{1,2}-\\d{1,3}_";
+
+	/*课时章节开头匹配*/
+	public static final String REGEX_LESSON_CHAPTER_NAME = "^[0-9]{1,2}_";
+
 	private PatternConstant() {}
 }

@@ -206,13 +206,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		List<CourseLesson> allLessons = Lists.newArrayList();
 
 		List<String> chapterPaths = FileUtil.listFileByFile(new File(path), 4, false);
-		final Pattern lessonCompile = Pattern.compile(CommonConstant.REGEX_LESSON_NAME);
-		final List<String> lessonPatternPathList = chapterPaths.stream().filter(s -> lessonCompile.matcher(s).matches()).collect(Collectors.toList());
+		final Pattern lessonCompile = Pattern.compile(PatternConstant.REGEX_LESSON_NAME);
+		final List<String> lessonPatternPathList = chapterPaths.stream().filter(s -> lessonCompile.matcher(s).find()).collect(Collectors.toList());
 
 		for (String lessonPath: lessonPatternPathList) {
+			log.info("lesson start [{}]", lessonPath);
 			CourseLesson courseLesson = doParseLesson(lessonPath, course, envReqs);
 			// 校验课时名称重复性
-			if (null != nameMap.putIfAbsent(courseLesson.getName(),
+			if (courseLesson == null || null != nameMap.putIfAbsent(courseLesson.getName(),
 					courseLesson.getResourceId())) {
 				log.error("Lesson name exist! course_path=[{}], lesson_path=[{}]", path,
 						lessonPath);
@@ -495,10 +496,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 			log.info("star import dept[{}] chapter", key);
 			// 保留章节标识开头的目录
-			Pattern chapterPattern = Pattern.compile(CommonConstant.REGEX_LESSON_CHAPTER_NAME);
+			Pattern chapterPattern = Pattern.compile(PatternConstant.REGEX_LESSON_CHAPTER_NAME);
 			List<String> deptChapterPaths = deptDirList.stream().filter(dirStr -> {
 				final String name = new File(dirStr).getName();
-				return chapterPattern.matcher(name).matches();
+				return chapterPattern.matcher(name).find();
 			}).collect(Collectors.toList());
 			// 过滤掉镜像文件夹并排序
 			List<String> notImagePathList = StreamApiUtils.filter(deptChapterPaths,
@@ -546,8 +547,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 		}
 
 		// 过滤课时目录
-		Pattern lessonPattern = Pattern.compile(CommonConstant.REGEX_LESSON_NAME);
-		final List<String> lessonPatternPathList = lessonPathList.stream().filter(s -> lessonPattern.matcher(s).matches()).collect(Collectors.toList());
+		Pattern lessonPattern = Pattern.compile(PatternConstant.REGEX_LESSON_NAME);
+		final List<String> lessonPatternPathList = lessonPathList.stream().filter(s -> lessonPattern.matcher(s).find()).collect(Collectors.toList());
 
 		List<String> sortLessonList = StreamApiUtils.sortByColumn(lessonPatternPathList, pathStr -> {
 			String sortStr = new File(pathStr).getName().split(PatternConstant.UNDER_LINE,

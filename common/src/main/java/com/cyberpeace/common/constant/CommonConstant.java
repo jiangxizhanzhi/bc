@@ -117,9 +117,4 @@ public final class CommonConstant {
 	public static final int TWO_HUNDRED_AND_FIFTY_FIVE = 255;
 
 	public static final String BACKSLASH = "\\";
-
-	public static final String REGEX_LESSON_NAME = "\\d{1,2}-\\d{1,2}_";
-
-	public static final String REGEX_LESSON_CHAPTER_NAME = "[0-9]{1,3}_";
-
 }

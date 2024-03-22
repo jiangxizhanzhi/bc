@@ -51,4 +51,8 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 */
 	List<LessonConfig> loadLessonConfig(LessonConfigDumpBo lessonConfig, String courseId,
 			List<CourseLesson> courseLessons);
+
+	void validConflict(String courseId);
+
+	void validLessonAndChapter(String courseId);
 }

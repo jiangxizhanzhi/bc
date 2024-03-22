@@ -346,4 +346,7 @@ public final class OjBusinessErrorCode {
 	/**课程下没有课时*/
 	public static final String COURSE_LESSON_NOT_FOUND = "102132";
 
+	/**课时目录结构不正确，课时下存在课时或者章节, 课时和章节同时存在*/
+	public static final String COURSE_LESSON_CONFLICT = "102133";
+
 }

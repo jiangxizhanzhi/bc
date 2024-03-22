@@ -85,4 +85,17 @@
         and `name` = #{name}
         and node_type != 0
     </select>
+
+    <select id="selectChapterLessonConflict" resultMap="base">
+        SELECT * FROM `oj_lesson_config`
+        <where>
+            course_id = #{courseId}
+        </where>
+        and parent_id in (select resource_id from oj_lesson_config where node_type = 2);
+    </select>
+
+    <select id="selectIncludeLessonAndChapter" resultMap="base">
+        SELECT * from oj_lesson_config WHERE resource_id in (
+        SELECT parent_id from oj_lesson_config WHERE course_id = #{courseId} GROUP BY parent_id HAVING count( DISTINCT node_type) > 1);
+    </select>
 </mapper>

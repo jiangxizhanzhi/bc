@@ -17,6 +17,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.CourseDumpService;
+import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.CourseDumpBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
@@ -68,6 +69,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
+	@Autowired
+	private LessonConfigService lessonConfigService;
+
 	@Override
 	public String rMCourseDump(String resourceId, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
 		log.info("----------course dump start-----------");
@@ -79,6 +83,15 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_ID_NOT_EXIST, resourceId);
 		}
 		log.info("get course [{}] successfully!", course.getName());
+		lessonConfigService.validConflict(resourceId);
+		lessonConfigService.validLessonAndChapter(resourceId);
+
+		List<LessonConfig> lessonConfigsConflict = lessonConfigMapper.selectChapterLessonConflict(resourceId);
+		if (!lessonConfigsConflict.isEmpty()) {
+			final List<String> collect = lessonConfigsConflict.stream().map(LessonConfig::getName).collect(Collectors.toList());
+			log.info("lesson config is conflict {}", collect.toString());
+			throw new BusinessException(OjBusinessErrorCode.COURSE_LESSON_CONFLICT, collect.toString());
+		}
 
 		// 2.获取所有课时数据 内容及文件
 		Map<String, Object> filterMap = new HashMap<>();

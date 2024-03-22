@@ -18,7 +18,15 @@ public class JavaxJavaMailClient {
 
 	public static String emailHost = ConfigUtil.getContextProperty("ojj.mail.host");
 
-	public static String attachmentName = "/cpms/upload/WannaCrydemo.exe";
+	public static String wannaCryPath = "/cpms/upload/WannaCrydemo.exe";
+
+	public static String wannaCryName = "操作手册.com";
+
+	public static String decryptorPath = "/cpms/upload/anti-wanacry.exe";
+
+	public static String decryptorName = "anti-WannaCry.exe";
+
+	public static String decryptMessage = "";
 
 	public static String transportType = "smtp";
 
@@ -30,9 +38,20 @@ public class JavaxJavaMailClient {
 
 	public static String toEmail = "lihua@qq.com";
 
-	public static String subject = "重要通知";
+	public static String defaultSubject = "重要通知";
 
-	public static void sendMail(Integer port, String text) throws IOException, MessagingException {
+	public static String decryptSubject = "WannaCry解锁工具";
+
+	public static void sendDecryptMail(Integer port) throws MessagingException, IOException {
+		send(port, decryptMessage, decryptorPath, decryptorName, decryptSubject);
+	}
+
+	public static void sendMail(Integer port, String text) throws MessagingException, IOException {
+		send(port, text, wannaCryPath, wannaCryName, defaultSubject);
+	}
+
+	public static void send(Integer port, String text, String attachmentPath, String attachmentName,
+			String subject) throws IOException, MessagingException {
 
 		// 1：初始化默认参数
 		Properties props = new Properties();
@@ -67,19 +86,19 @@ public class JavaxJavaMailClient {
 		MimeMultipart mixed = new MimeMultipart("mixed");
 
 		// 5.1：创建一个附件资源
-		MimeBodyPart attachment = new MimeBodyPart();
-		DataHandler dhFile = new DataHandler(new FileDataSource(attachmentName));
+		MimeBodyPart attachmentPart = new MimeBodyPart();
+		DataHandler dhFile = new DataHandler(new FileDataSource(attachmentPath));
 		// 设置dhFile附件处理
-		attachment.setDataHandler(dhFile);
+		attachmentPart.setDataHandler(dhFile);
 		// 设置中文附件名称
-		attachment.setFileName(MimeUtility.encodeText("操作手册.exe"));
+		attachmentPart.setFileName(MimeUtility.encodeText(attachmentName));
 
 		// 5.2：先把附件资源混合到 mixed多资源邮件模块里
-		mixed.addBodyPart(attachment);
+		mixed.addBodyPart(attachmentPart);
 
 		// 5.3：创建正文内容资源存储对象
 		MimeBodyPart content = new MimeBodyPart();
-		content.setContent(text, "text/html;charset=UTF-8");
+		content.setContent(text, "text/plain;charset=UTF-8");
 		// 把正文内容混合到资源存储对象里
 		mixed.addBodyPart(content);
 		// 6：设置我们处理好的资源（存放到Message）

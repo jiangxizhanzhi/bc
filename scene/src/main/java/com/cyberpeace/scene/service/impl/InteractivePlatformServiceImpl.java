@@ -163,6 +163,26 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 
 	@Override
 	public void sendMail(String text) {
+
+		try {
+			JavaxJavaMailClient.sendMail(getMailPort(), text);
+		} catch (Exception e) {
+			log.error("failed to send mail", e);
+			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
+		}
+	}
+
+	@Override
+	public void sendDecryptMail() {
+		try {
+			JavaxJavaMailClient.sendDecryptMail(getMailPort());
+		} catch (Exception e) {
+			log.error("failed to send decrypt mail", e);
+			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
+		}
+	}
+
+	private Integer getMailPort() {
 		SceneEntity scene = sceneMapper
 				.selectByScenario(InteractiveScenarioEnum.RANSOMWARE.getCode());
 		if (null == scene) {
@@ -178,12 +198,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			log.error("port mapping not established");
 			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
 		}
-		try {
-			JavaxJavaMailClient.sendMail(port, text);
-		} catch (Exception e) {
-			log.error("failed to send mail", e);
-			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
-		}
+		return port;
 	}
 
 	private NodeEntity createInstance(ImageEntity image, NetworkEntity network) {

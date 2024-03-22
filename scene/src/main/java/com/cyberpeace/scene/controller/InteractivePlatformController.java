@@ -55,4 +55,11 @@ public class InteractivePlatformController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("发送解密邮件")
+	@PostMapping("/mail/decrypt")
+	public BaseRsp sendDecryptMail() {
+		interactivePlatformService.sendDecryptMail();
+		return new BaseRsp<>();
+	}
+
 }

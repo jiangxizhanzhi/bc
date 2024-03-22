@@ -14,4 +14,6 @@ public interface InteractivePlatformService {
     void checkLink(Integer scenario);
 
     void sendMail(String content);
+
+	void sendDecryptMail();
 }

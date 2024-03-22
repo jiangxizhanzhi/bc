@@ -28,7 +28,7 @@ public final class ResourceImportConstant {
 	public static final String IMAGE_NAME = "images";
 
 	/**
-	 * 课程考试目录
+	 * 课程阶段性考试考试目录 该目录在v5.4.1之前版本都是只定义，未使用
 	 */
 	public static final String COURSE_PRATICES = "coursePratices";
 

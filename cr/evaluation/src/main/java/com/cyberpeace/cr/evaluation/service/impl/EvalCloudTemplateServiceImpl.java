@@ -1,15 +1,20 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalCloudTemplateAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalCloudTemplateBaseReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalCloudTemplateListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalCloudTemplateEnumRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalCloudTemplateListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestTemplateListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalCloudTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalCloudTemplateService;
@@ -143,5 +148,20 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 		evalCloudTemplateAddReq.setStepIds(evalCloudTemplate.getStepIdList());
 		evalCloudTemplateAddReq.setSceneConfigData(localSceneService.getTopoData(evalCloudTemplate.getTopoId()));
 		return evalCloudTemplateAddReq;
+	}
+
+	@Override
+	public ListRsp<EvalTestTemplateListRsp> templateList(EvalTestListReq evalTestListReq) {
+		IPage<EvalCloudTemplate> templateIPage = evalCloudTemplateMapper.templateList(evalTestListReq.toPageParam(), evalTestListReq);
+		List<String> topoIds = templateIPage.getRecords().stream().map(EvalCloudTemplate::getTopoId).collect(Collectors.toList());
+		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
+		templateIPage.convert(template -> {
+			EvalTestTemplateListRsp templateListRsp = BeanUtils.copy(template, EvalTestTemplateListRsp.class);
+			templateListRsp.setTemplateId(template.getResourceId());
+			templateListRsp.setTemplateName(template.getName());
+			templateListRsp.setNodeCount(nodeCountMap.get(template.getTopoId()).getNodeCounts());
+			return templateListRsp;
+		});
+		return PageUtil.getListResult(templateIPage);
 	}
 }

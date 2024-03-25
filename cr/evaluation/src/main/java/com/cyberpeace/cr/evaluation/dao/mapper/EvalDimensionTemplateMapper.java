@@ -22,6 +22,8 @@ public interface EvalDimensionTemplateMapper extends BaseMapper<EvalDimensionTem
 
 	List<EvalDimensionTemplate> selectByRuleId(@Param("ruleId") String ruleId);
 
+	List<EvalDimensionTemplate> selectByCloudTemplateId(@Param("cloudTemplateId") String cloudTemplateId);
+
 }
 
 

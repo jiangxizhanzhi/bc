@@ -42,4 +42,10 @@
             order by create_time desc
         </where>
     </select>
+
+    <select id="selectByCloudTemplateId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalDimensionTemplate">
+        select *
+        from cr_eval_dimension_template
+        where cloud_template_id = #{cloudTemplateId}
+    </select>
 </mapper>

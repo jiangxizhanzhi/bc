@@ -22,6 +22,8 @@ public interface EvalActionTemplateMapper extends BaseMapper<EvalActionTemplate>
 
 	void deleteByCloudTemplateIds(@Param("cloudTemplateIds") List<String> cloudTemplateIds);
 
+	List<EvalActionTemplate> selectByCloudTemplateId(@Param("cloudTemplateId") String cloudTemplateId);
+
 }
 
 

@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.evaluation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalCloudTemplate;
 import com.cyberpeace.cr.evaluation.service.context.EvalCloudTemplateListContext;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,6 +22,8 @@ public interface EvalCloudTemplateMapper extends BaseMapper<EvalCloudTemplate> {
 	String getTopoIdById(@Param("resourceId") String resourceId);
 
 	List<String> getTopoIdsByIds(@Param("ids") List<String> ids);
+
+	IPage<EvalCloudTemplate> templateList(Page<EvalCloudTemplate> page, @Param("listQuery")EvalTestListReq evalTestListReq);
 }
 
 

@@ -33,4 +33,22 @@
             #{id}
         </foreach>
     </select>
+
+    <select id="templateList" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalCloudTemplate">
+        select *
+        from cr_eval_cloud_template
+        <where>
+            1=1
+            <if test="listQuery.difficult != null">
+                and difficulty = #{listQuery.difficult}
+            </if>
+            <if test="listQuery.type != null">
+                and type = #{listQuery.type}
+            </if>
+            <if test="listQuery.pattern != null and listQuery.pattern != ''">
+                <bind name="name" value="'%' + listQuery.pattern + '%'"/>
+                and name = #{name}
+            </if>
+        </where>
+    </select>
 </mapper>

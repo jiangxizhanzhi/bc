@@ -22,7 +22,6 @@ import com.cyberpeace.cr.evaluation.service.EvalRuleTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalDimensionContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalHostContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRuleTemplateCount;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskTemplateContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.SceneData;
@@ -38,7 +37,10 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -86,7 +88,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 		evalRuleTemplate.setBooleanRelation(EvalRuleTemplate.BooleanRelation.OR.getCode());
 		evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalRuleTemplate.setLabelList(new ArrayList<>());
-		evalRuleTemplate.setTaskList(new ArrayList<>());
+		evalRuleTemplate.setStepIdList(new ArrayList<>());
 		evalRuleTemplateMapper.insert(evalRuleTemplate);
 		return evalRuleTemplate.getResourceId();
 	}
@@ -138,20 +140,17 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 
 	@Override
 	public void addTaskTemplate(EvalTaskTemplateAddReq evalTaskTemplateAddReq) {
-		EvalTaskTemplateContext evalTaskTemplateContext = BeanUtils.copy(evalTaskTemplateAddReq, EvalTaskTemplateContext.class);
 		EvalRuleTemplate evalRuleTemplate = evalRuleTemplateMapper.selectById(evalTaskTemplateAddReq.getRuleId());
-		evalRuleTemplate.addTask(evalTaskTemplateContext);
+		evalRuleTemplate.addStepId(evalTaskTemplateAddReq.getStepId());
 		evalRuleTemplateMapper.updateById(evalRuleTemplate);
 	}
 
 	@Override
 	public void deleteTaskTemplate(EvalTaskTemplateDelReq evalTaskTemplateDelReq) {
 		EvalRuleTemplate evalRuleTemplate = evalRuleTemplateMapper.selectById(evalTaskTemplateDelReq.getRuleId());
-		List<EvalTaskTemplateContext> taskList = evalRuleTemplate.getTaskList();
-		taskList = taskList.stream()
-						   .filter(evalTaskTemplateContext -> !evalTaskTemplateDelReq.getTaskIds().contains(evalTaskTemplateContext.getTaskId()))
-						   .collect(Collectors.toList());
-		evalRuleTemplate.setTaskList(taskList);
+		List<String> stepIdList = evalRuleTemplate.getStepIdList();
+		stepIdList.removeAll(evalTaskTemplateDelReq.getStepIds());
+		evalRuleTemplate.setStepIdList(stepIdList);
 		evalRuleTemplateMapper.updateById(evalRuleTemplate);
 	}
 
@@ -201,17 +200,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 
 		}
 
-
-		Integer integer = evalStepTemplateMapper.select1ByCloudTemplateId(evalRuleTemplate.getCloudTemplateId());
-		if (integer == null) {
-			evalRuleTemplateDetail.setTasks(evalRuleTemplate.getTaskList());
-		} else {
-			List<EvalTaskTemplateContext> evalTaskTemplateContexts = evalStepTemplateMapper.selectIdNameByCloudTemplateId(evalRuleTemplate.getCloudTemplateId());
-			Map<String, String> idNameMap = evalTaskTemplateContexts.stream().collect(Collectors.toMap(EvalTaskTemplateContext::getTaskId, EvalTaskTemplateContext::getTaskName));
-			evalRuleTemplateDetail.setTasks(evalRuleTemplate.getTaskList().stream()
-															.peek(evalTaskTemplateContext -> evalTaskTemplateContext.setTaskName(idNameMap.get(evalTaskTemplateContext.getTaskId())))
-															.collect(Collectors.toList()));
-		}
+		evalRuleTemplateDetail.setStepIds(evalRuleTemplate.getStepIdList());
 
 		evalRuleTemplateDetail.setActions(evalActionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId()));
 		return evalRuleTemplateDetail;

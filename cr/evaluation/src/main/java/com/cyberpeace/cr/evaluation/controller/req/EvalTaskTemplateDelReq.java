@@ -12,6 +12,6 @@ public class EvalTaskTemplateDelReq implements Serializable {
 	@ApiModelProperty("规则id")
 	private String ruleId;
 
-	@ApiModelProperty("任务id列表")
-	private List<String> taskIds;
+	@ApiModelProperty("步骤id列表")
+	private List<String> stepIds;
 }

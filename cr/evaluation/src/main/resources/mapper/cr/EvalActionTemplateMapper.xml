@@ -43,4 +43,10 @@
             #{cloudId}
         </foreach>
     </delete>
+
+    <select id="selectByCloudTemplateId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalActionTemplate">
+        select *
+        from cr_eval_action_template
+        where cloud_template_id = #{cloudTemplateId}
+    </select>
 </mapper>

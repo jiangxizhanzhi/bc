@@ -25,13 +25,6 @@
         where resource_id = #{cloudTemplateId}
     </select>
 
-    <select id="selectIdNameByCloudTemplateId"
-            resultType="com.cyberpeace.cr.evaluation.service.context.EvalTaskTemplateContext">
-        select resource_id task_id, name task_name
-        from cr_eval_step_template
-        where cloud_template_id = #{cloudTemplateId}
-    </select>
-
     <select id="select1ByCloudTemplateId" resultType="java.lang.Integer">
         select 1
         from cr_eval_step_template

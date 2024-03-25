@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskTemplateContext;
 import lombok.Data;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -57,31 +56,31 @@ public class EvalRuleTemplate extends BaseTable {
 	private Integer booleanRelation;
 
 	/**
-	 * 关联任务id列表
+	 * 关联步骤id列表
 	 */
-	private String tasks;
+	private String stepIds;
 
 	/**
 	 * 创建人
 	 */
 	private String createUserId;
 
-	public void addTask(EvalTaskTemplateContext task) {
-		List<EvalTaskTemplateContext> tasks = getTaskList();
-		tasks.add(task);
-		this.tasks = JsonUtil.toJsonString(tasks);
+	public void addStepId(String stepId) {
+		List<String> stepIdList = getStepIdList();
+		stepIdList.add(stepId);
+		stepIds = JsonUtil.toJsonString(stepIdList);
 	}
 
-	public List<EvalTaskTemplateContext> getTaskList() {
-		if (StringUtils.isEmpty(this.tasks)) {
+	public List<String> getStepIdList() {
+		if (StringUtils.isEmpty(stepIds)) {
 			return new ArrayList<>();
 		} else {
-			return JsonUtil.toJsonObjectArray(this.tasks, EvalTaskTemplateContext.class);
+			return JsonUtil.toJsonObjectArray(stepIds, String.class);
 		}
 	}
 
-	public void setTaskList(List<EvalTaskTemplateContext> tasks) {
-		this.tasks = JsonUtil.toJsonString(tasks);
+	public void setStepIdList(List<String> tasks) {
+		stepIds = JsonUtil.toJsonString(tasks);
 	}
 
 	public void setLabelList (List<String> labelList) {

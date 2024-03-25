@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalTestMapper">
+
+    <select id="testPage" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalTest">
+        select *
+        from cr_eval_test
+        <where>
+            <bind name="userId" value="'%' + userId + '%'"/>
+            read_auth_ids like #{userId}
+            <if test="listQuery.difficult != null">
+                and difficulty = #{listQuery.difficult}
+            </if>
+            <if test="listQuery.type != null">
+                and type = #{listQuery.type}
+            </if>
+            <if test="listQuery.pattern != null and listQuery.pattern != ''">
+                <bind name="name" value="'%' + listQuery.pattern + '%'"/>
+                and name like #{name}
+            </if>
+        </where>
+    </select>
+</mapper>

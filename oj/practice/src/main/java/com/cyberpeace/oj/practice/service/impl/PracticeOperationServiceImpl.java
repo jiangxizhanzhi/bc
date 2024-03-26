@@ -1,5 +1,23 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -47,7 +65,6 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
-import com.cyberpeace.oj.practice.controller.req.OperationUpdateReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
@@ -59,24 +76,12 @@ import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author chenz
@@ -157,6 +162,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	private PracticeMistakeMapper practiceMistakeMapper;
 
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
+
+	private static Cache<String, Boolean> sharedPracticeCache = CacheBuilder.newBuilder()
+			.expireAfterWrite(10, TimeUnit.SECONDS).build();
+
+	private final Object lock = new Object();
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -740,6 +750,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			log.error("StartScene operation is not dynamic env! dynamic_env=[{}], topo_id=[{}]",
 					operation.getDynamicEnv(), operation.getTopoId());
 			throw new BusinessException(OjBusinessErrorCode.NON_DYNAMIC_ENVIRONMENT);
+		}
+
+		// 实操题共享场景避免多人同时点击导致启动多个场景
+		if (operation.getSceneShareMode().equals(SceneShare.SHARED.getCode())) {
+			synchronized (lock) {
+				if (null != sharedPracticeCache.getIfPresent(resourceId)) {
+					throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
+				} else {
+					sharedPracticeCache.put(resourceId, true);
+				}
+			}
 		}
 
 		// 判断是否存在已启动场景

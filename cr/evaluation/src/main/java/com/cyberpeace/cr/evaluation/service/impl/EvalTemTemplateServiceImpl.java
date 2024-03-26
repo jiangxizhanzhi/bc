@@ -123,7 +123,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		EvalTemTemplateRsp evalTemTemplateRsp = new EvalTemTemplateRsp();
 		evalTemTemplateRsp.setBaseData(baseTemplateData);
 		evalTemTemplateRsp.setResourceId(resourceId);
-		evalTemTemplateRsp.setTechniqueWarfare(JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), TechniqueWarfare.class));
+		evalTemTemplateRsp.setMissionScheme(JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class));
 		evalTemTemplateRsp.setSceneConfigData(remoteTopoService.getTopoById(evalTemTemplate.getTopoId()));
 		return evalTemTemplateRsp;
 	}

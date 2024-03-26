@@ -23,5 +23,5 @@ public class EvalTemTemplateRsp implements Serializable {
 	private JSONObject sceneConfigData;
 
 	@ApiModelProperty("任务方案")
-	private MissionScheme missionScheme;
+	private MissionScheme missionsScheme;
 }

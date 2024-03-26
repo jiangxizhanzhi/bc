@@ -10,9 +10,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
-import com.cyberpeace.cr.evaluation.service.impl.bo.MissionData;
-import com.cyberpeace.cr.evaluation.service.impl.bo.TechniqueWarfare;
-import com.cyberpeace.cr.evaluation.service.impl.bo.ToolBo;
+import com.cyberpeace.cr.evaluation.service.impl.bo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,11 +52,11 @@ public class EvalMissionTemplateServiceImpl extends ServiceImpl<EvalMissionTempl
 	}
 
 	@Override
-	public List<String> getTaskIds(TechniqueWarfare missionSchemeList) {
+	public List<String> getTaskIds(MissionScheme missionSchemeList) {
 		List<String> resourceIds = new ArrayList<>();
-		for (MissionData missionScheme : missionSchemeList.getTools()) {
-			for (String stageData : missionScheme.getToolBoList()) {
-				resourceIds.add(stageData);
+		for (StageData missionScheme : missionSchemeList.getStageList()) {
+			for (TaskBo stageData : missionScheme.getTaskList()) {
+				resourceIds.add(stageData.getResourceId());
 			}
 		}
 		return resourceIds;

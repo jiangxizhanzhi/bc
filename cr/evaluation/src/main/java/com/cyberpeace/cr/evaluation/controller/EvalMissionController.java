@@ -33,7 +33,6 @@ import com.cyberpeace.cr.evaluation.service.impl.bo.*;
 import com.cyberpeace.integratation.model.scene.MissionStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.rabbitmq.tools.json.JSONUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -148,20 +147,27 @@ public class EvalMissionController {
             String taskId = evalMissionTemplate.getTaskId();
             String tools = evalMissionTemplate.getTools();
             // 工具顺序执行 TODO 确认是否多个工具
-            JSONArray array = JsonUtil.stringToArray(tools);
-            JSONObject jsonObject = array.getJSONObject(0);
-            String node = jsonObject.getString("node");
-            String action = jsonObject.getString("action");
-
             EvalTask evalTask = evalTaskMapper.selectById(taskId);
             String mpSceneId = evalTask.getMpSceneId();
-            MissionStartContext missionStartContext = new MissionStartContext();
-            UserInfo userContext = UserInfoContext.getUserContext();
-            missionStartContext.setId(mpSceneId);
-            missionStartContext.setNode_id(node);
-            missionStartContext.setExec_user(userContext.getUserId());
-            missionStartContext.setCommand(action);
-            remoteSceneService.startMission(missionStartContext);
+            JSONArray array = JsonUtil.stringToArray(tools);
+            for(int i = 0;i<array.size();i++){
+                JSONObject jsonObject = array.getJSONObject(0);
+                String executeType = jsonObject.getString("execute_type");
+                // 仅执行 自动执行类型的工具任务
+                if(executeType.equals(1)){
+                    continue;
+                }
+                String node = jsonObject.getString("node");
+                String action = jsonObject.getString("action");
+                MissionStartContext missionStartContext = new MissionStartContext();
+                UserInfo userContext = UserInfoContext.getUserContext();
+                missionStartContext.setId(mpSceneId);
+                missionStartContext.setNode_id(node);
+                missionStartContext.setExec_user(userContext.getUserId());
+                missionStartContext.setCommand(action);
+                remoteSceneService.startMission(missionStartContext);
+            }
+
         }
         // 状态修改 超时单独处理--
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {

@@ -218,7 +218,7 @@ public class EvalTemplateController {
 		evalTemplate.setExpCondition(evaTemplateAddReq.getCondition());
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
 		// 设置技战法方案-任务方案
-		evalTemplate.setTechniqueWarfare(null == evalTemTemplate ? JsonUtil.toJsonString(evaTemplateAddReq.getTechniqueWarfare()) : evalTemTemplate.getTechniqueWarfare());
+		evalTemplate.setTechniqueWarfare(null == evalTemTemplate ? JsonUtil.toJsonString(evaTemplateAddReq.getMissionScheme()) : evalTemTemplate.getTechniqueWarfare());
 
 		// 设置模板用户
 		if (evaTemplateAddReq.getOperationAuthType().equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())) {

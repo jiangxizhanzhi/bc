@@ -63,7 +63,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	@Override
 	public String createTemplate(EvalTemTemplateReq evalTemTemplateReq) {
 		EvalTemTemplate evalTemTemplate = BeanUtils.copy(evalTemTemplateReq.getBaseData(), EvalTemTemplate.class);
-		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(evalTemTemplateReq.getTechniqueWarfare()));
+		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(evalTemTemplateReq.getMissionsScheme()));
 		evalTemTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTemTemplate.setTopoId(saveTopo(evalTemTemplateReq.getSceneConfigData()));
 		evalTemTemplateMapper.insert(evalTemTemplate);
@@ -74,12 +74,12 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	public void updateTemplate(UpdateEvalTemTemplateReq updateEvalTemTemplateReq) {
 		EvalTemTemplate oldEvalTemTemplate = evalTemTemplateMapper.selectById(updateEvalTemTemplateReq.getResourceId());
 		String topoId = oldEvalTemTemplate.getTopoId();
-		TechniqueWarfare oldScheme = JsonUtil.toJsonObject(oldEvalTemTemplate.getTechniqueWarfare(), TechniqueWarfare.class);
+		MissionScheme oldScheme = JsonUtil.toJsonObject(oldEvalTemTemplate.getTechniqueWarfare(), MissionScheme.class);
 		List<String> oldResourceIds = evalMissionTemplateService.getTaskIds(oldScheme);
-		List<String> newResourceIds = evalMissionTemplateService.getTaskIds(updateEvalTemTemplateReq.getTechniqueWarfare());
+		List<String> newResourceIds = evalMissionTemplateService.getTaskIds(updateEvalTemTemplateReq.getMissionsScheme());
 		oldResourceIds.removeAll(newResourceIds);
 		EvalTemTemplate evalTemTemplate = BeanUtils.copy(updateEvalTemTemplateReq, EvalTemTemplate.class);
-		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(updateEvalTemTemplateReq.getTechniqueWarfare()));
+		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(updateEvalTemTemplateReq.getMissionsScheme()));
 		JSONObject topoJson = new JSONObject();
 		SceneConfigData sceneConfigData = updateEvalTemTemplateReq.getSceneConfigData();
 		topoJson.put("scene_config", sceneConfigData.getSceneConfig());

@@ -130,18 +130,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		evalTask.setResourceId(IDGeneratorUtil.getID());
 
 
-
-		// 构建步骤对象
-		List<EvalTaskStep> evalTaskSteps = Lists.newArrayList();
-		List<EvalTaskStepConfig> evalTaskStepConfigList = JsonUtil
-				.toJsonObjectArray(evalTemplate.getStepConfig(), EvalTaskStepConfig.class);
-		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
-			EvalTaskStep evalTaskStep = BeanUtils.copy(evalTaskStepConfig, EvalTaskStep.class);
-			evalTaskStep.setTaskId(evalTask.getResourceId());
-			evalTaskStep.setType(EvalTaskStep.Type.MANUAL.getCode());
-			evalTaskSteps.add(evalTaskStep);
-		}
-
 		// 构建本地scene对象
 		LocalScene localScene = createLocalScene(evalTask);
 
@@ -155,6 +143,8 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		evalTask.setLocalSceneId(localScene.getResourceId());
 		evalTask.setMpSceneId(sceneId);
 
+		evalTask.setEnableRecording(true);
+
 		// 更新模板信息
 		evalTemplate.setCurrentTaskId(evalTask.getResourceId());
 
@@ -166,7 +156,6 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 					localSceneService.save(localScene);
 					save(evalTask);
-					evalTaskStepService.saveBatch(evalTaskSteps);
 					evalTemplateMapper.updateById(evalTemplate);
 				}
 			});

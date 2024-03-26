@@ -27,7 +27,6 @@ public class EvaTemplateBaseInfoReq {
 	private Integer categoryCode;
 
 	@ApiModelProperty(value = "是否录屏", required = true)
-	@NotNull
 	private Boolean enableRecording;
 
 	@ApiModelProperty("试验条件")

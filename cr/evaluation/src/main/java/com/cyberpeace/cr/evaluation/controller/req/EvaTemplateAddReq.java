@@ -20,7 +20,6 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 	private SceneConfigData sceneConfigData;
 
 	@ApiModelProperty(value = "步骤配置", required = true)
-	@NotNull
 	private List<EvalTaskStepConfig> stepConfig = new ArrayList<>();
 
 	@ApiModelProperty("授权用户")

@@ -18,10 +18,6 @@ public interface EvalRuleTemplateService extends IService<EvalRuleTemplate> {
 
 	void deleteRuleTemplate(DeleteReq deleteReq);
 
-	void addTaskTemplate(EvalTaskTemplateAddReq evalTaskTemplateAddReq);
-
-	void deleteTaskTemplate(EvalTaskTemplateDelReq evalTaskTemplateDelReq);
-
 	EvalRuleTemplateDetailRsp getRuleTemplate(String id);
 
 	void modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq);

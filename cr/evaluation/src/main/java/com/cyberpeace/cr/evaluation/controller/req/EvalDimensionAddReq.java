@@ -8,25 +8,19 @@ import java.io.Serializable;
 @Data
 public class EvalDimensionAddReq implements Serializable {
 
-	@ApiModelProperty("规则id")
-	private String ruleId;
+	@ApiModelProperty("资源id")
+	private String resourceId;
 
-	@ApiModelProperty("云模板id")
-	private String cloudTemplateId;
-
-	@ApiModelProperty("事件名称")
+	@ApiModelProperty(value = "事件名称", required = true)
 	private String name;
 
-	@ApiModelProperty("事件类型")
+	@ApiModelProperty(value = "类型", required = true)
+	private Integer type;
+
+	@ApiModelProperty(value = "事件类型", required = true)
 	private Integer eventType;
 
-	@ApiModelProperty("操作")
-	private Integer operate;
-
-	@ApiModelProperty("对象")
-	private String object;
-
-	@ApiModelProperty("取值")
-	private String value;
+	@ApiModelProperty(value = "规则参数", required = true)
+	private String ruleParameter;
 
 }

@@ -6,13 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class EvalHostAddReq implements Serializable {
-
-	@ApiModelProperty("云模板Id")
-	private String cloudTemplateId;
-
-	@ApiModelProperty("规则id")
-	private String ruleId;
+public class EvalHostTemplateAddReq implements Serializable {
 
 	@ApiModelProperty("主机id")
 	private String hostId;

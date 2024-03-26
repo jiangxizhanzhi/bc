@@ -11,13 +11,15 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.evaluation.controller.req.*;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleTemplateDetailRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleTemplateEnumRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleTemplateListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalActionTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalDimensionTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalHostTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRuleTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
+import com.cyberpeace.cr.evaluation.service.EvalActionTemplateService;
+import com.cyberpeace.cr.evaluation.service.EvalDimensionTemplateService;
+import com.cyberpeace.cr.evaluation.service.EvalHostTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalRuleTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalDimensionContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalHostContext;
@@ -75,21 +77,33 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 	private SituationHandlerService situationHandlerService;
 
 	@Autowired
-	private EvalStepTemplateMapper evalStepTemplateMapper;
+	private EvalDimensionTemplateService evalDimensionTemplateService;
+
+	@Autowired
+	private EvalHostTemplateService evalHostTemplateService;
+
+	@Autowired
+	private EvalActionTemplateService evalActionTemplateService;
 
 	@Override
 	public String addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
-		EvalRuleTemplate evalRuleTemplate = new EvalRuleTemplate();
+		EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateAddReq, EvalRuleTemplate.class);
 		evalRuleTemplate.setName(evalRuleTemplateAddReq.getRuleName());
-		evalRuleTemplate.setDescription(evalRuleTemplateAddReq.getDescription());
-		evalRuleTemplate.setCloudTemplateId(evalRuleTemplateAddReq.getCloudTemplateId());
-		evalRuleTemplate.setStatus(EvalRuleTemplate.Status.CLOSE.getCode());
-		evalRuleTemplate.setGrade(EvalRuleTemplate.Grade.LOW.getCode());
-		evalRuleTemplate.setBooleanRelation(EvalRuleTemplate.BooleanRelation.OR.getCode());
 		evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		evalRuleTemplate.setLabelList(new ArrayList<>());
-		evalRuleTemplate.setStepIdList(new ArrayList<>());
-		evalRuleTemplateMapper.insert(evalRuleTemplate);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				evalRuleTemplateMapper.insert(evalRuleTemplate);
+				String cloudTemplateId = evalRuleTemplateAddReq.getCloudTemplateId();
+				String ruleId = evalRuleTemplate.getResourceId();
+
+				evalDimensionTemplateService.addDimensionTemplateList(evalRuleTemplateAddReq.getDimensionList(), cloudTemplateId, ruleId);
+				evalHostTemplateService.addHostTemplateList(evalRuleTemplateAddReq.getHostList(), cloudTemplateId, ruleId);
+				evalActionTemplateService.addActionTemplateList(evalRuleTemplateAddReq.getAlarms(), evalRuleTemplateAddReq.getSituations(), cloudTemplateId, ruleId);
+			}
+		});
 		return evalRuleTemplate.getResourceId();
 	}
 
@@ -136,22 +150,6 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 				evalDimensionTemplateMapper.deleteByRuleIds(deleteReq.getIds());
 			}
 		});
-	}
-
-	@Override
-	public void addTaskTemplate(EvalTaskTemplateAddReq evalTaskTemplateAddReq) {
-		EvalRuleTemplate evalRuleTemplate = evalRuleTemplateMapper.selectById(evalTaskTemplateAddReq.getRuleId());
-		evalRuleTemplate.addStepId(evalTaskTemplateAddReq.getStepId());
-		evalRuleTemplateMapper.updateById(evalRuleTemplate);
-	}
-
-	@Override
-	public void deleteTaskTemplate(EvalTaskTemplateDelReq evalTaskTemplateDelReq) {
-		EvalRuleTemplate evalRuleTemplate = evalRuleTemplateMapper.selectById(evalTaskTemplateDelReq.getRuleId());
-		List<String> stepIdList = evalRuleTemplate.getStepIdList();
-		stepIdList.removeAll(evalTaskTemplateDelReq.getStepIds());
-		evalRuleTemplate.setStepIdList(stepIdList);
-		evalRuleTemplateMapper.updateById(evalRuleTemplate);
 	}
 
 	@Override
@@ -202,7 +200,18 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 
 		evalRuleTemplateDetail.setStepIds(evalRuleTemplate.getStepIdList());
 
-		evalRuleTemplateDetail.setActions(evalActionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId()));
+		List<EvalActionTemplate> evalActionTemplateList = evalActionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
+		List<EvalAlarmReq> alarmRspList = new ArrayList<>();
+		List<EvalSituationReq> situationRspList = new ArrayList<>();
+		for (EvalActionTemplate evalActionTemplate : evalActionTemplateList) {
+			if (EvalActionTemplate.ActionType.ALARM.getCode().equals(evalActionTemplate.getActionType())) {
+				alarmRspList.add(BeanUtils.copy(evalActionTemplate, EvalAlarmReq.class));
+			}else {
+				situationRspList.add(BeanUtils.copy(evalActionTemplate, EvalSituationReq.class));
+			}
+		}
+		evalRuleTemplateDetail.setAlarms(alarmRspList);
+		evalRuleTemplateDetail.setSituations(situationRspList);
 		return evalRuleTemplateDetail;
 	}
 
@@ -212,7 +221,25 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 		evalRuleTemplate.setResourceId(evalRuleTemplateModifyReq.getRuleId());
 		evalRuleTemplate.setName(evalRuleTemplateModifyReq.getRuleName());
 		evalRuleTemplate.setLabelList(evalRuleTemplateModifyReq.getLabels());
-		evalRuleTemplateMapper.updateById(evalRuleTemplate);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				List<String> cloudTemplateIds = Arrays.asList(evalRuleTemplateModifyReq.getCloudTemplateId());
+				String cloudTemplateId = evalRuleTemplateModifyReq.getCloudTemplateId();
+				String ruleId = evalRuleTemplateModifyReq.getRuleId();
+
+				evalRuleTemplateMapper.updateById(evalRuleTemplate);
+				evalDimensionTemplateMapper.deleteByCloudTemplateIds(cloudTemplateIds);
+				evalDimensionTemplateService.addDimensionTemplateList(evalRuleTemplateModifyReq.getDimensionList(), cloudTemplateId, ruleId);
+				evalHostTemplateMapper.deleteByCloudTemplateIds(cloudTemplateIds);
+				evalHostTemplateService.addHostTemplateList(evalRuleTemplateModifyReq.getHostList(), cloudTemplateId, ruleId);
+				evalActionTemplateMapper.deleteByCloudTemplateIds(cloudTemplateIds);
+				evalActionTemplateService.addActionTemplateList(evalRuleTemplateModifyReq.getAlarms(), evalRuleTemplateModifyReq.getSituations(), cloudTemplateId, ruleId);
+			}
+		});
 	}
 
 	@Override

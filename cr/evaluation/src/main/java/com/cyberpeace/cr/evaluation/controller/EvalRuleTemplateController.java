@@ -4,11 +4,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.evaluation.controller.req.*;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateAddReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateModifyReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.service.EvalActionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalDimensionTemplateService;
-import com.cyberpeace.cr.evaluation.service.EvalHostTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalRuleTemplateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,9 +30,6 @@ public class EvalRuleTemplateController {
 
 	@Autowired
 	private EvalRuleTemplateService evalRuleTemplateService;
-
-	@Autowired
-	private EvalHostTemplateService evalHostTemplateService;
 
 	@Autowired
 	private EvalActionTemplateService evalActionTemplateService;
@@ -78,70 +76,10 @@ public class EvalRuleTemplateController {
 		return new BaseRsp<>(evalRuleTemplateService.getRuleEnum());
 	}
 
-	@ApiOperation("新增任务")
-	@PostMapping("/task")
-	public BaseRsp<Boolean> addTask(@RequestBody EvalTaskTemplateAddReq evalTaskTemplateAddReq) {
-		evalRuleTemplateService.addTaskTemplate(evalTaskTemplateAddReq);
-		return new BaseRsp<>(true);
-	}
-
-	@ApiOperation("删除任务")
-	@DeleteMapping("/task")
-	public BaseRsp<Boolean> deleteTask(@RequestBody EvalTaskTemplateDelReq evalTaskTemplateDelReq) {
-		evalRuleTemplateService.deleteTaskTemplate(evalTaskTemplateDelReq);
-		return new BaseRsp<>(true);
-	}
-
-	@ApiOperation("新增主机")
-	@PostMapping("/host")
-	public BaseRsp<String> addHost(@RequestBody EvalHostAddReq evalHostAddReq) {
-		return new BaseRsp<>(evalHostTemplateService.addHost(evalHostAddReq));
-	}
-
-	@ApiOperation("删除主机")
-	@DeleteMapping("/host")
-	public BaseRsp<Boolean> deleteHost(@RequestBody DeleteReq deleteReq) {
-		evalHostTemplateService.deleteHost(deleteReq.getIds());
-		return new BaseRsp<>(true);
-	}
-
-	@ApiOperation("新增标注")
-	@PostMapping("/dimension")
-	public BaseRsp<String> addDimension(@RequestBody EvalDimensionAddReq evalDimensionAddReq) {
-		return new BaseRsp<>(evalDimensionTemplateService.addDimensionTemplate(evalDimensionAddReq));
-	}
-
-	@ApiOperation("删除标注")
-	@DeleteMapping("/dimension")
-	public BaseRsp<Boolean> deleteDimension(@RequestBody DeleteReq deleteReq) {
-		evalDimensionTemplateService.removeByIds(deleteReq.getIds());
-		return new BaseRsp<>(true);
-	}
-
 	@ApiOperation("获取标注相关枚举")
 	@GetMapping("/dimension/enum")
 	public BaseRsp<EvalDimensionEnumRsp> getDimensionEnum() {
 		return new BaseRsp<>(evalDimensionTemplateService.getDimensionEnum());
-	}
-
-	@ApiOperation("新增动作")
-	@PostMapping("/action")
-	public BaseRsp<String> addAction(@RequestBody EvalActionTemplateAddReq evalActionTemplateAddReq) {
-		return new BaseRsp<>(evalActionTemplateService.addAction(evalActionTemplateAddReq));
-	}
-
-	@ApiOperation("删除动作")
-	@DeleteMapping("/action")
-	public BaseRsp<Boolean> deleteAction(@RequestBody DeleteReq deleteReq) {
-		evalActionTemplateService.deleteAction(deleteReq.getIds());
-		return new BaseRsp<>(true);
-	}
-
-	@ApiOperation("修改动作")
-	@PutMapping("/action")
-	public BaseRsp<Boolean> modifyAction(@RequestBody EvalActionTemplateModifyReq evalActionTemplateModifyReq) {
-		evalActionTemplateService.modifyAction(evalActionTemplateModifyReq);
-		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("获取动作相关枚举")

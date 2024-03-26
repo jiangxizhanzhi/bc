@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
-import com.cyberpeace.cr.evaluation.dao.entity.EvalActionTemplate;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAlarmReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSituationReq;
 import com.cyberpeace.cr.evaluation.service.context.EvalDimensionContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalHostContext;
 import io.swagger.annotations.ApiModelProperty;
@@ -48,9 +49,12 @@ public class EvalRuleTemplateDetailRsp implements Serializable {
 	@ApiModelProperty("主机")
 	private List<EvalHostContext> hosts;
 
-	@ApiModelProperty("步骤id列表")
+	@ApiModelProperty("任务id列表")
 	private List<String> stepIds;
 
-	@ApiModelProperty("动作")
-	private List<EvalActionTemplate> actions;
+	@ApiModelProperty("触发告警")
+	private List<EvalAlarmReq> alarms;
+
+	@ApiModelProperty("态势展示")
+	private List<EvalSituationReq> situations;
 }

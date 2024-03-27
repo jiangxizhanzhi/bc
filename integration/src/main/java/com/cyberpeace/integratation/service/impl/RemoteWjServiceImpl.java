@@ -9,10 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.WjErrorCode;
 import com.cyberpeace.integratation.model.WjRecordRsp;
 import com.cyberpeace.integratation.service.RemoteWjService;
@@ -53,11 +50,22 @@ public class RemoteWjServiceImpl implements RemoteWjService {
 
 		try {
 			JSONObject rep = HttpClientUtil.rawGetByParam(req, RECORD_LIST_URL, JSONObject.class);
-			listRsp.setTotal(rep.getInteger("total"));
-			listRsp.setLastPage(rep.getInteger("last_page"));
-			listRsp.setCurrentPage(rep.getInteger("current_page"));
+			Integer count = rep.getInteger("count");
+
+			// 通过数据总数，计算总页数，如果数据总数为0，则总页数为1
+			Integer lastPage;
+			if (count == null || count == 0) {
+				count = 0;
+				lastPage = 1;
+			} else {
+				lastPage = MathUtils.divide(count ,req.getPerPage());
+			}
+
+			listRsp.setTotal(count);
+			listRsp.setLastPage(lastPage);
+			listRsp.setCurrentPage(req.getPage());
 			listRsp.setList(JsonUtil.toJsonObjectArray(
-					JsonUtil.toJsonString(rep.getJSONArray("list")), WjRecordRsp.class));
+					JsonUtil.toJsonString(rep.getJSONArray("data")), WjRecordRsp.class));
 
 		} catch (Exception e) {
 			log.error("Get wj record list error", e);

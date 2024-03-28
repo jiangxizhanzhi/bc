@@ -7,7 +7,7 @@ import com.cyberpeace.common.context.user.OperationUserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 
-import com.cyberpeace.cr.evaluation.service.impl.bo.TechniqueWarfare;
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -33,7 +33,7 @@ public class EvalTemplateRsp extends EvalTemplateListRsp {
 	private Integer operationAuthType;
 
 	@ApiModelProperty("任务方案")
-	private TechniqueWarfare techniqueWarfare;
+	private MissionScheme missionsScheme;
 
 	public void setStepConfig(String stepConfig) {
 		this.stepConfig = JsonUtil.toJsonObjectArray(stepConfig, EvalTaskStepConfig.class);

@@ -29,7 +29,7 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 	private Integer operationAuthType;
 
 	@ApiModelProperty("试验阶段-技战法")
-	private MissionScheme missionScheme;
+	private MissionScheme missionsScheme;
 
 	@ApiModelProperty("模板id")
 	private String templateId;

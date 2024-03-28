@@ -5,9 +5,12 @@ import java.util.List;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.MissionTemplateStatus;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate;
 import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
-import com.cyberpeace.cr.evaluation.service.impl.bo.TechniqueWarfare;
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -127,8 +130,8 @@ public class EvalTemplateController {
 		// 构造接口返回数据
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
 		evalTemplateRsp.setCondition(evalTemplate.getExpCondition());
-		TechniqueWarfare techniqueWarfare = JsonUtil.toJsonObject(evalTemplate.getTechniqueWarfare(), TechniqueWarfare.class);
-		evalTemplateRsp.setTechniqueWarfare(techniqueWarfare);
+		MissionScheme techniqueWarfare = JsonUtil.toJsonObject(evalTemplate.getTechniqueWarfare(), MissionScheme.class);
+		evalTemplateRsp.setMissionsScheme(techniqueWarfare);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
 		// auth users
@@ -217,8 +220,17 @@ public class EvalTemplateController {
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
 		evalTemplate.setExpCondition(evaTemplateAddReq.getCondition());
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
+
+		MissionScheme missionsScheme = evaTemplateAddReq.getMissionsScheme();
+		List<StageData> stageList = missionsScheme.getStageList();
+
+		stageList.forEach( item -> {
+			List<TaskBo> taskList = item.getTaskList();
+			taskList.forEach(task-> task.setStatus(MissionTemplateStatus.NOT_START));
+		});
+		missionsScheme.setStageList(stageList);
 		// 设置技战法方案-任务方案
-		evalTemplate.setTechniqueWarfare(null == evalTemTemplate ? JsonUtil.toJsonString(evaTemplateAddReq.getMissionScheme()) : evalTemTemplate.getTechniqueWarfare());
+		evalTemplate.setTechniqueWarfare(null == evalTemTemplate ? JsonUtil.toJsonString(missionsScheme) : evalTemTemplate.getTechniqueWarfare());
 
 		// 设置模板用户
 		if (evaTemplateAddReq.getOperationAuthType().equals(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())) {

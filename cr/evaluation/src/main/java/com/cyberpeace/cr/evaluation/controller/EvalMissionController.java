@@ -327,15 +327,15 @@ public class EvalMissionController {
                                                 @ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(value = "task_id") String taskId) {
         EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
         String missionsScheme = evalTemplate.getTechniqueWarfare();
-        if (!StringUtils.isEmpty(taskId)) {
-            EvalTask evalTask = evalTaskMapper.selectById(taskId);
-            if (!StringUtils.isEmpty(evalTask.getTechniqueWarfare())) {
-                missionsScheme = evalTask.getTechniqueWarfare();
-            }
+        if(StringUtils.isEmpty(missionsScheme)){
+            return new BaseRsp<>(new ArrayList<>());
         }
         List<EvalMissionTemplate> evalMissionTemplates = evalMissionTemplateMapper.selectList(null);
         Map<String, Integer> missionTemplateMap = StreamApiUtils.toMap(evalMissionTemplates, EvalMissionTemplate::getResourceId, EvalMissionTemplate::getStatus);
         List<StageData> stageList = JsonUtil.toJsonObject(missionsScheme, MissionScheme.class).getStageList();
+        if(null == stageList || stageList.isEmpty()){
+            return new BaseRsp<>(new ArrayList<>());
+        }
         List<StageData> collect = stageList.stream().map(stageData -> {
             List<TaskBo> taskList = stageData.getTaskList();
             List<TaskBo> taskRes = new ArrayList<>();

@@ -57,7 +57,7 @@ public class AdminCourseImportController {
 			File file = new File(courseImportReq.getPath());
 			if (!file.exists()) {
 				log.error("RMCourseImport：File path not exist! path=[{}]", courseImportReq.getPath());
-				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+				throw new BusinessException(ErrorCode.FILE_NOT_EXIST, courseImportReq.getPath());
 			}
 
 			UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);

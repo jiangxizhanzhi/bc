@@ -80,7 +80,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 			Boolean renameFile) {
 		File origin = new File(originPath);
 		if (!origin.exists()) {
-			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+			throw new BusinessException(ErrorCode.FILE_NOT_EXIST, originPath);
 		}
 		if (origin.isDirectory()) {
 			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);

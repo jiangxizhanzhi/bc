@@ -101,7 +101,7 @@ public class FileTree {
 
 		if (file == null) {
 			log.error("file is null,name =[{}]", name);
-			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+			throw new BusinessException(ErrorCode.FILE_NOT_EXIST, name);
 		}
 
 		return file;

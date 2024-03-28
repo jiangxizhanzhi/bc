@@ -125,7 +125,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		File markdownFile = new File(path, ResourceImportConstant.README_NAME);
 		if (!markdownFile.exists() || markdownFile.isDirectory()) {
 			log.error("Markdown file not found! path=[{}]", markdownFile.getAbsolutePath());
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL, markdownFile.getAbsolutePath());
 		}
 		JSONObject markdownValue = MdUtil.parseJsonMarkdown(markdownFile);
 
@@ -221,7 +221,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 						courseLesson.getResourceId())) {
 					log.error("Lesson name exist! course_path=[{}], lesson_path=[{}]", path,
 							lessonPath);
-					throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+					throw new BusinessException(OjBusinessErrorCode.RESOURCE_IS_EXIST, lessonPath);
 				}
 				return courseLesson;
 			});
@@ -535,7 +535,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 					log.error(
 							"Course directory name and course name are inconsistent! course_path=[{}], lesson_dir=[{}]",
 							path, lessonPath);
-					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR);
+					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR, lessonPath);
 				}
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
@@ -1021,7 +1021,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 				if (null != lessonNameMap.putIfAbsent(lessonName, courseLesson.getResourceId())) {
 					log.error("Lesson name exist! course_name=[{}], lesson_path=[{}]",
 							courseInfo.getCourseName(), courseInfo.getPath());
-					throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+					throw new BusinessException(OjBusinessErrorCode.RESOURCE_IS_EXIST, courseInfo.getPath() + File.separator + lessonName);
 				}
 				lessons.add(courseLesson);
 			}

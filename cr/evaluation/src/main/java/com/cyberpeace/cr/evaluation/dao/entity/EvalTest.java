@@ -100,7 +100,7 @@ public class EvalTest {
 	}
 
 	public List<String> getStepIdList() {
-		if (StringUtils.isNotEmpty(stepIds)) {
+		if (StringUtils.isEmpty(stepIds)) {
 			return new ArrayList<>();
 		}
 		return JsonUtil.toJsonObjectArray(stepIds, String.class);

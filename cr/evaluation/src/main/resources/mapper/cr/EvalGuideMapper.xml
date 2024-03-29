@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalGuideMapper">
+
+    <sql id="share_constant">
+        <bind name="MANUALLY_CODE" value="@com.cyberpeace.situation.constant.SituationGuideScheme$Type@MANUALLY.code"/>
+    </sql>
+
+    <select id="selectListByTestId" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalGuideListRsp">
+        <include refid="share_constant"/>
+        select resource_id guide_id, name, attack_type, source, target, result
+        from cr_eval_situation_guide_scheme
+        where test_id = #{testId}
+        and type = ${MANUALLY_CODE}
+        order by update_time desc
+    </select>
+
+    <select id="selectTestIdByGuideId" resultType="java.lang.String">
+        select test_id
+        from cr_eval_situation_guide_scheme
+        where resource_id = #{guideId}
+    </select>
+
+    <select id="selectSceneIdByGuideId" resultType="java.lang.String">
+        select mp_scene_id
+        from local_scene
+        left join cr_eval_situation_guide_scheme scheme on scheme.test_id = local_scene.business_instance_id
+        where scheme.resource_id = #{guideId}
+    </select>
+
+    <delete id="deleteByStepId">
+        delete from cr_eval_situation_guide_scheme
+        where step_id = #{stepId}
+    </delete>
+</mapper>

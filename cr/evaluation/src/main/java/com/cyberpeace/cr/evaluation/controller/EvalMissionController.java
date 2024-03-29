@@ -331,7 +331,7 @@ public class EvalMissionController {
             return new BaseRsp<>(new ArrayList<>());
         }
         List<EvalMissionTemplate> evalMissionTemplates = evalMissionTemplateMapper.selectList(null);
-        Map<String, Integer> missionTemplateMap = StreamApiUtils.toMap(evalMissionTemplates, EvalMissionTemplate::getResourceId, EvalMissionTemplate::getStatus);
+        Map<String, EvalMissionTemplate> missionTemplateMap = StreamApiUtils.toMap(evalMissionTemplates, EvalMissionTemplate::getResourceId, s->s);
         List<StageData> stageList = JsonUtil.toJsonObject(missionsScheme, MissionScheme.class).getStageList();
         if(null == stageList || stageList.isEmpty()){
             return new BaseRsp<>(new ArrayList<>());
@@ -341,8 +341,8 @@ public class EvalMissionController {
             List<TaskBo> taskRes = new ArrayList<>();
             for (TaskBo task : taskList) {
                 String resourceId = task.getResourceId();
-                Integer status = missionTemplateMap.get(resourceId);
-                task.setStatus(status);
+                EvalMissionTemplate evalMissionTemplate = missionTemplateMap.get(resourceId);
+                BeanUtils.copyProperties(evalMissionTemplate, task);
                 taskRes.add(task);
             }
             stageData.setTaskList(taskRes);

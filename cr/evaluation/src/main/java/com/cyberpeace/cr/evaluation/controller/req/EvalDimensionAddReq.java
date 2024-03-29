@@ -14,7 +14,7 @@ public class EvalDimensionAddReq implements Serializable {
 	@ApiModelProperty(value = "事件名称", required = true)
 	private String name;
 
-	@ApiModelProperty(value = "类型", required = true)
+	@ApiModelProperty(value = "类型")
 	private Integer type;
 
 	@ApiModelProperty(value = "事件类型", required = true)

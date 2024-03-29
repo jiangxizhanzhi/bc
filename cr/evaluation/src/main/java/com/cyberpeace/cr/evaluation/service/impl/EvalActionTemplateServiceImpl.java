@@ -6,9 +6,11 @@ import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlarmReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSituationReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalActionTemplateEnumRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalAttackTypeRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalActionTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalActionTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalActionTemplateService;
+import com.cyberpeace.situation.constant.SituationGuideScheme;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -25,10 +27,13 @@ public class EvalActionTemplateServiceImpl extends ServiceImpl<EvalActionTemplat
 	@Override
 	public EvalActionTemplateEnumRsp getActionEnum() {
 		EvalActionTemplateEnumRsp evalActionTemplateEnumRsp = new EvalActionTemplateEnumRsp();
-		evalActionTemplateEnumRsp.setActionType(Arrays.stream(EvalActionTemplate.ActionType.values())
-													  .map(actionType -> new CodeNameRsp(actionType.getCode(), actionType.getDesc())).collect(Collectors.toList()));
 		evalActionTemplateEnumRsp.setLevel(Arrays.stream(EvalActionTemplate.Level.values())
 												 .map(level -> new CodeNameRsp(level.getCode(), level.getDesc())).collect(Collectors.toList()));
+		evalActionTemplateEnumRsp.setResult(Arrays.stream(SituationGuideScheme.ResultType.values())
+												  .map(resultType -> new CodeNameRsp(resultType.getCode(), resultType.getChinese())).collect(Collectors.toList()));
+		evalActionTemplateEnumRsp.setAttackType(Arrays.stream(SituationGuideScheme.AttackUrlEnum.values())
+													  .map(attack -> new EvalAttackTypeRsp(attack.getCode(), attack.getChinese(), attack.getSuccessUrl(), attack.getType()))
+													  .collect(Collectors.toList()));
 		return evalActionTemplateEnumRsp;
 	}
 

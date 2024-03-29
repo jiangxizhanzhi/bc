@@ -16,6 +16,4 @@ public class EvalDimensionEnumRsp implements Serializable {
 	@ApiModelProperty("事件类型")
 	private List<CodeNameRsp> eventType;
 
-	@ApiModelProperty("操作类型")
-	private List<CodeNameRsp> operation;
 }

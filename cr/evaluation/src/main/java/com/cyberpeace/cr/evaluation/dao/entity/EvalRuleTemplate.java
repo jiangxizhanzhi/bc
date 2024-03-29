@@ -65,12 +65,6 @@ public class EvalRuleTemplate extends BaseTable {
 	 */
 	private String createUserId;
 
-	public void addStepId(String stepId) {
-		List<String> stepIdList = getStepIdList();
-		stepIdList.add(stepId);
-		stepIds = JsonUtil.toJsonString(stepIdList);
-	}
-
 	public List<String> getStepIdList() {
 		if (StringUtils.isEmpty(stepIds)) {
 			return new ArrayList<>();

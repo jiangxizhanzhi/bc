@@ -85,11 +85,15 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 	@Autowired
 	private EvalActionTemplateService evalActionTemplateService;
 
+	@Autowired
+	private EvalStepTemplateMapper evalStepTemplateMapper;
+
 	@Override
 	public String addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
 		EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateAddReq, EvalRuleTemplate.class);
 		evalRuleTemplate.setName(evalRuleTemplateAddReq.getRuleName());
 		evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		evalRuleTemplate.setLabelList(evalRuleTemplateAddReq.getLabels());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -141,6 +145,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 
 	@Override
 	public void deleteRuleTemplate(DeleteReq deleteReq) {
+		log.info("deleteReq:" + deleteReq.toString());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -176,7 +181,8 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 										 .collect(Collectors.toList())
 		);
 		List<EvalHostTemplate> evalHostTemplateList = evalHostTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
-		if (evalCloudTemplateMapper.selectById(evalRuleTemplate.getCloudTemplateId()) == null) {
+		if (evalCloudTemplateMapper.selectById(evalRuleTemplate.getCloudTemplateId()) == null
+				|| evalCloudTemplateMapper.getTopoIdById(evalRuleTemplate.getCloudTemplateId()) == null) {
 			evalRuleTemplateDetail.setHosts(
 					evalHostTemplateList.stream()
 										.map(evalHostTemplate -> BeanUtils.copy(evalHostTemplate, EvalHostContext.class))
@@ -198,7 +204,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 
 		}
 
-		evalRuleTemplateDetail.setStepIds(evalRuleTemplate.getStepIdList());
+		evalRuleTemplateDetail.setSteps(evalStepTemplateMapper.selectRspByIds(evalRuleTemplate.getStepIdList()));
 
 		List<EvalActionTemplate> evalActionTemplateList = evalActionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
 		List<EvalAlarmReq> alarmRspList = new ArrayList<>();
@@ -227,16 +233,16 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
-				List<String> cloudTemplateIds = Arrays.asList(evalRuleTemplateModifyReq.getCloudTemplateId());
 				String cloudTemplateId = evalRuleTemplateModifyReq.getCloudTemplateId();
 				String ruleId = evalRuleTemplateModifyReq.getRuleId();
+				List<String> ruleIds = Arrays.asList(evalRuleTemplateModifyReq.getRuleId());
 
 				evalRuleTemplateMapper.updateById(evalRuleTemplate);
-				evalDimensionTemplateMapper.deleteByCloudTemplateIds(cloudTemplateIds);
+				evalDimensionTemplateMapper.deleteByRuleIds(ruleIds);
 				evalDimensionTemplateService.addDimensionTemplateList(evalRuleTemplateModifyReq.getDimensionList(), cloudTemplateId, ruleId);
-				evalHostTemplateMapper.deleteByCloudTemplateIds(cloudTemplateIds);
+				evalHostTemplateMapper.deleteByRuleTemplateIds(ruleIds);
 				evalHostTemplateService.addHostTemplateList(evalRuleTemplateModifyReq.getHostList(), cloudTemplateId, ruleId);
-				evalActionTemplateMapper.deleteByCloudTemplateIds(cloudTemplateIds);
+				evalActionTemplateMapper.deleteByRuleIds(ruleIds);
 				evalActionTemplateService.addActionTemplateList(evalRuleTemplateModifyReq.getAlarms(), evalRuleTemplateModifyReq.getSituations(), cloudTemplateId, ruleId);
 			}
 		});

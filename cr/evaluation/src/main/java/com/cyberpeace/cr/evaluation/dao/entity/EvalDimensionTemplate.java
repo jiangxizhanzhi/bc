@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -46,15 +45,6 @@ public class EvalDimensionTemplate extends BaseTable {
 	 */
 	private String cloudTemplateId;
 
-
-	public void setRuleParameter(Operate operate, String object, String value) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("operate", operate.key);
-		jsonObject.put("name", object);
-		jsonObject.put("value", value);
-		this.ruleParameter = jsonObject.toJSONString();
-	}
-
 //	类型
 	public enum Type implements GenericEnum {
 
@@ -92,30 +82,6 @@ public class EvalDimensionTemplate extends BaseTable {
 		EventType(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
-		}
-	}
-
-//	操作类型
-	public enum Operate implements GenericEnum {
-
-		MATE(0, "匹配", "match"),
-		ADD(1, "增加", "add"),
-		DELETE(2, "删除", "delete"),
-		MODIFY(3, "修改", "modify");
-
-		@Getter
-		private final Integer code;
-
-		@Getter
-		private final String desc;
-
-		@Getter
-		private final String key;
-
-		Operate(Integer code, String desc, String key) {
-			this.code = code;
-			this.desc = desc;
-			this.key = key;
 		}
 	}
 

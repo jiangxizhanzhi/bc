@@ -22,4 +22,12 @@
             #{cloudId}
         </foreach>
     </delete>
+
+    <delete id="deleteByRuleTemplateIds">
+        delete from cr_eval_host_template
+        where rule_id in
+        <foreach collection="ruleIds" item="ruleId" separator="," open="(" close=")">
+            #{ruleId}
+        </foreach>
+    </delete>
 </mapper>

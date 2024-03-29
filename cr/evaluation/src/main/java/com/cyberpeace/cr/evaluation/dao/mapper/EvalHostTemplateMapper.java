@@ -17,6 +17,8 @@ public interface EvalHostTemplateMapper extends BaseMapper<EvalHostTemplate> {
 
 	void deleteByCloudTemplateIds(@Param("cloudTemplateIds") List<String> cloudTemplateIds);
 
+	void deleteByRuleTemplateIds(@Param("ruleIds") List<String> ruleIds);
+
 }
 
 

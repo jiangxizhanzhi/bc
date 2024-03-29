@@ -29,6 +29,7 @@ public class EvalDimensionTemplateServiceImpl extends ServiceImpl<EvalDimensionT
 			EvalDimensionTemplate evalDimensionTemplate = BeanUtils.copy(evalDimensionAddReq, EvalDimensionTemplate.class);
 			evalDimensionTemplate.setCloudTemplateId(cloudTemplateId);
 			evalDimensionTemplate.setRuleId(ruleId);
+			evalDimensionTemplate.setType(EvalDimensionTemplate.Type.HOST.getCode());
 			return evalDimensionTemplate;
 		}).collect(Collectors.toList());
 		saveBatch(dimensionTemplateList);
@@ -37,8 +38,6 @@ public class EvalDimensionTemplateServiceImpl extends ServiceImpl<EvalDimensionT
 	@Override
 	public EvalDimensionEnumRsp getDimensionEnum() {
 		EvalDimensionEnumRsp evalDimensionEnumRsp = new EvalDimensionEnumRsp();
-		evalDimensionEnumRsp.setOperation(Arrays.stream(EvalDimensionTemplate.Operate.values())
-												.map(operate -> new CodeNameRsp(operate.getCode(), operate.getDesc())).collect(Collectors.toList()));
 		evalDimensionEnumRsp.setEventType(Arrays.stream(EvalDimensionTemplate.EventType.values())
 												.map(eventType -> new CodeNameRsp(eventType.getCode(), eventType.getDesc())).collect(Collectors.toList()));
 		evalDimensionEnumRsp.setType(Arrays.stream(EvalDimensionTemplate.Type.values())

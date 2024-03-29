@@ -29,21 +29,21 @@ public class EvalCloudTemplateController {
 
 
 	@ApiOperation("新增云场景模板")
-	@PostMapping("/")
+	@PostMapping("")
 	public BaseRsp<Boolean> addCloudTemplate(@RequestBody EvalCloudTemplateAddReq evalCloudTemplateAddReq) {
 		evalCloudTemplateService.addCloudTemplate(evalCloudTemplateAddReq);
 		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("修改云场景模板")
-	@PutMapping("/")
+	@PutMapping("")
 	public BaseRsp<Boolean> modifyCloudTemplate(@RequestBody EvalCloudTemplateAddReq evalCloudTemplateAddReq) {
 		evalCloudTemplateService.modifyCloudTemplate(evalCloudTemplateAddReq);
 		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("删除云场景模板")
-	@DeleteMapping("/")
+	@DeleteMapping("")
 	public BaseRsp<Boolean> deleteCloudTemplate(@RequestBody DeleteReq deleteReq) {
 		evalCloudTemplateService.deleteCloudTemplate(deleteReq.getIds());
 		return new BaseRsp<>(true);

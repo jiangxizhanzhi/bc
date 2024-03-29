@@ -49,8 +49,8 @@ public class EvalRuleTemplateDetailRsp implements Serializable {
 	@ApiModelProperty("主机")
 	private List<EvalHostContext> hosts;
 
-	@ApiModelProperty("任务id列表")
-	private List<String> stepIds;
+	@ApiModelProperty("任务列表")
+	private List<EvalStepRsp> steps;
 
 	@ApiModelProperty("触发告警")
 	private List<EvalAlarmReq> alarms;

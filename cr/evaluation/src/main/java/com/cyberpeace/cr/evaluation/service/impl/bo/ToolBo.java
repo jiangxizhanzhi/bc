@@ -21,4 +21,10 @@ public class ToolBo implements Serializable {
 
 	@ApiModelProperty("预定义动作")
 	private String action;
+
+	@ApiModelProperty("剩余时间")
+	private int limitTime;
+
+	@ApiModelProperty("是否手动执行")
+	private Boolean isExecute = false;
 }

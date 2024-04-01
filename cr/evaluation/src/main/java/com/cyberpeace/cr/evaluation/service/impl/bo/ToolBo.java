@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class ToolBo implements Serializable {
@@ -24,6 +25,9 @@ public class ToolBo implements Serializable {
 
 	@ApiModelProperty("剩余时间")
 	private int limitTime;
+
+	@ApiModelProperty("执行时间")
+	private Date executeTime;
 
 	@ApiModelProperty("是否手动执行")
 	private Boolean isExecute = false;

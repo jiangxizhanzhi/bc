@@ -17,4 +17,7 @@ public class ManualExecutionReq implements Serializable {
 	@ApiModelProperty("命令")
 	private String command;
 
+	@ApiModelProperty("工具")
+	private String tool;
+
 }

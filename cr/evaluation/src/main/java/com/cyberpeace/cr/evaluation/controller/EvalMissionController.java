@@ -329,7 +329,7 @@ public class EvalMissionController {
                 Integer status = task.getStatus();
                 if((status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL))
                         && new Date(task.getCreateTime().getTime() + task.getLimitTime()).compareTo(new Date()) > 0){
-                    task.setStatus(MissionTemplateStatus.OVERTIME);
+                    task.setOvertimeStatus(MissionTemplateStatus.OVERTIME);
                 }
                 taskRes.add(task);
             }

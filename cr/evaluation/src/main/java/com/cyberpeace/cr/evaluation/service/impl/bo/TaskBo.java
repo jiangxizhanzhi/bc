@@ -14,5 +14,5 @@ public class TaskBo extends EvalMissionTemplate {
 	private String resourceId;
 
 	@ApiModelProperty("超时状态")
-	private String overtimeStatus;
+	private Integer overtimeStatus;
 }

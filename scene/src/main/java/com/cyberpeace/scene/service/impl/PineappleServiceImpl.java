@@ -1,5 +1,6 @@
 package com.cyberpeace.scene.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -53,6 +54,8 @@ public class PineappleServiceImpl implements PineappleService {
 				res.add(qq);
 			}
 		}
+		// 倒序
+		Collections.reverse(res);
 		return res;
 	}
 }

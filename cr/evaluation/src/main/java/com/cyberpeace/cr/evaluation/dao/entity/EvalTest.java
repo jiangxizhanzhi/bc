@@ -87,6 +87,10 @@ public class EvalTest {
 	 */
 	private String stepIds;
 
+	/**
+	 * 当前实例id
+	 */
+	private String currentInstanceId;
 
 	public List<String> getReadAuthList() {
 		if (StringUtils.isEmpty(readAuthIds)) {

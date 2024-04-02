@@ -46,7 +46,7 @@ public class EvalTestListRsp implements Serializable {
 	@ApiModelProperty("参与人员")
 	private List<UserInfo> userInfoList;
 
-	@ApiModelProperty("试验状态")
+	@ApiModelProperty("试验状态:0=未开始，1=进行中")
 	private Integer status;
 
 }

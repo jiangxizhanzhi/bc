@@ -23,6 +23,7 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -108,6 +109,11 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 			}
 			testRsp.setUserInfoList(userInfoList);
 			testRsp.setNodeCount(nodeCountMap.get(test.getTopoId()).getNodeCounts());
+			if (StringUtils.isBlank(test.getCurrentInstanceId())) {
+				testRsp.setStatus(1);
+			} else {
+				testRsp.setStatus(0);
+			}
 
 			// TODO: 2024/3/22 调用中台接口获取服务类型、试验工具
 			testRsp.setCloudServices(new ArrayList<>());

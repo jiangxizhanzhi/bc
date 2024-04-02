@@ -15,4 +15,6 @@ public interface EvalTestMapper extends BaseMapper<EvalTest> {
 
 	IPage<EvalTest> testPage(Page<EvalTest> page, @Param("listQuery") EvalTestListReq evalTestListReq, @Param("userId") String userId);
 
+	String selectTopoIdByTestId(@Param("testId") String testId);
+
 }

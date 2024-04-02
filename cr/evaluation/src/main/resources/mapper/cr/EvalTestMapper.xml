@@ -20,4 +20,10 @@
             </if>
         </where>
     </select>
+
+    <select id="selectTopoIdByTestId" resultType="java.lang.String">
+        select topo_id
+        from cr_eval_test
+        where resource_id = #{testId}
+    </select>
 </mapper>

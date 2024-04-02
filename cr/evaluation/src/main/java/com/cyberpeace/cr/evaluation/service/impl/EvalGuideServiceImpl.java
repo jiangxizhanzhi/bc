@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideModifyReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalGuideListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideDetailRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalGuideScheme;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalGuideMapper;
@@ -17,10 +16,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestMapper;
 import com.cyberpeace.cr.evaluation.service.EvalGuideService;
 import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.cyberpeace.situation.constant.ws.MessageType;
-import com.cyberpeace.situation.model.ElementInfo;
-import com.cyberpeace.situation.model.LineStyle;
-import com.cyberpeace.situation.model.SceneData;
-import com.cyberpeace.situation.model.SituationTopo;
+import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeEffect;
 import com.cyberpeace.situation.service.SituationHandlerService;
@@ -78,7 +74,10 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 		EvalGuideScheme evalGuideScheme = evalGuideMapper.selectById(guideId);
 		String sceneId = evalGuideMapper.selectSceneIdByGuideId(guideId);
 		if (sceneId == null) {
-			String topoId = evalTestMapper.selectById(evalGuideScheme.getTestId()).getTopoId();
+			String topoId = evalTestMapper.selectTopoIdByTestId(evalGuideScheme.getTestId());
+			if (topoId == null) {
+				throw new BusinessException(CrBusinessErrorCode.CANNOT_FIND_TOPO);
+			}
 			pushDataToRoomByScheme(false, topoId, evalGuideScheme);
 		}else {
 			pushDataToRoomByScheme(true, sceneId, evalGuideScheme);

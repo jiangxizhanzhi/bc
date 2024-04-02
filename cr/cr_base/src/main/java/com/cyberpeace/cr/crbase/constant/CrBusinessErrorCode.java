@@ -495,5 +495,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String INDEX_RESULT_IS_INVALID = "101144";
 
+	/**
+	 * 找不到对应拓扑
+	 */
+	public static final String CANNOT_FIND_TOPO = "101145";
+
 	private CrBusinessErrorCode() {}
 }

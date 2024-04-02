@@ -4,7 +4,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepTemplateAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepTemplateModifyReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepTemplateEnumRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepTemplateListRsp;
 import com.cyberpeace.cr.evaluation.service.EvalStepTemplateService;
 import io.swagger.annotations.Api;
@@ -53,9 +52,4 @@ public class EvalStepTemplateController {
 		return new BaseRsp<>(evalStepTemplateService.getStepList(cloudTemplateId));
 	}
 
-	@ApiOperation("获取步骤相关枚举")
-	@GetMapping("/step/enum")
-	public BaseRsp<EvalStepTemplateEnumRsp> getStepEnum() {
-		return new BaseRsp<>(evalStepTemplateService.getStepEnum());
-	}
 }

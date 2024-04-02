@@ -22,4 +22,6 @@ public interface NodeMapper extends BaseMapper<NodeEntity> {
     int updateByInstanceId(@Param("instanceId") String instanceId, @Param("status") Integer status);
 
     NodeEntity selectBySceneAndType(@Param("sceneId") String sceneId, @Param("code") Integer code);
+
+    List<String> selectAllNames();
 }

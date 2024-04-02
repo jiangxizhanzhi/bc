@@ -2,9 +2,11 @@ package com.cyberpeace.scene.service.impl;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.constant.ErrorCode;
@@ -13,6 +15,7 @@ import com.cyberpeace.common.probe.RDPProbe;
 import com.cyberpeace.common.probe.SMTPProbe;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.scene.constant.enums.ImageRoleEnum;
 import com.cyberpeace.scene.constant.enums.InteractiveScenarioEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
@@ -24,7 +27,7 @@ import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.service.bo.PortMapping;
 import com.cyberpeace.scene.service.bo.interactive.ConnectionRes;
-import com.cyberpeace.scene.service.bo.interactive.InteractiveSceneReq;
+import com.cyberpeace.scene.service.bo.interactive.QQRes;
 import com.cyberpeace.scene.service.bo.interactive.UserConnectionRes;
 import com.cyberpeace.scene.service.bo.interactive.UserLinkRsp;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
@@ -62,17 +65,23 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 	@Autowired
 	private ConnectionMapper connectionMapper;
 
+	@Autowired
+	private PineappleService pineappleService;
+
+	@Autowired
+	@Qualifier("asyncTaskExecutor")
+	private Executor executor;
 
 	@Override
-	public void startScene(InteractiveSceneReq req) {
+	public void startScene(Integer scenario) {
 		// 1. stop old
-		stopScene(req);
+		stopScene(scenario);
 		// 2. create new scene
 		String sceneId = IDGeneratorUtil.getID();
 		SceneEntity scene = new SceneEntity();
-		scene.setScenario(req.getScenario());
+		scene.setScenario(scenario);
 		scene.setSceneName(
-				EnumUtils.getEnumDescByCode(req.getScenario(), InteractiveScenarioEnum.class));
+				EnumUtils.getEnumDescByCode(scenario, InteractiveScenarioEnum.class));
 		scene.setResourceId(sceneId);
 		scene.setSceneStatus(SceneEnum.CREATE.getCode());
 		sceneMapper.insert(scene);
@@ -80,7 +89,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			// create network with random id
 			NetworkEntity net = networkService.create(sceneId);
 			// select topo, get images
-			List<ImageEntity> images = imageMapper.selectByScenario(req.getScenario());
+			List<ImageEntity> images = imageMapper.selectByScenario(scenario);
 			for (ImageEntity image : images) {
 				// create node with rdp proxy
 				NodeEntity node = createInstance(image, net);
@@ -97,9 +106,9 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 	}
 
 	@Override
-	public void stopScene(InteractiveSceneReq req) {
+	public void stopScene(Integer scenario) {
 		// select scene by type
-		SceneEntity scene = sceneMapper.selectByScenario(req.getScenario());
+		SceneEntity scene = sceneMapper.selectByScenario(scenario);
 		if (null == scene) {
 			return;
 		}
@@ -111,13 +120,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 
 	@Override
 	public UserLinkRsp getUserLink(Integer scenario) {
-		SceneEntity scene = sceneMapper.selectByScenario(scenario);
-		if (null == scene) {
-			throw new BusinessException(ErrorCode.SCENARIO_NOT_EXIST);
-		}
-		if (!scene.getSceneStatus().equals(SceneEnum.ACTIVE.getCode())) {
-			throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
-		}
+		SceneEntity scene = getSceneByScenario(scenario);
 		List<NodeEntity> nodeList = nodeMapper.selectBySid(scene.getResourceId());
 		UserLinkRsp rsp = new UserLinkRsp();
 		rsp.setScenario(scenario);
@@ -134,13 +137,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 
 	@Override
 	public void checkLink(Integer scenario) {
-		SceneEntity scene = sceneMapper.selectByScenario(scenario);
-		if (null == scene) {
-			throw new BusinessException(ErrorCode.SCENARIO_NOT_EXIST);
-		}
-		if (!scene.getSceneStatus().equals(SceneEnum.ACTIVE.getCode())) {
-			throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
-		}
+		SceneEntity scene = getSceneByScenario(scenario);
 		List<NodeEntity> nodeList = nodeMapper.selectBySid(scene.getResourceId());
 		// 先检查一般的机器，再检查邮件服务器
 		nodeList = nodeList.stream().sorted(Comparator.comparing(NodeEntity::getType))
@@ -182,15 +179,56 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		}
 	}
 
-	private Integer getMailPort() {
-		SceneEntity scene = sceneMapper
-				.selectByScenario(InteractiveScenarioEnum.RANSOMWARE.getCode());
+	@Override
+	public void snapShotAll() {
+		executor.execute(() -> {
+			boolean flag = false;
+			int cnt = 0;
+			// 10秒检测一次，300s后停止,最多检查30次后放弃
+			while (!flag && cnt < 30) {
+				try {
+					Thread.sleep(10_000);
+					checkLink(InteractiveScenarioEnum.RANSOMWARE.getCode());
+					checkLink(InteractiveScenarioEnum.U_DISK.getCode());
+					flag = true;
+				} catch (Exception e) {
+					cnt += 1;
+				}
+			}
+
+			if (flag) {
+				List<String> nodeNames = nodeMapper.selectAllNames();
+				hostService.createSnapshot(nodeNames);
+			}
+		});
+	}
+
+	@Override
+	public List<QQRes> getQQRes() {
+		return pineappleService.listQQ();
+	}
+
+	@Override
+	public void recover(Integer scenario) {
+		SceneEntity scene = getSceneByScenario(scenario);
+		List<NodeEntity> nodes = nodeMapper.selectBySid(scene.getResourceId());
+		List<String> nodeNames = StreamApiUtils.map(nodes, NodeEntity::getName);
+		hostService.revertSnapshot(nodeNames);
+	}
+
+	private SceneEntity getSceneByScenario(Integer scenario) {
+		SceneEntity scene = sceneMapper.selectByScenario(scenario);
 		if (null == scene) {
 			throw new BusinessException(ErrorCode.SCENARIO_NOT_EXIST);
 		}
 		if (!scene.getSceneStatus().equals(SceneEnum.ACTIVE.getCode())) {
 			throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
 		}
+		return scene;
+	}
+
+	private Integer getMailPort() {
+		SceneEntity scene = getSceneByScenario(InteractiveScenarioEnum.RANSOMWARE.getCode());
 		NodeEntity node = nodeMapper.selectBySceneAndType(scene.getResourceId(),
 				ImageRoleEnum.SERVER.getCode());
 		Integer port = node.getHostPort();

@@ -1,13 +1,15 @@
 package com.cyberpeace.scene.service;
 
-import com.cyberpeace.scene.service.bo.interactive.InteractiveSceneReq;
+import com.cyberpeace.scene.service.bo.interactive.QQRes;
 import com.cyberpeace.scene.service.bo.interactive.UserLinkRsp;
+
+import java.util.List;
 
 public interface InteractivePlatformService {
 
-	void startScene(InteractiveSceneReq req);
+	void startScene(Integer scenario);
 
-	void stopScene(InteractiveSceneReq req);
+	void stopScene(Integer scenario);
 
 	UserLinkRsp getUserLink(Integer scenario);
 
@@ -16,4 +18,19 @@ public interface InteractivePlatformService {
     void sendMail(String content);
 
 	void sendDecryptMail();
+
+	void snapShotAll();
+
+	/**
+	 * 获取qq号和头像
+	 *
+	 * @return {@code List<QQRes>}
+	 */
+	List<QQRes> getQQRes();
+
+	/**
+	 * 通过快照恢复场景
+	 * @param scenario
+	 */
+	void recover(Integer scenario);
 }

@@ -18,4 +18,7 @@
     <select id="selectBySceneAndType" resultType="com.cyberpeace.scene.dao.entity.NodeEntity">
         select * from cr_node where sid = #{sceneId} and type = #{code}
     </select>
+    <select id="selectAllNames" resultType="java.lang.String">
+        select name from cr_node;
+    </select>
 </mapper>

@@ -25,6 +25,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.TraceIdContext;
+import org.springframework.http.HttpStatus;
 
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.WebConstant;
@@ -303,4 +304,45 @@ public class HttpClientUtil {
 
 	}
 
+	/**
+	 * 读取远程文本
+	 * @param uri
+	 * @return {@code String}
+	 */
+	public static String readPlainText(String uri) {
+		// 1、设置请求线程数据
+		setContext(uri);
+
+		// 2、生成get请求
+		HttpGet httpGet = new HttpGet(uri);
+		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		// 3、执行实际调用、返回序列化后的结果
+		HttpResponse response = null;
+		String httpResponse = null;
+		HttpclientContext.getContext().setMethod(httpGet.getMethod());
+		try {
+			// 1、调用远程服务
+			response = getClient().execute(httpGet);
+
+			// 2、解析远程服务的返回值
+			httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
+
+			// 3、记录调用日志
+			HttpclientContext.getContext().addLog(httpResponse);
+			if (response.getStatusLine().getStatusCode() != HttpStatus.OK.value()) {
+				throw new RemoteServiceException(
+						String.valueOf(response.getStatusLine().getStatusCode()));
+			}
+		} catch (Exception e) {
+			LOG.error("response {}", response);
+			LOG.error("remote execute exception" + e.getMessage(), e);
+			HttpclientContext.getContext().doRemoteException(e);
+			HttpclientContext.removeContext();
+			throw new RemoteServiceException(e.getMessage());
+		} finally {
+			HttpclientContext.removeContext();
+		}
+		// 4、解析结果并返回
+		return httpResponse;
+	}
 }

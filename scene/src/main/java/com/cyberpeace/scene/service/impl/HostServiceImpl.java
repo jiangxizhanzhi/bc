@@ -1,10 +1,10 @@
 package com.cyberpeace.scene.service.impl;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -14,10 +14,12 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.scene.service.CpEnvService;
 import com.cyberpeace.scene.service.HostService;
 import com.cyberpeace.scene.service.ImageService;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
+import com.cyberpeace.scene.service.bo.req.SnapshotReq;
 import com.cyberpeace.scene.service.bo.res.ConsoleUrlRes;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
 import com.cyberpeace.scene.service.bo.res.ImageRes;
@@ -49,6 +51,12 @@ public class HostServiceImpl implements HostService {
 
 	@Autowired
 	private CpEnvService cpEnvService;
+
+	private final String snapshotCreate = "/snapshot/create";
+
+	private final String snapshotDelete = "/snapshot/delete";
+
+	private final String snapshotRevert = "/snapshot/revert";
 
 	@PostConstruct
 	public void init() {
@@ -104,4 +112,18 @@ public class HostServiceImpl implements HostService {
         }
         return null;
     }
+
+	@Override
+	public void createSnapshot(List<String> instanceNames) {
+		SnapshotReq req = new SnapshotReq();
+		req.setInstances(instanceNames);
+		HttpUtil.post(CP_HOST + CP_INSTANCES + snapshotCreate, req, JSONObject.class);
+	}
+
+	@Override
+	public void revertSnapshot(List<String> instanceNames) {
+		SnapshotReq req = new SnapshotReq();
+		req.setInstances(instanceNames);
+		HttpUtil.post(CP_HOST + CP_INSTANCES + snapshotRevert, req, JSONObject.class);
+	}
 }

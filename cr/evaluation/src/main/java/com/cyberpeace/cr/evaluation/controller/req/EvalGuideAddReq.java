@@ -38,7 +38,7 @@ public class EvalGuideAddReq implements Serializable {
 	@NotNull
 	private Integer result;
 
-	@ApiModelProperty(value = "步骤id", required = true)
+	@ApiModelProperty(value = "步骤id")
 	private String stepId;
 
 }

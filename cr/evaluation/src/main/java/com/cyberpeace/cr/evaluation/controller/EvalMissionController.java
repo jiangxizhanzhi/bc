@@ -98,6 +98,7 @@ public class EvalMissionController {
         evalMissionTemplateLog.setOperate(MissionTemplateStatus.NEW);
         evalMissionTemplateLog.setMissionId(resourceId);
         evalMissionTemplateLog.setMissionName(evalMissionTemplate.getName());
+        evalMissionTemplateLog.setTaskId(evalMissionTemplate.getTaskId());
         UserInfo userContext = UserInfoContext.getUserContext();
         evalMissionTemplateLog.setCreateUserId(userContext.getUserId());
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -134,7 +135,7 @@ public class EvalMissionController {
     public BaseRsp<EvalMissionTemplateRsp> updateMissionStatus(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
 
         EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(updateEvalMissionReq.getResourceId());
-        EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName());
+        EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), evalMissionTemplate.getTaskId());
         Integer status = updateEvalMissionReq.getStatus();
         evalMissionTemplate.setStatus(status);
         evalMissionTemplate.setUpdateTime(new Date());
@@ -151,10 +152,11 @@ public class EvalMissionController {
         return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
     }
 
-    private EvalMissionTemplateLog updateMissionLog(String resourceId, String name) {
+    private EvalMissionTemplateLog updateMissionLog(String resourceId, String name, String id) {
         EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
         evalMissionTemplateLog.setOperate(MissionTemplateStatus.NEW);
         evalMissionTemplateLog.setMissionId(resourceId);
+        evalMissionTemplateLog.setTaskId(id);
         UserInfo userContext = UserInfoContext.getUserContext();
         evalMissionTemplateLog.setCreateUserId(userContext.getUserId());
         evalMissionTemplateLog.setMissionName(name);

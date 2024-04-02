@@ -271,25 +271,17 @@ public class EvalMissionController {
         List<ToolBo> toolBos = JsonUtil.toJsonObjectArray(tools, ToolBo.class);
         Map<String, ToolBo> toolBoMap = StreamApiUtils.toMap(toolBos, ToolBo::getToolName, s -> s);
         String tool = manualExecutionReq.getTool();
-        for (ToolBo toolBo : toolBos) {
-
-            ToolBo toolBo1 = toolBoMap.get(tool);
-            if (toolBo1.getIsExecute() && toolBo1.getLimitTime() > 0) {
-                return new BaseRsp<>("can't be executed repeatedly");
-            }
-            toolBo1.setIsExecute(true);
-            toolBo1.setExecuteTime(new Date());
-            toolBos.set(toolBos.indexOf(toolBo), toolBo1);
+        ToolBo toolBo1 = toolBoMap.get(tool);
+        if (Boolean.TRUE.equals(toolBo1.getIsExecute()) && toolBo1.getLimitTime() > 0) {
+            return new BaseRsp<>("can't be executed repeatedly");
         }
+        toolBo1.setIsExecute(true);
+        toolBo1.setExecuteTime(new Date());
+        toolBo1.setAction(manualExecutionReq.getCommand());
+        toolBos.set(toolBos.indexOf(toolBo1), toolBo1);
         evalMissionTemplate.setTools(JsonUtil.toJsonString(toolBos));
         // 状态修改 超时单独处理--
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                evalMissionTemplateMapper.updateById(evalMissionTemplate);
-            }
-        });
+        evalMissionTemplateMapper.updateById(evalMissionTemplate);
         String res = "success";
         return new BaseRsp<>(res);
     }
@@ -310,21 +302,30 @@ public class EvalMissionController {
         if (null == stageList || stageList.isEmpty()) {
             return new BaseRsp<>(new ArrayList<>());
         }
+        List<EvalMissionTemplate> tmp = new ArrayList<>();
         List<StageData> collect = stageList.stream().map(stageData -> {
             List<TaskBo> taskList = stageData.getTaskList();
             List<TaskBo> taskRes = new ArrayList<>();
             for (TaskBo task : taskList) {
                 String resourceId = task.getResourceId();
                 EvalMissionTemplate evalMissionTemplate = missionTemplateMap.get(resourceId);
-                String tools = task.getTools();
+                String tools = evalMissionTemplate.getTools();
                 List<ToolBo> toolBos = JsonUtil.toJsonObjectArray(tools, ToolBo.class);
                 toolBos.forEach(toolBo -> {
                     Boolean isExecute = toolBo.getIsExecute();
                     if(Boolean.TRUE.equals(isExecute)){
-                        toolBo.setLimitTime((TimeUtil.addSeconds(toolBo.getExecuteTime(), 30)).compareTo(new Date()) > 0 ? 0 :
-                                new Long(TimeUtil.getIntervalSeconds(toolBo.getExecuteTime(), new Date())).intValue() );
+                        if(TimeUtil.addSeconds(toolBo.getExecuteTime(), 30).compareTo(new Date()) > 0){
+                            toolBo.setLimitTime((int)(TimeUtil.addSeconds(toolBo.getExecuteTime(), 30).getTime() - System.currentTimeMillis())/1000);
+                        } else{
+                            toolBo.setLimitTime(0);
+                            toolBo.setIsExecute(false);
+
+                        }
                     }
                 });
+                String jsonString = JsonUtil.toJsonString(toolBos);
+                evalMissionTemplate.setTools(jsonString);
+                tmp.add(evalMissionTemplate);
                 BeanUtils.copyProperties(evalMissionTemplate, task);
                 Integer status = task.getStatus();
                 if((status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL))
@@ -336,6 +337,7 @@ public class EvalMissionController {
             stageData.setTaskList(taskRes);
             return stageData;
         }).collect(Collectors.toList());
+        evalMissionTemplateService.updateBatchById(tmp);
         return new BaseRsp<>(collect);
     }
 

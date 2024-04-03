@@ -2,6 +2,7 @@ package com.cyberpeace.scene.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
+import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.service.bo.NetworkInstance;
 
 /**
@@ -40,5 +41,7 @@ public interface NetworkService extends IService<NetworkEntity> {
      */
     Integer getStage(String sceneId);
 
-	NetworkEntity create(String sceneId);
+	NetworkEntity create(SceneEntity scene);
+
+    void clear();
 }

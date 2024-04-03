@@ -17,9 +17,11 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.scene.constant.enums.InteractiveScenarioEnum;
 import com.cyberpeace.scene.constant.enums.SceneEnum;
 import com.cyberpeace.scene.constant.enums.StatusEnum;
 import com.cyberpeace.scene.dao.entity.NetworkEntity;
+import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.service.CpEnvService;
 import com.cyberpeace.scene.service.NetworkService;
@@ -159,16 +161,24 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
     }
 
 	@Override
-	public NetworkEntity create(String sceneId) {
+	public NetworkEntity create(SceneEntity scene) {
+		// 勒索病毒场景不重复创建网络
+		if (scene.getScenario().equals(InteractiveScenarioEnum.RANSOMWARE.getCode())) {
+			List<NetworkEntity> networks = networkMapper.selectBySceneId(scene.getResourceId());
+			if (!networks.isEmpty()) {
+				return networks.get(0);
+			}
+		}
+
 		// 1.先保存entity数据库
 		NetworkEntity entity = new NetworkEntity();
 		entity.setResourceId(IDGeneratorUtil.getID());
-		entity.setSid(sceneId);
+		entity.setSid(scene.getResourceId());
 		entity.setNetworkStatus(SceneEnum.CREATE.getCode());
 
 		this.save(entity);
 		// 2.再远程创建network
-		log.info("create network start, scene_id:{}", sceneId);
+		log.info("create network start, scene_id:{}", scene.getResourceId());
 		CreateNetworkReq req = new CreateNetworkReq(DEFAULT_NAME + "_" + entity.getResourceId(),
 				DEFAULT_CIDR, DEFAULT_GATEWAY);
 		try {
@@ -187,7 +197,7 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
 			entity.setGateway(rsp.getGateway());
 			entity.setMtu(rsp.getMtu());
 			entity.setVlan(rsp.getVlan());
-			log.info("create network success, scene_id:{}", sceneId);
+			log.info("create network success, scene_id:{}", scene.getResourceId());
 		} catch (Exception e) {
 			entity.setNetworkStatus(SceneEnum.ERROR.getCode());
 			throw e;
@@ -196,4 +206,16 @@ public class NetworkServiceImpl extends ServiceImpl<NetworkMapper, NetworkEntity
 		}
 		return entity;
 	}
+
+	@Override
+	public void clear() {
+		List<NetworkEntity> networks = networkMapper.selectAll();
+		for (NetworkEntity network : networks) {
+			if (StringUtils.isNotBlank(network.getUuid())) {
+				this.delete(network.getUuid());
+			}
+			networkMapper.deleteByResourceId(network.getResourceId());
+		}
+	}
+
 }

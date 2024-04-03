@@ -57,6 +57,9 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 	private NodeMapper nodeMapper;
 
 	@Autowired
+	private NodeService nodeService;
+
+	@Autowired
 	private SceneMapper sceneMapper;
 
 	@Autowired
@@ -64,6 +67,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 
 	@Autowired
 	private ConnectionMapper connectionMapper;
+
 
 	@Autowired
 	private PineappleService pineappleService;
@@ -77,17 +81,24 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		// 1. stop old
 		stopScene(scenario);
 		// 2. create new scene
-		String sceneId = IDGeneratorUtil.getID();
-		SceneEntity scene = new SceneEntity();
-		scene.setScenario(scenario);
-		scene.setSceneName(
-				EnumUtils.getEnumDescByCode(scenario, InteractiveScenarioEnum.class));
-		scene.setResourceId(sceneId);
+		SceneEntity scene;
+		// 勒索病毒场景不重复创建
+		if (scenario.equals(InteractiveScenarioEnum.RANSOMWARE.getCode())) {
+			scene = sceneMapper.selectByScenario(scenario);
+		} else {
+			// 2. create new scene
+			String sceneId = IDGeneratorUtil.getID();
+			scene = new SceneEntity();
+			scene.setScenario(scenario);
+			scene.setSceneName(
+					EnumUtils.getEnumDescByCode(scenario, InteractiveScenarioEnum.class));
+			scene.setResourceId(sceneId);
+		}
 		scene.setSceneStatus(SceneEnum.CREATE.getCode());
-		sceneMapper.insert(scene);
+		sceneService.saveOrUpdate(scene);
 		try {
 			// create network with random id
-			NetworkEntity net = networkService.create(sceneId);
+			NetworkEntity net = networkService.create(scene);
 			// select topo, get images
 			List<ImageEntity> images = imageMapper.selectByScenario(scenario);
 			for (ImageEntity image : images) {
@@ -101,8 +112,8 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			throw new BusinessException(ErrorCode.FAILED_TO_CREATE_SCENE, e.getMessage());
 		}
 		// save scene
-		sceneMapper.updateSceneStatus(sceneId, SceneEnum.ACTIVE.getCode());
-		log.info("start scene end : {}", sceneId);
+		sceneMapper.updateSceneStatus(scene.getResourceId(), SceneEnum.ACTIVE.getCode());
+		log.info("start scene end : {}", scene.getResourceId());
 	}
 
 	@Override
@@ -216,6 +227,13 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		hostService.revertSnapshot(nodeNames);
 	}
 
+	@Override
+	public void clearAll() {
+		nodeService.clear();
+		networkService.clear();
+		clearConnection();
+	}
+
 	private SceneEntity getSceneByScenario(Integer scenario) {
 		SceneEntity scene = sceneMapper.selectByScenario(scenario);
 		if (null == scene) {
@@ -225,6 +243,16 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
 		}
 		return scene;
+	}
+
+	@Override
+	public void deleteMail() {
+		try {
+			JavaxJavaMailClient.deleteMail(getMailPort());
+		} catch (Exception e) {
+			log.error("failed to delete mail", e);
+			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
+		}
 	}
 
 	private Integer getMailPort() {
@@ -240,6 +268,14 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 	}
 
 	private NodeEntity createInstance(ImageEntity image, NetworkEntity network) {
+		// 勒索病毒场景不重复创建
+		if (image.getType().equals(ImageRoleEnum.SERVER.getCode())) {
+			NodeEntity node = nodeMapper.selectBySceneAndType(network.getSid(), image.getType());
+			if (null != node) {
+				return node;
+			}
+		}
+
 		// 1. save node entity
 		NodeEntity entity = new NodeEntity();
 		entity.setResourceId(IDGeneratorUtil.getID());
@@ -276,6 +312,10 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		return entity;
 	}
 
+	private NodeEntity createMailServer(ImageEntity image, NetworkEntity network) {
+		return null;
+	}
+
 	private UserConnectionRes getUserConnection(NodeEntity node) {
 		ConnectionEntity connection = connectionMapper.selectByNodeId(node.getResourceId());
 		if (null == connection) {
@@ -307,6 +347,14 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			}
 		}
 		connectionMapper.deleteBySceneId(sceneId);
+	}
+
+	private void clearConnection() {
+		List<ConnectionEntity> connections = connectionMapper.selectAll();
+		for (ConnectionEntity connection : connections) {
+			guacamoleService.closeConnection(connection.getConnectionId());
+		}
+		connectionMapper.clear();
 	}
 
 }

@@ -6,6 +6,9 @@
         from cr_connection
         where scene_id = #{sceneId}
     </delete>
+    <delete id="clear">
+        delete from cr_connection
+    </delete>
     <select id="selectByNodeId" resultType="com.cyberpeace.scene.dao.entity.ConnectionEntity">
         select *
         from cr_connection
@@ -15,5 +18,8 @@
         select *
         from cr_connection
         where scene_id = #{sceneId}
+    </select>
+    <select id="selectAll" resultType="com.cyberpeace.scene.dao.entity.ConnectionEntity">
+        select * from cr_connection;
     </select>
 </mapper>

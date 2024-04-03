@@ -3,8 +3,6 @@ package com.cyberpeace.scene.service.impl;
 import java.io.File;
 import java.util.*;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -29,7 +27,6 @@ import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.SystemPropertyService;
-import com.cyberpeace.scene.constant.ScenePropertyConstant;
 import com.cyberpeace.scene.constant.enums.*;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.controller.rsp.ConnectionRsp;
@@ -41,7 +38,6 @@ import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.dao.mapper.NetworkMapper;
 import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
-import com.cyberpeace.scene.job.SceneJob;
 import com.cyberpeace.scene.service.*;
 import com.cyberpeace.scene.service.bo.*;
 import com.cyberpeace.scene.service.bo.ad.AdSceneStartReq;
@@ -220,6 +216,10 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		try {
 			// 删除节点
 			nodeService.delete(sceneId);
+			// 勒索病毒场景不重复创建
+			if (scene.getScenario().equals(InteractiveScenarioEnum.RANSOMWARE.getCode())) {
+				return;
+			}
 			// 删除网络
 			List<NetworkEntity> networks = networkMapper.selectBySceneId(sceneId);
 			if (!CollectionUtils.isEmpty(networks)) {

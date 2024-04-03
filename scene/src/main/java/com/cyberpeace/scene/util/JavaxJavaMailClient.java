@@ -6,10 +6,7 @@ import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.*;
 
 import com.cyberpeace.common.util.ConfigUtil;
@@ -114,4 +111,41 @@ public class JavaxJavaMailClient {
 		transport.close();
 	}
 
+	public static void deleteMail(Integer port) throws MessagingException {
+		// 1：初始化默认参数
+		Properties props = new Properties();
+		props.setProperty("mail.store.protocol", "pop3");
+		props.setProperty("mail.pop3.host", emailHost);
+		props.setProperty("mail.pop3.port", String.valueOf(port));
+		props.setProperty("mail.pop3.ssl.enable", "true");
+		props.setProperty("mail.pop3.starttls.enable", "false");
+		props.setProperty("mail.pop3.ssl.protocols", "TLSv1.2");
+		props.setProperty("mail.pop3.socketFactory", "javax.net.ssl.SSLSocketFactory");
+		props.setProperty("mail.pop3.ssl.trust", emailHost);
+		// 2：获取Session对象
+		Session session = Session.getDefaultInstance(props);
+		session.setDebug(true);
+
+		// 3. create pop3 store object
+		Store store = session.getStore("pop3");
+		store.connect(emailHost, toEmail, authCode);
+
+		// create folder object
+		Folder folder = store.getFolder("INBOX");
+		folder.open(Folder.READ_WRITE);
+
+		// get messages
+		Message[] messages = folder.getMessages();
+
+		for (Message message : messages) {
+			System.out.println(message.getSubject());
+
+			if (message.getSubject().equals(defaultSubject)) {
+				message.setFlag(Flags.Flag.DELETED, true);
+			}
+		}
+
+		folder.close(true);
+		store.close();
+	}
 }

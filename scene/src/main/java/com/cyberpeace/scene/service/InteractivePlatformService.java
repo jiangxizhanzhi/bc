@@ -17,6 +17,8 @@ public interface InteractivePlatformService {
 
     void sendMail(String content);
 
+	void deleteMail();
+
 	void sendDecryptMail();
 
 	void snapShotAll();
@@ -33,4 +35,10 @@ public interface InteractivePlatformService {
 	 * @param scenario
 	 */
 	void recover(Integer scenario);
+
+	/**
+	 * 清理全部已启动的资源
+	 */
+	void clearAll();
+
 }

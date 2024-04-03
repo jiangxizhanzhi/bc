@@ -1,6 +1,7 @@
 package com.cyberpeace.scene.controller;
 
-import com.cyberpeace.scene.service.bo.interactive.QQRes;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,14 +10,13 @@ import com.cyberpeace.scene.constant.enums.InteractiveScenarioEnum;
 import com.cyberpeace.scene.service.InteractivePlatformService;
 import com.cyberpeace.scene.service.bo.interactive.InteractiveSceneReq;
 import com.cyberpeace.scene.service.bo.interactive.MailBo;
+import com.cyberpeace.scene.service.bo.interactive.QQRes;
 import com.cyberpeace.scene.service.bo.interactive.UserLinkRsp;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 @Api(value = "网安意识互动平台", tags = "网安意识互动平台")
 @Slf4j
@@ -85,6 +85,13 @@ public class InteractivePlatformController {
 		// create snapshot for all nodes
 		interactivePlatformService.snapShotAll();
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("清空数据")
+	@DeleteMapping("/clear")
+	public BaseRsp clearAll() {
+		interactivePlatformService.clearAll();
+		return new BaseRsp();
 	}
 
 }

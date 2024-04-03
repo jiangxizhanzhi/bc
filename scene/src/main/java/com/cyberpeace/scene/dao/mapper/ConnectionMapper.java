@@ -18,4 +18,8 @@ public interface ConnectionMapper extends BaseMapper<ConnectionEntity> {
 	List<ConnectionEntity> selectBySceneId(@Param("sceneId") String sceneId);
 
 	void deleteBySceneId(@Param("sceneId") String sceneId);
+
+    List<ConnectionEntity> selectAll();
+
+	void clear();
 }

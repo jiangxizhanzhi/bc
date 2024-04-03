@@ -23,4 +23,6 @@ public interface NetworkMapper extends BaseMapper<NetworkEntity> {
     List<NetworkEntity> selectBySid(@Param("sceneId") String sceneId,@Param("status") Integer status);
 
     int updateStatus(@Param("resourceId") String resourceId, @Param("status") Integer status);
+
+    List<NetworkEntity> selectAll();
 }

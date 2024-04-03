@@ -21,4 +21,7 @@
     <select id="selectAllNames" resultType="java.lang.String">
         select name from cr_node;
     </select>
+    <select id="selectAll" resultType="com.cyberpeace.scene.dao.entity.NodeEntity">
+        select * from cr_node;
+    </select>
 </mapper>

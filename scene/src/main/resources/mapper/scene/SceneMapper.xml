@@ -15,6 +15,9 @@
         from cr_scene
         where resource_id = #{sceneId}
     </delete>
+    <delete id="clear">
+        delete from cr_scene
+    </delete>
 
     <select id="selectSceneCount" resultType="java.lang.Integer">
         select count(1) from cr_scene where 1=1

@@ -81,11 +81,12 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		// 1. stop old
 		stopScene(scenario);
 		// 2. create new scene
-		SceneEntity scene;
+		SceneEntity scene = null;
 		// 勒索病毒场景不重复创建
 		if (scenario.equals(InteractiveScenarioEnum.RANSOMWARE.getCode())) {
 			scene = sceneMapper.selectByScenario(scenario);
-		} else {
+		}
+		if (null == scene) {
 			// 2. create new scene
 			String sceneId = IDGeneratorUtil.getID();
 			scene = new SceneEntity();
@@ -232,6 +233,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		nodeService.clear();
 		networkService.clear();
 		clearConnection();
+		sceneMapper.clear();
 	}
 
 	private SceneEntity getSceneByScenario(Integer scenario) {

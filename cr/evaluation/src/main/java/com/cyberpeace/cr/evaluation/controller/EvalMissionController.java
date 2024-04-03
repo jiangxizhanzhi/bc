@@ -172,6 +172,9 @@ public class EvalMissionController {
     ) {
         List<EvalNodeLog> evalNodeLogs = evalNodeLogMapper.selectList(null);
         List<EvalNodeLog> nodeLogList = evalNodeLogs.stream().filter(s -> s.getTaskId().equals(taskId)).collect(Collectors.toList());
+        if(nodeLogList.isEmpty()){
+            return new BaseRsp<>(new ArrayList<>());
+        }
         if (!StringUtils.isEmpty(nodeId)) {
             nodeLogList = evalNodeLogs.stream().filter(s -> s.getNodeId().equals(nodeId)).collect(Collectors.toList());
         }
@@ -184,6 +187,9 @@ public class EvalMissionController {
     @PatchMapping("/mission/abnormal")
     public BaseRsp<List<EvalMissionTemplateLog>> getAbnormalMission(@ApiParam(name = "task_id", required = true, value = "任务id") @RequestParam(value = "task_id") String taskId) {
         List<EvalMissionTemplateLog> evalMissionTemplateLogs = evalMissionTemplateLogMapper.selectList(null);
+        if(evalMissionTemplateLogs.isEmpty()){
+            return new BaseRsp<>(new ArrayList<>());
+        }
         List<EvalMissionTemplateLog> templateLogList = evalMissionTemplateLogs.stream().filter(s -> s.getTaskId().equals(taskId)
                 && (s.getOperate() == MissionTemplateStatus.FAIL || s.getOperate() == MissionTemplateStatus.OVERTIME)).
                 sorted(Comparator.comparing(EvalMissionTemplateLog::getCreateTime).reversed()).collect(Collectors.toList());

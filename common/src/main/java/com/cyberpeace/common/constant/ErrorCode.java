@@ -187,6 +187,9 @@ public interface ErrorCode {
 	/** 笔记为空*/
 	String BLANK_NOTE = "100059";
 
+	/**导入错误格式 */
+	String IMPORT_RESOURCE_ERROR = "104121";
+
 	/** 演示环境禁止增删改 */
 	String DEMONSTRATION_FORBID_UPDATE = "104021";
 }

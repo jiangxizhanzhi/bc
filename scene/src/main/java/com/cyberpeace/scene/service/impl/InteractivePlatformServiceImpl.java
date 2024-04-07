@@ -261,7 +261,6 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			JavaxJavaMailClient.deleteMail(getPopPort());
 		} catch (Exception e) {
 			log.error("failed to delete mail", e);
-			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
 		}
 	}
 

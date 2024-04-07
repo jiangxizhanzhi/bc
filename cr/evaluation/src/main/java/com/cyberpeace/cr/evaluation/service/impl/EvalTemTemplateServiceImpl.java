@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplatePageReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplateReq;
@@ -21,12 +18,18 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
-import com.cyberpeace.cr.evaluation.service.impl.bo.*;
+import com.cyberpeace.cr.evaluation.service.impl.bo.BaseTemplateData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -59,6 +62,9 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private AttachmentMapper attachmentMapper;
 
 	@Override
 	public String createTemplate(EvalTemTemplateReq evalTemTemplateReq) {
@@ -125,6 +131,14 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		evalTemTemplateRsp.setResourceId(resourceId);
 		evalTemTemplateRsp.setMissionsScheme(JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class));
 		evalTemTemplateRsp.setSceneConfigData(remoteTopoService.getTopoById(evalTemTemplate.getTopoId()));
+		if (StringUtils.isEmpty(evalTemTemplate.getScheme())) {
+			return evalTemTemplateRsp;
+		}
+		Attachment attachment = attachmentMapper.selectById(evalTemTemplate.getScheme());
+		if (attachment != null) {
+			evalTemTemplateRsp.getBaseData().setSchemeName(attachment.getFileName());
+			evalTemTemplateRsp.getBaseData().setSchemePath(ConfigUtil.getContextProperty("cr.local.file.prefix") + attachment.getFilePath());
+		}
 		return evalTemTemplateRsp;
 	}
 

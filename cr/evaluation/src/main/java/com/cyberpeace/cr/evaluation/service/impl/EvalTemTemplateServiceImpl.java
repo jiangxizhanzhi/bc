@@ -84,8 +84,11 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		List<String> oldResourceIds = evalMissionTemplateService.getTaskIds(oldScheme);
 		List<String> newResourceIds = evalMissionTemplateService.getTaskIds(updateEvalTemTemplateReq.getMissionsScheme());
 		oldResourceIds.removeAll(newResourceIds);
-		EvalTemTemplate evalTemTemplate = BeanUtils.copy(updateEvalTemTemplateReq, EvalTemTemplate.class);
+		EvalTemTemplate evalTemTemplate = BeanUtils.copy(updateEvalTemTemplateReq.getBaseData(), EvalTemTemplate.class);
 		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(updateEvalTemTemplateReq.getMissionsScheme()));
+		evalTemTemplate.setExpCondition(updateEvalTemTemplateReq.getBaseData().getCondition());
+		evalTemTemplate.setResourceId(updateEvalTemTemplateReq.getResourceId());
+		evalTemTemplate.setTopoId(topoId);
 		JSONObject topoJson = new JSONObject();
 		SceneConfigData sceneConfigData = updateEvalTemTemplateReq.getSceneConfigData();
 		topoJson.put("scene_config", sceneConfigData.getSceneConfig());

@@ -15,15 +15,15 @@ public class JavaxJavaMailClient {
 
 	public static String emailHost = ConfigUtil.getContextProperty("ojj.mail.host");
 
-	public static String wannaCryPath = "/cpms/upload/WannaCrydemo.exe";
+	public static String wannaCryPath = "/cpms/upload/WannaCrydemo.zip";
 
-	public static String wannaCryName = "操作手册.com";
+	public static String wannaCryName = "附件.zip";
 
 	public static String decryptorPath = "/cpms/upload/anti-wanacry.exe";
 
 	public static String decryptorName = "anti-WannaCry.exe";
 
-	public static String decryptMessage = "";
+	public static String decryptMessage = "请下载附件到桌面，运行解密软件即可解密。";
 
 	public static String transportType = "smtp";
 

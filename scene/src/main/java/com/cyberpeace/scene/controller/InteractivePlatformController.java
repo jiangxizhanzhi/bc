@@ -80,24 +80,19 @@ public class InteractivePlatformController {
 		return new BaseRsp(res);
 	}
 
-
-	@ApiOperation("初始化场景")
-	@GetMapping("/init")
-	public BaseRsp initScene() {
-		// start scenes
-		interactivePlatformService.stopScene(InteractiveScenarioEnum.RANSOMWARE.getCode());
-		interactivePlatformService.stopScene(InteractiveScenarioEnum.U_DISK.getCode());
-		interactivePlatformService.startScene(InteractiveScenarioEnum.RANSOMWARE.getCode());
-		interactivePlatformService.startScene(InteractiveScenarioEnum.U_DISK.getCode());
-		// create snapshot for all nodes
-		interactivePlatformService.snapShotAll();
-		return new BaseRsp<>();
-	}
-
 	@ApiOperation("清空数据")
 	@DeleteMapping("/clear")
 	public BaseRsp clearAll() {
 		interactivePlatformService.clearAll();
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("清空数据后初始化")
+	@GetMapping("/reset")
+	public BaseRsp clearAndInit() {
+		interactivePlatformService.clearAll();
+		interactivePlatformService.startScene(InteractiveScenarioEnum.RANSOMWARE.getCode());
+		interactivePlatformService.startScene(InteractiveScenarioEnum.U_DISK.getCode());
 		return new BaseRsp<>();
 	}
 

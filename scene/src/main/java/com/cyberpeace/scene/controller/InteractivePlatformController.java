@@ -66,6 +66,13 @@ public class InteractivePlatformController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("删除全部邮件")
+	@DeleteMapping("/mail/")
+	public BaseRsp deleteMail() {
+		interactivePlatformService.deleteMail();
+		return new BaseRsp<>();
+	}
+
 	@ApiOperation("获取绵羊墙列表")
 	@GetMapping("/pineapple")
 	public BaseRsp<List<QQRes>> getQQ(){
@@ -91,7 +98,7 @@ public class InteractivePlatformController {
 	@DeleteMapping("/clear")
 	public BaseRsp clearAll() {
 		interactivePlatformService.clearAll();
-		return new BaseRsp();
+		return new BaseRsp<>();
 	}
 
 }

@@ -15,6 +15,7 @@ import com.cyberpeace.common.probe.RDPProbe;
 import com.cyberpeace.common.probe.SMTPProbe;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.scene.constant.enums.ImageRoleEnum;
 import com.cyberpeace.scene.constant.enums.InteractiveScenarioEnum;
@@ -25,11 +26,8 @@ import com.cyberpeace.scene.dao.mapper.ImageMapper;
 import com.cyberpeace.scene.dao.mapper.NodeMapper;
 import com.cyberpeace.scene.dao.mapper.SceneMapper;
 import com.cyberpeace.scene.service.*;
-import com.cyberpeace.scene.service.bo.PortMapping;
-import com.cyberpeace.scene.service.bo.interactive.ConnectionRes;
-import com.cyberpeace.scene.service.bo.interactive.QQRes;
-import com.cyberpeace.scene.service.bo.interactive.UserConnectionRes;
-import com.cyberpeace.scene.service.bo.interactive.UserLinkRsp;
+import com.cyberpeace.scene.service.bo.NetAccessMode;
+import com.cyberpeace.scene.service.bo.interactive.*;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
 import com.cyberpeace.scene.util.JavaxJavaMailClient;
@@ -128,6 +126,10 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		sceneService.destroyScene(scene.getResourceId());
 		// delete connection
 		deleteConnectionBySceneId(scene.getResourceId());
+		// delete mail
+		if (scenario.equals(InteractiveScenarioEnum.RANSOMWARE.getCode())) {
+			deleteMail();
+		}
 	}
 
 	@Override
@@ -137,6 +139,10 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		UserLinkRsp rsp = new UserLinkRsp();
 		rsp.setScenario(scenario);
 		for (NodeEntity node : nodeList) {
+			// 不创建邮件服务器的用户连接
+			if (node.getType().equals(ImageRoleEnum.SERVER.getCode())) {
+				continue;
+			}
 			UserConnectionRes connectionRes = getUserConnection(node);
 			if (node.getType().equals(ImageRoleEnum.HACKER.getCode())) {
 				rsp.setHacker(connectionRes.getUrl());
@@ -157,12 +163,14 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		for (NodeEntity node : nodeList) {
 			// 检测邮件服务器
 			if (node.getType().equals(ImageRoleEnum.SERVER.getCode())) {
-				SMTPProbe smtpProbe = new SMTPProbe(node.getHostname(), node.getHostPort());
+				Access access = getSMTPAccess(node);
+				SMTPProbe smtpProbe = new SMTPProbe(access.getHost(), access.getHostPort());
 				if (!smtpProbe.probe()) {
 					throw new BusinessException(ErrorCode.MAIL_SERVER_NOT_READY);
 				}
 			} else {
-				RDPProbe rdpProbe = new RDPProbe(node.getHostname(), node.getHostPort());
+				Access access = node.getAccessModes().get(0);
+				RDPProbe rdpProbe = new RDPProbe(access.getHost(), access.getHostPort());
 				if (!rdpProbe.probe()) {
 					throw new BusinessException(ErrorCode.SCENARIO_NOT_READY);
 				}
@@ -250,7 +258,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 	@Override
 	public void deleteMail() {
 		try {
-			JavaxJavaMailClient.deleteMail(getMailPort());
+			JavaxJavaMailClient.deleteMail(getPopPort());
 		} catch (Exception e) {
 			log.error("failed to delete mail", e);
 			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
@@ -261,7 +269,7 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		SceneEntity scene = getSceneByScenario(InteractiveScenarioEnum.RANSOMWARE.getCode());
 		NodeEntity node = nodeMapper.selectBySceneAndType(scene.getResourceId(),
 				ImageRoleEnum.SERVER.getCode());
-		Integer port = node.getHostPort();
+		Integer port = getSmtpPort(node);
 		if (null == port) {
 			log.error("port mapping not established");
 			throw new BusinessException(ErrorCode.FAILED_TO_SEND_MAIL);
@@ -286,8 +294,6 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 		entity.setType(image.getType());
 		entity.setStatus(SceneEnum.CREATE.getCode());
 		entity.setNid(image.getResourceId());
-		entity.setUsername(image.getUsername());
-		entity.setPassword(image.getPassword());
 		entity.setScenario(image.getScenario());
 
 		nodeMapper.insert(entity);
@@ -300,10 +306,20 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			entity.setName(rsp.getInstanceName());
 			entity.setStatus(SceneEnum.ACTIVE.getCode());
 
-			PortMapping mapping = rsp.getNets().get(0).getAccess_modes().get(0).getPort_mapping();
-			entity.setHostname(mapping.getHost());
-			entity.setHostPort(mapping.getHost_port());
-			entity.setIp(mapping.getInstance_ip());
+			// 记录端口映射
+			List<Access> accessList = image.getAccessModes();
+			for (NetAccessMode mode : rsp.getNets().get(0).getAccess_modes()) {
+				Integer port = mode.getPort();
+				for (Access access : accessList) {
+					if (access.getPort().equals(port)) {
+						access.setHostPort(mode.getPort_mapping().getHost_port());
+						access.setHost(mode.getPort_mapping().getHost());
+					}
+				}
+				entity.setIp(mode.getPort_mapping().getInstance_ip());
+			}
+			entity.setAccess(JsonUtil.arrayToString(accessList));
+
 		} catch (Exception e) {
 			entity.setStatus(SceneEnum.ERROR.getCode());
 			throw e;
@@ -312,10 +328,6 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			nodeMapper.updateById(entity);
 		}
 		return entity;
-	}
-
-	private NodeEntity createMailServer(ImageEntity image, NetworkEntity network) {
-		return null;
 	}
 
 	private UserConnectionRes getUserConnection(NodeEntity node) {
@@ -357,6 +369,32 @@ public class InteractivePlatformServiceImpl implements InteractivePlatformServic
 			guacamoleService.closeConnection(connection.getConnectionId());
 		}
 		connectionMapper.clear();
+	}
+
+	private Access getSMTPAccess(NodeEntity node) {
+		for (Access access : node.getAccessModes()) {
+			if (access.getProtocol().equals(SMTPProbe.PROTOCOL)) {
+				return access;
+			}
+		}
+		throw new BusinessException(ErrorCode.MAIL_SERVER_NOT_READY);
+	}
+
+	private Integer getSmtpPort(NodeEntity node) {
+		Access access = getSMTPAccess(node);
+		return access.getHostPort();
+	}
+
+	private Integer getPopPort() {
+		SceneEntity scene = getSceneByScenario(InteractiveScenarioEnum.RANSOMWARE.getCode());
+		NodeEntity node = nodeMapper.selectBySceneAndType(scene.getResourceId(),
+				ImageRoleEnum.SERVER.getCode());
+		for (Access access : node.getAccessModes()) {
+			if (access.getProtocol().equals("pop3")) {
+				return access.getHostPort();
+			}
+		}
+		throw new BusinessException(ErrorCode.MAIL_SERVER_NOT_READY);
 	}
 
 }

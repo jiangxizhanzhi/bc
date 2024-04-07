@@ -124,7 +124,7 @@ public class JavaxJavaMailClient {
 		props.setProperty("mail.pop3.ssl.trust", emailHost);
 		// 2：获取Session对象
 		Session session = Session.getDefaultInstance(props);
-		session.setDebug(true);
+		// session.setDebug(true);
 
 		// 3. create pop3 store object
 		Store store = session.getStore("pop3");
@@ -138,11 +138,11 @@ public class JavaxJavaMailClient {
 		Message[] messages = folder.getMessages();
 
 		for (Message message : messages) {
-			System.out.println(message.getSubject());
-
-			if (message.getSubject().equals(defaultSubject)) {
-				message.setFlag(Flags.Flag.DELETED, true);
-			}
+			// 获取主题内容需要下载邮件，耗时较长
+			// if (message.getSubject().equals(defaultSubject) ||
+			// message.getSubject().equals(decryptSubject)) {
+			message.setFlag(Flags.Flag.DELETED, true);
+			// }
 		}
 
 		folder.close(true);

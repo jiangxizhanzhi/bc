@@ -1,11 +1,14 @@
 package com.cyberpeace.scene.dao.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.scene.service.bo.interactive.Access;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,13 +52,17 @@ public class NodeEntity extends BaseTable implements Serializable {
 	@ApiModelProperty("image id")
     private String nid;
 
-	private String username;
-
-	private String password;
-
-	private String hostname;
-
-	private Integer hostPort;
-
+	/**
+	 * 所属情景
+	 */
 	private Integer scenario;
+
+	/**
+	 * 接入方式
+	 */
+	private String access;
+
+	public List<Access> getAccessModes() {
+		return JsonUtil.toJsonObjectArray(this.access, Access.class);
+	}
 }

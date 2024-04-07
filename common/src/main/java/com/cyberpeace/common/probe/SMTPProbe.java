@@ -12,6 +12,8 @@ public class SMTPProbe {
 
 	private Integer port;
 
+	public static final String PROTOCOL = "smtp";
+
 	public SMTPProbe(String host, Integer port) {
 		this.host = host;
 		this.port = port;

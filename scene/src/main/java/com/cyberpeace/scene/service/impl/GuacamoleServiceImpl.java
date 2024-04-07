@@ -10,6 +10,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.scene.dao.entity.NodeEntity;
 import com.cyberpeace.scene.service.CpEnvService;
 import com.cyberpeace.scene.service.GuacamoleService;
+import com.cyberpeace.scene.service.bo.interactive.Access;
 import com.cyberpeace.scene.service.bo.interactive.ConnectionReq;
 import com.cyberpeace.scene.service.bo.interactive.ConnectionRes;
 import com.cyberpeace.scene.service.bo.interactive.UserConnectionRes;
@@ -43,8 +44,9 @@ public class GuacamoleServiceImpl implements GuacamoleService {
 
 	@Override
 	public ConnectionRes createConnection(NodeEntity node) {
-		ConnectionReq req = new ConnectionReq(node.getUsername(), node.getPassword(),
-				node.getHostname(), node.getHostPort());
+		Access access = node.getAccessModes().get(0);
+		ConnectionReq req = new ConnectionReq(access.getUsername(), access.getPassword(),
+				access.getHost(), access.getHostPort());
 		log.info("start create connection req : {}", JsonUtil.toJsonString(req));
 		ConnectionRes res = HttpUtil.post(CP_HOST + CONNECTION_PATH, req, ConnectionRes.class);
 		log.info("end create connection end res : {}", JsonUtil.toJsonString(res));

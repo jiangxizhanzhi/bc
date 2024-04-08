@@ -80,7 +80,6 @@ public class SituationGuideController {
 
     @ApiOperation("攻防态势模型")
     @GetMapping("/model")
-    @RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
     public BaseRsp<SituationModelRsp> listModel() {
         return new BaseRsp<>(situationGuideService.listModel());
     }

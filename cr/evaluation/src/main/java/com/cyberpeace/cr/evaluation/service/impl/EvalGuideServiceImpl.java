@@ -23,7 +23,6 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -113,6 +112,29 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 	@Override
 	public void deleteByStepId(String stepId) {
 		evalGuideMapper.deleteByStepId(stepId);
+	}
+
+	@Override
+	public List<EvalGuideAttackEnumRsp> getAttackEnum() {
+		List<EvalGuideAttackEnumRsp> attackEnumRsps = new ArrayList<>();
+		for (SituationGuideScheme.AttackUrlEnum modelEnum : SituationGuideScheme.AttackUrlEnum.values()) {
+			EvalGuideAttackEnumRsp enumRsp = new EvalGuideAttackEnumRsp(modelEnum.getCode(), modelEnum.getMsg(), modelEnum.getDesc(), modelEnum.getSuccessUrl(), modelEnum.getType());
+			attackEnumRsps.add(enumRsp);
+		}
+		return attackEnumRsps;
+	}
+
+	@Override
+	public EvalTestElementAreaRsp getElementArea(String testId) {
+		// TODO: 2024/4/1
+		List<ElementType> elements = new ArrayList<>();
+		elements.add(new ElementType("111", "节点1"));
+		List<ElementType> areas = new ArrayList<>();
+		areas.add(new ElementType("111", "区域1"));
+		EvalTestElementAreaRsp evalTestElementAreaRsp = new EvalTestElementAreaRsp();
+		evalTestElementAreaRsp.setElementList(elements);
+		evalTestElementAreaRsp.setAreaList(areas);
+		return evalTestElementAreaRsp;
 	}
 
 	public void pushDataToRoomByScheme(Boolean isInstance, String sceneId, EvalGuideScheme evalGuideScheme) {

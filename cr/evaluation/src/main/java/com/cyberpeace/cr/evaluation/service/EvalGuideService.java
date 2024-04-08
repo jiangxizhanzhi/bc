@@ -3,9 +3,7 @@ package com.cyberpeace.cr.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideModifyReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalGuideListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideDetailRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalGuideScheme;
 
 import java.util.List;
@@ -27,4 +25,8 @@ public interface EvalGuideService extends IService<EvalGuideScheme> {
 	EvalStepGuideDetailRsp getGuideDetail(String stepId);
 
 	void deleteByStepId(String stepId);
+
+	List<EvalGuideAttackEnumRsp> getAttackEnum();
+
+	EvalTestElementAreaRsp getElementArea(String testId);
 }

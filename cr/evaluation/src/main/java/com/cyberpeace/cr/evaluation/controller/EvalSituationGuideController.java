@@ -3,9 +3,7 @@ package com.cyberpeace.cr.evaluation.controller;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideModifyReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalGuideListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideDetailRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.service.EvalGuideService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -76,6 +74,18 @@ public class EvalSituationGuideController {
 	public BaseRsp<Boolean> deleteStepGuide(@ApiParam(name = "step_id", value = "步骤id") @RequestParam("step_id") String stepId) {
 		evalGuideService.deleteByStepId(stepId);
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("获取攻击类型")
+	@GetMapping("/attack_enum")
+	public BaseRsp<List<EvalGuideAttackEnumRsp>> getAttackEnum() {
+		return new BaseRsp<>(evalGuideService.getAttackEnum());
+	}
+
+	@ApiOperation("获取节点和区域")
+	@GetMapping("/element_area")
+	public BaseRsp<EvalTestElementAreaRsp> getElementArea(@ApiParam(name = "test_id", value = "试验id") @RequestParam("test_id") String testId) {
+		return new BaseRsp<>(evalGuideService.getElementArea(testId));
 	}
 
 }

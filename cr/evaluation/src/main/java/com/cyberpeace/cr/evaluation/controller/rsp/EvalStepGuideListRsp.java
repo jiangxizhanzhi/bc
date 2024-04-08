@@ -16,4 +16,7 @@ public class EvalStepGuideListRsp implements Serializable {
 
 	@ApiModelProperty("是否配有导调")
 	private Boolean isExistGuide;
+
+	@ApiModelProperty("是否可编辑")
+	private Boolean isEditable;
 }

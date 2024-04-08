@@ -1,21 +1,36 @@
 package com.cyberpeace.cr.evaluation.controller;
 
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTestAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestTemplateListRsp;
-import com.cyberpeace.cr.evaluation.service.EvalCloudTemplateService;
-import com.cyberpeace.cr.evaluation.service.EvalTestService;
+import com.cyberpeace.common.model.NameCount;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.evaluation.controller.req.*;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
+import com.cyberpeace.cr.evaluation.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Slf4j
 @Api(tags = "靶场测评-试验任务")
 @RestController
 @RequiresAuthentication
@@ -27,6 +42,15 @@ public class EvalTestController {
 
 	@Autowired
 	private EvalCloudTemplateService evalCloudTemplateService;
+
+	@Autowired
+	private EvalSceneService evalSceneService;
+
+	@Autowired
+	private EvalTestInstanceService evalTestInstanceService;
+
+	@Autowired
+	private EvalStepService evalStepService;
 
 	@ApiOperation("获取模板列表")
 	@GetMapping("/template/list")
@@ -44,6 +68,108 @@ public class EvalTestController {
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<EvalTestListRsp>> testList(@Validated EvalTestListReq evalTestListReq) {
 		return new BaseRsp<>(evalTestService.testList(evalTestListReq));
+	}
+
+	@ApiOperation("查看训练详情")
+	@GetMapping("")
+	public BaseRsp<EvalTestRsp> getDetail(@ApiParam(name = "test_id", value = "试验id", required = true) @RequestParam(name = "test_id") String testId,
+									  @ApiParam(name = "instance_id", value = "试验实例id") @RequestParam(name = "instance_id", required = false) String instanceId) {
+
+		EvalTest evalTest = evalTestService.getEvalTest(testId);
+		String currentInstanceId = evalTest.getCurrentInstanceId();
+		if (StringUtils.isEmpty(instanceId) && StringUtils.isNotEmpty(currentInstanceId)) {
+			instanceId = currentInstanceId;
+		}
+
+		EvalTestRsp evalTestRsp = new EvalTestRsp();
+		evalTestRsp.setTestId(evalTest.getResourceId());
+		evalTestRsp.setTestName(evalTest.getName());
+		SceneViewContext sceneViewContext;
+		if (StringUtils.isEmpty(instanceId)) {
+			sceneViewContext = evalSceneService.viewScene(null, evalTest.getTopoId());
+		} else {
+			EvalTestInstance evalTestInstance = evalTestInstanceService.getById(instanceId);
+			sceneViewContext = evalSceneService.viewScene(evalTestInstance.getMpSceneId(), evalTestInstance.getCopyedTopoId());
+			evalTestRsp.setInstanceId(instanceId);
+			evalTestRsp.setInstanceName(evalTestInstance.getInstanceName());
+			sceneViewContext.setLocalSceneId(evalTestInstance.getLocalSceneId());
+		}
+		BeanUtils.copyProperties(sceneViewContext, evalTestRsp);
+		return new BaseRsp<>(evalTestRsp);
+	}
+
+	@ApiOperation("删除试验实例")
+	@DeleteMapping("")
+	public BaseRsp<Boolean> delete(@ApiParam(name = "instance_id", value = "试验实例id", required = true) @RequestParam(name = "instance_id") String instanceId) {
+		return new BaseRsp<>(evalTestInstanceService.deleteTestInstance(instanceId));
+	}
+
+	@ApiOperation("启动场景")
+	@PostMapping("/start")
+	public BaseRsp<String> start(@RequestBody EvalTestStartReq evalTestStartReq) {
+
+		String testId = evalTestStartReq.getTestId();
+
+		if (Boolean.TRUE.equals(
+				evalTestService.validateExistTask(evalTestStartReq.getTestId(), EvalTestInstance.Status.RUNNING))) {
+			log.error("The evaluation range has running task! templateId = [{}]", testId);
+			throw new BusinessException(CrBusinessErrorCode.RUNNING_EVAL_STEP_EXIST);
+		}
+
+		return new BaseRsp<>(evalTestService.startScene(testId));
+	}
+
+	@ApiOperation("关闭场景")
+	@PostMapping("/stop")
+	public BaseRsp<Boolean> stop(@RequestBody @Validated EvalTestStopReq evalTestStopReq) {
+
+		String currentInstanceId = evalTestService.getEvalTest(evalTestStopReq.getTestId()).getCurrentInstanceId();
+		if (StringUtils.isNotEmpty(currentInstanceId)) {
+			evalTestStopReq.setInstanceId(currentInstanceId);
+		} else {
+			log.error("no test instance for test: [{}]", evalTestStopReq.getTestId());
+			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
+		}
+
+		//没有任务名称时，删除场景及试验实例
+		if (evalTestStopReq.getInstanceName() == null) {
+			return new BaseRsp<>(evalTestInstanceService.deleteTestInstance(evalTestStopReq.getInstanceId()));
+		} else {
+			//存在任务名称时，关闭场景
+			return new BaseRsp<>(evalTestInstanceService.stopInstance(evalTestStopReq.getTestId(),
+					evalTestStopReq.getInstanceId(), evalTestStopReq.getInstanceName()));
+		}
+	}
+
+	@ApiOperation("查询阶段导调")
+	@GetMapping("/step/list")
+	public BaseRsp<List<EvalTestStepListRsp>> getStep(@ApiParam(name = "test_id", value = "试验id", required = true)
+													@RequestParam(name = "test_id") String testId,
+												@ApiParam(name = "instance_id", value = "试验实例id")
+													@RequestParam(name = "instance_id", required = false) String instanceId) {
+		EvalTest evalTest = evalTestService.getEvalTest(testId);
+
+		if (StringUtils.isEmpty(instanceId)) {
+			instanceId = evalTest.getCurrentInstanceId();
+		}
+		if (StringUtils.isEmpty(instanceId)) {
+			//处理试验任务下无实例的情况
+			return new BaseRsp<>(evalStepService.getSteps(testId));
+		} else {
+			return new BaseRsp<>(evalStepService.getInstanceSteps(instanceId));
+		}
+	}
+
+	@ApiOperation("开始测试")
+	@PostMapping("/step/start")
+	public BaseRsp<Boolean> startStep(@RequestBody @Validated EvalTaskStepReq evalTaskStepReq) {
+		return new BaseRsp<>(evalStepService.startStep(evalTaskStepReq.getStepId()));
+	}
+
+	@ApiOperation("完成测试")
+	@PostMapping("/step/finish")
+	public BaseRsp<Boolean> finishStep(@RequestBody @Validated EvalTaskStepReq evalTaskStepReq) {
+		return new BaseRsp<>(evalStepService.finishStep(evalTaskStepReq.getStepId()));
 	}
 
 

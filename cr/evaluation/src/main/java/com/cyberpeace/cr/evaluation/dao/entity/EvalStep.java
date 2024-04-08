@@ -4,7 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
 import lombok.Data;
+
+import java.util.List;
 
 
 @Data
@@ -34,5 +38,13 @@ public class EvalStep extends BaseTable {
 	 */
 	private String testId;
 
+	/**
+	 * 步骤序号
+	 */
+	private Integer stage;
+
+	public List<LoadSetReq> getLoadList() {
+		return JsonUtil.toJsonObjectArray(setting, LoadSetReq.class);
+	}
 
 }

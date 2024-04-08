@@ -8,7 +8,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -44,11 +43,7 @@ public class EvalStepTemplate extends BaseTable {
 	}
 
 	public List<LoadSetReq> getSettingList() {
-		if (this.setting == null) {
-			return new ArrayList<>();
-		} else {
-			return JsonUtil.toJsonObjectArray(this.setting, LoadSetReq.class);
-		}
+		return JsonUtil.toJsonObjectArray(this.setting, LoadSetReq.class);
 	}
 
 }

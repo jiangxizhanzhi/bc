@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper">
+
+    <select id="selectIdsByTestIdAndStatus" resultType="java.lang.String">
+        select resource_id
+        from cr_eval_test_instance
+        where test_id = #{testId}
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance$Status@RUNNING.getCode()">
+            and end_time is null
+        </if>
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance$Status@FINISHED.getCode()">
+            and end_time is not null
+        </if>
+    </select>
+
+</mapper>

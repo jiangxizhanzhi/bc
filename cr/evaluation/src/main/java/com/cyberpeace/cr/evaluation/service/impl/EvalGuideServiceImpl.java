@@ -95,11 +95,14 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 		if (evalTest == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		List<String> stepIds = evalTest.getStepIdList();
-		if (CollectionUtils.isEmpty(stepIds)) {
-			return new ArrayList<>();
+		List<EvalStepGuideListRsp> evalStepGuideListRsps = evalStepMapper.selectStepGuideListByTestId(testId);
+		for (int i=0; i < evalStepGuideListRsps.size(); i++) {
+			if (i%2 == 0) {
+				// TODO: 2024/4/3
+				evalStepGuideListRsps.get(i).setIsEditable(false);
+			}
 		}
-		return evalStepMapper.selectStepGuideListByStepIds(stepIds);
+		return evalStepGuideListRsps;
 	}
 
 	@Override

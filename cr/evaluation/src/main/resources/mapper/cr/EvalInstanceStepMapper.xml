@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalInstanceStepMapper">
+
+    <select id="selectByInstanceId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalInstanceStep">
+        select *
+        from cr_eval_test_instance_step
+        where test_instance_id = #{instanceId}
+        order by stage
+    </select>
+
+    <select id="selectByStepId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalInstanceStep">
+        select *
+        from cr_eval_test_instance_step
+        where step_id = #{stepId}
+    </select>
+
+    <delete id="deleteByInstanceId">
+        delete
+        from cr_eval_test_instance_step
+        where test_instance_id = #{instanceId}
+    </delete>
+</mapper>

@@ -500,5 +500,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String CANNOT_FIND_TOPO = "101145";
 
+	/**
+	 * 试验任务存在已执行阶段
+	 */
+	public static final String RUNNING_EVAL_STEP_EXIST = "101146";
+
 	private CrBusinessErrorCode() {}
 }

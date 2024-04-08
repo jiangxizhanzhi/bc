@@ -6,6 +6,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalTestAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
 
 public interface EvalTestService extends IService<EvalTest> {
 
@@ -13,4 +14,9 @@ public interface EvalTestService extends IService<EvalTest> {
 
 	ListRsp<EvalTestListRsp> testList(EvalTestListReq evalTestListReq);
 
+	EvalTest getEvalTest(String testId);
+
+	Boolean validateExistTask(String testId, EvalTestInstance.Status status);
+
+	String startScene(String testId);
 }

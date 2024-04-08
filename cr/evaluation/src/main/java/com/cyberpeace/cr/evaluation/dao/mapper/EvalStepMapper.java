@@ -14,8 +14,10 @@ import java.util.List;
 @Repository
 public interface EvalStepMapper extends BaseMapper<EvalStep> {
 
-	List<EvalStepGuideListRsp> selectStepGuideListByStepIds(@Param("stepIds") List<String> stepIds);
-
 	EvalStepGuideDetailRsp selectGuideDetailByStepId(@Param("stepId") String stepId);
+
+	List<EvalStepGuideListRsp> selectStepGuideListByTestId(@Param("testId") String testId);
+
+	List<EvalStep> selectAllByTestId(@Param("testId") String testId);
 
 }

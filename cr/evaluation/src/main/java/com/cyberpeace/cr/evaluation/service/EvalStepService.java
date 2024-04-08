@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalStep;
 
 import java.util.List;
@@ -10,4 +11,13 @@ public interface EvalStepService extends IService<EvalStep> {
 
 	Map<String, String> createByTemplate(List<String> templateIdList, String testId);
 
+	List<EvalStep> selectByTestId(String testId);
+
+	List<EvalTestStepListRsp> getSteps(String testId);
+
+	List<EvalTestStepListRsp> getInstanceSteps(String instanceId);
+
+	Boolean startStep(String stepId);
+
+	Boolean finishStep(String stepId);
 }

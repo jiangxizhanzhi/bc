@@ -3,16 +3,15 @@ package com.cyberpeace.cr.evaluation.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.JsonUtil;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @TableName("cr_eval_test")
-public class EvalTest {
+public class EvalTest extends AuthTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -83,34 +82,16 @@ public class EvalTest {
 	private Integer cloudType;
 
 	/**
-	 * 步骤id列表
-	 */
-	private String stepIds;
-
-	/**
 	 * 当前实例id
 	 */
 	private String currentInstanceId;
 
-	public List<String> getReadAuthList() {
-		if (StringUtils.isEmpty(readAuthIds)) {
-			return new ArrayList<>();
-		}
-		return JsonUtil.toJsonObjectArray(readAuthIds, String.class);
+	public List<String> getAuthList() {
+		return JsonUtil.toJsonObjectArray(this.getOperationAuthIds(), String.class);
 	}
 
-	public void setReadAuthList(List<String> userIds) {
-		this.readAuthIds = JsonUtil.toJsonString(userIds);
+	public void setAuthList(List<String> userIds) {
+		this.setOperationAuthIds(JsonUtil.toJsonString(userIds));
 	}
 
-	public List<String> getStepIdList() {
-		if (StringUtils.isEmpty(stepIds)) {
-			return new ArrayList<>();
-		}
-		return JsonUtil.toJsonObjectArray(stepIds, String.class);
-	}
-
-	public void setStepList(List<String> stepIds) {
-		this.stepIds = JsonUtil.toJsonString(stepIds);
-	}
 }

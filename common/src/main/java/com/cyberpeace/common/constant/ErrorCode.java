@@ -376,5 +376,15 @@ public final class ErrorCode {
 	 */
 	public static final String MAIL_SERVER_NOT_READY = "100106";
 
+	/**
+	 * 大菠萝登录失败
+	 */
+	public static final String PINEAPPLE_LOGIN_FAILED = "100107";
+
+	/**
+	 * 大菠萝请求认证未通过
+	 */
+	public static final String PINEAPPLE_NOT_AUTHENTICATED = "100108";
+
 	private ErrorCode() {}
 }

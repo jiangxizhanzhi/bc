@@ -75,7 +75,7 @@ public class InteractivePlatformController {
 
 	@ApiOperation("获取绵羊墙列表")
 	@GetMapping("/pineapple")
-	public BaseRsp<List<QQRes>> getQQ(){
+	public BaseRsp<List<QQRes>> getQQ() {
 		List<QQRes> res = interactivePlatformService.getQQRes();
 		return new BaseRsp(res);
 	}

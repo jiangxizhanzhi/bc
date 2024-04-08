@@ -4,11 +4,8 @@ package com.cyberpeace.cr.evaluation.controller;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.evaluation.controller.req.*;
@@ -26,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -172,5 +167,16 @@ public class EvalTestController {
 		return new BaseRsp<>(evalStepService.finishStep(evalTaskStepReq.getStepId()));
 	}
 
+	@ApiOperation("我的验证任务")
+	@GetMapping("/person/list")
+	public BaseRsp<ListRsp<EvalPersonTestRsp>> personTestList(@Validated PageReqBase pageReqBase) {
+		return new BaseRsp<>(evalTestService.personTestRspListRsp(pageReqBase));
+	}
+
+	@ApiOperation("验证统计")
+	@GetMapping("/person/statistics")
+	public BaseRsp<EvalTestStatisticsRsp> testStatistics() {
+		return new BaseRsp<>(evalTestService.testStatistics());
+	}
 
 }

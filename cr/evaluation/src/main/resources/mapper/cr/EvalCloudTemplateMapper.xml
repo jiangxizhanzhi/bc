@@ -51,4 +51,9 @@
             </if>
         </where>
     </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(1)
+        from cr_eval_cloud_template
+    </select>
 </mapper>

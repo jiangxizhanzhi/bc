@@ -24,6 +24,8 @@ public interface EvalCloudTemplateMapper extends BaseMapper<EvalCloudTemplate> {
 	List<String> getTopoIdsByIds(@Param("ids") List<String> ids);
 
 	IPage<EvalCloudTemplate> templateList(Page<EvalCloudTemplate> page, @Param("listQuery")EvalTestListReq evalTestListReq);
+
+	Integer count();
 }
 
 

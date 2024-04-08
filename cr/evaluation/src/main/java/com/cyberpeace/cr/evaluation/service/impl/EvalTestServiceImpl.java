@@ -8,6 +8,8 @@ import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.NameCount;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -16,12 +18,15 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalPersonTestRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStatisticsRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalCloudTemplateMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestMapper;
 import com.cyberpeace.cr.evaluation.service.*;
+import com.cyberpeace.cr.evaluation.service.context.EvalTestCategoryCount;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -227,6 +232,30 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
 		return evalTestInstance.getResourceId();
+	}
+
+	@Override
+	public EvalTestStatisticsRsp testStatistics() {
+		EvalTestStatisticsRsp evalTestStatisticsRsp = new EvalTestStatisticsRsp();
+		List<NameCount> overview = new ArrayList<>();
+		overview.add(new NameCount("验证模板", evalCloudTemplateMapper.count()));
+		overview.add(new NameCount("验证任务", evalTestMapper.countByUserId(UserInfoContext.getUserContext().getUserId())));
+		evalTestStatisticsRsp.setOverview(overview);
+		List<NameCount> categoryCount = new ArrayList<>();
+		List<EvalTestCategoryCount> categoryCounts = evalTestInstanceMapper.countByCategoryAndUserId(UserInfoContext.getUserContext().getUserId());
+		Map<Integer, Integer> categoryCountMap = categoryCounts.stream()
+															   .collect(Collectors.toMap(EvalTestCategoryCount::getType, EvalTestCategoryCount::getCount));
+		for (EvalCloudTemplate.TestType type : EvalCloudTemplate.TestType.values()) {
+			categoryCount.add(new NameCount(type.getDesc(), categoryCountMap.getOrDefault(type.getCode(), 0)));
+		}
+		evalTestStatisticsRsp.setCategoryCount(categoryCount);
+		return evalTestStatisticsRsp;
+	}
+
+	@Override
+	public ListRsp<EvalPersonTestRsp> personTestRspListRsp(PageReqBase pageReqBase) {
+		IPage<EvalPersonTestRsp> testRspIPage = evalTestMapper.selectPersonTestPage(pageReqBase.toPageParam(), UserInfoContext.getUserContext().getUserId());
+		return PageUtil.getListResult(testRspIPage);
 	}
 
 

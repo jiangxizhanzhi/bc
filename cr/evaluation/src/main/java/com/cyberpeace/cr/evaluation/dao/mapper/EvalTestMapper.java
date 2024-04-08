@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalPersonTestRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,4 +18,7 @@ public interface EvalTestMapper extends BaseMapper<EvalTest> {
 
 	String selectTopoIdByTestId(@Param("testId") String testId);
 
+	Integer countByUserId(@Param("userId") String userId);
+
+	IPage<EvalPersonTestRsp> selectPersonTestPage(Page<EvalPersonTestRsp> page, @Param("userId") String userId);
 }

@@ -14,4 +14,15 @@
         </if>
     </select>
 
+    <select id="countByCategoryAndUserId"
+            resultType="com.cyberpeace.cr.evaluation.service.context.EvalTestCategoryCount">
+        select type, count(1)
+        from cr_eval_test_instance instance
+        left join cr_eval_test test on instance.test_id = test.resource_id
+        <where>
+            <bind name="userId" value="'%' + userId + '%'"/>
+            read_auth_ids like #{userId}
+            group by type
+        </where>
+    </select>
 </mapper>

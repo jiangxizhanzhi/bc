@@ -23,6 +23,7 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -119,13 +120,21 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 
 	@Override
 	public EvalTestElementAreaRsp getElementArea(String testId) {
-		// TODO: 2024/4/1
-		List<ElementType> elements = new ArrayList<>();
-		elements.add(new ElementType("111", "节点1"));
-		List<ElementType> areas = new ArrayList<>();
-		areas.add(new ElementType("111", "区域1"));
 		EvalTestElementAreaRsp evalTestElementAreaRsp = new EvalTestElementAreaRsp();
+		SceneData sceneData;
+		String sceneId = evalTestMapper.selectSceneIdByTestId(testId);
+		if (StringUtils.isNotEmpty(sceneId)) {
+			sceneData = topoHandlerService.getSceneData(sceneId, null);
+		} else  {
+			String topoId = evalTestMapper.selectTopoIdByTestId(testId);
+			sceneData = topoHandlerService.getSceneData(null, topoId);
+		}
+		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
+		List<ElementType> elements = elementInfoList.stream().map(info -> new ElementType(info.getElementId(), info.getName())).collect(Collectors.toList());
 		evalTestElementAreaRsp.setElementList(elements);
+		List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas().values());
+		List<ElementType> areas = areaInfoList.stream().map(info -> new ElementType(info.getAreaId(), info.getName())).collect(Collectors.toList());
 		evalTestElementAreaRsp.setAreaList(areas);
 		return evalTestElementAreaRsp;
 	}

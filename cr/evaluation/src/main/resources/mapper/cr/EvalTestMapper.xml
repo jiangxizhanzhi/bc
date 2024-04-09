@@ -52,4 +52,11 @@
         left join cr_eval_test_instance instance on instance.resource_id = test.current_instance_id
         where test.resource_id = #{testId}
     </select>
+
+    <select id="selectSceneIdByTestId" resultType="java.lang.String">
+        select instance.mp_scene_id
+        from cr_eval_test test
+        left join cr_eval_test_instance instance on instance.resource_id = test.current_instance_id
+        where test.resource_id = #{testId}
+    </select>
 </mapper>

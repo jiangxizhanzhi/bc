@@ -23,4 +23,6 @@ public interface EvalTestMapper extends BaseMapper<EvalTest> {
 	IPage<EvalPersonTestRsp> selectPersonTestPage(Page<EvalPersonTestRsp> page, @Param("userId") String userId);
 
 	String selectLocalSceneIdByTestId(@Param("testId") String testId);
+
+	String selectSceneIdByTestId(@Param("testId") String testId);
 }

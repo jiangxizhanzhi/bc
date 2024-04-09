@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -116,21 +117,20 @@ public class EvalMissionController {
 
     private void setTaskMission(EvalInstanceMissionTemplateReq evalMissionTemplateReq, EvalTask evalTask, String resourceId) {
         String techniqueWarfare = evalTask.getTechniqueWarfare();
-        if(StringUtils.isEmpty(techniqueWarfare)){
-            String templateId = evalTask.getTemplateId();
-            EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
-            techniqueWarfare = evalTemplate.getTechniqueWarfare();
-        }
         MissionScheme missionScheme = JsonUtil.toJsonObject(techniqueWarfare, MissionScheme.class);
         List<StageData> stageList = missionScheme.getStageList();
         String name = evalMissionTemplateReq.getName();
-        String taskId = evalMissionTemplateReq.getTaskId();
         stageList.forEach(stageData -> {
             if(stageData.getStageName().equals(evalMissionTemplateReq.getStageName())){
                 List<TaskBo> taskList = stageData.getTaskList();
+                List<String> column = StreamApiUtils.getColumn(taskList, TaskBo::getTaskName);
+                if(column.contains(name)){
+                    throw new BusinessException(ErrorCode.REPEATED_MISSION_NAME);
+                }
                 TaskBo taskBo = new TaskBo();
-                taskBo.setResourceId(taskId);
+                taskBo.setResourceId(resourceId);
                 taskBo.setStatus(0);
+                taskBo.setTaskId(evalTask.getResourceId());
                 taskBo.setTaskName(name);
                 taskList.add(taskBo);
             }
@@ -145,7 +145,7 @@ public class EvalMissionController {
     public BaseRsp<EvalMissionTemplateRsp> updateMissionStatus(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
 
         EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(updateEvalMissionReq.getResourceId());
-        EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), evalMissionTemplate.getTaskId());
+        EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId());
         Integer status = updateEvalMissionReq.getStatus();
         evalMissionTemplate.setStatus(status);
         evalMissionTemplate.setUpdateTime(new Date());
@@ -309,8 +309,8 @@ public class EvalMissionController {
     @GetMapping("/missions")
     public BaseRsp<List<StageData>> getMissions(@ApiParam(name = "template_id", value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId,
                                                 @ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(value = "task_id") String taskId) {
-        EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
-        String missionsScheme = evalTemplate.getTechniqueWarfare();
+        EvalTask evalTask = evalTaskMapper.selectById(taskId);
+        String missionsScheme = evalTask.getTechniqueWarfare();
         if (StringUtils.isEmpty(missionsScheme)) {
             return new BaseRsp<>(new ArrayList<>());
         }

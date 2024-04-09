@@ -193,5 +193,7 @@ public final class ErrorCode {
 
 	public static final String FAILED_TO_GET_HTML_TEMPLATE_INSTANCE = "100061";
 
+	public static final String REPEATED_MISSION_NAME = "100062";
+
 	private ErrorCode() {}
 }

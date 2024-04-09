@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalInstanceStep;
+import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -19,5 +20,7 @@ public interface EvalInstanceStepMapper extends BaseMapper<EvalInstanceStep> {
 	void deleteByInstanceId(@Param("instanceId") String instanceId);
 
 	List<String> selectRunningGuideIds();
+
+	List<EvalTimeLineContext> selectTimeNodes(@Param("instanceId") String instanceId);
 
 }

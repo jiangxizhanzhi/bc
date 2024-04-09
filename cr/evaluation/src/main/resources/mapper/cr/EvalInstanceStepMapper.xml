@@ -30,4 +30,12 @@
         and step.end_time is null
         and instance.instance_name is null
     </select>
+
+    <select id="selectTimeNodes" resultType="com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext">
+        select instance_step.resource_id step_id, step.name, end_time
+        from cr_eval_test_instance_step instance_step
+        left join cr_eval_step step on instance_step.step_id = step.resource_id
+        where instance_step.end_time is not null
+        and instance_step.test_instance_id = #{instanceId}
+    </select>
 </mapper>

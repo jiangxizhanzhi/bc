@@ -185,6 +185,13 @@ public class EvalTestController {
 		return new BaseRsp<>(evalTestService.getDeviceList(testId, category, name));
 	}
 
+	@ApiOperation("查询测评任务时间节点")
+	@GetMapping("/time_nodes")
+	public BaseRsp<EvalTaskTimeNodesRsp> getTimeNodes(@ApiParam(name = "instance_id", value = "实例id",
+			required = true) @RequestParam("instance_id") String instanceId) {
+		return new BaseRsp<>(evalTestInstanceService.getTimeNodes(instanceId));
+	}
+
 	@ApiOperation("我的验证任务")
 	@GetMapping("/person/list")
 	public BaseRsp<ListRsp<EvalPersonTestRsp>> personTestList(@Validated PageReqBase pageReqBase) {

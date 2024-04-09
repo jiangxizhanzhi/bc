@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeNodesRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalInstanceStepMapper;
@@ -87,6 +88,14 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 			}
 		});
 		return true;
+	}
+
+	@Override
+	public EvalTaskTimeNodesRsp getTimeNodes(String instanceId) {
+		EvalTaskTimeNodesRsp evalTaskTimeNodesRsp = new EvalTaskTimeNodesRsp();
+		evalTaskTimeNodesRsp.setTaskId(instanceId);
+		evalTaskTimeNodesRsp.setData(evalInstanceStepMapper.selectTimeNodes(instanceId));
+		return evalTaskTimeNodesRsp;
 	}
 
 	public void clearInstanceAndScene(String localSceneId,String testId, String instanceId) {

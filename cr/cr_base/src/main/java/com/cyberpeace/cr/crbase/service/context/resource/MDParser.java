@@ -295,6 +295,7 @@ public class MDParser {
 		Integer businessType = ZiguanConstants.CE_TYPE_MAPPING.get(data.get(ZiguanConstants.TYPE));
 		if (businessType == null) {
 			String businessTypeString = String.join(",", ZiguanConstants.CE_TYPE_MAPPING.keySet());
+			log.error("invalid businessType! businessType is[{}]", businessType);
 			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "场景类型不在范围内" + businessTypeString);
 		}
 		businessTemplate.setBusinessType(businessType);
@@ -303,7 +304,8 @@ public class MDParser {
 				.get(data.get(ZiguanConstants.DIFFICULTY));
 		if (difficulty == null) {
 			log.error("Invalid difficulty! difficulty = [{}]", difficulty);
-			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "难度不在低、中、高范围");
+			String difficultString = String.join(",", ZiguanConstants.DIFFICULTY_CHOICE.keySet());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "难度不在范围" + difficultString);
 		}
 		businessTemplate.setDifficulty(difficulty);
 		// category
@@ -312,7 +314,7 @@ public class MDParser {
 		if (category == null) {
 			log.error("Invalid training category! category is null");
 			String categoryString = String.join(",", ZiguanConstants.BUSINESS_CATEGORIES.keySet());
-			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "训练类型在范围内" + categoryString);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "训练类型不在范围内" + categoryString);
 		}
 		templateContext.setSubType(category);
 		// duration time

@@ -105,4 +105,6 @@ public interface PatternConstant {
 
 	/** 匹配<p></p>标签*/
 	String HTML_P = "<p>(?:(?!<\\/p>)[\\s\\S])*<\\/p>";
+
+	String LOWER_CASE_LETTER = "[a-z]";
 }

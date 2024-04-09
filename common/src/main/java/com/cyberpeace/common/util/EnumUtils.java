@@ -45,4 +45,8 @@ public class EnumUtils {
 				.collect(Collectors.toList());
 	}
 
+	public static <T extends GenericEnum> List<String> getListDesc(Class<T> enumClass) {
+		return Arrays.stream(enumClass.getEnumConstants()).map(GenericEnum::getDesc).collect(Collectors.toList());
+	}
+
 }

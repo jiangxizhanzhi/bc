@@ -299,6 +299,16 @@ public class PracticeValidateHandler {
 		}
 	}
 
+	public void validateOperationTitleExist(String practiceSetId, String title, String practicePath) {
+		String practiceId = practiceOperationMapper.selectByTitle(practiceSetId, title);
+		if (StringUtils.isNotBlank(practiceId)) {
+			log.error(
+					"Practice operation title exist! practice_set_id=[{}], practice_id=[{}], title=[{}]",
+					practiceSetId, practiceId, title);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, practicePath, "名称已存在" + title);
+		}
+	}
+
 	/**
 	 * 校验flag长度 5.3.6系统flag长度仅对动态flag长度做限制 随机与静态flag长度为1-255
 	 * @param flags
@@ -379,9 +389,18 @@ public class PracticeValidateHandler {
 			List<String> attachments) {
 		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
 				&& attachments.size() > CommonConstant.ONE) {
-			log.error("practice attachment is too many!practiceName=[{}],attachments.size()=[{}] ", attachments.size());
+			log.error("practice attachment is too many!practiceName=[{}],attachments.size()=[{}] ", practiceName, attachments.size());
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY,
 					practiceName);
+		}
+	}
+
+	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
+										 List<String> attachments, String practicePath) {
+		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
+				&& attachments.size() > CommonConstant.ONE) {
+			log.error("practice attachment is too many!practiceName=[{}],attachments.size()=[{}] ", practiceName,  attachments.size());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, practicePath, "不支持多个附件");
 		}
 	}
 

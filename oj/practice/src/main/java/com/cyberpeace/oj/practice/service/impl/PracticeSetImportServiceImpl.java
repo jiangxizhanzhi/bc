@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
@@ -125,6 +126,13 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		List<PracticeTheory> theoryList = practiceTheoryImportService.parseRmTheory(path,
 				practiceSet);
 
+		// 支持重复导入，theoryList 里面的数据已被导入，theoryList为空
+		if (theoryList.isEmpty()) {
+			log.info("practice theory add 0, this path is[{}]", path);
+			return true;
+		}
+
+
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
 
 			@Override
@@ -146,12 +154,17 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 
 		// 读取习题集数据信息
 		File setMarkdownFile = new File(path, ResourceImportConstant.README_NAME);
+		if (!setMarkdownFile.isFile()) {
+			log.error("practiceSet readme.md file not found, file is[{}]", setMarkdownFile.getAbsolutePath());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, setMarkdownFile.getAbsolutePath(), "文件没有找到");
+		}
+
 		JSONObject setData = MdUtil.parseJsonMarkdown(setMarkdownFile);
 		JSONObject setJson = JsonUtil.filedConvert(setData,
 				ResourceImportConstant.PRACTICE_SET_DATA_MAPPING);
 
 		// 格式化习题习题集数据 并存储数据库
-		PracticeSet practiceSet = jsonParsePracticeSet(setJson);
+		PracticeSet practiceSet = jsonParsePracticeSet(setJson, setMarkdownFile.getAbsolutePath());
 
 		// logo文件地址转换
 		File file = new File(path, ResourceImportConstant.PNG_LOGO);
@@ -160,6 +173,11 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 			file = new File(path, ResourceImportConstant.JPG_LOGO);
 			destFile = new File(AttachmentPath.LOGO.getDesc(), ResourceImportConstant.JPG_LOGO);
 		}
+		if (!file.exists()) {
+			log.error("practiceSet logo file not found file is[{}]", file.getAbsolutePath());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, file.getAbsolutePath(), "文件没有找到");
+		}
+
 		String destLogoPath = FileUtil.copyFile(file.getAbsolutePath(), destFile.getAbsolutePath(),
 				true);
 		practiceSet.setLogo(utilService.replaceFileUrl(destLogoPath));
@@ -190,11 +208,17 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	 * @param setJson Json化的习题集数据
 	 * @return
 	 */
-	private PracticeSet jsonParsePracticeSet(JSONObject setJson) {
+	private PracticeSet jsonParsePracticeSet(JSONObject setJson, String practiceSetPath) {
 		// 习题集类型处理
 		String typeName = (String) setJson.remove("practice_type");
 		Integer practiceType = EnumUtils.getEnumCodeByDesc(typeName,
 				PracticeSet.PracticeType.class);
+
+		if (practiceType == null) {
+			log.error("Invalid practiceType, practiceType is null");
+			final List<String> listDesc = EnumUtils.getListDesc(PracticeSet.PracticeType.class);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, practiceSetPath, "习题集类型不在范围内" + listDesc.toString());
+		}
 
 		PracticeSet practiceSet = setJson.toJavaObject(PracticeSet.class);
 		practiceSet.setPracticeType(practiceType);

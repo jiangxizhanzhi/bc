@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -40,6 +41,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -105,6 +107,13 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		if (StringUtils.isBlank(oneFile)) {
 			oneFile = FileUtil.getOneFile(path, FileSunffixConstant.XLSX.getDesc());
 		}
+		final File file = new File(oneFile);
+		if (StringUtils.isBlank(oneFile) || !file.isFile()) {
+			log.error("Theory [xls, xlsx] file not found, path is [{}]", path);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, path, "没有找到[xls,xlsx]文件");
+		}
+		log.info("start import theory file [{}]", oneFile);
+
 		ExcelDataHandler dataHandler = new ExcelDataHandler(oneFile, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 
@@ -406,6 +415,8 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		String practiceId = practiceTheoryMapper.selectByContent(practiceSet.getResourceId(),
 				practiceTheory.getContent());
 		if (StringUtils.isNotBlank(practiceId)) {
+			final int min = Math.min(practiceTheory.getContent().length(), 20);
+			log.info("this theory practice exists, content is [{}]", practiceTheory.getContent().substring(0, min) +"...");
 			return null;
 		}
 

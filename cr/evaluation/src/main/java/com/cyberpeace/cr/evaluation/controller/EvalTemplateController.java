@@ -8,6 +8,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionTemplateStatus;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate;
+import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
 import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
 import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
@@ -73,6 +74,9 @@ public class EvalTemplateController {
 
 	@Autowired
 	private AttachmentMapper attachmentMapper;
+
+	@Autowired
+	private EvalMissionTemplateService evalMissionTemplateService;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -222,6 +226,14 @@ public class EvalTemplateController {
 
 		// 校验测评模板配置
 		validateReq(evaTemplateAddReq);
+
+		List<String> resourceIds = evalMissionTemplateService.getTaskIds(evaTemplateAddReq.getMissionsScheme());
+		resourceIds.forEach(resourceId -> CrCommonValidator.checkStringExist(resourceId, CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE));
+		for (StageData stageData : evaTemplateAddReq.getMissionsScheme()
+				.getStageList()) {
+			CrCommonValidator.validateListIfEmpty(stageData.getTaskList(),
+					CrBusinessErrorCode.EMPTY_MISSION_STAGE);
+		}
 
 		// 复制模板信息
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);

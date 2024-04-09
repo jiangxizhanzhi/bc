@@ -115,17 +115,27 @@ public class EvalMissionController {
 
 
     private void setTaskMission(EvalInstanceMissionTemplateReq evalMissionTemplateReq, EvalTask evalTask, String resourceId) {
-        TechniqueWarfare missionScheme = JsonUtil.toJsonObject(evalTask.getTechniqueWarfare(), TechniqueWarfare.class);
-        List<MissionData> stageList = missionScheme.getTools();
-        Map<String, MissionData> stageDataMap = StreamApiUtils.toMap(stageList, MissionData::getStageName, s -> s);
-        MissionData stageData = stageDataMap.get(evalMissionTemplateReq.getStageName());
-        if (null == stageData) {
-            throw new BusinessException(CrBusinessErrorCode.ERROR_STAGE_NAME);
+        String techniqueWarfare = evalTask.getTechniqueWarfare();
+        if(StringUtils.isEmpty(techniqueWarfare)){
+            String templateId = evalTask.getTemplateId();
+            EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
+            techniqueWarfare = evalTemplate.getTechniqueWarfare();
         }
-        List<String> taskList = stageData.getToolBoList();
-        taskList.add(resourceId);
-        stageList.set(stageList.indexOf(stageData), stageData);
-        missionScheme.setTools(stageList);
+        MissionScheme missionScheme = JsonUtil.toJsonObject(techniqueWarfare, MissionScheme.class);
+        List<StageData> stageList = missionScheme.getStageList();
+        String name = evalMissionTemplateReq.getName();
+        String taskId = evalMissionTemplateReq.getTaskId();
+        stageList.forEach(stageData -> {
+            if(stageData.getStageName().equals(evalMissionTemplateReq.getStageName())){
+                List<TaskBo> taskList = stageData.getTaskList();
+                TaskBo taskBo = new TaskBo();
+                taskBo.setResourceId(taskId);
+                taskBo.setStatus(0);
+                taskBo.setTaskName(name);
+                taskList.add(taskBo);
+            }
+        });
+        missionScheme.setStageList(stageList);
         evalTask.setTechniqueWarfare(JsonUtil.toJsonString(missionScheme));
     }
 

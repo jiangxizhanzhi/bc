@@ -120,4 +120,15 @@ public class ToolController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("工具下载")
+	@PostMapping("/download")
+	@RequiresPermissions(MenuConstant.CMS_TOOL)
+	public BaseRsp<String> download(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
+
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,
+				OperationType.DOWNLOAD, toolupdateReq.getName());
+
+		return new BaseRsp<>();
+	}
+
 }

@@ -23,7 +23,8 @@ public enum OperationType implements BaseI18n {
 	STOP(11, "停止", "Stop"),
 	PAUSE(12, "暂停", "Suspend"),
 	START(13, "启动", "Start"),
-	UNPAUSE(14, "恢复", "Resume");
+	UNPAUSE(14, "恢复", "Resume"),
+	DOWNLOAD(15, "下载", "Download");
 
 	@Getter
 	private final Integer code;

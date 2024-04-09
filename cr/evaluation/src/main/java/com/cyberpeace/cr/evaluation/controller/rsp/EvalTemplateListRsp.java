@@ -24,6 +24,12 @@ public class EvalTemplateListRsp {
 	@ApiModelProperty("任务方案附件")
 	private String scheme;
 
+	@ApiModelProperty("任务方案附件名称")
+	private String schemeName;
+
+	@ApiModelProperty("任务方案附件地址")
+	private String schemePath;
+
 	@ApiModelProperty(value = "测评描述")
 	private String description;
 

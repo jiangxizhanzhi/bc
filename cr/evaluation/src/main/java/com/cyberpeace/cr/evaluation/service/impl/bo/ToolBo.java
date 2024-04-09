@@ -16,6 +16,9 @@ public class ToolBo implements Serializable {
 	@ApiModelProperty("工具所在节点-节点下拉框信息中 带-的id值")
 	private String node;
 
+	@ApiModelProperty("工具所在节点-节点下拉框信息中 带-的id值")
+	private String nodeName;
+
 	@ApiModelProperty(value = "执行类型 自动执行-0 手动执行-1", required = true)
 	@NotNull
 	private Integer executeType;

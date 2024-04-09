@@ -22,9 +22,10 @@
     </select>
 
     <select id="selectSceneIdByGuideId" resultType="java.lang.String">
-        select mp_scene_id
-        from local_scene
-        left join cr_eval_situation_guide_scheme scheme on scheme.test_id = local_scene.business_instance_id
+        select instance.mp_scene_id
+        from cr_eval_situation_guide_scheme scheme
+        left join cr_eval_test test on scheme.test_id = test.resource_id
+        left join cr_eval_test_instance instance on test.current_instance_id = instance.resource_id
         where scheme.resource_id = #{guideId}
     </select>
 
@@ -32,4 +33,15 @@
         delete from cr_eval_situation_guide_scheme
         where step_id = #{stepId}
     </delete>
+
+    <select id="batchSelectSceneIdByGuideId" resultType="com.cyberpeace.cr.evaluation.service.context.EvalGuideSceneContext">
+        select instance.mp_scene_id scene_id, scheme.resource_id guide_id
+        from cr_eval_situation_guide_scheme scheme
+        left join cr_eval_test test on scheme.test_id = test.resource_id
+        left join cr_eval_test_instance instance on test.current_instance_id = instance.resource_id
+        where scheme.resource_id in
+        <foreach collection="guideIds" item="guideId" open="(" separator="," close=")">
+            #{guideId}
+        </foreach>
+    </select>
 </mapper>

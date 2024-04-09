@@ -29,4 +29,6 @@ public interface EvalGuideService extends IService<EvalGuideScheme> {
 	List<EvalGuideAttackEnumRsp> getAttackEnum();
 
 	EvalTestElementAreaRsp getElementArea(String testId);
+
+	void pushDataToRoomByScheme(Boolean isInstance, String sceneId, EvalGuideScheme evalGuideScheme);
 }

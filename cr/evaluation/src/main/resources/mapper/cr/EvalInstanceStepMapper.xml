@@ -20,4 +20,14 @@
         from cr_eval_test_instance_step
         where test_instance_id = #{instanceId}
     </delete>
+
+    <select id="selectRunningGuideIds" resultType="java.lang.String">
+        select scheme.resource_id
+        from cr_eval_test_instance_step step
+        left join cr_eval_test_instance instance on step.test_instance_id = instance.resource_id
+        left join cr_eval_situation_guide_scheme scheme on step.step_id = scheme.step_id
+        where step.start_time is not null
+        and step.end_time is null
+        and instance.instance_name is null
+    </select>
 </mapper>

@@ -18,4 +18,6 @@ public interface EvalInstanceStepMapper extends BaseMapper<EvalInstanceStep> {
 
 	void deleteByInstanceId(@Param("instanceId") String instanceId);
 
+	List<String> selectRunningGuideIds();
+
 }

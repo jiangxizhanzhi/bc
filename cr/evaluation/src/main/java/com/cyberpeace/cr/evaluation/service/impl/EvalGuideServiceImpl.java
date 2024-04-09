@@ -94,14 +94,7 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 		if (evalTest == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		List<EvalStepGuideListRsp> evalStepGuideListRsps = evalStepMapper.selectStepGuideListByTestId(testId);
-		for (int i=0; i < evalStepGuideListRsps.size(); i++) {
-			if (i%2 == 0) {
-				// TODO: 2024/4/3
-				evalStepGuideListRsps.get(i).setIsEditable(false);
-			}
-		}
-		return evalStepGuideListRsps;
+		return evalStepMapper.selectStepGuideListByTestId(testId);
 	}
 
 	@Override
@@ -137,6 +130,7 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 		return evalTestElementAreaRsp;
 	}
 
+	@Override
 	public void pushDataToRoomByScheme(Boolean isInstance, String sceneId, EvalGuideScheme evalGuideScheme) {
 		WsMultiNodeEffect wsEffect = new WsMultiNodeEffect();
 		List<String> elementIds = getElementIds(sceneId, isInstance);

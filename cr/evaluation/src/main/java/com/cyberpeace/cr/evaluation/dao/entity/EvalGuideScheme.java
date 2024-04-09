@@ -53,5 +53,10 @@ public class EvalGuideScheme extends BaseTable {
 	 */
 	private String stepId;
 
+	/**
+	 * 是否可编辑
+	 */
+	private Integer isEditable;
+
 
 }

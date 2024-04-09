@@ -12,7 +12,7 @@
 
     <select id="selectStepGuideListByTestId"
             resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideListRsp">
-        select step.resource_id step_id, step.name step_name, if(scheme.resource_id is null, false, true) is_exist_guide, true is_editable
+        select step.resource_id step_id, step.name step_name, if(scheme.resource_id is null, false, true) is_exist_guide, is_editable
         from cr_eval_step step
         left join cr_eval_situation_guide_scheme scheme on scheme.step_id = step.resource_id
         where step.test_id = #{testId}

@@ -5,10 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.scene.service.InteractivePlatformService;
 import com.cyberpeace.scene.service.PineappleService;
+import com.cyberpeace.scene.service.bo.interactive.PineappleClientRes;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,9 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SheepWallController {
 
 	@Autowired
-	private InteractivePlatformService interactivePlatformService;
-
-	@Autowired
 	private PineappleService pineappleService;
 
 	@ApiOperation("获取DWall ws")
@@ -39,8 +35,8 @@ public class SheepWallController {
 
 	@ApiOperation("获取客户端")
 	@GetMapping("/clients")
-	public BaseRsp<JSONObject> getClients() {
-		JSONObject res = pineappleService.getClients();
+	public BaseRsp<PineappleClientRes> getClients() {
+		PineappleClientRes res = pineappleService.getClients();
 		return new BaseRsp(res);
 	}
 

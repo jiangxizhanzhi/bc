@@ -18,7 +18,6 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -28,6 +27,7 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.scene.service.PineappleService;
+import com.cyberpeace.scene.service.bo.interactive.PineappleClientRes;
 import com.cyberpeace.scene.service.bo.interactive.QQRes;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -99,9 +99,11 @@ public class PineappleServiceImpl implements PineappleService {
 	}
 
 	@Override
-	public JSONObject getClients() {
+	public PineappleClientRes getClients() {
 		String rsp = post(API_URL, RequestBody.GET_CLIENTS);
-		return JsonUtil.toJsonObject(rsp, JSONObject.class);
+		PineappleClientRes res = JsonUtil.toJsonObject(rsp, PineappleClientRes.class);
+		res.reformat();
+		return res;
 	}
 
 	private boolean getDWallStatus() {

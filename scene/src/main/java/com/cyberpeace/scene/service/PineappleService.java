@@ -2,7 +2,7 @@ package com.cyberpeace.scene.service;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.scene.service.bo.interactive.PineappleClientRes;
 import com.cyberpeace.scene.service.bo.interactive.QQRes;
 
 public interface PineappleService {
@@ -10,5 +10,5 @@ public interface PineappleService {
 
 	String activateDWall();
 
-	JSONObject getClients();
+	PineappleClientRes getClients();
 }

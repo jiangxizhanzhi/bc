@@ -8,7 +8,9 @@ import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplatePageReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalTemTemplateReq;
@@ -69,6 +71,13 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	@Override
 	public String createTemplate(EvalTemTemplateReq evalTemTemplateReq) {
 		EvalTemTemplate evalTemTemplate = BeanUtils.copy(evalTemTemplateReq.getBaseData(), EvalTemTemplate.class);
+		List<String> resourceIds = evalMissionTemplateService.getTaskIds(evalTemTemplateReq.getMissionsScheme());
+		resourceIds.forEach(resourceId -> CrCommonValidator.checkStringExist(resourceId, CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE));
+		for (StageData stageData : evalTemTemplateReq.getMissionsScheme()
+														   .getStageList()) {
+			CrCommonValidator.validateListIfEmpty(stageData.getTaskList(),
+					CrBusinessErrorCode.EMPTY_MISSION_STAGE);
+		}
 		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(evalTemTemplateReq.getMissionsScheme()));
 		evalTemTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTemTemplate.setTopoId(saveTopo(evalTemTemplateReq.getSceneConfigData()));
@@ -83,6 +92,12 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		MissionScheme oldScheme = JsonUtil.toJsonObject(oldEvalTemTemplate.getTechniqueWarfare(), MissionScheme.class);
 		List<String> oldResourceIds = evalMissionTemplateService.getTaskIds(oldScheme);
 		List<String> newResourceIds = evalMissionTemplateService.getTaskIds(updateEvalTemTemplateReq.getMissionsScheme());
+		newResourceIds.forEach(resourceId -> CrCommonValidator.checkStringExist(resourceId, CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE));
+		for (StageData stageData : updateEvalTemTemplateReq.getMissionsScheme()
+														   .getStageList()) {
+			CrCommonValidator.validateListIfEmpty(stageData.getTaskList(),
+					CrBusinessErrorCode.EMPTY_MISSION_STAGE);
+		}
 		oldResourceIds.removeAll(newResourceIds);
 		EvalTemTemplate evalTemTemplate = BeanUtils.copy(updateEvalTemTemplateReq.getBaseData(), EvalTemTemplate.class);
 		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(updateEvalTemTemplateReq.getMissionsScheme()));

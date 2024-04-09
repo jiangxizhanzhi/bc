@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class EvalStepTemplateController {
 
 	@ApiOperation("新增步骤")
 	@PostMapping("/step")
-	public BaseRsp<String> addStep(@RequestBody EvalStepTemplateAddReq evalStepTemplateAddReq) {
+	public BaseRsp<String> addStep(@RequestBody @Validated EvalStepTemplateAddReq evalStepTemplateAddReq) {
 		return new BaseRsp<>(evalStepTemplateService.addStep(evalStepTemplateAddReq));
 	}
 
@@ -41,7 +42,7 @@ public class EvalStepTemplateController {
 
 	@ApiOperation("修改步骤")
 	@PutMapping("/step")
-	public BaseRsp<Boolean> modifyStep(@RequestBody EvalStepTemplateModifyReq evalStepTemplateModifyReq) {
+	public BaseRsp<Boolean> modifyStep(@RequestBody @Validated EvalStepTemplateModifyReq evalStepTemplateModifyReq) {
 		evalStepTemplateService.modifyStep(evalStepTemplateModifyReq);
 		return new BaseRsp<>(true);
 	}

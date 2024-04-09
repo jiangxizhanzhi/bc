@@ -45,4 +45,11 @@
             read_auth_ids like #{userId}
         </where>
     </select>
+
+    <select id="selectLocalSceneIdByTestId" resultType="java.lang.String">
+        select instance.local_scene_id
+        from cr_eval_test test
+        left join cr_eval_test_instance instance on instance.resource_id = test.current_instance_id
+        where test.resource_id = #{testId}
+    </select>
 </mapper>

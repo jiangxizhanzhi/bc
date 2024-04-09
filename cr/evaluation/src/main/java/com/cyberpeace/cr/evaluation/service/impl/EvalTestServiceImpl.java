@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -258,6 +260,28 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 		return PageUtil.getListResult(testRspIPage);
 	}
 
+	@Override
+	public JSONObject getDeviceStatistics(String testId) {
+		String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
+		if (StringUtils.isNotEmpty(localSceneId)) {
+			return localSceneService.getNodeStatistics(localSceneId);
+		} else {
+			String topoId = evalTestMapper.selectTopoIdByTestId(testId);
+			return localSceneService.getNodeStatisticsByTopoId(topoId);
+		}
+	}
+
+	@Override
+	public JSONArray getDeviceList(String testId, Integer category, String name) {
+		String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
+		if (StringUtils.isNotEmpty(localSceneId)) {
+			EvalTest evalTest = evalTestMapper.selectById(testId);
+			return localSceneService.getAssetListByInstanceId(evalTest.getCurrentInstanceId(), category, name, true);
+		} else {
+			String topoId = evalTestMapper.selectTopoIdByTestId(testId);
+			return localSceneService.getAssetListByTopoId(topoId, category, name);
+		}
+	}
 
 	private LocalScene createLocalScene(EvalTestInstance evalTestInstance) {
 		LocalScene localScene = new LocalScene();

@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.evaluation.controller;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -165,6 +167,22 @@ public class EvalTestController {
 	@PostMapping("/step/finish")
 	public BaseRsp<Boolean> finishStep(@RequestBody @Validated EvalTaskStepReq evalTaskStepReq) {
 		return new BaseRsp<>(evalStepService.finishStep(evalTaskStepReq.getStepId()));
+	}
+
+	@ApiOperation("设备统计")
+	@GetMapping("/device/statistics")
+	public BaseRsp<JSONObject> getDeviceStatistics(
+			@ApiParam(name = "test_id", value = "试验id", required = true) @RequestParam(name = "test_id") String testId) {
+		return new BaseRsp<>(evalTestService.getDeviceStatistics(testId));
+	}
+
+	@ApiOperation("设备列表")
+	@GetMapping("/device/list")
+	public BaseRsp<JSONArray> getDeviceList(
+			@ApiParam(name = "test_id", value = "试验id", required = true) @RequestParam(name = "test_id") String testId,
+			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
+			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
+		return new BaseRsp<>(evalTestService.getDeviceList(testId, category, name));
 	}
 
 	@ApiOperation("我的验证任务")

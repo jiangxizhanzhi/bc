@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -26,4 +28,8 @@ public interface EvalTestService extends IService<EvalTest> {
 	EvalTestStatisticsRsp testStatistics();
 
 	ListRsp<EvalPersonTestRsp> personTestRspListRsp(PageReqBase pageReqBase);
+
+	JSONObject getDeviceStatistics(String testId);
+
+	JSONArray getDeviceList(String testId, Integer category, String name);
 }

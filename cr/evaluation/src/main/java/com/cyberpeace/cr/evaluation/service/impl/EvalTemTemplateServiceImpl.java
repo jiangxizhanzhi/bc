@@ -149,13 +149,18 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		evalTemTemplateRsp.setResourceId(resourceId);
 		evalTemTemplateRsp.setMissionsScheme(JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class));
 		evalTemTemplateRsp.setSceneConfigData(remoteTopoService.getTopoById(evalTemTemplate.getTopoId()));
-		if (StringUtils.isEmpty(evalTemTemplate.getScheme())) {
-			return evalTemTemplateRsp;
+		if (StringUtils.isNotEmpty(evalTemTemplate.getScheme())) {
+			Attachment attachment = attachmentMapper.selectById(evalTemTemplate.getScheme());
+			if (attachment != null) {
+				evalTemTemplateRsp.getBaseData().setSchemeName(attachment.getFileName());
+				evalTemTemplateRsp.getBaseData().setSchemePath(ConfigUtil.getContextProperty("cr.local.file.prefix") + attachment.getFilePath());
+			}
 		}
-		Attachment attachment = attachmentMapper.selectById(evalTemTemplate.getScheme());
-		if (attachment != null) {
-			evalTemTemplateRsp.getBaseData().setSchemeName(attachment.getFileName());
-			evalTemTemplateRsp.getBaseData().setSchemePath(ConfigUtil.getContextProperty("cr.local.file.prefix") + attachment.getFilePath());
+		if (StringUtils.isNotEmpty(evalTemTemplate.getLogoId())) {
+			Attachment attachment = attachmentMapper.selectById(evalTemTemplate.getLogoId());
+			if (attachment != null) {
+				evalTemTemplateRsp.getBaseData().setLogo(ConfigUtil.getContextProperty("cr.local.file.prefix") + attachment.getFilePath());
+			}
 		}
 		return evalTemTemplateRsp;
 	}

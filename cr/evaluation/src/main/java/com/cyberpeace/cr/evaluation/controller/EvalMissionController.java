@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.MissionStatusTypeConvert;
 import com.cyberpeace.cr.crbase.constant.MissionTemplateStatus;
 import com.cyberpeace.cr.crbase.constant.NodeOperate;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
@@ -17,6 +18,7 @@ import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalMissionTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalActionProsecuteRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionLogRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionOperateContentRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateLogMapper;
@@ -175,7 +177,7 @@ public class EvalMissionController {
 
     @ApiOperation("异常数据-靶标异常")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
-    @PatchMapping("/node/abnormal")
+    @GetMapping("/node/abnormal")
     public BaseRsp<List<EvalNodeLog>> getAbnormalNode(
             @ApiParam(name = "task_id", required = true, value = "任务id") @RequestParam(value = "task_id") String taskId,
             @ApiParam(name = "node_id", required = false, value = "节点id") @RequestParam(value = "node_id") String nodeId
@@ -194,7 +196,7 @@ public class EvalMissionController {
 
     @ApiOperation("异常数据-任务异常")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
-    @PatchMapping("/mission/abnormal")
+    @GetMapping("/mission/abnormal")
     public BaseRsp<List<EvalMissionTemplateLog>> getAbnormalMission(@ApiParam(name = "task_id", required = true, value = "任务id") @RequestParam(value = "task_id") String taskId) {
         List<EvalMissionTemplateLog> evalMissionTemplateLogs = evalMissionTemplateLogMapper.selectList(null);
         if(evalMissionTemplateLogs.isEmpty()){
@@ -204,6 +206,23 @@ public class EvalMissionController {
                 && (s.getOperate() == MissionTemplateStatus.FAIL || s.getOperate() == MissionTemplateStatus.OVERTIME)).
                 sorted(Comparator.comparing(EvalMissionTemplateLog::getCreateTime).reversed()).collect(Collectors.toList());
         return new BaseRsp<>(templateLogList);
+    }
+
+    @ApiOperation("任务状态列表")
+    @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
+    @GetMapping("/mission/status/list")
+    public BaseRsp<List<EvalMissionOperateContentRsp>> getMissionStatusList() {
+        List<EvalMissionOperateContentRsp> rsp = new ArrayList<>();
+        List<Integer> listCode = EnumUtils.getListCode(MissionStatusTypeConvert.class);
+        listCode = listCode.stream().filter(code-> code<MissionTemplateStatus.MISSION_CONSTANT).collect(Collectors.toList());
+        listCode.forEach(code-> {
+            EvalMissionOperateContentRsp contentRsp = new EvalMissionOperateContentRsp();
+            String enumDescByCode = EnumUtils.getEnumDescByCode(code, MissionStatusTypeConvert.class);
+            contentRsp.setOperate(enumDescByCode);
+            contentRsp.setCode(code);
+            rsp.add(contentRsp);
+        });
+        return new BaseRsp<>(rsp);
     }
 
 

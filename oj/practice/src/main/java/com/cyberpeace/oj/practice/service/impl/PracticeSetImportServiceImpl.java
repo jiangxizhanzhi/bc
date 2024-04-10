@@ -131,6 +131,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 			log.info("practice theory add 0, this path is[{}]", path);
 			return true;
 		}
+		log.info("practice theory add new [{}], this path is[{}]", theoryList.size(), path);
 
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {

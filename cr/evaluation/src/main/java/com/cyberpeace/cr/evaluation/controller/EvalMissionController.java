@@ -97,6 +97,7 @@ public class EvalMissionController {
         EvalMissionTemplate evalMissionTemplate = BeanUtils.copy(evalMissionTemplateReq, EvalMissionTemplate.class);
         evalMissionTemplate.setTools(JsonUtil.toJsonString(evalMissionTemplateReq.getTools()));
         evalMissionTemplate.setLimitTime(evalMissionTemplateReq.getLimitTime());
+        evalMissionTemplate.setStatus(MissionTemplateStatus.NOT_START);
         evalMissionTemplate.setResourceId(resourceId);
         EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
         evalMissionTemplateLog.setOperate(MissionTemplateStatus.NEW);
@@ -329,8 +330,14 @@ public class EvalMissionController {
     @GetMapping("/missions")
     public BaseRsp<List<StageData>> getMissions(@ApiParam(name = "template_id", value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId,
                                                 @ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(value = "task_id") String taskId) {
-        EvalTask evalTask = evalTaskMapper.selectById(taskId);
-        String missionsScheme = evalTask.getTechniqueWarfare();
+        String missionsScheme;
+        if(StringUtils.isEmpty(taskId)){
+            EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
+            missionsScheme = evalTemplate.getTechniqueWarfare();
+        } else {
+            EvalTask evalTask = evalTaskMapper.selectById(taskId);
+            missionsScheme = evalTask.getTechniqueWarfare();
+        }
         if (StringUtils.isEmpty(missionsScheme)) {
             return new BaseRsp<>(new ArrayList<>());
         }

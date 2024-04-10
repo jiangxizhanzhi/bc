@@ -128,6 +128,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		evalTask.setEnableRecording(evalTemplate.getEnableRecording());
 		evalTask.setTemplateName(evalTemplate.getName());
 		evalTask.setResourceId(IDGeneratorUtil.getID());
+		evalTask.setTechniqueWarfare(evalTemplate.getTechniqueWarfare());
 
 
 		// 构建本地scene对象

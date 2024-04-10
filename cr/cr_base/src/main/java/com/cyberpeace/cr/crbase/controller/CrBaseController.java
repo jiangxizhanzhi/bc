@@ -106,5 +106,10 @@ public class CrBaseController {
 		}
 		return new BaseRsp<>(rsp);
 	}
+	@ApiOperation("新增业务标签")
+	@GetMapping("/business_label")
+	public BaseRsp<List<CrConstantsConfig>> getLabels(){
+		return new BaseRsp<>(crConstantsService.getLables());
+	}
 
 }

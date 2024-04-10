@@ -23,4 +23,5 @@ public interface CrConstantsService {
 
 	String geCnNameByTypeAndCode(Integer type, Integer code);
 
+	List<CrConstantsConfig> getLables();
 }

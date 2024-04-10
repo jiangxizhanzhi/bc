@@ -96,6 +96,7 @@ public class EvalMissionController {
 
         EvalMissionTemplate evalMissionTemplate = BeanUtils.copy(evalMissionTemplateReq, EvalMissionTemplate.class);
         evalMissionTemplate.setTools(JsonUtil.toJsonString(evalMissionTemplateReq.getTools()));
+        evalMissionTemplate.setLimitTime(evalMissionTemplateReq.getLimitTime());
         evalMissionTemplate.setResourceId(resourceId);
         EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
         evalMissionTemplateLog.setOperate(MissionTemplateStatus.NEW);

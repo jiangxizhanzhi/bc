@@ -7,11 +7,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplatePageReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalTemTemplateReq;
@@ -21,12 +20,18 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
-import com.cyberpeace.cr.evaluation.service.impl.bo.*;
+import com.cyberpeace.cr.evaluation.service.impl.bo.BaseTemplateData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -60,9 +65,19 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private AttachmentMapper attachmentMapper;
+
 	@Override
 	public String createTemplate(EvalTemTemplateReq evalTemTemplateReq) {
 		EvalTemTemplate evalTemTemplate = BeanUtils.copy(evalTemTemplateReq.getBaseData(), EvalTemTemplate.class);
+		List<String> resourceIds = evalMissionTemplateService.getTaskIds(evalTemTemplateReq.getMissionsScheme());
+		resourceIds.forEach(resourceId -> CrCommonValidator.checkStringExist(resourceId, CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE));
+		for (StageData stageData : evalTemTemplateReq.getMissionsScheme()
+														   .getStageList()) {
+			CrCommonValidator.validateListIfEmpty(stageData.getTaskList(),
+					CrBusinessErrorCode.EMPTY_MISSION_STAGE);
+		}
 		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(evalTemTemplateReq.getMissionsScheme()));
 		evalTemTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTemTemplate.setTopoId(saveTopo(evalTemTemplateReq.getSceneConfigData()));
@@ -77,9 +92,18 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		MissionScheme oldScheme = JsonUtil.toJsonObject(oldEvalTemTemplate.getTechniqueWarfare(), MissionScheme.class);
 		List<String> oldResourceIds = evalMissionTemplateService.getTaskIds(oldScheme);
 		List<String> newResourceIds = evalMissionTemplateService.getTaskIds(updateEvalTemTemplateReq.getMissionsScheme());
+		newResourceIds.forEach(resourceId -> CrCommonValidator.checkStringExist(resourceId, CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE));
+		for (StageData stageData : updateEvalTemTemplateReq.getMissionsScheme()
+														   .getStageList()) {
+			CrCommonValidator.validateListIfEmpty(stageData.getTaskList(),
+					CrBusinessErrorCode.EMPTY_MISSION_STAGE);
+		}
 		oldResourceIds.removeAll(newResourceIds);
-		EvalTemTemplate evalTemTemplate = BeanUtils.copy(updateEvalTemTemplateReq, EvalTemTemplate.class);
+		EvalTemTemplate evalTemTemplate = BeanUtils.copy(updateEvalTemTemplateReq.getBaseData(), EvalTemTemplate.class);
 		evalTemTemplate.setTechniqueWarfare(JsonUtil.toJsonString(updateEvalTemTemplateReq.getMissionsScheme()));
+		evalTemTemplate.setExpCondition(updateEvalTemTemplateReq.getBaseData().getCondition());
+		evalTemTemplate.setResourceId(updateEvalTemTemplateReq.getResourceId());
+		evalTemTemplate.setTopoId(topoId);
 		JSONObject topoJson = new JSONObject();
 		SceneConfigData sceneConfigData = updateEvalTemTemplateReq.getSceneConfigData();
 		topoJson.put("scene_config", sceneConfigData.getSceneConfig());
@@ -125,6 +149,19 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 		evalTemTemplateRsp.setResourceId(resourceId);
 		evalTemTemplateRsp.setMissionsScheme(JsonUtil.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class));
 		evalTemTemplateRsp.setSceneConfigData(remoteTopoService.getTopoById(evalTemTemplate.getTopoId()));
+		if (StringUtils.isNotEmpty(evalTemTemplate.getScheme())) {
+			Attachment attachment = attachmentMapper.selectById(evalTemTemplate.getScheme());
+			if (attachment != null) {
+				evalTemTemplateRsp.getBaseData().setSchemeName(attachment.getFileName());
+				evalTemTemplateRsp.getBaseData().setSchemePath(ConfigUtil.getContextProperty("cr.local.file.prefix") + attachment.getFilePath());
+			}
+		}
+		if (StringUtils.isNotEmpty(evalTemTemplate.getLogoId())) {
+			Attachment attachment = attachmentMapper.selectById(evalTemTemplate.getLogoId());
+			if (attachment != null) {
+				evalTemTemplateRsp.getBaseData().setLogo(ConfigUtil.getContextProperty("cr.local.file.prefix") + attachment.getFilePath());
+			}
+		}
 		return evalTemTemplateRsp;
 	}
 

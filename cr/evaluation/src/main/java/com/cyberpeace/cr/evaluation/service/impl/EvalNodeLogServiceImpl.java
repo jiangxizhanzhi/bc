@@ -3,29 +3,17 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.evaluation.controller.req.EvalMissionTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalSceneNodeOpsReq;
-import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalMissionTemplateReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalNodeLog;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalNodeLogMapper;
-import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalNodeLogService;
-import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
-import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
-import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
-import com.cyberpeace.cr.evaluation.service.impl.bo.ToolBo;
+import com.cyberpeace.situation.model.ElementInfo;
+import com.cyberpeace.situation.model.SituationTopo;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 public class EvalNodeLogServiceImpl extends ServiceImpl<EvalNodeLogMapper, EvalNodeLog> implements EvalNodeLogService {
@@ -33,12 +21,18 @@ public class EvalNodeLogServiceImpl extends ServiceImpl<EvalNodeLogMapper, EvalN
 	@Autowired
 	private EvalNodeLogMapper evalNodeLogMapper;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	@Override
 	public void logNodeOperate(EvalSceneNodeOpsReq nodeOpsReq, String resourceId, int operate) {
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(nodeOpsReq.getMpSceneId(), true);
+		Map<String, ElementInfo> elements = situationTopo.getElements();
+		ElementInfo elementInfo = elements.get(nodeOpsReq.getNodeId());
 		UserInfo userContext = UserInfoContext.getUserContext();
 		EvalNodeLog evalNodeLog = new EvalNodeLog();
 		evalNodeLog.setNodeId(nodeOpsReq.getNodeId());
-		evalNodeLog.setNodeName(nodeOpsReq.getNodeName());
+		evalNodeLog.setNodeName(elementInfo.getName());
 		evalNodeLog.setTaskId(resourceId);
 		evalNodeLog.setCreateUserId(userContext.getUserId());
 		evalNodeLog.setOperate(operate);

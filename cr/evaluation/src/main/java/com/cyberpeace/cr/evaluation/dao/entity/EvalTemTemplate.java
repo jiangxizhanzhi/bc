@@ -20,8 +20,8 @@ public class EvalTemTemplate extends BaseTable {
 	@ApiModelProperty("试验目标")
 	private String target;
 
-	@ApiModelProperty("logo")
-	private String logo;
+	@ApiModelProperty("logoID")
+	private String logoId;
 
 	@ApiModelProperty("试验条件")
 	private String expCondition;

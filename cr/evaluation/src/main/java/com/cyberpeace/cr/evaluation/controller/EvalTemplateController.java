@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionTemplateStatus;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemTemplate;
+import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalTemTemplateService;
 import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
 import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
 import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,10 +31,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
@@ -71,6 +71,12 @@ public class EvalTemplateController {
 
 	@Autowired
 	private EvalTemTemplateService evalTemTemplateService;
+
+	@Autowired
+	private AttachmentMapper attachmentMapper;
+
+	@Autowired
+	private EvalMissionTemplateService evalMissionTemplateService;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -134,6 +140,11 @@ public class EvalTemplateController {
 		evalTemplateRsp.setMissionsScheme(techniqueWarfare);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
+		Attachment attachment = attachmentMapper.selectById(evalTemplate.getScheme());
+		if (attachment != null) {
+			evalTemplateRsp.setSchemeName(attachment.getFileName());
+			evalTemplateRsp.setSchemePath(ConfigUtil.getContextProperty("cr.local.file.prefix") + attachment.getFilePath());
+		}
 		// auth users
 		List<UserInfo> userInfos = remoteUserService.getByIdList(evalTemplate.getAuthIds());
 		List<OperationUserInfo> operationUserInfos = StreamApiUtils.map(userInfos, userInfo -> {
@@ -215,6 +226,14 @@ public class EvalTemplateController {
 
 		// 校验测评模板配置
 		validateReq(evaTemplateAddReq);
+
+		List<String> resourceIds = evalMissionTemplateService.getTaskIds(evaTemplateAddReq.getMissionsScheme());
+		resourceIds.forEach(resourceId -> CrCommonValidator.checkStringExist(resourceId, CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE));
+		for (StageData stageData : evaTemplateAddReq.getMissionsScheme()
+				.getStageList()) {
+			CrCommonValidator.validateListIfEmpty(stageData.getTaskList(),
+					CrBusinessErrorCode.EMPTY_MISSION_STAGE);
+		}
 
 		// 复制模板信息
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -7,6 +8,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.MissionStatusTypeConvert;
 import com.cyberpeace.cr.crbase.constant.MissionTemplateStatus;
 import com.cyberpeace.cr.crbase.constant.NodeOperate;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
@@ -16,6 +18,7 @@ import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalMissionTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalActionProsecuteRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionLogRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionOperateContentRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateLogMapper;
@@ -93,11 +96,14 @@ public class EvalMissionController {
 
         EvalMissionTemplate evalMissionTemplate = BeanUtils.copy(evalMissionTemplateReq, EvalMissionTemplate.class);
         evalMissionTemplate.setTools(JsonUtil.toJsonString(evalMissionTemplateReq.getTools()));
+        evalMissionTemplate.setLimitTime(evalMissionTemplateReq.getLimitTime());
+        evalMissionTemplate.setStatus(MissionTemplateStatus.NOT_START);
         evalMissionTemplate.setResourceId(resourceId);
         EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
         evalMissionTemplateLog.setOperate(MissionTemplateStatus.NEW);
         evalMissionTemplateLog.setMissionId(resourceId);
         evalMissionTemplateLog.setMissionName(evalMissionTemplate.getName());
+        evalMissionTemplateLog.setTaskId(evalMissionTemplate.getTaskId());
         UserInfo userContext = UserInfoContext.getUserContext();
         evalMissionTemplateLog.setCreateUserId(userContext.getUserId());
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -114,17 +120,26 @@ public class EvalMissionController {
 
 
     private void setTaskMission(EvalInstanceMissionTemplateReq evalMissionTemplateReq, EvalTask evalTask, String resourceId) {
-        TechniqueWarfare missionScheme = JsonUtil.toJsonObject(evalTask.getTechniqueWarfare(), TechniqueWarfare.class);
-        List<MissionData> stageList = missionScheme.getTools();
-        Map<String, MissionData> stageDataMap = StreamApiUtils.toMap(stageList, MissionData::getStageName, s -> s);
-        MissionData stageData = stageDataMap.get(evalMissionTemplateReq.getStageName());
-        if (null == stageData) {
-            throw new BusinessException(CrBusinessErrorCode.ERROR_STAGE_NAME);
-        }
-        List<String> taskList = stageData.getToolBoList();
-        taskList.add(resourceId);
-        stageList.set(stageList.indexOf(stageData), stageData);
-        missionScheme.setTools(stageList);
+        String techniqueWarfare = evalTask.getTechniqueWarfare();
+        MissionScheme missionScheme = JsonUtil.toJsonObject(techniqueWarfare, MissionScheme.class);
+        List<StageData> stageList = missionScheme.getStageList();
+        String name = evalMissionTemplateReq.getName();
+        stageList.forEach(stageData -> {
+            if(stageData.getStageName().equals(evalMissionTemplateReq.getStageName())){
+                List<TaskBo> taskList = stageData.getTaskList();
+                List<String> column = StreamApiUtils.getColumn(taskList, TaskBo::getTaskName);
+                if(column.contains(name)){
+                    throw new BusinessException(ErrorCode.REPEATED_MISSION_NAME);
+                }
+                TaskBo taskBo = new TaskBo();
+                taskBo.setResourceId(resourceId);
+                taskBo.setStatus(0);
+                taskBo.setTaskId(evalTask.getResourceId());
+                taskBo.setTaskName(name);
+                taskList.add(taskBo);
+            }
+        });
+        missionScheme.setStageList(stageList);
         evalTask.setTechniqueWarfare(JsonUtil.toJsonString(missionScheme));
     }
 
@@ -134,7 +149,7 @@ public class EvalMissionController {
     public BaseRsp<EvalMissionTemplateRsp> updateMissionStatus(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
 
         EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(updateEvalMissionReq.getResourceId());
-        EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName());
+        EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId());
         Integer status = updateEvalMissionReq.getStatus();
         evalMissionTemplate.setStatus(status);
         evalMissionTemplate.setUpdateTime(new Date());
@@ -151,10 +166,11 @@ public class EvalMissionController {
         return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
     }
 
-    private EvalMissionTemplateLog updateMissionLog(String resourceId, String name) {
+    private EvalMissionTemplateLog updateMissionLog(String resourceId, String name, String id) {
         EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
         evalMissionTemplateLog.setOperate(MissionTemplateStatus.NEW);
         evalMissionTemplateLog.setMissionId(resourceId);
+        evalMissionTemplateLog.setTaskId(id);
         UserInfo userContext = UserInfoContext.getUserContext();
         evalMissionTemplateLog.setCreateUserId(userContext.getUserId());
         evalMissionTemplateLog.setMissionName(name);
@@ -163,13 +179,16 @@ public class EvalMissionController {
 
     @ApiOperation("异常数据-靶标异常")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
-    @PatchMapping("/node/abnormal")
+    @GetMapping("/node/abnormal")
     public BaseRsp<List<EvalNodeLog>> getAbnormalNode(
             @ApiParam(name = "task_id", required = true, value = "任务id") @RequestParam(value = "task_id") String taskId,
             @ApiParam(name = "node_id", required = false, value = "节点id") @RequestParam(value = "node_id") String nodeId
     ) {
         List<EvalNodeLog> evalNodeLogs = evalNodeLogMapper.selectList(null);
         List<EvalNodeLog> nodeLogList = evalNodeLogs.stream().filter(s -> s.getTaskId().equals(taskId)).collect(Collectors.toList());
+        if(nodeLogList.isEmpty()){
+            return new BaseRsp<>(new ArrayList<>());
+        }
         if (!StringUtils.isEmpty(nodeId)) {
             nodeLogList = evalNodeLogs.stream().filter(s -> s.getNodeId().equals(nodeId)).collect(Collectors.toList());
         }
@@ -179,13 +198,33 @@ public class EvalMissionController {
 
     @ApiOperation("异常数据-任务异常")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
-    @PatchMapping("/mission/abnormal")
+    @GetMapping("/mission/abnormal")
     public BaseRsp<List<EvalMissionTemplateLog>> getAbnormalMission(@ApiParam(name = "task_id", required = true, value = "任务id") @RequestParam(value = "task_id") String taskId) {
         List<EvalMissionTemplateLog> evalMissionTemplateLogs = evalMissionTemplateLogMapper.selectList(null);
+        if(evalMissionTemplateLogs.isEmpty()){
+            return new BaseRsp<>(new ArrayList<>());
+        }
         List<EvalMissionTemplateLog> templateLogList = evalMissionTemplateLogs.stream().filter(s -> s.getTaskId().equals(taskId)
                 && (s.getOperate() == MissionTemplateStatus.FAIL || s.getOperate() == MissionTemplateStatus.OVERTIME)).
                 sorted(Comparator.comparing(EvalMissionTemplateLog::getCreateTime).reversed()).collect(Collectors.toList());
         return new BaseRsp<>(templateLogList);
+    }
+
+    @ApiOperation("任务状态列表")
+    @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
+    @GetMapping("/mission/status/list")
+    public BaseRsp<List<EvalMissionOperateContentRsp>> getMissionStatusList() {
+        List<EvalMissionOperateContentRsp> rsp = new ArrayList<>();
+        List<Integer> listCode = EnumUtils.getListCode(MissionStatusTypeConvert.class);
+        listCode = listCode.stream().filter(code-> code<MissionTemplateStatus.MISSION_CONSTANT).collect(Collectors.toList());
+        listCode.forEach(code-> {
+            EvalMissionOperateContentRsp contentRsp = new EvalMissionOperateContentRsp();
+            String enumDescByCode = EnumUtils.getEnumDescByCode(code, MissionStatusTypeConvert.class);
+            contentRsp.setOperate(enumDescByCode);
+            contentRsp.setCode(code);
+            rsp.add(contentRsp);
+        });
+        return new BaseRsp<>(rsp);
     }
 
 
@@ -271,25 +310,17 @@ public class EvalMissionController {
         List<ToolBo> toolBos = JsonUtil.toJsonObjectArray(tools, ToolBo.class);
         Map<String, ToolBo> toolBoMap = StreamApiUtils.toMap(toolBos, ToolBo::getToolName, s -> s);
         String tool = manualExecutionReq.getTool();
-        for (ToolBo toolBo : toolBos) {
-
-            ToolBo toolBo1 = toolBoMap.get(tool);
-            if (toolBo1.getIsExecute() && toolBo1.getLimitTime() > 0) {
-                return new BaseRsp<>("can't be executed repeatedly");
-            }
-            toolBo1.setIsExecute(true);
-            toolBo1.setExecuteTime(new Date());
-            toolBos.set(toolBos.indexOf(toolBo), toolBo1);
+        ToolBo toolBo1 = toolBoMap.get(tool);
+        if (Boolean.TRUE.equals(toolBo1.getIsExecute()) && toolBo1.getLimitTime() > 0) {
+            return new BaseRsp<>("can't be executed repeatedly");
         }
+        toolBo1.setIsExecute(true);
+        toolBo1.setExecuteTime(new Date());
+        toolBo1.setAction(manualExecutionReq.getCommand());
+        toolBos.set(toolBos.indexOf(toolBo1), toolBo1);
         evalMissionTemplate.setTools(JsonUtil.toJsonString(toolBos));
         // 状态修改 超时单独处理--
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                evalMissionTemplateMapper.updateById(evalMissionTemplate);
-            }
-        });
+        evalMissionTemplateMapper.updateById(evalMissionTemplate);
         String res = "success";
         return new BaseRsp<>(res);
     }
@@ -299,8 +330,14 @@ public class EvalMissionController {
     @GetMapping("/missions")
     public BaseRsp<List<StageData>> getMissions(@ApiParam(name = "template_id", value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId,
                                                 @ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(value = "task_id") String taskId) {
-        EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
-        String missionsScheme = evalTemplate.getTechniqueWarfare();
+        String missionsScheme;
+        if(StringUtils.isEmpty(taskId)){
+            EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
+            missionsScheme = evalTemplate.getTechniqueWarfare();
+        } else {
+            EvalTask evalTask = evalTaskMapper.selectById(taskId);
+            missionsScheme = evalTask.getTechniqueWarfare();
+        }
         if (StringUtils.isEmpty(missionsScheme)) {
             return new BaseRsp<>(new ArrayList<>());
         }
@@ -310,21 +347,30 @@ public class EvalMissionController {
         if (null == stageList || stageList.isEmpty()) {
             return new BaseRsp<>(new ArrayList<>());
         }
+        List<EvalMissionTemplate> tmp = new ArrayList<>();
         List<StageData> collect = stageList.stream().map(stageData -> {
             List<TaskBo> taskList = stageData.getTaskList();
             List<TaskBo> taskRes = new ArrayList<>();
             for (TaskBo task : taskList) {
                 String resourceId = task.getResourceId();
                 EvalMissionTemplate evalMissionTemplate = missionTemplateMap.get(resourceId);
-                String tools = task.getTools();
+                String tools = evalMissionTemplate.getTools();
                 List<ToolBo> toolBos = JsonUtil.toJsonObjectArray(tools, ToolBo.class);
                 toolBos.forEach(toolBo -> {
                     Boolean isExecute = toolBo.getIsExecute();
                     if(Boolean.TRUE.equals(isExecute)){
-                        toolBo.setLimitTime((TimeUtil.addSeconds(toolBo.getExecuteTime(), 30)).compareTo(new Date()) > 0 ? 0 :
-                                new Long(TimeUtil.getIntervalSeconds(toolBo.getExecuteTime(), new Date())).intValue() );
+                        if(TimeUtil.addSeconds(toolBo.getExecuteTime(), 30).compareTo(new Date()) > 0){
+                            toolBo.setLimitTime((int)(TimeUtil.addSeconds(toolBo.getExecuteTime(), 30).getTime() - System.currentTimeMillis())/1000);
+                        } else{
+                            toolBo.setLimitTime(0);
+                            toolBo.setIsExecute(false);
+
+                        }
                     }
                 });
+                String jsonString = JsonUtil.toJsonString(toolBos);
+                evalMissionTemplate.setTools(jsonString);
+                tmp.add(evalMissionTemplate);
                 BeanUtils.copyProperties(evalMissionTemplate, task);
                 Integer status = task.getStatus();
                 if((status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL))
@@ -336,6 +382,7 @@ public class EvalMissionController {
             stageData.setTaskList(taskRes);
             return stageData;
         }).collect(Collectors.toList());
+        evalMissionTemplateService.updateBatchById(tmp);
         return new BaseRsp<>(collect);
     }
 

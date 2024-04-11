@@ -1,9 +1,13 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -180,34 +184,52 @@ public class EvalMissionController {
     @ApiOperation("异常数据-靶标异常")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @GetMapping("/node/abnormal")
-    public BaseRsp<List<EvalNodeLog>> getAbnormalNode(
+    public BaseRsp<Page<EvalNodeLog>> getAbnormalNode(
             @ApiParam(name = "task_id", required = true, value = "任务id") @RequestParam(value = "task_id") String taskId,
-            @ApiParam(name = "node_id", required = false, value = "节点id") @RequestParam(value = "node_id") String nodeId
+            @ApiParam(name = "node_id", required = false, value = "节点id") @RequestParam(value = "node_id") String nodeId,
+            @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase
     ) {
-        List<EvalNodeLog> evalNodeLogs = evalNodeLogMapper.selectList(null);
-        List<EvalNodeLog> nodeLogList = evalNodeLogs.stream().filter(s -> s.getTaskId().equals(taskId)).collect(Collectors.toList());
-        if(nodeLogList.isEmpty()){
-            return new BaseRsp<>(new ArrayList<>());
-        }
+        Page<EvalNodeLog> objectPage = new Page<>(pageReqBase.getPage(), pageReqBase.getPerPage());
+        QueryWrapper<EvalNodeLog> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(EvalNodeLog::getTaskId, taskId).orderByDesc(EvalNodeLog::getCreateTime);
         if (!StringUtils.isEmpty(nodeId)) {
-            nodeLogList = evalNodeLogs.stream().filter(s -> s.getNodeId().equals(nodeId)).collect(Collectors.toList());
+            queryWrapper.lambda().eq(EvalNodeLog::getNodeId,nodeId);
         }
-        nodeLogList.sort(Comparator.comparing(EvalNodeLog::getCreateTime).reversed());
-        return new BaseRsp<>(nodeLogList);
+        Page<EvalNodeLog> res = evalNodeLogMapper.selectPage(objectPage,queryWrapper);
+        List<EvalNodeLog> nodeLogList = res.getRecords();
+        res.setTotal(nodeLogList.size());
+        if(nodeLogList.isEmpty()){
+            return new BaseRsp<>(res);
+        }
+        Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
+        nodeLogList.forEach(evalNodeLog -> {
+            UserInfo userInfo = userInfoMap.get(evalNodeLog.getCreateUserId());
+            if(null == userInfo){
+                return;
+            }
+            evalNodeLog.setCreateUserId(userInfo.getUserName());
+        });
+        res.setRecords(nodeLogList);
+        return new BaseRsp<>(res);
     }
 
     @ApiOperation("异常数据-任务异常")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @GetMapping("/mission/abnormal")
-    public BaseRsp<List<EvalMissionTemplateLog>> getAbnormalMission(@ApiParam(name = "task_id", required = true, value = "任务id") @RequestParam(value = "task_id") String taskId) {
-        List<EvalMissionTemplateLog> evalMissionTemplateLogs = evalMissionTemplateLogMapper.selectList(null);
+    public BaseRsp<Page<EvalMissionTemplateLog>> getAbnormalMission(@ApiParam(name = "task_id", required = true, value = "任务id") @RequestParam(value = "task_id") String taskId,
+                                                                    @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
+        Page<EvalMissionTemplateLog> objectPage = new Page<>(pageReqBase.getPage(), pageReqBase.getPerPage());
+        QueryWrapper<EvalMissionTemplateLog> queryWrapper = new QueryWrapper<>();
+        List<Integer> operates = new ArrayList<>();
+        operates.add(MissionTemplateStatus.FAIL);
+        operates.add(MissionTemplateStatus.OVERTIME);
+        queryWrapper.lambda().eq(EvalMissionTemplateLog::getTaskId, taskId).in(EvalMissionTemplateLog::getOperate, operates).orderByDesc(EvalMissionTemplateLog::getCreateTime);
+        Page<EvalMissionTemplateLog> res = evalMissionTemplateLogMapper.selectPage(objectPage,queryWrapper);
+        List<EvalMissionTemplateLog> evalMissionTemplateLogs = res.getRecords();
         if(evalMissionTemplateLogs.isEmpty()){
-            return new BaseRsp<>(new ArrayList<>());
+            return new BaseRsp<>(res);
         }
-        List<EvalMissionTemplateLog> templateLogList = evalMissionTemplateLogs.stream().filter(s -> s.getTaskId().equals(taskId)
-                && (s.getOperate() == MissionTemplateStatus.FAIL || s.getOperate() == MissionTemplateStatus.OVERTIME)).
-                sorted(Comparator.comparing(EvalMissionTemplateLog::getCreateTime).reversed()).collect(Collectors.toList());
-        return new BaseRsp<>(templateLogList);
+        return new BaseRsp<>(res);
     }
 
     @ApiOperation("任务状态列表")
@@ -239,25 +261,29 @@ public class EvalMissionController {
     @ApiOperation("导调控制方案-操作内容")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @GetMapping("/mission/status")
-    public BaseRsp<List<EvalMissionTemplateLog>> getMissionStatus(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("task_id", resourceId);
+    public BaseRsp<Page<EvalMissionTemplateLog>> getMissionStatus(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId,
+                                                                  @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
+        Page<EvalMissionTemplateLog> objectPage = new Page<>(pageReqBase.getPage(), pageReqBase.getPerPage());
         Map<String, UserInfo> allUsers = remoteUserService.allUsers();
-        List<EvalMissionTemplateLog> logList = evalMissionTemplateLogMapper.selectByMap(map);
+        QueryWrapper<EvalMissionTemplateLog> query = new QueryWrapper<>();
+        query.lambda().eq(EvalMissionTemplateLog::getTaskId, resourceId).orderByDesc(EvalMissionTemplateLog::getCreateTime);
+        Page<EvalMissionTemplateLog> res = evalMissionTemplateLogMapper.selectPage(objectPage, query);
+        List<EvalMissionTemplateLog> logList = res.getRecords();
         logList = logList.stream().map(s -> {
             String user = s.getCreateUserId();
             UserInfo userInfo = allUsers.get(user);
             s.setCreateUserId(userInfo.getName());
             return s;
         }).collect(Collectors.toList());
-        logList.sort(Comparator.comparing(EvalMissionTemplateLog::getCreateTime).reversed());
-        return new BaseRsp<>(logList);
+        res.setRecords(logList);
+        return new BaseRsp<>(res);
     }
 
     @ApiOperation("行动监控")
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @GetMapping("/action/mission")
-    public BaseRsp<List<EvalActionProsecuteRsp>> prosecuteAction(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId) {
+    public BaseRsp<ListRsp<EvalActionProsecuteRsp>> prosecuteAction(@ApiParam(name = "resource_id", required = true, value = "资源id") @RequestParam(value = "resource_id") String resourceId,
+                                                                 @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("task_id", resourceId);
         List<EvalMissionTemplateLog> templateLogs = evalMissionTemplateLogMapper.selectByMap(map);
@@ -278,6 +304,7 @@ public class EvalMissionController {
             rsp.setOperateType(missionMap.get(evalMissionTemplateLog.getOperate()));
             UserInfo userInfo = userInfoMap.get(evalMissionTemplateLog.getCreateUserId());
             rsp.setName(userInfo.getName());
+            rsp.setCreateTime(evalMissionTemplateLog.getCreateTime());
             res.add(rsp);
         });
         evalNodeLogs.forEach(evalNodeLog -> {
@@ -290,7 +317,8 @@ public class EvalMissionController {
             res.add(rsp);
         });
         res.sort(Comparator.comparing(EvalActionProsecuteRsp::getCreateTime).reversed());
-        return new BaseRsp<>(res);
+        ListRsp<EvalActionProsecuteRsp> evalActionProsecuteRspListRsp = PageUtil.pageList(res, pageReqBase.getPage(), pageReqBase.getPerPage());
+        return new BaseRsp<>(evalActionProsecuteRspListRsp);
     }
 
 

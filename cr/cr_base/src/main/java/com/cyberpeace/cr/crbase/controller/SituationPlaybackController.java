@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,9 @@ public class SituationPlaybackController {
 	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
 	public BaseRsp<List<GuideHistoryRsp>> refresh(@RequestBody @Validated ScreenGuideHistoryReq screenGuideHistoryReq) {
 		//前端6秒调一次接口
-		screenGuideHistoryReq.setEndTime(TimeUtil.format1(TimeUtil.addSeconds(TimeUtil.toDate1(screenGuideHistoryReq.getStartTime()), screenGuideHistoryReq.getRate() * 6)));
+		if (StringUtils.isEmpty(screenGuideHistoryReq.getEndTime())) {
+			screenGuideHistoryReq.setEndTime(TimeUtil.format1(TimeUtil.addSeconds(TimeUtil.toDate1(screenGuideHistoryReq.getStartTime()), screenGuideHistoryReq.getRate() * 6)));
+		}
 		return new BaseRsp<>(guideHistoryService.getRecord(screenGuideHistoryReq));
 	}
 

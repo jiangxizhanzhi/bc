@@ -149,7 +149,7 @@ public class EvalMissionController {
     public BaseRsp<EvalMissionTemplateRsp> updateMissionStatus(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
 
         EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(updateEvalMissionReq.getResourceId());
-        EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId());
+        EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId(), updateEvalMissionReq.getStatus());
         Integer status = updateEvalMissionReq.getStatus();
         evalMissionTemplate.setStatus(status);
         evalMissionTemplate.setUpdateTime(new Date());
@@ -166,9 +166,9 @@ public class EvalMissionController {
         return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
     }
 
-    private EvalMissionTemplateLog updateMissionLog(String resourceId, String name, String id) {
+    private EvalMissionTemplateLog updateMissionLog(String resourceId, String name, String id, Integer status) {
         EvalMissionTemplateLog evalMissionTemplateLog = new EvalMissionTemplateLog();
-        evalMissionTemplateLog.setOperate(MissionTemplateStatus.NEW);
+        evalMissionTemplateLog.setOperate(status);
         evalMissionTemplateLog.setMissionId(resourceId);
         evalMissionTemplateLog.setTaskId(id);
         UserInfo userContext = UserInfoContext.getUserContext();

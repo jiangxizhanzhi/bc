@@ -5,6 +5,8 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
+import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideModifyReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
@@ -50,6 +52,9 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 	@Autowired
 	private EvalStepMapper evalStepMapper;
 
+	@Autowired
+	private SituationGuideHisMapper situationGuideHisMapper;
+
 	@Override
 	public String addSituationGuide(EvalGuideAddReq req) {
 		EvalGuideScheme evalGuideScheme = BeanUtils.copy(req, EvalGuideScheme.class);
@@ -79,8 +84,10 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 				throw new BusinessException(CrBusinessErrorCode.CANNOT_FIND_TOPO);
 			}
 			pushDataToRoomByScheme(false, topoId, evalGuideScheme);
+			addHistory(evalGuideScheme, topoId);
 		}else {
 			pushDataToRoomByScheme(true, sceneId, evalGuideScheme);
+			addHistory(evalGuideScheme, sceneId);
 		}
 	}
 
@@ -167,7 +174,28 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 		situationHandlerService.pushDataToRoom(wsMessage, wsEffect.getSceneId());
 	}
 
-	public List<String> getElementIds(String sceneId, Boolean isInstance) {
+	private void addHistory(EvalGuideScheme scheme, String sceneId) {
+		SituationGuideHistory history = new SituationGuideHistory();
+		history.setRole(null);
+		history.setTarget(scheme.getTarget());
+		history.setSource(scheme.getSource());
+		history.setResult(scheme.getResult());
+		history.setEventName(scheme.getName());
+		history.setEventType(SituationGuideScheme.EventType.ATTACK.getCode());
+		history.setCategory(scheme.getAttackType());
+		history.setSceneId(sceneId);
+		history.setGuideId(scheme.getResourceId());
+		history.setType(SituationGuideScheme.Type.MANUALLY.getCode());
+		history.setResult(scheme.getResult());
+		history.setBusinessType(5);
+		history.setMissionId(null);
+		history.setTaskId(null);
+		history.setTriggerCondition(null);
+		history.setRoomId(scheme.getTestId());
+		situationGuideHisMapper.insert(history);
+	}
+
+	private List<String> getElementIds(String sceneId, Boolean isInstance) {
 
 		SceneData sceneData;
 		if (isInstance != null && !isInstance) {

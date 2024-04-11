@@ -12,11 +12,11 @@ import java.util.List;
 @Data
 public class ScreenGuideHistoryTimeLineReq implements Serializable {
 
-	@ApiModelProperty("训练id")
+	@ApiModelProperty(value = "训练id", required = true)
 	@NotBlank
 	private String roomId;
 
-	@ApiModelProperty("训练类型(3：团队，4：红蓝)")
+	@ApiModelProperty(value = "训练类型(3：团队，4：红蓝，5:试验任务)", required = true)
 	@NotNull
 	private Integer businessType;
 

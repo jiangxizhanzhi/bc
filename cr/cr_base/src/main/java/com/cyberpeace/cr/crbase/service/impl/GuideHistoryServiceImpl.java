@@ -186,8 +186,10 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 			guideHistoryRspList.add(guideHistoryRsp);
 		}
 
-		for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
-			situationGuideService.pushDataToRoomByGuide(true, situationGuideHistory);
+		if (screenGuideHistoryReq.getPushMessage()) {
+			for (SituationGuideHistory situationGuideHistory : situationGuideHistoryList) {
+				situationGuideService.pushDataToRoomByGuide(true, situationGuideHistory);
+			}
 		}
 
 		//获取中台数据,处理数据
@@ -207,24 +209,26 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		attCk.putAll(Arrays.stream(SituationGuideScheme.DefenseUrlEnum.values())
 						   .collect(Collectors.toMap(SituationGuideScheme.DefenseUrlEnum::getMpCode, SituationGuideScheme.DefenseUrlEnum::getCode)));
 
-		for (MpEvent mpEvent : mpEventList) {
-			for (String category : mpEvent.getAttCks()) {
-				SituationGuideHistory situationGuideHistory = new SituationGuideHistory();
-				situationGuideHistory.setSceneId(sceneId);
-				situationGuideHistory.setCategory(attCk.get(category));
-				situationGuideHistory.setEventName(mpEvent.getEventName());
-				situationGuideHistory.setEventType(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getCode());
-				if (SituationGuideScheme.Type.HOST.getMpCode().equals(mpEvent.getTriggerType())) {
-					//主机采集没有源节点，将源节点和目的节点设为同一个
-					situationGuideHistory.setSource(mpEvent.getTargetNodeId());
-				} else {
-					situationGuideHistory.setSource(mpEvent.getSourceNodeId());
+		if (screenGuideHistoryReq.getPushMessage()) {
+			for (MpEvent mpEvent : mpEventList) {
+				for (String category : mpEvent.getAttCks()) {
+					SituationGuideHistory situationGuideHistory = new SituationGuideHistory();
+					situationGuideHistory.setSceneId(sceneId);
+					situationGuideHistory.setCategory(attCk.get(category));
+					situationGuideHistory.setEventName(mpEvent.getEventName());
+					situationGuideHistory.setEventType(SituationGuideScheme.EventType.getEventTypeByMpCode(mpEvent.getActionType()).getCode());
+					if (SituationGuideScheme.Type.HOST.getMpCode().equals(mpEvent.getTriggerType())) {
+						//主机采集没有源节点，将源节点和目的节点设为同一个
+						situationGuideHistory.setSource(mpEvent.getTargetNodeId());
+					} else {
+						situationGuideHistory.setSource(mpEvent.getSourceNodeId());
+					}
+					situationGuideHistory.setTarget(mpEvent.getTargetNodeId());
+					//中台没有攻击结果和归属，赋一个默认值
+					situationGuideHistory.setResult(SituationGuideScheme.ResultType.SUCCESS.getCode());
+					situationGuideHistory.setRole(SituationGuideScheme.RoleType.RED.getCode());
+					situationGuideService.pushDataToRoomByGuide(true, situationGuideHistory);
 				}
-				situationGuideHistory.setTarget(mpEvent.getTargetNodeId());
-				//中台没有攻击结果和归属，赋一个默认值
-				situationGuideHistory.setResult(SituationGuideScheme.ResultType.SUCCESS.getCode());
-				situationGuideHistory.setRole(SituationGuideScheme.RoleType.RED.getCode());
-				situationGuideService.pushDataToRoomByGuide(true, situationGuideHistory);
 			}
 		}
 

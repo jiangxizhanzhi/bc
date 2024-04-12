@@ -11,19 +11,13 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.MissionStatusTypeConvert;
-import com.cyberpeace.cr.crbase.constant.MissionTemplateStatus;
-import com.cyberpeace.cr.crbase.constant.NodeOperate;
+import com.cyberpeace.cr.crbase.constant.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.mapper.CrConstantsConfigMapper;
 import com.cyberpeace.cr.evaluation.controller.req.EvalInstanceMissionTemplateReq;
 import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
 import com.cyberpeace.cr.evaluation.controller.req.UpdateEvalMissionTemplateReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalActionProsecuteRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionLogRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionOperateContentRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionTemplateRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateLogMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateMapper;
@@ -197,10 +191,6 @@ public class EvalMissionController {
         }
         Page<EvalNodeLog> res = evalNodeLogMapper.selectPage(objectPage,queryWrapper);
         List<EvalNodeLog> nodeLogList = res.getRecords();
-        res.setTotal(nodeLogList.size());
-        if(nodeLogList.isEmpty()){
-            return new BaseRsp<>(res);
-        }
         Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
         nodeLogList.forEach(evalNodeLog -> {
             UserInfo userInfo = userInfoMap.get(evalNodeLog.getCreateUserId());
@@ -226,9 +216,14 @@ public class EvalMissionController {
         queryWrapper.lambda().eq(EvalMissionTemplateLog::getTaskId, taskId).in(EvalMissionTemplateLog::getOperate, operates).orderByDesc(EvalMissionTemplateLog::getCreateTime);
         Page<EvalMissionTemplateLog> res = evalMissionTemplateLogMapper.selectPage(objectPage,queryWrapper);
         List<EvalMissionTemplateLog> evalMissionTemplateLogs = res.getRecords();
-        if(evalMissionTemplateLogs.isEmpty()){
-            return new BaseRsp<>(res);
-        }
+        Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
+        evalMissionTemplateLogs.forEach(evalMissionTemplateLog -> {
+            UserInfo userInfo = userInfoMap.get(evalMissionTemplateLog.getCreateUserId());
+            if(null == userInfo){
+                return;
+            }
+            evalMissionTemplateLog.setCreateUserId(userInfo.getName());
+        });
         return new BaseRsp<>(res);
     }
 
@@ -244,6 +239,26 @@ public class EvalMissionController {
             String enumDescByCode = EnumUtils.getEnumDescByCode(code, MissionStatusTypeConvert.class);
             contentRsp.setOperate(enumDescByCode);
             contentRsp.setCode(code);
+            rsp.add(contentRsp);
+        });
+        return new BaseRsp<>(rsp);
+    }
+
+    @ApiOperation("节点操作列表")
+    @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
+    @GetMapping("/node/operate/list")
+    public BaseRsp<List<EvalNodeOperateContentRsp>> getNodeLogList() {
+        List<EvalNodeOperateContentRsp> rsp = new ArrayList<>();
+        List<Integer> listCode = EnumUtils.getListCode(NodeLogTypeConvert.class);
+        listCode = listCode.stream().filter(code-> code<NodeOperate.NODE_CONSTANT).collect(Collectors.toList());
+        listCode.forEach(code-> {
+            EvalNodeOperateContentRsp contentRsp = new EvalNodeOperateContentRsp();
+            String enumDescByCode = EnumUtils.getEnumDescByCode(code, NodeLogTypeConvert.class);
+            String content = Arrays.stream(NodeLogTypeConvert.class.getEnumConstants()).filter(t -> t.getCode().equals(code))
+                    .map(NodeLogTypeConvert::getContent).findFirst().orElse(null);
+            contentRsp.setOperate(enumDescByCode);
+            contentRsp.setCode(code);
+            contentRsp.setContent(content);
             rsp.add(contentRsp);
         });
         return new BaseRsp<>(rsp);

@@ -18,6 +18,30 @@ public final class NodeOperate {
 	/**
 	 * 节点重建
 	 */
+	public static final int COM = 8;
+	/**
+	 * 节点重建
+	 */
+	public static final int TELNET = 7;
+
+	/**
+	 * 节点重启
+	 */
+	public static final int NC = 6;
+
+	/**
+	 * 节点重建
+	 */
+	public static final int RDP = 5;
+
+	/**
+	 * 节点重启
+	 */
+	public static final int CONSOLE = 4;
+
+	/**
+	 * 节点重建
+	 */
 	public static final int RECREATE = 3;
 
 	/**

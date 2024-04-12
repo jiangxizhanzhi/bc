@@ -75,7 +75,7 @@ public class EvalTaskSceneController {
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	public void accessNode(@RequestBody @Validated EvalSceneNodeOpsReq nodeOpsReq) {
 
-		evalNodeLogService.logNodeOperate(nodeOpsReq, nodeOpsReq.getTaskId(), NodeOperate.ACCESS);
+		evalNodeLogService.logNodeOperate(nodeOpsReq, nodeOpsReq.getTaskId(), nodeOpsReq.getOperate());
 
 	}
 

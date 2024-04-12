@@ -8,7 +8,9 @@ public enum NodeLogTypeConvert implements MdConvertEnum<Integer, String>, Generi
 
 	SSH(0, "靶标控守变化","靶标ssh登录"),SHUTDOWN(1, "网络联通状态变化","靶标关机，网络失去连接"),
 	PAUSE(2, "网络联通状态变化","靶标重启，网络失去连接"),
-	RESUME(3, "网络联通状态变化","靶标重建，网络失去连接"), CONSOLE(4, "靶标控守变化","靶标console登录");
+	RESUME(3, "网络联通状态变化","靶标重建，网络失去连接"), CONSOLE(4, "靶标控守变化","靶标console登录"),
+	RDP(5, "靶标控守变化","靶标rdp登录"), NC(6, "靶标控守变化","靶标nc登录"),
+	TELNET(7, "靶标控守变化","靶标telnet登录"), COM(8, "靶标控守变化","靶标COM登录");
 
 	private Integer trainType;
 

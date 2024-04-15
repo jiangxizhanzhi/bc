@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateLogMapper">
 
 
-to
+
 
     <select id="getAllByTask" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionLogRsp">
         SELECT

@@ -5,11 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Data
 @ApiModel
-public class ToolUpdateReq extends ToolAddReq{
-    @ApiModelProperty("resourceId")
+public class ToolUpdateReq implements Serializable {
+
     @NotBlank
-    private String resourceId;
+    private String name;
 }

@@ -5,14 +5,14 @@
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateLogMapper">
 
 
-
+to
 
     <select id="getAllByTask" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionLogRsp">
         SELECT
             l.mission_id as resource_id,
             t.name,
             DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s') as  start_time,
-            DATE_FORMAT(t.update_time, '%Y-%m-%d %H:%i:%s') AS end_time
+            DATE_FORMAT(t.end_time, '%Y-%m-%d %H:%i:%s') AS end_time
         FROM
             cr_eval_mission_template_log as l
         left join cr_eval_mission_template as t

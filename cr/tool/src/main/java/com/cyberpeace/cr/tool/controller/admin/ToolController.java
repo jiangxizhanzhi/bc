@@ -122,7 +122,7 @@ public class ToolController {
 
 	@ApiOperation("工具下载")
 	@PostMapping("/download")
-	@RequiresPermissions(MenuConstant.CMS_TOOL)
+	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
 	public BaseRsp<String> download(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
 
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,

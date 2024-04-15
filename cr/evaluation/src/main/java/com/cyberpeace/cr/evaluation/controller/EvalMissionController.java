@@ -151,6 +151,9 @@ public class EvalMissionController {
         Integer status = updateEvalMissionReq.getStatus();
         evalMissionTemplate.setStatus(status);
         evalMissionTemplate.setUpdateTime(new Date());
+        if(status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL)){
+            evalMissionTemplate.setEndTime(new Date());
+        }
         // 状态修改 超时单独处理--
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

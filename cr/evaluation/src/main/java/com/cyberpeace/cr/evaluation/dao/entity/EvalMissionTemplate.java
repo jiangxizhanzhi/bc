@@ -1,11 +1,11 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 @TableName("cr_eval_mission_template")
@@ -34,4 +34,7 @@ public class EvalMissionTemplate extends BaseTable {
 
 	@ApiModelProperty("任务状态，默认未开始")
 	private Integer status;
+
+	@ApiModelProperty("结束时间")
+	private Date endTime;
 }

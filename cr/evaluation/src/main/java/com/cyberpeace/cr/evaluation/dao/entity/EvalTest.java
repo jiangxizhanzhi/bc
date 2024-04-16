@@ -86,6 +86,11 @@ public class EvalTest extends AuthTable {
 	 */
 	private String currentInstanceId;
 
+	/**
+	 * superset大屏id
+	 */
+	private String dashboardId;
+
 	public List<String> getAuthList() {
 		return JsonUtil.toJsonObjectArray(this.getOperationAuthIds(), String.class);
 	}

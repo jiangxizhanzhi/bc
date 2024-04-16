@@ -1,14 +1,20 @@
 package com.cyberpeace.config.auth;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
-
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.InvalidParamException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.exception.evaluate.SupersetServiceException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.LocalStringUtil;
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -21,21 +27,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.LocalStringUtil;
-import com.google.common.collect.Maps;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
@@ -105,6 +103,8 @@ public class ExceptionFilter implements Filter {
 			parseBusinessException(servletResponse, (BusinessException) e);
 		} else if (e instanceof HttpRequestMethodNotSupportedException) {
 			notSupportedException(servletResponse);
+		} else if (e instanceof SupersetServiceException) {
+			parseSupersetServiceException(servletResponse, (SupersetServiceException) e);
 		}
 		else {
 			dealDefaultError(servletResponse);
@@ -139,6 +139,18 @@ public class ExceptionFilter implements Filter {
 					e.getMessage());
 		}
 		parseBusinessException(httpServletResponse, businessException);
+	}
+
+	/**
+	 * 调用superset服务错误
+	 * @param httpServletResponse
+	 */
+	private void parseSupersetServiceException(HttpServletResponse httpServletResponse,
+											 SupersetServiceException e) {
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setCode("OJ-010000");
+		errorInfo.setMessage(e.getMessage());
+		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
 	/**

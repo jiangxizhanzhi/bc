@@ -1,5 +1,6 @@
 package com.cyberpeace.common.model;
 
+import com.cyberpeace.common.context.SessionToken;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.common.constant.WebConstant;
@@ -9,6 +10,7 @@ public class CommonContext {
 	private static final ThreadLocal<String> languageContext = new ThreadLocal<>();
 	private static final ThreadLocal<String> ipContext = new ThreadLocal<>();
 	private static final ThreadLocal<String> authorizationContext = new ThreadLocal<>();
+	private static final ThreadLocal<SessionToken> sessionTokenContext = new ThreadLocal<>();
 
 	private CommonContext() {
 	}
@@ -55,5 +57,13 @@ public class CommonContext {
 
 	public static boolean isChinese() {
 		return StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_ZH);
+	}
+
+	public static void setSessionTokenContext(SessionToken sessionToken) {
+		sessionTokenContext.set(sessionToken);
+	}
+
+	public static SessionToken getSessionTokenContext() {
+		return sessionTokenContext.get();
 	}
 }

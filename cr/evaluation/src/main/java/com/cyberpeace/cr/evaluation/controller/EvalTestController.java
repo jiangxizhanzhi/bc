@@ -95,9 +95,15 @@ public class EvalTestController {
 		return new BaseRsp<>(evalTestRsp);
 	}
 
-	@ApiOperation("删除试验实例")
+	@ApiOperation("删除试验任务")
 	@DeleteMapping("")
-	public BaseRsp<Boolean> delete(@ApiParam(name = "instance_id", value = "试验实例id", required = true) @RequestParam(name = "instance_id") String instanceId) {
+	public BaseRsp<Boolean> delete(@ApiParam(name = "test_id", value = "试验id", required = true) @RequestParam(name = "test_id") String testId) {
+		return new BaseRsp<>(evalTestService.deleteTest(testId));
+	}
+
+	@ApiOperation("删除试验实例")
+	@DeleteMapping("/instance")
+	public BaseRsp<Boolean> deleteInstance(@ApiParam(name = "instance_id", value = "试验实例id", required = true) @RequestParam(name = "instance_id") String instanceId) {
 		return new BaseRsp<>(evalTestInstanceService.deleteTestInstance(instanceId));
 	}
 
@@ -136,6 +142,13 @@ public class EvalTestController {
 			return new BaseRsp<>(evalTestInstanceService.stopInstance(evalTestStopReq.getTestId(),
 					evalTestStopReq.getInstanceId(), evalTestStopReq.getInstanceName()));
 		}
+	}
+
+	@ApiOperation("获取大屏链接")
+	@GetMapping("/dashboard_permalink")
+	public BaseRsp<String> getDashboardPermalink(@ApiParam(name = "test_id", value = "试验id", required = true)
+													 @RequestParam(name = "test_id") String testId) {
+		return new BaseRsp<>(evalTestService.getDashboardPermalink(testId));
 	}
 
 	@ApiOperation("查询阶段导调")

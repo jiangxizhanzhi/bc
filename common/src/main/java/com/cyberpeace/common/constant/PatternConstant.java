@@ -106,5 +106,11 @@ public final class PatternConstant {
 	/** 匹配<p></p>标签*/
 	public static final String HTML_P = "<p>(?:(?!<\\/p>)[\\s\\S])*<\\/p>";
 
+	/** 匹配superset登录接口csrf_token */
+	public static final String CSRF_TOKEN = "value=\".*?\"";
+
+	/** 匹配session */
+	public static final String SESSION = "session=.*?;";
+
 	private PatternConstant() {}
 }

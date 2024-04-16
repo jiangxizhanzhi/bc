@@ -505,5 +505,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String RUNNING_EVAL_STEP_EXIST = "101146";
 
+	/**
+	 * 试验任务绑定的大屏未发布
+	 */
+	public static final String DASHBOARD_NOT_PUBLISH = "101147";
+
 	private CrBusinessErrorCode() {}
 }

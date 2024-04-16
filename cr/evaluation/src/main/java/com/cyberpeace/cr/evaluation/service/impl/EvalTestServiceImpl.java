@@ -34,6 +34,7 @@ import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteSupersetService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +45,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -87,6 +85,9 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 	@Autowired
 	private EvalInstanceStepService evalInstanceStepService;
 
+	@Autowired
+	private RemoteSupersetService remoteSupersetService;
+
 	@Override
 	public String createByTemplate(EvalTestAddReq evalTestAddReq) {
 		EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(evalTestAddReq.getCloudTemplateId());
@@ -97,6 +98,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 		evalTest.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTest.setTopoId(localSceneService.copyTopo(evalCloudTemplate.getTopoId(), evalTestAddReq.getName()));
 		evalTest.setTemplateName(evalCloudTemplate.getName());
+		evalTest.setDashboardId(remoteSupersetService.createDashboard(evalTestAddReq.getName()));
 
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -167,6 +169,39 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 		}
 
 		return evalTest;
+	}
+
+	@Override
+	public Boolean deleteTest(String testId) {
+		List<String> instanceIds = evalTestInstanceMapper.selectIdsByTestIdAndStatus(testId, null);
+		for (String instanceId : instanceIds) {
+			evalTestInstanceService.deleteTestInstance(instanceId);
+		}
+		EvalTest evalTest = evalTestMapper.selectById(testId);
+		if (StringUtils.isNotEmpty(evalTest.getTopoId())) {
+			try {
+				remoteTopoService.deleteById(evalTest.getTopoId());
+			} catch (Exception e) {
+				log.error("Evaluate test delete topo fail! testId=[{}], topoId=[{}], catch error:", testId, evalTest.getTopoId(), e);
+			}
+			try {
+				remoteSupersetService.deleteDashboard(Arrays.asList(evalTest.getDashboardId()));
+			} catch (Exception e) {
+				log.error("Evaluate test delete dashboard fail! testId=[{}], dashboardId=[{}], catch error:", testId, evalTest.getDashboardId(), e);
+			}
+		}
+		evalTestMapper.deleteById(testId);
+		return true;
+	}
+
+	@Override
+	public String getDashboardPermalink(String testId) {
+		JSONObject dashboardDetail = remoteSupersetService.getDashboardDetail(testId);
+		if (!dashboardDetail.getBoolean("published")) {
+			throw new BusinessException(CrBusinessErrorCode.DASHBOARD_NOT_PUBLISH);
+		}
+		JSONObject permalink = remoteSupersetService.getDashboardPermalink(testId);
+		return permalink.getString("url");
 	}
 
 	@Override

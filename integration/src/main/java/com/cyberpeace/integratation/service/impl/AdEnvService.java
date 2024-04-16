@@ -12,14 +12,11 @@ import javax.annotation.PostConstruct;
 @Service
 public class AdEnvService {
 
-	private String AD_HOST;
-
-	private String AD_PORT;
-
 	private String AD_URL;
 
 	public String getAdHost() {
-		if (StringUtils.isBlank(AD_HOST)) {
+		if (StringUtils.isBlank(AD_URL)) {
+			log.warn("compose yml AD_HOST not set");
 			return CommonConstant.EMPTY_STRING;
 		}
 		return AD_URL;
@@ -27,10 +24,15 @@ public class AdEnvService {
 
 	@PostConstruct
 	public void init() {
-		AD_HOST = SystemPropUtil.getProp("AD_HOST");
-		AD_PORT = SystemPropUtil.getProp("AD_PORT");
-		AD_URL = "http://" + AD_HOST + ":" + AD_PORT;
+		String AD_HOST = SystemPropUtil.getProp("AD_HOST");
+		// 竞赛模块不一定要存在
+		if (!StringUtils.isBlank(AD_HOST) && !AD_HOST.startsWith("http")) {
+			log.error("AD_HOST [{}] not starts with http!", AD_HOST);
+			throw new Error();
+		}
+		// 5.5+ 版本修改，和drm变量共用
+		AD_URL = AD_HOST;
 
-		log.info("ad host=[{}], port=[{}]", AD_HOST, AD_PORT);
+		log.info("ad url=[{}]", AD_URL);
 	}
 }

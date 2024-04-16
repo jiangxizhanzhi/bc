@@ -26,6 +26,7 @@ public class MpEnvService {
 			log.error("[{}] not starts with http!", MP_HOST);
 			throw new Error();
 		}
+		// 5.5+ 版本修改和drm变量共用
 		MP_URL = MP_HOST;
 
 		log.info("mp url=[{}]", MP_URL);

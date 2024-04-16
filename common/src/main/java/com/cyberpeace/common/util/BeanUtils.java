@@ -3,7 +3,6 @@ package com.cyberpeace.common.util;
 import java.util.List;
 
 import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 /**
@@ -11,6 +10,8 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
  * @author yinqingrong
  */
 public class BeanUtils {
+
+	public static MapperFacade mapper = new DefaultMapperFactory.Builder().build().getMapperFacade();
 
 	private BeanUtils() {}
 
@@ -39,10 +40,6 @@ public class BeanUtils {
 	 * @return
 	 */
 	public static <S, T> T deepCopy(S source, Class<T> target) {
-		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-
-		MapperFacade mapper = mapperFactory.getMapperFacade();
-
         return mapper.map(source, target);
 	}
 
@@ -55,9 +52,7 @@ public class BeanUtils {
 	 * @return
 	 */
 	public static <S, T> List<T> deepCopyList(List<S> source, Class<T> target) {
-		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-
-		return mapperFactory.getMapperFacade().mapAsList(source, target);
+		return mapper.mapAsList(source, target);
 	}
 
 	/**

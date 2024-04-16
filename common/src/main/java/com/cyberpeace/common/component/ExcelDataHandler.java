@@ -67,7 +67,7 @@ public class ExcelDataHandler {
 				// 关不掉算了
 				log.error("excel fileInputStream close failed!  catch error:", e2);
 			}
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL, filePath);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class ExcelDataHandler {
 				// 关不掉这个没办法了
 			}
 			log.error("excel fileInputStream close failed!  filePath =[{}],sheetName=[{}]",filePath,sheetName);
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL, filePath);
 		}
 	}
 

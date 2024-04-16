@@ -54,7 +54,7 @@ public class MdTheoryParser {
 	public void setFile(String file) {
 		if (StringUtils.isBlank(file) || !new File(file).exists()) {
 			log.error("File not exist! file_path=[{}]", file);
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL, file);
 		}
 
 		content = FileUtil.listContent(new File(file));
@@ -66,7 +66,7 @@ public class MdTheoryParser {
 			return doRead(cls);
 		} catch (IllegalAccessException e) {
 			log.error("Markdown file to entity failed! cls=[{}], catch error:", cls.getName(), e);
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL, cls.getName());
 		}
 	}
 

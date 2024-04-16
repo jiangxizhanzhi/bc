@@ -144,6 +144,12 @@ public class LocalStringUtil {
 		return strList;
 	}
 
+	public static boolean getMatchStrBool(String content, String regex) {
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(content);
+		return matcher.find();
+	}
+
 	/**
 	 * 根据正则表达是获取内容中的匹配数据 仅匹配一个
 	 * @param content

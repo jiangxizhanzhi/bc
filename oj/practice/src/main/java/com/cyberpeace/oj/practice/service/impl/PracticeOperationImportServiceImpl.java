@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -11,7 +12,6 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
@@ -88,6 +88,11 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	public PracticeOperation parseLessonPracticeCtf(String path, Map<String, String> envReqs,
 			PracticeSet practiceSet) {
 		File operationFile = new File(path, ResourceImportConstant.README_NAME);
+		if (!operationFile.isFile()) {
+			log.error("Invalid practice file not found [{}]", operationFile.getAbsolutePath());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, operationFile.getAbsolutePath(), "文件未找到");
+		}
+
 		JSONObject operationData = MdUtil.parseJsonMarkdown(operationFile);
 
 		JSONObject convertData = JsonUtil.filedConvert(operationData,
@@ -99,7 +104,7 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 				.getAbsolutePath();
 		List<String> fileNames = FileUtil.listFileNamesByDir(attachmentPath, false);
 		PracticeOperation operation = jsonParseOperation(convertData, practiceSet, topoId,
-				fileNames);
+				fileNames, operationFile.getAbsolutePath());
 
 		practiceValidateHandler.validateAttachmentLength(operation.getTitle(),
 				operation.getDynamicFlag(), fileNames);
@@ -135,6 +140,10 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	public PracticeOperation parseRmCtf(String path, Map<String, String> envReqs,
 			PracticeSet practiceSet) {
 		File operationFile = new File(path, ResourceImportConstant.README_NAME);
+		if (!operationFile.isFile()) {
+			log.error("ctf practice README.md file not found, file is [{}]", operationFile.getAbsolutePath());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, operationFile.getAbsolutePath(), "文件没有找到");
+		}
 		JSONObject operationData = MdUtil.parseJsonMarkdown(operationFile);
 
 		JSONObject convertData = JsonUtil.filedConvert(operationData,
@@ -146,13 +155,14 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 				.getAbsolutePath();
 		List<String> fileNames = FileUtil.listFileNamesByDir(attachmentPath, false);
 		PracticeOperation operation = jsonParseOperation(convertData, practiceSet, topoId,
-				fileNames);
+				fileNames, operationFile.getAbsolutePath());
 
 		// 校验实操习题标题
 		practiceValidateHandler.validateOperationTitleExist(practiceSet.getResourceId(),
-				operation.getTitle());
+				operation.getTitle(), operationFile.getAbsolutePath());
+
 		practiceValidateHandler.validateAttachmentLength(operation.getTitle(),
-				operation.getDynamicFlag(), fileNames);
+				operation.getDynamicFlag(), fileNames, operationFile.getAbsolutePath());
 
 		// 附件处理
 		List<String> attachments = FileUtil.listDirs(attachmentPath, true);
@@ -189,15 +199,15 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 * @return
 	 */
 	private PracticeOperation jsonParseOperation(JSONObject operationData, PracticeSet practiceSet,
-			String topoId, List<String> attachments) {
+			String topoId, List<String> attachments, String operationFilePath) {
 
 		PracticeOperation operation = new PracticeOperation();
 		// 分类数据处理
 		String categoryName = ((String) operationData.remove("category_id")).trim();
 		if (StringUtils.isBlank(categoryName)) {
-			log.error("Practice category is empty! operation_data=[{}]",
-					JsonUtil.toJsonString(operationData));
-			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);
+			log.error("Practice category is empty! filePath is[{}],  operation_data=[{}]",
+					operationFilePath, JsonUtil.toJsonString(operationData));
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, operationFilePath, "方向不能为空");
 		}
 		String categoryId = practiceCategoryMapper
 				.selectByName(PracticeCategory.PracticeType.OPERATION.getCode(), categoryName);
@@ -242,6 +252,11 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		// 难度处理
 		String difficultyStr = (String) operationData.remove("difficulty");
 		Integer difficulty = EnumUtils.getEnumCodeByDesc(difficultyStr, Difficulty.class);
+		if (difficulty == null) {
+			log.error("Invalid practice difficulty!, difficulty is [{}]", difficultyStr);
+			final List<String> listDesc = EnumUtils.getListDesc(Difficulty.class);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, operationFilePath, "难度不在范围" + listDesc.toString());
+		}
 		operation.setDifficulty(difficulty);
 
 		operation.setScore(CommonConstant.HUNDRED.doubleValue());

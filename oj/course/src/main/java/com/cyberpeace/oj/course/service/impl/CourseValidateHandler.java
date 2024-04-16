@@ -221,13 +221,13 @@ public class CourseValidateHandler {
 	 * @param course
 	 * @return
 	 */
-	public Course validateCourseName2NumExist(Course course) {
+	public Course validateCourseName2NumExist(Course course, String path) {
 		String courseId = courseMapper.selectByName(course.getName());
 		if (!StringUtils.isEmpty(courseId) && !StringUtils.equals(course.getResourceId(), courseId)){
 			log.error(
 					"The course name=[{}] already exists! import course num=[{}], exists course num=[{}]",
 					course.getName(), course.getResourceId(), courseId);
-			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, path, "课程名称已存在:" + course.getName());
 		}
 
 		Course courseExist = courseMapper.selectByCourseNum(course.getCourseNum());
@@ -235,7 +235,7 @@ public class CourseValidateHandler {
 		if (null != courseExist && !StringUtils.equals(course.getName(), courseExist.getName())) {
 			log.error("Course num=[{}] exists! import course name=[{}], exists course name=[{}]",
 					course.getCourseNum(), course.getName(), courseExist.getName());
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NUM_IS_EXIST);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, path, "课程编号已存在:" + course.getCourseNum());
 		}
 		return courseExist;
 	}

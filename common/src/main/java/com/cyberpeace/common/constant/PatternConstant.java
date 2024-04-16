@@ -106,5 +106,7 @@ public final class PatternConstant {
 	/** 匹配<p></p>标签*/
 	public static final String HTML_P = "<p>(?:(?!<\\/p>)[\\s\\S])*<\\/p>";
 
+	public static final String LOWER_CASE_LETTER = "[a-z]";
+
 	private PatternConstant() {}
 }

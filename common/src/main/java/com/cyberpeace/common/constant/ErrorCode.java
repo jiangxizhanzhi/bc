@@ -194,4 +194,10 @@ public final class ErrorCode {
 	public static final String FAILED_TO_GET_HTML_TEMPLATE_INSTANCE = "100061";
 
 	private ErrorCode() {}
+
+	/**导入错误格式 */
+	public static final String IMPORT_RESOURCE_ERROR = "104121";
+
+	/** 演示环境禁止增删改 */
+	public static final String DEMONSTRATION_FORBID_UPDATE = "104021";
 }

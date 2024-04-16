@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.model.mp.MpHostState;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.impl.TraceIdContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +26,6 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ListUtil;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -78,7 +79,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			switchRecording(localScene.getTopoId(), localScene.getRecord());
 		}
 
+		checkDemonstration();
 		SceneStartContext startContext = getSceneStartContext(localScene);
+
 
 		return remoteSceneService.startScene(startContext);
 	}
@@ -148,6 +151,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean stopScene(LocalScene localScene) {
+		checkDemonstration();
 		if (null == localScene) {
 			return false;
 		}
@@ -273,6 +277,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean pauseScene(String localSceneId) {
+		checkDemonstration();
 		LocalScene localScene = getById(localSceneId);
 		// 1. 场景已暂停，返回true
 		return pauseScene(localScene);
@@ -280,6 +285,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean unpauseScene(String localSceneId) {
+		checkDemonstration();
 		LocalScene localScene = getById(localSceneId);
 		// 1、 确认场景处于暂停状态，可以恢复
 		return unpauseScene(localScene);
@@ -399,6 +405,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public void deleteRemoteScene(LocalScene localScene) {
+		checkDemonstration();
 		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
 		remoteSceneService.stopScene(sceneOpsContext);
 	}
@@ -593,6 +600,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public void updateScene(LocalScene localScene, JSONObject updateScene) {
+		checkDemonstration();
 		SceneUpdateContext context = getSceneUpdateContext(localScene);
 		context.setUpdate_scene(updateScene);
 		remoteSceneService.updateScene(context);
@@ -737,6 +745,17 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		if (null == localScene) {
 			log.error("localScene is null,sceneId =[{}]", sceneId);
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+	}
+
+	private void checkDemonstration() {
+		RemoteUserService remoteUserService= SpringContextUtil
+				.getBeanByClass(RemoteUserService.class);
+		Boolean demoOpen= remoteUserService.isDemoOpen();
+		if (Boolean.TRUE.equals(demoOpen)
+				&& Boolean.TRUE.equals(!ThreadLocalContext.whiteUpdateThreadLocal.get())) {//如果是演示模式且不允许访问数据库 直接返回
+
+			throw new BusinessException(ErrorCode.DEMONSTRATION_FORBID_UPDATE);
 		}
 	}
 }

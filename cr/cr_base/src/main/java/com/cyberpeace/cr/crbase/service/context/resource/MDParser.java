@@ -9,6 +9,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.AuthTable;
@@ -257,12 +259,13 @@ public class MDParser {
 
 	private TrainingTemplateContext templateContext = new TrainingTemplateContext();
 
-	private IndustrySituationConfig situationConfig;
 
+	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(() -> "");
 
-	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(()->"");
-	//字段
+	// 字段
 	public static ThreadLocal<String> fieldErrorMsg = ThreadLocal.withInitial(() -> "");
+
+	private IndustrySituationConfig situationConfig;
 
 	public MDParser(String dirPath, String topoId) {
 		this.dirPath = dirPath;
@@ -283,10 +286,7 @@ public class MDParser {
 	public void loadDealError(String businessTemplateId) {
 		try {
 			load(businessTemplateId);
-		} catch (Exception e) {
-			throw new RemoteServiceException("file parse Exception file: " + fileErrorMsg.get()
-					+ "  filed: " + fieldErrorMsg.get());
-		} finally {
+		}  finally {
 			fileErrorMsg.remove();
 			fieldErrorMsg.remove();
 		}
@@ -300,14 +300,20 @@ public class MDParser {
 		Map<String, String> data = parseText(baseText, LINE_SEP + H3,
 				ZiguanConstants.TEMPLATE_BASE_INFO_FIELDS);
 		// type
-		businessTemplate.setBusinessType(
-				ZiguanConstants.CE_TYPE_MAPPING.get(data.get(ZiguanConstants.TYPE)));
+		Integer businessType = ZiguanConstants.CE_TYPE_MAPPING.get(data.get(ZiguanConstants.TYPE));
+		if (businessType == null) {
+			String businessTypeString = String.join(",", ZiguanConstants.CE_TYPE_MAPPING.keySet());
+			log.error("invalid businessType! businessType is[{}]", businessType);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "场景类型不在范围内" + businessTypeString);
+		}
+		businessTemplate.setBusinessType(businessType);
 		// difficulty
 		Integer difficulty = ZiguanConstants.DIFFICULTY_CHOICE
 				.get(data.get(ZiguanConstants.DIFFICULTY));
 		if (difficulty == null) {
 			log.error("Invalid difficulty! difficulty = [{}]", difficulty);
-			throw new BusinessException(CrBusinessErrorCode.INVALID_DIFFICULTY);
+			String difficultString = String.join(",", ZiguanConstants.DIFFICULTY_CHOICE.keySet());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "难度不在范围" + difficultString);
 		}
 		businessTemplate.setDifficulty(difficulty);
 		// category
@@ -315,13 +321,19 @@ public class MDParser {
 				.get(data.get(ZiguanConstants.CATEGORY));
 		if (category == null) {
 			log.error("Invalid training category! category is null");
-			throw new BusinessException(CrBusinessErrorCode.INVALID_TRAINING_CATEGORY);
+			String categoryString = String.join(",", ZiguanConstants.BUSINESS_CATEGORIES.keySet());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "训练类型不在范围内" + categoryString);
 		}
 		templateContext.setSubType(category);
 		// duration time
-		templateContext.setDurationTime(new Integer(data.get(ZiguanConstants.DURATION_TIME)));
+		Integer durationTime = data.get(ZiguanConstants.DURATION_TIME) != null ? new Integer(data.get(ZiguanConstants.DURATION_TIME)): 4;
+		templateContext.setDurationTime(durationTime);
 		// pre skill
 		String[] preSkills = data.get(ZiguanConstants.PRE_SKILL).split(LINE_SEP);
+		if (preSkills.length == 0) {
+			log.error("pre_skill length is 0");
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, fileErrorMsg.get(), "前置技能不能为空");
+		}
 		for (int i = 0; i < preSkills.length; i++) {
 			preSkills[i] = preSkills[i].substring(2).trim();
 		}

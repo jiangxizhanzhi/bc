@@ -56,6 +56,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String USERINFO_IDS_URL;
 
+	private String BLACK_ENABLE_URL;
+
 	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(15, TimeUnit.MINUTES)
 			.build(new CacheLoader<String, List<UserInfo>>() {
@@ -85,6 +87,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		AUTH_PERMISSION_MENUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
 		USERINFO_IDS_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("userinfo.ids");
+		BLACK_ENABLE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.auth.blacklist.enabled");
 	}
 
 	@Override
@@ -287,6 +290,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			return userInfo;
 		}
 		return null;
+	}
+
+	@Override
+	public Boolean isDemoOpen() {
+		return HttpClientUtil.rawGet(BLACK_ENABLE_URL, Boolean.class);
 	}
 
 	/**

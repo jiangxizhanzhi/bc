@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.sql.Wrapper;
 import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
@@ -17,7 +17,6 @@ import com.cyberpeace.oj.practice.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -127,18 +126,23 @@ public class CourseImportServiceImpl implements CourseImportService {
 		File markdownFile = new File(path, ResourceImportConstant.README_NAME);
 		if (!markdownFile.exists() || markdownFile.isDirectory()) {
 			log.error("Markdown file not found! path=[{}]", markdownFile.getAbsolutePath());
-			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, markdownFile.getAbsolutePath(), "文件未找到");
 		}
 		JSONObject markdownValue = MdUtil.parseJsonMarkdown(markdownFile);
 
 		// 解析数据转换 由markdown的key-value转换为数据库对应数据
 		JSONObject convertValue = JsonUtil.filedConvert(markdownValue,
 				ResourceImportConstant.COURSE_DATA_MAPPING);
-		Course course = jsonParseCourse(convertValue);
+		Course course = jsonParseCourse(convertValue, markdownFile.getAbsolutePath());
 
 		// 课程存在性校验
 		log.info("Start validate course number....");
-		courseValidateHandler.validateCourseName2NumExist(course);
+		courseValidateHandler.validateCourseName2NumExist(course, markdownFile.getAbsolutePath());
+
+		if (LocalStringUtil.getMatchStrBool(course.getResourceId(), PatternConstant.LOWER_CASE_LETTER)) {
+			log.error("course num not lower, [{}]", course.getResourceId());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, markdownFile.getAbsolutePath(), "编号不支持小写");
+		}
 
 		// 用户修改
 		course.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
@@ -188,11 +192,17 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 * @param jsonObject
 	 * @return
 	 */
-	private Course jsonParseCourse(JSONObject jsonObject) {
+	private Course jsonParseCourse(JSONObject jsonObject, String path) {
 
 		// 计算难度值
 		String difficulty = (String) jsonObject.remove("difficulty");
 		Integer code = EnumUtils.getEnumCodeByDesc(difficulty, Course.Difficulty.class);
+		if (code == null) {
+			log.error("Invalid  difficulty! code is null");
+			List<String> listDesc = EnumUtils.getListDesc(Course.Difficulty.class);
+			String difficultyString = String.join(",", listDesc);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, path, "难度不在范围内" + difficultyString);
+		}
 
 		// 类型转换
 		Course course = jsonObject.toJavaObject(Course.class);
@@ -221,9 +231,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 				// 校验课时名称重复性
 				if (null != nameMap.putIfAbsent(courseLesson.getName(),
 						courseLesson.getResourceId())) {
-					log.error("Lesson name exist! course_path=[{}], lesson_path=[{}]", path,
-							lessonPath);
-					throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+					log.error("Lesson name exist! lesson_path=[{}]", lessonPath);
+					throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, lessonPath, "课时名称重名" + courseLesson.getName());
 				}
 				return courseLesson;
 			});
@@ -245,7 +254,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 	private CourseLesson doParseLesson(String lessonPath, Course course,
 			Map<String, String> envReqs) {
 		log.info("Start parsing lesson information! lesson_path=[{}]", lessonPath);
-		CourseLesson courseLesson=null;
+		CourseLesson courseLesson;
 		try {
 
 			courseLesson= parseLesson(lessonPath, course, envReqs);
@@ -292,7 +301,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 解析课时数据
 		File file = new File(path, ResourceImportConstant.README_NAME);
 		if (!file.exists()) {
-			return null;
+			log.error("file not found, file is [{}]", file.getAbsolutePath());
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, file.getAbsolutePath(), "文件未找到");
 		}
 		JSONObject jsonMarkdown = MdUtil.parseJsonMarkdown(file);
 
@@ -301,7 +311,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 				ResourceImportConstant.LESSON_DATA_MAPPING);
 
 		// 解析课时数据
-		CourseLesson courseLesson = jsonParseLesson(filedConvert);
+		CourseLesson courseLesson = jsonParseLesson(filedConvert, file.getAbsolutePath());
 
 		// 解析附件
 		List<String> attachmentList = FileUtil.listDirs(
@@ -443,17 +453,34 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 * @param jsonObject
 	 * @return
 	 */
-	private CourseLesson jsonParseLesson(JSONObject jsonObject) {
+	private CourseLesson jsonParseLesson(JSONObject jsonObject, String lessonReadmePath) {
 
 		String difficulty = (String) jsonObject.remove("difficulty");
 		Integer difficultyCode = EnumUtils.getEnumCodeByDesc(difficulty, Difficulty.class);
+
+		if (difficultyCode == null) {
+			log.error("Invalid lesson difficulty! difficulty = [{}]", difficulty);
+			List<String> listDifficultyDesc = EnumUtils.getListDesc(Difficulty.class);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, lessonReadmePath, "难度不在范围:" + listDifficultyDesc.toString());
+		}
 
 		String compulsory = (String) jsonObject.remove("compulsory");
 		Integer compulsoryCode = EnumUtils.getEnumCodeByDesc(compulsory,
 				CourseLesson.CompulsoryType.class);
 
+		if (compulsoryCode == null) {
+			log.error("Invalid lesson compulsory! compulsory=[{}]", compulsory);
+			List<String> listCompulsoryDesc = EnumUtils.getListDesc(CourseLesson.CompulsoryType.class);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, lessonReadmePath, "学习类型不在范围：" + listCompulsoryDesc.toString());
+		}
+
 		String type = (String) jsonObject.remove("type");
 		Integer typeCode = EnumUtils.getEnumCodeByDesc(type, CourseLesson.LessonType.class);
+		if (typeCode == null) {
+			log.error("Invalid lesson type! type=[{}]", type);
+			List<String> listTypeDesc = EnumUtils.getListDesc(CourseLesson.LessonType.class);
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, lessonReadmePath, "课时类型不在范围:" + listTypeDesc.toString());
+		}
 
 		CourseLesson courseLesson = jsonObject.toJavaObject(CourseLesson.class);
 		courseLesson.setType(typeCode);
@@ -535,7 +562,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 					log.error(
 							"Course directory name and course name are inconsistent! course_path=[{}], lesson_dir=[{}]",
 							path, lessonPath);
-					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR);
+					throw new BusinessException(OjBusinessErrorCode.LESSON_DIR_NAME_ERROR, lessonPath);
 				}
 				LessonConfig lessonConfig = LessonConfig.builder().courseId(course.getResourceId())
 						.parentId(chapterConfig.getResourceId()).resourceId(IDGeneratorUtil.getID())
@@ -1017,7 +1044,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 				if (null != lessonNameMap.putIfAbsent(lessonName, courseLesson.getResourceId())) {
 					log.error("Lesson name exist! course_name=[{}], lesson_path=[{}]",
 							courseInfo.getCourseName(), courseInfo.getPath());
-					throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+					throw new BusinessException(OjBusinessErrorCode.RESOURCE_IS_EXIST, courseInfo.getPath() + File.separator + lessonName);
 				}
 				lessons.add(courseLesson);
 			}

@@ -1,7 +1,17 @@
 [
-  "/ojj/oj/admin/course",
+  "/ojj/oj/admin/course:GET",
   "/ojj/oj/lesson",
   "/ojj/cr/red_vs_blue/referee/evaluation/badge/click",
   "/ojj/cr/training_team/training_team_teacher/evaluation/badge/click",
-  "/ojj/oj/course"
+  "/ojj/oj/course",
+  "/ojj/rtks/training-plan/getRoleDetailRes",
+  "/ojj/oj/web/paper/create",
+  "/ojj/oj/practice/operation/scene",
+  "/ojj/oj/lesson/start_scene",
+  "/ojj/oj/practice/operation/scene_update_status",
+  "/ojj/oj/lesson/update_status",
+  "/ojj/oj/admin/class/group_info/get",
+  "/ojj/oj/course/class/room/sign_in/",
+  "/ojj/situation/scene_config",
+  "/ojj/oj/lesson/delete_scene"
 ]

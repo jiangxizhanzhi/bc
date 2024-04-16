@@ -30,9 +30,6 @@ public class BasicValidationRealm extends AuthorizingRealm {
     @Autowired
     private UserRelateService userRelateService;
 
-    @Autowired
-    private RemoteSupersetService remoteSupersetService;
-
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
@@ -67,7 +64,9 @@ public class BasicValidationRealm extends AuthorizingRealm {
             CommonContext.setAuthorization(token); // 调用竞赛接口时需要token
             Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());
             userInfo.setPermissions(userPermission);
-            CommonContext.setSessionTokenContext(remoteSupersetService.getToken());
+            RemoteSupersetService remoteSupersetService = SpringContextUtil
+                    .getBeanByClass(RemoteSupersetService.class);
+            CommonContext.setSessionTokenContext(remoteSupersetService.getToken(token));
 
             // rtks相关角色
             UserRole roleInfo = userRelateService.getUserRoleInfo(userInfo.getUserId());

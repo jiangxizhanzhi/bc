@@ -11,5 +11,7 @@ public final class CacheConstant {
 
 	public static final String REMOTE_TOPO = "remote_topo";
 
+	public static final String REMOTE_SUPERSET = "remote_superset";
+
 	private CacheConstant() {}
 }

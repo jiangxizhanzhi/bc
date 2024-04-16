@@ -3,6 +3,7 @@ package com.cyberpeace.demo.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.context.SessionToken;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
@@ -75,7 +76,7 @@ public class TestController {
 	@ApiOperation("获取token")
 	@GetMapping("/token")
 	public BaseRsp<SessionToken> getToken() {
-		return new BaseRsp<>(remoteSupersetService.getToken());
+		return new BaseRsp<>(remoteSupersetService.getToken(CommonContext.getAuthorization()));
 	}
 
 	@ApiOperation("创建大屏")

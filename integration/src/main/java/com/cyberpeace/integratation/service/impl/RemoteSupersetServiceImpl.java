@@ -1,9 +1,9 @@
 package com.cyberpeace.integratation.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.context.SessionToken;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.common.util.SupersetHttpUtil;
@@ -11,12 +11,15 @@ import com.cyberpeace.integratation.service.RemoteSupersetService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = { CacheConstant.REMOTE_SUPERSET })
 public class RemoteSupersetServiceImpl implements RemoteSupersetService {
 
 	private String SUPERSET_LOGIN_URL;
@@ -42,8 +45,8 @@ public class RemoteSupersetServiceImpl implements RemoteSupersetService {
 	}
 
 	@Override
-	public SessionToken getToken() {
-		String token = CommonContext.getAuthorization();
+	@Cacheable(key = "#p0")
+	public SessionToken getToken(String token) {
 		String targetUrl = SUPERSET_LOGIN_URL + token;
 		SessionToken sessionToken = SupersetHttpUtil.rawGetLogin(targetUrl);
 		String csrfToken = LocalStringUtil.getMatchStr(sessionToken.getCsrfToken(), PatternConstant.CSRF_TOKEN).get(0);

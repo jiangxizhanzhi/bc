@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RemoteSupersetService {
 
-	SessionToken getToken();
+	SessionToken getToken(String token);
 
 	String createDashboard(String dashboardName);
 

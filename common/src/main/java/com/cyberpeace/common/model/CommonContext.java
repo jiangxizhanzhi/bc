@@ -66,4 +66,8 @@ public class CommonContext {
 	public static SessionToken getSessionTokenContext() {
 		return sessionTokenContext.get();
 	}
+
+	public static void removeSessionTokenContext() {
+		sessionTokenContext.remove();
+	}
 }

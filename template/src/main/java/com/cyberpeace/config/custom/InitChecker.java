@@ -49,7 +49,6 @@ public class InitChecker {
 	 */
 	private void checkMp() {
 		blankCheck("MP_HOST");
-		blankCheck("MP_PORT");
 		blankCheck("MP_SECRET");
 
 		// 额外校验中台设置项

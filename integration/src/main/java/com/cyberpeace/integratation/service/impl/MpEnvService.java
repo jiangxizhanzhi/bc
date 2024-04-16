@@ -12,10 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MpEnvService {
 
-	private String MP_HOST;
-
-	private String MP_PORT;
-
 	private String MP_URL;
 
 	public String getMpHost() {
@@ -24,10 +20,14 @@ public class MpEnvService {
 
 	@PostConstruct
 	public void init() {
-		MP_HOST = SystemPropUtil.getProp("MP_HOST");
-		MP_PORT = SystemPropUtil.getProp("MP_PORT");
-		MP_URL = "http://" + MP_HOST + ":" + MP_PORT;
+		String MP_HOST = SystemPropUtil.getProp("MP_HOST");
 
-		log.info("mp host=[{}], port=[{}]", MP_HOST, MP_PORT);
+		if (!MP_HOST.startsWith("http")) {
+			log.error("[{}] not starts with http!", MP_HOST);
+			throw new Error();
+		}
+		MP_URL = MP_HOST;
+
+		log.info("mp url=[{}]", MP_URL);
 	}
 }

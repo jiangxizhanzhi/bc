@@ -66,10 +66,10 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 			progress.setBusinessId(req.getBusinessId());
 		} else if (req.getProgress() > progress.getProgress()) {
 			// 只有新进度大于旧进度才更新
-			progress.setProgress(req.getProgress());
-			progress.setTime(req.getTime());
 			updateFlag = true;
 		}
+		progress.setProgress(req.getProgress());
+		progress.setTime(req.getTime());
 		if (insertFlag) {
 			videoProgressMapper.insert(progress);
 		} else if (updateFlag) {

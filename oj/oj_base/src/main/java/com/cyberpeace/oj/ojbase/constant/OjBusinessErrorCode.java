@@ -36,7 +36,7 @@ public final class OjBusinessErrorCode {
 	public static final String NAME_IS_EXIST = "102008";
 
 	/** 资源已存在 */
-	String RESOURCE_IS_EXIST = "102808";
+	public static final String RESOURCE_IS_EXIST = "102808";
 
 	/** 课程编号已存在*/
 	public static final String COURSE_NUM_IS_EXIST = "102009";

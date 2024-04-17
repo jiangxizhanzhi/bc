@@ -225,7 +225,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 			log.info("lesson start [{}]", lessonPath);
 			CourseLesson courseLesson = doParseLesson(lessonPath, course, envReqs);
 			// 校验课时名称重复性
-			if (courseLesson == null || null != nameMap.putIfAbsent(courseLesson.getName(),
+			if (null != nameMap.putIfAbsent(courseLesson.getName(),
 					courseLesson.getResourceId())) {
 				log.error("Lesson name exist! lesson_path=[{}]", lessonPath);
 				throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, lessonPath, "课时名称重名" + courseLesson.getName());
@@ -250,13 +250,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 		log.info("Start parsing lesson information! lesson_path=[{}]", lessonPath);
 		CourseLesson courseLesson;
 		try {
-
 			courseLesson= parseLesson(lessonPath, course, envReqs);
-		}catch (Exception e) {
-			throw new RemoteServiceException("file parse Exception file: "+lessonPath);
-		}
-		if (null == courseLesson) {
-			return null;
+		}catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RemoteServiceException("file parse Exception file: " + lessonPath);
 		}
 
 		courseLesson.setPath(lessonPath);
@@ -273,7 +271,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 如果课时类型被修改 保留场景相关元数据
 		if (existLesson.getType() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
 				&& courseLesson.getType()
-						.equals(CourseLesson.LessonType.THEORY.getCode().intValue())) {
+						.equals(CourseLesson.LessonType.THEORY.getCode())) {
 			courseLesson.setType(existLesson.getType());
 			courseLesson.setSceneShareMode(existLesson.getSceneShareMode());
 			courseLesson.setDestroyDelay(existLesson.getDestroyDelay());

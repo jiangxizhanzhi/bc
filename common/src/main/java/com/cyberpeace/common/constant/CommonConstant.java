@@ -117,5 +117,4 @@ public final class CommonConstant {
 	public static final int TWO_HUNDRED_AND_FIFTY_FIVE = 255;
 
 	public static final String BACKSLASH = "\\";
-
 }

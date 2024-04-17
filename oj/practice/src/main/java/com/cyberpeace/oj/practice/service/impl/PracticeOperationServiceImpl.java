@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -807,6 +807,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			log.error("StartScene operation is not dynamic env! dynamic_env=[{}], topo_id=[{}]",
 					operation.getDynamicEnv(), operation.getTopoId());
 			throw new BusinessException(OjBusinessErrorCode.NON_DYNAMIC_ENVIRONMENT);
+		}
+		// 实操题共享场景避免多人同时点击导致启动多个场景
+		if (operation.getSceneShareMode().equals(SceneShare.SHARED.getCode())) {
+			synchronized (lock) {
+				if (null != sharedPracticeCache.getIfPresent(resourceId)) {
+					throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
+				} else {
+					sharedPracticeCache.put(resourceId, true);
+				}
+			}
 		}
 
 		// 实操题共享场景避免多人同时点击导致启动多个场景

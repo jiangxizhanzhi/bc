@@ -79,4 +79,19 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 	 */
 	String selectByCourseAndLessonName(@Param("courseId") String courseId,
 			@Param("name") String name);
+
+
+	/**
+	 * 查询课时目录下是否存在课时
+	 * @param courseId
+	 * @return
+	 */
+	List<LessonConfig> selectChapterLessonConflict(@Param("courseId") String courseId);
+
+	/**
+	 * 查询 同一个层次下，课时目录和章节目录同时存在的情况,  添加课时默认编排会出现该情况
+	 * @param courseId
+	 * @return
+	 */
+	List<LessonConfig> selectIncludeLessonAndChapter(@Param("courseId") String courseId);
 }

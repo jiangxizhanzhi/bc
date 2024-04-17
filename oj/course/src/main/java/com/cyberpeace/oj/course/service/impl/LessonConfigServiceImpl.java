@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,25 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	private TransactionTemplate transactionTemplate;
 
 	@Override
+	public void validConflict(String courseId) {
+		List<LessonConfig> lessonConfigsConflict = lessonConfigMapper.selectChapterLessonConflict(courseId);
+		if (!lessonConfigsConflict.isEmpty()) {
+			final List<String> collect = lessonConfigsConflict.stream().map(LessonConfig::getName).collect(Collectors.toList());
+			log.error("lesson config is conflict {}", collect.toString());
+			throw new BusinessException(OjBusinessErrorCode.COURSE_LESSON_CONFLICT, collect.toString());
+		}
+	}
+	@Override
+	public void validLessonAndChapter(String courseId) {
+		List<LessonConfig> includeLessonAndChapter = lessonConfigMapper.selectIncludeLessonAndChapter(courseId);
+		if (!includeLessonAndChapter.isEmpty()) {
+			final List<String> collect = includeLessonAndChapter.stream().map(LessonConfig::getName).collect(Collectors.toList());
+			log.error("lesson and chapter in the same floor {}", collect.toString());
+			throw new BusinessException(OjBusinessErrorCode.COURSE_LESSON_CONFLICT, collect.toString());
+		}
+	}
+
+	@Override
 	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
 
 		Course course = courseMapper.selectById(courseId);
@@ -79,6 +99,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	@Override
 	public LessonConfigBo updateLessonConfig(LessonConfigBo configBo) {
 
+		validLessonConfigBo(configBo);
+
 		// 重新编排数据
 		resetLessonConfigBo(configBo);
 
@@ -98,6 +120,28 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		});
 
 		return configBo;
+	}
+
+	/**
+	 * 校验不合理的编排，课时下不允许出现课时和章节
+	 * @param configBo
+	 */
+	private void validLessonConfigBo(LessonConfigBo configBo) {
+
+		if (configBo.getNodeType().intValue() == LessonConfig.NodeType.NODE_LESSON.getCode()) {
+			List<LessonConfigBo> children = configBo.getChildren();
+			if(CollectionUtils.isNotEmpty(children) && children.size() > 0) {
+				List<String> collect = children.stream().map(LessonConfigBo::getName).collect(Collectors.toList());
+				log.error("lesson conflict {}", collect.toString());
+				throw new BusinessException(OjBusinessErrorCode.COURSE_LESSON_CONFLICT, collect.toString());
+			}
+		}
+		if (CollectionUtils.isNotEmpty(configBo.getChildren())) {
+			for (LessonConfigBo lessonConfigBo: configBo.getChildren()) {
+				validLessonConfigBo(lessonConfigBo);
+			}
+		}
+
 	}
 
 	/**

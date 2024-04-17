@@ -44,6 +44,9 @@ public class AuthTable extends BaseTable {
 	 * @return boolean
 	 */
 	public boolean isFree2Operate() {
+		if (this.operationAuthType == null) {
+			return false;
+		}
 		return this.operationAuthType.equals(AuthType.ALL_SHARE_MODE.getCode());
 	}
 
@@ -53,6 +56,9 @@ public class AuthTable extends BaseTable {
 	 * @return boolean
 	 */
 	public boolean isFree2Read() {
+		if (this.readAuthType == null) {
+			return false;
+		}
 		return this.readAuthType.equals(AuthType.ALL_SHARE_MODE.getCode());
 	}
 }

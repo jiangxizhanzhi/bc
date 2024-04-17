@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,8 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.service.HandoutVideoService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
@@ -33,6 +34,7 @@ import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
 import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +57,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private UtilService utilService;
+
+	@Autowired
+	private HandoutVideoService handoutVideoService;
 
 	@Override
 	public void validConflict(String courseId) {
@@ -324,7 +332,19 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 					.listByLessonAndUser(authContext.getUserId(), lessonIds);
 			Map<String, List<LessonRecord>> recordMap = recordList.stream().collect(Collectors.groupingBy(LessonRecord::getLessonId));
 			configBos.forEach(lessonConfig -> lessonConfig
-					.setLearn(null != recordMap.get(lessonConfig.getLessonId())));
+					.setLearn(null == recordMap.get(lessonConfig.getLessonId()) ? 0 : 100));
+			// 视频课时的学习进度等于视频进度
+			Map<String, String> lessonVideoMap = StreamApiUtils.toMap(
+					StreamApiUtils.filter(lessons, l -> StringUtils.isNotBlank(l.getVideoUrl())),
+					CourseLesson::getResourceId, l -> utilService.handlerFileUrl(l.getVideoUrl()));
+			Map<String, Integer> progressMap = handoutVideoService
+					.getProgressBatch(lessonVideoMap.values(), authContext.getUserId());
+			for (LessonConfigBo bo : configBos) {
+				if (lessonVideoMap.containsKey(bo.getLessonId())) {
+					String path = lessonVideoMap.get(bo.getLessonId());
+					bo.setLearn(progressMap.getOrDefault(path, 0));
+				}
+			}
 		}
 
 		return configBos;

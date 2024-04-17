@@ -1,6 +1,8 @@
 package com.cyberpeace.cs.service.impl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.Mp4Util;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.VideoCheckPoint;
 import com.cyberpeace.cs.dao.entity.VideoProgress;
 import com.cyberpeace.cs.dao.mapper.VideoCheckPointMapper;
@@ -54,20 +57,32 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 	public void updateProgress(VideoProgressReportReq req) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		VideoProgress progress = videoProgressMapper.selectByPathAndUserId(req.getPath(), userId);
-		boolean flag = null == progress;
-		if (flag) {
+		boolean insertFlag = null == progress;
+		boolean updateFlag = false;
+		if (insertFlag) {
 			progress = new VideoProgress();
 			progress.setPath(req.getPath());
 			progress.setUserId(userId);
+			progress.setBusinessId(req.getBusinessId());
+		} else if (req.getProgress() > progress.getProgress()) {
+			// 只有新进度大于旧进度才更新
+			progress.setProgress(req.getProgress());
+			progress.setTime(req.getTime());
+			updateFlag = true;
 		}
-		progress.setProgress(req.getProgress());
-		progress.setTime(req.getTime());
-
-		if (flag) {
+		if (insertFlag) {
 			videoProgressMapper.insert(progress);
-		} else {
+		} else if (updateFlag) {
 			videoProgressMapper.updateById(progress);
 		}
+	}
+
+	@Override
+	public Map<String, Integer> getProgressBatch(Collection<String> paths, String userId) {
+		List<VideoProgress> progressList = videoProgressMapper.selectByUserIdAndPaths(userId,
+				paths);
+		return StreamApiUtils.toMap(progressList, VideoProgress::getPath,
+				VideoProgress::getProgress);
 	}
 
 	private VideoCheckPoint saveCheckPoints(String videoPath) {

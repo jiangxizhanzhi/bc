@@ -7,4 +7,13 @@
         where path = #{videoPath}
           and user_id = #{userId}
     </select>
+    <select id="selectByUserIdAndPaths" resultType="com.cyberpeace.cs.dao.entity.VideoProgress">
+        select *
+        from video_progress
+        where user_id = #{userId}
+        and path in
+        <foreach collection="paths" open="(" close=")" separator="," item="path">
+            #{path}
+        </foreach>
+    </select>
 </mapper>

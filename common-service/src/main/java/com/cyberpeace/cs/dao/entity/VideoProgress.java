@@ -20,6 +20,11 @@ public class VideoProgress extends BaseTable {
 	private String path;
 
 	/**
+	 * 业务id
+	 */
+	private String businessId;
+
+	/**
 	 * 用户id
 	 */
 	private String userId;

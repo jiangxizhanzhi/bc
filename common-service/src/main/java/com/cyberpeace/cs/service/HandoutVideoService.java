@@ -1,6 +1,8 @@
 package com.cyberpeace.cs.service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.cyberpeace.cs.dao.entity.VideoProgress;
 import com.cyberpeace.cs.service.context.video.VideoCheckPointBo;
@@ -29,4 +31,13 @@ public interface HandoutVideoService {
 	 * @param req 请求体
 	 */
 	void updateProgress(VideoProgressReportReq req);
+
+	/**
+	 * 获取progress批量
+	 *
+	 * @param paths
+	 * @param userId
+	 * @return {@code List<VideoProgress>}
+	 */
+	Map<String, Integer> getProgressBatch(Collection<String> paths, String userId);
 }

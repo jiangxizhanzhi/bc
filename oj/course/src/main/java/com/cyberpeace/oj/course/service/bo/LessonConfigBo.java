@@ -7,11 +7,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
 
 @Data
 @ApiModel("课程目录配置信息")
@@ -23,8 +25,8 @@ public class LessonConfigBo implements Serializable {
 	@ApiModelProperty("位置编号")
 	private Integer index;
 
-	@ApiModelProperty("是否学习")
-	private boolean isLearn;
+	@ApiModelProperty("学习进度")
+	private Integer learn;
 
 	@ApiModelProperty("是否必修")
 	private Integer compulsory;

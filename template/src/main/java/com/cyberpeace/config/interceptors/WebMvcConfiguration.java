@@ -25,7 +25,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(practiceGateWayInterceptor).addPathPatterns("/gateway/theory/**",
-				"/gateway/exercise/**");
+				"/gateway/exercise/**", "/oj/haibo/course/**");
 		registry.addInterceptor(requestInterceptor);
 	}
 

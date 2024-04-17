@@ -390,6 +390,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setOrgpaths((List<List<String>>) jsonObject.get("orgpaths"));
 		userInfo.setAdmin((int) jsonObject.get("is_admin") == 1);
 		userInfo.setSuperuser((int) jsonObject.get("is_super_user") == 1);
+		userInfo.setHaiboToken(jsonObject.getString("haiboToken"));
 		return userInfo;
 	}
 

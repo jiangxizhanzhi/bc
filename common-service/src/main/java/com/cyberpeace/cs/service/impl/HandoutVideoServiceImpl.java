@@ -95,6 +95,8 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 					tmp = time;
 				}
 			}
+			// 最后一个检查点进度为100
+			pointBos.get(pointBos.size() - 1).setProgress(100);
 		}
 		videoCheckPoint.setCheckPoint(JsonUtil.arrayToString(pointBos));
 		videoCheckPointMapper.insert(videoCheckPoint);

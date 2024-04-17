@@ -12,4 +12,10 @@ public class BusinessTemplateData extends BusinessTemplate {
 
 	private Integer resourceOccupiedNums;
 
+	private Integer totalCpu;
+
+	private Integer totalDisk;
+
+	private Integer totalRam;
+
 }

@@ -21,4 +21,11 @@ public class TopoDigest implements Serializable {
 	private Integer resourceOccupiedNums;
 
 	private String topoId;
+
+	private Integer totalCpu;
+
+	private Integer totalDisk;
+
+	private Integer totalRam;
+
 }

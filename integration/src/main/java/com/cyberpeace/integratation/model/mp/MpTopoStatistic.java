@@ -22,6 +22,12 @@ public class MpTopoStatistic implements Serializable {
 
 	private Integer resourceOccupiedNums;
 
+	private Integer totalCpu;
+
+	private Integer totalDisk;
+
+	private Integer totalRam;
+
 	public Integer getNodesCount() {
 		int count = 0;
 		if (this.firewallCount != null) {

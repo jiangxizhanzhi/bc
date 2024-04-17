@@ -121,6 +121,9 @@ public class BusinessTemplateController {
 			sceneConfigInfo.setResourceOccupiedNums(businessTemplateData.getResourceOccupiedNums());
 			sceneConfigInfo
 					.setHasScene(StringUtils.isNotBlank(businessTemplateData.getLocalSceneId()));
+			sceneConfigInfo.setTotalRam(businessTemplateData.getTotalRam());
+			sceneConfigInfo.setTotalCpu(businessTemplateData.getTotalCpu());
+			sceneConfigInfo.setTotalDisk(businessTemplateData.getTotalDisk());
 			businessTemplateRsp.setSceneConfigInfo(sceneConfigInfo);
 
 			return businessTemplateRsp;

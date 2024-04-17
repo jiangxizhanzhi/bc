@@ -335,6 +335,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			if (nodeCountMap.containsKey(businessTemplate.getTopoId())) {
 				businessTemplate.setNodesNum(nodeCountMap.get(businessTemplate.getTopoId()).getNodeCounts());
 				businessTemplate.setResourceOccupiedNums(nodeCountMap.get(businessTemplate.getTopoId()).getResourceOccupiedNums());
+				businessTemplate.setTotalCpu(nodeCountMap.get(businessTemplate.getTopoId()).getTotalCpu());
+				businessTemplate.setTotalRam(nodeCountMap.get(businessTemplate.getTopoId()).getTotalRam());
+				businessTemplate.setTotalDisk(nodeCountMap.get(businessTemplate.getTopoId()).getTotalDisk());
 			}
 		}
 

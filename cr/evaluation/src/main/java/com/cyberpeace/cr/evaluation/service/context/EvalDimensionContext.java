@@ -12,13 +12,13 @@ public class EvalDimensionContext implements Serializable {
 	private String dimensionId;
 
 	@ApiModelProperty("类型")
-	private Integer type;
+	private String type;
 
 	@ApiModelProperty("事件名称")
 	private String name;
 
 	@ApiModelProperty("事件类型")
-	private Integer eventType;
+	private String eventType;
 
 	@ApiModelProperty("规则参数")
 	private String ruleParameter;

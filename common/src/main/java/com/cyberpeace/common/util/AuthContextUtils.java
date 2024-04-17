@@ -21,6 +21,7 @@ public class AuthContextUtils {
 		authContext.setIsWeb(isWeb);
 		authContext.setIsSuperAdmin(userInfo.isSuperuser());
 		authContext.setIsAdmin(userInfo.isAdmin());
+		authContext.setHaiboToken(userInfo.getHaiboToken());
 
 		return authContext;
 	}

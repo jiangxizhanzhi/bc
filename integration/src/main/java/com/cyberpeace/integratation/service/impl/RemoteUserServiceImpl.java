@@ -413,6 +413,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setOrganizationId(byId.getOrganizationId());
 		userInfo.setSuperuser(byId.isSuperuser());
 		userInfo.setAdmin(byId.isAdmin());
+		userInfo.setHaiboToken(mpAuthenticatedUser.getHaiboToken());
 
 		return userInfo;
 	}

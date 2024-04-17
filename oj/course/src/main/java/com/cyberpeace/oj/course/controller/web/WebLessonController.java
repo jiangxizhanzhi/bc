@@ -2,6 +2,9 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.integratation.service.impl.RemoteHaiboTokenService;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -56,6 +59,21 @@ public class WebLessonController {
 
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.TRUE);
+
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			if (!courses.contains(courseId)) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+		}
+
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			if (!courses.contains(courseId)) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+		}
+
         LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, roomId, learnedType ,authContext);
 
 		// 记录远程操作日志
@@ -75,6 +93,13 @@ public class WebLessonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
 
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			if (!courses.contains(courseId)) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+		}
+
 		LessonPracticeBo practiceBo = courseLessonService.practiceByLesson(courseId, resourceId,
 				authContext);
 		return new BaseRsp<>(practiceBo);
@@ -91,6 +116,14 @@ public class WebLessonController {
 				PracticeAnswerContext.class);
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
+
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			if (!courses.contains(submitReq.getCourseId())) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+		}
+
 		SubmitAnswerContext answerContext = BeanUtils.copy(submitReq, SubmitAnswerContext.class);
 
 		EvaluateResult evaluateResult = courseLessonService.submitLessonPractice(answerContext,

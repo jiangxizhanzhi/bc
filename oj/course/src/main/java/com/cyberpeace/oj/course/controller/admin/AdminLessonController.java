@@ -23,6 +23,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.impl.RemoteHaiboTokenService;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
@@ -56,6 +57,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(tags = "oj-后台课时相关api")
@@ -95,10 +97,21 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListLessonReq lessonReq) {
 
 		// 分类课程筛选 权限数据过滤
-		List<String> courseIds = courseService.selectIdsByCategory(lessonReq.getCategoryId(),
-				AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false));
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
+		List<String> courseIds = courseService.selectIdsByCategory(lessonReq.getCategoryId(), authContext);
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return new BaseRsp<>(PageUtil.getNullResult());
+		}
+
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			List<String> filterCourseIds = new ArrayList<>();
+			for (String c : courseIds) {
+				if (courses.contains(c)) {
+					filterCourseIds.add(c);
+				}
+			}
+			courseIds = filterCourseIds;
 		}
 
 		// 课程数据过滤
@@ -140,6 +153,14 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
 	public BaseRsp<AdminLessonBo> get(@RequestParam(value = "course_id") String courseId,
 			@RequestParam(value = "lesson_id") String lessonId) {
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), CommonConstant.TRUE);
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			if (!courses.contains(courseId)) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+		}
+
 
 		AdminLessonBo lessonDetail = courseLessonService.selectByCourseAndLesson(courseId,
 				lessonId);

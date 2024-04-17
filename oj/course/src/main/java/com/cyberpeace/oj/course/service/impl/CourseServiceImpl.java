@@ -3,10 +3,13 @@ package com.cyberpeace.oj.course.service.impl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.service.impl.RemoteHaiboTokenService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,6 +263,18 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			if (CollectionUtils.isEmpty(courseIds)) {
 				return PageUtil.getNullResult();
 			}
+		}
+
+		if (StringUtils.isNotEmpty(authContext.getHaiboToken())) {
+			List<String> validCourses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			Set<String> validCoursesSet = new HashSet<>(validCourses);
+			List<String> filterCourses = new ArrayList<>();
+			for (String c : courseIds) {
+				if (validCoursesSet.contains(c)) {
+					filterCourses.add(c);
+				}
+			}
+			courseIds = filterCourses;
 		}
 
 		if(isWeb){

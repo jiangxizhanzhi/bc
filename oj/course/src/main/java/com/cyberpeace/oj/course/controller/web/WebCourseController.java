@@ -2,6 +2,9 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.integratation.service.impl.RemoteHaiboTokenService;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -84,6 +87,13 @@ public class WebCourseController {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			if (!courses.contains(resourceId)) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+		}
+
 		CourseInfoBo course = courseService.selectById(resourceId, authContext);
 
 		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);

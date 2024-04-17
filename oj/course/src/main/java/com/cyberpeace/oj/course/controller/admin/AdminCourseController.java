@@ -19,6 +19,7 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.impl.RemoteHaiboTokenService;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.controller.res.AdminCourseRes;
 import com.cyberpeace.oj.course.controller.res.SimpleDataRes;
@@ -50,6 +51,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -260,6 +262,17 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		List<String> courseIds = courseMapper.selectByAuth(authContext);
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return new BaseRsp<>(Lists.newArrayList());
+		}
+
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			List<String> filterCourseIds = new ArrayList<>();
+			for (String c : courseIds) {
+				if (courses.contains(c)) {
+					filterCourseIds.add(c);
+				}
+			}
+			courseIds = filterCourseIds;
 		}
 
 		List<Course> courses = courseMapper.selectBatchIds(courseIds);

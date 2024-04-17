@@ -1,9 +1,12 @@
 package com.cyberpeace.oj.course.controller.web;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.integratation.service.impl.RemoteHaiboTokenService;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -22,6 +25,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.util.List;
+
 @Api(tags = "oj-前台课程目录相关api")
 @RestController
 @RequestMapping("/oj/lessonconfig")
@@ -39,6 +44,12 @@ public class WebLessonConfigController {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
+		if (authContext.isHaiboUser()) {
+			List<String> courses = RemoteHaiboTokenService.getValidCourses(authContext.getHaiboToken());
+			if (!courses.contains(courseId)) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+		}
 		LessonConfigBo config = lessonConfigService.getLessonConfig(courseId, authContext);
 		return new BaseRsp<>(config);
 	}

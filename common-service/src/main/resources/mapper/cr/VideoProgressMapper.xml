@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cs.dao.mapper.VideoProgressMapper">
+    <select id="selectByPathAndUserId" resultType="com.cyberpeace.cs.dao.entity.VideoProgress">
+        select *
+        from video_progress
+        where path = #{videoPath}
+          and user_id = #{userId}
+    </select>
+</mapper>

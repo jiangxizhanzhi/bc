@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -32,10 +30,13 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.dao.entity.VideoProgress;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.HandoutVideoService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.cs.service.context.video.VideoProgressBo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -191,6 +192,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	@Autowired
+	private HandoutVideoService handoutVideoService;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext) {
 
@@ -252,6 +256,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			infoBo.setHandoutUrl(utilService.officeUrl(lesson.getHandoutUrl(), lessonId));
 		}
 		infoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
+
+		// video check point
+		if (StringUtils.isNotBlank(infoBo.getVideoUrl())) {
+			infoBo.setVideoProgress(
+					readVideoProgress(infoBo.getVideoUrl(), authContext.getUserId()));
+		}
 
 		// 判断聊天框前端是否应该显示
 		ClassroomGroupInfo groupInfo = null;
@@ -1615,5 +1625,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				lessonInfoBo.getName());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,OperationType.STUDY, operationTarget,
 				LogContent.CR_FORMAT.format(OperationType.STUDY, "", content));
+	}
+
+	private VideoProgressBo readVideoProgress(String videoPath, String userId) {
+
+		VideoProgressBo res = new VideoProgressBo();
+		res.setPoints(handoutVideoService.readCheckPoints(videoPath));
+		VideoProgress progress = handoutVideoService.getProgress(videoPath, userId);
+		res.setLastWatchedTime(progress.getTime());
+		res.setLastWatchedProgress(progress.getProgress());
+		return res;
 	}
 }

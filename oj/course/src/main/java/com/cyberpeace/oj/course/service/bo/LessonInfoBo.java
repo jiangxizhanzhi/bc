@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.cs.service.context.video.VideoProgressBo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -109,6 +110,9 @@ public class LessonInfoBo implements Serializable {
 
 	@ApiModelProperty("课堂编号")
 	private String roomId;
+
+	@ApiModelProperty("视频进度")
+	private VideoProgressBo videoProgress;
 
 	/**
 	 * 设置上节和下节课程编号

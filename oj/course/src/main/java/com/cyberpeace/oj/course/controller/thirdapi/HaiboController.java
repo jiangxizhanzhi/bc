@@ -2,9 +2,8 @@ package com.cyberpeace.oj.course.controller.thirdapi;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.annoations.AuthKeyUser;
+import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -26,9 +25,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +53,7 @@ public class HaiboController {
 
     @GetMapping("/direction")
     @ApiOperation("课程分类")
-    @AuthKeyUser(name = "user_id")
+    @AuthOjKey
     public BaseRsp<List<CourseCategoryBo>>
     listDirection(@RequestParam(value = "children", required = false) Boolean children) {
         List<CourseCategoryBo> categories = courseCategoryService
@@ -68,7 +64,7 @@ public class HaiboController {
 
     @GetMapping("/list")
     @ApiOperation("课程分页查询")
-    @AuthKeyUser(name = "user_id")
+    @AuthOjKey
     public BaseRsp<List<CourseWebBo>> getWebCourse(
             @ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
         // 数据组装
@@ -96,7 +92,7 @@ public class HaiboController {
 
     @GetMapping("/lessonconfig")
     @ApiOperation("课时查询")
-    @AuthKeyUser(name = "user_id")
+    @AuthOjKey
     public BaseRsp<LessonConfigBo> getLessonConfig(@ApiParam(name = "course_id",
             value = "课程编号") @RequestParam("course_id") String courseId) {
 

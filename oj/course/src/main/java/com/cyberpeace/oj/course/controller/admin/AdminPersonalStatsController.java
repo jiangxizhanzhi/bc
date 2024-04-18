@@ -8,6 +8,7 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -20,6 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -33,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(tags = "后台-学习统计-个人统计")
@@ -74,6 +77,18 @@ public class AdminPersonalStatsController {
 	public BaseRsp<ListRsp<PersonalStatsDetail4CourseBo>> personalStatsDetail4Course(
 			PageReqBase pageReq,
 			@ApiParam("用户resource_id") @RequestParam(value = "user_id") String userId) {
+
+		if (StringUtils.isNotEmpty(UserInfoContext.getUserContext().getHaiboToken())) {
+			BaseRsp<ListRsp<PersonalStatsDetail4CourseBo>> rsp = new BaseRsp<>();
+			ListRsp<PersonalStatsDetail4CourseBo> data = new ListRsp<>();
+			data.setList(new ArrayList<>());
+			data.setTotal(0);
+			data.setLastPage(1);
+			data.setCurrentPage(1);
+			rsp.setData(new ListRsp<>());
+			return rsp;
+		}
+
 		return new BaseRsp<>(
 				learnStatsService.getPersonalStatsDetail4Course(pageReq.toPageParam(), userId));
 	}

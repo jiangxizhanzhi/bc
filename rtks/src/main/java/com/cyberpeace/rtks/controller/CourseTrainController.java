@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(tags = "rtks-课程训练相关")
@@ -96,6 +97,12 @@ public class CourseTrainController {
 			MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
 	public BaseRsp<List<RoleCourseBo>> getRoleCourse(@ApiParam(value = "查询id") @RequestParam(value = "resource_id",required = false) String resourceId) {
 		String roleId = UserInfoContext.getUserContext().getRoleId();
+
+		if (StringUtils.isNotEmpty(UserInfoContext.getUserContext().getHaiboToken())) {
+			BaseRsp<List<RoleCourseBo>> rsp = new BaseRsp<>();
+			rsp.setData(new ArrayList<>());
+			return rsp;
+		}
 
 		BaseRsp<List<RoleCourseBo>> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(roleId)) {

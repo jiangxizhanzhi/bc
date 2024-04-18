@@ -2,12 +2,14 @@ package com.cyberpeace.oj.course.controller.thirdapi;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.AuthKeyUser;
 import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
@@ -68,6 +70,11 @@ public class HaiboController {
     public BaseRsp<List<CourseWebBo>> getWebCourse(
             @ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
         // 数据组装
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId("3f655d87112f4ae094bbaf70830e20aa");
+        userInfo.setSuperuser(true);
+        UserInfoContext.setUserContext(userInfo);
+
         CourseQueryBo context = BeanUtils.copy(listReq, CourseQueryBo.class);
         context.setUserId(UserInfoContext.getUserContext().getUserId());
         if (StringUtils.isNotBlank(listReq.getDirection())) {
@@ -95,6 +102,11 @@ public class HaiboController {
     @AuthOjKey
     public BaseRsp<LessonConfigBo> getLessonConfig(@ApiParam(name = "course_id",
             value = "课程编号") @RequestParam("course_id") String courseId) {
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId("3f655d87112f4ae094bbaf70830e20aa");
+        userInfo.setSuperuser(true);
+        UserInfoContext.setUserContext(userInfo);
 
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.TRUE);

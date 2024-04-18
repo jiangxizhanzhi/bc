@@ -173,17 +173,11 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 		evalRuleTemplateDetail.setCreateTime(TimeUtil.format1(evalRuleTemplate.getCreateTime()));
 		evalRuleTemplateDetail.setLabels(evalRuleTemplate.getLabelList());
 		List<EvalDimensionTemplate> evalDimensionTemplateList = evalDimensionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
-		Map<Integer, String> typeMap = StreamApiUtils.toMap(Arrays.asList(EvalDimensionTemplate.Type.values()),
-				EvalDimensionTemplate.Type::getCode, EvalDimensionTemplate.Type::getDesc);
-		Map<Integer, String> eventTypeMap = StreamApiUtils.toMap(Arrays.asList(EvalDimensionTemplate.EventType.values()),
-				EvalDimensionTemplate.EventType::getCode, EvalDimensionTemplate.EventType::getDesc);
 		evalRuleTemplateDetail.setDimensions(
 				evalDimensionTemplateList.stream()
 										 .map(evalDimensionTemplate -> {
 										 	EvalDimensionContext evalDimensionContext = BeanUtils.copy(evalDimensionTemplate, EvalDimensionContext.class);
 											evalDimensionContext.setDimensionId(evalDimensionTemplate.getResourceId());
-											evalDimensionContext.setType(typeMap.get(evalDimensionTemplate.getType()));
-											evalDimensionContext.setEventType(eventTypeMap.get(evalDimensionTemplate.getEventType()));
 											return evalDimensionContext;
 										 })
 										 .collect(Collectors.toList())

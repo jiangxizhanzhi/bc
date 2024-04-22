@@ -396,7 +396,7 @@ public class EvalMissionController {
         List<EvalMissionTemplate> tmp = new ArrayList<>();
         List<StageData> collect = stageList.stream().map(stageData -> {
             List<TaskBo> taskList = stageData.getTaskList();
-            long count = taskList.stream().filter(taskBo -> taskBo.getStatus().equals(MissionTemplateStatus.FAIL) || taskBo.getStatus().equals(MissionTemplateStatus.FINISH)).count();
+            long count = taskList.stream().filter(taskBo -> taskBo.getStatus() != null && (taskBo.getStatus().equals(MissionTemplateStatus.FAIL) || taskBo.getStatus().equals(MissionTemplateStatus.FINISH))).count();
             if(count == taskList.size()){
                 stageData.setStageStatus(MissionTemplateStatus.START);
             }

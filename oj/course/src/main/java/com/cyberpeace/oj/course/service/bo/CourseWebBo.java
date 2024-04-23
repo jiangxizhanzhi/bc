@@ -58,4 +58,7 @@ public class CourseWebBo implements Serializable {
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	@ApiModelProperty("课程简介")
+	private String description;
+
 }

@@ -1,5 +1,16 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,13 +29,11 @@ import com.cyberpeace.cr.crbase.controller.rsp.guide.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
-import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideSchemeMapper;
 import com.cyberpeace.cr.crbase.service.SituationGuideService;
-import com.cyberpeace.situation.model.ws.WsMultiNodeEffect;
 import com.cyberpeace.cr.crbase.service.context.guide.*;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
@@ -37,27 +46,20 @@ import com.cyberpeace.integratation.model.scene.AttackScreenContext;
 import com.cyberpeace.integratation.model.scene.SceneEventContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.constant.SituationGuideScheme;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.LineStyle;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.model.ws.WsMultiNodeEffect;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -258,6 +260,9 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         //校验训练是否开启
         checkRoomOpening(guideScheme);
         String sceneId = viewScene(guideScheme.getRoomId());
+		if (StringUtils.isBlank(sceneId)) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
 
         //增加历史记录
         SituationGuideHistory his = BeanUtils.copy(guideScheme, SituationGuideHistory.class);

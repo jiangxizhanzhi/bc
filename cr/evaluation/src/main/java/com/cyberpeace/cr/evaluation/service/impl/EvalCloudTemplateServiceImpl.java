@@ -130,7 +130,12 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 			evalCloudTemplateListRsp.setCloudTemplateId(evalCloudTemplateListContext.getResourceId());
 			evalCloudTemplateListRsp.setCreateUser(userMap.get(evalCloudTemplateListContext.getCreateUserId()));
 			evalCloudTemplateListRsp.setType(EnumUtils.getEnumDescByCode(evalCloudTemplateListContext.getType(), EvalCloudTemplate.TestType.class));
-			evalCloudTemplateListRsp.setNodeCount(nodeCountMap.get(evalCloudTemplateListContext.getTopoId()).getNodeCounts());
+			TopoDigest topoDigest = nodeCountMap.get(evalCloudTemplateListContext.getTopoId());
+			if (topoDigest == null) {
+				evalCloudTemplateListRsp.setNodeCount(0);
+			} else {
+				evalCloudTemplateListRsp.setNodeCount(topoDigest.getNodeCounts());
+			}
 			return evalCloudTemplateListRsp;
 		}).collect(Collectors.toList());
 	}

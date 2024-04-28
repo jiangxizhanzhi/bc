@@ -49,4 +49,10 @@ public class EvalTestListRsp implements Serializable {
 	@ApiModelProperty("试验状态:0=未开始，1=进行中")
 	private Integer status;
 
+	@ApiModelProperty("评估次数")
+	private Integer count;
+
+	@ApiModelProperty("最高得分")
+	private Integer score;
+
 }

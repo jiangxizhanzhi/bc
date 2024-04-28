@@ -25,10 +25,12 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStatisticsRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalCloudTemplateMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestMapper;
 import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalTestCategoryCount;
+import com.cyberpeace.cr.evaluation.service.context.TestRecordContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -88,6 +90,9 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 	@Autowired
 	private RemoteSupersetService remoteSupersetService;
 
+	@Autowired
+	private EvalRecordMapper evalRecordMapper;
+
 	@Override
 	public String createByTemplate(EvalTestAddReq evalTestAddReq) {
 		EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(evalTestAddReq.getCloudTemplateId());
@@ -118,13 +123,19 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 	@Override
 	public ListRsp<EvalTestListRsp> testList(EvalTestListReq evalTestListReq) {
 		IPage<EvalTest> evalTestIPage = evalTestMapper.testPage(evalTestListReq.toPageParam(), evalTestListReq, UserInfoContext.getUserContext().getUserId());
+		//获取用户信息
 		List<String> userIds = new ArrayList<>();
 		for (EvalTest evalTest : evalTestIPage.getRecords()) {
 			userIds.addAll(evalTest.getAuthList());
 		}
 		Map<String, UserInfo> nameIdMap = remoteUserService.getIdUserInfoMap(userIds);
+		//获取节点数量信息
 		List<String> topoIds = evalTestIPage.getRecords().stream().map(EvalTest::getTopoId).collect(Collectors.toList());
 		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
+		//获取训练任务评估数据
+		List<String> testIds = evalTestIPage.getRecords().stream().map(EvalTest::getResourceId).collect(Collectors.toList());
+		List<TestRecordContext> recordList =  evalRecordMapper.getTestRecordByIds(testIds);
+		Map<String, TestRecordContext> recordMap = recordList.stream().collect(Collectors.toMap(TestRecordContext::getTestId, e -> e));
 		evalTestIPage.convert(test -> {
 			EvalTestListRsp testRsp = BeanUtils.copy(test, EvalTestListRsp.class);
 			testRsp.setTestId(test.getResourceId());
@@ -138,6 +149,14 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 				testRsp.setStatus(1);
 			} else {
 				testRsp.setStatus(0);
+			}
+			TestRecordContext record = recordMap.get(test.getResourceId());
+			if (record == null) {
+				testRsp.setCount(0);
+				testRsp.setScore(0);
+			}else {
+				testRsp.setCount(recordMap.get(test.getResourceId()).getCount());
+				testRsp.setScore(recordMap.get(test.getResourceId()).getCount());
 			}
 
 			// TODO: 2024/3/22 调用中台接口获取服务类型、试验工具

@@ -510,5 +510,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String DASHBOARD_NOT_PUBLISH = "101147";
 
+	/**
+	 * 云场景模板id重复
+	 */
+	public static final String CLOUD_TEMPLATE_ID_EXIST = "101148";
+
 	private CrBusinessErrorCode() {}
 }

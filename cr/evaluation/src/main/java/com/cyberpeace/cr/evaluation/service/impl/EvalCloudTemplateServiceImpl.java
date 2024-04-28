@@ -2,12 +2,13 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalCloudTemplateAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalCloudTemplateBaseReq;
@@ -72,6 +73,10 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 
 	@Override
 	public void addCloudTemplate(EvalCloudTemplateAddReq evalCloudTemplateAddReq) {
+		EvalCloudTemplate oldEvalCloudTemplate = evalCloudTemplateMapper.selectById(evalCloudTemplateAddReq.getCloudTemplateId());
+		if (oldEvalCloudTemplate != null) {
+			throw new BusinessException(CrBusinessErrorCode.CLOUD_TEMPLATE_ID_EXIST);
+		}
 		EvalCloudTemplate evalCloudTemplate = BeanUtils.copy(evalCloudTemplateAddReq.getBaseInfo(), EvalCloudTemplate.class);
 		evalCloudTemplate.setStepIdList(evalCloudTemplateAddReq.getStepIds());
 		evalCloudTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());

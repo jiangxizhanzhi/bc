@@ -198,6 +198,23 @@ public class EvalTestController {
 		return new BaseRsp<>(evalTestService.getDeviceList(testId, category, name));
 	}
 
+	@ApiOperation("实例列表查询")
+	@GetMapping("/instance_list")
+	public BaseRsp<EvalInstanceListRsp> getTestInstanceList(
+			@ApiParam(name = "test_id", value = "任务id", required = true) @RequestParam("test_id") String testId,
+			@ApiParam(name = "is_finished", value = "是否只展示已结束任务", required = false)
+				@RequestParam(value = "is_finished", required = false) Boolean isFinished) {
+		EvalTest evalTest = evalTestService.getEvalTest(testId);
+
+		EvalInstanceListRsp evalInstanceListRsp = new EvalInstanceListRsp();
+		evalInstanceListRsp.setInstanceList(evalTestService.listInstance(evalTest, isFinished));
+
+		if (StringUtils.isNotEmpty(evalTest.getCurrentInstanceId())) {
+			evalInstanceListRsp.setCurrentInstanceId(evalTest.getCurrentInstanceId());
+		}
+		return new BaseRsp<>(evalInstanceListRsp);
+	}
+
 	@ApiOperation("查询测评任务时间节点")
 	@GetMapping("/time_nodes")
 	public BaseRsp<EvalTaskTimeNodesRsp> getTimeNodes(@ApiParam(name = "instance_id", value = "实例id",

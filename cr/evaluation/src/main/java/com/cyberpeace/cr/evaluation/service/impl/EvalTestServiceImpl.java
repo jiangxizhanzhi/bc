@@ -29,6 +29,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestMapper;
 import com.cyberpeace.cr.evaluation.service.*;
+import com.cyberpeace.cr.evaluation.service.context.EvalInstanceSlimContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTestCategoryCount;
 import com.cyberpeace.cr.evaluation.service.context.TestRecordContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -335,6 +336,23 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 			String topoId = evalTestMapper.selectTopoIdByTestId(testId);
 			return localSceneService.getAssetListByTopoId(topoId, category, name);
 		}
+	}
+
+	@Override
+	public List<EvalInstanceSlimContext> listInstance(EvalTest evalTest, Boolean isFinished) {
+		if (isFinished != null && isFinished) {
+			return evalTestInstanceMapper.selectSlimInstanceListByTestIdAndStatus(
+					evalTest.getResourceId(), EvalTestInstance.Status.FINISHED.getCode()
+			);
+		}
+
+		List<EvalInstanceSlimContext> evalInstanceSlimContexts = evalTestInstanceMapper
+				.selectSlimInstanceListByTestIdAndStatus(evalTest.getResourceId(), null);
+
+		if (StringUtils.isEmpty(evalTest.getCurrentInstanceId())) {
+			evalInstanceSlimContexts.add(new EvalInstanceSlimContext());
+		}
+		return evalInstanceSlimContexts;
 	}
 
 	private LocalScene createLocalScene(EvalTestInstance evalTestInstance) {

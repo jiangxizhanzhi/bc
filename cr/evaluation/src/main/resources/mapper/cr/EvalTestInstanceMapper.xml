@@ -25,4 +25,17 @@
             group by type
         </where>
     </select>
+
+    <select id="selectSlimInstanceListByTestIdAndStatus"
+            resultType="com.cyberpeace.cr.evaluation.service.context.EvalInstanceSlimContext">
+        select resource_id instance_id, instance_name, mp_scene_id
+        from cr_eval_test_instance
+        where test_id = #{testId}
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance$Status@RUNNING.getCode()">
+            and end_time is null
+        </if>
+        <if test="status != null and status == @com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance$Status@FINISHED.getCode()">
+            and end_time is not null
+        </if>
+    </select>
 </mapper>

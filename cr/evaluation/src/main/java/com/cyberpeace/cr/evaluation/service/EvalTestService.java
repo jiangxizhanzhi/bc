@@ -12,6 +12,9 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStatisticsRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
+import com.cyberpeace.cr.evaluation.service.context.EvalInstanceSlimContext;
+
+import java.util.List;
 
 public interface EvalTestService extends IService<EvalTest> {
 
@@ -36,4 +39,6 @@ public interface EvalTestService extends IService<EvalTest> {
 	JSONObject getDeviceStatistics(String testId);
 
 	JSONArray getDeviceList(String testId, Integer category, String name);
+
+	List<EvalInstanceSlimContext> listInstance(EvalTest evalTest, Boolean isFinished);
 }

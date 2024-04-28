@@ -28,12 +28,14 @@ import com.cyberpeace.cr.evaluation.service.context.EvalHostContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRuleTemplateCount;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.situation.model.ElementInfo;
+import com.cyberpeace.situation.model.PortInfo;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -184,29 +186,36 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 		);
 		List<EvalHostTemplate> evalHostTemplateList = evalHostTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
 		if (evalCloudTemplateMapper.selectById(evalRuleTemplate.getCloudTemplateId()) == null
-				|| evalCloudTemplateMapper.getTopoIdById(evalRuleTemplate.getCloudTemplateId()) == null) {
+				|| StringUtils.isBlank(evalCloudTemplateMapper.getTopoIdById(evalRuleTemplate.getCloudTemplateId()))) {
+			//说明此时拓扑未保存，直接读取数据库的数据
 			evalRuleTemplateDetail.setHosts(
 					evalHostTemplateList.stream()
 										.map(evalHostTemplate -> BeanUtils.copy(evalHostTemplate, EvalHostContext.class))
 										.collect(Collectors.toList())
 			);
 		} else {
+			//读取远程数据，防止数据变化
 			SceneData sceneData = topoHandlerService.getSceneData(null, evalCloudTemplateMapper.getTopoIdById(evalRuleTemplate.getCloudTemplateId()));
 			SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
 			List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
-			Map<String, String> idNameMap = elementInfoList.stream().collect(Collectors.toMap(ElementInfo::getElementId, ElementInfo::getName));
+			Map<String, ElementInfo> idElementMap = elementInfoList.stream().collect(Collectors.toMap(ElementInfo::getElementId, e -> e));
 			evalRuleTemplateDetail.setHosts(
 					evalHostTemplateList.stream()
 										.map(evalHostTemplate -> {
 											EvalHostContext evalHostContext = BeanUtils.copy(evalHostTemplate, EvalHostContext.class);
-											evalHostContext.setHostName(idNameMap.get(evalHostContext.getHostId()));
+											evalHostContext.setHostName(idElementMap.get(evalHostContext.getHostId()).getName());
+											evalHostContext.setIp(getElementIps(idElementMap.get(evalHostContext.getHostId())));
 											return evalHostContext;
 										})
 										.collect(Collectors.toList()));
 
 		}
 
-		evalRuleTemplateDetail.setSteps(evalStepTemplateMapper.selectRspByIds(evalRuleTemplate.getStepIdList()));
+		if (CollectionUtils.isEmpty(evalRuleTemplate.getStepIdList())) {
+			evalRuleTemplateDetail.setSteps(new ArrayList<>());
+		} else {
+			evalRuleTemplateDetail.setSteps(evalStepTemplateMapper.selectRspByIds(evalRuleTemplate.getStepIdList()));
+		}
 
 		List<EvalActionTemplate> evalActionTemplateList = evalActionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
 		List<EvalAlarmReq> alarmRspList = new ArrayList<>();
@@ -260,6 +269,11 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 		evalRuleTemplateEnumRsp.setGrade(Arrays.stream(EvalRuleTemplate.Grade.values())
 											   .map(grade -> new CodeNameRsp(grade.getCode(), grade.getDesc())).collect(Collectors.toList()));
 		return evalRuleTemplateEnumRsp;
+	}
+
+	private String getElementIps(ElementInfo elementInfo) {
+		List<String> ips = elementInfo.getPorts().values().stream().map(PortInfo::getIp).collect(Collectors.toList());
+		return StringUtils.join(ips, ",");
 	}
 
 

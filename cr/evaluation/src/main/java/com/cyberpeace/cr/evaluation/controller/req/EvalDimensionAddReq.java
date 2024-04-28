@@ -8,8 +8,8 @@ import java.io.Serializable;
 @Data
 public class EvalDimensionAddReq implements Serializable {
 
-	@ApiModelProperty("资源id")
-	private String resourceId;
+	@ApiModelProperty("标注id")
+	private String dimensionId;
 
 	@ApiModelProperty(value = "事件名称", required = true)
 	private String name;

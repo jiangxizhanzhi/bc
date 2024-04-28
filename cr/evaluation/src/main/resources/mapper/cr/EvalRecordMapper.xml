@@ -23,4 +23,20 @@
         </where>
         order by T1.id desc
     </select>
+
+    <select id="getTestRecordByIds" resultType="com.cyberpeace.cr.evaluation.service.context.TestRecordContext">
+        select count(*) count, max(score) score, test.resource_id test_id
+        from cr_eval_record record
+        left join cr_eval_test_instance instance on record.task_id = instance.resource_id
+        left join cr_eval_test test on instance.test_id = test.resource_id
+        <where>
+            <if test="ids != null and ids.size() != 0">
+                test.resource_id in
+                <foreach collection="ids" open="(" separator="," close=")" item="id">
+                     #{id}
+                </foreach>
+            </if>
+        </where>
+        group by test.resource_id
+    </select>
 </mapper>

@@ -1,19 +1,5 @@
 package com.cyberpeace.cs.controller;
 
-import java.io.File;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -29,10 +15,21 @@ import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
+import java.io.File;
 
 @Api(tags = "公共服务接口")
 @RestController
@@ -68,7 +65,7 @@ public class CommonController {
 			}
 
 			// 校验权限和文件
-			filePermission.validatePermission(false);
+//			filePermission.validatePermission(false);
 			filePermission.validateFileSuffix(fileName);
 
 		} else {
@@ -100,7 +97,7 @@ public class CommonController {
 		}
 
 		// 校验权限和文件
-		filePermission.validatePermission(false);
+//		filePermission.validatePermission(false);
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 		filePermission.validateFileSuffix(fileName);
 

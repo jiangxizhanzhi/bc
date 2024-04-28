@@ -47,7 +47,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 																		.collect(Collectors.toMap(EvalStepTemplate::getResourceId, evalStepTemplate -> evalStepTemplate));
 		List<EvalStep> stepList = new ArrayList<>();
 		Map<String, String> stepIdMap = new HashMap<>();
-		for (int i = 1; i <= templateIdList.size() ; i++) {
+		for (int i = 0; i < templateIdList.size() ; i++) {
 			String resourceId = templateIdList.get(i);
 			EvalStepTemplate evalStepTemplate = stepTemplateMap.get(resourceId);
 			EvalStep evalStep = new EvalStep();

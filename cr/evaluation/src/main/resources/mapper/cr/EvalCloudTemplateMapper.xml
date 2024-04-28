@@ -17,6 +17,7 @@
                 and type = #{type}
             </if>
         </where>
+        order by update_time desc
     </select>
 
     <select id="getTopoIdById" resultType="java.lang.String">

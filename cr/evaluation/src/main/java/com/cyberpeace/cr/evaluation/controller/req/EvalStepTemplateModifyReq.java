@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class EvalStepTemplateModifyReq extends EvalStepTemplateAddReq{
 
-	@ApiModelProperty(value = "资源id", required = true)
+	@ApiModelProperty(value = "步骤id", required = true)
 	@NotBlank
-	private String resourceId;
+	private String stepId;
 }

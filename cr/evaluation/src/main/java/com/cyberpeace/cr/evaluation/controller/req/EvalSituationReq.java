@@ -17,7 +17,7 @@ public class EvalSituationReq implements Serializable {
 	@ApiModelProperty(required = true, value = "攻击类型级别")
 	private Integer attackType;
 
-	@ApiModelProperty(value = "攻击源节点id")
+	@ApiModelProperty(required = true, value = "攻击源节点id")
 	private String sourceId;
 
 	@ApiModelProperty(required = true, value = "攻击目标节点id")

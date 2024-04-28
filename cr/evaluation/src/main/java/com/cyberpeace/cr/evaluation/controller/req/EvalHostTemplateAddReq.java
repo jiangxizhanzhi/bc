@@ -8,13 +8,16 @@ import java.io.Serializable;
 @Data
 public class EvalHostTemplateAddReq implements Serializable {
 
-	@ApiModelProperty("主机id")
+	@ApiModelProperty("资源id")
+	private String resourceId;
+
+	@ApiModelProperty(value = "主机id", required = true)
 	private String hostId;
 
-	@ApiModelProperty("主机名称")
+	@ApiModelProperty(value = "主机名称", required = true)
 	private String hostName;
 
-	@ApiModelProperty("类型")
+	@ApiModelProperty(value = "类型", required = true)
 	private String type;
 
 	@ApiModelProperty("主机ip")

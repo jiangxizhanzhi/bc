@@ -33,7 +33,7 @@
     </select>
 
     <select id="selectRspByIds" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalStepRsp">
-        select resource_id step_id, `name`, process
+        select resource_id step_id, `name`
         from cr_eval_step_template
         <where>
             <if test="ids != null and ids.size() != 0">

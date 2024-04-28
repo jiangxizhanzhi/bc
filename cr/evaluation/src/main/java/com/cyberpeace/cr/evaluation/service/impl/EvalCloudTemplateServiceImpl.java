@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.PageUtil;
@@ -73,6 +74,7 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 	public void addCloudTemplate(EvalCloudTemplateAddReq evalCloudTemplateAddReq) {
 		EvalCloudTemplate evalCloudTemplate = BeanUtils.copy(evalCloudTemplateAddReq.getBaseInfo(), EvalCloudTemplate.class);
 		evalCloudTemplate.setStepIdList(evalCloudTemplateAddReq.getStepIds());
+		evalCloudTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalCloudTemplate.setResourceId(evalCloudTemplateAddReq.getCloudTemplateId());
 		evalCloudTemplate.setTopoId(localSceneService.saveTopo(evalCloudTemplateAddReq.getSceneConfigData(),
 				BusinessCode.RANGE_EVALUATION.getCode()));

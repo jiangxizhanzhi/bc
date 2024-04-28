@@ -98,6 +98,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
 		evalRuleTemplate.setName(evalRuleTemplateAddReq.getRuleName());
 		evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalRuleTemplate.setLabelList(evalRuleTemplateAddReq.getLabels());
+		evalRuleTemplate.setStepIdList(evalRuleTemplateAddReq.getStepIds());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

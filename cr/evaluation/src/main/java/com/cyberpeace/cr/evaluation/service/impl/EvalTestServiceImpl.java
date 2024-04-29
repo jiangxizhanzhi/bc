@@ -106,6 +106,8 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 		evalTest.setTopoId(localSceneService.copyTopo(evalCloudTemplate.getTopoId(), evalTestAddReq.getName()));
 		evalTest.setTemplateName(evalCloudTemplate.getName());
 		evalTest.setDashboardId(remoteSupersetService.createDashboard(evalTestAddReq.getName()));
+		evalTest.setResourceId(null);
+		evalTest.setId(null);
 
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

@@ -108,6 +108,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 		evalTest.setDashboardId(remoteSupersetService.createDashboard(evalTestAddReq.getName()));
 		evalTest.setResourceId(null);
 		evalTest.setId(null);
+		evalTest.setName(evalTestAddReq.getName());
 
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

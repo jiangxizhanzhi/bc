@@ -151,9 +151,9 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 			testRsp.setUserInfoList(userInfoList);
 			testRsp.setNodeCount(nodeCountMap.get(test.getTopoId()).getNodeCounts());
 			if (StringUtils.isBlank(test.getCurrentInstanceId())) {
-				testRsp.setStatus(1);
-			} else {
 				testRsp.setStatus(0);
+			} else {
+				testRsp.setStatus(1);
 			}
 			TestRecordContext record = recordMap.get(test.getResourceId());
 			if (record == null) {

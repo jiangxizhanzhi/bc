@@ -22,4 +22,7 @@ public class EvalPersonTestRsp implements Serializable {
 
 	@ApiModelProperty("时间")
 	private String time;
+
+	@ApiModelProperty("类型")
+	private String type;
 }

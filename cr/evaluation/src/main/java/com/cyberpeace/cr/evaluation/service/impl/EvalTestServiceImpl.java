@@ -15,6 +15,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -312,6 +313,9 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 	@Override
 	public ListRsp<EvalPersonTestRsp> personTestRspListRsp(PageReqBase pageReqBase) {
 		IPage<EvalPersonTestRsp> testRspIPage = evalTestMapper.selectPersonTestPage(pageReqBase.toPageParam(), UserInfoContext.getUserContext().getUserId());
+		testRspIPage.getRecords().forEach(test -> {
+			test.setType(EnumUtils.getEnumDescByCode(Integer.parseInt(test.getType()), EvalCloudTemplate.TestType.class));
+		});
 		return PageUtil.getListResult(testRspIPage);
 	}
 

@@ -32,17 +32,17 @@
         from cr_eval_test
         <where>
             <bind name="userId" value="'%' + userId + '%'"/>
-            read_auth_ids like #{userId}
+            operation_auth_ids like #{userId}
         </where>
     </select>
 
     <select id="selectPersonTestPage" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalPersonTestRsp">
         select resource_id test_id, name, if(current_instance_id != null and current_instance_id != '', 1,0) status,
-            time duration_time, DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%S')  time
+            time duration_time, DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%S') time, `type`
         from cr_eval_test
         <where>
             <bind name="userId" value="'%' + userId + '%'"/>
-            read_auth_ids like #{userId}
+            operation_auth_ids like #{userId}
         </where>
     </select>
 

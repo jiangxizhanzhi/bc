@@ -48,7 +48,7 @@
             </if>
             <if test="listQuery.pattern != null and listQuery.pattern != ''">
                 <bind name="name" value="'%' + listQuery.pattern + '%'"/>
-                and name = #{name}
+                and name like #{name}
             </if>
         </where>
     </select>

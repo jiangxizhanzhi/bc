@@ -128,9 +128,14 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String HOST_EVENT_LIST;
 
+	private String MISSION_START_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
+
+		MISSION_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.mission.start");
+
 		SCENE_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.app");
 
 		SCENE_START_TEST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.test");
@@ -625,5 +630,17 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				.getString("list");
 		return JsonUtil.toJsonObjectArray(listData, MpHostEvent.class);
 	}
+
+    @Override
+    public String startMission(MissionStartContext missionStartContext) {
+		String targetUrl = MISSION_START_URL;
+		JSONObject post = HttpClientUtil.post(targetUrl, missionStartContext, JSONObject.class);
+		String status = post.get("status").toString();
+		if(!Boolean.parseBoolean(status)){
+			log.error("topoId=[{}]  mission execute error, response data is null", missionStartContext.getId());
+			return "false";
+		}
+		return status;
+    }
 
 }

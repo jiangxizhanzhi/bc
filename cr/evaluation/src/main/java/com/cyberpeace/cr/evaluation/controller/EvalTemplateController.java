@@ -1,7 +1,16 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.ToolBo;
+import com.cyberpeace.integratation.model.scene.MissionStartContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -58,6 +67,9 @@ public class EvalTemplateController {
 	private EvalTemplateService evalTemplateService;
 
 	@Autowired
+	private EvalTaskMapper evalTaskMapper;
+
+	@Autowired
 	private RemoteUserService remoteUserService;
 
 	@ApiOperation("模板新增")
@@ -93,6 +105,59 @@ public class EvalTemplateController {
 		evalTemplateService.updateById(evalTemplate);
 
 		return new BaseRsp<>(new EvalTemplateIdRsp(templateId));
+	}
+
+	@ApiOperation("手动执行")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@PostMapping("/manual/exe")
+	public BaseRsp<String>
+			exeCommandManual(@RequestBody @Validated ManualExecutionReq manualExecutionReq) {
+		// 执行任务
+		MissionStartContext missionStartContext = new MissionStartContext();
+		evalTemplateService.executeCommond(missionStartContext);
+
+		String taskId = manualExecutionReq.getTaskId();
+		EvalTask evalTask = evalTaskMapper.selectById(taskId);
+		String phase = evalTask.getPhase();
+		List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
+		Map<Integer, EvalTaskStepConfig> map = StreamApiUtils.toMap(stages, EvalTaskStepConfig::getStage, s -> s);
+		EvalTaskStepConfig evalTaskStepConfig = map.get(manualExecutionReq.getStage());
+		int stageIndex = stages.indexOf(evalTaskStepConfig);
+		List<ToolBo> toolBos = evalTaskStepConfig.getEquip();
+		Map<Integer, ToolBo> toolBoMap = StreamApiUtils.toMap(toolBos, ToolBo::getToolNum, a -> a);
+		ToolBo toolBo = toolBoMap.get(manualExecutionReq.getEquip());
+		int index = toolBos.indexOf(toolBo);
+		toolBo.setExecuteTime(new Date());
+		toolBo.setIsExecute(true);
+		toolBos.set(index, toolBo);
+		evalTaskStepConfig.setEquip(toolBos);
+		stages.set(stageIndex, evalTaskStepConfig);
+		evalTask.setPhase(JsonUtil.toJsonString(stages));
+		evalTaskMapper.updateById(evalTask);
+		return new BaseRsp<>("success");
+	}
+
+	@ApiOperation("试验阶段列表")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("/phase/list")
+	public BaseRsp<List<EvalTaskStepConfig>>
+			getPhaseLists(@ApiParam(name = "template_id", value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId,
+						  @ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(value = "task_id") String taskId) {
+
+		String phase;
+		if(StringUtils.isEmpty(taskId)){
+			EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
+			phase = evalTemplate.getStepConfig();
+		} else {
+			EvalTask evalTask = evalTaskMapper.selectById(taskId);
+			phase = evalTask.getPhase();
+		}
+		if (StringUtils.isEmpty(phase)) {
+			return new BaseRsp<>(new ArrayList<>());
+		}
+
+		List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
+		return new BaseRsp<>(stages);
 	}
 
 	@ApiOperation("模板查询")

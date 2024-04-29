@@ -17,6 +17,8 @@ public class EvalTemplateListQuery extends PageReqBase implements Serializable {
 	@Setter
 	private Integer categoryCode;
 
+	private Integer type;
+
 	public void setCategory_code(Integer categoryCode) {
 		this.categoryCode = categoryCode;
 	}

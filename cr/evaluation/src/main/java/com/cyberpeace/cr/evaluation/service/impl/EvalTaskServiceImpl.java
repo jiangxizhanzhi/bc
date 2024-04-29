@@ -145,6 +145,8 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 			evalTaskSteps.add(evalTaskStep);
 		}
 
+		evalTask.setPhase(evalTemplate.getStepConfig());
+
 		// 构建本地scene对象
 		LocalScene localScene = createLocalScene(evalTask);
 

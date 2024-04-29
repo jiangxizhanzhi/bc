@@ -3,8 +3,11 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.HashSet;
 import java.util.List;
 
+import com.cyberpeace.integratation.model.scene.MissionStartContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -63,6 +66,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
@@ -185,11 +191,11 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 				CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 
 		// 校验LOGO文件是否存在
-		if (Boolean.FALSE
-				.equals(attachmentService.isExist(evalTemplateBaseInfoContext.getLogoId()))) {
-			log.error("The logo file does not exist! logoId = [{}]", evalTemplateBaseInfoContext.getLogoId());
-			throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
-		}
+//		if (Boolean.FALSE
+//				.equals(attachmentService.isExist(evalTemplateBaseInfoContext.getLogoId()))) {
+//			log.error("The logo file does not exist! logoId = [{}]", evalTemplateBaseInfoContext.getLogoId());
+//			throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
+//		}
 
 		// 校验测试靶场的类型是否存在
 		if (Boolean.FALSE.equals(crConstantsService.validateType(
@@ -235,5 +241,11 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		return true;
 	}
+
+	@Async
+    @Override
+    public void executeCommond(MissionStartContext missionStartContext) {
+		remoteSceneService.startMission(missionStartContext);
+    }
 
 }

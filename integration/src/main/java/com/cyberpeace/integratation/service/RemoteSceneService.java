@@ -274,4 +274,5 @@ public interface RemoteSceneService {
 
 	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);
 
+    String startMission(MissionStartContext missionStartContext);
 }

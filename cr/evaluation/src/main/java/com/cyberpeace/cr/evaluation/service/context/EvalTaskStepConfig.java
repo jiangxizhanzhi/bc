@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Data
 @Slf4j
 public class EvalTaskStepConfig {
@@ -21,6 +23,9 @@ public class EvalTaskStepConfig {
 
 	@ApiModelProperty("步骤过程")
 	private String process;
+
+	@ApiModelProperty("装备")
+	private List<ToolBo> equip;
 
 	public void validate() {
 		if (stage == null || title == null || process == null) {

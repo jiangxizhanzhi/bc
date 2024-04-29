@@ -28,6 +28,8 @@ public class EvalTask extends BaseTable {
 
 	private String mpSceneId;
 
+	private String phase;
+
 	private String copyedTopoId;
 
 	private Date startTime;

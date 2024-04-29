@@ -10,6 +10,7 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
+import com.cyberpeace.integratation.model.scene.MissionStartContext;
 
 /**
  * 测评靶场-模板的处理
@@ -66,4 +67,5 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	 */
 	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 
+    void executeCommond(MissionStartContext missionStartContext);
 }

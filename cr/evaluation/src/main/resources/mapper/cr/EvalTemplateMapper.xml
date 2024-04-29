@@ -22,6 +22,9 @@
                 <bind name="pattern" value="'%' + evalTemplateListQuery.pattern + '%'"/>
                 and name like #{pattern}
             </if>
+            <if test="evalTemplateListQuery.type != null">
+                and type = #{type}
+            </if>
         </where>
     </select>
 

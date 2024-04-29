@@ -1,0 +1,2 @@
+ALTER TABLE cr_eval_template ADD COLUMN type tinyint(4) NULL DEFAULT 0 COMMENT '模板类型';
+ALTER TABLE cr_eval_task ADD COLUMN phase text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '试验阶段';

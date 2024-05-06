@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalInstanceStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalStep;
@@ -13,6 +14,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepTemplateMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.service.EvalStepService;
+import com.cyberpeace.integratation.service.RemoteLoadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,9 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
 	@Autowired
 	private EvalInstanceStepMapper evalInstanceStepMapper;
+
+	@Autowired
+	private RemoteLoadService remoteLoadService;
 
 	@Override
 	public Map<String, String> createByTemplate(List<String> templateIdList, String testId) {
@@ -78,8 +83,8 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			stepListRsp.setProgress(evalStep.getProcess());
 			stepListRsp.setStage(evalStep.getStage());
 
-			// TODO: 2024/4/3
-			stepListRsp.setLoadList(new ArrayList<>());
+			List<String> loadIds = evalStep.getLoadList().stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
+			stepListRsp.setLoadList(remoteLoadService.getLoadByIds(loadIds));
 		}
 		return stepListRsps;
 	}
@@ -108,8 +113,8 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 				evalTestStepListRsp.setPreStepStatus(evalTestStepListRspList.get(i - 1).getStatus());
 			}
 
-			// TODO: 2024/4/7
-			evalTestStepListRsp.setLoadList(new ArrayList<>());
+			List<String> loadIds = step.getLoadList().stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
+			evalTestStepListRsp.setLoadList(remoteLoadService.getLoadByIds(loadIds));
 			evalTestStepListRspList.add(evalTestStepListRsp);
 		}
 		Collections.sort(evalTestStepListRspList, Comparator.comparing(EvalTestStepListRsp::getStage));

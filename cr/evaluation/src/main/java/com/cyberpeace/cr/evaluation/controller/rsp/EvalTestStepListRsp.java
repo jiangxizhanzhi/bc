@@ -1,12 +1,12 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class EvalTestStepListRsp implements Serializable {
@@ -24,7 +24,7 @@ public class EvalTestStepListRsp implements Serializable {
 	private String progress;
 
 	@ApiModelProperty("载荷列表")
-	private List<EvalTestLoadListRsp> loadList;
+	private JSONArray loadList;
 
 	@ApiModelProperty("开始时间")
 	private String startTime;

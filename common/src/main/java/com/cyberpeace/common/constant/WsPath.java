@@ -44,6 +44,8 @@ public class WsPath {
 
 	public static final String EXERCISE_PAPER = "/ws/cr/ce_base/exercise_paper";
 
+	public static final String LIVE = "/ws/live";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
@@ -62,6 +64,7 @@ public class WsPath {
 		cache.add(ROOM_SCENE_FIFTEEN_MIN_TIPS);
 		cache.add(NOTICE);
 		cache.add(EXERCISE_PAPER);
+		cache.add(LIVE);
 	}
 
 	public static boolean validPath(String path) {

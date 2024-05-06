@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cs.service.HandoutVideoService;
-import com.cyberpeace.cs.service.WebRTCService;
+import com.cyberpeace.cs.service.LiveService;
+import com.cyberpeace.cs.service.context.rtc.LiveStatus;
 import com.cyberpeace.cs.service.context.rtc.WebRTCReq;
 import com.cyberpeace.cs.service.context.video.VideoProgressReportReq;
 
@@ -32,7 +33,7 @@ public class VideoController {
 	private HandoutVideoService handoutVideoService;
 
 	@Autowired
-	private WebRTCService webRTCService;
+	private LiveService liveService;
 
 	@ApiOperation("上报视频检查点进度")
 	@PostMapping("/check/report")
@@ -46,15 +47,15 @@ public class VideoController {
 	@PostMapping("/rtc/publish")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<String> getPublishUrl(@RequestBody @Valid WebRTCReq req) {
-		String publishUrl = webRTCService.getPublishUrl(req);
+		String publishUrl = liveService.getPublishUrl(req);
 		return new BaseRsp<>(publishUrl);
 	}
 
 	@ApiOperation("获取WebRTC拉流连接")
 	@PostMapping("/rtc/play")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-	public BaseRsp<String> getPlayUrl(@RequestBody @Valid WebRTCReq req) {
-		String publishUrl = webRTCService.getPlayUrl(req);
-		return new BaseRsp<>(publishUrl);
+	public BaseRsp<LiveStatus> getPlayUrl(@RequestBody @Valid WebRTCReq req) {
+		LiveStatus status = liveService.getLive(req);
+		return new BaseRsp<>(status);
 	}
 }

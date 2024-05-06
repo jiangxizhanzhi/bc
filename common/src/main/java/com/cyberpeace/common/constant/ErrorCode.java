@@ -193,6 +193,21 @@ public final class ErrorCode {
 
 	public static final String FAILED_TO_GET_HTML_TEMPLATE_INSTANCE = "100061";
 
+	/**
+	 * SRS服务错误返回
+	 */
+	public static final String SRS_BAD_RESPONSE = "100062";
+
+	/**
+	 * 当前课堂直播已开启，请勿重复开播
+	 */
+	public static final String LIVE_DUPLICATED = "100063";
+
+	/**
+	 * 直播尚未开启
+	 */
+	public static final String LIVE_NOT_STARTED = "100064";
+
 	private ErrorCode() {}
 
 	/**导入错误格式 */

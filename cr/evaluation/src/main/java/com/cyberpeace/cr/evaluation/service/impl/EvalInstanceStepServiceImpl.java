@@ -11,5 +11,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMapper, EvalInstanceStep> implements EvalInstanceStepService {
 
+	@Autowired
+	private RemoteLoadService remoteLoadService;
+
+	@Autowired
+	private EvalTestInstanceMapper evalTestInstanceMapper;
+
+	@Autowired
+	private EvalInstanceStepMapper evalInstanceStepMapper;
+
+	@Override
+	public List<CodeNameRsp> getAllStages(String instanceId) {
+		return evalInstanceStepMapper.getAllStages(instanceId);
+	}
+
 
 }

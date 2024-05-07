@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
@@ -232,6 +233,13 @@ public class EvalTestController {
 	@GetMapping("/person/statistics")
 	public BaseRsp<EvalTestStatisticsRsp> testStatistics() {
 		return new BaseRsp<>(evalTestService.testStatistics());
+	}
+
+	@ApiOperation("获取该试验下的所有阶段")
+	@GetMapping("/stages")
+	public BaseRsp<List<CodeNameRsp>> getAllStages(@ApiParam(name = "instance_id", value = "实例id",
+			required = true) @RequestParam("instance_id") String instanceId) {
+		return new BaseRsp<>(evalInstanceStepService.getAllStages(instanceId));
 	}
 
 }

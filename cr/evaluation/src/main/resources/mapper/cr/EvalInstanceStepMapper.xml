@@ -38,4 +38,19 @@
         where instance_step.end_time is not null
         and instance_step.test_instance_id = #{instanceId}
     </select>
+
+    <select id="getAllStages" resultType="com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp">
+        select instance_step.resource_id code, name name
+        from cr_eval_test_instance_step instance_step
+        left join cr_eval_step on instance_step.step_id = cr_eval_step.resource_id
+        where instance_step.test_instance_id = #{instanceId}
+    </select>
+
+    <select id="selectAllStepCount" resultType="java.lang.Integer">
+        select count(1)
+        from cr_eval_test_instance_step
+        where test_instance_id = #{instanceId}
+    </select>
+
+
 </mapper>

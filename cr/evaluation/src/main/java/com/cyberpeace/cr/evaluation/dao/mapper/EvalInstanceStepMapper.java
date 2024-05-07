@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalInstanceStep;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,5 +23,7 @@ public interface EvalInstanceStepMapper extends BaseMapper<EvalInstanceStep> {
 	List<String> selectRunningGuideIds();
 
 	List<EvalTimeLineContext> selectTimeNodes(@Param("instanceId") String instanceId);
+
+	List<CodeNameRsp> getAllStages(@Param("instanceId") String instanceId);
 
 }

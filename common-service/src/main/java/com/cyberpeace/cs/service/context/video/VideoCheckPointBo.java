@@ -4,11 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class VideoCheckPointBo {
+public class VideoCheckPointBo extends VideoCheckPointItem {
 
-	@ApiModelProperty(value = "时间（秒）")
-	private Integer time;
-
-	@ApiModelProperty(value = "进度（百分比）")
-	private Integer progress;
+	@ApiModelProperty(value = "是否观看")
+	private Boolean watched = false;
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -17,11 +18,11 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.HandoutVideoService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.video.VideoCheckPointConfig;
+import com.cyberpeace.cs.service.context.video.VideoCheckPointItem;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
@@ -36,6 +37,7 @@ import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
 import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -326,6 +328,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		List<LessonConfigBo> configBos = StreamApiUtils.map(lessonConfigs,
 				lessonConfig -> configToBo(lessonConfig, lessonMap));
 
+
 		// 前台掉用 查询学习记录
 		if (authContext.getIsWeb()) {
 			List<LessonRecord> recordList = lessonRecordMapper
@@ -335,14 +338,22 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 					.setLearn(null == recordMap.get(lessonConfig.getLessonId()) ? 0 : 100));
 			// 视频课时的学习进度等于视频进度
 			Map<String, String> lessonVideoMap = StreamApiUtils.toMap(
-					StreamApiUtils.filter(lessons, l -> StringUtils.isNotBlank(l.getVideoUrl())),
+					StreamApiUtils.filter(lessons,
+							l -> StringUtils.isNotBlank(l.getVideoUrl())
+									&& StringUtils.isNotBlank(l.getVideoCheckPoint())),
 					CourseLesson::getResourceId, l -> utilService.handlerFileUrl(l.getVideoUrl()));
-			Map<String, Integer> progressMap = handoutVideoService
+			Map<String, Set<Integer>> progressMap = handoutVideoService
 					.getProgressBatch(lessonVideoMap.values(), authContext.getUserId());
 			for (LessonConfigBo bo : configBos) {
 				if (lessonVideoMap.containsKey(bo.getLessonId())) {
 					String path = lessonVideoMap.get(bo.getLessonId());
-					bo.setLearn(progressMap.getOrDefault(path, 0));
+					if (progressMap.containsKey(path)) {
+						bo.setLearn(calVideoProgress(
+								lessonMap.get(bo.getLessonId()).getVideoCheckPoint(),
+								progressMap.get(path)));
+					} else {
+						bo.setLearn(0);
+					}
 				}
 			}
 		}
@@ -412,6 +423,29 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 			node.setChildren(boMap.get(node.getResourceId()));
 		}
+	}
+
+	private Integer calVideoProgress(String configJson, Set<Integer> watchedPoints) {
+		if (StringUtils.isBlank(configJson)) {
+			// not configured
+			return 0;
+		}
+		VideoCheckPointConfig config = JsonUtil.toJsonObject(configJson,
+				VideoCheckPointConfig.class);
+		Set<Integer> points = Sets.newHashSet();
+		for (VideoCheckPointItem point : config.getPoints()) {
+			points.add(point.getTime());
+		}
+		for (VideoCheckPointItem customPoint : config.getCustomPoints()) {
+			points.add(customPoint.getTime());
+		}
+		int watchedCnt = 0;
+		for (Integer point : points) {
+			if (watchedPoints.contains(point)) {
+				watchedCnt++;
+			}
+		}
+		return MathUtils.roundDivide(watchedCnt * 100, points.size());
 	}
 
 }

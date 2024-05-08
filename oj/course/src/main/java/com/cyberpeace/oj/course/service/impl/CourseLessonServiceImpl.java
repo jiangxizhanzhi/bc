@@ -30,12 +30,13 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.dao.entity.VideoProgress;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.HandoutVideoService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.cs.service.context.video.VideoCheckPointConfig;
+import com.cyberpeace.cs.service.context.video.VideoCheckPointItem;
 import com.cyberpeace.cs.service.context.video.VideoProgressBo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -259,8 +260,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// video check point
 		if (StringUtils.isNotBlank(infoBo.getVideoUrl())) {
-			infoBo.setVideoProgress(
-					readVideoProgress(infoBo.getVideoUrl(), authContext.getUserId()));
+			if (StringUtils.isNotBlank(lesson.getVideoCheckPoint())) {
+				infoBo.setVideoCheckPointConfig(JsonUtil.toJsonObject(lesson.getVideoCheckPoint(),
+						VideoCheckPointConfig.class));
+			} else {
+				infoBo.setVideoCheckPointConfig(getDefaultCheckPointConfig(lesson));
+			}
 		}
 
 		// 判断聊天框前端是否应该显示
@@ -357,6 +362,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 视频和讲义数据处理
 		lessonInfoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
+		if (StringUtils.isNotBlank(lessonInfoBo.getVideoUrl())) {
+			lessonInfoBo.setVideoDuration(VideoUtil.getVideoDuration(lessonInfoBo.getVideoUrl()));
+			if (StringUtils.isNotBlank(lesson.getVideoCheckPoint())) {
+				lessonInfoBo.setVideoCheckPointConfig(JsonUtil
+						.toJsonObject(lesson.getVideoCheckPoint(), VideoCheckPointConfig.class));
+			}
+		}
 		if (null != lesson.getHandoutType() && lesson.getHandoutType()
 				.intValue() == CourseLesson.HandoutType.PDF.getCode().intValue()) {
 			lessonInfoBo.setHandoutUrl(utilService.handlerFileUrl(lesson.getHandoutUrl()));
@@ -1082,10 +1094,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public void uploadVideo(CourseLesson courseLesson, String video) {
+	public void uploadVideo(CourseLesson courseLesson, String video, String checkPointConfig) {
 
 		if (null != video) {
 			courseLesson.setVideoUrl(video);
+		}
+		if (StringUtils.isNotBlank(video) && StringUtils.isNotBlank(checkPointConfig)) {
+			courseLesson.setVideoCheckPoint(checkPointConfig);
+		} else {
+			courseLesson.setVideoCheckPoint("");
 		}
 	}
 
@@ -1627,13 +1644,30 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				LogContent.CR_FORMAT.format(OperationType.STUDY, "", content));
 	}
 
-	private VideoProgressBo readVideoProgress(String videoPath, String userId) {
+	private VideoProgressBo readVideoProgress(String checkPointConfig, String userId) {
 
-		VideoProgressBo res = new VideoProgressBo();
-		res.setPoints(handoutVideoService.readCheckPoints(videoPath));
-		VideoProgress progress = handoutVideoService.getProgress(videoPath, userId);
-		res.setLastWatchedTime(progress.getTime());
-		res.setLastWatchedProgress(progress.getProgress());
+		VideoProgressBo res = JsonUtil.toJsonObject(checkPointConfig, VideoProgressBo.class);
 		return res;
+	}
+
+	private VideoCheckPointConfig getDefaultCheckPointConfig(CourseLesson lesson) {
+		int duration = VideoUtil.getVideoDuration(utilService.handlerFileUrl(lesson.getVideoUrl()));
+		if (duration == 0) {
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
+		}
+		// default 10s interval
+		VideoCheckPointConfig config = new VideoCheckPointConfig();
+		for (int i = 10; i < duration; i += 10) {
+			VideoCheckPointItem item = new VideoCheckPointItem();
+			item.setTime(i);
+			config.getPoints().add(item);
+		}
+		VideoCheckPointItem item = new VideoCheckPointItem();
+		item.setTime(duration);
+		config.getPoints().add(item);
+
+		lesson.setVideoCheckPoint(JsonUtil.toJsonString(config));
+		this.updateById(lesson);
+		return config;
 	}
 }

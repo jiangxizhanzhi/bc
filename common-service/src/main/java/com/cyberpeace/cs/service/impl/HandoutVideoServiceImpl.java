@@ -1,24 +1,28 @@
 package com.cyberpeace.cs.service.impl;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.compress.utils.Lists;
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.Mp4Util;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cs.dao.entity.VideoCheckPoint;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.dao.entity.VideoProgress;
-import com.cyberpeace.cs.dao.mapper.VideoCheckPointMapper;
 import com.cyberpeace.cs.dao.mapper.VideoProgressMapper;
 import com.cyberpeace.cs.service.HandoutVideoService;
-import com.cyberpeace.cs.service.context.video.VideoCheckPointBo;
 import com.cyberpeace.cs.service.context.video.VideoProgressReportReq;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,17 +33,14 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 	@Autowired
 	private VideoProgressMapper videoProgressMapper;
 
-	@Autowired
-	private VideoCheckPointMapper videoCheckPointMapper;
+	private String CAPTURE_FOLDER;
 
-	@Override
-	public List<VideoCheckPointBo> readCheckPoints(String videoPath) {
-		// whether recorded
-		VideoCheckPoint checkPoint = videoCheckPointMapper.selectByPath(videoPath);
-		if (null == checkPoint) {
-			checkPoint = saveCheckPoints(videoPath);
+	@PostConstruct
+	public void init() {
+		CAPTURE_FOLDER = ConfigUtil.getContextProperty("capture.folder");
+		if (!new File(CAPTURE_FOLDER).exists()) {
+			FileUtil.mkdirs(CAPTURE_FOLDER);
 		}
-		return JsonUtil.toJsonObjectArray(checkPoint.getCheckPoint(), VideoCheckPointBo.class);
 	}
 
 	@Override
@@ -47,7 +48,6 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 		VideoProgress progress = videoProgressMapper.selectByPathAndUserId(videoPath, userId);
 		if (null == progress) {
 			progress = new VideoProgress();
-			progress.setProgress(0);
 			progress.setTime(0);
 		}
 		return progress;
@@ -58,63 +58,50 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		VideoProgress progress = videoProgressMapper.selectByPathAndUserId(req.getPath(), userId);
 		boolean insertFlag = null == progress;
-		boolean updateFlag = false;
 		if (insertFlag) {
 			progress = new VideoProgress();
 			progress.setPath(req.getPath());
 			progress.setUserId(userId);
 			progress.setBusinessId(req.getBusinessId());
-		} else if (req.getProgress() > progress.getProgress()) {
-			// 只有新进度大于旧进度才更新
-			updateFlag = true;
 		}
-		progress.setProgress(req.getProgress());
+		List<Integer> watchedPoints = JsonUtil.toJsonObjectArray(progress.getWatchedPoint(),
+				Integer.class);
+		if (!watchedPoints.contains(req.getTime())) {
+			watchedPoints.add(req.getTime());
+			progress.setWatchedPoint(JsonUtil.arrayToString(watchedPoints));
+		}
 		progress.setTime(req.getTime());
 		if (insertFlag) {
 			videoProgressMapper.insert(progress);
-		} else if (updateFlag) {
+		} else {
 			videoProgressMapper.updateById(progress);
 		}
 	}
 
 	@Override
-	public Map<String, Integer> getProgressBatch(Collection<String> paths, String userId) {
+	public Map<String, Set<Integer>> getProgressBatch(Collection<String> paths, String userId) {
+		if (CollectionUtils.isEmpty(paths) || StringUtils.isBlank(userId)) {
+			return Maps.newHashMap();
+		}
 		List<VideoProgress> progressList = videoProgressMapper.selectByUserIdAndPaths(userId,
 				paths);
-		return StreamApiUtils.toMap(progressList, VideoProgress::getPath,
-				VideoProgress::getProgress);
+		return StreamApiUtils.toMap(progressList, VideoProgress::getPath, p -> Sets
+				.newHashSet(JsonUtil.toJsonObjectArray(p.getWatchedPoint(), Integer.class)));
 	}
 
-	private VideoCheckPoint saveCheckPoints(String videoPath) {
-		VideoCheckPoint videoCheckPoint = new VideoCheckPoint();
-		videoCheckPoint.setPath(videoPath);
-
-		List<VideoCheckPointBo> pointBos = Lists.newArrayList();
-		// time unit: ms -> s
-		int duration = (int) (Mp4Util.readDuration(videoPath) / 1000);
-		videoCheckPoint.setDuration(duration);
-
-		// 分成20份, 每份5%
-		int n = 20;
-		int p = 5;
-		if (duration != 0) {
-			int tmp = 0;
-			int time;
-			for (int i = 0; i < n; i++) {
-				time = duration * (i + 1) / n;
-				if (time != tmp) {
-					VideoCheckPointBo bo = new VideoCheckPointBo();
-					bo.setTime(time);
-					bo.setProgress(p * i);
-					pointBos.add(bo);
-					tmp = time;
-				}
-			}
-			// 最后一个检查点进度为100
-			pointBos.get(pointBos.size() - 1).setProgress(100);
+	@Override
+	public File getThumbnail(String path, Integer sec, Boolean resize) {
+		File video = new File(path);
+		if (!video.exists() || !video.canRead()) {
+			log.error("video file not exist or not readable: [{}]", path);
+			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		}
-		videoCheckPoint.setCheckPoint(JsonUtil.arrayToString(pointBos));
-		videoCheckPointMapper.insert(videoCheckPoint);
-		return videoCheckPoint;
+		String imageName = path.replace("/", "_") + "_" + sec + ".jpg";
+		String imagePath = CAPTURE_FOLDER + imageName;
+		File image = new File(imagePath);
+		if (!image.exists()) {
+			VideoUtil.getFramePic(video, sec, image, resize);
+		}
+		return image;
 	}
 }

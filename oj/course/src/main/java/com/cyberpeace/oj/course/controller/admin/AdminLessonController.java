@@ -1,5 +1,18 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -44,19 +57,9 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Api(tags = "oj-后台课时相关api")
 @RestController
@@ -434,7 +437,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		// 有文件路径 并且文件不为空 则修改文件
 		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())
 				&& null != lessonUpdateReq.getVideo()) {
-			courseLessonService.uploadVideo(courseLesson, lessonUpdateReq.getVideo());
+			courseLessonService.uploadVideo(courseLesson, lessonUpdateReq.getVideo(),
+					lessonUpdateReq.getVideoCheckPointConfig());
 
 		} else if (null == lessonUpdateReq.getVideo()
 				&& StringUtils.isBlank(lessonUpdateReq.getVideoUrl())) {
@@ -472,7 +476,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
-		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());
+		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo(),
+				lessonAddReq.getVideoCheckPointConfig());
 		courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());
 
 		return courseLesson;

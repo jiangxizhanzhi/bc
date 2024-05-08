@@ -11,6 +11,9 @@ public class VideoProgressBo {
 	@ApiModelProperty(value = "检查点列表")
 	private List<VideoCheckPointBo> points;
 
+	@ApiModelProperty(value = "自定义检查点列表")
+	private List<VideoCheckPointBo> customPoints;
+
 	@ApiModelProperty(value = "上次观看到的时间")
 	private Integer lastWatchedTime;
 

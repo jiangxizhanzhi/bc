@@ -15,7 +15,6 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface CourseLessonService extends IService<CourseLesson> {
 
@@ -156,8 +155,9 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * 上传视频文件
 	 * @param courseLesson
 	 * @param video
+	 * @param checkPointConfig
 	 */
-	void uploadVideo(CourseLesson courseLesson, String video);
+	void uploadVideo(CourseLesson courseLesson, String video, String checkPointConfig);
 
 	/**
 	 * 课时批量删除

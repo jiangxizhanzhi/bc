@@ -1,6 +1,12 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeNodesRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
@@ -10,8 +16,10 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTestInstanceService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +28,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -43,6 +52,20 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 	@Autowired
 	private EvalInstanceStepMapper evalInstanceStepMapper;
 
+	@Autowired
+	private RemoteSceneService remoteSceneService;
+
+	private static final String PROBES = "probes"; // 探针
+
+	private static final String TOPOLOGY = "topology"; // 拓扑
+
+	private static final String CPCOLLECTION = "cpcollection"; // 采集
+
+	private static final String PLUGINS = "plugins"; // 插件
+
+	private static final String SCENE = "scene"; // 场景
+
+	private static final String ELEMENTS = "elements"; // 元素
 
 	@Override
 	public Boolean deleteTestInstance(String instanceId) {
@@ -96,6 +119,28 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 		evalTaskTimeNodesRsp.setTaskId(instanceId);
 		evalTaskTimeNodesRsp.setData(evalInstanceStepMapper.selectTimeNodes(instanceId));
 		return evalTaskTimeNodesRsp;
+	}
+
+	@Override
+	public List<EvalRoomPairRsp> getNodes(String instanceId) {
+		EvalTestInstance instance = evalTestInstanceMapper.selectById(instanceId);
+		if (instance == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		List<EvalRoomPairRsp> results = Lists.newArrayList();
+
+		JSONObject jsonObject = remoteSceneService.getById(instance.getMpSceneId(), UserInfoContext.getUserContext()
+																								   .getUserId());
+		JSONArray nodes = jsonObject.getJSONObject(SCENE).getJSONObject(TOPOLOGY).getJSONArray(ELEMENTS);
+		nodes.forEach(item -> {
+			JSONObject nodeItem = (JSONObject) item;
+
+			EvalRoomPairRsp result = new EvalRoomPairRsp();
+			result.setId(nodeItem.getString("id"));
+			result.setLabel(nodeItem.getString("name"));
+			results.add(result);
+		});
+		return results;
 	}
 
 	public void clearInstanceAndScene(String localSceneId,String testId, String instanceId) {

@@ -199,6 +199,13 @@ public class EvalTestController {
 		return new BaseRsp<>(evalTestService.getDeviceList(testId, category, name));
 	}
 
+	@ApiOperation("场景终端节点获取")
+	@GetMapping("/nodes")
+	public BaseRsp<List<EvalRoomPairRsp>> getNodes(
+			@ApiParam(name = "instance_id", value = "实例id", required = true) @RequestParam(name = "instance_id") String instanceId) {
+		return new BaseRsp<>(evalTestInstanceService.getNodes(instanceId));
+	}
+
 	@ApiOperation("实例列表查询")
 	@GetMapping("/instance_list")
 	public BaseRsp<EvalInstanceListRsp> getTestInstanceList(

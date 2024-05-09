@@ -30,13 +30,13 @@ public class VideoProgress extends BaseTable {
 	private String userId;
 
 	/**
+	 * 检查点观看情况
+	 */
+	private String watchedPoint;
+
+	/**
 	 * 最后观看的检查点的时间
 	 */
 	private Integer time;
-
-	/**
-	 * 视频观看进度
-	 */
-	private Integer progress;
 
 }

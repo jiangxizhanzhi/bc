@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -43,6 +42,9 @@ public class CourseLesson extends BaseTable {
 
 	@ApiModelProperty("视频地址")
 	private String videoUrl;
+
+	@ApiModelProperty("视频检查点")
+	private String videoCheckPoint;
 
 	@ApiModelProperty("难度")
 	private Integer difficulty;

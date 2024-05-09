@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.cyberpeace.common.baseinterface.Create;
 
 import io.swagger.annotations.ApiModel;
@@ -57,6 +55,9 @@ public class LessonAddReq implements Serializable {
 	@ApiModelProperty("视频文件")
 	private String video;
 
+	@ApiModelProperty(name = "video_check_point", value = "视频检查点分布")
+	private String videoCheckPoint;
+
 	@ApiModelProperty(name = "oj_scene_config", value = "场景配置信息")
 	private String ojSceneConfig;
 
@@ -95,5 +96,9 @@ public class LessonAddReq implements Serializable {
 
 	public void setPractice_list(String practiceList) {
 		this.practiceList = practiceList;
+	}
+
+	public void setVideo_check_point(String videoCheckPoint) {
+		this.videoCheckPoint = videoCheckPoint;
 	}
 }

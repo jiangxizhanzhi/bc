@@ -1,17 +1,18 @@
 package com.cyberpeace.cs.controller;
 
+import java.io.File;
+
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.service.HandoutVideoService;
 import com.cyberpeace.cs.service.LiveService;
 import com.cyberpeace.cs.service.context.rtc.LiveStatus;
@@ -20,6 +21,7 @@ import com.cyberpeace.cs.service.context.video.VideoProgressReportReq;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "视频进度相关api")
@@ -41,6 +43,17 @@ public class VideoController {
 	public BaseRsp postVideoProgress(@RequestBody @Valid VideoProgressReportReq req) {
 		handoutVideoService.updateProgress(req);
 		return new BaseRsp();
+	}
+
+	@ApiOperation("获取指定视频指定时间的帧截图")
+	@GetMapping("/frame")
+	@RequiresPermissions(MenuConstant.CMS_COURSES)
+	public void getFrameImage(HttpServletResponse response,
+			@ApiParam(value = "视频文件路径", name = "path") String path,
+			@ApiParam(value = "视频时间（秒）", name = "sec") Integer sec,
+			@ApiParam(value = "是否压缩图片", name = "resize") Boolean resize) {
+		File image = handoutVideoService.getThumbnail(path, sec, resize);
+		FileUtil.setResponse(image, false, response);
 	}
 
 	@ApiOperation("获取WebRTC推流连接")

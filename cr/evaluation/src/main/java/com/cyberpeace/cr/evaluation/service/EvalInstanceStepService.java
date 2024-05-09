@@ -13,4 +13,10 @@ public interface EvalInstanceStepService extends IService<EvalInstanceStep> {
 
 	List<CodeNameRsp> getAllStages(String instanceId);
 
+	List<EvalTimeNodeRsp> getPlaybackTime(String instanceId);
+
+	EvalAllTimeLineRsp getTimeLine(String instanceId);
+
+	EvalTaskStatisticsRes getTaskStatistics(String instanceId);
+
 }

@@ -26,4 +26,6 @@ public interface EvalInstanceStepMapper extends BaseMapper<EvalInstanceStep> {
 
 	List<CodeNameRsp> getAllStages(@Param("instanceId") String instanceId);
 
+	Integer selectAllStepCount(@Param("instanceId") String instanceId);
+
 }

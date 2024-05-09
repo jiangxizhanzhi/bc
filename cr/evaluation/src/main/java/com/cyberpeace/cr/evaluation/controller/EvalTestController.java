@@ -48,6 +48,9 @@ public class EvalTestController {
 	private EvalTestInstanceService evalTestInstanceService;
 
 	@Autowired
+	private EvalInstanceStepService evalInstanceStepService;
+
+	@Autowired
 	private EvalStepService evalStepService;
 
 	@ApiOperation("获取模板列表")

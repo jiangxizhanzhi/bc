@@ -515,5 +515,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String CLOUD_TEMPLATE_ID_EXIST = "101148";
 
+	/**
+	 * 找不到对应试验实例
+	 */
+	public static final String CANNOT_FIND_TEST_INSTANCE = "101149";
+
 	private CrBusinessErrorCode() {}
 }

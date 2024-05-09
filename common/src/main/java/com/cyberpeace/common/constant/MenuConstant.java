@@ -185,5 +185,5 @@ public final class MenuConstant {
     //红蓝对抗统计
 	public static final String CMS_CR_RB_TRAIN_STATISTICS = "red-vs-blue-statistics";
 
-    private MenuConstant() {}
+    public MenuConstant() {}
 }

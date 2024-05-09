@@ -1,5 +1,6 @@
 package com.cyberpeace.config.auth;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -8,6 +9,7 @@ import com.cyberpeace.integratation.service.RemoteSupersetService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.rtks.dao.entity.UserRole;
 import com.cyberpeace.rtks.service.UserRelateService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -21,6 +23,9 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -30,14 +35,22 @@ public class BasicValidationRealm extends AuthorizingRealm {
     @Autowired
     private UserRelateService userRelateService;
 
+    @SneakyThrows
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
 
-        UserInfo userInfo = UserInfoContext.getUserContext();
+        List<String> permissions = new ArrayList<>();
+        MenuConstant menuConstant = new MenuConstant();
+
+        for (Field field : MenuConstant.class.getFields()) {
+            field.setAccessible(true);
+            String permission =  (String) field.get(menuConstant);
+            permissions.add(permission);
+        }
 
         // 以菜单作为权限控制
-        simpleAuthorizationInfo.addStringPermissions(userInfo.getPermissions());
+        simpleAuthorizationInfo.addStringPermissions(permissions);
 
         return simpleAuthorizationInfo;
     }

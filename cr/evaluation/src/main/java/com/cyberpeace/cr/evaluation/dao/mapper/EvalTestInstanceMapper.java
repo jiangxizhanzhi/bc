@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalSituationListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
 import com.cyberpeace.cr.evaluation.service.context.EvalInstanceSlimContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTestCategoryCount;
@@ -19,4 +20,6 @@ public interface EvalTestInstanceMapper extends BaseMapper<EvalTestInstance> {
 	List<EvalTestCategoryCount> countByCategoryAndUserId(@Param("userId") String userId);
 
 	List<EvalInstanceSlimContext> selectSlimInstanceListByTestIdAndStatus(@Param("testId") String testId, @Param("status") Integer status);
+
+	List<EvalSituationListRsp> getAllEvalSituation();
 }

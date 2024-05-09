@@ -38,4 +38,10 @@
             and end_time is not null
         </if>
     </select>
+
+    <select id="getAllEvalSituation" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalSituationListRsp">
+        select test_name name, resource_id hash
+        from cr_eval_test_instance
+        where end_time is null
+    </select>
 </mapper>

@@ -75,9 +75,4 @@
         as result;
     </select>
 
-    <select id="getAllEvalSituation" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalSituationListRsp">
-        select template_name as name, resource_id as hash
-        from cr_eval_task
-        where end_time is null
-    </select>
 </mapper>

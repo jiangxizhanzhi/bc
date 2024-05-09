@@ -8,7 +8,7 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSituationListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSituationServerRsp;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.service.EvalSituationService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
@@ -31,7 +31,7 @@ import java.util.*;
 public class EvalSituationServiceImpl implements EvalSituationService {
 
 	@Autowired
-	private EvalTaskMapper evalTaskMapper;
+	private EvalTestInstanceMapper evalTestInstanceMapper;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -63,7 +63,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
 
 	@Override
 	public List<EvalSituationListRsp> getAllEvalSituation() {
-		return evalTaskMapper.getAllEvalSituation();
+		return evalTestInstanceMapper.getAllEvalSituation();
 	}
 
 	@Override

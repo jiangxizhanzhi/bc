@@ -23,4 +23,10 @@ public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 	Boolean existByNameAndUserIdAndId(@Param("templateName") String templateName,
 			@Param("createUserId") String userId, @Param("templateId") String templateId);
 
+	/**
+	 * 根据模板id查询
+	 * @param resourceId
+	 * @return
+	 */
+    EvalTemplate selectByResourceId(@Param("resourceId") String resourceId);
 }

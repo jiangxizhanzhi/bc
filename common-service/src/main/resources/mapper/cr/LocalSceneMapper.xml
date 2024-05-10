@@ -49,4 +49,7 @@
         from local_scene
         where business_instance_id = #{businessInstanceId}
     </select>
+    <select id="selectLocalSceneByTopoId" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
+        select * from local_scene where topo_id = #{topoId}
+    </select>
 </mapper>

@@ -49,4 +49,11 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 	 * @return {@code LocalScene}
 	 */
 	LocalScene selectByBusinessInstanceId(@Param("businessInstanceId") String businessInstanceId);
+
+	/**
+	 * 查询通过topoId
+	 * @param topoId
+	 * @return
+	 */
+	LocalScene selectLocalSceneByTopoId(@Param("topoId")String topoId);
 }

@@ -42,5 +42,8 @@
         end
         as result;
     </select>
+    <select id="selectByResourceId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate">
+        select * from cr_eval_template where resource_id = #{resourceId}
+    </select>
 
 </mapper>

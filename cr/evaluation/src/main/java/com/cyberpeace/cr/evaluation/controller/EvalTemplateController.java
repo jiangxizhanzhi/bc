@@ -5,9 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTool;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalToolMapper;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cr.evaluation.service.context.ToolBo;
 import com.cyberpeace.integratation.model.scene.MissionStartContext;
@@ -71,6 +74,9 @@ public class EvalTemplateController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private EvalToolMapper evalToolMapper;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -247,6 +253,11 @@ public class EvalTemplateController {
 			@RequestBody @Validated EvalTemplateBaseInfoContext evalTemplateBaseInfoContext) {
 		Boolean result = evalTemplateService.validateBaseInfo(evalTemplateBaseInfoContext);
 		return new BaseRsp<>(result);
+	}
+	@ApiOperation("查询工具列表")
+	@GetMapping("/tool")
+	public BaseRsp<List<EvalTool>> getTool() {
+		return new BaseRsp<>(evalToolMapper.selectList(new LambdaQueryWrapper<>()));
 	}
 
 	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq,

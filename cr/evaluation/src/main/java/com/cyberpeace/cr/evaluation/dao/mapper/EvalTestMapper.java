@@ -25,4 +25,6 @@ public interface EvalTestMapper extends BaseMapper<EvalTest> {
 	String selectLocalSceneIdByTestId(@Param("testId") String testId);
 
 	String selectSceneIdByTestId(@Param("testId") String testId);
+
+	String selectDashboardIdByTestId(@Param("testId") String testId);
 }

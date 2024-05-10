@@ -220,11 +220,15 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
 	@Override
 	public String getDashboardPermalink(String testId) {
-		JSONObject dashboardDetail = remoteSupersetService.getDashboardDetail(testId);
-		if (!dashboardDetail.getBoolean("published")) {
+		String dashboardId = evalTestMapper.selectDashboardIdByTestId(testId);
+		if (dashboardId == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		JSONObject dashboardDetail = remoteSupersetService.getDashboardDetail(dashboardId);
+		if (!dashboardDetail.getJSONObject("result").getBoolean("published")) {
 			throw new BusinessException(CrBusinessErrorCode.DASHBOARD_NOT_PUBLISH);
 		}
-		JSONObject permalink = remoteSupersetService.getDashboardPermalink(testId);
+		JSONObject permalink = remoteSupersetService.getDashboardPermalink(dashboardId);
 		return permalink.getString("url");
 	}
 

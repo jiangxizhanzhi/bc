@@ -60,4 +60,10 @@
         left join cr_eval_test_instance instance on instance.resource_id = test.current_instance_id
         where test.resource_id = #{testId}
     </select>
+
+    <select id="selectDashboardIdByTestId" resultType="java.lang.String">
+        select dashboard_id
+        from cr_eval_test
+        where resource_id = #{testId}
+    </select>
 </mapper>

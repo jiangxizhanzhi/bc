@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.controller;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.evaluation.service.EvalDeviceService;
 import io.swagger.annotations.Api;
@@ -30,5 +31,11 @@ public class EvalDeviceController {
             @ApiParam(name = "category", value = "设备类型", required = false) Integer category,
             @ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
         return new BaseRsp<>(evalDeviceService.getDeviceList(resourceId, category, name));
+    }
+    @ApiOperation("设备统计")
+    @GetMapping("/device/statistics")
+    public BaseRsp<JSONObject> getDeviceStatistics(
+            @ApiParam(name = "resource_id", value = "模板id", required = true) @RequestParam(name = "resource_id") String resourceId) {
+        return new BaseRsp<>(evalDeviceService.getDeviceStatistics(resourceId));
     }
 }

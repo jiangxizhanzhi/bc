@@ -45,5 +45,9 @@
     <select id="selectByResourceId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate">
         select * from cr_eval_template where resource_id = #{resourceId}
     </select>
+    <select id="selectBysceneId" resultType="java.lang.String">
+        SELECT ls.resource_id FROM cr_eval_template as cet INNER JOIN local_scene as ls on cet.topo_id = ls.topo_id WHERE cet.resource_id = #{resourceId};
+    </select>
+
 
 </mapper>

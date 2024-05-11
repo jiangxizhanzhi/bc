@@ -29,4 +29,11 @@ public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 	 * @return
 	 */
     EvalTemplate selectByResourceId(@Param("resourceId") String resourceId);
+
+	/**
+	 * 根据模板ID查询场景resourceid
+	 * @param resourceId
+	 * @return
+	 */
+	String selectBysceneId(@Param("resourceId")String resourceId);
 }

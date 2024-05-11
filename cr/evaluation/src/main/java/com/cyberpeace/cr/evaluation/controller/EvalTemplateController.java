@@ -180,7 +180,7 @@ public class EvalTemplateController {
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
 		evalTemplateRsp.setMethod(evalTemplate.getMethod());
-		evalTemplateRsp.setCondition(evalTemplate.getExpCondition());
+		evalTemplateRsp.setExpCondition(evalTemplate.getExpCondition());
 		evalTemplateRsp.setTarget(evalTemplate.getTarget());
 		// auth users
 		List<UserInfo> userInfos = remoteUserService.getByIdList(evalTemplate.getAuthIds());

@@ -28,7 +28,7 @@ public class EvalTemplateListRsp {
 	private Integer categoryCode;
 
 	@ApiModelProperty("试验条件")
-	private String condition;
+	private String expCondition;
 
 	@ApiModelProperty("试验方法")
 	private String method;

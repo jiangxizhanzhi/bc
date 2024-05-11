@@ -28,6 +28,9 @@ public class WsMultiNodeDynamic implements Serializable {
 	@ApiModelProperty("事件类别")
 	private String category;
 
+	/**
+	{@linkplain com.cyberpeace.situation.constant.ws.ActionType code}
+	 */
 	@ApiModelProperty("事件类型")
 	private Integer type;
 

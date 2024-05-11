@@ -1,12 +1,9 @@
 package com.cyberpeace.cr.crbase.service.context.guide;
 
-import com.cyberpeace.constant.BaseI18n;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 @Data
@@ -18,6 +15,10 @@ public class MpEvent implements Serializable {
 	@ApiModelProperty("攻防类型名称")
 	private List<String> attCkNames;
 
+	/**
+	 * {@linkplain com.cyberpeace.situation.constant.SituationGuideScheme.AttackUrlEnum mpCode}
+	 * {@linkplain com.cyberpeace.situation.constant.SituationGuideScheme.DefenseUrlEnum mpCode}
+	 */
 	@ApiModelProperty("攻防类型")
 	private List<String> attCks;
 

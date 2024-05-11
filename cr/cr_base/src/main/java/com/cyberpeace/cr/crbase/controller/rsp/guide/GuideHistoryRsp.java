@@ -32,6 +32,10 @@ public class GuideHistoryRsp implements Serializable {
 	@ApiModelProperty("攻防类型")
 	private List<String> category;
 
+	/**
+	 * {@linkplain com.cyberpeace.situation.constant.SituationGuideScheme.AttackUrlEnum code}
+	 * {@linkplain com.cyberpeace.situation.constant.SituationGuideScheme.DefenseUrlEnum code}
+	 */
 	@ApiModelProperty("攻防类型code")
 	private List<Integer> categoryCode;
 

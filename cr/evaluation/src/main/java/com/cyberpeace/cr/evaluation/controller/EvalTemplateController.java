@@ -179,6 +179,9 @@ public class EvalTemplateController {
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
+		evalTemplateRsp.setMethod(evalTemplate.getMethod());
+		evalTemplateRsp.setCondition(evalTemplate.getExpCondition());
+		evalTemplateRsp.setTarget(evalTemplate.getTarget());
 		// auth users
 		List<UserInfo> userInfos = remoteUserService.getByIdList(evalTemplate.getAuthIds());
 		List<OperationUserInfo> operationUserInfos = StreamApiUtils.map(userInfos, userInfo -> {

@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.JsonUtil;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -42,6 +43,14 @@ public class EvalTemplate extends AuthTable {
 	private String currentTaskId;
 
 	private String createUserId;
+	@ApiModelProperty("试验条件")
+	private String expCondition;
+
+	@ApiModelProperty("试验方法")
+	private String method;
+
+	@ApiModelProperty(value = "实验目标")
+	private String target;
 
 	public void setLogoId(String logoId) {
 		this.logo = logoId;

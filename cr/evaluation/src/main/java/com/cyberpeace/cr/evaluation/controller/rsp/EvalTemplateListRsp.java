@@ -27,6 +27,15 @@ public class EvalTemplateListRsp {
 	@ApiModelProperty(value = "测评类型")
 	private Integer categoryCode;
 
+	@ApiModelProperty("试验条件")
+	private String condition;
+
+	@ApiModelProperty("试验方法")
+	private String method;
+
+	@ApiModelProperty(value = "实验目标")
+	private String target;
+
 	public void setLogo(String logo) {
 		this.logoId = logo;
 	}

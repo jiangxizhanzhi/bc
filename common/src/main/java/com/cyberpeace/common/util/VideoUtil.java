@@ -3,9 +3,12 @@ package com.cyberpeace.common.util;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.cache.Cache;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
@@ -18,6 +21,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class VideoUtil {
+
+	public static Cache<String, Long> videoCache = GuavaCacheUtil.newInstance(CommonConstant.TEN,
+			TimeUnit.MINUTES, String.class, Long.class);
 
 	/**
 	 * 获取videoduration
@@ -36,8 +42,14 @@ public class VideoUtil {
 	 * @return 时长（微秒）
 	 */
 	public static long readDuration(String path) {
+		Long duration = videoCache.getIfPresent(path);
+		if (null != duration) {
+			return duration;
+		}
+
 		File file = new File(path);
-		long duration = 0;
+
+
 		if (!file.exists() || !file.canRead()) {
 			log.error("video file not exist or not readable: [{}]", path);
 			return 0;
@@ -46,7 +58,9 @@ public class VideoUtil {
 			FFmpegFrameGrabber ff = new FFmpegFrameGrabber(file);
 			ff.start();
 			duration = ff.getLengthInTime();
-			ff.stop();
+			log.info("FFmpegFrameGrabber getLengthInTime is [{}] ", duration);
+			ff.release();
+			videoCache.put(path, duration);
 			return duration;
 		} catch (Exception e) {
 			log.error("failed to read video duration: {}", path, e);

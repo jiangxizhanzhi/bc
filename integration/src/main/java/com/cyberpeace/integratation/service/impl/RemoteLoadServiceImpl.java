@@ -36,7 +36,7 @@ public class RemoteLoadServiceImpl implements RemoteLoadService {
 	@Override
 	public JSONArray getLoadByIds(List<String> ids) {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("pks", ids);
+		jsonObject.put("ids", ids);
 		return HttpClientUtil.post(GET_LOAD_LIST_URL, jsonObject, JSONArray.class);
 	}
 

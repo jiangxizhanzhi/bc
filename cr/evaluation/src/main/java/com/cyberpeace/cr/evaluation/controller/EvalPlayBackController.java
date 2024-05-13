@@ -57,4 +57,14 @@ public class EvalPlayBackController {
 			required = true) @RequestParam("instance_id") String instanceId) {
 		return new BaseRsp<>(evalInstanceStepService.getTaskStatistics(instanceId));
 	}
+
+	@ApiOperation("刷新")
+	@GetMapping("refresh")
+	public BaseRsp<Boolean> refresh(
+			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam("scene_id") String sceneId,
+			@ApiParam(name = "start_time", value = "开始时间", required = true) @RequestParam("start_time") String startTime,
+			@ApiParam(name = "rate", value = "速率", required = true) @RequestParam("rate") long rate
+	) {
+		return new BaseRsp<>(true);
+	}
 }

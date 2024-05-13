@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 
 @Data
-public class EvalTaskStepContext {
+public class EvalTaskStepContext extends EvalTaskStepConfig{
 
 	@ApiModelProperty("步骤Id")
 	private String stepId;

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +23,17 @@ import com.cyberpeace.cs.service.LocalSceneService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 public class EvalSceneServiceImpl implements EvalSceneService {
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
 
 	@Override
 	public SceneViewContext viewScene(String mpSceneId, String topoId) {
@@ -83,6 +89,26 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 		context.setMpSceneId(evalTask.getMpSceneId());
 		context.setTopoId(evalTask.getCopyedTopoId());
 		return context;
+	}
+
+	@Override
+	public Boolean pause(String resourceId) {
+		LocalScene localScene = localSceneMapper.selectLocalSceneBytemplateId(resourceId);
+		if (Objects.isNull(localScene)) {
+			log.error("pause Scene templateId is null:{}",resourceId);
+			throw new BusinessException("pause Scene templateId is null:{}",resourceId);
+		}
+		return localSceneService.pauseScene(localScene.getResourceId());
+	}
+
+	@Override
+	public Boolean unPause(String resourceId) {
+		LocalScene localScene = localSceneMapper.selectLocalSceneBytemplateId(resourceId);
+		if (Objects.isNull(localScene)) {
+			log.error("unPause Scene templateId is null:{}",resourceId);
+			throw new BusinessException("unPause Scene templateId is null:{}",resourceId);
+		}
+		return localSceneService.unpauseScene(localScene.getResourceId());
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
@@ -11,9 +12,10 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTool;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalToolMapper;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
-import com.cyberpeace.cr.evaluation.service.context.ToolBo;
+import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
+import com.cyberpeace.cr.evaluation.service.context.*;
 import com.cyberpeace.integratation.model.scene.MissionStartContext;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -45,8 +47,6 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateTaskListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
@@ -77,6 +77,9 @@ public class EvalTemplateController {
 
 	@Autowired
 	private EvalToolMapper evalToolMapper;
+
+	@Autowired
+	private EvalTaskStepService evalTaskStepService;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -261,6 +264,54 @@ public class EvalTemplateController {
 	@GetMapping("/tool")
 	public BaseRsp<List<EvalTool>> getTool() {
 		return new BaseRsp<>(evalToolMapper.selectList(new LambdaQueryWrapper<>()));
+	}
+
+	@ApiOperation("试验阶段列表带有status")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("/phase/list/ll")
+	public BaseRsp<List<EvalTaskStepContext>>
+	getPhaseListsByTem(@ApiParam(name = "template_id", value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId,
+				  @ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(value = "task_id") String taskId) {
+
+		String phase;
+		List<EvalTaskStepContext> evalTaskStepContextList = Lists.newArrayList();
+		if(StringUtils.isEmpty(taskId)){
+			EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
+			evalTaskStepContextList = evalTaskStepService
+					.getTemplateSteps(evalTemplate.getStepConfig());
+			phase = evalTemplate.getStepConfig();
+			Map<String, List<ToolBo>> map = evalTaskStepContextList.stream().collect(Collectors.toMap(EvalTaskStepContext::getTitle, EvalTaskStepContext::getEquip));
+
+			List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
+			stages.stream().map(s->{
+				if (map.containsKey(s.getTitle())) {
+					map.put(s.getTitle(),s.getEquip());
+				}
+				return map;
+			});
+			evalTaskStepContextList.stream().map(e->{
+				if (map.containsKey(e.getTitle())) {
+					e.setEquip(map.get(e.getTitle()));
+				}
+				return map;
+			});
+		} else {
+			EvalTask evalTask = evalTaskMapper.selectById(taskId);
+			evalTaskStepContextList = evalTaskStepService.getTaskSteps(taskId);
+			phase = evalTask.getPhase();
+			List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
+			Map<String, List<ToolBo>> map = stages.stream().collect(Collectors.toMap(EvalTaskStepConfig::getTitle, EvalTaskStepConfig::getEquip));
+			for (int i = 0; i < evalTaskStepContextList.size(); i++) {
+				if (map.containsKey(evalTaskStepContextList.get(i).getTitle())) {
+					evalTaskStepContextList.get(i).setEquip(map.get(evalTaskStepContextList.get(i).getTitle()));
+				}
+			}
+		}
+		if (StringUtils.isEmpty(phase)) {
+			return new BaseRsp<>(new ArrayList<>());
+		}
+
+		return new BaseRsp<>(evalTaskStepContextList);
 	}
 
 	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq,

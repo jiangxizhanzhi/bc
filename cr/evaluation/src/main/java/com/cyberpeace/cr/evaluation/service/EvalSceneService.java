@@ -35,4 +35,15 @@ public interface EvalSceneService {
 	ElementFlowListContext getElementFlowListContext(EvalTaskFlowListQuery evalTaskFlowListQuery,
 			EvalTask evalTask);
 
+	/**
+	 * 根据模板id暂停场景
+	 * @param resourceId
+	 */
+	Boolean pause(String resourceId);
+
+	/**
+	 * 根据模板id恢复场景
+	 * @param resourceId
+	 */
+	Boolean unPause(String resourceId);
 }

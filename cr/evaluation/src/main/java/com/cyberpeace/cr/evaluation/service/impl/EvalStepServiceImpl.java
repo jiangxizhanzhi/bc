@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.TimeUtil;
@@ -16,9 +17,9 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.service.EvalStepService;
 import com.cyberpeace.integratation.service.RemoteLoadService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,7 +85,12 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			stepListRsp.setStage(evalStep.getStage());
 
 			List<String> loadIds = evalStep.getLoadList().stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
-			stepListRsp.setLoadList(remoteLoadService.getLoadByIds(loadIds));
+			if (CollectionUtils.isNotEmpty(loadIds)) {
+				stepListRsp.setLoadList(remoteLoadService.getLoadByIds(loadIds));
+			} else {
+				stepListRsp.setLoadList(new JSONArray());
+			}
+			stepListRsps.add(stepListRsp);
 		}
 		return stepListRsps;
 	}

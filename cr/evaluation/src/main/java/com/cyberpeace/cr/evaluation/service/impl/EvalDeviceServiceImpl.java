@@ -44,7 +44,7 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
             log.error("Param exception:{}",resourceId);
             throw new BusinessException("getDeviceList Param exception:{}",resourceId);
         }
-        LocalScene localScene = localSceneMapper.selectLocalSceneByTopoId(evalTemplate.getTopoId());
+        LocalScene localScene = localSceneMapper.selectLocalSceneBytemplateId(evalTemplate.getResourceId());
         if (Objects.nonNull(localScene)) {
             return localSceneService.getAssetListByInstanceId(localScene.getBusinessInstanceId(), category, name, true);
         } else {
@@ -61,9 +61,9 @@ public class EvalDeviceServiceImpl implements EvalDeviceService {
             throw new BusinessException("getDeviceList Param exception:{}",resourceId);
         }
         //根据模板id去查询场景ID
-        String localSceneId = evalTemplateMapper.selectBysceneId(resourceId);
-        if (StringUtils.isNotEmpty(localSceneId)) {
-            return localSceneService.getNodeStatistics(localSceneId);
+        LocalScene localScene = localSceneMapper.selectLocalSceneBytemplateId(resourceId);
+        if (Objects.nonNull(localScene)) {
+            return localSceneService.getNodeStatistics(localScene.getResourceId());
         } else {
             return localSceneService.getNodeStatisticsByTopoId(evalTemplate.getTopoId());
         }

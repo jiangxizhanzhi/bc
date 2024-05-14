@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.mp.LoadHistory;
 import com.cyberpeace.integratation.service.RemoteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,14 +23,17 @@ public class RemoteLoadServiceImpl implements RemoteLoadService {
 
 	private String GET_LOAD_LIST_URL;
 
+	private String GET_LOAD_HISTORY_URL;
+
 	@PostConstruct
 	public void init() {
-		GET_LOAD_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("get.load.history");
+		GET_LOAD_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("get.load.log");
 		GET_LOAD_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("get.load.list");
+		GET_LOAD_HISTORY_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("get.load.history");
 	}
 
 	@Override
-	public JSONArray getLoadHistory(String sceneId) {
+	public JSONArray getLoadLog(String sceneId) {
 		String targetUrl = GET_LOAD_LOG_URL + sceneId;
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
@@ -38,6 +43,14 @@ public class RemoteLoadServiceImpl implements RemoteLoadService {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("ids", ids);
 		return HttpClientUtil.post(GET_LOAD_LIST_URL, jsonObject, JSONArray.class);
+	}
+
+	@Override
+	public List<LoadHistory> getLoadHistory(String sceneId) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("scene_id", sceneId);
+		JSONObject history = HttpClientUtil.post(GET_LOAD_HISTORY_URL, jsonObject, JSONObject.class);
+		return JsonUtil.toJsonObjectArray(history.getString("list"), LoadHistory.class);
 	}
 
 }

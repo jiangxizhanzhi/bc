@@ -28,4 +28,6 @@ public interface EvalInstanceStepMapper extends BaseMapper<EvalInstanceStep> {
 
 	Integer selectAllStepCount(@Param("instanceId") String instanceId);
 
+	List<String> selectIncompleteStepCount(@Param("instanceId") String instanceId);
+
 }

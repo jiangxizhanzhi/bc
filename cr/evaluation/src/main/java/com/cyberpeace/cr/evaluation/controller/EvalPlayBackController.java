@@ -59,7 +59,7 @@ public class EvalPlayBackController {
 	}
 
 	@ApiOperation("刷新")
-	@GetMapping("refresh")
+	@GetMapping("/refresh")
 	public BaseRsp<Boolean> refresh(
 			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam("scene_id") String sceneId,
 			@ApiParam(name = "start_time", value = "开始时间", required = true) @RequestParam("start_time") String startTime,

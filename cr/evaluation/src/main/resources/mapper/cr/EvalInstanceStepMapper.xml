@@ -52,5 +52,10 @@
         where test_instance_id = #{instanceId}
     </select>
 
-
+    <select id="selectIncompleteStepCount" resultType="java.lang.String">
+        select resource_id
+        from cr_eval_test_instance_step
+        where test_instance_id = #{instanceId}
+        and end_time is null
+    </select>
 </mapper>

@@ -14,6 +14,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalInstanceStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.service.EvalInstanceStepService;
 import com.cyberpeace.cr.evaluation.service.context.EvalLoadLogContext;
+import com.cyberpeace.integratation.model.mp.LoadHistory;
 import com.cyberpeace.integratation.service.RemoteLoadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -104,16 +106,25 @@ public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMap
 	@Override
 	public EvalTaskStatisticsRes getTaskStatistics(String instanceId) {
 		EvalTaskStatisticsRes evalTaskStatisticsRes = new EvalTaskStatisticsRes();
-		evalTaskStatisticsRes.setSum(evalInstanceStepMapper.selectAllStepCount(instanceId));
-		// TODO: 2024/5/7
-		evalTaskStatisticsRes.setSuccess(evalInstanceStepMapper.selectAllStepCount(instanceId));
-		evalTaskStatisticsRes.setFail(0);
-		evalTaskStatisticsRes.setInCompletion(0);
+		Integer sum = evalInstanceStepMapper.selectAllStepCount(instanceId);
+		evalTaskStatisticsRes.setSum(sum);
+		EvalTestInstance instance = evalTestInstanceMapper.selectById(instanceId);
+		String sceneId = instance.getMpSceneId();
+		List<LoadHistory> histories = remoteLoadService.getLoadHistory(sceneId);
+		List<String> stepIds = evalInstanceStepMapper.selectIncompleteStepCount(instanceId);
+		evalTaskStatisticsRes.setInCompletion(stepIds.size());
+		List<String> failStepIds = histories.stream()
+											.filter(history -> !"success".equals(history.getResultStatus()))
+											.map(LoadHistory::getStageId)
+											.distinct().collect(Collectors.toList());
+		failStepIds.removeAll(stepIds);
+		evalTaskStatisticsRes.setFail(failStepIds.size());
+		evalTaskStatisticsRes.setSuccess(sum - stepIds.size() - failStepIds.size());
 		return evalTaskStatisticsRes;
 	}
 
 	private List<EvalLoadLogContext> getLoadLogList(String mpSceneId) {
-		JSONArray logArray = remoteLoadService.getLoadHistory(mpSceneId);
+		JSONArray logArray = remoteLoadService.getLoadLog(mpSceneId);
 		List<EvalLoadLogContext> logList = new ArrayList<>();
 		for (int i = 0; i < logArray.size(); i++) {
 			JSONObject jsonObject = logArray.getJSONObject(i);

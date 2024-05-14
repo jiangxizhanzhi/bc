@@ -12,4 +12,6 @@ import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 public interface CrConstantsConfigMapper {
 
 	List<CrConstantsConfig> getAll();
+
+    List<CrConstantsConfig> selectLables();
 }

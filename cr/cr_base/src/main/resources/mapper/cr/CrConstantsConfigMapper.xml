@@ -5,4 +5,7 @@
         select *
         from cr_constants_config
     </select>
+    <select id="selectLables" resultType="com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig">
+        select * from cr_constants_config where type = 41;
+    </select>
 </mapper>

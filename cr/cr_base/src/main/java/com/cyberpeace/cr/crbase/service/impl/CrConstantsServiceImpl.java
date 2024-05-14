@@ -84,4 +84,8 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 		}
 		return "";
 	}
+	@Override
+	public List<CrConstantsConfig> getLables() {
+		return crConstantsConfigMapper.selectLables();
+	}
 }

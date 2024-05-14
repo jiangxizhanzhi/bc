@@ -25,3 +25,10 @@ ALTER TABLE `cr_eval_template`
     ADD COLUMN `method` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL  COMMENT '试验方法';
 ALTER TABLE `cr_eval_template`
     ADD COLUMN `target` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL  COMMENT '试验目标';
+
+INSERT INTO cr_constants_config (`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (146, NULL, 0, 41, '边界及终端防护靶标', 'Boundary and terminal protection targets');
+INSERT INTO cr_constants_config (`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (147, NULL, 1, 41, '入侵检测靶标', 'Intrusion detection targets');
+INSERT INTO cr_constants_config (`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (148, NULL, 2, 41, '日志分析靶标', 'Log analysis target');
+INSERT INTO cr_constants_config (`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (149, NULL, 3, 41, '网络集中管控靶标', 'Network centralized control target');
+INSERT INTO cr_constants_config (`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (150, NULL, 4, 41, '流量分析靶标', 'Traffic analysis targets');
+INSERT INTO cr_constants_config (`id`, `resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (151, NULL, 5, 41, '应用服务靶标', 'Application service target');

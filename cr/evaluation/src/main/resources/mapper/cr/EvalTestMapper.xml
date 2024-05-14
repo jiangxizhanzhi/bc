@@ -66,4 +66,10 @@
         from cr_eval_test
         where resource_id = #{testId}
     </select>
+
+    <select id="exitByName" resultType="java.lang.Integer">
+        select 1
+        from cr_eval_test
+        where name = #{name}
+    </select>
 </mapper>

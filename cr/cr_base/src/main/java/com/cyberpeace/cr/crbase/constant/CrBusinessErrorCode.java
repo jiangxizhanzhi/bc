@@ -520,5 +520,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String CANNOT_FIND_TEST_INSTANCE = "101149";
 
+	/**
+	 * 试验名称重复
+	 */
+	public static final String TEST_NAME_REPEAT = "101150";
+
 	private CrBusinessErrorCode() {}
 }

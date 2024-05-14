@@ -97,6 +97,10 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
 	@Override
 	public String createByTemplate(EvalTestAddReq evalTestAddReq) {
+		Integer exit = evalTestMapper.exitByName(evalTestAddReq.getName());
+		if (exit != null) {
+			throw new BusinessException(CrBusinessErrorCode.TEST_NAME_REPEAT);
+		}
 		EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(evalTestAddReq.getCloudTemplateId());
 		EvalTest evalTest = BeanUtils.copy(evalCloudTemplate, EvalTest.class);
 		evalTest.setAuthList(evalTestAddReq.getUserIds());

@@ -50,6 +50,7 @@
                 <bind name="name" value="'%' + listQuery.pattern + '%'"/>
                 and name like #{name}
             </if>
+            order by update_time desc
         </where>
     </select>
 

@@ -11,4 +11,8 @@ public interface PineappleService {
 	String activateDWall();
 
 	PineappleClientRes getClients();
+
+	void updateSsid(String ssid);
+
+	String getSsid();
 }

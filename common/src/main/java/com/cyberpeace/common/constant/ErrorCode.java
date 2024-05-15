@@ -386,5 +386,25 @@ public final class ErrorCode {
 	 */
 	public static final String PINEAPPLE_NOT_AUTHENTICATED = "100108";
 
+	/**
+	 * 长度超出范围[1~255]
+	 */
+	public static final String INVALID_LENGTH = "100109";
+
+	/**
+	 * 修改SSID失败
+	 */
+	public static final String MODIFY_SSID_FAILURE = "100110";
+
+	/**
+	 * 远程shell执行失败
+	 */
+	public static final String REMOTE_SHELL_EXEC_FAILED = "100111";
+
+	/**
+	 * 重启抓包脚本失败，请联系运维
+	 */
+	public static final String FAILED_TO_RESTART_PKT = "100112";
+
 	private ErrorCode() {}
 }

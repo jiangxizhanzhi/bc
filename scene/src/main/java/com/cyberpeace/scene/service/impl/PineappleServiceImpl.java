@@ -2,6 +2,7 @@ package com.cyberpeace.scene.service.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -15,20 +16,23 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.scene.service.PineappleService;
+import com.cyberpeace.scene.service.bo.interactive.PineappleApiReq;
 import com.cyberpeace.scene.service.bo.interactive.PineappleClientRes;
 import com.cyberpeace.scene.service.bo.interactive.QQRes;
+import com.cyberpeace.scene.util.SshCommandUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -46,10 +50,22 @@ public class PineappleServiceImpl implements PineappleService {
 
 	private String WS_URL;
 
+	private String PI_HOST;
+
+	private String PI_USERNAME;
+
+	private String PI_PWD;
+
+	private String RESTART_SNIFFER_CMD;
+
 	private Cache<String, String> COOKIE = CacheBuilder.newBuilder()
 			.expireAfterWrite(30, TimeUnit.MINUTES).build();
 
 	private String sessionKey = "PHPSESSID";
+
+	@Autowired
+	@Qualifier("asyncTaskExecutor")
+	private Executor executor;
 
 	@PostConstruct
 	public void init() {
@@ -60,6 +76,11 @@ public class PineappleServiceImpl implements PineappleService {
 		String logoPath = ConfigUtil.getContextProperty("pi.logo.path");
 		String apiPath = ConfigUtil.getContextProperty("pi.api.path");
 		String wsPort = ConfigUtil.getContextProperty("pi.ws.port");
+
+		PI_HOST = piHost;
+		PI_USERNAME = SystemPropUtil.getProp("PI_USERNAME");
+		PI_PWD = SystemPropUtil.getProp("PI_PWD");
+		RESTART_SNIFFER_CMD = ConfigUtil.getContextProperty("pi.sniffer.restart.cmd");
 
 		QQ_URL = "http://" + piHost + ":" + piPort + numberPath;
 		LOGO_URL = "http://" + piHost + ":" + piPort + logoPath;
@@ -104,6 +125,44 @@ public class PineappleServiceImpl implements PineappleService {
 		PineappleClientRes res = JsonUtil.toJsonObject(rsp, PineappleClientRes.class);
 		res.reformat();
 		return res;
+	}
+
+	@Override
+	public void updateSsid(String ssid) {
+		// 验证长度
+		CrCommonValidator.validateNameLen(ssid, ErrorCode.INVALID_LENGTH);
+		// 获取AP配置
+		String configJson = post(API_URL, RequestBody.AP_CONFIG);
+		JSONObject config = JSON.parseObject(configJson);
+		config.put("openSSID", ssid);
+		// 修改 ssid
+		PineappleApiReq apiReq = new PineappleApiReq(Module.NETWORKING, Action.SAVE_AP_CONFIG);
+		JSONObject req = JsonUtil.java2JsonObject(apiReq);
+		req.put("apConfig", config);
+		String res = post(API_URL, req.toJSONString());
+		// 重启抓包脚本
+		if (res.contains(ResponseKeyWord.TRUE)) {
+			executor.execute(this::restartQqSniffer);
+		} else {
+			throw new BusinessException(ErrorCode.MODIFY_SSID_FAILURE);
+		}
+	}
+
+	@Override
+	public String getSsid() {
+		String configJson = post(API_URL, RequestBody.AP_CONFIG);
+		JSONObject config = JSON.parseObject(configJson);
+		return config.getString("openSSID");
+	}
+
+	private void restartQqSniffer() {
+		try {
+			SshCommandUtil executor = new SshCommandUtil(PI_HOST, 22, PI_USERNAME, PI_PWD);
+			executor.execCmd(RESTART_SNIFFER_CMD);
+			executor.exit();
+		} catch (Exception e) {
+			throw new BusinessException(ErrorCode.FAILED_TO_RESTART_PKT);
+		}
 	}
 
 	private boolean getDWallStatus() {
@@ -176,7 +235,7 @@ public class PineappleServiceImpl implements PineappleService {
 			throw new RemoteServiceException();
 		}
 		// 4、解析结果并返回
-		String[] rawRes = httpResponse.split("\n", 2);
+		String[] rawRes = httpResponse.split(",\n", 2);
 		String rsp = rawRes[1];
 		// 获取sessionId
 		if (StringUtils.isBlank(sessionId) && rsp.contains(ResponseKeyWord.TRUE)) {
@@ -198,6 +257,8 @@ final class Module {
 
 	public static final String D_WALL = "DWall";
 
+	public static final String NETWORKING = "Networking";
+
 }
 
 final class Action {
@@ -205,6 +266,8 @@ final class Action {
 	public static final String ENABLE = "enable";
 
 	public static final String GET_STATUS = "getStatus";
+
+	public static final String SAVE_AP_CONFIG = "saveAPConfig";
 }
 
 final class RequestBody {
@@ -217,6 +280,7 @@ final class RequestBody {
 
 	public static final String GET_CLIENTS = "{\"module\":\"Clients\",\"action\":\"getClientData\"}";
 
+	public static final String AP_CONFIG = "{\"module\":\"Networking\",\"action\":\"getAPConfig\"}";
 }
 
 final class ResponseKeyWord {

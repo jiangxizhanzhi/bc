@@ -1,13 +1,12 @@
 package com.cyberpeace.scene.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.scene.service.PineappleService;
 import com.cyberpeace.scene.service.bo.interactive.PineappleClientRes;
+import com.cyberpeace.scene.service.bo.interactive.SsidReq;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +37,20 @@ public class SheepWallController {
 	public BaseRsp<PineappleClientRes> getClients() {
 		PineappleClientRes res = pineappleService.getClients();
 		return new BaseRsp(res);
+	}
+
+	@ApiOperation("修改wifi ssid")
+	@PostMapping("/ssid")
+	public BaseRsp modifySsid(@RequestBody SsidReq req) {
+		pineappleService.updateSsid(req.getSsid());
+		return new BaseRsp();
+	}
+
+	@ApiOperation("获取wifi ssid")
+	@GetMapping("/ssid")
+	public BaseRsp<String> getSsid() {
+		String ssid = pineappleService.getSsid();
+		return new BaseRsp<>(ssid);
 	}
 
 }

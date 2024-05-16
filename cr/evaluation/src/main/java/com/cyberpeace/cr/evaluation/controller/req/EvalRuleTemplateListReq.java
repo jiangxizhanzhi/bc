@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 public class EvalRuleTemplateListReq extends PageReqBase implements Serializable {
 
-	@ApiModelProperty(name = "cloud_template_id", value = "云模板id")
+	@ApiModelProperty(name = "cloud_template_id", value = "云模板id", required = true)
 	private String cloudTemplateId;
 
 	@ApiModelProperty("等级")

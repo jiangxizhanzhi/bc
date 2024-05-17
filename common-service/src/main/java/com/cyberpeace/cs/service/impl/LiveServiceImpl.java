@@ -1,9 +1,12 @@
 package com.cyberpeace.cs.service.impl;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -20,17 +23,20 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cs.constant.live.LiveWsMessageType;
 import com.cyberpeace.cs.constant.live.LiveWsStatusActionCode;
 import com.cyberpeace.cs.constant.live.SRSAction;
 import com.cyberpeace.cs.service.LiveService;
 import com.cyberpeace.cs.service.context.rtc.*;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +46,9 @@ public class LiveServiceImpl implements LiveService {
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	private String PUBLISH_URL;
 
@@ -62,27 +71,47 @@ public class LiveServiceImpl implements LiveService {
 	@Override
 	public String getPublishUrl(WebRTCReq req) {
 		String roomId = req.getRoomId();
-		List<String> streamIds = getStreamIds();
-		if (streamIds.contains(roomId)) {
-			throw new BusinessException(ErrorCode.LIVE_DUPLICATED);
+		Map<String, Set<String>> streamIds = getStreams();
+		if (streamIds.containsKey(roomId)) {
+			Set<String> broadcasterIdList = streamIds.get(roomId);
+			Collection<String> broadcasterList = remoteUserService
+					.getIdNameMap(Lists.newArrayList(broadcasterIdList.iterator())).values();
+			while (broadcasterList.size() < broadcasterIdList.size()) {
+				broadcasterList.add("DELETED_USER");
+			}
+			String broadcasterNames = String.join(",", broadcasterList);
+			throw new BusinessException(ErrorCode.LIVE_DUPLICATED, broadcasterNames);
 		}
-		return PUBLISH_URL + req.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 课堂id作为app，推流人id作为stream
+		return String.format(PUBLISH_URL, roomId, userId);
 	}
 
 	@Override
 	public LiveStatus getLive(WebRTCReq req) {
-		List<String> streamIds = getStreamIds();
+		Map<String, Set<String>> streams = getStreams();
 		LiveStatus status = new LiveStatus();
-		status.setOnLive(streamIds.contains(req.getRoomId()));
-		status.setUrl(PLAY_URL + req.getRoomId());
+		status.setOnLive(streams.containsKey(req.getRoomId()));
+		String broadcasterId = Boolean.TRUE.equals(status.getOnLive())
+				? streams.get(req.getRoomId()).iterator().next()
+				: "unknown";
+		// 课堂id作为app，推流人id作为stream
+		status.setUrl(String.format(PLAY_URL, req.getRoomId(), broadcasterId));
 		return status;
 	}
 
-	@Override
-	public List<String> getStreamIds() {
+	private Map<String, Set<String>> getStreams() {
 		String rawRsp = doHttpGet(GET_STREAMS_URL);
 		SrsStreamApiRes res = JsonUtil.toJsonObject(rawRsp, SrsStreamApiRes.class);
-		return StreamApiUtils.map(res.getStreams(), SrsStream::getName);
+		Map<String, Set<String>> streamMap = Maps.newHashMap();
+		for (SrsStream stream : res.getStreams()) {
+			if (!streamMap.containsKey(stream.getApp())) {
+				streamMap.put(stream.getApp(), Sets.newHashSet());
+			}
+			streamMap.get(stream.getApp()).add(stream.getName());
+		}
+		return streamMap;
+
 	}
 
 	@Override

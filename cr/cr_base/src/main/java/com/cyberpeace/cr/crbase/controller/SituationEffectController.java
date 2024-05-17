@@ -132,7 +132,7 @@ public class SituationEffectController {
 	}
 
 	@ApiOperation("查看映射关系")
-	@GetMapping("/")
+	@GetMapping("/mapping")
 	public BaseRsp<SituationEffectMappingBo>
 			getMappingDetail(@ApiParam(value = "id", name = "resource_id") String resource_id) {
 

@@ -1,7 +1,5 @@
 package com.cyberpeace.cs.service;
 
-import java.util.List;
-
 import com.cyberpeace.cs.service.context.rtc.LiveStatus;
 import com.cyberpeace.cs.service.context.rtc.SrsCallbackReq;
 import com.cyberpeace.cs.service.context.rtc.WebRTCReq;
@@ -23,12 +21,6 @@ public interface LiveService {
      */
 	LiveStatus getLive(WebRTCReq req);
 
-	/**
-	 * 获取stream id 列表
-	 *
-	 * @return {@code List<String>}
-	 */
-	List<String> getStreamIds();
 
 	/**
 	 * 处理回调

@@ -27,7 +27,7 @@ CREATE TABLE `cr_eval_action` (
                                   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='云场景模板动作表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='云场景模板动作表';
 
 CREATE TABLE `cr_eval_action_template` (
                                            `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -45,7 +45,7 @@ CREATE TABLE `cr_eval_action_template` (
                                            `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                            PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 COMMENT='云场景模板动作表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='云场景模板动作表';
 
 CREATE TABLE `cr_eval_cloud_template` (
                                           `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -63,7 +63,7 @@ CREATE TABLE `cr_eval_cloud_template` (
                                           `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                           PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='云场景模板表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='云场景模板表';
 
 CREATE TABLE `cr_eval_dimension` (
                                      `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -77,7 +77,7 @@ CREATE TABLE `cr_eval_dimension` (
                                      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                      `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                      PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 COMMENT='试验任务标注表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='试验任务标注表';
 
 CREATE TABLE `cr_eval_dimension_template` (
                                               `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -91,7 +91,7 @@ CREATE TABLE `cr_eval_dimension_template` (
                                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8 COMMENT='云场景模板标注表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='云场景模板标注表';
 
 CREATE TABLE `cr_eval_host_template` (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -105,7 +105,7 @@ CREATE TABLE `cr_eval_host_template` (
                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='云场景模板主机表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='云场景模板主机表';
 
 CREATE TABLE `cr_eval_rule` (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -122,7 +122,7 @@ CREATE TABLE `cr_eval_rule` (
                                 `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                 PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8 COMMENT='试验任务规则表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='试验任务规则表';
 
 CREATE TABLE `cr_eval_rule_template` (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -139,7 +139,7 @@ CREATE TABLE `cr_eval_rule_template` (
                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8 COMMENT='云场景模板规则表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='云场景模板规则表';
 
 CREATE TABLE `cr_eval_situation_guide_scheme` (
                                                   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
@@ -156,7 +156,7 @@ CREATE TABLE `cr_eval_situation_guide_scheme` (
                                                   `create_time` datetime NOT NULL COMMENT '创建时间',
                                                   `update_time` datetime NOT NULL COMMENT '更新时间',
                                                   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='试验任务态势导调';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='试验任务态势导调';
 
 CREATE TABLE `cr_eval_step` (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -169,7 +169,7 @@ CREATE TABLE `cr_eval_step` (
                                 `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                 PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8 COMMENT='试验任务步骤表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='试验任务步骤表';
 
 CREATE TABLE `cr_eval_step_template` (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -181,7 +181,7 @@ CREATE TABLE `cr_eval_step_template` (
                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=233 DEFAULT CHARSET=utf8 COMMENT='云场景模板步骤表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='云场景模板步骤表';
 
 CREATE TABLE `cr_eval_test` (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -206,7 +206,7 @@ CREATE TABLE `cr_eval_test` (
                                 `read_auth_type` int(11) DEFAULT NULL COMMENT '浏览权限',
                                 `read_auth_ids` text DEFAULT NULL COMMENT '拥有前台预览权限的组织id',
                                 PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='试验任务表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='试验任务表';
 
 CREATE TABLE `cr_eval_test_instance` (
                                          `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -224,7 +224,7 @@ CREATE TABLE `cr_eval_test_instance` (
                                          `update_time` datetime DEFAULT NULL COMMENT '结束时间',
                                          PRIMARY KEY (`id`) USING BTREE,
                                          UNIQUE KEY `resource_id` (`resource_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='试验任务实例表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='试验任务实例表';
 
 CREATE TABLE `cr_eval_test_instance_step` (
                                               `id` int(11) NOT NULL AUTO_INCREMENT,

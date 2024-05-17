@@ -17,4 +17,7 @@ public class SituationEffectBo {
 
 	@ApiModelProperty(value = "分类id")
 	private String categoryId;
+
+	@ApiModelProperty(value = "文件")
+	private String file;
 }

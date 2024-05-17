@@ -27,4 +27,15 @@ public interface SituationEffectService {
 
 	ListRsp<SituationEffectCategoryName> pageCategory(PageReqBase reqBase);
 
+	SituationEffectBo getDetail(String resourceId);
+
+	void createMapping(SituationEffectMappingAddReq req);
+
+	SituationEffectMappingBo getMappingDetail(String resourceId);
+
+	void modifyMapping(SituationEffectMappingModifyReq req);
+
+	void deleteMapping(List<String> ids);
+
+	ListRsp<SituationEffectMappingBo> pageMapping(PageReqBase req);
 }

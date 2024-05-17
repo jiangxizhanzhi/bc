@@ -11,13 +11,16 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.SituationEffect;
 import com.cyberpeace.cr.crbase.dao.entity.SituationEffectCategory;
+import com.cyberpeace.cr.crbase.dao.entity.SituationEffectMapping;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationEffectCategoryMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationEffectMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.SituationEffectMappingMapper;
 import com.cyberpeace.cr.crbase.service.SituationEffectService;
 import com.cyberpeace.cr.crbase.service.context.IdListReq;
 import com.cyberpeace.cr.crbase.service.context.effect.*;
@@ -34,6 +37,9 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 
 	@Autowired
 	private SituationEffectCategoryMapper situationEffectCategoryMapper;
+
+	@Autowired
+	private SituationEffectMappingMapper situationEffectMappingMapper;
 
 	@Override
 	public List<SituationEffectCategoryName> listCategory() {
@@ -118,6 +124,69 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		return PageUtil.getListResult(result);
 	}
 
+	@Override
+	public SituationEffectBo getDetail(String resourceId) {
+		SituationEffect effect = situationEffectMapper.selectById(resourceId);
+		SituationEffectBo bo = BeanUtils.copy(effect, SituationEffectBo.class);
+		return bo;
+	}
+
+	@Override
+	public void createMapping(SituationEffectMappingAddReq req) {
+		if (ifMappingNameDuplicate(req.getName(), "")) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+		CrCommonValidator.validateNameLen(req.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		SituationEffectMapping mapping = mappingReq2Entity(req);
+		mapping.setResourceId(IDGeneratorUtil.getID());
+		situationEffectMappingMapper.insert(mapping);
+	}
+
+	@Override
+	public SituationEffectMappingBo getMappingDetail(String resourceId) {
+		SituationEffectMapping mapping = situationEffectMappingMapper.selectById(resourceId);
+		SituationEffectMappingBo bo = BeanUtils.copy(mapping, SituationEffectMappingBo.class);
+		return bo;
+	}
+
+	@Override
+	public void modifyMapping(SituationEffectMappingModifyReq req) {
+		if (ifMappingNameDuplicate(req.getName(), req.getResourceId())) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+		CrCommonValidator.validateNameLen(req.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		SituationEffectMapping mapping = mappingReq2Entity(req);
+		mapping.setResourceId(req.getResourceId());
+		situationEffectMappingMapper.updateById(mapping);
+	}
+
+	@Override
+	public void deleteMapping(List<String> ids) {
+		situationEffectMappingMapper.deleteBatchIds(ids);
+	}
+
+	@Override
+	public ListRsp<SituationEffectMappingBo> pageMapping(PageReqBase req) {
+		Page page = req.toPageParam();
+
+		IPage<SituationEffectBo> result = situationEffectMappingMapper.page(page, req.getPattern());
+
+		return PageUtil.getListResult(result);
+	}
+
+	private SituationEffectMapping mappingReq2Entity(SituationEffectMappingAddReq req) {
+		SituationEffectMapping mapping = new SituationEffectMapping();
+		mapping.setName(req.getName());
+		mapping.setRule(req.getRule());
+		mapping.setSourceEffect(req.getSourceEffect());
+		mapping.setTargetEffect(req.getTargetEffect());
+		mapping.setFocus(req.getFocus());
+		mapping.setColor(req.getColor());
+		mapping.setLineType(req.getLineType());
+		mapping.setLineWidth(req.getLineWidth());
+		return mapping;
+	}
+
 	private SituationEffect req2Entity(SituationEffectAddReq req) {
 		SituationEffect effect = new SituationEffect();
 		effect.setName(req.getName());
@@ -133,5 +202,9 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 
 	private boolean ifEffectNameDuplicate(String name, String resourceId) {
 		return situationEffectMapper.ifNameDuplicate(name, resourceId);
+	}
+
+	private boolean ifMappingNameDuplicate(String name, String resourceId) {
+		return situationEffectMappingMapper.ifNameDuplicate(name, resourceId);
 	}
 }

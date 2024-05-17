@@ -19,6 +19,7 @@ import com.cyberpeace.cr.crbase.service.context.effect.*;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "动效管理")
@@ -26,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/situation/effect")
 @RequiresAuthentication
-public class SituationManagementController {
+public class SituationEffectController {
 
 	@Autowired
 	private SituationEffectService situationEffectService;
@@ -89,6 +90,15 @@ public class SituationManagementController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("查看动效")
+	@GetMapping("/")
+	public BaseRsp<SituationEffectBo>
+			getDetail(@ApiParam(value = "id", name = "resource_id") String resource_id) {
+
+		SituationEffectBo res = situationEffectService.getDetail(resource_id);
+		return new BaseRsp<>(res);
+	}
+
 	@ApiOperation("修改动效")
 	@PutMapping("/")
 	public BaseRsp modify(@RequestBody @Valid SituationEffectModifyReq req) {
@@ -102,6 +112,47 @@ public class SituationManagementController {
 	public BaseRsp delete(@RequestBody @Valid IdReq req) {
 
 		situationEffectService.deleteEffect(req.getId());
+		return new BaseRsp();
+	}
+
+	@ApiOperation("动效映射列表")
+	@GetMapping("/mapping/page")
+	public BaseRsp<ListRsp<SituationEffectMappingBo>> getMappingPage(@Validated PageReqBase req) {
+
+		ListRsp<SituationEffectMappingBo> res = situationEffectService.pageMapping(req);
+		return new BaseRsp(res);
+	}
+
+	@ApiOperation("新增动效映射")
+	@PostMapping("/mapping")
+	public BaseRsp createMapping(@RequestBody @Valid SituationEffectMappingAddReq req) {
+
+		situationEffectService.createMapping(req);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("查看映射关系")
+	@GetMapping("/")
+	public BaseRsp<SituationEffectMappingBo>
+			getMappingDetail(@ApiParam(value = "id", name = "resource_id") String resource_id) {
+
+		SituationEffectMappingBo res = situationEffectService.getMappingDetail(resource_id);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("修改动效映射")
+	@PutMapping("/mapping")
+	public BaseRsp modifyMapping(@RequestBody @Valid SituationEffectMappingModifyReq req) {
+
+		situationEffectService.modifyMapping(req);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("删除动效映射")
+	@DeleteMapping("/mapping")
+	public BaseRsp deleteMapping(@RequestBody @Valid IdListReq req) {
+
+		situationEffectService.deleteMapping(req.getIds());
 		return new BaseRsp();
 	}
 

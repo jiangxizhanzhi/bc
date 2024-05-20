@@ -139,6 +139,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		topoJson.put("scene_config", topoData.getSceneConfig());
 		topoJson.put("logo", topoData.getLogo());
 		topoJson.put("support_partial_start", topoData.getSupportPartialStart());
+		topoJson.put("id", topoData.getId());
 
 		BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
 		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());

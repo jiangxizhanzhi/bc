@@ -43,12 +43,16 @@ public class UploadLogJob {
     public void uploadLog(){
         if(isUploadLog){
             String logRootPath = System.getProperty("catalina.base") + "/logs/";
-            List<String> logPaths = FileUtil.listFileByFile(new File(logRootPath),1,false);
+            List<String> logPaths = FileUtil.listFileByFile(new File(logRootPath),1,true);
             List<JSONObject> logBos = new ArrayList<>();
             for (String logPath: logPaths) {
                 String logName = FileUtil.getFileName(logPath,true);
                 if(logName.startsWith("bc")){
                     File logFile = new File(logPath);
+                    if (logFile.isDirectory()) {
+                        log.warn("log file path is dir [{}]", logPath);
+                        continue;
+                    }
                     JSONObject object = new JSONObject();
                     object.put("download_url",DOWNLOAD_LOG_URL+logName);
                     object.put("file_name",logName);

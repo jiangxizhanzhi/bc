@@ -407,27 +407,33 @@ public class FileUtil {
 	public static List<String> listFileByFile(File rootFile, Integer depth, Boolean includeFile) {
 
 		// 文件校验返回
-		if (!rootFile.exists()) {
+		if (!rootFile.isDirectory()) {
 			return Lists.newArrayList();
 		}
 
-		// 是包含文件过滤
-		if (!includeFile && rootFile.isFile()) {
-			return Lists.newArrayList();
-		}
 
 		// 根据审读计算是否继续往下
 		if (depth != null && depth > 0) {
 			depth--;
-		} else if (depth != null && depth <= 0) {
+		} else if (depth != null) {
 			return Lists.newArrayList();
 		}
 
 		// 遍历文件返回
 		File[] files = rootFile.listFiles();
 		List<String> allDir = Lists.newArrayList();
+
+		if (files == null) {
+			return Lists.newArrayList();
+		}
+
 		for (File file : files) {
-			allDir.add(file.getAbsolutePath());
+			if (includeFile) {
+				allDir.add(file.getAbsolutePath());
+			}else if (file.isDirectory()) {
+				allDir.add(file.getAbsolutePath());
+			}
+
 			List<String> childrenDirs = listFileByFile(file, depth, includeFile);
 			allDir.addAll(childrenDirs);
 		}

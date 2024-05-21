@@ -452,7 +452,7 @@ public class FileUtil {
 
 		File rootFile = new File(path);
 		if (!rootFile.exists()) {
-			log.error("File not exist! path=[{}]", path);
+			log.warn("File not exist! path=[{}]", path);
 			return Lists.newArrayList();
 		}
 		File[] files = rootFile.listFiles();
@@ -475,7 +475,7 @@ public class FileUtil {
 
 		File rootFile = new File(path);
 		if (!rootFile.exists()) {
-			log.error("File not exist! path=[{}]", path);
+			log.warn("File not exist! path=[{}]", path);
 			return Lists.newArrayList();
 		}
 		File[] files = rootFile.listFiles();

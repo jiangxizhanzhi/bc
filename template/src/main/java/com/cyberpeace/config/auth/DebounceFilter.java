@@ -1,22 +1,19 @@
 package com.cyberpeace.config.auth;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.compress.utils.IOUtils;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.config.wrapper.ContentCacheRequestWrapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -32,10 +29,6 @@ public class DebounceFilter implements Filter {
 	Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.SECONDS)
 			.build();
 
-	private final String post = "POST";
-
-	private final String jsonType = "application/json";
-
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -46,9 +39,9 @@ public class DebounceFilter implements Filter {
 						 FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 		// 只处理 body 是 json 的 post 请求
-		if (httpServletRequest.getMethod().equals(post)
+		if (httpServletRequest.getMethod().equals(WebConstant.POST)
 				&& httpServletRequest.getContentType() != null
-				&& httpServletRequest.getContentType().contains(jsonType)) {
+				&& httpServletRequest.getContentType().contains(WebConstant.JSON_TYPE)) {
 
 			ContentCacheRequestWrapper requestWrapper = new ContentCacheRequestWrapper(
 					(HttpServletRequest) servletRequest);
@@ -88,59 +81,6 @@ public class DebounceFilter implements Filter {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			throw new BusinessException(ErrorCode.INTERNAL_ERROR);
-		}
-	}
-}
-
-class ContentCacheRequestWrapper extends HttpServletRequestWrapper {
-
-	private byte[] body;
-
-	private BufferedReader reader;
-
-	private ServletInputStream inputStream;
-
-	public ContentCacheRequestWrapper(HttpServletRequest request) throws IOException {
-		super(request);
-		loadBody(request);
-	}
-
-	private void loadBody(HttpServletRequest request) throws IOException {
-		body = IOUtils.toByteArray(request.getInputStream());
-		inputStream = new RequestCachingInputStream(body);
-	}
-
-	public byte[] getBody() {
-		return body;
-	}
-
-	@Override
-	public ServletInputStream getInputStream() throws IOException {
-		if (inputStream != null) {
-			return inputStream;
-		}
-		return super.getInputStream();
-	}
-
-	@Override
-	public BufferedReader getReader() throws IOException {
-		if (reader == null) {
-			reader = new BufferedReader(new InputStreamReader(inputStream, getCharacterEncoding()));
-		}
-		return reader;
-	}
-
-	private static class RequestCachingInputStream extends ServletInputStream {
-
-		private final ByteArrayInputStream inputStream;
-
-		public RequestCachingInputStream(byte[] bytes) {
-			inputStream = new ByteArrayInputStream(bytes);
-		}
-
-		@Override
-		public int read() throws IOException {
-			return inputStream.read();
 		}
 	}
 }

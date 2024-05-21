@@ -42,5 +42,11 @@ public final class WebConstant {
 	/** 外部接口使用*/
 	public static final String OJ_HEADER_KEY_VALUE = "Cmycjs1bWUHsKb8r";
 
+	public static final String POST = "POST";
+
+	public static final String JSON_TYPE = "application/json";
+
+	public static final String GET = "GET";
+
 	private WebConstant() {}
 }

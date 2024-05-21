@@ -12,7 +12,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.annoations.BehaviorRecord;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -70,6 +73,7 @@ public class SingleRoomController {
 	@PostMapping
 	@ApiOperation("创建")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	@BehaviorRecord(module = BehaviorModuleEnum.SINGLE_TRAIN, action = BehaviorTypeEnum.START_SCENE)
 	public BaseRsp<SingleRoomBo> create(@RequestBody @Validated SingleRoomOpsReq req) {
 
 		SingleRoomBo singleRoomBo = singleRoomService.createRoom(req.getResourceId());

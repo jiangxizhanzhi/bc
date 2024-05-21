@@ -10,8 +10,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.annoations.BehaviorRecord;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -51,6 +54,8 @@ public class WebLessonController {
 	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
     @RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+	@BehaviorRecord(module = BehaviorModuleEnum.COURSE, action = BehaviorTypeEnum.ACCESS_LESSON,
+			target = "lesson_id")
     public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId, @RequestParam(value = "learned_type", required = true) Integer learnedType,
                                               @RequestParam("lesson_id") String lessonId, @RequestParam(value = "room_id", required = false) String roomId) {
 

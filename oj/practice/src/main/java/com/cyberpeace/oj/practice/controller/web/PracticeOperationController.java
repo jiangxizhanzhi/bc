@@ -13,8 +13,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.BehaviorRecord;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -129,6 +132,8 @@ public class PracticeOperationController {
 	@ApiOperation("实操练习解答")
 	@PostMapping("/submit_answer")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	@BehaviorRecord(module = BehaviorModuleEnum.OPERATION, action = BehaviorTypeEnum.ANSWER,
+			result = "solved")
 	public BaseRsp<EvaluateResult> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
 		EvaluateResult evaluateResult = practiceOperationService.submitAnswer(

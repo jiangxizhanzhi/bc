@@ -118,11 +118,11 @@ public class BehaviorRecordAspect {
 		String action = record.action().getDesc();
 		String module = record.module().getDesc();
 		String target = getFromResponse(response, record.name(), String.class);
-		if (null == target) {
-			target = "";
-		}
-		String descriptionTemplate = "用户[%s] 在 %s 页面 %s[%s]";
-		return String.format(descriptionTemplate, user, module, action, target);
+
+		String targetTemplate = "[%s]";
+		String descriptionTemplate = "用户[%s] 在 %s 页面 %s%s";
+		String targetStr = null == target ? "" : String.format(targetTemplate, target);
+		return String.format(descriptionTemplate, user, module, action, targetStr);
 
 	}
 
@@ -158,9 +158,14 @@ public class BehaviorRecordAspect {
 
 	private <T> T getFromResponse(Object response, String name, Class<T> clazz) {
 		JSONObject o = JsonUtil.java2JsonObject(response).getJSONObject("data");
-		if (null == o) {
-			return null;
+		String[] fields = name.split("\\.");
+		int size = fields.length;
+		for (int i = 0; i < size - 1; i++) {
+			if (null == o) {
+				return null;
+			}
+			o = o.getJSONObject(fields[i]);
 		}
-		return o.getObject(name, clazz);
+		return o.getObject(fields[size - 1], clazz);
 	}
 }

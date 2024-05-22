@@ -9,14 +9,18 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.annoations.BehaviorRecord;
 import com.cyberpeace.common.context.MissionStageScheme;
 import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,12 +137,6 @@ public class TeamTrainRoomController {
 	private TeamTemplateMapper teamTemplateMapper;
 
 	@Autowired
-	private TeamRoomMapper teamRoomMapper;
-
-	@Autowired
-	private RtksRelatedService rtksRelatedService;
-
-	@Autowired
 	private CrScoreService crScoreService;
 
 	@Autowired
@@ -152,6 +150,8 @@ public class TeamTrainRoomController {
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@BehaviorRecord(module = BehaviorModuleEnum.TEAM_TRAIN, action = BehaviorTypeEnum.START_SCENE,
+			target = "room_id")
 	public BaseRsp<StartSceneRsp> startScene(@RequestBody SceneOpsReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -304,6 +304,8 @@ public class TeamTrainRoomController {
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@BehaviorRecord(module = BehaviorModuleEnum.TEAM_TRAIN, action = BehaviorTypeEnum.CREATE,
+			target = "template", name = "templateName")
 	public BaseRsp<TeamRoomRsp> create(@RequestBody @Validated TeamTrainRoomReq teamTrainRoomReq) {
 		// 校验
 		teamTrainRoomReq.validate();
@@ -358,6 +360,7 @@ public class TeamTrainRoomController {
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@BehaviorRecord(module = BehaviorModuleEnum.TEAM_TRAIN, action = BehaviorTypeEnum.ACCESS)
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();

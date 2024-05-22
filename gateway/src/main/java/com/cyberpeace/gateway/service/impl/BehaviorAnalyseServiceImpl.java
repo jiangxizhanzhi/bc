@@ -4,19 +4,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.enums.BehaviorModuleEnum;
 import com.cyberpeace.common.enums.BehaviorResultEnum;
 import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.BehaviorRecordEntity;
 import com.cyberpeace.cs.dao.mapper.BehaviorRecordMapper;
-import com.cyberpeace.cs.service.BehaviorRecordService;
 import com.cyberpeace.cs.service.context.behavior.BehaviorAnalyseResult;
 import com.cyberpeace.cs.service.context.behavior.PracticeResult;
+import com.cyberpeace.gateway.service.BehaviorAnalyseService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.service.CourseLessonService;
@@ -27,11 +24,7 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.google.common.collect.Maps;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Service
-@Slf4j
-public class BehaviorRecordServiceImpl extends ServiceImpl<BehaviorRecordMapper, BehaviorRecordEntity> implements BehaviorRecordService {
+public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 
 	@Autowired
 	private BehaviorRecordMapper behaviorRecordMapper;

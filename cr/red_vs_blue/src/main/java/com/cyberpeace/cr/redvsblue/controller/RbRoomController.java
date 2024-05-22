@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.annoations.BehaviorRecord;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -129,6 +132,8 @@ public class RbRoomController {
     @ApiOperation("新增")
     @PostMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    @BehaviorRecord(module = BehaviorModuleEnum.RED_VS_BLUE, action = BehaviorTypeEnum.CREATE,
+                    target = "template", name = "templateName")
     public BaseRsp<RbRoomRsp> create(@RequestBody @Validated RbRoomReq rbRoomReq) {
         // 校验
         rbRoomReq.validate();
@@ -154,6 +159,7 @@ public class RbRoomController {
     @ApiOperation("查询")
     @GetMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+    @BehaviorRecord(module = BehaviorModuleEnum.RED_VS_BLUE, action = BehaviorTypeEnum.ACCESS)
     public BaseRsp<RbRoomRsp> getRbRoom(
             @ApiParam(name = "resource_id", value = "训练id", required = true) @RequestParam(
                     value = "resource_id", required = true) String resourceId) {

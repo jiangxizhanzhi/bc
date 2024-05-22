@@ -6,6 +6,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.annoations.BehaviorRecord;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -99,6 +102,7 @@ public class RbSceneController {
 	@ApiOperation("启动场景")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@BehaviorRecord(module = BehaviorModuleEnum.RED_VS_BLUE, action = BehaviorTypeEnum.START_SCENE, target = "room_id")
 	public BaseRsp<StartSceneRsp> startScene(@RequestBody SceneOpsReq sceneStartReq) {
 		String roomId = sceneStartReq.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();

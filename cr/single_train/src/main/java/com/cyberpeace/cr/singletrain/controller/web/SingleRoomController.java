@@ -73,7 +73,7 @@ public class SingleRoomController {
 	@PostMapping
 	@ApiOperation("创建")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
-	@BehaviorRecord(module = BehaviorModuleEnum.SINGLE_TRAIN, action = BehaviorTypeEnum.START_SCENE)
+	@BehaviorRecord(module = BehaviorModuleEnum.SINGLE_TRAIN, action = BehaviorTypeEnum.START_SCENE, name="eventData.name")
 	public BaseRsp<SingleRoomBo> create(@RequestBody @Validated SingleRoomOpsReq req) {
 
 		SingleRoomBo singleRoomBo = singleRoomService.createRoom(req.getResourceId());
@@ -88,6 +88,7 @@ public class SingleRoomController {
 	@GetMapping
 	@ApiOperation("详情")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	@BehaviorRecord(module = BehaviorModuleEnum.SINGLE_TRAIN, action = BehaviorTypeEnum.ACCESS, name="eventData.name")
 	public BaseRsp<SingleRoomBo> get(@RequestParam("resource_id") String businessTrainId) {
 		SingleRoomBo roomInfo = singleRoomService.getRoomInfo(businessTrainId);
 

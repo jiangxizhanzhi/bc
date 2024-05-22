@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.annoations.BehaviorRecord;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -129,6 +132,7 @@ public class TeamTrainStudentsController {
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@BehaviorRecord(module = BehaviorModuleEnum.TEAM_TRAIN, action = BehaviorTypeEnum.ACCESS)
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();

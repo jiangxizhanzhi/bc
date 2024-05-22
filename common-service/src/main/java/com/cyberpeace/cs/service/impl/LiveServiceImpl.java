@@ -117,9 +117,9 @@ public class LiveServiceImpl implements LiveService {
 	@Override
 	public void handleCallback(SrsCallbackReq req) {
 		if (req.getAction().equals(SRSAction.ON_PUBLISH)) {
-			pushLiveStatusMessage(req.getStream(), LiveWsStatusActionCode.PUBLISH);
+			pushLiveStatusMessage(req.getApp(), LiveWsStatusActionCode.PUBLISH);
 		} else if (req.getAction().equals(SRSAction.ON_UNPUBLISH)) {
-			pushLiveStatusMessage(req.getStream(), LiveWsStatusActionCode.UNPUBLISH);
+			pushLiveStatusMessage(req.getApp(), LiveWsStatusActionCode.UNPUBLISH);
 		}
 	}
 

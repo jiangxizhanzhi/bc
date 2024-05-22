@@ -22,6 +22,29 @@ CREATE TABLE `video_progress`
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for behavior_record
+-- ----------------------------
+DROP TABLE IF EXISTS `behavior_record`;
+CREATE TABLE `behavior_record`
+(
+    `id`          int(11)                                                  NOT NULL AUTO_INCREMENT,
+    `module`      smallint(6)                                              NOT NULL COMMENT '模块',
+    `user_id`     varchar(65) CHARACTER SET utf8 COLLATE utf8_general_ci   NOT NULL COMMENT '用户id',
+    `action`      smallint(6)                                              NOT NULL COMMENT '用户动作类型',
+    `target`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '动作目标',
+    `result`      smallint(6)                                              NULL DEFAULT NULL COMMENT '结果',
+    `link`        varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '链接',
+    `description` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
+    `time`        datetime                                                 NULL DEFAULT NULL COMMENT '时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `module_user` (`module`, `user_id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 30
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- video_check_point
 -- ----------------------------
 

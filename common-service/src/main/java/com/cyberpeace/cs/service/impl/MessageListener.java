@@ -166,7 +166,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 					// 判断是否是已删除场景的推送消息
 					String mpSceneId = object.getJSONObject("data").getString("cscene_id");
 					if (!localScene.getMpSceneId().equals(mpSceneId)) {
-						log.info("mp scene {} has been deleted, no longer belongs to business {}",
+						log.info("SCENE mp scene {} has been deleted, no longer belongs to business {}",
 								mpSceneId, businessId);
 						break;
 					}
@@ -179,7 +179,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 					// 判断是否是已删除场景的推送消息
 					mpSceneId = object.getJSONObject("data").getString("cscene_id");
 					if (!localScene.getMpSceneId().equals(mpSceneId)) {
-						log.info("mp scene {} has been deleted, no longer belongs to business {}",
+						log.info("SCENE_ELEMENT mp scene {} has been deleted, no longer belongs to business {}",
 								mpSceneId, businessId);
 						break;
 					}

@@ -38,6 +38,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -252,7 +253,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("查询全部课程信息")
 	@GetMapping("/all/course")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
+	@RequiresPermissions(value = {MenuConstant.CMS_COURSES, MenuConstant.CMS_CLASS_ROOM}, logical = Logical.OR)
 	public BaseRsp<List<SimpleDataRes>> allCourse() {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

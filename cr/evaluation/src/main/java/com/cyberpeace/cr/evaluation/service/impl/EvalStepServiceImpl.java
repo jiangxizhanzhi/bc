@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalInstanceStep;
@@ -107,7 +108,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			EvalInstanceStep instanceStep = instanceStepList.get(i);
 			EvalStep step = stepMap.get(instanceStep.getStepId());
 			EvalTestStepListRsp evalTestStepListRsp = BeanUtils.copy(step, EvalTestStepListRsp.class);
-			evalTestStepListRsp.setStepId(step.getResourceId());
+			evalTestStepListRsp.setStepId(instanceStep.getResourceId());
 			evalTestStepListRsp.setStartTime(TimeUtil.format1(instanceStep.getStartTime()));
 			evalTestStepListRsp.setEndTime(TimeUtil.format1(instanceStep.getEndTime()));
 			if (testInstance.getInstanceName() != null) {
@@ -137,10 +138,35 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
 	@Override
 	public Boolean finishStep(String stepId) {
-		EvalInstanceStep evalInstanceStep = evalInstanceStepMapper.selectByStepId(stepId);
+		EvalInstanceStep evalInstanceStep = evalInstanceStepMapper.selectById(stepId);
 		evalInstanceStep.setEndTime(new Date());
 		evalInstanceStepMapper.updateById(evalInstanceStep);
 		return true;
+	}
+
+	@Override
+	public void deleteLoad(EvalStepLoadDeleteReq deleteReq) {
+		String stepId = deleteReq.getStepId();
+		EvalInstanceStep evalInstanceStep = evalInstanceStepMapper.selectByStepId(stepId);
+		if (evalInstanceStep != null) {
+			stepId = evalInstanceStep.getStepId();
+		}
+		EvalStep evalStep = evalStepMapper.selectById(stepId);
+		List<LoadSetReq> loadList = evalStep.getLoadList();
+		loadList.stream().filter(load -> !load.getLoadId().equals(deleteReq.getLoadId())).collect(Collectors.toList());
+		evalStep.setSettingList(loadList);
+		evalStepMapper.updateById(evalStep);
+	}
+
+	@Override
+	public void addLoad(EvalStepLoadDeleteReq addReq) {
+		EvalStep evalStep = evalStepMapper.selectById(addReq.getLoadId());
+		List<LoadSetReq> loadList =  evalStep.getLoadList();
+		LoadSetReq loadSetReq = new LoadSetReq();
+		loadSetReq.setLoadId(addReq.getLoadId());
+		loadList.add(loadSetReq);
+		evalStep.setSettingList(loadList);
+		evalStepMapper.updateById(evalStep);
 	}
 
 

@@ -47,4 +47,8 @@ public class EvalStep extends BaseTable {
 		return JsonUtil.toJsonObjectArray(setting, LoadSetReq.class);
 	}
 
+	public void setSettingList(List<LoadSetReq> settingList) {
+		this.setting = JsonUtil.toJsonString(settingList);
+	}
+
 }

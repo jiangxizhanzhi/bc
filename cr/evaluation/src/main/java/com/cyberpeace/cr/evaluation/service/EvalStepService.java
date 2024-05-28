@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalStep;
 
@@ -20,4 +21,8 @@ public interface EvalStepService extends IService<EvalStep> {
 	Boolean startStep(String stepId);
 
 	Boolean finishStep(String stepId);
+
+	void deleteLoad(EvalStepLoadDeleteReq evalStepLoadDeleteReq);
+
+	void addLoad(EvalStepLoadDeleteReq evalStepLoadDeleteReq);
 }

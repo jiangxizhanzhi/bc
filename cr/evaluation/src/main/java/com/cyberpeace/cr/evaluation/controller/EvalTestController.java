@@ -7,7 +7,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
@@ -250,6 +249,20 @@ public class EvalTestController {
 	public BaseRsp<List<CodeNameRsp>> getAllStages(@ApiParam(name = "instance_id", value = "实例id",
 			required = true) @RequestParam("instance_id") String instanceId) {
 		return new BaseRsp<>(evalInstanceStepService.getAllStages(instanceId));
+	}
+
+	@ApiOperation("删除载荷")
+	@DeleteMapping("/load")
+	public BaseRsp<Boolean> deleteLoad(@RequestBody EvalStepLoadDeleteReq evalStepLoadDeleteReq) {
+		evalStepService.deleteLoad(evalStepLoadDeleteReq);
+		return new BaseRsp<>(Boolean.TRUE);
+	}
+
+	@ApiOperation("添加载荷")
+	@PostMapping("/load")
+	public BaseRsp<Boolean> addLoad(@RequestBody EvalStepLoadDeleteReq evalStepLoadDeleteReq) {
+		evalStepService.addLoad(evalStepLoadDeleteReq);
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 }

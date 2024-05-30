@@ -677,12 +677,51 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			throw new BusinessException(OjBusinessErrorCode.NOT_SELECT_LESSON_INFORMATION);
 		}
 
+		List<String> paperIds = new ArrayList<>();
+		for (CourseLesson courseLesson : courseLessons) {
+			paperIds.add(courseLesson.getPaperId());
+		}
+		List<Paper> papers = paperMapper.selectBatchIds(paperIds);
+		Map<String, Paper> paperMap = new HashMap<>();
+		for (Paper p : papers) {
+			paperMap.put(p.getResourceId(), p);
+		}
+
+		LambdaQueryWrapper<PracticeTheoryRef> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.in(PracticeTheoryRef::getPaperId, paperIds);
+		List<PracticeTheoryRef> refs = practiceTheoryRefMapper.selectList(queryWrapper);
+		Map<String, List<PracticeTheoryRef>> paperRefsMap = new HashMap<>();
+		for (PracticeTheoryRef ref : refs) {
+			if (!paperRefsMap.containsKey(ref.getPaperId())) {
+				paperRefsMap.put(ref.getPaperId(), new ArrayList<>());
+			}
+			paperRefsMap.get(ref.getPaperId()).add(ref);
+		}
+
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
+		List<Paper> addPapers = new ArrayList<>();
+		List<PracticeTheoryRef> addRefs = new ArrayList<>();
 		for (CourseLesson courseLesson : courseLessons) {
 			// 课时数据校验
 			courseValidateHandler.validateLessonNameExist(courseId, courseLesson.getName());
+
+			// 查询练习
+			Paper paper = paperMap.get(courseLesson.getPaperId());
+			paper.setId(null);
+			paper.setResourceId(IDGeneratorUtil.getID());
+			addPapers.add(paper);
+
+			List<PracticeTheoryRef> dbRefs = paperRefsMap.getOrDefault(courseLesson.getPaperId(),new ArrayList<>());
+			for (PracticeTheoryRef f : dbRefs) {
+				f.setId(null);
+				f.setPaperId(paper.getResourceId());
+				f.setResourceId(IDGeneratorUtil.getID());
+			}
+			addRefs.addAll(dbRefs);
+
 			// 重新初始化课时
 			reinitLesson(courseLesson, course.getResourceId());
+			courseLesson.setPaperId(paper.getResourceId());
 			// 目录数组组装
 			lessonConfigs.add(initLessonConfig(courseLesson));
 		}
@@ -694,6 +733,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		return transactionTemplate.execute(status-> {
 			lessonConfigService.saveBatch(lessonConfigs);
+			paperService.saveBatch(addPapers);
+			practiceTheoryRefService.saveBatch(addRefs);
 			return saveBatch(courseLessons);
 		});
 

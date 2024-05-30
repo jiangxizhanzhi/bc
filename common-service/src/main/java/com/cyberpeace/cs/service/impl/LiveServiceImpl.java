@@ -63,8 +63,8 @@ public class LiveServiceImpl implements LiveService {
 		String playUrl = ConfigUtil.getContextProperty("rtc.play.url");
 		String streamsUrl = ConfigUtil.getContextProperty("rtc.streams.url");
 
-		PUBLISH_URL = ProtocolHead.HTTPS + srsHost + publishUrl;
-		PLAY_URL = ProtocolHead.HTTPS + srsHost + playUrl;
+		PUBLISH_URL = srsHost + publishUrl;
+		PLAY_URL = srsHost + playUrl;
 		GET_STREAMS_URL = ProtocolHead.HTTP + srsHost + streamsUrl;
 	}
 

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.tool.controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -10,6 +11,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
@@ -76,6 +78,9 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> create(@RequestBody @Validated ToolAddReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
+		if (tool.getIntroduction() != null && tool.getIntroduction().length() > 65535) {
+			throw new BusinessException(CrBusinessErrorCode.DESC_TOO_LONG);
+		}
 
 		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
 		toolService.validateToolNameExist(tool);
@@ -92,6 +97,9 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
+		if (tool.getIntroduction() != null && tool.getIntroduction().length() > 65535) {
+			throw new BusinessException(CrBusinessErrorCode.DESC_TOO_LONG);
+		}
 		toolService.validateEditToolNameExist(tool);
 		toolService.updateById(tool);
 

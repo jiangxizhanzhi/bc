@@ -490,5 +490,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String NO_EVENT_TYPE_SELECTED = "101143";
 
+	/**
+	 * 工具库描述字段过长
+	 */
+	public static final String DESC_TOO_LONG = "101144";
+
 	private CrBusinessErrorCode() {}
 }

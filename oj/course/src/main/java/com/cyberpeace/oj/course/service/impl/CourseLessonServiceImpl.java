@@ -268,16 +268,24 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		ClassroomGroupInfo groupInfo = null;
 		if (StringUtils.isNotBlank(roomId)) {
 			Classroom classroom = classroomMapper.selectById(roomId);
-			if (null != classroom) {
-				groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(roomId,
-						authContext.getUserId());
-				Date current = new Date();
-				if ((null != groupInfo || lesson.getType()
-						.intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue())
-						&& current.after(classroom.getStartTime())
-						&& current.before(classroom.getEndTime())) {
-					infoBo.setRoomId(roomId);
-				}
+			if (null == classroom) {
+				log.error("classroom not found by id [{}]", roomId);
+				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_NOT_FOUNT);
+			}
+
+			if (!classroom.getOrganizationIds().contains(authContext.getOrganization())) {
+				log.error("user[{}], userOrganization[{}] not in classroom[{}]", authContext.getUserId(), authContext.getOrganization(), roomId);
+				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_USER_NOT_IN);
+			}
+
+			groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(roomId,
+					authContext.getUserId());
+			Date current = new Date();
+			if ((null != groupInfo || lesson.getType()
+					.intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue())
+					&& current.after(classroom.getStartTime())
+					&& current.before(classroom.getEndTime())) {
+				infoBo.setRoomId(roomId);
 			}
 		}
 

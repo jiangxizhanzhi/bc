@@ -762,6 +762,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		lesson.setId(null);
 		lesson.setCourseId(courseId);
 		lesson.setResourceId(IDGeneratorUtil.getID());
+		// 复制可见和视频
+		lesson.setVideoUrl(copyAttachment(lesson.getVideoUrl()));
+		lesson.setHandoutUrl(copyAttachment(lesson.getHandoutUrl()));
 	}
 
 	@Override
@@ -1200,6 +1203,27 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		
 		this.clearSceneAndTopos(sceneContext.getScenes(), sceneContext.getTopos());
 		return resourceIds.size();
+	}
+
+	private String copyAttachment(String uri) {
+		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
+		if (StringUtils.isBlank(uri) || uri.contains(" ") || uri.contains("\n")) {
+			return uri;
+		}
+		if (!uri.startsWith(prefix)) {
+			uri = uri + prefix;
+		}
+		String destFile = "";
+		try {
+			String folder = uri.substring(0, uri.lastIndexOf(File.separatorChar) + 1);
+			String fileSuffix = FileUtil.getFileSuffix(uri);
+			String newFileName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+			destFile = folder + newFileName;
+			FileUtil.copyFile(uri, destFile, false);
+		} catch (Exception e) {
+			log.error("failed to copy [{}]", uri, e);
+		}
+		return destFile;
 	}
 
 	/**

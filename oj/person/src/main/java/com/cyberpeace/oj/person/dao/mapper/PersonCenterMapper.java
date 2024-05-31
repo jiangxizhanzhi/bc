@@ -1,5 +1,12 @@
 package com.cyberpeace.oj.person.dao.mapper;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -7,13 +14,10 @@ import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
-import com.cyberpeace.oj.person.dao.entity.*;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.Date;
-import java.util.List;
+import com.cyberpeace.oj.person.dao.entity.PersonCollection;
+import com.cyberpeace.oj.person.dao.entity.PersonComment;
+import com.cyberpeace.oj.person.dao.entity.PersonNote;
+import com.cyberpeace.oj.person.dao.entity.StudyRecord;
 
 @Mapper
 @Repository
@@ -147,6 +151,9 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
             @Param("startTime") Date startTime,
             @Param("endTime") Date endTime,
             @Param("lessonIds") List<String> lessonIds);
+
+	List<NoteEvaluate> selectReportEvaluationByTime(@Param("noteIds") List<String> noteIds,
+			@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     List<String> selectLessonByAuth(@Param("courseIds") List<String> courseIds);
 

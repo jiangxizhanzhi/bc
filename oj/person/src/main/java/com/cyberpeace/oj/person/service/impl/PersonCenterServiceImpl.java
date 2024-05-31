@@ -1,5 +1,18 @@
 package com.cyberpeace.oj.person.service.impl;
 
+import static com.cyberpeace.integratation.constant.LogContent.EXERCISE;
+import static com.cyberpeace.integratation.constant.LogContent.THEORY;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,25 +40,14 @@ import com.cyberpeace.oj.person.dao.mapper.PersonCenterMapper;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.google.common.collect.Lists;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static com.cyberpeace.integratation.constant.LogContent.EXERCISE;
-import static com.cyberpeace.integratation.constant.LogContent.THEORY;
 
 @Service
 @Slf4j
@@ -186,15 +188,19 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                 endTime, lessonIds);
         List<Note> finishReports = personCenterMapper.selectReportByTime(userId, startTime, endTime,
                 expLessonIds);
-        List<NoteEvaluate> reportScores = personCenterMapper.selectReportAverageByTime(userId, startTime, endTime,
-                expLessonIds);
+		List<NoteEvaluate> reportScores = Lists.newArrayList();
+		if (!finishReports.isEmpty()) {
+			List<String> noteIds = StreamApiUtils.map(finishReports, Note::getResourceId);
+			reportScores = personCenterMapper.selectReportEvaluationByTime(noteIds, startTime,
+					endTime);
+		}
         int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
                 TimeUtil.getStartOfDay(endTime));
         Map<String, List<LessonRecord>> courseRecordMap = lessonRecord.stream().distinct()
                 .collect(Collectors.groupingBy(course -> TimeUtil.format8(course.getCreateTime())));
         Map<String, List<Note>> finishReportMap = finishReports.stream().collect(Collectors
                 .groupingBy(finishPractice -> TimeUtil.format8(finishPractice.getCreateTime())));
-        Map<String, List<NoteEvaluate>> reportAverageMap = reportScores.stream().collect(Collectors.groupingBy(score -> TimeUtil.format8(score.getEvaluateTime())));
+        Map<String, NoteEvaluate> scoreMap = StreamApiUtils.toMap(reportScores, NoteEvaluate::getNoteId, e->e);
         List<String> dates = Lists.newArrayList();
         List<Integer> courseRecords = Lists.newArrayList();
         List<Integer> reportRecords = Lists.newArrayList();
@@ -212,16 +218,18 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             List<Note> finishReportLists = finishReportMap.get(currentDate);
             if (CollectionUtils.isEmpty(finishReportLists)) {
                 reportRecords.add(0);
-            } else {
-                reportRecords.add(finishReportLists.size());
-            }
-            List<NoteEvaluate> reportAverageLists = reportAverageMap.get(currentDate);
-            if (CollectionUtils.isEmpty(reportAverageLists)) {
-                reportAverageRecords.add(0.0d);
-            } else {
-                double asDouble = reportAverageLists.stream().mapToDouble(NoteEvaluate::getScore).average().getAsDouble();
-                reportAverageRecords.add(asDouble);
-            }
+				reportAverageRecords.add(0.0d);
+			} else {
+				reportRecords.add(finishReportLists.size());
+				double sum = 0.0;
+				for (Note note : finishReportLists) {
+					if (scoreMap.containsKey(note.getResourceId())) {
+						sum += scoreMap.get(note.getResourceId()).getScore();
+					}
+				}
+				double score = sum / finishReportLists.size();
+				reportAverageRecords.add(score);
+			}
         }
         BaseRsp<BrokenLine> baseRsp = new BaseRsp<>();
         BrokenLine res = new BrokenLine();

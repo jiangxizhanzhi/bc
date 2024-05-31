@@ -340,7 +340,6 @@
         select *
         from oj_note
         where user_id = #{userId} and note_type = 2 and business_type = 2
-        and resource_id in (select note_id from oj_note_evaluate where score >= 80)
         and create_time &gt; #{startTime}
         and create_time &lt; #{endTime}
         <if test="lessonIds != null and lessonIds.size() != 0">
@@ -371,6 +370,15 @@
         and create_time &gt; #{startTime}
         and create_time &lt; #{endTime}
 
+    </select>
+    <select id="selectReportEvaluationByTime" resultType="com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate">
+        select *
+        from oj_note_evaluate
+        where
+        note_id in
+        <foreach collection="noteIds" item="noteId" open="(" close=")" separator=",">
+            #{noteId}
+        </foreach>
     </select>
 
 

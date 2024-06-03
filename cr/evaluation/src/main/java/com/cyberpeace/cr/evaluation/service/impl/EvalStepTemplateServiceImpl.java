@@ -42,6 +42,7 @@ public class EvalStepTemplateServiceImpl extends ServiceImpl<EvalStepTemplateMap
 	public void modifyStep(EvalStepTemplateModifyReq evalStepTemplateModifyReq) {
 		EvalStepTemplate evalStepTemplate = BeanUtils.copy(evalStepTemplateModifyReq, EvalStepTemplate.class);
 		evalStepTemplate.setResourceId(evalStepTemplateModifyReq.getStepId());
+		evalStepTemplate.setSettingList(evalStepTemplateModifyReq.getSet());
 		evalStepTemplateMapper.updateById(evalStepTemplate);
 	}
 

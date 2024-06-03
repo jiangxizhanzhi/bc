@@ -26,7 +26,8 @@ public class CrRoleNode implements Serializable {
 		OPERATING(1, "操作系统", "OPERATING"),
 		APPLICATION(2, "应用系统", "APPLICATION"),
 		NETWORK(3, "网路设备", "NETWORK"),
-		SECURITY(4, "安防设备", "SECURITY");
+		SECURITY(4, "安防设备", "SECURITY"),
+		LAYER_NODE(5, "层节点","LAYER_NODE");
 
 		@Getter
 		private final Integer code;

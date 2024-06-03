@@ -34,14 +34,18 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		List<String> assetNodeIds = nodes.getAssetNodes().stream().map(CrRoleNode::getId)
 				.collect(Collectors.toList());
 		JSONArray elements = topoData.getJSONObject(TOPOLOGY).getJSONArray("elements");
-
+		// 过滤节点
 		filterElements(topoData, elements, visibleNodeIds, assetNodeIds);
+		// 过滤层节点
+		JSONArray layerNodes = filterLayerNode(topoData, visibleNodeIds);
+		// 移除失效连线
 		removeInvalidConnections(topoData, elements);
+		removeInvalidLayerConnections(topoData, visibleNodeIds);
 
 		// remove empty areas
 		JSONArray areas = topoData.getJSONObject(TOPOLOGY).getJSONArray("areas");
 		JSONArray pieces = topoData.getJSONObject(TOPOLOGY).getJSONArray("pieces");
-		filterAreas(areas, pieces, elements);
+		filterAreas(areas, pieces, elements, layerNodes);
 	}
 
 	private void filterElements(JSONObject topoData, JSONArray elements,
@@ -84,17 +88,50 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 	}
 
 	/**
+	 * 去除不可见的层节点
+	 * 获取可见层节点的数据
+	 * @param topoData       拓扑data
+	 * @param visibleNodeIds visiblenodeid列表
+	 * @return {@code JSONArray}
+	 */
+	private JSONArray filterLayerNode(JSONObject topoData, List<String> visibleNodeIds) {
+		// 处理层节点，层节点在areas列表
+		JSONArray areas = topoData.getJSONObject(TOPOLOGY).getJSONArray("areas");
+		int k = 0;
+		JSONArray layerNodes = new JSONArray();
+		while (k < areas.size()) {
+			JSONObject area = areas.getJSONObject(k);
+			Integer type = area.getInteger("type");
+			String id = area.getString("id");
+			if (type == 1) {
+				if (!visibleNodeIds.contains(id)) {
+					areas.remove(k);
+				} else {
+					layerNodes.add(area);
+					k++;
+				}
+			} else {
+				k++;
+			}
+		}
+		return layerNodes;
+	}
+
+	/**
 	 * 去掉不含节点的 Block
 	 * @param areas Blocks
 	 * @param pieces Labels
 	 * @param elements Nodes
 	 */
-	private void filterAreas(JSONArray areas, JSONArray pieces, JSONArray elements) {
+	private void filterAreas(JSONArray areas, JSONArray pieces, JSONArray elements,
+			JSONArray layerNodes) {
 		int k = 0;
 		while (k < areas.size()) {
 			String areaPositionJson = areas.getJSONObject(k).getString("position2");
+			Integer type = areas.getJSONObject(k).getInteger("type");
 			Area area = JsonUtil.toJsonObject(areaPositionJson, Area.class);
-			if (!area.contains(elements)) {
+			// 将层节点视作节点
+			if (type != 1 && !area.contains(elements) && !area.contains(layerNodes)) {
 				areas.remove(k);
 				filterPieces(area, pieces);
 			} else {
@@ -152,6 +189,21 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		}
 	}
 
+	private void removeInvalidLayerConnections(JSONObject topoData, List<String> visibleNodeIds) {
+		JSONArray connections = topoData.getJSONObject(TOPOLOGY).getJSONArray("node_connections");
+		int i = 0;
+		while (i < connections.size()) {
+			JSONObject connection = connections.getJSONObject(i);
+			String sourceId = connection.getString("source_node_id");
+			String targetId = connection.getString("target_node_id");
+			if (visibleNodeIds.contains(sourceId) && visibleNodeIds.contains(targetId)) {
+				i++;
+			} else {
+				connections.remove(i);
+			}
+		}
+	}
+
 }
 
 /**
@@ -174,8 +226,15 @@ class Area {
 
 	public Boolean contains(Object object) {
 		JSONObject jsonObject = (JSONObject) object;
-		Coordination coordination = JsonUtil.toJsonObject(jsonObject.getString("position2"),
-				Coordination.class);
+		String position = jsonObject.getString("position2");
+		Coordination coordination;
+		if (position.contains("origin")) {
+			Area area = JsonUtil.toJsonObject(position, Area.class);
+			coordination = area.getOrigin();
+		} else {
+			coordination = JsonUtil.toJsonObject(jsonObject.getString("position2"),
+					Coordination.class);
+		}
 		return contains(coordination);
 	}
 

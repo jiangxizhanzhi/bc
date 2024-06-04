@@ -464,6 +464,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 如果未识别流量，统一判断为未知流量
 			if (mpEventType == null) {
+				log.info("MpEventType.UNKNOWN , this flowLog  jsonObject is [{}]", flowLog);
 				mpEventType = MpEventType.UNKNOWN;
 			}
 

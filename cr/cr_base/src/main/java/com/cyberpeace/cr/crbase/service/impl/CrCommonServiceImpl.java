@@ -31,10 +31,8 @@ import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.context.scene.SceneData;
-import com.cyberpeace.cs.service.context.scene.SceneDataImpl;
-import com.cyberpeace.cs.service.context.scene.SceneElement;
 import com.cyberpeace.integratation.model.mp.MpHostState;
+import com.cyberpeace.integratation.model.scene.SceneNodeListReq;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -82,13 +80,17 @@ public class CrCommonServiceImpl implements CrCommonService {
 		Map<String, MpHostState> stateMap = StreamApiUtils.toMap(stateList,
 				MpHostState::getElementId, state -> state);
 		// 3. 获取用户名、用户头像、ip
-		JSONObject sceneData = localSceneService.getSceneData(localScene,
-				UserInfoContext.getUserContext().getUserId());
-		SceneData data = sceneData.toJavaObject(SceneDataImpl.class);
+		// 获取ip
+		SceneNodeListReq req = new SceneNodeListReq();
+		req.setId(localScene.getMpSceneId());
+		List<JSONObject> assetList = localSceneService.getAssetList(req);
 		Map<String, String> ipMap = Maps.newHashMap();
-		for (SceneElement element : data.getTopology().getElements()) {
-			if (!element.getPorts().isEmpty()) {
-				ipMap.put(element.getId(), element.getPorts().get(0).getIp());
+		for (JSONObject object : assetList) {
+			String id = object.getString("id");
+			JSONArray ports = object.getJSONArray("ports");
+			if (!ports.isEmpty()) {
+				String ip = ports.getJSONObject(0).getString("ip");
+				ipMap.put(id, ip);
 			}
 		}
 		// 3.1 批量获取用户信息

@@ -142,8 +142,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 		courseValidateHandler.validateCourseName2NumExist(course, markdownFile.getAbsolutePath());
 
 		if (LocalStringUtil.getMatchStrBool(course.getResourceId(), PatternConstant.LOWER_CASE_LETTER)) {
-			log.error("course num not lower, [{}]", course.getResourceId());
-			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, markdownFile.getAbsolutePath(), "编号不支持小写");
+			log.warn("course num not lower [{}], must set uppercase", course.getResourceId());
+			// 已准备好的标准资源不用再做修改， 小写会导致我的职业存在相关问题
+			course.setResourceId(course.getResourceId().toUpperCase());
+//			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, markdownFile.getAbsolutePath(), "编号不支持小写");
 		}
 
 		// 用户修改

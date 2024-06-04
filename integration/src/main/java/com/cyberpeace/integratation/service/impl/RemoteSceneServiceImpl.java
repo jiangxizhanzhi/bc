@@ -10,6 +10,8 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.integratation.constant.SessionType;
 import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
@@ -460,7 +462,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public JSONObject getFlowLogs(FlowLogsPageContext flowLogsPageContext) {
-		return HttpClientUtil.rawGetByParam(flowLogsPageContext, FLOW_LOG_URL, JSONObject.class);
+		// 该接口必须使用英文
+		String tmpLanguage = CommonContext.getLanguage();
+		CommonContext.setLanguage(WebConstant.LANGUAGE_EN);
+		final JSONObject jsonObject = HttpClientUtil.rawGetByParam(flowLogsPageContext, FLOW_LOG_URL, JSONObject.class);
+		CommonContext.setLanguage(tmpLanguage);
+		return jsonObject;
 	}
 
 	@Override

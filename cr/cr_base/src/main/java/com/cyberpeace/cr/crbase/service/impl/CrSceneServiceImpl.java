@@ -31,6 +31,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.scene.AssetProperty;
@@ -73,6 +74,9 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
+
+	@Autowired
+	private SceneFilterService sceneFilterService;
 
 	@Override
 	public String saveTopo(SceneConfigData sceneConfigData, BusinessCode businessCode,
@@ -260,6 +264,16 @@ public class CrSceneServiceImpl implements CrSceneService {
 		sendWsData(bo, businessId);
 	}
 
+	@Override
+	public JSONObject getLayerNodeSceneData(String sceneId, String businessId, String areaId,
+			String roleId) {
+		// 1. 获取用户可见节点
+		CrRoleNodesData nodesData = getNodes(businessId, roleId);
+		JSONObject sceneData = remoteSceneService.getByArea(sceneId, areaId);
+		sceneFilterService.filterVisibleTopo(sceneData.getJSONObject("scene"), nodesData);
+		return sceneData;
+	}
+
 	/**
 	 * 发送ws数据
 	 *
@@ -404,5 +418,31 @@ public class CrSceneServiceImpl implements CrSceneService {
 		}
 
 		return true;
+	}
+
+	private CrRoleNodesData getNodes(String businessId, String roleId) {
+		List<CrRole> roleList = crRoleService.getRolesByRoomId(businessId);
+		if (roleList.isEmpty() || roleList.size() == 1) {
+			// 不是团队或红蓝，不做过滤
+			return null;
+		}
+		CrRole role = null;
+		if (StringUtils.isBlank(roleId)) {
+			String userId = UserInfoContext.getUserContext().getUserId();
+			role = CrRole.findRoleByUserId(roleList, userId);
+		} else {
+			role = CrRole.findRoleByRoleId(roleList, roleId);
+		}
+		if (null == role) {
+			log.error("invalid role in room[{}]", businessId);
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+
+		// 学员角色返回配置
+		if (role.isRvbStudent() || role.isTeamStudent()) {
+			return role.getNodeData();
+		} else {
+			return null;
+		}
 	}
 }

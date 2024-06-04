@@ -1,9 +1,13 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -30,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import springfox.documentation.spring.web.json.Json;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -246,7 +251,7 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
                 new File(unZipPath + File.separator + CrCommonConstants.RESOURCE_FILE_NAME));
         List<EvalCloudTemplateDumpReq> resources = JsonUtil.toJsonObjectArray(dataJson,
                 EvalCloudTemplateDumpReq.class);
-        log.info("batchLoad resources:{}", resources);
+        log.info("batchLoad resources:{}", JSON.toJSONString(resources));
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
@@ -270,6 +275,13 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
                     resource.setStepIds(newStepId);
 
 //					2.2事件规则处理
+//                    先删后加
+                    LambdaQueryWrapper<EvalRuleTemplate> evalRuleTemplateQueryWrapper = new LambdaQueryWrapper<>();
+                    evalRuleTemplateQueryWrapper.eq(EvalRuleTemplate::getCloudTemplateId, resource.getCloudTemplateId());
+                    List<String> ruelIds = evalRuleTemplateService.list(evalRuleTemplateQueryWrapper).stream().map(EvalRuleTemplate::getResourceId).collect(Collectors.toList());
+                    DeleteReq deleteReq = new DeleteReq();
+                    deleteReq.setIds(ruelIds);
+                    evalRuleTemplateService.deleteRuleTemplate(deleteReq);
                     for (EvalRuleTemplateDetailRsp rule : resource.getRuleList()) {
                         EvalRuleTemplateAddReq ruleTemplateAddReq = BeanUtils.copy(rule, EvalRuleTemplateAddReq.class);
                         List<EvalHostContext> hosts = rule.getHosts();

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlarmConditionAddReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAlarmConditionReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlarmCondition;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlarmConditionMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlarmConditionService;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class EvalAlarmConditionServiceImpl extends ServiceImpl<EvalAlarmConditionMapper, EvalAlarmCondition> implements EvalAlarmConditionService {
 
     @Override
-    public void addAlarmConditionList(List<EvalAlarmConditionAddReq> alarmConditionAddReqList, String cloudTemplateId, String ruleId) {
+    public void addAlarmConditionList(List<EvalAlarmConditionReq> alarmConditionAddReqList, String cloudTemplateId, String ruleId) {
         if (CollectionUtils.isEmpty(alarmConditionAddReqList)) {
             return;
         }

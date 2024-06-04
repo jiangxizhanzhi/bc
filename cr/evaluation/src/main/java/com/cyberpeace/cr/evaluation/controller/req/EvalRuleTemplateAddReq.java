@@ -47,7 +47,7 @@ public class EvalRuleTemplateAddReq implements Serializable {
 	private List<EvalSituationReq> situations;
 
 	@ApiModelProperty("告警条件")
-	private List<EvalAlarmConditionAddReq> alarmConditions;
+	private List<EvalAlarmConditionReq> alarmConditions;
 
 	@ApiModelProperty(required = true, value = "告警名称")
 	private String alarmName;

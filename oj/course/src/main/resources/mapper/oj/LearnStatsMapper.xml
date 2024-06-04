@@ -42,9 +42,9 @@
     </select>
 
     <select id="reportFinishRank" resultType="com.alibaba.fastjson.JSONObject">
-        select T1.user_id, count(T2.resource_id) as `count`
-        from oj_note T1 left join oj_note_evaluate T2 on T1.resource_id = T2.note_id
-        where T1.note_type = #{report_code} and T2.passed = 1 and T1.user_id in <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
+        select T1.user_id, count(T1.resource_id) as `count`
+        from oj_note T1
+        where T1.note_type = #{report_code} and T1.user_id in <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
         group by T1.user_id
         <include refid="limit"/>;
     </select>

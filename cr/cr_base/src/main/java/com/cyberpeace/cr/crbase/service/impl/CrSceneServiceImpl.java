@@ -32,12 +32,11 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
-import com.cyberpeace.cr.crbase.service.context.scene.AssetProperty;
-import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
-import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
-import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateWsBo;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
+import com.cyberpeace.cr.crbase.service.context.scene.*;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -265,13 +264,30 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	@Override
-	public JSONObject getLayerNodeSceneData(String sceneId, String businessId, String areaId,
+	public SceneViewContext getLayerNodeSceneData(String sceneId, String businessId, String areaId,
 			String roleId) {
-		// 1. 获取用户可见节点
-		CrRoleNodesData nodesData = getNodes(businessId, roleId);
-		JSONObject sceneData = remoteSceneService.getByArea(sceneId, areaId);
-		sceneFilterService.filterVisibleTopo(sceneData.getJSONObject("scene"), nodesData);
-		return sceneData;
+		// get self role
+		List<CrRole> roleList = crRoleService.getRolesByRoomId(businessId);
+		CrRoleNodesData nodesData = getNodes(roleList, businessId, roleId);
+		// get layer node scene
+		JSONObject sceneData = remoteSceneService.getByArea(sceneId, areaId).getJSONObject("scene");
+		// filter
+		sceneFilterService.filterVisibleTopo(sceneData, nodesData);
+		// team or rvb or single
+		SceneViewContext context;
+		CrRole selfRole = CrRole.findRoleByUserId(roleList,
+				UserInfoContext.getUserContext().getUserId());
+		if (null != selfRole && selfRole.isTeamRole()) {
+			context = new TeamSceneViewContext();
+			((TeamSceneViewContext) context).setRoleList(getNodeConfigList(roleList));
+		} else if (null != selfRole && selfRole.isRvbStaff()) {
+			context = new RbSceneViewContext();
+			setRbNodeConfig((RbSceneViewContext) context, roleList);
+		} else {
+			context = new SceneViewContext();
+		}
+		context.setSceneData(sceneData);
+		return context;
 	}
 
 	/**
@@ -420,16 +436,14 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return true;
 	}
 
-	private CrRoleNodesData getNodes(String businessId, String roleId) {
-		List<CrRole> roleList = crRoleService.getRolesByRoomId(businessId);
+	private CrRoleNodesData getNodes(List<CrRole> roleList, String businessId, String roleId) {
 		if (roleList.isEmpty() || roleList.size() == 1) {
 			// 不是团队或红蓝，不做过滤
 			return null;
 		}
 		CrRole role = null;
 		if (StringUtils.isBlank(roleId)) {
-			String userId = UserInfoContext.getUserContext().getUserId();
-			role = CrRole.findRoleByUserId(roleList, userId);
+			role = CrRole.findRoleByUserId(roleList, UserInfoContext.getUserContext().getUserId());
 		} else {
 			role = CrRole.findRoleByRoleId(roleList, roleId);
 		}
@@ -444,5 +458,45 @@ public class CrSceneServiceImpl implements CrSceneService {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public List<CrRoleConfig> getNodeConfigList(List<CrRole> roleList) {
+		List<CrRoleConfig> nodeConfigList = Lists.newArrayList();
+		for (CrRole role : roleList) {
+			if (role.isTeamStudent()) {
+				CrRoleConfig config = new CrRoleConfig();
+				CrRoleNodesData nodesData = role.getNodeData();
+				config.setId(role.getResourceId());
+				config.setName(role.getName());
+				config.setAssetNodes(nodesData.getAssetNodes());
+				config.setVisibleNodes(nodesData.getVisibleNodes());
+				nodeConfigList.add(config);
+			}
+		}
+		return nodeConfigList;
+	}
+
+	@Override
+	public void setRbNodeConfig(RbSceneViewContext context, List<CrRole> roleList) {
+		List<CrRoleConfig> redConfigList = Lists.newArrayList();
+		List<CrRoleConfig> blueConfigList = Lists.newArrayList();
+		for (CrRole role : roleList) {
+			if (role.isRvbStudent()) {
+				CrRoleConfig config = new CrRoleConfig();
+				CrRoleNodesData nodesData = role.getNodeData();
+				config.setId(role.getResourceId());
+				config.setName(role.getName());
+				config.setAssetNodes(nodesData.getAssetNodes());
+				config.setVisibleNodes(nodesData.getVisibleNodes());
+				if (role.isBlueStudent()) {
+					blueConfigList.add(config);
+				} else {
+					redConfigList.add(config);
+				}
+			}
+		}
+		context.setRedRoles(redConfigList);
+		context.setBlueRoles(blueConfigList);
 	}
 }

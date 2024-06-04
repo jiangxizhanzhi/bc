@@ -21,6 +21,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.BaseCrSceneUpdateHandler;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -151,12 +152,13 @@ public class CrSceneController {
 			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
 					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_EVALUATION },
 			logical = Logical.OR)
-	public BaseRsp<JSONObject> getByArea(
+	public BaseRsp<SceneViewContext> getByArea(
 			@ApiParam(name = "scene_id", value = "场景id", required = true) String scene_id,
 			@ApiParam(name = "business_id", value = "训练房间id", required = true) String business_id,
 			@ApiParam(name = "area_id", value = "层节点id", required = true) String area_id,
 			@ApiParam(name = "role_id", value = "训练角色id", required = false) String role_id) {
-		JSONObject layerNodeSceneData = crSceneService.getLayerNodeSceneData(scene_id, business_id,
+		SceneViewContext layerNodeSceneData = crSceneService.getLayerNodeSceneData(scene_id,
+				business_id,
 				area_id, role_id);
 		return new BaseRsp<>(layerNodeSceneData);
 	}

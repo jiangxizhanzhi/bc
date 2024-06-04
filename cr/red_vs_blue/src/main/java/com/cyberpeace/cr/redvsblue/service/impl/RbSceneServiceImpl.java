@@ -31,12 +31,11 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
+import com.cyberpeace.cr.crbase.service.context.scene.RbSceneViewContext;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.*;
-import com.cyberpeace.cr.redvsblue.service.context.RbSceneViewContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -190,25 +189,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 
             // 4. 场景角色资产配置，用于动态编辑,只有教员有权限
             if (selfRole.isRvbStaff()) {
-                List<CrRoleConfig> redConfigList = Lists.newArrayList();
-                List<CrRoleConfig> blueConfigList = Lists.newArrayList();
-                for (CrRole role : roleList) {
-                    if (role.isRvbStudent()) {
-                        CrRoleConfig config = new CrRoleConfig();
-                        CrRoleNodesData nodesData = role.getNodeData();
-                        config.setId(role.getResourceId());
-                        config.setName(role.getName());
-                        config.setAssetNodes(nodesData.getAssetNodes());
-                        config.setVisibleNodes(nodesData.getVisibleNodes());
-                        if (role.isBlueStudent()) {
-                            blueConfigList.add(config);
-                        } else {
-                            redConfigList.add(config);
-                        }
-                    }
-                }
-                ret.setRedRoles(redConfigList);
-                ret.setBlueRoles(blueConfigList);
+				crSceneService.setRbNodeConfig(ret, roleList);
             }
             return ret;
         }

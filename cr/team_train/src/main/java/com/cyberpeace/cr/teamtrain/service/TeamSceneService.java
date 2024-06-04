@@ -5,8 +5,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
+import com.cyberpeace.cr.crbase.service.context.scene.TeamSceneViewContext;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
-import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
 
 public interface TeamSceneService {
 

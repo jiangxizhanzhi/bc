@@ -4,11 +4,15 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
+import com.cyberpeace.cr.crbase.service.context.scene.RbSceneViewContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
@@ -127,7 +131,10 @@ public interface CrSceneService {
 	 * @param roleId
 	 * @return {@code JSONObject}
 	 */
-	JSONObject getLayerNodeSceneData(String sceneId, String businessId, String areaId,
+	SceneViewContext getLayerNodeSceneData(String sceneId, String businessId, String areaId,
 			String roleId);
 
+	List<CrRoleConfig> getNodeConfigList(List<CrRole> roleList);
+
+	void setRbNodeConfig(RbSceneViewContext context, List<CrRole> roleList);
 }

@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.service.context;
+package com.cyberpeace.cr.crbase.service.context.scene;
 
 import java.io.Serializable;
 import java.util.List;

@@ -1,5 +1,16 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -18,13 +29,12 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
+import com.cyberpeace.cr.crbase.service.context.scene.TeamSceneViewContext;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
-import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -32,17 +42,8 @@ import com.cyberpeace.cs.service.context.scene.*;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -150,19 +151,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
 
 			// 4. 场景角色资产配置，用于动态编辑,
-			List<CrRoleConfig> nodeConfigList = Lists.newArrayList();
-			for (CrRole role : roleList) {
-				if (role.isTeamStudent()) {
-					CrRoleConfig config = new CrRoleConfig();
-					CrRoleNodesData nodesData = role.getNodeData();
-					config.setId(role.getResourceId());
-					config.setName(role.getName());
-					config.setAssetNodes(nodesData.getAssetNodes());
-					config.setVisibleNodes(nodesData.getVisibleNodes());
-					nodeConfigList.add(config);
-				}
-			}
-			ret.setRoleList(nodeConfigList);
+			ret.setRoleList(crSceneService.getNodeConfigList(roleList));
 			return ret;
 		}
 		// 3、 远程场景不存在，返回topo数据

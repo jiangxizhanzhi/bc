@@ -1,9 +1,11 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
@@ -159,13 +161,32 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 	}
 
 	@Override
-	public void addLoad(EvalStepLoadDeleteReq addReq) {
-		EvalStep evalStep = evalStepMapper.selectById(addReq.getLoadId());
+	public void addLoad(EvalStepLoadAddReq addReq) {
+		EvalStep evalStep = evalStepMapper.selectById(addReq.getStepId());
 		List<LoadSetReq> loadList =  evalStep.getLoadList();
 		LoadSetReq loadSetReq = new LoadSetReq();
 		loadSetReq.setLoadId(addReq.getLoadId());
 		loadList.add(loadSetReq);
 		evalStep.setSettingList(loadList);
+
+		JSONObject jsonObject = new JSONObject();
+		JSONObject sceneConfigElement = new JSONObject();
+		JSONObject position2 = new JSONObject();
+		position2.put("x", addReq.getX());
+		position2.put("y", addReq.getY());
+		sceneConfigElement.put("position2", position2.toString());
+		JSONObject pluginSceneConfigElement = new JSONObject();
+		pluginSceneConfigElement.put("image_type", "load");
+		pluginSceneConfigElement.put("load_task_name", addReq.getLoadName());
+		pluginSceneConfigElement.put("load_task_describe", addReq.getLoadDescription());
+		pluginSceneConfigElement.put("load_exec_command", addReq.getCommand());
+		pluginSceneConfigElement.put("load_tool_id", addReq.getLoadId());
+		jsonObject.put("scene_config_element", sceneConfigElement);
+		jsonObject.put("plugin_scene_config_element", pluginSceneConfigElement);
+		EvalTestInstance evalTestInstance = evalTestInstanceMapper.selectById(addReq.getTestInstanceId());
+		jsonObject.put("scene_id", evalTestInstance.getMpSceneId());
+		remoteLoadService.addLoad(jsonObject);
+
 		evalStepMapper.updateById(evalStep);
 	}
 

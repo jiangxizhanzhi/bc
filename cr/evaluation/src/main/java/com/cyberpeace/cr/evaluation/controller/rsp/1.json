@@ -1,0 +1,90 @@
+{
+  "scene_id": "6dc6cf2a14e942249d4c5c70ac660c8a",
+  "scene_config_element": {
+    "display_context": "{\"size\":40,\"zIndex\":2,\"text\":{\"fontSize\":12,\"fill\":\"var(--neutral9)\",\"refY\":53,\"transform\":\"rotate(0)\",\"fontWeight\":400,\"text\":\"Ubuntu-16.04-x64-server2\",\"opacity\":1,\"class\":\"node-label original\"}}",
+    "id": "68edb0f3-8a89-4ffc-9c90-feae4901f68e",
+    "name": "Ubuntu-16.04-x64-server2",
+    "type": 4,
+    "icon2": "/api/mp/file/504/805/726bd707e8ebacd6d1147584f221a5e2.png",
+    "icon3": "",
+    "system_language": "cn",
+    "system_architecture": "64",
+    "system_type": 304,
+    "max_port_number": 1,
+    "cpu": 2,
+    "ram": 2048,
+    "disk": 40,
+    "ports": [
+      {
+        "id": "port_26adb0f3-8a89-4ffc-9c90-feae4901f38e_1",
+        "nat": false,
+        "name": "eth0/1",
+        "ip": "",
+        "access_modes": [
+          {
+            "protocol": "console",
+            "auth_protocol": "",
+            "hostname": "",
+            "username": "",
+            "password": "",
+            "description": "",
+            "manage_mode": false,
+            "proxy": true,
+            "desc": ""
+          },
+          {
+            "protocol": "ssh",
+            "auth_protocol": "",
+            "hostname": "",
+            "port": 22,
+            "username": "root",
+            "password": "123456",
+            "private_key_enable": false,
+            "private_key_path": "",
+            "private_key_file_name": "",
+            "description": "",
+            "manage_mode": false,
+            "proxy": true,
+            "desc": ""
+          }
+        ]
+      }
+    ],
+    "file": "",
+    "node_command": "",
+    "position2": "{\"x\":900,\"y\":200}"
+  },
+  "plugin_scene_config_element": {
+    "role": 10,
+    "image_type": "load",
+    "load_task_name": "参数测试66",
+    "load_task_describe": "参数测试77",
+    "load_exec_command": "参数测试88",
+    "load_tool_id": "参数测试99",
+    "image_uuid": "56d3febb-a907-45e0-b5d1-2647f7d58758",
+    "is_build_in": false,
+    "image": "Ubuntu-16.04-x64-server2",
+    "platform": "",
+    "electric_port_number": 0,
+    "electric_port_type": "E",
+    "optical_port_number": 0,
+    "optical_port_type": "sfp",
+    "init_support": true,
+    "category": 1,
+    "category2": 2,
+    "category3": 304,
+    "cidr": "",
+    "gateway": "",
+    "dhcp": true,
+    "wan_port_number": 0,
+    "wan_port_type": "E",
+    "lan_port_number": 0,
+    "lan_port_type": "E",
+    "quick_create_params": [],
+    "ospf_router_id": "",
+    "rip_loopback": "",
+    "virtual_usbs": [],
+    "entity_usbs": [],
+    "docker_params": {}
+  }
+}

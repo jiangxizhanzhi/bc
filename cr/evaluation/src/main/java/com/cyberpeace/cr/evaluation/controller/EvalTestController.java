@@ -61,7 +61,7 @@ public class EvalTestController {
 
 	@ApiOperation("根据模板创建试验任务")
 	@PostMapping("")
-	public BaseRsp<String> addEvalTemplate(@RequestBody @Validated EvalTestAddReq evalTestAddReq) {
+	public BaseRsp<String> addEval(@RequestBody @Validated EvalTestAddReq evalTestAddReq) {
 		return new BaseRsp<>(evalTestService.createByTemplate(evalTestAddReq));
 	}
 
@@ -261,8 +261,8 @@ public class EvalTestController {
 
 	@ApiOperation("添加载荷")
 	@PostMapping("/load")
-	public BaseRsp<Boolean> addLoad(@RequestBody EvalStepLoadDeleteReq evalStepLoadDeleteReq) {
-		evalStepService.addLoad(evalStepLoadDeleteReq);
+	public BaseRsp<Boolean> addLoad(@RequestBody EvalStepLoadAddReq addReq) {
+		evalStepService.addLoad(addReq);
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 

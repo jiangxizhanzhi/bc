@@ -25,11 +25,14 @@ public class RemoteLoadServiceImpl implements RemoteLoadService {
 
 	private String GET_LOAD_HISTORY_URL;
 
+	private String ADD_LOAD_URL;
+
 	@PostConstruct
 	public void init() {
 		GET_LOAD_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("get.load.log");
 		GET_LOAD_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("get.load.list");
 		GET_LOAD_HISTORY_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("get.load.history");
+		ADD_LOAD_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("add.load.url");
 	}
 
 	@Override
@@ -51,6 +54,11 @@ public class RemoteLoadServiceImpl implements RemoteLoadService {
 		jsonObject.put("scene_id", sceneId);
 		JSONObject history = HttpClientUtil.post(GET_LOAD_HISTORY_URL, jsonObject, JSONObject.class);
 		return JsonUtil.toJsonObjectArray(history.getString("list"), LoadHistory.class);
+	}
+
+	@Override
+	public void addLoad(JSONObject jsonObject) {
+		HttpClientUtil.post(ADD_LOAD_URL, jsonObject, JSONObject.class);
 	}
 
 }

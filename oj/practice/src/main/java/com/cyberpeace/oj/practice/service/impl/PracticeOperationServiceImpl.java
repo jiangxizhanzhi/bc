@@ -1311,7 +1311,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public void createMpLog(String practiceId, LogContent logContent) {
 		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
-		String content = LogContent.PRACTICE_FORMAT.format(operation.getContent(), logContent);
+		String content = LogContent.PRACTICE_FORMAT.format(operation.getTitle(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
 				OperationType.EXERCISE, LogContent.EXERCISE.getMsg(), content);
 	}

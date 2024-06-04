@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -439,7 +441,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public JSONObject getFlowLogs(FlowLogsPageContext flowLogsPageContext) {
-		return HttpClientUtil.rawGetByParam(flowLogsPageContext, FLOW_LOG_URL, JSONObject.class);
+		// 该接口必须使用英文
+		String tmpLanguage = CommonContext.getLanguage();
+		CommonContext.setLanguage(WebConstant.LANGUAGE_EN);
+		final JSONObject jsonObject = HttpClientUtil.rawGetByParam(flowLogsPageContext, FLOW_LOG_URL, JSONObject.class);
+		CommonContext.setLanguage(tmpLanguage);
+		return jsonObject;
 	}
 
 	@Override

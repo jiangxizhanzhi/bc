@@ -116,12 +116,13 @@ public class CourseValidateHandler {
 		List<String> publicIds = courseMapper.selectIdsByCategory(authIds, null,
 				authContext.getIsWeb());
 		if (CollectionUtils.isEmpty(publicIds)) {
-			log.error("course:[{}] is non public", courseId);
+			log.error("course:[{}] is non public, authIds is [{}]", courseId, authIds);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
 		if (!publicIds.contains(courseId)) {
-			log.error("course:[{}] is non public", courseId);
+			// 标准课程编码存在小写的情况
+			log.error("course:[{}] is non publicIds [{}]", courseId, publicIds);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 	}

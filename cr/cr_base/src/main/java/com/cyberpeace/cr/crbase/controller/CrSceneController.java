@@ -144,4 +144,20 @@ public class CrSceneController {
 		}
 		return new BaseRsp<>(true);
 	}
+
+	@GetMapping("get_by_area")
+	@ApiOperation("查看层节点内部")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
+					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_EVALUATION },
+			logical = Logical.OR)
+	public BaseRsp<JSONObject> getByArea(
+			@ApiParam(name = "scene_id", value = "场景id", required = true) String scene_id,
+			@ApiParam(name = "business_id", value = "训练房间id", required = true) String business_id,
+			@ApiParam(name = "area_id", value = "层节点id", required = true) String area_id,
+			@ApiParam(name = "role_id", value = "训练角色id", required = false) String role_id) {
+		JSONObject layerNodeSceneData = crSceneService.getLayerNodeSceneData(scene_id, business_id,
+				area_id, role_id);
+		return new BaseRsp<>(layerNodeSceneData);
+	}
 }

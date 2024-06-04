@@ -1,33 +1,36 @@
 package com.cyberpeace.integratation.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.integratation.constant.SessionType;
-import com.cyberpeace.integratation.model.mp.*;
-import com.cyberpeace.integratation.model.scene.*;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
+import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.constant.SessionType;
+import com.cyberpeace.integratation.model.mp.*;
+import com.cyberpeace.integratation.model.scene.*;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.google.common.collect.Lists;
 
-import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -130,6 +133,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String HOST_EVENT_LIST;
 
+	private String GET_BY_AREA_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -228,6 +233,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		EVENT_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.list");
 
 		HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
+
+		GET_BY_AREA_URL = MP_HOST + ConfigUtil.getContextProperty("scene.by.area");
 	}
 
 	@Override
@@ -631,6 +638,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		String listData =  HttpClientUtil.rawGetByParam(req, HOST_EVENT_LIST, JSONObject.class)
 				.getString("list");
 		return JsonUtil.toJsonObjectArray(listData, MpHostEvent.class);
+	}
+
+	@Override
+	public JSONObject getByArea(String sceneId, String areaId) {
+		String requestUrl = String.format(GET_BY_AREA_URL, sceneId, areaId);
+		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
 	}
 
 }

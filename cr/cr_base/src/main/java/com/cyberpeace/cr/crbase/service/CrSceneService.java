@@ -117,4 +117,17 @@ public interface CrSceneService {
 	 * @param businessId 业务标识
 	 */
 	void sendNodeDeleteSceneWs(String businessId);
+
+	/**
+	 * 获取层节点场景数据
+	 *
+	 * @param sceneId    场景id
+	 * @param businessId
+	 * @param areaId
+	 * @param roleId
+	 * @return {@code JSONObject}
+	 */
+	JSONObject getLayerNodeSceneData(String sceneId, String businessId, String areaId,
+			String roleId);
+
 }

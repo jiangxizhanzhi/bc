@@ -34,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> create(@RequestBody @Validated ToolAddReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
-		if (tool.getIntroduction() != null && tool.getIntroduction().length() > 65535) {
+		if (tool.getIntroduction() != null && tool.getIntroduction().getBytes(Charset.forName("utf8")).length > 65535) {
 			throw new BusinessException(CrBusinessErrorCode.DESC_TOO_LONG);
 		}
 
@@ -97,7 +98,7 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
-		if (tool.getIntroduction() != null && tool.getIntroduction().length() > 65535) {
+		if (tool.getIntroduction() != null && tool.getIntroduction().getBytes(Charset.forName("utf8")).length > 65535) {
 			throw new BusinessException(CrBusinessErrorCode.DESC_TOO_LONG);
 		}
 		toolService.validateEditToolNameExist(tool);

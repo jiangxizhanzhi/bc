@@ -54,5 +54,21 @@ ALTER TABLE `oj_course_lesson`
 ALTER TABLE `oj_lesson_record`
     DROP INDEX `user_lesson_uniq`,
     ADD INDEX `user_lesson_uniq`(`user_id`, `lesson_id`) USING BTREE;
+-- ----------------------------
+-- 删除内置习题集
+-- ----------------------------
+delete
+from oj_practice_set
+where builtin = 1
+  and resource_id in
+      ('584c596b5a8e481facb94189f5ccf224', '66220449b9134c8186f56f7cdd9a4b71', '7395331dcce742c3beb1ac49264cdbaf',
+       'c357afe336ce48418d4d9ca77a1a3cbe', '32a7da91927d46afa92e1ac60707d263', '8169e1626c0b4319881706ab40d72536',
+       '5a2203da9adf4bb48d81baee4fb751df', '64e2f15f8c7348bb949615a5993838b7', '48bbfebb649441dab66ec89a8978b98e',
+       '4ef4a5d6d1aa460e87ad29738ed1287f', 'e687cf39c4534399b4b4f9d6b5200f54', '1606526a65fa4d96ad17682d6102fcbe',
+       'ee3fc36981fe45ee93486f66f7da5cd1', '84fe54a3c9b44747baca92ab0db27651', '6ab2c73f6dd64707b645868a70660dfa')
+  and resource_id not in
+      (select distinct practice_set_id from oj_practice_theory)
+  and resource_id not in
+      (select distinct practice_set_id from oj_practice_operation);
 
 SET FOREIGN_KEY_CHECKS = 1;

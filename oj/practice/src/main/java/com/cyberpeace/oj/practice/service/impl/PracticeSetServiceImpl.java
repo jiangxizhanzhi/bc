@@ -232,7 +232,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				throw new BusinessException(OjBusinessErrorCode.SET_UNDER_EXIST_PRACTICE);
 			}
 		}
-
+		// builtin 类型不改变
+		practiceSet.setBuiltin(existSet.isBuiltin());
 		return practiceSetMapper.updateById(practiceSet) > CommonConstant.ZERO;
 	}
 

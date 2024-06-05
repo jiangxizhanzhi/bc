@@ -275,4 +275,7 @@ public interface RemoteSceneService {
 	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);
 
     String startMission(MissionStartContext missionStartContext);
+
+
+	int getEventValue(String nodeName, String evnName);
 }

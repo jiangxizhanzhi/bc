@@ -130,6 +130,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String MISSION_START_URL;
 
+	private String ALARM_EVENTS_DATA_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -231,6 +233,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		EVENT_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.list");
 
 		HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
+
+		ALARM_EVENTS_DATA_URL = MP_HOST +ConfigUtil.getContextProperty("alarm.events.data");
 	}
 
 	@Override
@@ -642,5 +646,15 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		}
 		return status;
     }
+
+	@Override
+	public int getEventValue(String nodeName, String evnName) {
+//		请求参数
+		AlarmParameter build = AlarmParameter.builder().nodeName(nodeName).eventName(evnName).build();
+		JSONObject object = JsonUtil.java2JsonObject(build, PropertyNamingStrategy.SnakeCase);
+		Integer value = HttpClientUtil.post(ALARM_EVENTS_DATA_URL, object, Integer.class);
+
+		return value;
+	}
 
 }

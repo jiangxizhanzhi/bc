@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
@@ -70,6 +71,26 @@ public class EvalIndexRef extends BaseTable {
     private Integer specialistAttrValue;
 
     /**
+     * 告警事件评分设置类型（三级指标包含）百分比/周期/整数值
+     */
+    private Integer eventType;
+
+    /**
+     * 告警事件评分设置属性（三级指标包含）效益/成本/固定/偏离
+     */
+    private Integer eventAttr;
+
+    /**
+     * 告警事件评分设置值（三级指标包含）类型输入
+     */
+    private Integer eventValue;
+
+    /**
+     * 告警事件评分设置中心值（三级指标包含）固定/偏离-中心值
+     */
+    private Integer eventAttrValue;
+
+    /**
      * 当前指标项下一级ID, 为json字符串
      */
     private String nextIds;
@@ -95,7 +116,7 @@ public class EvalIndexRef extends BaseTable {
     private String matrixData;
 
     public enum Type implements GenericEnum {
-        SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分");
+        SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分"),EVENT(3,"告警事件");
 
         @Getter
         private final Integer code;

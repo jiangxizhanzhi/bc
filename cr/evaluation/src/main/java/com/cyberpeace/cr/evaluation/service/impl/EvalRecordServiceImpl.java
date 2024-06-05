@@ -283,6 +283,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
             }
+            //事件评分
+            if(evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())){
+                List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
+                Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
+                //节点设备名称
+                String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
+                //事件名称
+                String evnName = evalRecordIndexContext.getEvent().getEvnName();
+
+                int value= remoteSceneService.getEventValue(nodeName,evnName);
+                thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
+            }
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
         });
 
@@ -496,6 +508,16 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
+                //事件评分
+                evalIndexRef.setEventType(evalIndicator.getDatatype());
+                evalIndexRef.setEventAttr(evalIndicator.getAttribute());
+                evalIndexRef.setEventAttrValue(evalIndicator.getAttributeValue());
+                evalIndexRef.setEventValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
+                if (evalIndexRef.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getEventType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
+                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+                }
+
             }
 
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
@@ -619,7 +641,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
-                } else {
+                }
+                else if(evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
+                    List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
+                    Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
+                    //节点设备名称
+                    String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
+                    //事件名称
+                    String evnName = evalRecordIndexContext.getEvent().getEvnName();
+                    //请求参数
+                    int value= remoteSceneService.getEventValue(nodeName,evnName);
+                    evalIndexRef.setEventValue(value);
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getEventType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
+                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+                }
+                else {
                     evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
                 }
                 evalIndexRefs.add(evalIndexRef);

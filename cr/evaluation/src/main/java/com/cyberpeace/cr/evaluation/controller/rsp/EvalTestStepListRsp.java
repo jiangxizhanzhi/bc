@@ -21,7 +21,7 @@ public class EvalTestStepListRsp implements Serializable {
 	private String name;
 
 	@ApiModelProperty("过程")
-	private String progress;
+	private String process;
 
 	@ApiModelProperty("载荷列表")
 	private JSONArray loadList;

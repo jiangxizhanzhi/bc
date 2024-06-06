@@ -84,7 +84,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			EvalTestStepListRsp stepListRsp = new EvalTestStepListRsp();
 			stepListRsp.setStepId(evalStep.getResourceId());
 			stepListRsp.setName(evalStep.getName());
-			stepListRsp.setProgress(evalStep.getProcess());
+			stepListRsp.setProcess(evalStep.getProcess());
 			stepListRsp.setStage(evalStep.getStage());
 
 			List<String> loadIds = evalStep.getLoadList().stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
@@ -111,8 +111,12 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			EvalStep step = stepMap.get(instanceStep.getStepId());
 			EvalTestStepListRsp evalTestStepListRsp = BeanUtils.copy(step, EvalTestStepListRsp.class);
 			evalTestStepListRsp.setStepId(instanceStep.getResourceId());
-			evalTestStepListRsp.setStartTime(TimeUtil.format1(instanceStep.getStartTime()));
-			evalTestStepListRsp.setEndTime(TimeUtil.format1(instanceStep.getEndTime()));
+			if (instanceStep.getStartTime() != null) {
+				evalTestStepListRsp.setStartTime(TimeUtil.format1(instanceStep.getStartTime()));
+			}
+			if (instanceStep.getEndTime() != null) {
+				evalTestStepListRsp.setEndTime(TimeUtil.format1(instanceStep.getEndTime()));
+			}
 			if (testInstance.getInstanceName() != null) {
 				evalTestStepListRsp.setPreStepStatus(EvalTestStepListRsp.Status.INIT.getCode());
 				evalTestStepListRsp.mergeStatus();

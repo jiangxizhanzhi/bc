@@ -160,7 +160,7 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 		EvalTest evalTest = evalTestMapper.selectById(testId);
 
 		if (StringUtils.equals(instanceId, evalTest.getCurrentInstanceId())) {
-			evalTest.setCurrentInstanceId(null);
+			evalTest.setCurrentInstanceId("");
 			evalTestMapper.updateById(evalTest);
 		}
 	}

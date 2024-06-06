@@ -139,7 +139,7 @@ public class EvalTestController {
 		}
 
 		//没有任务名称时，删除场景及试验实例
-		if (evalTestStopReq.getInstanceName() == null) {
+		if (StringUtils.isEmpty(evalTestStopReq.getInstanceName())) {
 			return new BaseRsp<>(evalTestInstanceService.deleteTestInstance(evalTestStopReq.getInstanceId()));
 		} else {
 			//存在任务名称时，关闭场景

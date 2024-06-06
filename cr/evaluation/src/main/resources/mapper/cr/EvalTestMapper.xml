@@ -6,8 +6,11 @@
         select *
         from cr_eval_test
         <where>
-            <bind name="userId" value="'%' + userId + '%'"/>
-            operation_auth_ids like #{userId}
+            1 = 1
+            <if test="userId != null and userId != ''">
+                <bind name="userId" value="'%' + userId + '%'"/>
+                and operation_auth_ids like #{userId}
+            </if>
             <if test="listQuery.difficult != null">
                 and difficulty = #{listQuery.difficult}
             </if>

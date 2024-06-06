@@ -130,7 +130,12 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
 	@Override
 	public ListRsp<EvalTestListRsp> testList(EvalTestListReq evalTestListReq) {
-		IPage<EvalTest> evalTestIPage = evalTestMapper.testPage(evalTestListReq.toPageParam(), evalTestListReq, UserInfoContext.getUserContext().getUserId());
+		IPage<EvalTest> evalTestIPage;
+		if (UserInfoContext.getUserContext().isSuperuser()) {
+			evalTestIPage = evalTestMapper.testPage(evalTestListReq.toPageParam(), evalTestListReq, null);
+		}else {
+			evalTestIPage = evalTestMapper.testPage(evalTestListReq.toPageParam(), evalTestListReq, UserInfoContext.getUserContext().getUserId());
+		}
 		//获取用户信息
 		List<String> userIds = new ArrayList<>();
 		for (EvalTest evalTest : evalTestIPage.getRecords()) {

@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalInstanceStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
@@ -40,7 +39,7 @@ public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMap
 	private EvalInstanceStepMapper evalInstanceStepMapper;
 
 	@Override
-	public List<CodeNameRsp> getAllStages(String instanceId) {
+	public List<EvalCodeStageRsp> getAllStages(String instanceId) {
 		return evalInstanceStepMapper.getAllStages(instanceId);
 	}
 
@@ -121,6 +120,11 @@ public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMap
 		evalTaskStatisticsRes.setFail(failStepIds.size());
 		evalTaskStatisticsRes.setSuccess(sum - stepIds.size() - failStepIds.size());
 		return evalTaskStatisticsRes;
+	}
+
+	@Override
+	public List<EvalCodeStageRsp> getAllStagesBySceneId(String sceneId) {
+		return evalInstanceStepMapper.getAllStagesBySceneId(sceneId);
 	}
 
 	private List<EvalLoadLogContext> getLoadLogList(String mpSceneId) {

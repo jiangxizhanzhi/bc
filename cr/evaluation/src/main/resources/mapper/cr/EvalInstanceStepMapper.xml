@@ -39,7 +39,7 @@
         and instance_step.test_instance_id = #{instanceId}
     </select>
 
-    <select id="getAllStages" resultType="com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp">
+    <select id="getAllStages" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalCodeStageRsp">
         select instance_step.resource_id code, name name
         from cr_eval_test_instance_step instance_step
         left join cr_eval_step on instance_step.step_id = cr_eval_step.resource_id
@@ -57,5 +57,13 @@
         from cr_eval_test_instance_step
         where test_instance_id = #{instanceId}
         and end_time is null
+    </select>
+
+    <select id="getAllStagesBySceneId" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalCodeStageRsp">
+        select instance_step.resource_id code, name name
+        from cr_eval_test_instance_step instance_step
+        left join cr_eval_step on instance_step.step_id = cr_eval_step.resource_id
+        left join cr_eval_test_instance instance on instance.resource_id = instance_step.test_instance_id
+        where instance.mp_scene_id = #{sceneId}
     </select>
 </mapper>

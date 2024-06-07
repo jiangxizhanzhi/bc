@@ -20,6 +20,9 @@ public class UserRole {
 	@ApiModelProperty("用户名")
 	private String name;
 
+	@ApiModelProperty("username")
+	private String username;
+
 	@ApiModelProperty("用户头像")
 	private String logo;
 

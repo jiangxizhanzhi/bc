@@ -425,6 +425,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		for (UserRole userRole : userRoleList) {
 			userRole.setName(userInfoMap.get(userRole.getResourceId()).getName());
+			userRole.setUsername(userInfoMap.get(userRole.getResourceId()).getUserName());
 			userRole.setLogo(userInfoMap.get(userRole.getResourceId()).getAvatarUrl());
 		}
 
@@ -561,7 +562,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		});
 
 		DashboardUser mine = mineArr[0];
-		mine.username(userInfoMap.get(mine.getId()).getName())
+		mine.username(userInfoMap.get(mine.getId()).getUserName())
+				.name(userInfoMap.get(mine.getId()).getName())
 				.avatar(userInfoMap.get(mine.getId()).getAvatarUrl());
 
 		// 好友列表封装
@@ -778,7 +780,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				.status("online")
 				.sign("")
 				.avatar(userInfo.getAvatarUrl())
-				.username(userInfo.getName());
+				.name(userInfo.getName())
+				.username(userInfo.getUserName());
 		if(role.isTeamTeacher()) {
 			dashboardUser.role(TeamRoleGroup.TEACHER.getMsg());
 		}

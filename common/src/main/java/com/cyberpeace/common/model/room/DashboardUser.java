@@ -74,4 +74,9 @@ public class DashboardUser implements Serializable {
 		this.username = username;
 		return this;
 	}
+
+	public DashboardUser name(String name) {
+		this.name = name;
+		return this;
+	}
 }

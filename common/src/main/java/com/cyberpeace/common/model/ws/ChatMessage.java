@@ -13,6 +13,8 @@ public class ChatMessage {
 
 	private String username;
 
+	private String name;
+
 	private String avatar;
 
 	/**

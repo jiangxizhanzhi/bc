@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.catalina.startup.SetNextNamingRule;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketMessage;
@@ -242,7 +243,8 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 			MESSAGE_TYPE messageType, String role) {
 
 		HelpChatMessage chatMessage = new HelpChatMessage();
-		chatMessage.setUsername(mine.getName());
+		chatMessage.setUsername(mine.getUserName());
+		chatMessage.setName(mine.getName());
 		chatMessage.setAvatar(mine.getAvatarUrl());
 		chatMessage.setId(mine.getUserId());
 		chatMessage.setType(messageType.desc);

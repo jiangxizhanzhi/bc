@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cs.service.LocalSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +63,7 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -265,8 +265,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			} else {
 				dashboardUser.setRole(userInfo.getUserName());
 				dashboardUser.setAvatar(userInfo.getAvatarUrl());
-				dashboardUser
-						.setUsername(userInfo.getUserName() + "/" + dashboardUser.getUsername());
+				dashboardUser.setName(userInfo.getName());
+				dashboardUser.setUsername(userInfo.getUserName());
 			}
 		}
 
@@ -403,7 +403,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		// 获取全部用户
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
-		mine.setUsername(userInfoMap.get(mine.getId()).getName());
+		mine.setUsername(userInfoMap.get(mine.getId()).getUserName());
+		mine.setName(userInfoMap.get(mine.getId()).getName());
 		mine.setAvatar(userInfoMap.get(mine.getId()).getAvatarUrl());
 		// 去掉不存在的用户
 		friend = StreamApiUtils.filter(friend,
@@ -412,7 +413,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		for (DashboardUser dashboardUser : friend) {
 			UserInfo userInfo = userInfoMap.get(dashboardUser.getId());
 			dashboardUser.setAvatar(userInfo.getAvatarUrl());
-			dashboardUser.setUsername(userInfo.getName());
+			dashboardUser.setUsername(userInfo.getUserName());
+			dashboardUser.setName(userInfo.getName());
 		}
 
 		DashboardFriend dashboardFriend = new DashboardFriend();
@@ -815,6 +817,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			} else {
 				userRole.setName(userInfo.getName());
 				userRole.setLogo(userInfo.getAvatarUrl());
+				userRole.setUsername(userInfo.getUserName());
 			}
 		}
 

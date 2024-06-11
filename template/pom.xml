@@ -365,7 +365,43 @@
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>4.0.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- 可选配置 -->
+                    <!-- 生成git.properties文件，默认只是将属性添加到maven项目属性中 -->
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <!-- git.properties文件的位置，在generateGitPropertiesFile=true时有效 -->
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                    <includeOnlyProperties>
+                        <includeOnlyProperty>git.branch</includeOnlyProperty>
+                        <includeOnlyProperty>git.commit.id</includeOnlyProperty>
+                        <includeOnlyProperty>git.commit.message.full</includeOnlyProperty>
+                        <includeOnlyProperty>git.commit.time</includeOnlyProperty>
+                        <includeOnlyProperty>git.commit.user.name</includeOnlyProperty>
+                        <includeOnlyProperty>git.remote.origin.url</includeOnlyProperty>
+                        <includeOnlyProperty>git.build.host</includeOnlyProperty>
+                        <includeOnlyProperty>git.build.time</includeOnlyProperty>
+                    </includeOnlyProperties>
+                    <failOnNoGitDirectory>true</failOnNoGitDirectory>
+                    <!-- 配置git-describe命令 -->
+                    <gitDescribe>
+                        <skip>false</skip>
+                        <always>false</always>
+                        <dirty>-dirty</dirty>
+                    </gitDescribe>
 
+                </configuration>
+            </plugin>
         </plugins>
 
     </build>

@@ -1,6 +1,9 @@
 package com.cyberpeace.cs.controller;
 
-import java.io.File;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 
@@ -8,10 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.ErrorCode;
@@ -193,6 +193,28 @@ public class CommonController {
 			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT,
 					Integer.parseInt(MD_UPLOAD_NAME_LEN));
 		}
+	}
+
+	@ApiOperation("获取git版本信息")
+	@GetMapping("/version")
+	public BaseRsp<Map<String, String>> getGitVersion()  {
+
+		Properties properties = new Properties();
+		try (InputStream input = getClass().getClassLoader().getResourceAsStream("git.properties")) {
+			if (input == null) {
+				throw new BusinessException("Sorry, unable to find git.properties, input is null");
+			}
+			properties.load(input);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			throw new BusinessException("Sorry, unable to find git.properties ");
+		}
+		Map<String, String> gitMap = new HashMap<>();
+		for (String name : properties.stringPropertyNames()) {
+			gitMap.put(name, properties.getProperty(name));
+		}
+
+		return new BaseRsp<>(gitMap);
 	}
 
 }

@@ -132,6 +132,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String ALARM_EVENTS_DATA_URL;
 
+	private String GET_PAGE_EVENT_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -235,6 +237,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
 
 		ALARM_EVENTS_DATA_URL = MP_HOST +ConfigUtil.getContextProperty("alarm.events.data");
+
+		GET_PAGE_EVENT_URL = MP_HOST + ConfigUtil.getContextProperty("page.event.data");
 	}
 
 	@Override
@@ -655,6 +659,15 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		Integer value = HttpClientUtil.post(ALARM_EVENTS_DATA_URL, object, Integer.class);
 
 		return value;
+	}
+
+	@Override
+	public JSONObject getPageEvent(String mpSceneId,Integer page, Integer prePage) {
+		PageEvent pageEvent = PageEvent.builder().mpSceneId(mpSceneId).page(page).prePage(prePage).build();
+		JSONObject object = JsonUtil.java2JsonObject(pageEvent, PropertyNamingStrategy.SnakeCase);
+		JSONObject post = HttpClientUtil.post(GET_PAGE_EVENT_URL, object, JSONObject.class);
+		System.out.println("post = " + post);
+		return post;
 	}
 
 }

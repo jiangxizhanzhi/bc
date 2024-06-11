@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordEventListContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -278,6 +279,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 获取"三级指标"评分类型
         Map<String, Integer> thirdIndexesTypeMap = Maps.newHashMap();
         Map<String, Integer> thirdSpecialistMap = Maps.newHashMap();
+        //存放告警事件的节点id
+        HashMap<String, String> thirdNodeId = Maps.newHashMap();
+        //存放告警事件的告警事件名称
+        HashMap<String, String> thirdEventName = Maps.newHashMap();
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
             thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
@@ -294,6 +299,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
                 int value= remoteSceneService.getEventValue(nodeName,evnName);
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
+                thirdEventName.put(evalRecordIndexContext.getResourceId(),evnName);
+                thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId());
             }
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
         });
@@ -513,6 +520,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setEventAttr(evalIndicator.getAttribute());
                 evalIndexRef.setEventAttrValue(evalIndicator.getAttributeValue());
                 evalIndexRef.setEventValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
+                evalIndexRef.setEvenName(thirdEventName.get(evalIndex.getResourceId()));
+                evalIndexRef.setNodeId(thirdNodeId.get(evalIndex.getResourceId()));
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.EVENT.getCode())) {
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getEventType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
@@ -652,7 +661,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     //请求参数
                     int value= remoteSceneService.getEventValue(nodeName,evnName);
                     evalIndexRef.setEventValue(value);
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getEventType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
                 else {
@@ -713,9 +722,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 同三级指标项下变量项过滤
         Set<String> variablesMap = Sets.newHashSet();
         nextIds.forEach(nextId -> {
-            evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
-            evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
-            evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
+            if (evalIndexRef.getType()==3){
+                evalSystemIndexesContext.setEvent(new EvalRecordEventListContext());
+                evalSystemIndexesContext.getEvent().setEventValue(evalIndexRef.getEventValue());
+                evalSystemIndexesContext.getEvent().setType(evalIndexRef.getEventType());
+                evalSystemIndexesContext.getEvent().setEventNodeId(evalIndexRef.getNodeId());
+                evalSystemIndexesContext.getEvent().setEvnName(evalIndexRef.getEvenName());
+            }else {
+                evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+                evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
+                evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
+            }
             EvalIndexRef evalIndexRef1 = fullIndexesMap.get(nextId);
             // 如果"ifFull"为真，跳过第四级直接由"EvalVariableRef"获取第五级
             Integer condition = Boolean.TRUE.equals(isFull) ? EvalIndexRef.Level.AGGREGATION.getCode() : EvalIndex.Level.THIRD.getCode();

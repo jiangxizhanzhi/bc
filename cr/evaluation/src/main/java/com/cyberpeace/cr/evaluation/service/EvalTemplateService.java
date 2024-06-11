@@ -4,6 +4,10 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.AlarmPageReq;
+import com.cyberpeace.cr.evaluation.dao.entity.CombatLog;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskSlimContext;
@@ -68,4 +72,6 @@ public interface EvalTemplateService extends IService<EvalTemplate> {
 	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 
     void executeCommond(MissionStartContext missionStartContext);
+
+    BaseRsp<ListRsp<CombatLog>> getAlarm(AlarmPageReq req);
 }

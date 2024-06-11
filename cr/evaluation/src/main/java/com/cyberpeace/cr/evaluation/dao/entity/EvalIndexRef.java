@@ -91,6 +91,15 @@ public class EvalIndexRef extends BaseTable {
     private Integer eventAttrValue;
 
     /**
+     * 告警事件的节点id
+     */
+    private String nodeId;
+    /**
+     * 告警事件的事件名称
+     */
+    private String evenName;
+
+    /**
      * 当前指标项下一级ID, 为json字符串
      */
     private String nextIds;

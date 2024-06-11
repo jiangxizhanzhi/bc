@@ -3,6 +3,12 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.HashSet;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.evaluation.dao.entity.AlarmPageReq;
+import com.cyberpeace.cr.evaluation.dao.entity.CombatLog;
 import com.cyberpeace.integratation.model.scene.MissionStartContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
@@ -247,5 +253,19 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
     public void executeCommond(MissionStartContext missionStartContext) {
 		remoteSceneService.startMission(missionStartContext);
     }
+
+	@Override
+	public BaseRsp<ListRsp<CombatLog>> getAlarm(AlarmPageReq req) {
+		JSONObject jsonObject = remoteSceneService.getPageEvent(req.getMpSceneId(),req.getPage(),req.getPerPage());
+		Integer total =(Integer) jsonObject.get("total");
+		long l = total.longValue();
+		Object list = jsonObject.get("list");
+		List<CombatLog> combatLogs = JsonUtil.toJsonObjectArray(list.toString(), CombatLog.class);
+		Page<CombatLog> page = new Page<>();
+		page.setCurrent(req.getPerPage());
+		page.setSize(req.getPage());
+		ListRsp<CombatLog> listResult = PageUtil.getListResult(combatLogs, page, l);
+		return new BaseRsp<>(listResult);
+	}
 
 }

@@ -7,13 +7,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTool;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalToolMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.context.*;
+import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.integratation.model.scene.MissionStartContext;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +46,6 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateTaskListRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -264,6 +264,14 @@ public class EvalTemplateController {
 	@GetMapping("/tool")
 	public BaseRsp<List<EvalTool>> getTool() {
 		return new BaseRsp<>(evalToolMapper.selectList(new LambdaQueryWrapper<>()));
+	}
+
+	@ApiOperation("查询告警事件")
+	@GetMapping("/alarm")
+	public BaseRsp<ListRsp<CombatLog>>getAlarm(AlarmPageReq pageReq){
+		LocalScene localScene = localSceneService.getById(pageReq.getTemplateId());
+		pageReq.setMpSceneId(localScene.getMpSceneId());
+		return evalTemplateService.getAlarm(pageReq);
 	}
 
 	@ApiOperation("试验阶段列表带有status")

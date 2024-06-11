@@ -39,15 +39,6 @@ public class EvalPlayBackController {
 	@GetMapping("/time_line")
 	public BaseRsp<EvalAllTimeLineRsp> getTimeLine(@ApiParam(name = "instance_id", value = "实例id",
 			required = true) @RequestParam("instance_id") String instanceId) {
-//		EvalTimeLineRsp lineRsp1 = new EvalTimeLineRsp("阶段1", TimeUtil.toDate1("2024-04-11 17:10:00"), 1);
-//		EvalTimeLineRsp lineRsp2 = new EvalTimeLineRsp("载荷2", TimeUtil.toDate1("2024-04-11 17:20:00"), 2);
-//		List<EvalTimeLineRsp> lineRsps = new ArrayList<>();
-//		lineRsps.add(lineRsp1);
-//		lineRsps.add(lineRsp2);
-//		EvalAllTimeLineRsp evalAllTimeLineRsp = new EvalAllTimeLineRsp();
-//		evalAllTimeLineRsp.setStartTime(TimeUtil.toDate1("2024-04-11 17:00:00"));
-//		evalAllTimeLineRsp.setEndTime(TimeUtil.toDate1("2024-04-11 17:30:00"));
-//		evalAllTimeLineRsp.setData(lineRsps);
 		return new BaseRsp<>(evalInstanceStepService.getTimeLine(instanceId));
 	}
 

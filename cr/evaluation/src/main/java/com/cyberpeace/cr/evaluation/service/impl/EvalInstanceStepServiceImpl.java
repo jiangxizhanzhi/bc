@@ -130,6 +130,9 @@ public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMap
 	private List<EvalLoadLogContext> getLoadLogList(String mpSceneId) {
 		JSONArray logArray = remoteLoadService.getLoadLog(mpSceneId);
 		List<EvalLoadLogContext> logList = new ArrayList<>();
+		if (logArray == null) {
+			return logList;
+		}
 		for (int i = 0; i < logArray.size(); i++) {
 			JSONObject jsonObject = logArray.getJSONObject(i);
 			EvalLoadLogContext context = new EvalLoadLogContext(jsonObject.getString("tool_name"),

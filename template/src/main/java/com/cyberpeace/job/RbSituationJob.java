@@ -1,11 +1,10 @@
 package com.cyberpeace.job;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.enums.RbRoleGroup;
-import com.cyberpeace.common.util.ConnectionUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbSituationService;
 import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
@@ -15,11 +14,20 @@ import com.google.common.collect.Lists;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -49,6 +57,27 @@ public class RbSituationJob {
 	private static final String RBSITUATIONEXCHANGE = "situation";
 
 	private Integer errorCount = 0;
+	private String exchangeUrl;
+
+	private CloseableHttpClient httpClient;
+
+	@PostConstruct
+	public void init() {
+		String mqWebPort = SystemPropUtil.getProp("MQ_WEB_PORT");
+		String userName = SystemPropUtil.getProp("MQ_USERNAME");
+		String password = SystemPropUtil.getProp("MQ_PASSWORD");
+		String mqHost = SystemPropUtil.getProp("MQ_HOST");
+		if(mqWebPort == null) {
+			mqWebPort = "15672";
+		}
+//		String url = "http://%s:%s/api/exchanges/%2F/%s/bindings/source";
+		exchangeUrl = "http://" + mqHost + ":" + mqWebPort + "/api/exchanges/%2F/" + RBSITUATIONEXCHANGE + "/bindings/source";
+
+		BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+		credsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(userName, password));
+
+		httpClient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+	}
 
 
 	@Scheduled(fixedRate = 5000)
@@ -60,6 +89,35 @@ public class RbSituationJob {
 			log.info("checkRecord job is end, mpSceneId is null");
 			return;
 		}
+
+		if (errorCount > 10) {
+			log.info("reset id, send rabbitmq message error more than 10 times");
+			rbSituationService.reSetId();
+			errorCount = 0;
+		}
+
+		// 创建HttpGet对象
+		log.info("exchangeUrl is [{}]", exchangeUrl);
+		HttpGet httpGet = new HttpGet(exchangeUrl);
+
+		try {
+			// 防止有交换机，没有队列时一直发送消息
+			CloseableHttpResponse response =httpClient.execute(httpGet);
+			String content = EntityUtils.toString(response.getEntity(), "UTF-8");
+			final JSONArray queues = JsonUtil.stringToArray(content);
+			if (queues.size() == 0) {
+				errorCount = errorCount + 1;
+				// 城市沙盘队列没有连上,检查config.txt配置是否正确
+				log.error("city not create queues, please city config.txt is right");
+				return;
+			}
+
+		} catch (IOException e) {
+			log.error("get exchange query is failed [{}]", e.getMessage());
+			errorCount = errorCount + 1;
+			return;
+		}
+
 
 		FlowLogsPageContext flowLogsPageContext = new FlowLogsPageContext();
 		flowLogsPageContext.setId(mpSceneId);
@@ -78,11 +136,6 @@ public class RbSituationJob {
 		} catch (Exception e) {
 			errorCount = errorCount + 1;
 			log.error("catch error: [{}]", e.getMessage());
-		}
-		if (errorCount > 10) {
-			log.info("reset id, send rabbitmq message error more than 10 times");
-			rbSituationService.reSetId();
-			errorCount = 0;
 		}
 
 		log.info("checkRecord job is end");

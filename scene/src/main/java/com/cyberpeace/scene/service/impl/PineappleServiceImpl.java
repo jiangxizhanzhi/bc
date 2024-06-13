@@ -195,7 +195,8 @@ public class PineappleServiceImpl implements PineappleService {
 			return;
 		}
 		String rsp = doHttpPost(API_URL, sessionId,
-				String.format(RequestBody.LOGIN, System.currentTimeMillis() / 1000));
+				String.format(RequestBody.LOGIN, PI_USERNAME, PI_PWD,
+						System.currentTimeMillis() / 1000));
 		if (!rsp.contains(ResponseKeyWord.TRUE)) {
 			COOKIE.invalidate(sessionKey);
 			throw new BusinessException(ErrorCode.PINEAPPLE_LOGIN_FAILED);
@@ -272,7 +273,7 @@ final class Action {
 
 final class RequestBody {
 
-	public static final String LOGIN = "{\"system\":\"authentication\",\"action\":\"login\",\"username\":\"root\",\"password\":\"root\",\"time\":%d}";
+	public static final String LOGIN = "{\"system\":\"authentication\",\"action\":\"login\",\"username\":\"%s\",\"password\":\"%s\",\"time\":%d}";
 
 	public static final String ENABLE = "{\"module\":\"DWall\",\"action\":\"enable\"}";
 

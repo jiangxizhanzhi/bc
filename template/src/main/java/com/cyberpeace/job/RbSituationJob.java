@@ -94,6 +94,7 @@ public class RbSituationJob {
 			log.info("reset id, send rabbitmq message error more than 10 times");
 			rbSituationService.reSetId();
 			errorCount = 0;
+			return;
 		}
 
 		// 创建HttpGet对象
@@ -105,10 +106,10 @@ public class RbSituationJob {
 			CloseableHttpResponse response =httpClient.execute(httpGet);
 			String content = EntityUtils.toString(response.getEntity(), "UTF-8");
 			final JSONArray queues = JsonUtil.stringToArray(content);
-			if (queues.size() == 0) {
+			if (queues.isEmpty()) {
 				errorCount = errorCount + 1;
 				// 城市沙盘队列没有连上,检查config.txt配置是否正确
-				log.error("city not create queues, please city config.txt is right");
+				log.error("city not create queues, please check city config.txt is right");
 				return;
 			}
 

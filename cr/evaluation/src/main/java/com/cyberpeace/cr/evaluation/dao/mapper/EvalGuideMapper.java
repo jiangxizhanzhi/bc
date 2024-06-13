@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface EvalGuideMapper extends BaseMapper<EvalGuideScheme> {
 
-	List<EvalGuideListRsp> selectListByTestId(@Param("testId") String testId);
+	List<EvalGuideListRsp> selectListByInstanceId(@Param("instanceId") String instanceId);
 
 	String selectTestIdByGuideId(@Param("guideId") String guideId);
 

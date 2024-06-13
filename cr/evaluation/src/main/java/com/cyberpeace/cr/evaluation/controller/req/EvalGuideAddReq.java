@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -13,6 +14,10 @@ public class EvalGuideAddReq implements Serializable {
 	@ApiModelProperty(value = "试验id", required = true)
 	@NotBlank
 	private String testId;
+
+	@ApiModelProperty(value = "试验实例id", required = true)
+	@NotBlank(message = CrBusinessErrorCode.SCENE_NOT_STARTED)
+	private String testInstanceId;
 
 	@ApiModelProperty(value = "事件名称", required = true)
 	@NotBlank

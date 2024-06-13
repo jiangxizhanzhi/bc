@@ -1,18 +1,15 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.SituationGuideHistory;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationGuideHisMapper;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalGuideModifyReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalGuideScheme;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalGuideMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalInstanceStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestMapper;
 import com.cyberpeace.cr.evaluation.service.EvalGuideService;
@@ -55,6 +52,9 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 	@Autowired
 	private SituationGuideHisMapper situationGuideHisMapper;
 
+	@Autowired
+	private EvalInstanceStepMapper evalInstanceStepMapper;
+
 	@Override
 	public String addSituationGuide(EvalGuideAddReq req) {
 		EvalGuideScheme evalGuideScheme = BeanUtils.copy(req, EvalGuideScheme.class);
@@ -70,25 +70,16 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 	}
 
 	@Override
-	public List<EvalGuideListRsp> getGuideList(String testId) {
-		return evalGuideMapper.selectListByTestId(testId);
+	public List<EvalGuideListRsp> getGuideList(String instanceId) {
+		return evalGuideMapper.selectListByInstanceId(instanceId);
 	}
 
 	@Override
 	public void	runGuideScheme(String guideId) {
 		EvalGuideScheme evalGuideScheme = evalGuideMapper.selectById(guideId);
 		String sceneId = evalGuideMapper.selectSceneIdByGuideId(guideId);
-		if (sceneId == null) {
-			String topoId = evalTestMapper.selectTopoIdByTestId(evalGuideScheme.getTestId());
-			if (topoId == null) {
-				throw new BusinessException(CrBusinessErrorCode.CANNOT_FIND_TOPO);
-			}
-			pushDataToRoomByScheme(false, topoId, evalGuideScheme);
-			addHistory(evalGuideScheme, topoId);
-		}else {
-			pushDataToRoomByScheme(true, sceneId, evalGuideScheme);
-			addHistory(evalGuideScheme, sceneId);
-		}
+		pushDataToRoomByScheme(true, sceneId, evalGuideScheme);
+		addHistory(evalGuideScheme, sceneId);
 	}
 
 	@Override
@@ -97,17 +88,13 @@ public class EvalGuideServiceImpl extends ServiceImpl<EvalGuideMapper, EvalGuide
 	}
 
 	@Override
-	public List<EvalStepGuideListRsp> getStepGuideList(String testId) {
-		EvalTest evalTest = evalTestMapper.selectById(testId);
-		if (evalTest == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		return evalStepMapper.selectStepGuideListByTestId(testId);
+	public List<EvalStepGuideListRsp> getStepGuideList(String instanceId) {
+		return evalInstanceStepMapper.selectStepGuideListByInstanceId(instanceId);
 	}
 
 	@Override
 	public EvalStepGuideDetailRsp getGuideDetail(String stepId) {
-		return evalStepMapper.selectGuideDetailByStepId(stepId);
+		return evalInstanceStepMapper.selectGuideDetailByStepId(stepId);
 	}
 
 	@Override

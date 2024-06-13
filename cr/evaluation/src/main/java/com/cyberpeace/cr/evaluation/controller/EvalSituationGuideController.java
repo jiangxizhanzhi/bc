@@ -39,8 +39,8 @@ public class EvalSituationGuideController {
 
 	@ApiOperation("查询手动导调方案列表")
 	@GetMapping("/list")
-	public BaseRsp<List<EvalGuideListRsp>> guideSchemeList(@ApiParam(name = "test_id", value = "试验id") @RequestParam("test_id") String testId) {
-		return new BaseRsp<>(evalGuideService.getGuideList(testId));
+	public BaseRsp<List<EvalGuideListRsp>> guideSchemeList(@ApiParam(name = "instance_id", value = "实例id") @RequestParam("instance_id") String instanceId) {
+		return new BaseRsp<>(evalGuideService.getGuideList(instanceId));
 	}
 
 	@ApiOperation("执行手动导调")
@@ -59,8 +59,8 @@ public class EvalSituationGuideController {
 
 	@ApiOperation("查询阶段任务列表")
 	@GetMapping("/step/list")
-	public BaseRsp<List<EvalStepGuideListRsp>> getStepGuideList(@ApiParam(name = "test_id", value = "试验id") @RequestParam("test_id") String testId) {
-		return new BaseRsp<>(evalGuideService.getStepGuideList(testId));
+	public BaseRsp<List<EvalStepGuideListRsp>> getStepGuideList(@ApiParam(name = "instance_id", value = "试验实例id") @RequestParam("instance_id") String instanceId) {
+		return new BaseRsp<>(evalGuideService.getStepGuideList(instanceId));
 	}
 
 	@ApiOperation("查询任务导调详情")

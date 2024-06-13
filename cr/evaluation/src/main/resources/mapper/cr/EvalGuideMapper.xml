@@ -6,11 +6,11 @@
         <bind name="MANUALLY_CODE" value="@com.cyberpeace.situation.constant.SituationGuideScheme$Type@MANUALLY.code"/>
     </sql>
 
-    <select id="selectListByTestId" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalGuideListRsp">
+    <select id="selectListByInstanceId" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalGuideListRsp">
         <include refid="share_constant"/>
         select resource_id guide_id, name, attack_type, source, target, result
         from cr_eval_situation_guide_scheme
-        where test_id = #{testId}
+        where test_instance_id = #{instanceId}
         and type = ${MANUALLY_CODE}
         order by update_time desc
     </select>
@@ -24,8 +24,7 @@
     <select id="selectSceneIdByGuideId" resultType="java.lang.String">
         select instance.mp_scene_id
         from cr_eval_situation_guide_scheme scheme
-        left join cr_eval_test test on scheme.test_id = test.resource_id
-        left join cr_eval_test_instance instance on test.current_instance_id = instance.resource_id
+        left join cr_eval_test_instance instance on scheme.test_instance_id = instance.resource_id
         where scheme.resource_id = #{guideId}
     </select>
 

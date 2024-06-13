@@ -2,22 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.EvalStepMapper">
 
-    <select id="selectGuideDetailByStepId"
-            resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideDetailRsp">
-        select step.resource_id step_id, scheme.resource_id guide_id, scheme.name, attack_type, source, target, result
-        from cr_eval_step step
-        left join cr_eval_situation_guide_scheme scheme on step.resource_id = scheme.step_id
-        where step.resource_id = #{stepId}
-    </select>
 
-    <select id="selectStepGuideListByTestId"
-            resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideListRsp">
-        select step.resource_id step_id, step.name step_name, if(scheme.resource_id is null, false, true) is_exist_guide, is_editable
-        from cr_eval_step step
-        left join cr_eval_situation_guide_scheme scheme on scheme.step_id = step.resource_id
-        where step.test_id = #{testId}
-        order by stage
-    </select>
 
     <select id="selectAllByTestId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalStep">
         select *

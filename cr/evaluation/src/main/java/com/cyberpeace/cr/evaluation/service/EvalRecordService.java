@@ -1,9 +1,6 @@
 package com.cyberpeace.cr.evaluation.service;
 
 
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
@@ -11,6 +8,9 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+
+import java.util.List;
+import java.util.Map;
 
 public interface EvalRecordService extends IService<EvalRecord> {
 
@@ -90,6 +90,9 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @return 节点探针ID、名称列表
      */
     List<EvalRoomPairRsp> getProbes(String roomId, String nodeId);
+
+
+    List<EvalRoomPairRsp> getTestProbes(String roomId, String nodeId);
 
     /**
      * 获取全量节点、探针 （Map）

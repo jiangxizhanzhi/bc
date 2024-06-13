@@ -25,14 +25,14 @@
         select scheme.resource_id
         from cr_eval_test_instance_step step
         left join cr_eval_test_instance instance on step.test_instance_id = instance.resource_id
-        left join cr_eval_situation_guide_scheme scheme on step.step_id = scheme.step_id
+        left join cr_eval_situation_guide_scheme scheme on step.resource_id = scheme.step_id
         where step.start_time is not null
         and step.end_time is null
         and instance.instance_name is null
     </select>
 
     <select id="selectTimeNodes" resultType="com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext">
-        select instance_step.resource_id step_id, step.name, end_time
+        select instance_step.resource_id step_id, step.name title, end_time
         from cr_eval_test_instance_step instance_step
         left join cr_eval_step step on instance_step.step_id = step.resource_id
         where instance_step.end_time is not null
@@ -65,5 +65,23 @@
         left join cr_eval_step on instance_step.step_id = cr_eval_step.resource_id
         left join cr_eval_test_instance instance on instance.resource_id = instance_step.test_instance_id
         where instance.mp_scene_id = #{sceneId}
+    </select>
+
+    <select id="selectStepGuideListByInstanceId"
+            resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideListRsp">
+        select instance_step.resource_id step_id, step.name step_name, if(scheme.resource_id is null, false, true) is_exist_guide, if(is_editable is null, true, is_editable) is_editable
+        from cr_eval_test_instance_step instance_step
+        left join cr_eval_situation_guide_scheme scheme on scheme.step_id = instance_step.resource_id
+        left join cr_eval_step step on instance_step.step_id = step.resource_id
+        where instance_step.test_instance_id = #{instanceId}
+        order by instance_step.stage
+    </select>
+
+    <select id="selectGuideDetailByStepId"
+            resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalStepGuideDetailRsp">
+        select instance_step.resource_id step_id, scheme.resource_id guide_id, scheme.name, attack_type, source, target, result
+        from cr_eval_test_instance_step instance_step
+        left join cr_eval_situation_guide_scheme scheme on instance_step.resource_id = scheme.step_id
+        where instance_step.resource_id = #{stepId}
     </select>
 </mapper>

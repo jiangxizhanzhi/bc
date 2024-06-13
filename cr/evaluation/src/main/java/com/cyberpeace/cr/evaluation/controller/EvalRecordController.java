@@ -109,6 +109,13 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getProbes(roomId, nodeId));
     }
 
+    @ApiOperation("验证3试验任务-终端使用探针信息获取")
+    @GetMapping("/probes/test")
+    public BaseRsp<List<EvalRoomPairRsp>> getTestProbes(@ApiParam(name = "room_id", value = "试验实例D") @RequestParam("room_id") String roomId,
+                                                    @ApiParam(name = "node_id", value = "场景节点ID") @RequestParam("node_id") String nodeId) {
+        return new BaseRsp<>(evalRecordService.getTestProbes(roomId, nodeId));
+    }
+
     @ApiOperation("终端使用探针信息获取-批量")
     @GetMapping("/probes-map")
     public BaseRsp<Map<String, List<EvalRoomPairRsp>>> getProbes(@ApiParam(name = "room_id", value = "测评任务ID") @RequestParam("room_id") String roomId) {

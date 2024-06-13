@@ -104,6 +104,9 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 		List<EvalTestStepListRsp> evalTestStepListRspList = new ArrayList<>();
 		List<EvalInstanceStep> instanceStepList = evalInstanceStepMapper.selectByInstanceId(instanceId);
 		List<String> stepIds = instanceStepList.stream().map(EvalInstanceStep::getStepId).collect(Collectors.toList());
+		if (CollectionUtils.isEmpty(stepIds)) {
+			return new ArrayList<>();
+		}
 		List<EvalStep> stepList = evalStepMapper.selectBatchIds(stepIds);
 		Map<String, EvalStep> stepMap = stepList.stream().collect(Collectors.toMap(EvalStep::getResourceId, e -> e));
 		for (int i = 0; i < instanceStepList.size(); i++ ) {
@@ -117,6 +120,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			if (instanceStep.getEndTime() != null) {
 				evalTestStepListRsp.setEndTime(TimeUtil.format1(instanceStep.getEndTime()));
 			}
+			evalTestStepListRsp.setStatus();
 			if (testInstance.getInstanceName() != null) {
 				evalTestStepListRsp.setPreStepStatus(EvalTestStepListRsp.Status.INIT.getCode());
 				evalTestStepListRsp.mergeStatus();

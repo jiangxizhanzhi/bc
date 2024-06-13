@@ -1,27 +1,6 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.model.AuthTable;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -36,6 +15,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -61,8 +41,26 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -148,6 +146,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Autowired
     private EvalIndexMapper evalIndexMapper;
+
+    @Autowired
+    private EvalTestInstanceMapper evalTestInstanceMapper;
 
     private static final long ONCE_PROBE_DATA_SIZE = 1000L;  // 10/100/1000
 
@@ -1166,6 +1167,40 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+        JSONObject cpCollection = jsonObject.getJSONObject(SCENE).getJSONObject(PLUGINS).getJSONObject(CPCOLLECTION);
+        if (cpCollection == null) {
+            return results;
+        }
+        JSONObject nodesProbe = cpCollection.getJSONObject(ELEMENTS);
+        for (Map.Entry<String, Object> entry : nodesProbe.entrySet()) {
+            if (!entry.getKey().equals(nodeId)) {
+                continue;
+            }
+
+            JSONObject itemData = (JSONObject) entry.getValue();
+            JSONArray probesData = itemData.getJSONArray(PROBES);
+
+            probesData.forEach(item -> {
+                JSONObject probeItem = (JSONObject) item;
+
+                EvalRoomPairRsp result = new EvalRoomPairRsp();
+                result.setId(probeItem.getString("id"));
+                result.setLabel(probeItem.getString("name"));
+                results.add(result);
+            });
+            break;
+        }
+
+        return results;
+    }
+
+    @Override
+    public List<EvalRoomPairRsp> getTestProbes(String roomId, String nodeId) {
+        EvalTestInstance testInstance = evalTestInstanceMapper.selectById(roomId);
+
+        List<EvalRoomPairRsp> results = Lists.newArrayList();
+
+        JSONObject jsonObject = remoteSceneService.getById(testInstance.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
         JSONObject cpCollection = jsonObject.getJSONObject(SCENE).getJSONObject(PLUGINS).getJSONObject(CPCOLLECTION);
         if (cpCollection == null) {
             return results;

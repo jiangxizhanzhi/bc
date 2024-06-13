@@ -19,6 +19,11 @@ public class EvalGuideScheme extends BaseTable {
 	private String testId;
 
 	/**
+	 * 实例id
+	 */
+	private String testInstanceId;
+
+	/**
 	 * 事件名称
 	 */
 	private String name;

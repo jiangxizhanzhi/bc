@@ -51,9 +51,6 @@ CREATE TABLE `behavior_record`
 ALTER TABLE `oj_course_lesson`
     ADD COLUMN `video_check_point` text NULL COMMENT '视频检查点配置' AFTER `video_url`;
 
-ALTER TABLE `oj_lesson_record`
-    DROP INDEX `user_lesson_uniq`,
-    ADD INDEX `user_lesson_uniq`(`user_id`, `lesson_id`) USING BTREE;
 -- ----------------------------
 -- 删除内置习题集
 -- ----------------------------

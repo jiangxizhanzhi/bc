@@ -17,4 +17,6 @@ public interface RbSituationService {
 	Map<String, String> getNodeMap();
 
 	String getMpSceneId();
+
+	void reSetId();
 }

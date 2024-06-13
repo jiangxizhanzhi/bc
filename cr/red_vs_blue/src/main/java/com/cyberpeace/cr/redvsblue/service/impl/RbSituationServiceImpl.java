@@ -132,4 +132,10 @@ public class RbSituationServiceImpl implements RbSituationService {
 	public String getMpSceneId() {
 		return mpSceneId;
 	}
+
+	@Override
+	public void reSetId() {
+		mpSceneId = null;
+		sceneId = null;
+	}
 }

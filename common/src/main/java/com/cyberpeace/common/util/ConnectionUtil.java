@@ -5,7 +5,9 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ConnectionUtil {
 	/**
 	 * 建立与RabbitMQ的连接
@@ -24,8 +26,8 @@ public class ConnectionUtil {
 		factory.setUsername(SystemPropUtil.getProp("MQ_USERNAME"));
 		factory.setPassword(SystemPropUtil.getProp("MQ_PASSWORD"));
 		// 通过工厂获取连接
-		Connection connection = factory.newConnection();
-		return connection;
+		log.info("rabbitmq {}:{} {}:password", factory.getHost(), factory.getPort(), factory.getUsername());
+		return factory.newConnection();
 	}
 
 	private ConnectionUtil() {}

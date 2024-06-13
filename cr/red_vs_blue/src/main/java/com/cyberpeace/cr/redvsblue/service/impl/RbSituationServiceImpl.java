@@ -69,6 +69,10 @@ public class RbSituationServiceImpl implements RbSituationService {
 			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
 		}
 		LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
+		if (localScene == null) {
+			log.error("localScene id null, must start [{}] scene", room.getName());
+			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+		}
 
 		JSONObject scene = remoteSceneService.getById(localScene.getMpSceneId(), null);
 		List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")

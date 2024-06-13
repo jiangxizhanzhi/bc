@@ -132,7 +132,7 @@ public class TeamTrainStudentsController {
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+		CrRole selfRole = crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
 
 		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
@@ -152,10 +152,15 @@ public class TeamTrainStudentsController {
 		List<String> copyedTopoIds = new ArrayList<>();
 		copyedTopoIds.add(copyedTopoId);
 		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
-				.batchGetTopoDigest(copyedTopoIds);
-		teamRoomRsp.setNodesCount(
-				topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+		if(selfRole.isTeamTeacher()){
+			Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+					.batchGetTopoDigest(copyedTopoIds);
+			teamRoomRsp.setNodesCount(
+					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+		} else {
+			teamRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
+		}
+
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
 	}
 

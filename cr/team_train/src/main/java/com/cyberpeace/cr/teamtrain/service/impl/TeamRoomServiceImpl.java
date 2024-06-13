@@ -690,8 +690,15 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
 			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId, userInfoMap));
 			teamRoomRsp.setRolesData(Lists.newArrayList());
-			teamRoomRsp.setNodesCount(
-					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+			// node count ,differs by role
+			CrRole selfRole = CrRole.findRoleByUserId(crRoles, userId);
+			if (null == selfRole || selfRole.isTeamTeacher()) {
+				teamRoomRsp.setNodesCount(
+						topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+			} else {
+				teamRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
+			}
+			
 			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
 					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
 			teamRoomRsp.setPreSkill(

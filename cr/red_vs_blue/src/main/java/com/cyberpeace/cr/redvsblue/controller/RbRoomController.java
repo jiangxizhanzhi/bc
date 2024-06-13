@@ -186,11 +186,16 @@ public class RbRoomController {
 		List<String> copyedTopoIds = new ArrayList<>();
 		copyedTopoIds.add(copyedTopoId);
 		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
-				.batchGetTopoDigest(copyedTopoIds);
+		CrRole selfRole = crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+		if(selfRole.isRvbStaff()){
+			Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+					.batchGetTopoDigest(copyedTopoIds);
+			rbRoomRsp.setNodesCount(
+					topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
+		} else {
+			rbRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
+		}
 
-		rbRoomRsp.setNodesCount(
-				topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
 		return new BaseRsp(rbRoomRsp);
 	}
 

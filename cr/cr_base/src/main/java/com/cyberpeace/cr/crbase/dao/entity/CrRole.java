@@ -1,9 +1,6 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -17,9 +14,11 @@ import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import lombok.Data;
 import lombok.Getter;
@@ -165,6 +164,17 @@ public class CrRole extends BaseTable {
 
 	public CrRoleNodesData getNodeData(){
 		return JsonUtil.toJsonObject(getNodes(), CrRoleNodesData.class);
+	}
+	
+	public Integer getVisibleNodeCount() {
+		CrRoleNodesData nodesData = this.getNodeData();
+		Set<Integer> countableTypes = Sets.newHashSet(CrRoleNode.CategoryGroup.OPERATING.getCode(),
+				CrRoleNode.CategoryGroup.NETWORK.getCode(),
+				CrRoleNode.CategoryGroup.APPLICATION.getCode(),
+				CrRoleNode.CategoryGroup.SECURITY.getCode());
+		long cnt = nodesData.getVisibleNodes().stream()
+				.filter(node -> countableTypes.contains(node.getCategory())).count();
+		return (int) cnt;
 	}
 
 	public void setNodesData(CrRoleNodesData nodesData){

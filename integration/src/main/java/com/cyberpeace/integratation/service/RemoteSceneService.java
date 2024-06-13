@@ -277,6 +277,10 @@ public interface RemoteSceneService {
 
 	JSONArray getEventList(SceneEventContext sceneEventContext);
 
+	List<ImagesByIdVO> getImageList();
+
+	List<ImagesByIdVO> getImageListByuuids(List<String> uuids);
+
 	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);
 
 }

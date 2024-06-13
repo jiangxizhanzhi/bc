@@ -130,9 +130,14 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String HOST_EVENT_LIST;
 
+	private String IMAGE_LIST;
+	private String IMAGE_UUID_LIST;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
+		IMAGE_LIST = MP_HOST + ConfigUtil.getContextProperty("image");
+		IMAGE_UUID_LIST = MP_HOST + ConfigUtil.getContextProperty("image.uuid");
 		MISSION_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.mission.start");
 		SCENE_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.start.app");
 
@@ -632,6 +637,22 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				JsonUtil.toJsonString(sceneEventContext, PropertyNamingStrategy.SnakeCase),
 				JSONObject.class);
 		return jsonObject.getJSONArray("list");
+	}
+
+	@Override
+	public List<ImagesByIdVO> getImageList() {
+		String list = HttpClientUtil.rawGetByParam(null, IMAGE_LIST,
+				JSONObject.class).getString("list");
+		return JsonUtil.toJsonObjectArray(list, ImagesByIdVO.class);
+	}
+
+	@Override
+	public List<ImagesByIdVO> getImageListByuuids(List<String> uuids) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("uuids", uuids);
+		JSONArray post = HttpClientUtil.post(IMAGE_UUID_LIST, JsonUtil.toJsonString(jsonObject, PropertyNamingStrategy.SnakeCase),
+				JSONArray.class);
+		return post.toJavaList(ImagesByIdVO.class);
 	}
 
 	@Override

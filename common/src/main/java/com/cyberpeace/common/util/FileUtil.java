@@ -1,17 +1,24 @@
 package com.cyberpeace.common.util;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.SceneMapFileList;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +29,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @Slf4j
 public class FileUtil {
@@ -708,4 +716,93 @@ public class FileUtil {
 			createPath(new File(parentPath, child));
 		}
 	}
+	// MultipartFile转换为InputStream
+	public static InputStream multipartToInputStream(MultipartFile multipartFile) throws IOException {
+		InputStream inputStream = null;
+		File file = null;
+		try {
+			// 创建临时文件
+			file = File.createTempFile("temp", null);
+			// 把multipartFile写入临时文件
+			multipartFile.transferTo(file);
+			// 使用文件创建 inputStream 流
+			inputStream = new FileInputStream(file);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			// 最后记得删除文件
+			file.deleteOnExit();
+			// 关闭流
+			inputStream.close();
+		}
+		return inputStream;
+	}
+
+	/**
+	 * 解压缩ZIP文件
+	 * @param zipFile ZIP文件
+	 * @param destDir 目标路径
+	 */
+	public static void zipDecompress(MultipartFile zipFile, File destDir) throws IOException {
+		byte[] buffer = new byte[1024];
+		File files = new File("path.zip");
+
+		FileUtils.copyInputStreamToFile(zipFile.getInputStream(), files);
+		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(files))) {
+			ZipEntry entry = zis.getNextEntry();
+			while (entry != null) {
+				File file = new File(destDir, entry.getName());
+				if(!fileListContains(file.getName())){
+					throw new BusinessException(ErrorCode.INVALID_FILE_NAME, file.getName());
+				}
+				if (entry.isDirectory()) {
+					file.mkdirs();
+				} else {
+					File parent = file.getParentFile();
+					if (!parent.exists()) {
+						parent.mkdirs();
+					}
+					try (FileOutputStream fos = new FileOutputStream(file)) {
+						int len;
+						while ((len = zis.read(buffer)) > 0) {
+							fos.write(buffer, 0, len);
+						}
+					}
+				}
+				entry = zis.getNextEntry();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static boolean containsFileInZip(File zipFile, String specifiedFileName) throws IOException {
+		try (ZipFile zip = new ZipFile(zipFile)) {
+			ZipEntry entry = zip.getEntry(specifiedFileName);
+			return entry != null;
+		} catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static Boolean fileListContains(String file){
+		Field[] declaredFields = SceneMapFileList.class.getDeclaredFields();
+		try{
+
+			for(Field field:declaredFields){
+				if(Modifier.isStatic(field.getModifiers())){
+					if(field.get(null).equals(file)){
+						return true;
+					}
+
+				}
+			}
+		} catch (IllegalAccessException | IllegalArgumentException e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }

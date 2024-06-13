@@ -165,7 +165,7 @@ public class HttpClientUtil {
 			httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
 
 			// 3、记录调用日志
-			HttpclientContext.getContext().addLog(httpResponse);
+//			HttpclientContext.getContext().addLog(httpResponse);
 		} catch (Exception e) {
 			try {
 				HttpclientContext.getContext().doRemoteException(e);

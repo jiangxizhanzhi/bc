@@ -147,10 +147,15 @@ public class EvalMissionController {
     public BaseRsp<EvalMissionTemplateRsp> updateMissionStatus(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
 
         EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(updateEvalMissionReq.getResourceId());
+        Integer templateStatus = evalMissionTemplate.getStatus();
+        if(templateStatus.equals(MissionTemplateStatus.FAIL) || templateStatus.equals(MissionTemplateStatus.FINISH)){
+            return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
+        }
         EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId(), updateEvalMissionReq.getStatus());
         Integer status = updateEvalMissionReq.getStatus();
         evalMissionTemplate.setStatus(status);
         evalMissionTemplate.setUpdateTime(new Date());
+        evalMissionTemplate.setTaskId(updateEvalMissionReq.getTaskId());
         if(status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL)){
             evalMissionTemplate.setEndTime(new Date());
         }

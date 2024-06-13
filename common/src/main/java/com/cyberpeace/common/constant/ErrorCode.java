@@ -195,5 +195,9 @@ public final class ErrorCode {
 
 	public static final String REPEATED_MISSION_NAME = "100062";
 
+	public static final String INVALID_FILE_NAME = "100063";
+
+	public static final String INVALID_ELEMENT = "100064";
+
 	private ErrorCode() {}
 }

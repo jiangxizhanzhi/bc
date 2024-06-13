@@ -736,8 +736,14 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			List<CrRole> crRoles = roomRoleMap.get(rbRoomData.getResourceId());
 
 			RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
-			rbRoomRsp.setNodesCount(
-					topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
+			// 节点数量
+			CrRole selfRole = CrRole.findRoleByUserId(crRoles, userId);
+			if (selfRole == null || selfRole.isRvbStaff()) {
+				rbRoomRsp.setNodesCount(
+						topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
+			} else {
+				rbRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
+			}
 			rbRoomRsp.setResourceOccupiedNums(
 					topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getResourceOccupiedNums());
 			rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId, userInfoMap));

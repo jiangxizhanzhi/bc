@@ -8,9 +8,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.annoations.BehaviorRecord;
-import com.cyberpeace.common.enums.BehaviorModuleEnum;
-import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -23,11 +20,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.annoations.BehaviorRecord;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -196,11 +196,16 @@ public class RbRoomController {
         List<String> copyedTopoIds = new ArrayList<>();
         copyedTopoIds.add(copyedTopoId);
         // 训练场景拓扑节点数量获取
-        Map<String, TopoDigest> topologyNodesStats = remoteTopoService
-                .batchGetTopoDigest(copyedTopoIds);
-
-        rbRoomRsp.setNodesCount(
-                topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
+		CrRole selfRole = crRoleService.checkPermission(resourceId,
+				UserInfoContext.getUserContext().getUserId());
+		if (selfRole.isRvbStaff()) {
+			Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+					.batchGetTopoDigest(copyedTopoIds);
+			rbRoomRsp.setNodesCount(
+					topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
+		} else {
+			rbRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
+		}
         return new BaseRsp<>(rbRoomRsp);
     }
 

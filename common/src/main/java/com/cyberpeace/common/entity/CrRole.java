@@ -1,11 +1,10 @@
 package com.cyberpeace.common.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.context.role.CrRoleNode;
+import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -165,6 +164,17 @@ public class CrRole extends BaseTable {
 
 	public CrRoleNodesData getNodeData(){
 		return JsonUtil.toJsonObject(getNodes(), CrRoleNodesData.class);
+	}
+
+	public Integer getVisibleNodeCount() {
+		CrRoleNodesData nodesData = this.getNodeData();
+		Set<Integer> countableTypes = Sets.newHashSet(CrRoleNode.CategoryGroup.OPERATING.getCode(),
+				CrRoleNode.CategoryGroup.NETWORK.getCode(),
+				CrRoleNode.CategoryGroup.APPLICATION.getCode(),
+				CrRoleNode.CategoryGroup.SECURITY.getCode());
+		long cnt = nodesData.getVisibleNodes().stream()
+				.filter(node -> countableTypes.contains(node.getCategory())).count();
+		return (int) cnt;
 	}
 
 	public void setNodesData(CrRoleNodesData nodesData){

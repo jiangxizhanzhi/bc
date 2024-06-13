@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.common.annoations.BehaviorRecord;
-import com.cyberpeace.common.enums.BehaviorModuleEnum;
-import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -21,9 +18,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.annoations.BehaviorRecord;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BehaviorModuleEnum;
+import com.cyberpeace.common.enums.BehaviorTypeEnum;
 import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -136,7 +136,7 @@ public class TeamTrainStudentsController {
 	public BaseRsp<TeamRoomRsp> getTeamRoom(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+		CrRole selfRole = crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
 
 		TeamRoomData teamRoomData = teamRoomService.getTeamRoomDataByRoomId(resource_id);
 
@@ -156,10 +156,14 @@ public class TeamTrainStudentsController {
 		List<String> copyedTopoIds = new ArrayList<>();
 		copyedTopoIds.add(copyedTopoId);
 		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
-				.batchGetTopoDigest(copyedTopoIds);
-		teamRoomRsp.setNodesCount(
-				topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+		if (selfRole.isTeamTeacher()) {
+			Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+					.batchGetTopoDigest(copyedTopoIds);
+			teamRoomRsp.setNodesCount(
+					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+		} else {
+			teamRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
+		}
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
 	}
 

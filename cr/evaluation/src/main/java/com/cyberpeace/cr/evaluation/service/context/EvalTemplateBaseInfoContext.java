@@ -15,4 +15,6 @@ public class EvalTemplateBaseInfoContext {
 
 	private Integer categoryCode;
 
+	private Integer isTem;
+
 }

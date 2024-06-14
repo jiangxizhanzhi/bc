@@ -34,6 +34,9 @@
         from cr_eval_template
         where `name` = #{templateName}
         and create_user_id = #{createUserId}
+          <if test="isTem != null and isTem != ''">
+              and is_tem = #{isTem}
+          </if>
         <if test="templateId != null and templateId != ''">
             and resource_id != #{templateId}
         </if>)

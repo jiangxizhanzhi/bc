@@ -31,6 +31,9 @@ public class EvalTemplateRsp extends EvalTemplateListRsp {
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
 	private Integer operationAuthType;
 
+	@ApiModelProperty("战法和模板的数据隔离：1是模板")
+	private Integer isTem;
+
 	public void setStepConfig(String stepConfig) {
 		this.stepConfig = JsonUtil.toJsonObjectArray(stepConfig, EvalTaskStepConfig.class);
 	}

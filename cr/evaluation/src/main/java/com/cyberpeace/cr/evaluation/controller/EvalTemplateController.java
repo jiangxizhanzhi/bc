@@ -1,9 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -185,6 +182,7 @@ public class EvalTemplateController {
 		evalTemplateRsp.setMethod(evalTemplate.getMethod());
 		evalTemplateRsp.setExpCondition(evalTemplate.getExpCondition());
 		evalTemplateRsp.setTarget(evalTemplate.getTarget());
+		evalTemplateRsp.setIsTem(evalTemplate.getIsTem());
 		// auth users
 		List<UserInfo> userInfos = remoteUserService.getByIdList(evalTemplate.getAuthIds());
 		List<OperationUserInfo> operationUserInfos = StreamApiUtils.map(userInfos, userInfo -> {
@@ -204,8 +202,32 @@ public class EvalTemplateController {
 			getEvalTemplateList(EvalTemplateListQuery evalTemplateListQuery) {
 
 		IPage<EvalTemplate> data = evalTemplateService.list(evalTemplateListQuery);
-
-		data.convert(evalTemplate -> {
+		List<EvalTemplate> records = data.getRecords();
+		IPage<EvalTemplate> evalTemplateIPage = null;
+		if (evalTemplateListQuery.getIsTem()==1) {
+			//模板
+//			 records.stream().filter(s -> s.getIsTem() == 1).collect(Collectors.toList());
+			List<EvalTemplate> collect = records.stream().map(s->{
+				if (s.getIsTem()!=null&& s.getIsTem() == 1) {
+					return s;
+				}
+				return null;
+			}).collect(Collectors.toList());
+			List<EvalTemplate> list = collect.stream().filter(Objects::nonNull).collect(Collectors.toList());
+			evalTemplateIPage = data.setRecords(list).setCurrent(data.getCurrent()).setSize(list.size()).setPages(data.getPages()).setTotal(list.size());
+		}else {
+			//非模板
+//			List<EvalTemplate> noTem = records.stream().filter(s -> s.getIsTem() != 1).collect(Collectors.toList());
+			List<EvalTemplate> noTem = records.stream().map(s->{
+				if (s.getIsTem()!=null&&0==s.getIsTem()) {
+					return s;
+				}
+				return null;
+			}).collect(Collectors.toList());
+			List<EvalTemplate> collect = noTem.stream().filter(Objects::nonNull).collect(Collectors.toList());
+			evalTemplateIPage = data.setRecords(collect).setCurrent(data.getCurrent()).setSize(collect.size()).setPages(data.getPages()).setTotal(collect.size());
+		}
+		evalTemplateIPage.convert(evalTemplate -> {
 			EvalTemplateListRsp evalTemplateListRsp = BeanUtils.copy(evalTemplate,
 					EvalTemplateListRsp.class);
 			evalTemplateListRsp
@@ -214,7 +236,7 @@ public class EvalTemplateController {
 
 		});
 
-		return new BaseRsp<>(PageUtil.getListResult(data));
+		return new BaseRsp<>(PageUtil.getListResult(evalTemplateIPage));
 	}
 
 	@ApiOperation("模板任务列表查询")

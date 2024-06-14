@@ -186,7 +186,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		// 校验名称重复
 		if (Boolean.TRUE.equals(evalTemplateMapper.existByNameAndUserIdAndId(templateName,
-				UserInfoContext.getUserContext().getUserId(), templateId))) {
+				UserInfoContext.getUserContext().getUserId(), templateId,evalTemplateBaseInfoContext.getIsTem()))) {
 			log.error("Name duplicate! templateName = [{}]", templateName);
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}

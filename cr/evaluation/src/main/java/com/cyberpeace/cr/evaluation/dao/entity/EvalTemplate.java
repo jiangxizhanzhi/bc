@@ -52,6 +52,9 @@ public class EvalTemplate extends AuthTable {
 	@ApiModelProperty(value = "实验目标")
 	private String target;
 
+	@ApiModelProperty("战法和模板的数据隔离：1是模板")
+	private Integer isTem;
+
 	public void setLogoId(String logoId) {
 		this.logo = logoId;
 	}

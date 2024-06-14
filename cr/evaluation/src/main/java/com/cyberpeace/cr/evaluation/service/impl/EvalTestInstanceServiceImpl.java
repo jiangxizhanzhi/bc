@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.evaluation.controller.req.EvalSceneNodeReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeNodesRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTest;
@@ -141,6 +143,30 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 			results.add(result);
 		});
 		return results;
+	}
+
+	@Override
+	public Boolean recreateNode(EvalSceneNodeReq nodeReq) {
+		EvalTestInstance instance = evalTestInstanceMapper.selectById(nodeReq.getInstanceId());
+		Boolean result = localSceneService.recreateNode(instance.getLocalSceneId(),
+				nodeReq.getNodeId());
+		if (Boolean.FALSE.equals(result)) {
+			log.error("failed_to_restart_node: LocalSceneId = [{}]", instance.getLocalSceneId());
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
+		}
+		return true;
+	}
+
+	@Override
+	public Boolean restartNode(EvalSceneNodeReq nodeReq) {
+		EvalTestInstance instance = evalTestInstanceMapper.selectById(nodeReq.getInstanceId());
+		Boolean result = localSceneService.restartNode(instance.getLocalSceneId(),
+				nodeReq.getNodeId());
+		if (Boolean.FALSE.equals(result)) {
+			log.error("failed_to_restart_node: LocalSceneId = [{}]", instance.getLocalSceneId());
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
+		}
+		return true;
 	}
 
 	public void clearInstanceAndScene(String localSceneId,String testId, String instanceId) {

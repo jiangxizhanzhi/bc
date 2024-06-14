@@ -272,4 +272,16 @@ public class EvalTestController {
 		return new BaseRsp<>(evalInstanceStepService.getAllStagesBySceneId(sceneId));
 	}
 
+	@ApiOperation("重建节点")
+	@GetMapping("/scene/node/recreate")
+	public BaseRsp<Boolean> recreateNode(@RequestBody EvalSceneNodeReq nodeReq) {
+		return new BaseRsp<>(evalTestInstanceService.recreateNode(nodeReq));
+	}
+
+	@ApiOperation("重启节点")
+	@GetMapping("/scene/node/restart")
+	public BaseRsp<Boolean> restartNode(@RequestBody EvalSceneNodeReq nodeReq) {
+		return new BaseRsp<>(evalTestInstanceService.restartNode(nodeReq));
+	}
+
 }

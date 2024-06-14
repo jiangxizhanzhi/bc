@@ -607,9 +607,11 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				pushDataToRoom(datas.remove(0), sceneId);
 			}
 
-			// 延时发送
-			Thread.sleep(interval * 1000);
+			// 多余的流量不发了, 太慢了不能等
+			break;
 		}
+
+		log.info("batchPushDataToRoom datas leave to drop [{}], message is [{}]", datas.size(), datas);
 
 	}
 

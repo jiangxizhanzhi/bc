@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
@@ -30,10 +31,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
@@ -335,6 +332,20 @@ public class EvalTemplateController {
 			phase = evalTask.getPhase();
 			List<EvalTaskStepConfig> stages = JsonUtil.toJsonObjectArray(phase, EvalTaskStepConfig.class);
 			Map<String, List<ToolBo>> map = stages.stream().collect(Collectors.toMap(EvalTaskStepConfig::getTitle, EvalTaskStepConfig::getEquip));
+			for (EvalTaskStepConfig eva : stages) {
+				for (ToolBo toolBo : eva.getEquip()) {
+					Boolean isExecute = toolBo.getIsExecute();
+					if(Boolean.TRUE.equals(isExecute)){
+						if(TimeUtil.addSeconds(toolBo.getExecuteTime(), 30).compareTo(new Date()) > 0){
+							toolBo.setLimitTime((int)(TimeUtil.addSeconds(toolBo.getExecuteTime(), 30).getTime() - System.currentTimeMillis())/1000);
+						} else{
+							toolBo.setLimitTime(0);
+							toolBo.setIsExecute(false);
+
+						}
+					}
+				}
+			}
 			for (int i = 0; i < evalTaskStepContextList.size(); i++) {
 				if (map.containsKey(evalTaskStepContextList.get(i).getTitle())) {
 					evalTaskStepContextList.get(i).setEquip(map.get(evalTaskStepContextList.get(i).getTitle()));

@@ -21,6 +21,7 @@ public class FileChunk {
 
 	private Integer total;
 
+	@TableField(value = "`index`")
 	private Integer index;
 
 	private Integer status;

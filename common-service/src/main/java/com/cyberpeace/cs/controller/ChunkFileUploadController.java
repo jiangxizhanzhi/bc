@@ -34,7 +34,7 @@ public class ChunkFileUploadController {
 
 	@ApiOperation("分片文件上传")
 	@PostMapping("")
-	public BaseRsp<Integer> upload(@RequestBody FileChunkReq req) {
+	public BaseRsp<Integer> upload(FileChunkReq req) {
 		Integer index = fileChunkUploadService.uploadChunk(req);
 		return new BaseRsp<>(index);
 	}

@@ -189,4 +189,8 @@ public interface ErrorCode {
 
 	/** 演示环境禁止增删改 */
 	String DEMONSTRATION_FORBID_UPDATE = "104021";
+	/**
+	 * 分片丢失，请重新上传
+	 */
+	String CHUNK_MISSING = "100061";
 }

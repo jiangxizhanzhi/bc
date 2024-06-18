@@ -1,0 +1,1 @@
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 12, '运维题', 'Yunwei');

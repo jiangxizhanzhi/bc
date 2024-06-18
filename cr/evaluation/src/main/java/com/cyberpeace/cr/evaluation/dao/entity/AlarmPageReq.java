@@ -8,5 +8,5 @@ public class AlarmPageReq extends PageReqBase {
 
     private String templateId;
 
-    private String mpSceneId;
+    private String sceneId;
 }

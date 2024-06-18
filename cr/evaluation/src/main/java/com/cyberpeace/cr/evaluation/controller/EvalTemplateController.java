@@ -291,8 +291,12 @@ public class EvalTemplateController {
 	@ApiOperation("查询告警事件")
 	@GetMapping("/alarm")
 	public BaseRsp<ListRsp<CombatLog>>getAlarm(AlarmPageReq pageReq){
-		LocalScene localScene = localSceneService.getById(pageReq.getTemplateId());
-		pageReq.setMpSceneId(localScene.getMpSceneId());
+		if (pageReq.getSceneId()!=null) {
+			pageReq.setSceneId(pageReq.getSceneId());
+		}else {
+			LocalScene localScene = localSceneService.getById(pageReq.getTemplateId());
+			pageReq.setSceneId(localScene.getMpSceneId());
+		}
 		return evalTemplateService.getAlarm(pageReq);
 	}
 

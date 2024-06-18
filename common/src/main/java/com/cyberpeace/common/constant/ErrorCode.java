@@ -215,4 +215,8 @@ public final class ErrorCode {
 
 	/** 演示环境禁止增删改 */
 	public static final String DEMONSTRATION_FORBID_UPDATE = "104021";
+	/**
+	 * 分片丢失，请重新上传
+	 */
+	public static final String CHUNK_MISSING = "100065";
 }

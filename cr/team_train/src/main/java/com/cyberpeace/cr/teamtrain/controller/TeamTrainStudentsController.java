@@ -636,7 +636,6 @@ public class TeamTrainStudentsController {
 			return new ArrayList<>();
 		}
 		List<TeamCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
-		boolean foundCommonDevice = false;
 		for (int i = 0; i < availableDevices.size(); i++) {
 			JSONObject availableDevice = availableDevices.get(i);
 			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
@@ -649,11 +648,6 @@ public class TeamTrainStudentsController {
 				context.setDeviceInfo(availableDevice);
 				context.setOccupyFlag(1);
 				commonDeviceContexts.add(context);
-				foundCommonDevice = true;
-				break;
-			}
-
-			if (foundCommonDevice) {
 				break;
 			}
 		}

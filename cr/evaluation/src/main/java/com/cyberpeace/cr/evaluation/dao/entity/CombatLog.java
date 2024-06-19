@@ -34,6 +34,11 @@ public class CombatLog  {
 	 */
 	private Date eventTime;
 
+	/**
+	 * 告警等级
+	 */
+	private Integer grade;
+
 	private String originalLog;
 
 }

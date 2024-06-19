@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.evaluation.controller.req.ManualExecutionReq;
+import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalToolMapper;
@@ -33,9 +33,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateModifyReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
@@ -295,6 +292,17 @@ public class EvalTemplateController {
 			pageReq.setSceneId(localScene.getMpSceneId());
 		}
 		return evalTemplateService.getAlarm(pageReq);
+	}
+
+	@ApiOperation("查询grade转换name")
+	@GetMapping("/gradeConName")
+	public BaseRsp<List<CodeConversionNameReq>>getGradeAndName(){
+		List<CodeConversionNameReq> list = Lists.newArrayList();
+		list.add(CodeConversionNameReq.builder().code(1).name("高危").build());
+		list.add(CodeConversionNameReq.builder().code(2).name("中危").build());
+		list.add(CodeConversionNameReq.builder().code(3).name("低危").build());
+		return new BaseRsp<>(list);
+
 	}
 
 	@ApiOperation("试验阶段列表带有status")

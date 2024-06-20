@@ -214,7 +214,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 		for (LessonConfig lessonConfig : nextChapterList) {
 			log.info("dumps Chapter start [{}]/[{}]", chapterParentPath, lessonConfig.getName());
-			Map<String, String> stringStringMap = combineChapterFirst(courseDumpBo, chapterParentPath, lessonConfig.getIndex() + 1, lessonConfig, lessons);
+			Map<String, String> stringStringMap = combineChapterFirst(courseDumpBo, chapterParentPath, lessonConfig.getIndex(), lessonConfig, lessons);
 			String filePath = stringStringMap.get(lessonConfig.getResourceId());
 			deepChapter(courseDumpBo, filePath, lessonConfig.getResourceId(), chapterList, lessons);
 			log.info("dumps Chapter end [{}]/[{}]", chapterParentPath, lessonConfig.getName());

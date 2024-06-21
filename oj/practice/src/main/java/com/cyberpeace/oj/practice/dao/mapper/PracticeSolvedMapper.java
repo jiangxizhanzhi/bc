@@ -40,4 +40,8 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 												@Param("solved") Boolean solved,
 												@Param("startTime") Date startTime,
 												@Param("endTime") Date endTime);
+
+	void deleteByOperationSetAndUser(@Param("setId") String setId, @Param("userId") String userId);
+
+	void deleteByTheoryIdsAndUser(@Param("practiceIds") List<String> practiceIds, @Param("userId") String userId);
 }

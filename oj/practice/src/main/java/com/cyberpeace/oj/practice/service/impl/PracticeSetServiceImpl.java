@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONArray;
@@ -31,6 +32,7 @@ import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.CustomFont;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.SystemPropertyService;
@@ -43,9 +45,7 @@ import com.cyberpeace.oj.practice.dao.context.SetListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
@@ -80,6 +80,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	@Autowired
 	private PracticeOperationService practiceOperationService;
+
+	@Autowired
+	private PracticeSolvedMapper practiceSolvedMapper;
+
+	@Autowired
+	private PracticeMistakeMapper practiceMistakeMapper;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -499,7 +505,29 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return "";
 	}
 
-	private String doExportSet(String destPath, PracticeSet practiceSet) {
+	@Override
+	public void reset(String resourceId, Integer setType) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		if (PracticeSet.PracticeType.THEORY.getCode().equals(setType)) {
+			List<String> practiceIds = practiceTheoryMapper
+					.selectBySetIds(Lists.newArrayList(resourceId), false);
+			if (practiceIds.isEmpty()) {
+				return;
+			}
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
+					practiceSolvedMapper.deleteByTheoryIdsAndUser(practiceIds, userId);
+					practiceMistakeMapper.deleteByPracticeIds(practiceIds, userId);
+				}
+			});
+		} else if (PracticeSet.PracticeType.OPERATION.getCode().equals(setType)) {
+			practiceSolvedMapper.deleteByOperationSetAndUser(resourceId, userId);
+		}
+	}
+
+    private String doExportSet(String destPath, PracticeSet practiceSet) {
 
 		if (StringUtils.isBlank(practiceSet.getLogo())) {
 			if (new File(ResourceDumpConstant.DEFAULT_LOGO_PATH).exists()) {

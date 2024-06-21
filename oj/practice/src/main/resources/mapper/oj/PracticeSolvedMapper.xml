@@ -15,6 +15,22 @@
             </if>
         </where>
     </delete>
+    <delete id="deleteByOperationSetAndUser">
+        delete
+        from oj_practice_solved
+        where submit_user_id = #{userId}
+          and practice_id in
+              (select resource_id from oj_practice_operation where practice_set_id = #{setId});
+    </delete>
+    <delete id="deleteByTheoryIdsAndUser">
+        delete from oj_practice_solved
+        where submit_user_id = #{userId}
+        and
+        practice_id in
+        <foreach collection="practiceIds" item="practiceId" separator="," open="(" close=")">
+            #{practiceId}
+        </foreach>
+    </delete>
 
     <select id="selectUserAndId" resultMap="solved">
         select * from oj_practice_solved

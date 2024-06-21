@@ -113,4 +113,5 @@ public interface PracticeSetService extends IService<PracticeSet> {
 
     String createImg(String setName);
 
+    void reset(String resourceId, Integer setType);
 }

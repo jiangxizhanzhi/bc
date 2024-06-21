@@ -102,6 +102,11 @@
         FROM oj_practice_set as ops LEFT JOIN
         (SELECT practice_set_id, count(id) practice_count FROM oj_practice_operation GROUP BY practice_set_id) AS opo
         ON ops.resource_id = opo.practice_set_id where ops.practice_type = 2
+        UNION ALL
+        SELECT ops.`id`, ops.`resource_id`, ops.`builtin`, ops.`practice_type`, ops.`name`, ops.`logo`, ops.`public`,
+        ops.`create_user_id`, ops.`operation_auth_type`, ops.`operation_auth_ids`, ops.`read_auth_type`,
+        ops.`read_auth_ids`, ops.`create_time`, ops.`update_time`, 0
+        FROM oj_practice_set as ops where ops.practice_type = 3
         ) as practice_set
         <where>
             <if test="listQuery != null">

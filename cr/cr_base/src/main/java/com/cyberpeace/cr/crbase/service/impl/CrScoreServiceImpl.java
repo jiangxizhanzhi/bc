@@ -357,7 +357,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 					logRsps));
 			UserRole userRole = new UserRole();
 			userRole.setName(userData.getRepName());
-			userRole.setLogo(mpEnvService.getMpHost()+userData.getLogo());
+			userRole.setLogo(userData.getLogo());
 			userRole.setType(type);
 			userRole.setRoleName(roleName);
 			userRoles.add(userRole);

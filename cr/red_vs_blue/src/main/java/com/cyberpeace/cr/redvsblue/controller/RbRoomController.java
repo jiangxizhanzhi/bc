@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -128,6 +129,9 @@ public class RbRoomController {
 
     @Autowired
     private CrConstantsService crConstantsService;
+
+    @Autowired
+    private MpEnvService mpEnvService;
 
     @ApiOperation("新增")
     @PostMapping()
@@ -524,6 +528,10 @@ public class RbRoomController {
                                         value = "resource_id", required = true) String resourceId,
                                 @ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
         TrainReportContext originData = this.getTrainReports(resourceId, scoreCount).getData();
+        // 导出时，用户头像加上 mp 地址
+        for (UserRole userRole : originData.getUserRoles()) {
+            userRole.setLogo(mpEnvService.getMpHost() + userRole.getLogo());
+        }
         TrainReportExportContext data = BeanUtils.deepCopy(originData,
                 TrainReportExportContext.class);
         data.initExport();

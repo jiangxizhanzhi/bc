@@ -90,6 +90,7 @@ import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -146,6 +147,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private CrConstantsService crConstantsService;
+	
+	@Autowired
+	private MpEnvService mpEnvService;
 
 	private static final String MISSING_LOG = "resource_id_missing";
 
@@ -769,6 +773,10 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
 		TrainReportContext originData = this.getTrainReports(resource_id, scoreCount).getData();
+		// 导出时，用户头像加上 mp 地址
+		for (UserRole userRole : originData.getUserRoles()) {
+			userRole.setLogo(mpEnvService.getMpHost() + userRole.getLogo());
+		}
 		TrainReportExportContext data = BeanUtils.deepCopy(originData,
 				TrainReportExportContext.class);
 		data.initExport();

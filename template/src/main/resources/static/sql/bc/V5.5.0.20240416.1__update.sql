@@ -24,7 +24,6 @@ CREATE TABLE `video_progress`
 -- ----------------------------
 -- Table structure for behavior_record
 -- ----------------------------
-DROP TABLE IF EXISTS `behavior_record`;
 CREATE TABLE `behavior_record`
 (
     `id`          int(11)                                                  NOT NULL AUTO_INCREMENT,

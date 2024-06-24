@@ -44,4 +44,10 @@
         from cr_eval_test_instance
         where end_time is null
     </select>
+
+    <select id="selectLocalSceneId" resultType="java.lang.String">
+        select local_scene_id
+        from cr_eval_test_instance
+        where resource_id = #{testInstanceId}
+    </select>
 </mapper>

@@ -22,4 +22,6 @@ public interface EvalTestInstanceMapper extends BaseMapper<EvalTestInstance> {
 	List<EvalInstanceSlimContext> selectSlimInstanceListByTestIdAndStatus(@Param("testId") String testId, @Param("status") Integer status);
 
 	List<EvalSituationListRsp> getAllEvalSituation();
+
+	String selectLocalSceneId(@Param("testInstanceId") String testInstanceId);
 }

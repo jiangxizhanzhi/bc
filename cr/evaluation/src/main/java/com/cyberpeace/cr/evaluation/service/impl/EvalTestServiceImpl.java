@@ -227,6 +227,18 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 	}
 
 	@Override
+	public void pause(String testInstanceId) {
+		String localSceneId = evalTestInstanceMapper.selectLocalSceneId(testInstanceId);
+		localSceneService.pauseScene(localSceneId);
+	}
+
+	@Override
+	public void unPause(String testInstanceId) {
+		String localSceneId = evalTestInstanceMapper.selectLocalSceneId(testInstanceId);
+		localSceneService.unpauseScene(localSceneId);
+	}
+
+	@Override
 	public String getDashboardPermalink(String testId) {
 		String dashboardId = evalTestMapper.selectDashboardIdByTestId(testId);
 		if (dashboardId == null) {

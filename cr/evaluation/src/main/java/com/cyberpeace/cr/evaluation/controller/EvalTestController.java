@@ -147,6 +147,20 @@ public class EvalTestController {
 		}
 	}
 
+	@ApiOperation("暂停场景")
+	@PostMapping("/pause")
+	public BaseRsp<Boolean> pause(@RequestBody EvalSceneOpsReq opsReq) {
+		evalTestService.pause(opsReq.getInstanceId());
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("恢复场景")
+	@PostMapping("/unpause")
+	public BaseRsp<Boolean> unpause(@RequestBody EvalSceneOpsReq opsReq) {
+		evalTestService.unPause(opsReq.getInstanceId());
+		return new BaseRsp<>(true);
+	}
+
 	@ApiOperation("获取大屏链接")
 	@GetMapping("/dashboard_permalink")
 	public BaseRsp<String> getDashboardPermalink(@ApiParam(name = "test_id", value = "试验id", required = true)

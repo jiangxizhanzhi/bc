@@ -26,6 +26,10 @@ public interface EvalTestService extends IService<EvalTest> {
 
 	Boolean deleteTest(String testId);
 
+	void pause(String testInstanceId);
+
+	void unPause(String testInstanceId);
+
 	String getDashboardPermalink(String testId);
 
 	Boolean validateExistTask(String testId, EvalTestInstance.Status status);

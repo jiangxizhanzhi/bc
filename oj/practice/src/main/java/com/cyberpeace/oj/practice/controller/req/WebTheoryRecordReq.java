@@ -18,4 +18,9 @@ public class WebTheoryRecordReq extends PageReqBase {
 	@ApiModelProperty("解决状态")
 	private Integer solved;
 
+	/**
+	 * 习题集id
+	 */
+	private String practiceSetId;
+
 }

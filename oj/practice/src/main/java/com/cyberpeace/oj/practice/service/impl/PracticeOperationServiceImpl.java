@@ -47,7 +47,6 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
-import com.cyberpeace.oj.practice.controller.req.OperationUpdateReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
@@ -1320,9 +1319,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime) {
+	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime, String practiceSetId) {
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
-		List<String> operationIds = getOptionIdsByAuth(authContext, null);
+		List<String> operationIds = getOptionIdsByAuth(authContext, practiceSetId);
 		return practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
 	}
 

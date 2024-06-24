@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -262,7 +261,7 @@ public class PracticeOperationController {
 	@GetMapping("/record")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<OperationRecordRes>> getOperationRecordTop5() {
-		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getUserContext(), null, null);
+		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getUserContext(), null, null, null);
 		if (operationRecordResList.size() > 5){
 			return new BaseRsp<>(operationRecordResList.subList(0, 5));
 		}
@@ -274,7 +273,8 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<OperationRecordResByDay>> getAllOperationRecord(
 			@ApiParam(name = "start_time", value = "开始时间") @RequestParam(name = "start_time", required = false) String startTime,
-			@ApiParam(name = "end_time", value = "开始时间") @RequestParam(name = "end_time", required = false) String endTime) {
+			@ApiParam(name = "end_time", value = "开始时间") @RequestParam(name = "end_time", required = false) String endTime,
+			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(name = "practice_set_id", required = false) String practiceSetId) {
 		Map<String, List<OperationRecordRes>> operationRecordMap = new HashMap<>();
 		Date startDate = TimeUtil.toDate2(startTime);
 		startDate = startDate == null ? null : TimeUtil.getStartOfDay(startDate);
@@ -282,7 +282,7 @@ public class PracticeOperationController {
 		endDate = endDate == null ? null : TimeUtil.getEndOfDay(endDate);
 
 		List<OperationRecordRes> operationRecordResList = practiceOperationService
-				.getOperationRecord(UserInfoContext.getUserContext(), startDate, endDate);
+				.getOperationRecord(UserInfoContext.getUserContext(), startDate, endDate, practiceSetId);
 		for (OperationRecordRes operationRecordRes : operationRecordResList) {
 			String time = TimeUtil.format6(TimeUtil.toDate1(operationRecordRes.getTime()));
 			if (operationRecordMap.get(time) == null) {
@@ -332,7 +332,7 @@ public class PracticeOperationController {
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<String>> getRecordPracticeIds() {
 		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(
-				UserInfoContext.getUserContext(), null, null);
+				UserInfoContext.getUserContext(), null, null, null);
 		return new BaseRsp<>(StreamApiUtils.map(operationRecordResList, OperationRecordRes::getPracticeId));
 	}
 }

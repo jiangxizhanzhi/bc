@@ -60,6 +60,9 @@ public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMap
 			List<EvalStageTimeNodeRsp> stageNodes = new ArrayList<>();
 			Date startTime = step.getStartTime();
 			Date endTime = step.getEndTime();
+			if (startTime == null) {
+				break;
+			}
 			stageNodes.add(new EvalStageTimeNodeRsp("开始", TimeUtil.format1(startTime)));
 			for (EvalLoadLogContext log : logList) {
 				Date loadTime = log.getTime();
@@ -87,8 +90,14 @@ public class EvalInstanceStepServiceImpl extends ServiceImpl<EvalInstanceStepMap
 		List<EvalTimeLineRsp> lineRspList = new ArrayList<>();
 		List<EvalInstanceStep> stepList = evalInstanceStepMapper.selectByInstanceId(instanceId);
 		for (EvalInstanceStep step : stepList) {
+			if (step.getStartTime() == null) {
+				break;
+			}
 			EvalTimeLineRsp startLineRsp = new EvalTimeLineRsp("步骤" + step.getStage() + "开始", step.getStartTime(), 1);
 			lineRspList.add(startLineRsp);
+			if (step.getEndTime() == null) {
+				break;
+			}
 			EvalTimeLineRsp endLineRsp = new EvalTimeLineRsp("步骤" + step.getStage() + "结束", step.getEndTime(), 1);
 			lineRspList.add(endLineRsp);
 		}

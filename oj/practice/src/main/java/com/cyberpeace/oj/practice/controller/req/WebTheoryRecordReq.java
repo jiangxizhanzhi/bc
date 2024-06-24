@@ -21,6 +21,6 @@ public class WebTheoryRecordReq extends PageReqBase {
 	/**
 	 * 习题集id
 	 */
-	private String practiceSetId;
+	private String practice_set_id;
 
 }

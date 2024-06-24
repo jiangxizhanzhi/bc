@@ -743,7 +743,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	public List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq) {
 		//获取所有可见的习题id
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
-		List<String> practiceIds = getPracticeIdsByUserAndSet(authContext, webTheoryRecordReq.getPracticeSetId());
+		List<String> practiceIds = getPracticeIdsByUserAndSet(authContext, webTheoryRecordReq.getPractice_set_id());
 		//获取练习记录
 		Date startDate = StringUtils.isEmpty(webTheoryRecordReq.getStartTime()) ? null :
 				TimeUtil.toDate4(webTheoryRecordReq.getStartTime() + " 00:00:00");

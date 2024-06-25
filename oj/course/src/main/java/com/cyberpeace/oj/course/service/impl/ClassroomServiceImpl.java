@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -43,6 +42,7 @@ import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
@@ -149,6 +149,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
     @Autowired
     private RbRoomMapper rbRoomMapper;
+
+    @Autowired
+    private MpEnvService mpEnvService;
 
     @Override
     public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -1200,6 +1203,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+				if (imgUrl.startsWith("/api/mp/file/")) {
+                    // 特殊处理虚拟机内截图
+					imgUrl = mpEnvService.getMpHost() + imgUrl;
+				}
                 log.info("imgUrl:" + imgUrl);
                 mdContent = mdContent.replace(str, String.format(MdConstant.ONLY_URL_IMG, imgUrl));
             }

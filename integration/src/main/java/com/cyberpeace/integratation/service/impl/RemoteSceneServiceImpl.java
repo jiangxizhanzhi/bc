@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.service.bo.AccessConnectionReq;
+import com.cyberpeace.integratation.service.bo.AccessConnectionRsp;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,6 +121,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_TREND;
 
+	private String GET_CONNECTION_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -205,6 +209,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		ATTACK_TYPE_COUNT = MP_HOST + ConfigUtil.getContextProperty("mp.attack.type.count");
 
 		SCENE_TREND = MP_HOST + ConfigUtil.getContextProperty("mp.scene.trend");
+
+		GET_CONNECTION_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.connection");
 	}
 
 	@Override
@@ -305,7 +311,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
 
-	@Override
+    @Override
+    public AccessConnectionRsp getConnection(AccessConnectionReq req) {
+		return HttpClientUtil.post(GET_CONNECTION_URL, req, AccessConnectionRsp.class);
+    }
+
+    @Override
 	public Boolean restartNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RESTART_URL, nodeOpsContext, Boolean.class);
 	}

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
@@ -60,20 +59,21 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 				elements.remove(i);
 			} else {
 				// 非资产节点去除接入方式
-				// 去除终端的ports的access_modes
-				if (!assetNodeIds.contains(elementId)
-						&& elementType.equals(CrCommonConstants.TERMINAL_TYPE_CODE)) {
+				// 去除节点的ports的access_modes
+				if (!assetNodeIds.contains(elementId)) {
 					JSONArray ports = element.getJSONArray("ports");
-					for (int j = 0; j < ports.size(); j++) {
-						JSONObject port = ports.getJSONObject(j);
-						// 去掉 elements 的 access_modes
-						port.put("access_modes", Lists.newArrayList());
-						// 去掉 port 的 ip => 去掉重启重建按钮
-						port.put("ip", null);
-						// 去掉 plugins 的 access_modes
-						String portId = port.getString("id");
-						elementPorts.getJSONObject(portId).put("access_modes",
-								Lists.newArrayList());
+					if (null != ports) {
+						for (int j = 0; j < ports.size(); j++) {
+							JSONObject port = ports.getJSONObject(j);
+							// 去掉 elements 的 access_modes
+							port.put("access_modes", Lists.newArrayList());
+							// 去掉 port 的 ip => 去掉重启重建按钮
+							port.put("ip", null);
+							// 去掉 plugins 的 access_modes
+							String portId = port.getString("id");
+							elementPorts.getJSONObject(portId).put("access_modes",
+									Lists.newArrayList());
+						}
 					}
 				}
 				i++;

@@ -1203,7 +1203,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-				if (imgUrl.startsWith("/api/mp/file/")) {
+				if (imgUrl.startsWith(CommonConstant.MP_FILE_PREFIX)) {
                     // 特殊处理虚拟机内截图
 					imgUrl = mpEnvService.getMpHost() + imgUrl;
 				}

@@ -5,6 +5,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalSceneNodeReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeNodesRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
+import com.cyberpeace.cr.evaluation.service.context.EvalTestInstanceOpsContext;
 
 import java.util.List;
 
@@ -21,5 +22,9 @@ public interface EvalTestInstanceService extends IService<EvalTestInstance> {
 	Boolean recreateNode(EvalSceneNodeReq nodeReq);
 
 	Boolean restartNode(EvalSceneNodeReq nodeReq);
+
+	EvalTestInstanceOpsContext getEvalTaskOpsContext(String testInstanceId, Boolean validateUser);
+
+	void clearInstanceAndScene(EvalTestInstanceOpsContext evalTestInstanceOpsContext);
 
 }

@@ -388,7 +388,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
 	private LocalScene createLocalScene(EvalTestInstance evalTestInstance) {
 		LocalScene localScene = new LocalScene();
-		localScene.setBusinessCode(BusinessCode.RANGE_EVALUATION.getCode());
+		localScene.setBusinessCode(BusinessCode.CLOUD.getCode());
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		localScene.setBusinessInstanceId(evalTestInstance.getResourceId());
 		localScene.setTopoId(evalTestInstance.getCopyedTopoId());

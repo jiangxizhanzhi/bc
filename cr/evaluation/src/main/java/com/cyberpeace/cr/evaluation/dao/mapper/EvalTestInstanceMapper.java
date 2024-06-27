@@ -24,4 +24,6 @@ public interface EvalTestInstanceMapper extends BaseMapper<EvalTestInstance> {
 	List<EvalSituationListRsp> getAllEvalSituation();
 
 	String selectLocalSceneId(@Param("testInstanceId") String testInstanceId);
+
+	String selectTestId(@Param("testInstanceId") String testInstanceId);
 }

@@ -16,6 +16,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalInstanceStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTestInstanceService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTestInstanceOpsContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -167,6 +168,30 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return true;
+	}
+
+	@Override
+	public EvalTestInstanceOpsContext getEvalTaskOpsContext(String testInstanceId, Boolean validateUser) {
+
+		EvalTestInstanceOpsContext evalTaskOpsContext = new EvalTestInstanceOpsContext();
+
+//		EvalTask evalTask = Boolean.TRUE.equals(validateUser) ? getTask(taskId) : getById(taskId);
+		EvalTestInstance evalTestInstance = getById(testInstanceId);
+
+		evalTaskOpsContext.setEvalTestInstance(evalTestInstance);
+
+		evalTaskOpsContext.setLocalScene(localSceneService.getById(evalTestInstance.getLocalSceneId()));
+
+		return evalTaskOpsContext;
+	}
+
+	@Override
+	public void clearInstanceAndScene(EvalTestInstanceOpsContext evalTestInstanceOpsContext) {
+
+		clearInstanceAndScene(evalTestInstanceOpsContext.getLocalScene().getResourceId(),
+				evalTestInstanceOpsContext.getEvalTestInstance().getTestId(),
+				evalTestInstanceOpsContext.getLocalScene().getBusinessInstanceId());
+
 	}
 
 	public void clearInstanceAndScene(String localSceneId,String testId, String instanceId) {

@@ -26,7 +26,8 @@ public enum BusinessCode implements GenericEnum, BaseI18n {
     COMPREHENSIVE_ASSESSMENT(233, "综合评估"),
     TACTICAL_TRAINING(234, "战术训练"),
     COMPREHENSIVE_TRAINING(235, "综合训练"),
-    RANGE_EVALUATION(236, "靶场测评");
+    RANGE_EVALUATION(236, "靶场测评"),
+    CLOUD(237,"云靶标");
 
     @Getter
     private final Integer code;

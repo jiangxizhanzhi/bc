@@ -50,4 +50,10 @@
         from cr_eval_test_instance
         where resource_id = #{testInstanceId}
     </select>
+
+    <select id="selectTestId" resultType="java.lang.String">
+        select test_id
+        from cr_eval_test_instance
+        where resource_id = #{testInstanceId}
+    </select>
 </mapper>

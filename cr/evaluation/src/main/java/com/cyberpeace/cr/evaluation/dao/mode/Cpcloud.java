@@ -10,8 +10,8 @@ import java.util.List;
 
 @Data
 public class Cpcloud {
-    private JSONArray element_ports;
-    private List<CpcloudElement> elements;
+    private JSONObject element_ports;
+    private JSONObject elements;
 
     public void setScene() {
         JSONObject scene = new JSONObject();

@@ -2,10 +2,8 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -21,6 +19,9 @@ import com.google.gson.GsonBuilder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,21 +29,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Api(tags = "靶场测评-测绘")
 @RestController
 //@RequiresAuthentication
 @Slf4j
-@RequestMapping("/cr/eval/template/scene/map/")
+@RequestMapping("/cr/eval/template/scene")
 public class EvalSceneMapController {
 	@Autowired
 	private RemoteSceneService remoteSceneService;
@@ -60,7 +58,7 @@ public class EvalSceneMapController {
 
 	@ApiOperation("导入测绘拓扑")
 //	@RequiresPermissions(value = { MenuConstant.CMS_CR_EVALUATION_TEMPLATE,MenuConstant. WEB_CR_EVALUATION }, logical = Logical.OR)
-	@PostMapping("/")
+	@PostMapping("/map")
 	public BaseRsp<EvalSceneMapRsp> loadMap(
 			@RequestParam("file") MultipartFile file
 	) throws IOException {
@@ -82,18 +80,25 @@ public class EvalSceneMapController {
 				.create();
 		String originalFilename = file.getOriginalFilename();
 		String replace = originalFilename.replace(".zip", "");
-		String unzipDir = "/cpms/decompress/";
+		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
+		String unzipDir;
+		if(Boolean.parseBoolean(apiDoc)){
+			unzipDir = "D:/cpms/decompress/";
+		} else {
+			unzipDir = "/cpms/decompress/";
+
+		}
 		File unzip = new File(unzipDir);
-		FileUtil.zipDecompress(file, unzip);
+		Map<String, String> fileMap = FileUtil.zipDecompress(file, unzip);
 		// 拓扑探测信息
-		String fileName = unzipDir + File.separator + replace + File.separator + "topology.json";
+		String fileName = fileMap.get("topo");
 		log.info("the current filename---- [{}]",fileName);
 		NetworkProbeData probeData = gson.fromJson(new FileReader(fileName), NetworkProbeData.class);
 
 		Convertor convertor = Convertor.builder().probeData(probeData).build();
 
 		// 节点服务信息
-		try (BufferedReader reader = new BufferedReader(new FileReader(unzipDir + File.separator + replace + File.separator + "server_data.json"))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(fileMap.get("server")))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				ReportData data = gson.fromJson(line, ReportData.class);
@@ -104,7 +109,7 @@ public class EvalSceneMapController {
 		}
 
 		// 配置好的服务和镜像的映射信息
-		ServiceImageMap imageMap = gson.fromJson(new FileReader(unzipDir + File.separator + replace + File.separator +"image_map.json"), ServiceImageMap.class);
+		ServiceImageMap imageMap = gson.fromJson(new FileReader(fileMap.get("image")), ServiceImageMap.class);
 		convertor.setImageMap(imageMap);
 
 
@@ -124,8 +129,8 @@ public class EvalSceneMapController {
 		Map<String, List<Port>> portMap = StreamApiUtils.groupBy(ports, Port::getElement);
 		List<TopoElement> topoElements = new ArrayList<>();
 		List<Connections> sceneConnections = new ArrayList<>();
-		List<CpcloudElement> elements = new ArrayList<>();
-		JSONArray elementPorts = new JSONArray();
+		JSONObject cpElements = new JSONObject();
+		JSONObject elementPorts = new JSONObject();
 		HashMap<String, String> map = new HashMap<>();
 		HashMap<String, ImagesByIdVO> elementPortMap = new HashMap<>();
 
@@ -133,7 +138,7 @@ public class EvalSceneMapController {
 			TopoElement topoElement = new TopoElement();
 			String id = IDGeneratorUtil.getID();
 			//TODO 设备名称
-			String name = element.getName();
+			String name = element.getName() ;
 			Element element1 = elementMap.get(element.getId());
 			String image = element1.getImage();
 			if(null == image){
@@ -158,9 +163,9 @@ public class EvalSceneMapController {
 			// TODO 网络设备获取port—ips
 			// imagesPageVO.getExtGateway().getPortConfigs().get()
 			topoElement.setId(id);
-			CpcloudElement elementObj = new CpcloudElement(imagesPageVO);
-			elements.add(elementObj);
-			topoElement.setName(name);
+			topoElement.setName(StringUtils.isEmpty(name) ? imagesPageVO.getName() : name);
+			CpcloudElement elementObj = getCpcloudElement(imagesPageVO);
+			cpElements.put(id, elementObj);
 
 
 			List<Port> portList = portMap.get(element.getId());
@@ -171,7 +176,6 @@ public class EvalSceneMapController {
 			for(Port port:portList){
 				String value = "port_" + id + "_" + portIndex;
 				String portId = port.getId();
-				JSONObject elementPortObj = new JSONObject();
 				JSONObject item = new JSONObject();
 				ImagesByIdVO imagesByIdVO = elementPortMap.get(id);
 				ExtGateway gateway = imagesByIdVO.getExtGateway();
@@ -189,8 +193,8 @@ public class EvalSceneMapController {
 				item.put("firewall_rules", null);
 				item.put("logic_network_id", "");
 				item.put("resource_id", "");
-				elementPortObj.put(value, item);
-				elementPorts.add(elementPortObj);
+				item.put("proxy", true);
+				elementPorts.put(value, item);
 				map.put(portId, value);
 				JSONObject object = new JSONObject();
 				object.put("id", value);
@@ -230,10 +234,178 @@ public class EvalSceneMapController {
 		Plugins plugins = new Plugins();
 		Cpcloud cpcloud = new Cpcloud();
 		cpcloud.setElement_ports(elementPorts);
-		cpcloud.setElements(elements);
+		cpcloud.setElements(cpElements);
 		plugins.setCpcloud(cpcloud);
 		rsp.setPlugins(plugins);
 		return new BaseRsp<>(rsp);
 	}
+
+
+	private CpcloudElement getCpcloudElement(ImagesByIdVO imagesPageVO) {
+		CpcloudElement elementObj = new CpcloudElement();
+		elementObj.setRole(imagesPageVO.getRole());
+		elementObj.setImageType(imagesPageVO.getImageType());
+		elementObj.setImageUuid(imagesPageVO.getUuid());
+		elementObj.setIsBuildIn(imagesPageVO.getIsInternal());
+		elementObj.setImage(imagesPageVO.getImageType());
+
+		try {
+			Class<?> object = imagesPageVO.getExtVm().getExtInfo().getClass();
+			elementObj.setPlatform(object.getDeclaredField("platform").get(object).toString());
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+
+		elementObj.setElectricPortNumber("simple".equals(imagesPageVO.getImageType()) ? 4 : 0);
+
+		elementObj.setInitSupport(null != imagesPageVO.getExtVm().getInitSupport() ?
+				imagesPageVO.getExtVm().getInitSupport() : imagesPageVO.getExtDocker().getInitSupport());
+
+		elementObj.setCategory(imagesPageVO.getCategory());
+		elementObj.setCategory2(imagesPageVO.getSecondCategory());
+		elementObj.setCategory3(imagesPageVO.getThirdCategory());
+
+		elementObj.setCidr(imagesPageVO.getRole() == 1 ? "192.168.1.10/24" : "");
+		elementObj.setGateway(imagesPageVO.getRole() == 1 ? "192.168.1.254" : "");
+		JSONArray dns = new JSONArray();
+		JSONObject obj1 = new JSONObject();
+		obj1.put("dns", "8.8.8.8");
+		dns.add(obj1);
+		JSONObject obj2 = new JSONObject();
+		obj2.put("dns", "114.114.114.114");
+		dns.add(obj2);
+		elementObj.setDnsNameservers(imagesPageVO.getRole() == 1 ? dns : new JSONArray());
+
+		elementObj.setVlanId(null);
+		if(null == imagesPageVO.getExtGateway() || null == imagesPageVO.getExtGateway().getPortConfigs()){
+			elementObj.setWanPortNumber(0);
+			elementObj.setLanPortNumber(0);
+		} else {
+			List<PortConfig> portConfigs = imagesPageVO.getExtGateway().getPortConfigs();
+			elementObj.setWanPortNumber((int) portConfigs.stream().filter(s -> s.getPortType() == 1).count());
+			elementObj.setLanPortNumber((int) portConfigs.stream().filter(s -> s.getPortType() == 2).count());
+
+		}
+
+		elementObj.setWanPortType("dynamips".equals(imagesPageVO.getImageType()) ? "sfp" : "E");
+
+
+		// Example of setting quick create params
+		// elementObj.setQuickCreateParams(imagesByIdVO.getExtVm().getQuickCreateParams()); // Uncomment if needed
+
+		elementObj.setIsoAttachFilename("vm".equals(imagesPageVO.getImageType()) && imagesPageVO.getExtVm().getIsoAttach() ?
+				imagesPageVO.getExtVm().getIsoAttachFilename() : "undefined");
+		return elementObj;
+	}
+
+	@ApiOperation("导入设备配置")
+//	@RequiresPermissions(value = { MenuConstant.CMS_CR_EVALUATION_TEMPLATE,MenuConstant. WEB_CR_EVALUATION }, logical = Logical.OR)
+	@PostMapping("/config")
+	public BaseRsp<EvalSceneMapRsp> loadConfig(
+			@RequestParam("file") MultipartFile file
+	) {
+		try {
+			// 1. 将MultipartFile转换为File
+			File zipFile = convertMultiPartToFile(file);
+
+			// 2. 解压ZIP文件并遍历其中的TXT文件
+			unzipAndProcessFiles(zipFile);
+
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private File convertMultiPartToFile(MultipartFile file) throws IOException {
+		File convFile = new File(file.getOriginalFilename());
+		convFile.createNewFile();
+		try (FileOutputStream fos = new FileOutputStream(convFile)) {
+			fos.write(file.getBytes());
+		}
+		return convFile;
+	}
+
+	private void unzipAndProcessFiles(File zipFile) throws IOException {
+		try (ZipFile zip = new ZipFile(zipFile)) {
+			Enumeration<ZipArchiveEntry> entries = zip.getEntries();
+			while (entries.hasMoreElements()) {
+				ZipArchiveEntry entry = entries.nextElement();
+				if (!entry.isDirectory() && entry.getName().endsWith(".txt")) {
+					// 处理TXT文件，这里可以写你的业务逻辑
+					processTxtFile(zip.getInputStream(entry), entry.getName());
+				}
+			}
+		}
+	}
+	private void processTxtFile(InputStream inputStream, String name) throws IOException {
+
+		// 这里可以实现对TXT文件内容的处理逻辑，例如读取内容或者解析内容等
+		try {
+			String inputStreamString = inputStreamToString(inputStream);
+//			String regex = "interface\\s+(\\S+)\\s+\\n\\s+ip address\\s+(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})";
+			String ipAddressPattern = "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b";
+			String[] interfaces = inputStreamString.split("router ospf")[0].split("interface");
+			for(String inter:interfaces){
+				if(StringUtils.isEmpty(inter)){
+					continue;
+				}
+				String[] split = inter.split("\n");
+				for(String item:split){
+					if(item.contains("ip address")){
+						String replace = item.replace("ip address", "");
+						String[] strings = replace.split(" ");
+						String ipAddress = strings[0];
+						String subnetMask = strings[1];
+					} else if(item.contains("description")){
+						continue;
+					} else {
+						String interfaceName = item;
+					}
+				}
+
+			}
+			// 设备名称-name 设备接口 interfaceName
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isInSameSubnet(String ipAddress1, String ipAddress2, String subnetMask1, String subnetMask2) {
+		// 转换IP地址为整数
+		int ip1 = ipToInt(ipAddress1);
+		int ip2 = ipToInt(ipAddress2);
+
+		// 转换子网掩码为整数
+		int mask1 = ipToInt(subnetMask1);
+		int mask2 = ipToInt(subnetMask2);
+
+		// 按位与运算
+		return (ip1 & mask1) == (ip2 & mask2);
+	}
+
+	// 将IP地址转换为整数形式
+	private int ipToInt(String ipAddress) {
+		String[] octets = ipAddress.split("\\.");
+		int result = 0;
+		for (int i = 0; i < octets.length; i++) {
+			result |= (Integer.parseInt(octets[i]) << (24 - 8 * i));
+		}
+		return result;
+	}
+
+	public static String inputStreamToString(InputStream inputStream) throws IOException {
+		StringBuilder resultStringBuilder = new StringBuilder();
+		try (BufferedReader br
+					 = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				resultStringBuilder.append(line).append("\n");
+			}
+		}
+		return resultStringBuilder.toString();
+	}
+
 
 }

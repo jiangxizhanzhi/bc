@@ -7,10 +7,7 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -744,10 +741,10 @@ public class FileUtil {
 	 * @param zipFile ZIP文件
 	 * @param destDir 目标路径
 	 */
-	public static void zipDecompress(MultipartFile zipFile, File destDir) throws IOException {
+	public static Map<String, String> zipDecompress(MultipartFile zipFile, File destDir) throws IOException {
 		byte[] buffer = new byte[1024];
 		File files = new File("path.zip");
-
+		Map<String, String> fileMap = new HashMap<>();
 		FileUtils.copyInputStreamToFile(zipFile.getInputStream(), files);
 		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(files))) {
 			ZipEntry entry = zis.getNextEntry();
@@ -770,11 +767,19 @@ public class FileUtil {
 						}
 					}
 				}
+				if(file.getName().equals("image_map.json")){
+					fileMap.put("image", file.getAbsolutePath());
+				} else if(file.getName().equals("topolopy.json") || file.getName().equals("topology.json")){
+					fileMap.put("topo", file.getAbsolutePath());
+				} else if(file.getName().equals("server_data.json")){
+					fileMap.put("server", file.getAbsolutePath());
+				}
 				entry = zis.getNextEntry();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return fileMap;
 	}
 
 	public static boolean containsFileInZip(File zipFile, String specifiedFileName) throws IOException {

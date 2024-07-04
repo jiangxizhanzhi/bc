@@ -249,4 +249,6 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
     List<PracticeOperation> getCategoryIdAndSetIds();
+
+    void reset(String resourceId);
 }

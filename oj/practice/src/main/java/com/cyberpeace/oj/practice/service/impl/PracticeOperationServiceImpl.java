@@ -1,5 +1,22 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
+import java.util.*;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -60,22 +77,8 @@ import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author chenz
@@ -1358,7 +1361,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return practiceOperationMapper.selectAllCategoryIds();
 	}
 
-	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {
+	@Override
+	public void reset(String resourceId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		practiceSolvedMapper.deleteByTheoryIdsAndUser(Lists.newArrayList(resourceId), userId);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		this.deleteScene(resourceId, authContext);
+	}
+
+    private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {
 		EXPORT_LOG.info("Start export practice {}....", operation.getTitle());
 
 		String path = createOperationPath(setPath, operation);

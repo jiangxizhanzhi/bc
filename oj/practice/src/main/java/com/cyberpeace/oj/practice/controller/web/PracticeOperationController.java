@@ -1,5 +1,14 @@
 package com.cyberpeace.oj.practice.controller.web;
 
+import java.util.*;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -30,23 +39,13 @@ import com.cyberpeace.oj.practice.controller.res.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
-import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
-import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
-import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
-import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
+import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @Slf4j
 @RestController
@@ -334,5 +333,13 @@ public class PracticeOperationController {
 		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(
 				UserInfoContext.getUserContext(), null, null, null);
 		return new BaseRsp<>(StreamApiUtils.map(operationRecordResList, OperationRecordRes::getPracticeId));
+	}
+
+	@ApiOperation("重置题目")
+	@PostMapping("/reset")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<Void> resetOperation(@RequestBody OperationResetReq req) {
+		practiceOperationService.reset(req.getResourceId());
+		return new BaseRsp<>();
 	}
 }

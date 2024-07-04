@@ -92,6 +92,8 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		practiceSet.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		practiceSet.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		practiceSet.setPracticeCount(CommonConstant.ZERO);
+		// 新增的习题集设置成默认公开
+		practiceSet.setIsPublic(Boolean.TRUE);
 
 		// 文件路径处理
 		practiceSet.setLogo(utilService.replaceFileUrl(setAddReq.getLogo()));

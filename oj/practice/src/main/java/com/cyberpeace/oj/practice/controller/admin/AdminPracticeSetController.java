@@ -89,8 +89,8 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		PracticeSet practiceSet = BeanUtils.copy(setAddReq, PracticeSet.class);
 		practiceSet.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		practiceSet.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		practiceSet.setPracticeCount(CommonConstant.ZERO);
 
 		// 文件路径处理

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.cs.service.impl.SceneStatusCompute;
@@ -97,6 +98,10 @@ public class SyncMpSceneJob {
 
 		} else if (Boolean.TRUE.equals(isClassroom(localScene.getBusinessCode()))) {
 			deleteClassScene(localScene);
+		}else {
+			String enumDesc = EnumUtils.getEnumDescByCode(localScene.getBusinessCode(), BusinessCode.class);
+			log.warn("exec sync mp scene close failed! local_scene_id=[{}] business_code=[{}]:[{}], not support",
+					localScene.getMpSceneId(), localScene.getBusinessCode(), enumDesc);
 		}
 	}
 

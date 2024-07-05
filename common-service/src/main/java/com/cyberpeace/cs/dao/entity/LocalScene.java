@@ -27,7 +27,7 @@ public class LocalScene extends BaseTable {
 	private String mpSceneId;
 
 	/**
-	 *
+	 *  {@link com.cyberpeace.common.enums.BusinessCode}
 	 */
 	private Integer businessCode;
 

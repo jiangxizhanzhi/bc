@@ -193,7 +193,6 @@ public class EvalSceneMapController {
 				item.put("firewall_rules", null);
 				item.put("logic_network_id", "");
 				item.put("resource_id", "");
-				item.put("proxy", true);
 				elementPorts.put(value, item);
 				map.put(portId, value);
 				JSONObject object = new JSONObject();
@@ -247,13 +246,13 @@ public class EvalSceneMapController {
 		elementObj.setImageType(imagesPageVO.getImageType());
 		elementObj.setImageUuid(imagesPageVO.getUuid());
 		elementObj.setIsBuildIn(imagesPageVO.getIsInternal());
-		elementObj.setImage(imagesPageVO.getImageType());
+		elementObj.setImage(imagesPageVO.getName());
+		if(null ==imagesPageVO.getExtVm() ||null == imagesPageVO.getExtVm().getExtInfo() || null == imagesPageVO.getExtVm().getExtInfo().getJSONObject("ext_dynamips")){
+			elementObj.setPlatform("");
+		} else {
+			JSONObject ext_dynamips = imagesPageVO.getExtVm().getExtInfo().getJSONObject("ext_dynamips");
+			elementObj.setPlatform(ext_dynamips.getString("platform"));
 
-		try {
-			Class<?> object = imagesPageVO.getExtVm().getExtInfo().getClass();
-			elementObj.setPlatform(object.getDeclaredField("platform").get(object).toString());
-		} catch (IllegalAccessException | NoSuchFieldException e) {
-			e.printStackTrace();
 		}
 
 		elementObj.setElectricPortNumber("simple".equals(imagesPageVO.getImageType()) ? 4 : 0);
@@ -330,16 +329,23 @@ public class EvalSceneMapController {
 	private void unzipAndProcessFiles(File zipFile) throws IOException {
 		try (ZipFile zip = new ZipFile(zipFile)) {
 			Enumeration<ZipArchiveEntry> entries = zip.getEntries();
+			List<String> uuids = new ArrayList<>();
+			uuids.add("854f7c24-060f-4dbd-b771-68eab207e071");
+			uuids.add("c12b7b53-e232-40f4-b7c3-d3dfac8e1b31");
+			List<DeviceVO> routerAndFirewall = remoteSceneService.getRouterAndFirewall();
+			Map<String, DeviceVO> images = StreamApiUtils.toMap(routerAndFirewall, DeviceVO::getUuid, s -> s);
+			DeviceVO router = images.get("854f7c24-060f-4dbd-b771-68eab207e071");
+			DeviceVO firewall = images.get("c12b7b53-e232-40f4-b7c3-d3dfac8e1b31");
 			while (entries.hasMoreElements()) {
 				ZipArchiveEntry entry = entries.nextElement();
 				if (!entry.isDirectory() && entry.getName().endsWith(".txt")) {
 					// 处理TXT文件，这里可以写你的业务逻辑
-					processTxtFile(zip.getInputStream(entry), entry.getName());
+					processTxtFile(zip.getInputStream(entry), entry.getName(), router);
 				}
 			}
 		}
 	}
-	private void processTxtFile(InputStream inputStream, String name) throws IOException {
+	private void processTxtFile(InputStream inputStream, String name, DeviceVO router) throws IOException {
 
 		// 这里可以实现对TXT文件内容的处理逻辑，例如读取内容或者解析内容等
 		try {
@@ -352,17 +358,25 @@ public class EvalSceneMapController {
 					continue;
 				}
 				String[] split = inter.split("\n");
+				Map<String, List<Router>> routerMap = new HashMap<>();
 				for(String item:split){
+					List<Router> routers = new ArrayList<>();
+					String interfaceName = "";
 					if(item.contains("ip address")){
-						String replace = item.replace("ip address", "");
+						Router router1 = new Router();
+						String replace = item.replace(" ip address ", "");
 						String[] strings = replace.split(" ");
 						String ipAddress = strings[0];
 						String subnetMask = strings[1];
+						router1.setIp(ipAddress);
+						router1.setSubnetMask(subnetMask);
+						routers.add(router1);
 					} else if(item.contains("description")){
 						continue;
 					} else {
-						String interfaceName = item;
+						interfaceName = item;
 					}
+					routerMap.put(interfaceName, routers);
 				}
 
 			}

@@ -1,5 +1,6 @@
 package com.cyberpeace.integratation.model.mp;
 
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -49,7 +50,7 @@ public class ExtVm implements Serializable {
      * 额外信息
      */
     @ApiModelProperty("扩展信息")
-    private Object extInfo;
+    private JSONObject extInfo;
 
     /**
      * 实例是否存在

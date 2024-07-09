@@ -58,6 +58,8 @@ public class AccessProtocol implements Serializable {
     @ApiModelProperty("是否秘钥访问")
     private Boolean privateKeyEnable;
 
+    private Boolean proxy=true;
+
     @ApiModelProperty("秘钥文件")
     private String privateKeyPath;
 

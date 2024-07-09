@@ -279,6 +279,8 @@ public interface RemoteSceneService {
 
 	List<ImagesByIdVO> getImageList();
 
+	List<DeviceVO> getRouterAndFirewall();
+
 	List<ImagesByIdVO> getImageListByuuids(List<String> uuids);
 
 	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);

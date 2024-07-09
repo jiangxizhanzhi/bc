@@ -22,6 +22,8 @@ public class ExtGateway implements Serializable {
 
     private List<PortConfig> portConfigs;
 
+    private Boolean proxy=true;
+
     /**
      * console协议配置
      */

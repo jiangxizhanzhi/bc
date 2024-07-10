@@ -99,6 +99,10 @@ public final class CrCommonConstants {
 
 	public static final String WHITE_GROUP_JAR_AVATAR = "redvsblue/white_group_avatar_v1.png";
 
+	public static final String ROUTER_UUID = "854f7c24-060f-4dbd-b771-68eab207e071";
+
+	public static final String FIREWALL_UUID = "c12b7b53-e232-40f4-b7c3-d3dfac8e1b31";
+
 	private CrCommonConstants() {}
 
 	public static final int PER_PAGE = 9999;

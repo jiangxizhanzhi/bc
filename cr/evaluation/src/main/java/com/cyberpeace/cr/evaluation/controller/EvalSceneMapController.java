@@ -2,11 +2,14 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalSceneMapRsp;
 import com.cyberpeace.cr.evaluation.dao.mode.*;
 import com.cyberpeace.cr.evaluation.dao.mode.probe.NetworkProbeData;
@@ -32,8 +35,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Api(tags = "靶场测评-测绘")
@@ -62,69 +63,24 @@ public class EvalSceneMapController {
 	public BaseRsp<EvalSceneMapRsp> loadMap(
 			@RequestParam("file") MultipartFile file
 	) throws IOException {
-		Gson gson = new GsonBuilder()
-				.setFieldNamingStrategy(field -> {
-					// 将驼峰命名转换为下划线命名
-					String name = field.getName();
-					StringBuilder result = new StringBuilder();
-					for (int i = 0; i < name.length(); i++) {
-						char ch = name.charAt(i);
-						if (Character.isUpperCase(ch)) {
-							result.append('_').append(Character.toLowerCase(ch));
-						} else {
-							result.append(ch);
-						}
-					}
-					return result.toString();
-				})
-				.create();
-		String originalFilename = file.getOriginalFilename();
-		String replace = originalFilename.replace(".zip", "");
-		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
-		String unzipDir;
-		if(Boolean.parseBoolean(apiDoc)){
-			unzipDir = "D:/cpms/decompress/";
-		} else {
-			unzipDir = "/cpms/decompress/";
-
-		}
-		File unzip = new File(unzipDir);
-		Map<String, String> fileMap = FileUtil.zipDecompress(file, unzip);
-		// 拓扑探测信息
-		String fileName = fileMap.get("topo");
-		log.info("the current filename---- [{}]",fileName);
-		NetworkProbeData probeData = gson.fromJson(new FileReader(fileName), NetworkProbeData.class);
-
-		Convertor convertor = Convertor.builder().probeData(probeData).build();
-
-		// 节点服务信息
-		try (BufferedReader reader = new BufferedReader(new FileReader(fileMap.get("server")))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				ReportData data = gson.fromJson(line, ReportData.class);
-				convertor.addData(data);
-			}
-		} catch (IOException e) {
-			throw e;
-		}
-
-		// 配置好的服务和镜像的映射信息
-		ServiceImageMap imageMap = gson.fromJson(new FileReader(fileMap.get("image")), ServiceImageMap.class);
-		convertor.setImageMap(imageMap);
+		Topology topo = analyzeFiles(file);
 
 
 		List<ImagesByIdVO> imageList = remoteSceneService.getImageList();
 		Map<String, String> imagesMap = StreamApiUtils.toMap(imageList, ImagesByIdVO::getName, s -> s.getUuid());
 
 		// 执行转换逻辑
-		Topology topo = convertor.convert();
 
 		Map<String, Element> elementMap = topo.getElementMap();
 		List<String> images = elementMap.values().stream().filter(element -> element.getImage() != null).
 				map(element -> imagesMap.get(element.getImage())).distinct().collect(Collectors.toList());
+		if(images.isEmpty()){
+			throw new BusinessException(ErrorCode.INVALID_IMAGES);
+		}
 		List<ImagesByIdVO> imageListByuuids = remoteSceneService.getImageListByuuids(images);
 		Map<String, ImagesByIdVO> imagesByIdVOMap = StreamApiUtils.toMap(imageListByuuids, ImagesByIdVO::getName, s -> s);
-		List<Element> elelemts = topo.getElelemts();
+		List<Element> elements = topo.getElements();
+		elements = elements.stream().filter(e-> null !=e.getImage()).collect(Collectors.toList());
 		List<Port> ports = topo.getPorts();
 		Map<String, List<Port>> portMap = StreamApiUtils.groupBy(ports, Port::getElement);
 		List<TopoElement> topoElements = new ArrayList<>();
@@ -134,7 +90,7 @@ public class EvalSceneMapController {
 		HashMap<String, String> map = new HashMap<>();
 		HashMap<String, ImagesByIdVO> elementPortMap = new HashMap<>();
 
-		for(Element element:elelemts){
+		for(Element element:elements){
 			TopoElement topoElement = new TopoElement();
 			String id = IDGeneratorUtil.getID();
 			//TODO 设备名称
@@ -149,21 +105,7 @@ public class EvalSceneMapController {
 			ImagesByIdVO imagesPageVO = imagesByIdVOMap.get(image);
 			imagesPageVO.setRole(roleMap.get(imagesPageVO.getRole()));
 			elementPortMap.put(id, imagesPageVO);
-			String logo = imagesPageVO.getLogo();
-			topoElement.setType(imagesPageVO.getRole());
-			topoElement.setIcon2(logo);
-			topoElement.setSystemLanguage(imagesPageVO.getExtSystemInfo().getLanguage());
-			topoElement.setSystemArchitecture(imagesPageVO.getExtSystemInfo().getSystemArchitecture());
-			topoElement.setSystemType(imagesPageVO.getExtSystemInfo().getSystemType());
-			topoElement.setMaxPortNumber(imagesPageVO.getRole() == 4 || imagesPageVO.getRole() == 7 ? 1:0);
-			topoElement.setCpu(imagesPageVO.getExtVm().getCpu());
-			topoElement.setDisk(imagesPageVO.getExtVm().getDisk());
-			topoElement.setRam(imagesPageVO.getExtVm().getRam());
-			// TODO 实装设备特有逻辑 ext_entity..
-			// TODO 网络设备获取port—ips
-			// imagesPageVO.getExtGateway().getPortConfigs().get()
-			topoElement.setId(id);
-			topoElement.setName(StringUtils.isEmpty(name) ? imagesPageVO.getName() : name);
+			getTopoElement(topoElement, id, name, imagesPageVO);
 			CpcloudElement elementObj = getCpcloudElement(imagesPageVO);
 			cpElements.put(id, elementObj);
 
@@ -239,6 +181,76 @@ public class EvalSceneMapController {
 		return new BaseRsp<>(rsp);
 	}
 
+	private Topology analyzeFiles(MultipartFile file) throws IOException {
+		Gson gson = new GsonBuilder()
+				.setFieldNamingStrategy(field -> {
+					// 将驼峰命名转换为下划线命名
+					String name = field.getName();
+					StringBuilder result = new StringBuilder();
+					for (int i = 0; i < name.length(); i++) {
+						char ch = name.charAt(i);
+						if (Character.isUpperCase(ch)) {
+							result.append('_').append(Character.toLowerCase(ch));
+						} else {
+							result.append(ch);
+						}
+					}
+					return result.toString();
+				})
+				.create();
+		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
+		String unzipDir;
+		if(Boolean.parseBoolean(apiDoc)){
+			unzipDir = "D:/cpms/decompress/";
+		} else {
+			unzipDir = "/cpms/decompress/";
+
+		}
+		File unzip = new File(unzipDir);
+		Map<String, String> fileMap = FileUtil.zipDecompress(file, unzip);
+		// 拓扑探测信息
+		String fileName = fileMap.get("topo");
+		log.info("the current filename---- [{}]",fileName);
+		NetworkProbeData probeData = gson.fromJson(new FileReader(fileName), NetworkProbeData.class);
+
+		Convertor convertor = Convertor.builder().probeData(probeData).build();
+
+		// 节点服务信息
+		try (BufferedReader reader = new BufferedReader(new FileReader(fileMap.get("server")))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				ReportData data = gson.fromJson(line, ReportData.class);
+				convertor.addData(data);
+			}
+		} catch (IOException e) {
+			throw e;
+		}
+
+		// 配置好的服务和镜像的映射信息
+		ServiceImageMap imageMap = gson.fromJson(new FileReader(fileMap.get("image")), ServiceImageMap.class);
+		convertor.setImageMap(imageMap);
+		Topology topo = convertor.convert();
+		return topo;
+	}
+
+	private void getTopoElement(TopoElement topoElement, String id, String name, ImagesByIdVO imagesPageVO) {
+		String logo = imagesPageVO.getLogo();
+		topoElement.setType(imagesPageVO.getRole());
+		topoElement.setIcon2(logo);
+		topoElement.setSystemLanguage(imagesPageVO.getExtSystemInfo().getLanguage());
+		topoElement.setSystemArchitecture(imagesPageVO.getExtSystemInfo().getSystemArchitecture());
+		topoElement.setSystemType(imagesPageVO.getExtSystemInfo().getSystemType());
+		topoElement.setMaxPortNumber(imagesPageVO.getRole() == 4 || imagesPageVO.getRole() == 7 ? 1:0);
+		topoElement.setCpu(imagesPageVO.getExtVm().getCpu());
+		topoElement.setDisk(imagesPageVO.getExtVm().getDisk());
+		topoElement.setRam(imagesPageVO.getExtVm().getRam());
+		// TODO 实装设备特有逻辑 ext_entity..
+		// TODO 网络设备获取port—ips
+		// imagesPageVO.getExtGateway().getPortConfigs().get()
+		topoElement.setId(id);
+		topoElement.setName(StringUtils.isEmpty(name) ? imagesPageVO.getName() : name);
+	}
+
 
 	private CpcloudElement getCpcloudElement(ImagesByIdVO imagesPageVO) {
 		CpcloudElement elementObj = new CpcloudElement();
@@ -303,17 +315,18 @@ public class EvalSceneMapController {
 	public BaseRsp<EvalSceneMapRsp> loadConfig(
 			@RequestParam("file") MultipartFile file
 	) {
+		EvalSceneMapRsp evalSceneMapRsp = new EvalSceneMapRsp();
 		try {
 			// 1. 将MultipartFile转换为File
 			File zipFile = convertMultiPartToFile(file);
 
 			// 2. 解压ZIP文件并遍历其中的TXT文件
-			unzipAndProcessFiles(zipFile);
+			evalSceneMapRsp = unzipAndProcessFiles(zipFile);
 
-			return null;
+			return new BaseRsp<>(evalSceneMapRsp);
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return new BaseRsp<>(evalSceneMapRsp);
 		}
 	}
 
@@ -326,25 +339,110 @@ public class EvalSceneMapController {
 		return convFile;
 	}
 
-	private void unzipAndProcessFiles(File zipFile) throws IOException {
+	private EvalSceneMapRsp unzipAndProcessFiles(File zipFile) throws IOException {
+		EvalSceneMapRsp rsp = new EvalSceneMapRsp();
 		try (ZipFile zip = new ZipFile(zipFile)) {
 			Enumeration<ZipArchiveEntry> entries = zip.getEntries();
 			List<String> uuids = new ArrayList<>();
-			uuids.add("854f7c24-060f-4dbd-b771-68eab207e071");
-			uuids.add("c12b7b53-e232-40f4-b7c3-d3dfac8e1b31");
+			uuids.add(CrCommonConstants.ROUTER_UUID);
+			uuids.add(CrCommonConstants.FIREWALL_UUID);
 			List<DeviceVO> routerAndFirewall = remoteSceneService.getRouterAndFirewall();
 			Map<String, DeviceVO> images = StreamApiUtils.toMap(routerAndFirewall, DeviceVO::getUuid, s -> s);
-			DeviceVO router = images.get("854f7c24-060f-4dbd-b771-68eab207e071");
-			DeviceVO firewall = images.get("c12b7b53-e232-40f4-b7c3-d3dfac8e1b31");
+			DeviceVO router = images.get(CrCommonConstants.ROUTER_UUID);
+			router.setRole(roleMap.get(router.getRole()));
+			DeviceVO firewall = images.get(CrCommonConstants.FIREWALL_UUID);
+			firewall.setRole(firewall.getRole());
+			List<TopoElement> topoElements = new ArrayList<>();
+			JSONObject cpElements = new JSONObject();
+			JSONObject elementPorts = new JSONObject();
+			List<Connections> sceneConnections = new ArrayList<>();
+
+			HashMap<String, DeviceVO> elementPortMap = new HashMap<>();
 			while (entries.hasMoreElements()) {
 				ZipArchiveEntry entry = entries.nextElement();
-				if (!entry.isDirectory() && entry.getName().endsWith(".txt")) {
+				String name = entry.getName();
+				if (!entry.isDirectory() && name.endsWith(".txt")) {
+					name = name.replace( ".txt", "");
 					// 处理TXT文件，这里可以写你的业务逻辑
-					processTxtFile(zip.getInputStream(entry), entry.getName(), router);
+					processTxtFile(zip.getInputStream(entry), name, router);
+					TopoElement topoElement = new TopoElement();
+					String id = IDGeneratorUtil.getID();
+					topoElement.setName(name);
+					topoElement.setId(id);
+					getTopoElementByDeviceVo(topoElement, name, router);
+					elementPortMap.put(id, router);
+					CpcloudElement elementObj = getCpcloudElementByDeviceDo(router);
+					cpElements.put(id, elementObj);
+					JSONArray objects = new JSONArray();
+					int portIndex = 1;
+					// 待确认解析的文件内容包含的连线关系
+					topoElement.setPorts(objects);
+					topoElements.add(topoElement);
+
 				}
 			}
+			SceneTopology sceneTopology = new SceneTopology();
+			sceneTopology.setElements(topoElements);
+			sceneTopology.setConnections(sceneConnections);
+			rsp.setSceneTopology(sceneTopology);
+			Plugins plugins = new Plugins();
+			Cpcloud cpcloud = new Cpcloud();
+			cpcloud.setElement_ports(elementPorts);
+			cpcloud.setElements(cpElements);
+			plugins.setCpcloud(cpcloud);
+			rsp.setPlugins(plugins);
 		}
+		return rsp;
 	}
+
+	private CpcloudElement getCpcloudElementByDeviceDo(DeviceVO router) {
+		CpcloudElement elementObj = new CpcloudElement();
+		Integer role = router.getRole();
+		elementObj.setRole(role);
+		elementObj.setImageType(router.getImageType());
+		elementObj.setImageUuid(router.getUuid());
+		elementObj.setIsBuildIn(router.getIsInternal());
+		elementObj.setImage(router.getName());
+		elementObj.setPlatform("");
+		elementObj.setElectricPortNumber("simple".equals(router.getImageType()) ? 4 : 0);
+		elementObj.setInitSupport(false);
+		elementObj.setCategory(router.getCategory());
+		elementObj.setCategory2(router.getSecondCategory());
+		elementObj.setCategory3(router.getThirdCategory());
+
+		elementObj.setCidr(role == 1 ? "192.168.1.10/24" : "");
+		elementObj.setGateway(role == 1 ? "192.168.1.254" : "");
+		JSONArray dns = new JSONArray();
+		JSONObject obj1 = new JSONObject();
+		obj1.put("dns", "8.8.8.8");
+		dns.add(obj1);
+		JSONObject obj2 = new JSONObject();
+		obj2.put("dns", "114.114.114.114");
+		dns.add(obj2);
+		elementObj.setDnsNameservers(role == 1 ? dns : new JSONArray());
+
+		elementObj.setVlanId(null);
+		elementObj.setWanPortNumber(0);
+		elementObj.setLanPortNumber(0);
+
+		elementObj.setWanPortType("E");
+
+		// Example of setting quick create params
+		// elementObj.setQuickCreateParams(imagesByIdVO.getExtVm().getQuickCreateParams()); // Uncomment if needed
+		elementObj.setIsoAttachFilename("undefined");
+
+		return elementObj;
+
+	}
+
+	private void getTopoElementByDeviceVo(TopoElement topoElement, String name, DeviceVO router) {
+		String logo = router.getLogo();
+		topoElement.setIcon2(logo);
+		Integer role = router.getRole();
+		topoElement.setType(role);
+		topoElement.setMaxPortNumber(role == 4 || role == 7 ? 1:0);
+	}
+
 	private void processTxtFile(InputStream inputStream, String name, DeviceVO router) throws IOException {
 
 		// 这里可以实现对TXT文件内容的处理逻辑，例如读取内容或者解析内容等

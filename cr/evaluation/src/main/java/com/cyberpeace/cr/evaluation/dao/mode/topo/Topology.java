@@ -8,7 +8,7 @@ import java.util.*;
 
 @Data
 public class Topology {
-    private List<Element> elelemts = new ArrayList<>();
+    private List<Element> elements = new ArrayList<>();
     private List<Port> ports = new ArrayList<>();
     private List<Connection> connections = new ArrayList<>();
 
@@ -26,7 +26,7 @@ public class Topology {
         if (elementMap.containsKey(element.getId())) {
             return;
         }
-        elelemts.add(element);
+        elements.add(element);
         elementMap.put(element.getId(), element);
     }
 
@@ -67,7 +67,7 @@ public class Topology {
         Element element = Element.builder().id(id).name(name).build();
         Port port = Port.builder().element(element.getId()).ip(ip).id(id).build();
 
-        elelemts.add(element);
+        elements.add(element);
         elementMap.put(element.getId(), element);
         ports.add(port);
         portMap.put(port.getId(), port);

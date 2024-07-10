@@ -198,6 +198,7 @@ public final class ErrorCode {
 	public static final String INVALID_FILE_NAME = "100063";
 
 	public static final String INVALID_ELEMENT = "100064";
+	public static final String INVALID_IMAGES = "100065";
 
-	private ErrorCode() {}
+    private ErrorCode() {}
 }

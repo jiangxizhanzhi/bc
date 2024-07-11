@@ -16,6 +16,7 @@ import com.cyberpeace.cr.crbase.controller.req.crtitle.CrUserTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
 import com.cyberpeace.cr.crbase.service.CrTitleService;
+import com.cyberpeace.cr.crbase.service.ExcelExportService;
 import com.cyberpeace.cr.crbase.service.impl.bo.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.google.common.cache.Cache;
@@ -24,6 +25,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,6 +51,9 @@ import java.util.concurrent.TimeUnit;
 public class TitleController {
     @Autowired
     private CrTitleService crTitleService;
+
+    @Autowired
+    private ExcelExportService excelExportService;
 
     Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(4, TimeUnit.SECONDS)
             .build();
@@ -159,5 +166,27 @@ public class TitleController {
     @ApiOperation("部门荣誉数据-训练记录")
     public BaseRsp<ListRsp<CrTitleTrainByDepartmentBo>> trainDepartment(CrTrainDepartmentReq queryParams) {
         return new BaseRsp<>(PageUtil.getListResult(crTitleService.trainDepartment(queryParams.getName(), queryParams.getTitle(), queryParams.getLevelId(),queryParams.toPageParam())));
+    }
+
+    @GetMapping("/train/department/export")
+    @ApiOperation("部门荣誉数据-训练记录导出")
+    public void trainDepartmentExport(HttpServletResponse httpServletResponse) throws IOException {
+
+        List<CrTitleTrainByDepartmentBo> result = crTitleService.getTrainDepartment();
+        List<String[]> data = Lists.newArrayList();
+        for (int i = 0; i < result.size(); i++) {
+            CrTitleTrainByDepartmentBo item = result.get(i);
+            data.add(new String[]{
+                    String.valueOf(i + 1),
+                    item.getTitleName(),
+                    item.getLevel(),
+                    item.getTrainName(),
+                    item.getCreateUser(),
+                    String.valueOf(item.getTrainCount()),
+                    String.valueOf(item.getMaxScore()),
+                    String.valueOf(item.getPassScore())
+            });
+        }
+        excelExportService.exportDataToExcel(httpServletResponse, data, new String[]{"序号", "职称", "级别", "场景", "训练人", "训练次数", "最高分", "及格分"});
     }
 }

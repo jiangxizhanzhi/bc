@@ -119,6 +119,32 @@
             group by T5.resource_id,T1.resource_id,T2.user_id
     </select>
 
+    <select id="listTitleStandardByUsers" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainByDepartmentBo">
+        select T5.name as title_name,
+        T5.resource_id as title_id,
+        T1.name as train_name,
+        T2.user_id as create_user,
+        T1.resource_id,
+        T1.business_type,
+        count(T2.id) as train_count,
+        ifnull(max(score), 0) as max_score
+        from cr_business_template T1
+        left join cr_title_train_progress T2 on T1.resource_id = T2.business_template_id
+        left join (select T3.resource_id,T3.name,T4.business_template_id,T3.level_id from cr_title T3
+        left join cr_title_business_template T4 on T3.resource_id = T4.title_id
+        left join cr_title_level T6 on T3.level_id = T6.resource_id)
+        T5 on T5.business_template_id = T1.resource_id
+        <where>
+            1= 1
+            and T1.resource_id in (select business_template_id from cr_title_business_template)
+            and T2.user_id in
+            <foreach collection="user_ids" item="user_id" separator="," open="(" close=")">
+                #{user_id}
+            </foreach>
+        </where>
+        group by T5.resource_id,T1.resource_id,T2.user_id
+    </select>
+
     <select id="titleDetails" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleDetailBo">
         select T1.resource_id,
                T1.name,

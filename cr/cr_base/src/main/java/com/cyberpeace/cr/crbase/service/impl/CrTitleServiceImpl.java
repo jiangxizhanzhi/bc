@@ -11,10 +11,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.DateUtil;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
@@ -312,6 +309,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
     /**
      * 清除保留的称号证书文件
+     *
      * @param title_ids 称号id
      */
     @Async
@@ -617,7 +615,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         List<CrTitleUserBo> res = new ArrayList<>();
         ListRsp<CrTitleUserBo> rsp = new ListRsp();
         users = remoteUserService.getMemberList(name);
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             return new BaseRsp(rsp);
         }
         List<String> userIds = StreamApiUtils.getColumn(users, UserInfo::getUserId);
@@ -625,19 +623,19 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         Map<String, CrTitleBo> crTitleBoMap = StreamApiUtils.toMap(crTitleBoIPage, CrTitleBo::getCreateUserId, record -> record);
         users.forEach(userInfo -> {
             CrTitleUserBo crTitleUserBo = new CrTitleUserBo();
-            if(StringUtils.isNotBlank(userInfo.getName())){
+            if (StringUtils.isNotBlank(userInfo.getName())) {
                 crTitleUserBo.setName(userInfo.getName());
             }
-            if(StringUtils.isNotBlank(userInfo.getOrganizationData())){
+            if (StringUtils.isNotBlank(userInfo.getOrganizationData())) {
                 String organizationData = userInfo.getOrganizationData();
                 String[] split = organizationData.split("/");
-                if(split.length > 0){
-                    crTitleUserBo.setDepartmentName(split[split.length -1]);
+                if (split.length > 0) {
+                    crTitleUserBo.setDepartmentName(split[split.length - 1]);
                 }
             }
             CrTitleBo crTitleBo = crTitleBoMap.get(userInfo.getUserId());
             crTitleUserBo.setResourceId(userInfo.getUserId());
-            if(null != crTitleBo){
+            if (null != crTitleBo) {
                 crTitleUserBo.setTitle(crTitleBo.getName());
             }
             res.add(crTitleUserBo);
@@ -655,11 +653,11 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         long current = page.getCurrent();
         long start;
         if (current <= 1L) {
-            start =  0L;
+            start = 0L;
         } else {
             start = (current - 1) * page.getSize();
         }
-        if(start > res.size()){
+        if (start > res.size()) {
             start = 0L;
         }
         long value = start + page.getSize();
@@ -673,7 +671,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     public IPage<CrTitleTrainByDepartmentBo> trainDepartment(String name, String title, String level, Page page) {
         List<UserInfo> users;
         users = remoteUserService.getMemberList(name);
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             return null;
         }
         Map<String, UserInfo> userInfoMap = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
@@ -685,11 +683,11 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         crTitleStandardBoIPage.convert(crTitleStandardBo -> {
             CrTitleDetailBo crTitleDetailBo = crTitleDetailBoMap.get(crTitleStandardBo.getTitleId());
             UserInfo userInfo = userInfoMap.get(crTitleStandardBo.getCreateUser());
-            if(null != crTitleDetailBo){
+            if (null != crTitleDetailBo) {
                 crTitleStandardBo.setPassScore(crTitleDetailBo.getScore());
                 crTitleStandardBo.setLevel(crTitleDetailBo.getLevel());
             }
-            if(null != userInfo){
+            if (null != userInfo) {
                 crTitleStandardBo.setCreateUser(userInfo.getName());
                 records.add(crTitleStandardBo);
             }
@@ -697,5 +695,36 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         });
         crTitleStandardBoIPage.setRecords(records);
         return crTitleStandardBoIPage;
+    }
+
+    @Override
+    public List<CrTitleTrainByDepartmentBo> getTrainDepartment() {
+
+        List<UserInfo> users;
+        users = remoteUserService.getMemberList(null);
+        if (users.isEmpty()) {
+            return new ArrayList<>();
+        }
+        Map<String, UserInfo> userInfoMap = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
+        List<String> userIds = StreamApiUtils.getColumn(users, UserInfo::getUserId);
+        List<CrTitleTrainByDepartmentBo> crTitleStandardBoList = this.baseMapper.listTitleStandardByUsers(userIds);
+
+        List<CrTitleDetailBo> crTitleDetailBos = this.baseMapper.titleDetails(null, null);
+        Map<String, CrTitleDetailBo> crTitleDetailBoMap = StreamApiUtils.toMap(crTitleDetailBos, CrTitleDetailBo::getResourceId, tmp -> tmp);
+        List<CrTitleTrainByDepartmentBo> records = new ArrayList<>();
+        crTitleStandardBoList.forEach(crTitleStandardBo -> {
+                    CrTitleDetailBo crTitleDetailBo = crTitleDetailBoMap.get(crTitleStandardBo.getTitleId());
+                    UserInfo userInfo = userInfoMap.get(crTitleStandardBo.getCreateUser());
+                    if (null != crTitleDetailBo) {
+                        crTitleStandardBo.setPassScore(crTitleDetailBo.getScore());
+                        crTitleStandardBo.setLevel(crTitleDetailBo.getLevel());
+                    }
+                    if (null != userInfo) {
+                        crTitleStandardBo.setCreateUser(userInfo.getName());
+                        records.add(crTitleStandardBo);
+                    }
+                }
+        );
+        return records;
     }
 }

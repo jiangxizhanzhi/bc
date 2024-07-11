@@ -208,4 +208,6 @@ public interface CrTitleService {
     BaseRsp<ListRsp<CrTitleUserBo>> titleDepartment(String name, Page page);
 
     IPage<CrTitleTrainByDepartmentBo> trainDepartment(String name, String title, String level, Page page);
+
+    public List<CrTitleTrainByDepartmentBo> getTrainDepartment();
 }

@@ -43,6 +43,8 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
                                                          @Param("title") String title,
                                                          @Param("level_id") String levelId);
 
+    List<CrTitleTrainByDepartmentBo> listTitleStandardByUsers(@Param("user_ids") List<String> userIds);
+
     List<CrTitleDetailBo> titleDetails(@Param("level_id") String levelId,
                                 @Param("title") String title);
 

@@ -11,7 +11,10 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.DateUtil;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
@@ -698,33 +701,24 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     }
 
     @Override
-    public List<CrTitleTrainByDepartmentBo> getTrainDepartment() {
+    public List<CrTitleTrainRecordBo> getTrainDepartment() {
+
+        List<CrTitleTrainRecordBo> records = this.baseMapper.listTitleStandardByUsers();
 
         List<UserInfo> users;
         users = remoteUserService.getMemberList(null);
         if (users.isEmpty()) {
             return new ArrayList<>();
         }
-        Map<String, UserInfo> userInfoMap = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
-        List<String> userIds = StreamApiUtils.getColumn(users, UserInfo::getUserId);
-        List<CrTitleTrainByDepartmentBo> crTitleStandardBoList = this.baseMapper.listTitleStandardByUsers(userIds);
 
-        List<CrTitleDetailBo> crTitleDetailBos = this.baseMapper.titleDetails(null, null);
-        Map<String, CrTitleDetailBo> crTitleDetailBoMap = StreamApiUtils.toMap(crTitleDetailBos, CrTitleDetailBo::getResourceId, tmp -> tmp);
-        List<CrTitleTrainByDepartmentBo> records = new ArrayList<>();
-        crTitleStandardBoList.forEach(crTitleStandardBo -> {
-                    CrTitleDetailBo crTitleDetailBo = crTitleDetailBoMap.get(crTitleStandardBo.getTitleId());
-                    UserInfo userInfo = userInfoMap.get(crTitleStandardBo.getCreateUser());
-                    if (null != crTitleDetailBo) {
-                        crTitleStandardBo.setPassScore(crTitleDetailBo.getScore());
-                        crTitleStandardBo.setLevel(crTitleDetailBo.getLevel());
-                    }
-                    if (null != userInfo) {
-                        crTitleStandardBo.setCreateUser(userInfo.getName());
-                        records.add(crTitleStandardBo);
-                    }
-                }
-        );
+        Map<String, UserInfo> userMaps = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
+
+        records.forEach(record -> {
+            UserInfo userInfo = userMaps.getOrDefault(record.getUserId(), new UserInfo());
+            record.setOrg(userInfo.getOrganizationData());
+            record.setUserName(userInfo.getUserName());
+        });
+
         return records;
     }
 }

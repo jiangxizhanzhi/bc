@@ -209,5 +209,5 @@ public interface CrTitleService {
 
     IPage<CrTitleTrainByDepartmentBo> trainDepartment(String name, String title, String level, Page page);
 
-    public List<CrTitleTrainByDepartmentBo> getTrainDepartment();
+    public List<CrTitleTrainRecordBo> getTrainDepartment();
 }

@@ -172,21 +172,21 @@ public class TitleController {
     @ApiOperation("部门荣誉数据-训练记录导出")
     public void trainDepartmentExport(HttpServletResponse httpServletResponse) throws IOException {
 
-        List<CrTitleTrainByDepartmentBo> result = crTitleService.getTrainDepartment();
+        List<CrTitleTrainRecordBo> result = crTitleService.getTrainDepartment();
         List<String[]> data = Lists.newArrayList();
         for (int i = 0; i < result.size(); i++) {
-            CrTitleTrainByDepartmentBo item = result.get(i);
+            CrTitleTrainRecordBo item = result.get(i);
             data.add(new String[]{
                     String.valueOf(i + 1),
-                    item.getTitleName(),
-                    item.getLevel(),
+                    item.getOrg(),
+                    item.getUserName(),
                     item.getTrainName(),
-                    item.getCreateUser(),
-                    String.valueOf(item.getTrainCount()),
-                    String.valueOf(item.getMaxScore()),
-                    String.valueOf(item.getPassScore())
+                    item.getStartTime(),
+                    item.getEndTime(),
+                    item.getUserScore(),
+                    item.getTaskScore(),
             });
         }
-        excelExportService.exportDataToExcel(httpServletResponse, data, new String[]{"序号", "职称", "级别", "场景", "训练人", "训练次数", "最高分", "及格分"});
+        excelExportService.exportDataToExcel(httpServletResponse, data, new String[]{"序号", "部门", "姓名", "训练名称", "训练开始时间", "训练完成时间", "用户得分", "训练总分"});
     }
 }

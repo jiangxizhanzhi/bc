@@ -38,7 +38,7 @@ public class ExcelExportService {
 
         // 设置响应头
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String filename = "train_department_" + LocalDateTime.now().format(formatter) + ".xlsx";
+        String filename = "record_" + LocalDateTime.now().format(formatter) + ".xlsx";
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment;filename=" + filename);
 

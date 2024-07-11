@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleTrainProgress;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleUser;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleDetailBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
-import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainByDepartmentBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -43,7 +40,7 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
                                                          @Param("title") String title,
                                                          @Param("level_id") String levelId);
 
-    List<CrTitleTrainByDepartmentBo> listTitleStandardByUsers(@Param("user_ids") List<String> userIds);
+    List<CrTitleTrainRecordBo> listTitleStandardByUsers();
 
     List<CrTitleDetailBo> titleDetails(@Param("level_id") String levelId,
                                 @Param("title") String title);

@@ -169,10 +169,10 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 
 		practiceSet.setBuiltin(CommonConstant.TRUE);
 		practiceSet.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
-		practiceSet.setIsPublic(CommonConstant.FALSE);
-		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setIsPublic(CommonConstant.TRUE);
+		practiceSet.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		practiceSet.setPracticeCount(CommonConstant.ZERO);
 

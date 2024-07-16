@@ -252,6 +252,18 @@ public interface LocalSceneService extends IService<LocalScene> {
 			Boolean realTimeHostState);
 
 	/**
+	 * 通过实例id获取云节点资产列表
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @param name               业务实例id
+	 * @param category           类别
+	 * @param realTimeHostState  是否展示实时主机状态
+	 * @return {@code JSONArray}
+	 */
+	JSONArray getAssetCloudListByInstanceId(String businessInstanceId, Integer category, String name,
+									   Boolean realTimeHostState);
+
+	/**
 	 * 通过拓扑id获取资产列表
 	 *
 	 * @param topoId   拓扑id

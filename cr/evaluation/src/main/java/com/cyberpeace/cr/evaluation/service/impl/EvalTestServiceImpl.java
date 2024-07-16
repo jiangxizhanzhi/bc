@@ -369,6 +369,17 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 		}
 	}
 
+	public JSONArray getCloudDeviceList(String testId, Integer category, String name) {
+		String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
+		if (StringUtils.isNotEmpty(localSceneId)) {
+			EvalTest evalTest = evalTestMapper.selectById(testId);
+			return localSceneService.getAssetCloudListByInstanceId(evalTest.getCurrentInstanceId(), category, name, true);
+		} else {
+			String topoId = evalTestMapper.selectTopoIdByTestId(testId);
+			return localSceneService.getAssetListByTopoId(topoId, category, name);
+		}
+	}
+
 	@Override
 	public List<EvalInstanceSlimContext> listInstance(EvalTest evalTest, Boolean isFinished) {
 		if (isFinished != null && isFinished) {

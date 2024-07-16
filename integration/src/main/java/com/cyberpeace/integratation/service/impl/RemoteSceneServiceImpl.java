@@ -108,6 +108,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_NODE_LIST;
 
+	private String SCENE_CLOUD_NODE_LIST;
+
 	private String SCENE_NODE_STATISTICS;
 
 	private String NODE_SCREEN_RECORD;
@@ -207,6 +209,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		SCENE_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.node.list");
 
+		SCENE_CLOUD_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.cloud.node.list");
+
 		SCENE_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("scene.node.statistics");
 
 		NODE_SCREEN_RECORD = MP_HOST + ConfigUtil.getContextProperty("mp.screen.record");
@@ -296,6 +300,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONArray getAssetList(SceneNodeListReq req) {
 		String targetUrl = SCENE_NODE_LIST + req.toUrl();
+		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+	}
+
+	@Override
+	public JSONArray getAssetCloudList(SceneNodeListReq req) {
+		String targetUrl = SCENE_CLOUD_NODE_LIST + req.toUrl();
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
 

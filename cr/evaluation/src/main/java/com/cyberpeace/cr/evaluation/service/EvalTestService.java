@@ -44,5 +44,7 @@ public interface EvalTestService extends IService<EvalTest> {
 
 	JSONArray getDeviceList(String testId, Integer category, String name);
 
+	JSONArray getCloudDeviceList(String testId, Integer category, String name);
+
 	List<EvalInstanceSlimContext> listInstance(EvalTest evalTest, Boolean isFinished);
 }

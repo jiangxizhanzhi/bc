@@ -215,6 +215,15 @@ public class EvalTestController {
 		return new BaseRsp<>(evalTestService.getDeviceList(testId, category, name));
 	}
 
+	@ApiOperation("云设备列表")
+	@GetMapping("/cloudDevice/list")
+	public BaseRsp<JSONArray> getCloudDeviceList(
+			@ApiParam(name = "test_id", value = "试验id", required = true) @RequestParam(name = "test_id") String testId,
+			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
+			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
+		return new BaseRsp<>(evalTestService.getCloudDeviceList(testId, category, name));
+	}
+
 	@ApiOperation("场景终端节点获取")
 	@GetMapping("/nodes")
 	public BaseRsp<List<EvalRoomPairRsp>> getNodes(

@@ -635,6 +635,21 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public JSONArray getAssetCloudListByInstanceId(String businessInstanceId, Integer category,
+											  String name, Boolean realTimeHostState) {
+		LocalScene localScene = getOrExceptionByBusinessInstanceId(businessInstanceId);
+		SceneNodeListReq req = new SceneNodeListReq();
+		req.setId(localScene.getMpSceneId());
+		req.setCategory(category);
+		req.setName(name);
+		// 前台设备列表展示主机状态
+		req.setRealTimeHostState(realTimeHostState);
+		// 前台设备列表展示简易型
+		req.setIsAll(true);
+		return remoteSceneService.getAssetCloudList(req);
+	}
+
+	@Override
 	public JSONArray getAssetListByTopoId(String topoId, Integer category, String name) {
 		TopoNodeListReq req = new TopoNodeListReq();
 		req.setId(topoId);

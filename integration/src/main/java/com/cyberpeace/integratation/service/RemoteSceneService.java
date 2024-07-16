@@ -248,6 +248,14 @@ public interface RemoteSceneService {
 	JSONArray getAssetList(SceneNodeListReq req);
 
 	/**
+	 * 获取云节点列表
+	 *
+	 * @param req 请求体
+	 * @return {@code JSONArray}
+	 */
+	JSONArray getAssetCloudList(SceneNodeListReq req);
+
+	/**
 	 * 通过场景id获取资产统计数据
 	 *
 	 * @param sceneId 场景id

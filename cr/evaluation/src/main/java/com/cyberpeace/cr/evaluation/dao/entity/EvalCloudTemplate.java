@@ -109,7 +109,7 @@ public class EvalCloudTemplate extends BaseTable {
 
 		MIX(0, "混合云"),
 		PRIVATE(1, "私有云"),
-		PUBLIC(2, "公用云");
+		PUBLIC(2, "公有云");
 
 		@Getter
 		private final Integer code;

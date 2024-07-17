@@ -406,5 +406,10 @@ public final class ErrorCode {
 	 */
 	public static final String FAILED_TO_RESTART_PKT = "100112";
 
+	/**
+	 * 平台未授权，请联系管理员
+	 */
+	public static final String PLATFORM_EXPIRE = "100113";
+
 	private ErrorCode() {}
 }

@@ -1,22 +1,37 @@
 package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.DesEncryptUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.dao.entity.SystemProperty;
 import com.cyberpeace.cs.dao.mapper.SystemPropertyMapper;
 import com.cyberpeace.cs.service.SystemPropertyService;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 @Service
 public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper, SystemProperty> implements SystemPropertyService {
 
 	@Autowired
 	private SystemPropertyMapper systemPropertyMapper;
+
+	private LoadingCache<String, Date> cache = CacheBuilder.newBuilder()
+			.expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<String, Date>() {
+
+				@Override
+				public Date load(String key) {
+					return getDateFromDb(key);
+				}
+			});
 
 	@Override
 	public boolean getExportBuiltin() {
@@ -37,12 +52,25 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 
 	@Override
 	public Date getExpirationDate() {
-		// 查询加密过的最后一天
-		SystemProperty property = systemPropertyMapper.selectByName("expirationDate");
+		try {
+			return cache.get("expirationDate");
+		} catch (Exception e) {
+			Throwable t = e.getCause();
+			if (t instanceof BusinessException) {
+				throw (BusinessException) t;
+			}
+			throw new RuntimeException(e);
+		}
+	}
+
+	private Date getDateFromDb(String name) {
+		// 查询加密过的过期日
+		SystemProperty property = systemPropertyMapper.selectByName(name);
+		if (null == property || StringUtils.isBlank(property.getContent())) {
+			return TimeUtil.toDate2("1970-01-01");
+		}
 		// 解密
 		String dateStr = DesEncryptUtils.decrypt(property.getContent());
-		Date lastDay = TimeUtil.toDate2(dateStr);
-		// 最后一天的第二天的00:00:00
-		return TimeUtil.addDates(lastDay, 1);
+		return TimeUtil.toDate2(dateStr);
 	}
 }

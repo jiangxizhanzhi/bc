@@ -2,8 +2,6 @@ package com.cyberpeace.config.aspects;
 
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
-
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -21,15 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 public class ExpirationAspect {
 
-	private Date expirationDate;
-
 	@Autowired
 	private SystemPropertyService systemPropertyService;
-
-	@PostConstruct
-	public void init() {
-		expirationDate = systemPropertyService.getExpirationDate();
-	}
 
 	@Pointcut("execution(* com.cyberpeace.scene.controller.*Controller.*(..))")
 	public void sceneApi() {
@@ -38,7 +29,7 @@ public class ExpirationAspect {
 
 	@Before(value = "sceneApi()")
 	public void checkExpiration() {
-		if (new Date().after(expirationDate)) {
+		if (new Date().after(systemPropertyService.getExpirationDate())) {
 			throw new BusinessException(ErrorCode.PLATFORM_EXPIRE);
 		}
 	}

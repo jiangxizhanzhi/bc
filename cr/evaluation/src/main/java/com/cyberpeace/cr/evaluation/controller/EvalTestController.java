@@ -296,13 +296,13 @@ public class EvalTestController {
 	}
 
 	@ApiOperation("重建节点")
-	@GetMapping("/scene/node/recreate")
+	@PostMapping("/scene/node/recreate")
 	public BaseRsp<Boolean> recreateNode(@RequestBody EvalSceneNodeReq nodeReq) {
 		return new BaseRsp<>(evalTestInstanceService.recreateNode(nodeReq));
 	}
 
 	@ApiOperation("重启节点")
-	@GetMapping("/scene/node/restart")
+	@PostMapping("/scene/node/restart")
 	public BaseRsp<Boolean> restartNode(@RequestBody EvalSceneNodeReq nodeReq) {
 		return new BaseRsp<>(evalTestInstanceService.restartNode(nodeReq));
 	}

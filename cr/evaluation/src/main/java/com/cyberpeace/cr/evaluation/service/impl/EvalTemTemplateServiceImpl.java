@@ -31,6 +31,7 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,9 +39,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -185,7 +184,7 @@ public class EvalTemTemplateServiceImpl extends ServiceImpl<EvalTemTemplateMappe
 							.toJsonObject(evalTemTemplate.getTechniqueWarfare(), MissionScheme.class);
 					evalTemTemplateListRsp.setMissionCount(0);
 					evalTemTemplateListRsp.setStageCount(0);
-					if(null == missionScheme && !missionScheme.getStageList().isEmpty()){
+					if(null != missionScheme && CollectionUtils.isNotEmpty(missionScheme.getStageList())){
 						List<StageData> stageList = missionScheme.getStageList();
 						evalTemTemplateListRsp.setStageCount(stageList.size());
 						List<List<TaskBo>> collect = stageList.stream().map(StageData::getTaskList).collect(Collectors.toList());

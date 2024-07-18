@@ -14,7 +14,7 @@ import java.io.Serializable;
 @TableName("system_property")
 public class SystemProperty implements Serializable {
 
-	@TableId
+	@TableId(type = IdType.AUTO)
 	private String id;
 
 	private String name;

@@ -14,4 +14,6 @@ public interface SystemPropertyService extends IService<SystemProperty> {
 	SystemProperty getSystemProperty(String name);
 
     Date getExpirationDate();
+
+	void updateExpDate(String code);
 }

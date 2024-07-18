@@ -410,6 +410,10 @@ public final class ErrorCode {
 	 * 平台未授权，请联系管理员
 	 */
 	public static final String PLATFORM_EXPIRE = "100113";
+	/**
+	 * 不正确的日期格式
+	 */
+	public static final String ILLEGAL_DATE_FORMAT = "100114";
 
-	private ErrorCode() {}
+    private ErrorCode() {}
 }

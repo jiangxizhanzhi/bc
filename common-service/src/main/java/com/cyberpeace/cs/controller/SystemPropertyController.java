@@ -4,6 +4,7 @@ package com.cyberpeace.cs.controller;
 import java.util.Date;
 import java.util.List;
 
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,4 +44,12 @@ public class SystemPropertyController {
 		res.setExpire(new Date().after(date));
 		return new BaseRsp<>(res);
 	}
+
+	@ApiOperation("更新到期日期")
+	@GetMapping("/exp_date/update")
+	public BaseRsp<Void> updateExpDate(@ApiParam(value = "加密日期", name = "code")String code) {
+		systemPropertyService.updateExpDate(code);
+		return new BaseRsp<>();
+	}
+
 }

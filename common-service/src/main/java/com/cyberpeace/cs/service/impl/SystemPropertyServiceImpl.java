@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.DesEncryptUtils;
 import com.cyberpeace.common.util.TimeUtil;
@@ -23,6 +24,8 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 
 	@Autowired
 	private SystemPropertyMapper systemPropertyMapper;
+
+	private final String expirationDate = "expirationDate";
 
 	private LoadingCache<String, Date> cache = CacheBuilder.newBuilder()
 			.expireAfterWrite(1, TimeUnit.MINUTES).build(new CacheLoader<String, Date>() {
@@ -53,7 +56,7 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 	@Override
 	public Date getExpirationDate() {
 		try {
-			return cache.get("expirationDate");
+			return cache.get(expirationDate);
 		} catch (Exception e) {
 			Throwable t = e.getCause();
 			if (t instanceof BusinessException) {
@@ -61,6 +64,28 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 			}
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public void updateExpDate(String code) {
+		if (StringUtils.isBlank(code)) {
+			return;
+		}
+		// validate
+		String dateStr = DesEncryptUtils.decrypt(code);
+		Date date = parseDate(dateStr);
+		// save
+		SystemProperty property = systemPropertyMapper.selectByName(expirationDate);
+		if (null == property) {
+			property = new SystemProperty();
+			property.setName(expirationDate);
+			property.setDesc("许可证过期日期");
+		}
+		property.setContent(code);
+		this.saveOrUpdate(property);
+		// flush cache
+		cache.invalidate(expirationDate);
+		cache.put(expirationDate, date);
 	}
 
 	private Date getDateFromDb(String name) {
@@ -71,6 +96,14 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 		}
 		// 解密
 		String dateStr = DesEncryptUtils.decrypt(property.getContent());
-		return TimeUtil.toDate2(dateStr);
+		return parseDate(dateStr);
+	}
+
+	private Date parseDate(String dateStr) {
+		Date date = TimeUtil.toDate2(dateStr);
+		if (null == date) {
+			throw new BusinessException(ErrorCode.ILLEGAL_DATE_FORMAT);
+		}
+		return date;
 	}
 }

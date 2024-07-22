@@ -550,7 +550,7 @@ public class MDParser {
 			template.setOption(CrCommonConstants.NULL);
 		}
 		// answer
-		template.setAnswer(missionData.get(ZiguanConstants.ANSWER));
+		template.setAnswer(missionData.get(ZiguanConstants.ANSWER).trim());
 		// judge
 		if (template.getType().equals(ZiguanConstants.JUDGEMENT_TYPE)) {
 			template.setAnswer(ZiguanConstants.JUDGEMENT_ANSWER_MAPPING.get(template.getAnswer()));

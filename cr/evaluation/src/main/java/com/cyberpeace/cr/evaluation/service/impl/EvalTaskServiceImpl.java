@@ -12,14 +12,19 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalMissionTemplateMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.impl.bo.MissionScheme;
+import com.cyberpeace.cr.evaluation.service.impl.bo.StageData;
+import com.cyberpeace.cr.evaluation.service.impl.bo.TaskBo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -64,6 +69,9 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 	@Autowired
 	private EvalRecordService evalRecordService;
+
+	@Autowired
+	private EvalMissionTemplateMapper evalMissionTemplateMapper;
 
 	@Override
 	public EvalTask getTask(String taskId) {
@@ -120,6 +128,8 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 		String templateId = evalTemplate.getResourceId();
 
+		newTechniqueWarfare(evalTemplate);
+
 		// 构建任务对象
 		EvalTask evalTask = new EvalTask();
 		evalTask.setTemplateId(templateId);
@@ -169,6 +179,40 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		}
 
 		return evalTask.getResourceId();
+
+	}
+
+	/**
+	 * 每次启动，都是一个新的模板
+	 * @param evalTemplate
+	 * @return
+	 */
+	private void newTechniqueWarfare(EvalTemplate evalTemplate) {
+
+		MissionScheme missionScheme = JsonUtil.toJsonObject(evalTemplate.getTechniqueWarfare(), MissionScheme.class);
+		List<StageData> stageList = missionScheme.getStageList();
+
+		for (StageData stageData : stageList) {
+			for (TaskBo taskBo : stageData.getTaskList()) {
+				// 创建一个新的ID
+				String resourceId = taskBo.getResourceId();
+				taskBo.setResourceId(IDGeneratorUtil.getID());
+				insertEvalMissionTemplate(taskBo, resourceId);
+			}
+		}
+
+		missionScheme.setStageList(stageList);
+		evalTemplate.setTechniqueWarfare(JsonUtil.toJsonString(missionScheme));
+
+	}
+
+	private void insertEvalMissionTemplate(TaskBo taskBo, String resourceId) {
+
+		EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(resourceId);
+		evalMissionTemplate.setResourceId(taskBo.getResourceId());
+		evalMissionTemplate.setId(taskBo.getId());
+		evalMissionTemplate.setStatus(taskBo.getStatus());
+		evalMissionTemplateMapper.insert(evalMissionTemplate);
 
 	}
 

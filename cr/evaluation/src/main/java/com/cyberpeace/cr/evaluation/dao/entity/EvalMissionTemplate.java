@@ -26,6 +26,9 @@ public class EvalMissionTemplate extends BaseTable {
 	@ApiModelProperty("任务限时（分钟）")
 	private Integer limitTime;
 
+	@ApiModelProperty("剩余时间")
+	private Long remainingTime;
+
 	@ApiModelProperty("验证结果")
 	private String result;
 

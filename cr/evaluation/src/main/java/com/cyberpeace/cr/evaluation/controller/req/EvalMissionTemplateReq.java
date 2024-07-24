@@ -27,6 +27,10 @@ public class EvalMissionTemplateReq implements Serializable {
 	@ApiModelProperty("验证结果")
 	private String result;
 
+	/**
+	 * 0：未开始；1：执行；2：暂停；3：继续；
+	 * 4：中止；5：失败；6：完成；7：超时
+	 */
 	@ApiModelProperty("任务状态")
 	private Integer status;
 }

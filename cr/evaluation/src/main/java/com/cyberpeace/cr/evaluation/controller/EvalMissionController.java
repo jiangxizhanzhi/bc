@@ -153,8 +153,62 @@ public class EvalMissionController {
         }
         EvalMissionTemplateLog evalMissionTemplateLog = updateMissionLog(updateEvalMissionReq.getResourceId(), evalMissionTemplate.getName(), updateEvalMissionReq.getTaskId(), updateEvalMissionReq.getStatus());
         Integer status = updateEvalMissionReq.getStatus();
-        evalMissionTemplate.setStatus(status);
-        evalMissionTemplate.setUpdateTime(new Date());
+
+        // 判断当前状态，暂停状态不计时，中止状态计算是否超时
+        if (status.equals(MissionTemplateStatus.START)) {
+            evalMissionTemplate.setStatus(status);
+            evalMissionTemplate.setUpdateTime(new Date());
+            // 记录剩余时间
+            evalMissionTemplate.setRemainingTime((evalMissionTemplate.getLimitTime() * 60 * 1000L));
+        } else if(status.equals(MissionTemplateStatus.PAUSE)){
+
+            // 更新状态
+            evalMissionTemplate.setStatus(status);
+
+            //计算所用时间
+            // 执行开始的时间
+            long time = evalMissionTemplate.getUpdateTime().getTime();
+            evalMissionTemplate.setUpdateTime(new Date());
+            // 剩余时间
+            evalMissionTemplate.setRemainingTime(evalMissionTemplate.getUpdateTime().getTime() - time);
+
+        } else if (status.equals(MissionTemplateStatus.STOP)) {
+            // 当执行中止命令时，先判断当前任务状态
+            // 执行时 继续时
+            if (evalMissionTemplate.getStatus().equals(MissionTemplateStatus.START) ||
+                    evalMissionTemplate.getStatus().equals(MissionTemplateStatus.CONTINUE)) {
+                if (evalMissionTemplate.getRemainingTime() < 0) {
+                    // 说明暂停时已超时，直接记录超时状态
+                    evalMissionTemplate.setStatus(MissionTemplateStatus.OVERTIME);
+                    evalMissionTemplate.setUpdateTime(new Date());
+                } else {
+                    long l = new Date().getTime() - evalMissionTemplate.getUpdateTime().getTime();
+                    if (evalMissionTemplate.getRemainingTime() - l < 0) {
+                        evalMissionTemplate.setStatus(MissionTemplateStatus.OVERTIME);
+                        evalMissionTemplate.setUpdateTime(new Date());
+                    } else {
+                        evalMissionTemplate.setStatus(MissionTemplateStatus.STOP);
+                        evalMissionTemplate.setUpdateTime(new Date());
+                    }
+                }
+
+            } else if (evalMissionTemplate.getStatus().equals(MissionTemplateStatus.PAUSE)) {
+                if (evalMissionTemplate.getRemainingTime() < 0) {
+                    // 说明暂停时已超时，直接记录超时状态
+                    evalMissionTemplate.setStatus(MissionTemplateStatus.OVERTIME);
+                    evalMissionTemplate.setUpdateTime(new Date());
+                }
+                evalMissionTemplate.setStatus(MissionTemplateStatus.STOP);
+                evalMissionTemplate.setUpdateTime(new Date());
+            }
+
+        } else {
+
+            // 状态为3,5,6
+            evalMissionTemplate.setStatus(status);
+            evalMissionTemplate.setUpdateTime(new Date());
+        }
+
         evalMissionTemplate.setTaskId(updateEvalMissionReq.getTaskId());
         if(status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL)){
             evalMissionTemplate.setEndTime(new Date());
@@ -428,8 +482,7 @@ public class EvalMissionController {
                 tmp.add(evalMissionTemplate);
                 BeanUtils.copyProperties(evalMissionTemplate, task);
                 Integer status = task.getStatus();
-                if((status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL))
-                        && new Date(task.getCreateTime().getTime() + task.getLimitTime()).compareTo(new Date()) > 0){
+                if((status.equals(MissionTemplateStatus.OVERTIME))){
                     task.setOvertimeStatus(MissionTemplateStatus.OVERTIME);
                 }
                 taskRes.add(task);

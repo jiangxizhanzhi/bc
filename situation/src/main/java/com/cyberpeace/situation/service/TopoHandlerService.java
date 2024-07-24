@@ -25,6 +25,9 @@ public interface TopoHandlerService {
 	 */
 	SceneData getSceneData(String sceneId, String topoId);
 
+
+	SceneData getSceneDataByCsceneIdAndAreaId(String csceneInstanceId, String csceneId, String areaId);
+
 	/**
 	 * 获取中台场景数据
 	 * @param sceneId

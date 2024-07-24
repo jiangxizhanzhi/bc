@@ -29,6 +29,8 @@ public interface RemoteSceneService {
 
 	JSONObject getById(String sceneId, String userId);
 
+	JSONObject getByIdAndAreaIdFor3D(String sceneId, String areaId);
+
 	Boolean unpauseScene(SceneOpsContext sceneOpContext);
 
 	Boolean restartNode(NodeOpsContext nodeOpsContext);

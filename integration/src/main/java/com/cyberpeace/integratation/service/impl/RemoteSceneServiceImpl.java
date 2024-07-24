@@ -49,6 +49,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_RETRIEVE;
 
+	private String SCENE_RETRIEVE_BY_AREA_FOR_3D;
+
 	private String SCENE_PAUSE_URL;
 
 	private String SCENE_UNPAUSE_URL;
@@ -147,6 +149,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_CLEAR_URL = MP_HOST + ConfigUtil.getContextProperty("scene.clear");
 
 		SCENE_RETRIEVE = MP_HOST + ConfigUtil.getContextProperty("scene.retrieve");
+
+		SCENE_RETRIEVE_BY_AREA_FOR_3D = MP_HOST + ConfigUtil.getContextProperty("scene.retrieve_by_area_for_3d");
 
 		SCENE_PAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.pause");
 
@@ -264,6 +268,18 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		String targetUrl = SCENE_RETRIEVE + "?id=" + sceneId + "&accessUserId=" + userId;
 		return replaceAccessIp(HttpClientUtil.rawGet(targetUrl, JSONObject.class));
 
+	}
+
+
+	@Override
+	public JSONObject getByIdAndAreaIdFor3D(String sceneId, String areaId) {
+
+		String targetUrl = SCENE_RETRIEVE_BY_AREA_FOR_3D + "?id=" + sceneId;
+		if (StringUtils.isNotBlank(areaId)) {
+			targetUrl = targetUrl + "&area_id=" + areaId;
+
+		}
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
 	@Override

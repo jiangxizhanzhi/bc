@@ -42,6 +42,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	private String TOPO_SYNC_UNLIMITED;
 
 	private String TOPO_RETRIEVE;
+	private String TOPO_RETRIEVE_BY_AREA_FOR_3D;
 
 	private String TOPO_DELETE;
 
@@ -67,6 +68,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 				+ ConfigUtil.getContextProperty("scene.topo.sync.unlimited");
 		TOPO_RETRIEVE = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
+		TOPO_RETRIEVE_BY_AREA_FOR_3D = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.topo.retrieve_by_area_for_3d");
 		TOPO_DELETE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
 		TOPO_EXPORT = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
 
@@ -86,6 +89,17 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	@Override
 	public JSONObject getTopoById(String topoId) {
 		String targetUrl = TOPO_RETRIEVE + "?id=" + topoId;
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject getTopoByIdAndAreaIdFor3D(String topoId, String areaId) {
+
+		String targetUrl = TOPO_RETRIEVE_BY_AREA_FOR_3D + "?id=" + topoId;
+		if (StringUtils.isNotBlank(areaId)) {
+			targetUrl = targetUrl + "&area_id=" + areaId;
+
+		}
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
@@ -233,7 +247,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	/**
 	 * 审计需求：sync、copy、delete topo的接口，增加context.accessUserId
-	 * @return 
+	 * @return
 	 */
 	private void setUserContext(JSONObject json) {
 		String currentUserId;

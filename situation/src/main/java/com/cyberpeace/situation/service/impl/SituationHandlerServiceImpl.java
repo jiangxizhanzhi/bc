@@ -3,10 +3,7 @@ package com.cyberpeace.situation.service.impl;
 import static com.cyberpeace.situation.constant.SituationConstants.DEFAULT_LINE_WIDTH;
 
 import java.security.SecureRandom;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class SituationHandlerServiceImpl implements SituationHandlerService {
+	private static final String LAYER_ELEMENT_NAME = "层节点";
 
 	@Autowired
 	private TopoHandlerService topoHandlerService;
@@ -203,12 +201,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			JSONObject elementExtendedInfo = extendElementInfo.getJSONObject(elementId);
 
 			// 处理设备类型（虚/实）
-			String virtualType = elementExtendedInfo.getString("image_type");
+			String virtualType = Optional.ofNullable(elementExtendedInfo).map(
+					jsonObject -> jsonObject.getString("image_type")).orElse("");
 			String deviceType = "entity".equals(virtualType) ? "entity" : "virtual";
 
 			// 处理类型数据
-			Integer category = elementExtendedInfo.getInteger("category");
-			Integer category2 = elementExtendedInfo.getInteger("category2");
+			Integer category = Optional.ofNullable(elementExtendedInfo).map(
+					jsonObject -> jsonObject.getInteger("category")).orElse(Integer.MAX_VALUE);
+			Integer category2 = Optional.ofNullable(elementExtendedInfo).map(
+					jsonObject -> jsonObject.getInteger("category2")).orElse(Integer.MAX_VALUE);
 			String firstType = categorieMap.getFirstCategorie().getOrDefault(category, "其他");
 			String secondType = categorieMap.getSecondCategorie().getOrDefault(category2, "其他");
 
@@ -216,7 +217,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			String type = StringUtils.isEmpty(icon3) ? firstType + "-" + secondType : "定制-" + icon3;
 
 			// 处理角色数据
-			Integer roleId = elementExtendedInfo.getInteger("role");
+			Integer roleId = Optional.ofNullable(elementExtendedInfo).map(
+					jsonObject -> jsonObject.getInteger("role")).orElse(Integer.MAX_VALUE);
 			String role = categorieMap.getRole().getOrDefault(roleId, "其他");
 
 			// 初次处理层级数据
@@ -232,6 +234,10 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 处理坐标数据
 			JSONObject position2 = element.getJSONObject("position2");
+			if (LAYER_ELEMENT_NAME.equals(elementName)) {
+				position2 = Optional.ofNullable(element).map(obj -> obj.getJSONObject("position2"))
+						.map(obj -> obj.getJSONObject("origin")).orElse(new JSONObject());
+			}
 			if (position2 == null) {
 				log.error("Failed to get node coordinates！Scene_id is [{}]",
 						sceneData.getSceneId());
@@ -239,8 +245,12 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			}
 			Float x = position2.getFloat("x");
 			Float y = position2.getFloat("y");
-			sceneData.getXList().add(x);
-			sceneData.getYList().add(y);
+			if (Objects.nonNull(x)) {
+				sceneData.getXList().add(x);
+			}
+			if (Objects.nonNull(y)) {
+				sceneData.getYList().add(y);
+			}
 
 			// 处理端口数据
 			Map<String, PortInfo> portsInfo = Maps.newHashMap();
@@ -263,7 +273,11 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setRole(role);
 			elementInfo.setDesc(element.getString("description"));
 			elementInfo.setDeviceType(deviceType);
-			elementInfo.setType(type);
+			if ("层节点".equals(elementInfo.getName())) {
+				elementInfo.setType("自定义-层节点");
+			} else {
+				elementInfo.setType(type);
+			}
 			elementInfo.setActionStatus(getElementActionStatus(element));
 			elementInfo.setStatus(getElementStatus(element));
 			elementInfo.setPosition(new PlaneCoordinate(x, y));
@@ -284,7 +298,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Display display = JsonUtil.toJsonObject(element.getString("display_context"), Display.class);
 
 			if (display != null) {
-				elementInfo.setFontStyle(new FontStyle(display.getText().getFill(), display.getText().getFontSize()));
+				elementInfo.setFontStyle(new FontStyle(Optional.of(display).map(Display::getText).map(Display.Label::getFill)
+						.orElse(""), Optional.of(display).map(Display::getText).map(Display.Label::getFontSize).orElse(12)));
 			}
 			//设置一级类型的编码
 			elementInfo.setOneCategoryCode(category);

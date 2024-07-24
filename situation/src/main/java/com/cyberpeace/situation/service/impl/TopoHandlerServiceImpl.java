@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.integratation.model.scene.SceneEventHostListReq;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,6 +69,33 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	private static final String SCENE = "scene";
 
 	@Override
+	public SceneData getSceneDataByCsceneIdAndAreaId(String csceneInstanceId, String csceneId, String areaId) {
+		// 获取中台场景数据，优先获取场景拓扑
+		JSONObject sceneTopo;
+		JSONObject topology;
+		JSONObject plugins;
+		Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap;
+		if (StringUtils.isBlank(csceneInstanceId)) {
+			throw new BusinessException(SituationErrorCode.NO_VALID_SCENE_CONFIG);
+		}
+
+		if (StringUtils.isBlank(csceneInstanceId)) {
+
+			sceneTopo = remoteTopoService.getTopoByIdAndAreaIdFor3D(csceneId, areaId);
+			topology = sceneTopo.getJSONObject("scene_config").getJSONObject("topology");
+			plugins = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins");
+			situationConfigMap = getSituationConfigMap(csceneId);
+		} else {
+			sceneTopo = remoteSceneService.getByIdAndAreaIdFor3D(csceneInstanceId, areaId);
+			topology = sceneTopo.getJSONObject(SCENE).getJSONObject("topology");
+			plugins = sceneTopo.getJSONObject(SCENE).getJSONObject("plugins");
+			situationConfigMap = getSituationConfigMap(csceneInstanceId);
+		}
+
+		return constructSceneData(csceneInstanceId, topology, plugins, situationConfigMap);
+	}
+
+	@Override
 	public SceneData getSceneData(String sceneId, String topoId) {
 
 		// 获取中台场景数据，优先获取场景拓扑
@@ -87,7 +116,10 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 			plugins = sceneTopo.getJSONObject(SCENE).getJSONObject("plugins");
 			situationConfigMap = getSituationConfigMap(sceneId);
 		}
+		return constructSceneData(sceneId, topology, plugins, situationConfigMap);
+	}
 
+	private SceneData constructSceneData(String sceneId, JSONObject topology, JSONObject plugins, Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap) {
 		JSONObject extendElementInfo = (JSONObject) ((JSONObject) plugins.getOrDefault("cpcloud",
 				new JSONObject())).getOrDefault("elements", new JSONObject());
 

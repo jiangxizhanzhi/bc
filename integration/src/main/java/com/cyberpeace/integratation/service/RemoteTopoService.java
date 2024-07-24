@@ -16,6 +16,15 @@ public interface RemoteTopoService {
 	JSONObject getTopoById(String topoId);
 
 	/**
+	 * 根据中台的csceneId和areaId从中台获取当前areaId指示的分层对应的拓扑信息,
+	 * 3D的吴俊要我们把分层节点放到elements处，这个接口针对其特制
+	 * @param topoId 对应中台的csceneId
+	 * @param areaId 分层的id, 如果为顶层，area_id为空
+	 * @return
+	 */
+	JSONObject getTopoByIdAndAreaIdFor3D(String topoId, String areaId);
+
+	/**
 	 * 根据现有的topoid，生成一份新的拓扑拷贝数据
 	 *
 	 * @param originTopoId 原始拓扑id

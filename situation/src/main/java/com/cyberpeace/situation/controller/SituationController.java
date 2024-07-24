@@ -69,10 +69,13 @@ public class SituationController {
 			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id",
 					required = false) String sceneId,
 			@ApiParam(name = "topo_id", value = "拓扑编号") @RequestParam(value = "topo_id",
-					required = false) String topoId) {
+					required = false) String topoId,
+			@ApiParam(name= "area_id", value = "区域id") @RequestParam(value = "area_id",
+					required = false) String areaId) {
+
 
 		// 获取场景/拓扑数据
-		SceneData sceneData = topoHandlerService.getSceneData(sceneId, topoId);
+		SceneData sceneData = topoHandlerService.getSceneDataByCsceneIdAndAreaId(sceneId, topoId, areaId);
 
 		// 处理态势数据
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);

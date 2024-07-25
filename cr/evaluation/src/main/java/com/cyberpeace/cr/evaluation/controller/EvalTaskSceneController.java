@@ -11,6 +11,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.service.EvalNodeLogService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class EvalTaskSceneController {
 			log.error("Node restart failure! nodeOpsReq = [{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
-		evalNodeLogService.logNodeOperate(nodeOpsReq, evalTask.getResourceId(), NodeOperate.RESTART);
+		evalNodeLogService.logNodeOperate(nodeOpsReq, evalTask.getResourceId(), evalTask.getMpSceneId(), NodeOperate.RESTART);
 		return new BaseRsp<>(result);
 	}
 
@@ -65,7 +66,7 @@ public class EvalTaskSceneController {
 			log.error("Node recreate failure! nodeOpsReq = [{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
-		evalNodeLogService.logNodeOperate(nodeOpsReq, evalTask.getResourceId(), NodeOperate.RECREATE);
+		evalNodeLogService.logNodeOperate(nodeOpsReq, evalTask.getResourceId(), evalTask.getMpSceneId(), NodeOperate.RECREATE);
 		return new BaseRsp<>(result);
 	}
 
@@ -74,8 +75,8 @@ public class EvalTaskSceneController {
 	@ApiOperation("单个节点接入")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	public void accessNode(@RequestBody @Validated EvalSceneNodeOpsReq nodeOpsReq) {
-
-		evalNodeLogService.logNodeOperate(nodeOpsReq, nodeOpsReq.getTaskId(), nodeOpsReq.getOperate());
+		EvalTask evalTask = evalTaskService.getActiveTask(nodeOpsReq.getTaskId());
+		evalNodeLogService.logNodeOperate(nodeOpsReq, nodeOpsReq.getTaskId(), evalTask.getMpSceneId(), nodeOpsReq.getOperate());
 
 	}
 
@@ -85,7 +86,7 @@ public class EvalTaskSceneController {
 	public BaseRsp<Boolean> stopNode(@RequestBody @Validated EvalSceneNodeOpsReq nodeOpsReq) {
 		Boolean result = localSceneService.stopNode(nodeOpsReq.getMpSceneId(), nodeOpsReq.getNodeId());
 		EvalTask evalTask = evalTaskService.getActiveTask(nodeOpsReq.getTaskId());
-		evalNodeLogService.logNodeOperate(nodeOpsReq, evalTask.getResourceId(), NodeOperate.STOP);
+		evalNodeLogService.logNodeOperate(nodeOpsReq, evalTask.getResourceId(), evalTask.getMpSceneId(), NodeOperate.STOP);
 		return new BaseRsp<>(result);
 	}
 

@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface EvalNodeLogService extends IService<EvalNodeLog> {
 
-	void logNodeOperate(@Validated @RequestBody EvalSceneNodeOpsReq nodeOpsReq, String resourceId, int operate);
+	void logNodeOperate(@Validated @RequestBody EvalSceneNodeOpsReq nodeOpsReq, String resourceId, String mpSceneId, int operate);
 
 }

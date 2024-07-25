@@ -3,6 +3,8 @@ package com.cyberpeace.cr.evaluation.dao.mode;
 import com.alibaba.fastjson.JSONArray;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class TopoElement {
     private String displayContext = "";
@@ -25,5 +27,6 @@ public class TopoElement {
     private String file = "";
     private String nodeCommand = "";
     private String position2 = "";
+    private List<Router> routers;
     private JSONArray ports;
 }

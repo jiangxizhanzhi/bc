@@ -103,8 +103,13 @@ public final class CrCommonConstants {
 
 	public static final String FIREWALL_UUID = "c12b7b53-e232-40f4-b7c3-d3dfac8e1b31";
 
+	public static final String EXCHANGE_UUID = "66e6244c-90d1-48d6-a615-0762af79e4f2";
+
 	private CrCommonConstants() {}
 
 	public static final int PER_PAGE = 9999;
+	public static final int ROUTER_ROLE = 21;
+	public static final int FIREWALL_ROLE = 23;
+	public static final int EXCHANGE_ROLE = 22;
 
 }

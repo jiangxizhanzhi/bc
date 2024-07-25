@@ -25,8 +25,8 @@ public class EvalNodeLogServiceImpl extends ServiceImpl<EvalNodeLogMapper, EvalN
 	private SituationHandlerService situationHandlerService;
 
 	@Override
-	public void logNodeOperate(EvalSceneNodeOpsReq nodeOpsReq, String resourceId, int operate) {
-		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(nodeOpsReq.getMpSceneId(), true);
+	public void logNodeOperate(EvalSceneNodeOpsReq nodeOpsReq, String resourceId, String mpSceneId, int operate) {
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(mpSceneId, true);
 		Map<String, ElementInfo> elements = situationTopo.getElements();
 		ElementInfo elementInfo = elements.get(nodeOpsReq.getNodeId());
 		UserInfo userContext = UserInfoContext.getUserContext();

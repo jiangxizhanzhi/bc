@@ -75,9 +75,6 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		JSONObject topology;
 		JSONObject plugins;
 		Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap;
-		if (StringUtils.isBlank(csceneInstanceId)) {
-			throw new BusinessException(SituationErrorCode.NO_VALID_SCENE_CONFIG);
-		}
 
 		if (StringUtils.isBlank(csceneInstanceId)) {
 

@@ -163,6 +163,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 		if (!logoFile.exists()) {
 			logoFile = new File(path, ResourceImportConstant.JPG_LOGO);
 		}
+		if (!logoFile.exists()) {
+			log.info("logo file not foud PNG or JPG logo");
+			throw new BusinessException(ErrorCode.IMPORT_RESOURCE_ERROR, logoFile, "logo文件未找到");
+		}
+
 		String dest = EnumUtils.getEnumDescByCode(AttachmentPath.LOGO.getCode(),
 				AttachmentPath.class) + logoFile.getName();
 		String destFilePath = FileUtil.copyFile(logoFile.getAbsolutePath(), dest, true);

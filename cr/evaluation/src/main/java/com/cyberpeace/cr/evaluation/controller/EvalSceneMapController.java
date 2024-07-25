@@ -401,20 +401,38 @@ public class EvalSceneMapController {
 		// 拓扑探测信息
 		String fileName = fileMap.get("topo");
 		log.info("the current filename---- [{}]",fileName);
-		NetworkProbeData probeData = gson.fromJson(new FileReader(fileName), NetworkProbeData.class);
+		Map<String, Convertor> map = new HashMap<>();
+		try (FileReader fileReader = new FileReader(fileName);
+             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
 
-		Convertor convertor = Convertor.builder().probeData(probeData).build();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                // 处理每行内容，这里简单打印输出
+                NetworkProbeData probeData = gson.fromJson(line, NetworkProbeData.class);
+				Convertor convertor = Convertor.builder().probeData(probeData).build();
+				map.put(probeData.getInstanceId(), convertor);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
 		// 节点服务信息
+		List<ReportData> dataList = new ArrayList<>();
+		String instanceId = "";
 		try (BufferedReader reader = new BufferedReader(new FileReader(fileMap.get("server")))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				ReportData data = gson.fromJson(line, ReportData.class);
-				convertor.addData(data);
+				dataList.add(data);
+				instanceId = data.getInstanceId();
 			}
 		} catch (IOException e) {
 			throw e;
 		}
+		Convertor convertor = map.get(instanceId);
+		convertor.setDataList(dataList);
 
 		// 配置好的服务和镜像的映射信息
 		ServiceImageMap imageMap = gson.fromJson(new FileReader(fileMap.get("image")), ServiceImageMap.class);
@@ -531,17 +549,17 @@ public class EvalSceneMapController {
 
 	private EvalSceneMapRsp unzipAndProcessFiles(File zipFile) throws IOException {
 		EvalSceneMapRsp rsp = new EvalSceneMapRsp();
+		List<DeviceVO> routerAndFirewall = remoteSceneService.getRouterAndFirewall();
+		Map<String, DeviceVO> images = StreamApiUtils.toMap(routerAndFirewall, DeviceVO::getUuid, s -> s);
+		DeviceVO router = images.get(CrCommonConstants.ROUTER_UUID);
+		Integer routerRole = router.getRole();
+		router.setRole(roleMap.get(routerRole));
+		DeviceVO firewall = images.get(CrCommonConstants.FIREWALL_UUID);
+		DeviceVO exchange = images.get(CrCommonConstants.EXCHANGE_UUID);
+		Integer firewallRole = firewall.getRole();
+		firewall.setRole(firewallRole);
 		try (ZipFile zip = new ZipFile(zipFile)) {
 			Enumeration<ZipArchiveEntry> entries = zip.getEntries();
-			List<DeviceVO> routerAndFirewall = remoteSceneService.getRouterAndFirewall();
-			Map<String, DeviceVO> images = StreamApiUtils.toMap(routerAndFirewall, DeviceVO::getUuid, s -> s);
-			DeviceVO router = images.get(CrCommonConstants.ROUTER_UUID);
-			Integer routerRole = router.getRole();
-			router.setRole(roleMap.get(routerRole));
-			DeviceVO firewall = images.get(CrCommonConstants.FIREWALL_UUID);
-			DeviceVO exchange = images.get(CrCommonConstants.EXCHANGE_UUID);
-			Integer firewallRole = firewall.getRole();
-			firewall.setRole(firewallRole);
 			List<TopoElement> topoElements = new ArrayList<>();
 			JSONObject cpElements = new JSONObject();
 			JSONObject elementPorts = new JSONObject();
@@ -552,7 +570,7 @@ public class EvalSceneMapController {
 				ZipArchiveEntry entry = entries.nextElement();
 				String name = entry.getName();
 				if (!entry.isDirectory() && name.endsWith(".txt")) {
-					name = name.replace( ".txt", "");
+//					name = name.replace( ".txt", "");
 
 					// 处理TXT文件，文件内容包含两种设备 路由器、防火墙 对应的信息可以从拓扑编辑器中的常用节点接口获取 该路由器与镜像路由器有区别 当前取前者
 					List<Router> routers = processTxtFile(zip.getInputStream(entry), name);
@@ -561,11 +579,15 @@ public class EvalSceneMapController {
 					String id = IDGeneratorUtil.getID();
 					nodes.add(id);
 					routerMap.put(id, routers);
+					String[] split = name.split("\\/");
+					name = split[split.length-1].replace(".txt", "");
 					topoElement.setName(name);
 					topoElement.setId(id);
 					getTopoElementByDeviceVo(topoElement, router);
 					topoElement.setType(CrCommonConstants.ROUTER_ROLE);
 					CpcloudElement elementObj = getCpcloudElementByDeviceDo(router);
+					// TODO 防火墙角色设置逻辑待处理
+					elementObj.setRole(CrCommonConstants.ROUTER_ROLE);
 					cpElements.put(id, elementObj);
 					JSONArray objects = new JSONArray();
 					// 待确认解析的文件内容包含的连线关系
@@ -672,6 +694,7 @@ public class EvalSceneMapController {
 				getTopoElementByDeviceVo(exchangeElement, exchange);
 				exchangeElement.setType(CrCommonConstants.EXCHANGE_ROLE);
 				CpcloudElement elementObj = getCpcloudElementByDeviceDo(exchange);
+				elementObj.setRole(CrCommonConstants.EXCHANGE_ROLE);
 				String cidr = "";
 				JSONArray objects = new JSONArray();
 				// 待确认解析的文件内容包含的连线关系

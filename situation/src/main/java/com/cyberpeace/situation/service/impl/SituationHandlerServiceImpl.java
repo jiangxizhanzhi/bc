@@ -47,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class SituationHandlerServiceImpl implements SituationHandlerService {
-	private static final String LAYER_ELEMENT_NAME = "层节点";
+	private static final Integer LAYER_ELEMENT_TYPE = 8;
 
 	@Autowired
 	private TopoHandlerService topoHandlerService;
@@ -198,6 +198,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			JSONObject element = elements.getJSONObject(i);
 			String elementId = element.getString("id");
 			String elementName = element.getString("name");
+			Integer mpElementType = element.getInteger("type");
 			JSONObject elementExtendedInfo = extendElementInfo.getJSONObject(elementId);
 
 			// 处理设备类型（虚/实）
@@ -234,7 +235,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 处理坐标数据
 			JSONObject position2 = element.getJSONObject("position2");
-			if (LAYER_ELEMENT_NAME.equals(elementName)) {
+			if (LAYER_ELEMENT_TYPE.equals(mpElementType)) {
 				position2 = Optional.ofNullable(element).map(obj -> obj.getJSONObject("position2"))
 						.map(obj -> obj.getJSONObject("origin")).orElse(new JSONObject());
 			}
@@ -273,7 +274,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setRole(role);
 			elementInfo.setDesc(element.getString("description"));
 			elementInfo.setDeviceType(deviceType);
-			if ("层节点".equals(elementInfo.getName())) {
+			if (LAYER_ELEMENT_TYPE.equals(mpElementType)) {
 				elementInfo.setType("自定义-层节点");
 			} else {
 				elementInfo.setType(type);

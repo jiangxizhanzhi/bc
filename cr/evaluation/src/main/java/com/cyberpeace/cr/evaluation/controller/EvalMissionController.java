@@ -164,42 +164,32 @@ public class EvalMissionController {
 
             // 更新状态
             evalMissionTemplate.setStatus(status);
-
             //计算所用时间
             // 执行开始的时间
             long time = evalMissionTemplate.getUpdateTime().getTime();
             evalMissionTemplate.setUpdateTime(new Date());
+            // 经过时间
+            long l = evalMissionTemplate.getUpdateTime().getTime() - time;
             // 剩余时间
-            evalMissionTemplate.setRemainingTime(evalMissionTemplate.getUpdateTime().getTime() - time);
+            evalMissionTemplate.setRemainingTime(evalMissionTemplate.getRemainingTime() - l);
 
         } else if (status.equals(MissionTemplateStatus.STOP)) {
             // 当执行中止命令时，先判断当前任务状态
-            // 执行时 继续时
-            if (evalMissionTemplate.getStatus().equals(MissionTemplateStatus.START) ||
-                    evalMissionTemplate.getStatus().equals(MissionTemplateStatus.CONTINUE)) {
-                if (evalMissionTemplate.getRemainingTime() < 0) {
-                    // 说明暂停时已超时，直接记录超时状态
-                    evalMissionTemplate.setStatus(MissionTemplateStatus.OVERTIME);
-                    evalMissionTemplate.setUpdateTime(new Date());
-                } else {
-                    long l = new Date().getTime() - evalMissionTemplate.getUpdateTime().getTime();
-                    if (evalMissionTemplate.getRemainingTime() - l < 0) {
-                        evalMissionTemplate.setStatus(MissionTemplateStatus.OVERTIME);
-                        evalMissionTemplate.setUpdateTime(new Date());
-                    } else {
-                        evalMissionTemplate.setStatus(MissionTemplateStatus.STOP);
-                        evalMissionTemplate.setUpdateTime(new Date());
-                    }
-                }
-
-            } else if (evalMissionTemplate.getStatus().equals(MissionTemplateStatus.PAUSE)) {
-                if (evalMissionTemplate.getRemainingTime() < 0) {
-                    // 说明暂停时已超时，直接记录超时状态
-                    evalMissionTemplate.setStatus(MissionTemplateStatus.OVERTIME);
-                    evalMissionTemplate.setUpdateTime(new Date());
-                }
-                evalMissionTemplate.setStatus(MissionTemplateStatus.STOP);
+            // 执行时
+            if (templateStatus.equals(MissionTemplateStatus.START) ||
+                    templateStatus.equals(MissionTemplateStatus.CONTINUE)) {
+                //计算所用时间
+                // 执行或继续开始的时间
+                long time = evalMissionTemplate.getUpdateTime().getTime();
                 evalMissionTemplate.setUpdateTime(new Date());
+                // 经过时间
+                long l = evalMissionTemplate.getUpdateTime().getTime() - time;
+                // 剩余时间
+                evalMissionTemplate.setRemainingTime(evalMissionTemplate.getRemainingTime() - l);
+                // 更新状态
+                evalMissionTemplate.setStatus(evalMissionTemplate.getRemainingTime() >= 0 ? status : MissionTemplateStatus.OVERTIME);
+            } else if (templateStatus.equals(MissionTemplateStatus.PAUSE) ) {
+                evalMissionTemplate.setStatus(evalMissionTemplate.getRemainingTime() >= 0 ? status : MissionTemplateStatus.OVERTIME);
             }
 
         } else {

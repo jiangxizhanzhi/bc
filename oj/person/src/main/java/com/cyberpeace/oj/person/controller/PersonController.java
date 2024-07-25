@@ -172,7 +172,6 @@ public class PersonController {
 		// 解出记录表中，不包含运维题，需要从竞赛获取
         List<StudyRecord> studyRecord = personCenterMapper.selectSlovedPractice(userIds);
         Map<String, StudyRecord> map = StreamApiUtils.toMap(studyRecord, StudyRecord::getUserId, s -> s);
-		JSONObject jsonObject = remoteAdService.queryOpsSolvedMap();
 
         int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
         int operationPracticeAllCount = personCenterMapper.selectOperationPracticeByAuth().size();
@@ -180,17 +179,13 @@ public class PersonController {
 		Map<String, JSONObject> userExamPassMap = remoteAdService.examPassList(userIds);
 
         res = userInfos.stream().map(s -> {
-			JSONArray jsonArray = jsonObject.getJSONArray(s.getResourceId());
-			int opsSolved = jsonArray == null ? 0:jsonArray.size();
 			StudyRecord record = map.get(s.getResourceId());
             PersonStatsBo personStatsBo = new PersonStatsBo();
             if (null != record) {
                 personStatsBo.setTheoryCorrectRate(record.getTheoryPracticeCount() * theoryPracticeAllCount == 0 ? "0%": record.getTheoryPracticeCount()*100 / theoryPracticeAllCount+"%");
-                int practiceCount = record.getOperationPracticeCount() + opsSolved;
+                int practiceCount = record.getOperationPracticeCount();
                 personStatsBo.setOperateCorrectRate(practiceCount * operationPracticeAllCount == 0 ?"0%" : practiceCount*100 / operationPracticeAllCount+"%");
-            }else {
-				personStatsBo.setOperateCorrectRate(opsSolved * operationPracticeAllCount == 0 ?"0%" : opsSolved*100 / operationPracticeAllCount+"%");
-			}
+            }
 
             if (lessonMap.containsKey(s.getResourceId())) {
                 personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ?"0%": lessonMap.get(s.getResourceId())*100 / lessonAllCount+"%");
@@ -270,13 +265,6 @@ public class PersonController {
 				pageReq.getBusinessType(),
 				pageReq.getPracticeType());
 
-		// 查询运维题的比赛id
-		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-		Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
-				.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
-		comments.getRecords().forEach(
-				note -> note.setRaceId(opsMap.getOrDefault(note.getBusinessId(), null)));
-
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 
@@ -294,13 +282,6 @@ public class PersonController {
 
 		IPage<PersonCollection> collections = personCenterService.pageCollections(page, userId,
 				type, authContext, practiceType);
-
-		// 查询运维题的比赛id
-		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-		Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
-				.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
-		collections.getRecords().forEach(
-				collect -> collect.setRaceId(opsMap.getOrDefault(collect.getResourceId(), null)));
 
 		return new BaseRsp<>(PageUtil.getListResult(collections));
 	}

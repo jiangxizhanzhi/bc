@@ -43,14 +43,4 @@ public interface RemoteAdService {
 	 */
 	Map<String, JSONObject> examPassList(List<String> userIds);
 
-	JSONArray queryHistoryExamList();
-
-    List<OpsQuestionBo> queryQuestionList();
-
-	void clearUserData(String userId);
-
-	JSONArray queryHistoryOpsList();
-
-	JSONObject queryOpsSolvedMap();
-
 }

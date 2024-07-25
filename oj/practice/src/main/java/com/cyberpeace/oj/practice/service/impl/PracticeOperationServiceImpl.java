@@ -2,14 +2,10 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.cyberpeace.integratation.service.*;
-import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
-import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -54,6 +50,9 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
@@ -76,7 +75,6 @@ import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
-import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
@@ -160,9 +158,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	private PracticeCategoryService practiceCategoryService;
 
 	@Autowired
-	private RemoteLogService remoteLogService;
-
-	@Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
 
 	@Autowired
@@ -171,10 +166,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private PracticeMistakeMapper practiceMistakeMapper;
 
-	@Autowired
-	private PracticeMistakeService practiceMistakeService;
-	@Autowired
-	private RemoteAdService remoteAdService;
 	@Autowired
 	private SceneService sceneService;
 
@@ -604,8 +595,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			return null;
 		}
 		operationListQuery.setResourceIds(operationIds);
-		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-		Map<String, OpsQuestionBo> opsMap = opsQuestionBos.stream().collect(Collectors.toMap(OpsQuestionBo::getResourceId, item-> item, (k1, k2) -> k1));
 		// 根据解题状态过滤
 		if ( null != listQuery.getSolved()) {
 
@@ -613,11 +602,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
 					UserInfoContext.getUserContext().getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
 					CommonConstant.TRUE, IS_COLLECTED);
-
-			List<String> opsIds = opsQuestionBos.stream().filter(OpsQuestionBo::isPass).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
-			if (CollectionUtils.isNotEmpty(opsIds)) {
-				solvedIds.addAll(opsIds);
-			}
 
 			// 正确取交集
 			if (listQuery.getSolved()) {
@@ -666,7 +650,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		Map<String, String> creatorMap = sysUserService.getUserNameMap(creatorIdList);
 		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext,
-				listQuery.getSolved(), practiceSolvedMap, practiceSetMap, creatorMap,opsMap));
+				listQuery.getSolved(), practiceSolvedMap, practiceSetMap, creatorMap));
 	}
 
 	/**
@@ -682,7 +666,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
 			AuthContext authContext, Boolean solved, Map<String, PracticeSolved> practiceSolvedMap,
-			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap,Map<String, OpsQuestionBo> opsMap) {
+			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap) {
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
@@ -708,13 +692,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 						null != practiceSolved ? practiceSolved.getSolved() : CommonConstant.FALSE);
 			}
 		}
-		OpsQuestionBo opsQuestionBo = opsMap.get(operationListBo.getResourceId());
 		String raceId = "";
-		if (opsQuestionBo != null) {
-			raceId =  opsQuestionBo.getRaceId();
-			// 设置运维题是否解出
-			operationListBo.setSolved(opsQuestionBo.isPass());
-		}
 		operationListBo.setRaceId(raceId);
 
 		PracticeSet practiceSet = practiceSetMap.get(practiceOperation.getPracticeSetId());
@@ -1333,52 +1311,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		List<OperationRecordRes> operationRecordResList = practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
 		operationRecordResList.forEach(operationRecordRes -> operationRecordRes.setKnowledgeList(JsonUtil.toJsonObjectArray(operationRecordRes.getKnowledge(), String.class)));
 
-		List<OperationRecordRes> opsRecordList = getOpsRecord(startTime, endTime);
-
-		operationRecordResList.addAll(opsRecordList);
 		return operationRecordResList;
-	}
-
-	/**
-	 * 获取运维题
-	 * @param startTime
-	 * @param endTime
-	 * @return
-	 */
-	public List<OperationRecordRes> getOpsRecord(Date startTime, Date endTime) {
-		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-		Map<String, OpsQuestionBo> opsQuestionBoMap = opsQuestionBos.stream()
-				.filter(OpsQuestionBo::isPass)
-				.filter(o -> {
-					if (o.getEndTime() == null) {
-						// 解出后，场景未关闭也没有结束时间
-						return true;
-					}
-
-					if (startTime != null && endTime != null){
-						return startTime.before(o.getEndTime()) && endTime.after(o.getEndTime());
-					}else if (startTime != null){
-						return startTime.before(o.getEndTime());
-					}else if (endTime != null) {
-						return endTime.after(o.getEndTime());
-					}else {
-						return true;
-					}
-				})
-				.collect(Collectors.toMap(OpsQuestionBo::getResourceId, opsQuestionBo -> opsQuestionBo));
-
-		List<String> solvedOpsIds = new ArrayList<>(opsQuestionBoMap.keySet());
-		List<OperationRecordRes> operationInfoList = CollectionUtils.isEmpty(solvedOpsIds)? new ArrayList<>(): practiceSolvedMapper.getOperationInfo(solvedOpsIds);
-		operationInfoList.forEach(operationInfo -> {
-			operationInfo.setSolved(true);
-			operationInfo.setKnowledgeList(JsonUtil.toJsonObjectArray(operationInfo.getKnowledge(), String.class));
-			// 已解决的运维题有解决时间
-			OpsQuestionBo opsQuestionBo = opsQuestionBoMap.get(operationInfo.getPracticeId());
-			operationInfo.setTime(TimeUtil.format1(opsQuestionBo.getEndTime() == null ? new Date() : opsQuestionBo.getEndTime()));
-			operationInfo.setRaceId(opsQuestionBo.getRaceId());
-		});
-
-		return operationInfoList;
 	}
 
 
@@ -1439,8 +1372,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public ProgressCountRes getProgressCount(String practiceSetId) {
 		// solved表不会有运维题解出记录；
-		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-		List<String> solvedOpsIds = opsQuestionBos.stream().filter(OpsQuestionBo::isPass).map(OpsQuestionBo::getResourceId).collect(Collectors.toList());
 
 		List<OperationSolved> operationSolvedList = practiceOperationMapper.selectSolved(UserInfoContext.getUserContext().getUserId(), practiceSetId);
 		Map<Integer, OperationSolved> operationSolvedMap = operationSolvedList.stream().collect(Collectors.toMap(OperationSolved::getCategory, operationSolved -> operationSolved));
@@ -1457,9 +1388,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 运维题
 		ProgressCountRes progressCountRes = new ProgressCountRes();
 		OptionCountProportion maintenance = new OptionCountProportion();
-		List<String> opsIds = operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()).getIds();
-		solvedOpsIds.retainAll(opsIds);
-		maintenance.setCount(solvedOpsIds.size());
+		maintenance.setCount(0);
 		maintenance.setSum(operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()).getSum());
 		progressCountRes.setMaintenance(maintenance);
 

@@ -15,6 +15,7 @@ import com.cyberpeace.common.context.role.CrRoleSimple;
 import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.teamtrain.service.impl.GXPTSceneServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -146,6 +147,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private CrConstantsService crConstantsService;
+
+	@Autowired
+	private GXPTSceneServiceImpl gxptSceneService;
 
 	private static final String MISSING_LOG = "resource_id_missing";
 
@@ -318,6 +322,8 @@ public class TeamTrainRoomController {
 				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getTrainSkill(), String.class));
 		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
 
+		// 模板实例化时,调用共性平台接口同步场景信息和拓扑信息
+		gxptSceneService.addScene(teamTrainRoomReq, teamRoom);
 
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.CREATE, teamTrainRoomReq.getName(),

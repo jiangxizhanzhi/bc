@@ -434,7 +434,10 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             List<IndexCourseReq> coverageReqList = categoryCoverageMap.getOrDefault(re.getCategoryName(), Lists.newArrayList());
             int courseStudyCoverage = coverageReqList.stream().mapToInt(req-> req.getStudyCount() == null ? 0: req.getStudyCount()).sum();
             int courseNumCoverage = coverageReqList.stream().mapToInt(req -> req.getCourseNum() == null ? 0: req.getCourseNum()).sum();
-			theoryRate = theoryRate.add(BigDecimal.valueOf(courseStudyCoverage*40.0/courseNumCoverage));
+			if (courseStudyCoverage > 0 && courseNumCoverage > 0) {
+				theoryRate = theoryRate
+						.add(BigDecimal.valueOf(courseStudyCoverage * 40.0 / courseNumCoverage));
+			}
 
             int operationCount = operationList.stream().filter(a -> a.getKnowledge() != null
                     && a.getKnowledge().contains(re.getCategoryName())).mapToInt(a -> 1).sum();

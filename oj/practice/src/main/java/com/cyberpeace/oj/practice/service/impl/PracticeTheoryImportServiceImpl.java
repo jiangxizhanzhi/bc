@@ -493,7 +493,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		}
 
 		practiceTheory.setScore(CommonConstant.ONE.doubleValue());
-		practiceTheory.setBuiltin(CommonConstant.TRUE);
+		practiceTheory.setBuiltin(CommonConstant.FALSE);
 		// 跟页面导入区分人员
 		practiceTheory
 				.setCreateUserId(null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);

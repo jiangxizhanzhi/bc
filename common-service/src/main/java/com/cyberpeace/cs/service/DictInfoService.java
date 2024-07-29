@@ -13,4 +13,12 @@ import java.util.List;
 public interface DictInfoService extends IService<DictInfo> {
 
     List<DictInfo> getDictInfo(String key);
+
+
+    /**
+     * 是否开启综合实操
+     *
+     * @return boolean
+     */
+    boolean isOperationOpen();
 }

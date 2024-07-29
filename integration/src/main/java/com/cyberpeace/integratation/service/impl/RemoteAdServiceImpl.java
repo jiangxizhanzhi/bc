@@ -107,6 +107,46 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		return map;
 	}
 
+	@Override
+	public JSONArray queryHistoryExamList() {
+		log.info("ad url {}",EXAM_HISTORY_LIST_URL);
+		return HttpClientUtil.rawGet(EXAM_HISTORY_LIST_URL, JSONArray.class);
+
+	}
+
+	@Override
+	public List<OpsQuestionBo> queryQuestionList() {
+		JSONObject jsonObject = HttpClientUtil.rawGet(QUESTION_LIST_URL+"?per_page=999999&page=1", JSONObject.class);
+		if (jsonObject==null) {
+			return new ArrayList<>();
+		}
+		JSONArray jsonArray = jsonObject.getJSONArray("list");
+		if (jsonArray==null) {
+			return new ArrayList<>();
+		}
+		return jsonArray.toJavaList(OpsQuestionBo.class);
+	}
+
+	@Override
+	public JSONObject queryOpsSolvedMap() {
+		return HttpClientUtil.rawGet(QUESTION_OPS_SOLVED_URL, JSONObject.class);
+	}
+
+	@Override
+	public void clearUserData(String userId) {
+		// 无竞赛环境则不调用
+		if (StringUtils.isBlank(adEnvService.getAdHost())) {
+			return;
+		}
+		AdUserClearanceReq body = new AdUserClearanceReq(userId);
+		HttpClientUtil.post(USER_DATA_CLEAR_URL, body, JSONObject.class);
+	}
+
+	@Override
+	public JSONArray queryHistoryOpsList() {
+		return HttpClientUtil.rawGet(OPS_HISTORY_LIST_URL, JSONArray.class);
+	}
+
 	/** 数据转换使用*/
 	private CalendarCompetitionBo jsonToBo(JSONObject json) {
 		CalendarCompetitionBo bo = new CalendarCompetitionBo();

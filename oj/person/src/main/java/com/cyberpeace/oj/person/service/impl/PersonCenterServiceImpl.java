@@ -1,16 +1,8 @@
 package com.cyberpeace.oj.person.service.impl;
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,38 +14,50 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
+import com.cyberpeace.oj.person.controller.req.IndexCategoryReq;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.person.controller.req.IndexCourseReq;
+import com.cyberpeace.oj.person.service.IndexInfoService;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
-import com.cyberpeace.oj.person.controller.req.IndexCategoryReq;
-import com.cyberpeace.oj.person.controller.req.IndexCourseReq;
 import com.cyberpeace.oj.person.controller.res.StudyCalendarRes;
 import com.cyberpeace.oj.person.controller.res.StudyHistoryRes;
 import com.cyberpeace.oj.person.controller.res.StudyStaticsRes;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.dao.mapper.PersonCenterMapper;
-import com.cyberpeace.oj.person.service.IndexInfoService;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressPracticeRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static com.cyberpeace.integratation.constant.LogContent.EXERCISE;
+import static com.cyberpeace.integratation.constant.LogContent.THEORY;
 
 @Service
 @Slf4j
@@ -88,6 +92,8 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Autowired
     IndexInfoService indexInfoService;
+    @Autowired
+    private RemoteAdService remoteAdService;
 
     @Override
     public IPage<PersonComment> pageComment(Page page, String userId, String parent,
@@ -315,10 +321,13 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         res.setTheoryLessonAllCount(lessonCount.getTheoryLessonAllCount());
         res.setExpLessonAllCount(lessonCount.getExpLessonAllCount());
         //获取练习正确率
+        Map<String, JSONObject> userExamPassMap = remoteAdService.examPassList(Collections.singletonList(userId));
+        Integer passCount = userExamPassMap.getOrDefault(userId, new JSONObject()).getInteger("pass_count");
+        passCount=passCount==null?0:passCount;
         StudyRecord practiceByUser = personCenterMapper.selectSlovedPracticeByUser(userId);
         Integer operationPracticeCount = practiceByUser.getOperationPracticeCount();
         Integer theoryPracticeCount = practiceByUser.getTheoryPracticeCount();
-        res.setOperationPracticeCount(null == operationPracticeCount ? 0 : operationPracticeCount);
+        res.setOperationPracticeCount(null == operationPracticeCount ? passCount : operationPracticeCount+passCount);
         res.setTheoryPracticeCount(null == theoryPracticeCount ? 0 : theoryPracticeCount);
         res.setPracticeCount(res.getOperationPracticeCount()+res.getTheoryPracticeCount());
         int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
@@ -338,6 +347,12 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         List<StudyHistoryRes>  lessonList= personCenterMapper.selectLessonStudyCalendar(startTime, endTime,userId);
         //练习
         List<StudyHistoryRes>  parcticeList= personCenterMapper.selectParcticeStudyCalendar(startTime, endTime,userId);
+        // 考试
+        JSONArray adHistoryList= remoteAdService.queryHistoryExamList();
+        dealAdHistory(adHistoryList,lessonList, StudyHistoryRes.AdEnum.EXAM);
+        //运维题历史记录
+        JSONArray adOpsHistoryList= remoteAdService.queryHistoryOpsList();
+        dealAdHistory(adOpsHistoryList,lessonList,StudyHistoryRes.AdEnum.OPS);
 
         lessonList.addAll(parcticeList);
         lessonList.stream().collect(Collectors.groupingBy(StudyHistoryRes::getDate)).forEach((k,v)->{
@@ -396,6 +411,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         Map<String, ProgressPracticeRes> theoryMap = theoryList.stream().filter(a->a.getCategoryName()!=null).collect(Collectors.toMap(ProgressPracticeRes::getCategoryName, Function.identity(), (a, b) -> a));
         //实操题 30%
         List<OperationRecordRes> operationList = practiceOperationMapper.getOperationRecordList(UserInfoContext.getUserContext().getUserId());
+        List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
         //覆盖度 40%
         List<IndexCategoryReq> categoryList = indexInfoService.getIndexInfo().getCategoryList();
         Map<String, List<IndexCourseReq>> categoryCoverageMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getCourses));
@@ -410,10 +426,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
             List<IndexCourseReq> coverageReqList = categoryCoverageMap.getOrDefault(re.getCategoryName(), Lists.newArrayList());
             int courseStudyCoverage = coverageReqList.stream().mapToInt(req-> req.getStudyCount() == null ? 0: req.getStudyCount()).sum();
             int courseNumCoverage = coverageReqList.stream().mapToInt(req -> req.getCourseNum() == null ? 0: req.getCourseNum()).sum();
-			if (courseStudyCoverage > 0 && courseNumCoverage > 0) {
-				theoryRate = theoryRate
-						.add(BigDecimal.valueOf(courseStudyCoverage * 40.0 / courseNumCoverage));
-			}
+			theoryRate = theoryRate.add(BigDecimal.valueOf(courseStudyCoverage*40.0/courseNumCoverage));
 
             int operationCount = operationList.stream().filter(a -> a.getKnowledge() != null
                     && a.getKnowledge().contains(re.getCategoryName())).mapToInt(a -> 1).sum();
@@ -425,7 +438,14 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                         .map(a -> BigDecimal.valueOf(30.0 / operationCount)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                 theoryRate = theoryRate.add(opCount);
             }
-
+            //运维题
+            if (CollectionUtils.isNotEmpty(opsQuestionBos) ){
+                BigDecimal opCount = opsQuestionBos.stream()
+                        .filter(a -> a.getDirection() != null
+                                && a.getDirection().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.isPass()))
+                        .map(a -> BigDecimal.valueOf(30.0 /operationCount)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                theoryRate = theoryRate.add(opCount);
+            }
             re.setCount(theoryRate.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
             re.setSum(100);
             res.add(re);

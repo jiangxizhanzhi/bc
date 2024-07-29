@@ -3,12 +3,13 @@ package com.cyberpeace.oj.person.service.impl;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import com.cyberpeace.oj.person.dao.mapper.UserDataClearanceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.auth.service.UserDataClearanceService;
-import com.cyberpeace.oj.person.dao.mapper.UserDataClearanceMapper;
+import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.scene.service.SceneService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,9 @@ public class UserDataClearanceServiceImpl implements UserDataClearanceService {
 
 	@Autowired
 	private SceneService sceneService;
+
+	@Autowired
+	private RemoteAdService remoteAdService;
 
 	@Autowired
 	@Qualifier("asyncTaskExecutor")
@@ -32,6 +36,8 @@ public class UserDataClearanceServiceImpl implements UserDataClearanceService {
 		executor.execute(() -> {
 			// clear record
 			clearOjRecord(userId);
+			// clear ad
+			clearAdExam(userId);
 			// clear scene
 			clearScene(userId);
 		});
@@ -45,6 +51,14 @@ public class UserDataClearanceServiceImpl implements UserDataClearanceService {
 		userDataClearanceMapper.clearPracticeMistake(userId);
 		userDataClearanceMapper.clearPracticeSolved(userId);
 		userDataClearanceMapper.clearResourceCollection(userId);
+	}
+
+	private void clearAdExam(String userId) {
+		try {
+			remoteAdService.clearUserData(userId);
+		} catch (Exception e) {
+			log.error("failed to clear ad user data of [{}]", userId, e);
+		}
 	}
 
 	private void clearScene(String userId) {

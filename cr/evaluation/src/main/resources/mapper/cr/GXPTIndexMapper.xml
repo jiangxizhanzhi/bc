@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cr.evaluation.dao.mapper.GXPTIndexMapper">
+
+    <update id="updateIndexDataByResourceIds">
+        UPDATE cr_eval_index
+        <set>
+            <if test="isSychronized != null">
+                is_sychronized = #{isSychronized},
+            </if>
+            <if test="returnData != null">
+                return_data = #{returnData},
+            </if>
+            <if test="returnInfo != null">
+                return_info = #{returnInfo},
+            </if>
+        </set>
+        WHERE resource_id IN
+        <foreach collection="indexIds" item="resourceId" open="(" separator="," close=")">
+            #{resourceId}
+        </foreach>
+    </update>
+
+    <select id="selectReturnDataByEvalSystemIds" resultType="java.lang.String">
+        select return_data from cr_eval_index
+        where eval_system_id in
+        <foreach collection="evalSystemIds" open="(" close=")" separator="," item="evalSystemId">
+            #{evalSystemId}
+        </foreach>
+    </select>
+
+</mapper>

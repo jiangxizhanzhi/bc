@@ -21,6 +21,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+import com.cyberpeace.cr.evaluation.service.impl.GXPTIndexServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -80,6 +81,9 @@ public class EvalSystemIndexAdminController {
 
 	@Autowired
 	private EvalCollectionService evalCollectionService;
+
+	@Autowired
+	private GXPTIndexServiceImpl gxptIndexService;
 
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
@@ -143,6 +147,9 @@ public class EvalSystemIndexAdminController {
 		List<EvalIndex> secondIndexList = convertIndexReqToIndex(evalSystemReq.getSecondIndexes(),
 				EvalIndex.Level.SECOND.getCode());
 		evalIndexService.saveBatch(secondIndexList);
+
+		// 数据同步到共性平台
+		gxptIndexService.addIndex(evalSystemReq);
 
 		EvalSystem evalSystem = BeanUtils.copy(evalSystemReq, EvalSystem.class);
 		evalSystem.setResourceId(evalSystemReq.getEvalSystemId());

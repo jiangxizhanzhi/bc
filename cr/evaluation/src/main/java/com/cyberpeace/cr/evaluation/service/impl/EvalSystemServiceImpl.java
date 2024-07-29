@@ -76,8 +76,15 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 	@Autowired
 	private EvalCollectionService evalCollectionService;
 
+	@Autowired
+	private GXPTIndexServiceImpl gxptIndexService;
+
 	@Override
 	public Boolean batchDelete(List<String> evalSystemIds) {
+
+		// 根据evalSystemIds查询指标数据
+		gxptIndexService.deleteIndex(evalSystemIds);
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -91,7 +98,6 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 
 			}
 		});
-
 		return true;
 	}
 

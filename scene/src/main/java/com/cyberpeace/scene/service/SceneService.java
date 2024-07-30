@@ -5,10 +5,13 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.dao.entity.SceneEntity;
 import com.cyberpeace.scene.service.bo.SceneData;
 import com.cyberpeace.scene.service.bo.ad.AdSceneStartReq;
+import com.cyberpeace.scene.service.bo.res.SceneListRsp;
 
 /**
  * @author :   SN
@@ -47,4 +50,6 @@ public interface SceneService extends IService<SceneEntity> {
      * @param raceId
      */
     void destroySceneByRaceId(String raceId);
+
+    ListRsp<SceneListRsp> getSceneList(PageReqBase req, Integer type);
 }

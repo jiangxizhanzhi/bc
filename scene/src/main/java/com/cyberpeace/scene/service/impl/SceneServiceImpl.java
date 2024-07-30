@@ -16,7 +16,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -25,6 +28,8 @@ import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.*;
@@ -49,6 +54,7 @@ import com.cyberpeace.scene.service.bo.req.CreateContainerReq;
 import com.cyberpeace.scene.service.bo.req.CreateInstanceReq;
 import com.cyberpeace.scene.service.bo.res.CreateContainersRes;
 import com.cyberpeace.scene.service.bo.res.CreateInstanceRes;
+import com.cyberpeace.scene.service.bo.res.SceneListRsp;
 import com.cyberpeace.scene.service.bo.scene.ElementStatistics;
 import com.cyberpeace.scene.service.bo.scene.SceneProcessBo;
 import com.cyberpeace.scene.util.SceneThreadPoolExecutor;
@@ -142,7 +148,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 		// 创建场景
 		SceneEntity scene = createScene(req.getTopologyId(), JsonUtil.toJsonString(topology),
-				req.getInstanceId(), userId, req.getInstanceType(), req.getDestroyTime());
+				req.getInstanceId(), req.getTargetName(), userId, req.getInstanceType(),
+				req.getDestroyTime());
 		// 提交创建场景任务
 		executor.submit(() -> startScene(topology, scene));
 		log.info("submit create scene mission, scene ：{}", scene);
@@ -166,8 +173,8 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		// 创建场景
 
 		SceneEntity scene = createScene(req.getId(), topo.toJSONString(), instanceId,
-				req.getContext().getAccessUserId(), req.getContext().getInstanceType(),
-				req.getContext().getDestroyTime());
+				req.getContext().getTargetName(), req.getContext().getAccessUserId(),
+				req.getContext().getInstanceType(), req.getContext().getDestroyTime());
 		executor.submit(() -> startScene(topology, scene));
 		// 生成返回数据
 		JSONObject res = new JSONObject();
@@ -209,6 +216,16 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 		List<String> sceneIdList = sceneMapper.selectByRaceId(raceId);
 		destroySceneBatch(sceneIdList);
+	}
+
+	@Override
+	public ListRsp<SceneListRsp> getSceneList(PageReqBase req, Integer type) {
+		Page page = req.toPageParam();
+		String nameSearch = req.getPattern();
+		IPage<SceneListRsp> sceneEntityIPage = sceneMapper.pageScene(page, nameSearch, type);
+		sceneEntityIPage.getRecords().forEach(
+				e -> e.setLength(TimeUtil.getIntervalSeconds(e.getCreateTime(), new Date())));
+		return PageUtil.getListResult(sceneEntityIPage);
 	}
 
 	/**
@@ -572,11 +589,11 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 		}
 	}
 
-	private SceneEntity createScene(String topologyId, String topoJson,String instanceId, String userId,
-			Integer instanceType, Integer destroy) {
+	private SceneEntity createScene(String topologyId, String topoJson, String instanceId,
+			String sceneName, String userId, Integer instanceType, Integer destroy) {
 		SceneEntity scene = new SceneEntity();
 		scene.setResourceId(IDGeneratorUtil.getID());
-		scene.setSceneName(IDGeneratorUtil.getID());
+		scene.setSceneName(sceneName);
 		Date startTime = new Date();
 		scene.setStartTime(startTime);
 		Date destroyTime;

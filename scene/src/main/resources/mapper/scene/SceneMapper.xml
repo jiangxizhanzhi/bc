@@ -63,4 +63,23 @@
         <bind name="search" value="'%' + raceId + '%'"/>
         select resource_id from cr_scene where instance_id like #{search}
     </select>
+    <select id="pageScene" resultType="com.cyberpeace.scene.service.bo.res.SceneListRsp">
+        select
+        s.resource_id,
+        s.scene_name,
+        s.instance_type,
+        u.name as user,
+        s.user_id,
+        s.create_time
+        from cr_scene s left join sys_user u on s.user_id=u.resource_id
+        <where>
+            <if test="nameSearch != null and nameSearch != ''">
+                <bind name="pattern" value="'%' + nameSearch + '%'"/>
+                `scene_name` like #{pattern}
+            </if>
+            <if test="type != null">
+                and `instance_type`=#{type}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -2,6 +2,9 @@ package com.cyberpeace.scene.dao.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.scene.service.bo.res.SceneListRsp;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -39,4 +42,5 @@ public interface SceneMapper extends BaseMapper<SceneEntity> {
 
     List<String> selectByRaceId(@Param("raceId") String raceId);
 
+    IPage<SceneListRsp> pageScene(@Param("page") Page page, @Param("nameSearch") String nameSearch, @Param("type") Integer type);
 }

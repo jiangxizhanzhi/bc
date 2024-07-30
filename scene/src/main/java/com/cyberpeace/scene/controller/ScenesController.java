@@ -1,17 +1,21 @@
 package com.cyberpeace.scene.controller;
 
 
-import com.cyberpeace.auth.service.bo.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.auth.constant.OpLogMethodEnum;
 import com.cyberpeace.auth.service.OpLogService;
+import com.cyberpeace.auth.service.bo.UserInfoContext;
+import com.cyberpeace.common.annoations.AdminRequired;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
+import com.cyberpeace.scene.service.bo.res.SceneListRsp;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -76,4 +80,13 @@ public class ScenesController  {
 
         return sceneService.detail(topologyId, instanceId);
     }
+
+	@GetMapping("/list")
+	@ApiOperation(value = "场景列表")
+	@AdminRequired
+	public BaseRsp<ListRsp<SceneListRsp>> getSceneList(@ApiParam PageReqBase req,
+			@ApiParam(value = "场景类型", name = "type") Integer type) {
+        ListRsp<SceneListRsp> res = sceneService.getSceneList(req, type);
+		return new BaseRsp<>(res);
+	}
 }

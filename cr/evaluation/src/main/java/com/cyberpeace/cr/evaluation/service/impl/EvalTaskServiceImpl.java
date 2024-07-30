@@ -212,6 +212,8 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		evalMissionTemplate.setResourceId(taskBo.getResourceId());
 		evalMissionTemplate.setId(taskBo.getId());
 		evalMissionTemplate.setStatus(taskBo.getStatus());
+		evalMissionTemplate.setUpdateTime(null);
+		evalMissionTemplate.setEndTime(null);
 		evalMissionTemplateMapper.insert(evalMissionTemplate);
 
 	}

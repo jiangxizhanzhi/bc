@@ -25,13 +25,16 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalNodeLogMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.service.EvalMissionService;
 import com.cyberpeace.cr.evaluation.service.EvalMissionTemplateService;
+import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
+import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 import com.cyberpeace.cr.evaluation.service.impl.bo.*;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -81,6 +84,9 @@ public class EvalMissionController {
 
     @Autowired
     private CrConstantsConfigMapper crConstantsConfigMapper;
+
+    @Autowired
+    private EvalTaskStepService evalTaskStepService;
 
 
     @ApiOperation("新增实例任务")
@@ -147,6 +153,10 @@ public class EvalMissionController {
     public BaseRsp<EvalMissionTemplateRsp> updateMissionStatus(@RequestBody @Validated UpdateEvalMissionTemplateReq updateEvalMissionReq) {
 
         EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(updateEvalMissionReq.getResourceId());
+
+        // 当前步骤
+        Integer stage = getStage(evalMissionTemplate, updateEvalMissionReq.getTaskId());
+
         Integer templateStatus = evalMissionTemplate.getStatus();
         if(templateStatus.equals(MissionTemplateStatus.FAIL) || templateStatus.equals(MissionTemplateStatus.FINISH)){
             return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
@@ -210,10 +220,47 @@ public class EvalMissionController {
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 evalMissionTemplateMapper.updateById(evalMissionTemplate);
                 evalMissionTemplateLogMapper.insert(evalMissionTemplateLog);
+
+                if(status.equals(MissionTemplateStatus.FINISH) || status.equals(MissionTemplateStatus.FAIL)){
+                    EvalTaskStep evalTaskStep = new EvalTaskStep();
+                    evalTaskStep.setStage(stage);
+                    evalTaskStep.setTaskId(evalMissionTemplate.getTaskId());
+                    evalTaskStep.setEndTime(evalMissionTemplate.getEndTime());
+                    evalTaskStep.setTitle(evalMissionTemplate.getName());
+                    evalTaskStepService.save(evalTaskStep);
+                }
             }
         });
 
         return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
+    }
+
+    private Integer getStage(EvalMissionTemplate evalMissionTemplate, String taskId) {
+        // 获取所有任务，判断当前步骤
+        List<StageData> data = getMissions(null, taskId).getData();
+
+        int steps = 0;
+        for (StageData stageData : data) {
+            for (TaskBo taskBo : stageData.getTaskList()) {
+                if (taskBo.getResourceId().equals(evalMissionTemplate.getResourceId()))
+                    steps = stageData.getTaskList().indexOf(taskBo) + 1;
+            }
+        }
+
+        // 根据当前步骤，判断执行顺序
+        if (steps != 1 && steps != 0) {
+            List<EvalTimeLineContext> finishedSteps = evalTaskStepService.getFinishedSteps(taskId);
+            if (CollectionUtils.isNotEmpty(finishedSteps)) {
+                Integer stage = evalTaskStepService.getTaskStep(finishedSteps.get(finishedSteps.size() - 1).getStepId()).getStage();
+                if (stage != (steps - 1)) {
+                    throw new BusinessException(CrBusinessErrorCode.PRECEDING_STEP_NOT_FINISHED);
+                }
+            } else {
+                throw new BusinessException(CrBusinessErrorCode.PRECEDING_STEP_NOT_FINISHED);
+            }
+        }
+
+        return steps;
     }
 
     private EvalMissionTemplateLog updateMissionLog(String resourceId, String name, String id, Integer status) {

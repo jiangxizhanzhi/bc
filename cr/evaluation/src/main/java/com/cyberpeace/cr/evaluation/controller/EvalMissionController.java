@@ -257,10 +257,10 @@ public class EvalMissionController {
             if (CollectionUtils.isNotEmpty(finishedSteps)) {
                 Integer stage = evalTaskStepService.getTaskStep(finishedSteps.get(finishedSteps.size() - 1).getStepId()).getStage();
                 if (stage != (steps - 1)) {
-                    throw new BusinessException(CrBusinessErrorCode.PRECEDING_STEP_NOT_FINISHED);
+                    throw new BusinessException(CrBusinessErrorCode.PREVIOUS_STEP_WAS_NOT_COMPLETED);
                 }
             } else {
-                throw new BusinessException(CrBusinessErrorCode.PRECEDING_STEP_NOT_FINISHED);
+                throw new BusinessException(CrBusinessErrorCode.PREVIOUS_STEP_WAS_NOT_COMPLETED);
             }
         }
 

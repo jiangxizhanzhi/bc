@@ -500,5 +500,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String ERROR_STAGE_NAME = "101145";
 
+	/**
+	 * 任务导控步骤前序步骤未完成
+	 */
+	public static final String PREVIOUS_STEP_WAS_NOT_COMPLETED = "101146";
+
 	private CrBusinessErrorCode() {}
 }

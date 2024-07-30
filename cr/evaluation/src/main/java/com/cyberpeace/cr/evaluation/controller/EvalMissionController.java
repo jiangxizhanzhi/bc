@@ -93,6 +93,11 @@ public class EvalMissionController {
     @RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_TEMPLATE)
     @PostMapping("/mission/instance")
     public BaseRsp<Boolean> createInstanceMission(@RequestBody @Validated EvalInstanceMissionTemplateReq evalMissionTemplateReq) {
+
+        if (evalMissionTemplateReq.getLimitTime() == null || evalMissionTemplateReq.getLimitTime() <= 0) {
+            throw new BusinessException(CrBusinessErrorCode.LIMITED_TIME_CANNOT_BE_ZERO_OR_LESS_THAN_ZERO);
+        }
+
         String taskId = evalMissionTemplateReq.getTaskId();
         EvalTask evalTask = evalTaskMapper.selectById(taskId);
         String resourceId = IDGeneratorUtil.getID();

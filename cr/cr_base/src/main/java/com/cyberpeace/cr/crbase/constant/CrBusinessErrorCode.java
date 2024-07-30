@@ -505,5 +505,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String PREVIOUS_STEP_WAS_NOT_COMPLETED = "101146";
 
+	/**
+	 * 任务限时不能为零或小于零
+	 */
+	public static final String LIMITED_TIME_CANNOT_BE_ZERO_OR_LESS_THAN_ZERO = "101147";
+
 	private CrBusinessErrorCode() {}
 }

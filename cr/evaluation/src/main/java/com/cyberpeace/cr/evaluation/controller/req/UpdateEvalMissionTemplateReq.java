@@ -12,4 +12,7 @@ public class UpdateEvalMissionTemplateReq extends EvalMissionTemplateReq {
 	@ApiModelProperty("模板id")
 	private String taskId;
 
+	@ApiModelProperty("测评靶场模板id")
+	private String templateId;
+
 }

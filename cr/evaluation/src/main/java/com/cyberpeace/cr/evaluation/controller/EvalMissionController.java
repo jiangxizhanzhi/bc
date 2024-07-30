@@ -155,7 +155,7 @@ public class EvalMissionController {
         EvalMissionTemplate evalMissionTemplate = evalMissionTemplateMapper.selectById(updateEvalMissionReq.getResourceId());
 
         // 当前步骤
-        Integer stage = getStage(evalMissionTemplate, updateEvalMissionReq.getTaskId());
+        Integer stage = getStage(evalMissionTemplate, updateEvalMissionReq.getTaskId(), updateEvalMissionReq.getTemplateId());
 
         Integer templateStatus = evalMissionTemplate.getStatus();
         if(templateStatus.equals(MissionTemplateStatus.FAIL) || templateStatus.equals(MissionTemplateStatus.FINISH)){
@@ -235,16 +235,20 @@ public class EvalMissionController {
         return new BaseRsp<>(evalMissionTemplateService.getMissionTemplate(updateEvalMissionReq.getResourceId()));
     }
 
-    private Integer getStage(EvalMissionTemplate evalMissionTemplate, String taskId) {
+    private Integer getStage(EvalMissionTemplate evalMissionTemplate, String taskId, String templateId) {
         // 获取所有任务，判断当前步骤
-        List<StageData> data = getMissions(null, taskId).getData();
+        List<StageData> data = getMissions(templateId, taskId).getData();
 
         int steps = 0;
+        List<TaskBo> taskBos = new ArrayList<>();
+        // 取出所有任务
         for (StageData stageData : data) {
-            for (TaskBo taskBo : stageData.getTaskList()) {
-                if (taskBo.getResourceId().equals(evalMissionTemplate.getResourceId()))
-                    steps = stageData.getTaskList().indexOf(taskBo) + 1;
-            }
+            taskBos.addAll(stageData.getTaskList());
+        }
+        // 根据所有任务进行排序，不分阶段
+        for (TaskBo taskBo : taskBos) {
+            if (taskBo.getResourceId().equals(evalMissionTemplate.getResourceId()))
+                steps = taskBos.indexOf(taskBo) + 1;
         }
 
         // 根据当前步骤，判断执行顺序
@@ -492,10 +496,7 @@ public class EvalMissionController {
         List<EvalMissionTemplate> tmp = new ArrayList<>();
         List<StageData> collect = stageList.stream().map(stageData -> {
             List<TaskBo> taskList = stageData.getTaskList();
-            long count = taskList.stream().filter(taskBo -> taskBo.getStatus() != null && (taskBo.getStatus().equals(MissionTemplateStatus.FAIL) || taskBo.getStatus().equals(MissionTemplateStatus.FINISH))).count();
-            if(count == taskList.size()){
-                stageData.setStageStatus(MissionTemplateStatus.START);
-            }
+
             List<TaskBo> taskRes = new ArrayList<>();
             for (TaskBo task : taskList) {
                 String resourceId = task.getResourceId();
@@ -523,6 +524,10 @@ public class EvalMissionController {
                     task.setOvertimeStatus(MissionTemplateStatus.OVERTIME);
                 }
                 taskRes.add(task);
+            }
+            long count = taskRes.stream().filter(taskBo -> taskBo.getStatus() != null && (taskBo.getStatus().equals(MissionTemplateStatus.FAIL) || taskBo.getStatus().equals(MissionTemplateStatus.FINISH))).count();
+            if(count == taskRes.size()){
+                stageData.setStageStatus(MissionTemplateStatus.START);
             }
             stageData.setTaskList(taskRes);
             return stageData;

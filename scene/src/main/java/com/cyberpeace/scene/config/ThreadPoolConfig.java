@@ -20,7 +20,7 @@ public class ThreadPoolConfig {
 
     @Bean
     public SceneThreadPoolExecutor threadPoolSceneExecutor(MyWebSocketHandler webSocketHandler) {
-        SceneThreadPoolExecutor sceneThreadPoolExecutor = new SceneThreadPoolExecutor(3, Math.max(Runtime.getRuntime().availableProcessors(), 4), 1,
+        SceneThreadPoolExecutor sceneThreadPoolExecutor = new SceneThreadPoolExecutor(1, 1, 1,
                 TimeUnit.MINUTES, new LinkedBlockingQueue<>());
         sceneThreadPoolExecutor.setWebSocketHandler(webSocketHandler);
         return sceneThreadPoolExecutor;

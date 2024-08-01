@@ -250,7 +250,9 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
                 for (EvalCloudTemplateDumpReq resource : resources) {
 //					2.1步骤信息处理
                     List<String> stepIds = resource.getStepIds();
-                    evalStepTemplateService.deleteStep(stepIds);
+                    if(stepIds.size()>0){
+                        evalStepTemplateService.deleteStep(stepIds);
+                    }
 
                     List<EvalStepTemplateListRsp> stepList = resource.getStepList();
                     List<String> newStepId = stepList.stream()

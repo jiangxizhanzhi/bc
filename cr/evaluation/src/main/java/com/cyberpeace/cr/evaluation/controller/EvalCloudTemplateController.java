@@ -1,9 +1,16 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.ZipUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.resource.BatchDumpReq;
 import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.service.*;
@@ -11,10 +18,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.exception.ZipException;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -68,4 +82,45 @@ public class EvalCloudTemplateController {
 		return new BaseRsp<>(evalCloudTemplateService.getCloudTemplateEnum());
 	}
 
+	@ApiOperation("批量导出场景模板")
+	@PostMapping("/batchDump")
+	public void batchDump(HttpServletResponse response, @RequestBody BatchDumpReq dumpReq) {
+
+		List<String> templateIds = dumpReq.getIds();
+		// 1. generate dump file
+		String tempDir = ZipUtil.generatePath();
+		try {
+			String zipPath = evalCloudTemplateService.makeDumpFile(templateIds, tempDir);
+			// 2. generate file response
+			File zip = new File(zipPath);
+			FileUtil.setResponse(zip, false, response);
+		} catch (Exception e) {
+			log.error("failed to dump business template", e);
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_DUMP_TEMPLATE);
+		} finally {
+			// 3. delete temp dir
+			if (!FileUtil.deleteDir(new File(tempDir))) {
+				log.error("failed to remove temp dir :{}", tempDir);
+			}
+		}
+	}
+
+	@ApiOperation("批量导入场景模板")
+	@PutMapping("/batchLoad")
+	public BaseRsp<Boolean> batchLoad(@RequestParam("file") MultipartFile file)
+			throws IOException, ZipException {
+
+		FileUtil.validateSuffix(file, FileSunffixConstant.ZIP.getDesc());
+		// 1. save file to temp dir
+		File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+		// 2. unzip file
+		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+		// 3. load resources
+		evalCloudTemplateService.batchLoad(unZipPath);
+		// 4. delete temp dir
+		if (!FileUtil.deleteDir(new File(unZipPath))) {
+			log.error("failed to delete temp dir");
+		}
+		return new BaseRsp<>();
+	}
 }

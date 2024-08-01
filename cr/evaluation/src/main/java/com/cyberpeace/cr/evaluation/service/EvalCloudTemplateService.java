@@ -10,6 +10,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalCloudTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestTemplateListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalCloudTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface EvalCloudTemplateService extends IService<EvalCloudTemplate> {
@@ -28,4 +29,7 @@ public interface EvalCloudTemplateService extends IService<EvalCloudTemplate> {
 
 	ListRsp<EvalTestTemplateListRsp> templateList(EvalTestListReq evalTestListReq);
 
+    String makeDumpFile(List<String> templateIds, String tempDir) throws IOException;
+
+	Boolean batchLoad(String unZipPath);
 }

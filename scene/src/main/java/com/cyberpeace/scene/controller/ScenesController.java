@@ -2,6 +2,7 @@ package com.cyberpeace.scene.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
@@ -15,6 +16,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.scene.controller.req.SceneStartReq;
 import com.cyberpeace.scene.service.SceneService;
 import com.cyberpeace.scene.service.TopologyService;
+import com.cyberpeace.scene.service.bo.req.SceneDestroyBatchReq;
 import com.cyberpeace.scene.service.bo.res.SceneListRsp;
 
 import io.swagger.annotations.Api;
@@ -72,6 +74,19 @@ public class ScenesController  {
         sceneService.destroyScene(resourceId);
         return new BaseRsp<>();
     }
+
+	@PostMapping("/destroy")
+	@ApiOperation(value = "批量销毁场景")
+	public BaseRsp<Void> destroyBatch(@RequestBody SceneDestroyBatchReq req) {
+		if (!CollectionUtils.isEmpty(req.getTargetNames())) {
+			opLogService.save(null, OpLogMethodEnum.STOP.getType(),
+					String.join(",", req.getTargetNames()), "关闭场景");
+		}
+		for (String id : req.getIds()) {
+			sceneService.destroyScene(id);
+		}
+		return new BaseRsp<>();
+	}
 
     @GetMapping("/detail")
     @ApiOperation(value = "场景详情")

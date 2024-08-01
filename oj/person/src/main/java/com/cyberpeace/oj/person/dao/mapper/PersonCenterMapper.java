@@ -45,12 +45,13 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
      * @return
      */
     IPage<PersonNote> selectNoteByUser(
-            Page<PersonNote> page,
+            @Param("page") Page<PersonNote> page,
             @Param("userId") String userId,
             @Param("noteType") Integer noteType,
             @Param("businessIds") List<String> businessIds,
             @Param("businessType") Integer businessType,
-            @Param("practiceType") Integer practiceType);
+            @Param("practiceType") Integer practiceType,
+            @Param("showOp") boolean showOp);
 
 
     /**

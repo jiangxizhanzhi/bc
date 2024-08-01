@@ -118,8 +118,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                                        Integer businessType, Integer practiceType) {
         Integer noteType = Note.NoteType.NOTE.getCode();
         List<String> resourceIds = new ArrayList<>();
+        boolean showOp = dictInfoService.isOperationOpen();
         IPage<PersonNote> iPage = personCenterMapper.selectNoteByUser(page, userId, noteType,
-                resourceIds, businessType, practiceType);
+                resourceIds, businessType, practiceType, showOp);
         return iPage.convert(this::noteToBo);
     }
 
@@ -128,20 +129,25 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
      * @param userId 用户ID
      * @return
      */
-    @Override
-    public IPage<PersonCollection> pageCollections(Page page, String userId, String type,
-                                                   AuthContext authContext, Integer practiceType) {
-        List<String> resourceIds = new ArrayList<>();
-        if (null != authContext) {
-            List<String> courseIds = courseMapper.selectByAuth(authContext);
-            List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
-            resourceIds.addAll(publicCourses);
-            resourceIds.addAll(personCenterMapper.selectLessonByAuth(publicCourses));
-            resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
-            resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
-        }
-        return personCenterMapper.selectByUser(page, userId, type, resourceIds, practiceType);
-    }
+	@Override
+	public IPage<PersonCollection> pageCollections(Page page, String userId, String type,
+			AuthContext authContext, Integer practiceType) {
+		List<String> resourceIds = new ArrayList<>();
+		if (null != authContext) {
+			List<String> courseIds = courseMapper.selectByAuth(authContext);
+			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
+			resourceIds.addAll(publicCourses);
+			resourceIds.addAll(personCenterMapper.selectLessonByAuth(publicCourses));
+			resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
+			if (dictInfoService.isOperationOpen()) {
+				resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
+			}
+		}
+		if (resourceIds.isEmpty()) {
+			return page;
+		}
+		return personCenterMapper.selectByUser(page, userId, type, resourceIds, practiceType);
+	}
 
     @Override
     public BaseRsp<StudyRecord> studyRecords(String userId, AuthContext authContext) {

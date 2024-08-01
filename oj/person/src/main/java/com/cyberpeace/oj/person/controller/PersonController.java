@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -37,6 +37,7 @@ import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.model.*;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.DictInfoService;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
@@ -113,6 +114,9 @@ public class PersonController {
 
     @Autowired
     private RemoteAdService remoteAdService;
+	
+	@Autowired
+	private DictInfoService dictInfoService;
 
 
     @ApiOperation("课程学习统计")
@@ -270,13 +274,14 @@ public class PersonController {
 				pageReq.getBusinessType(),
 				pageReq.getPracticeType());
 
-		// 查询运维题的比赛id
-		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-		Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
-				.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
-		comments.getRecords().forEach(
-				note -> note.setRaceId(opsMap.getOrDefault(note.getBusinessId(), null)));
-
+		if(dictInfoService.isOperationOpen()){
+			// 查询运维题的比赛id
+			List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
+			Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
+					.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
+			comments.getRecords().forEach(
+					note -> note.setRaceId(opsMap.getOrDefault(note.getBusinessId(), null)));
+		}
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 
@@ -294,13 +299,15 @@ public class PersonController {
 
 		IPage<PersonCollection> collections = personCenterService.pageCollections(page, userId,
 				type, authContext, practiceType);
-
-		// 查询运维题的比赛id
-		List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-		Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
-				.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
-		collections.getRecords().forEach(
-				collect -> collect.setRaceId(opsMap.getOrDefault(collect.getResourceId(), null)));
+		
+		if (dictInfoService.isOperationOpen()) {
+			// 查询运维题的比赛id
+			List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
+			Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
+					.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
+			collections.getRecords().forEach(collect -> collect
+					.setRaceId(opsMap.getOrDefault(collect.getResourceId(), null)));
+		}
 
 		return new BaseRsp<>(PageUtil.getListResult(collections));
 	}

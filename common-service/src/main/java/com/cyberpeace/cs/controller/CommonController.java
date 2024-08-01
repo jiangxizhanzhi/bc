@@ -2,16 +2,12 @@ package com.cyberpeace.cs.controller;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.cs.controller.res.CodeNameRsp;
-import com.cyberpeace.cs.dao.entity.ConstantsConfig;
-import com.cyberpeace.cs.service.ConstantsService;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,12 +24,17 @@ import com.cyberpeace.cs.constant.UploadAttachmentPermission;
 import com.cyberpeace.cs.constant.UploadImagePermission;
 import com.cyberpeace.cs.controller.req.AdMdUploadReq;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
+import com.cyberpeace.cs.controller.res.CodeNameRsp;
+import com.cyberpeace.cs.dao.entity.ConstantsConfig;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.ConstantsService;
+import com.cyberpeace.cs.service.DictInfoService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "公共服务接口")
@@ -50,6 +51,9 @@ public class CommonController {
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private DictInfoService dictInfoService;
 
 	private String MD_UPLOAD_NAME_LEN;
 
@@ -193,6 +197,16 @@ public class CommonController {
 	@GetMapping("/constants_config")
 	public BaseRsp<Object> getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
 		List<ConstantsConfig> constants = constantsService.getByType(type);
+		if (!dictInfoService.isOperationOpen()) {
+			if (ConstantsConfig.ConstantsType.COLLECTION_TYPE.getCode().equals(type)) {
+				constants = constants.stream().filter(c -> c.getCode() != 2)
+						.collect(Collectors.toList());
+			}
+			if (type == 40) {
+				constants = constants.stream().filter(c -> c.getCode() != 3)
+						.collect(Collectors.toList());
+			}
+		}
 		List<CodeNameRsp> rsp = StreamApiUtils.map(constants,
 				constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName()));
 		return new BaseRsp<>(rsp);

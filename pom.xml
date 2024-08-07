@@ -83,6 +83,7 @@
         <module>oj</module>
         <module>common-service</module>
         <module>situation</module>
+        <module>iov</module>
     </modules>
 
     <dependencyManagement>

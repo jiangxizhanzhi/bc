@@ -55,7 +55,8 @@ public class CrConstantsConfig implements SelectI18nName {
 		MESSAGE_MODULE_TYPE(31, "留言主题类型"),
 		STUDY_STATISTICS(37,"学习统计类型难度"),
 		EVAL_STATUS(38, "靶场测评评估状态"),
-		WEB_PRACTICE_STATUS(39, "三种练习状态");
+		WEB_PRACTICE_STATUS(39, "三种练习状态"), VEHICLE_TYPE(41, "车型"), AREA_TYPE(42,
+				"域类型"), ECU_UNIT(43, "ECU单元"), IOV_INTERFACE(44, "接口类型");
 
 		@Getter
 		private final Integer code;

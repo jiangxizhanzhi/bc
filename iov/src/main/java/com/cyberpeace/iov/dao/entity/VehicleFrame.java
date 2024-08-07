@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @TableName("iov_frame")
-public class Frame extends BaseTable {
+public class VehicleFrame extends BaseTable {
 
 	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
 	private String resourceId;
@@ -38,4 +38,9 @@ public class Frame extends BaseTable {
 	 * 节点规模
 	 */
 	private Integer scale;
+
+	/**
+	 * 拓扑
+	 */
+	private String topo;
 }

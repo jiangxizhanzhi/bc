@@ -1,0 +1,90 @@
+package com.cyberpeace.iov.service.impl;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.iov.dao.entity.VehicleFrame;
+import com.cyberpeace.iov.dao.mapper.VehicleFrameMapper;
+import com.cyberpeace.iov.service.VehicleFrameService;
+import com.cyberpeace.iov.service.bo.frame.VehicleFrameAddReq;
+import com.cyberpeace.iov.service.bo.frame.VehicleFrameDetailBo;
+import com.cyberpeace.iov.service.bo.frame.VehicleFrameListBo;
+import com.cyberpeace.iov.service.bo.frame.VehicleFrameModifyReq;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
+public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, VehicleFrame> implements VehicleFrameService {
+
+	@Autowired
+	private VehicleFrameMapper vehicleFrameMapper;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
+
+	@Override
+	public ListRsp<VehicleFrameListBo> pageFrame(PageReqBase req) {
+		Page page = req.toPageParam();
+		IPage<VehicleFrameListBo> iPage = vehicleFrameMapper.page(page, req.getPattern());
+		List<String> userIds = iPage.getRecords().stream().map(VehicleFrameListBo::getCreator)
+				.collect(Collectors.toList());
+		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
+		iPage.getRecords()
+				.forEach(r -> r.setCreatorName(userNameMap.getOrDefault(r.getCreator(), "")));
+		return PageUtil.getListResult(iPage);
+
+	}
+
+	@Override
+	public void create(VehicleFrameAddReq req) {
+		VehicleFrame frame = req2Entity(req);
+		this.save(frame);
+	}
+
+	@Override
+	public void modify(VehicleFrameModifyReq req) {
+		VehicleFrame frame = req2Entity(req);
+		frame.setResourceId(req.getResourceId());
+		this.updateById(frame);
+	}
+
+	@Override
+	public void deleteByIds(List<String> ids) {
+		vehicleFrameMapper.deleteBatchIds(ids);
+	}
+
+	@Override
+	public VehicleFrameDetailBo getDetail(String resourceId) {
+		VehicleFrame frame = this.getById(resourceId);
+		VehicleFrameDetailBo bo = BeanUtils.copy(frame, VehicleFrameDetailBo.class);
+		bo.setCreatorName(remoteUserService.getById(bo.getCreator()).getName());
+		return bo;
+	}
+
+	private VehicleFrame req2Entity(VehicleFrameAddReq req) {
+		VehicleFrame frame = new VehicleFrame();
+		frame.setCreator(UserInfoContext.getUserContext().getUserId());
+		frame.setName(req.getName());
+		frame.setDescription(req.getDescription());
+		frame.setModel(req.getModel());
+		frame.setScale(req.getScale());
+		frame.setTopo(req.getTopo());
+
+		return frame;
+	}
+
+}

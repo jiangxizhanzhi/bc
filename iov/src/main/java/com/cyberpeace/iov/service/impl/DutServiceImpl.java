@@ -18,6 +18,7 @@ import com.cyberpeace.iov.dao.mapper.DutMapper;
 import com.cyberpeace.iov.service.DutService;
 import com.cyberpeace.iov.service.bo.dut.DutAddReq;
 import com.cyberpeace.iov.service.bo.dut.DutListBo;
+import com.cyberpeace.iov.service.bo.dut.EnableReq;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,6 +52,11 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 	public List<DutListBo> listDuts(Integer model, Integer area) {
 		List<DutListBo> res = this.getBaseMapper().listByModelAndArea(model, area);
 		return res;
+	}
+
+	@Override
+	public void enable(EnableReq req) {
+		dutMapper.enable(req.getResourceId(), req.getEnable());
 	}
 
 	private Dut req2Entity(DutAddReq req) {

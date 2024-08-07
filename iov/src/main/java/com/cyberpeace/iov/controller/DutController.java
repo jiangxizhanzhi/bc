@@ -13,6 +13,7 @@ import com.cyberpeace.cr.crbase.service.context.IdListReq;
 import com.cyberpeace.iov.service.DutService;
 import com.cyberpeace.iov.service.bo.dut.DutAddReq;
 import com.cyberpeace.iov.service.bo.dut.DutListBo;
+import com.cyberpeace.iov.service.bo.dut.EnableReq;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -57,5 +58,12 @@ public class DutController {
 	public BaseRsp deleteBatch(@RequestBody IdListReq req) {
 		dutService.deleteByIds(req.getIds());
 		return new BaseRsp();
+	}
+
+	@ApiOperation("启用或禁用")
+	@PostMapping("/enable")
+	public BaseRsp<Boolean> enable(@RequestBody EnableReq req) {
+		dutService.enable(req);
+		return new BaseRsp<>(req.getEnable());
 	}
 }

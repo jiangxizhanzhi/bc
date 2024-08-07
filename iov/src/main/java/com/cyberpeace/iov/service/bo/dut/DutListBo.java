@@ -30,7 +30,7 @@ public class DutListBo {
 	@ApiModelProperty(value = "接口参数")
 	private String interfaceParam;
 
-	@ApiModelProperty(value = "状态")
+	@ApiModelProperty(value = "状态, 1=在线，2=离线")
 	private Integer status;
 
 	@ApiModelProperty(value = "是否启用")

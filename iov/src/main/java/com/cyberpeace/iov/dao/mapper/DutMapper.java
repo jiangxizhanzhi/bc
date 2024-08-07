@@ -20,4 +20,6 @@ public interface DutMapper extends BaseMapper<Dut> {
 
 	IPage<DutListBo> page(@Param("page") Page page, @Param("model") Integer model,
 			@Param("area") Integer area, @Param("status") Integer status);
+
+	void enable(@Param("resourceId") String resourceId, @Param("enable") Boolean enable);
 }

@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.iov.dao.entity.Dut;
 import com.cyberpeace.iov.service.bo.dut.DutAddReq;
 import com.cyberpeace.iov.service.bo.dut.DutListBo;
+import com.cyberpeace.iov.service.bo.dut.EnableReq;
 
 public interface DutService extends IService<Dut> {
 
@@ -18,4 +19,6 @@ public interface DutService extends IService<Dut> {
 	void deleteByIds(List<String> ids);
 
 	List<DutListBo> listDuts(Integer model, Integer area);
+
+	void enable(EnableReq req);
 }

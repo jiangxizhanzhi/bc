@@ -71,6 +71,7 @@
         <oj.practice.version>0.0.1-SNAPSHOT</oj.practice.version>
         <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
         <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
+        <iov.version>0.0.1-SNAPSHOT</iov.version>
     </properties>
 
     <modules>

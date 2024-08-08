@@ -1,6 +1,8 @@
 package com.cyberpeace.cs.controller;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -22,7 +24,6 @@ import com.cyberpeace.common.model.ExtractBase;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.cs.constant.UploadAttachmentPermission;
 import com.cyberpeace.cs.constant.UploadImagePermission;
 import com.cyberpeace.cs.controller.req.AdMdUploadReq;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
@@ -91,18 +92,8 @@ public class CommonController {
 	@PostMapping("/attachment_upload")
 	public BaseRsp<AttachmentBo> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
 
-		// 获取需要校验的数据
-		UploadAttachmentPermission filePermission = EnumUtils
-				.getEnumByCode(fileCommonUploadReq.getType(), UploadAttachmentPermission.class);
-		if (null == filePermission) {
-			log.error("Type not found! type=[{}]", fileCommonUploadReq.getType());
-			throw new UnauthorizedException();
-		}
-
 		// 校验权限和文件
-		filePermission.validatePermission(false);
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
-		filePermission.validateFileSuffix(fileName);
 
 		validateFileNameLen(fileName);
 		// 文件上传

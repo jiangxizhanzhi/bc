@@ -3,7 +3,7 @@
 <mapper namespace="com.cyberpeace.iov.dao.mapper.DutMapper">
     <update id="enable">
         update iov_dut
-        set enabled = #{enable}
+        set status = #{code}
         where resource_id = #{resourceId}
     </update>
     <select id="page" resultType="com.cyberpeace.iov.service.bo.dut.DutListBo">

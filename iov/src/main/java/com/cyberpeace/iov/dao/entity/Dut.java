@@ -56,9 +56,4 @@ public class Dut extends BaseTable {
 	 */
 	private Integer status;
 
-	/**
-	 * 是否启用
-	 */
-	private Boolean enabled;
-
 }

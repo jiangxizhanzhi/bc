@@ -59,7 +59,8 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 
 	@Override
 	public void enable(EnableReq req) {
-		dutMapper.enable(req.getResourceId(), req.getEnable());
+		Integer code = Boolean.TRUE.equals(req.getEnable()) ? DutStatus.ONLINE : DutStatus.OFFLINE;
+		dutMapper.enable(req.getResourceId(), code);
 	}
 
 	@Override
@@ -79,7 +80,6 @@ public class DutServiceImpl extends ServiceImpl<DutMapper, Dut> implements DutSe
 	private Dut req2Entity(DutAddReq req) {
 		Dut dut = BeanUtils.copy(req, Dut.class);
 		dut.setStatus(DutStatus.ONLINE);
-		dut.setEnabled(true);
 		return dut;
 	}
 

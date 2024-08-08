@@ -32,7 +32,4 @@ public class DutListBo {
 
 	@ApiModelProperty(value = "状态, 1=在线，2=离线")
 	private Integer status;
-
-	@ApiModelProperty(value = "是否启用")
-	private Boolean enabled;
 }

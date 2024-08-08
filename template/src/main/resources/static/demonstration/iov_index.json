@@ -1,0 +1,60 @@
+{
+  "tactic":[
+    {
+      "name": "Web安全",
+      "percent": 95
+    },
+    {
+      "name": "通信安全",
+      "percent": 67
+    },
+    {
+      "name": "系统安全",
+      "percent": 36
+    },
+    {
+      "name": "操作安全",
+      "percent": 28
+    },
+    {
+      "name": "平台安全",
+      "percent": 15
+    }
+  ],
+  "threat": [
+    {
+      "name": "通信安全",
+      "percent": 28
+    },
+    {
+      "name": "系统安全",
+      "percent": 25
+    },
+    {
+      "name": "操作安全",
+      "percent": 22
+    },
+    {
+      "name": "平台安全",
+      "percent": 17
+    },
+    {
+      "name": "Web安全",
+      "percent": 8
+    }
+  ],
+  "vuln": [
+    {
+      "name": "LEVEL1",
+      "percent": 70
+    },
+    {
+      "name": "LEVEL2",
+      "percent": 20
+    },
+    {
+      "name": "LEVEL3",
+      "percent": 10
+    }
+  ]
+}

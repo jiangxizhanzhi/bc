@@ -13,6 +13,7 @@ import com.cyberpeace.cr.crbase.service.context.IdListReq;
 import com.cyberpeace.iov.service.DutService;
 import com.cyberpeace.iov.service.bo.dut.DutAddReq;
 import com.cyberpeace.iov.service.bo.dut.DutListBo;
+import com.cyberpeace.iov.service.bo.dut.DutModifyReq;
 import com.cyberpeace.iov.service.bo.dut.EnableReq;
 
 import io.swagger.annotations.Api;
@@ -53,6 +54,13 @@ public class DutController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("编辑被测件")
+	@PutMapping("")
+	public BaseRsp update(@RequestBody DutModifyReq req) {
+		dutService.modify(req);
+		return new BaseRsp();
+	}
+
 	@ApiOperation("删除被测件")
 	@DeleteMapping("")
 	public BaseRsp deleteBatch(@RequestBody IdListReq req) {
@@ -65,5 +73,13 @@ public class DutController {
 	public BaseRsp<Boolean> enable(@RequestBody EnableReq req) {
 		dutService.enable(req);
 		return new BaseRsp<>(req.getEnable());
+	}
+
+	@ApiOperation("被测件详情")
+	@GetMapping("")
+	public BaseRsp<DutListBo>
+			getDetail(@ApiParam(value = "被测件id", name = "resource_id") String resource_id) {
+		DutListBo bo = dutService.getDetail(resource_id);
+		return new BaseRsp<>(bo);
 	}
 }

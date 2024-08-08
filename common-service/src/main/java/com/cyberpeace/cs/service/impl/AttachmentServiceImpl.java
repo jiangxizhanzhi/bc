@@ -286,4 +286,21 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return attachment != null && new File(ConfigUtil.getContextProperty("cr.local.upload.path")
 				+ "/" + attachment.getFilePath()).exists();
 	}
+
+	@Override
+	public AttachmentBo getOneById(String attachmentId) {
+		AttachmentBo bo = new AttachmentBo();
+		if(StringUtils.isBlank(attachmentId)){
+			return bo;
+		}
+		Attachment attachment = attachmentMapper.selectById(attachmentId);
+		if (null == attachment) {
+			return bo;
+		}
+		bo.setResourceId(attachment.getResourceId());
+		bo.setFileName(attachment.getFileName());
+		bo.setFilePath(ConfigUtil.getContextProperty("cr.local.upload.path")
+				+ "/" + attachment.getFilePath());
+		return bo;
+	}
 }

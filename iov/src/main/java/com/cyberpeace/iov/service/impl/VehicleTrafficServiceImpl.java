@@ -12,10 +12,11 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.iov.dao.entity.VehicleTraffic;
 import com.cyberpeace.iov.dao.mapper.VehicleTrafficMapper;
 import com.cyberpeace.iov.service.VehicleTrafficService;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameListBo;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficAddReq;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficDetailBo;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficListBo;
@@ -30,10 +31,13 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 	@Autowired
 	private VehicleTrafficMapper vehicleTrafficMapper;
 
+	@Autowired
+	private AttachmentService attachmentService;
+
 	@Override
 	public ListRsp<VehicleTrafficListBo> pageTraffic(PageReqBase req) {
 		Page page = req.toPageParam();
-		IPage<VehicleFrameListBo> iPage = vehicleTrafficMapper.page(page, req.getPattern());
+		IPage<VehicleTrafficListBo> iPage = vehicleTrafficMapper.page(page, req.getPattern());
 		return PageUtil.getListResult(iPage);
 	}
 
@@ -59,6 +63,9 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 	public VehicleTrafficDetailBo getDetail(String resourceId) {
 		VehicleTraffic frame = this.getById(resourceId);
 		VehicleTrafficDetailBo bo = BeanUtils.copy(frame, VehicleTrafficDetailBo.class);
+		AttachmentBo attachment = attachmentService.getOneById(bo.getBlfFile());
+		bo.setBlfFileName(attachment.getFileName());
+		bo.setBlfFilePath(attachment.getFilePath());
 		return bo;
 	}
 

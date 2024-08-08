@@ -3,6 +3,8 @@ package com.cyberpeace.iov.service.bo.traffic;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class VehicleTrafficListBo {
 
@@ -19,6 +21,6 @@ public class VehicleTrafficListBo {
 	private String description;
 
 	@ApiModelProperty(value = "创建时间")
-	private String createTime;
+	private Date createTime;
 
 }

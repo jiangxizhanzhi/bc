@@ -85,4 +85,6 @@ public interface AttachmentService extends IService<Attachment> {
 	 */
 	Boolean isExist(String attachmentId);
 
+	AttachmentBo getOneById(String attachmentId);
+
 }

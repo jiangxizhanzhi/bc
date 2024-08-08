@@ -2,9 +2,11 @@ package com.cyberpeace.cs.controller;
 
 import javax.validation.Valid;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +43,7 @@ public class SceneController {
 
 	@Autowired
 	private LocalSceneService localSceneService;
+	private BaseRsp<Boolean> booleanBaseRsp;
 
 	@PostMapping("/node/snapshot")
 	@ApiOperation("场景节点打快照")
@@ -115,7 +118,8 @@ public class SceneController {
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
-			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE,
+			MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
 	public BaseRsp<Boolean> stopNode(@Valid @RequestBody NodeOpsReq req) {
 		Boolean result = localSceneService.stopNode(req.getMpSceneId(), req.getNodeId());
 		return new BaseRsp<>(result);

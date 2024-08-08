@@ -15,9 +15,6 @@ public class VehicleFrameAddReq {
 	@ApiModelProperty(value = "拓扑描述")
 	private String description;
 
-	@ApiModelProperty(value = "拓扑规模")
-	private Integer scale;
-
 	@ApiModelProperty(value = "拓扑")
 	private String topo;
 }

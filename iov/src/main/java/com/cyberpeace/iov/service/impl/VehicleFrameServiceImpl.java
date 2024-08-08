@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,6 +15,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.iov.dao.entity.VehicleFrame;
@@ -81,10 +83,20 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 		frame.setName(req.getName());
 		frame.setDescription(req.getDescription());
 		frame.setModel(req.getModel());
-		frame.setScale(req.getScale());
+		frame.setScale(getScale(req.getTopo()));
 		frame.setTopo(req.getTopo());
 
 		return frame;
+	}
+
+	private int getScale(String topo) {
+		try {
+			JSONArray array = JsonUtil.stringToArray(topo);
+			return array.size();
+		} catch (Exception e) {
+			log.error("invalid topo json string: {}", topo);
+			return 0;
+		}
 	}
 
 }

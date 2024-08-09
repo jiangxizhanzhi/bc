@@ -45,16 +45,16 @@
   ],
   "vuln": [
     {
-      "name": "LEVEL1",
-      "percent": 70
+      "name": "LEVEL3",
+      "percent": 10
     },
     {
       "name": "LEVEL2",
       "percent": 20
     },
     {
-      "name": "LEVEL3",
-      "percent": 10
+      "name": "LEVEL1",
+      "percent": 70
     }
   ]
 }

@@ -1,5 +1,7 @@
 package com.cyberpeace.iov.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -10,8 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.iov.service.IovIndexService;
+import com.cyberpeace.iov.service.bo.index.ResourceCountBo;
 import com.cyberpeace.iov.service.bo.index.RightDemo;
-import com.cyberpeace.iov.service.bo.index.TargetCountBo;
+import com.cyberpeace.iov.service.bo.index.TaskBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,22 +37,16 @@ public class IndexController {
 
 	@ApiOperation("任务列表")
 	@GetMapping("/task")
-	public BaseRsp getTaskList() {
-
-		return new BaseRsp();
-	}
-
-	@ApiOperation("靶标数量")
-	@GetMapping("/target")
-	public BaseRsp<TargetCountBo> getTargetCount() {
-		TargetCountBo bo = iovIndexService.getTargetCount();
-		return new BaseRsp(bo);
+	public BaseRsp<List<TaskBo>> getTaskList() {
+		List<TaskBo> res = iovIndexService.getTaskList();
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("资源统计")
 	@GetMapping("/resource")
-	public BaseRsp getResourceCount() {
-		return new BaseRsp();
+	public BaseRsp<ResourceCountBo> getResourceCount() {
+		ResourceCountBo bo = iovIndexService.getResourceCount();
+		return new BaseRsp<>(bo);
 	}
 
 }

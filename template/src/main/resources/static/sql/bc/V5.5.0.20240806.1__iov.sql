@@ -10,7 +10,6 @@ CREATE TABLE `iov_dut`
     `interface_type`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '业务id',
     `interface_param` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '业务id',
     `status`          tinyint                                                 NOT NULL COMMENT '状态',
-    `enabled`         tinyint                                                 NOT NULL COMMENT '是否可用',
     `create_time`     datetime                                                NULL DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                                NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,

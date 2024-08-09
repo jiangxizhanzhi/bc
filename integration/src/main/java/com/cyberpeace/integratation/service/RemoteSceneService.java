@@ -285,5 +285,5 @@ public interface RemoteSceneService {
 	 */
 	JSONObject getByArea(String sceneId, String areaId);
 
-	JSONObject getResourceStatistics();
+	ResourceStatisticsRsp getResourceStatistics();
 }

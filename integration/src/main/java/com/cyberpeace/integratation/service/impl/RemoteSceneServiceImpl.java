@@ -668,8 +668,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public JSONObject getResourceStatistics() {
-		return HttpClientUtil.rawGet(RESOURCE_STATISTICS, JSONObject.class);
+	public ResourceStatisticsRsp getResourceStatistics() {
+		return HttpClientUtil.rawGet(RESOURCE_STATISTICS, ResourceStatisticsRsp.class);
 	}
 
 }

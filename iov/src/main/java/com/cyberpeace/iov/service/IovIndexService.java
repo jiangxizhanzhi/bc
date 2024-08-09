@@ -1,14 +1,25 @@
 package com.cyberpeace.iov.service;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
+import com.cyberpeace.iov.service.bo.index.ResourceCountBo;
 import com.cyberpeace.iov.service.bo.index.RightDemo;
-import com.cyberpeace.iov.service.bo.index.TargetCountBo;
+import com.cyberpeace.iov.service.bo.index.TaskBo;
 
 public interface IovIndexService {
 
 	RightDemo getDemo(HttpServletRequest request);
 
-	TargetCountBo getTargetCount();
+	ResourceCountBo getResourceCount();
+
+	/**
+	 * 获取tasklist
+	 * 单兵 + 团队
+	 *
+	 * @return {@code List<TaskBo> }
+	 */
+	List<TaskBo> getTaskList();
 
 }

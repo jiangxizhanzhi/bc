@@ -39,4 +39,6 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 * @return
 	 */
 	Boolean existByName(@Param("name") String name);
+
+	TeamRoom selectOnlyOne();
 }

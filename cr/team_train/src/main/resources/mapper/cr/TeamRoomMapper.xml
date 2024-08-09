@@ -148,6 +148,9 @@
     <select id="existByName" resultType="java.lang.Boolean">
         select case when exists(select 1 from cr_team_room where name = #{name}) then 1 else 0 end as result;
     </select>
+    <select id="selectOnlyOne" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">
+        select * from cr_team_room limit 1;
+    </select>
 
 
 </mapper>

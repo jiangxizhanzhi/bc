@@ -22,6 +22,6 @@
     </select>
     <select id="listByModelAndArea" resultType="com.cyberpeace.iov.service.bo.dut.DutListBo">
         select * from iov_dut
-        where model = #{model} and area = #{area} and status=1 and enabled=1;
+        where model = #{model} and area = #{area} and status = 1;
     </select>
 </mapper>

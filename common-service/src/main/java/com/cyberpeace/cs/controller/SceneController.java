@@ -106,7 +106,8 @@ public class SceneController {
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
-			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE,
+			MenuConstant.WEB_CR_EVALUATION}, logical = Logical.OR)
 	public BaseRsp<Boolean> startNode(@Valid @RequestBody NodeOpsReq req) {
 		Boolean result = localSceneService.startNode(req.getMpSceneId(), req.getNodeId());
 		return new BaseRsp<>(result);
@@ -131,7 +132,8 @@ public class SceneController {
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_SINGLE_TRAIN,
-			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE }, logical = Logical.OR)
+			MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE,
+			MenuConstant.WEB_CR_EVALUATION }, logical = Logical.OR)
 	public BaseRsp<Boolean> restartNode(@Valid @RequestBody NodeOpsReq req) {
 		Boolean result = localSceneService.restartNodeBySceneId(req.getMpSceneId(), req.getNodeId());
 		return new BaseRsp<>(result);

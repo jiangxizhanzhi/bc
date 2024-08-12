@@ -63,6 +63,13 @@ public class HttpClientUtil {
 		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		post.setEntity(entity);
 
+		String authorization = CommonContext.getAuthorization();
+		LOG.info("authorization ==> {}",authorization);
+		if (null != authorization) { // 调用竞赛接口需要
+			LOG.info("set authorization ==> {}",authorization);
+			post.setHeader(WebConstant.AUTHORIZATION_HEADER,  authorization);
+		}
+
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(post, resultType);
 	}
@@ -113,7 +120,7 @@ public class HttpClientUtil {
 
 		String jwt = CommonContext.getAuthorization();
 		if (StringUtils.isNotBlank(jwt)) {
-			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + jwt);
+			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, jwt);
 		}
 
 		// 3、执行实际调用、返回序列化后的结果

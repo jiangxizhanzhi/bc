@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -176,7 +175,6 @@ public class PersonController {
 		// 解出记录表中，不包含运维题，需要从竞赛获取
         List<StudyRecord> studyRecord = personCenterMapper.selectSlovedPractice(userIds);
         Map<String, StudyRecord> map = StreamApiUtils.toMap(studyRecord, StudyRecord::getUserId, s -> s);
-		JSONObject jsonObject = remoteAdService.queryOpsSolvedMap();
 
         int theoryPracticeAllCount = personCenterMapper.selectTheoryPracticeByAuth().size();
         int operationPracticeAllCount = personCenterMapper.selectOperationPracticeByAuth().size();
@@ -184,8 +182,7 @@ public class PersonController {
 		Map<String, JSONObject> userExamPassMap = remoteAdService.examPassList(userIds);
 
         res = userInfos.stream().map(s -> {
-			JSONArray jsonArray = jsonObject.getJSONArray(s.getResourceId());
-			int opsSolved = jsonArray == null ? 0:jsonArray.size();
+			int opsSolved = 0;
 			StudyRecord record = map.get(s.getResourceId());
             PersonStatsBo personStatsBo = new PersonStatsBo();
             if (null != record) {
@@ -193,7 +190,7 @@ public class PersonController {
                 int practiceCount = record.getOperationPracticeCount() + opsSolved;
                 personStatsBo.setOperateCorrectRate(practiceCount * operationPracticeAllCount == 0 ?"0%" : practiceCount*100 / operationPracticeAllCount+"%");
             }else {
-				personStatsBo.setOperateCorrectRate(opsSolved * operationPracticeAllCount == 0 ?"0%" : opsSolved*100 / operationPracticeAllCount+"%");
+				personStatsBo.setOperateCorrectRate("0%");
 			}
 
             if (lessonMap.containsKey(s.getResourceId())) {

@@ -97,12 +97,11 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		// 接口请求
 		JSONObject body = new JSONObject();
 		body.put("user_ids", userIds);
-		JSONArray jsonArray = HttpClientUtil.post(EXAM_PASS_LIST_URL, body, JSONArray.class);
-		JSONObject jsonObject = jsonArray.getJSONObject(0);
+		JSONObject object = HttpClientUtil.post(EXAM_PASS_LIST_URL, body, JSONObject.class);
 		HashMap<String, JSONObject> map = new HashMap<>();
-		for (String key : jsonObject.keySet()) {//key userId
-			JSONObject object = jsonObject.getJSONObject(key);
-			map.put(key, object);
+		for (String key : object.keySet()) {// key userId
+			JSONObject o = object.getJSONObject(key);
+			map.put(key, o);
 		}
 		return map;
 	}

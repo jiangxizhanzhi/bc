@@ -361,8 +361,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         // 过滤综合实操类型
 		if (dictInfoService.isOperationOpen()) {
 			// 运维题历史记录
-			JSONArray adOpsHistoryList = remoteAdService.queryHistoryOpsList();
-			dealAdHistory(adOpsHistoryList, lessonList, StudyHistoryRes.AdEnum.OPS);
 		} else {
 			practiceList = practiceList.stream().filter(p -> p.getBusinessType().equals(1))
 					.collect(Collectors.toList());

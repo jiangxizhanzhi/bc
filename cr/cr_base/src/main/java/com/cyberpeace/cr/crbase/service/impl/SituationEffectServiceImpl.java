@@ -22,7 +22,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.SituationEffectCategoryMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationEffectMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.SituationEffectMappingMapper;
 import com.cyberpeace.cr.crbase.service.SituationEffectService;
-import com.cyberpeace.cr.crbase.service.context.IdListReq;
+import com.cyberpeace.common.model.IdListReq;
 import com.cyberpeace.cr.crbase.service.context.effect.*;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 

@@ -49,12 +49,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>cr_base</artifactId>
-            <version>${cr.base.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
             <scope>provided</scope>
@@ -113,38 +107,14 @@
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>integration</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${integration.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace</groupId>
             <artifactId>common-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>tool</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>course</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>team_train</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>single_train</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${common.service.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

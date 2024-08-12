@@ -1,17 +1,16 @@
 package com.cyberpeace.iov.controller;
 
-import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficDetailBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.IdListReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.cr.crbase.service.context.IdListReq;
 import com.cyberpeace.iov.service.VehicleTrafficService;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameDetailBo;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficAddReq;
+import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficDetailBo;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficListBo;
 import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficModifyReq;
 

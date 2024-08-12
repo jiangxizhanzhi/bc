@@ -1,4 +1,4 @@
-package com.cyberpeace.iov.service.impl;
+package com.cyberpeace.iov.index.service.impl;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cyberpeace.iov.index.service.IovIndexService;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,9 @@ import com.cyberpeace.integratation.model.scene.ResourceStatisticsRsp;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.iov.constant.IovTaskStatus;
 import com.cyberpeace.iov.dao.mapper.DutMapper;
-import com.cyberpeace.iov.service.IovIndexService;
-import com.cyberpeace.iov.service.bo.index.ResourceCountBo;
-import com.cyberpeace.iov.service.bo.index.RightDemo;
-import com.cyberpeace.iov.service.bo.index.TaskBo;
+import com.cyberpeace.iov.index.service.bo.index.ResourceCountBo;
+import com.cyberpeace.iov.index.service.bo.index.RightDemo;
+import com.cyberpeace.iov.index.service.bo.index.TaskBo;
 import com.cyberpeace.oj.course.service.CourseService;
 
 import lombok.extern.slf4j.Slf4j;

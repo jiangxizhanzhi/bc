@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.cr.crbase.service.context.IdListReq;
+import com.cyberpeace.common.model.IdListReq;
 import com.cyberpeace.cr.crbase.service.context.effect.*;
 
 public interface SituationEffectService {

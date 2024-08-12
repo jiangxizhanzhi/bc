@@ -13,7 +13,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.crbase.service.SituationEffectService;
-import com.cyberpeace.cr.crbase.service.context.IdListReq;
+import com.cyberpeace.common.model.IdListReq;
 import com.cyberpeace.cr.crbase.service.context.IdReq;
 import com.cyberpeace.cr.crbase.service.context.effect.*;
 

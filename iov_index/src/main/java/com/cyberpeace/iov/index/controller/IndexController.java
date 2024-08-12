@@ -1,4 +1,4 @@
-package com.cyberpeace.iov.controller;
+package com.cyberpeace.iov.index.controller;
 
 import java.util.List;
 
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.iov.service.IovIndexService;
-import com.cyberpeace.iov.service.bo.index.ResourceCountBo;
-import com.cyberpeace.iov.service.bo.index.RightDemo;
-import com.cyberpeace.iov.service.bo.index.TaskBo;
+import com.cyberpeace.iov.index.service.IovIndexService;
+import com.cyberpeace.iov.index.service.bo.index.ResourceCountBo;
+import com.cyberpeace.iov.index.service.bo.index.RightDemo;
+import com.cyberpeace.iov.index.service.bo.index.TaskBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

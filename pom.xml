@@ -85,6 +85,7 @@
         <module>common-service</module>
         <module>situation</module>
         <module>iov</module>
+        <module>iov_index</module>
     </modules>
 
     <dependencyManagement>

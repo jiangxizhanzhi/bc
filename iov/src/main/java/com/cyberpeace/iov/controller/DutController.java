@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.IdListReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.cr.crbase.service.context.IdListReq;
 import com.cyberpeace.iov.service.DutService;
 import com.cyberpeace.iov.service.bo.dut.DutAddReq;
 import com.cyberpeace.iov.service.bo.dut.DutListBo;

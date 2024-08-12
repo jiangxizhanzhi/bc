@@ -136,6 +136,11 @@
             <version>${iov.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.cyberpeace.iov</groupId>
+            <artifactId>iov_index</artifactId>
+            <version>${iov.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
             <exclusions>

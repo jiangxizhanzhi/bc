@@ -1,12 +1,12 @@
-package com.cyberpeace.iov.service;
+package com.cyberpeace.iov.index.service;
 
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.cyberpeace.iov.service.bo.index.ResourceCountBo;
-import com.cyberpeace.iov.service.bo.index.RightDemo;
-import com.cyberpeace.iov.service.bo.index.TaskBo;
+import com.cyberpeace.iov.index.service.bo.index.ResourceCountBo;
+import com.cyberpeace.iov.index.service.bo.index.RightDemo;
+import com.cyberpeace.iov.index.service.bo.index.TaskBo;
 
 public interface IovIndexService {
 

@@ -1,4 +1,4 @@
-package com.cyberpeace.iov.service.bo.index;
+package com.cyberpeace.iov.index.service.bo.index;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

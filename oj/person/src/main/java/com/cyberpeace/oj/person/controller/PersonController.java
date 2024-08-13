@@ -196,9 +196,10 @@ public class PersonController {
             if (lessonMap.containsKey(s.getResourceId())) {
                 personStatsBo.setCourseProgress(lessonMap.get(s.getResourceId()) * lessonAllCount == 0 ?"0%": lessonMap.get(s.getResourceId())*100 / lessonAllCount+"%");
             }
-            if(userExamPassMap.containsKey(s.getResourceId())){
-				String passRate = userExamPassMap.getOrDefault(s.getResourceId(), new JSONObject()).getString("exam_pass_rate");
-				personStatsBo.setExamPassRate(passRate==null?"0%":(int)Double.parseDouble(passRate)+"%");
+			if (userExamPassMap.containsKey(s.getResourceId())) {
+				Integer passRate = userExamPassMap.getOrDefault(s.getResourceId(), new JSONObject())
+						.getInteger("exam_pass_rate");
+				personStatsBo.setExamPassRate(passRate == null ? "0%" : passRate + "%");
 			}
             personStatsBo.setUsername(s.getUsername());
             personStatsBo.setName(s.getName());

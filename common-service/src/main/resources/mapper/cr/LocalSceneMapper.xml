@@ -55,4 +55,7 @@
     <select id="selectLocalSceneBytemplateId" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
         SELECT ls.* FROM cr_eval_task as  cet INNER JOIN local_scene as ls on cet.local_scene_id = ls.resource_id WHERE cet.template_id = #{resourceId}
     </select>
+    <select id="getByTaskId" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
+        SELECT ls.* FROM `cr_eval_template` as cret INNER JOIN cr_eval_task as cet on cret.current_task_id = cet.resource_id INNER JOIN  local_scene as ls on cet.local_scene_id = ls.resource_id WHERE cret.resource_id = #{templateId}
+    </select>
 </mapper>

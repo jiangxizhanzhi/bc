@@ -308,4 +308,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return {@code LocalScene}
 	 */
 	LocalScene getOrExceptionByMpSceneId(String mpSceneId);
+
+	LocalScene getByTaskId(String templateId);
 }

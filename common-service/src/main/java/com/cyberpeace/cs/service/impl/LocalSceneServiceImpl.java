@@ -724,6 +724,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return localScene;
 	}
 
+	@Override
+	public LocalScene getByTaskId(String templateId) {
+
+		return localSceneMapper.getByTaskId(templateId);
+	}
+
 	private LocalScene getOrExceptionByBusinessInstanceId(String businessInstanceId) {
 		LocalScene localScene = localSceneMapper.selectByBusinessInstanceId(businessInstanceId);
 		if (null == localScene) {

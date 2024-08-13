@@ -264,8 +264,8 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		Page<CombatLog> page = new Page<>();
 		page.setCurrent(req.getPerPage());
 		page.setSize(req.getPage());
-		ListRsp<CombatLog> listResult = PageUtil.getListResult(combatLogs, page, l);
-		return new BaseRsp<>(listResult);
+		ListRsp<CombatLog> combatLogListRsp = PageUtil.pageList(combatLogs, req.getPage(), total);
+		return new BaseRsp<>(combatLogListRsp);
 	}
 
 }

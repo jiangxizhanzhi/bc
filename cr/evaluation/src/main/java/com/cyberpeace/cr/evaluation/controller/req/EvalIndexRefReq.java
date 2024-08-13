@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.controller.req;
 
 import javax.validation.constraints.NotEmpty;
 
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordEventListContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -28,6 +29,9 @@ public class EvalIndexRefReq {
 
 	@ApiModelProperty("系统评分时 需要探针id")
 	private String probeId;
+
+	@ApiModelProperty("事件评分配置")
+	private EvalRecordEventListContext eventListContext;
 
 
 

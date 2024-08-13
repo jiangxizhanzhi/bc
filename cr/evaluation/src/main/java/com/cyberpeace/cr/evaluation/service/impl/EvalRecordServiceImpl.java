@@ -295,11 +295,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 //节点设备名称
                 String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
                 //事件名称
-                String evnName = evalRecordIndexContext.getEvent().getEvnName();
+                String eventName = evalRecordIndexContext.getEvent().getEventName();
 
-                int value= remoteSceneService.getEventValue(nodeName,evnName);
+                int value= remoteSceneService.getEventValue(nodeName,eventName);
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
-                thirdEventName.put(evalRecordIndexContext.getResourceId(),evnName);
+                thirdEventName.put(evalRecordIndexContext.getResourceId(),eventName);
                 thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId());
             }
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
@@ -657,9 +657,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     //节点设备名称
                     String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
                     //事件名称
-                    String evnName = evalRecordIndexContext.getEvent().getEvnName();
+                    String eventName = evalRecordIndexContext.getEvent().getEventName();
                     //请求参数
-                    int value= remoteSceneService.getEventValue(nodeName,evnName);
+                    int value= remoteSceneService.getEventValue(nodeName,eventName);
                     evalIndexRef.setEventValue(value);
                     evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(),evalIndexRef.getEventAttr(),evalIndexRef.getEventAttrValue(),evalIndexRef.getEventValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
@@ -727,7 +727,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalSystemIndexesContext.getEvent().setEventValue(evalIndexRef.getEventValue());
                 evalSystemIndexesContext.getEvent().setType(evalIndexRef.getEventType());
                 evalSystemIndexesContext.getEvent().setEventNodeId(evalIndexRef.getNodeId());
-                evalSystemIndexesContext.getEvent().setEvnName(evalIndexRef.getEvenName());
+                evalSystemIndexesContext.getEvent().setEventName(evalIndexRef.getEvenName());
             }else {
                 evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
                 evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());

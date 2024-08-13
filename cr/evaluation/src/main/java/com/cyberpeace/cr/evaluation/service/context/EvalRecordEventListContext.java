@@ -21,5 +21,5 @@ public class EvalRecordEventListContext implements Serializable {
     private Integer eventValue;
 
     @ApiModelProperty(value = "告警事件名称")
-    private String evnName;
+    private String eventName;
 }

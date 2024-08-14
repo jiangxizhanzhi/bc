@@ -25,7 +25,6 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.service.DictInfoService;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -423,7 +422,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         Map<String, ProgressPracticeRes> theoryMap = theoryList.stream().filter(a->a.getCategoryName()!=null).collect(Collectors.toMap(ProgressPracticeRes::getCategoryName, Function.identity(), (a, b) -> a));
         //实操题 30%
         List<OperationRecordRes> operationList = practiceOperationMapper.getOperationRecordList(UserInfoContext.getUserContext().getUserId());
-        List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
         //覆盖度 40%
         List<IndexCategoryReq> categoryList = indexInfoService.getIndexInfo().getCategoryList();
         Map<String, List<IndexCourseReq>> categoryCoverageMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getCourses));
@@ -451,14 +449,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
                         .filter(a -> a.getKnowledge() != null
                                 && a.getKnowledge().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.getSolved()))
                         .map(a -> BigDecimal.valueOf(30.0 / operationCount)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-                theoryRate = theoryRate.add(opCount);
-            }
-            //运维题
-            if (CollectionUtils.isNotEmpty(opsQuestionBos) ){
-                BigDecimal opCount = opsQuestionBos.stream()
-                        .filter(a -> a.getDirection() != null
-                                && a.getDirection().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.isPass()))
-                        .map(a -> BigDecimal.valueOf(30.0 /operationCount)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                 theoryRate = theoryRate.add(opCount);
             }
             re.setCount(theoryRate.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());

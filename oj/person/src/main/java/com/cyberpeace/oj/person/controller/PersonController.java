@@ -39,7 +39,6 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.DictInfoService;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.integratation.service.bo.OpsQuestionBo;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -272,14 +271,6 @@ public class PersonController {
 				pageReq.getBusinessType(),
 				pageReq.getPracticeType());
 
-		if(dictInfoService.isOperationOpen()){
-			// 查询运维题的比赛id
-			List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-			Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
-					.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
-			comments.getRecords().forEach(
-					note -> note.setRaceId(opsMap.getOrDefault(note.getBusinessId(), null)));
-		}
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 
@@ -298,15 +289,6 @@ public class PersonController {
 		IPage<PersonCollection> collections = personCenterService.pageCollections(page, userId,
 				type, authContext, practiceType);
 		
-		if (dictInfoService.isOperationOpen()) {
-			// 查询运维题的比赛id
-			List<OpsQuestionBo> opsQuestionBos = remoteAdService.queryQuestionList();
-			Map<String, String> opsMap = opsQuestionBos.stream().collect(Collectors
-					.toMap(OpsQuestionBo::getResourceId, OpsQuestionBo::getRaceId, (k1, k2) -> k1));
-			collections.getRecords().forEach(collect -> collect
-					.setRaceId(opsMap.getOrDefault(collect.getResourceId(), null)));
-		}
-
 		return new BaseRsp<>(PageUtil.getListResult(collections));
 	}
 

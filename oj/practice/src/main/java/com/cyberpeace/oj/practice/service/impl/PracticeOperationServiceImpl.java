@@ -1398,11 +1398,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					, new OperationSolved(PracticeOperation.Category.OPERATION.getCode(), 0, 0, ""));
 		}
 
-		// 运维题
 		ProgressCountRes progressCountRes = new ProgressCountRes();
-		OptionCountProportion maintenance = new OptionCountProportion();
-		maintenance.setSum(operationSolvedMap.get(PracticeOperation.Category.MAINTENANCE.getCode()).getSum());
-		progressCountRes.setMaintenance(maintenance);
 
 		// 实操题
 		OptionCountProportion operation = new OptionCountProportion();
@@ -1411,8 +1407,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		progressCountRes.setOperation(operation);
 
 		OptionCountProportion sum = new OptionCountProportion();
-		sum.setCount(maintenance.getCount() + operation.getCount());
-		sum.setSum(maintenance.getSum() + operation.getSum());
+		sum.setCount(operation.getCount());
+		sum.setSum(operation.getSum());
 		progressCountRes.setSum(sum);
 
 		return progressCountRes;

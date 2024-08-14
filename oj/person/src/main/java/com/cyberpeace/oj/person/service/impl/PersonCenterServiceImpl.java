@@ -355,8 +355,6 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
         //练习
         List<StudyHistoryRes>  practiceList= personCenterMapper.selectParcticeStudyCalendar(startTime, endTime,userId);
         // 考试
-        JSONArray adHistoryList= remoteAdService.queryHistoryExamList();
-        dealAdHistory(adHistoryList,lessonList, StudyHistoryRes.AdEnum.EXAM);
         // 过滤综合实操类型
 		if (dictInfoService.isOperationOpen()) {
 			// 运维题历史记录

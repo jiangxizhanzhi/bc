@@ -21,7 +21,7 @@ public class EvalIndexRefReq {
 	@ApiModelProperty("指标项专家评分配置")
 	private EvalRecordSpecialistContext specialist;
 
-	@ApiModelProperty("评分方式 1系统 2 专家")
+	@ApiModelProperty("评分方式 1系统 2 专家 3 事件")
 	private Integer type;
 
 	@ApiModelProperty("系统评分时 需要节点id")
@@ -32,6 +32,9 @@ public class EvalIndexRefReq {
 
 	@ApiModelProperty("事件评分配置")
 	private EvalRecordEventListContext eventListContext;
+
+	@ApiModelProperty("taskId")
+	private String taskId;
 
 
 

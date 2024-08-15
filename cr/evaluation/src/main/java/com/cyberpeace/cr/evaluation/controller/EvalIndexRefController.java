@@ -1,5 +1,10 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
+import com.cyberpeace.cr.evaluation.service.EvalRecordService;
+import com.cyberpeace.cr.evaluation.service.impl.EvalRecordServiceImpl;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +29,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Api(tags = "靶场测评-评估关联算法")
 @RestController
 @RequiresAuthentication
@@ -39,6 +48,12 @@ public class EvalIndexRefController {
 
     @Autowired
     private EvalIndexRefService evalIndexRefService;
+
+    @Autowired
+    private RemoteSceneService remoteSceneService;
+
+    @Autowired
+    private EvalRecordService evalRecordService;
 
     @ApiOperation("更新评估关联算法的评分方式")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -79,6 +94,24 @@ public class EvalIndexRefController {
                 // TODO 设置回显 speciallist的其他值
                 evalIndexRef.setSpecialistValue(specialist.getValue());
                 evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
+                evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+            }
+            if (type.equals(EvalIndexRef.Type.EVENT.getCode())){
+                List<EvalRoomPairRsp> nodes = evalRecordService.getNodes(requestData.getTaskId());
+                Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
+                String eventNodeId = requestData.getEventListContext().getEventNodeId();
+                String eventName = requestData.getEventListContext().getEventName();
+                if (!StringUtils.isBlank(eventName)) {
+                    int value= remoteSceneService.getEventValue(map.get(eventNodeId).getLabel(),eventName);
+                    evalIndexRef.setEventValue(value);
+                    evalIndexRef.setEvenName(eventName);
+                    evalIndexRef.setNodeId(eventNodeId);
+                }else {
+                    evalIndexRef.setEventValue(0);
+                    evalIndexRef.setEvenName(eventName);
+                    evalIndexRef.setNodeId(eventNodeId.equals("") ? "" : eventNodeId);
+                }
+                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getEventValue()));
                 evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
             }
             evalIndexRefMapper.updateById(evalIndexRef);

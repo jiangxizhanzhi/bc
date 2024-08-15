@@ -8,18 +8,18 @@ import java.io.Serializable;
 
 @Data
 public class EvalRecordEventListContext implements Serializable {
-    @ApiModelProperty("数据类型 3级指标时 value不为空 百分比:1,周期:2,延时:3")
+    @ApiModelProperty(value = "数据类型 3级指标时 value不为空 百分比:1,周期:2,延时:3" ,required = false)
     private Integer type;
 
-    @ApiModelProperty("数据属性")
+    @ApiModelProperty(value = "数据属性",required = false)
     private Integer property;
 
-    @ApiModelProperty("节点id")
+    @ApiModelProperty(value = "节点id",required = false)
     private String eventNodeId;
 
-    @ApiModelProperty(value = "值")
+    @ApiModelProperty(value = "值",required = false)
     private Integer eventValue;
 
-    @ApiModelProperty(value = "告警事件名称")
+    @ApiModelProperty(value = "告警事件名称",required = false)
     private String eventName;
 }

@@ -291,16 +291,23 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             //事件评分
             if(evalRecordIndexContext.getType().equals(EvalIndexRef.Type.EVENT.getCode())){
                 List<EvalRoomPairRsp> nodes = this.getNodes(requestData.getTaskId());
-                Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
-                //节点设备名称
-                String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
-                //事件名称
-                String eventName = evalRecordIndexContext.getEvent().getEventName();
+                    Map<String, EvalRoomPairRsp> map = nodes.stream().collect(Collectors.toMap(EvalRoomPairRsp::getId, eval -> eval));
+                    //节点设备名称
+                if (!StringUtils.isBlank(evalRecordIndexContext.getEvent().getEventName())) {
+                    String nodeName = map.get(evalRecordIndexContext.getEvent().getEventNodeId()).getLabel();
+                    //事件名称
+                    String eventName = evalRecordIndexContext.getEvent().getEventName();
 
-                int value= remoteSceneService.getEventValue(nodeName,eventName);
-                thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
-                thirdEventName.put(evalRecordIndexContext.getResourceId(),eventName);
-                thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId());
+                    int value= remoteSceneService.getEventValue(nodeName,eventName);
+                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),value);
+                    thirdEventName.put(evalRecordIndexContext.getResourceId(),eventName);
+                    thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId());
+                }else {
+                    thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(),0);
+                    thirdEventName.put(evalRecordIndexContext.getResourceId(),"");
+                    thirdNodeId.put(evalRecordIndexContext.getResourceId(),evalRecordIndexContext.getEvent().getEventNodeId().equals("")?"":evalRecordIndexContext.getEvent().getEventNodeId());
+                }
+
             }
             evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
         });

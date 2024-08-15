@@ -215,4 +215,13 @@ public final class ErrorCode {
 
 	/** 演示环境禁止增删改 */
 	public static final String DEMONSTRATION_FORBID_UPDATE = "104021";
+
+	/**写入es数据错误 */
+	public static final String WRITE_ES_DATA_FAULT = "100065";
+
+	/**读取es数据错误 */
+	public static final String READ_ES_DATA_FAULT = "100066";
+
+	/**文件小于截取大小 */
+	public static final String RESTRICTED_FILE = "100067";
 }

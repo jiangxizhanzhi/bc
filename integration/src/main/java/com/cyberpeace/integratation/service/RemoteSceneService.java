@@ -279,5 +279,5 @@ public interface RemoteSceneService {
 
 	int getEventValue(String nodeName, String eventName);
 
-	JSONObject getPageEvent(String mpSceneId,Integer page,Integer prePage);
+	JSONObject getPageEvent(String mpSceneId,Integer page,Integer prePage,String nodeName);
 }

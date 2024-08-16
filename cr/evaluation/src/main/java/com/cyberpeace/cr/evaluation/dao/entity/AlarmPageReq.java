@@ -9,4 +9,6 @@ public class AlarmPageReq extends PageReqBase {
     private String templateId;
 
     private String sceneId;
+
+    private String nodeName;
 }

@@ -13,6 +13,8 @@ public class PageEvent {
 
     private String mpSceneId;
 
+    private String nodeName;
+
     private Integer page;
 
     private Integer prePage;

@@ -662,11 +662,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public JSONObject getPageEvent(String mpSceneId,Integer page, Integer prePage) {
-		PageEvent pageEvent = PageEvent.builder().mpSceneId(mpSceneId).page(page).prePage(prePage).build();
+	public JSONObject getPageEvent(String mpSceneId,Integer page, Integer prePage,String nodeName) {
+		PageEvent pageEvent = PageEvent.builder().mpSceneId(mpSceneId).page(page).prePage(prePage).nodeName(nodeName).build();
 		JSONObject object = JsonUtil.java2JsonObject(pageEvent, PropertyNamingStrategy.SnakeCase);
 		JSONObject post = HttpClientUtil.post(GET_PAGE_EVENT_URL, object, JSONObject.class);
-		System.out.println("post = " + post);
 		return post;
 	}
 

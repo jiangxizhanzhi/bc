@@ -52,4 +52,14 @@ public class VcanLogAnalysisController {
         JSONObject result = vcanLogAnalysisService.getVcanLogWithScroll(tableName, sceneId, elementId, scroll, scrollId, pageSize);
         return new BaseRsp(result);
     }
+
+    @ApiOperation(value = "创建vcan日志数据存储策略", notes = "")
+    @GetMapping("/vcanLogCreatePolicy")
+    public BaseRsp vcanLogCreatePolicy(@RequestParam(name = "policy_name") String policyName,
+                                       @RequestParam(name = "max_size", required = false, defaultValue = "1gb") String maxSize,
+                                       @RequestParam(name = "max_age", required = false, defaultValue = "7d") String maxAge,
+                                       @RequestParam(name = "delete_age", required = false, defaultValue = "30d") String deleteAge) {
+        Boolean result = vcanLogAnalysisService.vcanLogCreatePolicy(policyName, maxSize, maxAge, deleteAge);
+        return new BaseRsp(result);
+    }
 }

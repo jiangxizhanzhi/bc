@@ -16,6 +16,9 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.AcknowledgedResponse;
+import org.elasticsearch.client.indexlifecycle.*;
+import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -301,5 +304,37 @@ public class VcanLogAnalysisServiceImpl {
         return finalResult;
     }
 
+    /**
+     * "max_size": "1gb",   // 当索引达到 1GB 时滚动
+     * "max_age": "7d"      // 或者索引达到 7 天时滚动
+     * "min_age": "30d",    // 保留 30 天的数据
+     */
+    public Boolean vcanLogCreatePolicy(String policyName, String maxSize, String maxAge, String deleteAge) {
+        try {
+            // 创建热阶段 (Hot phase)
+            Map<String, LifecycleAction> hotActions = new HashMap<>();
+            hotActions.put("rollover", new RolloverAction(
+                    ByteSizeValue.parseBytesSizeValue(maxSize, "max_size"),
+                    null,
+                    TimeValue.parseTimeValue(maxAge, "max_age"),
+                    null)
+            );
+            Phase hotPhase = new Phase("hot", TimeValue.ZERO, hotActions);// 阶段的最小年龄：0毫秒，一创建索引就进入该阶段
 
+            // 构建 phases map
+            Map<String, Phase> phases = new HashMap<>();
+            phases.put("hot", hotPhase);
+
+            // 创建LifecyclePolicy
+            LifecyclePolicy lifecyclePolicy = new LifecyclePolicy(policyName, phases);
+
+            // 创建ILM策略请求
+            PutLifecyclePolicyRequest policyRequest = new PutLifecyclePolicyRequest(lifecyclePolicy);
+            AcknowledgedResponse putPolicyResponse = client.indexLifecycle().putLifecyclePolicy(policyRequest, RequestOptions.DEFAULT);
+            return putPolicyResponse.isAcknowledged();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

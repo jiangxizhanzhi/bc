@@ -1,5 +1,7 @@
 package com.cyberpeace.integratation.model.scene;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +20,7 @@ public class PageEvent {
     private Integer page;
 
     private Integer prePage;
+
+    @ApiModelProperty("处理数据隔离")
+    private Integer quarantine;
 }

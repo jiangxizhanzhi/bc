@@ -239,3 +239,51 @@ CREATE TABLE `cr_eval_test_instance_step` (
                                               `update_time` datetime NOT NULL COMMENT '更新时间',
                                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='试验任务实例步骤表';
+
+alter table cr_eval_aggregation
+    add progress int default 1 null comment '指标进度' after score;
+alter table cr_eval_collection
+    modify progress int default 1 null comment '指标进度' after score;
+alter table cr_eval_index
+    modify cal_score int null comment '指标得分';
+alter table cr_eval_index
+drop column score;
+alter table cr_eval_index
+    modify cal_message varchar(255) null comment '指标计算错误信息';
+alter table cr_eval_index
+    add is_sychronized varchar(8) collate utf8mb4_general_ci null comment '场景是否已同步共性平台';
+alter table cr_eval_index
+    add return_data varchar(1024) collate utf8mb4_general_ci null comment '场景同步共性平台返回data';
+alter table cr_eval_index
+    add return_info varchar(255) collate utf8mb4_general_ci null comment '场景同步共性平台返回info';
+create table cr_eval_situation_guide_history
+(
+    id          int auto_increment comment '自增id' primary key,
+    resource_id varchar(32)  not null comment '资源id',
+    test_id     varchar(32)  null comment '试验id',
+    name        varchar(255) null comment '事件名称',
+    type        int          not null comment '类型1:任务导调 2:手动导调',
+    attack_type tinyint      not null comment '攻击类型',
+    source      varchar(128) null comment '攻击源',
+    target      varchar(128) null comment '攻击目标',
+    result      int          null comment '攻击结果 1:成功 2:失败',
+    step_id     varchar(32)  null comment '步骤id',
+    guide_id    varchar(32)  not null comment '导调id',
+    instance_id varchar(32)  not null comment '测试实例id',
+    create_time datetime     not null comment '创建时间',
+    update_time datetime     not null comment '更新时间'
+);
+alter table cr_eval_situation_guide_scheme
+    add test_instance_id varchar(32) null comment '试验实例id' after test_id;
+alter table cr_team_room
+    add is_sychronized varchar(8) collate utf8mb4_general_ci null comment '场景是否已同步共性平台';
+alter table cr_team_room
+    add return_data varchar(1024) collate utf8mb4_general_ci null comment '场景同步共性平台返回data';
+alter table cr_team_room
+    add return_info varchar(255) collate utf8mb4_general_ci null comment '场景同步共性平台返回info';
+alter table cr_team_room
+    add is_sychronized_topology varchar(8) collate utf8mb4_general_ci null comment '拓扑是否已同步共性平台';
+alter table cr_team_room
+    add return_data_topology varchar(1024) collate utf8mb4_general_ci null comment '拓扑同步共性平台返回data';
+alter table cr_team_room
+    add return_info_topology varchar(255) collate utf8mb4_general_ci null comment '拓扑同步共性平台返回info';

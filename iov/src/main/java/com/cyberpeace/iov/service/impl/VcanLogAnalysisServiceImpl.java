@@ -11,12 +11,15 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
@@ -72,7 +75,7 @@ public class VcanLogAnalysisServiceImpl {
             // 如果文件大小超过需要截取的字节大小，则跳过该截取大小
             if (size != null && fileSize > size) {
                 inputStream.skip(size);
-            }else{
+            } else {
                 throw new BusinessException(ErrorCode.RESTRICTED_FILE);
             }
             // 不保留重复数据
@@ -232,4 +235,71 @@ public class VcanLogAnalysisServiceImpl {
 
         return finalResult;
     }
+
+    /**
+     * 初始查询和滚动查询的分支判断：
+     * 如果 scrollId 为空或为 null，则执行初始查询。
+     * 如果 scrollId 不为空，则使用 scrollId 继续滚动查询。
+     * scroll 参数：
+     * scroll 是滚动查询的超时时间，比如 "1m" 表示 1 分钟。
+     */
+    public JSONObject getVcanLogWithScroll(String tableName, String sceneId, String elementId, String scroll, String scrollId, Integer pageSize) {
+        JSONObject finalResult = new JSONObject();
+        List<Map<String, Object>> result = new ArrayList<>();
+        SearchResponse searchResponse;
+
+        try {
+            if (scrollId == null || scrollId.isEmpty()) {
+                // 初始查询
+                SearchRequest searchRequest = new SearchRequest(tableName);
+                SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+                searchSourceBuilder.size(pageSize);
+
+                // 设置查询条件
+                BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+                if (sceneId != null && !sceneId.isEmpty()) {
+                    boolQueryBuilder.must(QueryBuilders.termQuery("sceneId", sceneId));
+                }
+                if (elementId != null && !elementId.isEmpty()) {
+                    boolQueryBuilder.must(QueryBuilders.termQuery("elementId", elementId));
+                }
+                searchSourceBuilder.query(boolQueryBuilder);
+                searchRequest.source(searchSourceBuilder);
+
+                // 设置 Scroll 超时时间
+                searchRequest.scroll(TimeValue.parseTimeValue(scroll, "scroll"));
+
+                // 执行初始查询
+                searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            } else {
+                // 使用 scrollId 执行后续查询
+                SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+                scrollRequest.scroll(TimeValue.parseTimeValue(scroll, "scroll"));
+
+                // 执行 Scroll 请求获取下一批数据
+                searchResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
+            }
+
+            // 获取 Scroll ID
+            scrollId = searchResponse.getScrollId();
+            SearchHits hits = searchResponse.getHits();
+
+            // 处理查询结果
+            for (SearchHit hit : hits) {
+                result.add(hit.getSourceAsMap());
+            }
+
+            // 构建最终结果
+            finalResult.put("data", result);
+            finalResult.put("total", hits.getTotalHits().value);
+            finalResult.put("scrollId", scrollId);
+
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.READ_ES_DATA_FAULT, e);
+        }
+
+        return finalResult;
+    }
+
+
 }

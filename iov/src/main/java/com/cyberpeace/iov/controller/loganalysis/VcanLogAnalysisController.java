@@ -30,7 +30,7 @@ public class VcanLogAnalysisController {
         return new BaseRsp();
     }
 
-    @ApiOperation(value = "vcan日志列表", notes = "")
+    @ApiOperation(value = "vcan日志列表", notes = "上限1万条数据")
     @GetMapping("/getVcanLog")
     public BaseRsp getVcanLog(@RequestParam(name = "table_name") String tableName,
                               @RequestParam(name = "scene_id", required = false) String sceneId,
@@ -38,6 +38,18 @@ public class VcanLogAnalysisController {
                               @RequestParam(name = "page_num", required = false, defaultValue = "1") Integer pageNum,
                               @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize) {
         JSONObject result = vcanLogAnalysisService.getVcanLog(tableName, sceneId, elementId, pageNum, pageSize);
+        return new BaseRsp(result);
+    }
+
+    @ApiOperation(value = "vcan日志列表(scroll滚动查询)", notes = "")
+    @GetMapping("/getVcanLogWithScroll")
+    public BaseRsp getVcanLogWithScroll(@RequestParam(name = "table_name") String tableName,
+                                        @RequestParam(name = "scene_id", required = false) String sceneId,
+                                        @RequestParam(name = "element_id", required = false) String elementId,
+                                        @RequestParam(name = "scroll", required = false, defaultValue = "1m") String scroll,
+                                        @RequestParam(name = "scroll_id", required = false) String scrollId,
+                                        @RequestParam(name = "page_size", required = false, defaultValue = "1000") Integer pageSize) {
+        JSONObject result = vcanLogAnalysisService.getVcanLogWithScroll(tableName, sceneId, elementId, scroll, scrollId, pageSize);
         return new BaseRsp(result);
     }
 }

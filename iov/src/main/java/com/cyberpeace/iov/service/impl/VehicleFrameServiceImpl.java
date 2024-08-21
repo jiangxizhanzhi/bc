@@ -9,6 +9,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -92,8 +93,12 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 
 	@Override
 	public Map<String, Integer> getNodesCountMap(Collection<String> vehicleFrameIds) {
-		List<VehicleFrame> frameList = vehicleFrameMapper.selectBatchIds(vehicleFrameIds);
 		Map<String, Integer> res = Maps.newHashMap();
+		if (CollectionUtils.isEmpty(vehicleFrameIds)) {
+			return res;
+		}
+		List<VehicleFrame> frameList = vehicleFrameMapper.selectBatchIds(vehicleFrameIds);
+
 		for (VehicleFrame frame : frameList) {
 			res.put(frame.getResourceId(),
 					JsonUtil.toJsonObjectArray(frame.getTopo(), FrameTopoItem.class).size());

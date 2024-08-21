@@ -213,7 +213,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(),
 				businessTemplate.getResourceId());
-		if (!baseInfo.getType().equals(BusinessType.TRAINING_TEAM.getCode())) {
+		if (!businessTemplate.getBusinessType().equals(BusinessType.TRAINING_TEAM.getCode())) {
 			// update topo
 			SceneConfigData topoData = baseInfo.getSceneConfigData();
 			if (topoData != null) {

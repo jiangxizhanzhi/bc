@@ -30,6 +30,8 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
+import com.cyberpeace.iov.service.VehicleFrameService;
+import com.cyberpeace.iov.service.bo.frame.FrameTopoItem;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import io.swagger.annotations.Api;
@@ -81,6 +83,9 @@ public class TeamTrainTeacherController {
 
 	@Autowired
 	private SituationHandlerService situationHandlerService;
+
+	@Autowired
+	private VehicleFrameService vehicleFrameService;
 
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
@@ -171,14 +176,15 @@ public class TeamTrainTeacherController {
 	@ApiOperation("设备清单")
 	@GetMapping("/device/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<JSONArray> getDeviceList(
+	public BaseRsp<List<FrameTopoItem>> getDeviceList(
 			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 		if (StringUtils.isBlank(resource_id)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		JSONArray res = teamSceneService.getAssetList(resource_id, category, name);
+		TeamRoom room = teamRoomService.getOrExceptionById(resource_id);
+		List<FrameTopoItem> res = vehicleFrameService.getTopoByFrameId(room.getVehicleFrameId());
 		return new BaseRsp<>(res);
 	}
 

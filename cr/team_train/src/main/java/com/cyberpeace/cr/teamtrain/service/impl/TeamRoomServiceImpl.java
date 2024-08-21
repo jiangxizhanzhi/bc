@@ -152,7 +152,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		TeamRoom teamRoom = new TeamRoom(teamTrainRoomContext, template);
 		teamRoom.setCreateUserId(userId);
-		teamRoom.setCopyedTopoId(localSceneService.copyTopo(businessTemplate.getTopoId(), teamRoom.getName()));
+		teamRoom.setCopyedTopoId(businessTemplate.getTopoId());
 		teamRoom.setTeamTemplateName(businessTemplate.getName());
 		teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
 		teamRoom.setVehicleFrameId(template.getVehicleFrameId());

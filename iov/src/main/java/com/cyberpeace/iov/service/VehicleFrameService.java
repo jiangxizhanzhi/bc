@@ -1,12 +1,15 @@
 package com.cyberpeace.iov.service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.iov.dao.entity.VehicleFrame;
 import com.cyberpeace.iov.service.bo.frame.*;
+import org.bytedeco.opencv.presets.opencv_core;
 
 public interface VehicleFrameService extends IService<VehicleFrame> {
 
@@ -21,4 +24,6 @@ public interface VehicleFrameService extends IService<VehicleFrame> {
 	VehicleFrameDetailBo getDetail(String resourceId);
 
 	List<FrameTopoItem> getTopoByFrameId(String vehicleFrameId);
+
+	Map<String, Integer> getNodesCountMap(Collection<String> vehicleFrameIds);
 }

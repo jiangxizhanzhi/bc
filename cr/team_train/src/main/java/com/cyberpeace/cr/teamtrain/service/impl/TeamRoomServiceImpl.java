@@ -68,9 +68,9 @@ import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.iov.service.VehicleFrameService;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -123,6 +123,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
+
+	@Autowired
+	private VehicleFrameService vehicleFrameService;
 
 	private static final String FAIL_LOG="failed to get TeamRoom with Id [{}]";
 	private static final String PERMISSION_LOG="user does not have TeamRoom Permission！roomId=[{}], userId=[{}]";
@@ -665,10 +668,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		IPage<TeamRoomData> data = this.list(listQuery);
 
-		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
-				.batchGetTopoDigest(data.getRecords().stream().map(TeamRoomData::getCopyedTopoId)
-						.collect(Collectors.toList()));
 		ListRsp<TeamRoomRsp> teamRoomRspListRsp = new ListRsp<>();
 
 		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
@@ -696,6 +695,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 		}
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		
+		List<String> vehicleFrameIdList = data.getRecords().stream()
+				.map(TeamRoomData::getVehicleFrameId).collect(Collectors.toList());
+		Map<String, Integer> nodeCountMap = vehicleFrameService
+				.getNodesCountMap(vehicleFrameIdList);
 
 		// 填充数据
 		for (TeamRoomData teamRoomData : data.getRecords()) {
@@ -708,15 +712,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId, userInfoMap));
 			teamRoomRsp.setRolesData(Lists.newArrayList());
 			// node count ,differs by role
-			CrRole selfRole = CrRole.findRoleByUserId(crRoles, userId);
-			if (null == selfRole || selfRole.isTeamTeacher()) {
-				teamRoomRsp.setNodesCount(
-						topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
-			} else {
-				teamRoomRsp.setNodesCount(selfRole.getVisibleNodeCount());
-			}
-			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
-					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
+			teamRoomRsp.setNodesCount(nodeCountMap.getOrDefault(teamRoomData.getVehicleFrameId(), 0));
+			teamRoomRsp.setResourceOccupiedNums(0);
 			teamRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(

@@ -1,5 +1,6 @@
 package com.cyberpeace.iov.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import com.cyberpeace.iov.dao.entity.VehicleFrame;
 import com.cyberpeace.iov.dao.mapper.VehicleFrameMapper;
 import com.cyberpeace.iov.service.VehicleFrameService;
 import com.cyberpeace.iov.service.bo.frame.*;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -86,6 +88,17 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 			return Lists.newArrayList();
 		}
 		return JsonUtil.toJsonObjectArray(frame.getTopo(), FrameTopoItem.class);
+	}
+
+	@Override
+	public Map<String, Integer> getNodesCountMap(Collection<String> vehicleFrameIds) {
+		List<VehicleFrame> frameList = vehicleFrameMapper.selectBatchIds(vehicleFrameIds);
+		Map<String, Integer> res = Maps.newHashMap();
+		for (VehicleFrame frame : frameList) {
+			res.put(frame.getResourceId(),
+					JsonUtil.toJsonObjectArray(frame.getTopo(), FrameTopoItem.class).size());
+		}
+		return res;
 	}
 
 	private VehicleFrame req2Entity(VehicleFrameAddReq req) {

@@ -76,6 +76,7 @@
         local_scene.start_time scene_start_time,
         local_scene.destroy_time scene_end_time,
         local_scene.scene_status,
+        cr_team_room.vehicle_frame_id,
         (
         CASE
         WHEN cr_team_room.training_status = 1 THEN

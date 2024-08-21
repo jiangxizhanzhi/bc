@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.iov.service.VehicleFrameService;
-import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -54,10 +52,10 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.iov.service.VehicleFrameService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -279,8 +277,13 @@ public class TeamTrainTemplateController {
 		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
 				.countEngageRel(businessTemplateIds);
 
+		List<String> vehicleFrameIdList = data.getRecords().stream()
+				.map(TeamTemplateData::getVehicleFrameId).collect(Collectors.toList());
+		Map<String, Integer> iovNodeCountMap = vehicleFrameService
+				.getNodesCountMap(vehicleFrameIdList);
+
 		data.convert(teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData,
-				attackRelCount, icsRelCount, engageRelCount));
+				attackRelCount, icsRelCount, engageRelCount, iovNodeCountMap));
 
 		return new BaseRsp<>(data);
 	}
@@ -288,7 +291,7 @@ public class TeamTrainTemplateController {
 	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(
 			TeamTemplateData teamTemplateData,
 			Map<String, List<NameCount>> attackRelCount, Map<String, List<NameCount>> icsRelCount,
-			Map<String, List<NameCount>> engageRelCount) {
+			Map<String, List<NameCount>> engageRelCount, Map<String, Integer> iovNodeCountMap) {
 
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
 
@@ -308,7 +311,8 @@ public class TeamTrainTemplateController {
 
 		// 设置返回对象
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
-		teamTrainTemplateRsp.setNodesCount(vehicleFrameService.getTopoByFrameId(teamTemplateData.getVehicleFrameId()).size());
+		teamTrainTemplateRsp.setNodesCount(
+				iovNodeCountMap.getOrDefault(teamTemplateData.getVehicleFrameId(), 0));
 		teamTrainTemplateRsp.setResourceOccupiedNums(0);
 		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
 

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.iov.service.VehicleFrameService;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -98,6 +100,10 @@ public class TeamTrainTemplateController {
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private VehicleFrameService vehicleFrameService;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
@@ -263,10 +269,6 @@ public class TeamTrainTemplateController {
 		listQuery.setSort("-cr_business_template.create_time");
 
 		IPage<TeamTemplateData> data = teamTemplateService.page(listQuery);
-		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
-				data.getRecords().stream().map(teamTemplateData -> teamTemplateData.getTopoId())
-						.collect(Collectors.toList()));
 		// get attack engage relations
 		List<String> businessTemplateIds = data.getRecords().stream()
 				.map(TeamTemplateData::getBusinessTemplateId).collect(Collectors.toList());
@@ -278,13 +280,13 @@ public class TeamTrainTemplateController {
 				.countEngageRel(businessTemplateIds);
 
 		data.convert(teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData,
-				topologyNodesStats, attackRelCount, icsRelCount, engageRelCount));
+				attackRelCount, icsRelCount, engageRelCount));
 
 		return new BaseRsp<>(data);
 	}
 
 	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(
-			TeamTemplateData teamTemplateData, Map<String, TopoDigest> topologyNodesStats,
+			TeamTemplateData teamTemplateData,
 			Map<String, List<NameCount>> attackRelCount, Map<String, List<NameCount>> icsRelCount,
 			Map<String, List<NameCount>> engageRelCount) {
 
@@ -306,10 +308,8 @@ public class TeamTrainTemplateController {
 
 		// 设置返回对象
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
-		teamTrainTemplateRsp.setNodesCount(
-				topologyNodesStats.get(teamTemplateData.getTopoId()).getNodeCounts());
-		teamTrainTemplateRsp.setResourceOccupiedNums(
-				topologyNodesStats.get(teamTemplateData.getTopoId()).getResourceOccupiedNums());
+		teamTrainTemplateRsp.setNodesCount(vehicleFrameService.getTopoByFrameId(teamTemplateData.getVehicleFrameId()).size());
+		teamTrainTemplateRsp.setResourceOccupiedNums(0);
 		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
 
 		teamTrainTemplateRsp.setBusinessTemplateId(teamTemplateData.getBusinessTemplateId());

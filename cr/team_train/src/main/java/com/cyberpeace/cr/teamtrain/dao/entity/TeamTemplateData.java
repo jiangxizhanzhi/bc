@@ -50,4 +50,6 @@ public class TeamTemplateData implements Serializable {
 
 	private String logo;
 
+	private String vehicleFrameId;
+
 }

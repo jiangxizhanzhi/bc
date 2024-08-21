@@ -18,7 +18,7 @@
         cr_business_template.topo_id, cr_business_template.name, cr_business_template.description,
         cr_business_template.business_type, cr_business_template.difficulty,
         cr_business_template.create_user_id,cr_business_template.create_time,
-        cr_business_template.logo
+        cr_business_template.logo, cr_team_template.vehicle_frame_id
         from
         cr_team_template
         left join cr_business_template on cr_business_template.resource_id = cr_team_template.business_template_id

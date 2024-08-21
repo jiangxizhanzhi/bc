@@ -82,6 +82,9 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 			return Lists.newArrayList();
 		}
 		VehicleFrame frame = this.getById(resourceId);
+		if (null == frame) {
+			return Lists.newArrayList();
+		}
 		return JsonUtil.toJsonObjectArray(frame.getTopo(), FrameTopoItem.class);
 	}
 

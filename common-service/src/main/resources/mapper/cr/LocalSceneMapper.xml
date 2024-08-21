@@ -56,6 +56,10 @@
         SELECT ls.* FROM cr_eval_task as  cet INNER JOIN local_scene as ls on cet.local_scene_id = ls.resource_id WHERE cet.template_id = #{resourceId}
     </select>
     <select id="getByTaskId" resultType="java.lang.String">
-        SELECT mp_scene_id FROM cr_eval_task  WHERE template_id = #{templateId}
+        SELECT mp_scene_id
+        FROM cr_eval_task
+        WHERE template_id = #{templateId}
+        ORDER BY create_time DESC
+            LIMIT 1;
     </select>
 </mapper>

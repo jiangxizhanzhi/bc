@@ -309,5 +309,5 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	LocalScene getOrExceptionByMpSceneId(String mpSceneId);
 
-	LocalScene getByTaskId(String templateId);
+	String getByTaskId(String templateId);
 }

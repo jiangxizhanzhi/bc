@@ -725,7 +725,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public LocalScene getByTaskId(String templateId) {
+	public String getByTaskId(String templateId) {
 
 		return localSceneMapper.getByTaskId(templateId);
 	}

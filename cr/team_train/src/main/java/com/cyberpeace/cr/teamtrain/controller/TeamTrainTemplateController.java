@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -22,16 +23,23 @@ import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
+import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
+import com.cyberpeace.cr.crbase.controller.rsp.BusinessTemplateRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
@@ -53,8 +61,8 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.iov.service.VehicleFrameService;
 
 import io.swagger.annotations.Api;
@@ -97,7 +105,7 @@ public class TeamTrainTemplateController {
 	private RtksRelatedService rtksRelatedService;
 
 	@Autowired
-	private RemoteSceneService remoteSceneService;
+	private RemoteUserService remoteUserService;
 
 	@Autowired
 	private VehicleFrameService vehicleFrameService;
@@ -106,6 +114,7 @@ public class TeamTrainTemplateController {
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<Void> create(@RequestBody @Validated TeamTrainTemplateAddReq addReq) {
+		addReq.validate();
 		// set type
 		addReq.getBaseInfo().setType(BusinessType.TRAINING_TEAM.getCode());
 		// create team template
@@ -286,6 +295,56 @@ public class TeamTrainTemplateController {
 				attackRelCount, icsRelCount, engageRelCount, iovNodeCountMap));
 
 		return new BaseRsp<>(data);
+	}
+
+	@ApiOperation("后台查询模板列表")
+	@GetMapping("/page")
+	@RequiresPermissions(value = {MenuConstant.CMS_CR_TEAM_TRAIN}, logical = Logical.OR)
+	public BaseRsp<ListRsp<BusinessTemplateRsp>> getTemplate(TemplateReq listReq) {
+		BusinessTemplateQuery businessTemplateQuery = BeanUtils.copy(listReq,
+				BusinessTemplateQuery.class);
+		businessTemplateQuery.setSort("-cr_business_template.create_time");
+
+		IPage<BusinessTemplateData> data = businessTemplateService.page(businessTemplateQuery);
+		List<String> businessTemplateIds = data.getRecords().stream()
+				.map(BusinessTemplate::getResourceId).collect(Collectors.toList());
+		List<TeamTemplate> teamTemplateList = teamTemplateService
+				.getTeamTemplateByBusinessIds(businessTemplateIds);
+		Map<String, String> businessFrameMap = StreamApiUtils.toMap(teamTemplateList,
+				TeamTemplate::getBusinessTemplateId, TeamTemplate::getVehicleFrameId);
+		Map<String, Integer> iovNodeCountMap = vehicleFrameService
+				.getNodesCountMap(businessFrameMap.values());
+
+		List<String> userIds = Lists.newArrayList();
+		for (BusinessTemplateData businessTemplateData : data.getRecords()) {
+			userIds.add(businessTemplateData.getCreateUserId());
+		}
+		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
+
+		data.convert(businessTemplateData -> {
+			BusinessTemplateRsp businessTemplateRsp = BeanUtils.copy(businessTemplateData,
+					BusinessTemplateRsp.class);
+			businessTemplateRsp.setDifficult(businessTemplateData.getDifficulty());
+			businessTemplateRsp
+					.setCreateUser(idNameMap.get(businessTemplateData.getCreateUserId()));
+			businessTemplateRsp.setId(businessTemplateData.getResourceId());
+			businessTemplateRsp.setType(businessTemplateData.getBusinessType());
+			businessTemplateRsp.setSceneManagerId(businessTemplateData.getTopoId());
+			businessTemplateRsp.setShare(businessTemplateData.getOperationAuthType());
+			businessTemplateRsp.setShareTeachers(JsonUtil
+					.toJsonObjectArray(businessTemplateData.getOperationAuthIds(), String.class));
+			SceneConfigRsp sceneConfigInfo = new SceneConfigRsp();
+			sceneConfigInfo.setNodeCount(iovNodeCountMap.getOrDefault(
+					businessFrameMap.getOrDefault(businessTemplateData.getResourceId(), ""), 0));
+			sceneConfigInfo.setResourceOccupiedNums(businessTemplateData.getResourceOccupiedNums());
+			sceneConfigInfo
+					.setHasScene(StringUtils.isNotBlank(businessTemplateData.getLocalSceneId()));
+			businessTemplateRsp.setSceneConfigInfo(sceneConfigInfo);
+
+			return businessTemplateRsp;
+		});
+
+		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
 	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(

@@ -335,6 +335,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				businessTemplateQuery);
 
 		// get node count
+		if (businessTemplateQuery.getType()
+				.equals(BusinessType.TRAINING_TEAM.getCode().toString())) {
+			return result;
+		}
 		List<String> topoIds = result.getRecords().stream().map(BusinessTemplate::getTopoId)
 				.collect(Collectors.toList());
 		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);

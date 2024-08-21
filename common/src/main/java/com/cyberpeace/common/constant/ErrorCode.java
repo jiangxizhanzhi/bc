@@ -4,6 +4,7 @@ package com.cyberpeace.common.constant;
  * 统一错误吗
  */
 public final class ErrorCode {
+	private ErrorCode() {}
 
 	/**
 	 * 参数校验异常
@@ -208,8 +209,6 @@ public final class ErrorCode {
 	 */
 	public static final String LIVE_NOT_STARTED = "100064";
 
-	private ErrorCode() {}
-
 	/**导入错误格式 */
 	public static final String IMPORT_RESOURCE_ERROR = "104121";
 
@@ -224,4 +223,10 @@ public final class ErrorCode {
 
 	/**文件小于截取大小 */
 	public static final String RESTRICTED_FILE = "100067";
+
+	/**
+	 * 车架ID不可为空
+	 */
+	public static final String EMPTY_VEHICLE_FRAME_ID = "100068";
+
 }

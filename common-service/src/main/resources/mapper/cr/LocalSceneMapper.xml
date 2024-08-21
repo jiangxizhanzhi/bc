@@ -58,7 +58,7 @@
     <select id="getByTaskId" resultType="java.lang.String">
         SELECT mp_scene_id
         FROM cr_eval_task
-        WHERE template_id = #{templateId}
+        WHERE resource_id = #{taskId}
         ORDER BY create_time DESC
             LIMIT 1;
     </select>

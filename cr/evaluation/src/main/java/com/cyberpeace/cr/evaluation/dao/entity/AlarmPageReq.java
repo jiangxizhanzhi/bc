@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class AlarmPageReq extends PageReqBase {
 
-    private String templateId;
+    private String taskId;
 
     private String sceneId;
 

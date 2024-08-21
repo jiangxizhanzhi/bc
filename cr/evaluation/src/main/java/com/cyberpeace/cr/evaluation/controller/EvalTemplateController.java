@@ -288,7 +288,7 @@ public class EvalTemplateController {
 		if (pageReq.getSceneId()!=null) {
 			pageReq.setSceneId(pageReq.getSceneId());
 		}else {
-			String mpSceneId = localSceneService.getByTaskId(pageReq.getTemplateId());
+			String mpSceneId = localSceneService.getByTaskId(pageReq.getTaskId());
 			pageReq.setSceneId(mpSceneId);
 		}
 		return evalTemplateService.getAlarm(pageReq);

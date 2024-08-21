@@ -59,5 +59,5 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 
 	LocalScene selectLocalSceneBytemplateId(@Param("resourceId") String resourceId);
 
-	String getByTaskId(@Param("templateId") String templateId);
+	String getByTaskId(@Param("taskId") String taskId);
 }

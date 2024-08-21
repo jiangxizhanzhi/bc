@@ -155,6 +155,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		teamRoom.setCopyedTopoId(localSceneService.copyTopo(businessTemplate.getTopoId(), teamRoom.getName()));
 		teamRoom.setTeamTemplateName(businessTemplate.getName());
 		teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.UNOPENED.getCode());
+		teamRoom.setVehicleFrameId(template.getVehicleFrameId());
 		// 行业态势-攻击路径
 		if (StringUtils.isNotBlank(template.getSituationConfig())) {
 			IndustrySituationConfig config = JsonUtil.toJsonObject(template.getSituationConfig(),

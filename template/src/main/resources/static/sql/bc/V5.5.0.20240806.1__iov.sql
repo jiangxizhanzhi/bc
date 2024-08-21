@@ -107,3 +107,10 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 65, 43, 'GPU定位车�
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 44, 'CAN', '', NULL, NULL);
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 44, 'WIFI', '', NULL, NULL);
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 44, '蓝牙', '', NULL, NULL);
+
+
+ALTER TABLE `cr_team_template`
+    ADD COLUMN `vehicle_frame_id` varchar(32) NULL COMMENT '车架id';
+
+ALTER TABLE `cr_team_room`
+    ADD COLUMN `vehicle_frame_id` varchar(32) NULL COMMENT '车架id';

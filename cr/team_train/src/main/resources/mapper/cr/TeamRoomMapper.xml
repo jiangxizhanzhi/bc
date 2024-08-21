@@ -42,6 +42,7 @@
                cr_team_room.copyed_topo_id,
                cr_team_room.training_status,
                cr_team_room.logo,
+               cr_team_room.vehicle_frame_id,
                cr_team_template.duration_time,
                cr_train_record.start_time scene_start_time,
                cr_train_record.end_time   scene_end_time

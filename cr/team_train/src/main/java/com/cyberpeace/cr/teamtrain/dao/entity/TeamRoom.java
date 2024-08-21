@@ -1,17 +1,18 @@
 package com.cyberpeace.cr.teamtrain.dao.entity;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+
 import lombok.Data;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @TableName(value = "cr_team_room")
 @Data
@@ -74,6 +75,7 @@ public class TeamRoom extends BaseTable {
 	 */
 	private String sceneIdRecord;
 
+	private String vehicleFrameId;
 
 	public TeamRoom() {}
 

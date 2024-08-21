@@ -5,11 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.threadlocal.ThreadLocalContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.impl.TraceIdContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +21,8 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -42,6 +39,7 @@ import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -319,7 +317,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public void deleteTopo(String topoId) {
-		remoteTopoService.deleteById(topoId);
+		if (StringUtils.isNotBlank(topoId)) {
+			remoteTopoService.deleteById(topoId);
+		}
 	}
 
 	@Override

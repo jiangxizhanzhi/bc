@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +23,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.iov.dao.entity.VehicleFrame;
 import com.cyberpeace.iov.dao.mapper.VehicleFrameMapper;
 import com.cyberpeace.iov.service.VehicleFrameService;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameAddReq;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameDetailBo;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameListBo;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameModifyReq;
+import com.cyberpeace.iov.service.bo.frame.*;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -75,6 +74,15 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 		VehicleFrameDetailBo bo = BeanUtils.copy(frame, VehicleFrameDetailBo.class);
 		bo.setCreatorName(remoteUserService.getById(bo.getCreator()).getName());
 		return bo;
+	}
+
+	@Override
+	public List<FrameTopoItem> getTopoByFrameId(String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
+			return Lists.newArrayList();
+		}
+		VehicleFrame frame = this.getById(resourceId);
+		return JsonUtil.toJsonObjectArray(frame.getTopo(), FrameTopoItem.class);
 	}
 
 	private VehicleFrame req2Entity(VehicleFrameAddReq req) {

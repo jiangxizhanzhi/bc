@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.iov.dao.entity.VehicleFrame;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameAddReq;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameDetailBo;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameListBo;
-import com.cyberpeace.iov.service.bo.frame.VehicleFrameModifyReq;
+import com.cyberpeace.iov.service.bo.frame.*;
 
 public interface VehicleFrameService extends IService<VehicleFrame> {
 
@@ -22,4 +19,6 @@ public interface VehicleFrameService extends IService<VehicleFrame> {
 	void deleteByIds(List<String> ids);
 
 	VehicleFrameDetailBo getDetail(String resourceId);
+
+	List<FrameTopoItem> getTopoByFrameId(String vehicleFrameId);
 }

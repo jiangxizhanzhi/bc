@@ -66,4 +66,9 @@ public class TeamTemplate extends BaseTable {
 	 */
 	private String situationConfig;
 
+	/**
+	 * 车架id
+	 */
+	private String vehicleFrameId;
+
 }

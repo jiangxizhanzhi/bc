@@ -1,11 +1,11 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
+import com.cyberpeace.iov.service.bo.frame.FrameTopoItem;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -99,4 +99,10 @@ public class TeamRoomRsp  {
 
 	@ApiModelProperty(value = "关联 Engage 计数")
 	private List<NameCount> engageCount;
+
+	@ApiModelProperty(value = "车架id")
+	private String vehicleFrameId;
+
+	@ApiModelProperty(value = "车架拓扑")
+	private List<FrameTopoItem> vehicleFrame;
 }

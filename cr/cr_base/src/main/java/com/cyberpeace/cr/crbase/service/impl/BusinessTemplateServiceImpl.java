@@ -133,19 +133,23 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		businessTemplate.setOperationAuthIds("[]");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
-		// 拓扑场景id保存获取
-		SceneConfigData topoData = baseInfo.getSceneConfigData();
-		JSONObject topoJson = new JSONObject();
-		topoJson.put("scene_config", topoData.getSceneConfig());
-		topoJson.put("logo", topoData.getLogo());
-		topoJson.put("support_partial_start", topoData.getSupportPartialStart());
-		topoJson.put("id", topoData.getId());
+		if (baseInfo.getType().equals(BusinessType.TRAINING_TEAM.getCode())) {
+			businessTemplate.setTopoId("");
+		} else {
+			// 拓扑场景id保存获取
+			SceneConfigData topoData = baseInfo.getSceneConfigData();
+			JSONObject topoJson = new JSONObject();
+			topoJson.put("scene_config", topoData.getSceneConfig());
+			topoJson.put("logo", topoData.getLogo());
+			topoJson.put("support_partial_start", topoData.getSupportPartialStart());
+			topoJson.put("id", topoData.getId());
 
-		BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
-		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
+			BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
+			String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
 
-		// 保存基础模板
-		businessTemplate.setTopoId(topoId);
+			// 保存基础模板
+			businessTemplate.setTopoId(topoId);
+		}
 		// 2、执行实际的保存
 		// 1、保存公共模版数据
 		save(businessTemplate);
@@ -209,15 +213,17 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		// validate name
 		validateName(businessTemplate.getName(), businessTemplate.getBusinessType(),
 				businessTemplate.getResourceId());
-		// update topo
-		SceneConfigData topoData = baseInfo.getSceneConfigData();
-		if (topoData != null) {
-			JSONObject topoJson = new JSONObject();
-			topoJson.put("scene_config", topoData.getSceneConfig());
-			topoJson.put("logo", topoData.getLogo());
-			topoJson.put("support_partial_start", topoData.getSupportPartialStart());
+		if (!baseInfo.getType().equals(BusinessType.TRAINING_TEAM.getCode())) {
+			// update topo
+			SceneConfigData topoData = baseInfo.getSceneConfigData();
+			if (topoData != null) {
+				JSONObject topoJson = new JSONObject();
+				topoJson.put("scene_config", topoData.getSceneConfig());
+				topoJson.put("logo", topoData.getLogo());
+				topoJson.put("support_partial_start", topoData.getSupportPartialStart());
 
-			localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
+				localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
+			}
 		}
 		// save
 		updateById(businessTemplate);

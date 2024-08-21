@@ -53,4 +53,6 @@ public class TeamRoomData implements Serializable {
 
 	private String businessTemplateId;
 
+	private String vehicleFrameId;
+
 }

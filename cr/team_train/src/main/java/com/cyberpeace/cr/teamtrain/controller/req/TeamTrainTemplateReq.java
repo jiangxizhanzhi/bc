@@ -23,4 +23,7 @@ public class TeamTrainTemplateReq extends BasicTemplate {
 	@NotNull
 	private Object timeLineConfig = "{}";
 
+	@ApiModelProperty(value = "车架id")
+	private String vehicleFrameId;
+
 }

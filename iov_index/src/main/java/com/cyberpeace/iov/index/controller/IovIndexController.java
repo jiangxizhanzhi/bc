@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/iov/index/")
 @RequiresAuthentication
-public class IndexController {
+public class IovIndexController {
 
 	@Autowired
 	private IovIndexService iovIndexService;

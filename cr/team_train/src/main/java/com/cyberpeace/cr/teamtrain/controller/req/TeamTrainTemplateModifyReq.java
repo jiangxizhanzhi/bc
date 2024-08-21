@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TeamTrainTemplateModifyReq extends TeamTrainTemplateReq {
+public class TeamTrainTemplateModifyReq extends TeamTrainTemplateAddReq {
 
 	@ApiModelProperty(required = true, value = "模板编号")
 	@NotNull

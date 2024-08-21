@@ -91,6 +91,7 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
+import com.cyberpeace.iov.service.VehicleFrameService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -150,6 +151,9 @@ public class TeamTrainRoomController {
 	
 	@Autowired
 	private MpEnvService mpEnvService;
+
+	@Autowired
+	private VehicleFrameService vehicleFrameService;
 
 	private static final String MISSING_LOG = "resource_id_missing";
 
@@ -389,7 +393,10 @@ public class TeamTrainRoomController {
 		teamRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 
-		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
+		teamRoomRsp.setVehicleFrame(
+				vehicleFrameService.getTopoByFrameId(teamRoomData.getVehicleFrameId()));
+
+		return new BaseRsp<>(teamRoomRsp);
 	}
 
 	private List<TeamRoomRoleRes> getTeamRoomRoleRes(List<CrRole> crRoles) {

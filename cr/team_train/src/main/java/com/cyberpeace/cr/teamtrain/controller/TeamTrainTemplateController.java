@@ -241,6 +241,7 @@ public class TeamTrainTemplateController {
 		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRsp.getRoleList()) {
 			teamTrainTemplateRoleRsp.initAssetMap();
 		}
+		teamTrainTemplateRsp.setVehicleFrameId(template.getVehicleFrameId());
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 

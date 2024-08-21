@@ -57,4 +57,7 @@ public class TeamTrainTemplateRsp  {
 	@ApiModelProperty(value = "关联 Engage 计数")
 	private List<NameCount> engageCount;
 
+	@ApiModelProperty(value = "车架id")
+	private String vehicleFrameId;
+
 }

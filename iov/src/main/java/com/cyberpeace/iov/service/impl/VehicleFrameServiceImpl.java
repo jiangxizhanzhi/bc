@@ -21,10 +21,12 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.iov.dao.entity.VehicleFrame;
 import com.cyberpeace.iov.dao.mapper.VehicleFrameMapper;
 import com.cyberpeace.iov.service.VehicleFrameService;
+import com.cyberpeace.iov.service.bo.dut.AreaAndCount;
 import com.cyberpeace.iov.service.bo.frame.*;
 import com.google.common.collect.Maps;
 
@@ -106,6 +108,18 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 		return res;
 	}
 
+	@Override
+	public List<AreaAndCount> countDutByArea(String vehicleFrameId) {
+		List<FrameTopoItem> dutList = this.getTopoByFrameId(vehicleFrameId);
+		List<AreaAndCount> res = this.initCountByArea();
+		Map<Integer, List<FrameTopoItem>> mapByArea = StreamApiUtils.groupBy(dutList,
+				FrameTopoItem::getArea);
+		for (AreaAndCount item : res) {
+			item.setCount(mapByArea.getOrDefault(item.getArea(), Lists.newArrayList()).size());
+		}
+		return res;
+	}
+
 	private VehicleFrame req2Entity(VehicleFrameAddReq req) {
 		VehicleFrame frame = new VehicleFrame();
 		frame.setCreator(UserInfoContext.getUserContext().getUserId());
@@ -126,6 +140,16 @@ public class VehicleFrameServiceImpl extends ServiceImpl<VehicleFrameMapper, Veh
 			log.error("invalid topo json string: {}", topo);
 			return 0;
 		}
+	}
+
+	private List<AreaAndCount> initCountByArea() {
+		List<AreaAndCount> res = Lists.newArrayList();
+		for (int i = 1; i <= 6; i++) {
+			AreaAndCount item = new AreaAndCount();
+			item.setArea(i);
+			res.add(item);
+		}
+		return res;
 	}
 
 }

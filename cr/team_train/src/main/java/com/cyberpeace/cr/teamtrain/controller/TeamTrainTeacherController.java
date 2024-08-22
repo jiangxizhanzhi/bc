@@ -1,7 +1,15 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.exception.BusinessException;
@@ -31,22 +39,15 @@ import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.iov.service.VehicleFrameService;
+import com.cyberpeace.iov.service.bo.dut.AreaAndCount;
 import com.cyberpeace.iov.service.bo.frame.FrameTopoItem;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例-教员")
 @Slf4j
@@ -198,10 +199,10 @@ public class TeamTrainTeacherController {
 	@ApiOperation("设备统计")
 	@GetMapping("/device/statistics")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<JSONObject> getDeviceStatistics(
+	public BaseRsp<List<AreaAndCount>> getDeviceStatistics(
 			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
-		JSONObject res = teamSceneService.getNodeStatistics(resource_id);
+		List<AreaAndCount> res = teamTeacherService.getDutCount(resource_id);
 		return new BaseRsp<>(res);
 	}
 

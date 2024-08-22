@@ -6,6 +6,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cs.service.context.IdNameType;
+import com.cyberpeace.iov.service.bo.dut.AreaAndCount;
 
 public interface TeamTeacherService {
 
@@ -58,4 +59,6 @@ public interface TeamTeacherService {
 	 * @param missionId 任务id
 	 */
 	void notifySubmission(String missionId);
+
+	List<AreaAndCount> getDutCount(String resourceId);
 }

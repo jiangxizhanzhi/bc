@@ -2,16 +2,16 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.enums.TeamRoleGroup;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
-import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
@@ -21,6 +21,8 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.service.context.IdNameType;
+import com.cyberpeace.iov.service.VehicleFrameService;
+import com.cyberpeace.iov.service.bo.dut.AreaAndCount;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,9 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 
 	@Autowired
 	private CrRoleService crRoleService;
+
+	@Autowired
+	private VehicleFrameService vehicleFrameService;
 
 	@Override
 	public List<StudentScoreListRsp> getScoreList(String roomId) {
@@ -109,6 +114,12 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 		List<String> teacherIds = this.getTeacherIdsByRoomId(roomId);
 		crBadgeService.createBatch(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), teacherIds);
 		crTaskService.pushMissionWsToUsers(roomId, teacherIds, MissionWsCode.MISSION_SUBMISSION);
+	}
+
+	@Override
+	public List<AreaAndCount> getDutCount(String resourceId) {
+		TeamRoom room = teamRoomService.getOrExceptionById(resourceId);
+		return vehicleFrameService.countDutByArea(room.getVehicleFrameId());
 	}
 
 	private List<String> getTeacherIdsByRoomId(String roomId) {

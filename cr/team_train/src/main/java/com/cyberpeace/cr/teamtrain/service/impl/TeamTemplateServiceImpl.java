@@ -2,18 +2,20 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.enums.BusinessCode;
-import com.cyberpeace.common.enums.BusinessType;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -189,6 +191,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 
 	@Override
 	public List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> businessIds) {
+		if (CollectionUtils.isEmpty(businessIds)) {
+			return Lists.newArrayList();
+		}
 		return teamTemplateMapper.getTeamTemplateByBusinessIds(businessIds);
 	}
 

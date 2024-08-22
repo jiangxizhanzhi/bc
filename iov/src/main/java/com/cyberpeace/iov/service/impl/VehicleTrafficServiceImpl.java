@@ -1,6 +1,9 @@
 package com.cyberpeace.iov.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +15,10 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.iov.dao.entity.VehicleTraffic;
 import com.cyberpeace.iov.dao.mapper.VehicleTrafficMapper;
@@ -33,6 +39,9 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private UtilService utilService;
 
 	@Override
 	public ListRsp<VehicleTrafficListBo> pageTraffic(PageReqBase req) {
@@ -67,6 +76,26 @@ public class VehicleTrafficServiceImpl extends ServiceImpl<VehicleTrafficMapper,
 		bo.setBlfFileName(attachment.getFileName());
 		bo.setBlfFilePath(attachment.getFilePath());
 		return bo;
+	}
+
+	@Override
+	public List<VehicleTrafficDetailBo> listTraffic() {
+		List<VehicleTraffic> trafficList = this.list();
+		List<VehicleTrafficDetailBo> res = BeanUtils.deepCopyList(trafficList,
+				VehicleTrafficDetailBo.class);
+		List<String> attachmentIds = trafficList.stream().map(VehicleTraffic::getBlfFile)
+				.filter(Objects::nonNull).collect(Collectors.toList());
+		List<Attachment> attachmentList = attachmentService.batchGetByIds(attachmentIds);
+		Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachmentList,
+				Attachment::getResourceId, a -> a);
+		for (VehicleTrafficDetailBo bo : res) {
+			Attachment attachment = attachmentMap.get(bo.getBlfFile());
+			if (null != attachment) {
+				bo.setBlfFileName(attachment.getFileName());
+				bo.setBlfFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
+			}
+		}
+		return res;
 	}
 
 	private VehicleTraffic req2Entity(VehicleTrafficAddReq req) {

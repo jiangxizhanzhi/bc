@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.iov.service.VehicleTrafficService;
+import com.cyberpeace.iov.service.bo.traffic.VehicleTrafficDetailBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -128,6 +130,9 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private CrScoreService crScoreService;
+
+	@Autowired
+	private VehicleTrafficService vehicleTrafficService;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -508,6 +513,13 @@ public class TeamTrainStudentsController {
 				availableDevices, collectedCommonDevices);
 
 		return new BaseRsp<>(commonDeviceContexts);
+	}
+
+	@ApiOperation("BLF文件列表")
+	@GetMapping("/blf")
+	public BaseRsp<List<VehicleTrafficDetailBo>> listBlf() {
+		List<VehicleTrafficDetailBo> res = vehicleTrafficService.listTraffic();
+		return new BaseRsp<>(res);
 	}
 
 	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息

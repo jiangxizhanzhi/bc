@@ -21,4 +21,6 @@ public interface VehicleTrafficService extends IService<VehicleTraffic> {
     void deleteByIds(List<String> ids);
 
     VehicleTrafficDetailBo getDetail(String resourceId);
+
+    List<VehicleTrafficDetailBo> listTraffic();
 }

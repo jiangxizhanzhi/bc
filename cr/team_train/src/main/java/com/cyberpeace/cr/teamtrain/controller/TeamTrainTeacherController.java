@@ -186,6 +186,13 @@ public class TeamTrainTeacherController {
 		}
 		TeamRoom room = teamRoomService.getOrExceptionById(resource_id);
 		List<FrameTopoItem> res = vehicleFrameService.getTopoByFrameId(room.getVehicleFrameId());
+		if (null != category) {
+			res = res.stream().filter(i -> i.getArea().equals(category))
+					.collect(Collectors.toList());
+		}
+		if (null != name) {
+			res = res.stream().filter(i -> i.getName().contains(name)).collect(Collectors.toList());
+		}
 		return new BaseRsp<>(res);
 	}
 

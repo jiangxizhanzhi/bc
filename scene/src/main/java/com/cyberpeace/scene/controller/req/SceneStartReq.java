@@ -24,7 +24,7 @@ public class SceneStartReq implements Serializable {
     @ApiModelProperty(value = "销毁时间,单位：小时", name = "destroy_time")
     private Integer destroyTime;
 
-    @ApiModelProperty(value = "实例类型,0=课程，1=实操，2=运维", name = "instance_type")
+    @ApiModelProperty(value = "实例类型,0=课程，1=实操，2=运维， 3=考试", name = "instance_type")
     private Integer instanceType;
 
     @ApiModelProperty(value = "日志对象名称", name = "target_name")

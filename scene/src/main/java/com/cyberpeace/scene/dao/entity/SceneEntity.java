@@ -59,7 +59,7 @@ public class SceneEntity extends BaseTable implements Serializable {
     @ApiModelProperty("场景元数据")
     private String meta;
 
-    @ApiModelProperty("实例类型,0=课程，1=实操，2=运维")
+    @ApiModelProperty("实例类型,0=课程，1=实操，2=运维，3=考试")
     private Integer instanceType;
 
     @TableField(exist = false)

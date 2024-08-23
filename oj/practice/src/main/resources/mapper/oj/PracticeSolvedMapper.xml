@@ -116,6 +116,7 @@
                 <if test="solved.isPaper != null">
                     , is_paper = #{solved.isPaper}
                 </if>
+                , update_time = now()
             </if>
         </set>
         where submit_user_id = #{solved.submitUserId}

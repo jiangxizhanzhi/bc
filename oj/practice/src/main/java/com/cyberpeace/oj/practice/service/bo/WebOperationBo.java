@@ -21,4 +21,7 @@ public class WebOperationBo extends OperationBo {
 	@ApiModelProperty("来源")
 	private String source;
 
+	@ApiModelProperty("方向")
+	private String categoryName;
+
 }

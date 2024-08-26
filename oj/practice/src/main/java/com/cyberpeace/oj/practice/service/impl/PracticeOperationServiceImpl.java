@@ -575,6 +575,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeSet practiceSet = practiceSetMapper.selectById(webOperationBo.getPracticeSetId());
 		webOperationBo.setPracticeSetName(practiceSet.getName());
 		webOperationBo.setSource(practiceSet.getTag());
+		PracticeCategory category = practiceCategoryMapper
+				.selectById(webOperationBo.getCategoryId());
+		webOperationBo.setCategoryName(category == null ? null : category.getName());
 
 		return webOperationBo;
 	}
@@ -655,9 +658,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				PracticeSet::getResourceId, item -> item);
 
 		Map<String, String> creatorMap = sysUserService.getUserNameMap(creatorIdList);
+		List<PracticeCategory> categoryList = practiceCategoryService.list();
+		Map<String,String> categoryMap = StreamApiUtils.toMap(categoryList, PracticeCategory::getResourceId, PracticeCategory::getName);
 		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext,
 				listQuery.getSolved(), practiceSolvedMap, practiceSetMap, creatorMap,
-				Maps.newHashMap()));
+				Maps.newHashMap(), categoryMap));
 	}
 
 	/**
@@ -673,7 +678,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
 			AuthContext authContext, Boolean solved, Map<String, PracticeSolved> practiceSolvedMap,
-			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap,Map<String, OpsQuestionBo> opsMap) {
+			Map<String, PracticeSet> practiceSetMap, Map<String, String> creatorMap,
+			Map<String, OpsQuestionBo> opsMap, Map<String, String> categoryMap) {
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
@@ -713,6 +719,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operationListBo.setCreateUserName( creatorMap.getOrDefault(practiceOperation.getCreateUserId(),""));
 		operationListBo.setSource(null != practiceSet ? practiceSet.getSource() : "");
 		operationListBo.setTag(null != practiceSet ? practiceSet.getTag() : "");
+
+		operationListBo.setCategoryName(categoryMap.get(operationListBo.getCategoryId()));
 		return operationListBo;
 
 	}

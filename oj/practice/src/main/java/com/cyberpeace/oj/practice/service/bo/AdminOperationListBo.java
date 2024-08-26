@@ -15,8 +15,11 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("资源编号")
 	private String resourceId;
 
-	@ApiModelProperty("方向")
+	@ApiModelProperty("方向id")
 	private String categoryId;
+
+	@ApiModelProperty("方向")
+	private String categoryName;
 
 	@ApiModelProperty("标题")
 	private String title;
@@ -59,9 +62,6 @@ public class AdminOperationListBo implements Serializable {
 
 	@ApiModelProperty("知识点")
 	private List<String> knowledge;
-
-	@ApiModelProperty("题型")
-	private Integer category;
 
 	@ApiModelProperty("是否为真题")
 	private Boolean isTrue;

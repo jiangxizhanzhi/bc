@@ -9,6 +9,9 @@ import lombok.Data;
 @ApiModel
 public class WebOperationListReq extends PageReqBase {
 
+	@ApiModelProperty("方向")
+	private String categoryId;
+
 	@ApiModelProperty("习题集")
 	private String practiceSetId;
 
@@ -21,10 +24,11 @@ public class WebOperationListReq extends PageReqBase {
 	@ApiModelProperty("来源")
 	private String source;
 
-	@ApiModelProperty("题型")
-	private Integer category;
-
 	public void setPractice_set_id(String practiceSetId) {
 		this.practiceSetId = practiceSetId;
+	}
+
+	public void setCategory_id(String categoryId) {
+		this.categoryId = categoryId;
 	}
 }

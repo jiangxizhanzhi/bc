@@ -25,6 +25,12 @@
                 <if test="listQuery.category != null ">
                     and category = #{listQuery.category}
                 </if>
+                <if test="listQuery.categoryIds != null and listQuery.categoryIds.size() != 0">
+                    and category_id in
+                    <foreach collection="listQuery.categoryIds" open="(" close=")" item="categoryId" separator=",">
+                        #{categoryId}
+                    </foreach>
+                </if>
                 <if test="listQuery.pattern != null and listQuery.pattern != ''">
                     <bind name="title" value="'%' + listQuery.pattern + '%'"/>
                     and title like #{title}

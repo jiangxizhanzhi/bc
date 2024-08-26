@@ -113,6 +113,11 @@ public class PracticeOperationController {
 			listQueryBo.setKnowledgeList(Arrays.asList(listReq.getKnowledge()));
 		}
 
+
+		if (StringUtils.isNotBlank(listReq.getCategoryId())) {
+			listQueryBo.setCategoryIds(Arrays.asList(listReq.getCategoryId()));
+		}
+
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
 

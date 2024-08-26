@@ -4,21 +4,30 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.practice.dao.entity.PracticeRandomFlag;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeRandomFlagMapper;
 import com.cyberpeace.oj.practice.entity.PracticeBase;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateService;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service("operation")
 public class OperationEvaluateHandler implements PracticeEvaluateHandler {
+
+	@Autowired
+	private PracticeRandomFlagMapper practiceRandomFlagMapper;
 
 	private static Map<Integer, PracticeEvaluateService> evaluateMap = Maps.newHashMap();
 
@@ -56,6 +65,19 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 	 * @return
 	 */
 	private String correctAnswer(String userId, PracticeOperation practiceOperation) {
+		// 随机flag题目判断
+		if (practiceOperation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
+				.getCode().intValue()) {
+			PracticeRandomFlag randomFlag = practiceRandomFlagMapper.selectByUserAndPractice(userId,
+					practiceOperation.getResourceId(),
+					PracticeRandomFlag.FlagType.PRACTICE.getCode());
+			if (null == randomFlag) {
+				log.error("randomFlag is null ,userId =[{}]，ResourceId=[{}]", userId,
+						practiceOperation.getResourceId());
+				throw new BusinessException(OjBusinessErrorCode.RELOAD_PRACTICE);
+			}
+			return JsonUtil.arrayToString(Lists.newArrayList(randomFlag.getFlag()));
+		}
 		return practiceOperation.getAnswer();
 	}
 

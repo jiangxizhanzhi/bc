@@ -543,7 +543,8 @@ public class EvalSceneMapController {
 		convFile.createNewFile();
 		try (FileOutputStream fos = new FileOutputStream(convFile)) {
 			fos.write(file.getBytes());
-		}
+			fos.flush();
+        }
 		return convFile;
 	}
 
@@ -555,9 +556,9 @@ public class EvalSceneMapController {
 		Integer routerRole = router.getRole();
 		router.setRole(roleMap.get(routerRole));
 		DeviceVO firewall = images.get(CrCommonConstants.FIREWALL_UUID);
-		DeviceVO exchange = images.get(CrCommonConstants.EXCHANGE_UUID);
 		Integer firewallRole = firewall.getRole();
 		firewall.setRole(firewallRole);
+		DeviceVO exchange = images.get(CrCommonConstants.EXCHANGE_UUID);
 		try (ZipFile zip = new ZipFile(zipFile)) {
 			Enumeration<ZipArchiveEntry> entries = zip.getEntries();
 			List<TopoElement> topoElements = new ArrayList<>();
@@ -566,39 +567,90 @@ public class EvalSceneMapController {
 			List<Connections> sceneConnections;
 			List<String> nodes = new ArrayList<>();
 			Map<String, List<Router>> routerMap = new HashMap<>();
+			Map<String, List<Firewall>> firewallMap = new HashMap<>(); //防火墙MAP
 			while (entries.hasMoreElements()) {
 				ZipArchiveEntry entry = entries.nextElement();
 				String name = entry.getName();
 				if (!entry.isDirectory() && name.endsWith(".txt")) {
 //					name = name.replace( ".txt", "");
+//
+//					// 处理TXT文件，文件内容包含两种设备 路由器、防火墙 对应的信息可以从拓扑编辑器中的常用节点接口获取 该路由器与镜像路由器有区别 当前取前者
+//					List<Router> routers = processTxtFile(zip.getInputStream(entry), name);
+//					// 根据常用节点中路由器镜像信息初始化 节点信息
+//					TopoElement topoElement = new TopoElement();
+//					String id = IDGeneratorUtil.getID();
+//					nodes.add(id);
+//					routerMap.put(id, routers);
+//					String[] split = name.split("\\/");
+//					name = split[split.length-1].replace(".txt", "");
+//					topoElement.setName(name);
+//					topoElement.setId(id);
+//					getTopoElementByDeviceVo(topoElement, router);
+//					topoElement.setType(CrCommonConstants.ROUTER_ROLE);
+//					CpcloudElement elementObj = getCpcloudElementByDeviceDo(router);
+//					// TODO 防火墙角色设置逻辑待处理
+//					elementObj.setRole(CrCommonConstants.ROUTER_ROLE);
+//					cpElements.put(id, elementObj);
+//					JSONArray objects = new JSONArray();
+//					// 待确认解析的文件内容包含的连线关系
+//					topoElement.setPorts(objects);
+//					topoElements.add(topoElement);
 
-					// 处理TXT文件，文件内容包含两种设备 路由器、防火墙 对应的信息可以从拓扑编辑器中的常用节点接口获取 该路由器与镜像路由器有区别 当前取前者
-					List<Router> routers = processTxtFile(zip.getInputStream(entry), name);
-					// 根据常用节点中路由器镜像信息初始化 节点信息
-					TopoElement topoElement = new TopoElement();
-					String id = IDGeneratorUtil.getID();
-					nodes.add(id);
-					routerMap.put(id, routers);
-					String[] split = name.split("\\/");
-					name = split[split.length-1].replace(".txt", "");
-					topoElement.setName(name);
-					topoElement.setId(id);
-					getTopoElementByDeviceVo(topoElement, router);
-					topoElement.setType(CrCommonConstants.ROUTER_ROLE);
-					CpcloudElement elementObj = getCpcloudElementByDeviceDo(router);
-					// TODO 防火墙角色设置逻辑待处理
-					elementObj.setRole(CrCommonConstants.ROUTER_ROLE);
-					cpElements.put(id, elementObj);
-					JSONArray objects = new JSONArray();
-					// 待确认解析的文件内容包含的连线关系
-					topoElement.setPorts(objects);
-					topoElements.add(topoElement);
+					InputStream inputStream = zip.getInputStream(entry);
+					String content = inputStreamToString(inputStream);
 
+					List<Router> routers = null;
+					List<Firewall> firewalls = null;
+
+					// 根据内容判断是路由器文件还是防火墙文件
+					if (content.contains("router")) {
+						routers = processTxtFile(new ByteArrayInputStream(content.getBytes()), name);
+					} else if (content.contains("security")) {
+						firewalls = processTxtFileFire(new ByteArrayInputStream(content.getBytes()), name);
+					}
+
+					// 处理路由器文件
+					if (routers != null) {
+						TopoElement topoElement = new TopoElement();
+						String id = IDGeneratorUtil.getID();
+						nodes.add(id);
+						routerMap.put(id, routers);
+						String[] split = name.split("\\/");
+						name = split[split.length - 1].replace(".txt", "");
+						topoElement.setName(name);
+						topoElement.setId(id);
+						getTopoElementByDeviceVo(topoElement, router);
+						topoElement.setType(CrCommonConstants.ROUTER_ROLE);
+						CpcloudElement elementObj = getCpcloudElementByDeviceDo(router);
+						elementObj.setRole(CrCommonConstants.ROUTER_ROLE);
+						cpElements.put(id, elementObj);
+						topoElement.setPorts(new JSONArray());
+						topoElements.add(topoElement);
+					}
+
+					// 处理防火墙文件
+					if (firewalls != null) {
+						TopoElement topoElement = new TopoElement();
+						String id = IDGeneratorUtil.getID();
+						nodes.add(id);
+						firewallMap.put(id, firewalls);
+						String[] split = name.split("\\/");
+						name = split[split.length - 1].replace(".txt", "");
+						topoElement.setName(name);
+						topoElement.setId(id);
+						getTopoElementByDeviceVo(topoElement, firewall);
+						topoElement.setType(CrCommonConstants.FIREWALL_ROLE);
+						CpcloudElement elementObj = getCpcloudElementByDeviceDo(firewall);
+						elementObj.setRole(CrCommonConstants.FIREWALL_ROLE);
+						cpElements.put(id, elementObj);
+						topoElement.setPorts(new JSONArray());
+						topoElements.add(topoElement);
+					}
 				}
 			}
 			// 根据设备文件中的 遍历取 设备A 与 设备B 的 接口a 、接口b 是否在同一网段 具体实现是networkutil中的方法 入参为 接口的IP 网关
 			// 若出现 两台设备相同IP段就直连，三台及以上设备的话就需要新增一台交换机 设备均与交换机相连
-			sceneConnections = getConnection(nodes, routerMap, topoElements, elementPorts, exchange, cpElements);
+			sceneConnections = getConnection(nodes, routerMap, firewallMap, topoElements, elementPorts, exchange, cpElements);
 			topoElements.forEach(s-> {
 				String id = s.getId();
 				JSONArray ports = s.getPorts();
@@ -621,8 +673,7 @@ public class EvalSceneMapController {
 		return rsp;
 	}
 
-	private List<Connections> getConnection(List<String> ids, Map<String, List<Router>> routerMap,
-											List<TopoElement> topoElements, JSONObject elementPorts, DeviceVO exchange, JSONObject cpElements) throws UnknownHostException {
+	private List<Connections> getConnection(List<String> ids, Map<String, List<Router>> routerMap, Map<String, List<Firewall>> firewallMap, List<TopoElement> topoElements, JSONObject elementPorts, DeviceVO exchange, JSONObject cpElements) throws UnknownHostException {
 		Map<String, TopoElement> elementMap = StreamApiUtils.toMap(topoElements, TopoElement::getId, s -> s);
 		List<Connections> connections = new ArrayList<>();
 		Map<String, String> connectMap = new HashMap<>();
@@ -632,41 +683,84 @@ public class EvalSceneMapController {
 		for(int i =0;i< ids.size();i++) {
 			String id = ids.get(i);
 			List<Router> routers = routerMap.get(id);
+			List<Firewall> firewalls = firewallMap.get(id);
 			for (int j = 0; j < ids.size(); j++) {
 				if (i <= j) {
 					continue;
 				}
 				String nextId = ids.get(j);
 				List<Router> nextRouters = routerMap.get(nextId);
-				for (Router router : routers) {
-					List<PhysicalPort> physicalPorts = router.getPhysicalPorts();
-					for (PhysicalPort physicalPort : physicalPorts) {
-						String ip = physicalPort.getIp();
-						String subnetMask = physicalPort.getSubnetMask();
-						for (Router nextRouter : nextRouters) {
-							List<PhysicalPort> ports = nextRouter.getPhysicalPorts();
-							for (PhysicalPort port : ports) {
-								String ip2 = port.getIp();
-								String subnetMask2 = port.getSubnetMask();
-								log.info("tooo  connections :[{}]--[{}]--[{}]--[{}]", ip, ip2, subnetMask, subnetMask2);
-								if (NetworkUtils.sameSubnet(ip, ip2, subnetMask, subnetMask2)) {
-									String address = NetworkUtils.calculateNetworkAddress(ip, subnetMask);
-									TopoElement topoElement = elementMap.get(id);
-									TopoElement nextTopoElement = elementMap.get(nextId);
-									if (!exchangeMap.containsKey(address)) {
-										List<TopoElement> devices = new ArrayList<>();
-										devices.add(topoElement);
-										devices.add(nextTopoElement);
-										exchangeMap.put(address, devices);
-									} else {
-										List<TopoElement> elementList = exchangeMap.get(address);
-										if (!elementList.contains(topoElement)) {
-											elementList.add(topoElement);
+				List<Firewall> nextFirewalls = firewallMap.get(nextId);
+
+				//路由器连线
+				if(routers != null && nextRouters != null){
+					for (Router router : routers) {
+						List<PhysicalPort> physicalPorts = router.getPhysicalPorts();
+						for (PhysicalPort physicalPort : physicalPorts) {
+							String ip = physicalPort.getIp();
+							String subnetMask = physicalPort.getSubnetMask();
+							for (Router nextRouter : nextRouters) {
+								List<PhysicalPort> ports = nextRouter.getPhysicalPorts();
+								for (PhysicalPort port : ports) {
+									String ip2 = port.getIp();
+									String subnetMask2 = port.getSubnetMask();
+									log.info("tooo  connections :[{}]--[{}]--[{}]--[{}]", ip, ip2, subnetMask, subnetMask2);
+									if (NetworkUtils.sameSubnet(ip, ip2, subnetMask, subnetMask2)) {
+										String address = NetworkUtils.calculateNetworkAddress(ip, subnetMask);
+										TopoElement topoElement = elementMap.get(id);
+										TopoElement nextTopoElement = elementMap.get(nextId);
+										if (!exchangeMap.containsKey(address)) {
+											List<TopoElement> devices = new ArrayList<>();
+											devices.add(topoElement);
+											devices.add(nextTopoElement);
+											exchangeMap.put(address, devices);
+										} else {
+											List<TopoElement> elementList = exchangeMap.get(address);
+											if (!elementList.contains(topoElement)) {
+												elementList.add(topoElement);
+											}
+											if (!elementList.contains(nextTopoElement)) {
+												elementList.add(nextTopoElement);
+											}
+											exchangeMap.put(address, elementList);
 										}
-										if (!elementList.contains(nextTopoElement)) {
-											elementList.add(nextTopoElement);
+									}
+								}
+							}
+						}
+					}
+				}
+				//防火墙
+				if (firewalls != null && nextFirewalls != null) {
+					for (Firewall fireWall : firewalls) {
+						List<PhysicalPort> physicalPorts = fireWall.getPhysicalPorts();
+						for (PhysicalPort physicalPort : physicalPorts) {
+							String ip = physicalPort.getIp();
+							String subnetMask = physicalPort.getSubnetMask();
+							for (Firewall nextFireWall : nextFirewalls) {
+								List<PhysicalPort> ports = nextFireWall.getPhysicalPorts();
+								for (PhysicalPort port : ports) {
+									String ip2 = port.getIp();
+									String subnetMask2 = port.getSubnetMask();
+									if (NetworkUtils.sameSubnet(ip, ip2, subnetMask, subnetMask2)) {
+										String address = NetworkUtils.calculateNetworkAddress(ip, subnetMask);
+										TopoElement topoElement = elementMap.get(id);
+										TopoElement nextTopoElement = elementMap.get(nextId);
+										if (!exchangeMap.containsKey(address)) {
+											List<TopoElement> devices = new ArrayList<>();
+											devices.add(topoElement);
+											devices.add(nextTopoElement);
+											exchangeMap.put(address, devices);
+										} else {
+											List<TopoElement> elementList = exchangeMap.get(address);
+											if (!elementList.contains(topoElement)) {
+												elementList.add(topoElement);
+											}
+											if (!elementList.contains(nextTopoElement)) {
+												elementList.add(nextTopoElement);
+											}
+											exchangeMap.put(address, elementList);
 										}
-										exchangeMap.put(address, elementList);
 									}
 								}
 							}
@@ -674,9 +768,11 @@ public class EvalSceneMapController {
 					}
 				}
 			}
+
 			TopoElement topoElement = elementMap.get(id);
 			int index = topoElements.indexOf(topoElement);
 			topoElement.setRouters(routers);
+			topoElement.setFirewalls(firewalls);
 			topoElements.set(index, topoElement);
 		}
 
@@ -704,20 +800,39 @@ public class EvalSceneMapController {
 				String sourceIp = null;
 				for(TopoElement element:value){
 					List<Router> routers = element.getRouters();
-					for(Router router:routers){
-						List<PhysicalPort> physicalPorts = router.getPhysicalPorts();
-						Map<String, PhysicalPort> physicalPortMap = StreamApiUtils.toMap(physicalPorts, PhysicalPort::getAddress, s -> s);
-						PhysicalPort physicalPort = physicalPortMap.get(address);
-						if(physicalPort == null){
-							continue;
+					List<Firewall> firewalls = element.getFirewalls();
+					if (routers != null) {
+						for (Router router : routers) {
+							List<PhysicalPort> physicalPorts = router.getPhysicalPorts();
+							Map<String, PhysicalPort> physicalPortMap = StreamApiUtils.toMap(physicalPorts, PhysicalPort::getAddress, s -> s);
+							PhysicalPort physicalPort = physicalPortMap.get(address);
+							if (physicalPort == null) {
+								continue;
+							}
+							targetIp = physicalPort.getIp();
+							targetSubnetMask = physicalPort.getSubnetMask();
+							cidr = CidrCalculator.getCidr(targetIp, targetSubnetMask);
+							elementObj.setCidr(cidr);
+							elementObj.setGateway(targetIp);
+							List<String> address1 = NetworkUtils.calculateBroadcastAddress(targetIp, targetSubnetMask);
+							sourceIp = address1.get(1);
 						}
-						targetIp = physicalPort.getIp();
-						targetSubnetMask = physicalPort.getSubnetMask();
-						cidr = CidrCalculator.getCidr(targetIp, targetSubnetMask);
-						elementObj.setCidr(cidr);
-						elementObj.setGateway(targetIp);
-						List<String> address1 = NetworkUtils.calculateBroadcastAddress(targetIp, targetSubnetMask);
-						sourceIp = address1.get(1);
+					}else if (firewalls != null) {
+						for (Firewall firewall : firewalls) {
+							List<PhysicalPort> physicalPorts = firewall.getPhysicalPorts();
+							Map<String, PhysicalPort> physicalPortMap = StreamApiUtils.toMap(physicalPorts, PhysicalPort::getAddress, s -> s);
+							PhysicalPort physicalPort = physicalPortMap.get(address);
+							if (physicalPort == null) {
+								continue;
+							}
+							targetIp = physicalPort.getIp();
+							targetSubnetMask = physicalPort.getSubnetMask();
+							cidr = CidrCalculator.getCidr(targetIp, targetSubnetMask);
+							elementObj.setCidr(cidr);
+							elementObj.setGateway(targetIp);
+							List<String> address1 = NetworkUtils.calculateBroadcastAddress(targetIp, targetSubnetMask);
+							sourceIp = address1.get(1);
+						}
 					}
 					JSONArray ports1 = element.getPorts();
 					int sourcePortNum = objects.isEmpty() ? 1 : objects.size() + 1;
@@ -763,65 +878,134 @@ public class EvalSceneMapController {
 			String nextId = nextTopoElement.getId();
 			List<Router> routers = routerMap.get(id);
 			List<Router> nextRouters = routerMap.get(nextId);
-			for(Router router:routers){
-				List<PhysicalPort> physicalPorts = router.getPhysicalPorts();
-				for(PhysicalPort physicalPort:physicalPorts){
-					String ip = physicalPort.getIp();
-					String subnetMask = physicalPort.getSubnetMask();
-					for(Router nextRouter:nextRouters){
-						List<PhysicalPort> ports = nextRouter.getPhysicalPorts();
-						for(PhysicalPort port:ports) {
-							String ip2 = port.getIp();
-							String subnetMask2 = port.getSubnetMask();
-							log.info("tooo  connections :[{}]--[{}]--[{}]--[{}]", ip, ip2, subnetMask, subnetMask2);
-							if(NetworkUtils.sameSubnet(ip, ip2, subnetMask, subnetMask2)){
-								if(connectMap.containsKey(id) && connectMap.get(id).equals(nextId)){
-									continue;
+			List<Firewall> firewalls = firewallMap.get(id);
+			List<Firewall> nextFirewalls = firewallMap.get(nextId);
+			if (routers != null) {
+				for (Router router : routers) {
+					List<PhysicalPort> physicalPorts = router.getPhysicalPorts();
+					for (PhysicalPort physicalPort : physicalPorts) {
+						String ip = physicalPort.getIp();
+						String subnetMask = physicalPort.getSubnetMask();
+						for (Router nextRouter : nextRouters) {
+							List<PhysicalPort> ports = nextRouter.getPhysicalPorts();
+							for (PhysicalPort port : ports) {
+								String ip2 = port.getIp();
+								String subnetMask2 = port.getSubnetMask();
+								log.info("tooo  connections :[{}]--[{}]--[{}]--[{}]", ip, ip2, subnetMask, subnetMask2);
+								if (NetworkUtils.sameSubnet(ip, ip2, subnetMask, subnetMask2)) {
+									if (connectMap.containsKey(id) && connectMap.get(id).equals(nextId)) {
+										continue;
+									}
+									connectMap.put(id, nextId);
+									log.info("connections :[{}]--[{}]--[{}]--[{}]", ip, ip2, subnetMask, subnetMask2);
+									int index1 = topoElements.indexOf(topoElement);
+									int index = topoElements.indexOf(nextTopoElement);
+									JSONArray ports1 = topoElement.getPorts();
+									JSONArray ports2 = nextTopoElement.getPorts();
+									int sourcePortNum = ports1.isEmpty() ? 1 : ports1.size() + 1;
+									String sourcePort = "port_" + id + "_electrical_" + sourcePortNum;
+									int targetPortNum = ports2.isEmpty() ? 1 : ports2.size() + 1;
+									String targetPort = "port_" + nextId + "_electrical_" + targetPortNum;
+									JSONObject source = new JSONObject();
+									source.put("id", sourcePort);
+									source.put("name", "E0/" + sourcePortNum);
+									source.put("mac_addr", "");
+									source.put("ip", ip);
+									ports1.add(source);
+									topoElement.setPorts(ports1);
+
+									JSONObject target = new JSONObject();
+									target.put("id", targetPort);
+									target.put("name", "E0/" + targetPortNum);
+									target.put("mac_addr", "");
+									target.put("ip", ip2);
+									ports2.add(target);
+									nextTopoElement.setPorts(ports2);
+									topoElements.set(index1, topoElement);
+									topoElements.set(index, nextTopoElement);
+
+									JSONObject targetObj = new JSONObject();
+									target.put("connect_mode", (topoElement.getType() == 1 || topoElement.getType() == 2) ? "simple" : null);
+									target.put("firewall_rules", null);
+									target.put("logic_network_id", "");
+									target.put("resource_id", "");
+
+									elementPorts.put(targetPort, targetObj);
+									elementPorts.put(sourcePort, targetObj);
+
+									Connections connScene = new Connections();
+									String connId = IDGeneratorUtil.getID();
+									connScene.setId(connId);
+									connScene.setTarget(sourcePort);
+									connScene.setSource(targetPort);
+									connections.add(connScene);
+
 								}
-								connectMap.put(id, nextId);
-								log.info("connections :[{}]--[{}]--[{}]--[{}]", ip, ip2, subnetMask, subnetMask2);
-								int index1 = topoElements.indexOf(topoElement);
-								int index = topoElements.indexOf(nextTopoElement);
-								JSONArray ports1 = topoElement.getPorts();
-								JSONArray ports2 = nextTopoElement.getPorts();
-								int sourcePortNum = ports1.isEmpty() ? 1 : ports1.size() + 1;
-								String sourcePort = "port_" + id + "_electrical_" + sourcePortNum;
-								int targetPortNum = ports2.isEmpty() ? 1 : ports2.size() + 1;
-								String targetPort = "port_" + nextId + "_electrical_" + targetPortNum;
-								JSONObject source = new JSONObject();
-								source.put("id", sourcePort);
-								source.put("name", "E0/" + sourcePortNum);
-								source.put("mac_addr", "");
-								source.put("ip", ip);
-								ports1.add(source);
-								topoElement.setPorts(ports1);
+							}
+						}
+					}
+				}
+			}else if(firewalls != null){
+				for (Firewall firewall : firewalls) {
+					List<PhysicalPort> physicalPorts = firewall.getPhysicalPorts();
+					for (PhysicalPort physicalPort : physicalPorts) {
+						String ip = physicalPort.getIp();
+						String subnetMask = physicalPort.getSubnetMask();
+						for (Firewall nextFirewall : nextFirewalls) {
+							List<PhysicalPort> ports = nextFirewall.getPhysicalPorts();
+							for (PhysicalPort port : ports) {
+								String ip2 = port.getIp();
+								String subnetMask2 = port.getSubnetMask();
+								log.info("tooo  connections :[{}]--[{}]--[{}]--[{}]", ip, ip2, subnetMask, subnetMask2);
+								if (NetworkUtils.sameSubnet(ip, ip2, subnetMask, subnetMask2)) {
+									if (connectMap.containsKey(id) && connectMap.get(id).equals(nextId)) {
+										continue;
+									}
+									connectMap.put(id, nextId);
+									log.info("connections :[{}]--[{}]--[{}]--[{}]", ip, ip2, subnetMask, subnetMask2);
+									int index1 = topoElements.indexOf(topoElement);
+									int index = topoElements.indexOf(nextTopoElement);
+									JSONArray ports1 = topoElement.getPorts();
+									JSONArray ports2 = nextTopoElement.getPorts();
+									int sourcePortNum = ports1.isEmpty() ? 1 : ports1.size() + 1;
+									String sourcePort = "port_" + id + "_electrical_" + sourcePortNum;
+									int targetPortNum = ports2.isEmpty() ? 1 : ports2.size() + 1;
+									String targetPort = "port_" + nextId + "_electrical_" + targetPortNum;
+									JSONObject source = new JSONObject();
+									source.put("id", sourcePort);
+									source.put("name", "E0/" + sourcePortNum);
+									source.put("mac_addr", "");
+									source.put("ip", ip);
+									ports1.add(source);
+									topoElement.setPorts(ports1);
 
-								JSONObject target = new JSONObject();
-								target.put("id", targetPort);
-								target.put("name", "E0/" + targetPortNum);
-								target.put("mac_addr", "");
-								target.put("ip", ip2);
-								ports2.add(target);
-								nextTopoElement.setPorts(ports2);
-								topoElements.set(index1, topoElement);
-								topoElements.set(index, nextTopoElement);
+									JSONObject target = new JSONObject();
+									target.put("id", targetPort);
+									target.put("name", "E0/" + targetPortNum);
+									target.put("mac_addr", "");
+									target.put("ip", ip2);
+									ports2.add(target);
+									nextTopoElement.setPorts(ports2);
+									topoElements.set(index1, topoElement);
+									topoElements.set(index, nextTopoElement);
 
-								JSONObject targetObj = new JSONObject();
-								target.put("connect_mode", (topoElement.getType() == 1 || topoElement.getType() == 2)  ? "simple":null);
-								target.put("firewall_rules", null);
-								target.put("logic_network_id", "");
-								target.put("resource_id", "");
+									JSONObject targetObj = new JSONObject();
+									target.put("connect_mode", (topoElement.getType() == 1 || topoElement.getType() == 2) ? "simple" : null);
+									target.put("firewall_rules", null);
+									target.put("logic_network_id", "");
+									target.put("resource_id", "");
 
-								elementPorts.put(targetPort, targetObj);
-								elementPorts.put(sourcePort, targetObj);
+									elementPorts.put(targetPort, targetObj);
+									elementPorts.put(sourcePort, targetObj);
 
-								Connections connScene = new Connections();
-								String connId = IDGeneratorUtil.getID();
-								connScene.setId(connId);
-								connScene.setTarget(sourcePort);
-								connScene.setSource(targetPort);
-								connections.add(connScene);
+									Connections connScene = new Connections();
+									String connId = IDGeneratorUtil.getID();
+									connScene.setId(connId);
+									connScene.setTarget(sourcePort);
+									connScene.setSource(targetPort);
+									connections.add(connScene);
 
+								}
 							}
 						}
 					}
@@ -887,7 +1071,7 @@ public class EvalSceneMapController {
 		try {
 			String inputStreamString = inputStreamToString(inputStream);
 //			String regex = "interface\\s+(\\S+)\\s+\\n\\s+ip address\\s+(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s+(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})";
-			String ipAddressPattern = "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b";
+//			String ipAddressPattern = "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b";
 			String[] interfaces = inputStreamString.split("router ospf")[0].split("interface");
 			List<Router> routers = new ArrayList<>();
 			for(String inter:interfaces){
@@ -937,17 +1121,100 @@ public class EvalSceneMapController {
 		}
 	}
 
+	//防火墙
+	private List<Firewall> processTxtFileFire(InputStream inputStream, String name) throws IOException {
+		try {
+			String inputStreamString = inputStreamToString(inputStream);
+
+			// 1. 先匹配整个interfaces部分
+			String interfacesRegex = "interfaces \\{(.*?)\\}\\s*(?=security)";
+			Pattern interfacesPattern = Pattern.compile(interfacesRegex, Pattern.DOTALL);
+			Matcher interfacesMatcher = interfacesPattern.matcher(inputStreamString);
+
+			List<Firewall> firewalls = new ArrayList<>();
+
+			if (interfacesMatcher.find()) {
+				String interfacesSection = interfacesMatcher.group(1); // 获取interfaces部分的内容
+
+				// 2. 再根据每个接口进行切分
+				String interfaceRegex = "(\\S+) \\{(.*?)\\n\\s*\\}";
+				Pattern interfacePattern = Pattern.compile(interfaceRegex, Pattern.DOTALL);
+				Matcher interfaceMatcher = interfacePattern.matcher(interfacesSection);
+
+				while (interfaceMatcher.find()) {
+					String interfaceName = interfaceMatcher.group(1); // 提取接口名称
+					String configBlock = interfaceMatcher.group(2);   // 提取接口配置块
+
+					List<PhysicalPort> physicalPorts = new ArrayList<>();
+
+					// 在接口配置块中查找 IP 地址和子网掩码
+					String addressRegex = "address\\s+(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d+)";
+					Pattern addressPattern = Pattern.compile(addressRegex);
+					Matcher addressMatcher = addressPattern.matcher(configBlock);
+
+					if (addressMatcher.find()) {
+						String ipAddress = addressMatcher.group(1);
+						int subnetMaskLength = Integer.parseInt(addressMatcher.group(2));
+						String subnetMask = subnetMaskLengthToDecimal(subnetMaskLength);
+
+						PhysicalPort physicalPort = new PhysicalPort();
+						physicalPort.setIp(ipAddress);
+						physicalPort.setSubnetMask(subnetMask);
+						String address = NetworkUtils.calculateNetworkAddress(ipAddress, subnetMask);
+						physicalPort.setAddress(address);
+						physicalPorts.add(physicalPort);
+					}
+
+					Firewall firewall = new Firewall();
+					firewall.setInterfaceName(interfaceName);
+					firewall.setPhysicalPorts(physicalPorts);
+					firewalls.add(firewall);
+				}
+			}
+
+			return firewalls;
+		} catch (IOException e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
+			return null;
+		}
+	}
+
+
+
+
+
 	public static String inputStreamToString(InputStream inputStream) throws IOException {
 		StringBuilder resultStringBuilder = new StringBuilder();
-		try (BufferedReader br
-					 = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 			String line;
 			while ((line = br.readLine()) != null) {
 				resultStringBuilder.append(line).append("\n");
 			}
+		}finally {
+			br.close();
+			inputStream.close();
 		}
+
 		return resultStringBuilder.toString();
 	}
 
+	//subnetMask 子网掩码长度转换为正常的点分十进制形式
+	private String subnetMaskLengthToDecimal(int length) {
+		StringBuilder mask = new StringBuilder();
+		for (int i = 0; i < 4; i++) {
+			if (length > 8) {
+				mask.append(255);
+				length -= 8;
+			} else {
+				mask.append(256 - (1 << (8 - length)));
+				length = 0;
+			}
+			if (i < 3) mask.append(".");
+		}
+		return mask.toString();
+	}
 
 }

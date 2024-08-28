@@ -29,4 +29,5 @@ public class TopoElement {
     private String position2 = "";
     private List<Router> routers;
     private JSONArray ports;
+    private List<Firewall> firewalls;
 }

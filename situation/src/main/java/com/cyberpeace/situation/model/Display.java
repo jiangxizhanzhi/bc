@@ -88,6 +88,9 @@ public class Display {
 	public Display() {}
 
 	private Integer getSize(String size) {
+		if (null == size){
+			return null;
+		}
 		// 使用正则表达式提取数字部分
 		Pattern pattern = Pattern.compile("\\d+");
 		Matcher matcher = pattern.matcher(size);

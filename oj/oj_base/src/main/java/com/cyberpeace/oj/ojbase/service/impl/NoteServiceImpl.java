@@ -1,5 +1,14 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,15 +34,8 @@ import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -64,10 +66,20 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
-		try {
-			noteMapper.insert(note);
-		} catch (DuplicateKeyException e) {
-			noteMapper.updateNote(note);
+		// 实验报告
+		if (Note.NoteType.REPORT.getCode().equals(noteAddContext.getNoteType())) {
+			Note existNote = noteMapper.selectByCondition(noteAddContext);
+			if (null != existNote) {
+				throw new BusinessException(OjBusinessErrorCode.REPORT_ALREADY_SUBMITTED);
+			} else {
+				noteMapper.insert(note);
+			}
+		} else {
+			try {
+				noteMapper.insert(note);
+			} catch (DuplicateKeyException e) {
+				noteMapper.updateNote(note);
+			}
 		}
 
 		return note;

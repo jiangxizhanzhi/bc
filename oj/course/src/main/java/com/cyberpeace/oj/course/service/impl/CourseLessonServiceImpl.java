@@ -233,6 +233,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				ResourceCollection.BusinessType.LESSON.getCode(), lessonId);
 		infoBo.setIsCollection(collection);
 
+		// 当前用户是否已经提交了实验报告
+		if (CourseLesson.LessonType.EXPERIMENT.getCode().equals(lesson.getType())) {
+			Note note = noteMapper.selectByUnique(UserInfoContext.getUserContext().getUserId(),
+					Note.NoteType.REPORT.getCode(), Note.NoteResourceType.LESSON.getCode(),
+					lessonId);
+			infoBo.setReportSubmitted(null != note);
+		}
+
 		// 文件地址处理
 		if (null != lesson.getHandoutType() && lesson.getHandoutType()
 				.intValue() == CourseLesson.HandoutType.PDF.getCode().intValue()) {

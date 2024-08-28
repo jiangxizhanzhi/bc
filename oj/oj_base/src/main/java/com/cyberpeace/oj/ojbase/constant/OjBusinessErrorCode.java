@@ -341,4 +341,8 @@ public interface OjBusinessErrorCode {
 
 	/** 出题范围错误 */
 	String PRACTICE_RANGE_ERROR = "102131";
+	/**
+	 * 不能重复提交实验报告
+	 */
+	String REPORT_ALREADY_SUBMITTED = "102132";
 }

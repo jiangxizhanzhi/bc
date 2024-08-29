@@ -149,4 +149,13 @@ public class AdminTrainPlanController {
 
 		return new BaseRsp<>();
 	}
+
+	@ApiOperation("复用训练计划")
+	@PostMapping("/train_plan/reuse")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<String> reuseTrainPlan(@RequestBody @Validated TrainPlanUpdateReq reuseReq) {
+
+		trainPlanService.reuse(reuseReq);
+		return new BaseRsp<>();
+	}
 }

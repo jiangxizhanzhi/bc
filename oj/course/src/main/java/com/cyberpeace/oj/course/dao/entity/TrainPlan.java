@@ -16,6 +16,8 @@ public class TrainPlan extends BaseTable {
 
 	private String name;
 
+	private Integer type;
+
 	private String createUserId;
 
 	public static String TASK_SET = "Task Set";

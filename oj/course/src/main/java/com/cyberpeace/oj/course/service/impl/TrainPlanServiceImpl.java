@@ -2,14 +2,12 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,16 +16,26 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
+import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
 import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -41,6 +49,15 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 	@Autowired
 	private CourseMapper courseMapper;
+
+	@Autowired
+	private ClassroomMapper classroomMapper;
+
+	@Autowired
+	private ClassroomService classroomService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public List<TrainPlanBo> trainPlanList(UserInfo userInfo) {
@@ -81,6 +98,36 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			log.error("[{}] name repeat", StreamApiUtils.getColumn(assessModel, TrainPlan::getName).toString());
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
+	}
+
+	@Override
+	public void reuse(TrainPlanUpdateReq reuseReq) {
+		// 校验name是否已存在
+		this.checkNameRepeat(reuseReq.getName(), null,
+				UserInfoContext.getUserContext().getUserId());
+		TrainPlan trainPlan = BeanUtils.copy(reuseReq, TrainPlan.class);
+		trainPlan.setResourceId(IDGeneratorUtil.getID());
+		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		// classrooms
+		List<Classroom> classroomList = classroomMapper.selectByPlan(reuseReq.getResourceId());
+		String userId = UserInfoContext.getUserContext().getUserId();
+		for (Classroom classroom : classroomList) {
+			classroom.setCreateUserId(userId);
+			classroom.setId(null);
+			classroom.setCreateTime(null);
+			classroom.setUpdateTime(null);
+			classroom.setResourceId(IDGeneratorUtil.getID());
+			classroom.setTrainPlanId(trainPlan.getResourceId());
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				save(trainPlan);
+				classroomService.saveBatch(classroomList);
+			}
+		});
+
 	}
 
 	/** 数据转换*/

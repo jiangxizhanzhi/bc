@@ -10,4 +10,7 @@ public class TrainPlanAddReq implements Serializable {
 
 	@ApiModelProperty("资源名称")
 	private String name;
+
+	@ApiModelProperty("类型")
+	private Integer type;
 }

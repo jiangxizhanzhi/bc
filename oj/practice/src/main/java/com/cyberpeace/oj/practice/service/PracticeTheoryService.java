@@ -148,4 +148,6 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	List<PracticeTheoryListBo> getRecommend(String categoryId, String userId);
+
+
 }

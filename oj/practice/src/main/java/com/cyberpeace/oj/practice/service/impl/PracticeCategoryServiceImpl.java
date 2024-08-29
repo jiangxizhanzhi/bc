@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -216,6 +217,14 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 		practiceCategoryMapper.insert(practiceCategory);
 		return resourceId;
+	}
+
+	@Override
+	public List<PracticeCategory> getByIds(Collection<? extends Serializable> idList) {
+		if(CollectionUtils.isEmpty(idList)){
+			return Lists.newArrayList();
+		}
+		return practiceCategoryMapper.selectBatchIds(idList);
 	}
 
 	/**

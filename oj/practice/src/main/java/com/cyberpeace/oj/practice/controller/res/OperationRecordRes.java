@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.practice.controller.res;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class OperationRecordRes implements Serializable {
@@ -43,4 +43,10 @@ public class OperationRecordRes implements Serializable {
 
 	@ApiModelProperty("是否真题")
 	private Boolean isTrue;
+
+	@ApiModelProperty("方向")
+	private String categoryName;
+
+	@ApiModelProperty("方向id")
+	private String categoryId;
 }

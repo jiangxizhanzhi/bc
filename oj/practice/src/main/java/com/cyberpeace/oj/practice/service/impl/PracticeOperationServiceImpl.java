@@ -1327,11 +1327,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime) {
+	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime,
+			Date endTime) {
 		List<String> operationIds = getOptionIdsByAuth(null);
-		List<OperationRecordRes> operationRecordResList = practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
-		operationRecordResList.forEach(operationRecordRes -> operationRecordRes.setKnowledgeList(JsonUtil.toJsonObjectArray(operationRecordRes.getKnowledge(), String.class)));
-
+		List<OperationRecordRes> operationRecordResList = practiceSolvedMapper
+				.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
+		operationRecordResList.forEach(operationRecordRes -> operationRecordRes.setKnowledgeList(
+				JsonUtil.toJsonObjectArray(operationRecordRes.getKnowledge(), String.class)));
+		List<PracticeCategory> categoryList = practiceCategoryService.list();
+		Map<String, String> categoryMap = StreamApiUtils.toMap(categoryList,
+				PracticeCategory::getResourceId, PracticeCategory::getName);
+		operationRecordResList.forEach(operationRecordRes -> {
+			operationRecordRes.setCategoryName(categoryMap.get(operationRecordRes.getCategoryId()));
+		});
 		return operationRecordResList;
 	}
 

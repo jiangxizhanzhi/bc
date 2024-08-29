@@ -7,6 +7,8 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
 import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 public interface PracticeCategoryService extends IService<PracticeCategory> {
@@ -81,4 +83,6 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 	 * @return
 	 */
 	String selectCategoryOrCreate(String categoryName, Integer code, String userId);
+
+	List<PracticeCategory> getByIds(Collection<? extends Serializable> idList);
 }

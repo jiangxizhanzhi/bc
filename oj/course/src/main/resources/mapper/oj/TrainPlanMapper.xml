@@ -63,7 +63,7 @@
             and a.resource_id in (select train_plan_id  FROM   oj_classroom where organization_id = #{organizationId})
         </if>
 
-        union SELECT "${TASK_SET_ID}","${TASK_SET}",min(start_time) start_time,max(end_time) end_time,count(1) count, max(update_time)  update_time ,'-'
+        union SELECT "${TASK_SET_ID}","${TASK_SET}",min(start_time) start_time,max(end_time) end_time,count(1) count, max(update_time)  update_time ,'-' as create_user_id, 1 as type
         FROM   oj_classroom where train_plan_id = ''
         <if test="isSuperUser != null and 'false'.toString() == isSuperUser.toString()">
             and create_user_id = #{userId}
@@ -72,7 +72,7 @@
             and organization_id = #{organizationId}
         </if>
         group by train_plan_id
-        ) a where 1=1
+        ) as aboc where 1=1
         <if test="null != pattern and pattern != ''">
         <bind name="pattern" value="'%' + pattern + '%'"/>
         and `name` like #{pattern}

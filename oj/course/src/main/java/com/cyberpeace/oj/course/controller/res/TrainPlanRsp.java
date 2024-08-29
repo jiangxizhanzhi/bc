@@ -33,4 +33,7 @@ public class TrainPlanRsp implements Serializable {
 
     @ApiModelProperty("创建人名称")
     private String createUser;
+
+    @ApiModelProperty("类型, 1=普通，2=连续")
+    private Integer type;
 }

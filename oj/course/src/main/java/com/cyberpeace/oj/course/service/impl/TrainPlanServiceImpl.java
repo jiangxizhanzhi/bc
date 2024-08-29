@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,12 +76,11 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 				false));
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
 				userInfo.getUserId(), userInfo.isSuperuser(), userInfo.isAdmin(), courseIds);
-
+		
+		List<String> userIds = result.getRecords().stream().map(TrainPlanRsp::getCreateUserId).collect(Collectors.toList());
+		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
 		for (TrainPlanRsp trainPlanRsp : result.getRecords()) {
-			UserInfo user = remoteUserService.getById(trainPlanRsp.getCreateUserId());
-			if (null != user) {
-				trainPlanRsp.setCreateUser( user.getName() );
-			}
+			trainPlanRsp.setCreateUser(userNameMap.get(trainPlanRsp.getCreateUserId()));
 		}
 		return result;
 	}

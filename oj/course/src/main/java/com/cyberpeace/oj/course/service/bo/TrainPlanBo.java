@@ -17,4 +17,7 @@ public class TrainPlanBo implements Serializable {
 	@ApiModelProperty("姓名")
 	private String username;
 
+	@ApiModelProperty("类型, 1=普通，2=连续")
+	private Integer type;
+
 }

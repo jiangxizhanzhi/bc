@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+
 import lombok.Data;
 
 
@@ -23,4 +24,12 @@ public class TrainPlan extends BaseTable {
 	public static String TASK_SET = "Task Set";
 
 	public static String TASK_SET_ID = "task_set_id";
+
+	public static class PlanType {
+
+		public static final Integer NORMAL = 1;
+
+		public static final Integer CONTINUOUS = 2;
+
+	}
 }

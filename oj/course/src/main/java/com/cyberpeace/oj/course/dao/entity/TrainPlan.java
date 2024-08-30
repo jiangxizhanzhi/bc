@@ -32,4 +32,15 @@ public class TrainPlan extends BaseTable {
 		public static final Integer CONTINUOUS = 2;
 
 	}
+
+	public static class PlanStatus {
+
+		public static final Integer NOT_STARTED = 1;
+
+		public static final Integer ONGOING = 2;
+
+		public static final Integer ENDED = 3;
+
+	}
+
 }

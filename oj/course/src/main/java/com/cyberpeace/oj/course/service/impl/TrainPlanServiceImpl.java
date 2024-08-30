@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -75,12 +76,27 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		List<String> courseIds = courseMapper.selectByAuth(AuthContextUtils.constructAuth(userInfo,
 				false));
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
-				userInfo.getUserId(), userInfo.isSuperuser(), userInfo.isAdmin(), courseIds);
+				userInfo.getUserId(), userInfo.isSuperuser(), userInfo.isAdmin(), courseIds, trainPlanReq.getStatus());
 		
 		List<String> userIds = result.getRecords().stream().map(TrainPlanRsp::getCreateUserId).collect(Collectors.toList());
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
 		for (TrainPlanRsp trainPlanRsp : result.getRecords()) {
 			trainPlanRsp.setCreateUser(userNameMap.get(trainPlanRsp.getCreateUserId()));
+		}
+		// set status
+		if (trainPlanReq.getStatus() != null) {
+			result.getRecords().forEach(r -> r.setStatus(trainPlanReq.getStatus()));
+		} else {
+			for (TrainPlanRsp record : result.getRecords()) {
+				Date now = new Date();
+				if (now.before(record.getStartTime())) {
+					record.setStatus(TrainPlan.PlanStatus.NOT_STARTED);
+				} else if (now.after(record.getEndTime())) {
+					record.setStatus(TrainPlan.PlanStatus.ENDED);
+				} else {
+					record.setStatus(TrainPlan.PlanStatus.ONGOING);
+				}
+			}
 		}
 		return result;
 	}

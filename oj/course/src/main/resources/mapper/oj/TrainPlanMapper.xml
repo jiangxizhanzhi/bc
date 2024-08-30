@@ -77,5 +77,16 @@
         <bind name="pattern" value="'%' + pattern + '%'"/>
         and `name` like #{pattern}
         </if>
+        <if test="status != null">
+            <if test="status == 1">
+                and aboc.`start_time` &gt; now()
+            </if>
+            <if test="status == 3">
+                and aboc.`end_time` &lt; now()
+            </if>
+            <if test="status == 2">
+                and aboc.start_time &lt; now() and aboc.end_time &gt; now()
+            </if>
+        </if>
     </select>
 </mapper>

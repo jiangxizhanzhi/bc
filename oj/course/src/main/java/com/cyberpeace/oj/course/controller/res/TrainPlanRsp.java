@@ -36,4 +36,7 @@ public class TrainPlanRsp implements Serializable {
 
     @ApiModelProperty("类型, 1=普通，2=连续")
     private Integer type;
+
+    @ApiModelProperty("状态, 1=未开始，2=进行中，3=已结束")
+    private Integer status;
 }

@@ -130,6 +130,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String HOST_EVENT_LIST;
 
+	private String SAVE_ALERT_RULE;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -230,6 +232,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		EVENT_LIST_URL = MP_HOST + ConfigUtil.getContextProperty("scene.event.list");
 
 		HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
+
+		SAVE_ALERT_RULE = MP_HOST + ConfigUtil.getContextProperty("alert.rule.save");
 	}
 
 	@Override
@@ -634,6 +638,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		String listData =  HttpClientUtil.rawGetByParam(req, HOST_EVENT_LIST, JSONObject.class)
 				.getString("list");
 		return JsonUtil.toJsonObjectArray(listData, MpHostEvent.class);
+	}
+
+	@Override
+	public Boolean saveAlertRule(JSONArray data) {
+		return HttpClientUtil.post(SAVE_ALERT_RULE, data, Boolean.class);
 	}
 
 }

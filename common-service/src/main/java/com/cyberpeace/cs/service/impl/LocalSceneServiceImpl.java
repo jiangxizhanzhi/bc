@@ -739,6 +739,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return localScene;
 	}
 
+	@Override
+	public Boolean saveAlertRule(JSONArray data) {
+		return remoteSceneService.saveAlertRule(data);
+	}
+
 	private LocalScene getOrExceptionByBusinessInstanceId(String businessInstanceId) {
 		LocalScene localScene = localSceneMapper.selectByBusinessInstanceId(businessInstanceId);
 		if (null == localScene) {

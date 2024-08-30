@@ -17,134 +17,153 @@ import java.util.List;
 @TableName("cr_eval_rule_template")
 public class EvalRuleTemplate extends BaseTable {
 
-	@TableId(type = IdType.UUID, value = "resource_id")
-	private String resourceId;
+    @TableId(type = IdType.UUID, value = "resource_id")
+    private String resourceId;
 
-	/**
-	 * 规则名称
-	 */
-	private String name;
+    /**
+     * 规则名称
+     */
+    private String name;
 
-	/**
-	 * 规则描述
-	 */
-	private String description;
+    /**
+     * 规则描述
+     */
+    private String description;
 
-	/**
-	 * 云模板id
-	 */
-	private String cloudTemplateId;
+    /**
+     * 云模板id
+     */
+    private String cloudTemplateId;
 
-	/**
-	 * 状态
-	 */
-	private Integer status;
+    /**
+     * 状态
+     */
+    private Integer status;
 
-	/**
-	 * 标签
-	 */
-	private String labels;
+    /**
+     * 标签
+     */
+    private String labels;
 
-	/**
-	 * 等级
-	 */
-	private Integer grade;
+    /**
+     * 等级
+     */
+    private Integer grade;
 
-	/**
-	 * 布尔关系
-	 */
-	private Integer booleanRelation;
+    /**
+     * 布尔关系
+     */
+    private Integer booleanRelation;
 
-	/**
-	 * 关联步骤id列表
-	 */
-	private String stepIds;
+    /**
+     * 关联步骤id列表
+     */
+    private String stepIds;
 
-	/**
-	 * 创建人
-	 */
-	private String createUserId;
+    /**
+     * 创建人
+     */
+    private String createUserId;
 
-	public List<String> getStepIdList() {
-		if (StringUtils.isEmpty(stepIds)) {
-			return new ArrayList<>();
-		} else {
-			return JsonUtil.toJsonObjectArray(stepIds, String.class);
-		}
-	}
+    /**
+     * 告警名称
+     */
+    private String alarmName;
 
-	public void setStepIdList(List<String> tasks) {
-		stepIds = JsonUtil.toJsonString(tasks);
-	}
+    /**
+     * 告警描述说明
+     */
+    private String alarmDescription;
 
-	public void setLabelList (List<String> labelList) {
-		this.labels = JsonUtil.toJsonString(labelList);
-	}
+    /**
+     * 告警事件级别
+     */
+    private Integer alarmLevel;
 
-	public List<String> getLabelList () {
-		if (StringUtils.isEmpty(this.labels)) {
-			return new ArrayList<>();
-		} else {
-			return JsonUtil.toJsonObjectArray(this.labels, String.class);
-		}
-	}
+    /**
+     * 自定义属性
+     */
+    private String alarmAttributes;
+
+    public List<String> getStepIdList() {
+        if (StringUtils.isEmpty(stepIds)) {
+            return new ArrayList<>();
+        } else {
+            return JsonUtil.toJsonObjectArray(stepIds, String.class);
+        }
+    }
+
+    public void setStepIdList(List<String> tasks) {
+        stepIds = JsonUtil.toJsonString(tasks);
+    }
+
+    public void setLabelList(List<String> labelList) {
+        this.labels = JsonUtil.toJsonString(labelList);
+    }
+
+    public List<String> getLabelList() {
+        if (StringUtils.isEmpty(this.labels)) {
+            return new ArrayList<>();
+        } else {
+            return JsonUtil.toJsonObjectArray(this.labels, String.class);
+        }
+    }
 
 
-//	状态
-	public enum Status implements GenericEnum {
+    //	状态
+    public enum Status implements GenericEnum {
 
-		CLOSE(0, "关闭"),
-		OPEN(1, "打开");
+        CLOSE(0, "关闭"),
+        OPEN(1, "打开");
 
-		@Getter
-		private final Integer code;
+        @Getter
+        private final Integer code;
 
-		@Getter
-		private final String desc;
+        @Getter
+        private final String desc;
 
-		Status(Integer code, String desc) {
-			this.code = code;
-			this.desc = desc;
-		}
-	}
+        Status(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
 
-//	等级
-	public enum Grade implements GenericEnum {
+    //	等级
+    public enum Grade implements GenericEnum {
 
-		LOW(0, "低"),
-		MEDIUM(1, "中"),
-		HIGH(2, "高");
+        LOW(0, "低"),
+        MEDIUM(1, "中"),
+        HIGH(2, "高");
 
-		@Getter
-		private final Integer code;
+        @Getter
+        private final Integer code;
 
-		@Getter
-		private final String desc;
+        @Getter
+        private final String desc;
 
-		Grade(Integer code, String desc) {
-			this.code = code;
-			this.desc = desc;
-		}
-	}
+        Grade(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
 
-//	布尔关系
-	public enum BooleanRelation implements GenericEnum {
+    //	布尔关系
+    public enum BooleanRelation implements GenericEnum {
 
-		OR(0, "或"),
-		AND(1, "与");
+        OR(0, "或"),
+        AND(1, "与");
 
-		@Getter
-		private final Integer code;
+        @Getter
+        private final Integer code;
 
-		@Getter
-		private final String desc;
+        @Getter
+        private final String desc;
 
-		BooleanRelation(Integer code, String desc) {
-			this.code = code;
-			this.desc = desc;
-		}
-	}
-
+        BooleanRelation(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
 
 
 }

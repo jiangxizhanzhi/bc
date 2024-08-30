@@ -18,7 +18,6 @@ import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalCloudTemplateService;
 import com.cyberpeace.cr.evaluation.service.EvalRuleTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalCloudTemplateListContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalDimensionContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalHostContext;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -250,7 +249,7 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
                 for (EvalCloudTemplateDumpReq resource : resources) {
 //					2.1步骤信息处理
                     List<String> stepIds = resource.getStepIds();
-                    if(stepIds.size()>0){
+                    if (stepIds.size() > 0) {
                         evalStepTemplateService.deleteStep(stepIds);
                     }
 
@@ -269,17 +268,11 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
 //					2.2事件规则处理
                     for (EvalRuleTemplateDetailRsp rule : resource.getRuleList()) {
                         EvalRuleTemplateAddReq ruleTemplateAddReq = BeanUtils.copy(rule, EvalRuleTemplateAddReq.class);
-                        List<EvalDimensionContext> dimensions = rule.getDimensions();
-                        List<EvalDimensionAddReq> dimensionList = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(dimensions), EvalDimensionAddReq.class);
-                        ruleTemplateAddReq.setDimensionList(dimensionList);
                         List<EvalHostContext> hosts = rule.getHosts();
                         List<EvalHostTemplateAddReq> hostList = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(hosts), EvalHostTemplateAddReq.class);
                         ruleTemplateAddReq.setHostList(hostList);
-                        List<String> stepIdList = rule.getSteps().stream().map(EvalStepRsp::getStepId).collect(Collectors.toList());
-                        ruleTemplateAddReq.setStepIds(stepIdList);
                         evalRuleTemplateService.addRuleTemplate(ruleTemplateAddReq);
                     }
-
                     try {
                         addCloudTemplate(resource);
                     } catch (BusinessException e) {

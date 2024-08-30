@@ -21,20 +21,23 @@ public class EvalRuleTemplateListRsp implements Serializable {
 	@ApiModelProperty("状态")
 	private String status;
 
-	@ApiModelProperty("标注数量")
-	private Integer dimensionCount;
+	@ApiModelProperty("条件数量")
+	private Integer conditionCount;
+
+	@ApiModelProperty("告警名称")
+	private String alarmName;
+
+	@ApiModelProperty("告警描述")
+	private String alarmDescription;
+
+	@ApiModelProperty("告警事件级别")
+	private Integer alarmLevel;
+
+	@ApiModelProperty("自定义属性")
+	private String alarmAttributes;
 
 	@ApiModelProperty("标签")
 	private List<String> labelList;
-
-	@ApiModelProperty("等级")
-	private String grade;
-
-	@ApiModelProperty("布尔关系")
-	private String booleanRelation;
-
-	@ApiModelProperty("动作数量")
-	private Integer actionCount;
 
 	@ApiModelProperty("创建时间")
 	private String createTime;

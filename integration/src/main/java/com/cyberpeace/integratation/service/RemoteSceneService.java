@@ -282,4 +282,5 @@ public interface RemoteSceneService {
 
 	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);
 
+	Boolean saveAlertRule(JSONArray data);
 }

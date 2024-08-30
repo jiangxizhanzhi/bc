@@ -22,6 +22,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalPersonTestRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleMPRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStatisticsRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
@@ -41,6 +42,7 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteSupersetService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +97,10 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 	@Autowired
 	private EvalRecordMapper evalRecordMapper;
 
+	@Autowired
+	private EvalRuleTemplateService evalRuleTemplateService;
+
+	ObjectMapper objectMapper = new ObjectMapper();
 	@Override
 	public String createByTemplate(EvalTestAddReq evalTestAddReq) {
 		Integer exit = evalTestMapper.exitByName(evalTestAddReq.getName());
@@ -118,6 +124,12 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+//				此处保存mp报警规则数据
+				List<EvalRuleMPRsp> ruleList = evalRuleTemplateService.getRuleList(evalTestAddReq.getCloudTemplateId());
+				ruleList.forEach(rule -> rule.setSceneId(evalTest.getTopoId()));
+				JSONArray objects = objectMapper.convertValue(ruleList, JSONArray.class);
+				localSceneService.saveAlertRule(objects);
 
 				Map<String, String> stepIdMap = evalStepService.createByTemplate(evalCloudTemplate.getStepIdList(), newId);
 				evalTest.setTemplateId(evalTestAddReq.getCloudTemplateId());

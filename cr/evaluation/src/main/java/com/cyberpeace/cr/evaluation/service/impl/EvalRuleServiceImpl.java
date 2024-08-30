@@ -48,9 +48,6 @@ public class EvalRuleServiceImpl extends ServiceImpl<EvalRuleMapper, EvalRule> i
 			rule.setId(null);
 			rule.setTestId(testId);
 			List<String> stepIdList = new ArrayList<>();
-			for (String stepTemplateId : evalRuleTemplate.getStepIdList()) {
-				stepIdList.add(stepIdMap.get(stepTemplateId));
-			}
 			rule.setStepIdList(stepIdList);
 			return rule;
 		}).collect(Collectors.toList());

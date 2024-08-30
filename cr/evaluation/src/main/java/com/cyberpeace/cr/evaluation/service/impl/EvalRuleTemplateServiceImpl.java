@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -7,25 +9,22 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
-import com.cyberpeace.cr.evaluation.controller.req.*;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAlarmConditionReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateAddReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateModifyReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleMPRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleTemplateDetailRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleTemplateEnumRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleTemplateListRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalActionTemplate;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalDimensionTemplate;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlarmCondition;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalHostTemplate;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRuleTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
-import com.cyberpeace.cr.evaluation.service.EvalActionTemplateService;
-import com.cyberpeace.cr.evaluation.service.EvalDimensionTemplateService;
-import com.cyberpeace.cr.evaluation.service.EvalHostTemplateService;
-import com.cyberpeace.cr.evaluation.service.EvalRuleTemplateService;
-import com.cyberpeace.cr.evaluation.service.context.EvalDimensionContext;
+import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalHostContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalRuleTemplateCount;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.PortInfo;
@@ -33,6 +32,8 @@ import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -53,229 +54,241 @@ import java.util.stream.Collectors;
 @Service
 public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMapper, EvalRuleTemplate> implements EvalRuleTemplateService {
 
-	@Autowired
-	private EvalRuleTemplateMapper evalRuleTemplateMapper;
+    @Autowired
+    private EvalRuleTemplateMapper evalRuleTemplateMapper;
 
-	@Autowired
-	private EvalDimensionTemplateMapper evalDimensionTemplateMapper;
+    @Autowired
+    private EvalDimensionTemplateMapper evalDimensionTemplateMapper;
 
-	@Autowired
-	private EvalActionTemplateMapper evalActionTemplateMapper;
+    @Autowired
+    private EvalActionTemplateMapper evalActionTemplateMapper;
 
-	@Autowired
-	private TransactionTemplate transactionTemplate;
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
-	@Autowired
-	private RemoteUserService remoteUserService;
+    @Autowired
+    private RemoteUserService remoteUserService;
 
-	@Autowired
-	private EvalHostTemplateMapper evalHostTemplateMapper;
+    @Autowired
+    private EvalHostTemplateMapper evalHostTemplateMapper;
 
-	@Autowired
-	private EvalCloudTemplateMapper evalCloudTemplateMapper;
+    @Autowired
+    private EvalCloudTemplateMapper evalCloudTemplateMapper;
 
-	@Autowired
-	private TopoHandlerService topoHandlerService;
+    @Autowired
+    private TopoHandlerService topoHandlerService;
 
-	@Autowired
-	private SituationHandlerService situationHandlerService;
+    @Autowired
+    private SituationHandlerService situationHandlerService;
 
-	@Autowired
-	private EvalDimensionTemplateService evalDimensionTemplateService;
+    @Autowired
+    private EvalDimensionTemplateService evalDimensionTemplateService;
 
-	@Autowired
-	private EvalHostTemplateService evalHostTemplateService;
+    @Autowired
+    private EvalHostTemplateService evalHostTemplateService;
 
-	@Autowired
-	private EvalActionTemplateService evalActionTemplateService;
+    @Autowired
+    private EvalActionTemplateService evalActionTemplateService;
 
-	@Autowired
-	private EvalStepTemplateMapper evalStepTemplateMapper;
+    @Autowired
+    private EvalStepTemplateMapper evalStepTemplateMapper;
 
-	@Override
-	public String addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
-		EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateAddReq, EvalRuleTemplate.class);
-		evalRuleTemplate.setName(evalRuleTemplateAddReq.getRuleName());
-		evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		evalRuleTemplate.setLabelList(evalRuleTemplateAddReq.getLabels());
-		evalRuleTemplate.setStepIdList(evalRuleTemplateAddReq.getStepIds());
+    @Autowired
+    private EvalAlarmConditionService evalAlarmConditionService;
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+    @Autowired
+    private EvalAlarmConditionMapper evalAlarmConditionMapper;
 
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				evalRuleTemplateMapper.insert(evalRuleTemplate);
-				String cloudTemplateId = evalRuleTemplateAddReq.getCloudTemplateId();
-				String ruleId = evalRuleTemplate.getResourceId();
+    ObjectMapper objectMapper = new ObjectMapper();
 
-				evalDimensionTemplateService.addDimensionTemplateList(evalRuleTemplateAddReq.getDimensionList(), cloudTemplateId, ruleId);
-				evalHostTemplateService.addHostTemplateList(evalRuleTemplateAddReq.getHostList(), cloudTemplateId, ruleId);
-				evalActionTemplateService.addActionTemplateList(evalRuleTemplateAddReq.getAlarms(), evalRuleTemplateAddReq.getSituations(), cloudTemplateId, ruleId);
-			}
-		});
-		return evalRuleTemplate.getResourceId();
-	}
+    @Override
+    public String addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
+        EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateAddReq, EvalRuleTemplate.class);
+        evalRuleTemplate.setName(evalRuleTemplateAddReq.getRuleName());
+        evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+        evalRuleTemplate.setLabelList(evalRuleTemplateAddReq.getLabels());
 
-	@Override
-	public List<EvalRuleTemplateListRsp> getRuleTemplateList(EvalRuleTemplateListReq evalRuleTemplateListReq) {
-		List<EvalRuleTemplate> evalRuleTemplateList = evalRuleTemplateMapper.listEvalRuleTemplate(evalRuleTemplateListReq);
-		if (CollectionUtils.isEmpty(evalRuleTemplateList)) {
-			return new ArrayList<>();
-		}
-		List<String> ruleIds = evalRuleTemplateList.stream().map(EvalRuleTemplate::getResourceId).collect(Collectors.toList());
-		List<EvalRuleTemplateCount> dimensionCounts = evalDimensionTemplateMapper.selectCountByRuleIds(ruleIds);
-		Map<String, Integer> dimensionCountMap = StreamApiUtils.toMap(dimensionCounts,
-				EvalRuleTemplateCount::getRuleId, EvalRuleTemplateCount::getCount);
-		List<EvalRuleTemplateCount> actionCounts = evalActionTemplateMapper.selectCountByRuleIds(ruleIds);
-		Map<String, Integer> actionCountMap = StreamApiUtils.toMap(actionCounts,
-				EvalRuleTemplateCount::getRuleId, EvalRuleTemplateCount::getCount);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		List<EvalRuleTemplateListRsp> evalRuleTemplateListRspList = new ArrayList<>();
-		for (EvalRuleTemplate evalRuleTemplate : evalRuleTemplateList) {
-			EvalRuleTemplateListRsp evalRuleTemplateListRsp = BeanUtils.copy(evalRuleTemplate, EvalRuleTemplateListRsp.class);
-			evalRuleTemplateListRsp.setRuleId(evalRuleTemplate.getResourceId());
-			evalRuleTemplateListRsp.setRuleName(evalRuleTemplate.getName());
-			evalRuleTemplateListRsp.setDimensionCount(dimensionCountMap.getOrDefault(evalRuleTemplate.getResourceId(), 0));
-			evalRuleTemplateListRsp.setActionCount(actionCountMap.getOrDefault(evalRuleTemplate.getResourceId(), 0));
-			evalRuleTemplateListRsp.setStatus(EnumUtils.getEnumDescByCode(evalRuleTemplate.getStatus(), EvalRuleTemplate.Status.class));
-			evalRuleTemplateListRsp.setGrade(EnumUtils.getEnumDescByCode(evalRuleTemplate.getGrade(), EvalRuleTemplate.Grade.class));
-			evalRuleTemplateListRsp.setBooleanRelation(
-					EnumUtils.getEnumDescByCode(evalRuleTemplate.getBooleanRelation(), EvalRuleTemplate.BooleanRelation.class));
-			evalRuleTemplateListRsp.setCreateTime(TimeUtil.format1(evalRuleTemplate.getCreateTime()));
-			evalRuleTemplateListRsp.setLabelList(evalRuleTemplate.getLabelList());
-			evalRuleTemplateListRspList.add(evalRuleTemplateListRsp);
-		}
-		return evalRuleTemplateListRspList;
-	}
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                evalRuleTemplateMapper.insert(evalRuleTemplate);
+                String cloudTemplateId = evalRuleTemplateAddReq.getCloudTemplateId();
+                String ruleId = evalRuleTemplate.getResourceId();
 
-	@Override
-	public void deleteRuleTemplate(DeleteReq deleteReq) {
-		log.info("deleteReq:" + deleteReq.toString());
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                evalHostTemplateService.addHostTemplateList(evalRuleTemplateAddReq.getHostList(), cloudTemplateId, ruleId);
+                evalAlarmConditionService.addAlarmConditionList(evalRuleTemplateAddReq.getAlarmConditions(), cloudTemplateId, ruleId);
+            }
+        });
+        return evalRuleTemplate.getResourceId();
+    }
 
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				evalRuleTemplateMapper.deleteBatchIds(deleteReq.getIds());
-				evalActionTemplateMapper.deleteByRuleIds(deleteReq.getIds());
-				evalDimensionTemplateMapper.deleteByRuleIds(deleteReq.getIds());
-			}
-		});
-	}
+    @Override
+    public List<EvalRuleTemplateListRsp> getRuleTemplateList(EvalRuleTemplateListReq evalRuleTemplateListReq) {
+        List<EvalRuleTemplate> evalRuleTemplateList = evalRuleTemplateMapper.listEvalRuleTemplate(evalRuleTemplateListReq);
+        if (CollectionUtils.isEmpty(evalRuleTemplateList)) {
+            return new ArrayList<>();
+        }
+        List<String> ruleIds = evalRuleTemplateList.stream().map(EvalRuleTemplate::getResourceId).collect(Collectors.toList());
 
-	@Override
-	public EvalRuleTemplateDetailRsp getRuleTemplate(String id) {
-		EvalRuleTemplate evalRuleTemplate = evalRuleTemplateMapper.selectById(id);
-		if (evalRuleTemplate == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+        List<EvalAlarmCondition> evalAlarmConditionList = evalAlarmConditionMapper.selectList(new LambdaQueryWrapper<EvalAlarmCondition>().in(EvalAlarmCondition::getRuleId, ruleIds));
+        Map<String, Long> evalAlarmConditionCountMap = evalAlarmConditionList.stream().collect(Collectors.groupingBy(EvalAlarmCondition::getRuleId, Collectors.counting()));
 
-		EvalRuleTemplateDetailRsp evalRuleTemplateDetail = BeanUtils.copy(evalRuleTemplate, EvalRuleTemplateDetailRsp.class);
-		evalRuleTemplateDetail.setRuleId(evalRuleTemplate.getResourceId());
-		evalRuleTemplateDetail.setRuleName(evalRuleTemplate.getName());
-		evalRuleTemplateDetail.setCreateUser(remoteUserService.getById(evalRuleTemplate.getCreateUserId()).getUserName());
-		evalRuleTemplateDetail.setCreateTime(TimeUtil.format1(evalRuleTemplate.getCreateTime()));
-		evalRuleTemplateDetail.setLabels(evalRuleTemplate.getLabelList());
-		List<EvalDimensionTemplate> evalDimensionTemplateList = evalDimensionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
-		evalRuleTemplateDetail.setDimensions(
-				evalDimensionTemplateList.stream()
-										 .map(evalDimensionTemplate -> {
-										 	EvalDimensionContext evalDimensionContext = BeanUtils.copy(evalDimensionTemplate, EvalDimensionContext.class);
-											evalDimensionContext.setDimensionId(evalDimensionTemplate.getResourceId());
-											return evalDimensionContext;
-										 })
-										 .collect(Collectors.toList())
-		);
-		List<EvalHostTemplate> evalHostTemplateList = evalHostTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
-		if (evalCloudTemplateMapper.selectById(evalRuleTemplate.getCloudTemplateId()) == null
-				|| StringUtils.isBlank(evalCloudTemplateMapper.getTopoIdById(evalRuleTemplate.getCloudTemplateId()))) {
-			//说明此时拓扑未保存，直接读取数据库的数据
-			evalRuleTemplateDetail.setHosts(
-					evalHostTemplateList.stream()
-										.map(evalHostTemplate -> BeanUtils.copy(evalHostTemplate, EvalHostContext.class))
-										.collect(Collectors.toList())
-			);
-		} else {
-			//读取远程数据，防止数据变化
-			SceneData sceneData = topoHandlerService.getSceneData(null, evalCloudTemplateMapper.getTopoIdById(evalRuleTemplate.getCloudTemplateId()));
-			SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
-			List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
-			Map<String, ElementInfo> idElementMap = elementInfoList.stream().collect(Collectors.toMap(ElementInfo::getElementId, e -> e));
-			evalRuleTemplateDetail.setHosts(
-					evalHostTemplateList.stream()
-										.map(evalHostTemplate -> {
-											EvalHostContext evalHostContext = BeanUtils.copy(evalHostTemplate, EvalHostContext.class);
-											evalHostContext.setHostName(idElementMap.get(evalHostContext.getHostId()).getName());
-											evalHostContext.setIp(getElementIps(idElementMap.get(evalHostContext.getHostId())));
-											return evalHostContext;
-										})
-										.collect(Collectors.toList()));
+        List<EvalRuleTemplateListRsp> evalRuleTemplateListRspList = new ArrayList<>();
+        for (EvalRuleTemplate evalRuleTemplate : evalRuleTemplateList) {
+            EvalRuleTemplateListRsp evalRuleTemplateListRsp = BeanUtils.copy(evalRuleTemplate, EvalRuleTemplateListRsp.class);
+            evalRuleTemplateListRsp.setRuleId(evalRuleTemplate.getResourceId());
+            evalRuleTemplateListRsp.setRuleName(evalRuleTemplate.getName());
+            evalRuleTemplateListRsp.setStatus(EnumUtils.getEnumDescByCode(evalRuleTemplate.getStatus(), EvalRuleTemplate.Status.class));
+            evalRuleTemplateListRsp.setCreateTime(TimeUtil.format1(evalRuleTemplate.getCreateTime()));
+            evalRuleTemplateListRsp.setLabelList(evalRuleTemplate.getLabelList());
+            evalRuleTemplateListRsp.setConditionCount(evalAlarmConditionCountMap.getOrDefault(evalRuleTemplate.getResourceId(), 0L).intValue());
+            evalRuleTemplateListRspList.add(evalRuleTemplateListRsp);
+        }
+        return evalRuleTemplateListRspList;
+    }
 
-		}
+    @Override
+    public List<EvalRuleMPRsp> getRuleList(String cloudTemplateId) {
+        LambdaQueryWrapper<EvalRuleTemplate> queryWrapper = new LambdaQueryWrapper<EvalRuleTemplate>()
+                .eq(EvalRuleTemplate::getCloudTemplateId, cloudTemplateId)
+                .eq(EvalRuleTemplate::getStatus, EvalRuleTemplate.Status.OPEN.getCode());
+        List<EvalRuleTemplate> evalRuleTemplateList = evalRuleTemplateMapper.selectList(queryWrapper);
 
-		if (CollectionUtils.isEmpty(evalRuleTemplate.getStepIdList())) {
-			evalRuleTemplateDetail.setSteps(new ArrayList<>());
-		} else {
-			evalRuleTemplateDetail.setSteps(evalStepTemplateMapper.selectRspByIds(evalRuleTemplate.getStepIdList()));
-		}
+        if (CollectionUtils.isEmpty(evalRuleTemplateList)) {
+            return new ArrayList<>();
+        }
+        List<String> ruleIds = evalRuleTemplateList.stream().map(EvalRuleTemplate::getResourceId).collect(Collectors.toList());
+//		告警条件
+        List<EvalAlarmCondition> evalAlarmConditionList = evalAlarmConditionMapper.selectList(new LambdaQueryWrapper<EvalAlarmCondition>().in(EvalAlarmCondition::getRuleId, ruleIds));
+        Map<String, List<EvalAlarmCondition>> evalAlarmConditionMap = evalAlarmConditionList.stream().collect(Collectors.groupingBy(EvalAlarmCondition::getRuleId));
+//		主机信息
+        List<EvalHostTemplate> evalHostTemplateList = evalHostTemplateMapper.selectList(new LambdaQueryWrapper<EvalHostTemplate>().in(EvalHostTemplate::getRuleId, ruleIds));
+        Map<String, String> hostIdMap = evalHostTemplateList.stream()
+                .collect(Collectors.groupingBy(
+                        EvalHostTemplate::getRuleId,
+                        Collectors.mapping(EvalHostTemplate::getHostId, Collectors.joining(","))
+                ));
 
-		List<EvalActionTemplate> evalActionTemplateList = evalActionTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
-		List<EvalAlarmReq> alarmRspList = new ArrayList<>();
-		List<EvalSituationReq> situationRspList = new ArrayList<>();
-		for (EvalActionTemplate evalActionTemplate : evalActionTemplateList) {
-			if (EvalActionTemplate.ActionType.ALARM.getCode().equals(evalActionTemplate.getActionType())) {
-				alarmRspList.add(BeanUtils.copy(evalActionTemplate, EvalAlarmReq.class));
-			}else {
-				situationRspList.add(BeanUtils.copy(evalActionTemplate, EvalSituationReq.class));
-			}
-		}
-		evalRuleTemplateDetail.setAlarms(alarmRspList);
-		evalRuleTemplateDetail.setSituations(situationRspList);
-		return evalRuleTemplateDetail;
-	}
+        List<EvalRuleMPRsp> ruleTemplateDetailRspList = evalRuleTemplateList.stream()
+                .map(evalRuleTemplate -> {
+                    EvalRuleMPRsp evalRule = BeanUtils.copy(evalRuleTemplate, EvalRuleMPRsp.class);
+                    List<EvalAlarmCondition> alarmConditionList = evalAlarmConditionMap.get(evalRuleTemplate.getResourceId());
+                    List<EvalAlarmConditionReq> evalAlarmConditionReqList = alarmConditionList.stream().map(evalAlarmCondition -> BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class)).collect(Collectors.toList());
+                    try {
+                        evalRule.setAlarmConditions(objectMapper.writeValueAsString(evalAlarmConditionReqList));
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    evalRule.setHosts(hostIdMap.get(evalRuleTemplate.getResourceId()));
+                    return evalRule;
+                })
+                .collect(Collectors.toList());
 
-	@Override
-	public void modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq) {
-		EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateModifyReq, EvalRuleTemplate.class);
-		evalRuleTemplate.setResourceId(evalRuleTemplateModifyReq.getRuleId());
-		evalRuleTemplate.setName(evalRuleTemplateModifyReq.getRuleName());
-		evalRuleTemplate.setLabelList(evalRuleTemplateModifyReq.getLabels());
+        return ruleTemplateDetailRspList;
+    }
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+    @Override
+    public void deleteRuleTemplate(DeleteReq deleteReq) {
+        log.info("deleteReq:" + deleteReq.toString());
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                evalRuleTemplateMapper.deleteBatchIds(deleteReq.getIds());
+                evalActionTemplateMapper.deleteByRuleIds(deleteReq.getIds());
+            }
+        });
+    }
 
-				String cloudTemplateId = evalRuleTemplateModifyReq.getCloudTemplateId();
-				String ruleId = evalRuleTemplateModifyReq.getRuleId();
-				List<String> ruleIds = Arrays.asList(evalRuleTemplateModifyReq.getRuleId());
+    @Override
+    public EvalRuleTemplateDetailRsp getRuleTemplate(String id) {
+        EvalRuleTemplate evalRuleTemplate = evalRuleTemplateMapper.selectById(id);
+        if (evalRuleTemplate == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
 
-				evalRuleTemplateMapper.updateById(evalRuleTemplate);
-				evalDimensionTemplateMapper.deleteByRuleIds(ruleIds);
-				evalDimensionTemplateService.addDimensionTemplateList(evalRuleTemplateModifyReq.getDimensionList(), cloudTemplateId, ruleId);
-				evalHostTemplateMapper.deleteByRuleTemplateIds(ruleIds);
-				evalHostTemplateService.addHostTemplateList(evalRuleTemplateModifyReq.getHostList(), cloudTemplateId, ruleId);
-				evalActionTemplateMapper.deleteByRuleIds(ruleIds);
-				evalActionTemplateService.addActionTemplateList(evalRuleTemplateModifyReq.getAlarms(), evalRuleTemplateModifyReq.getSituations(), cloudTemplateId, ruleId);
-			}
-		});
-	}
+        EvalRuleTemplateDetailRsp evalRuleTemplateDetail = BeanUtils.copy(evalRuleTemplate, EvalRuleTemplateDetailRsp.class);
+        evalRuleTemplateDetail.setRuleId(evalRuleTemplate.getResourceId());
+        evalRuleTemplateDetail.setRuleName(evalRuleTemplate.getName());
+        evalRuleTemplateDetail.setCreateUser(remoteUserService.getById(evalRuleTemplate.getCreateUserId()).getUserName());
+        evalRuleTemplateDetail.setCreateTime(TimeUtil.format1(evalRuleTemplate.getCreateTime()));
+        evalRuleTemplateDetail.setLabels(evalRuleTemplate.getLabelList());
+        List<EvalHostTemplate> evalHostTemplateList = evalHostTemplateMapper.selectByRuleId(evalRuleTemplate.getResourceId());
+        if (evalCloudTemplateMapper.selectById(evalRuleTemplate.getCloudTemplateId()) == null
+                || StringUtils.isBlank(evalCloudTemplateMapper.getTopoIdById(evalRuleTemplate.getCloudTemplateId()))) {
+            //说明此时拓扑未保存，直接读取数据库的数据
+            evalRuleTemplateDetail.setHosts(
+                    evalHostTemplateList.stream()
+                            .map(evalHostTemplate -> BeanUtils.copy(evalHostTemplate, EvalHostContext.class))
+                            .collect(Collectors.toList())
+            );
+        } else {
+            //读取远程数据，防止数据变化
+            SceneData sceneData = topoHandlerService.getSceneData(null, evalCloudTemplateMapper.getTopoIdById(evalRuleTemplate.getCloudTemplateId()));
+            SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+            List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
+            Map<String, ElementInfo> idElementMap = elementInfoList.stream().collect(Collectors.toMap(ElementInfo::getElementId, e -> e));
+            evalRuleTemplateDetail.setHosts(
+                    evalHostTemplateList.stream()
+                            .map(evalHostTemplate -> {
+                                EvalHostContext evalHostContext = BeanUtils.copy(evalHostTemplate, EvalHostContext.class);
+                                evalHostContext.setHostName(idElementMap.get(evalHostContext.getHostId()).getName());
+                                evalHostContext.setIp(getElementIps(idElementMap.get(evalHostContext.getHostId())));
+                                return evalHostContext;
+                            })
+                            .collect(Collectors.toList()));
 
-	@Override
-	public EvalRuleTemplateEnumRsp getRuleEnum() {
-		EvalRuleTemplateEnumRsp evalRuleTemplateEnumRsp = new EvalRuleTemplateEnumRsp();
-		evalRuleTemplateEnumRsp.setBooleanRelation(Arrays.stream(EvalRuleTemplate.BooleanRelation.values())
-														 .map(booleanRelation -> new CodeNameRsp(booleanRelation.getCode(), booleanRelation.getDesc())).collect(Collectors.toList()));
-		evalRuleTemplateEnumRsp.setStatus(Arrays.stream(EvalRuleTemplate.Status.values())
-												.map(status -> new CodeNameRsp(status.getCode(), status.getDesc())).collect(Collectors.toList()));
-		evalRuleTemplateEnumRsp.setGrade(Arrays.stream(EvalRuleTemplate.Grade.values())
-											   .map(grade -> new CodeNameRsp(grade.getCode(), grade.getDesc())).collect(Collectors.toList()));
-		return evalRuleTemplateEnumRsp;
-	}
+        }
 
-	private String getElementIps(ElementInfo elementInfo) {
-		List<String> ips = elementInfo.getPorts().values().stream().map(PortInfo::getIp).collect(Collectors.toList());
-		return StringUtils.join(ips, ",");
-	}
+        List<EvalAlarmCondition> evalAlarmConditionList = evalAlarmConditionMapper.selectList(new LambdaQueryWrapper<EvalAlarmCondition>().eq(EvalAlarmCondition::getRuleId, evalRuleTemplate.getResourceId()));
+        List<EvalAlarmConditionReq> evalAlarmConditionReqList = evalAlarmConditionList.stream().map(evalAlarmCondition -> BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class))
+                .collect(Collectors.toList());
+        evalRuleTemplateDetail.setAlarmConditions(evalAlarmConditionReqList);
+        return evalRuleTemplateDetail;
+    }
+
+    @Override
+    public void modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq) {
+        EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateModifyReq, EvalRuleTemplate.class);
+        evalRuleTemplate.setResourceId(evalRuleTemplateModifyReq.getRuleId());
+        evalRuleTemplate.setName(evalRuleTemplateModifyReq.getRuleName());
+        evalRuleTemplate.setLabelList(evalRuleTemplateModifyReq.getLabels());
+
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+                String cloudTemplateId = evalRuleTemplateModifyReq.getCloudTemplateId();
+                String ruleId = evalRuleTemplateModifyReq.getRuleId();
+                List<String> ruleIds = Arrays.asList(evalRuleTemplateModifyReq.getRuleId());
+
+                evalRuleTemplateMapper.updateById(evalRuleTemplate);
+                evalHostTemplateMapper.deleteByRuleTemplateIds(ruleIds);
+                evalHostTemplateService.addHostTemplateList(evalRuleTemplateModifyReq.getHostList(), cloudTemplateId, ruleId);
+                evalAlarmConditionMapper.delete(new QueryWrapper<EvalAlarmCondition>().lambda().in(EvalAlarmCondition::getRuleId, ruleIds));
+                evalAlarmConditionService.addAlarmConditionList(evalRuleTemplateModifyReq.getAlarmConditions(), cloudTemplateId, ruleId);
+            }
+        });
+    }
+
+    @Override
+    public EvalRuleTemplateEnumRsp getRuleEnum() {
+        EvalRuleTemplateEnumRsp evalRuleTemplateEnumRsp = new EvalRuleTemplateEnumRsp();
+        evalRuleTemplateEnumRsp.setBooleanRelation(Arrays.stream(EvalRuleTemplate.BooleanRelation.values())
+                .map(booleanRelation -> new CodeNameRsp(booleanRelation.getCode(), booleanRelation.getDesc())).collect(Collectors.toList()));
+        evalRuleTemplateEnumRsp.setStatus(Arrays.stream(EvalRuleTemplate.Status.values())
+                .map(status -> new CodeNameRsp(status.getCode(), status.getDesc())).collect(Collectors.toList()));
+        evalRuleTemplateEnumRsp.setGrade(Arrays.stream(EvalRuleTemplate.Grade.values())
+                .map(grade -> new CodeNameRsp(grade.getCode(), grade.getDesc())).collect(Collectors.toList()));
+        return evalRuleTemplateEnumRsp;
+    }
+
+    private String getElementIps(ElementInfo elementInfo) {
+        List<String> ips = elementInfo.getPorts().values().stream().map(PortInfo::getIp).collect(Collectors.toList());
+        return StringUtils.join(ips, ",");
+    }
 
 
 }

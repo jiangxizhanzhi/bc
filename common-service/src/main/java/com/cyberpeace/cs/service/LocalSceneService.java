@@ -320,4 +320,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return {@code LocalScene}
 	 */
 	LocalScene getOrExceptionByMpSceneId(String mpSceneId);
+
+	/**
+	 * 保存报警规则
+	 */
+	Boolean saveAlertRule(JSONArray data);
 }

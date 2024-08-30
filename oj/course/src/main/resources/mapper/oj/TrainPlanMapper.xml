@@ -79,13 +79,13 @@
         </if>
         <if test="status != null">
             <if test="status == 1">
-                and aboc.`start_time` &gt; now()
+                and aboc.`start_time` is not null and aboc.`start_time` &gt; now()
             </if>
             <if test="status == 3">
-                and aboc.`end_time` &lt; now()
+                and aboc.`end_time` is not null and aboc.`end_time` &lt; now()
             </if>
             <if test="status == 2">
-                and aboc.start_time &lt; now() and aboc.end_time &gt; now()
+                and aboc.`start_time` is not null and aboc.start_time &lt; now() and aboc.end_time &gt; now()
             </if>
         </if>
     </select>

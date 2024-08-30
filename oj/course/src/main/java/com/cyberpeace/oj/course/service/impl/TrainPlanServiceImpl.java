@@ -89,7 +89,9 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		} else {
 			for (TrainPlanRsp record : result.getRecords()) {
 				Date now = new Date();
-				if (now.before(record.getStartTime())) {
+				if (record.getStartTime() == null) {
+					record.setStatus(null);
+				} else if (now.before(record.getStartTime())) {
 					record.setStatus(TrainPlan.PlanStatus.NOT_STARTED);
 				} else if (now.after(record.getEndTime())) {
 					record.setStatus(TrainPlan.PlanStatus.ENDED);

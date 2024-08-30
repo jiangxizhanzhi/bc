@@ -2,16 +2,11 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
-import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
-import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
-import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
-import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
-import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,16 +15,29 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
+import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
+import com.cyberpeace.oj.ojbase.service.NoteService;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
+import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
+import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +71,15 @@ public class CourseValidateHandler {
 
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
+
+	@Autowired
+	private LessonConfigMapper lessonConfigMapper;
+
+	@Autowired
+	private CourseLessonService courseLessonService;
+
+	@Autowired
+	private NoteService noteService;
 
 	/**
 	 * 校验课时更新时 名称是否已存在
@@ -346,5 +363,46 @@ public class CourseValidateHandler {
 				}
 			});
 		});
+	}
+
+	/**
+	 * 连续实验课是否有访问权限
+	 * @param courseId
+	 * @param lesson
+	 * @param roomId
+	 * @param authContext
+	 */
+	public void checkAccessibility(String courseId, CourseLesson lesson, String roomId,
+			AuthContext authContext) {
+		if (!authContext.getIsWeb() || !lesson.getContinuous()
+				|| lesson.getType().equals(CourseLesson.LessonType.THEORY.getCode())) {
+			return;
+		}
+		List<LessonConfig> configList = lessonConfigMapper.selectByCourse(courseId);
+		List<String> lessonIds = configList.stream()
+				.filter(c -> c.getNodeType().equals(LessonConfig.NodeType.NODE_LESSON.getCode()))
+				.map(LessonConfig::getLessonId).collect(Collectors.toList());
+
+		List<CourseLesson> lessonList = courseLessonService
+				.listContinuousExpByIdsInOrder(lessonIds);
+		if (lessonList.isEmpty()) {
+			return;
+		}
+		Set<String> reportedSet = noteService.getReportSubmittedLessonIds(
+				StreamApiUtils.map(lessonList, CourseLesson::getResourceId),
+				authContext.getUserId(), Note.NoteType.REPORT.getCode());
+		Set<String> accessibleIds = Sets.newHashSet();
+		String preName = "";
+		for (CourseLesson l : lessonList) {
+			accessibleIds.add(l.getResourceId());
+			if (!reportedSet.contains(l.getResourceId())) {
+				preName = l.getName();
+				break;
+			}
+		}
+		if (!accessibleIds.contains(lesson.getResourceId())) {
+			throw new BusinessException(OjBusinessErrorCode.PRE_EXP_TO_DO, preName);
+		}
+
 	}
 }

@@ -7,11 +7,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.collections.CollectionUtils;
 
 @Data
 @ApiModel("课程目录配置信息")
@@ -56,6 +59,12 @@ public class LessonConfigBo implements Serializable {
 	@ApiModelProperty("目录信息索引 课时1 章节1")
 	private String typeIndex;
 
+	@ApiModelProperty("是否连续")
+	private Boolean continuous = false;
+
+	@ApiModelProperty("是否可用")
+	private Boolean accessible = true;
+
 	/**
 	 * 获取排序好子类课时信息
 	 * @param includeChapter true 包含章节 false
@@ -71,6 +80,32 @@ public class LessonConfigBo implements Serializable {
 		return bos;
 
 	}
+	
+	public void checkAccessibility(Collection<String> submittedIds) {
+		List<LessonConfigBo> continuousList = Lists.newArrayList();
+		this.collectContinuous(continuousList);
+		int i;
+		for (i = 0; i < continuousList.size(); i++) {
+			if (!submittedIds.contains(continuousList.get(i).getResourceId())) {
+				break;
+			}
+		}
+		for (i = i + 1; i < continuousList.size(); i++) {
+			continuousList.get(i).setAccessible(false);
+		}
+	}
+
+	private void collectContinuous(List<LessonConfigBo> res) {
+		if (this.continuous) {
+			res.add(this);
+		}
+		if (null != this.children) {
+			for (LessonConfigBo child : this.children) {
+				child.collectContinuous(res);
+			}
+		}
+	}
+	
 
 	/**
 	 * 获取排序数据

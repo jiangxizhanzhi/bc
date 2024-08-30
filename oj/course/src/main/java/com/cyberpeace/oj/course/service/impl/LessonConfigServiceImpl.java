@@ -300,6 +300,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			if (null != lesson) {
 				configBo.setType(lesson.getType());
 				configBo.setCompulsory(lesson.getCompulsory());
+				configBo.setContinuous(lesson.getContinuous());
 			}
 		}
 

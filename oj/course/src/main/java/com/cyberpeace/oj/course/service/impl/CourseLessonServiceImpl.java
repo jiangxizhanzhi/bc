@@ -191,6 +191,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 课时数据校验
 		CourseLesson lesson = courseValidateHandler.validateLessonPermission(lessonId, authContext);
+		courseValidateHandler.checkAccessibility(courseId, lesson, roomId, authContext);
 		Course course = courseMapper.selectById(courseId);
 
 		// 增加热度
@@ -1262,6 +1263,24 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<CourseLesson> listContinuousExpByIdsInOrder(List<String> lessonIds) {
+		List<CourseLesson> lessonList = this.listByIds(lessonIds);
+		lessonList = StreamApiUtils.filter(lessonList, l -> {
+			return l.getType().equals(CourseLesson.LessonType.EXPERIMENT.getCode())
+					&& l.getContinuous();
+		});
+		List<CourseLesson> res = Lists.newArrayList();
+		for (String lessonId : lessonIds) {
+			for (CourseLesson lesson : lessonList) {
+				if (lesson.getResourceId().equals(lessonId)){
+					res.add(lesson);
+				}
+			}
+		}
+		return res;
 	}
 
 	@Override

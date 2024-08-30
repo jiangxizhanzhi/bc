@@ -43,7 +43,7 @@ public class Note extends AuthTable {
 
 	public enum NoteType implements GenericEnum {
 
-		NOTE(1, "笔记"), REPORT(2, "实验报告");
+		NOTE(1, "笔记"), REPORT(2, "实验报告"), CLASS_REPORT(3, "课堂教学报告");
 
 		@Getter
 		private Integer code;

@@ -87,6 +87,9 @@ public class CourseLesson extends BaseTable {
 	@ApiModelProperty("课后练习公开")
 	private Boolean paperPublic;
 
+	@ApiModelProperty("是否连续")
+	private Boolean continuous;
+
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;
 

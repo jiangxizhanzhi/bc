@@ -1,5 +1,8 @@
 package com.cyberpeace.oj.ojbase.dao.mapper;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -9,8 +12,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
-
-import java.util.List;
 
 @Mapper
 public interface NoteMapper extends BaseMapper<Note> {
@@ -41,4 +42,8 @@ public interface NoteMapper extends BaseMapper<Note> {
 	int updateReportByID(Note note);
 
 	int countByUserId(@Param("userId") String userId, @Param("noteType") Integer noteType, @Param("resourceIds") List<String> resourceIds);
+
+	List<Note> selectByUserAndType(@Param("userId") String userId,
+								   @Param("noteType") Integer noteType, @Param("businessType") Integer businessType,
+								   @Param("businessIds") Collection<String> businessIds);
 }

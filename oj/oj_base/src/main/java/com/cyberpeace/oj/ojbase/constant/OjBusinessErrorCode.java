@@ -345,4 +345,8 @@ public interface OjBusinessErrorCode {
 	 * 不能重复提交实验报告
 	 */
 	String REPORT_ALREADY_SUBMITTED = "102132";
+	/**
+	 * 请完成前置课时
+	 */
+	String PRE_EXP_TO_DO = "102133";
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.ojbase.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -176,5 +177,16 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	@Override
 	public void deleteByBusiness(String businessId, Integer noteType, Integer businessType) {
 		noteMapper.deleteByBusiness(businessId,noteType,businessType);
+	}
+
+    @Override
+    public List<Note> getReportByLessonIds(List<String> lessonIds, String userId) {
+		return noteMapper.selectByUserAndType(userId, Note.NoteType.REPORT.getCode(), Note.NoteResourceType.LESSON.getCode(), lessonIds);
+    }
+
+	@Override
+	public Set<String> getReportSubmittedLessonIds(List<String> lessonIds, String userId, Integer noteType) {
+		List<Note> noteList = noteMapper.selectByUserAndType(userId, noteType, Note.NoteResourceType.LESSON.getCode(), lessonIds);
+		return noteList.stream().map(Note::getBusinessId).collect(Collectors.toSet());
 	}
 }

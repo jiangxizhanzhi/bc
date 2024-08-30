@@ -12,6 +12,7 @@ import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 
 import java.util.List;
+import java.util.Set;
 
 public interface NoteService extends IService<Note> {
 
@@ -47,4 +48,8 @@ public interface NoteService extends IService<Note> {
     Integer getCount(String userId, Integer noteType, List<String> resourceType);
 
     void deleteByBusiness(String businessId, Integer noteType, Integer businessType);
+
+    List<Note> getReportByLessonIds(List<String> lessonIds, String userId);
+
+    Set<String> getReportSubmittedLessonIds(List<String> lessonIds, String userId, Integer noteType);
 }

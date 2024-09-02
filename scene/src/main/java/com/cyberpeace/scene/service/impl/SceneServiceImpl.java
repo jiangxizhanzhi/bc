@@ -2,11 +2,13 @@ package com.cyberpeace.scene.service.impl;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.Executor;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -19,7 +21,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.auth.service.SysUserService;
 import com.cyberpeace.auth.service.bo.UserInfoContext;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -107,6 +108,10 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+	
+	@Autowired
+	@Qualifier("asyncTaskExecutor")
+	private Executor asyncTaskExecutor;
 
 	/**
 	 * 场景自动销毁时间 单位:小时
@@ -365,10 +370,16 @@ public class SceneServiceImpl extends ServiceImpl<SceneMapper, SceneEntity> impl
 				.in(SceneEntity::getSceneStatus, SceneEnum.getCodes())
 				.lt(SceneEntity::getDestroyTime, new Date()));
 		if (!CollectionUtils.isEmpty(list)) {
-			list.forEach(scene -> {
-				destroyScene(scene.getResourceId());
-				log.info("Destroy scene : {}", scene.getResourceId());
-			});
+			for (SceneEntity scene : list) {
+				asyncTaskExecutor.execute(() -> {
+					destroyScene(scene.getResourceId());
+					log.info("Destroy scene : {}", scene.getResourceId());
+				});
+				try {
+					Thread.sleep(2_000);
+				} catch (InterruptedException e) {
+				}
+			}
 		}
 	}
 

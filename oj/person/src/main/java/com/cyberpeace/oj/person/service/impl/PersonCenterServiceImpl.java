@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.MathUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -414,46 +415,23 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Override
     public List<ProgressPracticeRes> abilityFramework() {
-        List<PracticeCategory> practiceCategories = practiceCategoryMapper.selectList(new QueryWrapper<>());
-        //理论题 30%
-        List<ProgressPracticeRes> theoryList = practiceTheoryMapper.getProgressCategoryStatistics(UserInfoContext.getUserContext().getUserId());
-        Map<String, ProgressPracticeRes> theoryMap = theoryList.stream().filter(a->a.getCategoryName()!=null).collect(Collectors.toMap(ProgressPracticeRes::getCategoryName, Function.identity(), (a, b) -> a));
         //实操题 30%
         List<OperationRecordRes> operationList = practiceOperationMapper.getOperationRecordList(UserInfoContext.getUserContext().getUserId());
-        //覆盖度 40%
-        List<IndexCategoryReq> categoryList = indexInfoService.getIndexInfo().getCategoryList();
-        Map<String, List<IndexCourseReq>> categoryCoverageMap = categoryList.stream().collect(Collectors.toMap(IndexCategoryReq::getCategoryName, IndexCategoryReq::getCourses));
+        Map<String, List<OperationRecordRes>> opMap = StreamApiUtils.groupBy(operationList, OperationRecordRes::getCategoryId);
 
+        List<PracticeCategory> categoryList = practiceCategoryMapper.listByTypeAndName(PracticeCategory.PracticeType.OPERATION.getCode(), null);
         List<ProgressPracticeRes> res = new ArrayList<>();
-        for (PracticeCategory practiceCategory : practiceCategories) {
-            ProgressPracticeRes re = theoryMap.getOrDefault(practiceCategory.getName(), new ProgressPracticeRes(0,0));
-            if(null == re.getCategoryName()){
-                continue;
-            }
-            BigDecimal theoryRate =re.getSum()==0?BigDecimal.ZERO: BigDecimal.valueOf(re.getCount()*30.0/re.getSum());
-            List<IndexCourseReq> coverageReqList = categoryCoverageMap.getOrDefault(re.getCategoryName(), Lists.newArrayList());
-            int courseStudyCoverage = coverageReqList.stream().mapToInt(req-> req.getStudyCount() == null ? 0: req.getStudyCount()).sum();
-            int courseNumCoverage = coverageReqList.stream().mapToInt(req -> req.getCourseNum() == null ? 0: req.getCourseNum()).sum();
-			if (courseStudyCoverage > 0 && courseNumCoverage > 0) {
-				theoryRate = theoryRate
-						.add(BigDecimal.valueOf(courseStudyCoverage * 40.0 / courseNumCoverage));
-			}
-
-            int operationCount = operationList.stream().filter(a -> a.getKnowledge() != null
-                    && a.getKnowledge().contains(re.getCategoryName())).mapToInt(a -> 1).sum();
-            //实操题
-            if (CollectionUtils.isNotEmpty(operationList) ){
-                BigDecimal opCount = operationList.stream()
-                        .filter(a -> a.getKnowledge() != null
-                                && a.getKnowledge().contains(re.getCategoryName()) && Boolean.TRUE.equals(a.getSolved()))
-                        .map(a -> BigDecimal.valueOf(30.0 / operationCount)).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-                theoryRate = theoryRate.add(opCount);
-            }
-            re.setCount(theoryRate.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
+        for (PracticeCategory category : categoryList) {
+            ProgressPracticeRes re = new ProgressPracticeRes();
             re.setSum(100);
+            re.setCategoryName(category.getName());
+            List<OperationRecordRes> resList = opMap.getOrDefault(category.getResourceId(), Lists.newArrayList());
+            int opCount = resList.size();
+            long solvedCount = resList.stream().filter(r->Boolean.TRUE.equals(r.getSolved())).count();
+            re.setCount(MathUtils.roundDivide((int)solvedCount * 100, opCount));
+
             res.add(re);
         }
-
         return res;
     }
 

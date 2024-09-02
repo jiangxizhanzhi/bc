@@ -198,7 +198,7 @@ public class PersonController {
 			if (userExamPassMap.containsKey(s.getResourceId())) {
 				Double passRate = userExamPassMap.getOrDefault(s.getResourceId(), new JSONObject())
 						.getDouble("exam_pass_rate");
-				personStatsBo.setExamPassRate(passRate == null ? "0%" : passRate + "%");
+				personStatsBo.setExamPassRate(passRate == null ? "0.0%" : passRate + "%");
 			}
             personStatsBo.setUsername(s.getUsername());
             personStatsBo.setName(s.getName());

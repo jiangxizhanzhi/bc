@@ -29,7 +29,7 @@ public class PersonStatsBo implements Serializable {
     private String operateCorrectRate = "0%";
 
     @ApiModelProperty("考试通过率")
-    private String examPassRate = "0%";
+    private String examPassRate = "0.0%";
 
 
 }

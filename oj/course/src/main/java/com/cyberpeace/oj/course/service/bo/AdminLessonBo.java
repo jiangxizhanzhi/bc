@@ -74,4 +74,8 @@ public class AdminLessonBo implements Serializable {
 	@ApiModelProperty("课时附件数据")
 	private List<AttachmentBo> LessonFile;
 
+	@ApiModelProperty("是否连续")
+	private Boolean continuous;
+
+
 }

@@ -68,7 +68,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
 		// 实验报告
-		if (Note.NoteType.REPORT.getCode().equals(noteAddContext.getNoteType())) {
+		if (Note.NoteType.REPORT.getCode().equals(noteAddContext.getNoteType())
+				|| Note.NoteType.CLASS_REPORT.getCode().equals(noteAddContext.getNoteType())) {
 			Note existNote = noteMapper.selectByCondition(noteAddContext);
 			if (null != existNote) {
 				throw new BusinessException(OjBusinessErrorCode.REPORT_ALREADY_SUBMITTED);

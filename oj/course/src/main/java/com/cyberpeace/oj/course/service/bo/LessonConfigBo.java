@@ -90,7 +90,7 @@ public class LessonConfigBo implements Serializable {
 				break;
 			}
 		}
-		for (i = i + 1; i < continuousList.size(); i++) {
+		for (i = i + 2; i < continuousList.size(); i++) {
 			continuousList.get(i).setAccessible(false);
 		}
 	}

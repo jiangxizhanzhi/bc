@@ -86,11 +86,11 @@ public class LessonConfigBo implements Serializable {
 		this.collectContinuous(continuousList);
 		int i;
 		for (i = 0; i < continuousList.size(); i++) {
-			if (!submittedIds.contains(continuousList.get(i).getResourceId())) {
+			if (!submittedIds.contains(continuousList.get(i).getLessonId())) {
 				break;
 			}
 		}
-		for (i = i + 2; i < continuousList.size(); i++) {
+		for (i = i + 1; i < continuousList.size(); i++) {
 			continuousList.get(i).setAccessible(false);
 		}
 	}

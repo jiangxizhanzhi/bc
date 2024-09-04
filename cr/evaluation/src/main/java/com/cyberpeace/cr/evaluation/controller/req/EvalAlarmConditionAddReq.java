@@ -24,4 +24,10 @@ public class EvalAlarmConditionAddReq implements Serializable {
 
     @ApiModelProperty(value = "阈值")
     private double threshold;
+
+    @ApiModelProperty(value = "搜索条件")
+    private String condition;
+
+    @ApiModelProperty(value = "频率")
+    private String frequency;
 }

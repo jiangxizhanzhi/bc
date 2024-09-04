@@ -24,6 +24,7 @@ public class EvalAlarmConditionServiceImpl extends ServiceImpl<EvalAlarmConditio
         }
         List<EvalAlarmCondition> evalHostTemplateList = alarmConditionAddReqList.stream().map(alarmConditionAddReq -> {
             EvalAlarmCondition evalAlarmCondition = BeanUtils.copy(alarmConditionAddReq, EvalAlarmCondition.class);
+            evalAlarmCondition.setAlarmCondition(alarmConditionAddReq.getCondition());
             evalAlarmCondition.setCloudTemplateId(cloudTemplateId);
             evalAlarmCondition.setRuleId(ruleId);
             return evalAlarmCondition;

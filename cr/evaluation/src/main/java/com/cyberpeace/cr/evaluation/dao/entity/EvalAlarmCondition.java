@@ -31,6 +31,12 @@ public class EvalAlarmCondition extends BaseTable {
     @ApiModelProperty(value = "阈值")
     private double threshold;
 
+    @ApiModelProperty(value = "搜索条件")
+    private String alarmCondition;
+
+    @ApiModelProperty(value = "频率")
+    private String frequency;
+
     /**
      * 规则id
      */

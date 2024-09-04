@@ -126,10 +126,10 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 //				此处保存mp报警规则数据
-				List<EvalRuleMPRsp> ruleList = evalRuleTemplateService.getRuleList(evalTestAddReq.getCloudTemplateId());
+				/*List<EvalRuleMPRsp> ruleList = evalRuleTemplateService.getRuleList(evalTestAddReq.getCloudTemplateId());
 				ruleList.forEach(rule -> rule.setSceneId(evalTest.getTopoId()));
 				JSONArray objects = objectMapper.convertValue(ruleList, JSONArray.class);
-				localSceneService.saveAlertRule(objects);
+				localSceneService.saveAlertRule(objects);*/
 
 				Map<String, String> stepIdMap = evalStepService.createByTemplate(evalCloudTemplate.getStepIdList(), newId);
 				evalTest.setTemplateId(evalTestAddReq.getCloudTemplateId());
@@ -281,6 +281,12 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 		evalTestInstance.setCopyedTopoId(remoteTopoService.copyTopo(evalTest.getTopoId()));
 		evalTestInstance.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTestInstance.setResourceId(IDGeneratorUtil.getID());
+
+		//				此处保存mp报警规则数据
+		List<EvalRuleMPRsp> ruleList = evalRuleTemplateService.getRuleList(evalTest.getTemplateId());
+		ruleList.forEach(rule -> rule.setSceneId(evalTestInstance.getCopyedTopoId()));
+		JSONArray objects = objectMapper.convertValue(ruleList, JSONArray.class);
+		localSceneService.saveAlertRule(objects);
 
 
 		List<EvalInstanceStep> instanceSteps = new ArrayList<>();

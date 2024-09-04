@@ -10,8 +10,6 @@ import java.io.Serializable;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class EvalAlarmConditionReq implements Serializable {
-    @ApiModelProperty("资源id")
-    private String resourceId;
 
     @ApiModelProperty(value = "报警条件的类型")
     private String type;
@@ -30,4 +28,10 @@ public class EvalAlarmConditionReq implements Serializable {
 
     @ApiModelProperty(value = "阈值")
     private double threshold;
+
+    @ApiModelProperty(value = "搜索条件")
+    private String condition;
+
+    @ApiModelProperty(value = "频率")
+    private String frequency;
 }

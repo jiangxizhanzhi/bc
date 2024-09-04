@@ -174,7 +174,11 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
                 .map(evalRuleTemplate -> {
                     EvalRuleMPRsp evalRule = BeanUtils.copy(evalRuleTemplate, EvalRuleMPRsp.class);
                     List<EvalAlarmCondition> alarmConditionList = evalAlarmConditionMap.get(evalRuleTemplate.getResourceId());
-                    List<EvalAlarmConditionReq> evalAlarmConditionReqList = alarmConditionList.stream().map(evalAlarmCondition -> BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class)).collect(Collectors.toList());
+                    List<EvalAlarmConditionReq> evalAlarmConditionReqList = alarmConditionList.stream().map(evalAlarmCondition -> {
+                        EvalAlarmConditionReq evalAlarmConditionReq = BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class);
+                        evalAlarmConditionReq.setCondition(evalAlarmCondition.getAlarmCondition());
+                        return evalAlarmConditionReq;
+                    }).collect(Collectors.toList());
                     try {
                         evalRule.setAlarmConditions(objectMapper.writeValueAsString(evalAlarmConditionReqList));
                     } catch (JsonProcessingException e) {
@@ -197,6 +201,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 evalRuleTemplateMapper.deleteBatchIds(deleteReq.getIds());
                 evalActionTemplateMapper.deleteByRuleIds(deleteReq.getIds());
+                evalAlarmConditionMapper.delete(new QueryWrapper<EvalAlarmCondition>().lambda().in(EvalAlarmCondition::getRuleId, deleteReq.getIds()));
             }
         });
     }

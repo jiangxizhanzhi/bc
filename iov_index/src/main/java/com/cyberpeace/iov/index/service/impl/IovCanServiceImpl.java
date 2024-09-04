@@ -1,5 +1,6 @@
 package com.cyberpeace.iov.index.service.impl;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -103,10 +104,10 @@ public class IovCanServiceImpl implements IovCanService {
 	public void startReplay(MultipartFile blFile) {
 		final String originalFilename = blFile.getOriginalFilename();
 		if (originalFilename == null || !originalFilename.endsWith(".blf")) {
-			throw new BusinessException("文件格式错误，请上传.blf文件");
+			throw new BusinessException(ErrorCode.INVALID_VEHICLE_FRAME_ID, "文件格式错误，请上传.blf文件");
 		}
 		if (blFile.isEmpty() || blFile.getSize() > 1024 * 1024 * 200) {
-			throw new BusinessException("文件大小不能超过200M");
+			throw new BusinessException(ErrorCode.INVALID_VEHICLE_FRAME_ID, "文件大小不能为空或者不能超过200M");
 		}
 
 		IovHttpClientUtil.rawPostUploadFile(START_REPLAY_URL, blFile, JSONObject.class);

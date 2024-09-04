@@ -229,4 +229,9 @@ public final class ErrorCode {
 	 */
 	public static final String EMPTY_VEHICLE_FRAME_ID = "100068";
 
+	/**
+	 * 通用错误
+	 */
+	public static final String INVALID_VEHICLE_FRAME_ID = "104199";
+
 }

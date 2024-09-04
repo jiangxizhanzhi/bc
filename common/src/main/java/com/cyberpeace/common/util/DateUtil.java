@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -35,6 +37,17 @@ public class DateUtil {
 		Calendar cal2 = Calendar.getInstance();
 		cal2.setTime(date2);
 		return cal1.get(Calendar.YEAR)==cal2.get(Calendar.YEAR);
+	}
+
+	public static String generateTimeNamedFileName() {
+		// 获取当前时间
+		LocalDateTime now = LocalDateTime.now();
+
+		// 定义时间格式
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+
+		// 格式化时间
+		return now.format(formatter);
 	}
 
 	private DateUtil() {}

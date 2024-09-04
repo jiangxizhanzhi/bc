@@ -1,22 +1,33 @@
 package com.cyberpeace.iov.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.TreeMap;
 
+import com.cyberpeace.common.util.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -37,6 +48,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.iov.model.CanBaseRsp;
 import com.google.common.collect.Lists;
+import org.springframework.web.multipart.MultipartFile;
 
 public class IovHttpClientUtil {
 
@@ -153,6 +165,90 @@ public class IovHttpClientUtil {
 		return doHttp(httpGet, resultType);
 	}
 
+
+	/**
+	 * post请求，下载文件
+	 * @param url
+	 * @param fileName
+	 */
+	public static void rawPostFile(String url, String fileName) {
+
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			// 创建 GET 请求
+			HttpPost httpPost = new HttpPost(url);
+
+			try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+				// 检查响应状态码
+				int statusCode = response.getStatusLine().getStatusCode();
+				if (statusCode != 200) {
+					LOG.error("rawPostFile response code error, statusCode is {}", statusCode);
+					throw new RemoteServiceException("第三方请求异常");
+				}
+
+				// 获取响应实体
+				HttpEntity entity = response.getEntity();
+
+				// 将文件流保存到本地文件
+				saveToFile(entity, fileName);
+			}
+		} catch (IOException e) {
+			LOG.error("rawPostFile error url ={}, fileName={}", url, fileName, e);
+			throw new RemoteServiceException(e.getMessage());
+		}
+	}
+	private static void saveToFile(HttpEntity entity, String fileName) throws IOException {
+		LOG.info("开始下载文件到本地文件: {}", fileName);
+		final File file = new File(fileName);
+		final File parentFile = file.getParentFile();
+		FileUtil.createPath(parentFile);
+		final boolean created  = file.createNewFile();
+		if (!created) {
+			LOG.warn("文件已存在, {}", file.getAbsolutePath());
+		}
+		try (FileOutputStream fos = new FileOutputStream(file)) {
+			byte[] buffer = new byte[4096];
+			int bytesRead;
+
+			while ((bytesRead = entity.getContent().read(buffer)) != -1) {
+				fos.write(buffer, 0, bytesRead);
+			}
+		}
+		LOG.info("结束下载文件到本地文件: {}", fileName);
+	}
+
+	public static <T> T rawPostUploadFile(String url, MultipartFile file, Class<T> resultType) {
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			// 创建 POST 请求
+			HttpPost httpPost = new HttpPost(url);
+
+			try {
+				// 构建 MultipartEntity
+				HttpEntity multipartEntity = MultipartEntityBuilder.create()
+						.addPart("file", new FileBody(new File(file.getOriginalFilename()), Files.probeContentType(Paths.get(file.getOriginalFilename()))))
+						.build();
+				httpPost.setEntity(multipartEntity);
+
+				CloseableHttpResponse response = httpClient.execute(httpPost);
+				// 检查响应状态码
+				int statusCode = response.getStatusLine().getStatusCode();
+				if (statusCode != 200) {
+					LOG.error("rawPostUploadFile response code error, statusCode is {}", statusCode);
+					throw new RemoteServiceException("第三方请求异常");
+				}
+
+				// 2、解析远程服务的返回值
+				String httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
+				// 4、解析结果并返回
+				return parseHttpResponse(httpResponse, resultType);
+			} catch (IOException e) {
+				LOG.error("rawPostUploadFile error url ={}, fileName={}", url, file.getOriginalFilename(), e);
+				throw new RemoteServiceException(e.getMessage());
+			}
+		} catch (IOException e) {
+			LOG.error("rawPostUploadFile error", e);
+            throw new RuntimeException(e);
+        }
+    }
 	/**
 	 * 设置请求上下文
 	 * @param url
@@ -182,7 +278,7 @@ public class IovHttpClientUtil {
 				LOG.error("remote error logging Exception", e1);
 			} finally {
 				HttpclientContext.removeContext();
-				throw new RemoteServiceException();
+				throw new RemoteServiceException(e.getMessage());
 			}
 		}
 
@@ -238,8 +334,14 @@ public class IovHttpClientUtil {
 	 * @return
 	 */
 	private static HttpClient getClient() {
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setConnectTimeout(10000) // 连接超时时间 10 秒
+				.setSocketTimeout(1000 * 60 * 5)  // 数据读取超时时间 10 秒
+				.build();
 
-		return HttpClients.custom().setDefaultHeaders(defaultHeader()).build();
+		return HttpClients.custom()
+				.setDefaultRequestConfig(requestConfig)
+				.setDefaultHeaders(defaultHeader()).build();
 	}
 
 	/**

@@ -229,8 +229,10 @@ public class ExceptionFilter implements Filter {
 				String desc = CommonContext.isChinese()
 						? ConfigUtil.getContextProperty(error.getDefaultMessage() + ".cn")
 						: ConfigUtil.getContextProperty(error.getDefaultMessage() + ".en");
+				String errorMsg = field + ":" + error.getDefaultMessage();
+				log.error("parseArgumentNotValidException error: {}", errorMsg);
 				flushErrorInfo(httpServletResponse, ErrorCode.METHOD_ARG_NOT_VALID,
-						StringUtils.isNotBlank(desc) ? desc : field);
+						StringUtils.isNotBlank(desc) ? desc : errorMsg);
 
 				return;
 			}

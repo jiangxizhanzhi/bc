@@ -2,6 +2,7 @@ package com.cyberpeace.iov.index.service;
 
 import com.cyberpeace.iov.index.service.bo.can.FuzzingReq;
 import com.cyberpeace.iov.index.service.bo.can.MsgSendReq;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface IovCanService {
 
@@ -15,4 +16,5 @@ public interface IovCanService {
 
 	void stopReplay();
 
+	void startReplay(MultipartFile blf);
 }

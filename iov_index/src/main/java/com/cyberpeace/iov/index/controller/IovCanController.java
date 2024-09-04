@@ -1,7 +1,9 @@
 package com.cyberpeace.iov.index.controller;
 
+import com.cyberpeace.iov.index.service.bo.can.BLFreq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import com.cyberpeace.iov.index.service.bo.can.MsgSendReq;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "CAN api")
 @RestController
@@ -26,7 +29,7 @@ public class IovCanController {
 
 	@ApiOperation("开始报文模糊")
 	@PostMapping("/fuzzing/start/")
-	public BaseRsp<Void> startFuzzing(@RequestBody FuzzingReq req) {
+	public BaseRsp<Void> startFuzzing(@RequestBody @Validated FuzzingReq req) {
 		iovCanService.startFuzzing(req);
 		return new BaseRsp<>();
 	}
@@ -40,8 +43,9 @@ public class IovCanController {
 
 	@ApiOperation("开始重放攻击")
 	@PostMapping("/replay/start/")
-	public BaseRsp<Void> startReplay() {
-
+	public BaseRsp<Void> startReplay(BLFreq blFreq) {
+		final MultipartFile blf = blFreq.getBlf();
+		iovCanService.startReplay(blf);
 		return new BaseRsp<>();
 	}
 
@@ -54,7 +58,7 @@ public class IovCanController {
 
 	@ApiOperation("开始发送报文")
 	@PostMapping("/msg/start/")
-	public BaseRsp<Void> startSendMessage(MsgSendReq req) {
+	public BaseRsp<Void> startSendMessage(@RequestBody @Validated MsgSendReq req) {
 		iovCanService.startSendMsg(req);
 		return new BaseRsp<>();
 	}

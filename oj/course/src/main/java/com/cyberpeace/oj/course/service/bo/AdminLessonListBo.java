@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.cs.service.context.AttachmentBo;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -71,4 +72,10 @@ public class AdminLessonListBo implements Serializable {
 
 	@ApiModelProperty("场景共享类型 1=个人 2=共享 3=小组")
 	private Integer sceneShareMode;
+
+	@ApiModelProperty("是否连续")
+	private Boolean continuous;
+
+	@ApiModelProperty("是否共享")
+	private Boolean shared;
 }

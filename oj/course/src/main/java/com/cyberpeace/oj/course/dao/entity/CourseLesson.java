@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -89,6 +88,9 @@ public class CourseLesson extends BaseTable {
 
 	@ApiModelProperty("是否连续")
 	private Boolean continuous;
+
+	@ApiModelProperty("是否共享")
+	private Boolean shared;
 
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;

@@ -186,6 +186,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	@Autowired
+	private SharedRepositoryService sharedRepositoryService;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext) {
 
@@ -424,6 +427,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 				// 课程目录数据新增
 				lessonConfigService.save(lessonConfig);
+
+				// add to my repository
+				sharedRepositoryService.add2My(courseLesson.getResourceId());
 
 			}
 		});
@@ -689,7 +695,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			@Override
 			public Boolean doInTransaction(TransactionStatus status) {
 				lessonConfigService.saveBatch(lessonConfigs);
-				return saveBatch(courseLessons);
+				Boolean res = saveBatch(courseLessons);
+				// my repository
+				sharedRepositoryService.add2My(courseLessons);
+				return res;
 			}
 		});
 
@@ -709,6 +718,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		lesson.setId(null);
 		lesson.setCourseId(courseId);
 		lesson.setResourceId(IDGeneratorUtil.getID());
+		lesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 	}
 
 	@Override

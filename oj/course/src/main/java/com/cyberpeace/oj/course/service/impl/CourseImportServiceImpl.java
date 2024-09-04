@@ -3,13 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.io.File;
 import java.util.*;
 
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
-import com.cyberpeace.oj.practice.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +17,14 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -39,10 +34,15 @@ import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
+import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.service.*;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
@@ -112,6 +112,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
+
+	@Autowired
+	private SharedRepositoryService sharedRepositoryService;
 
 	@Override
 	public Course parseRmCourse(String path) {
@@ -608,6 +611,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 				// 课后练习
 				saveLessonPractice(lessonPractice);
+				// my repository
+				sharedRepositoryService.add2My(lessons);
 			}
 		});
 
@@ -1073,6 +1078,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 					StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));
 					// 课时和课时目录数据存储
 					courseLessonService.saveBatch(lessons);
+					// my repository
+					sharedRepositoryService.add2My(lessons);
 				}
 
 				lessonConfigMapper.deleteByCourse(course.getResourceId());

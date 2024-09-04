@@ -6,6 +6,13 @@
     <resultMap id="lesson" type="com.cyberpeace.oj.course.dao.entity.CourseLesson">
         <result property="isPublic" column="public"/>
     </resultMap>
+    <update id="updateShare">
+        update oj_course_lesson set `shared` = #{shared} where resource_id in
+        <foreach collection="ids" separator="," close=")" open="(" item="id">
+            #{id}
+        </foreach>
+        and create_user_id = #{userId}
+    </update>
 
     <select id="listByCourses" resultMap="lesson">
         select * from oj_course_lesson
@@ -102,5 +109,58 @@
             course_id = #{courseId}
         </where>
         and node_type = 1
+    </select>
+    <select id="pageShared" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
+        select * from oj_course_lesson
+        <where>
+            `type` = 1 and `shared` = 1
+            <if test="pattern != null and pattern != ''">
+                <bind name="search" value="'%' + pattern + '%'"/>
+                and `name` like #{search}
+            </if>
+            <if test="userIds != null and userIds.size() > 0">
+                and create_user_id in
+                <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+                    #{userId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="selectMyExp" resultType="java.lang.String">
+        select resource_id
+        from oj_course_lesson
+        where `type` = 1
+          and create_user_id = #{userId}
+        order by id
+    </select>
+    <select id="pageMy" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
+        select * from oj_course_lesson
+        <where>
+            `type` = 1
+            <if test="myIds != null and myIds.size() > 0">
+                and resource_id in
+                <foreach collection="myIds" item="myId" open="(" close=")" separator=",">
+                    #{myId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="selectIdsByIds" resultType="java.lang.String">
+        select resource_id from oj_course_lesson
+        <where>
+            `type` = 1
+            and resource_id in
+            <foreach collection="myIds" item="myId" open="(" close=")" separator=",">
+                #{myId}
+            </foreach>
+        </where>
+    </select>
+    <select id="selectByIds" resultType="com.cyberpeace.oj.course.service.bo.AdminLessonListBo">
+        select l.name, c.name as course_name, l.resource_id from oj_course_lesson l left join oj_course c on l.course_id
+        = c.id
+        where l.resource_id in
+        <foreach collection="myIds" item="myId" open="(" close=")" separator=",">
+            #{myId}
+        </foreach>
     </select>
 </mapper>

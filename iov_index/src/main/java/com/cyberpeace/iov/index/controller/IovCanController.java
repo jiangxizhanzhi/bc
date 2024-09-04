@@ -1,13 +1,9 @@
 package com.cyberpeace.iov.index.controller;
 
-import com.cyberpeace.iov.index.service.bo.can.BLFreq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.iov.index.service.IovCanService;
@@ -17,6 +13,8 @@ import com.cyberpeace.iov.index.service.bo.can.MsgSendReq;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
 
 @Api(tags = "CAN api")
 @RestController
@@ -43,8 +41,7 @@ public class IovCanController {
 
 	@ApiOperation("开始重放攻击")
 	@PostMapping("/replay/start/")
-	public BaseRsp<Void> startReplay(BLFreq blFreq) {
-		final MultipartFile blf = blFreq.getBlf();
+	public BaseRsp<Void> startReplay(@RequestParam("blf") @NotNull MultipartFile blf) {
 		iovCanService.startReplay(blf);
 		return new BaseRsp<>();
 	}

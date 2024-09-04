@@ -24,7 +24,9 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -217,6 +219,7 @@ public class IovHttpClientUtil {
 	}
 
 	public static <T> T rawPostUploadFile(String url, MultipartFile file, Class<T> resultType) {
+		setContext(url);
 		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 			// 创建 POST 请求
 			HttpPost httpPost = new HttpPost(url);
@@ -224,7 +227,8 @@ public class IovHttpClientUtil {
 			try {
 				// 构建 MultipartEntity
 				HttpEntity multipartEntity = MultipartEntityBuilder.create()
-						.addPart("file", new FileBody(new File(file.getOriginalFilename()), Files.probeContentType(Paths.get(file.getOriginalFilename()))))
+						.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+						.addBinaryBody("blf", file.getInputStream(), ContentType.DEFAULT_BINARY, file.getOriginalFilename())
 						.build();
 				httpPost.setEntity(multipartEntity);
 
@@ -247,7 +251,9 @@ public class IovHttpClientUtil {
 		} catch (IOException e) {
 			LOG.error("rawPostUploadFile error", e);
             throw new RuntimeException(e);
-        }
+        }finally {
+			HttpclientContext.removeContext();
+		}
     }
 	/**
 	 * 设置请求上下文
@@ -308,6 +314,15 @@ public class IovHttpClientUtil {
 			if (!isSuccess(baseRsp)) {
 				LOG.error("url=[{}], result=[{}] error, code=[{}]",
 						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode());
+				if (baseRsp.getMsg().get(0).contains("fuzzing")) {
+					throw new RemoteServiceException("请先停止模糊测试");
+				}
+				if (baseRsp.getMsg().get(0).contains("msg")) {
+					throw new RemoteServiceException("请先停止指令发送");
+				}
+				if (baseRsp.getMsg().get(0).contains("replay")) {
+					throw new RemoteServiceException("请先停止流量重放");
+				}
 				throw new RemoteServiceException(baseRsp.getMsg().get(0));
 			}
 			if (null == baseRsp.getData().get(0)) {

@@ -307,6 +307,8 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
                 .map(aggregation -> new StrCodeNameRsp(aggregation.getCode(), aggregation.getDesc())).collect(Collectors.toList()));
         evalRuleTemplateEnumRsp.setCondition(Arrays.stream(EvalRuleTemplate.Condition.values())
                 .map(condition -> new StrCodeNameRsp(condition.getCode(), condition.getDesc())).collect(Collectors.toList()));
+        evalRuleTemplateEnumRsp.setEvaluationFrequency(Arrays.stream(EvalRuleTemplate.EvaluationFrequency.values())
+                .map(evaluationFrequency -> new StrCodeNameRsp(evaluationFrequency.getCode(), evaluationFrequency.getDesc())).collect(Collectors.toList()));
         return evalRuleTemplateEnumRsp;
     }
 

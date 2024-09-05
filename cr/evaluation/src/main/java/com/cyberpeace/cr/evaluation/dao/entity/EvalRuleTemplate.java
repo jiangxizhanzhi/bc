@@ -171,11 +171,11 @@ public class EvalRuleTemplate extends BaseTable {
 
     public enum Aggregation {
 
-        Average("Average", "平均值"),
-        Maximum("Maximum","最大值"),
-        Minimum("Minimum","最小值"),
-        Total("LessThanOrEqual","总计"),
-        Count("Count", "计数");
+        AVERAGE("Average", "平均值"),
+        MAXIMUM("Maximum","最大值"),
+        MINIMUM("Minimum","最小值"),
+        TOTAL("LessThanOrEqual","总计"),
+        COUNT("Count", "计数");
 
         @Getter
         private final String code;
@@ -266,5 +266,32 @@ public class EvalRuleTemplate extends BaseTable {
         }
     }
 
+    public enum EvaluationFrequency {
+
+        oneMinute("PT1M", "1分钟"),
+        fiveMinutes("PT5M","5分钟"),
+        tenMinutes("PT10M","10分钟"),
+        fifteenMinutes("PT15M","15分钟"),
+        thirtyMinutes("PT30M", "30分钟"),
+        fortyFiveMinutes("PT45M", "45分钟"),
+        oneHour("PT1H", "1小时"),
+        twoHours("PT2H", "1小时"),
+        threeHours("PT3H", "1小时"),
+        fourHours("PT4H", "1小时"),
+        fiveHours("PT5H", "1小时"),
+        sixHours("PT6H", "1小时"),
+        oneDay("P1D", "1天");
+
+        @Getter
+        private final String code;
+
+        @Getter
+        private final String desc;
+
+        EvaluationFrequency(String code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
 
 }

@@ -25,4 +25,7 @@ public class EvalRuleTemplateEnumRsp implements Serializable {
 
 	@ApiModelProperty("自定义日志搜索")
 	private List<StrCodeNameRsp> condition;
+
+	@ApiModelProperty("评估频率")
+	private List<StrCodeNameRsp> evaluationFrequency;
 }

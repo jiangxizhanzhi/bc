@@ -11,10 +11,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
-import com.cyberpeace.cr.evaluation.controller.req.EvalAlarmConditionReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateAddReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateListReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalRuleTemplateModifyReq;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.StrCodeNameRsp;
+import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleMPRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleTemplateDetailRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleTemplateEnumRsp;
@@ -102,14 +100,19 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
+    public EvalRuleTemplateDetailRsp addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
         EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateAddReq, EvalRuleTemplate.class);
         evalRuleTemplate.setName(evalRuleTemplateAddReq.getRuleName());
         evalRuleTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
         evalRuleTemplate.setLabelList(evalRuleTemplateAddReq.getLabels());
-
+        List<EvalAlarmReq> alarms = evalRuleTemplateAddReq.getAlarms();
+        if (alarms.size() > 0) {
+            EvalAlarmReq evalAlarmReq = alarms.get(0);
+            evalRuleTemplate.setAlarmName(evalAlarmReq.getAlarmName());
+            evalRuleTemplate.setAlarmLevel(evalAlarmReq.getLevel());
+            evalRuleTemplate.setAlarmDescription(evalAlarmReq.getDescription());
+        }
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 evalRuleTemplateMapper.insert(evalRuleTemplate);
@@ -120,7 +123,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
                 evalAlarmConditionService.addAlarmConditionList(evalRuleTemplateAddReq.getAlarmConditions(), cloudTemplateId, ruleId);
             }
         });
-        return evalRuleTemplate.getResourceId();
+        return getRuleTemplate(evalRuleTemplate.getResourceId());
     }
 
     @Override
@@ -250,15 +253,27 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
         List<EvalAlarmConditionReq> evalAlarmConditionReqList = evalAlarmConditionList.stream().map(evalAlarmCondition -> BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class))
                 .collect(Collectors.toList());
         evalRuleTemplateDetail.setAlarmConditions(evalAlarmConditionReqList);
+        EvalAlarmReq evalAlarmReq = new EvalAlarmReq();
+        evalAlarmReq.setAlarmName(evalRuleTemplate.getAlarmName());
+        evalAlarmReq.setDescription(evalRuleTemplate.getAlarmDescription());
+        evalAlarmReq.setLevel(evalRuleTemplate.getAlarmLevel());
+        evalRuleTemplateDetail.setAlarms(Arrays.asList(evalAlarmReq));
         return evalRuleTemplateDetail;
     }
 
     @Override
-    public void modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq) {
+    public EvalRuleTemplateDetailRsp modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq) {
         EvalRuleTemplate evalRuleTemplate = BeanUtils.copy(evalRuleTemplateModifyReq, EvalRuleTemplate.class);
         evalRuleTemplate.setResourceId(evalRuleTemplateModifyReq.getRuleId());
         evalRuleTemplate.setName(evalRuleTemplateModifyReq.getRuleName());
         evalRuleTemplate.setLabelList(evalRuleTemplateModifyReq.getLabels());
+        List<EvalAlarmReq> alarms = evalRuleTemplateModifyReq.getAlarms();
+        if (alarms.size() > 0) {
+            EvalAlarmReq evalAlarmReq = alarms.get(0);
+            evalRuleTemplate.setAlarmName(evalAlarmReq.getAlarmName());
+            evalRuleTemplate.setAlarmLevel(evalAlarmReq.getLevel());
+            evalRuleTemplate.setAlarmDescription(evalAlarmReq.getDescription());
+        }
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -276,17 +291,22 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
                 evalAlarmConditionService.addAlarmConditionList(evalRuleTemplateModifyReq.getAlarmConditions(), cloudTemplateId, ruleId);
             }
         });
+        return getRuleTemplate(evalRuleTemplate.getResourceId());
     }
 
     @Override
     public EvalRuleTemplateEnumRsp getRuleEnum() {
         EvalRuleTemplateEnumRsp evalRuleTemplateEnumRsp = new EvalRuleTemplateEnumRsp();
-        evalRuleTemplateEnumRsp.setBooleanRelation(Arrays.stream(EvalRuleTemplate.BooleanRelation.values())
-                .map(booleanRelation -> new CodeNameRsp(booleanRelation.getCode(), booleanRelation.getDesc())).collect(Collectors.toList()));
         evalRuleTemplateEnumRsp.setStatus(Arrays.stream(EvalRuleTemplate.Status.values())
                 .map(status -> new CodeNameRsp(status.getCode(), status.getDesc())).collect(Collectors.toList()));
         evalRuleTemplateEnumRsp.setGrade(Arrays.stream(EvalRuleTemplate.Grade.values())
                 .map(grade -> new CodeNameRsp(grade.getCode(), grade.getDesc())).collect(Collectors.toList()));
+        evalRuleTemplateEnumRsp.setOperator(Arrays.stream(EvalRuleTemplate.Operator.values())
+                .map(operator -> new StrCodeNameRsp(operator.getCode(), operator.getDesc())).collect(Collectors.toList()));
+        evalRuleTemplateEnumRsp.setAggregation(Arrays.stream(EvalRuleTemplate.Aggregation.values())
+                .map(aggregation -> new StrCodeNameRsp(aggregation.getCode(), aggregation.getDesc())).collect(Collectors.toList()));
+        evalRuleTemplateEnumRsp.setCondition(Arrays.stream(EvalRuleTemplate.Condition.values())
+                .map(condition -> new StrCodeNameRsp(condition.getCode(), condition.getDesc())).collect(Collectors.toList()));
         return evalRuleTemplateEnumRsp;
     }
 

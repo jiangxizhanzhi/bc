@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface EvalRuleTemplateService extends IService<EvalRuleTemplate> {
 
-	String addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq);
+	EvalRuleTemplateDetailRsp addRuleTemplate(EvalRuleTemplateAddReq evalRuleTemplateAddReq);
 
 	List<EvalRuleTemplateListRsp> getRuleTemplateList(EvalRuleTemplateListReq evalRuleTemplateListReq);
 
@@ -21,7 +21,7 @@ public interface EvalRuleTemplateService extends IService<EvalRuleTemplate> {
 
 	EvalRuleTemplateDetailRsp getRuleTemplate(String id);
 
-	void modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq);
+	EvalRuleTemplateDetailRsp modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq);
 
 	EvalRuleTemplateEnumRsp getRuleEnum();
 

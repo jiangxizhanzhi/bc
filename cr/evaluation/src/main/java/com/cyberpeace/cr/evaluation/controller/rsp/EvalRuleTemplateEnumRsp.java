@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.StrCodeNameRsp;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -17,5 +18,11 @@ public class EvalRuleTemplateEnumRsp implements Serializable {
 	private List<CodeNameRsp> grade;
 
 	@ApiModelProperty("布尔关系")
-	private List<CodeNameRsp> booleanRelation;
+	private List<StrCodeNameRsp> operator;
+
+	@ApiModelProperty("聚合类型")
+	private List<StrCodeNameRsp> aggregation;
+
+	@ApiModelProperty("自定义日志搜索")
+	private List<StrCodeNameRsp> condition;
 }

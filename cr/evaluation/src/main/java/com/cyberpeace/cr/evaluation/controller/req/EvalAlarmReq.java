@@ -11,6 +11,9 @@ public class EvalAlarmReq implements Serializable {
 	@ApiModelProperty("资源id")
 	private String resourceId;
 
+	@ApiModelProperty(required = true, value = "告警名称")
+	private String alarmName;
+
 	@ApiModelProperty(required = true, value = "描述")
 	private String description;
 

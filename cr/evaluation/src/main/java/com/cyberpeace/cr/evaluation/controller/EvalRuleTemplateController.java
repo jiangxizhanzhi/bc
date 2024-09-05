@@ -39,7 +39,7 @@ public class EvalRuleTemplateController {
 
 	@ApiOperation("规则新增")
 	@PostMapping("/rule")
-	public BaseRsp<String> addRule(@RequestBody EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
+	public BaseRsp<EvalRuleTemplateDetailRsp> addRule(@RequestBody EvalRuleTemplateAddReq evalRuleTemplateAddReq) {
 		return new BaseRsp<>(evalRuleTemplateService.addRuleTemplate(evalRuleTemplateAddReq));
 	}
 
@@ -65,9 +65,8 @@ public class EvalRuleTemplateController {
 
 	@ApiOperation("修改规则")
 	@PutMapping("/rule")
-	public BaseRsp<Boolean> modifyRule(@RequestBody EvalRuleTemplateModifyReq evalRuleTemplateModifyReq) {
-		evalRuleTemplateService.modifyRuleTemplate(evalRuleTemplateModifyReq);
-		return new BaseRsp<>(true);
+	public BaseRsp<EvalRuleTemplateDetailRsp> modifyRule(@RequestBody EvalRuleTemplateModifyReq evalRuleTemplateModifyReq) {
+		return new BaseRsp<>(evalRuleTemplateService.modifyRuleTemplate(evalRuleTemplateModifyReq));
 	}
 
 	@ApiOperation("获取规则基础信息相关枚举")

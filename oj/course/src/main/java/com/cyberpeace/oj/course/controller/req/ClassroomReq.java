@@ -33,8 +33,6 @@ public class ClassroomReq implements Serializable {
 	private String lessonId;
 
 	@ApiModelProperty("组织编号")
-	@NotBlank(groups = { Create.class, Update.class },
-			message = OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL)
 	private String organizationId;
 
 	@ApiModelProperty("开始时间")

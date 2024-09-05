@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,9 +35,11 @@ import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 
@@ -75,6 +76,9 @@ public class AdminClassroomController {
 
 	@Autowired
 	private UtilService utilService;
+	
+	@Autowired
+	private TrainPlanService trainPlanService;
 
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
@@ -171,6 +175,12 @@ public class AdminClassroomController {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
+		
+		if (StringUtils.isNotBlank(classroomReq.getTrainPlanId())) {
+			TrainPlan plan = trainPlanService.getPlanById(classroom.getTrainPlanId());
+			classroom.setOrganizationId(plan.getOrganizationId());
+			classroom.setOrganizationIds(plan.getOrganizationIds());
+		}
 
 		Classroom insertResult = classroomService.create(classroom, authContext);
 
@@ -187,6 +197,13 @@ public class AdminClassroomController {
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
+
+		if (StringUtils.isNotBlank(classroomReq.getTrainPlanId())) {
+			TrainPlan plan = trainPlanService.getPlanById(classroom.getTrainPlanId());
+			classroom.setOrganizationId(plan.getOrganizationId());
+			classroom.setOrganizationIds(plan.getOrganizationIds());
+		}
+
 		Boolean result = classroomService.updateClassroom(classroom, authContext);
 		return new BaseRsp(result);
 	}

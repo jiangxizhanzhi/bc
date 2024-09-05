@@ -1,5 +1,19 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -57,20 +71,8 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -167,9 +169,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		// 课堂基本数据获取
-		List<String> orgIds = classroomValidateHandler
-				.validateClassroomOrgHasUser(classroom.getOrganizationId());
-		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
+		if (StringUtils.isBlank(classroom.getTrainPlanId())) {
+			List<String> orgIds = classroomValidateHandler
+					.validateClassroomOrgHasUser(classroom.getOrganizationId());
+			classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
+		}
 		classroom.setResourceId(IDGeneratorUtil.getID());
 
 		// 分组数据
@@ -226,9 +230,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		validateChangeClassroom(classroom);
 
 		// 组织数据获取
-		List<String> orgIds = remoteOrganizationService.childrenList(classroom.getOrganizationId(),
-				true);
-		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
+		if (StringUtils.isBlank(classroom.getTrainPlanId())) {
+			List<String> orgIds = remoteOrganizationService
+					.childrenList(classroom.getOrganizationId(), true);
+			classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
+		}
 
 		// 判断群组是否群组需要改变
 		boolean changeGroup = changeGroup(existRoom, classroom, courseLesson);

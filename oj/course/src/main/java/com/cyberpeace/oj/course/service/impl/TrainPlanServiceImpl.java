@@ -37,6 +37,7 @@ import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -149,7 +150,19 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 	}
 
-	/** 数据转换*/
+	@Override
+	public TrainPlan getPlanById(String trainPlanId) {
+		TrainPlan plan = this.getById(trainPlanId);
+		if (null == plan) {
+			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NOT_FOUND);
+		}
+		if (StringUtils.isBlank(plan.getOrganizationId())) {
+			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL);
+		}
+		return plan;
+	}
+
+    /** 数据转换*/
 	private TrainPlanBo entityToBo(TrainPlan trainPlan, UserInfo userInfo) {
 		TrainPlanBo planBo = BeanUtils.copy(trainPlan, TrainPlanBo.class);
 		planBo.setTrainPlanName(trainPlan.getName());

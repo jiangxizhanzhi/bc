@@ -1,7 +1,12 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.security.AccessControlContext;
 import java.util.List;
 
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.oj.course.service.bo.TrainPlanContext;
+import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -50,6 +55,12 @@ public class AdminTrainPlanController {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	@Autowired
+	private ClassroomValidateHandler classroomValidateHandler;
+
+	@Autowired
+	private RemoteOrganizationService remoteOrganizationService;
+
 	@ApiOperation("训练计划列表查询全部")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -91,6 +102,10 @@ public class AdminTrainPlanController {
 				UserInfoContext.getUserContext().getUserId());
 
 		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		// 课堂基本数据获取
+		List<String> orgIds = classroomValidateHandler
+				.validateClassroomOrgHasUser(trainPlan.getOrganizationId());
+		trainPlan.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 
 		trainPlanService.save(trainPlan);
 
@@ -108,6 +123,11 @@ public class AdminTrainPlanController {
 		trainPlanService.checkNameRepeat(trainPlanUpdateReq.getName(),
 				trainPlanUpdateReq.getResourceId(), UserInfoContext.getUserContext().getUserId());
 
+		// 课堂基本数据获取
+		List<String> orgIds = classroomValidateHandler
+				.validateClassroomOrgHasUser(trainPlan.getOrganizationId());
+		trainPlan.setOrganizationIds(JsonUtil.arrayToString(orgIds));
+
 		trainPlanService.updateById(trainPlan);
 
 		return new BaseRsp<>();
@@ -116,11 +136,22 @@ public class AdminTrainPlanController {
 	@ApiOperation("查询单条训练计划")
 	@GetMapping("/train_plan")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp<TrainPlan> getAssessModel(
+	public BaseRsp<TrainPlanContext> getAssessModel(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		TrainPlan assessModel = trainPlanService.getById(resource_id);
+		TrainPlanContext context = BeanUtils.copy(assessModel, TrainPlanContext.class);
+		// 组织信息
+		String orgName = remoteOrganizationService.orgNameById(assessModel.getOrganizationId());
+		context.setOrganizationName(orgName);
 
-		return new BaseRsp(assessModel);
+		String orgPath = remoteOrganizationService.getOrgPath(assessModel.getOrganizationId());
+		context.setOrgPath(orgPath);
+
+		List<String> parentIds = remoteOrganizationService
+				.getParentIds(assessModel.getOrganizationId());
+		context.setParentOrgIds(parentIds);
+
+		return new BaseRsp(context);
 	}
 
 	@ApiOperation("后台计划批量删除")

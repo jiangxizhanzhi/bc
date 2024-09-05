@@ -27,4 +27,6 @@ public interface TrainPlanService extends IService<TrainPlan> {
 	void checkNameRepeat(String name, String id, String userId);
 
     void reuse(TrainPlanUpdateReq reuseReq);
+
+	TrainPlan getPlanById(String trainPlanId);
 }

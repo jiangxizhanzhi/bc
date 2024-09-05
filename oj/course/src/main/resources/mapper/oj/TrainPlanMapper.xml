@@ -89,4 +89,9 @@
             </if>
         </if>
     </select>
+    <select id="selectOrgIdById" resultType="java.lang.String">
+        select `organization_id`
+        from oj_train_plan
+        where resource_id = #{trainPlanId}
+    </select>
 </mapper>

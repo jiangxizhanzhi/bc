@@ -133,8 +133,14 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
 	@Override
 	public Note addAndUpdateReport(ReportAddReq reportAddReq) {
+		Note existNote = noteMapper.selectByUnique(UserInfoContext.getUserContext().getUserId(),
+				reportAddReq.getType(), Note.NoteResourceType.LESSON.getCode(),
+				reportAddReq.getBusinessId());
+		if (null != existNote && Boolean.TRUE.equals(existNote.getIsSubmit())) {
+			throw new BusinessException(OjBusinessErrorCode.REPORT_ALREADY_SUBMITTED);
+		}
 		NoteAddContext noteAddContext = BeanUtils.copy(reportAddReq, NoteAddContext.class);
-		noteAddContext.setNoteType(Note.NoteType.REPORT.getCode());
+		noteAddContext.setNoteType(reportAddReq.getType());
 		noteAddContext.setBusinessType(Note.NoteResourceType.LESSON.getCode());
 		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
 
@@ -143,23 +149,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setIsPublic(CommonConstant.TRUE);
 		note.setIsSubmit(reportAddReq.getOperate());
-		try {
+
+		if (null == existNote){
 			noteMapper.insert(note);
-		} catch (DuplicateKeyException e) {
-			Note report = noteMapper.selectByUnique(note.getUserId(), note.getNoteType(), note.getBusinessType(), note.getBusinessId());
-			//已经提交过的无法再存草稿
-			if (report.getIsSubmit() != null && report.getIsSubmit() && !reportAddReq.getOperate()) {
-				log.error("report [{}] can't be duplicate submit", report.getContent());
-				throw new BusinessException(OjBusinessErrorCode.CANT_SAVE_SUBMIT_REPORT);
-			}
-			//已经通过的无法再提交
-			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(report.getResourceId());
-			if (noteEvaluate != null && noteEvaluate.getPassed()) {
-				log.error("[{}] can't be duplicate submit", noteEvaluate.getResourceId());
-				throw new BusinessException(OjBusinessErrorCode.CANT_SUBMIT_EVALUATE_REPORT);
-			}
+		} else {
 			note.setIsSubmit(reportAddReq.getOperate());
-			note.setResourceId(report.getResourceId());
+			note.setResourceId(existNote.getResourceId());
 			noteMapper.updateReportByID(note);
 		}
 		return note;

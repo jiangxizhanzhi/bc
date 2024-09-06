@@ -65,7 +65,7 @@ public class WebNoteController {
 	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
 		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
-		//如果笔记内容为空改为删除逻辑
+
 		if (Note.NoteType.REPORT.getCode().equals(noteAddContext.getNoteType())
 				|| Note.NoteType.CLASS_REPORT.getCode().equals(noteAddContext.getNoteType())) {
 			Note existNote = noteMapper.selectByCondition(noteAddContext);
@@ -73,6 +73,7 @@ public class WebNoteController {
 				throw new BusinessException(OjBusinessErrorCode.REPORT_ALREADY_SUBMITTED);
 			}
 		}
+		//如果笔记内容为空改为删除逻辑
 		if (StringUtils.isBlank(noteReq.getContent())) {
 			noteService.deleteByBusiness(noteAddContext.getBusinessId(), noteReq.getNoteType(),
 					noteReq.getBusinessType());

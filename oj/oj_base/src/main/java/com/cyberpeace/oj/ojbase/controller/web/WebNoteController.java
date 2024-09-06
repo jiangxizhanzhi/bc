@@ -12,6 +12,7 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.*;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
@@ -65,6 +66,13 @@ public class WebNoteController {
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
 		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
 		//如果笔记内容为空改为删除逻辑
+		if (Note.NoteType.REPORT.getCode().equals(noteAddContext.getNoteType())
+				|| Note.NoteType.CLASS_REPORT.getCode().equals(noteAddContext.getNoteType())) {
+			Note existNote = noteMapper.selectByCondition(noteAddContext);
+			if (null != existNote) {
+				throw new BusinessException(OjBusinessErrorCode.REPORT_ALREADY_SUBMITTED);
+			}
+		}
 		if (StringUtils.isBlank(noteReq.getContent())) {
 			noteService.deleteByBusiness(noteAddContext.getBusinessId(), noteReq.getNoteType(),
 					noteReq.getBusinessType());

@@ -70,12 +70,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		// 实验报告
 		if (Note.NoteType.REPORT.getCode().equals(noteAddContext.getNoteType())
 				|| Note.NoteType.CLASS_REPORT.getCode().equals(noteAddContext.getNoteType())) {
-			Note existNote = noteMapper.selectByCondition(noteAddContext);
-			if (null != existNote) {
-				throw new BusinessException(OjBusinessErrorCode.REPORT_ALREADY_SUBMITTED);
-			} else {
-				noteMapper.insert(note);
-			}
+			noteMapper.insert(note);
 		} else {
 			try {
 				noteMapper.insert(note);

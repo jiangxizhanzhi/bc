@@ -15,7 +15,7 @@ public class NoteAddReq implements Serializable {
 	@ApiModelProperty("笔记内容")
 	private String content;
 
-	@ApiModelProperty("笔记类型 1=笔记 2=实验报告")
+	@ApiModelProperty("笔记类型 1=笔记 2=实验报告 3=课堂实验报告")
 	@NotNull
 	private Integer noteType;
 

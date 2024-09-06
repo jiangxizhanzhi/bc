@@ -519,6 +519,9 @@ public class MissionController {
 		if (missionModifyReq.getSkillPoints() != null) {
 			mission.setSkillPoints(missionModifyReq.getSkillPoints());
 		}
+		if (missionModifyReq.getDescription() != null) {
+			mission.setDescription(missionModifyReq.getDescription());
+		}
 
 		return mission;
 	}

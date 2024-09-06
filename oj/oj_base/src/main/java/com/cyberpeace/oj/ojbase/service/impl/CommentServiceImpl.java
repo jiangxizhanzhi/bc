@@ -1,5 +1,15 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.exception.BusinessException;
@@ -17,15 +27,8 @@ import com.cyberpeace.oj.ojbase.dao.mapper.CommentLikeMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.CommentMapper;
 import com.cyberpeace.oj.ojbase.service.CommentService;
 import com.cyberpeace.oj.ojbase.service.bo.CommentBo;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -179,6 +182,17 @@ public class CommentServiceImpl implements CommentService {
 		IPage<Comment> iPage = commentMapper.selectParent(page, businessType, content);
 		IPage<CommentBo> convert = iPage.convert(comment -> commentToBo(null, comment, null));
 		setChildrenByFirst(convert.getRecords());
+		// 最后回复
+		for (CommentBo bo : convert.getRecords()) {
+			if (CollectionUtils.isEmpty(bo.getCommentReply())) {
+				bo.setLastReplyTime(bo.getCreateTime());
+				bo.setLastReplyUserName(bo.getUserName());
+			} else {
+				CommentBo last = bo.getCommentReply().get(bo.getReplyCount() - 1);
+				bo.setLastReplyTime(last.getCreateTime());
+				bo.setLastReplyUserName(last.getUserName());
+			}
+		}
 		return PageUtil.getListResult(convert);
 	}
 

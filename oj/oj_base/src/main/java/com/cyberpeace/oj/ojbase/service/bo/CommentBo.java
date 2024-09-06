@@ -61,4 +61,10 @@ public class CommentBo implements Serializable {
 	@ApiModelProperty("被回复的评论")
 	private List<CommentBo> commentReply;
 
+	@ApiModelProperty("最近回帖人")
+	private String lastReplyUserName;
+
+	@ApiModelProperty("最近回帖时间")
+	private Date lastReplyTime;
+
 }

@@ -21,7 +21,5 @@ public class TrainPlanAddReq implements Serializable {
 	private Integer type;
 
 	@ApiModelProperty("组织编号")
-	@NotBlank(groups = { Create.class, Update.class },
-			message = OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL)
 	private String organizationId;
 }

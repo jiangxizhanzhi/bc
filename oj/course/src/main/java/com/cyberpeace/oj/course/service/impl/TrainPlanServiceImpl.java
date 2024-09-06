@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
@@ -62,6 +59,9 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private ClassroomValidateHandler classroomValidateHandler;
 
 	@Override
 	public List<TrainPlanBo> trainPlanList(UserInfo userInfo) {
@@ -128,6 +128,10 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		TrainPlan trainPlan = BeanUtils.copy(reuseReq, TrainPlan.class);
 		trainPlan.setResourceId(IDGeneratorUtil.getID());
 		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+		List<String> orgIds = classroomValidateHandler
+				.validateClassroomOrgHasUser(trainPlan.getOrganizationId());
+		trainPlan.setOrganizationIds(JsonUtil.arrayToString(orgIds));
 		// classrooms
 		List<Classroom> classroomList = classroomMapper.selectByPlan(reuseReq.getResourceId());
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -138,6 +142,8 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			classroom.setUpdateTime(null);
 			classroom.setResourceId(IDGeneratorUtil.getID());
 			classroom.setTrainPlanId(trainPlan.getResourceId());
+			classroom.setOrganizationId(trainPlan.getOrganizationId());
+			classroom.setOrganizationIds(trainPlan.getOrganizationIds());
 		}
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

@@ -163,4 +163,12 @@
             </if>
         </where>
     </select>
+    <select id="selectByPlanIdsOrderTime" resultType="com.cyberpeace.oj.course.dao.entity.Classroom">
+        select * from oj_classroom
+        where train_plan_id in
+        <foreach collection="planIds" item="planId" open="(" close=")" separator=",">
+            #{planId}
+        </foreach>
+        order by start_time
+    </select>
 </mapper>

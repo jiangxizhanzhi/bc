@@ -95,6 +95,14 @@ public class CourseLesson extends BaseTable {
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;
 
+	public boolean isTheory(){
+		return LessonType.THEORY.getCode().equals(this.type);
+	}
+
+	public boolean isExp(){
+		return LessonType.EXPERIMENT.getCode().equals(this.type);
+	}
+
 	public enum HandoutType implements GenericEnum {
 
 		/** 讲义类型*/

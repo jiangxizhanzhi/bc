@@ -71,6 +71,7 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -149,6 +150,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
+	
+	@Autowired
+	private LessonRecordMapper lessonRecordMapper;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -350,8 +354,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				// 课程表数据查询
 				List<Classroom> classrooms = classroomMapper.selectListByCourse(publicCourseIds,
 						roomListQuery);
-				classroomBos = StreamApiUtils.map(classrooms,
-						classroom -> entityToBo(classroom));
+				// filter continuous
+				classroomBos = this.filterContinuous(classrooms);
 			}
 		}
 
@@ -1922,6 +1926,128 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 日程类型
 		classroomBo.setClassify(ClassroomType.CLASS.getCode());
 		return classroomBo;
+	}
+
+
+	private List<ClassroomBo> filterContinuous(List<Classroom> classrooms) {
+		List<ClassroomBo> res = Lists.newArrayList();
+		if (classrooms.isEmpty()) {
+			return res;
+		}
+		List<String> planIds = classrooms.stream()
+				.filter(c -> c.getTrainPlanId() != null && c.getTrainPlanId().isEmpty())
+				.map(Classroom::getTrainPlanId).collect(Collectors.toList());
+		if (planIds.isEmpty()) {
+			return StreamApiUtils.map(classrooms, this::entityToBo);
+		}
+		List<TrainPlan> planList = trainPlanMapper.selectBatchIds(planIds);
+		List<String> continuousPlanIds = planList.stream()
+				.filter(p -> TrainPlan.PlanType.CONTINUOUS.equals(p.getType()))
+				.map(TrainPlan::getResourceId).collect(Collectors.toList());
+		if (continuousPlanIds.isEmpty()) {
+			return StreamApiUtils.map(classrooms, this::entityToBo);
+		}
+		List<Classroom> classList = classroomMapper
+				.selectByPlanIdsOrderTime(StreamApiUtils.map(planList, TrainPlan::getResourceId));
+		List<String> lessonIds = StreamApiUtils.map(classList, Classroom::getLessonId);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		Map<String, List<Classroom>> classMap = Maps.newHashMap();
+		for (Classroom classroom : classList) {
+			classMap.putIfAbsent(classroom.getTrainPlanId(), Lists.newArrayList());
+			classMap.get(classroom.getTrainPlanId()).add(classroom);
+		}
+		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(lessonIds);
+		Map<String, CourseLesson> lessonMap = StreamApiUtils.toMap(lessonList,
+				CourseLesson::getResourceId, l -> l);
+		List<LessonRecord> recordList = lessonRecordMapper.listByLessonAndUser(userId, lessonIds);
+		Map<String, LessonRecord> recordMap = StreamApiUtils.toMap(recordList,
+				LessonRecord::getLessonId, lessonRecord -> lessonRecord);
+		List<Note> reportList = noteMapper.selectByUserAndType(userId,
+				Note.NoteType.CLASS_REPORT.getCode(), Note.NoteResourceType.LESSON.getCode(),
+				lessonIds);
+		Map<String, Note> reportMap = StreamApiUtils.toMap(reportList, Note::getBusinessId, n -> n);
+
+		Set<String> inaccessible = Sets.newHashSet();
+		for (String planId : continuousPlanIds) {
+			List<Classroom> classroomList = classMap.get(planId);
+			int i;
+			for (i = 0; i < classroomList.size(); i++) {
+				CourseLesson lesson = lessonMap.get(classroomList.get(i).getLessonId());
+				if (lesson.isTheory()) {
+					if (!recordMap.containsKey(lesson.getResourceId())) {
+						break;
+					}
+				} else if (lesson.isExp()) {
+					if (!reportMap.containsKey(lesson.getResourceId())) {
+						break;
+					}
+				}
+			}
+			for (i = i + 1; i < classroomList.size(); i++) {
+				inaccessible.add(classroomList.get(i).getResourceId());
+			}
+		}
+		
+		List<Classroom> filtered = StreamApiUtils.filter(classrooms,
+				c -> !inaccessible.contains(c.getResourceId()));
+		List<Course> courseList = courseMapper
+				.selectBatchIds(StreamApiUtils.map(filtered, Classroom::getCourseId));
+		Map<String, Course> courseMap = StreamApiUtils.toMap(courseList, Course::getResourceId,
+				c -> c);
+		Map<String, TrainPlan> planMap = StreamApiUtils.toMap(planList, TrainPlan::getResourceId,
+				p -> p);
+
+		List<String> orgIdList = filtered.stream().map(Classroom::getOrganizationId).distinct().collect(Collectors.toList());
+		Map<String, String> orgNameMap = Maps.newHashMap();
+		Map<String, String> orgPathMap = Maps.newHashMap();
+		Map<String, List<String>> parentIdsMap = Maps.newHashMap();
+		for (String orgId : orgIdList) {
+			orgNameMap.put(orgId, remoteOrganizationService.orgNameById(orgId));
+			orgPathMap.put(orgId, remoteOrganizationService.getOrgPath(orgId));
+			parentIdsMap.put(orgId, remoteOrganizationService.getParentIds(orgId));
+		}
+
+		for (Classroom classroom : filtered) {
+			ClassroomBo classroomBo = BeanUtils.copy(classroom, ClassroomBo.class);
+
+			// 课程数据组装
+			Course course = courseMap.get(classroom.getCourseId());
+			if (course == null) {
+				log.error("Course not found! course_id=[{}]", classroom.getCourseId());
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+			classroomBo.setCourseName(course.getName());
+			classroomBo.setCourseType(course.getCourseType());
+
+			// 课时数据组装
+			CourseLesson lesson = lessonMap.get(classroom.getLessonId());
+			if (lesson == null) {
+				log.error("Lesson not found! lesson_id=[{}]", classroom.getLessonId());
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+			classroomBo.setLessonName(lesson.getName());
+			classroomBo.setLessonType(lesson.getType());
+
+			// 组织信息
+			classroomBo.setOrganizationName(orgNameMap.get(classroom.getOrganizationId()));
+
+			classroomBo.setOrgPath(orgPathMap.get(classroom.getOrganizationId()));
+
+			classroomBo.setParentOrgIds(parentIdsMap.get(classroom.getOrganizationId()));
+
+			// 计划数据
+			if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+				TrainPlan trainPlan = planMap.get(classroom.getTrainPlanId());
+				if (null != trainPlan) {
+					classroomBo.setTrainPlanName(trainPlan.getName());
+				}
+			}
+
+			// 日程类型
+			classroomBo.setClassify(ClassroomType.CLASS.getCode());
+			res.add(classroomBo);
+		}
+		return res;
 	}
 
 }

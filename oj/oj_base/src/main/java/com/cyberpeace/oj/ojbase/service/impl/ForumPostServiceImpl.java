@@ -83,6 +83,9 @@ public class ForumPostServiceImpl extends ServiceImpl<ForumPostMapper, ForumPost
 
 	@Override
 	public void deleteByIds(List<String> ids, Integer type) {
+		if (UserInfoContext.getUserContext().isSuperuser()) {
+			this.removeByIds(ids);
+		}
 		forumPostMapper.deleteByIdsAndUserId(ids, UserInfoContext.getUserContext().getUserId(),
 				type);
 	}

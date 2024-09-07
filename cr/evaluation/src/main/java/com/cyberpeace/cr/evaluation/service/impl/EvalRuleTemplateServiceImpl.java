@@ -253,11 +253,13 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
         List<EvalAlarmConditionReq> evalAlarmConditionReqList = evalAlarmConditionList.stream().map(evalAlarmCondition -> BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class))
                 .collect(Collectors.toList());
         evalRuleTemplateDetail.setAlarmConditions(evalAlarmConditionReqList);
-        EvalAlarmReq evalAlarmReq = new EvalAlarmReq();
-        evalAlarmReq.setAlarmName(evalRuleTemplate.getAlarmName());
-        evalAlarmReq.setDescription(evalRuleTemplate.getAlarmDescription());
-        evalAlarmReq.setLevel(evalRuleTemplate.getAlarmLevel());
-        evalRuleTemplateDetail.setAlarms(Arrays.asList(evalAlarmReq));
+        if(StringUtils.isNotBlank(evalRuleTemplate.getAlarmName())) {
+            EvalAlarmReq evalAlarmReq = new EvalAlarmReq();
+            evalAlarmReq.setAlarmName(evalRuleTemplate.getAlarmName());
+            evalAlarmReq.setDescription(evalRuleTemplate.getAlarmDescription());
+            evalAlarmReq.setLevel(evalRuleTemplate.getAlarmLevel());
+            evalRuleTemplateDetail.setAlarms(Arrays.asList(evalAlarmReq));
+        }
         return evalRuleTemplateDetail;
     }
 

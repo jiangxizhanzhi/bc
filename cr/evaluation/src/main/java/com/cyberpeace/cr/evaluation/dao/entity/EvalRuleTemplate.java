@@ -268,7 +268,7 @@ public class EvalRuleTemplate extends BaseTable {
 
     public enum EvaluationFrequency {
 
-        oneMinute("PT1M", "1分钟"),
+//        oneMinute("PT1M", "1分钟"),
         fiveMinutes("PT5M","5分钟"),
         tenMinutes("PT10M","10分钟"),
         fifteenMinutes("PT15M","15分钟"),

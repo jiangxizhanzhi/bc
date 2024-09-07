@@ -31,7 +31,7 @@ public class EvalDimensionServiceImpl extends ServiceImpl<EvalDimensionMapper, E
 		List<EvalDimension> evalDimensionList = dimensionTemplateList.stream().map(dimensionTemplate -> {
 			EvalDimension evalDimension = BeanUtils.copy(dimensionTemplate, EvalDimension.class);
 			evalDimension.setId(null);
-			evalDimension.setRuleId(ruleIdMap.get(dimensionTemplate.getRuleId()));
+			evalDimension.setRuleId(ruleIdMap.getOrDefault(dimensionTemplate.getRuleId(),""));
 			evalDimension.setResourceId(IDGeneratorUtil.getID());
 			evalDimension.setTestId(testId);
 			return evalDimension;

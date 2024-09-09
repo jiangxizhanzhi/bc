@@ -56,7 +56,6 @@ public class IovCanController {
 	@ApiOperation("开始发送报文")
 	@PostMapping("/msg/start/")
 	public BaseRsp<Void> startSendMessage(@RequestBody @Validated MsgSendReq req) {
-	public BaseRsp<Void> startSendMessage(@RequestBody MsgSendReq req) {
 		iovCanService.startSendMsg(req);
 		return new BaseRsp<>();
 	}

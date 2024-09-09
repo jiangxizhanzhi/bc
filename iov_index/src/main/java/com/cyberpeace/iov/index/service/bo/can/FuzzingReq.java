@@ -11,7 +11,7 @@ public class FuzzingReq {
 
 	@NotBlank
 	@NotNull
-	@Size(min = 3, max = 3, message = "参数长度必须为3个字符")
+	@Size(min = 2, max = 3, message = "参数必须为-1或0-7FF")
 	private String msgId;
 
 	private String msgChn;

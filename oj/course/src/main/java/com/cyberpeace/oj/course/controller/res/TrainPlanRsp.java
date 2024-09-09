@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class TrainPlanRsp implements Serializable {
@@ -39,4 +40,17 @@ public class TrainPlanRsp implements Serializable {
 
     @ApiModelProperty("状态, 1=未开始，2=进行中，3=已结束")
     private Integer status;
+
+    @ApiModelProperty("组织编号")
+    private String organizationId;
+
+    @ApiModelProperty("组织名称")
+    private String organizationName;
+
+    @ApiModelProperty("组织路径")
+    private String orgPath;
+
+    @ApiModelProperty("父级组织编号")
+    private List<String> parentOrgIds;
+
 }

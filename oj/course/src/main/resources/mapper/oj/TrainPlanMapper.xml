@@ -32,7 +32,7 @@
 
     <select id="listTrainPlan" resultType="com.cyberpeace.oj.course.controller.res.TrainPlanRsp">
         <include refid="task_constant"/>
-        select * from ( SELECT a.`resource_id`,a.`name`,b.start_time,b.end_time,IFNULL(b.count,0) count,a.update_time,create_user_id, a.`type` FROM  `oj_train_plan` a left join
+        select * from ( SELECT a.`resource_id`,a.`name`,b.start_time,b.end_time,IFNULL(b.count,0) count,a.update_time,create_user_id, a.`type`, organization_id FROM  `oj_train_plan` a left join
 
         (SELECT min(start_time) start_time,max(end_time) end_time,count(1) count, train_plan_id,max(update_time)  update_time
         FROM   oj_classroom
@@ -63,7 +63,7 @@
             and a.resource_id in (select train_plan_id  FROM   oj_classroom where organization_id = #{organizationId})
         </if>
 
-        union SELECT "${TASK_SET_ID}","${TASK_SET}",min(start_time) start_time,max(end_time) end_time,count(1) count, max(update_time)  update_time ,'-' as create_user_id, 1 as type
+        union SELECT "${TASK_SET_ID}","${TASK_SET}",min(start_time) start_time,max(end_time) end_time,count(1) count, max(update_time)  update_time ,'-' as create_user_id, 1 as type, organization_id
         FROM   oj_classroom where train_plan_id = ''
         <if test="isSuperUser != null and 'false'.toString() == isSuperUser.toString()">
             and create_user_id = #{userId}

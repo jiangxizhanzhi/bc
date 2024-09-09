@@ -1,9 +1,9 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
 
 @Data
 public class TrainPlanBo implements Serializable {

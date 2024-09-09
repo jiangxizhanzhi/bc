@@ -3,9 +3,9 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,8 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
@@ -35,6 +37,7 @@ import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,6 +65,9 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
+	
+	@Autowired
+	private RemoteOrganizationService remoteOrganizationService;
 
 	@Override
 	public List<TrainPlanBo> trainPlanList(UserInfo userInfo) {
@@ -100,6 +106,22 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 					record.setStatus(TrainPlan.PlanStatus.ONGOING);
 				}
 			}
+		}
+		// org
+		Set<String> orgIdList = result.getRecords().stream().map(TrainPlanRsp::getOrganizationId)
+				.collect(Collectors.toSet());
+		Map<String, String> orgNameMap = Maps.newHashMap();
+		Map<String, String> orgPathMap = Maps.newHashMap();
+		Map<String, List<String>> parentIdsMap = Maps.newHashMap();
+		for (String orgId : orgIdList) {
+			orgNameMap.put(orgId, remoteOrganizationService.orgNameById(orgId));
+			orgPathMap.put(orgId, remoteOrganizationService.getOrgPath(orgId));
+			parentIdsMap.put(orgId, remoteOrganizationService.getParentIds(orgId));
+		}
+		for (TrainPlanRsp rsp : result.getRecords()) {
+			rsp.setOrganizationName(orgNameMap.get(rsp.getOrganizationId()));
+			rsp.setOrgPath(orgPathMap.get(rsp.getOrganizationId()));
+			rsp.setParentOrgIds(parentIdsMap.get(rsp.getOrganizationId()));
 		}
 		return result;
 	}

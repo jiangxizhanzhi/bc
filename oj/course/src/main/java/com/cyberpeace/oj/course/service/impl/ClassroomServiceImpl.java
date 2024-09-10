@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.IdAndBool;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1277,6 +1278,25 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public List<String> selectTempTaskIdsByUser(UserInfo userContext) {
 
 		return classroomMapper.selectTempTaskIdsByUser(userContext.getUserId(),userContext.isSuperuser()) ;
+	}
+
+    @Override
+    public Boolean getRecordingButton(String roomId) {
+		Classroom classroom = this.getById(roomId);
+		if (null == classroom){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return classroom.getEnableRecording();
+    }
+
+	@Override
+	public void updateRecordingButton(IdAndBool req) {
+		Classroom classroom = this.getById(req.getResourceId());
+		if (null == classroom){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		classroom.setEnableRecording(req.getBool());
+		this.save(classroom);
 	}
 
 	/**

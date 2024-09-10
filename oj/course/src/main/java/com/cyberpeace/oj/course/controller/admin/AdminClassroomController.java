@@ -20,10 +20,7 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.*;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -43,10 +40,7 @@ import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台课程表api")
@@ -419,5 +413,22 @@ public class AdminClassroomController {
 		String destPdfPath = classroomService.exportReport(classroomId);
 		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
 	}
+
+	@ApiOperation("查看录屏开关")
+	@GetMapping("/record/enable")
+	public BaseRsp<Boolean> getRecordingButton(
+			@ApiParam(value = "课堂id", name = "classroom_id") String classroom_id) {
+		Boolean res = classroomService.getRecordingButton(classroom_id);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("开关录屏开关")
+	@PostMapping("/record/enable")
+	public BaseRsp getRecordingButton(@RequestBody IdAndBool req) {
+		classroomService.updateRecordingButton(req);
+		return new BaseRsp();
+	}
+
+
 
 }

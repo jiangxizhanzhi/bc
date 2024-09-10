@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.StartSceneBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
@@ -105,6 +106,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	@Autowired
+	private ClassroomService classroomService;
+
 	private Map<String, BatchStartSceneHandler> batchSceneMap = Maps.newConcurrentMap();
 
 	@Override
@@ -138,6 +142,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		LocalScene localScene = initLocalScene(groupInfo, courseLesson, initOjLocalScene,
 				authContext);
 		initOjLocalScene.setLocalSceneId(localScene.getResourceId());
+		// record
+		Boolean enableRecording = classroomService.getRecordingButton(groupInfo.getClassroomId());
+		localScene.setRecord(enableRecording);
 
 		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);

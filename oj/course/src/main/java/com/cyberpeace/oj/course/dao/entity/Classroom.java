@@ -42,4 +42,6 @@ public class Classroom extends BaseTable {
     @ApiModelProperty("训练计划编号")
     private String trainPlanId;
 
+    private Boolean enableRecording;
+
 }

@@ -23,6 +23,8 @@ public class UserPageContext implements Serializable {
 
 	private Integer page;
 
+	private String org;
+
 	public Integer getPerPage() {
 		return null == perPage ? CommonConstant.NINE_NINE_NINE : perPage;
 	}

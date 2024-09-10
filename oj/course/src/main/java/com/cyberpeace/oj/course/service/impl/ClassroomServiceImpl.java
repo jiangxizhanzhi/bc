@@ -38,6 +38,7 @@ import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -587,20 +588,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     @Override
-    public PageReportBo selectClassroomReport(String classroomId, String userName, Page<Object> page) {
+	public PageReportBo selectClassroomReport(String classroomId, String userName, String orgId,
+			Page<Object> page) {
 
         // 基本数据校验
         Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
         CourseLesson courseLesson = courseValidateHandler
                 .validateLessonExist(classroom.getLessonId(), false);
+		if (StringUtils.isBlank(orgId)) {
+			orgId = classroom.getOrganizationId();
+		}
 
-        List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-                true);
-
-        List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
-                userInfo -> StringUtils.isBlank(userName)
-                        || userInfo.getUserName().contains(userName)
-                        || userInfo.getName().contains(userName));
+		List<UserInfo> filterUsers = remoteUserService.getFuzzyQueryUserList(
+				UserPageContext.builder().username(userName).org(orgId).build());
 
         List<UserInfo> pageUser;
         if (CollectionUtils.isEmpty(page.getOrders())) {
@@ -609,6 +609,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
             pageUser = filterUsers;
         }
 
+		Set<String> orgIds = filterUsers.stream().map(UserInfo::getOrganizationId)
+				.collect(Collectors.toSet());
+		Map<String, String> orgPathMap = Maps.newHashMap();
+		for (String id : orgIds) {
+			String orgPath = remoteOrganizationService.getOrgPath(id);
+			orgPathMap.put(id, orgPath);
+		}
+
         Map<String, String> orgMap = remoteOrganizationService
                 .childrenMap(classroom.getOrganizationId(), true);
 
@@ -616,6 +624,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         Map<String, UserInfo> evaluateUser = Maps.newHashMap();
         List<ClassroomReportBo> data = StreamApiUtils.map(pageUser,
                 userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
+		for (ClassroomReportBo bo : data) {
+			bo.setOrgPath(orgPathMap.get(bo.getOrganizationId()));
+		}
         return new PageReportBo(data, (long) filterUsers.size());
     }
 
@@ -1068,11 +1079,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     @Override
-    public List<String> selectIdsByPlanIds(List<String> ids) {
-        return classroomMapper.selectIdsByPlanIds(ids);
-    }
-
-    @Override
     public List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover) {
 
         // excel数据读取
@@ -1149,7 +1155,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     @Override
-    public String exportReport(String classroomId) {
+    public String exportReport(String classroomId, List<String> userIds) {
         String basePath = AttachmentPath.LESSON_HTML_TEMPLATE.getDesc();
         // 基本数据校验
         Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
@@ -1167,8 +1173,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         }
         FileUtil.mkdirs(htmlPath);
 
-        List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-                true);
+        List<UserInfo> userInfos;
+		if (null == userIds) {
+			userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(), true);
+		} else {
+			userInfos = remoteUserService.getByIdList(userIds);
+		}
+
         Map<String, String> orgMap = remoteOrganizationService
                 .childrenMap(classroom.getOrganizationId(), true);
         Map<String, UserInfo> evaluateUser = Maps.newHashMap();
@@ -1404,6 +1415,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.TRAIN_PLAN);
     }
 
+    @Override
+    public List<String> selectIdsByPlanIds(List<String> ids) {
+        return classroomMapper.selectIdsByPlanIds(ids);
+    }
+
     /**
      * 导出的数据转换
      * 会按照页面逻辑查询计划下的课程任务
@@ -1629,13 +1645,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     /**
-     * 训练计划解析
-     *
-     * @param rowData
-     * @param userId
-     * @param cover
-     * @return
-     */
+	 * 训练计划解析
+	 *
+	 * @param rowData
+	 * @param userId
+	 * @param 
+	 * @return
+	 */
     private TrainPlan parseTrainPlan(List<String> rowData, String userId,
                                      int rowIndex, Map<String, TrainPlan> trainPlanMap) {
 

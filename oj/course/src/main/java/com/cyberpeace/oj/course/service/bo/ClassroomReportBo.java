@@ -26,6 +26,9 @@ public class ClassroomReportBo implements Serializable {
 	@ApiModelProperty("组织名称")
 	private String organizationName;
 
+	@ApiModelProperty("组织路径")
+	private String orgPath;
+
 	@ApiModelProperty("笔记编号")
 	private String noteId;
 

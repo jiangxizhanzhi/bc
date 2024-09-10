@@ -52,9 +52,11 @@ public interface ClassroomService extends IService<Classroom> {
 	/**
 	 * 获取用户签到信息列表
 	 * @param classroomId
+	 * @param orgId
 	 * @return
 	 */
-	PageReportBo selectClassroomReport(String classroomId, String userName, Page<Object> page);
+	PageReportBo selectClassroomReport(String classroomId, String userName, String orgId,
+			Page<Object> page);
 
 	/**
 	 * 课堂学习统计
@@ -136,7 +138,7 @@ public interface ClassroomService extends IService<Classroom> {
 
 	List<String> selectIdsByPlanIds(List<String> ids);
 
-	String exportReport(String classroomId);
+	String exportReport(String classroomId, List<String> userIds);
 
 	List<String> selectTempTaskIdsByUser(UserInfo userContext);
 }

@@ -260,7 +260,7 @@ public class AdminClassroomController {
 
 		Page<Object> page = reportReq.toPageParam();
 		PageReportBo pageReportBo = classroomService
-				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern(), page);
+				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern(), reportReq.getOrgId(), page);
 		return new BaseRsp<>(
 				PageUtil.getListResult(pageReportBo.getData(), page, pageReportBo.getTotal()));
 	}
@@ -400,7 +400,14 @@ public class AdminClassroomController {
 	@ApiOperation("实验报告导出")
 	@GetMapping("/report/export")
 	public void exportReport(HttpServletResponse httpServletResponse,@RequestParam("classroom_id") String classroomId){
-		String destPdfPath = classroomService.exportReport(classroomId);
+		String destPdfPath = classroomService.exportReport(classroomId, null);
+		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+	}
+
+	@ApiOperation("实验报告导出")
+	@PostMapping("/report/export")
+	public void exportReport(HttpServletResponse httpServletResponse,@RequestBody ReportExportReq req){
+		String destPdfPath = classroomService.exportReport(req.getClassroomId(), req.getUserIds());
 		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
 	}
 

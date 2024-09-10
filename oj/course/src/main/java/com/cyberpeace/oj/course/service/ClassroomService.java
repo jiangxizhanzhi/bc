@@ -14,6 +14,7 @@ import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.*;
+import org.bytedeco.opencv.presets.opencv_core;
 
 public interface ClassroomService extends IService<Classroom> {
 
@@ -138,7 +139,7 @@ public interface ClassroomService extends IService<Classroom> {
 
 	List<String> selectIdsByPlanIds(List<String> ids);
 
-	String exportReport(String classroomId, List<String> userIds);
+	String exportReport(String classroomId, List<String> userIds, String orgId);
 
 	List<String> selectTempTaskIdsByUser(UserInfo userContext);
 }

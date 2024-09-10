@@ -1155,7 +1155,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     }
 
     @Override
-    public String exportReport(String classroomId, List<String> userIds) {
+    public String exportReport(String classroomId, List<String> userIds, String orgId) {
         String basePath = AttachmentPath.LESSON_HTML_TEMPLATE.getDesc();
         // 基本数据校验
         Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
@@ -1175,7 +1175,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
         List<UserInfo> userInfos;
 		if (CollectionUtils.isEmpty(userIds)) {
-			userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(), true);
+			if (StringUtils.isBlank(orgId)) {
+				userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(), true);
+			} else {
+				userInfos = remoteUserService.ListByOrgId(orgId, true);
+			}
 		} else {
 			userInfos = remoteUserService.getByIdList(userIds);
 		}

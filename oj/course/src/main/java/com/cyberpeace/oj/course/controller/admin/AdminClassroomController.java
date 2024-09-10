@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -400,14 +399,14 @@ public class AdminClassroomController {
 	@ApiOperation("实验报告导出")
 	@GetMapping("/report/export")
 	public void exportReport(HttpServletResponse httpServletResponse,@RequestParam("classroom_id") String classroomId){
-		String destPdfPath = classroomService.exportReport(classroomId, null);
+		String destPdfPath = classroomService.exportReport(classroomId, null, null);
 		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
 	}
 
 	@ApiOperation("实验报告导出")
 	@PostMapping("/report/export")
 	public void exportReport(HttpServletResponse httpServletResponse,@RequestBody ReportExportReq req){
-		String destPdfPath = classroomService.exportReport(req.getClassroomId(), req.getUserIds());
+		String destPdfPath = classroomService.exportReport(req.getClassroomId(), req.getUserIds(), req.getOrgId());
 		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
 	}
 

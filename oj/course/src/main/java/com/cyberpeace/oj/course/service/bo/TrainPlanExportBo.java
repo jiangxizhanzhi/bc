@@ -1,9 +1,9 @@
 package com.cyberpeace.oj.course.service.bo;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.Data;
 
 /**
  * 不能增加和删除字段 也不能改变字段顺序
@@ -22,5 +22,11 @@ public class TrainPlanExportBo implements Serializable {
 	private Date endTime;
 
 	private String orgPath;
+
+	private String userName;
+
+	private Integer lessonCount;
+
+	private Integer studentCount;
 
 }

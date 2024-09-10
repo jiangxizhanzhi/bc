@@ -39,10 +39,12 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
@@ -1389,9 +1391,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 数据查询及转换
 		String userId =userInfo.isSuperuser() ? CommonConstant.EMPTY_STRING : userInfo.getUserId();
 
-		List<TrainPlan> trainPlanList = trainPlanMapper.selectByUser(userId);
+		List<TrainPlanRsp> trainPlanRspList = trainPlanMapper.selectEndedByUser(userId);
 
-		List<TrainPlanExportBo> exportBoList = StreamApiUtils.flatMap(trainPlanList,
+		List<TrainPlanExportBo> exportBoList = StreamApiUtils.flatMap(trainPlanRspList,
 				trainPlan -> planToExportBo(userId, trainPlan));
 
 		// 数据导出
@@ -1401,14 +1403,38 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	/** 导出的数据转换
 	 *  会按照页面逻辑查询计划下的课程任务
 	 * */
-	private List<TrainPlanExportBo> planToExportBo(String userId, TrainPlan trainPlan) {
+	private List<TrainPlanExportBo> planToExportBo(String userId, TrainPlanRsp trainPlan) {
 		List<Classroom> classroomList = classroomMapper.selectByUserPlan(userId,trainPlan.getResourceId());
+		List<String> createUserIds = StreamApiUtils.map(classroomList, Classroom::getCreateUserId);
+		Set<String> orgIds = classroomList.stream().map(Classroom::getOrganizationId)
+				.collect(Collectors.toSet());
+		Map<String, String> userNameMap = remoteUserService.getIdNameMap(createUserIds);
+		Map<String, String> orgPathMap = Maps.newHashMap();
+		Map<String, Integer> orgUserCountMap = Maps.newHashMap();
+		for (String orgId : orgIds) {
+			String orgPath = remoteOrganizationService.getOrgPath(orgId);
+			orgPathMap.put(orgId, orgPath);
+			// 人数
+			UserPageContext pageContext = UserPageContext.builder().org(orgId).username("").build();
+			List<UserInfo> userInfos = remoteUserService.getFuzzyQueryUserList(pageContext);
+			orgUserCountMap.put(orgId, userInfos.size());
+		}
+		Map<String, Integer> lessonCountMap = Maps.newHashMap();
+		for (Classroom classroom : classroomList) {
+			if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+				lessonCountMap.putIfAbsent(classroom.getTrainPlanId(), 0);
+				lessonCountMap.computeIfPresent(classroom.getTrainPlanId(), (k, v) -> v + 1);
+			}
+		}
 		return StreamApiUtils.map(classroomList,
-				classroom -> classRoomToExportBo(trainPlan.getName(), classroom));
+				classroom -> classRoomToExportBo(trainPlan.getName(), classroom, userNameMap,
+						orgPathMap, orgUserCountMap, lessonCountMap));
 	}
 
 	/** 数据转换*/
-	private TrainPlanExportBo classRoomToExportBo(String planName, Classroom classroom) {
+	private TrainPlanExportBo classRoomToExportBo(String planName, Classroom classroom,
+			Map<String, String> userNameMap, Map<String, String> orgPathMap,
+			Map<String, Integer> orgUserCountMap, Map<String, Integer> lessonCountMap) {
 		TrainPlanExportBo planExportBo = new TrainPlanExportBo();
 		planExportBo.setTrainPLanName(planName);
 
@@ -1431,13 +1457,17 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		planExportBo.setStartTime(classroom.getStartTime());
 		planExportBo.setEndTime(classroom.getEndTime());
 
-		String orgPath = remoteOrganizationService.getOrgPath(classroom.getOrganizationId());
+		String orgPath = orgPathMap.get(classroom.getOrganizationId());
 		if (StringUtils.isBlank(orgPath)) {
 			log.error("Classroom organization is not found! classroom_id=[{}], org_id=[{}]",
 					classroom.getResourceId(), classroom.getOrganizationId());
 			throw new BusinessException(OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL);
 		}
 		planExportBo.setOrgPath(orgPath);
+
+		planExportBo.setUserName(userNameMap.get(classroom.getCreateUserId()));
+		planExportBo.setLessonCount(lessonCountMap.get(classroom.getTrainPlanId()));
+		planExportBo.setStudentCount(orgUserCountMap.get(classroom.getOrganizationId()));
 
 		return planExportBo;
 	}

@@ -16,8 +16,9 @@ public enum ExcelHeader {
 			new String[] {"Organization", "Participation", "Number of classes completed",
 					"Number of exercises completed after class", "Number of completed experiments","Number of examinations taken"},
 			new String[] {"desc"}),
-	TRAIN_PLAN(new String[] {"计划名称", "课程名", "课时名", "开始时间", "结束时间", "组织"},
-			new String[] {"Plan Name", "Course Name", "Course Hour Name", "Start time", "End time", "Organization"},
+	TRAIN_PLAN(new String[] { "计划名称", "课程名", "课时名", "开始时间", "结束时间", "组织", "任课教师", "任务个数", "学生人数" },
+			new String[] { "Plan Name", "Course Name", "Course Hour Name", "Start time", "End time",
+					"Organization", "Teacher", "Lesson Number", "Student Number" },
 			new String[] {"desc"});
 
 

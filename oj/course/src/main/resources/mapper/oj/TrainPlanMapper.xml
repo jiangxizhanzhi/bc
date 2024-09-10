@@ -94,4 +94,21 @@
         from oj_train_plan
         where resource_id = #{trainPlanId}
     </select>
+    <select id="selectEndedByUser" resultType="com.cyberpeace.oj.course.controller.res.TrainPlanRsp">
+        select
+        oj_train_plan.resource_id as resource_id,
+        oj_train_plan.name,
+        oj_train_plan.type,
+        oj_train_plan.create_user_id,
+        oj_train_plan.organization_id,
+        oj_train_plan.organization_ids,
+        max(oj_classroom.end_time) as end_time from oj_train_plan left
+        join oj_classroom on oj_train_plan.resource_id =
+        oj_classroom.train_plan_id
+        where end_time &lt; now()
+        <if test="userId != null and userId != ''">
+            and oj_train_plan.create_user_id = #{userId}
+        </if>
+        group by oj_train_plan.resource_id
+    </select>
 </mapper>

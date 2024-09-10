@@ -1174,7 +1174,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
         FileUtil.mkdirs(htmlPath);
 
         List<UserInfo> userInfos;
-		if (null == userIds) {
+		if (CollectionUtils.isEmpty(userIds)) {
 			userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(), true);
 		} else {
 			userInfos = remoteUserService.getByIdList(userIds);

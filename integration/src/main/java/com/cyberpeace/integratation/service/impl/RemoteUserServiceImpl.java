@@ -179,6 +179,20 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
+	public List<UserInfo> pageUsersByOrg(UserPageContext userPageContext) {
+		List<UserInfo> userInfoList = new ArrayList<>();
+
+		List<Object> jsonArray = (List) HttpClientUtil
+				.rawGetByParam(userPageContext, USERINFO_LIST_URL, JSONObject.class).get("list");
+
+		for (Object object : jsonArray) {
+			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+		}
+
+		return userInfoList;
+	}
+
+	@Override
 	public List<UserInfo> getByIdList(List<String> ids) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 

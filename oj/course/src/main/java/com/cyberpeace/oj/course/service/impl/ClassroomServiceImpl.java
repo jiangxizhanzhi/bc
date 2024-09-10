@@ -599,7 +599,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			orgId = classroom.getOrganizationId();
 		}
 
-		List<UserInfo> filterUsers = remoteUserService.getFuzzyQueryUserList(
+		List<UserInfo> filterUsers = remoteUserService.pageUsersByOrg(
 				UserPageContext.builder().username(userName).org(orgId).build());
 
         List<UserInfo> pageUser;

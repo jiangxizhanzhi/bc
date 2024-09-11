@@ -1303,7 +1303,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				save(classroom);
+				updateById(classroom);
 
 				List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper
 						.selectByRoom(classroom.getResourceId());

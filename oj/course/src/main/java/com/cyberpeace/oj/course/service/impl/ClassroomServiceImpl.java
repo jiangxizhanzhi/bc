@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.IdAndBool;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.IdAndBool;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardFriend;
 import com.cyberpeace.common.model.room.DashboardGroup;
@@ -40,6 +40,7 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
@@ -156,6 +157,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
+	
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -1296,7 +1300,27 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		classroom.setEnableRecording(req.getBool());
-		this.save(classroom);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				save(classroom);
+
+				List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper
+						.selectByRoom(classroom.getResourceId());
+				List<String> groupIds = StreamApiUtils.map(groupInfos,
+						ClassroomGroupInfo::getResourceId);
+				if (groupIds.isEmpty()) {
+					return;
+				}
+				List<OjLocalScene> ojLocalSceneList = ojLocalSceneMapper.selectByGroupIds(groupIds);
+				if (ojLocalSceneList.isEmpty()) {
+					return;
+				}
+				List<String> localSceneIds = StreamApiUtils.map(ojLocalSceneList,
+						OjLocalScene::getLocalSceneId);
+				localSceneService.switchRecording(localSceneIds, req.getBool());
+			}
+		});
 	}
 
 	/**

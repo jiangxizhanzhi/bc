@@ -299,4 +299,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return {@code LocalScene}
 	 */
 	LocalScene getOrExceptionByMpSceneId(String mpSceneId);
+
+	void switchRecording(List<String> localSceneIds, Boolean bool);
 }

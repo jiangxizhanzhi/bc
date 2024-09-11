@@ -4,11 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.threadlocal.ThreadLocalContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.model.mp.MpHostState;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +12,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -33,9 +31,11 @@ import com.cyberpeace.cs.service.context.scene.CpFlow;
 import com.cyberpeace.cs.service.context.scene.ElementFlow;
 import com.cyberpeace.cs.service.context.scene.ElementFlowList;
 import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -716,6 +716,16 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		return localScene;
+	}
+
+	@Override
+	public void switchRecording(List<String> localSceneIds, Boolean bool) {
+		List<LocalScene> localSceneList = localSceneMapper.selectBatchIds(localSceneIds);
+		List<String> mpSceneIds = StreamApiUtils.map(localSceneList, LocalScene::getMpSceneId);
+		if (mpSceneIds.isEmpty()) {
+			return;
+		}
+		remoteSceneService.switchRecordingBatch(mpSceneIds, bool);
 	}
 
 	private LocalScene getOrExceptionByBusinessInstanceId(String businessInstanceId) {

@@ -7,8 +7,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -121,6 +121,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_TREND;
 
+	private String SCENE_SWITCH_RECORDING;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -207,6 +209,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		ATTACK_TYPE_COUNT = MP_HOST + ConfigUtil.getContextProperty("mp.attack.type.count");
 
 		SCENE_TREND = MP_HOST + ConfigUtil.getContextProperty("mp.scene.trend");
+
+		SCENE_SWITCH_RECORDING = MP_HOST + ConfigUtil.getContextProperty("mp.scene.switch.recording.batch");
 	}
 
 	@Override
@@ -308,6 +312,14 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
+	public void switchRecordingBatch(List<String> mpSceneIds, Boolean bool) {
+		JSONObject body = new JSONObject();
+		body.put("button", bool);
+		body.put("ids", mpSceneIds);
+		HttpClientUtil.post(SCENE_SWITCH_RECORDING, body, JSONObject.class);
+	}
+
+    @Override
 	public Boolean restartNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RESTART_URL, nodeOpsContext, Boolean.class);
 	}

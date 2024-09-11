@@ -261,4 +261,6 @@ public interface RemoteSceneService {
 	JSONArray attackTypeCount(String mpSceneId);
 
 	JSONArray sceneTrend(String mpSceneId);
+
+    void switchRecordingBatch(List<String> mpSceneIds, Boolean bool);
 }

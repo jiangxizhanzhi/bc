@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.utils;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,21 @@ public class CrCommonValidator {
 		if (StringUtils.isBlank(userId)) {
 			log.error("userId is blank");
 			throw new BusinessException(CrBusinessErrorCode.BLANK_USER_ID);
+		}
+	}
+
+	public static void validateLength(String target, String fieldName, Integer minLen, Integer maxLen) {
+		if (Objects.isNull(target)) {
+			if (minLen == 0) {
+				return;
+			} else {
+				log.error("target is null and minLen is bigger than 0");
+				throw new BusinessException(CrBusinessErrorCode.ILLEGAL_FIELD_LEN, fieldName, minLen, maxLen);
+			}
+		} else {
+			if (target.length() < minLen || target.length() > maxLen) {
+				throw new BusinessException(CrBusinessErrorCode.ILLEGAL_FIELD_LEN, fieldName, minLen, maxLen);
+			}
 		}
 	}
 

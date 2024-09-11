@@ -2,6 +2,8 @@ package com.cyberpeace.cs.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -234,16 +236,16 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		String destPathFileName = destPath + fileName;
 		String storeInDbName = EnumUtils.getEnumByCode(type, AttachmentPath.class).getOriginDesc()
 				+ fileName;
-		File dest = new File(destPathFileName);
+		Path dest = Paths.get(destPathFileName);
 
 		try {
-			if (!dest.getParentFile().exists()) {
-				dest.getParentFile().mkdirs();
+			if (!java.nio.file.Files.exists(dest.getParent())) {
+				java.nio.file.Files.createDirectories(dest.getParent());
 			}
 			file.transferTo(dest);
 		} catch (IOException e) {
 			// 复制文件失败
-			log.error("copy file error: " + fileName + " ,to:" + dest.getAbsolutePath(), e);
+			log.error("copy file error: " + fileName + " ,to:" + dest, e);
 			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 

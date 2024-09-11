@@ -59,6 +59,7 @@ public class BasicValidationRealm extends AuthorizingRealm {
             RemoteUserService remoteUserService = SpringContextUtil
                     .getBeanByClass(RemoteUserService.class);
 
+            log.info("start remote authentication");
             userInfo = remoteUserService.doAuthentication(token);
             CommonContext.setAuthorization(token); // 调用竞赛接口时需要token
             Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());

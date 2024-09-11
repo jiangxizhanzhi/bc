@@ -355,4 +355,9 @@ public final class OjBusinessErrorCode {
 	/** 用户不属于该课堂中 **/
 	public static final String CLASSROOM_USER_NOT_IN = "102134";
 
+	/**
+	 * excel 模板文件格式异常，请重新下载模板
+	 */
+	public static final String EXCEL_TEMPLATE_ERROR = "102135";
+
 }

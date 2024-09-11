@@ -40,12 +40,12 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.io.File;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.cyberpeace.common.constant.ErrorCode.DIRECT_MSG_EXCEPTION;
 
 @Slf4j(topic = "resourceImport")
 @Service
@@ -72,6 +72,8 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	private Integer MAX_CONTENT_LENGTH;
 
 	private Integer MAX_CATEGORY_LENGTH;
+
+	private final String DEFAULT_FILE_IMPORT_ERROR_MESSAGE = "内容格式异常，保持模板格式不变，只填充数据";
 
 	@PostConstruct
 	private void init() {
@@ -106,12 +108,20 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 			oneFile = FileUtil.getOneFile(path, FileSunffixConstant.XLSX.getDesc());
 		}
 		ExcelDataHandler dataHandler = new ExcelDataHandler(oneFile, CommonConstant.ZERO);
+		List<String> headers = new ArrayList<>();
+		try {
+			headers = dataHandler.getSheetData(CommonConstant.ZERO, CommonConstant.ONE).get(0);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new BusinessException(OjBusinessErrorCode.EXCEL_TEMPLATE_ERROR);
+		}
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 
 		dataHandler.closeIO();
 		// 数据类型转换
+		List<String> finalHeaders = headers;
 		List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData,
-				rowData -> excelDataToEntity(rowData, practiceSet, null));
+				rowData -> excelDataToEntity(finalHeaders, rowData, practiceSet, null));
 
 		// 数据去重
 		return StreamApiUtils.distinctByColumn(theoryList,
@@ -138,17 +148,39 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 		// 数据读取
 		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ZERO);
+		List<String> headers = new ArrayList<>();
+		try {
+			headers = dataHandler.getSheetData(CommonConstant.ZERO, CommonConstant.ONE).get(0);
+			checkTheoryImportFileHeader(headers);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new BusinessException(OjBusinessErrorCode.EXCEL_TEMPLATE_ERROR);
+		}
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 		List<Integer> rowsRead = Lists.newArrayList();
+		List<String> finalHeaders = headers;
+
+		List<String> errorCollector = new ArrayList<>();
 		List<PracticeTheory> theories = StreamApiUtils.map(sheetData, data -> {
 			try {
 				rowsRead.add(1);
-				return excelDataToEntity(data, practiceSet, userId);
-			} catch (NumberFormatException e) {
+				return excelDataToEntity(finalHeaders, data, practiceSet, userId);
+			} catch (Exception e) {
 				log.error("import theory invalid ! ", e);
-				throw new BusinessException(OjBusinessErrorCode.IMPORT_THEORY_INVALID, rowsRead.size());
+				String detailErrorMessage = "";
+				if (e instanceof BusinessException) {
+					detailErrorMessage = ((BusinessException) e).getErrorMessage();
+				} else {
+					detailErrorMessage = DEFAULT_FILE_IMPORT_ERROR_MESSAGE;
+				}
+				errorCollector.add(String.format("第%d行数据无效，详细失败原因：%s存在错误", (rowsRead.size()+1), detailErrorMessage));
+				return null;
 			}
 		});
+
+		if (CollectionUtils.isNotEmpty(errorCollector)) {
+			throw new BusinessException(DIRECT_MSG_EXCEPTION, String.join("\n", errorCollector));
+		}
 
 		if (CollectionUtils.isEmpty(theories)) {
 			return CommonConstant.TRUE;
@@ -164,6 +196,22 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 			practiceSetMapper.updateById(practiceSet);
 			return saveBatch(theoryList);
 		});
+	}
+
+	/**
+	 * 检查理论题导入文件表头，第一列内容，第二列方向，第三列难度，第四列题型，第五列答案，第六到九列分别为A,B,C,D
+	 * @param headers
+	 */
+	private void checkTheoryImportFileHeader(List<String> headers) {
+		boolean validHeadFlag = headers.get(0).contains("内容") && headers.get(1).contains("方向") && headers.get(2).contains("难度")
+				&& headers.get(3).contains("题型") && headers.get(4).contains("答案") && headers.get(5).trim().equals("A")
+				&& headers.get(6).trim().equals("B") && headers.get(7).trim().equals("C") && headers.get(8).trim().equals("D");
+		if (validHeadFlag) {
+			return;
+		} else {
+			throw new BusinessException(OjBusinessErrorCode.EXCEL_TEMPLATE_ERROR);
+		}
+
 	}
 
 	/**
@@ -291,97 +339,128 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	 * @param excelRowData
 	 * @return
 	 */
-	private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet,
+	private PracticeTheory  excelDataToEntity(List<String> headers, List<String> excelRowData, PracticeSet practiceSet,
 			String userId) {
 
+		List<String> errorHeaders = new ArrayList<>();
 		// 数据长度为零 返回空过滤掉
 		if (StringUtils.isBlank(String.join("", excelRowData))) {
 			return null;
 		}
 
 		PracticeTheory practiceTheory = new PracticeTheory();
-		String content = excelRowData.get(0);
-		CrCommonValidator.validateLength(content, CrCommonConstants.ZERO_STR_LEN,
-				MAX_CONTENT_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+		try {
+			String content = excelRowData.get(0);
+			CrCommonValidator.validateLength(content, headers.get(0), CrCommonConstants.ZERO_STR_LEN,
+					MAX_CONTENT_LENGTH);
 
-		practiceTheory.setContent(content);
-		practiceTheory.setTitle(content);
-
-		String practiceId = practiceTheoryMapper.selectByContent(practiceSet.getResourceId(),
-				practiceTheory.getContent());
-		if (StringUtils.isNotBlank(practiceId)) {
-			return null;
+			practiceTheory.setContent(content);
+			practiceTheory.setTitle(content);
+			String practiceId = practiceTheoryMapper.selectByContent(practiceSet.getResourceId(),
+					practiceTheory.getContent());
+			if (StringUtils.isNotBlank(practiceId)) {
+				final int min = Math.min(practiceTheory.getContent().length(), 20);
+				log.info("this theory practice exists, content is [{}]", practiceTheory.getContent().substring(0, min) +"...");
+				return null;
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			errorHeaders.add("习题内容");
 		}
 
-		// excel数据中难度=比当前代码枚举值+1
-		practiceTheory.setDifficulty(handleTheoryDifficulty(excelRowData.get(2)));
+
+
+		try {
+			// excel数据中难度=比当前代码枚举值+1
+			practiceTheory.setDifficulty(handleTheoryDifficulty(excelRowData.get(2)));
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			errorHeaders.add("习题难度");
+		}
 		// excel数据中题型=当前代码枚举值+1
-		Integer theoryType = handleOnlyTheoryType(excelRowData.get(3));
-		practiceTheory.setTheoryType(theoryType);
+		try {
+			Integer theoryType = handleOnlyTheoryType(excelRowData.get(3));
+			practiceTheory.setTheoryType(theoryType);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			errorHeaders.add("习题题型");
+		}
 
 		// 分类编号设置 不存在创建
-		String categoryName = excelRowData.get(1).trim();
-		if (StringUtils.isBlank(categoryName)) {
-			log.error("Practice category is empty! operation_data=[{}]",
-					JsonUtil.toJsonString(excelRowData));
-			throw new BusinessException(OjBusinessErrorCode.PRACTICE_DIRECTION_EMPTY_ERROR);
-		}
-		// 校验方向长度
-		CrCommonValidator.validateLength(categoryName, CrCommonConstants.ZERO_STR_LEN,
-				MAX_CATEGORY_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
-
-		String categoryId = practiceCategoryMapper
-				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);
-		if (StringUtils.isBlank(categoryId)) {
-			PracticeCategory category = new PracticeCategory();
-			category.setResourceId(IDGeneratorUtil.getID());
-			category.setCode(category.getResourceId());
-			// 跟页面导入区分人员
-			category.setCreateUserId(
-					null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
-			category.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
-			category.setName(excelRowData.get(1));
-			practiceCategoryMapper.insert(category);
-
-			practiceTheory.setCategoryId(category.getResourceId());
-		} else {
-			practiceTheory.setCategoryId(categoryId);
-		}
-
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
-				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
-						.getCode().intValue()) {
-			String answer = handleChoiceAnswer(excelRowData.get(4));
-			String option = formatOption(excelRowData, 5);
-			practiceTheory.setOption(option);
-			practiceTheory.setAnswer(answer);
-		}
-
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
-				.getCode().intValue()) {
-			practiceValidateHandler.validateJudgementAnswer(excelRowData.get(4));
-			practiceTheory.setAnswer(excelRowData.get(4));
-			practiceTheory.setOption(JsonUtil.toJsonString(null));
-		}
-
-		// 参照页面导入解析填空题
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
-				.getCode().intValue()) {
-			String blankAnswers = handleFillBlank(excelRowData, 3);
-			practiceTheory.setBlank(blankAnswers);
-			practiceTheory.setAnswer(blankAnswers);
-
-		}
-
-		// 参考页面导入解析简答题
-		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
-				.getCode().intValue()) {
-			String shortAnswer = excelRowData.get(4);
-			if (StringUtils.isBlank(shortAnswer)) {
-				log.error("shortAnswer isBlank !excelRowData=[{}] ", excelRowData);
-				throw new BusinessException(OjBusinessErrorCode.SHORT_ANSWER_ANSWER_EMPTY_ERROR);
+		try {
+			String categoryName = excelRowData.get(1).trim();
+			if (StringUtils.isBlank(categoryName)) {
+				log.error("Practice category is empty! operation_data=[{}]",
+						JsonUtil.toJsonString(excelRowData));
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_DIRECTION_EMPTY_ERROR);
 			}
-			practiceTheory.setAnswer(shortAnswer);
+			// 校验方向长度
+			CrCommonValidator.validateLength(categoryName, headers.get(1), CrCommonConstants.ZERO_STR_LEN,
+					MAX_CATEGORY_LENGTH);
+
+			String categoryId = practiceCategoryMapper
+					.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);
+			if (StringUtils.isBlank(categoryId)) {
+				PracticeCategory category = new PracticeCategory();
+				category.setResourceId(IDGeneratorUtil.getID());
+				category.setCode(category.getResourceId());
+				// 跟页面导入区分人员
+				category.setCreateUserId(
+						null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
+				category.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+				category.setName(excelRowData.get(1));
+				practiceCategoryMapper.insert(category);
+
+				practiceTheory.setCategoryId(category.getResourceId());
+			} else {
+				practiceTheory.setCategoryId(categoryId);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			errorHeaders.add("习题方向");
+		}
+
+		try {
+
+			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
+					|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
+					.getCode().intValue()) {
+				String answer = handleChoiceAnswer(excelRowData.get(4));
+				String option = formatOption(excelRowData, 5);
+				practiceTheory.setOption(option);
+				practiceTheory.setAnswer(answer);
+			}
+
+			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
+					.getCode().intValue()) {
+				practiceValidateHandler.validateJudgementAnswer(excelRowData.get(4));
+				practiceTheory.setAnswer(excelRowData.get(4));
+				practiceTheory.setOption(JsonUtil.toJsonString(null));
+			}
+
+			// 参照页面导入解析填空题
+			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+					.getCode().intValue()) {
+				String blankAnswers = handleFillBlank(excelRowData, 3);
+				practiceTheory.setBlank(blankAnswers);
+				practiceTheory.setAnswer(blankAnswers);
+
+			}
+
+			// 参考页面导入解析简答题
+			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
+					.getCode().intValue()) {
+				String shortAnswer = excelRowData.get(4);
+				if (StringUtils.isBlank(shortAnswer)) {
+					log.error("shortAnswer isBlank !excelRowData=[{}] ", excelRowData);
+					throw new BusinessException(OjBusinessErrorCode.SHORT_ANSWER_ANSWER_EMPTY_ERROR);
+				}
+				practiceTheory.setAnswer(shortAnswer);
+
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			errorHeaders.add("习题答案");
 
 		}
 
@@ -393,6 +472,9 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		practiceTheory.setIsPublic(CommonConstant.TRUE);
 		practiceTheory.setPracticeSetId(practiceSet.getResourceId());
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
+		if (CollectionUtils.isNotEmpty(errorHeaders)) {
+			throw new BusinessException(DIRECT_MSG_EXCEPTION, String.join("/", errorHeaders));
+		}
 
 		return practiceTheory;
 	}

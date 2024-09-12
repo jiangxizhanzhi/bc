@@ -1,6 +1,13 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
-import com.cyberpeace.common.constant.ErrorCode;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -23,17 +30,10 @@ import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "oj-前台笔记相关api")
 @RestController
@@ -121,7 +121,9 @@ public class WebNoteController {
 		// 无笔记存在 实验报告返回默认值
 		if (null == noteBo || StringUtils.isBlank(noteBo.getContent())) {
 			BaseRsp<WebNoteRes> rsp = new BaseRsp<>();
-			if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
+			if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()
+					|| getNoteReq.getNoteType().intValue() == Note.NoteType.CLASS_REPORT.getCode()
+							.intValue()) {
 				String template_name = "oj.report.template_en.data";
 				if (CommonContext.isChinese()) {
 					template_name = "oj.report.template.data";
@@ -145,7 +147,9 @@ public class WebNoteController {
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
 		noteRes.setIsSubmit(noteBo.getIsSubmit() != null && noteBo.getIsSubmit());
 		// 实验报告数据评估结果组装
-		if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
+		if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()
+				|| getNoteReq.getNoteType().intValue() == Note.NoteType.CLASS_REPORT.getCode()
+						.intValue()) {
 			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(noteRes.getResourceId());
 			if (null != noteEvaluate) {
 				noteRes.setScore(noteEvaluate.getScore());

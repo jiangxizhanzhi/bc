@@ -241,8 +241,8 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
                     evalHostTemplateList.stream()
                             .map(evalHostTemplate -> {
                                 EvalHostContext evalHostContext = BeanUtils.copy(evalHostTemplate, EvalHostContext.class);
-                                evalHostContext.setHostName(idElementMap.get(evalHostContext.getHostId()).getName());
-                                evalHostContext.setIp(getElementIps(idElementMap.get(evalHostContext.getHostId())));
+                                evalHostContext.setHostName(idElementMap.get(evalHostContext.getHostId()) != null ? idElementMap.get(evalHostContext.getHostId()).getName() : "");
+                                evalHostContext.setIp(idElementMap.get(evalHostContext.getHostId()) != null ? getElementIps(idElementMap.get(evalHostContext.getHostId())) : "");
                                 return evalHostContext;
                             })
                             .collect(Collectors.toList()));
@@ -253,7 +253,7 @@ public class EvalRuleTemplateServiceImpl extends ServiceImpl<EvalRuleTemplateMap
         List<EvalAlarmConditionReq> evalAlarmConditionReqList = evalAlarmConditionList.stream().map(evalAlarmCondition -> BeanUtils.copy(evalAlarmCondition, EvalAlarmConditionReq.class))
                 .collect(Collectors.toList());
         evalRuleTemplateDetail.setAlarmConditions(evalAlarmConditionReqList);
-        if(StringUtils.isNotBlank(evalRuleTemplate.getAlarmName())) {
+        if (StringUtils.isNotBlank(evalRuleTemplate.getAlarmName())) {
             EvalAlarmReq evalAlarmReq = new EvalAlarmReq();
             evalAlarmReq.setAlarmName(evalRuleTemplate.getAlarmName());
             evalAlarmReq.setDescription(evalRuleTemplate.getAlarmDescription());

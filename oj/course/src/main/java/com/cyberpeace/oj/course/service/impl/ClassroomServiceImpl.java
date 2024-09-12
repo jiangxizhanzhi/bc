@@ -54,6 +54,7 @@ import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.course.service.bo.classroom.ClassroomStatisticsBo;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
@@ -66,6 +67,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
+import com.cyberpeace.oj.ojbase.service.bo.post.ReportEvaBo;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
@@ -1323,6 +1325,53 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		});
 	}
 
+	@Override
+	public ClassroomStatisticsBo getStatistics(String roomId) {
+		Classroom classroom = this.getById(roomId);
+		if (null == classroom) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		ClassroomStatisticsBo res = new ClassroomStatisticsBo();
+		res.setResourceId(roomId);
+
+		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
+			TrainPlan plan = trainPlanMapper.selectById(classroom.getTrainPlanId());
+			res.setPlanName(null == plan ? "" : plan.getName());
+		}
+		Course course = courseMapper.selectById(classroom.getCourseId());
+		res.setCourseName(null == course ? "" : course.getName());
+
+		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
+		res.setLessonName(null == lesson ? "" : lesson.getName());
+
+		UserInfo teacher = remoteUserService.getById(classroom.getCreateUserId());
+		res.setTeacherName(teacher.getName());
+
+		String orgName = remoteOrganizationService.orgNameById(classroom.getOrganizationId());
+		res.setOrgName(orgName);
+
+		UserPageContext pageContext = UserPageContext.builder().org(classroom.getOrganizationId())
+				.username("").build();
+		List<UserInfo> students = remoteUserService.getFuzzyQueryUserList(pageContext);
+		List<String> studentIds = StreamApiUtils.map(students, UserInfo::getUserId);
+		List<ReportEvaBo> reportList = noteMapper.selectClassReport(classroom.getLessonId(),
+				studentIds);
+		res.setFinishedCount(reportList.size());
+
+		List<Integer> scoreList = reportList.stream().map(ReportEvaBo::getScore)
+				.filter(Objects::nonNull).sorted().collect(Collectors.toList());
+		if (!scoreList.isEmpty()) {
+			res.setLowest(scoreList.get(0));
+			res.setHighest(scoreList.get(scoreList.size() - 1));
+		}
+		for (ReportEvaBo evaBo : reportList) {
+			if (evaBo.getUserId().equals(UserInfoContext.getUserContext().getUserId())) {
+				res.setScore(evaBo.getScore());
+			}
+		}
+		return res;
+	}
+
 	/**
 	 * 判断起止时间是否相同或起始时间大于结束时间
 	 *
@@ -1897,7 +1946,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
 				.businessId(courseLesson.getResourceId())
 				.businessType(Note.NoteResourceType.LESSON.getCode())
-				.noteType(Note.NoteType.REPORT.getCode()).userId(userInfo.getUserId()).build();
+				.noteType(Note.NoteType.CLASS_REPORT.getCode()).userId(userInfo.getUserId())
+				.build();
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
 		if (null != noteBo && noteBo.getIsSubmit() != null && noteBo.getIsSubmit()) {
 			reportBo.setContent(noteBo.getContent());

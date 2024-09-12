@@ -15,6 +15,7 @@ import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.course.service.bo.classroom.ClassroomStatisticsBo;
 
 public interface ClassroomService extends IService<Classroom> {
 
@@ -144,4 +145,6 @@ public interface ClassroomService extends IService<Classroom> {
 	Boolean getRecordingButton(String roomId);
 
 	void updateRecordingButton(IdAndBool req);
+
+	ClassroomStatisticsBo getStatistics(String roomId);
 }

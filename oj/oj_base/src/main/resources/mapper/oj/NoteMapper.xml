@@ -203,4 +203,14 @@
             </foreach>
         </if>
     </select>
+    <select id="selectClassReport" resultType="com.cyberpeace.oj.ojbase.service.bo.post.ReportEvaBo">
+        select
+        n.resource_id, n.is_submit, n.user_id, e.score, e.passed
+        from oj_note n left join oj_note_evaluate e on n.resource_id = e.note_id
+        where n.business_type = 2 and n.note_type = 3 and n.business_id = #{lessonId} and n.is_submit = 1
+        and n.user_id in
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </select>
 </mapper>

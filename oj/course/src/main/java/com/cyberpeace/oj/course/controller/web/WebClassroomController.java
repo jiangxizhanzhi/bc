@@ -1,5 +1,17 @@
 package com.cyberpeace.oj.course.controller.web;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -15,20 +27,11 @@ import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
 import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
+import com.cyberpeace.oj.course.service.bo.classroom.ClassroomStatisticsBo;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
-import java.util.List;
 
 @Api(tags = "oj-前台课程表相关")
 @RestController
@@ -128,6 +131,14 @@ public class WebClassroomController {
 			@Param("group_id") String groupId) {
 		List<DashboardUser> dashboardUsers = classroomService.getChatGroupUsers(roomId, groupId);
 		return new BaseRsp<>(dashboardUsers);
+	}
+
+	@ApiOperation("课堂统计")
+	@GetMapping("/statistics")
+	public BaseRsp<ClassroomStatisticsBo>
+			getStatistics(@ApiParam(name = "room_id", value = "课堂id") String room_id) {
+		ClassroomStatisticsBo bo = classroomService.getStatistics(room_id);
+		return new BaseRsp<>(bo);
 	}
 
 }

@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.service.bo.post.ReportEvaBo;
 
 @Mapper
 public interface NoteMapper extends BaseMapper<Note> {
@@ -46,4 +47,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 	List<Note> selectByUserAndType(@Param("userId") String userId,
 								   @Param("noteType") Integer noteType, @Param("businessType") Integer businessType,
 								   @Param("businessIds") Collection<String> businessIds);
+
+	List<ReportEvaBo> selectClassReport(@Param("lessonId") String lessonId,
+			@Param("userIds") List<String> userIds);
 }

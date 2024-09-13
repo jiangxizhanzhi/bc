@@ -2086,7 +2086,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<LessonRecord> recordList = lessonRecordMapper.listByLessonAndUser(userId, lessonIds);
 		Map<String, LessonRecord> recordMap = StreamApiUtils.toMap(recordList,
 				LessonRecord::getLessonId, lessonRecord -> lessonRecord);
-		List<Note> reportList = noteMapper.selectByUserAndType(userId,
+		List<Note> reportList = noteMapper.selectSubmittedByUserAndType(userId,
 				Note.NoteType.CLASS_REPORT.getCode(), Note.NoteResourceType.LESSON.getCode(),
 				lessonIds);
 		Map<String, Note> reportMap = StreamApiUtils.toMap(reportList, Note::getBusinessId, n -> n);

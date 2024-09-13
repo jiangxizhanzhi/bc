@@ -190,12 +190,13 @@
             </if>
         </where>
     </select>
-    <select id="selectByUserAndType" resultType="com.cyberpeace.oj.ojbase.dao.entity.Note">
+    <select id="selectSubmittedByUserAndType" resultType="com.cyberpeace.oj.ojbase.dao.entity.Note">
         select *
         from oj_note
         where user_id = #{userId}
         and business_type = #{businessType}
         and note_type = #{noteType}
+        and is_submit = 1
         <if test="businessIds != null and businessIds.size() > 0">
             and business_id in
             <foreach collection="businessIds" open="(" close=")" item="businessId" separator=",">

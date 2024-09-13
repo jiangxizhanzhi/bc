@@ -44,9 +44,9 @@ public interface NoteMapper extends BaseMapper<Note> {
 
 	int countByUserId(@Param("userId") String userId, @Param("noteType") Integer noteType, @Param("resourceIds") List<String> resourceIds);
 
-	List<Note> selectByUserAndType(@Param("userId") String userId,
-								   @Param("noteType") Integer noteType, @Param("businessType") Integer businessType,
-								   @Param("businessIds") Collection<String> businessIds);
+	List<Note> selectSubmittedByUserAndType(@Param("userId") String userId,
+											@Param("noteType") Integer noteType, @Param("businessType") Integer businessType,
+											@Param("businessIds") Collection<String> businessIds);
 
 	List<ReportEvaBo> selectClassReport(@Param("lessonId") String lessonId,
 			@Param("userIds") List<String> userIds);

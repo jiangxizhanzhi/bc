@@ -172,12 +172,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
     @Override
     public List<Note> getReportByLessonIds(List<String> lessonIds, String userId) {
-		return noteMapper.selectByUserAndType(userId, Note.NoteType.REPORT.getCode(), Note.NoteResourceType.LESSON.getCode(), lessonIds);
+		return noteMapper.selectSubmittedByUserAndType(userId, Note.NoteType.REPORT.getCode(), Note.NoteResourceType.LESSON.getCode(), lessonIds);
     }
 
 	@Override
 	public Set<String> getReportSubmittedLessonIds(List<String> lessonIds, String userId, Integer noteType) {
-		List<Note> noteList = noteMapper.selectByUserAndType(userId, noteType, Note.NoteResourceType.LESSON.getCode(), lessonIds);
+		List<Note> noteList = noteMapper.selectSubmittedByUserAndType(userId, noteType, Note.NoteResourceType.LESSON.getCode(), lessonIds);
 		return noteList.stream().map(Note::getBusinessId).collect(Collectors.toSet());
 	}
 

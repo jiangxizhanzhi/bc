@@ -375,7 +375,7 @@ public class CourseValidateHandler {
 	public void checkAccessibility(String courseId, CourseLesson lesson, String roomId,
 			AuthContext authContext) {
 		if (!authContext.getIsWeb() || !lesson.getContinuous()
-				|| lesson.getType().equals(CourseLesson.LessonType.THEORY.getCode())) {
+				|| lesson.getType().equals(CourseLesson.LessonType.THEORY.getCode()) || StringUtils.isNotBlank(roomId)) {
 			return;
 		}
 		List<LessonConfig> configList = lessonConfigMapper.selectByCourse(courseId);

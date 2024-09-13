@@ -26,4 +26,6 @@ public interface SharedRepositoryService {
 	List<AdminLessonListBo> getAllMy();
 
 	void saveArrangement(List<String> ids);
+
+	List<AdminLessonListBo> lesson2AdminBo(List<CourseLesson> lessonList);
 }

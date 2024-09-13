@@ -163,4 +163,15 @@
             #{myId}
         </foreach>
     </select>
+    <select id="selectExternal" resultType="com.cyberpeace.oj.course.dao.entity.CourseLesson">
+        select * from oj_course_lesson
+        where
+        resource_id in
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+        <if test="isPublic != null and isPublic">
+            and `public` = #{isPublic}
+        </if>
+    </select>
 </mapper>

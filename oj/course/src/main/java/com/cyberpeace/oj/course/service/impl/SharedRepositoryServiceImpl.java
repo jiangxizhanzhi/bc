@@ -206,18 +206,13 @@ public class SharedRepositoryServiceImpl implements SharedRepositoryService {
 		myRepositoryMapper.updateById(myRepository);
 	}
 
-	private MyRepository initMy(String userId) {
-		List<String> lessonIds = courseLessonMapper.selectMyExp(userId);
-		MyRepository myRepository = new MyRepository();
-		myRepository.setUserId(userId);
-		myRepository.setMy(JsonUtil.arrayToString(lessonIds));
-		myRepositoryMapper.insert(myRepository);
-		return myRepository;
-	}
-
-	private ListRsp<AdminLessonListBo> convert(IPage<CourseLesson> iPage) {
-		List<CourseLesson> records = iPage.getRecords();
-		List<String> paperIds = StreamApiUtils.getColumn(records, CourseLesson::getPaperId);
+	@Override
+	public List<AdminLessonListBo> lesson2AdminBo(List<CourseLesson> lessonList) {
+		List<AdminLessonListBo> res = Lists.newArrayList();
+		if (lessonList.isEmpty()) {
+			return res;
+		}
+		List<String> paperIds = StreamApiUtils.getColumn(lessonList, CourseLesson::getPaperId);
 		LambdaQueryWrapper<PracticeOperationRef> filterOperation = new LambdaQueryWrapper<>();
 		LambdaQueryWrapper<PracticeTheoryRef> filterTheory = new LambdaQueryWrapper<>();
 		if (!paperIds.isEmpty()) {
@@ -232,9 +227,15 @@ public class SharedRepositoryServiceImpl implements SharedRepositoryService {
 				.selectList(filterTheory);
 		Map<String, List<PracticeTheoryRef>> theoryMap = StreamApiUtils.groupBy(practiceTheoryRefs,
 				PracticeTheoryRef::getPaperId);
-		List<String> userIds = StreamApiUtils.map(records, CourseLesson::getCreateUserId);
+		List<String> userIds = StreamApiUtils.map(lessonList, CourseLesson::getCreateUserId);
 		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
-		IPage<AdminLessonListBo> boIPage = iPage.convert(courseLesson -> {
+		List<String> courseIds = StreamApiUtils.map(lessonList, CourseLesson::getCourseId);
+		List<Course> courseList = courseMapper.selectBatchIds(courseIds);
+		Map<String, Course> courseMap = StreamApiUtils.toMap(courseList, Course::getResourceId,
+				c -> c);
+		List<Paper> papers = paperMapper.selectBatchIds(paperIds);
+		Map<String, Paper> paperMap = StreamApiUtils.toMap(papers, Paper::getResourceId, p -> p);
+		for (CourseLesson courseLesson : lessonList) {
 			// 前台没有课程列表查询 不用管是否存在课堂场景 修改sceneShareMode
 			AdminLessonListBo adminLessonListBo = BeanUtils.copy(courseLesson,
 					AdminLessonListBo.class);
@@ -258,7 +259,7 @@ public class SharedRepositoryServiceImpl implements SharedRepositoryService {
 			adminLessonListBo.setVideoUrl(utilService.handlerFileUrl(courseLesson.getVideoUrl()));
 
 			// 试卷相关
-			Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+			Paper paper = paperMap.get(courseLesson.getPaperId());
 
 			String paperId = courseLesson.getPaperId();
 			List<PracticeOperationRef> operations = operationMap.getOrDefault(paperId,
@@ -269,25 +270,33 @@ public class SharedRepositoryServiceImpl implements SharedRepositoryService {
 			adminLessonListBo.setPaperPublic(paper.getIsPublic());
 
 			// 课程相关
-			Course course = courseMapper.selectById(courseLesson.getCourseId());
+			Course course = courseMap.get(courseLesson.getCourseId());
 			adminLessonListBo.setCourseName(course.getName());
 
 			// 用户相关
 			adminLessonListBo.setCreateUserName(
 					userNameMap.getOrDefault(courseLesson.getCreateUserId(), ""));
 
-			// 是否具有实验报告
-			// NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
-			// .noteType(Note.NoteType.REPORT.getCode())
-			// .businessType(Note.NoteResourceType.LESSON.getCode())
-			// .businessId(courseLesson.getResourceId()).build();
-			// List<String> noteIds = noteMapper.selectByContext(uniqueContext);
-			// adminLessonListBo.setHasReport(
-			// courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
-			// .getCode() && CollectionUtils.isNotEmpty(noteIds));
-			return adminLessonListBo;
-		});
-		return PageUtil.getListResult(boIPage);
+			res.add(adminLessonListBo);
+		}
+		return res;
+	}
+
+	private MyRepository initMy(String userId) {
+		List<String> lessonIds = courseLessonMapper.selectMyExp(userId);
+		MyRepository myRepository = new MyRepository();
+		myRepository.setUserId(userId);
+		myRepository.setMy(JsonUtil.arrayToString(lessonIds));
+		myRepositoryMapper.insert(myRepository);
+		return myRepository;
+	}
+
+	private ListRsp<AdminLessonListBo> convert(IPage<CourseLesson> iPage) {
+		List<CourseLesson> lessonList = iPage.getRecords();
+		List<AdminLessonListBo> adminLessonListBos = lesson2AdminBo(lessonList);
+		ListRsp<AdminLessonListBo> res = PageUtil.getListResult(iPage);
+		res.setList(adminLessonListBos);
+		return res;
 	}
 
 	private List<AdminLessonListBo> sortById(List<AdminLessonListBo> boList, List<String> idList) {

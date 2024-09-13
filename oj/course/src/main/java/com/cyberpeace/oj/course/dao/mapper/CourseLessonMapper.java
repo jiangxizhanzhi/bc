@@ -60,4 +60,7 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 			@Param("shared") Integer shared);
 
 	List<AdminLessonListBo> selectByIds(@Param("myIds") List<String> myIds);
+
+	List<CourseLesson> selectExternal(@Param("ids") List<String> ids,
+			@Param("isPublic") Boolean isPublic);
 }

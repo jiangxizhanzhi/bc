@@ -1301,6 +1301,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
+	public List<AdminLessonListBo> listExternal(List<String> ids, Boolean isPublic) {
+		List<CourseLesson> lessonList = courseLessonMapper.selectExternal(ids, isPublic);
+		List<AdminLessonListBo> res = sharedRepositoryService.lesson2AdminBo(lessonList);
+		return res;
+	}
+
+	@Override
 	public List<OjLocalScene> selectLessonAllScene(List<CourseLesson> lessonList, AuthContext authContext) {
 		List<OjLocalScene> scenes = new ArrayList<>();
 		// 查询课时场景
@@ -1682,4 +1689,5 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
 				OperationType.STUDY, operationTarget, content);
 	}
+
 }

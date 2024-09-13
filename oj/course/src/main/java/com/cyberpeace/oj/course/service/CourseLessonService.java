@@ -238,4 +238,6 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @return {@code List<CourseLesson> }
 	 */
 	List<CourseLesson> listContinuousExpByIdsInOrder(List<String> lessonIds);
+
+	List<AdminLessonListBo> listExternal(List<String> ids, Boolean isPublic);
 }

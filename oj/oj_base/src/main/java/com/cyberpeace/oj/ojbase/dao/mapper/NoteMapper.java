@@ -50,4 +50,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 
 	List<ReportEvaBo> selectClassReport(@Param("lessonId") String lessonId,
 			@Param("userIds") List<String> userIds);
+
+	List<Note> selectClassReportByLessonsAndUsers(@Param("lessonIds") List<String> lessonIds,
+			@Param("userIds") List<String> userIds);
 }

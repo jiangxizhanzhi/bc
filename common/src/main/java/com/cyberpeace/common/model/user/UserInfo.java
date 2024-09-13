@@ -81,4 +81,9 @@ public class UserInfo implements Serializable {
      */
     private Set<String> permissions;
 
+	public String getOrgName() {
+		List<String> paths = this.orgpaths.get(0);
+		return paths.get(paths.size() - 1);
+	}
+
 }

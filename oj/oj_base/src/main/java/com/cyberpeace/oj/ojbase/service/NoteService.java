@@ -1,5 +1,8 @@
 package com.cyberpeace.oj.ojbase.service;
 
+import java.util.List;
+import java.util.Set;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -10,9 +13,6 @@ import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
-
-import java.util.List;
-import java.util.Set;
 
 public interface NoteService extends IService<Note> {
 
@@ -52,4 +52,6 @@ public interface NoteService extends IService<Note> {
     List<Note> getReportByLessonIds(List<String> lessonIds, String userId);
 
     Set<String> getReportSubmittedLessonIds(List<String> lessonIds, String userId, Integer noteType);
+
+	List<Note> listClassReport(List<String> userIds, List<String> lessonIds);
 }

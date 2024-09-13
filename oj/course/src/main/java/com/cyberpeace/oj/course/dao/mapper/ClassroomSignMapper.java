@@ -1,11 +1,12 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 
 @Mapper
 public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
@@ -25,4 +26,7 @@ public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
 	 */
 	ClassroomSign selectByRoomAndUser(@Param("roomId") String roomId,
 			@Param("userId") String userId);
+
+	List<ClassroomSign> selectByRoomsAndUsers(@Param("classroomIds") List<String> classroomIds,
+			@Param("userIds") List<String> userIds);
 }

@@ -213,4 +213,15 @@
             #{userId}
         </foreach>
     </select>
+    <select id="selectClassReportByLessonsAndUsers" resultType="com.cyberpeace.oj.ojbase.dao.entity.Note">
+        select * from oj_note where business_type = 2 and note_type = 3 and is_submit = 1 and business_id
+        in
+        <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">
+            #{lessonId}
+        </foreach>
+        and user_id in
+        <foreach collection="userIds" open="(" close=")" separator="," item="userId">
+            #{userId}
+        </foreach>
+    </select>
 </mapper>

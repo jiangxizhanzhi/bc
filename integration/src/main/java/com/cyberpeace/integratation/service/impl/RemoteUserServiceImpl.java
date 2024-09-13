@@ -298,6 +298,13 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return HttpClientUtil.rawGet(BLACK_ENABLE_URL, Boolean.class);
 	}
 
+	@Override
+	public List<UserInfo> listByOrgId(String organizationId) {
+		UserPageContext context = UserPageContext.builder().org(organizationId).username("")
+				.build();
+		return this.getFuzzyQueryUserList(context);
+	}
+
 	/**
 	 * 获取用户可见的菜单
 	 *

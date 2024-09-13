@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,14 +30,19 @@ import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
 import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
+import com.cyberpeace.oj.course.service.bo.classroom.PlanProgressBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +74,12 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
+
+	@Autowired
+	private NoteService noteService;
+
+	@Autowired
+	private ClassroomSignMapper classroomSignMapper;
 
 	@Override
 	public List<TrainPlanBo> trainPlanList(UserInfo userInfo) {
@@ -188,6 +200,77 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL);
 		}
 		return plan;
+	}
+
+	@Override
+	public List<PlanProgressBo> getProgress(String planId) {
+		TrainPlan plan = this.getPlanById(planId);
+		List<PlanProgressBo> res = Lists.newArrayList();
+		List<UserInfo> userInfoList = remoteUserService.listByOrgId(plan.getOrganizationId());
+		if (userInfoList.isEmpty()) {
+			return res;
+		}
+		List<String> userIds = StreamApiUtils.map(userInfoList, UserInfo::getUserId);
+		// exp only
+		List<Classroom> classroomList = classroomMapper.listExpByPlanId(planId);
+		List<String> lessonIds = StreamApiUtils.map(classroomList, Classroom::getLessonId);
+		List<Note> noteList = noteService.listClassReport(userIds, lessonIds);
+		int expCount = classroomList.size();
+		Map<String, List<Note>> userNoteMap = StreamApiUtils.groupBy(noteList, Note::getUserId);
+
+		Map<String, List<ClassroomSign>> signMap = Maps.newHashMap();
+		if (!lessonIds.isEmpty()) {
+			List<String> classroomIds = StreamApiUtils.map(classroomList, Classroom::getResourceId);
+			List<ClassroomSign> signList = classroomSignMapper.selectByRoomsAndUsers(classroomIds,
+					userIds);
+			signMap = StreamApiUtils.groupBy(signList, ClassroomSign::getUserId);
+		}
+
+		for (UserInfo info : userInfoList) {
+			PlanProgressBo bo = new PlanProgressBo();
+			bo.setStudentId(info.getUserId());
+			bo.setName(info.getName());
+			bo.setOrgId(info.getOrganizationId());
+			bo.setOrgName(info.getOrgName());
+			List<Note> reportList = userNoteMap.getOrDefault(info.getUserId(),
+					Lists.newArrayList());
+			int finishedExp = reportList.size();
+			bo.setProgress(MathUtils.roundDivide(finishedExp * 100, expCount));
+			// time cost
+			List<ClassroomSign> signList = signMap.getOrDefault(info.getUserId(),
+					Lists.newArrayList());
+			Map<String, ClassroomSign> individualSignMap = StreamApiUtils.toMap(signList,
+					ClassroomSign::getClassroomId, s -> s);
+			Map<String, Note> individualReportMap = StreamApiUtils.toMap(reportList,
+					Note::getBusinessId, n -> n);
+			int cost = 0;
+			for (Classroom classroom : classroomList) {
+				ClassroomSign sign = individualSignMap.get(classroom.getResourceId());
+				if (null == sign) {
+					continue;
+				}
+				long classroomCost = 0;
+				Date start = sign.getSignInTime();
+				Note note = individualReportMap.get(classroom.getLessonId());
+				Date end;
+				if (null == note) {
+					end = new Date();
+				} else {
+					// 最后一次提交的时间
+					end = note.getUpdateTime();
+				}
+				if (end.before(start)) {
+					classroomCost = 0;
+				} else {
+					classroomCost = TimeUtil.getIntervalSeconds(start, end);
+				}
+
+				cost += classroomCost;
+			}
+			bo.setTimeCost(cost);
+			res.add(bo);
+		}
+		return res;
 	}
 
     /** 数据转换*/

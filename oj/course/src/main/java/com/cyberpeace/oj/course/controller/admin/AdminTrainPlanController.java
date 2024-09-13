@@ -1,12 +1,7 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import java.security.AccessControlContext;
 import java.util.List;
 
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.oj.course.service.bo.TrainPlanContext;
-import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -26,7 +21,9 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.oj.course.controller.req.TrainPlanAddReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanUpdateReq;
@@ -35,6 +32,9 @@ import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
+import com.cyberpeace.oj.course.service.bo.TrainPlanContext;
+import com.cyberpeace.oj.course.service.bo.classroom.PlanProgressBo;
+import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -188,5 +188,13 @@ public class AdminTrainPlanController {
 
 		trainPlanService.reuse(reuseReq);
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("课程进度查看")
+	@GetMapping("/progress")
+	public BaseRsp<List<PlanProgressBo>>
+			getProgress(@ApiParam(value = "教学课程id", name = "plan_id") String plan_id) {
+		List<PlanProgressBo> res = trainPlanService.getProgress(plan_id);
+		return new BaseRsp<>(res);
 	}
 }

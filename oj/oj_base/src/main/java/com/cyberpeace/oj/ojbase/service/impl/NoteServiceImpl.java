@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -27,7 +28,6 @@ import com.cyberpeace.oj.ojbase.controller.req.ReportAddReq;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
-import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
@@ -179,5 +179,13 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	public Set<String> getReportSubmittedLessonIds(List<String> lessonIds, String userId, Integer noteType) {
 		List<Note> noteList = noteMapper.selectByUserAndType(userId, noteType, Note.NoteResourceType.LESSON.getCode(), lessonIds);
 		return noteList.stream().map(Note::getBusinessId).collect(Collectors.toSet());
+	}
+
+	@Override
+	public List<Note> listClassReport(List<String> userIds, List<String> lessonIds) {
+		if (userIds.isEmpty() || lessonIds.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		return noteMapper.selectClassReportByLessonsAndUsers(lessonIds, userIds);
 	}
 }

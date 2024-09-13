@@ -15,4 +15,15 @@
         where classroom_id= #{roomId}
         and user_id = #{userId}
     </select>
+    <select id="selectByRoomsAndUsers" resultType="com.cyberpeace.oj.course.dao.entity.ClassroomSign">
+        select * from oj_classroom_sign
+        where classroom_id in
+        <foreach collection="classroomIds" open="(" close=")" separator="," item="classroomId">
+            #{classroomId}
+        </foreach>
+        and user_id in
+        <foreach collection="userIds" open="(" close=")" separator="," item="userId">
+            #{userId}
+        </foreach>
+    </select>
 </mapper>

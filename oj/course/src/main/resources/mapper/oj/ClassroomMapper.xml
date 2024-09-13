@@ -171,4 +171,11 @@
         </foreach>
         order by start_time
     </select>
+    <select id="listExpByPlanId" resultType="com.cyberpeace.oj.course.dao.entity.Classroom">
+        select c.*
+        from oj_classroom c
+                 left join oj_course_lesson l on c.lesson_id = l.resource_id
+        where c.train_plan_id = #{planId}
+          and l.type = 1
+    </select>
 </mapper>

@@ -75,4 +75,6 @@ public interface RemoteUserService {
 	UserInfo searchUserByUserIdInUserList(String userId, List<UserInfo> userInfos);
 
 	Boolean isDemoOpen();
+
+	List<UserInfo> listByOrgId(String organizationId);
 }

@@ -3,10 +3,6 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.DateUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +10,17 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.ScreenService;
-import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordRsp;
 import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.bo.ScreenRecordRsp;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

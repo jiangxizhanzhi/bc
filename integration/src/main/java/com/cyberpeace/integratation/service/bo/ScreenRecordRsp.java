@@ -1,9 +1,8 @@
-package com.cyberpeace.cr.crbase.service.context.screen;
-
-import lombok.Data;
+package com.cyberpeace.integratation.service.bo;
 
 import java.math.BigDecimal;
-import java.util.Date;
+
+import lombok.Data;
 
 @Data
 public class ScreenRecordRsp {
@@ -26,5 +25,17 @@ public class ScreenRecordRsp {
 
     private String host;
 
+	private String file;
+
     private String file_name;
+
+	private String file_size;
+
+	private String node_id;
+
+	private String scene;
+
+	private String scene_name;
+
+	private String user_org_name;
 }

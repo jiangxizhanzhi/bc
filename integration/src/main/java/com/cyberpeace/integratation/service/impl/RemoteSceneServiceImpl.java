@@ -28,6 +28,7 @@ import com.cyberpeace.integratation.constant.SessionType;
 import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.bo.ScreenRecordRsp;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -297,6 +298,15 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		String targetUrl = NODE_SCREEN_RECORD + "?csceneId=" + sceneId+"&nodeId="+nodeId+"&page=1&pageSize=999";
 		return  HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public List<ScreenRecordRsp> pageSceneRecord(String sceneId, String userId) {
+		String targetUrl = NODE_SCREEN_RECORD + "?csceneId=" + sceneId + "&userId=" + userId
+				+ "&page=1&pageSize=10";
+		JSONObject o = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		JSONArray array = o.getJSONArray("list");
+		return array.toJavaList(ScreenRecordRsp.class);
 	}
 
 	@Override

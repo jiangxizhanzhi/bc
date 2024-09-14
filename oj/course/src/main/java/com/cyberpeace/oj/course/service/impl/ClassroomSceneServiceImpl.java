@@ -3,11 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.bo.StartSceneBo;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
-import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,15 +39,21 @@ import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomSignMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.service.ClassroomSceneRecordService;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
+import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.GroupWsMessageIdentifier;
+import com.cyberpeace.oj.course.service.bo.StartSceneBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
+import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.google.common.collect.Lists;
@@ -109,6 +110,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	@Autowired
 	private ClassroomService classroomService;
 
+	@Autowired
+	private ClassroomSceneRecordService classroomSceneRecordService;
+
 	private Map<String, BatchStartSceneHandler> batchSceneMap = Maps.newConcurrentMap();
 
 	@Override
@@ -155,6 +159,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				ojLocalSceneMapper.insert(initOjLocalScene);
 				localSceneMapper.insert(localScene);
+				classroomSceneRecordService.record(groupInfo, sceneId);
 			}
 		});
 

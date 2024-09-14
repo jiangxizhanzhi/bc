@@ -131,11 +131,9 @@ public class EvalRuleTemplate extends BaseTable {
     //	等级
     public enum Grade implements GenericEnum {
 
-        SEVERITY(0, "严重"),
-        ERROR(1, "错误"),
-        WARN(2, "警告"),
-        INFO(3, "信息性"),
-        DETA(4, "详细");
+        HIGH(10, "高"),
+        MIDDLE(5, "中"),
+        LOW(0, "低");
 
         @Getter
         private final Integer code;

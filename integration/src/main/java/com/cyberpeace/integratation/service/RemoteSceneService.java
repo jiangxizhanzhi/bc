@@ -9,7 +9,6 @@ import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.bo.ScreenRecordListRsp;
 import com.cyberpeace.integratation.service.bo.ScreenRecordRsp;
-import org.bytedeco.opencv.presets.opencv_core;
 
 /**
  * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2

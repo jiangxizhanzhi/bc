@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.service.bo.ScreenRecordListRsp;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -124,6 +125,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_SWITCH_RECORDING;
 
+	private String LIST_SCREEN_RECORD;
+
+	private String RECORD_DOWNLOAD_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -212,6 +217,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_TREND = MP_HOST + ConfigUtil.getContextProperty("mp.scene.trend");
 
 		SCENE_SWITCH_RECORDING = MP_HOST + ConfigUtil.getContextProperty("mp.scene.switch.recording.batch");
+		LIST_SCREEN_RECORD = MP_HOST + ConfigUtil.getContextProperty("mp.screen.record.list");
+		RECORD_DOWNLOAD_URL = MP_HOST + ConfigUtil.getContextProperty("mp.screen.record.download");
 	}
 
 	@Override
@@ -329,7 +336,23 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		HttpClientUtil.post(SCENE_SWITCH_RECORDING, body, JSONObject.class);
 	}
 
-    @Override
+	@Override
+	public List<ScreenRecordListRsp> listScreenRecord(List<String> sceneIds, String userId) {
+		String sceneId = String.join(",", sceneIds);
+		String targetUrl = String.format(LIST_SCREEN_RECORD, sceneId, userId);
+		JSONObject o = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		JSONArray array = o.getJSONArray("list");
+		return array.toJavaList(ScreenRecordListRsp.class);
+	}
+
+	@Override
+	public String getRecordDownloadUrl(String fileName) {
+		String targetUrl = RECORD_DOWNLOAD_URL + fileName;
+		String rsp = HttpClientUtil.rawGet(targetUrl, String.class);
+		return rsp;
+	}
+
+	@Override
 	public Boolean restartNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RESTART_URL, nodeOpsContext, Boolean.class);
 	}

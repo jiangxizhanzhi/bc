@@ -2,7 +2,6 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,7 +28,7 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.bo.ScreenRecordRsp;
+import com.cyberpeace.integratation.service.bo.ScreenRecordByNode;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
@@ -276,12 +275,6 @@ public class AdminClassroomController {
 
 		ListRsp<ClassroomReportBo> res = PageUtil.getListResult(pageReportBo.getData(), page,
 				pageReportBo.getTotal());
-		List<String> userIds = StreamApiUtils.map(res.getList(), ClassroomReportBo::getUserId);
-		Map<String, ScreenRecordRsp> recordMap = classroomSceneRecordService
-				.getLastRecordMap(reportReq.getClassroomId(), userIds);
-		for (ClassroomReportBo bo : res.getList()) {
-			bo.setScreenRecord(recordMap.get(bo.getUserId()));
-		}
 		return new BaseRsp<>(res);
 	}
 
@@ -437,6 +430,16 @@ public class AdminClassroomController {
 	public BaseRsp getRecordingButton(@RequestBody IdAndBool req) {
 		classroomService.updateRecordingButton(req);
 		return new BaseRsp();
+	}
+
+	@ApiOperation("查看学员的全部录屏")
+	@GetMapping("/record/list")
+	public BaseRsp<List<ScreenRecordByNode>> getRecordList(
+			@ApiParam(value = "课堂id", name = "classroom_id") String classroom_id,
+			@ApiParam(value = "学员id", name = "user_id") String user_id) {
+		List<ScreenRecordByNode> res = classroomSceneRecordService.listScreenRecord(classroom_id,
+				user_id);
+		return new BaseRsp<>(res);
 	}
 
 

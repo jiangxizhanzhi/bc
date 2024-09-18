@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.integratation.service.bo.ScreenRecordByNode;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;

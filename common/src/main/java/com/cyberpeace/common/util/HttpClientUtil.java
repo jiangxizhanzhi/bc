@@ -1,5 +1,6 @@
 package com.cyberpeace.common.util;
 
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -143,6 +144,77 @@ public class HttpClientUtil {
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(httpGet, resultType);
 	}
+
+	public static void download(String url, String dest) {
+		setContext(url);
+		HttpGet httpGet = new HttpGet(url);
+		String authorization = CommonContext.getAuthorization();
+		if (null != authorization) { // 调用竞赛接口需要
+			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
+		}
+		HttpResponse response = null;
+		HttpclientContext.getContext().setMethod(httpGet.getMethod());
+		InputStream inputStream = null;
+		FileOutputStream fileOutputStream = null;
+		try {
+			// 1、调用远程服务
+			response = getClient().execute(httpGet);
+
+			// 2、解析远程服务的返回值
+			HttpEntity entity = response.getEntity();
+			inputStream = entity.getContent();
+			File file = new File(dest);
+			file.getParentFile().mkdirs();
+			fileOutputStream = new FileOutputStream(file);
+
+			byte[] buffer = new byte[8192];
+			int len;
+			while ((len = inputStream.read(buffer)) > 0) {
+				fileOutputStream.write(buffer, 0, len);
+			}
+			// 3、记录调用日志
+			HttpclientContext.getContext().addLog("");
+		} catch (Exception e) {
+			try {
+				HttpclientContext.getContext().doRemoteException(e);
+				throw new RemoteServiceException();
+			} catch (Exception e1) {
+				LOG.error("remote error logging Exception", e1);
+			} finally {
+				HttpclientContext.removeContext();
+			}
+		} finally {
+			try {
+				if (null != inputStream) {
+					inputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (null != fileOutputStream) {
+					fileOutputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void downloadByIO(String url, File dest) {
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest));
+				InputStream is = new URL(url).openStream()) {
+			byte[] buffer = new byte[8192];
+			int len;
+			while ((len = is.read(buffer)) > 0) {
+				bos.write(buffer, 0, len);
+			}
+		} catch (Exception e) {
+			LOG.error("failed to download {}", url, e);
+			throw new RemoteServiceException();
+		}
+	}
+	
 
 	/**
 	 * 设置请求上下文

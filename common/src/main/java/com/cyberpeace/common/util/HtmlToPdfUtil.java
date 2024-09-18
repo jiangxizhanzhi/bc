@@ -120,7 +120,9 @@ public class HtmlToPdfUtil {
 			throw new RuntimeException(e);
 		} finally {
 			try {
-				writer.close();
+				if(null != writer){
+					writer.close();
+				}
 			} catch (IOException e) {}
 		}
 

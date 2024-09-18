@@ -16,4 +16,6 @@ public interface ClassroomSceneRecordService extends IService<ClassroomSceneReco
 	Map<String, ScreenRecordRsp> getLastRecordMap(String classroomId, List<String> userIds);
 
 	List<ScreenRecordByNode> listScreenRecord(String classroomId, String userId);
+
+	void downloadRecords(String classroomId, String userId, String baseClassroomPath);
 }

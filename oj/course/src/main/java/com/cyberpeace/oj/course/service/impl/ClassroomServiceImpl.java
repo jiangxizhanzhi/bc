@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.integratation.service.bo.ScreenRecordByNode;
+import com.cyberpeace.oj.course.service.ClassroomSceneRecordService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,6 +164,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private ClassroomSceneRecordService classroomSceneRecordService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -1271,8 +1275,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			pdfFile.renameTo(new File(baseClassroomPath + File.separator + initPersonName + ".pdf"));
 			//删除html文件
 			FileUtil.deleteDir(new File(destHtmlPath));
+			// 录屏文件
+			classroomSceneRecordService.downloadRecords(classroomId, classroomReportBo.getUserId(), baseClassroomPath);
 			File baseClassroomFile = new File(baseClassroomPath);
 			baseClassroomFile.renameTo(new File(htmlPath + File.separator + initPersonName));
+
 		}
 		File zipFile = new File(ZipUtil.toZip(htmlPath));
 		String zipPath = basePath + File.separator + initLessonName + ClassroomExportReportConstant.LABORATORY_REPORT_SUFFIX.getMsg();

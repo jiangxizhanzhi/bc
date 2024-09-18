@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -81,19 +83,8 @@ public class ClassroomSceneRecordServiceImpl extends ServiceImpl<ClassroomSceneR
 
 	@Override
 	public List<ScreenRecordByNode> listScreenRecord(String classroomId, String userId) {
-		if (StringUtils.isBlank(classroomId) || StringUtils.isBlank(userId)) {
-			throw new BusinessException(ErrorCode.BLANK_ID);
-		}
 		List<ScreenRecordByNode> res = Lists.newArrayList();
-		ClassroomSceneRecord record = mapper.selectByRoomAndUser(classroomId, userId);
-		if (null == record) {
-			return res;
-		}
-		List<String> sceneIds = record.getSceneIdList();
-		if (sceneIds.isEmpty()) {
-			return res;
-		}
-		List<ScreenRecordListRsp> rspList = sceneService.listScreenRecord(sceneIds, userId);
+		List<ScreenRecordListRsp> rspList = this.getRspList(classroomId, userId);
 		Map<String, List<ScreenRecordListRsp>> map = StreamApiUtils.groupBy(rspList,
 				ScreenRecordListRsp::getNodeId);
 		for (List<ScreenRecordListRsp> value : map.values()) {
@@ -104,5 +95,31 @@ public class ClassroomSceneRecordServiceImpl extends ServiceImpl<ClassroomSceneR
 			res.add(node);
 		}
 		return res;
+	}
+
+	@Override
+	public void downloadRecords(String classroomId, String userId, String baseClassroomPath) {
+		List<ScreenRecordListRsp> recordList = this.getRspList(classroomId, userId);
+		for (ScreenRecordListRsp rsp : recordList) {
+			String downloadUrl = sceneService.getRecordDownloadUrl(rsp.getFilename());
+			HttpClientUtil.downloadByIO(downloadUrl,
+					new File(baseClassroomPath, rsp.getFilename()));
+		}
+	}
+
+	private List<ScreenRecordListRsp> getRspList(String classroomId, String userId) {
+		if (StringUtils.isBlank(classroomId) || StringUtils.isBlank(userId)) {
+			throw new BusinessException(ErrorCode.BLANK_ID);
+		}
+		List<ScreenRecordListRsp> res = Lists.newArrayList();
+		ClassroomSceneRecord record = mapper.selectByRoomAndUser(classroomId, userId);
+		if (null == record) {
+			return res;
+		}
+		List<String> sceneIds = record.getSceneIdList();
+		if (sceneIds.isEmpty()) {
+			return res;
+		}
+		return sceneService.listScreenRecord(sceneIds, userId);
 	}
 }

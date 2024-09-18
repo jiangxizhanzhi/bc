@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,15 +29,13 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
+import com.cyberpeace.integratation.service.bo.ScreenRecordRsp;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
-import com.cyberpeace.oj.course.service.ClassroomService;
-import com.cyberpeace.oj.course.service.ClassroomSignService;
-import com.cyberpeace.oj.course.service.CourseLessonService;
-import com.cyberpeace.oj.course.service.TrainPlanService;
+import com.cyberpeace.oj.course.service.*;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.course.service.impl.ClassroomValidateHandler;
 
@@ -73,6 +72,9 @@ public class AdminClassroomController {
 	
 	@Autowired
 	private TrainPlanService trainPlanService;
+	
+	@Autowired
+	private ClassroomSceneRecordService classroomSceneRecordService;
 
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
@@ -271,8 +273,16 @@ public class AdminClassroomController {
 		Page page = reportReq.toPageParam();
 		PageReportBo pageReportBo = classroomService
 				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern(), page);
-		return new BaseRsp(
-				PageUtil.getListResult(pageReportBo.getData(), page, pageReportBo.getTotal()));
+
+		ListRsp<ClassroomReportBo> res = PageUtil.getListResult(pageReportBo.getData(), page,
+				pageReportBo.getTotal());
+		List<String> userIds = StreamApiUtils.map(res.getList(), ClassroomReportBo::getUserId);
+		Map<String, ScreenRecordRsp> recordMap = classroomSceneRecordService
+				.getLastRecordMap(reportReq.getClassroomId(), userIds);
+		for (ClassroomReportBo bo : res.getList()) {
+			bo.setScreenRecord(recordMap.get(bo.getUserId()));
+		}
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("课堂学习统计")

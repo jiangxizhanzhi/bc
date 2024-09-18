@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import com.cyberpeace.integratation.service.bo.ScreenRecordRsp;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -55,5 +56,8 @@ public class ClassroomReportBo implements Serializable {
 
 	@ApiModelProperty("是否通过")
 	private Boolean passed;
+
+	@ApiModelProperty(value = "实验视频")
+	private ScreenRecordRsp screenRecord;
 
 }

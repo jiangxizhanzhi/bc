@@ -9,7 +9,7 @@
     </select>
     <select id="selectByRoomAndUsers" resultType="com.cyberpeace.oj.course.dao.entity.ClassroomSceneRecord">
         select *
-        from oj_classroom_last_scene
+        from oj_classroom_scene_record
         where classroom_id = #{classroomId}
         and user_id in
         <foreach collection="userIds" item="userId" open="(" close=")" separator=",">

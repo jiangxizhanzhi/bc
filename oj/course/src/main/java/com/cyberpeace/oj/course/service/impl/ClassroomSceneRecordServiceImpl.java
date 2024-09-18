@@ -50,6 +50,7 @@ public class ClassroomSceneRecordServiceImpl extends ServiceImpl<ClassroomSceneR
 		}
 	}
 
+	@Override
 	public Map<String, ScreenRecordRsp> getLastRecordMap(String classroomId, List<String> userIds) {
 		Map<String, ScreenRecordRsp> res = Maps.newHashMap();
 		if (userIds.isEmpty()) {

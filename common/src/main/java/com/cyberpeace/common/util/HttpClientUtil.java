@@ -281,7 +281,11 @@ public class HttpClientUtil {
 			if (null == baseRsp.getData()) {
 				return null;
 			}
-			return JsonUtil.toJsonObject(baseRsp.getData().toString(), resultType);
+			String data = baseRsp.getData().toString();
+			if (resultType == String.class && !data.startsWith("\"")) {
+				return (T) data;
+			}
+			return JsonUtil.toJsonObject(data, resultType);
 		} catch (RemoteServiceException e) {
 			throw e;
 		} catch (Exception e) {

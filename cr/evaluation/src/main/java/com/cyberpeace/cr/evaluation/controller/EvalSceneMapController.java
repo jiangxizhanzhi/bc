@@ -537,7 +537,7 @@ public class EvalSceneMapController {
 			return new BaseRsp<>(evalSceneMapRsp);
 		}
 	}
-
+  
 	private File convertMultiPartToFile(MultipartFile file) throws IOException {
 		File convFile = new File(file.getOriginalFilename());
 		convFile.createNewFile();
@@ -739,6 +739,81 @@ public class EvalSceneMapController {
 							String subnetMask = physicalPort.getSubnetMask();
 							for (Firewall nextFireWall : nextFirewalls) {
 								List<PhysicalPort> ports = nextFireWall.getPhysicalPorts();
+								for (PhysicalPort port : ports) {
+									String ip2 = port.getIp();
+									String subnetMask2 = port.getSubnetMask();
+									if (NetworkUtils.sameSubnet(ip, ip2, subnetMask, subnetMask2)) {
+										String address = NetworkUtils.calculateNetworkAddress(ip, subnetMask);
+										TopoElement topoElement = elementMap.get(id);
+										TopoElement nextTopoElement = elementMap.get(nextId);
+										if (!exchangeMap.containsKey(address)) {
+											List<TopoElement> devices = new ArrayList<>();
+											devices.add(topoElement);
+											devices.add(nextTopoElement);
+											exchangeMap.put(address, devices);
+										} else {
+											List<TopoElement> elementList = exchangeMap.get(address);
+											if (!elementList.contains(topoElement)) {
+												elementList.add(topoElement);
+											}
+											if (!elementList.contains(nextTopoElement)) {
+												elementList.add(nextTopoElement);
+											}
+											exchangeMap.put(address, elementList);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// 防火墙连路由器
+				if ((routers != null && nextFirewalls != null)) {
+					for (Router router : routers) {
+						List<PhysicalPort> physicalPorts = router.getPhysicalPorts();
+						for (PhysicalPort physicalPort : physicalPorts) {
+							String ip = physicalPort.getIp();
+							String subnetMask = physicalPort.getSubnetMask();
+							for (Firewall nextFireWall : nextFirewalls) {
+								List<PhysicalPort> ports = nextFireWall.getPhysicalPorts();
+								for (PhysicalPort port : ports) {
+									String ip2 = port.getIp();
+									String subnetMask2 = port.getSubnetMask();
+									if (NetworkUtils.sameSubnet(ip, ip2, subnetMask, subnetMask2)) {
+										String address = NetworkUtils.calculateNetworkAddress(ip, subnetMask);
+										TopoElement topoElement = elementMap.get(id);
+										TopoElement nextTopoElement = elementMap.get(nextId);
+										if (!exchangeMap.containsKey(address)) {
+											List<TopoElement> devices = new ArrayList<>();
+											devices.add(topoElement);
+											devices.add(nextTopoElement);
+											exchangeMap.put(address, devices);
+										} else {
+											List<TopoElement> elementList = exchangeMap.get(address);
+											if (!elementList.contains(topoElement)) {
+												elementList.add(topoElement);
+											}
+											if (!elementList.contains(nextTopoElement)) {
+												elementList.add(nextTopoElement);
+											}
+											exchangeMap.put(address, elementList);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				if ((firewalls != null && nextRouters != null)) {
+					for (Firewall fireWall : firewalls) {
+						List<PhysicalPort> physicalPorts = fireWall.getPhysicalPorts();
+						for (PhysicalPort physicalPort : physicalPorts) {
+							String ip = physicalPort.getIp();
+							String subnetMask = physicalPort.getSubnetMask();
+							for (Router nextRouter : nextRouters) {
+								List<PhysicalPort> ports = nextRouter.getPhysicalPorts();
 								for (PhysicalPort port : ports) {
 									String ip2 = port.getIp();
 									String subnetMask2 = port.getSubnetMask();

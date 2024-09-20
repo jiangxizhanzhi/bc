@@ -26,4 +26,7 @@ public class EvaluateResultTheory implements Serializable {
 
 	@ApiModelProperty("资源编号")
 	private String resourceId;
+
+	@ApiModelProperty("正确答案")
+	private String answer;
 }

@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.practice.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -12,8 +14,6 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
-
-import java.util.List;
 
 public interface PracticeTheoryService extends IService<PracticeTheory> {
 
@@ -138,4 +138,5 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	List<SolvedTop5> getSolvedTop5(String resourceId);
 
+	String getAnswer(String resourceId);
 }

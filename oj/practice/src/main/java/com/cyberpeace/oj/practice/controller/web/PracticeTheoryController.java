@@ -167,6 +167,8 @@ public class PracticeTheoryController {
 		} else {
 			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.TRIED.getCode());
 		}
+		String answer = practiceTheoryService.getAnswer(answerReq.getResourceId());
+		evaluateResultTheory.setAnswer(answer);
 		return new BaseRsp<>(evaluateResultTheory);
 	}
 

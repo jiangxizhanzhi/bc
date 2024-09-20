@@ -86,6 +86,7 @@ public class EvalSituationServiceImpl implements EvalSituationService {
 
 	@Override
 	public void pushFlow(String resourceId) {
+		resourceId = resourceId.substring(0, resourceId.length() - 1);
 		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(resourceId);
 		FlowLogsPageContext flowLogsPageContext = new FlowLogsPageContext();
 		flowLogsPageContext.setId(mpSceneId);

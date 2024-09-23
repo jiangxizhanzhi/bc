@@ -131,7 +131,8 @@ public class EvalSituationServiceImpl implements EvalSituationService {
 				msgMap.put("scene", resourceId);
 				msgMap.put("data", JSON.toJSON(rbSituationAttack));
 				JSONObject msgObject = new JSONObject(msgMap);
-				channel.basicPublish(RBSITUATIONEXCHANGE, resourceId, null,
+				channel.queueDeclare(resourceId, true, false, false, null);
+				channel.basicPublish("", resourceId, null,
 						msgObject.toString().getBytes(StandardCharsets.UTF_8));
 				count++;
 				Thread.sleep(900);

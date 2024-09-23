@@ -40,9 +40,10 @@
         where mp_scene_id = #{sceneId}
     </select>
 
-    <select id="selectAll" resultMap="baseResultMap">
+    <select id="selectToDelete" resultMap="baseResultMap">
         select *
         from local_scene
+        where business_code in <foreach collection="businessCodes" separator="," open="(" close=")" item="business_code_id">#{business_code_id}</foreach>
     </select>
     <select id="selectByBusinessInstanceId" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
         select *

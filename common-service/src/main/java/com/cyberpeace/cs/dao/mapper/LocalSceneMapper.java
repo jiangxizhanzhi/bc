@@ -40,7 +40,7 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 
 	LocalScene selectBySceneId(@Param("sceneId") String sceneId);
 
-	List<LocalScene> selectAll();
+	List<LocalScene> selectToDelete(@Param("businessCodes") List<Integer> businessCodes);
 
 	/**
 	 * 查询通过业务实例id

@@ -14,6 +14,7 @@ import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -51,8 +52,14 @@ public class SyncMpSceneJob {
 	@Scheduled(initialDelay = 1000, fixedRate = 300000)
 	public void syncMpSceneClose() {
 		log.info("syncMpSceneClose start");
+		// 只有课程、练习、课程表等类型场景存在自动关闭场景,需要清理数据
+		List<Integer> businessCodes = Lists.newArrayList();
+		businessCodes.add(BusinessCode.LESSON.getCode());
+		businessCodes.add(BusinessCode.PRACTICE.getCode());
+		businessCodes.add(BusinessCode.CLASSROOM.getCode());
+		businessCodes.add(BusinessCode.LESSON_PRACTICE.getCode());
 
-		List<LocalScene> localScenes = localSceneMapper.selectAll();
+		List<LocalScene> localScenes = localSceneMapper.selectToDelete(businessCodes);
 		for (LocalScene localScene : localScenes) {
 			log.info("exec {} local_scene sync mp scene close status, local_scene_id=[{}]",
 					localScene.getSceneName(), localScene.getResourceId());
@@ -70,7 +77,7 @@ public class SyncMpSceneJob {
 
 	private void syncMpSceneClose(LocalScene localScene) {
 		if (StringUtils.isBlank(localScene.getMpSceneId())) {
-			log.info("mp_scene_id is null, continue....");
+			log.info("mp_scene_id is null, continue, local_scene id is [{}]", localScene.getResourceId());
 			return;
 		}
 

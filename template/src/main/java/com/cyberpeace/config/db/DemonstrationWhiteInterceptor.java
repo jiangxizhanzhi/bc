@@ -6,12 +6,10 @@ import com.cyberpeace.common.threadlocal.ThreadLocalContext;
 import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.situation.constant.SituationErrorCode;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Properties;
 
@@ -31,6 +29,12 @@ public class DemonstrationWhiteInterceptor implements Interceptor {
 		SqlCommandType sqlCommandType = statement.getSqlCommandType();
 		RemoteUserService remoteUserService= SpringContextUtil
 				.getBeanByClass(RemoteUserService.class);
+
+		// 定时任务都允许修改
+		if (Boolean.TRUE.equals(ThreadLocalContext.whiteUpdateJobThreadLocal.get())) {
+			return invocation.proceed();
+		}
+
 		demoOpen= remoteUserService.isDemoOpen();
 		if ((Boolean.TRUE.equals(demoOpen)||"open".equals(demo))
 				&& Boolean.FALSE.equals(ThreadLocalContext.whiteUpdateThreadLocal.get())

@@ -2,6 +2,7 @@ package com.cyberpeace.job;
 
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.MathUtils;
+import com.cyberpeace.common.threadlocal.ThreadLocalContext;
 import com.cyberpeace.cs.service.SystemUseStatusService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -34,23 +35,28 @@ public class SystemUseStatusJob {
 
 	@Scheduled(fixedRate =  5 * 60 * 1000)
 	public void insertSystemUseStatus() {
-		log.info("system use status start----------");
+		log.info("insertSystemUseStatus system use status start----------");
 		String diskCmd = "df -h /";
 		String memoryCmd = "cat /proc/meminfo";
 		String cpuCmd = " top -b -n 1";
 		if (insertSystemUseStatus) {
-			List<String> cpuInfo = execShell(cpuCmd);
-			log.info("cpuInfo:{}", cpuInfo.get(2));
-			List<String> disk = execShell(diskCmd);
-			log.info("disk:{}", disk);
-			List<String> ram = execShell(memoryCmd);
-			log.info("ram:{}", ram);
-			double cpu = getCpuUsage(cpuInfo);
-			double unixDickUsage = getUnixDiskUsage(disk);
-			double memoryUsage = getMemoryUsage(ram);
-			systemUseStatusService.insert(String.valueOf(cpu), String.valueOf(memoryUsage), String.valueOf(unixDickUsage));
-			log.info("system use status end--------");
+			try {
+				ThreadLocalContext.whiteUpdateJobThreadLocal.set(true);
+				List<String> cpuInfo = execShell(cpuCmd);
+				log.info("cpuInfo:{}", cpuInfo.get(2));
+				List<String> disk = execShell(diskCmd);
+				log.info("disk:{}", disk);
+				List<String> ram = execShell(memoryCmd);
+				log.info("ram:{}", ram);
+				double cpu = getCpuUsage(cpuInfo);
+				double unixDickUsage = getUnixDiskUsage(disk);
+				double memoryUsage = getMemoryUsage(ram);
+				systemUseStatusService.insert(String.valueOf(cpu), String.valueOf(memoryUsage), String.valueOf(unixDickUsage));
+			}finally {
+				ThreadLocalContext.whiteUpdateJobThreadLocal.remove();
+			}
 		}
+		log.info("insertSystemUseStatus system use status end--------");
 	}
 
 	/**

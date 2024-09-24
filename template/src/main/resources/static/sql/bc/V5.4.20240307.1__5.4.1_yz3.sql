@@ -137,6 +137,10 @@ CREATE TABLE `cr_eval_rule_template` (
                                          `step_ids` text DEFAULT NULL COMMENT '关联步骤id',
                                          `create_user_id` varchar(32) DEFAULT NULL COMMENT '创建者id',
                                          `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                         `alarm_attributes` varchar(2048) DEFAULT NULL COMMENT '自定义规则',
+                                         `alarm_description` varchar(2048) DEFAULT NULL COMMENT '告警描述',
+                                         `alarm_level` tinyint(2) NULL DEFAULT NULL COMMENT '告警事件级别',
+                                         `alarm_name` varchar(255) DEFAULT NULL COMMENT '事件名称',
                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='云场景模板规则表';

@@ -764,7 +764,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		lesson.setResourceId(IDGeneratorUtil.getID());
 		// 复制可见和视频
 		lesson.setVideoUrl(copyAttachment(lesson.getVideoUrl()));
-		lesson.setHandoutUrl(copyAttachment(lesson.getHandoutUrl()));
+		if (CourseLesson.HandoutType.hasFileUrl(lesson.getHandoutType())){
+			lesson.setHandoutUrl(copyAttachment(lesson.getHandoutUrl()));
+		}
 	}
 
 	@Override
@@ -1211,8 +1213,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			return uri;
 		}
 		if (!uri.startsWith(prefix)) {
-			uri = uri + prefix;
+			uri = prefix + uri;
 		}
+		// 修正双斜杠路径 /cpms/oj/course/FGU3IVWFZF/handout//b802b147e2b24360be74509c0ded8824.pdf
+		uri = uri.replace("//", "/");
 		String destFile = "";
 		try {
 			String folder = uri.substring(0, uri.lastIndexOf(File.separatorChar) + 1);

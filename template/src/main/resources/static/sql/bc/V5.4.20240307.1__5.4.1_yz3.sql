@@ -313,3 +313,12 @@ CREATE TABLE `cr_eval_alarm_condition`  (
                                             `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
                                             PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 130 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '评估报警条件表' ROW_FORMAT = Dynamic;
+
+ALTER TABLE
+    `cr_eval_action_template` ADD COLUMN `attributes` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '自定义规则' AFTER `description`;
+
+ALTER TABLE
+    `cr_eval_dimension_template` MODIFY COLUMN `rule_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '关联的规则id' AFTER `rule_parameter`;
+
+ALTER TABLE
+    `cr_eval_host_template` MODIFY COLUMN `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '类型' AFTER `host_id`;

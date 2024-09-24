@@ -115,6 +115,12 @@ public class CourseLesson extends BaseTable {
 			return officeTypeList.contains(handoutType);
 		}
 
+		public static Boolean hasFileUrl(Integer handoutType) {
+			List<Integer> officeTypeList = Lists.newArrayList(HandoutType.DOC.getCode(),
+					HandoutType.PPT.getCode(), HandoutType.XLS.getCode(), HandoutType.PDF.getCode());
+			return officeTypeList.contains(handoutType);
+		}
+
 	}
 
 	public enum LessonType implements GenericEnum {

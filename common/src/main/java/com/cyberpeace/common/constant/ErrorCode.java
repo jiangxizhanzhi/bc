@@ -193,5 +193,9 @@ public final class ErrorCode {
 
 	public static final String FAILED_TO_GET_HTML_TEMPLATE_INSTANCE = "100061";
 
+	public static final String INVALID_FILE_NAME = "100063";
+
+	public static final String INVALID_IMAGES = "100065";
+
 	private ErrorCode() {}
 }

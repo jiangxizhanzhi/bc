@@ -283,4 +283,8 @@ public interface RemoteSceneService {
 	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);
 
 	Boolean saveAlertRule(JSONArray data);
+
+	List<ImagesByIdVO> getImageList();
+
+	List<ImagesByIdVO> getImageListByuuids(List<String> uuids);
 }

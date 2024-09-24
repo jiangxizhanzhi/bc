@@ -1,17 +1,20 @@
 package com.cyberpeace.common.util;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.SceneMapFileList;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -707,5 +710,70 @@ public class FileUtil {
 		for (String child : children) {
 			createPath(new File(parentPath, child));
 		}
+	}
+
+	/**
+	 * 解压缩ZIP文件
+	 * @param zipFile ZIP文件
+	 * @param destDir 目标路径
+	 */
+	public static Map<String, String> zipDecompress(MultipartFile zipFile, File destDir) throws IOException {
+		byte[] buffer = new byte[1024];
+		File files = new File("path.zip");
+		Map<String, String> fileMap = new HashMap<>();
+		FileUtils.copyInputStreamToFile(zipFile.getInputStream(), files);
+		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(files))) {
+			ZipEntry entry = zis.getNextEntry();
+			while (entry != null) {
+				File file = new File(destDir, entry.getName());
+				if(!fileListContains(file.getName())){
+					break;
+//					throw new BusinessException(ErrorCode.INVALID_FILE_NAME, file.getName());
+				}
+				if (entry.isDirectory()) {
+					file.mkdirs();
+				} else {
+					File parent = file.getParentFile();
+					if (!parent.exists()) {
+						parent.mkdirs();
+					}
+					try (FileOutputStream fos = new FileOutputStream(file)) {
+						int len;
+						while ((len = zis.read(buffer)) > 0) {
+							fos.write(buffer, 0, len);
+						}
+					}
+				}
+				if(file.getName().equals("image_map.json")){
+					fileMap.put("image", file.getAbsolutePath());
+				} else if(file.getName().equals("topolopy.json") || file.getName().equals("topology.json")){
+					fileMap.put("topo", file.getAbsolutePath());
+				} else if(file.getName().equals("server_data.json")){
+					fileMap.put("server", file.getAbsolutePath());
+				}
+				entry = zis.getNextEntry();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fileMap;
+	}
+
+	public static Boolean fileListContains(String file){
+		Field[] declaredFields = SceneMapFileList.class.getDeclaredFields();
+		try{
+
+			for(Field field:declaredFields){
+				if(Modifier.isStatic(field.getModifiers())){
+					if(field.get(null).equals(file)){
+						return true;
+					}
+
+				}
+			}
+		} catch (IllegalAccessException | IllegalArgumentException e){
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

@@ -698,17 +698,16 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		LambdaQueryWrapper<PracticeTheoryRef> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.in(PracticeTheoryRef::getPaperId, paperIds);
 		List<PracticeTheoryRef> refs = practiceTheoryRefMapper.selectList(queryWrapper);
-		Map<String, List<PracticeTheoryRef>> paperRefsMap = new HashMap<>();
-		for (PracticeTheoryRef ref : refs) {
-			if (!paperRefsMap.containsKey(ref.getPaperId())) {
-				paperRefsMap.put(ref.getPaperId(), new ArrayList<>());
-			}
-			paperRefsMap.get(ref.getPaperId()).add(ref);
-		}
+
+		LambdaQueryWrapper<PracticeOperationRef> queryWrapperOperation = new LambdaQueryWrapper<>();
+		queryWrapper.in(PracticeOperationRef::getPaperId, paperIds);
+		List<PracticeOperationRef> refsOperations = practiceOperationRefMapper.selectList(queryWrapperOperation);
+
 
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		List<Paper> addPapers = new ArrayList<>();
 		List<PracticeTheoryRef> addRefs = new ArrayList<>();
+		List<PracticeOperationRef> addRefsOperations = new ArrayList<>();
 		for (CourseLesson courseLesson : courseLessons) {
 			// 课时数据校验
 			courseValidateHandler.validateLessonNameExist(courseId, courseLesson.getName());
@@ -719,13 +718,22 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			paper.setResourceId(IDGeneratorUtil.getID());
 			addPapers.add(paper);
 
-			List<PracticeTheoryRef> dbRefs = paperRefsMap.getOrDefault(courseLesson.getPaperId(),new ArrayList<>());
+			List<PracticeTheoryRef> dbRefs = refs.stream().filter(ref -> ref.getPaperId().equals(courseLesson.getPaperId())).collect(Collectors.toList());
 			for (PracticeTheoryRef f : dbRefs) {
 				f.setId(null);
 				f.setPaperId(paper.getResourceId());
 				f.setResourceId(IDGeneratorUtil.getID());
 			}
 			addRefs.addAll(dbRefs);
+
+			List<PracticeOperationRef> dbRefsOperation = refsOperations.stream().filter(ref -> ref.getPaperId().equals(courseLesson.getPaperId())).collect(Collectors.toList());
+			for (PracticeOperationRef fo : dbRefsOperation) {
+				fo.setId(null);
+				fo.setPaperId(paper.getResourceId());
+				fo.setResourceId(IDGeneratorUtil.getID());
+			}
+			addRefsOperations.addAll(dbRefsOperation);
+
 
 			// 重新初始化课时
 			reinitLesson(courseLesson, course.getResourceId());
@@ -743,6 +751,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			lessonConfigService.saveBatch(lessonConfigs);
 			paperService.saveBatch(addPapers);
 			practiceTheoryRefService.saveBatch(addRefs);
+			practiceOperationRefService.saveBatch(addRefsOperations);
 			return saveBatch(courseLessons);
 		});
 
@@ -766,6 +775,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		lesson.setVideoUrl(copyAttachment(lesson.getVideoUrl()));
 		if (CourseLesson.HandoutType.hasFileUrl(lesson.getHandoutType())){
 			lesson.setHandoutUrl(copyAttachment(lesson.getHandoutUrl()));
+		}
+		// 复制拓扑
+		if (StringUtils.isNotBlank(lesson.getTopoId())){
+			lesson.setTopoId(localSceneService.copyTopo(lesson.getTopoId(), lesson.getName()));
 		}
 	}
 

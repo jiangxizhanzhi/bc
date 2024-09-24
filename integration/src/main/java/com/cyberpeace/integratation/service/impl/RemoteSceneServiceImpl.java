@@ -333,7 +333,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		JSONObject body = new JSONObject();
 		body.put("button", bool);
 		body.put("ids", mpSceneIds);
-		HttpClientUtil.post(SCENE_SWITCH_RECORDING, body, JSONObject.class);
+		HttpClientUtil.post(SCENE_SWITCH_RECORDING, body, Boolean.class);
 	}
 
 	@Override

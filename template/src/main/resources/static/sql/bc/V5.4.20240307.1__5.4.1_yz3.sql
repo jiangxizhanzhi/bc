@@ -291,3 +291,25 @@ alter table cr_team_room
     add return_data_topology varchar(1024) collate utf8mb4_general_ci null comment '拓扑同步共性平台返回data';
 alter table cr_team_room
     add return_info_topology varchar(255) collate utf8mb4_general_ci null comment '拓扑同步共性平台返回info';
+
+-- ----------------------------
+-- Table structure for cr_eval_alarm_condition
+-- ----------------------------
+DROP TABLE IF EXISTS `cr_eval_alarm_condition`;
+CREATE TABLE `cr_eval_alarm_condition`  (
+                                            `id` int(11) NOT NULL AUTO_INCREMENT,
+                                            `resource_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'uuid',
+                                            `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '报警条件的类型',
+                                            `aggregation_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '聚合类型',
+                                            `aggregation_type_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '聚合类型名称',
+                                            `operator` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '运算符',
+                                            `operator_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '运算符名称',
+                                            `threshold` double NULL DEFAULT NULL COMMENT '阈值',
+                                            `alarm_condition` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '搜索条件',
+                                            `frequency` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '频率',
+                                            `rule_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '规则id',
+                                            `cloud_template_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '云模板id',
+                                            `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+                                            `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+                                            PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 130 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '评估报警条件表' ROW_FORMAT = Dynamic;

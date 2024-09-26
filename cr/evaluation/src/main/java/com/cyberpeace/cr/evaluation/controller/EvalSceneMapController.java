@@ -196,16 +196,18 @@ public class EvalSceneMapController {
 				object.put("access_modes", gateway);
 
 
-			} else if(null != extVm.getAccessProtocols()){
+			} else if(extVm != null && null != extVm.getAccessProtocols()){
 				item.put("access_modes", extVm.getAccessProtocols());
 				object.put("access_modes", extVm.getAccessProtocols());
 
-			} else if(null != extDocker.getAccessProtocols()){
+			} else if(extDocker != null && null != extDocker.getAccessProtocols()){
 				item.put("access_modes", extDocker.getAccessProtocols());
 				object.put("access_modes", extDocker.getAccessProtocols());
 
 			}
-			item.put("connect_mode", (imagesByIdVO.getRole() == 1 || imagesByIdVO.getRole() == 2) && !"simple".equals(imagesByIdVO.getImageType()) ? "simple":null);
+			if (imagesByIdVO != null && imagesByIdVO.getRole() != null) {
+				item.put("connect_mode", (imagesByIdVO.getRole() == 1 || imagesByIdVO.getRole() == 2) && !"simple".equals(imagesByIdVO.getImageType()) ? "simple":null);
+			}
 			item.put("firewall_rules", null);
 			item.put("logic_network_id", "");
 			item.put("resource_id", "");
@@ -439,13 +441,20 @@ public class EvalSceneMapController {
 		String logo = imagesPageVO.getLogo();
 		topoElement.setType(imagesPageVO.getRole());
 		topoElement.setIcon2(logo);
-		topoElement.setSystemLanguage(imagesPageVO.getExtSystemInfo().getLanguage());
-		topoElement.setSystemArchitecture(imagesPageVO.getExtSystemInfo().getSystemArchitecture());
-		topoElement.setSystemType(imagesPageVO.getExtSystemInfo().getSystemType());
-		topoElement.setMaxPortNumber(imagesPageVO.getRole() == 4 || imagesPageVO.getRole() == 7 ? 1:0);
-		topoElement.setCpu(imagesPageVO.getExtVm().getCpu());
-		topoElement.setDisk(imagesPageVO.getExtVm().getDisk());
-		topoElement.setRam(imagesPageVO.getExtVm().getRam());
+		if (imagesPageVO != null && imagesPageVO.getExtSystemInfo() != null) {
+			topoElement.setSystemLanguage(imagesPageVO.getExtSystemInfo().getLanguage());
+			topoElement.setSystemArchitecture(imagesPageVO.getExtSystemInfo().getSystemArchitecture());
+			topoElement.setSystemType(imagesPageVO.getExtSystemInfo().getSystemType());
+		}
+		if (imagesPageVO != null && imagesPageVO.getRole() != null) {
+			topoElement.setMaxPortNumber(imagesPageVO.getRole() == 4 || imagesPageVO.getRole() == 7 ? 1:0);
+		}
+		if (imagesPageVO != null && imagesPageVO.getExtVm() != null) {
+			topoElement.setCpu(imagesPageVO.getExtVm().getCpu());
+			topoElement.setDisk(imagesPageVO.getExtVm().getDisk());
+			topoElement.setRam(imagesPageVO.getExtVm().getRam());
+		}
+
 		// 实装设备特有逻辑 ext_entity..  当前导入的镜像设备 不涉及
 		// TODO 网络设备获取port—ips
 		// imagesPageVO.getExtGateway().getPortConfigs().get()
@@ -471,15 +480,15 @@ public class EvalSceneMapController {
 
 		elementObj.setElectricPortNumber("simple".equals(imagesPageVO.getImageType()) ? 4 : 0);
 
-		elementObj.setInitSupport(null != imagesPageVO.getExtVm().getInitSupport() ?
-				imagesPageVO.getExtVm().getInitSupport() : imagesPageVO.getExtDocker().getInitSupport());
+		if (imagesPageVO != null && imagesPageVO.getExtVm() != null && imagesPageVO.getExtVm().getInitSupport()) {
+			elementObj.setInitSupport(null != imagesPageVO.getExtVm().getInitSupport() ?
+					imagesPageVO.getExtVm().getInitSupport() : imagesPageVO.getExtDocker().getInitSupport());
+		}
 
 		elementObj.setCategory(imagesPageVO.getCategory());
 		elementObj.setCategory2(imagesPageVO.getSecondCategory());
 		elementObj.setCategory3(imagesPageVO.getThirdCategory());
 
-		elementObj.setCidr(imagesPageVO.getRole() == 1 ? "192.168.1.10/24" : "");
-		elementObj.setGateway(imagesPageVO.getRole() == 1 ? "192.168.1.254" : "");
 		JSONArray dns = new JSONArray();
 		JSONObject obj1 = new JSONObject();
 		obj1.put("dns", "8.8.8.8");
@@ -487,7 +496,11 @@ public class EvalSceneMapController {
 		JSONObject obj2 = new JSONObject();
 		obj2.put("dns", "114.114.114.114");
 		dns.add(obj2);
-		elementObj.setDnsNameservers(imagesPageVO.getRole() == 1 ? dns : new JSONArray());
+		if (imagesPageVO != null && imagesPageVO.getRole() != null) {
+			elementObj.setCidr(imagesPageVO.getRole() == 1 ? "192.168.1.10/24" : "");
+			elementObj.setGateway(imagesPageVO.getRole() == 1 ? "192.168.1.254" : "");
+			elementObj.setDnsNameservers(imagesPageVO.getRole() == 1 ? dns : new JSONArray());
+		}
 
 		elementObj.setVlanId(null);
 		if(null == imagesPageVO.getExtGateway() || null == imagesPageVO.getExtGateway().getPortConfigs()){

@@ -113,6 +113,10 @@ public class LessonInfoBo implements Serializable {
 	@ApiModelProperty("是否提交了实验报告")
 	private Boolean reportSubmitted;
 
+	@ApiModelProperty("指导")
+	private String guidance;
+
+
 	/**
 	 * 设置上节和下节课程编号
 	 * @param sortList

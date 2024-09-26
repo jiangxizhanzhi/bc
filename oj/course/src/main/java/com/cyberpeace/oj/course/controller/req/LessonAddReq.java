@@ -72,6 +72,9 @@ public class LessonAddReq implements Serializable {
 	@ApiModelProperty("是否连续")
 	private Boolean continuous;
 
+	@ApiModelProperty("指导")
+	private String guidance;
+
 
 	public void setAttachment_ids(String attachmentIds) {
 		this.attachmentIds = attachmentIds;

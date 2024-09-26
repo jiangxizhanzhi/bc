@@ -77,5 +77,6 @@ public class AdminLessonBo implements Serializable {
 	@ApiModelProperty("是否连续")
 	private Boolean continuous;
 
-
+	@ApiModelProperty("指导")
+	private String guidance;
 }

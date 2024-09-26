@@ -92,6 +92,8 @@ public class CourseLesson extends BaseTable {
 	@ApiModelProperty("是否共享")
 	private Boolean shared;
 
+	private String guidance;
+
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;
 

@@ -503,7 +503,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					commentMapper.updateComment(comment);
 				}
 				courseLessonMapper.updateById(courseLesson);
-
+				// 理论改实验
+				if (CourseLesson.LessonType.THEORY.getCode().equals(lessonExist.getType())
+						&& CourseLesson.LessonType.EXPERIMENT.getCode()
+								.equals(courseLesson.getType())) {
+					sharedRepositoryService.add2My(courseLesson.getResourceId());
+				}
 			}
 		});
 

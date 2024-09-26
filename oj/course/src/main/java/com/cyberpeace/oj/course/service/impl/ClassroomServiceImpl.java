@@ -647,7 +647,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 仅统计签到过的用户
 		if (signUsers.size() != 0) {
 			NoteListQuery listQuery = NoteListQuery.builder()
-					.noteType(Note.NoteType.REPORT.getCode())
+					.noteType(Note.NoteType.CLASS_REPORT.getCode())
 					.businessId(courseLesson.getResourceId())
 					.businessType(Note.NoteResourceType.LESSON.getCode()).userIds(signUsers)
 					.build();

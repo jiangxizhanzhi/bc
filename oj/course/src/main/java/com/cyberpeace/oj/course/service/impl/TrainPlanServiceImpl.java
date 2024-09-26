@@ -232,6 +232,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 			bo.setName(info.getName());
 			bo.setOrgId(info.getOrganizationId());
 			bo.setOrgName(info.getOrgName());
+			bo.setUsername(info.getUserName());
 			List<Note> reportList = userNoteMap.getOrDefault(info.getUserId(),
 					Lists.newArrayList());
 			int finishedExp = reportList.size();

@@ -12,6 +12,9 @@ public class PlanProgressBo {
 	@ApiModelProperty(value = "姓名")
 	private String name;
 
+	@ApiModelProperty(value = "学号")
+	private String username;
+
 	@ApiModelProperty(value = "组织id")
 	private String orgId;
 

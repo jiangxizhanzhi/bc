@@ -88,10 +88,16 @@ public class EvalSceneMapController {
 		Map<String, Element> elementMap = topo.getElementMap();
 		List<String> images = elementMap.values().stream().filter(element -> element.getImage() != null).
 				map(element -> imagesMap.get(element.getImage())).distinct().collect(Collectors.toList());
-		if(images.isEmpty()){
+		List<String> ids = new ArrayList<>();
+		for (String uuid : images) {
+			if (uuid != null && StringUtils.isNotEmpty(uuid)) {
+				ids.add(uuid);
+			}
+		}
+		if(ids.isEmpty()){
 			throw new BusinessException(ErrorCode.INVALID_IMAGES);
 		}
-		List<ImagesByIdVO> imageListByuuids = remoteSceneService.getImageListByuuids(images);
+		List<ImagesByIdVO> imageListByuuids = remoteSceneService.getImageListByuuids(ids);
 		Map<String, ImagesByIdVO> imagesByIdVOMap = StreamApiUtils.toMap(imageListByuuids, ImagesByIdVO::getName, s -> s);
 
 		// 3、遍历解析出的节点列表 将节点对应的镜像信息填充后返回前端

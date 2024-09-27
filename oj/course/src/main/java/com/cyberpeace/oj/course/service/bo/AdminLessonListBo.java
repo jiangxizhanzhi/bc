@@ -78,4 +78,7 @@ public class AdminLessonListBo implements Serializable {
 
 	@ApiModelProperty("是否共享")
 	private Boolean shared;
+
+	@ApiModelProperty("指导")
+	private String guidance;
 }

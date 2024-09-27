@@ -193,6 +193,9 @@ public class SharedRepositoryServiceImpl implements SharedRepositoryService {
 			myRepository = this.initMy(UserInfoContext.getUserContext().getUserId());
 		}
 		List<String> myIds = JsonUtil.toJsonObjectArray(myRepository.getMy(), String.class);
+		if (myIds.isEmpty()) {
+			return Lists.newArrayList();
+		}
 		List<AdminLessonListBo> unsorted = courseLessonMapper.selectByIds(myIds);
 		List<AdminLessonListBo> res = this.sortById(unsorted, myIds);
 		return res;

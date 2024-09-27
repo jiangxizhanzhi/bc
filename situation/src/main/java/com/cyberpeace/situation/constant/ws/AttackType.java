@@ -48,7 +48,11 @@ public enum AttackType {
 	HORIZONTAL_MOVEMENT_OF_KERNEL_VULNERABILITIES(ActionType.LATERAL_MOVEMENT,"内核漏洞横向移动","Horizontal Movement Of Kernel Vulnerabilities","horizontal-movement-of-kernel-vulnerabilities", false, true, false, "Exp", "发现内网审计系统存在log4j漏洞，漏洞利用拿到系统权限，发现服务以容器的形式启动，尝试脏牛提权后成功逃逸，拿到宿主机的root权限。", "CVE-2021-44228+脏牛提权，Apache Log4j远程代码执行漏洞"),
 	OPERATION_FAILURE_OF_INDUSTRIAL_CONTROL_EQUIPMENT(ActionType.SUCCESS_ATTACK, "工控设备运转故障", "Operation Failure Of Industrial Control Equipment","operation-failure-of-industrial-control-equipment", false, false, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
 	POWER_SYSTEM_INTERRUPTION(ActionType.SUCCESS_ATTACK, "电力系统中断", "Power System Interruption", "power-system-interruption", false, false, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
-	LOGISTICS_AND_TRANSPORTATION_NETWORK_IS_PARALYZED(ActionType.SUCCESS_ATTACK, "物流运输网络瘫痪", "Logistics And Transportation Network Is Paralyzed", "logistics-and-transportation-network-is-paralyzed", false, false, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击");
+	LOGISTICS_AND_TRANSPORTATION_NETWORK_IS_PARALYZED(ActionType.SUCCESS_ATTACK, "物流运输网络瘫痪", "Logistics And Transportation Network Is Paralyzed", "logistics-and-transportation-network-is-paralyzed", false, false, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
+	INTRUSION_PREVENTION(ActionType.SUCCESS_ATTACK, "入侵防御", "Intrusion Prevention", "intrusion-prevention", false, false, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
+	DATA_EAVESDROPPING(ActionType.SUCCESS_ATTACK, "数据窃听", "Data eavesdropping", "data-eavesdropping", false, false, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
+	VIRUS_IMPLANTATION(ActionType.SUCCESS_ATTACK, "病毒植入", "Virus implantation", "virus-implantation", false, false, true, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击"),
+	VULNERABILITY_EXPLOITATION(ActionType.SUCCESS_ATTACK, "漏洞利用", "Vulnerability exploitation", "vulnerability-exploitation", false, true, false, "LOIC", "大量数据包会使网络出现瘫痪，导致网站服务、api、应用程序等无法访问。", "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击");
 
     @Getter
 	private ActionType actionType;

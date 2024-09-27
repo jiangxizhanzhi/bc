@@ -47,7 +47,11 @@ public enum DefenseType {
 	NETWORK_FORENSICS(DefenseActionType.SECURITY_FORENSICS, "网络取证","Network Forensics","network-forensics", "Tcpdump", "抓包分析内网流量，抓取、记录和分析网络事件，发现攻击源头。"),
 	DATABASE_FORENSICS(DefenseActionType.SECURITY_FORENSICS, "数据库取证","Database Forensics","database-forensics", "SQL Extractor", "分析数据库是否被篡改并及时恢复"),
 	EMAIL_FORENSICS(DefenseActionType.SECURITY_FORENSICS, "电子邮件取证","Email Forensics","email-forensics", "Foxmail", "对发件人、收件人身份进行审查，确认邮件准确的手法时间"),
-	MALWARE_FORENSICS(DefenseActionType.SECURITY_FORENSICS, "恶意软件取证","Malware Forensics","malware-forensics", "IDA Pro", "病毒样本分析和溯源");
+	MALWARE_FORENSICS(DefenseActionType.SECURITY_FORENSICS, "恶意软件取证","Malware Forensics","malware-forensics", "IDA Pro", "病毒样本分析和溯源"),
+	INTRUSION_PREVENTION(DefenseActionType.SECURITY_FORENSICS, "入侵防御","Intrusion Prevention","intrusion-prevention", "IDA Pro", "病毒样本分析和溯源"),
+	DATA_EAVESDROPPING(DefenseActionType.SECURITY_FORENSICS, "数据窃听","Data eavesdropping","data-eavesdropping", "IDA Pro", "病毒样本分析和溯源"),
+	VIRUS_IMPLANTATION(DefenseActionType.SECURITY_FORENSICS, "病毒植入","Virus implantation","virus-implantation", "IDA Pro", "病毒样本分析和溯源"),
+	VULNERABILITY_EXPLOITATION(DefenseActionType.SECURITY_FORENSICS, "漏洞利用","Vulnerability exploitation","malware-forensics", "vulnerability-exploitation", "病毒样本分析和溯源");
 
 	@Getter
 	private DefenseActionType defenseActionType;

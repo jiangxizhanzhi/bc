@@ -1,10 +1,13 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepTemplateAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepTemplateModifyReq;
+import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalStepTemplateListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalStepTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepTemplateMapper;
@@ -27,8 +30,12 @@ public class EvalStepTemplateServiceImpl extends ServiceImpl<EvalStepTemplateMap
 
 	@Override
 	public String addStep(EvalStepTemplateAddReq evalStepTemplateAddReq) {
+		List<LoadSetReq> loadList = evalStepTemplateAddReq.getSet();
+		if (loadList.stream().map(LoadSetReq::getLoadId).distinct().count() != loadList.size()) {
+			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_LOAD);
+		}
 		EvalStepTemplate evalStepTemplate = BeanUtils.copy(evalStepTemplateAddReq, EvalStepTemplate.class);
-		evalStepTemplate.setSettingList(evalStepTemplateAddReq.getSet());
+		evalStepTemplate.setSettingList(loadList);
 		evalStepTemplateMapper.insert(evalStepTemplate);
 		return evalStepTemplate.getResourceId();
 	}
@@ -40,9 +47,13 @@ public class EvalStepTemplateServiceImpl extends ServiceImpl<EvalStepTemplateMap
 
 	@Override
 	public void modifyStep(EvalStepTemplateModifyReq evalStepTemplateModifyReq) {
+		List<LoadSetReq> loadList = evalStepTemplateModifyReq.getSet();
+		if (loadList.stream().map(LoadSetReq::getLoadId).distinct().count() != loadList.size()) {
+			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_LOAD);
+		}
 		EvalStepTemplate evalStepTemplate = BeanUtils.copy(evalStepTemplateModifyReq, EvalStepTemplate.class);
 		evalStepTemplate.setResourceId(evalStepTemplateModifyReq.getStepId());
-		evalStepTemplate.setSettingList(evalStepTemplateModifyReq.getSet());
+		evalStepTemplate.setSettingList(loadList);
 		evalStepTemplateMapper.updateById(evalStepTemplate);
 	}
 

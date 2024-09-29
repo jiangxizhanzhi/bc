@@ -525,5 +525,10 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String TEST_NAME_REPEAT = "101150";
 
+	/**
+	 * 当前阶段内存在重复载荷
+	 */
+	public static final String DUPLICATED_LOAD = "101151";
+
 	private CrBusinessErrorCode() {}
 }

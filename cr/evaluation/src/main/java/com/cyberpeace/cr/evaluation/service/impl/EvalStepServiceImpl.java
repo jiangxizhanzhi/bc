@@ -3,8 +3,10 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
@@ -87,9 +89,15 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			stepListRsp.setProcess(evalStep.getProcess());
 			stepListRsp.setStage(evalStep.getStage());
 
+			Map<String, String> loadCmdMap = evalStep.getLoadList().stream().collect(Collectors.toMap(LoadSetReq::getLoadId, LoadSetReq::getCommandSet));
 			List<String> loadIds = evalStep.getLoadList().stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
 			if (CollectionUtils.isNotEmpty(loadIds)) {
-				stepListRsp.setLoadList(remoteLoadService.getLoadByIds(loadIds));
+				JSONArray loadList = remoteLoadService.getLoadByIds(loadIds);
+				for (Object o : loadList) {
+					JSONObject load = (JSONObject) o;
+					load.put("cmd", loadCmdMap.getOrDefault(load.getString("id"), load.getString("default_cmd")));
+				}
+				stepListRsp.setLoadList(loadList);
 			} else {
 				stepListRsp.setLoadList(new JSONArray());
 			}
@@ -131,7 +139,13 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			}
 
 			List<String> loadIds = step.getLoadList().stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
-			evalTestStepListRsp.setLoadList(remoteLoadService.getLoadByIds(loadIds));
+			Map<String, String> loadCmdMap = step.getLoadList().stream().collect(Collectors.toMap(LoadSetReq::getLoadId, LoadSetReq::getCommandSet));
+			JSONArray loadList = remoteLoadService.getLoadByIds(loadIds);
+			for (Object o : loadList) {
+				JSONObject load = (JSONObject) o;
+				load.put("cmd", loadCmdMap.getOrDefault(load.getString("id"), load.getString("default_cmd")));
+			}
+			evalTestStepListRsp.setLoadList(loadList);
 			evalTestStepListRspList.add(evalTestStepListRsp);
 		}
 		Collections.sort(evalTestStepListRspList, Comparator.comparing(EvalTestStepListRsp::getStage));
@@ -157,13 +171,13 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 	@Override
 	public void deleteLoad(EvalStepLoadDeleteReq deleteReq) {
 		String stepId = deleteReq.getStepId();
-		EvalInstanceStep evalInstanceStep = evalInstanceStepMapper.selectByStepId(stepId);
+		EvalInstanceStep evalInstanceStep = evalInstanceStepMapper.selectById(stepId);
 		if (evalInstanceStep != null) {
 			stepId = evalInstanceStep.getStepId();
 		}
 		EvalStep evalStep = evalStepMapper.selectById(stepId);
 		List<LoadSetReq> loadList = evalStep.getLoadList();
-		loadList.stream().filter(load -> !load.getLoadId().equals(deleteReq.getLoadId())).collect(Collectors.toList());
+		loadList = loadList.stream().filter(load -> !load.getLoadId().equals(deleteReq.getLoadId())).collect(Collectors.toList());
 		evalStep.setSettingList(loadList);
 		evalStepMapper.updateById(evalStep);
 	}
@@ -171,9 +185,18 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 	@Override
 	public void addLoad(EvalStepLoadAddReq addReq) {
 		EvalStep evalStep = evalStepMapper.selectById(addReq.getStepId());
+		if (evalStep == null) {
+			EvalInstanceStep instanceStep = evalInstanceStepMapper.selectById(addReq.getStepId());
+			evalStep = evalStepMapper.selectById(instanceStep.getStepId());
+		}
 		List<LoadSetReq> loadList =  evalStep.getLoadList();
+		List<String> loadIds = loadList.stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
+		if (loadIds.contains(addReq.getLoadId())) {
+			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_LOAD);
+		}
 		LoadSetReq loadSetReq = new LoadSetReq();
 		loadSetReq.setLoadId(addReq.getLoadId());
+		loadSetReq.setCommandSet(addReq.getCommand());
 		loadList.add(loadSetReq);
 		evalStep.setSettingList(loadList);
 

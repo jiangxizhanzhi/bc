@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -113,6 +114,12 @@ public class SharedRepositoryServiceImpl implements SharedRepositoryService {
 		ListRsp<AdminLessonListBo> converted = this.convert(iPage);
 		List<AdminLessonListBo> sorted = this.sortById(converted.getList(), idRes.getList());
 
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		List<String> courseIds = courseMapper.selectByAuth(authContext);
+		for (AdminLessonListBo bo : sorted) {
+			bo.setEditable(courseIds.contains(bo.getCourseId()));
+		}
 		ListRsp<AdminLessonListBo> res = new ListRsp<>();
 		res.setTotal(idRes.getTotal());
 		res.setLastPage(idRes.getLastPage());

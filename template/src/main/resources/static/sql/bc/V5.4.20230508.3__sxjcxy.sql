@@ -5,7 +5,7 @@ ALTER TABLE `oj_course_lesson`
     ADD COLUMN `continuous` boolean DEFAULT 0 COMMENT '是否连续',
     ADD COLUMN `shared`     tinyint NULL DEFAULT 0 COMMENT '是否共享',
     ADD COLUMN `guidance`   text    NULL COMMENT '指导',
-    ADD COLUMN `radio`      tinyint NULL;
+    ADD COLUMN `radio`      tinyint NOT NULL DEFAULT 1;
 
 INSERT INTO `cr_constants_config` VALUES (NULL, NULL, 1, 41, '未开始', 'NOT STARTED');
 INSERT INTO `cr_constants_config` VALUES (NULL, NULL, 2, 41, '进行中', 'ONGOING');

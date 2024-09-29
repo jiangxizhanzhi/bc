@@ -82,6 +82,8 @@ public class AdminLessonListBo implements Serializable {
 	@ApiModelProperty("指导")
 	private String guidance;
 
+	private Integer radio;
+
 	@ApiModelProperty("是否可编辑")
 	private Boolean editable;
 }

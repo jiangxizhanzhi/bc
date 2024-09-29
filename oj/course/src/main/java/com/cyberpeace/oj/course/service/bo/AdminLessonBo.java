@@ -79,4 +79,6 @@ public class AdminLessonBo implements Serializable {
 
 	@ApiModelProperty("指导")
 	private String guidance;
+
+	private Integer radio;
 }

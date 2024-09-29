@@ -75,6 +75,7 @@ public class LessonAddReq implements Serializable {
 	@ApiModelProperty("指导")
 	private String guidance;
 
+	private Integer radio;
 
 	public void setAttachment_ids(String attachmentIds) {
 		this.attachmentIds = attachmentIds;

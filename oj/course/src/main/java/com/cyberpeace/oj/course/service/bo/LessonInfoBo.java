@@ -116,6 +116,8 @@ public class LessonInfoBo implements Serializable {
 	@ApiModelProperty("指导")
 	private String guidance;
 
+	private Integer radio;
+
 
 	/**
 	 * 设置上节和下节课程编号

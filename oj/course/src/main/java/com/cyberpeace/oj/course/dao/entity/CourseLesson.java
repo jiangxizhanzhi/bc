@@ -94,6 +94,8 @@ public class CourseLesson extends BaseTable {
 
 	private String guidance;
 
+	private Integer radio;
+
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;
 

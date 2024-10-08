@@ -37,6 +37,10 @@ public class IovCanServiceImpl implements IovCanService {
 
 	private static String STOP_SEND_MSG_URL;
 
+	private static String START_SNIFF_URL;
+
+	private static String STOP_SNIFF_URL;
+
 	private static String DOWNLOAD_PATH;
 
 	// 每个车的通道不一样，后续根据车型来配置
@@ -57,6 +61,8 @@ public class IovCanServiceImpl implements IovCanService {
 		STOP_REPLAY_URL = KA_HOST + ConfigUtil.getContextProperty("ka.replay.stop");
 		START_SEND_MSG_URL = KA_HOST + ConfigUtil.getContextProperty("ka.msg.send.start");
 		STOP_SEND_MSG_URL = KA_HOST + ConfigUtil.getContextProperty("ka.mgs.send.stop");
+		START_SNIFF_URL = KA_HOST + ConfigUtil.getContextProperty("ka.sniff.start");
+		STOP_SNIFF_URL = KA_HOST + ConfigUtil.getContextProperty("ka.sniff.stop");
 		DOWNLOAD_PATH = ConfigUtil.getContextProperty("cr.local.file.prefix") + "blf";
 
 
@@ -111,6 +117,16 @@ public class IovCanServiceImpl implements IovCanService {
 		}
 
 		IovHttpClientUtil.rawPostUploadFile(START_REPLAY_URL, blFile, JSONObject.class);
+	}
+
+	@Override
+	public void startSniff() {
+		IovHttpClientUtil.postJson(START_SNIFF_URL, null, String.class);
+	}
+
+	@Override
+	public void stopSniff() {
+
 	}
 
 }

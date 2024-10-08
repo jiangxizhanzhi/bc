@@ -1,9 +1,12 @@
 package com.cyberpeace.iov.index.controller;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.iov.index.service.IovCanService;
@@ -12,9 +15,6 @@ import com.cyberpeace.iov.index.service.bo.can.MsgSendReq;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.NotNull;
 
 @Api(tags = "CAN api")
 @RestController
@@ -64,6 +64,20 @@ public class IovCanController {
 	@PostMapping("/msg/stop/")
 	public BaseRsp<Void> stopSendMessage() {
 		iovCanService.stopSendMsg();
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("开始抓取")
+	@PostMapping("/sniff/start/")
+	public BaseRsp<Void> startSniff() {
+		iovCanService.startSniff();
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("停止抓取")
+	@PostMapping("/sniff/stop/")
+	public BaseRsp<Void> stopSniff() {
+		iovCanService.stopSniff();
 		return new BaseRsp<>();
 	}
 

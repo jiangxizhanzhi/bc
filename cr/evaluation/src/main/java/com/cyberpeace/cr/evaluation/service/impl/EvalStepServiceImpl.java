@@ -21,6 +21,8 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepTemplateMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.service.EvalStepService;
 import com.cyberpeace.integratation.service.RemoteLoadService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.situation.service.TopoHandlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,12 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
 	@Autowired
 	private RemoteLoadService remoteLoadService;
+
+	@Autowired
+	private TopoHandlerService topoHandlerService;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	@Override
 	public Map<String, String> createByTemplate(List<String> templateIdList, String testId) {
@@ -116,6 +124,18 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			return new ArrayList<>();
 		}
 		List<EvalStep> stepList = evalStepMapper.selectBatchIds(stepIds);
+		String sceneId = testInstance.getMpSceneId();
+		JSONObject plugins = remoteSceneService.getById(sceneId, null).getJSONObject("scene").getJSONObject("plugins");
+		JSONObject extendElementInfo = (JSONObject) ((JSONObject) plugins.getOrDefault("cpcloud",
+				new JSONObject())).getOrDefault("elements", new JSONObject());
+		Map<String, String> loadTaskMap = new HashMap<>();
+		for (String elementId : extendElementInfo.keySet()) {
+			JSONObject elementInfo = (JSONObject) extendElementInfo.get(elementId);
+			String loadToolId = elementInfo.getString("load_tool_id");
+			if (loadToolId != null) {
+				loadTaskMap.put(loadToolId, elementInfo.getString("resource_id"));
+			}
+		}
 		Map<String, EvalStep> stepMap = stepList.stream().collect(Collectors.toMap(EvalStep::getResourceId, e -> e));
 		for (int i = 0; i < instanceStepList.size(); i++ ) {
 			EvalInstanceStep instanceStep = instanceStepList.get(i);
@@ -144,6 +164,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			for (Object o : loadList) {
 				JSONObject load = (JSONObject) o;
 				load.put("cmd", loadCmdMap.getOrDefault(load.getString("id"), load.getString("default_cmd")));
+				load.put("task_id", loadTaskMap.getOrDefault(load.getString("id"), ""));
 			}
 			evalTestStepListRsp.setLoadList(loadList);
 			evalTestStepListRspList.add(evalTestStepListRsp);

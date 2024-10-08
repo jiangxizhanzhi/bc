@@ -217,7 +217,7 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 		}
 		LoadSetReq loadSetReq = new LoadSetReq();
 		loadSetReq.setLoadId(addReq.getLoadId());
-		loadSetReq.setCommandSet(addReq.getCommand());
+		loadSetReq.setCommandSet(addReq.getCommand() != null ? addReq.getCommand() : "");
 		loadList.add(loadSetReq);
 		evalStep.setSettingList(loadList);
 

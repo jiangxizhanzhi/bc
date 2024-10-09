@@ -189,7 +189,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 			testRsp.setToolCount(0);
 			testRsp.setToolList(new ArrayList<>());
 			return testRsp;
-		}).getRecords().stream().filter(test -> test != null && test.getStatus() != null && test.getStatus().equals(evalTestListReq.getStatus()));
+		});
 		return PageUtil.getListResult(evalTestIPage);
 	}
 

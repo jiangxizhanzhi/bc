@@ -17,6 +17,12 @@
             <if test="listQuery.type != null">
                 and type = #{listQuery.type}
             </if>
+            <if test="listQuery.status != null and listQuery.status == 0">
+                and (current_instance_id is null or current_instance_id = '')
+            </if>
+            <if test="listQuery.status != null and listQuery.status == 1">
+                and current_instance_id is not null and current_instance_id != ''
+            </if>
             <if test="listQuery.pattern != null and listQuery.pattern != ''">
                 <bind name="name" value="'%' + listQuery.pattern + '%'"/>
                 and name like #{name}

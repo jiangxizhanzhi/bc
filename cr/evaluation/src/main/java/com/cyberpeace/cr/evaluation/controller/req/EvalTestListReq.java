@@ -12,4 +12,7 @@ public class EvalTestListReq extends PageReqBase {
 
 	@ApiModelProperty("难度")
 	private Integer difficult;
+
+	@ApiModelProperty("训练状态")
+	private Integer status;
 }

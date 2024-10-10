@@ -175,7 +175,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 			if (record == null) {
 				testRsp.setCount(0);
 				testRsp.setScore(0);
-			}else {
+			} else {
 				testRsp.setCount(recordMap.get(test.getResourceId()).getCount());
 				testRsp.setScore(recordMap.get(test.getResourceId()).getCount());
 			}

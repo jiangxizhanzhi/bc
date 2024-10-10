@@ -8,6 +8,9 @@ import java.io.Serializable;
 @Data
 public class EvalStepLoadAddReq implements Serializable {
 
+	@ApiModelProperty("实验id")
+	private String testId;
+
 	@ApiModelProperty("试验实例id")
 	private String testInstanceId;
 

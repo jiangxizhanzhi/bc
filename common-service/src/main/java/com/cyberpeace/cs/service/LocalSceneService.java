@@ -13,6 +13,7 @@ import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
 import com.cyberpeace.integratation.model.scene.SceneNodeListReq;
+import com.cyberpeace.integratation.model.scene.SceneStartContext;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -325,4 +326,11 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * 保存报警规则
 	 */
 	Boolean saveAlertRule(JSONArray data);
+
+	/**
+	 * 生成场景启动的上下文
+	 * @param localScene
+	 * @return
+	 */
+	SceneStartContext getSceneStartContext(LocalScene localScene);
 }

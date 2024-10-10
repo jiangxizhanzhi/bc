@@ -58,7 +58,7 @@ public class RemoteLoadServiceImpl implements RemoteLoadService {
 
 	@Override
 	public void addLoad(JSONObject jsonObject) {
-		HttpClientUtil.post(ADD_LOAD_URL, jsonObject, JSONObject.class);
+		HttpClientUtil.post(ADD_LOAD_URL, jsonObject, Boolean.class);
 	}
 
 }

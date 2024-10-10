@@ -3,29 +3,34 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalStepLoadDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.LoadSetReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStepListRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalInstanceStep;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalStep;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalStepTemplate;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalInstanceStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalStepTemplateMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTestInstanceMapper;
 import com.cyberpeace.cr.evaluation.service.EvalStepService;
+import com.cyberpeace.cr.evaluation.service.EvalTestService;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.model.scene.SceneMpContext;
 import com.cyberpeace.integratation.service.RemoteLoadService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +52,14 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 
 	@Autowired
 	private RemoteLoadService remoteLoadService;
+
+	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Lazy
+	@Autowired
+	private EvalTestService evalTestService;
+
 
 	@Override
 	public Map<String, String> createByTemplate(List<String> templateIdList, String testId) {
@@ -216,6 +229,15 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 		jsonObject.put("plugin_scene_config_element", pluginSceneConfigElement);
 		EvalTestInstance evalTestInstance = evalTestInstanceMapper.selectById(addReq.getTestInstanceId());
 		jsonObject.put("scene_id", evalTestInstance.getMpSceneId());
+		EvalTest evalTest = evalTestService.getEvalTest(evalStep.getTestId());
+		jsonObject.put("cscene_id", evalTest.getTopoId());
+		LocalScene localScene = localSceneService.getOrExceptionByMpSceneId(evalTestInstance.getMpSceneId());
+		SceneMpContext context = new SceneMpContext();
+		context.getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
+				localScene.getBusinessInstanceId());
+		context.setAccessUserId(localScene.getUserId());
+		jsonObject.put("context", context);
+		log.info("evalStepService.addLoad:{}", jsonObject.toJSONString());
 		remoteLoadService.addLoad(jsonObject);
 
 		evalStepMapper.updateById(evalStep);

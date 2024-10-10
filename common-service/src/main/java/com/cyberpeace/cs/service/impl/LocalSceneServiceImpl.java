@@ -95,7 +95,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	 * @param localScene
 	 * @return
 	 */
-	private SceneStartContext getSceneStartContext(LocalScene localScene) {
+	@Override
+	public SceneStartContext getSceneStartContext(LocalScene localScene) {
 		SceneStartContext context = new SceneStartContext();
 
 		context.setId(localScene.getTopoId());

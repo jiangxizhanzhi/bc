@@ -46,6 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -67,6 +68,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 	@Autowired
 	private EvalRuleService evalRuleService;
 
+	@Lazy
 	@Autowired
 	private EvalStepService evalStepService;
 
@@ -124,12 +126,6 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-//				此处保存mp报警规则数据
-				/*List<EvalRuleMPRsp> ruleList = evalRuleTemplateService.getRuleList(evalTestAddReq.getCloudTemplateId());
-				ruleList.forEach(rule -> rule.setSceneId(evalTest.getTopoId()));
-				JSONArray objects = objectMapper.convertValue(ruleList, JSONArray.class);
-				localSceneService.saveAlertRule(objects);*/
 
 				Map<String, String> stepIdMap = evalStepService.createByTemplate(evalCloudTemplate.getStepIdList(), newId);
 				evalTest.setTemplateId(evalTestAddReq.getCloudTemplateId());

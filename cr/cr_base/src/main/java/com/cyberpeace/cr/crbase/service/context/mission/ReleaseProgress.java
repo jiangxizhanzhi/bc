@@ -9,7 +9,6 @@ import lombok.Data;
  * 任务下发进度
  *
  * @author SN
- * @date 2023/05/15
  */
 @Data
 public class ReleaseProgress implements Serializable {

@@ -9,7 +9,6 @@ import lombok.Data;
  * 角色资源
  *
  * @author SN
- * @date 2023/05/31
  */
 @Data
 public class RoleResource implements Serializable {

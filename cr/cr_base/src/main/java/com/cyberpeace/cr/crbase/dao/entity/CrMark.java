@@ -11,7 +11,6 @@ import lombok.Data;
  * cr标记
  *
  * @author SN
- * @date 2023/05/24
  */
 @TableName(value = "cr_mark")
 @Data

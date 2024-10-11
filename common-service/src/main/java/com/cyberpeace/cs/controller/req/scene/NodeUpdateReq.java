@@ -11,7 +11,6 @@ import lombok.Data;
  * 节点更新请求体
  *
  * @author SN
- * @date 2023/05/11
  */
 @Data
 public class NodeUpdateReq implements Serializable {

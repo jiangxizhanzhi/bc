@@ -1,5 +1,4 @@
 -- ----------------------------
--- 20220719.1__situation_add_scheme.sql
 -- ----------------------------
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -53,7 +52,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 
 -- ----------------------------
--- 20220721.1__modify_cr_eval.sql
 -- ----------------------------
 alter table cr_eval_record add column `eval_end_time` datetime NULL DEFAULT NULL;
 alter table cr_eval_index_ref add column `progress` int(11) NULL DEFAULT NULL;
@@ -67,7 +65,6 @@ alter table cr_eval_probe_data modify column `content` text NOT NULL;
 alter table cr_eval_record modify column `message` longtext DEFAULT NULL;
 
 -- ----------------------------
--- 20220723.1__rtks_situation
 -- ----------------------------
 CREATE TABLE `rtks_situation_log`
 (
@@ -146,7 +143,6 @@ ALTER TABLE `situation_scene_config`
 
 
 -- ----------------------------
--- 20220725.1__delete_improper_initial_data
 -- ----------------------------
 DELETE
 FROM `rtks_user_role`
@@ -166,7 +162,6 @@ WHERE `id` = 10
   and role_id = 'e25dc8c9d15ddd621f16616083d68726';
 
 -- ----------------------------
--- 20220726.1__add_cr_constants_config
 -- ----------------------------
 ALTER TABLE `cr_constants_config` CHANGE `code` `code` SMALLINT(4) NULL;
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 14, '未请求协助', 'Assistance Not Requested');
@@ -232,7 +227,6 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 37, '高级', 'Senio
 
 
 -- ----------------------------
--- 20220726.2__modify_practice_fields_length
 -- ----------------------------
 -- 禅道7140
 ALTER TABLE `oj_practice_theory` MODIFY COLUMN `answer` varchar(4096) NOT NULL;

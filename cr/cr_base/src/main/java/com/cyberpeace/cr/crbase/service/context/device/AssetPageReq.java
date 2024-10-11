@@ -11,7 +11,6 @@ import lombok.Data;
  * 资产清单
  *
  * @author SN
- * @date 2023/05/29
  */
 @Data
 public class AssetPageReq extends PageReqBase implements Serializable {

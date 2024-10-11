@@ -9,7 +9,6 @@ import lombok.Data;
  * 红点
  *
  * @author SN
- * @date 2023/06/08
  */
 @Data
 public class BadgeBo implements Serializable {

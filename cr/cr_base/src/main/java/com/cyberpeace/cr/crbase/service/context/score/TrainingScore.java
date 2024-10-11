@@ -12,7 +12,6 @@ import lombok.Data;
  * 训练分数
  *
  * @author SN
- * @date 2023/05/23
  */
 @Data
 public class TrainingScore implements Serializable {

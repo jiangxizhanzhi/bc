@@ -4,7 +4,6 @@ import lombok.Data;
 
 /**
  * @Author xuxz
- * @Date 22/7/2022 下午6:29
  */
 @Data
 public class EvalVariableGraphListRsp extends EvalVariableGraphRsp{

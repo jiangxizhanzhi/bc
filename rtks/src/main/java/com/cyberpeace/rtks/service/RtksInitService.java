@@ -9,7 +9,6 @@ import com.cyberpeace.rtks.service.bo.resource.IdAndWeight;
  * inti_rtks_xx 相关数据
  *
  * @author SN
- * @date 2023/06/01
  */
 public interface RtksInitService {
 

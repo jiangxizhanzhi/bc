@@ -10,7 +10,6 @@ import lombok.Data;
  * 场景动态更新
  *
  * @author SN
- * @date 2023/05/11
  */
 @Data
 public class SceneUpdateContext extends SceneOpsContext implements Serializable {

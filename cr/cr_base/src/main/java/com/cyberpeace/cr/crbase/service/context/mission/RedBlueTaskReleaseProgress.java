@@ -9,7 +9,6 @@ import java.io.Serializable;
  * 任务下发进度
  *
  * @author SN
- * @date 2023/05/15
  */
 @Data
 public class RedBlueTaskReleaseProgress extends TaskReleaseProgress implements Serializable {

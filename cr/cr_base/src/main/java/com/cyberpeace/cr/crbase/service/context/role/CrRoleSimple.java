@@ -16,7 +16,6 @@ import org.apache.commons.collections.CollectionUtils;
  * 角色简要信息
  *
  * @author SN
- * @date 2023/05/15
  */
 @Data
 public class CrRoleSimple implements Serializable {

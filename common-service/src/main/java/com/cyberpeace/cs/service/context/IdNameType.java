@@ -9,6 +9,7 @@ import lombok.Data;
  * id名称类型
  *
  * @author SN
+ * @date 2023/05/18
  */
 @Data
 public class IdNameType implements Serializable {

@@ -12,6 +12,7 @@ import lombok.Data;
  * 组任务下发进度
  *
  * @author SN
+ * @date 2023/05/15
  */
 @Data
 public class GroupTaskReleaseProgress extends ReleaseProgress implements Serializable {

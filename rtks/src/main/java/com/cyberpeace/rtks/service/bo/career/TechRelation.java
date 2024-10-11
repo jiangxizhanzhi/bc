@@ -9,6 +9,7 @@ import lombok.Data;
  * attack， engage
  *
  * @author SN
+ * @date 2023/05/10
  */
 @Data
 public class TechRelation implements Serializable {

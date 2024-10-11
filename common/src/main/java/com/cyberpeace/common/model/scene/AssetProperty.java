@@ -4,6 +4,7 @@ package com.cyberpeace.common.model.scene;
  * 资产属性
  *
  * @author SN
+ * @date 2023/05/30
  */
 public interface AssetProperty {
 

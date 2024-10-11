@@ -10,6 +10,7 @@ import lombok.Data;
  * 时间轴数据
  * 兼容不同训练类型的前端事件列表字段
  * @author SN
+ * @date 2023/05/31
  */
 @Data
 public class TimeLineData {

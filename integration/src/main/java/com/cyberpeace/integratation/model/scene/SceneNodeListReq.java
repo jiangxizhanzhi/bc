@@ -1,17 +1,19 @@
 package com.cyberpeace.integratation.model.scene;
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import java.io.Serializable;
+import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serializable;
-import java.util.List;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 场景节点列表请求体
  *
  * @author SN
+ * @date 2023/05/30
  */
 @Data
 @Slf4j

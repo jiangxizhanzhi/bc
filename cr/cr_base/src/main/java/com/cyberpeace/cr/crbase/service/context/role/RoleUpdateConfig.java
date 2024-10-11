@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
  * 角色更新配置
  *
  * @author SN
+ * @date 2023/05/12
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

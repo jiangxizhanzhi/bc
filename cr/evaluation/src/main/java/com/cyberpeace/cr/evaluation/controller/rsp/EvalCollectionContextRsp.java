@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 /**
  * @Author xuxz
+ * @Date 20/7/2022 下午3:55
  */
 @Data
 public class EvalCollectionContextRsp implements Serializable {

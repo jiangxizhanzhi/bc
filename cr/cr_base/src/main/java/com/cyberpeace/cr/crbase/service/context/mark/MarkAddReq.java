@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  * 标记新增请求体
  *
  * @author SN
+ * @date 2023/05/24
  */
 @Data
 public class MarkAddReq implements Serializable {

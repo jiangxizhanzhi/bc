@@ -11,6 +11,7 @@ import lombok.Data;
  * 需要发给前端提示刷新场景的
  *
  * @author SN
+ * @date 2023/06/01
  */
 @Data
 public class SceneUpdateWsBo implements Serializable {

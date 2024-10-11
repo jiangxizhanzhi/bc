@@ -10,6 +10,7 @@ import lombok.Data;
  * 直接查询可得的评估列表信息
  *
  * @author SN
+ * @date 2023/05/18
  */
 @Data
 public class EvaluationListBo implements Serializable {

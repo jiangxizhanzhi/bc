@@ -9,6 +9,7 @@ import lombok.Data;
  * 训练记录列表
  *
  * @author SN
+ * @date 2023/05/16
  */
 @Data
 public class TrainingRecordListBo extends RecordRspBase implements Serializable {

@@ -15,6 +15,7 @@ import lombok.Getter;
  * 用户看到的红点提示
  *
  * @author SN
+ * @date 2023/06/07
  */
 @Data
 public class CrBadge {

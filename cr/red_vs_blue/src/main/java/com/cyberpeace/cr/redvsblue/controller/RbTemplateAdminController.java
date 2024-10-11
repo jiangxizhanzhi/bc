@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.redvsblue.entity.RbAttackPath;
+import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
@@ -91,6 +93,9 @@ public class RbTemplateAdminController {
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
+	@Autowired
+	private RbSceneService rbSceneService;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
@@ -113,6 +118,10 @@ public class RbTemplateAdminController {
 				// update missionTemplates
 				businessTemplateService.updateMissionTemplateRelation(businessTemplateId, "",
 						rbTemplate.getRoleConfig());
+				//更新攻击路径
+				if(!CollectionUtils.isEmpty(addReq.getAttackPaths())) {
+					rbSceneService.updateRbAttackPathByTemplateId(rbTemplate.getResourceId(), addReq.getAttackPaths());
+				}
 			}
 		});
 
@@ -150,6 +159,10 @@ public class RbTemplateAdminController {
 				// delete&update missionTemplates
 				businessTemplateService.updateMissionTemplateRelation(resourceId, oldRoleConfig,
 						rbTemplate.getRoleConfig());
+				//更新攻击路径
+				if(!CollectionUtils.isEmpty(modifyReq.getAttackPaths())) {
+					rbSceneService.updateRbAttackPathByTemplateId(rbTemplate.getResourceId(), modifyReq.getAttackPaths());
+				}
 			}
 		});
 
@@ -167,6 +180,8 @@ public class RbTemplateAdminController {
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		rbTemplateService.batchDelete(deleteReq.getIds());
+		List<String> rbTemplateIds = rbTemplateService.getRbTemplateByBusinessIds(deleteReq.getIds()).stream().map(RbTemplate::getResourceId).collect(Collectors.toList());
+		rbSceneService.batchDeleteByTemplateIds(rbTemplateIds);
 		return new BaseRsp<>();
 	}
 
@@ -193,6 +208,9 @@ public class RbTemplateAdminController {
 		List<JSONObject> blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
 		dealAssetNodesMap(redRoleRsps);
 		dealAssetNodesMap(blueRoleRsps);
+
+		List<RbAttackPath> rbAttackPaths = rbSceneService.queryAttackPathByTemplateId(template.getResourceId());
+
 		// 获取基本信息
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
 
@@ -217,6 +235,7 @@ public class RbTemplateAdminController {
 		teamTrainTemplateRsp.setResourceId(template.getResourceId());
 		teamTrainTemplateRsp.setRedRoles(redRoleRsps);
 		teamTrainTemplateRsp.setBlueRoles(blueRoleRsps);
+		teamTrainTemplateRsp.setAttackPaths(rbAttackPaths);
 
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}

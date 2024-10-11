@@ -5,6 +5,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
+import com.cyberpeace.cr.redvsblue.entity.RbAttackPath;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbSceneViewContext;
 import com.cyberpeace.cs.service.context.scene.SceneData;
@@ -80,4 +81,16 @@ public interface RbSceneService {
 	JSONObject getNodeStatistics(String roomId);
 
 	SceneData getSceneData(RbRoom room);
+
+	List<RbAttackPath> queryAttackPath(String sceneId);
+
+	void addAttackPath(RbAttackPath attackPath);
+
+	void deleteAttackPath(String resourceId, String sceneId);
+
+	void updateRbAttackPathByTemplateId(String resourceId, List<RbAttackPath> attackPaths);
+
+	void batchDeleteByTemplateIds(List<String> rbTemplateIds);
+
+	List<RbAttackPath> queryAttackPathByTemplateId(String templateId);
 }

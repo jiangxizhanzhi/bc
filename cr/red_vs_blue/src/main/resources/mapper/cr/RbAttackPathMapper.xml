@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.redvsblue.dao.mapper.RbAttackPathMapper">
+
+    <select id="queryAttackPath"
+            resultType="com.cyberpeace.cr.redvsblue.entity.RbAttackPath">
+        SELECT resource_id,template_id,scene_id,source_node_id,source_node_name,target_node_id,target_node_name
+        FROM cr_rb_attack_path WHERE scene_id = #{sceneId}
+    </select>
+
+
+    <insert id="addAttackPath">
+        INSERT INTO cr_rb_attack_path
+        (resource_id,template_id,scene_id,source_node_id,source_node_name,target_node_id,target_node_name,create_time)
+        VALUES
+        (#{attackPath.resourceId},#{attackPath.templateId},#{attackPath.sceneId},#{attackPath.sourceNodeId},#{attackPath.sourceNodeName},
+         #{attackPath.targetNodeId},#{attackPath.targetNodeName},#{attackPath.createTime})
+    </insert>
+
+    <delete id="deleteAttackPath">
+        delete
+        from cr_rb_attack_path where 1=1
+        <if test="resourceId != null and resourceId != ''">
+            and resource_id = #{resourceId}
+        </if>
+        <if test="sceneId != null and sceneId != ''">
+            and scene_id = #{sceneId}
+        </if>
+        <if test="templateId != null and templateId != ''">
+            and template_id = #{templateId}
+        </if>
+    </delete>
+
+    <select id="queryAttackPathByTemplateId"
+            resultType="com.cyberpeace.cr.redvsblue.entity.RbAttackPath">
+        SELECT resource_id,template_id,scene_id,source_node_id,source_node_name,target_node_id,target_node_name
+        FROM cr_rb_attack_path where template_id = #{templateId} and scene_id is null
+    </select>
+
+    <delete id="deleteAttackPathByTemplateId">
+        delete from cr_rb_attack_path where template_id = #{templateId} and scene_id is null
+    </delete>
+</mapper>

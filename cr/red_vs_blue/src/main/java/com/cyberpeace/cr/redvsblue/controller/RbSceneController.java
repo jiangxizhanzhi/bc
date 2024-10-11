@@ -6,12 +6,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.redvsblue.entity.RbAttackPath;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONArray;
@@ -512,5 +514,28 @@ public class RbSceneController {
 			}
 		}
 		return commonDeviceContexts;
+	}
+
+	@ApiOperation("攻击路径信息查询")
+	@GetMapping("/queryAttackPath")
+	public BaseRsp<List<RbAttackPath>> queryAttackPath(@ApiParam(name = "scene_id", value = "红蓝房间id", required = true) @RequestParam(
+			value = "scene_id", required = true) String sceneId) {
+		List<RbAttackPath> rbTemplateLinks = rbSceneService.queryAttackPath(sceneId);
+		return new BaseRsp<>(rbTemplateLinks);
+	}
+
+	@ApiOperation("攻击路径信息添加")
+	@PostMapping("/addAttackPath")
+	public BaseRsp<Void> addAttackPath(@RequestBody @Validated RbAttackPath attackPath) {
+		rbSceneService.addAttackPath(attackPath);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("攻击路径信息删除")
+	@DeleteMapping("/deleteAttackPath")
+	public BaseRsp<Void> deleteAttackPath(@RequestParam(value = "resource_id", required = false) String resourceId,
+										  @RequestParam(value = "scene_id", required = false) String sceneId) {
+		rbSceneService.deleteAttackPath(resourceId, sceneId);
+		return new BaseRsp<>();
 	}
 }

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbAttackPathMapper;
+import com.cyberpeace.cr.redvsblue.entity.RbAttackPath;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,6 +86,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 
     @Autowired
     private RbCommonDeviceService rbCommonDeviceService;
+
+    @Autowired
+    private RbAttackPathMapper rbAttackPathMapper;
 
     @Override
     public String startScene(String roomId, String userId) {
@@ -530,5 +535,40 @@ public class RbSceneServiceImpl implements RbSceneService {
         }
 
         return null;
+    }
+
+    @Override
+    public List<RbAttackPath> queryAttackPath(String sceneId) {
+        return rbAttackPathMapper.queryAttackPath(sceneId);
+    }
+
+    @Override
+    public List<RbAttackPath> queryAttackPathByTemplateId(String templateId) {
+        return rbAttackPathMapper.queryAttackPathByTemplateId(templateId);
+    }
+
+    @Override
+    public void addAttackPath(RbAttackPath attackPath) {
+        attackPath.setResourceId(IDGeneratorUtil.getID());
+        attackPath.setCreateTime(new Date());
+        rbAttackPathMapper.addAttackPath(attackPath);
+    }
+
+    @Override
+    public void deleteAttackPath(String resourceId, String sceneId) {
+        if (resourceId == null || sceneId == null) {
+            rbAttackPathMapper.deleteAttackPath(resourceId, sceneId, null);
+        }
+    }
+
+    @Override
+    public void updateRbAttackPathByTemplateId(String templateId, List<RbAttackPath> attackPaths) {
+        rbAttackPathMapper.deleteAttackPathByTemplateId(templateId);
+        attackPaths.stream().peek(e -> e.setTemplateId(templateId)).forEach(this::addAttackPath);
+    }
+
+    @Override
+    public void batchDeleteByTemplateIds(List<String> rbTemplateIds) {
+        rbTemplateIds.stream().peek(id -> rbAttackPathMapper.deleteAttackPathByTemplateId(id)).forEach(s ->log.info("删除攻击路径：{}", s));
     }
 }

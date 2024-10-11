@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.cyberpeace.cr.redvsblue.entity.RbAttackPath;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -25,4 +26,7 @@ public class RbTemplateRsp {
 	@ApiModelProperty(required = true, value = "蓝方角色")
 	@NotNull
 	private List<JSONObject> blueRoles;
+
+	@ApiModelProperty(value = "攻击路径", required = true)
+	private List<RbAttackPath> attackPaths;
 }

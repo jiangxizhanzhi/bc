@@ -322,18 +322,3 @@ ALTER TABLE
 
 ALTER TABLE
     `cr_eval_host_template` MODIFY COLUMN `type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '类型' AFTER `host_id`;
-
-create table cr_rb_attack_path
-(
-    id               int auto_increment
-        primary key,
-    resource_id      varchar(64) charset utf8 not null comment 'uuid',
-    template_id      varchar(64)              null comment '试验计划id',
-    source_node_id   varchar(64)              null comment '起始节点id',
-    source_node_name varchar(255)             null comment '起始节点名称',
-    target_node_id   varchar(64)              null comment '目标节点id',
-    target_node_name varchar(255)             null comment '目标节点名称',
-    create_time      datetime                 null comment '创建时间',
-    update_time      datetime                 null comment '更新时间'
-)
-    comment '攻击路径信息' engine = InnoDB;

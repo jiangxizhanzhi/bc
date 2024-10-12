@@ -726,6 +726,19 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		context.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
 				localScene.getBusinessInstanceId());
 		// set update data
+//
+		try {
+			JSONArray jsonArray = updateData.getJSONObject("topology").getJSONArray("elements");
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+				JSONObject areaJson = jsonObject.getJSONObject("area");
+				String areaId = areaJson.getString("id");
+				jsonObject.put("area",areaId);
+			}
+			updateData.getJSONObject("topology").put("elements",jsonArray);
+		}catch (Exception e){
+			log.info("Handling attack node status");
+		}
 		context.setUpdate(updateData);
 		return context;
 	}

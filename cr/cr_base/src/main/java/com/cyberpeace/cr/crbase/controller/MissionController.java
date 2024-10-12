@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.integratation.constant.LogContent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -520,6 +519,9 @@ public class MissionController {
 		}
 		if (missionModifyReq.getSkillPoints() != null) {
 			mission.setSkillPoints(missionModifyReq.getSkillPoints());
+		}
+		if (StringUtils.isNotBlank(missionModifyReq.getDescription())) {
+			mission.setDescription(missionModifyReq.getDescription());
 		}
 
 		return mission;

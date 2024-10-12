@@ -726,7 +726,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		context.getContext().getPass_through().put(WebConstant.PASS_THROUGH_BUSINESS_ID,
 				localScene.getBusinessInstanceId());
 		// set update data
-//
+//		处理攻击节点状态更新前端难处理问题
 		try {
 			JSONArray jsonArray = updateData.getJSONObject("topology").getJSONArray("elements");
 			for (int i = 0; i < jsonArray.size(); i++) {

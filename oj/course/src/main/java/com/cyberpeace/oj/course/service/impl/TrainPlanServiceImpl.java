@@ -237,6 +237,8 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 					Lists.newArrayList());
 			int finishedExp = reportList.size();
 			bo.setProgress(MathUtils.roundDivide(finishedExp * 100, expCount));
+			bo.setFinished(finishedExp);
+			bo.setUnfinished(expCount - finishedExp);
 			// time cost
 			List<ClassroomSign> signList = signMap.getOrDefault(info.getUserId(),
 					Lists.newArrayList());

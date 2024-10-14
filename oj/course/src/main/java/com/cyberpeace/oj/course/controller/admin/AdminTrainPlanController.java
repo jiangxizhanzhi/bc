@@ -14,15 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.*;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.oj.course.controller.req.TrainPlanAddReq;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
@@ -192,9 +186,17 @@ public class AdminTrainPlanController {
 
 	@ApiOperation("课程进度查看")
 	@GetMapping("/progress")
-	public BaseRsp<List<PlanProgressBo>>
-			getProgress(@ApiParam(value = "教学课程id", name = "plan_id") String plan_id) {
+	public BaseRsp<ListRsp<PlanProgressBo>> getProgress(
+			@ApiParam(value = "教学课程id", name = "plan_id") String plan_id,
+			@ApiParam(value = "搜索学号、姓名、小组", name = "search") String search, PageReqBase pageReq) {
 		List<PlanProgressBo> res = trainPlanService.getProgress(plan_id);
-		return new BaseRsp<>(res);
+		res = StreamApiUtils.sortByColumn(res, PlanProgressBo::getStudentId);
+		if (StringUtils.isNotBlank(search)) {
+			res = StreamApiUtils.filter(res, bo -> bo.getUsername().contains(search)
+					|| bo.getName().contains(search) || bo.getOrgName().contains(search));
+		}
+		ListRsp<PlanProgressBo> rsp = PageUtil.pageList(res, pageReq.getPage(),
+				pageReq.getPerPage());
+		return new BaseRsp<>(rsp);
 	}
 }

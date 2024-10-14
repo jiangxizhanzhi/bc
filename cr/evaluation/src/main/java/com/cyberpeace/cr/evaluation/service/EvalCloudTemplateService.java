@@ -29,7 +29,19 @@ public interface EvalCloudTemplateService extends IService<EvalCloudTemplate> {
 
 	ListRsp<EvalTestTemplateListRsp> templateList(EvalTestListReq evalTestListReq);
 
+	/**
+	 * 批量导出场景模板
+	 * @param templateIds
+	 * @param tempDir
+	 * @return
+	 * @throws IOException
+	 */
     String makeDumpFile(List<String> templateIds, String tempDir) throws IOException;
 
+	/**
+	 * 批量导入场景模板
+	 * @param unZipPath
+	 * @return
+	 */
 	Boolean batchLoad(String unZipPath);
 }

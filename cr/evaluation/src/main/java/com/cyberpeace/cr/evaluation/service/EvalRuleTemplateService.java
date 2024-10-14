@@ -19,6 +19,11 @@ public interface EvalRuleTemplateService extends IService<EvalRuleTemplate> {
 
 	void deleteRuleTemplate(DeleteReq deleteReq);
 
+	/**
+	 * 获取规则模板详情
+	 * @param id
+	 * @return
+	 */
 	EvalRuleTemplateDetailRsp getRuleTemplate(String id);
 
 	EvalRuleTemplateDetailRsp modifyRuleTemplate(EvalRuleTemplateModifyReq evalRuleTemplateModifyReq);

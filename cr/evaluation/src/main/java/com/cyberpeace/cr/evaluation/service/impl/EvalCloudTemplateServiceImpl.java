@@ -192,10 +192,12 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
         if (templateIds.isEmpty()) {
             throw new BusinessException(CrBusinessErrorCode.EMPTY_RESOURCE_ID_LIST);
         }
+        log.info("make dump file for templateIds:{}", templateIds);
         // 1. make temp dir
         FileUtil.mkdirs(tempDir);
         List<EvalCloudTemplateAddReq> contextList = Lists.newArrayList();
         for (String templateId : templateIds) {
+            log.info("make dump file for templateId:{}", templateId);
             EvalCloudTemplateDumpReq cloudTemplate = BeanUtils.copy(getCloudTemplate(templateId), EvalCloudTemplateDumpReq.class);
 //			2.1步骤信息处理
             List<EvalStepTemplateListRsp> stepList = evalStepTemplateService.getStepList(templateId);
@@ -222,6 +224,7 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
             }*/
 
             // 3.collect template data
+            log.info("make dump file for cloudTemplate:{}", cloudTemplate);
             contextList.add(cloudTemplate);
         }
 
@@ -243,6 +246,7 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
                 new File(unZipPath + File.separator + CrCommonConstants.RESOURCE_FILE_NAME));
         List<EvalCloudTemplateDumpReq> resources = JsonUtil.toJsonObjectArray(dataJson,
                 EvalCloudTemplateDumpReq.class);
+        log.info("batchLoad resources:{}", resources);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {

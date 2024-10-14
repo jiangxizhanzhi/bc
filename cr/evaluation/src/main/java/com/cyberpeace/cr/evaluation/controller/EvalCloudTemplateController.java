@@ -116,7 +116,7 @@ public class EvalCloudTemplateController {
 		// 2. unzip file
 		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
 		// 3. load resources
-		evalCloudTemplateService.batchLoad(unZipPath);
+ 		evalCloudTemplateService.batchLoad(unZipPath);
 		// 4. delete temp dir
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");

@@ -154,6 +154,7 @@
                 #{myId}
             </foreach>
         </where>
+        order by id
     </select>
     <select id="selectByIds" resultType="com.cyberpeace.oj.course.service.bo.AdminLessonListBo">
         select l.name, c.name as course_name, l.resource_id from oj_course_lesson l left join oj_course c on l.course_id

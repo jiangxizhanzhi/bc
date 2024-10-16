@@ -110,9 +110,9 @@ public class SharedRepositoryServiceImpl implements SharedRepositoryService {
 		List<String> ordered = ListUtil.mergeWithOldOrder(myIds, existLessonIds);
 		ListRsp<String> idRes = PageUtil.pageList(ordered, req.getPage(), req.getPerPage());
 
-		IPage<CourseLesson> iPage = courseLessonMapper.pageMy(page, idRes.getList());
-		ListRsp<AdminLessonListBo> converted = this.convert(iPage);
-		List<AdminLessonListBo> sorted = this.sortById(converted.getList(), idRes.getList());
+		List<CourseLesson> courseLessonList = courseLessonMapper.selectBatchIds(idRes.getList());
+		List<AdminLessonListBo> adminLessonListBos = lesson2AdminBo(courseLessonList);
+		List<AdminLessonListBo> sorted = this.sortById(adminLessonListBos, idRes.getList());
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

@@ -259,7 +259,11 @@ public class ExcelDataHandler {
 						if (obj instanceof Date) {
 							dataRow.createCell(cellNum).setCellValue(TimeUtil.format1((Date) obj));
 						} else {
-							dataRow.createCell(cellNum).setCellValue(JsonUtil.toJsonString(obj));
+							if (null == obj){
+								dataRow.createCell(cellNum).setCellValue(CommonConstant.EMPTY_STRING);
+							} else {
+								dataRow.createCell(cellNum).setCellValue(JsonUtil.toJsonString(obj));
+							}
 						}
 
 					} catch (JSONException e) {

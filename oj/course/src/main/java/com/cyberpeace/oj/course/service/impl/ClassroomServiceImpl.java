@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.service.bo.classroom.ClassroomConclusionBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1395,6 +1396,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			baseClassroomFile.renameTo(new File(htmlPath + File.separator + initPersonName));
 
 		}
+		// 教学成绩统计
+		String excelPath = htmlPath + File.separator + lessonName + "_成绩统计.xlsx";
+		this.exportTrainConclusion(classroomId, excelPath);
 		File zipFile = new File(ZipUtil.toZip(htmlPath));
 		String zipPath = basePath + File.separator + initLessonName + ClassroomExportReportConstant.LABORATORY_REPORT_SUFFIX.getMsg();
 		zipFile.renameTo(new File(zipPath));
@@ -1402,18 +1406,20 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		return zipPath;
 	}
 
-	private void exportTrainConclusion(UserInfo userInfo, String filePath) {
+	private void exportTrainConclusion(String classRoomId, String filePath) {
 
 		// 数据查询及转换
-		String userId = userInfo.isSuperuser() ? CommonConstant.EMPTY_STRING : userInfo.getUserId();
+		List<ClassroomReportBo> reportBoList = this.getReportList(classRoomId);
 
-		List<TrainPlanRsp> trainPlanRspList = trainPlanMapper.selectEndedByUser(userId);
-
-		List<TrainPlanExportBo> exportBoList = StreamApiUtils.flatMap(trainPlanRspList,
-				trainPlan -> planToExportBo(userId, trainPlan));
+		List<ClassroomConclusionBo> boList  = Lists.newArrayList();
+		for (ClassroomReportBo bo : reportBoList) {
+			ClassroomConclusionBo conclusion = BeanUtils.copy(bo, ClassroomConclusionBo.class);
+			conclusion.setStatus(bo.getStatus());
+			boList.add(conclusion);
+		}
 
 		// 数据导出
-		ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.CLASSROOM);
+		ExcelDataHandler.exportExcel(boList, filePath, ExcelHeader.CLASSROOM);
 	}
 
 	@Override

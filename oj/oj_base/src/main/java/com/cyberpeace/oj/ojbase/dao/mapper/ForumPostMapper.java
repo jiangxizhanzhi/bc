@@ -16,7 +16,7 @@ import com.cyberpeace.oj.ojbase.service.bo.post.ForumPostBo;
 @Repository
 public interface ForumPostMapper extends BaseMapper<ForumPost> {
 
-	IPage<ForumPostBo> page(@Param("page") Page page, @Param("type") Integer type);
+	IPage<ForumPostBo> page(@Param("page") Page page, @Param("type") Integer type, @Param("pattern") String pattern);
 
 	void deleteByIdsAndUserId(@Param("ids") List<String> ids, @Param("userId") String userId,
 			@Param("type") Integer type);

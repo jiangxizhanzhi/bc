@@ -13,5 +13,9 @@
         select *
         from oj_forum_post
         where type = #{type}
+        <if test="pattern != null and pattern != ''">
+            <bind name="patternLike" value="'%' + pattern + '%'"/>
+            and (content like #{patternLike} or title like #{patternLike})
+        </if>
     </select>
 </mapper>

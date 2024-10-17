@@ -86,7 +86,7 @@
             </if>
             <if test="content != null and content != ''">
                 <bind name="contentLike" value="'%' + content + '%'"/>
-                and content like #{contentLike}
+                and (content like #{contentLike} or theme_name like #{contentLike})
             </if>
             and root_id is null
         </where>

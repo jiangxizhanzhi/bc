@@ -41,7 +41,7 @@ public class ForumPostServiceImpl extends ServiceImpl<ForumPostMapper, ForumPost
 	@Override
 	public ListRsp<ForumPostBo> pagePost(PageReqBase req, Integer type) {
 		Page page = req.toPageParam();
-		IPage<ForumPostBo> iPage = forumPostMapper.page(page, type);
+		IPage<ForumPostBo> iPage = forumPostMapper.page(page, type, req.getPattern());
 		Map<String, String> userNameMap = remoteUserService
 				.getIdNameMap(StreamApiUtils.map(iPage.getRecords(), ForumPostBo::getUserId));
 		for (ForumPostBo bo : iPage.getRecords()) {

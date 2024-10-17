@@ -30,4 +30,6 @@ public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
 	 */
 	List<NoteEvaluate> selectBatchNoteIds(@Param("noteIds") List<String> noteIds,
 			@Param("isPublic") Boolean isPublic);
+
+	List<NoteEvaluate> selectBatchByNoteIds(@Param("noteIds") List<String> noteIds);
 }

@@ -1,12 +1,13 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import com.cyberpeace.integratation.service.bo.ScreenRecordRsp;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @ApiModel
@@ -57,7 +58,19 @@ public class ClassroomReportBo implements Serializable {
 	@ApiModelProperty("是否通过")
 	private Boolean passed;
 
-	@ApiModelProperty(value = "实验视频")
-	private ScreenRecordRsp screenRecord;
+	@ApiModelProperty("批阅情况")
+	private Integer status;
+
+	@ApiModelProperty(value = "是否在线")
+	private Boolean online;
+
+	@ApiModelProperty(value = "平均分")
+	private Double average;
+
+	@ApiModelProperty(value = "最高分")
+	private Double highest;
+
+	@ApiModelProperty(value = "最低分")
+	private Double lowest;
 
 }

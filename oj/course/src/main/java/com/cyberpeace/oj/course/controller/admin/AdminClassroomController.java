@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.hibernate.validator.internal.util.logging.formatter.ClassObjectFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -269,13 +270,16 @@ public class AdminClassroomController {
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ListRsp<ClassroomReportBo>> classroomReport(ClassroomMonitorReq reportReq) {
 
-		Page page = reportReq.toPageParam();
-		PageReportBo pageReportBo = classroomService
-				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern(), page);
-
-		ListRsp<ClassroomReportBo> res = PageUtil.getListResult(pageReportBo.getData(), page,
-				pageReportBo.getTotal());
+		ListRsp<ClassroomReportBo> res = classroomService.selectClassroomReport(reportReq);
 		return new BaseRsp<>(res);
+
+//		Page page = reportReq.toPageParam();
+//		PageReportBo pageReportBo = classroomService
+//				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern(), page);
+//
+//		ListRsp<ClassroomReportBo> res = PageUtil.getListResult(pageReportBo.getData(), page,
+//				pageReportBo.getTotal());
+//		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("课堂学习统计")

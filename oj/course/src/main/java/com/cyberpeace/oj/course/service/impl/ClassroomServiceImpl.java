@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.integratation.service.bo.ScreenRecordByNode;
-import com.cyberpeace.oj.course.service.ClassroomSceneRecordService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +46,14 @@ import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
+import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
 import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
+import com.cyberpeace.oj.course.service.ClassroomSceneRecordService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.course.service.bo.classroom.ClassroomStatisticsBo;
@@ -599,29 +599,143 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), false);
 
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-				true);
+		List<UserInfo> userInfos = remoteUserService.listByOrgId(classroom.getOrganizationId());
 
-		List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
-				userInfo -> StringUtils.isBlank(userName)
-						|| userInfo.getUserName().contains(userName)
-						|| userInfo.getName().contains(userName));
+		// List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
+		// userInfo -> StringUtils.isBlank(userName)
+		// || userInfo.getUserName().contains(userName)
+		// || userInfo.getName().contains(userName));
 
-		List<UserInfo> pageUser;
-		if (CollectionUtils.isEmpty(page.getOrders())) {
-			pageUser = StreamApiUtils.pageByList(filterUsers, page.getCurrent(), page.getSize());
-		} else {
-			pageUser = filterUsers;
-		}
+// List<UserInfo> pageUser;
+// if (CollectionUtils.isEmpty(page.getOrders())) {
+// pageUser = StreamApiUtils.pageByList(filterUsers, page.getCurrent(),
+// page.getSize());
+// } else {
+// pageUser = filterUsers;
+// }
 
 		Map<String, String> orgMap = remoteOrganizationService
 				.childrenMap(classroom.getOrganizationId(), true);
 
 		// 供评估人员使用
 		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
-		List<ClassroomReportBo> data = StreamApiUtils.map(pageUser,
+		List<ClassroomReportBo> data = StreamApiUtils.map(userInfos,
 				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
-		return new PageReportBo(data, (long) filterUsers.size());
+		return new PageReportBo(data, (long) userInfos.size());
+	}
+
+
+	@Override
+	public ListRsp<ClassroomReportBo> selectClassroomReport(ClassroomMonitorReq reportReq) {
+
+		List<ClassroomReportBo> reportBoList = this.getReportList(reportReq.getClassroomId());
+		if (StringUtils.isNotBlank(reportReq.getPattern())) {
+			reportBoList = StreamApiUtils.filter(reportBoList,
+					b -> b.getUserName().contains(reportReq.getPattern())
+							|| b.getName().contains(reportReq.getPattern())
+							|| b.getOrganizationName().contains(reportReq.getPattern()));
+		}
+		if (null != reportReq.getStatus()) {
+			reportBoList = StreamApiUtils.filter(reportBoList, r-> r.getStatus().equals(reportReq.getStatus()));
+		}
+		ListRsp<ClassroomReportBo> res = PageUtil.getListResult(reportBoList,
+				reportReq.toPageParam(), reportBoList.size());
+		return res;
+	}
+
+	private List<ClassroomReportBo> getReportList(String classroomId) {
+		// 基本数据校验
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
+		List<UserInfo> userInfos = remoteUserService.listByOrgId(classroom.getOrganizationId());
+
+		Map<String, String> orgMap = Maps.newHashMap();
+		for (UserInfo userInfo : userInfos) {
+			if (!orgMap.containsKey(userInfo.getOrganizationId())) {
+				orgMap.put(userInfo.getOrganizationId(), userInfo.getOrgName());
+			}
+		}
+		List<String> userIds = StreamApiUtils.map(userInfos, UserInfo::getUserId);
+		List<String> lessonIds = Lists.newArrayList(classroom.getLessonId());
+
+		List<Note> reportList = noteService.listClassReport(userIds, lessonIds);
+		Map<String, Note> userNoteMap = StreamApiUtils.toMap(reportList, Note::getUserId, n -> n);
+		List<String> noteIds = StreamApiUtils.map(reportList, Note::getResourceId);
+		List<NoteEvaluate> noteEvaluateList = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(noteIds)){
+			noteEvaluateList = noteEvaluateMapper.selectBatchByNoteIds(noteIds);
+		}
+		Map<String, NoteEvaluate> evaluateMap = StreamApiUtils.toMap(noteEvaluateList,
+				NoteEvaluate::getNoteId, e -> e);
+		List<String> evaluatorIds = StreamApiUtils.map(noteEvaluateList,
+				NoteEvaluate::getEvaluatorId);
+		Map<String, UserInfo> evaluatorMap = remoteUserService.getIdUserInfoMap(evaluatorIds);
+
+		List<ClassroomReportBo> res = Lists.newArrayList();
+
+		for (UserInfo userInfo : userInfos) {
+			// 用户信息
+			ClassroomReportBo reportBo = BeanUtils.copy(userInfo, ClassroomReportBo.class);
+			reportBo.setOrganizationName(userInfo.getOrgName());
+
+			// 实验报告数据
+			Note note = userNoteMap.get(userInfo.getUserId());
+			if (null != note) {
+				reportBo.setContent(note.getContent());
+				reportBo.setSubmitTime(note.getUpdateTime());
+				reportBo.setNoteId(note.getResourceId());
+
+				NoteEvaluate noteEvaluate = evaluateMap.get(note.getResourceId());
+				if (null != noteEvaluate) {
+					// 评估数据设置
+					reportBo.setEvaluateComment(noteEvaluate.getEvaluateComment());
+					reportBo.setEvaluateTime(noteEvaluate.getEvaluateTime());
+					reportBo.setScore(noteEvaluate.getScore());
+					reportBo.setPassed(noteEvaluate.getPassed());
+					if (noteEvaluate.getPassed()) {
+						reportBo.setStatus(ClassReportStatus.PASSED);
+					} else {
+						reportBo.setStatus(ClassReportStatus.NOT_PASSED);
+					}
+					// 评估人数据设置
+					UserInfo evaluator = evaluatorMap.get(noteEvaluate.getEvaluatorId());
+
+					if (null != evaluator) {
+						reportBo.setEvaluatorId(noteEvaluate.getEvaluatorId());
+						reportBo.setEvaluatorName(evaluator.getName());
+						reportBo.setEvaluatorUserName(evaluator.getUserName());
+					}
+				} else {
+					reportBo.setStatus(ClassReportStatus.NOT_EVALUATED);
+				}
+			} else {
+				reportBo.setStatus(ClassReportStatus.NOT_SUBMITTED);
+			}
+			res.add(reportBo);
+		}
+		// 最高分最低分
+		List<Double> scoreList = noteEvaluateList.stream().map(NoteEvaluate::getScore)
+				.filter(Objects::nonNull).sorted().collect(Collectors.toList());
+		Double lowest = 0.0;
+		Double highest = 0.0;
+		Double average = 0.0;
+		if (!scoreList.isEmpty()) {
+			lowest = scoreList.get(0);
+			highest = scoreList.get(scoreList.size() - 1);
+			average = scoreList.stream().mapToDouble(d->d).sum() / scoreList.size();
+		}
+
+		// 在线状态
+		List<String> onlineIds = remoteUserService.getOnlineIds(userIds);
+
+		for (ClassroomReportBo bo : res) {
+			bo.setLowest(lowest);
+			bo.setHighest(highest);
+			bo.setAverage(average);
+			bo.setOnline(onlineIds.contains(bo.getUserId()));
+		}
+		res = res.stream().sorted(Comparator.comparing(ClassroomReportBo::getUserId)).collect(Collectors.toList());
+
+		return res;
 	}
 
 	@Override
@@ -1288,6 +1402,20 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		return zipPath;
 	}
 
+	private void exportTrainConclusion(UserInfo userInfo, String filePath) {
+
+		// 数据查询及转换
+		String userId = userInfo.isSuperuser() ? CommonConstant.EMPTY_STRING : userInfo.getUserId();
+
+		List<TrainPlanRsp> trainPlanRspList = trainPlanMapper.selectEndedByUser(userId);
+
+		List<TrainPlanExportBo> exportBoList = StreamApiUtils.flatMap(trainPlanRspList,
+				trainPlan -> planToExportBo(userId, trainPlan));
+
+		// 数据导出
+		ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.CLASSROOM);
+	}
+
 	@Override
 	public List<String> selectTempTaskIdsByUser(UserInfo userContext) {
 
@@ -1379,6 +1507,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 		return res;
 	}
+
 
 	/**
 	 * 判断起止时间是否相同或起始时间大于结束时间

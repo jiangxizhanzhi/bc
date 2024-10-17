@@ -58,6 +58,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String BLACK_ENABLE_URL;
 
+	private String ONLINE_CHECK_URL;
+
 	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(15, TimeUnit.MINUTES)
 			.build(new CacheLoader<String, List<UserInfo>>() {
@@ -88,6 +90,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
 		USERINFO_IDS_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("userinfo.ids");
 		BLACK_ENABLE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.auth.blacklist.enabled");
+		ONLINE_CHECK_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.online.check");
 	}
 
 	@Override
@@ -305,7 +308,20 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return this.getFuzzyQueryUserList(context);
 	}
 
-	/**
+    @Override
+    public List<String> getOnlineIds(List<String> userIds) {
+		if(CollectionUtils.isEmpty(userIds)){
+			return Lists.newArrayList();
+		}
+		String targetUrl = ONLINE_CHECK_URL;
+		JSONObject body = new JSONObject();
+		body.put("ids", userIds);
+
+		JSONObject jsonResponse = HttpClientUtil.post(targetUrl,body, JSONObject.class);
+		return jsonResponse.getJSONArray("online").toJavaList(String.class);
+    }
+
+    /**
 	 * 获取用户可见的菜单
 	 *
 	 * @param userId

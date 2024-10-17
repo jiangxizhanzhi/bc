@@ -42,4 +42,11 @@
             and `public` = #{isPublic}
         </if>
     </select>
+    <select id="selectBatchByNoteIds" resultType="com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate">
+        select * from oj_note_evaluate
+        where note_id in
+        <foreach collection="noteIds" item="noteId" open="(" close=")" separator=",">
+            #{noteId}
+        </foreach>
+    </select>
 </mapper>

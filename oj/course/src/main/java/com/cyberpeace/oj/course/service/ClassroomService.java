@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.service.bo.ScreenRecordByNode;
+import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
@@ -148,4 +149,6 @@ public interface ClassroomService extends IService<Classroom> {
 	void updateRecordingButton(IdAndBool req);
 
 	ClassroomStatisticsBo getStatistics(String roomId);
+
+    ListRsp<ClassroomReportBo> selectClassroomReport(ClassroomMonitorReq reportReq);
 }

@@ -77,4 +77,6 @@ public interface RemoteUserService {
 	Boolean isDemoOpen();
 
 	List<UserInfo> listByOrgId(String organizationId);
+
+	List<String> getOnlineIds(List<String> userIds);
 }

@@ -88,4 +88,6 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @return
 	 */
 	List<PracticeTheory> selectAllCategoryIds();
+
+	List<String> selectTime();
 }

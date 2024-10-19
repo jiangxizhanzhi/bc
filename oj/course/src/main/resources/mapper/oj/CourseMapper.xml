@@ -179,4 +179,8 @@
             read_auth_ids like #{likeOrganization}
         </where>
     </select>
+    <select id="selectTime" resultType="java.lang.String">
+        select DATE_FORMAT(create_time, '%Y-%m')
+        from oj_course
+    </select>
 </mapper>

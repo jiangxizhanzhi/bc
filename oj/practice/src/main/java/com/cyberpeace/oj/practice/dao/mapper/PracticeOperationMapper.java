@@ -1,15 +1,14 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
@@ -49,4 +48,6 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	String searchBuiltinBySetIds(@Param("setIds") List<String> setIds);
 
 	List<PracticeOperation> selectAllCategoryIds();
+
+	List<String> selectTime();
 }

@@ -267,5 +267,10 @@
         FROM oj_practice_theory
     </select>
 
+    <select id="selectTime" resultType="java.lang.String">
+        select DATE_FORMAT(create_time, '%Y-%m')
+        from oj_practice_theory
+    </select>
+
 
 </mapper>

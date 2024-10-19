@@ -161,4 +161,9 @@
         SELECT distinct category_id, practice_set_id
         FROM oj_practice_operation
     </select>
+
+    <select id="selectTime" resultType="java.lang.String">
+        select DATE_FORMAT(create_time, '%Y-%m')
+        from oj_practice_operation
+    </select>
 </mapper>

@@ -1,16 +1,14 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.model.CommonContext;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.model.CommonContext;
-
-import lombok.Data;
 
 public class TimeUtil {
 
@@ -394,6 +392,16 @@ public class TimeUtil {
 	 */
 	public static String format10(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		return simpleDateFormat.format(date);
+	}
+
+	/**
+	 * 格式化成2017-07的形式
+	 * @param date
+	 * @return
+	 */
+	public static String format11(Date date) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
 		return simpleDateFormat.format(date);
 	}
 

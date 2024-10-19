@@ -155,8 +155,8 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	public List<ToolTypeCount> statistics() {
 		List<ToolTypeCount> typeCounts = new ArrayList<>();
 		List<ToolStatistics> tools = toolMapper.statistics();
-		String thisMonth = TimeUtil.format8(new Date());
-		String lastMonth = TimeUtil.format8(TimeUtil.addMonths(new Date(), -1));
+		String thisMonth = TimeUtil.format11(new Date());
+		String lastMonth = TimeUtil.format11(TimeUtil.addMonths(new Date(), -1));
 		List<ToolStatistics> typeTools;
 		for (Tool.Type type : Tool.Type.values()) {
 			ToolTypeCount toolTypeCount = new ToolTypeCount();

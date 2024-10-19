@@ -51,8 +51,8 @@ public class StatisticsController {
     }
 
     private StatisticsBo statistics(List<String> timeList) {
-        String thisMonth = TimeUtil.format8(new Date());
-        String lastMonth = TimeUtil.format8(TimeUtil.addMonths(new Date(), -1));
+        String thisMonth = TimeUtil.format11(new Date());
+        String lastMonth = TimeUtil.format11(TimeUtil.addMonths(new Date(), -1));
         StatisticsBo statistics = new StatisticsBo();
         statistics.setTotal(timeList.size());
         statistics.setThisAdd((int) timeList.stream().filter(time -> thisMonth.equals(time)).count());

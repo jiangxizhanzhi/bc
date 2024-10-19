@@ -4,7 +4,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.frame.controller.res.StatisticsRes;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +14,6 @@ import java.util.List;
 @Api(tags = "框架统计接口")
 @RestController
 @RequestMapping("/frame/statistics")
-@Slf4j
 public class FrameStatisticsController {
 
     @ApiOperation("统计")

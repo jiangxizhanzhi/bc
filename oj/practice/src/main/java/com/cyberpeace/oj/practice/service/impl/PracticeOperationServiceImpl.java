@@ -675,6 +675,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		List<PracticeOperationTarget> operationTargets = practiceOperationTargetMapper.getAllByOperationIds(operationIds);
+		if (operationTargets == null) {
+			operationTargets = new ArrayList<>();
+		}
 		Map<String, List<PracticeOperationTarget>> operationTargetMap = new HashMap<>();
 		for (PracticeOperationTarget operationTarget : operationTargets) {
 			List<PracticeOperationTarget> operations = operationTargetMap.get(operationTarget.getOperationId());
@@ -1469,6 +1472,51 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Override
 	public List<PracticeOperation> getCategoryIdAndSetIds() {
 		return practiceOperationMapper.selectAllCategoryIds();
+	}
+
+	@Override
+	public List<AdminOperationListBo> getOperationByBodeIds(List<String> nodeIds) {
+		if (CollectionUtils.isEmpty(nodeIds)) {
+			return new ArrayList<>();
+		}
+		List<PracticeOperationTarget> targetList = practiceOperationTargetMapper.getAllByTargetIds(nodeIds);
+		if (targetList == null) {
+			return new ArrayList<>();
+		}
+		List<String> operationIds = StreamApiUtils.map(targetList, PracticeOperationTarget::getOperationId);
+		List<PracticeOperation> operationList = practiceOperationMapper.selectBatchIds(operationIds);
+		List<String> attachmentIds = new ArrayList<>();
+		for (PracticeOperation operation : operationList) {
+			String attachmentId = operation.getAttachmentId();
+			if (StringUtils.isNotBlank(attachmentId)) {
+				attachmentIds.addAll(Arrays.asList(attachmentId.split(CommonConstant.CODE_COMMA)));
+			}
+		}
+
+		List<PracticeOperationTarget> operationTargets = practiceOperationTargetMapper.getAllByOperationIds(operationIds);
+		Map<String, List<PracticeOperationTarget>> operationTargetMap = new HashMap<>();
+		for (PracticeOperationTarget operationTarget : operationTargets) {
+			List<PracticeOperationTarget> operations = operationTargetMap.get(operationTarget.getOperationId());
+			if (operations == null) {
+				operationTargetMap.put(operationTarget.getOperationId(), Collections.singletonList(operationTarget));
+			} else {
+				operations.add(operationTarget);
+			}
+		}
+		List<String> targetIds = operationTargets.stream().map(PracticeOperationTarget::getNodeId).collect(Collectors.toList());
+		Map<String, String> map = remoteTopoService.getDeviceName(targetIds);
+
+
+		attachmentIds.addAll(operationTargets.stream().map(PracticeOperationTarget::getAttachmentId).collect(Collectors.toList()));
+		List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds, false);
+
+
+		// 数据类型转换
+		Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
+				Attachment::getResourceId, attachment -> attachment);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
+
+		return operationList.stream().map(practiceOperation -> entityToListBo(practiceOperation, authContext, null, operationTargetMap, attachmentMap, map)).collect(Collectors.toList());
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

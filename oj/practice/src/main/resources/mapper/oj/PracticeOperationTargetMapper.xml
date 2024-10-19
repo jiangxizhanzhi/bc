@@ -15,4 +15,17 @@
             </if>
         </where>
     </select>
+
+    <select id="getAllByTargetIds" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeOperationTarget">
+        select *
+        from oj_practice_operation_target
+        <where>
+            <if test="targetIds != null and targetIds.size() != 0">
+                target_id in
+                <foreach collection="targetIds" item="targetId" close=")" open="(" separator=",">
+                    #{targetId}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

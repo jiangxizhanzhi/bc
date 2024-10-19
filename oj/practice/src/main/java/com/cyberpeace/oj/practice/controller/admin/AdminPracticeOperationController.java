@@ -308,4 +308,10 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp(result);
 	}
 
+	@ApiOperation("根据镜像id获取实操题列表")
+	@PostMapping("/list/by_node")
+	public BaseRsp<List<AdminOperationListBo>> getOperationByNode(@RequestBody OperationByNodeReq operationByNodeReq) {
+		return new BaseRsp<>(practiceOperationService.getOperationByBodeIds(operationByNodeReq.getNodeIds()));
+	}
+
 }

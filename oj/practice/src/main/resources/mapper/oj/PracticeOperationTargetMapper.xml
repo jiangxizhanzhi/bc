@@ -21,7 +21,7 @@
         from oj_practice_operation_target
         <where>
             <if test="targetIds != null and targetIds.size() != 0">
-                target_id in
+                node_id in
                 <foreach collection="targetIds" item="targetId" close=")" open="(" separator=",">
                     #{targetId}
                 </foreach>

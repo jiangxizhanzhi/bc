@@ -1,28 +1,16 @@
 package com.cyberpeace.cr.tool.service.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import com.cyberpeace.common.util.JsonUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.DeviceInfo;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DateUtil;
-import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
+import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
+import com.cyberpeace.cr.tool.dao.context.ToolStatistics;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
@@ -34,6 +22,15 @@ import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements ToolService {
@@ -152,5 +149,30 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			log.error("toolObject is  null,tool =[{}]", JsonUtil.toJsonString(tool));
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
 		}
+	}
+
+	@Override
+	public List<ToolTypeCount> statistics() {
+		List<ToolTypeCount> typeCounts = new ArrayList<>();
+		List<ToolStatistics> tools = toolMapper.statistics();
+		String thisMonth = TimeUtil.format8(new Date());
+		String lastMonth = TimeUtil.format8(TimeUtil.addMonths(new Date(), -1));
+		List<ToolStatistics> typeTools;
+		for (Tool.Type type : Tool.Type.values()) {
+			ToolTypeCount toolTypeCount = new ToolTypeCount();
+			toolTypeCount.setName(type.getDesc());
+			typeTools = tools.stream().filter(tool -> type.getCode().equals(tool.getType())).collect(Collectors.toList());
+			toolTypeCount.setCount(typeTools.size());
+			toolTypeCount.setThisAdd((int) typeTools.stream().filter(tool -> thisMonth.equals(tool.getDate())).count());
+			toolTypeCount.setLastAdd((int) typeTools.stream().filter(tool -> lastMonth.equals(tool.getDate())).count());
+			typeCounts.add(toolTypeCount);
+		}
+		ToolTypeCount toolTypeCount = new ToolTypeCount();
+		toolTypeCount.setName("总计");
+		toolTypeCount.setCount(tools.size());
+		toolTypeCount.setThisAdd((int) tools.stream().filter(tool -> thisMonth.equals(tool.getDate())).count());
+		toolTypeCount.setLastAdd((int) tools.stream().filter(tool -> lastMonth.equals(tool.getDate())).count());
+		typeCounts.add(toolTypeCount);
+		return typeCounts;
 	}
 }

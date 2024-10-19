@@ -1,15 +1,14 @@
 package com.cyberpeace.cr.tool.dao.entity;
 
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.*;
-import org.apache.commons.lang3.StringUtils;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.ConfigUtil;
-
 import lombok.Data;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @TableName("cr_tool_tool")
@@ -67,6 +66,8 @@ public class Tool extends BaseTable {
 	@TableField(exist = false)
 	private String coverUrl;
 
+	private String type;
+
 	public String getCoverUrl() {
 		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
 		if (StringUtils.isNotBlank(cover) && !cover.startsWith(prefix)) {
@@ -86,6 +87,22 @@ public class Tool extends BaseTable {
 		private String desc;
 
 		Cracked(String code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
+
+	public enum Type {
+
+		PROBE("probe", "探测类"), ATTACK("attack", "攻击类"), CONTROL("control", "控制类"), DEFENSE("defense", "防御类");
+
+		@Getter
+		private String code;
+
+		@Getter
+		private String desc;
+
+		Type(String code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

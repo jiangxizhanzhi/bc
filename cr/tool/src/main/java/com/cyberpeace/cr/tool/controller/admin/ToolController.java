@@ -8,12 +8,12 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
+import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.service.ToolService;
@@ -24,7 +24,6 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 import java.util.List;
 
 @Api(tags = "后台-资源中心-工具库")
@@ -119,5 +117,12 @@ public class ToolController {
 
 		return new BaseRsp<>();
 	}
+
+	@ApiOperation("工具统计")
+	@GetMapping("/statistics")
+	public BaseRsp<List<ToolTypeCount>> statistics() {
+		return new BaseRsp<>(toolService.statistics());
+	}
+
 
 }

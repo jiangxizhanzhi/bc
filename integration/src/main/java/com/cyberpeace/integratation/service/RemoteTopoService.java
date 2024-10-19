@@ -1,13 +1,13 @@
 package com.cyberpeace.integratation.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
+
+import java.util.List;
+import java.util.Map;
 
 public interface RemoteTopoService {
 
@@ -96,4 +96,6 @@ public interface RemoteTopoService {
 	 * @return {@code JSONObject}
 	 */
 	JSONObject getNodeStatistics(String topoId);
+
+	Map<String, String> getDeviceName(List<String> deviceIds);
 }

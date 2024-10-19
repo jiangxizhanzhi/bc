@@ -1,23 +1,5 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -80,8 +62,24 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author chenz
@@ -160,6 +158,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PracticeMistakeMapper practiceMistakeMapper;
+
+	@Autowired
+	private PracticeOperationTargetMapper practiceOperationTargetMapper;
 
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
@@ -415,6 +416,32 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 前面做了更改 这时候要重新设置一下
 		operationBo.setAttachmentId(operation.getAttachmentId());
 
+		List<PracticeOperationTarget> operationTargetList = practiceOperationTargetMapper.getAllByOperationIds(Collections.singletonList(operationBo.getResourceId()));
+		List<TargetBo> targetBoList = new ArrayList<>();
+		List<String> attachmentIds = operationTargetList.stream().map(PracticeOperationTarget::getAttachmentId).collect(Collectors.toList());
+		List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds, false);
+
+		// 数据类型转换
+		Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
+				Attachment::getResourceId, attachment -> attachment);
+		List<String> targetIds = operationTargetList.stream().map(PracticeOperationTarget::getNodeId).collect(Collectors.toList());
+		Map<String, String> targetMap = remoteTopoService.getDeviceName(targetIds);
+		for (PracticeOperationTarget target : operationTargetList) {
+			TargetBo bo = new TargetBo();
+			bo.setNodeId(target.getNodeId());
+			bo.setNodeName(targetMap.get(target.getNodeId()));
+			bo.setNodeCommand(target.getNodeCommand());
+			if (target.getAttachmentId() != null) {
+				Attachment attachment = attachmentMap.getOrDefault(target.getAttachmentId(), null);
+				if (attachment != null) {
+					bo.setFileName(attachment.getFileName());
+					bo.setFileUrl(attachment.getFilePath());
+				}
+			}
+			targetBoList.add(bo);
+		}
+		operationBo.setTargetList(targetBoList);
+
 		return operationBo;
 	}
 
@@ -638,7 +665,39 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,
 				operationListQuery, authContext.getIsWeb());
 
-		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext, listQuery.getSolved()));
+		operationIds = iPage.getRecords().stream().map(PracticeOperation::getResourceId).collect(Collectors.toList());
+		List<String> attachmentIds = new ArrayList<>();
+		for (PracticeOperation operation : iPage.getRecords()) {
+			String attachmentId = operation.getAttachmentId();
+			if (StringUtils.isNotBlank(attachmentId)) {
+				attachmentIds.addAll(Arrays.asList(attachmentId.split(CommonConstant.CODE_COMMA)));
+			}
+		}
+
+		List<PracticeOperationTarget> operationTargets = practiceOperationTargetMapper.getAllByOperationIds(operationIds);
+		Map<String, List<PracticeOperationTarget>> operationTargetMap = new HashMap<>();
+		for (PracticeOperationTarget operationTarget : operationTargets) {
+			List<PracticeOperationTarget> operations = operationTargetMap.get(operationTarget.getOperationId());
+			if (operations == null) {
+				operationTargetMap.put(operationTarget.getOperationId(), Collections.singletonList(operationTarget));
+			} else {
+				operations.add(operationTarget);
+			}
+		}
+		List<String> targetIds = operationTargets.stream().map(PracticeOperationTarget::getNodeId).collect(Collectors.toList());
+		Map<String, String> map = remoteTopoService.getDeviceName(targetIds);
+
+
+		attachmentIds.addAll(operationTargets.stream().map(PracticeOperationTarget::getAttachmentId).collect(Collectors.toList()));
+		List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds, false);
+
+
+		// 数据类型转换
+		Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
+				Attachment::getResourceId, attachment -> attachment);
+
+
+		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext, listQuery.getSolved(), operationTargetMap, attachmentMap, map));
 	}
 
 	/**
@@ -649,7 +708,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 * @return
 	 */
 	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
-			AuthContext authContext, Boolean solved) {
+			AuthContext authContext, Boolean solved, Map<String, List<PracticeOperationTarget>> operationTargetMap,
+			Map<String, Attachment> attachmentMap, Map<String, String> targetMmap) {
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
@@ -678,6 +738,37 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 		UserInfo userInfo = remoteUserService.getById(practiceOperation.getCreateUserId());
 		operationListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
+		List<PracticeOperationTarget> operationTargetList = operationTargetMap.getOrDefault(practiceOperation.getResourceId(), new ArrayList<>());
+		List<TargetBo> targetBoList = new ArrayList<>();
+		for (PracticeOperationTarget target : operationTargetList) {
+			TargetBo bo = new TargetBo();
+			bo.setNodeId(target.getNodeId());
+			bo.setNodeName(targetMmap.get(target.getNodeId()));
+			bo.setNodeCommand(target.getNodeCommand());
+			if (target.getAttachmentId() != null) {
+				Attachment attachment = attachmentMap.getOrDefault(target.getAttachmentId(), null);
+				if (attachment != null) {
+					bo.setFileName(attachment.getFileName());
+					bo.setFileUrl(attachment.getFilePath());
+				}
+			}
+			targetBoList.add(bo);
+		}
+		operationListBo.setTargetList(targetBoList);
+
+		String attachmentId = practiceOperation.getAttachmentId();
+		List<PracticeOperationFileBo> fileBoList = new ArrayList<>();
+		if (StringUtils.isNotBlank(attachmentId)) {
+			for (String id : attachmentId.split(CommonConstant.CODE_COMMA)) {
+				PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
+				Attachment attachment = attachmentMap.get(id);
+				fileBo.setFileName(attachment.getFileName());
+				fileBo.setFileUrl(attachment.getFilePath());
+				fileBoList.add(fileBo);
+			}
+		}
+		operationListBo.setFiles(fileBoList);
+
 		return operationListBo;
 
 	}

@@ -1,11 +1,12 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel
@@ -55,5 +56,14 @@ public class AdminOperationListBo implements Serializable {
 
 	@ApiModelProperty("是否有场景")
 	private Boolean hasSceneData;
+
+	@ApiModelProperty("靶标列表")
+	private List<TargetBo> targetList;
+
+	@ApiModelProperty("附件列表")
+	private List<PracticeOperationFileBo> files;
+
+	@ApiModelProperty("答案")
+	private String answer;
 
 }

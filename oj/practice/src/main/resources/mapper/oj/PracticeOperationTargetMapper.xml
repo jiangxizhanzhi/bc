@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeOperationTargetMapper">
+
+    <select id="getAllByOperationIds" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeOperationTarget">
+        select *
+        from oj_practice_operation_target
+        <where>
+            <if test="operationIds != null and operationIds.size() != 0">
+                operation_id in
+                <foreach collection="operationIds" item="operationId" close=")" open="(" separator=",">
+                    #{operationId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

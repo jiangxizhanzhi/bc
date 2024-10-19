@@ -25,4 +25,7 @@ public class OperationBo extends PracticeOperation {
 	@ApiModelProperty("后台实操习题附件 主要针对随机flag")
 	private List<PracticeOperationFileBo> files;
 
+	@ApiModelProperty("靶标列表")
+	private List<TargetBo> targetList;
+
 }

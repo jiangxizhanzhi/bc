@@ -12,7 +12,7 @@
 
     <groupId>com.cyberpeace.frame</groupId>
     <artifactId>frame</artifactId>
-    <version>${frame.version</version>
+    <version>${frame.version}</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

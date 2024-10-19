@@ -127,7 +127,7 @@
         <dependency>
             <groupId>com.cyberpeace.frame</groupId>
             <artifactId>frame</artifactId>
-            <version>${frame.version</version>
+            <version>${frame.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

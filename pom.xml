@@ -71,6 +71,7 @@
         <oj.practice.version>0.0.1-SNAPSHOT</oj.practice.version>
         <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
         <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
+        <frame.version>0.0.1-SNAPSHOT</frame.version>
         <aop-version>2.7.3</aop-version>
     </properties>
 

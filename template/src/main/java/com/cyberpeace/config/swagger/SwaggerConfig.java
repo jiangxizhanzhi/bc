@@ -85,6 +85,13 @@ public class SwaggerConfig {
 				.groupName("outer");
 	}
 
+	@Bean
+	public Docket apiFrame() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.frame"))
+						  .apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+						  .groupName("frame");
+	}
+
 	private ApiSelectorBuilder getDocket() {
 		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");
 

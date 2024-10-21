@@ -30,8 +30,8 @@ public class FrameStatisticsController {
         StatisticsRes progress = new StatisticsRes();
         progress.setName("面向攻击流程");
         progress.setTotal(4);
-        target.setThisAdd(2);
-        target.setLastAdd(2);
+        progress.setThisAdd(2);
+        progress.setLastAdd(2);
         result.add(progress);
 
         StatisticsRes total = new StatisticsRes();

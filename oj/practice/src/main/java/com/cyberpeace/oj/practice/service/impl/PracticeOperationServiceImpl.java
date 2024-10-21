@@ -424,12 +424,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 数据类型转换
 		Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
 				Attachment::getResourceId, attachment -> attachment);
-		List<String> targetIds = operationTargetList.stream().map(PracticeOperationTarget::getNodeId).collect(Collectors.toList());
-		Map<String, String> targetMap = remoteTopoService.getDeviceName(targetIds);
 		for (PracticeOperationTarget target : operationTargetList) {
 			TargetBo bo = new TargetBo();
 			bo.setNodeId(target.getNodeId());
-			bo.setNodeName(targetMap.get(target.getNodeId()));
+			bo.setNodeName(target.getNodeName());
 			bo.setNodeCommand(target.getNodeCommand());
 			if (target.getAttachmentId() != null) {
 				Attachment attachment = attachmentMap.getOrDefault(target.getAttachmentId(), null);
@@ -687,8 +685,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				operations.add(operationTarget);
 			}
 		}
-		List<String> targetIds = operationTargets.stream().map(PracticeOperationTarget::getNodeId).collect(Collectors.toList());
-		Map<String, String> map = remoteTopoService.getDeviceName(targetIds);
 
 
 		attachmentIds.addAll(operationTargets.stream().map(PracticeOperationTarget::getAttachmentId).collect(Collectors.toList()));
@@ -700,7 +696,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				Attachment::getResourceId, attachment -> attachment);
 
 
-		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext, listQuery.getSolved(), operationTargetMap, attachmentMap, map));
+		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext, listQuery.getSolved(), operationTargetMap, attachmentMap));
 	}
 
 	/**
@@ -712,7 +708,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
 			AuthContext authContext, Boolean solved, Map<String, List<PracticeOperationTarget>> operationTargetMap,
-			Map<String, Attachment> attachmentMap, Map<String, String> targetMmap) {
+			Map<String, Attachment> attachmentMap) {
 
 		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
 				AdminOperationListBo.class);
@@ -746,7 +742,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		for (PracticeOperationTarget target : operationTargetList) {
 			TargetBo bo = new TargetBo();
 			bo.setNodeId(target.getNodeId());
-			bo.setNodeName(targetMmap.get(target.getNodeId()));
+			bo.setNodeName(target.getNodeName());
 			bo.setNodeCommand(target.getNodeCommand());
 			if (target.getAttachmentId() != null) {
 				Attachment attachment = attachmentMap.getOrDefault(target.getAttachmentId(), null);
@@ -1480,7 +1476,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			return new ArrayList<>();
 		}
 		List<PracticeOperationTarget> targetList = practiceOperationTargetMapper.getAllByTargetIds(nodeIds);
-		if (targetList == null) {
+		if (CollectionUtils.isEmpty(targetList)) {
 			return new ArrayList<>();
 		}
 		List<String> operationIds = StreamApiUtils.map(targetList, PracticeOperationTarget::getOperationId);
@@ -1503,8 +1499,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				operations.add(operationTarget);
 			}
 		}
-		List<String> targetIds = operationTargets.stream().map(PracticeOperationTarget::getNodeId).collect(Collectors.toList());
-		Map<String, String> map = remoteTopoService.getDeviceName(targetIds);
 
 
 		attachmentIds.addAll(operationTargets.stream().map(PracticeOperationTarget::getAttachmentId).collect(Collectors.toList()));
@@ -1516,7 +1510,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				Attachment::getResourceId, attachment -> attachment);
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), false);
 
-		return operationList.stream().map(practiceOperation -> entityToListBo(practiceOperation, authContext, null, operationTargetMap, attachmentMap, map)).collect(Collectors.toList());
+		return operationList.stream().map(practiceOperation -> entityToListBo(practiceOperation, authContext, null, operationTargetMap, attachmentMap)).collect(Collectors.toList());
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

@@ -18,6 +18,8 @@ public class PracticeOperationTarget extends BaseTable {
 
 	private String nodeId;
 
+	private String nodeName;
+
 	private String attachmentId;
 
 	private String nodeCommand;

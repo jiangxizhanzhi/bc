@@ -7,6 +7,6 @@ CREATE TABLE `oj_practice_operation_target` (
                                                 `node_command` varchar(255) DEFAULT NULL COMMENT '命令',
                                                 `create_time` datetime DEFAULT NULL,
                                                 `update_time` datetime DEFAULT NULL,
+                                                `node_name` varchar(255) DEFAULT NULL COMMENT '节点名称',
                                                 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-

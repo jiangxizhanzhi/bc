@@ -17,4 +17,6 @@ public class WebToolListReq extends PageReqBase {
 
     @ApiModelProperty("授权")
     private String cracked;
+
+    private String type;
 }

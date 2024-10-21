@@ -54,12 +54,14 @@ public class ToolController {
 	public BaseRsp<ListRsp<ToolRsp>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase,
 			@ApiParam(name = "type", value = "工具分类")String type,
-			@ApiParam(name = "tag", value = "工具标签")String tag) {
+			@ApiParam(name = "tag", value = "工具标签")String tag,
+			@ApiParam(name = "category", value = "工具分类")String category) {
 		Boolean isAdmin = true;
 		Page page = pageReqBase.toPageParam();
 		ToolListQuery listQuery = BeanUtils.copy(pageReqBase, ToolListQuery.class);
 		listQuery.setType(type);
 		listQuery.setTag(tag);
+		listQuery.setCategory(category);
 		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin);
 		return new BaseRsp(PageUtil.getListResult(toolBoListRsp));
 	}

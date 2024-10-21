@@ -120,6 +120,11 @@
             <version>${situation.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.cyberpeace.space</groupId>
+            <artifactId>space</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.cyberpeace.gateway</groupId>
             <artifactId>gateway</artifactId>
             <version>${gateway.version}</version>

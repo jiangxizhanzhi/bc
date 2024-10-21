@@ -45,4 +45,7 @@ public class AdminCourseRes implements Serializable {
 
 	@ApiModelProperty("课程编号")
 	private String courseNum;
+
+	@ApiModelProperty("岗位")
+	private Integer role;
 }

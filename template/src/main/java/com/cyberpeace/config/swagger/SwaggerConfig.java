@@ -1,11 +1,8 @@
 package com.cyberpeace.config.swagger;
 
-import java.util.Arrays;
-
 import com.cyberpeace.common.util.ConfigUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -18,6 +15,8 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
 import springfox.documentation.spring.web.plugins.Docket;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableOpenApi
@@ -56,6 +55,13 @@ public class SwaggerConfig {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
 				.groupName("oj");
+	}
+
+	@Bean
+	public Docket apiSpace() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.space"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.groupName("space");
 	}
 
 	@Bean

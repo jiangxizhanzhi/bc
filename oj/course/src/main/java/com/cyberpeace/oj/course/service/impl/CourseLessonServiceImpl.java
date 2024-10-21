@@ -1,23 +1,5 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -71,8 +53,23 @@ import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.impl.LessonOperationEvaluateHandler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -1146,6 +1143,44 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return resourceIds.size();
 	}
 
+	@Override
+	public void batchDelete(List<String> resourceIds) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		// 运行场景
+		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(resourceIds);
+		CourseSceneContext sceneContext = this.selectCourseScene(lessonList, authContext);
+
+
+		transactionTemplate.execute(new TransactionCallback<Integer>() {
+
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+
+				// 笔记和评论
+				// 收藏
+
+				// 课堂相关
+
+				// 课后练习
+
+				// 目录和场景
+				return courseLessonMapper.deleteBatchIds(resourceIds);
+			}
+		});
+		// 删除课件和视频
+		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
+		for (CourseLesson lesson : lessonList) {
+			String handoutUrl = lesson.getHandoutUrl();
+			String videoUrl = lesson.getVideoUrl();
+			this.deleteAttachment(handoutUrl, prefix);
+			this.deleteAttachment(videoUrl, prefix);
+		}
+		this.clearSceneAndTopos(sceneContext.getScenes(), sceneContext.getTopos());
+	}
+
 	/**
 	 * 删除附件
 	 *
@@ -1256,7 +1291,84 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 	}
 
-	@Override
+    @Override
+    public List<AdminLessonListBo> lesson2AdminBo(List<CourseLesson> lessonList) {
+
+		List<AdminLessonListBo> res = Lists.newArrayList();
+		if (lessonList.isEmpty()) {
+			return res;
+		}
+		List<String> paperIds = StreamApiUtils.getColumn(lessonList, CourseLesson::getPaperId);
+		LambdaQueryWrapper<PracticeOperationRef> filterOperation = new LambdaQueryWrapper<>();
+		LambdaQueryWrapper<PracticeTheoryRef> filterTheory = new LambdaQueryWrapper<>();
+		if (!paperIds.isEmpty()) {
+			filterOperation.in(PracticeOperationRef::getPaperId, paperIds);
+			filterTheory.in(PracticeTheoryRef::getPaperId, paperIds);
+		}
+		List<PracticeOperationRef> practiceOperationRefs = practiceOperationRefMapper
+				.selectList(filterOperation);
+		Map<String, List<PracticeOperationRef>> operationMap = StreamApiUtils
+				.groupBy(practiceOperationRefs, PracticeOperationRef::getPaperId);
+		List<PracticeTheoryRef> practiceTheoryRefs = practiceTheoryRefMapper
+				.selectList(filterTheory);
+		Map<String, List<PracticeTheoryRef>> theoryMap = StreamApiUtils.groupBy(practiceTheoryRefs,
+				PracticeTheoryRef::getPaperId);
+		List<String> userIds = StreamApiUtils.map(lessonList, CourseLesson::getCreateUserId);
+		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
+		List<String> courseIds = StreamApiUtils.map(lessonList, CourseLesson::getCourseId);
+		List<Course> courseList = courseMapper.selectBatchIds(courseIds);
+		Map<String, Course> courseMap = StreamApiUtils.toMap(courseList, Course::getResourceId,
+				c -> c);
+		List<Paper> papers = paperMapper.selectBatchIds(paperIds);
+		Map<String, Paper> paperMap = StreamApiUtils.toMap(papers, Paper::getResourceId, p -> p);
+		for (CourseLesson courseLesson : lessonList) {
+			// 前台没有课程列表查询 不用管是否存在课堂场景 修改sceneShareMode
+			AdminLessonListBo adminLessonListBo = BeanUtils.copy(courseLesson,
+					AdminLessonListBo.class);
+
+			// 附件数据相关
+			if (StringUtils.isNotBlank(courseLesson.getAttachmentIds())) {
+				List<AttachmentBo> attachmentBoList = attachmentService
+						.selectByIds(courseLesson.getAttachmentIds(), false);
+				adminLessonListBo.setLessonFile(attachmentBoList);
+			}
+
+			// 文件相关处理
+			if (StringUtils.isNotBlank(courseLesson.getHandoutUrl())
+					&& courseLesson.getHandoutType().intValue() == CourseLesson.HandoutType.MD
+					.getCode().intValue()) {
+				adminLessonListBo.setHandoutUrl(courseLesson.getHandoutUrl());
+			} else {
+				adminLessonListBo
+						.setHandoutUrl(utilService.handlerFileUrl(courseLesson.getHandoutUrl()));
+			}
+			adminLessonListBo.setVideoUrl(utilService.handlerFileUrl(courseLesson.getVideoUrl()));
+
+			// 试卷相关
+			Paper paper = paperMap.get(courseLesson.getPaperId());
+
+			String paperId = courseLesson.getPaperId();
+			List<PracticeOperationRef> operations = operationMap.getOrDefault(paperId,
+					new ArrayList<>());
+			List<PracticeTheoryRef> theories = theoryMap.getOrDefault(paperId, new ArrayList<>());
+			adminLessonListBo.setPracticeCount(operations.size() + theories.size());
+			adminLessonListBo.setPracticeCount(paper.getPracticeCount());
+			adminLessonListBo.setPaperPublic(paper.getIsPublic());
+
+//			 课程相关
+			Course course = courseMap.get(courseLesson.getCourseId());
+			adminLessonListBo.setCourseName(course.getName());
+
+			// 用户相关
+			adminLessonListBo.setCreateUserName(
+					userNameMap.getOrDefault(courseLesson.getCreateUserId(), ""));
+
+			res.add(adminLessonListBo);
+		}
+		return res;
+    }
+
+    @Override
 	public List<OjLocalScene> selectLessonAllScene(List<CourseLesson> lessonList, AuthContext authContext) {
 		List<OjLocalScene> scenes = new ArrayList<>();
 		// 查询课时场景

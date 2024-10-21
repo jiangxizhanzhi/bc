@@ -65,6 +65,8 @@ public class Course extends AuthTable {
 	@ApiModelProperty("课程编号")
 	private String courseNum;
 
+	private Integer role;
+
 	@TableField(exist = false)
 	@ApiModelProperty("课时数量")
 	private Integer lessonCount;

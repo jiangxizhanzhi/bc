@@ -1,10 +1,5 @@
 package com.cyberpeace.oj.course.controller.req;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -13,6 +8,10 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
 @ApiModel("课程新增信息")
@@ -55,6 +54,9 @@ public class CourseAddReq implements Serializable {
 	@ApiModelProperty("课程编号")
 	@NotBlank
 	private String courseNum;
+
+	@ApiModelProperty("岗位")
+	private Integer role;
 
 	public void validate() {
 		// 校验分数最大值

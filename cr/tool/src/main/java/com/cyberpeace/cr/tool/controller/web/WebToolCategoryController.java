@@ -2,7 +2,6 @@ package com.cyberpeace.cr.tool.controller.web;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
 import io.swagger.annotations.Api;
@@ -11,7 +10,6 @@ import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,8 +29,8 @@ public class WebToolCategoryController {
     @ApiOperation("工具分类列表")
     @RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)
     public BaseRsp<List<WebToolCategoryRsp>> getList(
-            @ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
-        List<WebToolCategoryRsp> webToolCategoryRsps = toolCategoryService.webSelectAll();
+            @ApiParam(name = "type", value = "工具类别") String type) {
+        List<WebToolCategoryRsp> webToolCategoryRsps = toolCategoryService.webSelectAll(type);
 
         return new BaseRsp<>(webToolCategoryRsps);
     }

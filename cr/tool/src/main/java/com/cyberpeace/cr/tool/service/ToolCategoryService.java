@@ -27,8 +27,9 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	/**
 	 * 前台查询所有工具分类（区分用户设置语言, 进行国际化处理）
 	 * @return 所有工具分类列表
+	 * @param type
 	 */
-	List<WebToolCategoryRsp> webSelectAll();
+	List<WebToolCategoryRsp> webSelectAll(String type);
 
 	/**
 	 * 根据工具分类名称获取工具分类信息

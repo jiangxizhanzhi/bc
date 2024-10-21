@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
@@ -18,6 +19,7 @@ import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -51,13 +53,16 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		return toolCategoryMapper.selectList(null);
 	}
 
-	public List<WebToolCategoryRsp> webSelectAll() {
+	public List<WebToolCategoryRsp> webSelectAll(String type) {
 		List<ToolCategory> toolCategories = selectAll();
-
-		return toolCategories.stream().map(toolCategory ->
-				WebToolCategoryRsp.builder().resourceId(toolCategory.getResourceId())
-						.categoryI18nName(toolCategory.selectI18nName()).build()
-		).collect(Collectors.toList());
+		if (StringUtils.isNotBlank(type)) {
+			toolCategories = StreamApiUtils.filter(toolCategories, c -> type.equals(c.getType()));
+		}
+		return toolCategories.stream()
+				.map(toolCategory -> WebToolCategoryRsp.builder()
+						.resourceId(toolCategory.getResourceId())
+						.categoryI18nName(toolCategory.selectI18nName()).build())
+				.collect(Collectors.toList());
 	}
 
 	@Override

@@ -102,11 +102,6 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_NAME);
 		}
 		// 英文名称重复性校验
-		toolCategoryObject = toolCategoryMapper.getByEnName(toolCategory.getEnName(), toolCategory.getResourceId());
-		if (toolCategoryObject != null) {
-			log.error("Tool category english name duplicate, enter again! enName = [{}]", toolCategory.getEnName());
-			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_ENNAME);
-		}
 	}
 
 	@Override

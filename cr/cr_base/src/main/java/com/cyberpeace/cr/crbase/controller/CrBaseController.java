@@ -1,19 +1,5 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.compress.utils.Lists;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -29,11 +15,23 @@ import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Api(tags = "靶场公用接口")
 @RestController
@@ -66,7 +64,8 @@ public class CrBaseController {
 	public BaseRsp getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
 		List<CrConstantsConfig> constants = crConstantsService.getByType(type);
 		// 任务类型
-		if (type.equals(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode())) {
+		if (type.equals(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode()) ||
+				type.equals(CrConstantsConfig.ConstantsType.TOOL_TYPE.getCode())) {
 			List<MissionCategoryRsp> rsp = StreamApiUtils.map(constants,
 					constant -> new MissionCategoryRsp(constant.getResourceId(),
 							constant.selectI18nName()));

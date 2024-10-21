@@ -56,7 +56,8 @@ public class CrConstantsConfig implements SelectI18nName {
 		STUDY_STATISTICS(37,"学习统计类型难度"),
 		EVAL_STATUS(38, "靶场测评评估状态"),
 		WEB_PRACTICE_STATUS(39, "三种练习状态"),
-		Note_type(40, "笔记资源类型");
+		Note_type(40, "笔记资源类型"),
+		TOOL_TYPE(43, "工具类别");
 
 		@Getter
 		private final Integer code;

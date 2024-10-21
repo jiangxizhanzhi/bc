@@ -86,6 +86,7 @@
         <module>common-service</module>
         <module>situation</module>
         <module>space</module>
+        <module>frame</module>
     </modules>
 
     <dependencyManagement>

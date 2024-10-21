@@ -13,7 +13,7 @@
                 and `tag` like #{tag}
             </if>
             <if test="isAdmin == false">
-                and `disable` = 0
+                and `disabled` = 0
             </if>
             <if test="listQuery.pattern != null and listQuery.pattern != ''">
                 <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>

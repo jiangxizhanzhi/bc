@@ -13,9 +13,10 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	/**
 	 * 工具类型分页
 	 * @param listReq 分页参数
+	 * @param type
 	 * @return 分页后工具分类
 	 */
-	ListRsp<ToolCategory> selectPage(PageReqBase listReq);
+	ListRsp<ToolCategory> selectPage(PageReqBase listReq, String type);
 
 	/**
 	 * 查询所有工具分类

@@ -16,4 +16,8 @@ public class ToolListQuery extends PatternBase {
 	@ApiModelProperty("授权")
 	private Boolean cracked;
 
+	private String type;
+
+	private String tag;
+
 }

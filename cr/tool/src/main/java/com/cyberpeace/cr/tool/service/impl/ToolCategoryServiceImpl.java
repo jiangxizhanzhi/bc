@@ -39,9 +39,9 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	private ToolMapper toolMapper;
 
 	@Override
-	public ListRsp<ToolCategory> selectPage(PageReqBase listReq) {
+	public ListRsp<ToolCategory> selectPage(PageReqBase listReq, String type) {
 		Page page = listReq.toPageParam();
-		IPage<ToolCategory> result = toolCategoryMapper.list(page, listReq.getPattern());
+		IPage<ToolCategory> result = toolCategoryMapper.list(page, listReq.getPattern(), type);
 		return PageUtil.getListResult(result);
 	}
 

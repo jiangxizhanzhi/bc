@@ -54,7 +54,8 @@ public class Tool extends BaseTable {
 
 	private Boolean cracked;
 
-	@Deprecated
+	private Boolean disabled;
+
 	private String tag;
 
 	private String scene;

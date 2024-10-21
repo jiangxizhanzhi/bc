@@ -16,4 +16,7 @@ public class ToolCategoryRsp implements Serializable {
 	@ApiModelProperty("ID")
 	private String resourceId;
 
+	@ApiModelProperty("类型， probe：探测类,attack：攻击类，control：控制类，defense：防御类")
+	private String type;
+
 }

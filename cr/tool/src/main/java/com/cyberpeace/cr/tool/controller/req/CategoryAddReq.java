@@ -18,4 +18,8 @@ public class CategoryAddReq implements Serializable {
 	@ApiModelProperty("英文名称")
 	@NotBlank
 	private String enName;
+
+	@ApiModelProperty("类型， probe：探测类,attack：攻击类，control：控制类，defense：防御类")
+	@NotBlank
+	private String type;
 }

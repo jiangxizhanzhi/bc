@@ -1,13 +1,12 @@
 package com.cyberpeace.cr.tool.controller.res;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @ApiModel("工具库信息")
 @Data
@@ -89,4 +88,10 @@ public class ToolRsp implements Serializable {
 
 	@ApiModelProperty("标签")
 	private String tag;
+
+	@ApiModelProperty("是否禁用")
+	private Boolean disabled;
+
+	@ApiModelProperty("类型， probe：探测类,attack：攻击类，control：控制类，defense：防御类")
+	private String type;
 }

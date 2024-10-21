@@ -12,6 +12,9 @@
             <if test="null != pattern and pattern != ''">
                 and (`cn_name` like #{pattern} or `en_name` like #{pattern})
             </if>
+            <if test="null != type and type != ''">
+                and `type` = #{type}
+            </if>
         </where>
         order by id desc
     </select>

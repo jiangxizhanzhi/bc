@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 
-	IPage<ToolCategory> list(Page page, @Param("pattern") String pattern);
+	IPage<ToolCategory> list(@Param("page") Page page, @Param("pattern") String pattern, @Param("type") String type);
 
 	List<ToolCategory> selectByResourceIds(@NotEmpty @Param("ids") List<String> ids);
 

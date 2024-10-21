@@ -28,6 +28,9 @@ public class ToolAddReq implements Serializable {
 	@ApiModelProperty("是否破解")
 	private Boolean cracked;
 
+	@ApiModelProperty("是否禁用")
+	private Boolean disabled;
+
 	@ApiModelProperty("语言")
 	@NotBlank
 	private String language;
@@ -35,9 +38,6 @@ public class ToolAddReq implements Serializable {
 	@ApiModelProperty("平台")
 	@NotBlank
 	private String platforms;
-
-	@ApiModelProperty("是否可见")
-	private Boolean visible;
 
 	@ApiModelProperty("版本")
 	private String version;
@@ -49,11 +49,14 @@ public class ToolAddReq implements Serializable {
 	@NotBlank
 	private String files;
 
-	@ApiModelProperty("工具类型")
-	private Integer toolType;
-
 	@ApiModelProperty("靶标ID")
 	private String imageResourceId;
+
+	@ApiModelProperty("类型， probe：探测类,attack：攻击类，control：控制类，defense：防御类")
+	private String type;
+
+	@ApiModelProperty("标签")
+	private String tag;
 
 	private Boolean toolPublic = true;
 }

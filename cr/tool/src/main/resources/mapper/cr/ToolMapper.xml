@@ -5,8 +5,15 @@
     <select id="list" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
         select * from cr_tool_tool
         <where>
+            <if test="listQuery.type != null and listQuery.type != ''">
+                and `type` = #{listQuery.type}
+            </if>
+            <if test="listQuery.tag != null and listQuery.tag != ''">
+                <bind name="tag" value="'%' + listQuery.tag + '%'"/>
+                and `tag` like #{tag}
+            </if>
             <if test="isAdmin == false">
-                and visible is true
+                and `disable` = 0
             </if>
             <if test="listQuery.pattern != null and listQuery.pattern != ''">
                 <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>

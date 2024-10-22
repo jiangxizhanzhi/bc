@@ -14,4 +14,6 @@ public class CourseQueryBo extends CourseContext {
 
 	private String userId;
 
+	private Integer role;
+
 }

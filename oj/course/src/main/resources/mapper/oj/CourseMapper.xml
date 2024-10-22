@@ -35,6 +35,9 @@
                 <if test="null != courseContext.difficulty">
                     and L1.difficulty = #{courseContext.difficulty}
                 </if>
+                <if test="null != courseContext.role">
+                    and L1.role = #{courseContext.role}
+                </if>
                 <if test="null != courseContext.directions and courseContext.directions.size() > 0">
                     and L1.category_id in
                     <foreach collection="courseContext.directions" index="index" separator=","

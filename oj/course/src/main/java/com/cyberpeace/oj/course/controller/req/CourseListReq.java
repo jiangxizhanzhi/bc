@@ -18,5 +18,7 @@ public class CourseListReq extends PageReqBase {
 
 	@ApiModelProperty("难度")
 	private Integer difficulty;
+	@ApiModelProperty("岗位")
+	private Integer role;
 
 }

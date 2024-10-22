@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.space.dao.mapper.SpaceTacticDefenseCategoryMapper">
+    <select id="page" resultType="com.cyberpeace.space.service.context.tactic.TacticDefenseCategoryBo">
+        select resource_id, `name` from space_tactic_defense_category
+        <if test="pattern != null and pattern != ''">
+            <bind name="search" value="'%' + pattern + '%'"/>
+            `name` like #{search}
+        </if>
+        order by id desc
+    </select>
+</mapper>

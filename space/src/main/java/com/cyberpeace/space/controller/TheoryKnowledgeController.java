@@ -114,7 +114,7 @@ public class TheoryKnowledgeController {
 	 */
 	private CourseLesson updateReqToEntity(LessonUpdateReq lessonUpdateReq) {
 		CourseLesson courseLesson = BeanUtils.copy(lessonUpdateReq, CourseLesson.class);
-		courseLesson.setCourseId(SpaceCommonConstant.DEFAULT_COURSE_ID);
+		courseLesson.setCourseId(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
 
 		// 有文件路径 并且文件不为空 则修改文件
 		if (StringUtils.isBlank(lessonUpdateReq.getVideoUrl())
@@ -157,7 +157,7 @@ public class TheoryKnowledgeController {
 		courseLesson.setKnowledge(lessonAddReq.getKnowledge());
 		courseLesson.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
-		courseLesson.setCourseId(SpaceCommonConstant.DEFAULT_COURSE_ID);
+		courseLesson.setCourseId(SpaceCommonConstant.DEFAULT_STRATEGY_FRAME);
 
 		courseLessonService.uploadVideo(courseLesson, lessonAddReq.getVideo());
 		courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());

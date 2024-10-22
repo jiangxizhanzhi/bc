@@ -87,7 +87,7 @@ public class ToolRsp implements Serializable {
 	private String sceneData;
 
 	@ApiModelProperty("标签")
-	private String tag;
+	private List<String> tag;
 
 	@ApiModelProperty("是否禁用")
 	private Boolean disabled;

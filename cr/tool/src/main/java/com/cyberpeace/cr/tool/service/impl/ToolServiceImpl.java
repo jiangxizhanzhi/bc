@@ -104,6 +104,8 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		toolRsp.setLanguage(Arrays.asList(StringUtils.split(tool.getLanguage(), ",")));
 		toolRsp.setPlatforms(Arrays.asList(StringUtils.split(tool.getPlatforms(), ",")));
 
+		toolRsp.setTag(JsonUtil.toJsonObjectArray(tool.getTag(), String.class));
+
 		if (isDetail) {
 			setAboutFile(toolRsp, tool);
 		}

@@ -1,4 +1,5 @@
 package com.cyberpeace.cr.tool.controller.req;
+
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ApiModel
@@ -56,7 +58,7 @@ public class ToolAddReq implements Serializable {
 	private String type;
 
 	@ApiModelProperty("标签")
-	private String tag;
+	private List<String> tag;
 
 	private Boolean toolPublic = true;
 }

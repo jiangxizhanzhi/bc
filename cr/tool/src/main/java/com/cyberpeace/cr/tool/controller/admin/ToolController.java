@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
@@ -82,6 +83,7 @@ public class ToolController {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
 
 		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
+		tool.setTag(JsonUtil.arrayToString(toolReq.getTag()));
 		toolService.validateToolNameExist(tool);
 		toolService.save(tool);
 
@@ -96,6 +98,7 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
+		tool.setTag(JsonUtil.arrayToString(toolupdateReq.getTag()));
 		toolService.validateEditToolNameExist(tool);
 		toolService.updateById(tool);
 

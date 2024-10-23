@@ -1,23 +1,33 @@
 package com.cyberpeace.space.controller;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.SpaceRuleCommonService;
+import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
+import com.cyberpeace.space.service.context.rule.RaceStatistics;
+import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.space.service.SpaceRuleCommonService;
-import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
-import com.cyberpeace.space.service.context.rule.RaceStatistics;
-import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import javax.annotation.PostConstruct;
 
 @Api(tags = "知识空间-规则库-通用")
 @RestController
 @RequestMapping("/space/rule/common")
 public class SpaceRuleCommonController {
+	
+	@PostConstruct
+	public void init() {
+		TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""),
+				SpaceBaseTable.class);
+	}
 
 	@Autowired
 	private SpaceRuleCommonService service;

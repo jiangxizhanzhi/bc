@@ -5,7 +5,7 @@
         select resource_id, `name` from space_tactic_attack_category
         <if test="pattern != null and pattern != ''">
             <bind name="search" value="'%' + pattern + '%'"/>
-            `name` like #{search}
+            where `name` like #{search}
         </if>
         order by id desc
     </select>

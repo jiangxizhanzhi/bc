@@ -17,4 +17,7 @@ public class KnowledgeReq implements Serializable {
 
     @ApiModelProperty("实操")
     private StatisticsBo operate;
+
+    @ApiModelProperty("总计")
+    private StatisticsBo total;
 }

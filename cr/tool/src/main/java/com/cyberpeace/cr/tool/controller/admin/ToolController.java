@@ -14,7 +14,6 @@ import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.req.ToolAddReq;
 import com.cyberpeace.cr.tool.controller.req.ToolUpdateReq;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
-import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.service.ToolService;
@@ -125,12 +124,6 @@ public class ToolController {
 		});
 
 		return new BaseRsp<>();
-	}
-
-	@ApiOperation("工具统计")
-	@GetMapping("/statistics")
-	public BaseRsp<List<ToolTypeCount>> statistics() {
-		return new BaseRsp<>(toolService.statistics());
 	}
 
 

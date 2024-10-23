@@ -32,7 +32,7 @@ public class StatisticsController {
     private PracticeOperationMapper practiceOperationMapper;
 
     @ApiOperation("知识空间统计")
-    @GetMapping("/")
+    @GetMapping("")
     public BaseRsp<KnowledgeReq> listComments() {
         KnowledgeReq knowledgeReq = new KnowledgeReq();
         //课程
@@ -46,6 +46,13 @@ public class StatisticsController {
         //实操
         timeList = practiceOperationMapper.selectTime();
         knowledgeReq.setOperate(statistics(timeList));
+
+        //总计
+        StatisticsBo total = new StatisticsBo();
+        total.setTotal(knowledgeReq.getCourse().getTotal() + knowledgeReq.getTheory().getTotal() + knowledgeReq.getOperate().getTotal());
+        total.setLastAdd(knowledgeReq.getCourse().getLastAdd() + knowledgeReq.getTheory().getLastAdd() + knowledgeReq.getOperate().getLastAdd());
+        total.setThisAdd(knowledgeReq.getCourse().getThisAdd() + knowledgeReq.getTheory().getThisAdd() + knowledgeReq.getTheory().getThisAdd());
+        knowledgeReq.setTotal(total);
 
         return new BaseRsp<>(knowledgeReq);
     }

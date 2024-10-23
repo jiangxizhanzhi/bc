@@ -12,7 +12,7 @@ public class StatisticsRes implements Serializable {
     private String name;
 
     @ApiModelProperty("数量")
-    private Integer total;
+    private Integer count;
 
     @ApiModelProperty("本月新增")
     private Integer thisAdd;

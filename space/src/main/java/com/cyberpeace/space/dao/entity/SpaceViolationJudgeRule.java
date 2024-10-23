@@ -1,6 +1,7 @@
 
 package com.cyberpeace.space.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 
@@ -12,6 +13,7 @@ import lombok.Data;
 public class SpaceViolationJudgeRule extends SpaceBaseTable {
 
 	@ApiModelProperty(value = "提交答案间隔")
+	@TableField("`interval`")
 	private Integer interval;
 
 	@ApiModelProperty(value = "端口检测")

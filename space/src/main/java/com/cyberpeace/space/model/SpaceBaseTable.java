@@ -19,10 +19,12 @@ public class SpaceBaseTable{
 
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
+    @JsonIgnore
     private Date createTime;
 
     @ApiModelProperty("更新时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
+    @JsonIgnore
     private Date updateTime;
 
 	@TableId(type = IdType.ASSIGN_UUID)

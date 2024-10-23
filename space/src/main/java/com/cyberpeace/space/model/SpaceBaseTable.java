@@ -11,7 +11,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class SpaceBaseTable{
+public abstract class SpaceBaseTable {
 
     @ApiModelProperty("自增ID")
     @JsonIgnore
@@ -33,4 +33,6 @@ public class SpaceBaseTable{
 
     @ApiModelProperty(value = "名称")
 	private String name;
+
+	public abstract SpaceBoBase entity2Bo();
 }

@@ -1,9 +1,10 @@
-
 package com.cyberpeace.space.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceViolationJudgeRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -21,4 +22,10 @@ public class SpaceViolationJudgeRule extends SpaceBaseTable {
 
 	@ApiModelProperty(value = "攻击目标检测")
 	private Boolean targetCheck;
+
+
+	public SpaceViolationJudgeRuleBo entity2Bo() {
+		SpaceViolationJudgeRuleBo bo = BeanUtils.copy(this, SpaceViolationJudgeRuleBo.class);
+		return bo;
+	}
 }

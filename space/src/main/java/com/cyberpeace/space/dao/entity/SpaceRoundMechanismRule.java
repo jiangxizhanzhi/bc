@@ -1,8 +1,9 @@
-
 package com.cyberpeace.space.dao.entity;
-
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceRoundMechanismRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,4 +26,10 @@ public class SpaceRoundMechanismRule extends SpaceBaseTable {
 
 	@ApiModelProperty(value = "重置最小间隔")
 	private Integer minResetInterval;
+
+
+	public SpaceRoundMechanismRuleBo entity2Bo() {
+		SpaceRoundMechanismRuleBo bo = BeanUtils.copy(this, SpaceRoundMechanismRuleBo.class);
+		return bo;
+	}
 }

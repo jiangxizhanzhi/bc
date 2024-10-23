@@ -1,6 +1,8 @@
 
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.space.dao.entity.SpaceBaseAlgorithm;
+import com.cyberpeace.space.service.context.rule.SpaceBaseAlgorithmBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_event_integration_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceEventIntegrationRuleController extends SpaceRuleRepositoryBaseController<SpaceEventIntegrationRuleService, SpaceEventIntegrationRule>
+public class SpaceEventIntegrationRuleController extends SpaceRuleRepositoryBaseController<SpaceEventIntegrationRuleService, SpaceEventIntegrationRule, SpaceBaseAlgorithmBo>
     
 {}

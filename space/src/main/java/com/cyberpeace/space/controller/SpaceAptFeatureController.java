@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.space.dao.entity.SpaceAptFeature;
 import com.cyberpeace.space.service.SpaceAptFeatureService;
+import com.cyberpeace.space.service.context.rule.SpaceAptFeatureBo;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_apt_feature")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAptFeatureController extends SpaceRuleRepositoryBaseController<SpaceAptFeatureService, SpaceAptFeature>
+public class SpaceAptFeatureController extends SpaceRuleRepositoryBaseController<SpaceAptFeatureService, SpaceAptFeature, SpaceAptFeatureBo>
     
 {}

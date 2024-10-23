@@ -1,8 +1,9 @@
-
 package com.cyberpeace.space.dao.entity;
-
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceBaseAlgorithmBo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,4 +26,10 @@ public class SpaceBaseAlgorithm extends SpaceBaseTable {
 
 	@ApiModelProperty(value = "参数")
 	private String parameter;
+
+
+	public SpaceBaseAlgorithmBo entity2Bo() {
+		SpaceBaseAlgorithmBo bo = BeanUtils.copy(this, SpaceBaseAlgorithmBo.class);
+		return bo;
+	}
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.space.dao.entity.SpaceThreatImageRule;
 import com.cyberpeace.space.service.SpaceThreatImageRuleService;
+import com.cyberpeace.space.service.context.rule.SpaceThreatImageRuleBo;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_threat_image_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceThreatImageRuleController extends SpaceRuleRepositoryBaseController<SpaceThreatImageRuleService, SpaceThreatImageRule>
-    
-{}
+public class SpaceThreatImageRuleController extends SpaceRuleRepositoryBaseController<SpaceThreatImageRuleService, SpaceThreatImageRule, SpaceThreatImageRuleBo> {
+
+	@Override
+	public void checkNameDuplication(SpaceThreatImageRule entity) {
+
+	}
+}

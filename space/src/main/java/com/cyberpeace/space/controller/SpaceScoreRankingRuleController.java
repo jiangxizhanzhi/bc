@@ -1,6 +1,7 @@
 
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.space.service.context.rule.SpaceScoreRankingRuleBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_score_ranking_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceScoreRankingRuleController extends SpaceRuleRepositoryBaseController<SpaceScoreRankingRuleService, SpaceScoreRankingRule>
+public class SpaceScoreRankingRuleController extends SpaceRuleRepositoryBaseController<SpaceScoreRankingRuleService, SpaceScoreRankingRule, SpaceScoreRankingRuleBo>
     
 {}

@@ -1,8 +1,11 @@
 package com.cyberpeace.space.dao.entity;
-
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.SpaceBaseTable;
-
+import com.cyberpeace.space.service.context.rule.AptReportHistory;
+import com.cyberpeace.space.service.context.rule.SpaceAptFeatureBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,6 +14,7 @@ import lombok.Data;
 public class SpaceAptFeature extends SpaceBaseTable {
 
 	@ApiModelProperty(value = "别名")
+	@TableField("`alias`")
 	private String alias;
 
 	@ApiModelProperty(value = "攻击者类型")
@@ -51,4 +55,11 @@ public class SpaceAptFeature extends SpaceBaseTable {
 
 	@ApiModelProperty(value = "历史报告")
 	private String historyReport;
+
+
+	public SpaceAptFeatureBo entity2Bo() {
+		SpaceAptFeatureBo bo = BeanUtils.copy(this, SpaceAptFeatureBo.class);
+		bo.setHistoryReport(JsonUtil.toJsonObjectArray(this.historyReport, AptReportHistory.class));
+		return bo;
+	}
 }

@@ -1,8 +1,9 @@
-
 package com.cyberpeace.space.dao.entity;
-
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceScoreRankingRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,4 +25,10 @@ public class SpaceScoreRankingRule extends SpaceBaseTable {
 	private Integer secondBlood;
     @ApiModelProperty(value = "三血奖励")
 	private Integer thirdBlood;
+
+
+	public SpaceScoreRankingRuleBo entity2Bo() {
+		SpaceScoreRankingRuleBo bo = BeanUtils.copy(this, SpaceScoreRankingRuleBo.class);
+		return bo;
+	}
 }

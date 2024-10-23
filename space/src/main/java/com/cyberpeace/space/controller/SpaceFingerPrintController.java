@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.space.dao.entity.SpaceFingerPrint;
 import com.cyberpeace.space.service.SpaceFingerPrintService;
+import com.cyberpeace.space.service.context.rule.SpaceFingerPrintBo;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_finger_print")
 @RequiresAuthentication
 @Slf4j
-public class SpaceFingerPrintController extends SpaceRuleRepositoryBaseController<SpaceFingerPrintService, SpaceFingerPrint>
+public class SpaceFingerPrintController extends SpaceRuleRepositoryBaseController<SpaceFingerPrintService, SpaceFingerPrint, SpaceFingerPrintBo>
     
 {}

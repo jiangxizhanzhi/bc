@@ -1,23 +1,33 @@
 package com.cyberpeace.space.controller;
 
-import com.cyberpeace.common.util.IDGeneratorUtil;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.model.SpaceBoBase;
 import com.cyberpeace.space.service.context.IdListReq;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E extends SpaceBaseTable> {
+public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase> {
 
 	@Autowired
 	private S baseService;
@@ -31,26 +41,29 @@ public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E
 
 	@ApiOperation("列表")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<E>> page(PageReqBase req) {
+	public BaseRsp<ListRsp<B>> page(PageReqBase req) {
 		IPage<E> iPage = baseService.page(req.toPageParam());
-		ListRsp<E> res = PageUtil.getListResult(iPage);
+		iPage.convert(SpaceBaseTable::entity2Bo);
+		ListRsp<B> res = PageUtil.getListResult(iPage);
 		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("新增")
 	@PostMapping("")
-	public BaseRsp addAttack(@RequestBody E req) {
-//		req.setId(null);
+	public BaseRsp addAttack(@RequestBody B req) {
 		req.setResourceId(IDGeneratorUtil.getID());
-		baseService.getBaseMapper().insert(req);
+		E entity = (E) req.bo2Entity();
+		this.checkNameDuplication(entity);
+		baseService.getBaseMapper().insert(entity);
 		return new BaseRsp();
 	}
 
 	@ApiOperation("更新")
 	@PatchMapping("")
-	public BaseRsp updateA(@RequestBody E req) {
-//		req.setId(null);
-		baseService.updateById(req);
+	public BaseRsp updateA(@RequestBody B req) {
+		E entity = (E) req.bo2Entity();
+		this.checkNameDuplication(entity);
+		baseService.updateById(entity);
 		return new BaseRsp();
 	}
 
@@ -63,11 +76,23 @@ public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E
 
 	@ApiOperation("详情")
 	@GetMapping("")
-	public BaseRsp<E>
+	public BaseRsp<B>
 			getADetail(@ApiParam(value = "resource_id", name = "resource_id") String resource_id) {
 		E res = baseService.getById(resource_id);
-//		res.setId(null);
-		return new BaseRsp<>(res);
+		B bo = (B) res.entity2Bo();
+		return new BaseRsp<>(bo);
+	}
+
+	public void checkNameDuplication(E entity) {
+		CrCommonValidator.validateNameLen(entity.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), SpaceBaseTable.class);
+		LambdaQueryWrapper<E> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(E::getName, entity.getName());
+		E one = baseService.getOne(wrapper);
+		if (null != one && (StringUtils.isBlank(entity.getResourceId())
+				|| !one.getResourceId().equals(entity.getResourceId()))) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
 	}
 
 }

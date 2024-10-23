@@ -1,8 +1,9 @@
-
 package com.cyberpeace.space.dao.entity;
-
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceThreatImageRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,4 +29,10 @@ public class SpaceThreatImageRule extends SpaceBaseTable {
 
 	@ApiModelProperty(value = "标签")
 	private String tag;
+
+
+	public SpaceThreatImageRuleBo entity2Bo() {
+		SpaceThreatImageRuleBo bo = BeanUtils.copy(this, SpaceThreatImageRuleBo.class);
+		return bo;
+	}
 }

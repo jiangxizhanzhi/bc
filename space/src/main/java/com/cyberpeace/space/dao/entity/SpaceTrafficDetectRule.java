@@ -1,8 +1,9 @@
-
 package com.cyberpeace.space.dao.entity;
-
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.service.context.rule.SpaceTrafficDetectRuleBo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,4 +24,10 @@ public class SpaceTrafficDetectRule extends SpaceBaseTable {
 	@ApiModelProperty(value = "威胁等级")
 	private String threatLevel;
 
+
+
+	public SpaceTrafficDetectRuleBo entity2Bo() {
+		SpaceTrafficDetectRuleBo bo = BeanUtils.copy(this, SpaceTrafficDetectRuleBo.class);
+		return bo;
+	}
 }

@@ -3,11 +3,10 @@ package com.cyberpeace.space.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.space.dao.mapper.SpaceRoundMechanismRuleMapper;
-import com.cyberpeace.space.dao.mapper.SpaceScoreRankingRuleMapper;
-import com.cyberpeace.space.dao.mapper.SpaceViolationJudgeRuleMapper;
+import com.cyberpeace.space.dao.mapper.*;
 import com.cyberpeace.space.service.SpaceRuleCommonService;
 import com.cyberpeace.space.service.context.rule.RaceStatistics;
+import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +23,24 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 	@Autowired
 	private SpaceViolationJudgeRuleMapper spaceViolationJudgeRuleMapper;
 
+	@Autowired
+	private SpaceTrafficExtractionRuleMapper spaceTrafficExtractionRuleMapper;
+
+	@Autowired
+	private SpaceTrafficDetectRuleMapper spaceTrafficDetectRuleMapper;
+
+	@Autowired
+	private SpaceLoadedFileThreatRuleMapper spaceLoadedFileThreatRuleMapper;
+
+	@Autowired
+	private SpaceAptThreatDetectRuleMapper spaceAptThreatDetectRuleMapper;
+
+	@Autowired
+	private SpaceEventIntegrationRuleMapper spaceEventIntegrationRuleMapper;
+
+	@Autowired
+	private SpaceSourceAnalyzeRuleMapper spaceSourceAnalyzeRuleMapper;
+
 	@Override
 	public RaceStatistics getRaceStatistics() {
 		Integer scoreRanking = spaceScoreRankingRuleMapper.selectCount(null);
@@ -34,5 +51,18 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 		res.setRoundMechanism(roundMechanism);
 		res.setViolationJudge(violation);
 		return res;
+	}
+
+	@Override
+	public ThreatDetectStatistics getThreatDetectStatistics() {
+		ThreatDetectStatistics statistics = new ThreatDetectStatistics();
+		statistics.setTrafficDetect(spaceTrafficDetectRuleMapper.selectCount(null));
+		statistics.setTrafficExtraction(spaceTrafficExtractionRuleMapper.selectCount(null));
+		statistics.setLoadedFileThreat(spaceLoadedFileThreatRuleMapper.selectCount(null));
+		statistics.setAptThreat(spaceAptThreatDetectRuleMapper.selectCount(null));
+		statistics.setEventIntegration(spaceEventIntegrationRuleMapper.selectCount(null));
+		statistics.setThreatImage(spaceEventIntegrationRuleMapper.selectCount(null));
+		statistics.setSourceAnalyze(spaceSourceAnalyzeRuleMapper.selectCount(null));
+		return statistics;
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.space.service.SpaceRuleCommonService;
 import com.cyberpeace.space.service.context.rule.RaceStatistics;
+import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,4 +27,12 @@ public class SpaceRuleCommonController {
 		RaceStatistics res = service.getRaceStatistics();
 		return new BaseRsp<>(res);
 	}
+
+	@ApiOperation("威胁检测规则统计")
+	@GetMapping("/threat/statistics")
+	public BaseRsp<ThreatDetectStatistics> getThreatRuleS() {
+		ThreatDetectStatistics res = service.getThreatDetectStatistics();
+		return new BaseRsp<>(res);
+	}
+
 }

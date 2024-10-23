@@ -26,7 +26,9 @@ public class SpaceBaseTable{
     private Date updateTime;
 
 	@TableId(type = IdType.ASSIGN_UUID)
+    @ApiModelProperty(value = "资源id")
 	private String resourceId;
 
+    @ApiModelProperty(value = "名称")
 	private String name;
 }

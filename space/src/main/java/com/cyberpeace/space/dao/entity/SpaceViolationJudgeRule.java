@@ -1,0 +1,22 @@
+
+package com.cyberpeace.space.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.space.model.SpaceBaseTable;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+@TableName("space_violation_judge_rule")
+public class SpaceViolationJudgeRule extends SpaceBaseTable {
+
+	@ApiModelProperty(value = "提交答案间隔")
+	private Integer interval;
+
+	@ApiModelProperty(value = "端口检测")
+	private Boolean portCheck;
+
+	@ApiModelProperty(value = "攻击目标检测")
+	private Boolean targetCheck;
+}

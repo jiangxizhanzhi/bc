@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.cyberpeace.space.dao.mapper.*;
 import com.cyberpeace.space.service.SpaceRuleCommonService;
+import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
 import com.cyberpeace.space.service.context.rule.RaceStatistics;
 import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
 
@@ -41,6 +42,15 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 	@Autowired
 	private SpaceSourceAnalyzeRuleMapper spaceSourceAnalyzeRuleMapper;
 
+	@Autowired
+	private SpaceFingerPrintMapper spaceFingerPrintMapper;
+
+	@Autowired
+	private SpaceAptFeatureMapper spaceAptFeatureMapper;
+
+	@Autowired
+	private SpaceIocThreatMapper spaceIocThreatMapper;
+
 	@Override
 	public RaceStatistics getRaceStatistics() {
 		Integer scoreRanking = spaceScoreRankingRuleMapper.selectCount(null);
@@ -63,6 +73,15 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 		statistics.setEventIntegration(spaceEventIntegrationRuleMapper.selectCount(null));
 		statistics.setThreatImage(spaceEventIntegrationRuleMapper.selectCount(null));
 		statistics.setSourceAnalyze(spaceSourceAnalyzeRuleMapper.selectCount(null));
+		return statistics;
+	}
+
+	@Override
+	public BaseDataRuleStatistics getBaseDataStatistics() {
+		BaseDataRuleStatistics statistics = new BaseDataRuleStatistics();
+		statistics.setFingerPrint(spaceFingerPrintMapper.selectCount(null));
+		statistics.setApt(spaceAptFeatureMapper.selectCount(null));
+		statistics.setIoc(spaceIocThreatMapper.selectCount(null));
 		return statistics;
 	}
 }

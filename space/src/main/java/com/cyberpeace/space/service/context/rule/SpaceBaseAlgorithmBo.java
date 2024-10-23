@@ -33,10 +33,11 @@ public class SpaceBaseAlgorithmBo extends SpaceBoBase {
 	private String code;
 
 	@ApiModelProperty(value = "参数")
-	private String parameter;
+	private List<SpaceAlgorithmParameter> parameter;
 
 	public SpaceBaseAlgorithm bo2Entity() {
 		SpaceBaseAlgorithm entity = BeanUtils.copy(this, SpaceBaseAlgorithm.class);
+		entity.setParameter(JsonUtil.arrayToString(this.parameter));
 		return entity;
 	}
 

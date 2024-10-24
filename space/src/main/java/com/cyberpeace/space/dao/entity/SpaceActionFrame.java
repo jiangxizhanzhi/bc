@@ -28,7 +28,7 @@ public class SpaceActionFrame extends SpaceFrameBaseTable {
 
 	private String description;
 
-	public SpaceActionFrameBo entity2Bo(Map<String, IdAndName> parentMap) {
+	public SpaceActionFrameBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceActionFrameBo bo = BeanUtils.copy(this, SpaceActionFrameBo.class);
 		bo.setAttack(JsonUtil.toJsonObjectArray(this.attack, String.class));
 		bo.setDefense(JsonUtil.toJsonObjectArray(this.defense, String.class));

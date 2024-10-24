@@ -46,7 +46,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	public BaseRsp<ListRsp<B>> page(R req) {
 		LambdaQueryWrapper<E> wrapper = req.req2QueryWrapper();
 		IPage<E> iPage = baseService.page(req.toPageParam(), wrapper);
-		iPage.convert(e->e.entity2Bo(this.getParentMap(iPage.getRecords())));
+		iPage.convert(e->e.entity2Bo(this.getRelatedMap(iPage.getRecords())));
 		ListRsp<B> res = PageUtil.getListResult(iPage);
 		return new BaseRsp<>(res);
 	}
@@ -94,7 +94,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		if(null == e){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		B bo = (B) e.entity2Bo(getParentMap(Lists.newArrayList(e)));
+		B bo = (B) e.entity2Bo(getRelatedMap(Lists.newArrayList(e)));
 		return new BaseRsp<>(bo);
 	}
 
@@ -109,19 +109,19 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		}
 	}
 
-	private Map<String, IdAndName> getParentMap(List<E> list){
+	private Map<String, IdAndName> getRelatedMap(List<E> list){
 		Map<String, IdAndName> res = Maps.newHashMap();
 		this.addIdAndName(res, list);
 		return res;
 	}
 
-	protected void createIdAndName(List<? extends SpaceFrameBaseTable> entities, Map<String, IdAndName> parentMap){
+	protected void createIdAndName(List<? extends SpaceFrameBaseTable> entities, Map<String, IdAndName> relatedMap){
 		for (SpaceFrameBaseTable e : entities) {
-			parentMap.put(e.getResourceId(), new IdAndName(e.getResourceId(), e.getName()));
+			relatedMap.put(e.getResourceId(), new IdAndName(e.getResourceId(), e.getName()));
 		}
 	}
 
-	protected void addIdAndName(Map<String, IdAndName> parentMap, List<E> entityList){
+	protected void addIdAndName(Map<String, IdAndName> relatedMap, List<E> entityList){
 
 	}
 

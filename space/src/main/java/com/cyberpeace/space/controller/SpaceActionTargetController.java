@@ -30,14 +30,14 @@ public class SpaceActionTargetController extends SpaceActionFrameBaseController<
     private SpaceActionFrameService frameService;
 
     @Override
-    protected void addIdAndName(Map<String, IdAndName> parentMap, List<SpaceActionTarget> entityList){
+    protected void addIdAndName(Map<String, IdAndName> relatedMap, List<SpaceActionTarget> entityList){
         Set<String> ids = Sets.newHashSet();
         for (SpaceActionTarget target : entityList) {
             ids.addAll(JsonUtil.toJsonObjectArray(target.getFrame(), String.class));
         }
         if(!ids.isEmpty()) {
             List<SpaceActionFrame> methods = frameService.listByIds(ids);
-            this.createIdAndName(methods, parentMap);
+            this.createIdAndName(methods, relatedMap);
         }
     }
 

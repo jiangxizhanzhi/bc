@@ -68,11 +68,11 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 	}
 
 	@Override
-	protected void addIdAndName(Map<String, IdAndName> parentMap, List<SpaceAction> entityList) {
+	protected void addIdAndName(Map<String, IdAndName> relatedMap, List<SpaceAction> entityList) {
 		List<String> ids = StreamApiUtils.map(entityList, SpaceAction::getMethod);
 		if (!ids.isEmpty()) {
 			List<SpaceActionMethod> methods = methodService.listByIds(ids);
-			this.createIdAndName(methods, parentMap);
+			this.createIdAndName(methods, relatedMap);
 		}
 	}
 

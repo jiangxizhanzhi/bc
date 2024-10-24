@@ -35,23 +35,23 @@ public abstract class SpaceFrameBaseTable {
 
 	private String name;
 
-	public abstract SpaceFrameBoBase entity2Bo(Map<String, IdAndName> parentMap);
+	public abstract SpaceFrameBoBase entity2Bo(Map<String, IdAndName> relatedMap);
 
-	public List<IdAndName> getIdAndNameList(Map<String, IdAndName> parentMap, String idListJson){
+	public List<IdAndName> getIdAndNameList(Map<String, IdAndName> relatedMap, String idListJson){
 		List<String> ids = JsonUtil.toJsonObjectArray(idListJson, String.class);
-		return getIdAndNameList(parentMap, ids);
+		return getIdAndNameList(relatedMap, ids);
 	}
 
-	public List<IdAndName> getIdAndNameList(Map<String, IdAndName> parentMap, List<String> ids){
+	public List<IdAndName> getIdAndNameList(Map<String, IdAndName> relatedMap, List<String> ids){
 		List<IdAndName> res = Lists.newArrayList();
 		for (String id : ids) {
-			if(parentMap.containsKey(id)){
-				res.add(parentMap.get(id));
+			if(relatedMap.containsKey(id)){
+				res.add(relatedMap.get(id));
 			}
 		}
 		return res;
 	}
-	public IdAndName getIdAndName(Map<String, IdAndName> parentMap, String id){
-		return parentMap.get(id);
+	public IdAndName getIdAndName(Map<String, IdAndName> relatedMap, String id){
+		return relatedMap.get(id);
 	}
 }

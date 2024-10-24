@@ -31,9 +31,9 @@ public class SpaceAction extends SpaceFrameBaseTable {
 
 	private String strategy;
 
-	public SpaceActionBo entity2Bo(Map<String, IdAndName> parentMap) {
+	public SpaceActionBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceActionBo bo = BeanUtils.copy(this, SpaceActionBo.class);
-		bo.setMethod(this.getIdAndName(parentMap, this.method));
+		bo.setMethod(this.getIdAndName(relatedMap, this.method));
 		return bo;
 	}
 }

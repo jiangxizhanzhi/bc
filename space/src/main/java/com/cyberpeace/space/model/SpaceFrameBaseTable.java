@@ -1,0 +1,57 @@
+package com.cyberpeace.space.model;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.cyberpeace.common.util.JsonUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+@Data
+public abstract class SpaceFrameBaseTable {
+
+	@JsonIgnore
+	private Integer id;
+
+	@ApiModelProperty("创建时间")
+	@TableField(fill = FieldFill.INSERT)
+	@JsonIgnore
+	private Date createTime;
+
+	@ApiModelProperty("更新时间")
+	@TableField(fill = FieldFill.INSERT_UPDATE)
+	@JsonIgnore
+	private Date updateTime;
+
+	@TableId(type = IdType.ASSIGN_UUID)
+	private String resourceId;
+
+	private String name;
+
+	public abstract SpaceFrameBoBase entity2Bo(Map<String, IdAndName> parentMap);
+
+	public List<IdAndName> getIdAndNameList(Map<String, IdAndName> parentMap, String idListJson){
+		List<String> ids = JsonUtil.toJsonObjectArray(idListJson, String.class);
+		return getIdAndNameList(parentMap, ids);
+	}
+
+	public List<IdAndName> getIdAndNameList(Map<String, IdAndName> parentMap, List<String> ids){
+		List<IdAndName> res = Lists.newArrayList();
+		for (String id : ids) {
+			if(parentMap.containsKey(id)){
+				res.add(parentMap.get(id));
+			}
+		}
+		return res;
+	}
+	public IdAndName getIdAndName(Map<String, IdAndName> parentMap, String id){
+		return parentMap.get(id);
+	}
+}

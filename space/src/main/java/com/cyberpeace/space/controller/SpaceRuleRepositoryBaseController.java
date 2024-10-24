@@ -38,7 +38,7 @@ public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<B>> page(PageReqBase req) {
 		IPage<E> iPage = baseService.page(req.toPageParam());
-		iPage.convert(SpaceBaseTable::entity2Bo);
+		iPage.convert(E::entity2Bo);
 		ListRsp<B> res = PageUtil.getListResult(iPage);
 		return new BaseRsp<>(res);
 	}

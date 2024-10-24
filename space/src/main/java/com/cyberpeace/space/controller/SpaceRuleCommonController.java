@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.space.model.SpaceBaseTable;
+import com.cyberpeace.space.model.SpaceFrameBaseTable;
 import com.cyberpeace.space.service.SpaceRuleCommonService;
 import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
 import com.cyberpeace.space.service.context.rule.RaceStatistics;
@@ -27,6 +28,8 @@ public class SpaceRuleCommonController {
 	public void init() {
 		TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""),
 				SpaceBaseTable.class);
+		TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""),
+				SpaceFrameBaseTable.class);
 	}
 
 	@Autowired

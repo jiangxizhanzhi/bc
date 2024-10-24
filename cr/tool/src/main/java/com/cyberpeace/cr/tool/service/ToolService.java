@@ -52,4 +52,6 @@ public interface ToolService extends IService<Tool> {
 	 * 统计工具数量
 	 */
 	List<ToolTypeCount> statistics();
+
+	List<Tool> listByIdsInOrder(List<String> ids);
 }

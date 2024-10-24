@@ -32,7 +32,7 @@ import java.util.Map;
 public abstract class SpaceActionFrameBaseController<S extends IService<E>, E extends SpaceFrameBaseTable, B extends SpaceFrameBoBase, R extends FrameBasePageReq> {
 
 	@Autowired
-	private S baseService;
+	protected S baseService;
 
 	protected Class<E> entityClass = currentModelCls();
 

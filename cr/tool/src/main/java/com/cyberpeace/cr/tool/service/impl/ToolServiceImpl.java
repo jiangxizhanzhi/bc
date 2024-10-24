@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -177,4 +178,20 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		typeCounts.add(toolTypeCount);
 		return typeCounts;
 	}
+
+    @Override
+    public List<Tool> listByIdsInOrder(List<String> ids) {
+		 List<Tool> res =  Lists.newArrayList();
+		if(ids.isEmpty()){
+			return res;
+		}
+		List<Tool> toolList = this.listByIds(ids);
+		Map<String, Tool> toolMap = StreamApiUtils.toMap(toolList, Tool::getResourceId, t->t);
+		for (String id : ids) {
+			if (toolMap.containsKey(id)){
+				res.add(toolMap.get(id));
+			}
+		}
+		return res;
+    }
 }

@@ -17,9 +17,11 @@ import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.context.strategy.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -115,6 +117,18 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return bo;
 	}
 
+	@Override
+	public String getFrameRouteById(String frameId) {
+		List<String> names = Lists.newArrayList();
+		SpaceStrategyFrame frame = this.getFrameOrException(frameId);
+		while (!SpaceCommonConstant.DEFAULT_STRATEGY_FRAME.equals(frame.getParent())){
+			frame = this.getFrameOrException(frame.getParent());
+			names.add(frame.getName());
+		}
+		Collections.reverse(names);
+		return String.join("/", names);
+	}
+
 	private SpaceStrategy req2Entity(SpaceStrategyAddReq req){
 		SpaceStrategy strategy = BeanUtils.copy(req, SpaceStrategy.class);
 		return strategy;
@@ -144,4 +158,13 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		}
 		return strategy;
 	}
+
+	private SpaceStrategyFrame getFrameOrException(String resourceId){
+		SpaceStrategyFrame frame = frameMapper.selectById(resourceId);
+		if(null == frame){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return frame;
+	}
+
 }

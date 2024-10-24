@@ -2,22 +2,27 @@ package com.cyberpeace.space.service.context.frame;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.space.dao.entity.SpaceActionAttack;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.space.dao.entity.SpaceAction;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBoBase;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
-public class SpaceActionAttackBo extends SpaceFrameBoBase {
+public class SpaceActionBo extends SpaceFrameBoBase {
 
 	@ApiModelProperty(value = "资源id")
 	private String resourceId;
 
 	@ApiModelProperty(value = "名称")
 	private String name;
+
+	@ApiModelProperty(value = "类型，1：攻击，2：防御")
+	private Integer type;
 
 	@ApiModelProperty(value = "描述")
 	private String description;
@@ -41,13 +46,15 @@ public class SpaceActionAttackBo extends SpaceFrameBoBase {
 	private List<SpaceActionStrategy> strategy;
 
 	@ApiModelProperty(value = "创建时间，前端不要传")
-	private String createTime;
+	private Date createTime;
 
-	public SpaceActionAttack bo2Entity() {
-		SpaceActionAttack entity = BeanUtils.copy(this, SpaceActionAttack.class);
+	public SpaceAction bo2Entity() {
+		SpaceAction entity = BeanUtils.copy(this, SpaceAction.class);
 		entity.setMethod(this.method.getResourceId());
-		entity.setTool(JsonUtil.arrayToString(this.tool));
-		entity.setStrategy(JsonUtil.arrayToString(this.strategy));
+		entity.setTool(JsonUtil
+				.arrayToString(StreamApiUtils.map(this.tool, SpaceActionTool::getResourceId)));
+		entity.setStrategy(JsonUtil.arrayToString(
+				StreamApiUtils.map(this.strategy, SpaceActionStrategy::getResourceId)));
 		return entity;
 	}
 

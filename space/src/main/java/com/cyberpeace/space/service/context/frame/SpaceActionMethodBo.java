@@ -4,9 +4,10 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionMethod;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBoBase;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class SpaceActionMethodBo extends SpaceFrameBoBase {
@@ -23,7 +24,7 @@ public class SpaceActionMethodBo extends SpaceFrameBoBase {
 	@ApiModelProperty(value = "所属作战目标")
 	private IdAndName target;
 	@ApiModelProperty(value = "创建时间，前端不要传")
-	private String createTime;
+	private Date createTime;
 
 	public SpaceActionMethod bo2Entity() {
 		SpaceActionMethod entity = BeanUtils.copy(this, SpaceActionMethod.class);

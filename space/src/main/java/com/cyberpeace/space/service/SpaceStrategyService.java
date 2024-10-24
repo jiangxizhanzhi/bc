@@ -24,4 +24,6 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
     void deleteStrategy(String resourceId);
 
     SpaceStrategyBo getDetail(String resourceId);
+
+    String getFrameRouteById(String frameId);
 }

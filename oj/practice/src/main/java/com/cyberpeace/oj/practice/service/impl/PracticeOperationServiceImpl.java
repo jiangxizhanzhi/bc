@@ -680,7 +680,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		for (PracticeOperationTarget operationTarget : operationTargets) {
 			List<PracticeOperationTarget> operations = operationTargetMap.get(operationTarget.getOperationId());
 			if (operations == null) {
-				operationTargetMap.put(operationTarget.getOperationId(), Collections.singletonList(operationTarget));
+				operationTargetMap.put(operationTarget.getOperationId(), Arrays.asList(operationTarget));
 			} else {
 				operations.add(operationTarget);
 			}

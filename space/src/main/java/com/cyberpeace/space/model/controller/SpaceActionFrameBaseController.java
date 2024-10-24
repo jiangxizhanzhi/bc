@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.model.IdAndName;
@@ -47,6 +48,15 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		IPage<E> iPage = baseService.page(req.toPageParam(), wrapper);
 		iPage.convert(e->e.entity2Bo(this.getParentMap(iPage.getRecords())));
 		ListRsp<B> res = PageUtil.getListResult(iPage);
+		return new BaseRsp<>(res);
+	}
+
+
+	@ApiOperation("全部")
+	@GetMapping("/list_all")
+	public BaseRsp<List<B>> listAll() {
+		List<E> eList = baseService.list();
+		List<B> res = StreamApiUtils.map(eList, e -> (B) e.entity2Bo(Maps.newHashMap()));
 		return new BaseRsp<>(res);
 	}
 

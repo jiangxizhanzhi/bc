@@ -73,6 +73,9 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	@ApiOperation("更新")
 	@PatchMapping("")
 	public BaseRsp updateA(@RequestBody B req) {
+		if (StringUtils.isBlank(req.getResourceId())) {
+			throw new BusinessException(ErrorCode.BLANK_ID);
+		}
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
 		baseService.updateById(entity);

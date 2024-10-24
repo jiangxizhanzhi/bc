@@ -1,5 +1,8 @@
 package com.cyberpeace.space.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
@@ -17,10 +20,9 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.model.SpaceBoBase;
 import com.cyberpeace.space.service.context.IdListReq;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase> {
 
@@ -56,6 +58,9 @@ public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E
 	@ApiOperation("更新")
 	@PatchMapping("")
 	public BaseRsp updateA(@RequestBody B req) {
+		if (StringUtils.isBlank(req.getResourceId())) {
+			throw new BusinessException(ErrorCode.BLANK_ID);
+		}
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
 		baseService.updateById(entity);
@@ -80,7 +85,6 @@ public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E
 
 	public void checkNameDuplication(E entity) {
 		CrCommonValidator.validateNameLen(entity.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-//		TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), SpaceBaseTable.class);
 		LambdaQueryWrapper<E> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(E::getName, entity.getName());
 		E one = baseService.getOne(wrapper);

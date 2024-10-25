@@ -89,6 +89,10 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 
 
 	private List<SpaceActionStrategy> convert(List<String> ids) {
+		List<SpaceActionStrategy> res = Lists.newArrayList();
+		if (ids.isEmpty()) {
+			return res;
+		}
 		List<SpaceStrategy> strategyList = strategyService.listByIds(ids);
 		Map<String, SpaceActionStrategy> map = Maps.newHashMap();
 
@@ -102,7 +106,6 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 
 			map.put(bo.getResourceId(), bo);
 		}
-		List<SpaceActionStrategy> res = Lists.newArrayList();
 		for (String id : ids) {
 			if (map.containsKey(id)) {
 				res.add(map.get(id));

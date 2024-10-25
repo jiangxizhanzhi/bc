@@ -1,6 +1,7 @@
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolService;
@@ -75,6 +76,9 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Autowired
 	private SpaceActionFrameService spaceActionFrameService;
 
+	@Autowired
+	private EvalAlgorithmService evalAlgorithmService;
+
 	@Override
 	public IndexKnowledge getKnowledgeRepositoryStatistics() {
 		IndexKnowledge res = new IndexKnowledge();
@@ -125,7 +129,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 
 		// 算法
 		IndexAlgorithm algorithm = new IndexAlgorithm();
-		algorithm.setBase(spaceBaseAlgorithmMapper.selectCount(null));
+		algorithm.setBase(evalAlgorithmService.count());
 		algorithm.calSum();
 		res.setAlgorithm(algorithm);
 		// 场景

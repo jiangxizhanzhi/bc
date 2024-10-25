@@ -7,6 +7,7 @@ import com.cyberpeace.space.dao.entity.SpaceActionRelation;
 import com.cyberpeace.space.dao.mapper.SpaceActionRelationMapper;
 import com.cyberpeace.space.service.SpaceActionRelationService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         wrapper1.in(SpaceActionRelation::getLowerId, ids);
         this.remove(wrapper1);
         LambdaQueryWrapper<SpaceActionRelation> wrapper2 = new LambdaQueryWrapper<>();
-        wrapper1.in(SpaceActionRelation::getUpperId, ids);
+        wrapper2.in(SpaceActionRelation::getUpperId, ids);
         this.remove(wrapper2);
     }
 
@@ -59,6 +60,16 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         wrapper.eq(SpaceActionRelation::getUpperId, upperId);
         List<SpaceActionRelation> relations  = this.list(wrapper);
         return StreamApiUtils.map(relations, SpaceActionRelation::getLowerId);
+    }
+
+    @Override
+    public List<SpaceActionRelation> listByUpperIds(List<String> upperIds) {
+        if(upperIds.isEmpty()){
+            return Lists.newArrayList();
+        }
+        LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(SpaceActionRelation::getUpperId, upperIds);
+        return this.list(wrapper);
     }
 
 

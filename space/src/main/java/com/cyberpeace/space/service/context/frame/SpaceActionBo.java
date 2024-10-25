@@ -28,7 +28,7 @@ public class SpaceActionBo extends SpaceFrameBoBase {
 	private String description;
 
 	@ApiModelProperty(value = "所属交战方法")
-	private IdAndName method;
+	private List<IdAndName> method;
 
 	@ApiModelProperty(value = "作战环境")
 	private String environment;
@@ -50,7 +50,6 @@ public class SpaceActionBo extends SpaceFrameBoBase {
 
 	public SpaceAction bo2Entity() {
 		SpaceAction entity = BeanUtils.copy(this, SpaceAction.class);
-		entity.setMethod(this.method.getResourceId());
 		entity.setTool(JsonUtil
 				.arrayToString(StreamApiUtils.map(this.tool, SpaceActionTool::getResourceId)));
 		entity.setStrategy(JsonUtil.arrayToString(

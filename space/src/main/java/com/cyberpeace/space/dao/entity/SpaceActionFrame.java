@@ -10,6 +10,7 @@ import com.cyberpeace.space.service.context.frame.SpaceActionFrameBo;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -30,7 +31,7 @@ public class SpaceActionFrame extends SpaceFrameBaseTable {
 
 	private String description;
 
-	public SpaceActionFrameBo entity2Bo(Map<String, IdAndName> relatedMap) {
+	public SpaceActionFrameBo entity2Bo(Map<String, List<IdAndName>> relatedMap) {
 		SpaceActionFrameBo bo = BeanUtils.copy(this, SpaceActionFrameBo.class);
 		bo.setAttack(JsonUtil.toJsonObjectArray(this.attack, String.class));
 		bo.setDefense(JsonUtil.toJsonObjectArray(this.defense, String.class));

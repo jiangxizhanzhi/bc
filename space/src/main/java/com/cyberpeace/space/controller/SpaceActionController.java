@@ -14,6 +14,7 @@ import com.cyberpeace.space.dao.entity.SpaceStrategy;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
 import com.cyberpeace.space.service.SpaceActionMethodService;
+import com.cyberpeace.space.service.SpaceActionRelationService;
 import com.cyberpeace.space.service.SpaceActionService;
 import com.cyberpeace.space.service.SpaceStrategyService;
 import com.cyberpeace.space.service.context.frame.SpaceActionBo;
@@ -49,6 +50,10 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 	@Autowired
 	private SpaceStrategyService strategyService;
 
+
+	@Autowired
+	private SpaceActionRelationService relationService;
+
 	@ApiOperation("详情")
 	@GetMapping("")
 	@Override
@@ -64,17 +69,24 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 		List<Tool> toolList = toolService.listByIdsInOrder(toolIds);
 		bo.setTool(BeanUtils.deepCopyList(toolList, SpaceActionTool.class));
 		bo.setStrategy(this.convert(strategyIds));
+
+		List<String> upperIds = relationService.getUpperIdsByLowerId(e.getResourceId());
+		List<SpaceActionMethod> methods = this.getUpperRelated(upperIds);
+		List<IdAndName> idAndNames = StreamApiUtils.map(methods, m->new IdAndName(m.getResourceId(), m.getName()));
+		bo.setMethod(idAndNames);
 		return new BaseRsp<>(bo);
 	}
 
 	@Override
-	protected void addIdAndName(Map<String, IdAndName> relatedMap, List<SpaceAction> entityList) {
-		List<String> ids = StreamApiUtils.map(entityList, SpaceAction::getMethod);
-		if (!ids.isEmpty()) {
-			List<SpaceActionMethod> methods = methodService.listByIds(ids);
-			this.createIdAndName(methods, relatedMap);
-		}
+	protected List<SpaceActionMethod> getUpperRelated(List<String> upperIds) {
+		return methodService.listByIds(upperIds);
 	}
+
+	@Override
+	protected List<String> getUpperIds(SpaceActionBo req) {
+		return StreamApiUtils.map(req.getMethod(), IdAndName::getResourceId);
+	}
+
 
 	private List<SpaceActionStrategy> convert(List<String> ids) {
 		List<SpaceStrategy> strategyList = strategyService.listByIds(ids);

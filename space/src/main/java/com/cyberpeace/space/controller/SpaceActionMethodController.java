@@ -2,8 +2,8 @@ package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionMethod;
-import com.cyberpeace.space.dao.entity.SpaceActionTarget;
 import com.cyberpeace.space.model.IdAndName;
+import com.cyberpeace.space.model.SpaceFrameBaseTable;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
 import com.cyberpeace.space.service.SpaceActionMethodService;
 import com.cyberpeace.space.service.SpaceActionTargetService;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @Api(tags = "知识库-防御行动框架-作战方法管理")
 @RestController
@@ -28,12 +27,12 @@ public class SpaceActionMethodController extends SpaceActionFrameBaseController<
 	private SpaceActionTargetService targetService;
 
 	@Override
-	protected void addIdAndName(Map<String, IdAndName> relatedMap,
-			List<SpaceActionMethod> entityList) {
-		List<String> ids = StreamApiUtils.map(entityList, SpaceActionMethod::getTarget);
-		if (!ids.isEmpty()) {
-			List<SpaceActionTarget> methods = targetService.listByIds(ids);
-			this.createIdAndName(methods, relatedMap);
-		}
+	protected List<? extends SpaceFrameBaseTable> getUpperRelated(List<String> upperIds) {
+		return targetService.listByIds(upperIds);
+	}
+
+	@Override
+	protected List<String> getUpperIds(SpaceActionMethodBo req) {
+		return StreamApiUtils.map(req.getTarget(), IdAndName::getResourceId);
 	}
 }

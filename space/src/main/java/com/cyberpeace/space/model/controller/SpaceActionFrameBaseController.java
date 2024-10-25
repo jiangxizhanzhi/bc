@@ -2,7 +2,6 @@ package com.cyberpeace.space.model.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -14,32 +13,42 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.space.dao.entity.SpaceActionRelation;
+import com.cyberpeace.space.dao.mapper.SpaceActionRelationMapper;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBaseTable;
 import com.cyberpeace.space.model.SpaceFrameBoBase;
 import com.cyberpeace.space.model.req.FrameBasePageReq;
+import com.cyberpeace.space.service.SpaceActionRelationService;
 import com.cyberpeace.space.service.context.IdListReq;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class SpaceActionFrameBaseController<S extends IService<E>, E extends SpaceFrameBaseTable, B extends SpaceFrameBoBase, R extends FrameBasePageReq> {
 
 	@Autowired
 	protected S baseService;
 
-	protected Class<E> entityClass = currentModelCls();
+	@Autowired
+	protected SpaceActionRelationMapper relationMapper;
 
-	@SuppressWarnings("unchecked")
-	private Class<E> currentModelCls() {
-		return (Class<E>) ReflectionKit.getSuperClassGenericType(this.getClass(), 1);
-	}
+	@Autowired
+	protected SpaceActionRelationService relationService;
+
+	@Autowired
+	protected TransactionTemplate transactionTemplate;
 
 	@ApiOperation("列表")
 	@GetMapping("/list")
@@ -66,7 +75,14 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		req.setResourceId(IDGeneratorUtil.getID());
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
-		baseService.getBaseMapper().insert(entity);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				baseService.getBaseMapper().insert(entity);
+				relationService.createRelation(getUpperIds(req), req.getResourceId());
+			}
+		});
+
 		return new BaseRsp();
 	}
 
@@ -78,14 +94,27 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		}
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
-		baseService.updateById(entity);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				baseService.updateById(entity);
+				relationService.updateRelation(getUpperIds(req), req.getResourceId());
+			}
+		});
+
 		return new BaseRsp();
 	}
 
 	@ApiOperation("删除")
 	@DeleteMapping("")
 	public BaseRsp deleteA(@RequestBody IdListReq req) {
-		baseService.removeByIds(req.getIds());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				baseService.removeByIds(req.getIds());
+				relationService.deleteRelationsByIds(req.getIds());
+			}
+		});
 		return new BaseRsp();
 	}
 
@@ -112,20 +141,43 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		}
 	}
 
-	private Map<String, IdAndName> getRelatedMap(List<E> list){
-		Map<String, IdAndName> res = Maps.newHashMap();
-		this.addIdAndName(res, list);
+	private Map<String, List<IdAndName>> getRelatedMap(List<E> eList){
+		Map<String, List<IdAndName>> res = Maps.newHashMap();
+		if (eList.isEmpty()) {
+			return res;
+		}
+		List<String> lowerIds = StreamApiUtils.map(eList, E::getResourceId);
+		LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
+		wrapper.in(SpaceActionRelation::getLowerId, lowerIds);
+		List<SpaceActionRelation> relations = relationMapper.selectList(wrapper);
+		if (relations.isEmpty()) {
+			return res;
+		}
+		List<String> upperIds = StreamApiUtils.map(relations, SpaceActionRelation::getUpperId);
+		List<? extends SpaceFrameBaseTable> upperList = this.getUpperRelated(upperIds);
+
+		Map<String, IdAndName> upperMap = Maps.newHashMap();
+		for (SpaceFrameBaseTable e : upperList) {
+			upperMap.put(e.getResourceId(), new IdAndName(e.getResourceId(), e.getName()));
+		}
+		// 排序，使结果一致
+		relations = relations.stream().sorted(Comparator.comparing(SpaceActionRelation::getId)).collect(Collectors.toList());
+
+		for (SpaceActionRelation relation : relations) {
+			String lowerId = relation.getLowerId();
+			String upperId = relation.getUpperId();
+			res.putIfAbsent(lowerId, Lists.newArrayList());
+			res.get(lowerId).add(upperMap.get(upperId));
+		}
 		return res;
 	}
 
-	protected void createIdAndName(List<? extends SpaceFrameBaseTable> entities, Map<String, IdAndName> relatedMap){
-		for (SpaceFrameBaseTable e : entities) {
-			relatedMap.put(e.getResourceId(), new IdAndName(e.getResourceId(), e.getName()));
-		}
+	protected List<? extends SpaceFrameBaseTable> getUpperRelated(List<String> upperIds) {
+		return Lists.newArrayList();
 	}
 
-	protected void addIdAndName(Map<String, IdAndName> relatedMap, List<E> entityList){
-
+	protected List<String> getUpperIds(B req){
+		return Lists.newArrayList();
 	}
 
 }

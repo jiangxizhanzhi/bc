@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class SpaceActionMethodBo extends SpaceFrameBoBase {
@@ -22,13 +23,12 @@ public class SpaceActionMethodBo extends SpaceFrameBoBase {
 	private String description;
 
 	@ApiModelProperty(value = "所属作战目标")
-	private IdAndName target;
+	private List<IdAndName> target;
 	@ApiModelProperty(value = "创建时间，前端不要传")
 	private Date createTime;
 
 	public SpaceActionMethod bo2Entity() {
 		SpaceActionMethod entity = BeanUtils.copy(this, SpaceActionMethod.class);
-		entity.setTarget(this.target.getResourceId());
 		return entity;
 	}
 

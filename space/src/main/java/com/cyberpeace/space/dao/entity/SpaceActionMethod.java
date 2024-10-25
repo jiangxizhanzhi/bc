@@ -7,6 +7,7 @@ import com.cyberpeace.space.model.SpaceFrameBaseTable;
 import com.cyberpeace.space.service.context.frame.SpaceActionMethodBo;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -17,9 +18,9 @@ public class SpaceActionMethod extends SpaceFrameBaseTable {
 
 	private String target;
 
-	public SpaceActionMethodBo entity2Bo(Map<String, IdAndName> relatedMap) {
+	public SpaceActionMethodBo entity2Bo(Map<String, List<IdAndName>> relatedMap) {
 		SpaceActionMethodBo bo = BeanUtils.copy(this, SpaceActionMethodBo.class);
-		bo.setTarget(this.getIdAndName(relatedMap, this.target));
+		bo.setTarget(relatedMap.get(bo.getResourceId()));
 		return bo;
 	}
 }

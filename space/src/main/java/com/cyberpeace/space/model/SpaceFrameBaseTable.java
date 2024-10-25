@@ -35,7 +35,7 @@ public abstract class SpaceFrameBaseTable {
 
 	private String name;
 
-	public abstract SpaceFrameBoBase entity2Bo(Map<String, IdAndName> relatedMap);
+	public abstract SpaceFrameBoBase entity2Bo(Map<String, List<IdAndName>> relatedMap);
 
 	public List<IdAndName> getIdAndNameList(Map<String, IdAndName> relatedMap, String idListJson){
 		List<String> ids = JsonUtil.toJsonObjectArray(idListJson, String.class);

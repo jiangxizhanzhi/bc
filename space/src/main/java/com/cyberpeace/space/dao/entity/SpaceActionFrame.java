@@ -41,7 +41,7 @@ public class SpaceActionFrame extends SpaceFrameBaseTable {
 
 	public enum Type implements GenericEnum {
 
-		PROCESS(1, "面向流程"),TARGET(2, "面向目标");
+		PROCESS(0, "面向流程"),TARGET(1, "面向目标");
 
 		@Getter
 		private Integer code;

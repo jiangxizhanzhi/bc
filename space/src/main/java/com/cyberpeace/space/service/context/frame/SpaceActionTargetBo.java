@@ -1,8 +1,6 @@
 package com.cyberpeace.space.service.context.frame;
 
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionTarget;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBoBase;
@@ -32,8 +30,6 @@ public class SpaceActionTargetBo extends SpaceFrameBoBase {
 
 	public SpaceActionTarget bo2Entity() {
 		SpaceActionTarget entity = BeanUtils.copy(this, SpaceActionTarget.class);
-		List<String> frameIds = StreamApiUtils.map(this.frame, IdAndName::getResourceId);
-		entity.setFrame(JsonUtil.arrayToString(frameIds));
 		return entity;
 	}
 

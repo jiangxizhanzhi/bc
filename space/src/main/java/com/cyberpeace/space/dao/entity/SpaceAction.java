@@ -19,8 +19,6 @@ public class SpaceAction extends SpaceFrameBaseTable {
 
 	private String description;
 
-	private String method;
-
 	private String environment;
 
 	private String action;

@@ -16,8 +16,6 @@ public class SpaceActionMethod extends SpaceFrameBaseTable {
 
 	private String description;
 
-	private String target;
-
 	public SpaceActionMethodBo entity2Bo(Map<String, List<IdAndName>> relatedMap) {
 		SpaceActionMethodBo bo = BeanUtils.copy(this, SpaceActionMethodBo.class);
 		bo.setTarget(relatedMap.get(bo.getResourceId()));

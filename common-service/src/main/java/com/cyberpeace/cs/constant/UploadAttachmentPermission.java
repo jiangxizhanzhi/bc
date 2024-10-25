@@ -28,7 +28,8 @@ public enum UploadAttachmentPermission implements GenericEnum {
 	WEB_OJ_THEORY_PRACTICE(11, "前台理论题MD编辑器附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[] { MenuConstant.WEB_OJ_THEORY_PRACTICE }),
     WEB_MISSION_MD_ATTACHMENT(12, "前台学员答题编辑MD附件上传", FileTypeContant.MD_ATTACHMENT_TYPE,
 					new String[] { MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN,
-							MenuConstant.WEB_CR_SINGLE_TRAIN });
+							MenuConstant.WEB_CR_SINGLE_TRAIN }),
+    WEB_COURSE_ATTACHMENT(13, "前台课程上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.WEB_OJ_ALL_COURSE });
 
     @Getter
     public final Integer code;

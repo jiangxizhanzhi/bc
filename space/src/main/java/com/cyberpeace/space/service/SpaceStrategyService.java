@@ -2,6 +2,7 @@ package com.cyberpeace.space.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.space.dao.entity.SpaceStrategy;
+import com.cyberpeace.space.service.context.index.IndexStrategy;
 import com.cyberpeace.space.service.context.strategy.*;
 
 import java.util.List;
@@ -26,4 +27,7 @@ public interface SpaceStrategyService extends IService<SpaceStrategy> {
     SpaceStrategyBo getDetail(String resourceId);
 
     String getFrameRouteById(String frameId);
+
+    IndexStrategy getStatistics();
+
 }

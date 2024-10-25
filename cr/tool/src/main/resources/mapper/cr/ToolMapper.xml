@@ -69,4 +69,8 @@
         select `type`, DATE_FORMAT(create_time, '%Y-%m') as date
         from cr_tool_tool
     </select>
+    <select id="listTypeAndPlatform" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
+        select `type`, platforms
+        from cr_tool_tool
+    </select>
 </mapper>

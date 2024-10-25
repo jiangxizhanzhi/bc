@@ -27,4 +27,6 @@ public interface ToolMapper extends BaseMapper<Tool> {
 
     List<ToolStatistics> statistics();
 
+    List<Tool> listTypeAndPlatform();
+
 }

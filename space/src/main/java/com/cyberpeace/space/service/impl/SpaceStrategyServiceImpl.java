@@ -1,5 +1,6 @@
 package com.cyberpeace.space.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -14,6 +15,7 @@ import com.cyberpeace.space.dao.entity.SpaceStrategyFrame;
 import com.cyberpeace.space.dao.mapper.SpaceStrategyFrameMapper;
 import com.cyberpeace.space.dao.mapper.SpaceStrategyMapper;
 import com.cyberpeace.space.service.SpaceStrategyService;
+import com.cyberpeace.space.service.context.index.IndexStrategy;
 import com.cyberpeace.space.service.context.strategy.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -129,7 +131,47 @@ public class SpaceStrategyServiceImpl extends ServiceImpl<SpaceStrategyMapper, S
 		return String.join("/", names);
 	}
 
-	private SpaceStrategy req2Entity(SpaceStrategyAddReq req){
+    @Override
+    public IndexStrategy getStatistics() {
+		SpaceStrategyFrameBo frameBo = this.getFrame();
+		Map<String, List<String>> map = Maps.newHashMap();
+		for (SpaceStrategyFrameBo child : frameBo.getChildren()) {
+			List<String> frameIds = Lists.newArrayList();
+			this.collectFrameId(frameIds, child);
+			map.put(child.getResourceId(), frameIds);
+		}
+		IndexStrategy strategy = new IndexStrategy();
+		strategy.setOs(this.countByFrameIds(map.get("47d82955780346d98f92250e1e4ecd10")));
+		strategy.setDatabase(this.countByFrameIds(map.get("f41c777715754d3c99c76f17f2b78975")));
+		strategy.setMiddleware(this.countByFrameIds(map.get("52e001b892ae4d38aced84842918a4ba")));
+		strategy.setSwitchboard(this.countByFrameIds(map.get("8114e09e4dee4ca6b15eaa4772f36bf9")));
+		strategy.setRouter(this.countByFrameIds(map.get("e0fafbc784c9486c967ab0952c0c3a3f")));
+		strategy.setBigData(this.countByFrameIds(map.get("da6a5308594e4cbab220d136bf1002d9")));
+		strategy.setAntiVirus(this.countByFrameIds(map.get("02ef1b4cf4d94a2bb9d2312defd3ed6f")));
+		strategy.setTerminal(this.countByFrameIds(map.get("5a4243d5c16b4376ab7a63da386ea993")));
+		strategy.setBorder(this.countByFrameIds(map.get("518eccd483a94d218b4994de4c714557")));
+		strategy.setInvasionCheck(this.countByFrameIds(map.get("ca6efb4d930b438badc1649f098eb966")));
+		strategy.calSum();
+
+		return strategy;
+    }
+
+	private void collectFrameId(List<String> frameIds, SpaceStrategyFrameBo bo){
+		frameIds.add(bo.getResourceId());
+		for (SpaceStrategyFrameBo child : bo.getChildren()) {
+			collectFrameId(frameIds, child);
+		}
+	}
+
+	private Integer countByFrameIds(List<String> frameIds){
+		LambdaQueryWrapper<SpaceStrategy> wrapper = new LambdaQueryWrapper<>();
+		wrapper.in(SpaceStrategy::getFrameId, frameIds);
+		return mapper.selectCount(wrapper);
+	}
+
+
+
+    private SpaceStrategy req2Entity(SpaceStrategyAddReq req){
 		SpaceStrategy strategy = BeanUtils.copy(req, SpaceStrategy.class);
 		return strategy;
 	}

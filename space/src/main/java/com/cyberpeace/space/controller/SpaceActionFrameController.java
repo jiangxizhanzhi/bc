@@ -1,6 +1,10 @@
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.common.model.BaseRsp;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,5 +21,14 @@ import io.swagger.annotations.Api;
 @RequestMapping("/space/action_frame/action_frame")
 @RequiresAuthentication
 public class SpaceActionFrameController extends SpaceActionFrameBaseController<SpaceActionFrameService, SpaceActionFrame, SpaceActionFrameBo, SpaceActionFramePageReq> {
+
+
+    @ApiOperation("获取框架")
+    @GetMapping("/frame")
+    public BaseRsp getFrame(@ApiParam(value = "resource_id", name = "resource_id") String resource_id){
+
+
+        return new BaseRsp();
+    }
 
 }

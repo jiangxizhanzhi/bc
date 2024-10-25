@@ -14,7 +14,6 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.space.dao.entity.SpaceActionRelation;
-import com.cyberpeace.space.dao.mapper.SpaceActionRelationMapper;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBaseTable;
 import com.cyberpeace.space.model.SpaceFrameBoBase;
@@ -42,9 +41,6 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	protected S baseService;
 
 	@Autowired
-	protected SpaceActionRelationMapper relationMapper;
-
-	@Autowired
 	protected SpaceActionRelationService relationService;
 
 	@Autowired
@@ -54,8 +50,16 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<B>> page(R req) {
 		LambdaQueryWrapper<E> wrapper = req.req2QueryWrapper();
+		String upperId = req.getUpperId();
+		if (StringUtils.isNotBlank(upperId)) {
+			List<String> ids = relationService.getLowerIdsByUpperId(upperId);
+			if (ids.isEmpty()) {
+				return new BaseRsp<>(PageUtil.getNullResult());
+			}
+			wrapper.in(E::getResourceId, ids);
+		}
 		IPage<E> iPage = baseService.page(req.toPageParam(), wrapper);
-		iPage.convert(e->e.entity2Bo(this.getRelatedMap(iPage.getRecords())));
+		iPage.convert(e -> e.entity2Bo(this.getRelatedMap(iPage.getRecords())));
 		ListRsp<B> res = PageUtil.getListResult(iPage);
 		return new BaseRsp<>(res);
 	}
@@ -149,7 +153,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 		List<String> lowerIds = StreamApiUtils.map(eList, E::getResourceId);
 		LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
 		wrapper.in(SpaceActionRelation::getLowerId, lowerIds);
-		List<SpaceActionRelation> relations = relationMapper.selectList(wrapper);
+		List<SpaceActionRelation> relations = relationService.list(wrapper);
 		if (relations.isEmpty()) {
 			return res;
 		}

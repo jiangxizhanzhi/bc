@@ -18,15 +18,16 @@ public class SpaceActionMethodPageReq extends FrameBasePageReq {
 
 	public LambdaQueryWrapper<SpaceActionMethod> req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceActionMethod> wrapper = new LambdaQueryWrapper<>();
-		if (StringUtils.isNotBlank(this.targetId)) {
-			wrapper.eq(SpaceActionMethod::getId, this.targetId);
-		}
-
 		if (StringUtils.isNotBlank(this.getPattern())) {
 			wrapper.like(SpaceActionMethod::getName, this.getPattern());
 		}
 
 		return wrapper;
+	}
+
+	@Override
+	public String getUpperId() {
+		return this.targetId;
 	}
 
 }

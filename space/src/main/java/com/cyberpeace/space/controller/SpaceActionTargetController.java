@@ -2,7 +2,6 @@ package com.cyberpeace.space.controller;
 
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionTarget;
-import com.cyberpeace.space.dao.mapper.SpaceActionFrameTargetRelationMapper;
 import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceFrameBaseTable;
 import com.cyberpeace.space.model.controller.SpaceActionFrameBaseController;
@@ -26,9 +25,6 @@ public class SpaceActionTargetController extends SpaceActionFrameBaseController<
 
     @Autowired
     private SpaceActionFrameService frameService;
-
-    @Autowired
-    private SpaceActionFrameTargetRelationMapper frameTargetRelationMapper;
 
 
     @Override

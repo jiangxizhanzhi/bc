@@ -53,6 +53,14 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         return StreamApiUtils.map(relations, SpaceActionRelation::getUpperId);
     }
 
+    @Override
+    public List<String> getLowerIdsByUpperId(String upperId) {
+        LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SpaceActionRelation::getUpperId, upperId);
+        List<SpaceActionRelation> relations  = this.list(wrapper);
+        return StreamApiUtils.map(relations, SpaceActionRelation::getLowerId);
+    }
+
 
     private SpaceActionRelation createEntity(String upperId, String lowerId){
         SpaceActionRelation relation = new SpaceActionRelation();

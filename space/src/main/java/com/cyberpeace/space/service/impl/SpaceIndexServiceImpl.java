@@ -165,6 +165,7 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		IndexFrameCount count = new IndexFrameCount();
 		count.setProcess(spaceActionFrameService.countByType(SpaceActionFrame.Type.PROCESS.getCode()));
 		count.setTarget(spaceActionFrameService.countByType(SpaceActionFrame.Type.TARGET.getCode()));
+		count.calSum();
 		frame.setFrameCount(count);
 
 		return frame;

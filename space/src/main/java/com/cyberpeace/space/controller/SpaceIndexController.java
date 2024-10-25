@@ -26,6 +26,7 @@ public class SpaceIndexController {
 	@GetMapping("/knowledge")
 	public BaseRsp<IndexKnowledge> getKRepository() {
 		IndexKnowledge res = indexService.getKnowledgeRepositoryStatistics();
+		res.calSum();
 		return new BaseRsp(res);
 	}
 

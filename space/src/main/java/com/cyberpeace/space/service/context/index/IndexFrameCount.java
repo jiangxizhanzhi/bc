@@ -11,4 +11,10 @@ public class IndexFrameCount {
 
 	@ApiModelProperty(value = "攻击目标的JW防御行动框架")
 	private Integer target;
+
+	private Integer sum;
+
+	public void calSum() {
+		this.sum = this.process + this.target;
+	}
 }

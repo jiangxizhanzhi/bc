@@ -19,11 +19,20 @@ public class IndexKnowledge {
 	private IndexRule rule;
 
 	@ApiModelProperty(value = "流量库")
-	private IndexTraffic traffic;
+	private IndexTraffic traffic = new IndexTraffic();
 
 	@ApiModelProperty(value = "算法库")
 	private IndexAlgorithm algorithm;
 
 	@ApiModelProperty(value = "场景库")
-	private IndexScene scene;
+	private IndexScene scene = new IndexScene();
+
+	@ApiModelProperty(value = "防御知识库总数")
+	private Integer sum;
+
+	public void calSum() {
+		this.sum = this.theory.getSum() + this.strategy.getSum() + this.tactic.getSum()
+				+ this.rule.getSum() + this.traffic.getSum() + this.algorithm.getSum()
+				+ this.scene.getSum();
+	}
 }

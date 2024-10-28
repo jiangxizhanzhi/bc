@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.course.service.bo;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 @ApiModel("课程基本信息")
@@ -83,4 +83,6 @@ public class CourseInfoBo implements Serializable {
 
 	@ApiModelProperty("是否具有访问权限")
 	private Boolean interview;
+
+	private Integer role;
 }

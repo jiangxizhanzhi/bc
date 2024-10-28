@@ -131,6 +131,8 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		SpaceTacticDefenseCategory category = new SpaceTacticDefenseCategory();
 		category.setName(req.getName());
 		category.setResourceId(IDGeneratorUtil.getID());
+		category.setStage(req.getStage());
+		category.setCover(req.getCover());
 		return category;
 	}
 

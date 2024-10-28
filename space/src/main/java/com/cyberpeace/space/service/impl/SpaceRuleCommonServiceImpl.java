@@ -37,6 +37,9 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 	private SpaceAptThreatDetectRuleMapper spaceAptThreatDetectRuleMapper;
 
 	@Autowired
+	private SpaceThreatImageRuleMapper spaceThreatImageRuleMapper;
+
+	@Autowired
 	private SpaceEventIntegrationRuleMapper spaceEventIntegrationRuleMapper;
 
 	@Autowired
@@ -71,7 +74,7 @@ public class SpaceRuleCommonServiceImpl implements SpaceRuleCommonService {
 		statistics.setLoadedFileThreat(spaceLoadedFileThreatRuleMapper.selectCount(null));
 		statistics.setAptThreat(spaceAptThreatDetectRuleMapper.selectCount(null));
 		statistics.setEventIntegration(spaceEventIntegrationRuleMapper.selectCount(null));
-		statistics.setThreatImage(spaceEventIntegrationRuleMapper.selectCount(null));
+		statistics.setThreatImage(spaceThreatImageRuleMapper.selectCount(null));
 		statistics.setSourceAnalyze(spaceSourceAnalyzeRuleMapper.selectCount(null));
 		return statistics;
 	}

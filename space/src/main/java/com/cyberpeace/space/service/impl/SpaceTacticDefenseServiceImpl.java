@@ -8,6 +8,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefenseCategory;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseCategoryMapper;
@@ -32,6 +33,9 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 
 	@Autowired
 	private SpaceTacticDefenseCategoryMapper categoryMapper;
+
+	@Autowired
+	private UtilService utilService;
 
 	@Override
 	public ListRsp<DefenseListBo> page(PageReqBase req) {
@@ -91,6 +95,9 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	public ListRsp<TacticDefenseCategoryBo> pageCategory(PageReqBase reqBase) {
 		Page page = reqBase.toPageParam();
 		IPage<TacticDefenseCategoryBo> iPage = categoryMapper.page(page, reqBase.getPattern());
+		for (TacticDefenseCategoryBo bo : iPage.getRecords()) {
+			bo.setCover(utilService.handlerFileUrl(bo.getCover()));
+		}
 		return PageUtil.getListResult(iPage);
 	}
 

@@ -114,36 +114,36 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			AuthContext authContext) {
 
 		// 过滤无权限习题集
-		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authSetIds)) {
-			return null;
-		}
+//		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+//		if (CollectionUtils.isEmpty(authSetIds)) {
+//			return null;
+//		}
 
 		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authSetIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authSetIds)
-				|| (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-				&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
-			return null;
-		}
+//		List<PracticeSet> practiceSets = practiceSetMapper
+//				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+//		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+//		authSetIds.retainAll(setIds);
+//		if (CollectionUtils.isEmpty(authSetIds)
+//				|| (StringUtils.isNotBlank(listQuery.getPracticeSetId())
+//				&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
+//			return null;
+//		}
 
 		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
 		theoryListQuery.setQuestionType(listQuery.getTheoryType());
 		// 根据习题集过滤习题编号
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
-			authSetIds.clear();
-			authSetIds.add(listQuery.getPracticeSetId());
-		}
-		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-				authContext.getIsWeb());
-
-		if (CollectionUtils.isEmpty(practiceIds)) {
-			return null;
-		}
-		theoryListQuery.setResourceIds(practiceIds);
+//		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+//			authSetIds.clear();
+//			authSetIds.add(listQuery.getPracticeSetId());
+//		}
+//		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
+//				authContext.getIsWeb());
+//
+//		if (CollectionUtils.isEmpty(practiceIds)) {
+//			return null;
+//		}
+//		theoryListQuery.setResourceIds(practiceIds);
 
 		// 答题记录过滤习题
 		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
@@ -179,13 +179,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			userIdList.add(record.getCreateUserId());
 			practiceIdList.add(record.getPracticeSetId());
 		}
-
-		if(CollectionUtils.isEmpty(userIdList) || CollectionUtils.isEmpty(practiceIdList)) {
+		if(iPage.getRecords().isEmpty()){
 			return null;
 		}
 
+
 		Map<String, String> userInfoMap = StreamApiUtils.toMap(remoteUserService.getByIdList(userIdList), UserInfo::getUserId, UserInfo::getUserName);
-		Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSetMapper.selectBatchIds(practiceIdList), PracticeSet::getResourceId, PracticeSet::getName);
+//		Map<String, String> practiceSetMap = Maps.newHashMap();
 		LambdaQueryWrapper<PracticeSolved> practiceSolvedQuery = new LambdaQueryWrapper<>();
 		practiceSolvedQuery.eq(PracticeSolved::getSubmitUserId, authContext.getUserId());
 		practiceSolvedQuery.eq(PracticeSolved::getPracticeType, PracticeCategory.PracticeType.THEORY.getCode());
@@ -211,8 +211,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 			String userName= userInfoMap.get(practiceTheory.getCreateUserId());
 			theoryListBo.setCreateUserName(null != userName ? userName : "");
-			String practiceSetName=	practiceSetMap.get(practiceTheory.getPracticeSetId());
-			theoryListBo.setPracticeSetName(null != practiceSetName ? practiceSetName : "");
+//			String practiceSetName=	practiceSetMap.get(practiceTheory.getPracticeSetId());
+//			theoryListBo.setPracticeSetName(null != practiceSetName ? practiceSetName : "");
 			return theoryListBo;
 		});
 	}
@@ -243,8 +243,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		answerToNull(webTheoryBo, practiceSolved);
 
-		PracticeSet practiceSet = practiceSetMapper.selectById(webTheoryBo.getPracticeSetId());
-		webTheoryBo.setPracticeSetName(practiceSet.getName());
+//		PracticeSet practiceSet = practiceSetMapper.selectById(webTheoryBo.getPracticeSetId());
+//		webTheoryBo.setPracticeSetName(practiceSet.getName());
 
 		return webTheoryBo;
 	}
@@ -351,23 +351,23 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	public Integer create(PracticeTheory practiceTheory, AuthContext authContext) {
 
 		// 数据校验
-		practiceValidateHandler.validateTheoryContentExist(practiceTheory.getPracticeSetId(),
+		practiceValidateHandler.validateTheoryContentExist("",
 				practiceTheory.getContent());
 		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
 				PracticeCategory.PracticeType.THEORY.getCode());
-		PracticeSet practiceSet = practiceValidateHandler.validateSetType(
-				practiceTheory.getPracticeSetId(), PracticeSet.PracticeType.THEORY.getCode());
+//		PracticeSet practiceSet = practiceValidateHandler.validateSetType(
+//				practiceTheory.getPracticeSetId(), PracticeSet.PracticeType.THEORY.getCode());
 		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());
 		// 基本数据设置
 		practiceTheory.setBuiltin(CommonConstant.FALSE);
 		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
-		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
+//		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
 
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
-				practiceSetMapper.updateById(practiceSet);
+//				practiceSetMapper.updateById(practiceSet);
 				return practiceTheoryMapper.insert(practiceTheory);
 			}
 		});
@@ -377,12 +377,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
 
 		// 数据校验
-		practiceValidateHandler.validateTheoryContentExistExcludeItself(practiceTheory.getPracticeSetId(),
+		practiceValidateHandler.validateTheoryContentExistExcludeItself("",
 				practiceTheory.getContent(), practiceTheory);
 		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
 				PracticeCategory.PracticeType.THEORY.getCode());
-		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
-				PracticeSet.PracticeType.THEORY.getCode());
+//		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
+//				PracticeSet.PracticeType.THEORY.getCode());
 		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());
 		PracticeTheory originPractice = practiceTheoryMapper.selectById(practiceTheory.getResourceId());
 		String originChangeBo = BeanUtils.copy(originPractice, TheoryChangeBo.class).toString();
@@ -752,15 +752,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				endDate,
 				webTheoryRecordReq.getSolved());
 		//设置习题集名称
-		List<String> practiceSetIds = StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getPracticeSetId);
-		if (practiceSetIds.size() == 0) {
-			return new ArrayList<>();
-		}
-		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
-		Map<String, String> practiceSetIdNameMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getName);
-		for (PracticeTheoryListBo practiceTheoryListBo : practiceTheoryList) {
-			practiceTheoryListBo.setPracticeSetName(practiceSetIdNameMap.get(practiceTheoryListBo.getPracticeSetId()));
-		}
+//		List<String> practiceSetIds = StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getPracticeSetId);
+//		if (practiceSetIds.size() == 0) {
+//			return new ArrayList<>();
+//		}
+//		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
+//		Map<String, String> practiceSetIdNameMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getName);
+//		for (PracticeTheoryListBo practiceTheoryListBo : practiceTheoryList) {
+//			practiceTheoryListBo.setPracticeSetName(practiceSetIdNameMap.get(practiceTheoryListBo.getPracticeSetId()));
+//		}
 		return practiceTheoryList;
 	}
 

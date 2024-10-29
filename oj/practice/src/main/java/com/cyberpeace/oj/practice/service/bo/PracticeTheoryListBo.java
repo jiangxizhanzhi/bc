@@ -20,8 +20,8 @@ public class PracticeTheoryListBo implements Serializable {
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
-	@ApiModelProperty("习题集")
-	private String practiceSetId;
+//	@ApiModelProperty("习题集")
+//	private String practiceSetId;
 
 	@ApiModelProperty("名称")
 	private String content;
@@ -41,8 +41,8 @@ public class PracticeTheoryListBo implements Serializable {
 	@ApiModelProperty("更新时间")
 	private Date updateTime;
 
-	@ApiModelProperty("习题集名称")
-	private String practiceSetName;
+//	@ApiModelProperty("习题集名称")
+//	private String practiceSetName;
 
 	@ApiModelProperty("解题状态：")
 	private Integer solved;

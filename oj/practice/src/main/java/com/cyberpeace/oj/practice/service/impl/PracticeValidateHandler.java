@@ -335,7 +335,7 @@ public class PracticeValidateHandler {
 	 * @param content
 	 */
 	public void validateTheoryContentExist(String practiceSetId, String content) {
-		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId, content);
+		String practiceId = practiceTheoryMapper.selectByContent("", content);
 		if (StringUtils.isNotBlank(practiceId)) {
 			log.error("Practice theory content exist! practice_set_id=[{}], practice_id=[{}]",
 					practiceSetId, practiceId);
@@ -402,7 +402,7 @@ public class PracticeValidateHandler {
 
 	public void validateTheoryContentExistExcludeItself(String practiceSetId, String content,
 			PracticeTheory practiceTheory) {
-		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId, content);
+		String practiceId = practiceTheoryMapper.selectByContent("", content);
 		if (StringUtils.isNotBlank(practiceId)
 				&& !practiceId.equals(practiceTheory.getResourceId())) {
 			log.error("Practice theory content exist! practice_set_id=[{}], practice_id=[{}]",

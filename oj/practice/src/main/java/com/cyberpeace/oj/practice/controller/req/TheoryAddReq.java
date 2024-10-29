@@ -20,8 +20,8 @@ public class TheoryAddReq implements Serializable {
 	@ApiModelProperty(value = "填空题答案", required = true)
 	private String blank;
 
-	@ApiModelProperty(value = "习题集", required = true)
-	private String practiceSetId = "default";
+//	@ApiModelProperty(value = "习题集", required = true)
+//	private String practiceSetId = "default";
 
 	@ApiModelProperty(value = "分类", required = true)
 	@NotBlank(groups = { Create.class })

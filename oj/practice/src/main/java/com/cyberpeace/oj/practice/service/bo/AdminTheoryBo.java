@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 @ApiModel
@@ -19,8 +19,8 @@ public class AdminTheoryBo implements Serializable {
 	@ApiModelProperty(value = "填空题答案")
 	private String blank;
 
-	@ApiModelProperty(value = "习题集")
-	private String practiceSetId;
+//	@ApiModelProperty(value = "习题集")
+//	private String practiceSetId;
 
 	@ApiModelProperty(value = "分类")
 	private String categoryId;

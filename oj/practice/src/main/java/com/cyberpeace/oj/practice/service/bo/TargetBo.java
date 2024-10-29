@@ -16,6 +16,8 @@ public class TargetBo implements Serializable {
 
 //	@ApiModelProperty("flag")
 //	private String flag;
+	@ApiModelProperty("附件id")
+	private String attachmentId;
 
 	@ApiModelProperty("附件名称")
 	private String fileName;

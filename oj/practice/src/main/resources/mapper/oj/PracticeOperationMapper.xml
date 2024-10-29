@@ -99,8 +99,7 @@
 
     <select id="selectByTitle" resultType="java.lang.String">
         select resource_id from oj_practice_operation
-        where practice_set_id = #{practiceSetId}
-        and title = #{title}
+        where title = #{title}
     </select>
 
     <select id="topoIdsByIds" resultType="java.lang.String">

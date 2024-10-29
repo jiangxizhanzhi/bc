@@ -1,17 +1,5 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.model.AuthTable;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -20,6 +8,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.SystemConfigService;
@@ -35,8 +24,15 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -290,7 +286,7 @@ public class PracticeValidateHandler {
 	 * @param title
 	 */
 	public void validateOperationTitleExist(String practiceSetId, String title) {
-		String practiceId = practiceOperationMapper.selectByTitle(practiceSetId, title);
+		String practiceId = practiceOperationMapper.selectByTitle("", title);
 		if (StringUtils.isNotBlank(practiceId)) {
 			log.error(
 					"Practice operation title exist! practice_set_id=[{}], practice_id=[{}], title=[{}]",
@@ -353,7 +349,7 @@ public class PracticeValidateHandler {
 	 * @param newTitle
 	 */
 	public void validateOperationUpdateTitleExist(PracticeOperation operation, String newTitle) {
-		String existTitleId = practiceOperationMapper.selectByTitle(operation.getPracticeSetId(),
+		String existTitleId = practiceOperationMapper.selectByTitle("",
 				newTitle);
 		if (StringUtils.isNotBlank(existTitleId)
 				&& !operation.getResourceId().equals(existTitleId)) {

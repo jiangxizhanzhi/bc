@@ -27,8 +27,8 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("题解是否公开")
 	private Boolean writeupPublic;
 
-	@ApiModelProperty("习题集")
-	private String practiceSetId;
+//	@ApiModelProperty("习题集")
+//	private String practiceSetId;
 
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	private Integer difficulty;
@@ -51,8 +51,8 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("是否解决")
 	private Boolean solved;
 
-	@ApiModelProperty("习题集名称")
-	private String practiceSetName;
+//	@ApiModelProperty("习题集名称")
+//	private String practiceSetName;
 
 	@ApiModelProperty("是否有场景")
 	private Boolean hasSceneData;

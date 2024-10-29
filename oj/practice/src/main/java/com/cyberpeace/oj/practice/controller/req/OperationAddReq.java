@@ -31,9 +31,8 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	@NotBlank(groups = { Create.class })
 	private String title;
 
-	@ApiModelProperty(name = "practice_set_id", value = "习题集")
-	@NotBlank(groups = { Create.class })
-	private String practiceSetId;
+//	@ApiModelProperty(name = "practice_set_id", value = "习题集")
+//	private String practiceSetId;
 
 	@ApiModelProperty(name = "category_id", value = "方向")
 	@NotBlank(groups = { Create.class })
@@ -70,7 +69,6 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	private Integer dynamicFlag;
 
 	@ApiModelProperty(name = "destroy_delay", value = "场景存活时间")
-	@NotNull(groups = { Create.class })
 	private Integer destroyDelay;
 
 	@ApiModelProperty("答案")
@@ -81,7 +79,6 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	private Double score;
 
 	@ApiModelProperty(name = "is_public", value = "是否公开")
-	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
 	@ApiModelProperty(name = "writeup_public", value = "题解是否公开")
@@ -94,9 +91,9 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	@ApiModelProperty("靶标列表，包含镜像id，附件id，命令")
 	private String target;
 
-	public void setPractice_set_id(String practiceSetId) {
-		this.practiceSetId = practiceSetId;
-	}
+//	public void setPractice_set_id(String practiceSetId) {
+//		this.practiceSetId = practiceSetId;
+//	}
 
 	public void setCategory_id(String categoryId) {
 		this.categoryId = categoryId;

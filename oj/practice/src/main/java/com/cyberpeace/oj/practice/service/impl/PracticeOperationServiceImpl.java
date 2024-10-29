@@ -178,10 +178,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			String targetJson, AuthContext authContext) {
 
 		// 数据校验
-		PracticeSet practiceSet = validatePracticeSet(practiceOperation.getPracticeSetId(),
-				authContext);
+//		PracticeSet practiceSet = validatePracticeSet(practiceOperation.getPracticeSetId(),
+//				authContext);
 		validateCategory(practiceOperation.getCategoryId());
-		practiceValidateHandler.validateOperationTitleExist(practiceOperation.getPracticeSetId(),
+		practiceValidateHandler.validateOperationTitleExist("",
 				practiceOperation.getTitle());
 
 		practiceOperation.setResourceId(IDGeneratorUtil.getID());
@@ -202,7 +202,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// }
 
 		// 习题集习题 数量加一
-		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
+//		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + CommonConstant.ONE);
 
 		List<PracticeOperationTarget> targetList = targetBo2Entity(targetBoList,
 				practiceOperation.getResourceId());
@@ -210,7 +210,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
-				practiceSetMapper.updateById(practiceSet);
+//				practiceSetMapper.updateById(practiceSet);
 				if (!targetList.isEmpty()) {
 					practiceOperationTargetService.saveBatch(targetList);
 				}
@@ -301,13 +301,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 //		}
 
 		// topo更新
-
-		PracticeOperation practiceOperation = practiceOperationMapper.selectById(updateOperation.getResourceId());
-
-		if(null == practiceOperation){
-			log.error("practiceOperation is null,ResourceId =[{}]", updateOperation.getResourceId());
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
 //		if (updateOperation.getDynamicEnv() && null != targetJson) {
 //			updateOperation.setTopoId(
 //					localSceneService.saveTopo(targetJson, practiceOperation.getTopoId()));
@@ -317,7 +310,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode().intValue()
 				&& !operation.getAttachmentId().equals(updateOperation.getAttachmentId());
 
-		PracticeOperation originalBean = BeanUtils.copy(practiceOperation, PracticeOperation.class);
+		PracticeOperation originalBean = BeanUtils.copy(operation, PracticeOperation.class);
 		PracticeOperation changeBean = BeanUtils.copy(updateOperation, PracticeOperation.class);
 		originalBean.setBuiltin(null);
 		originalBean.setCreateUserId(null);
@@ -325,7 +318,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		changeBean.setCreateUserId(null);
 
 		List<PracticeOperationTarget> targetList = targetBo2Entity(targetBoList,
-				practiceOperation.getResourceId());
+				operation.getResourceId());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -348,7 +341,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				}
 
 				// 如果修改了额定字段
-				if (isModifySpecify(updateOperation, practiceOperation)) {
+				if (isModifySpecify(updateOperation, operation)) {
 					// 删除题解和错题集
 					delMappedSolvedAndMistake(updateOperation);
 				}
@@ -459,6 +452,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			bo.setNodeId(target.getNodeId());
 			bo.setNodeName(target.getNodeName());
 			bo.setNodeCommand(target.getNodeCommand());
+			bo.setAttachmentId(target.getAttachmentId());
 			if (target.getAttachmentId() != null) {
 				Attachment attachment = attachmentMap.getOrDefault(target.getAttachmentId(), null);
 				if (attachment != null) {
@@ -637,63 +631,63 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			AuthContext authContext) {
 
 		// 过滤无权限习题集
-		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authIds)) {
-			return null;
-		}
+//		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+//		if (CollectionUtils.isEmpty(authIds)) {
+//			return null;
+//		}
 
 		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authIds)) {
-			return null;
-		}
+//		List<PracticeSet> practiceSets = practiceSetMapper
+//				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
+//		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+//		authIds.retainAll(setIds);
+//		if (CollectionUtils.isEmpty(authIds)) {
+//			return null;
+//		}
 
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-				&& !authIds.contains(listQuery.getPracticeSetId())) {
-			return null;
-		}
+//		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())
+//				&& !authIds.contains(listQuery.getPracticeSetId())) {
+//			return null;
+//		}
 
 		// 根据习题集过滤习题编号
 		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
-			authIds.clear();
-			authIds.add(listQuery.getPracticeSetId());
-		}
+//		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+//			authIds.clear();
+//			authIds.add(listQuery.getPracticeSetId());
+//		}
 
-		List<String> operationIds = practiceOperationMapper.selectBySetIds(authIds,
-				authContext.getIsWeb());
-		if (CollectionUtils.isEmpty(operationIds)) {
-			return null;
-		}
-		operationListQuery.setResourceIds(operationIds);
+//		List<String> operationIds = practiceOperationMapper.selectBySetIds(authIds,
+//				authContext.getIsWeb());
+//		if (CollectionUtils.isEmpty(operationIds)) {
+//			return null;
+//		}
+//		operationListQuery.setResourceIds(operationIds);
 
 		// 根据解题状态过滤
-		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
-
-			// 查询已解决习题编号
-			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
-					authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
-					CommonConstant.TRUE, IS_COLLECTED);
-
-			// 正确取交集
-			if (listQuery.getSolved()) {
-				operationListQuery.getResourceIds().retainAll(solvedIds);
-			} else {
-				operationListQuery.getResourceIds().removeAll(solvedIds);
-			}
-
-			if (CollectionUtils.isEmpty(operationListQuery.getResourceIds())) {
-				return null;
-			}
-		}
+//		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
+//
+//			// 查询已解决习题编号
+//			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
+//					authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
+//					CommonConstant.TRUE, IS_COLLECTED);
+//
+//			// 正确取交集
+//			if (listQuery.getSolved()) {
+//				operationListQuery.getResourceIds().retainAll(solvedIds);
+//			} else {
+//				operationListQuery.getResourceIds().removeAll(solvedIds);
+//			}
+//
+//			if (CollectionUtils.isEmpty(operationListQuery.getResourceIds())) {
+//				return null;
+//			}
+//		}
 
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,
 				operationListQuery, authContext.getIsWeb());
 
-		operationIds = iPage.getRecords().stream().map(PracticeOperation::getResourceId).collect(Collectors.toList());
+		List<String> operationIds = iPage.getRecords().stream().map(PracticeOperation::getResourceId).collect(Collectors.toList());
 		List<String> attachmentIds = new ArrayList<>();
 		for (PracticeOperation operation : iPage.getRecords()) {
 			String attachmentId = operation.getAttachmentId();
@@ -764,7 +758,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeSet practiceSet = practiceSetMapper
 				.selectById(practiceOperation.getPracticeSetId());
-		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
+//		operationListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 		UserInfo userInfo = remoteUserService.getById(practiceOperation.getCreateUserId());
 		operationListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 		List<PracticeOperationTarget> operationTargetList = operationTargetMap.getOrDefault(practiceOperation.getResourceId(), new ArrayList<>());
@@ -774,6 +768,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			bo.setNodeId(target.getNodeId());
 			bo.setNodeName(target.getNodeName());
 			bo.setNodeCommand(target.getNodeCommand());
+			bo.setAttachmentId(target.getAttachmentId());
 			if (target.getAttachmentId() != null) {
 				Attachment attachment = attachmentMap.getOrDefault(target.getAttachmentId(), null);
 				if (attachment != null) {

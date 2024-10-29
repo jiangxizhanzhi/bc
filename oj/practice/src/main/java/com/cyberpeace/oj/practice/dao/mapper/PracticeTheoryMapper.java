@@ -90,4 +90,6 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	List<PracticeTheory> selectAllCategoryIds();
 
 	List<String> selectTime();
+
+	List<String> selectOnlyBySetIds(@Param("setIds") List<String> setIds);
 }

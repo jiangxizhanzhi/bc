@@ -271,5 +271,15 @@
         from oj_practice_theory
     </select>
 
-
+    <select id="selectOnlyBySetIds" resultType="java.lang.String">
+        select resource_id from oj_practice_theory
+        <where>
+            <if test="setIds != null and setIds.size() != 0">
+                practice_set_id in
+                <foreach collection="setIds" separator="," open="(" close=")" item="setId">
+                    #{setId}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -54,6 +54,18 @@
         order by update_time desc, id
     </select>
 
+    <select id="selectOnlyBySetIds" resultType="java.lang.String">
+        select resource_id from oj_practice_operation
+        <where>
+            <if test="setIds != null and setIds.size() != 0">
+                practice_set_id in
+                <foreach collection="setIds" item="setId" open="(" close=")" separator=",">
+                    #{setId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
     <select id="selectByCategoryIds" resultType="java.lang.String">
         select resource_id from oj_practice_operation
         where category_id in

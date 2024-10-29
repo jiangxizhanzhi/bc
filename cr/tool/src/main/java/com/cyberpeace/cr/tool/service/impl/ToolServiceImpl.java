@@ -9,6 +9,7 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
+import com.cyberpeace.cr.tool.dao.context.MonthCount;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.context.ToolStatistics;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
@@ -24,7 +25,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,23 +158,29 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	public List<ToolTypeCount> statistics() {
 		List<ToolTypeCount> typeCounts = new ArrayList<>();
 		List<ToolStatistics> tools = toolMapper.statistics();
-		String thisMonth = TimeUtil.format11(new Date());
-		String lastMonth = TimeUtil.format11(TimeUtil.addMonths(new Date(), -1));
 		List<ToolStatistics> typeTools;
 		for (Tool.Type type : Tool.Type.values()) {
 			ToolTypeCount toolTypeCount = new ToolTypeCount();
 			toolTypeCount.setName(type.getDesc());
 			typeTools = tools.stream().filter(tool -> type.getCode().equals(tool.getType())).collect(Collectors.toList());
 			toolTypeCount.setCount(typeTools.size());
-			toolTypeCount.setThisAdd((int) typeTools.stream().filter(tool -> thisMonth.equals(tool.getDate())).count());
-			toolTypeCount.setLastAdd((int) typeTools.stream().filter(tool -> lastMonth.equals(tool.getDate())).count());
+			List<MonthCount> monthCounts = new ArrayList<>();
+			for (int i = 0 ; i < 6 ; i++) {
+				String month = TimeUtil.format11(TimeUtil.addMonths(new Date(), -i));
+				monthCounts.add(new MonthCount(month, (int) typeTools.stream().filter(tool -> month.equals(tool.getDate())).count()));
+			}
+			toolTypeCount.setCountList(monthCounts);
 			typeCounts.add(toolTypeCount);
 		}
 		ToolTypeCount toolTypeCount = new ToolTypeCount();
 		toolTypeCount.setName("总计");
 		toolTypeCount.setCount(tools.size());
-		toolTypeCount.setThisAdd((int) tools.stream().filter(tool -> thisMonth.equals(tool.getDate())).count());
-		toolTypeCount.setLastAdd((int) tools.stream().filter(tool -> lastMonth.equals(tool.getDate())).count());
+		List<MonthCount> monthCounts = new ArrayList<>();
+		for (int i = 0 ; i < 6 ; i++) {
+			String month = TimeUtil.format11(TimeUtil.addMonths(new Date(), -i));
+			monthCounts.add(new MonthCount(month, (int) tools.stream().filter(tool -> month.equals(tool.getDate())).count()));
+		}
+		toolTypeCount.setCountList(monthCounts);
 		typeCounts.add(toolTypeCount);
 		return typeCounts;
 	}

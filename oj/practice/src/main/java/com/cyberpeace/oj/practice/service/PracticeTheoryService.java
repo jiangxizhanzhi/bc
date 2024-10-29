@@ -10,6 +10,7 @@ import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryBo;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
@@ -135,5 +136,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	List<PracticeTheory> getCategoryIdAndSetIds();
+
+	IPage<ExternalTheoryBo> pageByQuery(Page page, TheoryListQueryBo listQuery);
 
 }

@@ -68,6 +68,8 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery,
 			AuthContext authContext);
 
+	IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery);
+
 	/**
 	 * 实操练习习题解答
 	 *

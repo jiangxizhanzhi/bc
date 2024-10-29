@@ -173,6 +173,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	private final Object lock = new Object();
 
+	private String downloadUrl = "http://" + SystemPropUtil.getProp("BC_HOST") + ConfigUtil.getContextProperty("cr.local.file.prefix");
+
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			String targetJson, AuthContext authContext) {
@@ -723,6 +725,64 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext, listQuery.getSolved(), operationTargetMap, attachmentMap));
 	}
 
+	@Override
+	public IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery) {
+
+		List<String> authIds = new ArrayList<>();
+
+
+		// 根据习题集过滤习题编号
+		OperationListQuery operationListQuery = BeanUtils.copy(listQuery, OperationListQuery.class);
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+			authIds.add(listQuery.getPracticeSetId());
+		}
+
+		List<String> operationIds = practiceOperationMapper.selectOnlyBySetIds(authIds);
+		if (CollectionUtils.isEmpty(operationIds)) {
+			return null;
+		}
+		operationListQuery.setResourceIds(operationIds);
+
+
+		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,
+				operationListQuery, null);
+
+		operationIds = iPage.getRecords().stream().map(PracticeOperation::getResourceId).collect(Collectors.toList());
+		List<String> attachmentIds = new ArrayList<>();
+		for (PracticeOperation operation : iPage.getRecords()) {
+			String attachmentId = operation.getAttachmentId();
+			if (StringUtils.isNotBlank(attachmentId)) {
+				attachmentIds.addAll(Arrays.asList(attachmentId.split(CommonConstant.CODE_COMMA)));
+			}
+		}
+
+		List<PracticeOperationTarget> operationTargets = practiceOperationTargetMapper.getAllByOperationIds(operationIds);
+		if (operationTargets == null) {
+			operationTargets = new ArrayList<>();
+		}
+		Map<String, List<PracticeOperationTarget>> operationTargetMap = new HashMap<>();
+		for (PracticeOperationTarget operationTarget : operationTargets) {
+			List<PracticeOperationTarget> operations = operationTargetMap.get(operationTarget.getOperationId());
+			if (operations == null) {
+				operationTargetMap.put(operationTarget.getOperationId(), Arrays.asList(operationTarget));
+			} else {
+				operations.add(operationTarget);
+			}
+		}
+
+
+		attachmentIds.addAll(operationTargets.stream().map(PracticeOperationTarget::getAttachmentId).collect(Collectors.toList()));
+		List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds, false);
+
+
+		// 数据类型转换
+		Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
+				Attachment::getResourceId, attachment -> attachment);
+
+
+		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, operationTargetMap, attachmentMap));
+	}
+
 	/**
 	 * 数据转换
 	 * @param practiceOperation
@@ -788,6 +848,50 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				Attachment attachment = attachmentMap.get(id);
 				fileBo.setFileName(attachment.getFileName());
 				fileBo.setFileUrl(attachment.getFilePath());
+				fileBoList.add(fileBo);
+			}
+		}
+		operationListBo.setFiles(fileBoList);
+
+		return operationListBo;
+
+	}
+
+	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation, Map<String, List<PracticeOperationTarget>> operationTargetMap,
+												Map<String, Attachment> attachmentMap) {
+
+		AdminOperationListBo operationListBo = BeanUtils.copy(practiceOperation,
+				AdminOperationListBo.class);
+
+
+		UserInfo userInfo = remoteUserService.getById(practiceOperation.getCreateUserId());
+		operationListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
+		List<PracticeOperationTarget> operationTargetList = operationTargetMap.getOrDefault(practiceOperation.getResourceId(), new ArrayList<>());
+		List<TargetBo> targetBoList = new ArrayList<>();
+		for (PracticeOperationTarget target : operationTargetList) {
+			TargetBo bo = new TargetBo();
+			bo.setNodeId(target.getNodeId());
+			bo.setNodeName(target.getNodeName());
+			bo.setNodeCommand(target.getNodeCommand());
+			if (target.getAttachmentId() != null) {
+				Attachment attachment = attachmentMap.getOrDefault(target.getAttachmentId(), null);
+				if (attachment != null) {
+					bo.setFileName(attachment.getFileName());
+					bo.setFileUrl(downloadUrl + attachment.getFilePath());
+				}
+			}
+			targetBoList.add(bo);
+		}
+		operationListBo.setTargetList(targetBoList);
+
+		String attachmentId = practiceOperation.getAttachmentId();
+		List<PracticeOperationFileBo> fileBoList = new ArrayList<>();
+		if (StringUtils.isNotBlank(attachmentId)) {
+			for (String id : attachmentId.split(CommonConstant.CODE_COMMA)) {
+				PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
+				Attachment attachment = attachmentMap.get(id);
+				fileBo.setFileName(attachment.getFileName());
+				fileBo.setFileUrl(downloadUrl + attachment.getFilePath());
 				fileBoList.add(fileBo);
 			}
 		}

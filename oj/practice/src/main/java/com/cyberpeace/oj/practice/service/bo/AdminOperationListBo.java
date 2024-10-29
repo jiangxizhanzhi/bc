@@ -66,4 +66,10 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("答案")
 	private String answer;
 
+	@ApiModelProperty("是否使用动态FLAG")
+	private Integer dynamicFlag;
+
+	@ApiModelProperty("内容")
+	private String content;
+
 }

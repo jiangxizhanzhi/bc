@@ -29,6 +29,7 @@ import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryBo;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
 import com.cyberpeace.oj.practice.service.externalbo.TheorySimpleBo;
 import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
@@ -213,6 +214,46 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			theoryListBo.setCreateUserName(null != userName ? userName : "");
 //			String practiceSetName=	practiceSetMap.get(practiceTheory.getPracticeSetId());
 //			theoryListBo.setPracticeSetName(null != practiceSetName ? practiceSetName : "");
+			return theoryListBo;
+		});
+	}
+
+	@Override
+	public IPage<ExternalTheoryBo> pageByQuery(Page page, TheoryListQueryBo listQuery) {
+
+		// 过滤无权限习题集
+		List<String> authSetIds = new ArrayList<>();
+		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
+			authSetIds.add(listQuery.getPracticeSetId());
+		}
+		List<String> practiceIds = practiceTheoryMapper.selectOnlyBySetIds(authSetIds);
+
+		if (CollectionUtils.isEmpty(practiceIds)) {
+			return null;
+		}
+		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
+		theoryListQuery.setResourceIds(practiceIds);
+
+		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery, null);
+
+		List<String> userIdList = new ArrayList<>();
+		List<String> practiceIdList = new ArrayList<>();
+		for (PracticeTheory record : iPage.getRecords()) {
+			userIdList.add(record.getCreateUserId());
+			practiceIdList.add(record.getPracticeSetId());
+		}
+
+		if(CollectionUtils.isEmpty(userIdList) || CollectionUtils.isEmpty(practiceIdList)) {
+			return null;
+		}
+
+		Map<String, String> userInfoMap = StreamApiUtils.toMap(remoteUserService.getByIdList(userIdList), UserInfo::getUserId, UserInfo::getUserName);
+
+		return iPage.convert(practiceTheory -> {
+			ExternalTheoryBo theoryListBo = BeanUtils.copy(practiceTheory, ExternalTheoryBo.class);
+
+			String userName= userInfoMap.get(practiceTheory.getCreateUserId());
+			theoryListBo.setCreateUserName(null != userName ? userName : "");
 			return theoryListBo;
 		});
 	}

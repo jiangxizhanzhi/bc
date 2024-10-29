@@ -25,20 +25,20 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * 实践操作习题新增
 	 *
 	 * @param practiceOperation
-	 * @param ojSceneConfig
+	 * @param targetConfig
 	 * @return
 	 */
-	Integer addPracticeOperation(PracticeOperation practiceOperation, JSONObject ojSceneConfig,
+	Integer addPracticeOperation(PracticeOperation practiceOperation, String targetConfig,
 			AuthContext authContext);
 
 	/**
 	 * 实践操作习题修改
 	 *
 	 * @param updateOperation
-	 * @param ojSceneConfig
+	 * @param targetJson
 	 * @return
 	 */
-	Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig);
+	Integer updateOperation(PracticeOperation updateOperation, String targetJson);
 
 	/**
 	 * 根据id查询实践操作信息

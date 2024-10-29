@@ -1,12 +1,6 @@
 package com.cyberpeace.oj.practice.controller.req;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
+import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.CustomValidate;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -14,14 +8,17 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.baseinterface.Create;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.cyberpeace.cr.crbase.utils.CrCommonValidator.validateLength;
 
@@ -93,6 +90,9 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	@ApiModelProperty("题解")
 	private String writeup;
+
+	@ApiModelProperty("靶标列表，包含镜像id，附件id，命令")
+	private String target;
 
 	public void setPractice_set_id(String practiceSetId) {
 		this.practiceSetId = practiceSetId;

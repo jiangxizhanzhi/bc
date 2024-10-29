@@ -1,21 +1,23 @@
 package com.cyberpeace.integratation.service.impl;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.model.mp.MpDeviceInfo;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 @Service
 public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 
 	private String DEVICE_INFO;
+
+	private String IMAGE_LIST;
 
 	@Autowired
 	private MpEnvService mpEnvService;
@@ -23,6 +25,7 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	@PostConstruct
 	public void init() {
 		DEVICE_INFO = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.info");
+		IMAGE_LIST = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.list");
 	}
 
 	@Override
@@ -47,6 +50,12 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	public JSONObject getAllCategorie() {
 		String targetUrl = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("device.categorie") + "?isAll=true";
+		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject pageImages(ClusterImagePageReq req) {
+		String targetUrl = IMAGE_LIST + req.toQuery();
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 }

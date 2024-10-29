@@ -11,7 +11,7 @@ import lombok.Data;
 public class PracticeOperationTarget extends BaseTable {
 
 	/** 资源id*/
-	@TableId(type = IdType.UUID, value = "resource_id")
+	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
 	private String resourceId;
 
 	private String operationId;

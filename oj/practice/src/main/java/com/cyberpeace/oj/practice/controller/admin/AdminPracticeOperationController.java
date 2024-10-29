@@ -20,6 +20,8 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteTerminalService;
+import com.cyberpeace.integratation.service.bo.ClusterImagePageReq;
 import com.cyberpeace.oj.ojbase.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
@@ -72,6 +74,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	@Autowired
+	private RemoteTerminalService remoteTerminalService;
+
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -95,8 +100,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		PracticeOperation addOperation = BeanUtils.copy(addReq, PracticeOperation.class);
 		addOperation.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
-		Integer result = practiceOperationService.addPracticeOperation(addOperation,
-				JsonUtil.toJsonObject(addReq.getSceneConfigData(), JSONObject.class), authContext);
+		Integer result = practiceOperationService.addPracticeOperation(addOperation, addReq.getTarget(), authContext);
 
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
 				OperationType.CREATE, LogContent.EXERCISE.getMsg(),
@@ -125,7 +129,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
 
 		Integer result = practiceOperationService.updateOperation(updateOperation,
-				JsonUtil.toJsonObject(updateReq.getSceneConfigData(), JSONObject.class));
+				updateReq.getTarget());
 
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
 				OperationType.UPDATE, LogContent.EXERCISE.getMsg(),
@@ -312,6 +316,13 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@PostMapping("/list/by_node")
 	public BaseRsp<List<AdminOperationListBo>> getOperationByNode(@RequestBody OperationByNodeReq operationByNodeReq) {
 		return new BaseRsp<>(practiceOperationService.getOperationByBodeIds(operationByNodeReq.getNodeIds()));
+	}
+
+	@ApiOperation("获取镜像列表")
+	@GetMapping("/images")
+	public BaseRsp getImagePage(@ApiParam ClusterImagePageReq req){
+		JSONObject res = remoteTerminalService.pageImages(req);
+		return new BaseRsp(res);
 	}
 
 }

@@ -16,4 +16,5 @@ public interface PracticeOperationTargetMapper extends BaseMapper<PracticeOperat
 
 	List<PracticeOperationTarget> getAllByTargetIds(@Param("targetIds") List<String> targetIds);
 
+	void deleteByOperationId(@Param("operationId") String operationId);
 }

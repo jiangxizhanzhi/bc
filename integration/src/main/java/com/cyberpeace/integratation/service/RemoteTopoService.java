@@ -97,5 +97,4 @@ public interface RemoteTopoService {
 	 */
 	JSONObject getNodeStatistics(String topoId);
 
-	Map<String, String> getDeviceName(List<String> deviceIds);
 }

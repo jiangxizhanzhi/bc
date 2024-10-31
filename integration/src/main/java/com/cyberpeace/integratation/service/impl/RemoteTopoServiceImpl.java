@@ -51,8 +51,6 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String TOPO_NODE_STATISTICS;
 
-	private String DEVICE_LIST;
-
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -76,7 +74,6 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		TOPO_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("topo.node.statistics");
 
-		DEVICE_LIST = MP_HOST + ConfigUtil.getContextProperty("device.list");
 	}
 
 	@Override
@@ -233,18 +230,6 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		String result = HttpClientUtil.delete(BATCH_DELETE_TOPO, notBlankIds, String.class);
 		return Boolean.TRUE;
-	}
-
-	@Override
-	public Map<String, String> getDeviceName(List<String> deviceIds) {
-		String url = DEVICE_LIST + "?per_page=1000&page=1";
-		JSONArray jsonArray = HttpClientUtil.rawGet(url, JSONObject.class).getJSONArray("list");
-		Map<String, String> map = new HashMap<>();
-		for (Object object : jsonArray) {
-			JSONObject jsonObject = (JSONObject) object;
-			map.put(jsonObject.getString("uuid"), jsonObject.getString("name"));
-		}
-		return map;
 	}
 
 	/**

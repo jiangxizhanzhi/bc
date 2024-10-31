@@ -22,10 +22,13 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	@Autowired
+	private CyberSpaceMpEnvService cyberSpaceMpEnvService;
+
 	@PostConstruct
 	public void init() {
 		DEVICE_INFO = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.info");
-		IMAGE_LIST = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.list");
+		IMAGE_LIST = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.list");
 	}
 
 	@Override

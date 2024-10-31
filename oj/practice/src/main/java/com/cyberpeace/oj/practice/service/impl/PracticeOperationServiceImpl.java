@@ -1139,13 +1139,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			}
 		}
 
-		String practiceId = practiceIds.get(CommonConstant.ZERO);
-		PracticeOperation operation = practiceValidateHandler.validateOperationExist(practiceId);
-		PracticeSet practiceSet = practiceValidateHandler
-				.validatePracticeSetExist(operation.getPracticeSetId());
-		practiceSet.setPracticeCount(null == practiceSet.getPracticeCount()
-				|| practiceSet.getPracticeCount() <= practiceIds.size() ? CommonConstant.ZERO
-						: practiceSet.getPracticeCount() - practiceIds.size());
+//		String practiceId = practiceIds.get(CommonConstant.ZERO);
+//		PracticeOperation operation = practiceValidateHandler.validateOperationExist(practiceId);
+//		PracticeSet practiceSet = practiceValidateHandler
+//				.validatePracticeSetExist(operation.getPracticeSetId());
+//		practiceSet.setPracticeCount(null == practiceSet.getPracticeCount()
+//				|| practiceSet.getPracticeCount() <= practiceIds.size() ? CommonConstant.ZERO
+//						: practiceSet.getPracticeCount() - practiceIds.size());
 
 		List<String> topoIds = practiceOperationMapper.topoIdsByIds(practiceIds);
 
@@ -1163,7 +1163,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 					ojLocalSceneMapper.deleteBatchIds(ojLocalSceneIds);
 				}
 
-				practiceSetMapper.updateById(practiceSet);
+//				practiceSetMapper.updateById(practiceSet);
 				try {
 					remoteTopoService.batchDeleteTopo(topoIds);
 				} catch (Exception e) {

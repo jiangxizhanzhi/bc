@@ -4,12 +4,22 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmListReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalAlgorithmRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
+import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
 import com.cyberpeace.cr.tool.dao.context.MonthCount;
 import com.cyberpeace.cr.tool.service.ToolService;
@@ -31,8 +41,10 @@ import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
 import com.cyberpeace.space.service.context.frame.ActionStatisticsBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,6 +80,9 @@ public class ExternalYXController {
 
 	@Autowired
 	private SpaceActionFrameMapper spaceActionFrameMapper;
+
+	@Autowired
+	private EvalAlgorithmService evalAlgorithmService;
 
 	@ApiOperation("分页查询实践操作习题")
 	@GetMapping("/operation/list")
@@ -211,6 +226,52 @@ public class ExternalYXController {
 		toolTypeCount.setCountList(monthCounts);
 		countList.add(toolTypeCount);
 		return new BaseRsp<>(countList);
+	}
+
+	@ApiOperation("列表查询")
+	@GetMapping("/algorithm/list")
+	public BaseRsp<ListRsp<EvalAlgorithmRsp>> list(EvalAlgorithmListReq listReq) {
+		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
+		listQuery.setPer_page(listReq.getPerPage());
+		listQuery.setName(listReq.getPattern());
+
+		// 默认时间排序
+		listQuery.setSort("-create_time");
+
+		IPage<EvalAlgorithm> data = evalAlgorithmService.page(listQuery);
+
+		data.convert(evalAlgorithm -> {
+			EvalAlgorithmRsp evalAlgorithmRsp = BeanUtils.copy(evalAlgorithm,
+					EvalAlgorithmRsp.class);
+			evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithm.getResourceId());
+			evalAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(),
+					AlgorithmParamContext.class));
+			evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
+
+			return evalAlgorithmRsp;
+		});
+
+		return new BaseRsp(PageUtil.getListResult(data));
+	}
+
+	@ApiOperation("查询算法")
+	@GetMapping("/algorithm")
+	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
+			@ApiParam(name = "resource_id", value = "id", required = true) String resource_id) {
+
+		EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(resource_id);
+		if (null == evalAlgorithm) {
+			log.info("EvalAlgorithm not found! evalAlgorithmId=[{}]", resource_id);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		EvalAlgorithmRsp evalAlgorithmRsp = BeanUtils.copy(evalAlgorithm, EvalAlgorithmRsp.class);
+		evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithm.getResourceId());
+		evalAlgorithmRsp.setParams(
+				JsonUtil.toJsonObjectArray(evalAlgorithm.getParams(), AlgorithmParamContext.class));
+		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
+
+		return new BaseRsp(evalAlgorithmRsp);
 	}
 
 }

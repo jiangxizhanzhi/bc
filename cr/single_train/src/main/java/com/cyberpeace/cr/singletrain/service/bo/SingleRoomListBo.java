@@ -1,14 +1,14 @@
 package com.cyberpeace.cr.singletrain.service.bo;
 
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 @ApiModel("单兵训练分页业务对象")
@@ -28,4 +28,7 @@ public class SingleRoomListBo extends SingleRoomBo implements Serializable {
 
     @ApiModelProperty("涉及称号")
     private List<String> titles;
+
+	@ApiModelProperty(value = "是否已提交")
+	private Boolean submitted;
 }

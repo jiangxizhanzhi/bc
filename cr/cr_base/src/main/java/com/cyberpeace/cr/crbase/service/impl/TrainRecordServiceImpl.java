@@ -1,14 +1,19 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.google.common.collect.Maps;
 
 @Service
 public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, TrainRecord> implements TrainRecordService {
@@ -67,6 +72,25 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	@Override
 	public TrainRecord getByRoomId(String roomId) {
 		return trainRecordMapper.getByRoomId(roomId);
+	}
+
+	@Override
+	public Map<String, Boolean> getSubmittedMap(List<String> templateIds, String userId) {
+		Map<String, Boolean> res = Maps.newHashMap();
+		if (templateIds.isEmpty()) {
+			return res;
+		}
+		LambdaQueryWrapper<TrainRecord> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(TrainRecord::getUserId, userId);
+		wrapper.in(TrainRecord::getBusinessTemplateId, templateIds);
+		List<TrainRecord> recordList = trainRecordMapper.selectList(wrapper);
+		for (TrainRecord trainRecord : recordList) {
+			res.putIfAbsent(trainRecord.getBusinessTemplateId(), false);
+			if (StringUtils.isNotBlank(trainRecord.getExtra())) {
+				res.put(trainRecord.getBusinessTemplateId(), true);
+			}
+		}
+		return res;
 	}
 
 }

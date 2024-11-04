@@ -312,6 +312,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		List<String> template_ids = selectResult.getRecords().stream()
 				.map(singleRoomList -> singleRoomList.getBusinessTemplate().getResourceId())
 				.collect(Collectors.toList());
+		
+		// 查询提交记录
+		Map<String, Boolean> recordMap = trainRecordService.getSubmittedMap(template_ids,
+				UserInfoContext.getUserContext().getUserId());
 
 		// 查询训练使用统计
 		List<SingleTrainStats> dateStats = singleRoomMapper.singleTrainStats(template_ids,
@@ -374,6 +378,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			singleRoomListBo.setTemplateUseCount(trainStats.getOrDefault(
 					singleRoomListBo.getResourceId(), Lists.newArrayList(0, 0, 0, 0, 0, 0, 0)));
 			singleRoomListBo.setTitles(crTitleService.getTitleByTrain(item.getBusinessTemplate().getResourceId()));
+			singleRoomListBo.setSubmitted(
+					recordMap.getOrDefault(item.getBusinessTemplate().getResourceId(), false));
 
 			singleRoomListBoList.add(singleRoomListBo);
 		}

@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 训练使用记录
  */
@@ -43,4 +46,6 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	void updateEndDate(String businessTemplateId);
 
 	TrainRecord getByRoomId(String roomId);
+
+	Map<String, Boolean> getSubmittedMap(List<String> templateIds, String userId);
 }

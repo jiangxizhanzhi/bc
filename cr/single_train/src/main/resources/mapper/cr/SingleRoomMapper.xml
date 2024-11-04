@@ -61,7 +61,7 @@
             )
         </if>
         </where>
-        order by R1.start_time desc, T1.id desc
+        order by R1.start_time desc, T1.name asc
 
     </select>
 

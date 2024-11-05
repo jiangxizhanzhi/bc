@@ -17,4 +17,6 @@ public interface SpaceActionRelationService extends IService<SpaceActionRelation
     List<String> getLowerIdsByUpperId(String upperId);
 
     List<SpaceActionRelation> listByUpperIds(List<String> upperIds);
+
+    void deleteByUpperIds(List<String> upperIds);
 }

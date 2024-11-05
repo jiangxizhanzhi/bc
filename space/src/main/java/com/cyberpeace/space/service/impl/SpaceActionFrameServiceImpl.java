@@ -8,8 +8,12 @@ import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
 import com.cyberpeace.space.service.*;
 import com.cyberpeace.space.service.context.frame.SpaceActionFrameLevel;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +33,9 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 
 	@Autowired
 	private SpaceActionService actionService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Override
 	public Integer countByType(Integer code) {
@@ -101,5 +108,64 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			}
 		}
 		return level;
+	}
+
+	/**
+	 * 保存帧
+	 *
+	 * @param req 请求体
+	 */
+	@Override
+	public void saveFrame(SpaceActionFrameLevel req) {
+		List<String> upperIds = Lists.newArrayList();
+		List<SpaceActionRelation> newRel = Lists.newArrayList();
+		// frame
+		String frameId = req.getResourceId();
+		upperIds.add(frameId);
+		// target
+		List<SpaceActionFrameLevel> targetLevels = req.getChildren();
+		if (null != targetLevels) {
+			for (SpaceActionFrameLevel targetLevel : targetLevels) {
+				String targetId = targetLevel.getResourceId();
+				upperIds.add(targetId);
+				newRel.add(this.createRel(frameId, targetId));
+				// method
+				List<SpaceActionFrameLevel> methodLevels = targetLevel.getChildren();
+				if (null == methodLevels) {
+					continue;
+				}
+				for (SpaceActionFrameLevel methodLevel : methodLevels) {
+					String methodId = methodLevel.getResourceId();
+					upperIds.add(methodId);
+					newRel.add(this.createRel(targetId, methodId));
+					// action
+					List<SpaceActionFrameLevel> actionLevels = methodLevel.getChildren();
+					if (null == actionLevels) {
+						continue;
+					}
+					for (SpaceActionFrameLevel actionLevel : actionLevels) {
+						String actionId = actionLevel.getResourceId();
+						newRel.add(this.createRel(methodId, actionId));
+					}
+				}
+			}
+		}
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				relationService.deleteByUpperIds(upperIds);
+				relationService.saveBatch(newRel);
+			}
+		});
+
+	}
+
+	private SpaceActionRelation createRel(String upperId, String lowerId) {
+		SpaceActionRelation rel = new SpaceActionRelation();
+		rel.setUpperId(upperId);
+		rel.setLowerId(lowerId);
+		return rel;
 	}
 }

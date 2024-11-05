@@ -72,6 +72,21 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
         return this.list(wrapper);
     }
 
+    /**
+     * 删除由上id列表
+     *
+     * @param upperIds 上id列表
+     */
+    @Override
+    public void deleteByUpperIds(List<String> upperIds) {
+        if(upperIds.isEmpty()){
+            return;
+        }
+        LambdaQueryWrapper<SpaceActionRelation> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(SpaceActionRelation::getUpperId, upperIds);
+        this.remove(wrapper);
+    }
+
 
     private SpaceActionRelation createEntity(String upperId, String lowerId){
         SpaceActionRelation relation = new SpaceActionRelation();

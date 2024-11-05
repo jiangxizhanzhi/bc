@@ -74,7 +74,8 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		Map<String, SpaceActionMethod> methodMap = StreamApiUtils.toMap(
 				methodService.listByIds(methodIds), SpaceActionMethod::getResourceId, m -> m);
 		for (SpaceActionFrameLevel targetLevel : level.getChildren()) {
-			List<SpaceActionRelation> relations = targetMethodMap.get(targetLevel.getResourceId());
+			List<SpaceActionRelation> relations = targetMethodMap
+					.getOrDefault(targetLevel.getResourceId(), Lists.newArrayList());
 			for (SpaceActionRelation relation : relations) {
 				SpaceActionMethod method = methodMap.get(relation.getLowerId());
 				if (null != method) {
@@ -97,7 +98,7 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		for (SpaceActionFrameLevel targetLevel : level.getChildren()) {
 			for (SpaceActionFrameLevel methodLevel : targetLevel.getChildren()) {
 				List<SpaceActionRelation> relations = methodActionMap
-						.get(methodLevel.getResourceId());
+						.getOrDefault(methodLevel.getResourceId(), Lists.newArrayList());
 				for (SpaceActionRelation relation : relations) {
 					SpaceAction action = actionMap.get(relation.getLowerId());
 					if (null != action) {

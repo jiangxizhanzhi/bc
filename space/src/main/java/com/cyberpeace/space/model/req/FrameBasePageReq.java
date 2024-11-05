@@ -9,7 +9,7 @@ public class FrameBasePageReq extends PageReqBase {
 
 	public LambdaQueryWrapper req2QueryWrapper() {
 		return null;
-	};
+	}
 
 	public String getUpperId() {
 		return null;

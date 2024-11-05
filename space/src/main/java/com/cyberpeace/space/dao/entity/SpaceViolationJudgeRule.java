@@ -1,8 +1,11 @@
 package com.cyberpeace.space.dao.entity;
 
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceViolationJudgeRuleBo;
 
@@ -24,7 +27,7 @@ public class SpaceViolationJudgeRule extends SpaceBaseTable {
 	private Boolean targetCheck;
 
 
-	public SpaceViolationJudgeRuleBo entity2Bo() {
+	public SpaceViolationJudgeRuleBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceViolationJudgeRuleBo bo = BeanUtils.copy(this, SpaceViolationJudgeRuleBo.class);
 		return bo;
 	}

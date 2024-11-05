@@ -4,11 +4,15 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.cyberpeace.common.util.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.compress.utils.Lists;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Data
 public abstract class SpaceBaseTable {
@@ -34,5 +38,18 @@ public abstract class SpaceBaseTable {
     @ApiModelProperty(value = "名称")
 	private String name;
 
-	public abstract SpaceBoBase entity2Bo();
+	public abstract SpaceBoBase entity2Bo(Map<String, IdAndName> relatedMap);
+
+	public List<IdAndName> getListByJson(Map<String, IdAndName> relatedMap, String jsonStr) {
+		List<IdAndName> res = Lists.newArrayList();
+		if (jsonStr != null && !jsonStr.isEmpty()) {
+			List<String> ids = JsonUtil.toJsonObjectArray(jsonStr, String.class);
+			for (String id : ids) {
+				if (relatedMap.containsKey(id)) {
+					res.add(relatedMap.get(id));
+				}
+			}
+		}
+		return res;
+	}
 }

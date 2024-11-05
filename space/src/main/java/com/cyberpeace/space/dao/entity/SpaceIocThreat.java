@@ -1,7 +1,10 @@
 package com.cyberpeace.space.dao.entity;
+
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceIocThreatBo;
 
@@ -17,7 +20,7 @@ public class SpaceIocThreat extends SpaceBaseTable {
 	private String ioc;
 
 
-	public SpaceIocThreatBo entity2Bo() {
+	public SpaceIocThreatBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceIocThreatBo bo = BeanUtils.copy(this, SpaceIocThreatBo.class);
 		return bo;
 	}

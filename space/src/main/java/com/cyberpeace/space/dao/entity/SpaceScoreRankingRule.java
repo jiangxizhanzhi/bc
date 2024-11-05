@@ -1,7 +1,10 @@
 package com.cyberpeace.space.dao.entity;
+
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceScoreRankingRuleBo;
 
@@ -27,7 +30,7 @@ public class SpaceScoreRankingRule extends SpaceBaseTable {
 	private Integer thirdBlood;
 
 
-	public SpaceScoreRankingRuleBo entity2Bo() {
+	public SpaceScoreRankingRuleBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceScoreRankingRuleBo bo = BeanUtils.copy(this, SpaceScoreRankingRuleBo.class);
 		return bo;
 	}

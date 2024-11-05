@@ -1,11 +1,7 @@
 package com.cyberpeace.space.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -17,30 +13,33 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.model.SpaceBoBase;
 import com.cyberpeace.space.service.context.IdListReq;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase> {
 
 	@Autowired
 	private S baseService;
-
-	protected Class<E> entityClass = currentModelCls();
-
-	@SuppressWarnings("unchecked")
-	private Class<E> currentModelCls() {
-		return (Class<E>) ReflectionKit.getSuperClassGenericType(this.getClass(), 1);
-	}
-
 	@ApiOperation("列表")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<B>> page(PageReqBase req) {
-		IPage<E> iPage = baseService.page(req.toPageParam());
-		iPage.convert(E::entity2Bo);
+		LambdaQueryWrapper<E> wrapper = new LambdaQueryWrapper<>();
+		if (StringUtils.isNotBlank(req.getPattern())) {
+			wrapper.like(E::getName, req.getPattern());
+		}
+		IPage<E> iPage = baseService.page(req.toPageParam(), wrapper);
+		iPage.convert(e -> e.entity2Bo(getRelatedMap(iPage.getRecords())));
 		ListRsp<B> res = PageUtil.getListResult(iPage);
 		return new BaseRsp<>(res);
 	}
@@ -79,7 +78,10 @@ public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E
 	public BaseRsp<B>
 			getADetail(@ApiParam(value = "resource_id", name = "resource_id") String resource_id) {
 		E res = baseService.getById(resource_id);
-		B bo = (B) res.entity2Bo();
+		if (null == res) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		B bo = (B) res.entity2Bo(getRelatedMap(Lists.newArrayList(res)));
 		return new BaseRsp<>(bo);
 	}
 
@@ -92,6 +94,10 @@ public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E
 				|| !one.getResourceId().equals(entity.getResourceId()))) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
+	}
+
+	protected Map<String, IdAndName> getRelatedMap(List<E> eList) {
+		return Maps.newHashMap();
 	}
 
 }

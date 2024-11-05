@@ -1,8 +1,13 @@
 package com.cyberpeace.space.dao.entity;
+
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceFingerPrintBo;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,7 +21,7 @@ public class SpaceFingerPrint extends SpaceBaseTable {
 	@ApiModelProperty(value = "指纹列表")
 	private String content;
 
-	public SpaceFingerPrintBo entity2Bo() {
+	public SpaceFingerPrintBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceFingerPrintBo bo = BeanUtils.copy(this, SpaceFingerPrintBo.class);
 		return bo;
 	}

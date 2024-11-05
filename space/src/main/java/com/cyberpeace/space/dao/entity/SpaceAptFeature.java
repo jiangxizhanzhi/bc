@@ -1,13 +1,17 @@
 package com.cyberpeace.space.dao.entity;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.AptReportHistory;
 import com.cyberpeace.space.service.context.rule.SpaceAptFeatureBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Map;
 
 @Data
 @TableName("space_apt_feature")
@@ -57,7 +61,7 @@ public class SpaceAptFeature extends SpaceBaseTable {
 	private String historyReport;
 
 
-	public SpaceAptFeatureBo entity2Bo() {
+	public SpaceAptFeatureBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceAptFeatureBo bo = BeanUtils.copy(this, SpaceAptFeatureBo.class);
 		bo.setHistoryReport(JsonUtil.toJsonObjectArray(this.historyReport, AptReportHistory.class));
 		return bo;

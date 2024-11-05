@@ -1,7 +1,10 @@
 package com.cyberpeace.space.dao.entity;
+
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.space.model.IdAndName;
 import com.cyberpeace.space.model.SpaceBaseTable;
 import com.cyberpeace.space.service.context.rule.SpaceLoadedFileThreatRuleBo;
 
@@ -19,7 +22,7 @@ public class SpaceLoadedFileThreatRule extends SpaceBaseTable {
 	private String description;
 
 
-	public SpaceLoadedFileThreatRuleBo entity2Bo() {
+	public SpaceLoadedFileThreatRuleBo entity2Bo(Map<String, IdAndName> relatedMap) {
 		SpaceLoadedFileThreatRuleBo bo = BeanUtils.copy(this, SpaceLoadedFileThreatRuleBo.class);
 		return bo;
 	}

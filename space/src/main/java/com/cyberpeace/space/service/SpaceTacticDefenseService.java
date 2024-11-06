@@ -3,6 +3,7 @@ package com.cyberpeace.space.service;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import com.cyberpeace.space.service.context.tactic.*;
 
 import java.util.List;
@@ -41,4 +42,11 @@ public interface SpaceTacticDefenseService {
      * @return {@code List<DefenseDetail> }
      */
     List<DefenseDetail> listByCategoryId(String categoryId);
+
+    /**
+     * 获取框架
+     *
+     * @return {@code SpaceFrameLevel }
+     */
+    SpaceFrameLevel getFrame();
 }

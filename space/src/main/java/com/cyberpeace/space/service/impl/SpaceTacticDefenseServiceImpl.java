@@ -9,11 +9,13 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefenseCategory;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseCategoryMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
 import com.cyberpeace.space.service.SpaceTacticDefenseService;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import com.cyberpeace.space.service.context.tactic.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -233,6 +235,45 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 			detail.setTool(JsonUtil.toJsonObjectArray(defense.getTool(), TacticTool.class));
 			return detail;
 		});
+	}
+
+	@Override
+	public SpaceFrameLevel getFrame() {
+		SpaceFrameLevel level = new SpaceFrameLevel("", "");
+		List<TacticDefenseCategoryBo> bos = this.listCategory();
+		LambdaQueryWrapper<SpaceTacticDefense> wrapper = new LambdaQueryWrapper<>();
+		wrapper.orderByAsc(SpaceTacticDefense::getId);
+		List<SpaceTacticDefense> defenseList = mapper.selectList(wrapper);
+		Map<String, List<SpaceTacticDefense>> defenseMap = StreamApiUtils.groupBy(defenseList,
+				SpaceTacticDefense::getCategoryId);
+
+		level.getChildren()
+				.add(getStageFrame(SpaceCommonConstant.TacticStage.PRE, "事前阶段", defenseMap, bos));
+		level.getChildren()
+				.add(getStageFrame(SpaceCommonConstant.TacticStage.IN, "事中阶段", defenseMap, bos));
+		level.getChildren()
+				.add(getStageFrame(SpaceCommonConstant.TacticStage.POST, "事后阶段", defenseMap, bos));
+
+		return level;
+	}
+
+	private SpaceFrameLevel getStageFrame(Integer stage, String stageName,
+			Map<String, List<SpaceTacticDefense>> defenseMap,
+			List<TacticDefenseCategoryBo> categoryBos) {
+		SpaceFrameLevel level = new SpaceFrameLevel(stage.toString(), stageName);
+		for (TacticDefenseCategoryBo categoryBo : StreamApiUtils.filter(categoryBos,
+				bo -> bo.getStage().equals(stage))) {
+			SpaceFrameLevel categoryLevel = new SpaceFrameLevel(categoryBo.getResourceId(),
+					categoryBo.getName());
+			if (defenseMap.containsKey(categoryBo.getResourceId())) {
+				for (SpaceTacticDefense defense : defenseMap.get(categoryBo.getResourceId())) {
+					categoryLevel.getChildren()
+							.add(new SpaceFrameLevel(defense.getResourceId(), defense.getName()));
+				}
+			}
+			level.getChildren().add(categoryLevel);
+		}
+		return level;
 	}
 
 	/**

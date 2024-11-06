@@ -7,6 +7,7 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.service.SpaceTacticDefenseService;
 import com.cyberpeace.space.service.context.IdListReq;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import com.cyberpeace.space.service.context.tactic.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -141,5 +142,12 @@ public class SpaceTacticDefenseController {
 			listByCategory(@ApiParam(value = "战术id", name = "category_id") String category_id) {
 		List<DefenseDetail> res = defenseService.listByCategoryId(category_id);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("获取防御战法框架")
+	@GetMapping("/frame")
+	public BaseRsp<List<SpaceFrameLevel>> getDefenseFrame() {
+		SpaceFrameLevel level = defenseService.getFrame();
+		return new BaseRsp<>(level.getChildren());
 	}
 }

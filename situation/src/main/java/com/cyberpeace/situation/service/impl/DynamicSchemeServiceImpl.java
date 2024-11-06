@@ -361,6 +361,16 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	 */
 	@Override
 	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds) {
+
+		log.info("attack type:"+attackMessageBo.getType());
+		if(AttackType.NODE_DARKENS.getKeyWord().equals(attackMessageBo.getType())){
+			SituationHandlerServiceImpl.node_ids.addAll(elementIds);
+			return;
+		}else if(AttackType.NODE_DARKENS_BAK.getKeyWord().equals(attackMessageBo.getType())){
+			SituationHandlerServiceImpl.node_ids.removeAll(elementIds);
+			return;
+		}
+
 		WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageBo,
 				WsMultiNodeDynamic.class);
 		wsMultiNodeDynamic.setCategory("attack");

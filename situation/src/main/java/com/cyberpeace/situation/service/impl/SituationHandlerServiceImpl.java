@@ -21,6 +21,7 @@ import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.service.context.ElementStatusContext;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
@@ -645,9 +646,17 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	public static Set<String> node_ids = new HashSet<>();
+
 	@Override
 	public WsMessage<WsNodeStatus> pushLinkStatus(String sceneId) {
 		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
+
+		for (ElementStatusContext sss : wsNodeStatus.getElementStatus()) {
+			if (node_ids.contains(sss.getElementId())) {
+				sss.setStatus(0);
+			}
+		}
 
 		// 推送ws消息
 		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),

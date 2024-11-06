@@ -27,7 +27,8 @@ public enum AttackType {
     HIGHLIGHT_AREA(ActionType.HIGHLIGHT_AREA,"区域高亮","Highlight Area","highlight-area"),
     HIGHLIGHT_ELEMENT(ActionType.HIGHLIGHT_ELEMENT,"节点聚焦","Highlight Element","highlight-element"),
     LINK_POWER_OFF(ActionType.LINK_POWER_OFF,"链路断线","Link Poweroff","link-poweroff"),
-	NODE_DARKENS(ActionType.NODE_DARKENS,"节点变暗","Node darkens","node-darkens");
+	NODE_DARKENS(ActionType.NODE_DARKENS,"节点变暗","Node darkens","node-darkens"),
+	NODE_DARKENS_BAK(ActionType.NODE_DARKENS_BAK,"节点恢复","Node darkens bak","node-darkens-bak");
 
     @Getter
 	private ActionType actionType;

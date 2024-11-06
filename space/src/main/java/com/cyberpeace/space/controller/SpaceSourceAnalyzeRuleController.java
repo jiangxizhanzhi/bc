@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_source_analyze_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceSourceAnalyzeRuleController extends SpaceRuleRepositoryBaseController<SpaceSourceAnalyzeRuleService, SpaceSourceAnalyzeRule, SpaceSourceAnalyzeRuleBo>
+public class SpaceSourceAnalyzeRuleController extends SpaceControllerBase<SpaceSourceAnalyzeRuleService, SpaceSourceAnalyzeRule, SpaceSourceAnalyzeRuleBo>
     
 {}

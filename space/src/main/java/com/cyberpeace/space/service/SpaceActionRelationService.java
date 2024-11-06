@@ -19,4 +19,6 @@ public interface SpaceActionRelationService extends IService<SpaceActionRelation
     List<SpaceActionRelation> listByUpperIds(List<String> upperIds);
 
     void deleteByUpperIds(List<String> upperIds);
+
+    SpaceActionRelation createEntity(String upperId, String lowerId);
 }

@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_round_mechanism_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceRoundMechanismRuleController extends SpaceRuleRepositoryBaseController<SpaceRoundMechanismRuleService, SpaceRoundMechanismRule, SpaceRoundMechanismRuleBo>
+public class SpaceRoundMechanismRuleController extends SpaceControllerBase<SpaceRoundMechanismRuleService, SpaceRoundMechanismRule, SpaceRoundMechanismRuleBo>
     
 {}

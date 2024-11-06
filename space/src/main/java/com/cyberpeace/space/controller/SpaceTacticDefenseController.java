@@ -1,5 +1,7 @@
 package com.cyberpeace.space.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +60,7 @@ public class SpaceTacticDefenseController {
 		return new BaseRsp<>(detail);
 	}
 
-	@ApiOperation("防御战法战术列表")
+	@ApiOperation("防御战法战术分页")
 	@GetMapping("/category/page")
 	public BaseRsp<ListRsp<TacticDefenseCategoryBo>> pageC(PageReqBase reqBase) {
 		ListRsp<TacticDefenseCategoryBo> rsp = defenseService.pageCategory(reqBase);
@@ -92,5 +94,12 @@ public class SpaceTacticDefenseController {
 			getCDetail(@ApiParam(value = "resource_id", name = "resource_id") String resource_id) {
         DefenseCategoryBo bo = defenseService.getCategoryDetail(resource_id);
         return new BaseRsp<>(bo);
+	}
+
+	@ApiOperation("防御战法战术全部")
+	@GetMapping("/category/list")
+	public BaseRsp<List<TacticDefenseCategoryBo>> listC() {
+		List<TacticDefenseCategoryBo> rsp = defenseService.listCategory();
+		return new BaseRsp<>(rsp);
 	}
 }

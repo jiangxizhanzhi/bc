@@ -26,4 +26,6 @@ public interface SpaceTacticDefenseService {
     void deleteCategory(List<String> ids);
 
     DefenseCategoryBo getCategoryDetail(String resourceId);
+
+    List<TacticDefenseCategoryBo> listCategory();
 }

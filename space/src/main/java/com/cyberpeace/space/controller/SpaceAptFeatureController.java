@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_apt_feature")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAptFeatureController extends SpaceRuleRepositoryBaseController<SpaceAptFeatureService, SpaceAptFeature, SpaceAptFeatureBo>
+public class SpaceAptFeatureController extends SpaceControllerBase<SpaceAptFeatureService, SpaceAptFeature, SpaceAptFeatureBo>
     
 {}

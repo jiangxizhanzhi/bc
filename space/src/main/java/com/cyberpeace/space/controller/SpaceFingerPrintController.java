@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_finger_print")
 @RequiresAuthentication
 @Slf4j
-public class SpaceFingerPrintController extends SpaceRuleRepositoryBaseController<SpaceFingerPrintService, SpaceFingerPrint, SpaceFingerPrintBo>
+public class SpaceFingerPrintController extends SpaceControllerBase<SpaceFingerPrintService, SpaceFingerPrint, SpaceFingerPrintBo>
     
 {}

@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_apt_threat_detect_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAptThreatDetectRuleController extends SpaceRuleRepositoryBaseController<SpaceAptThreatDetectRuleService, SpaceAptThreatDetectRule, SpaceAptThreatDetectRuleBo> {
+public class SpaceAptThreatDetectRuleController extends SpaceControllerBase<SpaceAptThreatDetectRuleService, SpaceAptThreatDetectRule, SpaceAptThreatDetectRuleBo> {
 
 	@Override
 	public void checkNameDuplication(SpaceAptThreatDetectRule entity) {

@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_traffic_extraction_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceTrafficExtractionRuleController extends SpaceRuleRepositoryBaseController<SpaceTrafficExtractionRuleService, SpaceTrafficExtractionRule, SpaceTrafficExtractionRuleBo>
+public class SpaceTrafficExtractionRuleController extends SpaceControllerBase<SpaceTrafficExtractionRuleService, SpaceTrafficExtractionRule, SpaceTrafficExtractionRuleBo>
     
 {}

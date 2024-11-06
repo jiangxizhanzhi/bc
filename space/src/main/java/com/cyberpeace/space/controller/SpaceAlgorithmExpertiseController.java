@@ -24,8 +24,11 @@ import java.util.Map;
 @RequestMapping("/space/algorithm/algorithm_expertise")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAlgorithmExpertiseController extends SpaceRuleRepositoryBaseController<SpaceAlgorithmExpertiseService, SpaceAlgorithmExpertise, SpaceAlgorithmExpertiseBo> {
+public class SpaceAlgorithmExpertiseController extends SpaceControllerBase<SpaceAlgorithmExpertiseService, SpaceAlgorithmExpertise, SpaceAlgorithmExpertiseBo> {
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 

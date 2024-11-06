@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/space/algorithm/algorithm_role")
 @RequiresAuthentication
 @Slf4j
-public class SpaceAlgorithmRoleController extends SpaceRuleRepositoryBaseController<SpaceAlgorithmRoleService, SpaceAlgorithmRole, SpaceAlgorithmRoleBo> {
+public class SpaceAlgorithmRoleController extends SpaceControllerBase<SpaceAlgorithmRoleService, SpaceAlgorithmRole, SpaceAlgorithmRoleBo> {
 
     @Autowired
     private CourseService courseService;

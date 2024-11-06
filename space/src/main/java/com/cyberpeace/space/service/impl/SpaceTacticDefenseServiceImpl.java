@@ -17,6 +17,7 @@ import com.cyberpeace.space.service.SpaceTacticDefenseService;
 import com.cyberpeace.space.service.context.tactic.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,30 @@ import java.util.Map;
 @Slf4j
 public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService {
 
+	/**
+	 * 映射
+	 */
 	@Autowired
 	private SpaceTacticDefenseMapper mapper;
 
+	/**
+	 * 类别映射器
+	 */
 	@Autowired
 	private SpaceTacticDefenseCategoryMapper categoryMapper;
 
 	@Autowired
+	/**
+	 * utilService
+	 */
 	private UtilService utilService;
 
+	/**
+	 * 分页
+	 *
+	 * @param req 请求体
+	 * @return {@code ListRsp<DefenseListBo> }
+	 */
 	@Override
 	public ListRsp<DefenseListBo> page(PageReqBase req) {
 
@@ -64,6 +80,11 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return PageUtil.getListResult(res);
 	}
 
+	/**
+	 * 新增
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void add(DefenseAddReq req) {
 		SpaceTacticDefense Defense = this.req2Entity(req);
@@ -71,6 +92,11 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		mapper.insert(Defense);
 	}
 
+	/**
+	 * 更新防御
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void updateDefense(DefenseModifyReq req) {
 		// todo id name
@@ -79,11 +105,22 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		mapper.updateById(Defense);
 	}
 
+	/**
+	 * 删除批量
+	 *
+	 * @param ids id列表
+	 */
 	@Override
 	public void deleteBatch(List<String> ids) {
 		mapper.deleteBatchIds(ids);
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code DefenseDetail }
+	 */
 	@Override
 	public DefenseDetail getDetail(String resourceId) {
 		SpaceTacticDefense Defense = this.getOrException(resourceId);
@@ -91,6 +128,12 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return detail;
 	}
 
+	/**
+	 * 分页类别
+	 *
+	 * @param reqBase 请求体基础
+	 * @return {@code ListRsp<TacticDefenseCategoryBo> }
+	 */
 	@Override
 	public ListRsp<TacticDefenseCategoryBo> pageCategory(PageReqBase reqBase) {
 		Page page = reqBase.toPageParam();
@@ -101,6 +144,11 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return PageUtil.getListResult(iPage);
 	}
 
+	/**
+	 * 新增防御类别
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void addDefenseCategory(TacticDefenseCategoryAddReq req) {
 		SpaceTacticDefenseCategory category = this.req2Entity(req);
@@ -108,6 +156,11 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		categoryMapper.insert(category);
 	}
 
+	/**
+	 * 更新防御类别
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void updateDefenseCategory(TacticDefenseCategoryModifyReq req) {
 		SpaceTacticDefenseCategory category = this.req2Entity(req);
@@ -115,11 +168,22 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		categoryMapper.updateById(category);
 	}
 
+	/**
+	 * 删除类别
+	 *
+	 * @param ids id列表
+	 */
 	@Override
 	public void deleteCategory(List<String> ids) {
 		categoryMapper.deleteBatchIds(ids);
 	}
 
+	/**
+	 * 获取类别详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code DefenseCategoryBo }
+	 */
 	@Override
 	public DefenseCategoryBo getCategoryDetail(String resourceId) {
 		SpaceTacticDefenseCategory category = this.getCategoryOrException(resourceId);
@@ -127,6 +191,22 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return bo;
 	}
 
+	/**
+	 * 列表类别
+	 *
+	 * @return {@code List<TacticDefenseCategoryBo> }
+	 */
+	@Override
+    public List<TacticDefenseCategoryBo> listCategory() {
+		return Lists.newArrayList();
+    }
+
+	/**
+	 * req2 实体
+	 *
+	 * @param req 请求体
+	 * @return {@code SpaceTacticDefenseCategory }
+	 */
 	private SpaceTacticDefenseCategory req2Entity(TacticDefenseCategoryAddReq req) {
 		SpaceTacticDefenseCategory category = new SpaceTacticDefenseCategory();
 		category.setName(req.getName());
@@ -136,6 +216,12 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return category;
 	}
 
+	/**
+	 * req2 实体
+	 *
+	 * @param req 请求体
+	 * @return {@code SpaceTacticDefense }
+	 */
 	private SpaceTacticDefense req2Entity(DefenseAddReq req) {
 		SpaceTacticDefense Defense = new SpaceTacticDefense();
 		Defense.setName(req.getName());
@@ -151,6 +237,12 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return Defense;
 	}
 
+	/**
+	 * 实体 2 bo
+	 *
+	 * @param defense 防御
+	 * @return {@code DefenseDetail }
+	 */
 	private DefenseDetail entity2Bo(SpaceTacticDefense defense) {
 		DefenseDetail detail = BeanUtils.copy(defense, DefenseDetail.class);
 		detail.setTag(JsonUtil.toJsonObjectArray(defense.getTag(), String.class));
@@ -164,6 +256,12 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return detail;
 	}
 
+	/**
+	 * 获取或例外
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code SpaceTacticDefense }
+	 */
 	private SpaceTacticDefense getOrException(String resourceId) {
 		SpaceTacticDefense defense = mapper.selectById(resourceId);
 		if (null == defense) {
@@ -173,6 +271,12 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return defense;
 	}
 
+	/**
+	 * 获取类别或例外
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code SpaceTacticDefenseCategory }
+	 */
 	private SpaceTacticDefenseCategory getCategoryOrException(String resourceId) {
 		SpaceTacticDefenseCategory category = categoryMapper.selectById(resourceId);
 		if (null == category) {

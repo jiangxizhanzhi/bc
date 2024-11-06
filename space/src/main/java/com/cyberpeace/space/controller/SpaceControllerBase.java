@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-public abstract class SpaceRuleRepositoryBaseController<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase> {
+public abstract class SpaceControllerBase<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase> {
 
 	@Autowired
 	private S baseService;

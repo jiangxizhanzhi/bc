@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_ioc_threat")
 @RequiresAuthentication
 @Slf4j
-public class SpaceIocThreatController extends SpaceRuleRepositoryBaseController<SpaceIocThreatService, SpaceIocThreat, SpaceIocThreatBo>
+public class SpaceIocThreatController extends SpaceControllerBase<SpaceIocThreatService, SpaceIocThreat, SpaceIocThreatBo>
     
 {}

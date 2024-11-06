@@ -192,4 +192,8 @@ public interface ErrorCode {
 
 	/** 演示环境禁止增删改 */
 	String DEMONSTRATION_FORBID_UPDATE = "104021";
+	/**
+	 * 重复id
+	 */
+	String DUPLICATE_ID = "104022";
 }

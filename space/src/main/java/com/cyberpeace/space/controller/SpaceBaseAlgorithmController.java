@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/algorithm/base_algorithm")
 @RequiresAuthentication
 @Slf4j
-public class SpaceBaseAlgorithmController extends SpaceRuleRepositoryBaseController<SpaceBaseAlgorithmService, SpaceBaseAlgorithm, SpaceBaseAlgorithmBo> {
+public class SpaceBaseAlgorithmController extends SpaceControllerBase<SpaceBaseAlgorithmService, SpaceBaseAlgorithm, SpaceBaseAlgorithmBo> {
 
 }

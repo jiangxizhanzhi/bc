@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_violation_judge_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceViolationJudgeRuleController extends SpaceRuleRepositoryBaseController<SpaceViolationJudgeRuleService, SpaceViolationJudgeRule, SpaceViolationJudgeRuleBo>
+public class SpaceViolationJudgeRuleController extends SpaceControllerBase<SpaceViolationJudgeRuleService, SpaceViolationJudgeRule, SpaceViolationJudgeRuleBo>
     
 {}

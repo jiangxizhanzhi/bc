@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_traffic_detect_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceTrafficDetectRuleController extends SpaceRuleRepositoryBaseController<SpaceTrafficDetectRuleService, SpaceTrafficDetectRule, SpaceTrafficDetectRuleBo> {
+public class SpaceTrafficDetectRuleController extends SpaceControllerBase<SpaceTrafficDetectRuleService, SpaceTrafficDetectRule, SpaceTrafficDetectRuleBo> {
 
     @Override
 	public void checkNameDuplication(SpaceTrafficDetectRule entity) {

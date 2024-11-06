@@ -1,7 +1,10 @@
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.SpaceActionRelation;
 import com.cyberpeace.space.dao.mapper.SpaceActionRelationMapper;
@@ -18,9 +21,10 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
 
     @Override
     public void createRelation(List<String> upperIds, String resourceId) {
-        if(upperIds.isEmpty()){
+        if (upperIds.isEmpty()) {
             return;
         }
+        upperIds = StreamApiUtils.distinct(upperIds);
         List<SpaceActionRelation> relations = StreamApiUtils.map(upperIds, up -> this.createEntity(up, resourceId));
         this.saveBatch(relations);
     }
@@ -88,7 +92,11 @@ public class SpaceActionRelationServiceImpl extends ServiceImpl<SpaceActionRelat
     }
 
 
-    private SpaceActionRelation createEntity(String upperId, String lowerId){
+    @Override
+    public SpaceActionRelation createEntity(String upperId, String lowerId){
+		if (StringUtils.isBlank(upperId) || StringUtils.isBlank(lowerId)) {
+			throw new BusinessException(ErrorCode.BLANK_ID);
+		}
         SpaceActionRelation relation = new SpaceActionRelation();
         relation.setUpperId(upperId);
         relation.setLowerId(lowerId);

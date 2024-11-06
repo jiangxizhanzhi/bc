@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_threat_image_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceThreatImageRuleController extends SpaceRuleRepositoryBaseController<SpaceThreatImageRuleService, SpaceThreatImageRule, SpaceThreatImageRuleBo> {
+public class SpaceThreatImageRuleController extends SpaceControllerBase<SpaceThreatImageRuleService, SpaceThreatImageRule, SpaceThreatImageRuleBo> {
 
 	@Override
 	public void checkNameDuplication(SpaceThreatImageRule entity) {

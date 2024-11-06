@@ -17,6 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/space/rule/space_loaded_file_threat_rule")
 @RequiresAuthentication
 @Slf4j
-public class SpaceLoadedFileThreatRuleController extends SpaceRuleRepositoryBaseController<SpaceLoadedFileThreatRuleService, SpaceLoadedFileThreatRule, SpaceLoadedFileThreatRuleBo>
+public class SpaceLoadedFileThreatRuleController extends SpaceControllerBase<SpaceLoadedFileThreatRuleService, SpaceLoadedFileThreatRule, SpaceLoadedFileThreatRuleBo>
     
 {}

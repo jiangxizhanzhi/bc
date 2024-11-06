@@ -26,7 +26,8 @@ public enum ActionType {
 	NONE(10, "无攻击", "element",true,true),
 	HIGHLIGHT_AREA(11,"区域高亮","area",false,true),
 	HIGHLIGHT_ELEMENT(12,"节点聚焦","element",false,true),
-	LINK_POWER_OFF(13,"链路断线","element",true,true);
+	LINK_POWER_OFF(13,"链路断线","element",true,true),
+	NODE_DARKENS(14,"节点变暗","element",false,true);
 
 	@Getter
 	private Integer code;

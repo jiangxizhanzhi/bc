@@ -1,5 +1,6 @@
 package com.cyberpeace.space.service.context.tactic;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
@@ -17,6 +18,7 @@ public class TacticDefenseCategoryBo {
     /**
      * 阶段
      */
+    @ApiModelProperty(value = "")
     private Integer stage;
 
     /**

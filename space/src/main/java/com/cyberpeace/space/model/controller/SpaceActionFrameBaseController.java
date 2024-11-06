@@ -50,6 +50,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<B>> page(R req) {
 		LambdaQueryWrapper<E> wrapper = req.req2QueryWrapper();
+		wrapper.orderByDesc(E::getId);
 		String upperId = req.getUpperId();
 		if (StringUtils.isNotBlank(upperId)) {
 			List<String> ids = relationService.getLowerIdsByUpperId(upperId);

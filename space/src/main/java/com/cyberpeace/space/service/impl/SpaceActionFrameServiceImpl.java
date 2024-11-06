@@ -1,7 +1,6 @@
 package com.cyberpeace.space.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -10,7 +9,7 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.space.dao.entity.*;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
 import com.cyberpeace.space.service.*;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameLevel;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +46,12 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	}
 
 	@Override
-	public SpaceActionFrameLevel getFrameLevels(String resourceId) {
+	public SpaceFrameLevel getFrameLevels(String resourceId) {
 		SpaceActionFrame frame = this.getOrException(resourceId);
-		SpaceActionFrameLevel level = JsonUtil.toJsonObject(frame.getFrame(),
-				SpaceActionFrameLevel.class);
+		SpaceFrameLevel level = JsonUtil.toJsonObject(frame.getFrame(),
+				SpaceFrameLevel.class);
 		if (null == level) {
-			return new SpaceActionFrameLevel(resourceId, frame.getName());
+			return new SpaceFrameLevel(resourceId, frame.getName());
 		}
 
 		// gather ids
@@ -62,11 +61,11 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		List<SpaceActionMethod> methodList = Lists.newArrayList();
 		List<String> actionIds = Lists.newArrayList();
 		List<SpaceAction> actionList = Lists.newArrayList();
-		for (SpaceActionFrameLevel target : level.getChildren()) {
+		for (SpaceFrameLevel target : level.getChildren()) {
 			targetIds.add(target.getResourceId());
-			for (SpaceActionFrameLevel method : target.getChildren()) {
+			for (SpaceFrameLevel method : target.getChildren()) {
 				methodIds.add(method.getResourceId());
-				for (SpaceActionFrameLevel action : method.getChildren()) {
+				for (SpaceFrameLevel action : method.getChildren()) {
 					actionIds.add(action.getResourceId());
 				}
 			}
@@ -91,19 +90,19 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 		// set name
 		int i = 0;
 		while (i < level.getChildren().size()) {
-			SpaceActionFrameLevel target = level.getChildren().get(i);
+			SpaceFrameLevel target = level.getChildren().get(i);
 			String targetId = target.getResourceId();
 			if (targetMap.containsKey(targetId)) {
 				target.setName(targetMap.get(targetId).getName());
 				int j = 0;
 				while (j < target.getChildren().size()) {
-					SpaceActionFrameLevel method = target.getChildren().get(j);
+					SpaceFrameLevel method = target.getChildren().get(j);
 					String methodId = method.getResourceId();
 					if (methodMap.containsKey(methodId)) {
 						method.setName(methodMap.get(methodId).getName());
 						int k = 0;
 						while (k < method.getChildren().size()) {
-							SpaceActionFrameLevel action = method.getChildren().get(k);
+							SpaceFrameLevel action = method.getChildren().get(k);
 							String actionId = action.getResourceId();
 							if (actionMap.containsKey(actionId)) {
 								action.setName(actionMap.get(actionId).getName());
@@ -131,8 +130,8 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 	 * @param req 请求体
 	 */
 	@Override
-	public void saveFrame(SpaceActionFrameLevel req) {
-		this.checkFrame(req);
+	public void saveFrame(SpaceFrameLevel req) {
+		req.checkLevel(false);
 		SpaceActionFrame frame = this.getOrException(req.getResourceId());
 		frame.setFrame(JsonUtil.toJsonString(req));
 		this.updateById(frame);
@@ -151,27 +150,5 @@ public class SpaceActionFrameServiceImpl extends ServiceImpl<SpaceActionFrameMap
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return frame;
-	}
-
-	/**
-	 * 检查框架
-	 *
-	 * @param frame 框架
-	 */
-	private void checkFrame(SpaceActionFrameLevel frame) {
-		if (null == frame.getChildren()) {
-			frame.setChildren(Lists.newArrayList());
-		}
-		if (StringUtils.isBlank(frame.getResourceId())) {
-			throw new BusinessException(ErrorCode.BLANK_ID);
-		}
-		List<SpaceActionFrameLevel> childSet = StreamApiUtils.distinctByColumn(frame.getChildren(),
-				SpaceActionFrameLevel::getResourceId);
-		if (childSet.size() != frame.getChildren().size()) {
-			throw new BusinessException(ErrorCode.DUPLICATE_ID);
-		}
-		for (SpaceActionFrameLevel child : frame.getChildren()) {
-			checkFrame(child);
-		}
 	}
 }

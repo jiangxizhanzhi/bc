@@ -2,7 +2,7 @@ package com.cyberpeace.space.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
-import com.cyberpeace.space.service.context.frame.SpaceActionFrameLevel;
+import com.cyberpeace.space.service.context.frame.SpaceFrameLevel;
 
 /**
  * 空间行动框架Service
@@ -26,12 +26,12 @@ public interface SpaceActionFrameService extends IService<SpaceActionFrame> {
      * @param resourceId 资源id
      * @return {@code SpaceActionFrameLevel }
      */
-    SpaceActionFrameLevel getFrameLevels(String resourceId);
+    SpaceFrameLevel getFrameLevels(String resourceId);
 
     /**
      * 保存框架
      *
      * @param req 请求体
      */
-    void saveFrame(SpaceActionFrameLevel req);
+    void saveFrame(SpaceFrameLevel req);
 }

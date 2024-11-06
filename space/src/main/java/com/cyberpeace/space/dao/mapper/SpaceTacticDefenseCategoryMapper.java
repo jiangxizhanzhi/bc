@@ -10,9 +10,13 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefenseCategory;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface SpaceTacticDefenseCategoryMapper extends BaseMapper<SpaceTacticDefenseCategory> {
 
     IPage<TacticDefenseCategoryBo> page(@Param("page") Page page, @Param("pattern") String pattern);
+
+    List<TacticDefenseCategoryBo> listAllInOrder();
 }

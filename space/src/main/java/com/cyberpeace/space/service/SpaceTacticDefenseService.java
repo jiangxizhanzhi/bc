@@ -2,6 +2,7 @@ package com.cyberpeace.space.service;
 
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
 import com.cyberpeace.space.service.context.tactic.*;
 
 import java.util.List;
@@ -28,4 +29,8 @@ public interface SpaceTacticDefenseService {
     DefenseCategoryBo getCategoryDetail(String resourceId);
 
     List<TacticDefenseCategoryBo> listCategory();
+
+    List<SpaceTacticDefense> listByIds(List<String> defenseIds);
+
+    SpaceTacticDefense getById(String resourceId);
 }

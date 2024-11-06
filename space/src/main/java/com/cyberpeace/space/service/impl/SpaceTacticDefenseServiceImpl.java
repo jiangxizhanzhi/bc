@@ -17,6 +17,7 @@ import com.cyberpeace.space.service.SpaceTacticDefenseService;
 import com.cyberpeace.space.service.context.tactic.*;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,8 +199,27 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	 */
 	@Override
     public List<TacticDefenseCategoryBo> listCategory() {
-		return Lists.newArrayList();
+		// in order
+		return categoryMapper.listAllInOrder();
+
     }
+
+	@Override
+	public List<SpaceTacticDefense> listByIds(List<String> defenseIds) {
+		if(CollectionUtils.isEmpty(defenseIds)){
+			return Lists.newArrayList();
+		}
+		return mapper.selectBatchIds(defenseIds);
+	}
+
+	@Override
+	public SpaceTacticDefense getById(String resourceId) {
+		SpaceTacticDefense defense = mapper.selectById(resourceId);
+		if(null == defense){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return defense;
+	}
 
 	/**
 	 * req2 实体

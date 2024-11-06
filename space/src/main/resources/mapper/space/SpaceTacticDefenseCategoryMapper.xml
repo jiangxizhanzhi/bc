@@ -9,4 +9,10 @@
         </if>
         order by id desc
     </select>
+    <select id="listAllInOrder"
+            resultType="com.cyberpeace.space.service.context.tactic.TacticDefenseCategoryBo">
+        select resource_id, `name`, `cover`, `stage`
+        from space_tactic_defense_category
+        order by `stage`, `id`
+    </select>
 </mapper>

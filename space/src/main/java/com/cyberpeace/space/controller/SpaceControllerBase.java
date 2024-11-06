@@ -30,7 +30,9 @@ import java.util.Map;
 public abstract class SpaceControllerBase<S extends IService<E>, E extends SpaceBaseTable, B extends SpaceBoBase> {
 
 	@Autowired
-	private S baseService;
+	protected S baseService;
+
+
 	@ApiOperation("列表")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<B>> page(PageReqBase req) {

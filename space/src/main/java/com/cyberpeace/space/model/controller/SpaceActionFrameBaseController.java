@@ -75,7 +75,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 
 	@ApiOperation("新增")
 	@PostMapping("")
-	public BaseRsp addAttack(@RequestBody B req) {
+	public BaseRsp<E> addAttack(@RequestBody B req) {
 		req.setResourceId(IDGeneratorUtil.getID());
 		E entity = (E) req.bo2Entity();
 		this.checkNameDuplication(entity);
@@ -87,7 +87,7 @@ public abstract class SpaceActionFrameBaseController<S extends IService<E>, E ex
 			}
 		});
 
-		return new BaseRsp();
+		return new BaseRsp<>(entity);
 	}
 
 	@ApiOperation("更新")

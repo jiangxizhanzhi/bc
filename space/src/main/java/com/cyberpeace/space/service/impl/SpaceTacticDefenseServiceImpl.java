@@ -73,8 +73,8 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 				categoryMap.put(category.getResourceId(), category.getName());
 			}
 		}
-		IPage<DefenseListBo> res = iPage.convert(Defense -> {
-			DefenseListBo bo = BeanUtils.copy(Defense, DefenseListBo.class);
+		IPage<DefenseListBo> res = iPage.convert(defense -> {
+			DefenseListBo bo = BeanUtils.copy(defense, DefenseListBo.class);
 			bo.setCategory(categoryMap.get(bo.getCategoryId()));
 			return bo;
 		});
@@ -124,8 +124,8 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	 */
 	@Override
 	public DefenseDetail getDetail(String resourceId) {
-		SpaceTacticDefense Defense = this.getOrException(resourceId);
-		DefenseDetail detail = this.entity2Bo(Defense);
+		SpaceTacticDefense defense = this.getOrException(resourceId);
+		DefenseDetail detail = this.entity2Bo(defense);
 		return detail;
 	}
 
@@ -219,6 +219,20 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return defense;
+	}
+
+	@Override
+	public List<DefenseDetail> listByCategoryId(String categoryId) {
+		LambdaQueryWrapper<SpaceTacticDefense> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SpaceTacticDefense::getCategoryId, categoryId);
+		wrapper.orderByAsc(SpaceTacticDefense::getId);
+		List<SpaceTacticDefense> defenseList = mapper.selectList(wrapper);
+		return StreamApiUtils.map(defenseList, defense -> {
+			DefenseDetail detail = BeanUtils.copy(defense, DefenseDetail.class);
+			detail.setTag(JsonUtil.toJsonObjectArray(defense.getTag(), String.class));
+			detail.setTool(JsonUtil.toJsonObjectArray(defense.getTool(), TacticTool.class));
+			return detail;
+		});
 	}
 
 	/**

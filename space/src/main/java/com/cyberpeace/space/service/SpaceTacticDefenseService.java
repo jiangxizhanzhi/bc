@@ -33,4 +33,12 @@ public interface SpaceTacticDefenseService {
     List<SpaceTacticDefense> listByIds(List<String> defenseIds);
 
     SpaceTacticDefense getById(String resourceId);
+
+    /**
+     * 列表由类别id
+     *
+     * @param categoryId 类别id
+     * @return {@code List<DefenseDetail> }
+     */
+    List<DefenseDetail> listByCategoryId(String categoryId);
 }

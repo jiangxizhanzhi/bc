@@ -1,20 +1,21 @@
 package com.cyberpeace.space.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.service.SpaceTacticDefenseService;
 import com.cyberpeace.space.service.context.IdListReq;
 import com.cyberpeace.space.service.context.tactic.*;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "知识空间-知识库-战法库-防御战法")
 @RestController
@@ -96,10 +97,49 @@ public class SpaceTacticDefenseController {
         return new BaseRsp<>(bo);
 	}
 
+	/**
+	 * 列表防御战法战术全部
+	 *
+	 * @return {@code BaseRsp<List<StagedDefenseCategory>> }
+	 */
 	@ApiOperation("防御战法战术全部")
 	@GetMapping("/category/list")
-	public BaseRsp<List<TacticDefenseCategoryBo>> listC() {
-		List<TacticDefenseCategoryBo> rsp = defenseService.listCategory();
+	public BaseRsp<List<StagedDefenseCategory>> listC() {
+		List<TacticDefenseCategoryBo> bos = defenseService.listCategory();
+		List<StagedDefenseCategory> rsp = Lists.newArrayList();
+
+		StagedDefenseCategory pre = new StagedDefenseCategory();
+		pre.setStage(SpaceCommonConstant.TacticStage.PRE);
+		pre.setCategories(StreamApiUtils.filter(bos,
+				bo -> bo.getStage().equals(SpaceCommonConstant.TacticStage.PRE)));
+		rsp.add(pre);
+
+		StagedDefenseCategory in = new StagedDefenseCategory();
+		in.setStage(SpaceCommonConstant.TacticStage.IN);
+		in.setCategories(StreamApiUtils.filter(bos,
+				bo -> bo.getStage().equals(SpaceCommonConstant.TacticStage.IN)));
+		rsp.add(in);
+
+		StagedDefenseCategory post = new StagedDefenseCategory();
+		post.setStage(SpaceCommonConstant.TacticStage.POST);
+		post.setCategories(StreamApiUtils.filter(bos,
+				bo -> bo.getStage().equals(SpaceCommonConstant.TacticStage.POST)));
+		rsp.add(post);
+
 		return new BaseRsp<>(rsp);
+	}
+
+	/**
+	 * 按类别列出
+	 *
+	 * @param category_id 类别id
+	 * @return {@code BaseRsp<List<DefenseDetail>> }
+	 */
+	@ApiOperation("根据战术获取战法")
+	@GetMapping("/list")
+	public BaseRsp<List<DefenseDetail>>
+			listByCategory(@ApiParam(value = "战术id", name = "category_id") String category_id) {
+		List<DefenseDetail> res = defenseService.listByCategoryId(category_id);
+		return new BaseRsp<>(res);
 	}
 }

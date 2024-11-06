@@ -7,9 +7,11 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import com.cyberpeace.integratation.service.RemotePythonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,9 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 
 	@Autowired
 	EvalIndicatorMapper evalIndicatorMapper;
+
+	@Autowired
+	RemotePythonService remotePythonService;
 
 	@Override
 	public Integer selectUsedNum(List<String> ids) {
@@ -82,5 +87,10 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	@Override
 	public void updateStateByIds(List<String> algorithmIds) {
 		evalAlgorithmMapper.updateStateByIds(algorithmIds);
+	}
+
+	public Object runAlgorithm(String algorithmId, Object data, Object listData, Object otherArgs) {
+		EvalAlgorithm algorithm = evalAlgorithmMapper.selectById(algorithmId);
+		return remotePythonService.runAlgorithm(algorithmId, algorithm.getCode(), data, listData, (List<Serializable>) otherArgs);
 	}
 }

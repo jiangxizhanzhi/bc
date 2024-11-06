@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -15,6 +14,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmListReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalRunAlgorithmReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalAlgorithmRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
@@ -27,14 +27,13 @@ import com.cyberpeace.gateway.controller.req.TheoryListReq;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.practice.controller.req.AdminOperationListReq;
 import com.cyberpeace.oj.practice.controller.req.OperationByNodeReq;
+import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
-import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
-import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
-import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
+import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryBo;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
@@ -44,8 +43,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -83,6 +82,9 @@ public class ExternalYXController {
 
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
+
+	@Autowired
+	private PracticeCategoryService categoryService;
 
 	@ApiOperation("分页查询实践操作习题")
 	@GetMapping("/operation/list")
@@ -272,6 +274,28 @@ public class ExternalYXController {
 		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
 
 		return new BaseRsp(evalAlgorithmRsp);
+	}
+
+	@ApiOperation("执行算法")
+	@PostMapping(("/algorithm/run"))
+	public BaseRsp<Object> runAlgorithm(@RequestBody EvalRunAlgorithmReq evalRunAlgorithmReq) {
+		return new BaseRsp<>(evalAlgorithmService.runAlgorithm(evalRunAlgorithmReq.getAlgorithmId(), evalRunAlgorithmReq.getData(), evalRunAlgorithmReq.getListData(), evalRunAlgorithmReq.getOtherArgs()));
+	}
+
+	@ApiOperation("分页查询练习分类")
+	@GetMapping("/category/list")
+	public BaseRsp<ListRsp<CategoryListBo>> list(@Validated PracticeCategoryListReq categoryListReq) {
+
+		Page page = categoryListReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
+		CategoryListQuery query = BeanUtils.copy(categoryListReq, CategoryListQuery.class);
+
+		IPage<CategoryListBo> iPage = practiceCategoryService.pageByListQuery(page, query,
+				categoryListReq.getChildren());
+
+		return new BaseRsp(PageUtil.getListResult(iPage));
 	}
 
 }

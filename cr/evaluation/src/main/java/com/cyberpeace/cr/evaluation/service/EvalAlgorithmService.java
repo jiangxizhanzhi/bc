@@ -51,4 +51,6 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 * @param selectUsedAlgorithmIds
 	 */
 	void updateStateByIds(List<String> selectUsedAlgorithmIds);
+
+	Object runAlgorithm(String algorithmId, Object data, Object listData, Object otherArgs);
 }

@@ -16,6 +16,9 @@ public class AdminOperationListReq extends PageReqBase {
     @ApiModelProperty(name = "category_id", value = "方向")
     private String categoryId;
 
+    @ApiModelProperty(name = "difficulty", value = "难度")
+    private Integer difficulty;
+
     public void setPractice_set_id(String practiceSetId) {
         this.practiceSetId = practiceSetId;
     }

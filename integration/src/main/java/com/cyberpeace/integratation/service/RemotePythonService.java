@@ -69,4 +69,6 @@ public interface RemotePythonService {
 	 */
 	Integer indexAhpPerform(String algorithmId, String matrixData, String algorithmCode, List<Integer> data,
 						 List<Serializable> otherArguments);
+
+	Object runAlgorithm(String algorithmId, String algorithmCode, Object data, Object listData, List<Serializable> otherArguments);
 }

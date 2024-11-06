@@ -364,10 +364,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 		log.info("attack type:"+attackMessageBo.getType());
 		if(AttackType.NODE_DARKENS.getKeyWord().equals(attackMessageBo.getType())){
-			SituationHandlerServiceImpl.node_ids.addAll(elementIds);
+			SituationHandlerServiceImpl.node_ids.add(attackMessageBo.getTargetId());
 			return;
 		}else if(AttackType.NODE_DARKENS_BAK.getKeyWord().equals(attackMessageBo.getType())){
-			SituationHandlerServiceImpl.node_ids.removeAll(elementIds);
+			SituationHandlerServiceImpl.node_ids.remove(attackMessageBo.getTargetId());
 			return;
 		}
 

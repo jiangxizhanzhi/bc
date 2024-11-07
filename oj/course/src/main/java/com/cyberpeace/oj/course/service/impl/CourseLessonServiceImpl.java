@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.*;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -28,7 +31,10 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
-import com.cyberpeace.oj.course.service.*;
+import com.cyberpeace.oj.course.service.ClassroomService;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.LessonPracticeSceneService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -43,7 +49,6 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.ResourceCollectionMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
-import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
@@ -143,9 +148,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
-
-	@Autowired
-	private ClassroomGroupInfoService classroomGroupInfoService;
 
 	@Autowired
 	private UtilService utilService;
@@ -960,52 +962,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		return true;
 
-	}
-
-	@Override
-	public TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext) {
-
-		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
-		if (null == courseLesson) {
-			log.error("getTopoScene: lesson not found! lesson_id=[{}]", lessonId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		TopoSceneDataBo topoSceneDataRes = new TopoSceneDataBo();
-		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
-				&& StringUtils.isNotBlank(courseLesson.getTopoId())) {
-
-			// 拓扑信息查询
-			JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());
-			topoSceneDataRes.setSceneConfigData(topoData);
-
-			// 前台需要先查询课堂场景
-			OjLocalScene ojLocalScene = null;
-			ClassroomGroupInfo groupInfo = null;
-
-			if (authContext.getIsWeb()) {
-				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
-				if (null != groupInfo) {
-					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-				}
-			}
-
-			// 查询课时场景
-			if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
-				ojLocalScene = ojLocalSceneService.selectOjLocalScene(courseLesson.getResourceId(),
-						courseLesson.getSceneShareMode(), authContext);
-			}
-
-			if (null != ojLocalScene) {
-				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
-				if (groupInfo != null) {
-					sceneData.put(JsonKeyConstant.ROOM_ID, groupInfo.getClassroomId());
-				}
-				topoSceneDataRes.setSceneData(sceneData);
-			}
-		}
-
-		return topoSceneDataRes;
 	}
 
 	@Override

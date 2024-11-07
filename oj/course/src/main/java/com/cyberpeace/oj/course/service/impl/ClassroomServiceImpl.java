@@ -1,11 +1,12 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
-import com.cyberpeace.common.constant.*;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.ExcelHeader;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -17,8 +18,6 @@ import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -27,20 +26,19 @@ import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
-import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.*;
+import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
+import com.cyberpeace.oj.ojbase.constant.ClassroomType;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
-import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.oj.ojbase.service.NoteService;
-import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
@@ -61,8 +59,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -89,9 +85,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	private ClassroomSignMapper classroomSignMapper;
 
 	@Autowired
-	private NoteService noteService;
-
-	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
 
 	@Autowired
@@ -106,8 +99,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
-	@Autowired
-	private ClassroomGroupInfoService classroomGroupInfoService;
 
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
@@ -132,120 +123,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private RemoteAdService remoteAdService;
-
-	@Autowired
-	private CrRoleMapper crRoleMapper;
-
-	@Override
-	public Classroom create(Classroom classroom, AuthContext authContext) {
-
-		// 数据校验
-		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
-		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
-		CourseLesson courseLesson = courseValidateHandler
-				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
-//		classroomValidateHandler.validateClassroomLessonExist(classroom.getLessonId(),
-//				classroom.getOrganizationId());
-		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
-				classroom.getEndTime());
-		classroomValidateHandler.validateClassroomTimeOverlap(classroom.getOrganizationId(),
-				classroom.getStartTime(), classroom.getEndTime());
-		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
-			classroomValidateHandler.validatePlanExistById(classroom.getTrainPlanId());
-		}
-
-		// 课堂基本数据获取
-		List<String> orgIds = classroomValidateHandler
-				.validateClassroomOrgHasUser(classroom.getOrganizationId());
-		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
-		classroom.setResourceId(IDGeneratorUtil.getID());
-
-		// 分组数据
-		List<String> userIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
-
-		// 如果组织下不包含创建者则把创建者加入
-		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoService.initClassroomGroupInfo(
-				classroom.getResourceId(), courseLesson, userIds, CommonConstant.ONE);
-
-		// 如果课程无访问权限 把组织数据加入
-		boolean changCourse = changeCourse(classroom.getOrganizationId(), course);
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				classroomMapper.insert(classroom);
-				classroomGroupInfoService.saveBatch(groupInfoList);
-				if (changCourse) {
-					courseMapper.updateById(course);
-				}
-			}
-		});
-
-		return classroom;
-	}
-
-	@Override
-	public Boolean updateClassroom(Classroom classroom, AuthContext authContext) {
-
-		// 时间校验
-		classroomValidateHandler.validateClassroomStartAndEnd(classroom.getStartTime(),
-				classroom.getEndTime());
-		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
-				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
-		// 唯一索引 课时+组织id唯一性校验
-//		classroomValidateHandler.validateClassroomLessonExistExcludeItself(classroom.getLessonId(), classroom.getOrganizationId(), classroom);
-
-		// 课程权限校验
-		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
-		Course course = courseValidateHandler.validateCourseExist(classroom.getCourseId());
-		CourseLesson courseLesson = courseValidateHandler
-				.validateLessonExist(classroom.getLessonId(), authContext.getIsWeb());
-
-		// 课程表校验
-		Classroom existRoom = classroomValidateHandler
-				.validateClassroomExist(classroom.getResourceId());
-
-		// 训练计划校验
-		if (StringUtils.isNotBlank(classroom.getTrainPlanId())) {
-			classroomValidateHandler.validatePlanExistById(classroom.getTrainPlanId());
-		}
-
-		validateChangeClassroom(classroom);
-
-		// 组织数据获取
-		List<String> orgIds = remoteOrganizationService.childrenList(classroom.getOrganizationId(),
-				true);
-		classroom.setOrganizationIds(JsonUtil.arrayToString(orgIds));
-
-		// 判断群组是否群组需要改变
-		boolean changeGroup = changeGroup(existRoom, classroom, courseLesson);
-		List<ClassroomGroupInfo> groupInfos = changeGroup ? reInitGroup(classroom, courseLesson)
-				: Lists.newArrayList();
-
-		// 课程修改
-		boolean changeCourse = changeCourse(classroom.getOrganizationId(), course);
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				classroomMapper.updateById(classroom);
-
-				if (changeCourse) {
-					courseMapper.updateById(course);
-				}
-
-				if (changeGroup) {
-					classroomGroupInfoMapper.deleteByRoom(classroom.getResourceId());
-					classroomGroupInfoService.saveBatch(groupInfos);
-				}
-			}
-		});
-
-		return CommonConstant.TRUE;
-
-	}
 
 	/** 判断是否需要修改课程*/
 	private boolean changeCourse(String orgId, Course course) {
@@ -279,15 +156,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				.getCode().intValue();
 
 		return enableChange;
-	}
-
-	/** 出新初始化分组数据*/
-	private List<ClassroomGroupInfo> reInitGroup(Classroom classroom, CourseLesson courseLesson) {
-
-		// 用户查询及校验
-		List<String> orgUserIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
-		return classroomGroupInfoService.initClassroomGroupInfo(classroom.getResourceId(),
-				courseLesson, orgUserIds, CommonConstant.ONE);
 	}
 
 	/**
@@ -434,39 +302,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		return PageUtil.getListResult(monitorBos, page, monitorBos.size());
 
-	}
-
-	@Override
-	public PageReportBo selectClassroomReport(String classroomId, String userName, Page page) {
-
-		// 基本数据校验
-		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
-		CourseLesson courseLesson = courseValidateHandler
-				.validateLessonExist(classroom.getLessonId(), false);
-
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-				true);
-
-		List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
-				userInfo -> StringUtils.isBlank(userName)
-						|| userInfo.getUserName().contains(userName)
-						|| userInfo.getName().contains(userName));
-
-		List<UserInfo> pageUser;
-		if (CollectionUtils.isEmpty(page.getOrders())) {
-			pageUser = StreamApiUtils.pageByList(filterUsers, page.getCurrent(), page.getSize());
-		} else {
-			pageUser = filterUsers;
-		}
-
-		Map<String, String> orgMap = remoteOrganizationService
-				.childrenMap(classroom.getOrganizationId(), true);
-
-		// 供评估人员使用
-		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
-		List<ClassroomReportBo> data = StreamApiUtils.map(pageUser,
-				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
-		return new PageReportBo(data, (long) filterUsers.size());
 	}
 
 	@Override
@@ -1011,126 +846,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	@Override
-	public String exportReport(String classroomId){
-		String basePath = AttachmentPath.LESSON_HTML_TEMPLATE.getDesc();
-		// 基本数据校验
-		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
-		CourseLesson courseLesson = courseValidateHandler
-				.validateLessonExist(classroom.getLessonId(), false);
-		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
-		//课程名称
-		String initLessonName = lesson.getName();
-		String lessonName = initLessonName.replace(" ","");
-		String htmlPath = basePath + File.separator + lessonName;
-		//清理目录
-		File file = new File(htmlPath);
-		if (file.exists()) {
-			FileUtil.deleteDir(file);
-		}
-		FileUtil.mkdirs(htmlPath);
-
-		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
-				true);
-		Map<String, String> orgMap = remoteOrganizationService
-				.childrenMap(classroom.getOrganizationId(), true);
-		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
-		List<ClassroomReportBo> data = StreamApiUtils.map(userInfos,
-				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
-		//过滤实验报告为空的情况
-		List<ClassroomReportBo> filterData = StreamApiUtils.filter(data, classroomReportBo -> classroomReportBo.getContent()!=null);
-		if (filterData.size() == 0){
-			log.error("[{}] report is empty", classroomId);
-			throw new BusinessException(OjBusinessErrorCode.NO_REPORT_CAN_BE_EXPORTED);
-		}
-		for(ClassroomReportBo classroomReportBo: filterData){
-			String initPersonName =
-					classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + initLessonName + ClassroomExportReportConstant.SESSION_REPORT.getMsg();
-			String personName = initPersonName.replace(" ","");
-			String baseClassroomPath = htmlPath + File.separator + personName;
-			JSONObject jsonObject = new JSONObject();
-			String mdContent = classroomReportBo.getContent();
-			//处理图片
-			List<String> strList = LocalStringUtil.getMatchStr(mdContent, PatternConstant.MARKDOWN_IMAGE);
-			for (String str : strList) {
-				String imgUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
-				try {
-					//判断图片真实类型
-					String realType = ImgUtil.imgType(new File(imgUrl));
-					if (realType.equals("webp")) {
-						//图片真实类型为webp时，html转pdf图片无法显示，需要将图片转成jpg
-						String imgName = EnumUtils.getEnumDescByCode(AttachmentPath.UPLOAD_IMAGE.getCode(), AttachmentPath.class) + IDGeneratorUtil.getID() + ".jpg";
-						ImgUtil.webpToJpg(imgUrl, imgName);
-						imgUrl = imgName;
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				imgUrl = "http://" + SystemPropUtil.getProp("BC_HOST") + imgUrl;
-				log.info("imgUrl:" + imgUrl);
-				mdContent = mdContent.replace(str, String.format(MdConstant.ONLY_URL_IMG, imgUrl));
-			}
-			//附件
-			List<String> urlList = LocalStringUtil.getMatchStr(mdContent, PatternConstant.MARKDOWN_URL);
-			int j = 0;
-			for (String str: urlList) {
-				j++;
-				String fileUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
-				if (!new File(fileUrl).isFile()) {
-					continue;
-				}
-				FileUtil.copyFile(fileUrl,
-						baseClassroomPath + File.separator + j + "." + FileUtil.getFileSuffix(fileUrl), false);
-				fileUrl = j + "." + FileUtil.getFileSuffix(fileUrl);
-				mdContent = mdContent.replace(str, fileUrl);
-			}
-			String reportContent = MdUtil.mdToHtmlForApiDoc(mdContent);
-			//实验报告
-			jsonObject.put("report_content", reportContent);
-			//是否通过
-			if (classroomReportBo.getPassed() == null) {
-				jsonObject.put("passed", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
-			} else if (classroomReportBo.getPassed()) {
-				jsonObject.put("passed", ClassroomExportReportConstant.YES.getMsg());
-			} else {
-				jsonObject.put("passed", ClassroomExportReportConstant.NO.getMsg());
-			}
-			//评分
-			if (classroomReportBo.getScore() == null) {
-				jsonObject.put("score", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
-			} else {
-				jsonObject.put("score", classroomReportBo.getScore().toString());
-			}
-			//评语
-			if (classroomReportBo.getEvaluateComment() == null) {
-				jsonObject.put("evaluate_comment", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
-			} else {
-				jsonObject.put("evaluate_comment", classroomReportBo.getEvaluateComment());
-			}
-			jsonObject.put("report_content_title", ClassroomExportReportConstant.LABORATORY_REPORT_TITLE.getMsg());
-			jsonObject.put("score_title", ClassroomExportReportConstant.SCORE_TITLE.getMsg());
-			jsonObject.put("passed_title", ClassroomExportReportConstant.PASSED_TITLE.getMsg());
-			jsonObject.put("evaluate_comment_title", ClassroomExportReportConstant.EVALUATE_COMMENT_TITLE.getMsg());
-			String destHtmlPath = baseClassroomPath + File.separator + personName + ".html";
-			HtmlToPdfUtil.getHtmlTemplateInstance(jsonObject, HtmlTemplateEnum.LESSON, destHtmlPath);
-			// 在同目录下生成pdf
-			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
-					+ "pdf";
-			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
-			File pdfFile = new File(destPdfPath);
-			pdfFile.renameTo(new File(baseClassroomPath + File.separator + initPersonName + ".pdf"));
-			//删除html文件
-			FileUtil.deleteDir(new File(destHtmlPath));
-			File baseClassroomFile = new File(baseClassroomPath);
-			baseClassroomFile.renameTo(new File(htmlPath + File.separator + initPersonName));
-		}
-		File zipFile = new File(ZipUtil.toZip(htmlPath));
-		String zipPath = basePath + File.separator + initLessonName + ClassroomExportReportConstant.LABORATORY_REPORT_SUFFIX.getMsg();
-		zipFile.renameTo(new File(zipPath));
-		FileUtil.deleteDir(new File(htmlPath));
-		return zipPath;
-	}
-
-	@Override
 	public List<String> selectTempTaskIdsByUser(UserInfo userContext) {
 
 		return classroomMapper.selectTempTaskIdsByUser(userContext.getUserId(),userContext.isSuperuser()) ;
@@ -1661,60 +1376,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				.size();
 		gradeDistribution.setFullScore(full);
 		return gradeDistribution;
-	}
-
-	/**
-	 * 用户数据转换
-	 *
-	 * @param userInfo
-	 * @param courseLesson
-	 * @param orgMap
-	 * @return
-	 */
-	private ClassroomReportBo userToReportBo(UserInfo userInfo, CourseLesson courseLesson,
-			Map<String, String> orgMap, Map<String, UserInfo> evaluatorMap) {
-
-		// 用户信息
-		ClassroomReportBo reportBo = BeanUtils.copy(userInfo, ClassroomReportBo.class);
-		reportBo.setOrganizationName(orgMap.get(userInfo.getOrganizationId()));
-
-		// 实验报告数据
-		NoteUniqueContext uniqueContext = NoteUniqueContext.builder()
-				.businessId(courseLesson.getResourceId())
-				.businessType(Note.NoteResourceType.LESSON.getCode())
-				.noteType(Note.NoteType.REPORT.getCode()).userId(userInfo.getUserId()).build();
-		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
-		if (null != noteBo && noteBo.getIsSubmit() != null && noteBo.getIsSubmit()) {
-			reportBo.setContent(noteBo.getContent());
-			reportBo.setSubmitTime(noteBo.getUpdateTime());
-			reportBo.setNoteId(noteBo.getResourceId());
-		}
-
-		// 实验报告评分数据
-		if (null != noteBo) {
-			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(noteBo.getResourceId());
-			if (null != noteEvaluate) {
-				// 评估数据设置
-				reportBo.setEvaluateComment(noteEvaluate.getEvaluateComment());
-				reportBo.setEvaluateTime(noteEvaluate.getEvaluateTime());
-				reportBo.setScore(noteEvaluate.getScore());
-				reportBo.setPassed(noteEvaluate.getPassed());
-
-				// 评估人数据设置
-				UserInfo evaluator = evaluatorMap.get(noteEvaluate.getEvaluatorId());
-				if (null == evaluator) {
-					evaluator = remoteUserService.getById(noteEvaluate.getEvaluatorId());
-					evaluatorMap.put(noteEvaluate.getEvaluatorId(), evaluator);
-				}
-
-				if (null != evaluator) {
-					reportBo.setEvaluatorId(noteEvaluate.getEvaluatorId());
-					reportBo.setEvaluatorName(evaluator.getName());
-					reportBo.setEvaluatorUserName(evaluator.getUserName());
-				}
-			}
-		}
-		return reportBo;
 	}
 
 	/**

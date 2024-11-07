@@ -137,14 +137,6 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	Boolean releaseLessonPractice(String resourceId, String authId, AuthContext authContext);
 
 	/**
-	 * 查询topo和场景数据信息
-	 * @param lessonId
-	 * @param authContext
-	 * @return
-	 */
-	TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext);
-
-	/**
 	 * 上传课时讲义 如果为makdown则解析 数据绑定课时
 	 * @param courseLesson
 	 * @param handout

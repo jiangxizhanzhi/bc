@@ -18,14 +18,6 @@ import java.util.List;
 public interface ClassroomService extends IService<Classroom> {
 
 	/**
-	 * 新建课堂表
-	 * @param classroom
-	 * @param authContext
-	 * @return
-	 */
-	Classroom create(Classroom classroom, AuthContext authContext);
-
-	/**
 	 * 分页查询课时表信息
 	 * @param roomListQuery
 	 * @param authContext
@@ -41,14 +33,7 @@ public interface ClassroomService extends IService<Classroom> {
 	 */
 	ListRsp<ClassroomMonitorBo> selectSignList(Page page, String classroomId);
 
-	/**
-	 * 获取用户签到信息列表
-	 * @param classroomId
-	 * @return
-	 */
-	PageReportBo selectClassroomReport(String classroomId, String userName, Page page);
-
-	/**
+    /**
 	 * 课堂学习统计
 	 * @param classroomId
 	 * @param authContext
@@ -80,14 +65,6 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	Integer deleteClassroom(String classroomId, AuthContext authContext);
-
-	/**
-	 * 课堂表更新
-	 * @param classroom
-	 * @param authContext
-	 * @return
-	 */
-	Boolean updateClassroom(Classroom classroom, AuthContext authContext);
 
 	/**
 	 * 获取课堂聊天用户信息
@@ -127,8 +104,6 @@ public interface ClassroomService extends IService<Classroom> {
 	IPage<ClassroomBo>  selectPage(ClassRoomPageQuery roomListQuery, AuthContext authContext);
 
 	List<String> selectIdsByPlanIds(List<String> ids);
-
-	String exportReport(String classroomId);
 
 	List<String> selectTempTaskIdsByUser(UserInfo userContext);
 }

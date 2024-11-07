@@ -4,6 +4,12 @@ import java.util.List;
 
 import com.cyberpeace.cs.service.context.BadgeBo;
 
+/**
+ * 靶场徽章Service
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public interface CrBadgeService {
 
 	/**

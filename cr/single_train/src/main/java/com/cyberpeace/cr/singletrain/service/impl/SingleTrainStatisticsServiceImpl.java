@@ -30,22 +30,45 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 单训练统计学Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsService {
 
+    /**
+     * 靶场任务Mapper
+     */
     @Autowired
     CrTaskMapper crTaskMapper;
 
+    /**
+     * 远程用户Service
+     */
     @Autowired
     RemoteUserService remoteUserService;
 
+    /**
+     * 远程组织Service
+     */
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
 
+    /**
+     * utilService
+     */
     @Autowired
     private UtilService utilService;
 
+    /**
+     * 获取组织排统计学
+     *
+     * @return {@code List<SingleOrganizationStatisticsBo> }
+     */
     @Override
     public List<SingleOrganizationStatisticsBo> getOrganizationRankStatistics() {
         List<SingleOrganizationStatisticsBo> rsp = Lists.newArrayList();
@@ -129,6 +152,11 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
     }
 
 
+    /**
+     * 获取都个人排统计学
+     *
+     * @return {@code List<SinglePersonalStatisticsBo> }
+     */
     @Override
     public List<SinglePersonalStatisticsBo> getAllPersonalRankStatistics() {
         List<SinglePersonalStatisticsBo> rsp = Lists.newArrayList();
@@ -174,6 +202,13 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
     }
 
+    /**
+     * 获取都统计学详情
+     *
+     * @param detailReq 详情请求体
+     * @param page      分页
+     * @return {@code ListRsp<SingleStatisticsDetailBo> }
+     */
     @Override
     public ListRsp<SingleStatisticsDetailBo> getAllStatisticsDetail(SingleTrainStatisticsDetailReq detailReq, Page page) {
         List<SingleStatisticsDetailBo> rsp = Lists.newArrayList();

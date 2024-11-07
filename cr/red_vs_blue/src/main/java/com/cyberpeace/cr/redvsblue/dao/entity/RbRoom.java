@@ -12,45 +12,105 @@ import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * RB 会议室
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("cr_rb_room")
 public class RbRoom extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 模板id
+	 */
 	private String templateId;
 
+	/**
+	 * 模板名称
+	 */
 	private String templateName;
 
+	/**
+	 * 训练状态
+	 */
 	private Integer trainingStatus;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 创造用户id
+	 */
 	private String createUserId;
 
+	/**
+	 * 子类型
+	 */
 	private Integer subType;
 
+	/**
+	 * 描述
+	 */
 	private String description;
 
+	/**
+	 * 预技能
+	 */
 	private String preSkill;
 
+	/**
+	 * 训练技能
+	 */
 	private String trainSkill;
 
+	/**
+	 * 困难
+	 */
 	private Integer difficulty;
 
+	/**
+	 * 开始时间
+	 */
 	private Date startTime;
 
+	/**
+	 * 结束时间
+	 */
 	private Date endTime;
 
+	/**
+	 * 当地场景id
+	 */
 	private String localSceneId;
 
+	/**
+	 * 已复制拓扑id
+	 */
 	private String copyedTopoId;
 
+	/**
+	 * 启用录制
+	 */
 	private Boolean enableRecording;
 
+	/**
+	 * 支持 Partial Start
+	 */
 	private Boolean supportPartialStart;
 
+	/**
+	 * 图标
+	 */
 	private String logo;
 
 	/**

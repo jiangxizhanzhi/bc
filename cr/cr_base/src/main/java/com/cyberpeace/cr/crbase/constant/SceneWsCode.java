@@ -13,8 +13,8 @@ public interface SceneWsCode {
 	 */
 	Integer SCENE_UPDATED = 6;
 
-    /**
-     * 场景关闭
-     */
-    Integer SCENE_STOPPED = 9;
+	/**
+	 * 场景关闭
+	 */
+	Integer SCENE_STOPPED = 9;
 }

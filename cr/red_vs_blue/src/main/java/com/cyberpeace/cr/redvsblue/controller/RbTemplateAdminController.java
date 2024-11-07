@@ -59,6 +59,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB 模板 Admin Controller
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "红蓝对抗模板后台")
 @RestController
 @Slf4j
@@ -66,32 +72,66 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/admin/red_vs_blue/red_vs_blue_templates/")
 public class RbTemplateAdminController {
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	/**
+	 * RB模板Service
+	 */
 	@Autowired
 	private RbTemplateService rbTemplateService;
 
+	/**
+	 * 靶场常见Service
+	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 业务模板Mapper
+	 */
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	/**
+	 * 创造
+	 *
+	 * @param addReq 新增请求体
+	 * @return {@code BaseRsp<Object> }
+	 */
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
@@ -126,6 +166,12 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param modifyReq 修改请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("修改")
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
@@ -163,6 +209,12 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
@@ -183,6 +235,12 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取RB模板
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<RbTemplateRsp> }
+	 */
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.WEB_CR_RED_VS_BLUE },
@@ -234,6 +292,11 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
+	/**
+	 * 交易资产节点映射
+	 *
+	 * @param roleRsps 角色 RSP
+	 */
 	public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
 		for (JSONObject roleRsp : roleRsps) {
 			List<Object> assetNodes = roleRsp.getObject("asset_nodes", ArrayList.class);
@@ -250,6 +313,14 @@ public class RbTemplateAdminController {
 			roleRsp.put("assetMap",assetMap);
 		}
 	}
+
+	/**
+	 * 获取角色
+	 *
+	 * @param roleArray 角色数组
+	 * @param mapping   映射
+	 * @return {@code List<JSONObject> }
+	 */
 	private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
 		List<JSONObject> result = Lists.newArrayList();
 		// 逐角色逐阶段读取任务信息
@@ -268,6 +339,13 @@ public class RbTemplateAdminController {
 		return result;
 	}
 
+	/**
+	 * 请求体自RB模板
+	 *
+	 * @param req        请求体
+	 * @param rbTemplate RB 模板
+	 * @return {@code RbTemplate }
+	 */
 	private RbTemplate reqToRbTemplate(RbTemplateAddReq req, RbTemplate rbTemplate) {
 
 		CrRoleConfigRb roleConfigRb = BeanUtils.copy(req, CrRoleConfigRb.class);

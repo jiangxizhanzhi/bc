@@ -13,42 +13,54 @@ import org.hibernate.validator.constraints.Length;
 import io.swagger.annotations.ApiModelProperty;
 
 
+/**
+ * 靶场通知请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class CrNoticeReq implements Serializable {
 
     /**
-    * 
-    */
+     * id
+     */
     private Integer id;
     /**
-    * uuid
-    */
+     * uuid
+     */
     @ApiModelProperty("uuid")
     private String resourceId;
     /**
-    * 创建人id
-    */
+     * 创建人id
+     */
     @ApiModelProperty("创建人id")
     private String createUserId;
     /**
-    * 公告内容
-    */
+     * 公告内容
+     */
     @ApiModelProperty("公告内容")
     private String context;
     /**
-    * 公告对象
-    */
+     * 公告对象
+     */
     @ApiModelProperty("公告对象:1全部 2红方 3蓝方")
     private Integer role;
     /**
-    * 房间id
-    */
+     * 房间id
+     */
     @ApiModelProperty("房间id")
     private String roomId;
 
+    /**
+     * 在顶部
+     */
     @ApiModelProperty("是否置顶 0否 1是")
     private Integer isTop;
 
+    /**
+     * 是 RB
+     */
     @ApiModelProperty("是否红蓝 0否 1是")
     private Boolean isRb;
 

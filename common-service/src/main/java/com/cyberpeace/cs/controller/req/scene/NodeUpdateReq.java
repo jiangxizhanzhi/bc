@@ -16,9 +16,15 @@ import lombok.Data;
 @Data
 public class NodeUpdateReq implements Serializable {
 
+	/**
+	 * 中台场景id
+	 */
 	@ApiModelProperty(value = "场景id")
 	private String mpSceneId;
 
+	/**
+	 * 更新
+	 */
 	@ApiModelProperty(value = "节点更新内容")
 	private JSONObject update;
 }

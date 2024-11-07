@@ -28,6 +28,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * EVAL 任务流控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Api(tags = "靶场测评-流量")
 @RestController
@@ -35,15 +41,30 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/eval/task/flow")
 public class EvalTaskFlowController {
 
+	/**
+	 * 评估任务Service
+	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
+	/**
+	 * 评估场景Service
+	 */
 	@Autowired
 	private EvalSceneService evalSceneService;
 
+	/**
+	 * 靶场场景Service
+	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
+	/**
+	 * 获取流列表
+	 *
+	 * @param query 查询
+	 * @return {@code BaseRsp<ListRsp<ElementFlow>> }
+	 */
 	@ApiOperation("获取任务流量列表")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/list")
@@ -70,6 +91,12 @@ public class EvalTaskFlowController {
 		return new BaseRsp<>(flowListRsp);
 	}
 
+	/**
+	 * Update Flow 参数
+	 *
+	 * @param flowParamUpdateReq 流参数更新请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("修改节点流量的源IP")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/source_ip")
@@ -87,6 +114,12 @@ public class EvalTaskFlowController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 启动所有流
+	 *
+	 * @param evalFlowsOpsReq 评估流老年 退休金 计划请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("启动全部任务流量")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/all_start")
@@ -102,6 +135,12 @@ public class EvalTaskFlowController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 启动流程列表
+	 *
+	 * @param evalFlowsOpsReq 评估流老年 退休金 计划请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("批量启动任务流量")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/batch_start")
@@ -116,6 +155,13 @@ public class EvalTaskFlowController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 下载流程
+	 *
+	 * @param taskId 任务id
+	 * @param flowId 流id
+	 * @return {@code BaseRsp<FlowDownloadRsp> }
+	 */
 	@ApiOperation("获取流量下载链接")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/download")

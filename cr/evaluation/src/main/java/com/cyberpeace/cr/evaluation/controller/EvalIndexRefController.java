@@ -23,6 +23,12 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * EVAL 索引引用控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "靶场测评-评估关联算法")
 @RestController
 @RequiresAuthentication
@@ -30,15 +36,30 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class EvalIndexRefController {
 
+    /**
+     * 评估指数裁判Mapper
+     */
     @Autowired
     private EvalIndexRefMapper evalIndexRefMapper;
 
+    /**
+     * 评估变量裁判Mapper
+     */
     @Autowired
     private EvalVariableRefMapper evalVariableRefMapper;
 
+    /**
+     * 评估指数裁判Service
+     */
     @Autowired
     private EvalIndexRefService evalIndexRefService;
 
+    /**
+     * 更新
+     *
+     * @param requestData 请求数据
+     * @return {@code BaseRsp<String> }
+     */
     @ApiOperation("更新评估关联算法的评分方式")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PatchMapping("")
@@ -87,6 +108,12 @@ public class EvalIndexRefController {
         return new BaseRsp<>("success");
     }
 
+    /**
+     * 获取
+     *
+     * @param resourceId 资源id
+     * @return {@code BaseRsp<EvalIndexRef> }
+     */
     @ApiOperation("获取单个评估关联算法及评分方式")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("")

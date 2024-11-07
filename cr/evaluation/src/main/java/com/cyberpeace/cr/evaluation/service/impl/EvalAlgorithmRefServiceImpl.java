@@ -13,16 +13,37 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 评估算法裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Service
 public class EvalAlgorithmRefServiceImpl extends ServiceImpl<EvalAlgorithmRefMapper, EvalAlgorithmRef> implements EvalAlgorithmRefService {
 
+    /**
+     * 参数名称
+     */
     private final String PARAM_NAME = "param_name";
 
+    /**
+     * param 类型
+     */
     private final String PARAM_TYPE = "param_type";
 
+    /**
+     * 参数值
+     */
     private final String PARAM_VALUE = "default_value";
 
+    /**
+     * 构建其他参数
+     *
+     * @param argumentsString arguments 字符串
+     * @return {@code List<Serializable> }
+     */
     @Override
     public List<Serializable> buildOtherArguments(String argumentsString) {
         List<Serializable> args = Lists.newArrayList();

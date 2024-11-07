@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * websocket连接需要的上下文
- * 
+ *
  * @author yinqingrong
+ * @date 2024/11/07
  */
 @Data
 @AllArgsConstructor

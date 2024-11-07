@@ -5,14 +5,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 聊天消息
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessage {
 
+	/**
+	 * 用户名
+	 */
 	private String username;
 
+	/**
+	 * 化身
+	 */
 	private String avatar;
 
 	/**
@@ -20,23 +32,47 @@ public class ChatMessage {
 	 */
 	private String id;
 
+	/**
+	 * 类型
+	 */
 	private String type;
 
+	/**
+	 * 内容
+	 */
 	private String content;
 
+	/**
+	 * CID
+	 */
 	private final Integer cid = 0;
 
+	/**
+	 * 矿山
+	 */
 	private final Boolean mine = Boolean.FALSE;
 
+	/**
+	 * fromid
+	 */
 	private String fromid;
 
+	/**
+	 * 时间
+	 */
 	private String time;
 
+	/**
+	 * 时间戳
+	 */
 	private long timestamp;
 
 	public void setTimestamp() {
 		timestamp = System.currentTimeMillis();
 	}
 
+	/**
+	 * uuid
+	 */
 	private String uuid;
 }

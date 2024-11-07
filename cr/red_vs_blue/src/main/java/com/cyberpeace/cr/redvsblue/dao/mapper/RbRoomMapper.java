@@ -14,25 +14,79 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * RB房间Mapper
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Mapper
 @Repository
 public interface RbRoomMapper extends BaseMapper<RbRoom> {
 
+	/**
+	 * 查询都
+	 *
+	 * @return {@code List<RbRoom> }
+	 */
 	List<RbRoom> selectAll();
 
+	/**
+	 * 计数都
+	 *
+	 * @return {@code Integer }
+	 */
 	Integer countAll();
 
+	/**
+	 * 获取RB房间数据由房间id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code RbRoomData }
+	 */
 	RbRoomData getRbRoomDataByRoomId(String resourceId);
 
+	/**
+	 * 列出 RB 房间
+	 *
+	 * @param page      分页
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<RbRoomData> }
+	 */
 	IPage<RbRoomData> listRbRoom(Page page, ListQuery listQuery);
 
+	/**
+	 * 获取训练计数
+	 *
+	 * @param roomIds         房间id列表
+	 * @param completedStatus 完成状态
+	 * @return {@code TrainingCount }
+	 */
 	TrainingCount getTrainingCount(@Param("roomIds") List<String> roomIds,
 			@Param("completedStatus") Integer completedStatus);
 
+	/**
+	 * 查询未完成由id列表
+	 *
+	 * @param roomIds   房间id列表
+	 * @param endStatus 结束状态
+	 * @return {@code List<RbRoom> }
+	 */
 	List<RbRoom> selectUnfinishedByIds(@Param("roomIds") List<String> roomIds,
 			@Param("endStatus") Integer endStatus);
 
+	/**
+	 * 计数由名称
+	 *
+	 * @param name 名称
+	 * @return {@code Integer }
+	 */
 	Integer countByName(@Param("name") String name);
 
+	/**
+	 * 查询都运行
+	 *
+	 * @return {@code List<RbSituation> }
+	 */
 	List<RbSituation> selectAllRunning();
 }

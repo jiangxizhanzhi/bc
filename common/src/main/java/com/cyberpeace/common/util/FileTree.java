@@ -18,10 +18,16 @@ import com.cyberpeace.common.exception.BusinessException;
  * path 相对路径
  * fileMap 子文件名:子文件
  * dirMap 子文件夹名:子文件夹
- * */
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 public class FileTree {
 
+	/**
+	 * 分隔符
+	 */
 	public static final String SEPARATOR = "/";
 
 	/**
@@ -29,24 +35,49 @@ public class FileTree {
 	 */
 	private final String path;
 
+	/**
+	 * 文件映射
+	 */
 	private final Map<String, File> fileMap;
 
+	/**
+	 * dir map （目录映射）
+	 */
 	private final Map<String, FileTree> dirMap;
 
+	/**
+	 * 文件树
+	 */
 	public FileTree() {
 		this("");
 	}
 
+	/**
+	 * 文件树
+	 *
+	 * @param path 路径
+	 */
 	public FileTree(String path) {
 		this.path = path;
 		dirMap = new HashMap<>();
 		fileMap = new HashMap<>();
 	}
 
+	/**
+	 * 获取文件地图
+	 *
+	 * @return {@code Map<String, File> }
+	 */
 	private Map<String, File> getFileMap() {
 		return fileMap;
 	}
 
+	/**
+	 * 获取满路径
+	 *
+	 * @param name 名称
+	 * @return {@code String }
+	 */
 	public String getFullPath(String name) {
 		if (StringUtils.isBlank(path)) {
 			return name;
@@ -56,7 +87,9 @@ public class FileTree {
 
 	/**
 	 * 添加一个子目录 存在则跳过
+	 *
 	 * @param pathName 子目录名 不允许多级
+	 * @return {@code FileTree }
 	 */
 	private FileTree getOrAddDir(String pathName) {
 		FileTree childTree = dirMap.get(pathName);
@@ -72,9 +105,10 @@ public class FileTree {
 
 	/**
 	 * 向文件夹中添加一个空文件/文件夹
+	 *
 	 * @param filePath 文件/文件夹的相对路径
 	 * @return 添加的文件
-	 * */
+	 */
 	public File addFile(String filePath) {
 		String[] pathList = filePath.split(SEPARATOR);
 
@@ -95,7 +129,10 @@ public class FileTree {
 	/**
 	 * 根据名称获取当前文件夹的子文件
 	 * 不存在则报错
-	 * */
+	 *
+	 * @param name 名称
+	 * @return {@code File }
+	 */
 	public File getFileByName(String name) {
 		File file = getFileMap().get(name);
 
@@ -107,6 +144,12 @@ public class FileTree {
 		return file;
 	}
 
+	/**
+	 * 来自 Stream 输入
+	 *
+	 * @param inputStream 输入流
+	 * @throws IOException io异常
+	 */
 	public void inputFromStream(InputStream inputStream) throws IOException {
 		ZipInputStream zipInputStream = new ZipInputStream(inputStream);
 
@@ -135,6 +178,12 @@ public class FileTree {
 		}
 	}
 
+	/**
+	 * 输出到流
+	 *
+	 * @param outputStream 输出流
+	 * @throws IOException io异常
+	 */
 	public void outputToStream(OutputStream outputStream) throws IOException {
 		ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(zipOutputStream);
@@ -143,6 +192,13 @@ public class FileTree {
 		zipOutputStream.close();
 	}
 
+	/**
+	 * 压缩
+	 *
+	 * @param zos ZOS
+	 * @param bos BOS
+	 * @throws IOException io异常
+	 */
 	private void compress(ZipOutputStream zos, BufferedOutputStream bos) throws IOException {
 
 		for (String dirName : dirMap.keySet()) {

@@ -12,9 +12,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 列表钥匙值解析 器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class ListKeyValueParser implements MdContentParser<Map<String, String>, String> {
 
+	/**
+	 * 解析
+	 *
+	 * @param content 内容
+	 * @return {@code Map<String, String> }
+	 */
 	@Override
 	public Map<String, String> parse(Object content) {
 
@@ -39,6 +51,12 @@ public class ListKeyValueParser implements MdContentParser<Map<String, String>, 
 		return map;
 	}
 
+	/**
+	 * 写入
+	 *
+	 * @param map 地图
+	 * @return {@code String }
+	 */
 	@Override
 	public String write(Map<String, String> map) {
 

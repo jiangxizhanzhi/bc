@@ -23,15 +23,34 @@ import com.cyberpeace.cr.teamtrain.dao.mapper.TeamCommonDeviceMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
 
+/**
+ * 团队常见装置Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMapper, TeamCommonDevice> implements TeamCommonDeviceService {
 
+	/**
+	 * 团队常见装置Mapper
+	 */
 	@Autowired
 	private TeamCommonDeviceMapper teamCommonDeviceMapper;
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 过滤可见常用设备
+	 *
+	 * @param roomId           房间id
+	 * @param allCommonDevices 所有常见设备
+	 * @return {@code List<TeamCommonDeviceContext> }
+	 */
 	@Override
 	public List<TeamCommonDeviceContext> filterVisibleCommonDevices(String roomId,
 			List<TeamCommonDeviceContext> allCommonDevices) {
@@ -63,16 +82,34 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 		return commonDeviceList;
 	}
 
+	/**
+	 * 获取收集常见设备
+	 *
+	 * @param roomId        房间id
+	 * @param collectUserId 收集用户id
+	 * @return {@code List<TeamCommonDevice> }
+	 */
 	@Override
 	public List<TeamCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId) {
 		return teamCommonDeviceMapper.selectByCollectUserAndRoomId(roomId, collectUserId);
 	}
 
+	/**
+	 * 获取都收集常见装置设备
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<TeamCommonDevice> }
+	 */
 	@Override
 	public List<TeamCommonDevice> getAllCollectedCommonDeviceDevices(String roomId) {
 		return teamCommonDeviceMapper.selectAllDevices(roomId);
 	}
 
+	/**
+	 * 新增列表自收集
+	 *
+	 * @param commonDeviceContextList 常见设备上下文列表
+	 */
 	@Override
 	public void addListToCollect(List<TeamCommonDeviceContext> commonDeviceContextList) {
 		List<TeamCommonDevice> commonDeviceList = commonDeviceContextList.stream().map(item -> {
@@ -89,6 +126,11 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 		teamCommonDeviceMapper.insertList(commonDeviceList);
 	}
 
+	/**
+	 * 新增自收集
+	 *
+	 * @param commonDeviceContext 通用设备上下文
+	 */
 	@Override
 	public void addToCollect(TeamCommonDeviceContext commonDeviceContext) {
 		TeamCommonDevice commonDevice = new TeamCommonDevice();
@@ -101,16 +143,31 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 		teamCommonDeviceMapper.insert(commonDevice);
 	}
 
+	/**
+	 * del collect
+	 *
+	 * @param resourceId 资源id
+	 */
 	@Override
 	public void delCollect(String resourceId) {
 		teamCommonDeviceMapper.deleteByResourceId(resourceId);
 	}
 
+	/**
+	 * 删除由装置id
+	 *
+	 * @param nodeId 节点id
+	 */
 	@Override
 	public void deleteByDeviceId(String nodeId) {
 		teamCommonDeviceMapper.deleteByDeviceId(nodeId);
 	}
 
+	/**
+	 * 戴尔由房间id
+	 *
+	 * @param roomId 房间id
+	 */
 	@Override
 	public void delByRoomId(String roomId) {
 		teamCommonDeviceMapper.deleteByRoomId(roomId);

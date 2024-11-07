@@ -5,15 +5,30 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 锻炼纸请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class ExercisePaperReq implements Serializable {
 
+	/**
+	 * 练习纸
+	 */
 	@ApiModelProperty(value = "演习文书")
 	private String exercisePaper;
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty(value = "房间id", required = true)
 	private String resourceId;
 
+	/**
+	 * 组哈希
+	 */
 	@ApiModelProperty(value = "分组", required = true)
 	private Integer groupHash;
 }

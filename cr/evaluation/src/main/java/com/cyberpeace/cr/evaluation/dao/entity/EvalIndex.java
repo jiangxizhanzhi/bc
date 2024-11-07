@@ -10,13 +10,18 @@ import lombok.Data;
 import lombok.Getter;
 
 /**
- * 
- * @TableName cr_eval_index
+ * 评估指数
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @TableName(value = "cr_eval_index")
 @Data
 public class EvalIndex extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 

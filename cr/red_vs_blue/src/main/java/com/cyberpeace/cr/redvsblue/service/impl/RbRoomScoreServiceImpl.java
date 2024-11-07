@@ -47,31 +47,64 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB房间得分Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> implements RbRoomScoreService {
 
+	/**
+	 * RB房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * RB时间管理Service
+	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 靶场任务提交Mapper
+	 */
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 获取角色得分信息
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<RoleScore> }
+	 */
 	@Override
 	public List<RoleScore> getRoleScoreInfo(String roomId) {
 		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.RbRoleGroup.RED);
@@ -128,6 +161,12 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return roleScores;
 	}
 
+	/**
+	 * 获取RB时间数据
+	 *
+	 * @param roomId 房间id
+	 * @return {@code TimeData }
+	 */
 	@Override
 	public TimeData getRbTimeData(String roomId) {
 		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(roomId);
@@ -152,6 +191,13 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return timeDate;
 	}
 
+	/**
+	 * 获取RB任务类别
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code XYData }
+	 */
 	@Override
 	public XYData getRbMissionCategory(String roomId, Integer roleType) {
 		// 获取场景实例下的任务hash
@@ -183,6 +229,13 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return new XYData(xData, yData);
 	}
 
+	/**
+	 * 获取RB成员排名
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getRbMembersRanking(String roomId, Integer roleType) {
 
@@ -206,6 +259,13 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return json;
 	}
 
+	/**
+	 * 获取RB任务评估
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getRbMissionEvaluation(String roomId, Integer roleType) {
 
@@ -252,6 +312,13 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return json;
 	}
 
+	/**
+	 * 获取RB领导板
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getRbLeaderBoard(String roomId, Integer roleType) {
 
@@ -286,6 +353,13 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return json;
 	}
 
+	/**
+	 * 获取RB得分进展
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getRbScoreProgress(String roomId, Integer roleType) {
 		// 获取实例实际开始时间和理论结束时间
@@ -308,6 +382,14 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 	}
 
+	/**
+	 * 获取得分进展
+	 *
+	 * @param timeData    时间数据
+	 * @param roomId      房间id
+	 * @param roleUserIds 角色用户id列表
+	 * @return {@code List<Integer> }
+	 */
 	private List<Integer> getScoreProgress(TimeData timeData, String roomId, RoleUserIds roleUserIds) {
 		// 一次取出所有用户的得分纪录
 		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(roomId,
@@ -324,11 +406,26 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return timeData.calculateCountByTime(taskTimes);
 	}
 
+	/**
+	 * 获取得分进展
+	 *
+	 * @param timeData  时间数据
+	 * @param roomId    房间id
+	 * @param roleGroup 角色组
+	 * @return {@code List<Integer> }
+	 */
 	private List<Integer> getScoreProgress(TimeData timeData, String roomId, CrRole.RbRoleGroup roleGroup){
 		RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, roleGroup));
 		return getScoreProgress(timeData, roomId, roleUserIds);
 	}
 
+	/**
+	 * 获取都RB得分进展
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getAllRbScoreProgress(String roomId, Integer roleType) {
 
@@ -357,6 +454,13 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return json;
 	}
 
+	/**
+	 * 获取RB任务进展
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getRbMissionProgress(String roomId, Integer roleType) {
 
@@ -404,6 +508,13 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return json;
 	}
 
+	/**
+	 * 获取用户得分任务数据
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code List<RankData> }
+	 */
 	private List<RankData> getUserScoreMissionData(String roomId, Integer roleType) {
 
 		// 获取角色组数据
@@ -475,10 +586,24 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 		return rankDataList;
 	}
+
+	/**
+	 * 获取角色信息
+	 *
+	 * @param roomId   房间id
+	 * @param roleType 角色类型
+	 * @return {@code RoleUserIds }
+	 */
 	private RoleUserIds getRoleInfo(String roomId, Integer roleType) {
 		return getRoleInfo(new RoleQuery(roomId, roleType));
 	}
 
+	/**
+	 * 获取角色信息
+	 *
+	 * @param roleQuery 角色查询
+	 * @return {@code RoleUserIds }
+	 */
 	private RoleUserIds getRoleInfo(RoleQuery roleQuery) {
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 

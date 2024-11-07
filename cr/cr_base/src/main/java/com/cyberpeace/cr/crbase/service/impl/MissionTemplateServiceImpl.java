@@ -28,21 +28,39 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 任务模板Service实现
+ *
  * @author SN
+ * @date 2024/11/07
  */
 @Service
 @Slf4j
 public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMapper, MissionTemplate> implements MissionTemplateService {
 
+	/**
+	 * 任务模板Mapper
+	 */
 	@Autowired
 	MissionTemplateMapper missionTemplateMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
+	/**
+	 * RTKS相关Service
+	 */
 	@Autowired
 	RtksRelatedService rtksRelatedService;
 
+	/**
+	 * 批量获取由任务方案JSON 格式
+	 *
+	 * @param schemeJson 方案 JSON
+	 * @return {@code List<MissionTemplate> }
+	 */
 	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
 		List<String> missionTemplateIds = getIdsByMissionsSchemeJson(schemeJson);
@@ -52,6 +70,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		return missionTemplateMapper.selectBatchIds(missionTemplateIds);
 	}
 
+	/**
+	 * 获取映射由id列表
+	 *
+	 * @param templateIds 模板id列表
+	 * @return {@code Map<String, MissionTemplate> }
+	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingByIds(List<String> templateIds) {
 		if (templateIds.isEmpty()) {
@@ -61,12 +85,23 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 				.toMap(MissionTemplate::getResourceId, missionTemplate -> missionTemplate));
 	}
 
+	/**
+	 * 获取映射由方案JSON 格式
+	 *
+	 * @param schemeJson 方案 JSON
+	 * @return {@code Map<String, MissionTemplate> }
+	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingBySchemeJson(String schemeJson) {
 		List<String> templateIds = getIdsByMissionsSchemeJson(schemeJson);
 		return getMappingByIds(templateIds);
 	}
 
+	/**
+	 * 批量插入
+	 *
+	 * @param missionTemplateList 任务模板列表
+	 */
 	@Override
 	public void batchInsert(List<MissionTemplate> missionTemplateList) {
 		if (missionTemplateList.isEmpty()) {
@@ -75,6 +110,11 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		missionTemplateMapper.batchInsert(missionTemplateList);
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param missionTemplateIds 任务模板id列表
+	 */
 	@Override
 	public void batchDelete(List<String> missionTemplateIds) {
 		if (missionTemplateIds.isEmpty()) {
@@ -91,6 +131,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 
 	}
 
+	/**
+	 * 批量更新业务模板id
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param missionTemplateIds 任务模板id列表
+	 */
 	@Override
 	public void batchUpdateBusinessTemplateId(String businessTemplateId,
 			List<String> missionTemplateIds) {
@@ -100,6 +146,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		missionTemplateMapper.batchUpdateBusinessTemplateId(businessTemplateId, missionTemplateIds);
 	}
 
+	/**
+	 * 获取id列表由任务方案JSON 格式
+	 *
+	 * @param schemeJson 方案 JSON
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getIdsByMissionsSchemeJson(String schemeJson) {
 		String reg = String.format(PatternConstant.RESOURCE_ID,
@@ -107,6 +159,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		return LocalStringUtil.getMatchStr(schemeJson, reg, 1);
 	}
 
+	/**
+	 * 地图跟业务
+	 *
+	 * @param missionTemplateIds 任务模板id列表
+	 * @return {@code Map<String, MissionTemplateRes> }
+	 */
 	@Override
 	public Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds) {
 		Map<String, MissionTemplateRes> mapping = Maps.newHashMap();
@@ -121,11 +179,23 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		return mapping;
 	}
 
+	/**
+	 * 获取id列表由业务模板id
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getIdsByBusinessTemplateId(String businessTemplateId) {
 		return missionTemplateMapper.selectByBusinessTemplateId(businessTemplateId);
 	}
 
+	/**
+	 * 获取映射由方案JSON 格式列表
+	 *
+	 * @param schemeJsonList scheme JSON 列表
+	 * @return {@code Map<String, MissionTemplate> }
+	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList) {
 		List<String> templateIds = new ArrayList<>();
@@ -135,6 +205,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		return getMappingByIds(templateIds);
 	}
 
+	/**
+	 * 获取批量由id列表
+	 *
+	 * @param missionTemplateIds 任务模板id列表
+	 * @return {@code List<MissionTemplate> }
+	 */
 	@Override
 	public List<MissionTemplate> getBatchByIds(Collection<String> missionTemplateIds) {
 		if (CollectionUtils.isEmpty(missionTemplateIds)) {

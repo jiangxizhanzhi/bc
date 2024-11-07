@@ -21,6 +21,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 单训练统计学控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "单兵训练统计")
 @RestController
 @RequestMapping("/cr/admin/single_train_statistics")
@@ -28,10 +34,18 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class SingleTrainStatisticsController {
 
+    /**
+     * 单训练统计学
+     */
     @Autowired
     SingleTrainStatisticsService singleTrainStatistics;
 
 
+    /**
+     * 获取都个人排
+     *
+     * @return {@code BaseRsp<List<SinglePersonalStatisticsBo>> }
+     */
     @GetMapping("/personal_rank")
     @ApiOperation("单兵训练个人排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
@@ -40,6 +54,11 @@ public class SingleTrainStatisticsController {
         return new BaseRsp<>(rsp);
     }
 
+    /**
+     * 获取组织排
+     *
+     * @return {@code BaseRsp<List<SingleOrganizationStatisticsBo>> }
+     */
     @GetMapping("/organization_rank")
     @ApiOperation("单兵训练组织排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
@@ -49,6 +68,12 @@ public class SingleTrainStatisticsController {
     }
 
 
+    /**
+     * 获取都详情
+     *
+     * @param detailReq 详情请求体
+     * @return {@code BaseRsp<ListRsp<SingleStatisticsDetailBo>> }
+     */
     @GetMapping("/detail")
     @ApiOperation("单兵训练统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)

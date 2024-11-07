@@ -8,13 +8,18 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 /**
- * 
- * @TableName cr_eval_collection
+ * EVAL 系列
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @TableName(value = "cr_eval_collection")
 @Data
 public class EvalCollection extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 

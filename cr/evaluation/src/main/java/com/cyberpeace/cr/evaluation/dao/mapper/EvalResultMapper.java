@@ -6,7 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 /**
- * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalResult
+ * 评估结果Mapper
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Mapper
 @Repository

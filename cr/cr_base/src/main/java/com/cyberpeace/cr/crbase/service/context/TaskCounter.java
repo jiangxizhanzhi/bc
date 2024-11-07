@@ -5,14 +5,26 @@ import lombok.Getter;
 
 /**
  * 任务统计计数结果
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class TaskCounter {
 
+	/**
+	 * 完成
+	 */
 	private Integer finished;
 
+	/**
+	 * 释放
+	 */
 	private Integer released;
 
+	/**
+	 * 未发布
+	 */
 	private Integer notReleased;
 
 	public enum TaskType {

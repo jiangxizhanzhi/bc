@@ -20,13 +20,29 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 
+/**
+ * 评估场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Service
 public class EvalSceneServiceImpl implements EvalSceneService {
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 视图场景
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param topoId    拓扑id
+	 * @return {@code SceneViewContext }
+	 */
 	@Override
 	public SceneViewContext viewScene(String mpSceneId, String topoId) {
 
@@ -56,6 +72,12 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 		return null;
 	}
 
+	/**
+	 * 停场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopScene(LocalScene localScene) {
 
@@ -70,6 +92,13 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 		return true;
 	}
 
+	/**
+	 * 获取元素流列表上下文
+	 *
+	 * @param evalTaskFlowListQuery 评估任务流列表查询
+	 * @param evalTask              评估任务
+	 * @return {@code ElementFlowListContext }
+	 */
 	@Override
 	public ElementFlowListContext getElementFlowListContext(
 			EvalTaskFlowListQuery evalTaskFlowListQuery, EvalTask evalTask) {

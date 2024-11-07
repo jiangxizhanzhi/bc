@@ -15,26 +15,35 @@ import com.cyberpeace.integratation.model.scene.FlowInfo;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 
 /**
+ * 靶场场景Service
  *
+ * @author SN
+ * @date 2024/11/07
  */
 public interface CrSceneService {
 
-	/** 保存、更新拓扑
+	/**
+	 * 保存、更新拓扑
+	 *
 	 * @param sceneConfigData 场景配置数据
-	 * @param businessCode 训练类型
-	 * @param topoId 拓扑id
+	 * @param businessCode    训练类型
+	 * @param topoId          拓扑id
 	 * @return 拓扑id
 	 */
 	String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
 			String topoId);
 
-	/** 获取流量文件路径
+	/**
+	 * 获取流量文件路径
+	 *
 	 * @param flowId 流量id
 	 * @return 流量文件路径
 	 */
 	String getFlowFilePath(String flowId);
 
-	/** 获取场景节点下流量（mp格式）列表
+	/**
+	 * 获取场景节点下流量（mp格式）列表
+	 *
 	 * @param mpSceneId
 	 * @param topoId
 	 * @param nodeId
@@ -42,47 +51,61 @@ public interface CrSceneService {
 	 */
 	List<FlowInfo> getNodeFlowContextList(String mpSceneId, String topoId, String nodeId);
 
-	/** 获取靶场场景节点下流量列表
+	/**
+	 * 获取靶场场景节点下流量列表
+	 *
 	 * @param elementFlowListContext 节点流量查询体
 	 * @return 节点流量列表
 	 */
 	ListRsp<ElementFlow> getCrFlowList(ElementFlowListContext elementFlowListContext);
 
-	/** 更新流量参数
+	/**
+	 * 更新流量参数
+	 *
 	 * @param flowOpsContext 流量操作上下文
 	 * @return 布尔值
 	 */
 	Boolean updateFlowParam(FlowOpsContext flowOpsContext);
 
-	/** 启动流量
-	 * @param mpSceneId 中台场景id
-	 * @param nodeId 节点id
-	 * @param flows 流量列表
+	/**
+	 * 启动流量
+	 *
+	 * @param mpSceneId  中台场景id
+	 * @param nodeId     节点id
+	 * @param flows      流量列表
+	 * @param businessId 业务id
 	 * @return 启动结果（布尔值）
 	 */
 	Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
 			String businessId);
 
-	/** 启动场景节点下所有流量
-	 * @param mpSceneId 中台场景id
-	 * @param nodeId 节点id
-	 * @param runType 启动类型
+	/**
+	 * 启动场景节点下所有流量
+	 *
+	 * @param mpSceneId  中台场景id
+	 * @param nodeId     节点id
+	 * @param runType    启动类型
+	 * @param businessId 业务id
 	 * @return 启动结果（布尔值）
 	 */
 	Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType, String businessId);
 
-	/** 获取节点流量列表
+	/**
+	 * 获取节点流量列表
+	 *
 	 * @param mpSceneId 中台场景id
-	 * @param topoId 拓扑id
-	 * @param nodeId 节点id
+	 * @param topoId    拓扑id
+	 * @param nodeId    节点id
 	 * @return 节点流量列表
 	 */
 	List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId);
 
-	/** 设置节点流量状态
+	/**
+	 * 设置节点流量状态
+	 *
 	 * @param elementFlowList 节点流量列表数据
-	 * @param mpSceneId 中台场景id
-	 * @param nodeId 节点id
+	 * @param mpSceneId       中台场景id
+	 * @param nodeId          节点id
 	 * @return 节点流量列表
 	 */
 	List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList, String mpSceneId,
@@ -90,9 +113,11 @@ public interface CrSceneService {
 
 	/**
 	 * 获取资产列表
+	 * <p>
+	 * <p>
 	 * 不做分页
 	 *
-	 * @param req               请求体
+	 * @param req           请求体
 	 * @param withHostState 实时主机状态
 	 * @return {@code List<JSONObject>}
 	 */

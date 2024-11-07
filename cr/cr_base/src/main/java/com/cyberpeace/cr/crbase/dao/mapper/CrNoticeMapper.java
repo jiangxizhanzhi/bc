@@ -5,6 +5,12 @@ import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+/**
+ * 靶场通知映射
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Mapper
 @Repository
 public interface CrNoticeMapper extends BaseMapper<CrNotice> {

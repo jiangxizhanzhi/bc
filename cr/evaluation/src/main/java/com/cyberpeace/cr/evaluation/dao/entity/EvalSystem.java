@@ -9,13 +9,18 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 
- * @TableName cr_eval_system
+ * 评估系统
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @TableName(value = "cr_eval_system")
 @Data
 public class EvalSystem extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("ID")
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -38,12 +43,21 @@ public class EvalSystem extends BaseTable {
 	@ApiModelProperty("连线信息")
 	private String connlist;
 
+	/**
+	 * 第一指数数量
+	 */
 	@ApiModelProperty("一级指标数量")
 	private Integer firstIndexNum;
 
+	/**
+	 * 第二指数数量
+	 */
 	@ApiModelProperty("二级指标数量")
 	private Integer secondIndexNum;
 
+	/**
+	 * 第三指数数量
+	 */
 	@ApiModelProperty("三级指标数量")
 	private Integer thirdIndexNum;
 

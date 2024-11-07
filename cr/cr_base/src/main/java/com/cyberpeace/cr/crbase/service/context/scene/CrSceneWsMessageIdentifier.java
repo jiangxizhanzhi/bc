@@ -6,9 +6,15 @@ import lombok.Data;
 
 /**
  * 场景ws标识
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class CrSceneWsMessageIdentifier extends WsMessageIdentifier {
 
+	/**
+	 * 业务id
+	 */
 	private String business_id;
 }

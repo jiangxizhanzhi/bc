@@ -23,13 +23,20 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 文件实用程序
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 public class FileUtil {
 
 	/**
 	 * 校验允许的类型
+	 *
 	 * @param file
-	 * @param fileSuffix
+	 * @param fileSuffix 文件后缀
 	 */
 	public static void validateSuffix(MultipartFile file, String... fileSuffix) {
 		if (null == file) {
@@ -50,8 +57,9 @@ public class FileUtil {
 
 	/**
 	 * 校验不允许的类型
+	 *
 	 * @param file
-	 * @param fileSuffix
+	 * @param fileSuffix 文件后缀
 	 */
 	public static void validateNotAccessFile(MultipartFile file, String... fileSuffix) {
 		if (null == file) {
@@ -68,6 +76,14 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * 保存文件
+	 *
+	 * @param file     文件
+	 * @param basePath
+	 * @return {@code File }
+	 * @throws IOException io异常
+	 */
 	public static File saveFile(MultipartFile file, String basePath) throws IOException {
 		String originalFilename = file.getOriginalFilename();
 		assert originalFilename != null;
@@ -81,6 +97,12 @@ public class FileUtil {
 		return newFile;
 	}
 
+	/**
+	 * mkdirs
+	 *
+	 * @param path 路径
+	 * @return {@code File }
+	 */
 	public static File mkdirs(String path) {
 		File file = new File(path);
 		if (!file.exists()) {
@@ -91,8 +113,9 @@ public class FileUtil {
 
 	/**
 	 * 获取文件名称
+	 *
 	 * @param filePath 文件路径
-	 * @param suffix 是否包含后缀
+	 * @param suffix   是否包含后缀
 	 * @return
 	 */
 	public static String getFileName(String filePath, Boolean suffix) {
@@ -116,6 +139,7 @@ public class FileUtil {
 
 	/**
 	 * 读取文件内容
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -148,6 +172,7 @@ public class FileUtil {
 
 	/**
 	 * 以行读取文件 返回行数据列表
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -181,9 +206,11 @@ public class FileUtil {
 
 	/**
 	 * 文件拷贝
+	 *
 	 * @param path
 	 * @param dest
 	 * @param rename true=已存在修改名称 false已存在则覆盖
+	 * @return {@code String }
 	 */
 	public static String copyFile(String path, String dest, boolean rename) {
 
@@ -226,9 +253,10 @@ public class FileUtil {
 
 	/**
 	 * 将字符串写入文件
+	 *
 	 * @param data 要写入的字符串
-	 * @param osw 输出流
-	 * @throws IOException
+	 * @param osw  输出流
+	 * @throws IOException io异常
 	 */
 	public static void writeString(String data, OutputStreamWriter osw) throws IOException {
 		try {
@@ -249,8 +277,9 @@ public class FileUtil {
 
 	/**
 	 * 文件写到目的文件夹
+	 *
 	 * @param data
-	 * @param destFilePath
+	 * @param destFilePath 目标文件路径
 	 */
 	public static void writeToDestFile(String data, String destFilePath) {
 
@@ -278,10 +307,10 @@ public class FileUtil {
 	}
 
 	/**
-	 * @Author 陈卓
-	 * 生成文件响应
-	 * @param file 返回的文件
-	 * @param delete 是否删除本地文件
+	 * 设置响应
+	 *
+	 * @param file     返回的文件
+	 * @param delete   是否删除本地文件
 	 * @param response 响应
 	 */
 	public static void setResponse(File file, Boolean delete, HttpServletResponse response) {
@@ -324,6 +353,7 @@ public class FileUtil {
 
 	/**
 	 * 递归删除文件夹
+	 *
 	 * @param dir 要删除的文件夹
 	 * @return true: 删除成功； false: 删除失败
 	 */
@@ -343,9 +373,10 @@ public class FileUtil {
 
 	/**
 	 * 文件目录拷贝 如果存在则覆盖
+	 *
 	 * @param dir
 	 * @param destDir
-	 * @param self true=目录拷贝进目标文件夹 false=把目录下文件拷贝进目标文件夹
+	 * @param self    true=目录拷贝进目标文件夹 false=把目录下文件拷贝进目标文件夹
 	 */
 	public static void copyDirectory(String dir, String destDir, Boolean self) {
 
@@ -393,8 +424,9 @@ public class FileUtil {
 
 	/**
 	 * 根据传入的根目录 获取对应的目录名称的文件路径列表
+	 *
 	 * @param rootFile
-	 * @param depth 深度 无限往下则为null
+	 * @param depth       深度 无限往下则为null
 	 * @param includeFile 是否包含文件 true包含 false不包含
 	 * @return
 	 */
@@ -477,6 +509,7 @@ public class FileUtil {
 
 	/**
 	 * 获取文件夹下的一个文件
+	 *
 	 * @param path
 	 * @param fileSuffix
 	 * @return
@@ -507,6 +540,7 @@ public class FileUtil {
 
 	/**
 	 * 文件重命名
+	 *
 	 * @param dest
 	 * @return
 	 */
@@ -519,6 +553,8 @@ public class FileUtil {
 
 	/**
 	 * 获取新文件名且不重复 可传入文件路径和名称
+	 *
+	 * @param nameOrPath 名称或路径
 	 * @return
 	 */
 	public static String getNewName(String nameOrPath) {
@@ -542,9 +578,9 @@ public class FileUtil {
 
 	/**
 	 * 校验文件后缀名
+	 *
 	 * @param destFilePath 目标文件地址 文件名称和绝对路径均可以
-	 * @param fileTypeStr 文件后缀字符串 可参考FileTypeContant传入数据
-	 * @return
+	 * @param fileTypeStr  文件后缀字符串 可参考FileTypeContant传入数据
 	 */
 	public static void validateFileSuffix(String destFilePath, String fileTypeStr) {
 
@@ -586,6 +622,7 @@ public class FileUtil {
 
 	/**
 	 * 获取文件后缀名称
+	 *
 	 * @param filePath
 	 * @return
 	 */
@@ -600,8 +637,9 @@ public class FileUtil {
 
 	/**
 	 * 文件夹目录删除
+	 *
 	 * @param destDir
-	 * @param self
+	 * @param self    自我
 	 */
 	public static void deleteDir(String destDir, boolean self) {
 		File file = new File(destDir);
@@ -639,6 +677,14 @@ public class FileUtil {
 		
 	}
 
+	/**
+	 * 获取哈希256
+	 *
+	 * @param file 文件
+	 * @return {@code String }
+	 * @throws IOException              io异常
+	 * @throws NoSuchAlgorithmException 没有这样算法例外
+	 */
 	public static String getHash256(File file) throws IOException, NoSuchAlgorithmException {
 		String value = "";
 		try (InputStream fis = new FileInputStream(file)) {
@@ -661,7 +707,8 @@ public class FileUtil {
 
 	/**
 	 * 创建父级目录
-	 * @param filePath
+	 *
+	 * @param filePath 文件路径
 	 */
 	public static void createParentPath(String filePath) {
 
@@ -671,10 +718,22 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * 复制文件
+	 *
+	 * @param originFile origin 文件
+	 * @param destFile   dest 文件
+	 */
 	public static void copyFile(String originFile, String destFile) {
 		copyFile(new File(originFile), new File(destFile));
 	}
 
+	/**
+	 * 复制文件
+	 *
+	 * @param file     文件
+	 * @param destFile dest 文件
+	 */
 	public static void copyFile(File file, File destFile) {
 
 		try {
@@ -686,6 +745,11 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * 创建路径
+	 *
+	 * @param file 文件
+	 */
 	public static void createPath(File file) {
 
 		if (file.exists()) {
@@ -695,6 +759,12 @@ public class FileUtil {
 		file.mkdirs();
 	}
 
+	/**
+	 * 创建多个路径
+	 *
+	 * @param parentPath 父路径
+	 * @param children   子级
+	 */
 	public static void createManyPath(String parentPath, String... children) {
 		for (String child : children) {
 			createPath(new File(parentPath, child));

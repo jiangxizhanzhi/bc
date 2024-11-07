@@ -2,14 +2,32 @@ package com.cyberpeace.common.model.scene;
 
 import java.io.Serializable;
 
+/**
+ * MQ 上下文
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public class MqContext implements Serializable {
 
+	/**
+	 * 用户id
+	 */
 	private String USER_ID;
 
+	/**
+	 * 叫链id
+	 */
 	private String CALL_CHAIN_ID;
 
+	/**
+	 * 现场
+	 */
 	private Locale LOCALE;
 
+	/**
+	 * 通过
+	 */
 	private String PASS_THROUGH;
 
 	public String getPassThrough() {

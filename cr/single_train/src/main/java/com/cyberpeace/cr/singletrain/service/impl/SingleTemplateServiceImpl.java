@@ -36,27 +36,51 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 单模板Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper, SingleTemplate> implements SingleTemplateService {
 
+	/**
+	 * 单模板Mapper
+	 */
 	@Autowired
 	private SingleTemplateMapper singleTemplateMapper;
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 单兵训练模板获取
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code SingleTemplateBo }
 	 */
 	@Override
 	public SingleTemplateBo get(String businessTemplateId) {
@@ -88,9 +112,10 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 
 	/**
 	 * 单兵训练模板更新
+	 *
 	 * @param businessTemplateId cr_business_template.resource_id
-	 * @param baseInfo 训练基础数据
-	 * @param missionsScheme 训练任务方案
+	 * @param baseInfo           训练基础数据
+	 * @param missionsScheme     训练任务方案
 	 * @return 更新后的单兵训练数据对象
 	 */
 	@Override
@@ -127,11 +152,23 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		return get(businessTemplateId);
 	}
 
+	/**
+	 * 获取由业务模板id
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code SingleTemplate }
+	 */
 	@Override
 	public SingleTemplate getByBusinessTemplateId(String businessTemplateId) {
 		return singleTemplateMapper.getByBusinessId(businessTemplateId);
 	}
 
+	/**
+	 * 获取任务模板id列表由任务方案
+	 *
+	 * @param missionsScheme 任务计划
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getMissionTemplateIdsByMissionsScheme(String missionsScheme) {
 		CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(missionsScheme,
@@ -142,6 +179,12 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		return missionTemplateIds;
 	}
 
+	/**
+	 * 获取单矩阵
+	 *
+	 * @param btId BT系列id
+	 * @return {@code SingleMatrixProgressRsp }
+	 */
 	@Override
 	public SingleMatrixProgressRsp getSingleMatrix(String btId) {
 		SingleMatrixProgressRsp rsp = new SingleMatrixProgressRsp();
@@ -175,7 +218,13 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		return rsp;
 	}
 
-    private JSONObject getMissionTemplates(String missionsScheme) {
+	/**
+	 * 获取任务模板
+	 *
+	 * @param missionsScheme 任务计划
+	 * @return {@code JSONObject }
+	 */
+	private JSONObject getMissionTemplates(String missionsScheme) {
 		// get missionTemplates mapping
 		Map<String, MissionTemplate> mapping = missionTemplateService
 				.getMappingBySchemeJson(missionsScheme);

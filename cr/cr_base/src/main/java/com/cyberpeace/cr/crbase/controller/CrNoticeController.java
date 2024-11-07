@@ -25,15 +25,30 @@ import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 靶场通知控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "公告")
 @RestController
 @Slf4j
 @RequestMapping("/cr/notice")
 public class CrNoticeController {
 
+	/**
+	 * 靶场通知Service
+	 */
 	@Autowired
 	private CrNoticeService crNoticeService;
 
+	/**
+	 * 新增
+	 *
+	 * @param crNoticeReq 靶场通知请求体
+	 * @return {@code BaseRsp<CrNotice> }
+	 */
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(
@@ -44,6 +59,12 @@ public class CrNoticeController {
 		return new BaseRsp<CrNotice>();
 	}
 
+	/**
+	 * 更新顶部
+	 *
+	 * @param crNoticeReq 靶场通知请求体
+	 * @return {@code BaseRsp<CrNotice> }
+	 */
 	@ApiOperation("置顶取消置顶")
 	@PostMapping("/top")
 	@RequiresPermissions(
@@ -56,6 +77,12 @@ public class CrNoticeController {
 		return new BaseRsp<CrNotice>(notice);
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param crNoticeReq 靶场通知请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("删除")
 	@PostMapping("/delete")
 	@RequiresPermissions(
@@ -66,6 +93,12 @@ public class CrNoticeController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * RBBlist
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<List<CrNoticeRsp>> }
+	 */
 	@ApiOperation("红蓝查询")
 	@GetMapping("/rb/list")
 	@RequiresPermissions(
@@ -77,6 +110,13 @@ public class CrNoticeController {
 		return new BaseRsp<List<CrNoticeRsp>>(res);
 	}
 
+	/**
+	 * 有新信息
+	 *
+	 * @param resource_id 资源id
+	 * @param is_rb       是 RB
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("查询是否有新消息")
 	@GetMapping("/hasNewInfo")
 	@RequiresPermissions(
@@ -90,6 +130,12 @@ public class CrNoticeController {
 	}
 
 
+	/**
+	 * 团队名单
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<List<CrNoticeRsp>> }
+	 */
 	@ApiOperation("团队查询")
 	@GetMapping("/teamList/list")
 	@RequiresPermissions(

@@ -55,33 +55,66 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 团队训练得分控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "团队训练评分")
 @RestController
 @RequestMapping("/cr/training_team/training_team")
 @Slf4j
 public class TeamTrainScoreController {
 
+	/**
+	 * 团队房间Service
+	 */
 	@Autowired
 	TeamRoomService teamRoomService;
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 靶场得分控制器
+	 */
 	@Autowired
 	private CrScoreController crScoreController;
 
+	/**
+	 * 靶场得分Service
+	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
-	
+
+	/**
+	 * 训练记录Service
+	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
+	/**
+	 * 转 储训练记录2PDF格式
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param roomId              房间id
+	 */
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -118,6 +151,12 @@ public class TeamTrainScoreController {
 		}
 	}
 
+	/**
+	 * 转 储训练记录2PDF格式1
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param roomId              房间id
+	 */
 	@ApiOperation("训练记录导出为html")
 	@GetMapping("/train2html")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -145,6 +184,12 @@ public class TeamTrainScoreController {
 
 	}
 
+	/**
+	 * 获取训练记录JSON 格式对象
+	 *
+	 * @param roomId 房间id
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject getTrainRecordJsonObject(String roomId) {
 		JSONObject jsonObject = new JSONObject();
 
@@ -185,6 +230,13 @@ public class TeamTrainScoreController {
 	}
 
 
+	/**
+	 * 获取学员得分
+	 *
+	 * @param resource_id 资源id
+	 * @param user_hash   用户哈希
+	 * @return {@code BaseRsp<StudentScoreRsp> }
+	 */
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -203,6 +255,12 @@ public class TeamTrainScoreController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 更新学员得分
+	 *
+	 * @param studentScoreReq 学员得分请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("提交学员评分")
 	@PostMapping("/student_score")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -218,6 +276,12 @@ public class TeamTrainScoreController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 更新提交评估
+	 *
+	 * @param submitEvaluationReq 提交评估请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -252,6 +316,8 @@ public class TeamTrainScoreController {
 	/**
 	 * 获取动态事件
 	 *
+	 * @param resource_id 资源id
+	 * @param student_id  学员id
 	 * @return
 	 */
 	@ApiOperation("获取学员动态事件")
@@ -270,6 +336,7 @@ public class TeamTrainScoreController {
 	/**
 	 * 获取训练报告 - 任务信息统计
 	 *
+	 * @param resource_id 资源id
 	 * @return
 	 */
 	@ApiOperation("获取任务信息统计")
@@ -289,6 +356,8 @@ public class TeamTrainScoreController {
 	/**
 	 * 获取训练报告 - 任务信息统计
 	 *
+	 * @param resource_id 资源id
+	 * @param user_hash   用户哈希
 	 * @return
 	 */
 	@ApiOperation("获取用户训练记录")
@@ -311,6 +380,7 @@ public class TeamTrainScoreController {
 	/**
 	 * 获取训练报告 - 任务信息统计
 	 *
+	 * @param resource_id 资源id
 	 * @return
 	 */
 	@ApiOperation("获取用户训练报告")
@@ -352,6 +422,12 @@ public class TeamTrainScoreController {
 		return new BaseRsp<>(trainingReport);
 	}
 
+	/**
+	 * 获取期间
+	 *
+	 * @param trainingTime 训练时间
+	 * @return {@code String }
+	 */
 	private String getDuration(Integer trainingTime) {
 		String duration = "";
 		// 几天几小时
@@ -393,6 +469,12 @@ public class TeamTrainScoreController {
 
 	}
 
+	/**
+	 * 获取阶段RSP
+	 *
+	 * @param missionSchemeList 任务计划列表
+	 * @return {@code List<StageExport> }
+	 */
 	private List<StageExport>
 			getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
 		List<StageExport> stageExports = Lists.newArrayList();

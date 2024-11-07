@@ -2,6 +2,9 @@ package com.cyberpeace.common.constant;
 
 /**
  * rabbitmq监听的队列名统一管理
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 public interface RabbitmqQueueName {
 

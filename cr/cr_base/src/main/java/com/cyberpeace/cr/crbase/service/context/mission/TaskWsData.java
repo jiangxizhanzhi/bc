@@ -6,10 +6,16 @@ import lombok.Data;
 
 /**
  * 任务相关ws的data部分
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class TaskWsData implements Serializable {
 
+	/**
+	 * 代号
+	 */
 	private Integer code;
 
 	public TaskWsData(Integer code) {

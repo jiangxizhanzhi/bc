@@ -15,14 +15,27 @@ import com.cyberpeace.cr.evaluation.service.EvalIndexService;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
 
 /**
+ * 评估指数Service实现
  *
+ * @author SN
+ * @date 2024/11/07
  */
 @Service
 public class EvalIndexServiceImpl extends ServiceImpl<EvalIndexMapper, EvalIndex> implements EvalIndexService {
 
+	/**
+	 * 评估指数Mapper
+	 */
 	@Autowired
 	private EvalIndexMapper evalIndexMapper;
 
+	/**
+	 * 获取指标由评估系统id
+	 *
+	 * @param systemId 系统id
+	 * @param level    水平
+	 * @return {@code List<IndexContext> }
+	 */
 	@Override
 	public List<IndexContext> getIndexesByEvalSystemId(String systemId, Integer level) {
 
@@ -44,6 +57,11 @@ public class EvalIndexServiceImpl extends ServiceImpl<EvalIndexMapper, EvalIndex
 		return indexContextList;
 	}
 
+	/**
+	 * 删除批量由评估系统id
+	 *
+	 * @param evalSystemId 评估系统id
+	 */
 	@Override
 	public void deleteBatchByEvalSystemId(String evalSystemId) {
 		evalIndexMapper.deleteBatchByEvalSystemId(evalSystemId);

@@ -19,20 +19,43 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * RB训练统计学
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class RbTrainingStatistics extends CrEventStatistics {
 
+	/**
+	 * 靶场角色Mapper
+	 */
 	@Autowired
 	CrRoleMapper crRoleMapper;
 
+	/**
+	 * RB房间Mapper
+	 */
 	@Autowired
 	RbRoomMapper rbRoomMapper;
 
+	/**
+	 * 获取代号
+	 *
+	 * @return {@code LocalScene.BusinessCode }
+	 */
 	@Override
 	public LocalScene.BusinessCode getCode() {
 		return LocalScene.BusinessCode.RED_VS_BLUE;
 	}
 
+	/**
+	 * 获取训练计数
+	 *
+	 * @param userId 用户id
+	 * @return {@code TrainingCount }
+	 */
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
@@ -43,6 +66,12 @@ public class RbTrainingStatistics extends CrEventStatistics {
 		return rbRoomMapper.getTrainingCount(roomIds, RbRoom.TrainingStatusCode.ENDED.getCode());
 	}
 
+	/**
+	 * 获取相关训练
+	 *
+	 * @param userId 用户id
+	 * @return {@code List<TrainingData> }
+	 */
 	@Override
 	public List<TrainingData> getRelatedTraining(String userId) {
 		List<RoomRoleContext> roomRoleContexts = crRoleMapper.getRoomIdsAndRoleGroupByUserIdAndType(
@@ -76,6 +105,12 @@ public class RbTrainingStatistics extends CrEventStatistics {
 		return related;
 	}
 
+	/**
+	 * 获取州
+	 *
+	 * @param trainingStatus 训练状态
+	 * @return {@code Integer }
+	 */
 	private Integer getState(Integer trainingStatus) {
 		switch (trainingStatus) {
 			case 4:

@@ -6,11 +6,18 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice;
 import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
 
+/**
+ * 团队常见装置Service
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 
 	/**
 	 * 过滤可视常用资产
-	 * @param roomId 红蓝房间id
+	 *
+	 * @param roomId           红蓝房间id
 	 * @param allCommonDevices 全部常用资产
 	 * @return 已过滤常用资产
 	 */
@@ -19,7 +26,8 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 
 	/**
 	 * 根据团队房间id和设备添加人 查询已添加的常用设别列表
-	 * @param roomId 团队房间id
+	 *
+	 * @param roomId        团队房间id
 	 * @param collectUserId 设备添加人
 	 * @return 常用设备列表
 	 */
@@ -27,24 +35,29 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 
 	/**
 	 * 获取所有已添加为常用资产的 resourceIds
+	 *
+	 * @param roomId 房间id
 	 * @return 常用资产的 deviceIds
 	 */
 	List<TeamCommonDevice> getAllCollectedCommonDeviceDevices(String roomId);
 
 	/**
 	 * 批量添加常用资产
+	 *
 	 * @param commonDeviceContextList 常用资产列表
 	 */
 	void addListToCollect(List<TeamCommonDeviceContext> commonDeviceContextList);
 
 	/**
 	 * 添加常用设备
+	 *
 	 * @param commonDeviceContext 常用设备json
 	 */
 	void addToCollect(TeamCommonDeviceContext commonDeviceContext);
 
 	/**
 	 * 根据常用设备uuid删除
+	 *
 	 * @param resourceId 常用设备uuid
 	 */
 	void delCollect(String resourceId);
@@ -58,6 +71,7 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 
 	/**
 	 * 根据房间id删除 常用设备
+	 *
 	 * @param roomId 房间id
 	 */
 	void delByRoomId(String roomId);

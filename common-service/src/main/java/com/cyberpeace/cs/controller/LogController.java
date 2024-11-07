@@ -14,12 +14,24 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
+/**
+ * 日志控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "后台日志相关api")
 @RestController
 @RequestMapping("/cs/admin/log")
 @RequiresAuthentication
 public class LogController {
 
+	/**
+	 * 下载
+	 *
+	 * @param response 响应
+	 * @param name     名称
+	 */
 	@ApiOperation("下载日志")
 	@GetMapping("/downloadLog")
 	@RequiresPermissions(MenuConstant.CMS_SYSTEM_LOG)

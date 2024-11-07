@@ -43,6 +43,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * EVAL System Index 管理控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "后台-测试靶场-指标体系")
 @RestController
 @RequiresAuthentication
@@ -50,18 +56,36 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EvalSystemIndexAdminController {
 
+	/**
+	 * 评估指数Service
+	 */
 	@Autowired
 	private EvalIndexService evalIndexService;
 
+	/**
+	 * 评估系统Mapper
+	 */
 	@Autowired
 	private EvalSystemMapper evalSystemMapper;
 
+	/**
+	 * 评估系统Service
+	 */
 	@Autowired
 	private EvalSystemService evalSystemService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 新增评估指数
+	 *
+	 * @param evalSystemReq 评估系统请求体
+	 * @return {@code BaseRsp<EvalSystem> }
+	 */
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
@@ -81,6 +105,12 @@ public class EvalSystemIndexAdminController {
 		return new BaseRsp(evalSystemReq);
 	}
 
+	/**
+	 * 编辑 eval 索引
+	 *
+	 * @param evalSystemReq 评估系统请求体
+	 * @return {@code BaseRsp<EvalSystem> }
+	 */
 	@ApiOperation("编辑体系指标")
 	@PutMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
@@ -107,6 +137,12 @@ public class EvalSystemIndexAdminController {
 		return new BaseRsp(evalSystemReq);
 	}
 
+	/**
+	 * 保存评估指数
+	 *
+	 * @param evalSystemReq 评估系统请求体
+	 * @return {@code EvalSystem }
+	 */
 	private EvalSystem saveEvalIndex(@Validated @RequestBody EvalSystemReq evalSystemReq) {
 		validateReq(evalSystemReq);
 
@@ -137,6 +173,13 @@ public class EvalSystemIndexAdminController {
 		return evalSystem;
 	}
 
+	/**
+	 * 更改 connlist
+	 *
+	 * @param connlist       连接列表
+	 * @param thirdIndexList 第三个索引列表
+	 * @return {@code String }
+	 */
 	private String changeConnlist(String connlist, List<EvalIndex> thirdIndexList) {
 		for (EvalIndex evalIndex : thirdIndexList) {
 			connlist = connlist.replace(evalIndex.getEvalIndicatorId(), evalIndex.getResourceId());
@@ -144,6 +187,11 @@ public class EvalSystemIndexAdminController {
 		return connlist;
 	}
 
+	/**
+	 * 验证请求体
+	 *
+	 * @param req 请求体
+	 */
 	private void validateReq(EvalSystemReq req) {
 		String resourceId = req.getEvalSystemId();
 
@@ -161,6 +209,12 @@ public class EvalSystemIndexAdminController {
 				CrCommonConstants.MAX_DESC_LEN, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 	}
 
+	/**
+	 * 改变子级id列表
+	 *
+	 * @param secondIndexList 第二个索引列表
+	 * @param thirdIndexList  第三个索引列表
+	 */
 	private void changeChildrenIds(List<IndexContext> secondIndexList,
 			List<EvalIndex> thirdIndexList) {
 		Map<String, String> thirdIndexMaps = StreamApiUtils.toMap(thirdIndexList,
@@ -172,6 +226,12 @@ public class EvalSystemIndexAdminController {
 		}
 	}
 
+	/**
+	 * 获取评估指数
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<EvalSystemRsp> }
+	 */
 	@ApiOperation("查询体系指标")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
@@ -187,6 +247,12 @@ public class EvalSystemIndexAdminController {
 		return new BaseRsp(evalSystemRsp);
 	}
 
+	/**
+	 * 转换评估系统自评估系统响应
+	 *
+	 * @param evalSystem 评估系统
+	 * @return {@code EvalSystemRsp }
+	 */
 	private EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem) {
 		EvalSystemRsp evalSystemRsp = BeanUtils.copy(evalSystem, EvalSystemRsp.class);
 
@@ -201,6 +267,13 @@ public class EvalSystemIndexAdminController {
 		return evalSystemRsp;
 	}
 
+	/**
+	 * 转换指数请求体自指数
+	 *
+	 * @param indexContextList 索引上下文列表
+	 * @param level            水平
+	 * @return {@code List<EvalIndex> }
+	 */
 	private List<EvalIndex> convertIndexReqToIndex(List<IndexContext> indexContextList,
 			Integer level) {
 
@@ -232,6 +305,12 @@ public class EvalSystemIndexAdminController {
 		return evalIndexList;
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@DeleteMapping()
 	@ApiOperation("批量删除")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
@@ -242,6 +321,12 @@ public class EvalSystemIndexAdminController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<EvalSystemRsp>> }
+	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM,

@@ -43,44 +43,93 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Service
 public class RbSceneServiceImpl implements RbSceneService {
 
+	/**
+	 * 暂停标志
+	 */
 	private static final Integer PAUSE_FLAG = 1;
 
+	/**
+	 * 取消暂停标志
+	 */
 	private static final Integer UNPAUSE_FLAG = 2;
 
+	/**
+	 * RB房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 场景滤波器Service
+	 */
 	@Autowired
 	private SceneFilterService sceneFilterService;
 
+	/**
+	 * RB时间管理Service
+	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 靶场场景Service
+	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
+	/**
+	 * RB装置Service
+	 */
 	@Autowired
 	private RbDeviceService rbDeviceService;
 
+	/**
+	 * RB常见装置Service
+	 */
 	@Autowired
 	private RbCommonDeviceService rbCommonDeviceService;
 
+	/**
+	 * 开始场景
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code String }
+	 */
 	@Override
 	public String startScene(String roomId, String userId) {
 		// 1、权限校验，学员是不可以启动场景的
@@ -137,6 +186,13 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return sceneId;
 	}
 
+	/**
+	 * 创造当地场景
+	 *
+	 * @param room   房间
+	 * @param topoId 拓扑id
+	 * @return {@code LocalScene }
+	 */
 	private LocalScene createLocalScene(RbRoom room, String topoId) {
 		LocalScene localScene = new LocalScene();
 
@@ -157,6 +213,13 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return localScene;
 	}
 
+	/**
+	 * 视图场景
+	 *
+	 * @param roomId 房间id
+	 * @param roleId 角色id
+	 * @return {@code RbSceneViewContext }
+	 */
 	@Override
 	public RbSceneViewContext viewScene(String roomId, String roleId) {
 		RbSceneViewContext ret = new RbSceneViewContext();
@@ -217,6 +280,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return ret;
 	}
 
+	/**
+	 * 停场景
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopScene(String roomId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -259,6 +328,11 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return stopResult;
 	}
 
+	/**
+	 * 清除本地
+	 *
+	 * @param room 房间
+	 */
 	@Override
 	public void clearLocal(RbRoom room) {
 		String localSceneId = room.getLocalSceneId();
@@ -273,6 +347,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		});
 	}
 
+	/**
+	 * 暂停场景
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean pauseScene(String roomId) {
 		// 1. 校验场景存在和用户权限
@@ -302,6 +382,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return true;
 	}
 
+	/**
+	 * 取消暂停场景
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean unpauseScene(String roomId) {
 		// 1. 校验场景存在和用户权限
@@ -332,6 +418,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return true;
 	}
 
+	/**
+	 * 暂停操作前检查
+	 *
+	 * @param room 房间
+	 * @param flag 旗
+	 */
 	private void checkBeforePauseOps(RbRoom room, Integer flag) {
 		if (room == null) {
 			log.error("Room not exist, roomId:{}", room);
@@ -362,6 +454,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		}
 	}
 
+	/**
+	 * 获取流列表
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<Flow> }
+	 */
 	@Override
 	public List<Flow> getFlowList(String roomId) {
 		// 1.创建变量
@@ -421,6 +519,14 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return flows;
 	}
 
+	/**
+	 * 获取资产列表
+	 *
+	 * @param roomId   房间id
+	 * @param category 类别
+	 * @param name     名称
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getAssetList(String roomId, Integer category, String name) {
 		RbRoom room = rbRoomService.getOrExceptionById(roomId);
@@ -433,6 +539,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		}
 	}
 
+	/**
+	 * 获取节点统计学
+	 *
+	 * @param roomId 房间id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getNodeStatistics(String roomId) {
 		RbRoom room = rbRoomService.getOrExceptionById(roomId);
@@ -445,6 +557,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		}
 	}
 
+	/**
+	 * 获取中台场景数据
+	 *
+	 * @param room 房间
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject getMpSceneData(RbRoom room) {
 		String localSceneId = room.getLocalSceneId();
 		// localSceneId字段为空
@@ -482,6 +600,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return sceneData;
 	}
 
+	/**
+	 * 获取场景数据
+	 *
+	 * @param room 房间
+	 * @return {@code SceneData }
+	 */
 	public SceneData getSceneData(RbRoom room) {
 		JSONObject sceneData = getMpSceneData(room);
 		if (sceneData == null) {
@@ -490,6 +614,14 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return sceneData.toJavaObject(SceneData.class);
 	}
 
+	/**
+	 * 获取节点
+	 *
+	 * @param selfRole 自我角色
+	 * @param roleList 角色列表
+	 * @param roleId   角色id
+	 * @return {@code CrRoleNodesData }
+	 */
 	private CrRoleNodesData getNodes(CrRole selfRole, List<CrRole> roleList, String roleId) {
 
 		// 1、如果是学员角色，直接返回

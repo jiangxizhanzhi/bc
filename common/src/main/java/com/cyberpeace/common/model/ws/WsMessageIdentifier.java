@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
  * websocket标记的基类。
  *
  * @author yinqingrong
+ * @date 2024/11/07
  */
 public class WsMessageIdentifier implements Serializable {
 
@@ -19,10 +20,14 @@ public class WsMessageIdentifier implements Serializable {
 	 */
 	private String userId;
 
+	/**
+	 * 路径
+	 */
 	private String path;
 
 	/**
 	 * 获取业务id
+	 *
 	 * @return
 	 */
 	public String getIdentifierId() {
@@ -46,18 +51,38 @@ public class WsMessageIdentifier implements Serializable {
 		return stringBuilder.toString();
 	}
 
+	/**
+	 * 获取用户id
+	 *
+	 * @return {@code String }
+	 */
 	public String getUserId() {
 		return userId;
 	}
 
+	/**
+	 * 设置用户id
+	 *
+	 * @param userId 用户id
+	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
+	/**
+	 * 获取路径
+	 *
+	 * @return {@code String }
+	 */
 	public String getPath() {
 		return path;
 	}
 
+	/**
+	 * 设置路径
+	 *
+	 * @param path 路径
+	 */
 	public void setPath(String path) {
 		this.path = path;
 	}

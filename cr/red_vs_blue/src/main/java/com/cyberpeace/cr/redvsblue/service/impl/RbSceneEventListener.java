@@ -23,30 +23,64 @@ import com.cyberpeace.cs.service.impl.MessageListener;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB场景事件听者
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RbSceneEventListener extends MessageListener {
 
+	/**
+	 * Web 套接字处理程序
+	 */
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
 
+	/**
+	 * RB房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * RB场景Service
+	 */
 	@Autowired
 	private RbSceneService rbSceneService;
 
+	/**
+	 * 靶场事件听者助手
+	 */
 	@Autowired
 	private CrEventListenerHelper crEventListenerHelper;
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 声明消息类型
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer declareMessageType() {
 		return LocalScene.BusinessCode.RED_VS_BLUE.getCode();
 	}
 
+	/**
+	 * 上场景删除
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		RbRoom room = rbRoomService.getById(businessId);
@@ -54,12 +88,28 @@ public class RbSceneEventListener extends MessageListener {
 		return true;
 	}
 
+	/**
+	 * 上场景开始过程
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
 		return true;
 	}
 
+	/**
+	 * 上场景元素
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		// get roles
@@ -86,8 +136,9 @@ public class RbSceneEventListener extends MessageListener {
 
 	/**
 	 * 场景消息统一推送
+	 *
 	 * @param data
-	 * @param businessId
+	 * @param businessId 业务id
 	 */
 	private void pushDataToWeb(String data, String businessId) {
 		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
@@ -97,6 +148,10 @@ public class RbSceneEventListener extends MessageListener {
 
 	/**
 	 * 推送消息给某个角色的所有用户
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param userIds    用户id列表
 	 */
 	private void pushDataToWebByUserIds(String data, String businessId, List<String> userIds) {
 		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,

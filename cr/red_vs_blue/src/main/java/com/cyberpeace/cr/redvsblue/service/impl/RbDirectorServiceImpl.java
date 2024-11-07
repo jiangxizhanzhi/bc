@@ -23,16 +23,34 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB导演Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RbDirectorServiceImpl implements RbDirectorService {
 
+	/**
+	 * RB房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 获取任务释放进展
+	 *
+	 * @param roomId 房间id
+	 * @return {@code RedBlueTaskReleaseProgress }
+	 */
 	@Override
 	public RedBlueTaskReleaseProgress getTaskReleaseProgress(String roomId) {
 		if (StringUtils.isBlank(roomId)) {
@@ -97,6 +115,12 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 		return progress;
 	}
 
+	/**
+	 * 获取复盘场景id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getReplaySceneId(String roomId) {
 		RbRoom room = rbRoomService.getOrExceptionById(roomId);

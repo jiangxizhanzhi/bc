@@ -11,8 +11,10 @@ import lombok.Data;
 import lombok.Getter;
 
 /**
- * 
- * @TableName cr_eval_algorithm
+ * 评估算法
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @TableName(value ="cr_eval_algorithm")
 @Data

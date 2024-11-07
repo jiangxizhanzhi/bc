@@ -29,20 +29,40 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB统计学Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RbStatisticsServiceImpl implements RbStatisticsService {
 
+    /**
+     * 靶场任务Mapper
+     */
     @Autowired
     CrTaskMapper crTaskMapper;
 
+    /**
+     * 远程用户Service
+     */
     @Autowired
     RemoteUserService remoteUserService;
 
+    /**
+     * 远程组织Service
+     */
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
 
 
+    /**
+     * 获取组织排统计学
+     *
+     * @return {@code List<RbOrganizationStatisticsBo> }
+     */
     @Override
     public List<RbOrganizationStatisticsBo> getOrganizationRankStatistics() {
         List<RbOrganizationStatisticsBo> rsp = Lists.newArrayList();
@@ -127,6 +147,11 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
     }
 
 
+    /**
+     * 获取都个人排统计学
+     *
+     * @return {@code List<RbPersonalStatisticsBo> }
+     */
     @Override
     public List<RbPersonalStatisticsBo> getAllPersonalRankStatistics() {
         List<RbPersonalStatisticsBo> rsp = Lists.newArrayList();
@@ -174,6 +199,13 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
         return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
     }
 
+    /**
+     * 获取都统计学详情
+     *
+     * @param detailReq 详情请求体
+     * @param page      分页
+     * @return {@code ListRsp<RbStatisticsDetailBo> }
+     */
     @Override
     public ListRsp<RbStatisticsDetailBo> getAllStatisticsDetail(RbStatisticsDetailReq detailReq, Page page) {
         List<RbStatisticsDetailBo> rsp = Lists.newArrayList();

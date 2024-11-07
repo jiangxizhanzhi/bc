@@ -25,12 +25,24 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * json序列化和反序列化工具类
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Slf4j
 public class JsonUtil {
 
+	/**
+	 * JSON 实用程序
+	 */
 	private JsonUtil() {}
 
+	/**
+	 * 转换为 JSON 字符串
+	 *
+	 * @param obj 对象
+	 * @return {@code String }
+	 */
 	public static String toJsonString(Object obj) {
 		if (null == obj) {
 			return "{}";
@@ -43,6 +55,13 @@ public class JsonUtil {
 		return JSON.toJSONString(obj);
 	}
 
+	/**
+	 * 到 JSON 对象数组
+	 *
+	 * @param text  发短信
+	 * @param clazz 克拉兹
+	 * @return {@code List<T> }
+	 */
 	public static <T> List<T> toJsonObjectArray(String text, Class<T> clazz) {
 		if (StringUtils.isBlank(text)) {
 			return Lists.newArrayList();
@@ -51,10 +70,24 @@ public class JsonUtil {
 		return JSONObject.parseArray(text, clazz);
 	}
 
+	/**
+	 * 到 JSON 对象
+	 *
+	 * @param text  发短信
+	 * @param clazz 克拉兹
+	 * @return {@code T }
+	 */
 	public static <T> T toJsonObject(String text, Class<T> clazz) {
 		return JSONObject.parseObject(text, clazz);
 	}
 
+	/**
+	 * 到 JSON 对象
+	 *
+	 * @param inputStream 输入流
+	 * @param clazz       克拉兹
+	 * @return {@code T }
+	 */
 	@SneakyThrows
 	public static <T> T toJsonObject(InputStream inputStream, Class<T> clazz) {
 
@@ -76,8 +109,8 @@ public class JsonUtil {
 
 	/**
 	 * 集合转换为字符串
+	 *
 	 * @param objArr
-	 * @param <T>
 	 * @return
 	 */
 	public static <T> String arrayToString(List<T> objArr) {
@@ -89,6 +122,7 @@ public class JsonUtil {
 
 	/**
 	 * 字符串转为jsonArray
+	 *
 	 * @param text
 	 * @return
 	 */
@@ -96,6 +130,14 @@ public class JsonUtil {
 		return JSONArray.parseArray(text);
 	}
 
+	/**
+	 * 转 JSON tObject
+	 *
+	 * @param text     发短信
+	 * @param type     类型
+	 * @param features 特征
+	 * @return {@code T }
+	 */
 	public static <T> T toJsonTObject(String text, TypeReference<T> type, Feature... features) {
 		return JSON.parseObject(text, type, features);
 
@@ -103,8 +145,9 @@ public class JsonUtil {
 
 	/**
 	 * json key转换
+	 *
 	 * @param jsonObject 原json数据
-	 * @param mapping 原json的key与新key的映射关系
+	 * @param mapping    原json的key与新key的映射关系
 	 * @return
 	 */
 	public static JSONObject filedConvert(JSONObject jsonObject, String mapping) {
@@ -130,8 +173,8 @@ public class JsonUtil {
 
 	/**
 	 * 将 java 对象转为 JSONObject
+	 *
 	 * @param source
-	 * @param <T>
 	 * @return
 	 */
 	public static <T> JSONObject java2JsonObject(T source) {
@@ -139,7 +182,11 @@ public class JsonUtil {
 	}
 
 	/**
+	 * Java2 JSON 对象
+	 *
+	 * @param source         源
 	 * @param namingStrategy 命名策略
+	 * @return {@code JSONObject }
 	 */
 	public static <T> JSONObject java2JsonObject(T source, PropertyNamingStrategy namingStrategy) {
 		SerializeConfig config = new SerializeConfig();
@@ -149,6 +196,7 @@ public class JsonUtil {
 
 	/**
 	 * 支持命名策略，转化实例为json字符串
+	 *
 	 * @param obj
 	 * @param namingStrategy
 	 * @return
@@ -170,8 +218,9 @@ public class JsonUtil {
 
 	/**
 	 * 集合转换为字符串
+	 *
 	 * @param objArr
-	 * @param <T>
+	 * @param namingStrategy 命名策略
 	 * @return
 	 */
 	public static <T> String arrayToString(List<T> objArr, PropertyNamingStrategy namingStrategy) {
@@ -185,6 +234,7 @@ public class JsonUtil {
 
 	/**
 	 * 比较两个Json数据
+	 *
 	 * @param json1
 	 * @param json2
 	 * @return
@@ -202,7 +252,12 @@ public class JsonUtil {
 
 	}
 
-	/** 获取有顺序的key*/
+	/**
+	 * 获取有顺序的key
+	 *
+	 * @param jsonObject JSON 对象
+	 * @return {@code TreeMap<String, String> }
+	 */
 	private static TreeMap<String, String> toTreeMap(JSONObject jsonObject) {
 
 		TreeMap<String, String> treeMap = Maps.newTreeMap();

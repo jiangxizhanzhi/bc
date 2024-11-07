@@ -16,10 +16,22 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
 
+/**
+ * HTML 到 PDF 实用程序
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public class HtmlToPdfUtil {
 
+	/**
+	 * 日志
+	 */
 	private static final Logger log = LoggerFactory.getLogger(HtmlToPdfUtil.class);
 
+	/**
+	 * HTML 到 PDF 实用程序
+	 */
 	private HtmlToPdfUtil() {}
 
 	/**
@@ -28,9 +40,10 @@ public class HtmlToPdfUtil {
 	private static final String TOOL = "wkhtmltopdf";
 
 	/**
+	 * 转换
 	 *
 	 * @param htmlFilePath 待转换的html文件路径
-	 * @param pdfFilePath 转换后的pdf文件路径
+	 * @param pdfFilePath  转换后的pdf文件路径
 	 * @return 转换成功返回true
 	 */
 	public static boolean convert(String htmlFilePath, String pdfFilePath) {
@@ -61,9 +74,10 @@ public class HtmlToPdfUtil {
 
 	/**
 	 * 生成html模板实例
+	 *
 	 * @param obj
 	 * @param htmlTemplateEnum
-	 * @param templateInstancePath
+	 * @param templateInstancePath 模板实例路径
 	 */
 	public static void getHtmlTemplateInstance(Object obj, HtmlTemplateEnum htmlTemplateEnum,
 			String templateInstancePath) {
@@ -73,7 +87,10 @@ public class HtmlToPdfUtil {
 
 	/**
 	 * 生成html模板实例
-	 * @description 获取模板
+	 *
+	 * @param data                 数据
+	 * @param htmlTemplateEnum     HTML 模板枚举
+	 * @param templateInstancePath 模板实例路径
 	 */
 	public static void getHtmlTemplateInstance(Map<String, Object> data,
 			HtmlTemplateEnum htmlTemplateEnum, String templateInstancePath) {
@@ -126,6 +143,11 @@ public class HtmlToPdfUtil {
 
 	}
 
+	/**
+	 * 确保 dir
+	 *
+	 * @param file 文件
+	 */
 	private static void ensureDir(File file) {
 		File dir = file.getParentFile();
 

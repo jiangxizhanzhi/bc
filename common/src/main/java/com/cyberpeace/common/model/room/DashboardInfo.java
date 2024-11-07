@@ -7,6 +7,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.checkerframework.checker.units.qual.A;
 
+/**
+ * 仪表板信息
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class DashboardInfo implements Serializable {
 

@@ -8,13 +8,22 @@ import lombok.Data;
 
 /**
  * 单兵训练记录
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class TrainRecordBo implements Serializable {
 
+    /**
+     * 阶段
+     */
     @ApiModelProperty("阶段")
     private String stage;
 
+    /**
+     * 任务
+     */
     @ApiModelProperty("训练任务记录")
     private List<MissionRecordBo> missions;
 

@@ -11,9 +11,18 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务方案模板修改请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class MissionSchemeTemplateModifyReq extends MissionSchemeTemplateReq implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty(value = "必须字段，其他字段不更新则非必要", required = true)
 	private String resourceId;
 

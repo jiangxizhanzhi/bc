@@ -22,8 +22,17 @@ import com.google.common.collect.Maps;
  */
 public abstract class BaseCrSceneUpdateHandler {
 
+	/**
+	 * 处理程序映射
+	 */
 	private static final Map<Integer, BaseCrSceneUpdateHandler> HANDLER_MAP = Maps.newHashMap();
 
+	/**
+	 * 获取处理器
+	 *
+	 * @param type 类型
+	 * @return {@code BaseCrSceneUpdateHandler }
+	 */
 	public static BaseCrSceneUpdateHandler getHandler(Integer type) {
 		return HANDLER_MAP.get(type);
 	}
@@ -35,6 +44,9 @@ public abstract class BaseCrSceneUpdateHandler {
 	 */
 	protected abstract Integer getCode();
 
+	/**
+	 * 基础靶场场景更新处理器
+	 */
 	protected BaseCrSceneUpdateHandler() {
 		HANDLER_MAP.put(getCode(), this);
 	}
@@ -50,7 +62,7 @@ public abstract class BaseCrSceneUpdateHandler {
 	 * 更新角色
 	 *
 	 * @param roomId 业务实例id
-	 * @param req                请求体
+	 * @param req    请求体
 	 */
 	public abstract void updateRoles(String roomId, SceneUpdateReq req);
 
@@ -87,6 +99,8 @@ public abstract class BaseCrSceneUpdateHandler {
 
 	/**
 	 * 获取过滤后节点数据
+	 * <p>
+	 * <p>
 	 * 去除指定id节点
 	 *
 	 * @param role   角色

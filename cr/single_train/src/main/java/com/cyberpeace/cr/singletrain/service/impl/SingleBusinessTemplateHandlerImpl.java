@@ -27,30 +27,63 @@ import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 单业务模板处理器实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Service
 public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
+	/**
+	 * 训练记录Service
+	 */
 	@Autowired
 	TrainRecordService trainRecordService;
 
+	/**
+	 * 单模板Service
+	 */
 	@Autowired
 	private SingleTemplateService singleTemplateService;
 
+	/**
+	 * 单房间Service
+	 */
 	@Autowired
 	private SingleRoomService singleRoomService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 设置业务类型
+	 *
+	 * @return {@code BusinessTemplate.BusinessType }
+	 */
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
 		return BusinessTemplate.BusinessType.TRAINING_SINGLE;
 	}
 
+	/**
+	 * 保存真正业务
+	 *
+	 * @param basicTemplate 基本模板
+	 * @param businessId    业务id
+	 * @return {@code String }
+	 */
 	@Override
 	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 		SingleTemplate singleTemplate = new SingleTemplate();
@@ -72,6 +105,12 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		return singleTemplate.getBusinessTemplateId();
 	}
 
+	/**
+	 * 真正转 储业务
+	 *
+	 * @param template 模板
+	 * @return {@code ResourceDumpContext }
+	 */
 	@Override
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<SingleTemplate> context = new ResourceDumpContext<>();
@@ -87,6 +126,11 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		return context;
 	}
 
+	/**
+	 * 真正负荷业务资源
+	 *
+	 * @param resource 资源
+	 */
 	@Override
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
 		SingleTemplate singleTemplate = ((JSONObject) resource.getBusiness())
@@ -101,6 +145,11 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		}
 	}
 
+	/**
+	 * 删除模板相关
+	 *
+	 * @param businessTemplate 业务模板
+	 */
 	@Override
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		SingleTemplate singleTemplate = singleTemplateService
@@ -113,12 +162,22 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		singleTemplateService.removeById(singleTemplate.getResourceId());
 	}
 
+	/**
+	 * 负荷训练模板
+	 *
+	 * @param templateContext 模板上下文
+	 */
 	@Override
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		SingleTemplate template = BeanUtils.copy(templateContext, SingleTemplate.class);
 		singleTemplateService.save(template);
 	}
 
+	/**
+	 * 在 del 之前检查
+	 *
+	 * @param businessTemplate 业务模板
+	 */
 	@Override
 	public void checkBeforeDel(BusinessTemplate businessTemplate) {
 		List<SingleRoom> roomList = singleRoomService

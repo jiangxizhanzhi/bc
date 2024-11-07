@@ -12,43 +12,100 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 团队会议室
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @TableName(value = "cr_team_room")
 @Data
 public class TeamRoom extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 团队模板id
+	 */
 	private String teamTemplateId;
 
+	/**
+	 * 团队模板名称
+	 */
 	private String teamTemplateName;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	private String description;
 
+	/**
+	 * 子类型
+	 */
 	private Integer subType;
 
+	/**
+	 * 预科技能
+	 */
 	private String preSkills;
 
+	/**
+	 * 训练技能
+	 */
 	private String trainSkills;
 
+	/**
+	 * 开始时间
+	 */
 	private Date startTime;
 
+	/**
+	 * 结束时间
+	 */
 	private Date endTime;
 
+	/**
+	 * 困难
+	 */
 	private Integer difficulty;
 
+	/**
+	 * 训练状态
+	 */
 	private Integer trainingStatus;
 
+	/**
+	 * 时间线配置
+	 */
 	private String timeLineConfig;
 
+	/**
+	 * 创造用户id
+	 */
 	private String createUserId;
 
+	/**
+	 * 修改用户id
+	 */
 	private String modifyUserId;
 
+	/**
+	 * 当地场景id
+	 */
 	private String localSceneId;
 
+	/**
+	 * 已复制拓扑id
+	 */
 	private String copyedTopoId;
 
 	/**
@@ -56,6 +113,9 @@ public class TeamRoom extends BaseTable {
 	 */
 	private Boolean enableRecording;
 
+	/**
+	 * 图标
+	 */
 	private String logo;
 
 	/**

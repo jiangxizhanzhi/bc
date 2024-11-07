@@ -11,26 +11,53 @@ import lombok.Getter;
 
 /**
  * 靶场模板公共信息模型
- * */
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("cr_business_template")
 public class BusinessTemplate extends AuthTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 拓扑id
+	 */
 	private String topoId;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	private String description;
 
+	/**
+	 * 业务类型
+	 */
 	private Integer businessType;
 
+	/**
+	 * 困难
+	 */
 	private Integer difficulty;
 
+	/**
+	 * 创造用户id
+	 */
 	private String createUserId;
 
+	/**
+	 * 图标
+	 */
 	private String logo;
 
 	/**
@@ -38,14 +65,49 @@ public class BusinessTemplate extends AuthTable {
 	 */
 	private String localSceneId;
 
+	/**
+	 * 业务类型
+	 *
+	 * @author SN
+	 * @date 2024/11/07
+	 */
 	public enum BusinessType implements GenericEnum {
 
-		TRAINING_SINGLE(1, "单兵训练"), VULN_VALIDATE(2, "漏洞库"), TRAINING_TEAM(3,
-				"团队训练"), RED_VS_BLUE(4, "红蓝对抗"), WEAPON_ASSESS(6, "装备测试"), SYSTEM_ASSESS(7, "系统测试");
+		/**
+		 * 训练单
+		 */
+		TRAINING_SINGLE(1, "单兵训练"),
+		/**
+		 * 漏洞验证
+		 */
+		VULN_VALIDATE(2, "漏洞库"),
+		/**
+		 * 训练团队
+		 */
+		TRAINING_TEAM(3,
+				"团队训练"),
+		/**
+		 * 红色 vs 蓝色
+		 */
+		RED_VS_BLUE(4, "红蓝对抗"),
+		/**
+		 * 武器评估
+		 */
+		WEAPON_ASSESS(6, "装备测试"),
+		/**
+		 * 系统评估
+		 */
+		SYSTEM_ASSESS(7, "系统测试");
 
+		/**
+		 * 代号
+		 */
 		@Getter
 		private Integer code;
 
+		/**
+		 * 描述
+		 */
 		@Getter
 		private String desc;
 

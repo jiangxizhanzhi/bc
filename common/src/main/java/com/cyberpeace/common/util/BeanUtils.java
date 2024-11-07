@@ -7,20 +7,27 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 /**
  * 对象拷贝工具类
+ *
  * @author yinqingrong
+ * @date 2024/11/07
  */
 public class BeanUtils {
 
+	/**
+	 * 映射
+	 */
 	public static MapperFacade mapper = new DefaultMapperFactory.Builder().build().getMapperFacade();
 
+	/**
+	 * Bean 实用程序
+	 */
 	private BeanUtils() {}
 
 	/**
 	 * 浅拷贝
+	 *
 	 * @param source
 	 * @param target
-	 * @param <S>
-	 * @param <T>
 	 * @return
 	 */
 	public static <S, T> T copy(S source, Class<T> target) {
@@ -33,10 +40,9 @@ public class BeanUtils {
 
 	/**
 	 * 深拷贝对象
+	 *
 	 * @param source
 	 * @param target
-	 * @param <S>
-	 * @param <T>
 	 * @return
 	 */
 	public static <S, T> T deepCopy(S source, Class<T> target) {
@@ -45,10 +51,9 @@ public class BeanUtils {
 
 	/**
 	 * 深拷贝列表
+	 *
 	 * @param source
 	 * @param target
-	 * @param <S>
-	 * @param <T>
 	 * @return
 	 */
 	public static <S, T> List<T> deepCopyList(List<S> source, Class<T> target) {
@@ -57,9 +62,9 @@ public class BeanUtils {
 
 	/**
 	 * 拷贝对象属性
+	 *
 	 * @param source
 	 * @param target
-	 * @return
 	 */
 	public static void copyProperties(Object source, Object target){
 		org.springframework.beans.BeanUtils.copyProperties(source, target);

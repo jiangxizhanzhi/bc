@@ -23,6 +23,13 @@ import com.cyberpeace.cs.constant.FileTypeContant;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+/**
+ * 工具文件控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Api(tags = "工具附件")
 @RestController
@@ -30,9 +37,18 @@ import io.swagger.annotations.ApiOperation;
 @RequiresAuthentication
 public class ToolFileController {
 
+	/**
+	 * 工具文件Service
+	 */
 	@Autowired
 	private ToolFileService toolFileService;
 
+	/**
+	 * 更新工具文件
+	 *
+	 * @param file 文件
+	 * @return {@code BaseRsp<ToolFile> }
+	 */
 	@ApiOperation("上传工具附件")
 	@PostMapping("/upload_tool_file")
 	@RequiresPermissions(MenuConstant.CMS_TOOL)

@@ -30,16 +30,33 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 聊天 Web 套接字处理程序
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Component
 public class ChatWebSocketHandler extends MyWebSocketHandler {
 
+	/**
+	 * 注册
+	 */
 	private static Map<Integer, ChatWebSocketHandler> register = Maps.newHashMap();
 
+	/**
+	 * 声明消息类型
+	 *
+	 * @return {@code Integer }
+	 */
 	public Integer declareMessageType() {
 		return CHAT_TYPE.COMMON.type;
 	}
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
@@ -52,7 +69,8 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 获取组用户编号
-	 * @param businessId 业务编号 做扩展使用
+	 *
+	 * @param businessId  业务编号 做扩展使用
 	 * @param chatContent
 	 * @return
 	 */
@@ -62,7 +80,8 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 获取好友编号 是否适配群发
-	 * @param businessId 业务编号 做扩展使用
+	 *
+	 * @param businessId  业务编号 做扩展使用
 	 * @param chatContent
 	 * @return
 	 */
@@ -77,6 +96,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 数据校验
+	 *
 	 * @param webSocketContext
 	 * @return
 	 */
@@ -86,12 +106,19 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 是否发送给自己
+	 *
 	 * @return
 	 */
 	public Boolean sendSelf() {
 		return false;
 	}
 
+	/**
+	 * 建立连接后
+	 *
+	 * @param session 会期
+	 * @throws Exception 例外
+	 */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		WebSocketConnectionContext webSocketContext = (WebSocketConnectionContext) session
@@ -113,6 +140,12 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	}
 
+	/**
+	 * 获取处理器
+	 *
+	 * @param webSocketConnectionContext Web 套接字连接上下文
+	 * @return {@code ChatWebSocketHandler }
+	 */
 	private ChatWebSocketHandler getHandler(WebSocketConnectionContext webSocketConnectionContext) {
 		String businessType = webSocketConnectionContext.getOriginParams()
 				.get(JsonKeyConstant.BUSINESS_TYPE);
@@ -124,6 +157,13 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		return register.get(Integer.valueOf(businessType));
 	}
 
+	/**
+	 * handle message （处理消息）
+	 *
+	 * @param session 会期
+	 * @param message 消息
+	 * @throws Exception 例外
+	 */
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
 			throws Exception {
@@ -166,9 +206,11 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 好友消息推送 默认推送给好友
+	 *
 	 * @param identifier
 	 * @param mine
-	 * @param message
+	 * @param message    消息
+	 * @param role       角色
 	 */
 	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message,
 			String role) {
@@ -178,11 +220,12 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 可选择推送消息类型
-	 * @param identifier 里面包含发送给谁
+	 *
+	 * @param identifier  里面包含发送给谁
 	 * @param mine
 	 * @param message
 	 * @param messageType
-	 * @param role
+	 * @param role        角色
 	 */
 	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message,
 			MESSAGE_TYPE messageType, String role) {
@@ -192,6 +235,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 前端推送信息转换为消息
+	 *
 	 * @param chatContent
 	 * @param senderName
 	 * @return
@@ -220,9 +264,10 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 消息发送
+	 *
 	 * @param identifier
 	 * @param chatMessage
-	 * @param userIds
+	 * @param userIds     用户id列表
 	 */
 	private void doPushChatMessage(WsMessageIdentifier identifier, ChatMessage chatMessage,
 			List<String> userIds) {
@@ -233,9 +278,11 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 根据发送者和接受者进行消息组装
+	 *
 	 * @param mine
 	 * @param message
 	 * @param messageType
+	 * @param role        角色
 	 * @return
 	 */
 	private ChatMessage convertToChatMessage(UserInfo mine, String message,

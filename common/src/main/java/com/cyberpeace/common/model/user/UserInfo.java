@@ -9,6 +9,12 @@ import com.google.common.collect.Lists;
 
 import lombok.Data;
 
+/**
+ * 用户信息
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class UserInfo implements Serializable {
 
@@ -16,15 +22,15 @@ public class UserInfo implements Serializable {
      * 用户id，不要使用自增数字编号（必须）
      */
     private String userId;
-    
-	/**
-	 * 姓名（文字显示）
-	 */
-	private String name;
 
-	/**
-	 * 用户名（对前端显示，登录使用）
-	 */
+    /**
+     * 姓名（文字显示）
+     */
+    private String name;
+
+    /**
+     * 用户名（对前端显示，登录使用）
+     */
     private String userName;
 
     /**
@@ -47,8 +53,14 @@ public class UserInfo implements Serializable {
      */
     private List<JSONObject> roles = Lists.newArrayList();
 
+    /**
+     * 位置id
+     */
     private String positionId;
 
+    /**
+     * 位置名称
+     */
     private String positionName;
 
     /**
@@ -66,10 +78,10 @@ public class UserInfo implements Serializable {
      */
     private String roleId;
 
-	/**
-	 * 当前岗位名称（rtks相关，与训练的角色无关）
-	 */
-	private String roleName;
+    /**
+     * 当前岗位名称（rtks相关，与训练的角色无关）
+     */
+    private String roleName;
 
     /**
      * 组织结构信息

@@ -10,8 +10,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * config 实用程序
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public class ConfigUtil extends PropertyPlaceholderConfigurer {
 
+    /**
+     * ctx 属性映射
+     */
     private static Map<String, String> ctxPropertiesMap;
 
     /**
@@ -42,6 +51,13 @@ public class ConfigUtil extends PropertyPlaceholderConfigurer {
         return subMap;
     }
 
+    /**
+     * 过程属性
+     *
+     * @param beanFactoryToProcess Bean Factory 到 Process
+     * @param props                道具
+     * @throws BeansException bean 异常
+     */
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess,
                                      Properties props) throws BeansException {

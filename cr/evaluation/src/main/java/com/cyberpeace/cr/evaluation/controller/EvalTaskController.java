@@ -40,6 +40,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 评估任务控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "靶场测评-任务")
 @Slf4j
 @RestController
@@ -47,18 +53,36 @@ import java.util.List;
 @RequestMapping("/cr/eval/task")
 public class EvalTaskController {
 
+	/**
+	 * 评估模板Service
+	 */
 	@Autowired
 	private EvalTemplateService evalTemplateService;
 
+	/**
+	 * 评估任务Service
+	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
+	/**
+	 * 评估场景Service
+	 */
 	@Autowired
 	private EvalSceneService evalSceneService;
 
+	/**
+	 * 评估任务步Service
+	 */
 	@Autowired
 	private EvalTaskStepService evalTaskStepService;
 
+	/**
+	 * 开始步骤
+	 *
+	 * @param evalTaskStepReq 评估任务步请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("启动步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/step/start")
@@ -75,6 +99,12 @@ public class EvalTaskController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 完成步骤
+	 *
+	 * @param evalTaskStepReq 评估任务步请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("完成步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/step/finish")
@@ -92,6 +122,12 @@ public class EvalTaskController {
 
 	}
 
+	/**
+	 * 启动 EVAL 任务
+	 *
+	 * @param evalTaskStartReq 评估任务开始请求体
+	 * @return {@code BaseRsp<EvalTaskIdRsp> }
+	 */
 	@ApiOperation("启动测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/start")
@@ -113,6 +149,12 @@ public class EvalTaskController {
 		return new BaseRsp<>(new EvalTaskIdRsp(taskId));
 	}
 
+	/**
+	 * 停止评估任务
+	 *
+	 * @param evalTaskStopReq 评估任务停请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("关闭测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/stop")
@@ -138,6 +180,13 @@ public class EvalTaskController {
 		return new BaseRsp<>(false);
 	}
 
+	/**
+	 * 获取评估任务
+	 *
+	 * @param templateId 模板id
+	 * @param taskId     任务id
+	 * @return {@code BaseRsp<EvalTaskRsp> }
+	 */
 	@ApiOperation("查询测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("")
@@ -176,6 +225,12 @@ public class EvalTaskController {
 		return new BaseRsp<>(evalTaskRsp);
 	}
 
+	/**
+	 * 删除 eval 任务
+	 *
+	 * @param evalTaskDeleteReq 评估任务删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("删除测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@DeleteMapping("")
@@ -189,6 +244,13 @@ public class EvalTaskController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 获取步列表
+	 *
+	 * @param templateId 模板id
+	 * @param taskId     任务id
+	 * @return {@code BaseRsp<List<EvalTaskStepContext>> }
+	 */
 	@ApiOperation("查询测评任务步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/step/list")
@@ -217,6 +279,13 @@ public class EvalTaskController {
 		return new BaseRsp<>(evalTaskStepContextList);
 	}
 
+	/**
+	 * 获取时间线
+	 *
+	 * @param templateId 模板id
+	 * @param taskId     任务id
+	 * @return {@code BaseRsp<EvalTaskTimeLineRsp> }
+	 */
 	@ApiOperation("查询测评任务时间线")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/time_line")
@@ -249,6 +318,13 @@ public class EvalTaskController {
 		return new BaseRsp<>(evalTaskTimeLineRsp);
 	}
 
+	/**
+	 * 获取时间节点
+	 *
+	 * @param templateId 模板id
+	 * @param taskId     任务id
+	 * @return {@code BaseRsp<EvalTaskTimeNodesRsp> }
+	 */
 	@ApiOperation("查询测评任务时间节点")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/time_nodes")

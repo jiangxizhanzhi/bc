@@ -5,13 +5,17 @@ import com.cyberpeace.common.model.user.UserInfo;
 
 /**
  * 权限获取
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 public class AuthContextUtils {
 
 	/**
 	 * 获取权限数据
-	 * @param userInfo
-	 * @param isWeb
+	 *
+	 * @param userInfo 用户信息
+	 * @param isWeb    是 Web
 	 * @return
 	 */
 	public static AuthContext constructAuth(UserInfo userInfo, boolean isWeb) {

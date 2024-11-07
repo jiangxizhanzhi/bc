@@ -32,22 +32,40 @@ import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.*;
 import com.google.common.collect.Lists;
 
+/**
+ * HTTP 客户端实用程序
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public class HttpClientUtil {
 
+	/**
+	 * 日志
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger("mp");
 
+	/**
+	 * HTTP 客户端实用程序
+	 */
 	private HttpClientUtil() {}
 
+	/**
+	 * 默认标头
+	 */
 	private static List<Header> defaultHeaders;
 
+	/**
+	 * 成功后缀
+	 */
 	private static final String SUCCESS_POSTFIX = "-000000";
 
 	/**
 	 * 执行post请求
-	 * @param url 请求的url地址
-	 * @param body 输入参数
+	 *
+	 * @param url        请求的url地址
+	 * @param body       输入参数
 	 * @param resultType 返回的数据类型
-	 * @param <T>
 	 * @return
 	 */
 	public static <T> T post(String url, Object body, Class<T> resultType) {
@@ -67,6 +85,14 @@ public class HttpClientUtil {
 		return doHttp(post, resultType);
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param url        网址
+	 * @param body       身体
+	 * @param resultType 结果类型
+	 * @return {@code T }
+	 */
 	public static <T> T delete(String url, Object body, Class<T> resultType) {
 		// 1、设置请；线程数据
 		setContext(url);
@@ -86,9 +112,9 @@ public class HttpClientUtil {
 
 	/**
 	 * 请求地址中包含特殊字符的可使用该方法 比如空格 * ｜
-	 * @param resultType
+	 *
 	 * @param url
-	 * @param <T>
+	 * @param resultType
 	 * @return
 	 */
 	public static <T> T rawSpecialGet(String url, Class<T> resultType) {
@@ -123,9 +149,8 @@ public class HttpClientUtil {
 	/**
 	 * 所有参数都放在url中都get方法
 	 *
-	 * @param resultType
 	 * @param url
-	 * @param <T>
+	 * @param resultType
 	 * @return
 	 */
 	public static <T> T rawGet(String url, Class<T> resultType) {
@@ -146,13 +171,21 @@ public class HttpClientUtil {
 
 	/**
 	 * 设置请求上下文
-	 * @param url
+	 *
+	 * @param url 网址
 	 */
 	private static void setContext(String url) {
 		HttpclientModel httpclientModel = new HttpclientModel(TraceIdContext.getTraceId(), url);
 		HttpclientContext.setContext(httpclientModel);
 	}
 
+	/**
+	 * 执行 HTTP
+	 *
+	 * @param httpRequest HTTP 请求
+	 * @param resultType  结果类型
+	 * @return {@code T }
+	 */
 	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
 		HttpResponse response = null;
 		String httpResponse = null;
@@ -192,7 +225,6 @@ public class HttpClientUtil {
 	 *
 	 * @param httpResponse http返回
 	 * @param resultType   需要序列化的类型
-	 * @param <T>          返回结果类型
 	 * @return
 	 */
 	private static <T> T parseHttpResponse(String httpResponse, Class<T> resultType) {
@@ -263,6 +295,7 @@ public class HttpClientUtil {
 
 	/**
 	 * 判断请求码
+	 *
 	 * @param baseRsp
 	 * @return
 	 */
@@ -272,10 +305,10 @@ public class HttpClientUtil {
 
 	/**
 	 * 附带参数get查询
-	 * @param obj 对象参数 根据对象字段和值去查询 过滤掉空值字段
-	 * @param url 接口地址
+	 *
+	 * @param obj        对象参数 根据对象字段和值去查询 过滤掉空值字段
+	 * @param url        接口地址
 	 * @param resultType
-	 * @param <T>
 	 * @return
 	 */
 	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {

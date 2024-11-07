@@ -30,14 +30,34 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 靶场通知Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> implements CrNoticeService {
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 蹼插座推Service
+	 */
 	@Autowired
 	private WebSocketPushService webSocketPushService;
+
+	/**
+	 * 查询列表
+	 *
+	 * @param roomId 房间id
+	 * @param isRb   是 RB
+	 * @return {@code List<CrNoticeRsp> }
+	 */
 	@Override
 	public List<CrNoticeRsp> queryList(String roomId, boolean isRb) {
 		List<CrNotice> list = getList(roomId, isRb);
@@ -59,6 +79,11 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		return rspList;
 	}
 
+	/**
+	 * 通知
+	 *
+	 * @param crNoticeReq 靶场通知请求体
+	 */
 	@Override
 	public void notice(CrNoticeReq crNoticeReq) {
 		CrNotice notice = BeanUtils.copy(crNoticeReq, CrNotice.class);
@@ -88,6 +113,13 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		webSocketPushService.notice(userIds,MissionWsCode.NOTICE_Code,crNoticeReq.getRoomId(),WsPath.NOTICE);
 	}
 
+	/**
+	 * 有新信息
+	 *
+	 * @param roomId 房间id
+	 * @param isRb   是 RB
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean hasNewInfo(String roomId, boolean isRb) {
 		List<CrNotice> list = getList(roomId, isRb);
@@ -100,6 +132,11 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		return false;
 	}
 
+	/**
+	 * Remve 和 Notice
+	 *
+	 * @param resourceId 资源id
+	 */
 	@Override
 	public void remveAndNotice(String resourceId) {
 		CrNotice notice = this.getById(resourceId);
@@ -111,6 +148,13 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		}
 	}
 
+	/**
+	 * 获取列表
+	 *
+	 * @param roomId 房间id
+	 * @param isRb   是 RB
+	 * @return {@code List<CrNotice> }
+	 */
 	public List<CrNotice> getList(String roomId, boolean isRb) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
@@ -130,6 +174,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 
 	/**
 	 * 置顶处理
+	 *
 	 * @param list
 	 * @return
 	 */
@@ -149,6 +194,13 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		return topList;
 	}
 
+	/**
+	 * 交易角色
+	 *
+	 * @param role 角色
+	 * @param isRb 是 RB
+	 * @return {@code List<Integer> }
+	 */
 	public List<Integer> dealRole(Integer role, boolean isRb) {
 		List<Integer> list = new ArrayList<>();
 		if (isRb) {

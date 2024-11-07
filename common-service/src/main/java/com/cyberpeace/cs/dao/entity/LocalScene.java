@@ -14,12 +14,18 @@ import lombok.Getter;
 
 import java.util.Date;
 
+/**
+ * 当地场景
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("local_scene")
 public class LocalScene extends BaseTable {
 
 	/**
-	 *
+	 * 资源id
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -30,7 +36,7 @@ public class LocalScene extends BaseTable {
 	private String mpSceneId;
 
 	/**
-	 *
+	 * 业务代号
 	 */
 	private Integer businessCode;
 
@@ -66,6 +72,8 @@ public class LocalScene extends BaseTable {
 
 	/**
 	 * 计时场景使用，统计用户场景暂停了多久。
+	 * <p>
+	 * <p>
 	 * 场景恢复后，destroyTime相应顺延。
 	 */
 	private Date pauseTime;
@@ -75,16 +83,23 @@ public class LocalScene extends BaseTable {
 	 */
 	private String topoId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
 	/**
 	 * 场景存活时间（单位分钟）。
+	 * <p>
+	 * <p>
 	 * 单兵等不限制场景时长等使用场景中，不需要设置该值。
 	 */
 	private Integer sceneTtl;
 
 	/**
 	 * 场景节点数量
+	 * <p>
+	 * <p>
 	 * 记录该值，避免重复请求mp
 	 */
 	private Integer nodeCount;
@@ -94,6 +109,9 @@ public class LocalScene extends BaseTable {
 	 */
 	private String sceneName;
 
+	/**
+	 * 场景attr
+	 */
 	private Integer sceneAttr;
 
 	/**
@@ -104,14 +122,32 @@ public class LocalScene extends BaseTable {
 
 	/**
 	 * json格式。
+	 * <p>
+	 * <p>
 	 * 目前保存appResourceId
+	 * <p>
+	 * <p>
 	 * {
+	 * <p>
+	 * <p>
 	 * "app_resource_id":"abcd"
+	 * <p>
+	 * <p>
 	 * }
+	 *
+	 *
+	 * <p>
+	 * <p>
 	 * <p>
 	 * app_resource_id用于前端页面场景小球的路由。对于靶场而言=业务实例id；
+	 * <p>
+	 * <p>
 	 * 实训习题=习题编号
+	 * <p>
+	 * <p>
 	 * 实训课时=course_id/lesson_id
+	 * <p>
+	 * <p>
 	 * 实训课后联系=course_id/lesson_id/paper_id
 	 */
 	private String meta;

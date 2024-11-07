@@ -33,25 +33,52 @@ import com.cyberpeace.cs.service.LocalSceneService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB模板Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTemplate> implements RbTemplateService {
 
+	/**
+	 * RB模板Mapper
+	 */
 	@Autowired
 	RbTemplateMapper rbTemplateMapper;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	LocalSceneService localSceneService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	MissionTemplateService missionTemplateService;
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 获取RB模板由业务id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code RbTemplate }
+	 */
 	@Override
 	public RbTemplate getRbTemplateByBusinessId(String resourceId) {
 
@@ -64,6 +91,13 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 		return template;
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param rbTemplateContext rb 模板上下文
+	 * @param businessTemplate  业务模板
+	 * @return {@code RbTemplate }
+	 */
 	@Override
 	public RbTemplate update(RbTemplateContext rbTemplateContext,
 			BusinessTemplate businessTemplate) {
@@ -109,16 +143,33 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 		return rbTemplate;
 	}
 
+	/**
+	 * 获取RB模板由业务id列表
+	 *
+	 * @param businessIds 业务id列表
+	 * @return {@code List<RbTemplate> }
+	 */
 	@Override
 	public List<RbTemplate> getRbTemplateByBusinessIds(List<String> businessIds) {
 		return rbTemplateMapper.getRbTemplateByBusinessIds(businessIds);
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 */
 	@Override
 	public void batchDelete(List<String> businessTemplateIds) {
 		businessTemplateService.batchDelete(businessTemplateIds);
 	}
 
+	/**
+	 * 分页
+	 *
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<RbTemplateData> }
+	 */
 	@Override
 	public IPage<RbTemplateData> page(ListQuery listQuery) {
 		Page page = listQuery.toPageParam();
@@ -131,6 +182,12 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 		return rbTemplateMapper.listRbTemplate(page, listQuery);
 	}
 
+	/**
+	 * 获取任务模板id列表由角色配置
+	 *
+	 * @param roleConfig 角色配置
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getMissionTemplateIdsByRoleConfig(String roleConfig) {
 		CrRoleConfigRb crRoleConfigRb = JsonUtil.toJsonObject(roleConfig, CrRoleConfigRb.class);

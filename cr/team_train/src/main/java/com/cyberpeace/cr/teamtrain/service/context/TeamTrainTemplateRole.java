@@ -11,18 +11,36 @@ import lombok.Getter;
 
 /**
  * 团队训练模板角色
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class TeamTrainTemplateRole {
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 角色组
+	 */
 	private Integer roleGroup;
 
+	/**
+	 * 任务计划
+	 */
 	private ColorMission<TemplateMissionId> missionsScheme;
 
+	/**
+	 * 资产节点
+	 */
 	private List<CrRoleNode> assetNodes;
 
+	/**
+	 * 可见节点
+	 */
 	private List<CrRoleNode> visibleNodes;
 
 	public enum RoleName {

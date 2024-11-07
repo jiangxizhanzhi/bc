@@ -14,12 +14,21 @@ import lombok.Data;
 @Data
 public class IdNameType implements Serializable {
 
+	/**
+	 * id
+	 */
 	@ApiModelProperty(value = "ID")
 	private String id;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty(value = "类型")
 	private Integer type;
 }

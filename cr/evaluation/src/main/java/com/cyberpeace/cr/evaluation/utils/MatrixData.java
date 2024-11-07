@@ -8,8 +8,20 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * 矩阵数据
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public class MatrixData {
 
+    /**
+     * 获取格式矩阵数据
+     *
+     * @param matrixData 矩阵数据
+     * @return {@code double [][] }
+     */
     public static double [][] getFormatMatrixData(String matrixData){
         JSONArray objects = JSONArray.parseArray(matrixData);
         double [][] res = new double[objects.size()][];

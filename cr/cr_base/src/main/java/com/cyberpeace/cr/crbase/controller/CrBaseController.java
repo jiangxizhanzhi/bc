@@ -35,6 +35,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场基础控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "靶场公用接口")
 @RestController
 @Slf4j
@@ -42,12 +48,24 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 public class CrBaseController {
 
+	/**
+	 * 靶场基础Service
+	 */
 	@Autowired
 	private CrBaseService crBaseService;
 
+	/**
+	 * 靶场常数Service
+	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	/**
+	 * 获取训练统计学
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<TrainingStatisticsRsp> }
+	 */
 	@ApiOperation("个人中心训练统计")
 	@GetMapping("/training_statistics")
 	public BaseRsp<TrainingStatisticsRsp>
@@ -61,6 +79,12 @@ public class CrBaseController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 获取常数配置
+	 *
+	 * @param type 类型
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("获取常量配置")
 	@GetMapping("/constants_config")
 	public BaseRsp getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
@@ -78,6 +102,11 @@ public class CrBaseController {
 		}
 	}
 
+	/**
+	 * 获取当前时间
+	 *
+	 * @return {@code BaseRsp<CurrentTimeRsp> }
+	 */
 	@ApiOperation("获取当前服务器时间")
 	@GetMapping("/current_time")
 	@RequiresPermissions(
@@ -90,6 +119,11 @@ public class CrBaseController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 获取授权类型
+	 *
+	 * @return {@code BaseRsp<List<CodeNameRsp>> }
+	 */
 	@ApiOperation("获取当前用户拥有权限的训练类型")
 	@GetMapping("/authorized_type")
 	public BaseRsp<List<CodeNameRsp>> getAuthorizedType() {

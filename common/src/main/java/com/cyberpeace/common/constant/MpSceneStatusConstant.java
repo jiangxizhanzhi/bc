@@ -1,7 +1,12 @@
 package com.cyberpeace.common.constant;
 
+/**
+ * 中台场景状态不断
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public interface MpSceneStatusConstant {
-
 
 	/**
 	 * 暂停
@@ -12,6 +17,7 @@ public interface MpSceneStatusConstant {
 	 * 恢复
 	 */
 	Integer MP_SCENE_UNPAUSE_EVENT_CODE = 7;
+
 	/**
 	 * 场景删除事件代号
 	 */

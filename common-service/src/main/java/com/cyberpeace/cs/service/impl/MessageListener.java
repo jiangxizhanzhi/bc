@@ -27,22 +27,49 @@ import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.Channel;
 
+/**
+ * 消息侦听器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class MessageListener implements ChannelAwareMessageListener {
 
+	/**
+	 * 日志
+	 */
 	private static final Logger log = LoggerFactory.getLogger("mq");
 
+	/**
+	 * 注册
+	 */
 	private static Map<Integer, MessageListener> register = Maps.newHashMap();
 
+	/**
+	 * 场景元素
+	 */
 	private final String SCENE_ELEMENT = "scene_element";
 
+	/**
+	 * 场景
+	 */
 	private final String SCENE = "scene";
 
+	/**
+	 * 场景删除
+	 */
 	private final String SCENE_DELETE = "delete_cscene_instance";
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
@@ -52,6 +79,13 @@ public class MessageListener implements ChannelAwareMessageListener {
 		register.put(declareMessageType(), this);
 	}
 
+	/**
+	 * 在消息中
+	 *
+	 * @param message 消息
+	 * @param channel 渠道
+	 * @throws Exception 例外
+	 */
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
 		String realMessage = new String(message.getBody(), WebConstant.ENCODING);
@@ -73,6 +107,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	/**
 	 * 每个子类需要重写该方法，保证返回值唯一
+	 *
 	 * @return
 	 */
 	public Integer declareMessageType() {
@@ -81,24 +116,58 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	/**
 	 * 子类定义具体的消息处理方法
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
 	 * @return
 	 */
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		return false;
 	}
 
+	/**
+	 * 上场景开始过程
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		return false;
 	}
 
+	/**
+	 * 上场景元素
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		return false;
 	}
 
+	/**
+	 * 上场景成功
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
 		return false;
 	}
 
+	/**
+	 * 遣
+	 *
+	 * @param message 消息
+	 * @return boolean
+	 */
 	private boolean dispatch(String message) {
 		JSONObject object;
 
@@ -201,6 +270,12 @@ public class MessageListener implements ChannelAwareMessageListener {
 		return result;
 	}
 
+	/**
+	 * 取代访问ip地址
+	 *
+	 * @param topoData 拓扑数据
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject replaceAccessIp(JSONObject topoData) {
 		try {
 			JSONObject pluginData = topoData.getJSONObject("scene_element_port_plugin_data");

@@ -26,36 +26,75 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RbRefereeServiceImpl implements RbRefereeService {
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * RB房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 靶场得分Service
+	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 靶场徽章Service
+	 */
 	@Autowired
 	private CrBadgeService crBadgeService;
 
+	/**
+	 * 靶场常见Service
+	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
+	/**
+	 * 获取评估列表
+	 *
+	 * @param req 请求体
+	 * @return {@code List<EvaluationListRsp> }
+	 */
 	@Override
 	public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
 		return crTaskService.getEvaluationList(req);
 	}
 
+	/**
+	 * 获取得分列表
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<StudentScoreListRsp> }
+	 */
 	@Override
 	public List<StudentScoreListRsp> getScoreList(String roomId) {
 		// get roles
@@ -64,6 +103,12 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 		return crScoreService.getScoreListRsp(roomId, roleList);
 	}
 
+	/**
+	 * 获取角色列表
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<RbRoleIdNameType> }
+	 */
 	@Override
 	public List<RbRoleIdNameType> getRoleList(String roomId) {
 		// 获取学员角色
@@ -83,6 +128,11 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 		return res;
 	}
 
+	/**
+	 * 通知提交
+	 *
+	 * @param missionId 任务id
+	 */
 	@Override
 	public void notifySubmission(String missionId) {
 		// get mission
@@ -95,6 +145,12 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 		crTaskService.pushMissionWsToUsers(roomId, refereeIds, MissionWsCode.MISSION_SUBMISSION);
 	}
 
+	/**
+	 * 获取监控会话
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<MonitorSession> }
+	 */
 	@Override
 	public List<MonitorSession> getMonitorSessions(String roomId) {
 		RbRoom room = rbRoomService.getById(roomId);
@@ -115,6 +171,12 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 		return sessionList;
 	}
 
+	/**
+	 * 获取裁判id列表由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<String> }
+	 */
 	private List<String> getRefereeIdsByRoomId(String roomId) {
 		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,
 				Lists.newArrayList(CrRole.RbRoleGroup.REFEREE.getCode()));

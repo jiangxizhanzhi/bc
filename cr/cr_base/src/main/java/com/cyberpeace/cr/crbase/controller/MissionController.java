@@ -64,6 +64,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
 
+/**
+ * 任务控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "任务相关接口")
 @RestController
 @RequestMapping("/cr/admin/mission")
@@ -71,30 +77,61 @@ import net.lingala.zip4j.exception.ZipException;
 @Slf4j
 public class MissionController {
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 任务计划模板映射器
+	 */
 	@Autowired
 	private MissionSchemeTemplateMapper missionSchemeTemplateMapper;
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 公共控制器
+	 */
 	@Autowired
 	private CommonController commonController;
 
+	/**
+	 * 获取雷达
+	 *
+	 * @param resource_id 资源id
+	 * @param user_hash   用户哈希
+	 * @return {@code BaseRsp<List<Integer>> }
+	 */
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
@@ -107,6 +144,11 @@ public class MissionController {
 		return new BaseRsp<>(radars);
 	}
 
+	/**
+	 * 获取雷达标签
+	 *
+	 * @return {@code BaseRsp<JSONObject> }
+	 */
 	@ApiOperation("获取任务技能点")
 	@GetMapping("/missions/radar_labels")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
@@ -122,6 +164,12 @@ public class MissionController {
 		return new BaseRsp<>(jsonObject);
 	}
 
+	/**
+	 * 更新 Radar 标签
+	 *
+	 * @param labels 标签
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("后台更新任务技能点")
 	@PostMapping("/missions/radar_labels")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
@@ -147,6 +195,12 @@ public class MissionController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取任务
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<MissionTemplateRsp> }
+	 */
 	@ApiOperation("获取任务模板详情")
 	@GetMapping("/missions")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
@@ -160,6 +214,12 @@ public class MissionController {
 		return new BaseRsp<>(missionTemplateToRsp(missionTemplate));
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<MissionDetail> }
+	 */
 	@ApiOperation("获取前台任务详情")
 	@GetMapping("/detail")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
@@ -170,6 +230,12 @@ public class MissionController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 新增任务
+	 *
+	 * @param missionTemplateReq 任务模板请求体
+	 * @return {@code BaseRsp<MissionTemplateRsp> }
+	 */
 	@ApiOperation("新增任务")
 	@PostMapping("/missions")
 	@RequiresPermissions(
@@ -190,6 +256,12 @@ public class MissionController {
 		return new BaseRsp(missionTemplateRsp);
 	}
 
+	/**
+	 * 更新任务模板
+	 *
+	 * @param modifyReq 修改请求体
+	 * @return {@code BaseRsp<MissionTemplateRsp> }
+	 */
 	@ApiOperation("后台更新任务")
 	@PutMapping("/missions")
 	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.CMS_RED_VS_BLUE,
@@ -213,6 +285,12 @@ public class MissionController {
 		return new BaseRsp(missionTemplateRsp);
 	}
 
+	/**
+	 * 更新任务
+	 *
+	 * @param missionModifyReq 任务修改请求体
+	 * @return {@code BaseRsp<?> }
+	 */
 	@ApiOperation("前台更新任务")
 	@PutMapping("/mission_update")
 	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
@@ -232,6 +310,11 @@ public class MissionController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 列表类别
+	 *
+	 * @return {@code BaseRsp<List<MissionCategory>> }
+	 */
 	@ApiOperation("获取任务类型")
 	@GetMapping("/missions/get_category/")
 	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
@@ -242,6 +325,12 @@ public class MissionController {
 		return new BaseRsp<>(categories);
 	}
 
+	/**
+	 * 创建 Scheme 模板
+	 *
+	 * @param templateReq 模板请求体
+	 * @return {@code BaseRsp<?> }
+	 */
 	@ApiOperation("创建任务方案")
 	@PostMapping("/combat_techs")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
@@ -260,6 +349,12 @@ public class MissionController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 批量删除方案模板
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<?> }
+	 */
 	@ApiOperation("批量删除任务方案")
 	@DeleteMapping("/combat_techs/batch_destroy/")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
@@ -280,6 +375,12 @@ public class MissionController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 编辑方案模板
+	 *
+	 * @param templateModifyReq 模板修改请求体
+	 * @return {@code BaseRsp<?> }
+	 */
 	@ApiOperation("编辑任务方案")
 	@PutMapping("/combat_techs")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
@@ -297,6 +398,12 @@ public class MissionController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表方案模板
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code BaseRsp<List<MissionSchemeTemplateRsp>> }
+	 */
 	@ApiOperation("分页查询任务方案")
 	@GetMapping("/combat_techs/list")
 	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.CMS_RED_VS_BLUE,
@@ -317,6 +424,12 @@ public class MissionController {
 		return new BaseRsp(schemeTemplateListRsp);
 	}
 
+	/**
+	 * 获取方案模板
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<MissionSchemeTemplateRsp> }
+	 */
 	@ApiOperation("查询单个任务方案")
 	@GetMapping("/combat_techs")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
@@ -327,6 +440,12 @@ public class MissionController {
 		return new BaseRsp(templateRsp);
 	}
 
+	/**
+	 * 批量转 储
+	 *
+	 * @param response 响应
+	 * @param dumpReq  转 储请求体
+	 */
 	@ApiOperation("批量导出任务方案")
 	@PostMapping("/combat_techs/dump")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
@@ -351,6 +470,14 @@ public class MissionController {
 		}
 	}
 
+	/**
+	 * 批量负荷
+	 *
+	 * @param file 文件
+	 * @return {@code BaseRsp }
+	 * @throws IOException  io异常
+	 * @throws ZipException zip 异常
+	 */
 	@ApiOperation("批量导入任务方案")
 	@PutMapping("/combat_tech/load")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
@@ -369,6 +496,12 @@ public class MissionController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 列出任务模板
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<List<MissionTemplateRes>> }
+	 */
 	@ApiOperation("RTKS-获取任务模板列表")
 	@GetMapping("/mission_templates")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -379,6 +512,13 @@ public class MissionController {
 		return new BaseRsp(missionTemplateRspListRsp);
 	}
 
+	/**
+	 * 解析 mdfile
+	 *
+	 * @param missionId 任务id
+	 * @param md        医学博士
+	 * @return {@code BaseRsp<ExtractBase> }
+	 */
 	@ApiOperation("解析md文件数据")
 	@PostMapping("/parse/md")
 	public BaseRsp<ExtractBase> parseMDFile(@RequestParam("missionId") String missionId,
@@ -425,6 +565,12 @@ public class MissionController {
 
 	}
 
+	/**
+	 * 请求任务模板
+	 *
+	 * @param missionTemplateReq 任务模板请求体
+	 * @return {@code MissionTemplate }
+	 */
 	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {
 		MissionTemplate missionTemplate = BeanUtils.copy(missionTemplateReq, MissionTemplate.class);
 
@@ -437,6 +583,12 @@ public class MissionController {
 		return missionTemplate;
 	}
 
+	/**
+	 * 请求任务模板
+	 *
+	 * @param modifyReq 修改请求体
+	 * @return {@code MissionTemplate }
+	 */
 	private MissionTemplate requestToMissionTemplate(MissionTemplateModifyReq modifyReq) {
 		MissionTemplate missionTemplate = BeanUtils.copy(modifyReq, MissionTemplate.class);
 
@@ -447,6 +599,12 @@ public class MissionController {
 		return missionTemplate;
 	}
 
+	/**
+	 * 获取附件
+	 *
+	 * @param writeup 撰写
+	 * @return {@code String }
+	 */
 	private String getAttachments(String writeup) {
 		if (writeup == null || writeup.length() < CrCommonConstants.GENERATED_UUID_LENGTH) {
 			return CommonConstant.EMPTY_LIST_JSON;
@@ -459,6 +617,12 @@ public class MissionController {
 		return JsonUtil.arrayToString(imageIds);
 	}
 
+	/**
+	 * 请求方案模板
+	 *
+	 * @param templateModifyReq 模板修改请求体
+	 * @return {@code MissionSchemeTemplate }
+	 */
 	private MissionSchemeTemplate
 			requestToSchemeTemplate(MissionSchemeTemplateModifyReq templateModifyReq) {
 		if (StringUtils.isBlank(templateModifyReq.getResourceId())) {
@@ -495,6 +659,12 @@ public class MissionController {
 		return schemeTemplate;
 	}
 
+	/**
+	 * 请求方案模板
+	 *
+	 * @param templateReq 模板请求体
+	 * @return {@code MissionSchemeTemplate }
+	 */
 	private MissionSchemeTemplate requestToSchemeTemplate(MissionSchemeTemplateReq templateReq) {
 		MissionSchemeTemplate schemeTemplate = BeanUtils.copy(templateReq,
 				MissionSchemeTemplate.class);
@@ -506,6 +676,12 @@ public class MissionController {
 		return schemeTemplate;
 	}
 
+	/**
+	 * 向任务请求
+	 *
+	 * @param missionModifyReq 任务修改请求体
+	 * @return {@code Mission }
+	 */
 	private Mission requestToMission(MissionModifyReq missionModifyReq) {
 		Mission mission = missionService.getById(missionModifyReq.getResourceId());
 		if (StringUtils.isNotBlank(missionModifyReq.getTitle())) {
@@ -526,6 +702,12 @@ public class MissionController {
 		return mission;
 	}
 
+	/**
+	 * 任务模板自响应
+	 *
+	 * @param missionTemplate 任务模板
+	 * @return {@code MissionTemplateRsp }
+	 */
 	private MissionTemplateRsp missionTemplateToRsp(MissionTemplate missionTemplate) {
 		MissionTemplateRsp missionTemplateRsp = BeanUtils.copy(missionTemplate,
 				MissionTemplateRsp.class);

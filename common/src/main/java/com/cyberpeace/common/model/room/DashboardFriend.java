@@ -9,6 +9,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+* 仪表板好友
+*
+* @author SN
+* @date 2024/11/07
+*/
 @Data
 public class DashboardFriend implements Serializable {
 

@@ -8,9 +8,24 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * 评估记录Mapper
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Mapper
 @Repository
 public interface EvalRecordMapper extends BaseMapper<EvalRecord> {
+    /**
+     * 分页列表
+     *
+     * @param page    分页
+     * @param task_id 任务id
+     * @param status  状态
+     * @param pattern 模式
+     * @return {@code Page<EvalRecordListRsp> }
+     */
     Page<EvalRecordListRsp> pageList(@Param("page") Page page,
                                      @Param("task_id") String task_id,
                                      @Param("status") Integer status,

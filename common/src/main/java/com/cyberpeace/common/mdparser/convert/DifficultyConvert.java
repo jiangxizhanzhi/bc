@@ -3,7 +3,10 @@ package com.cyberpeace.common.mdparser.convert;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 
 /**
+ * 难度转换
+ *
  * @author chenzhuo
+ * @date 2024/11/07
  */
 public enum DifficultyConvert implements MdConvertEnum<Integer, String>, GenericEnum {
 
@@ -14,27 +17,53 @@ public enum DifficultyConvert implements MdConvertEnum<Integer, String>, Generic
 
 	private String desc;
 
+	/**
+	 * 难度转换
+	 *
+	 * @param difficulty 困难
+	 * @param desc       描述
+	 */
 	DifficultyConvert(Integer difficulty, String desc) {
 		this.difficulty = difficulty;
 		this.desc = desc;
 	}
 
+	/**
+	 * 自
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer to() {
 		return difficulty;
 	}
 
+	/**
+	 * re 更改为
+	 *
+	 * @return {@code String }
+	 */
 	@Override
 	public String reTo() {
 		return desc;
 	}
 
 
+	/**
+	 * 获取代号
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer getCode() {
 		return difficulty;
 	}
 
+	/**
+	 * 获取描述
+	 *
+	 * @return {@code String }
+	 */
 	@Override
 	public String getDesc() {
 		return desc;

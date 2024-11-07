@@ -13,18 +13,38 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 团队训练聊天处理器实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Component("teamTrainChatHandlerImpl")
 public class TeamTrainChatHandlerImpl extends ChatWebSocketHandler {
 
+    /**
+     * 靶场角色Service
+     */
     @Autowired
     private CrRoleService crRoleService;
 
+    /**
+     * 声明消息类型
+     *
+     * @return {@code Integer }
+     */
     @Override
     public Integer declareMessageType() {
         return BusinessTemplate.BusinessType.TRAINING_TEAM.getCode();
     }
 
+    /**
+     * 检查在业务
+     *
+     * @param webSocketConnectionContext Web 套接字连接上下文
+     * @return {@code Boolean }
+     */
     @Override
     public Boolean checkInBusiness(WebSocketConnectionContext webSocketConnectionContext) {
         String userId = webSocketConnectionContext.getUserId();

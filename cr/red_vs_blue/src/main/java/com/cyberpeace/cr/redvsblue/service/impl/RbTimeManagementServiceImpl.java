@@ -21,48 +21,97 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RB时间管理Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMapper, RbTimeManagement> implements RbTimeManagementService {
 
+	/**
+	 * RB时间管理Mapper
+	 */
 	@Autowired
 	RbTimeManagementMapper rbTimeManagementMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
+	/**
+	 * RB房间Mapper
+	 */
 	@Autowired
 	RbRoomMapper rbRoomMapper;
 
+	/**
+	 * 获取由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code RbTimeManagement }
+	 */
 	@Override
 	public RbTimeManagement getByRoomId(String roomId) {
 
 		return rbTimeManagementMapper.selectByRoomId(roomId);
 	}
 
+	/**
+	 * 获取开始房间id列表
+	 *
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getStartedRoomIds() {
 		return rbTimeManagementMapper
 				.selectRoomIdsByStatus(RbTimeManagement.TimeManagementStatus.START.getCode());
 	}
 
+	/**
+	 * 获取都
+	 *
+	 * @return {@code List<RbTimeManagement> }
+	 */
 	@Override
 	public List<RbTimeManagement> getAll() {
 		return rbTimeManagementMapper.selectAll();
 	}
 
+	/**
+	 * 获取停止
+	 *
+	 * @return {@code List<RbTimeManagement> }
+	 */
 	@Override
 	public List<RbTimeManagement> getStopped() {
 		return rbTimeManagementMapper
 				.selectByStatus(RbTimeManagement.TimeManagementStatus.STOP.getCode());
 	}
 
+	/**
+	 * 获取未停止
+	 *
+	 * @return {@code List<RbTimeManagement> }
+	 */
 	@Override
 	public List<RbTimeManagement> getUnstopped() {
 		return rbTimeManagementMapper
 				.selectExcludeStatus(RbTimeManagement.TimeManagementStatus.STOP.getCode());
 	}
 
+	/**
+	 * 更新时间管理
+	 *
+	 * @param timeManagement 时间管理
+	 * @param room           房间
+	 * @param status         状态
+	 * @param userId         用户id
+	 */
 	@Override
 	public void updateTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
 			String userId) {
@@ -91,6 +140,14 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 		});
 	}
 
+	/**
+	 * 新增时间管理
+	 *
+	 * @param timeManagement 时间管理
+	 * @param room           房间
+	 * @param status         状态
+	 * @param userId         用户id
+	 */
 	@Override
 	public void addTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
 			String userId) {
@@ -110,6 +167,12 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 		});
 	}
 
+	/**
+	 * 获取时间成本
+	 *
+	 * @param roomId 房间id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getTimeCost(String roomId) {
 		RbTimeManagement timeManagement = getByRoomId(roomId);
@@ -124,6 +187,12 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 		}
 	}
 
+	/**
+	 * 获取结肠时间成本
+	 *
+	 * @param roomId 房间id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getColonTimeCost(String roomId) {
 		RbTimeManagement timeManagement = getByRoomId(roomId);
@@ -138,7 +207,13 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 		}
 	}
 
-    @Override
+	/**
+	 * 获取实体结束时间
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Date }
+	 */
+	@Override
     public Date getActualEndTime(String roomId) {
 		RbTimeManagement management = this.getByRoomId(roomId);
 		if(null != management && management.isStopped()){

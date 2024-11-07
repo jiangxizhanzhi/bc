@@ -21,6 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * RB 统计控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "红蓝对抗统计")
 @RestController
 @RequestMapping("/cr/admin/red_vs_blue_statistics")
@@ -28,10 +34,18 @@ import java.util.List;
 @Slf4j
 public class RbStatisticsController {
 
+    /**
+     * RB训练统计学
+     */
     @Autowired
     RbStatisticsService RbTrainStatistics;
 
 
+    /**
+     * 获取都个人排
+     *
+     * @return {@code BaseRsp<List<RbPersonalStatisticsBo>> }
+     */
     @GetMapping("/personal_rank")
     @ApiOperation("红蓝对抗个人排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)
@@ -40,6 +54,11 @@ public class RbStatisticsController {
         return new BaseRsp<>(rsp);
     }
 
+    /**
+     * 获取组织排
+     *
+     * @return {@code BaseRsp<List<RbOrganizationStatisticsBo>> }
+     */
     @GetMapping("/organization_rank")
     @ApiOperation("红蓝对抗组织排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)
@@ -49,6 +68,12 @@ public class RbStatisticsController {
     }
 
 
+    /**
+     * 获取详情都
+     *
+     * @param detailReq 详情请求体
+     * @return {@code BaseRsp<ListRsp<RbStatisticsDetailBo>> }
+     */
     @GetMapping("/detail")
     @ApiOperation("红蓝对抗统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)

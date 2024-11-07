@@ -35,24 +35,48 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * EVAL 记录控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "靶场测评-评估")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/record")
 @Slf4j
 public class EvalRecordController {
+    /**
+     * 评估任务Service
+     */
     @Autowired
     private EvalTaskService evalTaskService;
 
+    /**
+     * 评估记录Service
+     */
     @Autowired
     private EvalRecordService evalRecordService;
 
+    /**
+     * 评估指数裁判Service
+     */
     @Autowired
     private EvalIndexRefService evalIndexRefService;
 
+    /**
+     * 评估变量裁判Service
+     */
     @Autowired
     private EvalVariableRefService evalVariableRefService;
 
+    /**
+     * 列表
+     *
+     * @param queryParams 查询参数
+     * @return {@code BaseRsp<ListRsp<EvalRecordListRsp>> }
+     */
     @ApiOperation("获取靶场测评实例评估（分页）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/list")
@@ -65,6 +89,11 @@ public class EvalRecordController {
         ));
     }
 
+    /**
+     * 状态枚举
+     *
+     * @return {@code BaseRsp<List<EvalRoomIntPairRsp>> }
+     */
     @ApiOperation("评估状态枚举（查询用）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/status")
@@ -72,6 +101,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.recordStatusEnum());
     }
 
+    /**
+     * 创造
+     *
+     * @param requestData 请求数据
+     * @return {@code BaseRsp<EvalRecordRsp> }
+     */
     @ApiOperation("创建评估")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PostMapping("")
@@ -81,6 +116,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.create(requestData));
     }
 
+    /**
+     * 更新
+     *
+     * @param requestData 请求数据
+     * @return {@code BaseRsp<EvalRecordRsp> }
+     */
     @ApiOperation("更新评估")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PatchMapping("")
@@ -90,6 +131,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.update(requestData));
     }
 
+    /**
+     * 获取
+     *
+     * @param recordId 记录id
+     * @return {@code BaseRsp<EvalRecordRsp> }
+     */
     @ApiOperation("获取单个评估")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("")
@@ -97,6 +144,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.get(recordId));
     }
 
+    /**
+     * 删除
+     *
+     * @param requestData 请求数据
+     * @return {@code BaseRsp<Boolean> }
+     */
     @ApiOperation("评估任务删除")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @DeleteMapping("")
@@ -104,6 +157,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.delete(requestData.getIds()));
     }
 
+    /**
+     * 获取节点
+     *
+     * @param roomId 房间id
+     * @return {@code BaseRsp<List<EvalRoomPairRsp>> }
+     */
     @ApiOperation("场景终端节点获取")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/nodes")
@@ -111,6 +170,13 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getNodes(roomId));
     }
 
+    /**
+     * 获取探针
+     *
+     * @param roomId 房间id
+     * @param nodeId 节点id
+     * @return {@code BaseRsp<List<EvalRoomPairRsp>> }
+     */
     @ApiOperation("终端使用探针信息获取")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/probes")
@@ -119,6 +185,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getProbes(roomId, nodeId));
     }
 
+    /**
+     * 获取探针
+     *
+     * @param roomId 房间id
+     * @return {@code BaseRsp<Map<String, List<EvalRoomPairRsp>>> }
+     */
     @ApiOperation("终端使用探针信息获取-批量")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/probes-map")
@@ -126,6 +198,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getProbes(roomId));
     }
 
+    /**
+     * 获取节点探针
+     *
+     * @param roomId 房间id
+     * @return {@code BaseRsp<List<EvalRecordNodeProbeReq>> }
+     */
     @ApiOperation("场景使用终端/探针")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/probes/all")
@@ -133,6 +211,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.getNodeProbe(roomId));
     }
 
+    /**
+     * 开始
+     *
+     * @param requestData 请求数据
+     * @return {@code BaseRsp<Boolean> }
+     */
     @ApiOperation("评估任务开启")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PostMapping("/start")
@@ -165,6 +249,12 @@ public class EvalRecordController {
         return new BaseRsp<>(result);
     }
 
+    /**
+     * 结果
+     *
+     * @param recordId 记录id
+     * @return {@code BaseRsp<EvalRecordResultRsp> }
+     */
     @ApiOperation("评估任务结果")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result")
@@ -172,6 +262,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.result(recordId));
     }
 
+    /**
+     * 变量
+     *
+     * @param indexId 指数id
+     * @return {@code BaseRsp<List<EvalRoomPairRsp>> }
+     */
     @ApiOperation("获取某一级指标项下全部变量项")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables")
@@ -179,6 +275,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalIndexRefService.selectVariables(indexId));
     }
 
+    /**
+     * 变量图
+     *
+     * @param variableId 变量id
+     * @return {@code BaseRsp<EvalVariableGraphRsp> }
+     */
     @ApiOperation("变量项采集信息（折线图）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables/graph")
@@ -186,6 +288,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalVariableRefService.graph(variableId));
     }
 
+    /**
+     * 变量数据
+     *
+     * @param queryParams 查询参数
+     * @return {@code BaseRsp<ListRsp<EvalVariableDataPageRsp>> }
+     */
     @ApiOperation("变量项采集信息（原始数据）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables/data")
@@ -193,6 +301,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalVariableRefService.originData(queryParams.toPageParam(), queryParams.getVariableId()));
     }
 
+    /**
+     * 结果索引
+     *
+     * @param indexId 指数id
+     * @return {@code BaseRsp<EvalRecordResultIndexRsp> }
+     */
     @ApiOperation("评估任务结果（指标项信息）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/index")
@@ -200,6 +314,12 @@ public class EvalRecordController {
         return new BaseRsp<>(evalIndexRefService.resultIndex(indexId));
     }
 
+    /**
+     * result 变量
+     *
+     * @param variableId 变量id
+     * @return {@code BaseRsp<EvalRecordResultVariableRsp> }
+     */
     @ApiOperation("评估任务结果（变量项信息）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/variable")
@@ -207,6 +327,13 @@ public class EvalRecordController {
         return new BaseRsp<>(evalVariableRefService.resultVariable(variableId));
     }
 
+    /**
+     * 转储 评估记录2 PDF
+     *
+     * @param httpServletResponse HTTP Servlet 响应
+     * @param resourceId          资源id
+     * @param taskId              任务id
+     */
     @ApiOperation("评估详情导出为PDF")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/train2pdf")
@@ -216,6 +343,12 @@ public class EvalRecordController {
         FileUtil.setResponse(new File(evalRecordService.dumpEvalRecordPath(resourceId, taskId)), true, httpServletResponse);
     }
 
+    /**
+     * 获取记录结果列表
+     *
+     * @param resourceId 资源id
+     * @return {@code BaseRsp<List<EvalSystemResultRsp>> }
+     */
     @ApiOperation("评估任务结果-5轮评估记录")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/list")

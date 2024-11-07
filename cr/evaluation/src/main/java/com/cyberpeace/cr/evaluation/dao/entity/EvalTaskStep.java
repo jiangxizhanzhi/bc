@@ -11,25 +11,55 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 评估任务步骤
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("cr_eval_task_step")
 public class EvalTaskStep extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 任务id
+	 */
 	private String taskId;
 
+	/**
+	 * 阶段
+	 */
 	private Integer stage;
 
+	/**
+	 * 标题
+	 */
 	private String title;
 
+	/**
+	 * 过程
+	 */
 	private String process;
 
+	/**
+	 * 类型
+	 */
 	private Integer type;
 
+	/**
+	 * 开始时间
+	 */
 	private Date startTime;
 
+	/**
+	 * 结束时间
+	 */
 	private Date endTime;
 
 	public enum Type implements GenericEnum {

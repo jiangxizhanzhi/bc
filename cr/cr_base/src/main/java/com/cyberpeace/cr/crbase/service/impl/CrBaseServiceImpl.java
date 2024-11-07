@@ -24,12 +24,28 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场基础Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class CrBaseServiceImpl implements CrBaseService {
 
+	/**
+	 * 注册
+	 */
 	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
+	/**
+	 * 获取训练统计学
+	 *
+	 * @param userId 用户id
+	 * @param page   分页
+	 * @return {@code TrainingStatisticsRsp }
+	 */
 	@Override
 	public TrainingStatisticsRsp getTrainingStatistics(String userId, TrainingStatisticsPage page) {
 		// 1. define variables
@@ -95,14 +111,35 @@ public class CrBaseServiceImpl implements CrBaseService {
 
 }
 
+/**
+ * 训练比较仪
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 class TrainingComparator implements Comparator<TrainingData> {
 
+	/**
+	 * ASC
+	 */
 	private final Boolean asc;
 
+	/**
+	 * 训练比较仪
+	 *
+	 * @param asc ASC
+	 */
 	public TrainingComparator(Boolean asc) {
 		this.asc = asc;
 	}
 
+	/**
+	 * 比较
+	 *
+	 * @param o1 o1
+	 * @param o2 O2
+	 * @return int
+	 */
 	@Override
 	public int compare(TrainingData o1, TrainingData o2) {
 		if (asc) {

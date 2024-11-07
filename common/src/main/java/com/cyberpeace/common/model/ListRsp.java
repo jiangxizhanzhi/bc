@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * 分页返回数据模型
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 @AllArgsConstructor
@@ -20,15 +23,27 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ListRsp<T> implements Serializable {
 
+	/**
+	 * 列表
+	 */
 	@ApiModelProperty(value = "列表")
 	private List<T> list = Lists.newArrayList();
 
+	/**
+	 * 总
+	 */
 	@ApiModelProperty(value = "总页数")
 	private long total;
 
+	/**
+	 * 最后分页
+	 */
 	@ApiModelProperty(value = "最后页")
 	private long lastPage;
 
+	/**
+	 * 当前分页
+	 */
 	@ApiModelProperty(value = "当前页")
 	private long currentPage;
 }

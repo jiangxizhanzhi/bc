@@ -14,13 +14,29 @@ import com.cyberpeace.cs.service.context.BadgeBo;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场徽章Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class CrBadgeServiceImpl implements CrBadgeService {
 
+	/**
+	 * 靶场徽章映射
+	 */
 	@Autowired
 	private CrBadgeMapper crBadgeMapper;
 
+	/**
+	 * 创造批量
+	 *
+	 * @param businessId 业务id
+	 * @param type       类型
+	 * @param userIds    用户id列表
+	 */
 	@Override
 	public void createBatch(String businessId, Integer type, List<String> userIds) {
 		List<CrBadge> crBadgeList = Lists.newArrayList();
@@ -35,16 +51,37 @@ public class CrBadgeServiceImpl implements CrBadgeService {
 		crBadgeMapper.insertBatch(crBadgeList);
 	}
 
+	/**
+	 * 如果存在
+	 *
+	 * @param businessId 业务id
+	 * @param type       类型
+	 * @param userId     用户id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean ifExist(String businessId, Integer type, String userId) {
 		return crBadgeMapper.existByBusinessIdAndTypeAndUserId(businessId, type, userId);
 	}
 
+	/**
+	 * 删除徽章
+	 *
+	 * @param businessId 业务id
+	 * @param type       类型
+	 * @param userId     用户id
+	 */
 	@Override
 	public void removeBadge(String businessId, Integer type, String userId) {
 		crBadgeMapper.removeBatchByBusinessIdAndTypeAndUserId(businessId, type, userId);
 	}
 
+	/**
+	 * 获取评估徽章
+	 *
+	 * @param roomId 房间id
+	 * @return {@code BadgeBo }
+	 */
 	@Override
 	public BadgeBo getEvaluationBadge(String roomId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -54,6 +91,11 @@ public class CrBadgeServiceImpl implements CrBadgeService {
 		return bo;
 	}
 
+	/**
+	 * 点击评估徽章
+	 *
+	 * @param roomId 房间id
+	 */
 	@Override
 	public void clickEvaluationBadge(String roomId) {
 		this.removeBadge(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(),

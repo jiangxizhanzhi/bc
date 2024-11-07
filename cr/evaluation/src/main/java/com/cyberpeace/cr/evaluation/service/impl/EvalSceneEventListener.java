@@ -35,35 +35,75 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 评估场景事件听者
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class EvalSceneEventListener extends MessageListener {
 
+	/**
+	 * Web 套接字处理程序
+	 */
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
 
+	/**
+	 * 靶场事件听者助手
+	 */
 	@Autowired
 	private CrEventListenerHelper crEventListenerHelper;
 
+	/**
+	 * 靶场场景Service
+	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
+	/**
+	 * 评估任务Service
+	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
+	/**
+	 * 评估模板Service
+	 */
 	@Autowired
 	private EvalTemplateService evalTemplateService;
 
+	/**
+	 * 评估任务Mapper
+	 */
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
 
+	/**
+	 * 流程代码
+	 */
 	private List<String> FLOW_CODES = Lists.newArrayList("node_start_flow", "node_stop_flow");
 
+	/**
+	 * 声明消息类型
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer declareMessageType() {
 		return LocalScene.BusinessCode.RANGE_EVALUATION.getCode();
 	}
 
+	/**
+	 * 上场景删除
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 
@@ -86,12 +126,28 @@ public class EvalSceneEventListener extends MessageListener {
 		return true;
 	}
 
+	/**
+	 * 上场景开始过程
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
 		return true;
 	}
 
+	/**
+	 * 上场景元素
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 
@@ -107,6 +163,12 @@ public class EvalSceneEventListener extends MessageListener {
 		return true;
 	}
 
+	/**
+	 * 流程流消息
+	 *
+	 * @param context    上下文
+	 * @param businessId 业务id
+	 */
 	private void processFlowMessage(MqContext context, String businessId) {
 
 		String extension = JSON.parseObject(context.getPassThrough(), JSONObject.class)
@@ -148,6 +210,12 @@ public class EvalSceneEventListener extends MessageListener {
 				businessId);
 	}
 
+	/**
+	 * 将数据推送到 Web
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 */
 	private void pushDataToWeb(String data, String businessId) {
 
 		String templateId = evalTaskMapper.getTemplateIdByTaskId(businessId);

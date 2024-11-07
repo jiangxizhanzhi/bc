@@ -5,14 +5,25 @@ import net.sf.sevenzipjbinding.*;
 import java.io.*;
 
 /**
- * @Author xuxz
- * @Date 30/1/2023 下午8:03
+ * 提取回调
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 public class ExtractCallback implements IArchiveExtractCallback {
 
 
+    /**
+     * 指数
+     */
     private int index;
+    /**
+     * 存档
+     */
     private IInArchive inArchive;
+    /**
+     * 我们导演
+     */
     private String ourDir;
 
     public ExtractCallback(IInArchive inArchive, String ourDir) {

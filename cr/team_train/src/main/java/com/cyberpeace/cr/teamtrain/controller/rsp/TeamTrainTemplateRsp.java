@@ -9,51 +9,102 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 团队训练模板响应
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class TeamTrainTemplateRsp implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty(value = "编号")
 	private String resourceId;
 
+	/**
+	 * 业务模板id
+	 */
 	@ApiModelProperty(value = "基础业务模板id")
 	private String businessTemplateId;
 
+	/**
+	 * 基地信息
+	 */
 	@ApiModelProperty(value = "基础信息")
 	private BaseInfoRsp baseInfo;
 
+	/**
+	 * 人数
+	 */
 	@ApiModelProperty(value = "建议人数")
 	private Integer peopleNumber;
 
+	/**
+	 * 角色列表
+	 */
 	@ApiModelProperty(value = "角色列表")
 	private List<TeamTrainTemplateRoleRsp> roleList;
 
+	/**
+	 * 角色结构
+	 */
 	@ApiModelProperty(value = "角色结构")
 	private List<BaseRole> roleStructure;
 
+	/**
+	 * 节点计数
+	 */
 	@ApiModelProperty(value = "节点数")
 	private Integer nodesCount;
 
+	/**
+	 * 资源占用数
+	 */
 	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
 
+	/**
+	 * 时间线配置
+	 */
 	@ApiModelProperty(value = "时间轴配置")
 	private Object timeLineConfig = "{}";
 
+	/**
+	 * 与攻击有关
+	 */
 	@ApiModelProperty("是否关联 ATT&CK")
 	private Boolean isAttackRelated;
 
+	/**
+	 * 攻击计数
+	 */
 	@ApiModelProperty(value = "关联 ATT&CK 计数")
 	private List<NameCount> attackCount;
 
+	/**
+	 * 是否与 IC 相关
+	 */
 	@ApiModelProperty("是否关联 ATT&CK ICS")
 	private Boolean isIcsRelated;
 
+	/**
+	 * 集成电路计数
+	 */
 	@ApiModelProperty(value = "关联 ATT&CK 计数")
 	private List<NameCount> icsCount;
 
+	/**
+	 * 与 engage 相关
+	 */
 	@ApiModelProperty("是否关联 Engage")
 	private Boolean isEngageRelated;
 
+	/**
+	 * 聘计数
+	 */
 	@ApiModelProperty(value = "关联 Engage 计数")
 	private List<NameCount> engageCount;
 

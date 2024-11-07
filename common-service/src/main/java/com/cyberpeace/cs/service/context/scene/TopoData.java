@@ -4,11 +4,23 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 拓扑数据
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class TopoData implements Serializable {
 
+	/**
+	 * 拓扑学
+	 */
 	private Topology topology;
 
+	/**
+	 * 插件
+	 */
 	private ScenePlugins plugins;
 
 }

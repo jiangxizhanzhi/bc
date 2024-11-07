@@ -3,11 +3,18 @@ package com.cyberpeace.common.util;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+/**
+ * 连接实用程序
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public class ConnectionUtil {
 	/**
 	 * 建立与RabbitMQ的连接
+	 *
 	 * @return
-	 * @throws Exception
+	 * @throws Exception 例外
 	 */
 	public static Connection getConnection() throws Exception {
 		//定义连接工厂

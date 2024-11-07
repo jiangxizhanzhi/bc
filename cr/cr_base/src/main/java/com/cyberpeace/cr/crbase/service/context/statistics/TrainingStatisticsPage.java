@@ -8,14 +8,26 @@ import lombok.Data;
 
 /**
  * 训练统计分页
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class TrainingStatisticsPage implements Serializable {
 
+	/**
+	 * 分页
+	 */
 	private Integer page;
 
+	/**
+	 * 每分页
+	 */
 	private Integer perPage;
 
+	/**
+	 * 排序
+	 */
 	private Boolean sort;
 
 	public TrainingStatisticsPage(PageReqBase req) {

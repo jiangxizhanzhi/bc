@@ -21,26 +21,56 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.context.RbTemplateContext;
 
+/**
+ * RB业务模板处理器实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 
+	/**
+	 * RB模板Service
+	 */
 	@Autowired
 	private RbTemplateService rbTemplateService;
 
+	/**
+	 * RB模板Mapper
+	 */
 	@Autowired
 	private RbTemplateMapper rbTemplateMapper;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 设置业务类型
+	 *
+	 * @return {@code BusinessTemplate.BusinessType }
+	 */
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
 		return BusinessTemplate.BusinessType.RED_VS_BLUE;
 	}
 
+	/**
+	 * 保存真正业务
+	 *
+	 * @param basicTemplate 基本模板
+	 * @param businessId    业务id
+	 * @return {@code String }
+	 */
 	@Override
 	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 		RbTemplateContext rbTemplateContext = BeanUtils.copy(basicTemplate,
@@ -77,6 +107,12 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		return rbTemplate.getBusinessTemplateId();
 	}
 
+	/**
+	 * 真正转 储业务
+	 *
+	 * @param template 模板
+	 * @return {@code ResourceDumpContext }
+	 */
 	@Override
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<RbTemplate> context = new ResourceDumpContext<>();
@@ -92,6 +128,11 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		return context;
 	}
 
+	/**
+	 * 真正负荷业务资源
+	 *
+	 * @param resource 资源
+	 */
 	@Override
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
 		RbTemplate rbTemplate = ((JSONObject) resource.getBusiness())
@@ -106,6 +147,11 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		}
 	}
 
+	/**
+	 * 删除模板相关
+	 *
+	 * @param businessTemplate 业务模板
+	 */
 	@Override
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		RbTemplate rbTemplate = rbTemplateMapper
@@ -116,6 +162,11 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 		rbTemplateMapper.deleteById(rbTemplate.getResourceId());
 	}
 
+	/**
+	 * 负荷训练模板
+	 *
+	 * @param templateContext 模板上下文
+	 */
 	@Override
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		RbTemplate template = BeanUtils.copy(templateContext, RbTemplate.class);

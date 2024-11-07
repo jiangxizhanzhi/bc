@@ -9,57 +9,114 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务信息响应
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class MissionInfoRsp implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("任务id")
 	private String resourceId;
 
+	/**
+	 * 标题
+	 */
 	@ApiModelProperty("任务名称")
 	private String title;
 
+	/**
+	 * 选择
+	 */
 	@ApiModelProperty("选项")
 	private String option;
 
+	/**
+	 * 类别
+	 */
 	@ApiModelProperty("任务类别")
 	private String category;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty("任务描述")
 	private String description;
 
+	/**
+	 * 任务状态
+	 */
 	@ApiModelProperty("任务状态")
 	private Integer missionStatus;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty("任务类型")
 	private Integer type;
 
+	/**
+	 * 技能点
+	 */
 	@ApiModelProperty("任务技能分数")
 	private String skillPoints;
 
+	/**
+	 * 写入向上
+	 */
 	@ApiModelProperty("任务题解")
 	private String writeUp;
 
+	/**
+	 * 得分
+	 */
 	@ApiModelProperty("任务分数")
 	private Integer score;
 
+	/**
+	 * 答案
+	 */
 	@ApiModelProperty("答案")
 	private String answer;
 
+	/**
+	 * 评估状态
+	 */
 	@ApiModelProperty("评估状态")
 	private Integer evaluateStatus;
 
+	/**
+	 * 拒绝日志
+	 */
 	@ApiModelProperty("拒绝列表")
 	private List rejectLog;
 
+	/**
+	 * 用户答案
+	 */
 	@ApiModelProperty("用户答案")
 	private String userAnswer;
 
+	/**
+	 * 用户任务状态
+	 */
 	@ApiModelProperty("任务状态")
 	private Integer userMissionStatus;
 
+	/**
+	 * 写入向上显示
+	 */
 	@ApiModelProperty("展示题解")
 	private Boolean writeUpShow;
 
+	/**
+	 * 备注
+	 */
 	private String remark;
 
 	public void initUserMissionStatus(TaskContext taskContext) {

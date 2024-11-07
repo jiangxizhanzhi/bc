@@ -24,28 +24,58 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 团队教员Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class TeamTeacherServiceImpl implements TeamTeacherService {
 
+	/**
+	 * 团队房间Service
+	 */
 	@Autowired
 	private TeamRoomService teamRoomService;
 
+	/**
+	 * 靶场得分Service
+	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 靶场徽章Service
+	 */
 	@Autowired
 	private CrBadgeService crBadgeService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 获取得分列表
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<StudentScoreListRsp> }
+	 */
 	@Override
 	public List<StudentScoreListRsp> getScoreList(String roomId) {
 		// get roles
@@ -54,6 +84,12 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 		return crScoreService.getScoreListRsp(roomId, roleList);
 	}
 
+	/**
+	 * 获取角色列表
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<IdNameType> }
+	 */
 	@Override
 	public List<IdNameType> getRoleList(String roomId) {
 		List<CrRole> roles = teamRoomService.getStudentsRoles(roomId);
@@ -69,16 +105,35 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 		return res;
 	}
 
+	/**
+	 * 获取复盘时间轴
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code TimeLineData }
+	 */
 	@Override
 	public TimeLineData getReplayTimeline(String roomId, String userId) {
 		return teamRoomService.getTimeLine(roomId, userId);
 	}
 
+	/**
+	 * 获取任务统计学信息
+	 *
+	 * @param roomId 房间id
+	 * @return {@code TaskStatisticsInfo }
+	 */
 	@Override
 	public TaskStatisticsInfo getTaskStatisticsInfo(String roomId) {
 		return crTaskService.getTaskStatisticsInfoByRoomId(roomId);
 	}
 
+	/**
+	 * 获取复盘场景id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getReplaySceneId(String roomId) {
 		TeamRoom room = teamRoomService.getById(roomId);
@@ -98,6 +153,11 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 		return res;
 	}
 
+	/**
+	 * 通知提交
+	 *
+	 * @param missionId 任务id
+	 */
 	@Override
 	public void notifySubmission(String missionId) {
 		// get mission
@@ -110,6 +170,12 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 		crTaskService.pushMissionWsToUsers(roomId, teacherIds, MissionWsCode.MISSION_SUBMISSION);
 	}
 
+	/**
+	 * 获取教员id列表由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<String> }
+	 */
 	private List<String> getTeacherIdsByRoomId(String roomId) {
 		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,
 				Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));

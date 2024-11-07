@@ -14,19 +14,53 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 
 /**
- * @Entity com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate
+ * 团队模板Mapper
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Mapper
 @Repository
 public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 
+	/**
+	 * 列出团队模板
+	 *
+	 * @param page      分页
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<TeamTemplateData> }
+	 */
 	IPage<TeamTemplateData> listTeamTemplate(Page page, ListQuery listQuery);
 
+	/**
+	 * 获取由业务id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code TeamTemplate }
+	 */
 	TeamTemplate getByBusinessId(String resourceId);
 
+	/**
+	 * 获取团队模板由业务id列表
+	 *
+	 * @param ids id列表
+	 * @return {@code List<TeamTemplate> }
+	 */
 	List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> ids);
 
+	/**
+	 * 删除由业务模板id
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code Boolean }
+	 */
 	Boolean deleteByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
 
+	/**
+	 * 批量获取由业务id
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @return {@code List<TeamTemplate> }
+	 */
 	List<TeamTemplate> batchGetByBusinessId(List<String> businessTemplateIds);
 }

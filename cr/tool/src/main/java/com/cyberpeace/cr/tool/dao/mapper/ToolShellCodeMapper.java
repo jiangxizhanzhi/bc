@@ -7,10 +7,25 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * 工具壳代号Mapper
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Mapper
 @Repository
 public interface ToolShellCodeMapper extends BaseMapper<ToolShellCode> {
 
+	/**
+	 * 列表
+	 *
+	 * @param page        分页
+	 * @param author      作者
+	 * @param platform    平台
+	 * @param edbVerified EDB 验证
+	 * @return {@code IPage<ToolShellCode> }
+	 */
 	IPage<ToolShellCode> list(Page page, @Param("author") String author,
 			@Param("platform") String platform, @Param("edbVerified") Boolean edbVerified);
 }

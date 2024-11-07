@@ -6,6 +6,12 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import lombok.Data;
 
+/**
+ * 组织信息
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class OrgInfo implements Serializable {
 

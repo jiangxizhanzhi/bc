@@ -7,12 +7,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 
+/**
+ * 文件常见上传请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class FileCommonUploadReq implements Serializable {
 
+	/**
+	 * 文件
+	 */
 	@ApiModelProperty("文件")
 	private MultipartFile file;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty("上传类型 ")
 	private Integer type;
 

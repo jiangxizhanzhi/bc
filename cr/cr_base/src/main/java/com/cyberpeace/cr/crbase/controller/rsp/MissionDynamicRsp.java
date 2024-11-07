@@ -8,12 +8,24 @@ import com.cyberpeace.cr.crbase.service.context.StatisticalInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务动态响应
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class MissionDynamicRsp {
 
+	/**
+	 * 统计信息
+	 */
 	@ApiModelProperty(value = "统计信息")
 	private List<StatisticalInfo> statisticalInfo;
 
+	/**
+	 * 动态数据
+	 */
 	@ApiModelProperty(value = "动态数据")
 	private List<DynamicData> dynamicData;
 }

@@ -12,24 +12,51 @@ import lombok.Data;
 
 /**
  * 时间数据
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class TimeData {
 
+	/**
+	 * 状态
+	 */
 	private Integer status;
 
+	/**
+	 * 开始时间
+	 */
 	private Date startTime;
 
+	/**
+	 * 结束时间
+	 */
 	private Date endTime;
 
+	/**
+	 * x 最大时间
+	 */
 	private Date xMaxTime;
 
+	/**
+	 * X 数据
+	 */
 	private List<String> xData;
 
+	/**
+	 * 时间列表
+	 */
 	private List<Date> timeList;
 
+	/**
+	 * 运行
+	 */
 	private Integer running;
 
+	/**
+	 * 积累值
+	 */
 	private Integer accumulatedValue;
 
 	public TimeData(int status, Date startTime, Date realEndTime, Date supposedEndTime) {

@@ -14,30 +14,70 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 团队装置Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class TeamDeviceServiceImpl extends ServiceImpl<TeamDeviceMapper, TeamTrainDevice> implements TeamDeviceService {
+    /**
+     * 团队装置Mapper
+     */
     @Autowired
     private TeamDeviceMapper teamDeviceMapper;
 
+    /**
+     * 远程用户Service
+     */
     @Autowired
     private RemoteUserService remoteUserService;
 
+    /**
+     * 获取占领
+     *
+     * @param roomId   房间id
+     * @param deviceId 装置id
+     * @return {@code TeamTrainDevice }
+     */
     @Override
     public TeamTrainDevice getOccupied(String roomId, String deviceId) {
         return teamDeviceMapper.selectByRoomIdAndDeviceId(roomId, deviceId);
     }
 
+    /**
+     * 占据
+     *
+     * @param device 装置
+     * @return boolean
+     */
     @Override
     public boolean occupy(TeamTrainDevice device) {
         return teamDeviceMapper.insert(device) > 0;
     }
 
+    /**
+     * 删除
+     *
+     * @param roomId   房间id
+     * @param deviceId 装置id
+     * @param userId   用户id
+     * @return boolean
+     */
     @Override
     public boolean remove(String roomId, String deviceId, String userId) {
         teamDeviceMapper.deleteByRoomIdAndDeviceIdAndCreateUserId(roomId, deviceId, userId);
         return true;
     }
 
+    /**
+     * 获取占有
+     *
+     * @param roomId   房间id
+     * @param deviceId 装置id
+     * @return {@code List<TeamTrainDeviceContext> }
+     */
     @Override
     public List<TeamTrainDeviceContext> getOccupies(String roomId, String deviceId) {
         List<TeamTrainDevice> devices = teamDeviceMapper.selectAllByRoomIdAndDeviceId(roomId, deviceId);

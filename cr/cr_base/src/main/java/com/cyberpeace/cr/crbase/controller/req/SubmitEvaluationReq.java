@@ -9,25 +9,49 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 提交评估请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @Slf4j
 public class SubmitEvaluationReq {
 
+	/**
+	 * 房间id
+	 */
 	@ApiModelProperty(value = "房间ID")
 	private String roomId;
 
+	/**
+	 * 提交id
+	 */
 	@ApiModelProperty(value = "任务提交id")
 	private String submitId;
 
+	/**
+	 * 评估状态
+	 */
 	@ApiModelProperty(value = "评估结果")
 	private Integer evaluateStatus;
 
+	/**
+	 * 原因
+	 */
 	@ApiModelProperty(value = "预设原因")
 	private Integer reason;
 
+	/**
+	 * 详情
+	 */
 	@ApiModelProperty(value = "裁决详情")
 	private String detail;
 
+	/**
+	 * 得分
+	 */
 	@ApiModelProperty(value = "分数改判")
 	private Integer score;
 

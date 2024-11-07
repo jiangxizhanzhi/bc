@@ -23,18 +23,42 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
+/**
+ * 屏幕Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Service
 public class ScreenServiceImpl implements ScreenService {
+    /**
+     * 远程场景Service
+     */
     @Autowired
     private RemoteSceneService remoteSceneService;
 
+    /**
+     * 当地场景Service
+     */
     @Autowired
     private LocalSceneService localSceneService;
 
+    /**
+     * 靶场角色Service
+     */
     @Autowired
     private CrRoleService crRoleService;
 
+    /**
+     * 获取复盘用户时间信息
+     *
+     * @param roomId        房间id
+     * @param replaySceneId 复盘场景id
+     * @param nodeId        节点id
+     * @param groups        组
+     * @return {@code List<ScreenRecordUserRole> }
+     */
     @Override
 	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String replaySceneId , String nodeId, Collection<Integer> groups) {
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
@@ -73,6 +97,13 @@ public class ScreenServiceImpl implements ScreenService {
         return resList;
     }
 
+    /**
+     * 滤波器以前实体结束时间
+     *
+     * @param screenRecordUserRoles 屏幕录制用户角色
+     * @param actualEndTime         实体结束时间
+     * @return {@code List<ScreenRecordUserRole> }
+     */
     @Override
     public List<ScreenRecordUserRole> filterBeforeActualEndTime(List<ScreenRecordUserRole> screenRecordUserRoles, Date actualEndTime) {
         if(CollectionUtils.isEmpty(screenRecordUserRoles) || actualEndTime == null) {

@@ -6,9 +6,21 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+/**
+ * 整数解析器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class IntegerParser implements MdContentParser<Object, String> {
 
+    /**
+     * 解析
+     *
+     * @param content 内容
+     * @return {@code Object }
+     */
     @Override
     public Object parse(Object content) {
 
@@ -20,6 +32,12 @@ public class IntegerParser implements MdContentParser<Object, String> {
         return Integer.parseInt(value.trim());
     }
 
+    /**
+     * 写入
+     *
+     * @param value 值
+     * @return {@code String }
+     */
     @Override
     public String write(Object value) {
         if (ObjectUtils.isEmpty(value)) {

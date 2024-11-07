@@ -7,23 +7,50 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 
+/**
+ * RB 模板
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("cr_rb_template")
 public class RbTemplate extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 子类型
+	 */
 	private Integer subType;
 
+	/**
+	 * 持续时间
+	 */
 	private Integer durationTime;
 
+	/**
+	 * 预技能
+	 */
 	private String preSkill;
 
+	/**
+	 * 训练技能
+	 */
 	private String trainSkill;
 
+	/**
+	 * 角色配置
+	 */
 	private String roleConfig;
 
+	/**
+	 * 业务模板id
+	 */
 	private String businessTemplateId;
 
 }

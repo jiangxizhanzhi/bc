@@ -8,22 +8,49 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * EVAL 探针数据
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("cr_eval_probe_data")
 public class EvalProbeData extends BaseTable {
+    /**
+     * id
+     */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    /**
+     * 场景id
+     */
     private String sceneId;
 
+    /**
+     * 装置id
+     */
     private String deviceId;
 
+    /**
+     * 探针id
+     */
     private String probeId;
 
+    /**
+     * 收集时间
+     */
     private Date collectionTime;
 
+    /**
+     * 装置ip地址
+     */
     private String deviceIp;
 
+    /**
+     * 内容
+     */
     private String content;
 
     // todo 识别采集时间需要

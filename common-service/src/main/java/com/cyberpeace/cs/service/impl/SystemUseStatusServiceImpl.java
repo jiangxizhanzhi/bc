@@ -13,13 +13,27 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 系统用状态Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class SystemUseStatusServiceImpl extends ServiceImpl<SystemUseStatusMapper, SystemUseStatus> implements SystemUseStatusService {
 
+	/**
+	 * 系统用状态映射
+	 */
 	@Autowired
 	private SystemUseStatusMapper systemUseStatusMapper;
 
+	/**
+	 * 显示全部
+	 *
+	 * @return {@code SystemUseStatusRes }
+	 */
 	@Override
 	public SystemUseStatusRes showAll() {
 		SystemUseStatusRes val = new SystemUseStatusRes();
@@ -35,6 +49,13 @@ public class SystemUseStatusServiceImpl extends ServiceImpl<SystemUseStatusMappe
 		return val;
 	}
 
+	/**
+	 * 插入
+	 *
+	 * @param cpuUsage    CPU 使用率
+	 * @param memoryUsage 内存使用情况
+	 * @param diskUsage   磁盘使用情况
+	 */
 	@Override
 	public void insert(String cpuUsage, String memoryUsage, String diskUsage) {
 		SystemUseStatus systemUseStatus = new SystemUseStatus();
@@ -45,6 +66,9 @@ public class SystemUseStatusServiceImpl extends ServiceImpl<SystemUseStatusMappe
 		systemUseStatusMapper.insert(systemUseStatus);
 	}
 
+	/**
+	 * 删除
+	 */
 	@Override
 	public void delete() {
 		systemUseStatusMapper.deleteOverdueData();

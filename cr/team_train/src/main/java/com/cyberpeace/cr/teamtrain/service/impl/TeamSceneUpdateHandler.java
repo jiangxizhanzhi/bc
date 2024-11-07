@@ -25,26 +25,51 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 @Service
 public class TeamSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 
+	/**
+	 * 靶场角色Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 团队房间Service
+	 */
 	@Autowired
 	private TeamRoomService teamRoomService;
 
+	/**
+	 * 团队常见装置Service
+	 */
 	@Autowired
 	private TeamCommonDeviceService teamCommonDeviceService;
 
+	/**
+	 * 获取代号
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	protected Integer getCode() {
 		return LocalScene.BusinessCode.TEAM_TRAINING.getCode();
 	}
 
+	/**
+	 * 检查权限
+	 *
+	 * @param businessInstanceId 业务实例id
+	 */
 	@Override
 	protected void checkPermission(String businessInstanceId) {
 		teamRoomService.checkTeacherPermission(businessInstanceId,
 				UserInfoContext.getUserContext().getUserId());
 	}
 
+	/**
+	 * 更新角色
+	 *
+	 * @param roomId 房间id
+	 * @param req    请求体
+	 */
 	@Override
 	public void updateRoles(String roomId, SceneUpdateReq req) {
 		checkPermission(roomId);
@@ -60,6 +85,12 @@ public class TeamSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 		crRoleService.updateBatchById(modified);
 	}
 
+	/**
+	 * 删除节点
+	 *
+	 * @param roomId 房间id
+	 * @param nodeId 节点id
+	 */
 	@Override
 	public void deleteNode(String roomId, String nodeId) {
 		checkPermission(roomId);

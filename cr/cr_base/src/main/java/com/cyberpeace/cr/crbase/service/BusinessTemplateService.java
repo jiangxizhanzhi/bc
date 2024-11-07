@@ -19,7 +19,10 @@ import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**
+ * 业务模板Service
  *
+ * @author SN
+ * @date 2024/11/07
  */
 public interface BusinessTemplateService extends IService<BusinessTemplate> {
 
@@ -123,7 +126,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param templateIds 基础模版id列表
 	 * @param tempDir     临时文件夹
 	 * @return 压缩包路径
-	 * @throws IOException
+	 * @throws IOException io异常
 	 */
 	String makeDumpFile(List<String> templateIds, String tempDir) throws IOException;
 
@@ -169,6 +172,8 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 
 	/**
 	 * 用于资管：读取某名称的模板id
+	 * <p>
+	 * <p>
 	 * 结果为null代表不存在
 	 *
 	 * @param templateName 模板名称
@@ -195,6 +200,8 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 
 	/**
 	 * 创建或更新模板时，更新任务模板关联
+	 * <p>
+	 * <p>
 	 * 删除去除的任务，更新新增的任务
 	 *
 	 * @param businessTemplateId 业务模板id
@@ -227,6 +234,11 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
 	ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq);
 
+	/**
+	 * 清除用户身份验证
+	 *
+	 * @param user 用户
+	 */
 	void clearUserAuth(String user);
 
 }

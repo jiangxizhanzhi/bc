@@ -34,29 +34,56 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 
 /**
+ * 团队模板Service实现
  *
+ * @author SN
+ * @date 2024/11/07
  */
 @Service
 public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, TeamTemplate> implements TeamTemplateService {
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 业务模板Mapper
+	 */
 	@Autowired
 	BusinessTemplateMapper businessTemplateMapper;
 
+	/**
+	 * 团队模板Mapper
+	 */
 	@Autowired
 	private TeamTemplateMapper teamTemplateMapper;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 分页
+	 *
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<TeamTemplateData> }
+	 */
 	@Override
 	public IPage<TeamTemplateData> page(ListQuery listQuery) {
 		Page page = listQuery.toPageParam();
@@ -68,6 +95,12 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
         return teamTemplateMapper.listTeamTemplate(page, listQuery);
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param teamTrainTemplateContext 团队训练模板上下文
+	 * @return {@code TeamTemplate }
+	 */
 	@Override
 	public TeamTemplate create(TeamTrainTemplateContext teamTrainTemplateContext) {
 		TeamTemplate teamTemplate = new TeamTemplate();
@@ -116,6 +149,12 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return teamTemplate;
 	}
 
+	/**
+	 * 获取业务模板从基础信息输入
+	 *
+	 * @param baseInfo 基地信息
+	 * @return {@code BusinessTemplate }
+	 */
 	private BusinessTemplate getBusinessTemplateFromBaseInfoInput(BaseInfo baseInfo) {
 		BusinessTemplate businessTemplate = new BusinessTemplate();
 		businessTemplate.setName(baseInfo.getName());
@@ -126,6 +165,13 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return businessTemplate;
 	}
 
+	/**
+	 * 更新团队模板
+	 *
+	 * @param input            输入
+	 * @param businessTemplate 业务模板
+	 * @return {@code TeamTemplate }
+	 */
 	@Override
 	public TeamTemplate updateTeamTemplate(TeamTrainTemplateContext input,
 			BusinessTemplate businessTemplate) {
@@ -171,6 +217,12 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return teamTemplate;
 	}
 
+	/**
+	 * 获取由模板业务id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code TeamTemplate }
+	 */
 	@Override
 	public TeamTemplate getByTemplateBusinessId(String resourceId) {
 		TeamTemplate template = teamTemplateMapper.getByBusinessId(resourceId);
@@ -181,21 +233,44 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		return template;
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 */
 	@Override
 	public void batchDelete(List<String> businessTemplateIds) {
 		businessTemplateService.batchDelete(businessTemplateIds);
 	}
 
+	/**
+	 * 获取团队模板由业务id列表
+	 *
+	 * @param businessIds 业务id列表
+	 * @return {@code List<TeamTemplate> }
+	 */
 	@Override
 	public List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> businessIds) {
 		return teamTemplateMapper.getTeamTemplateByBusinessIds(businessIds);
 	}
 
+	/**
+	 * 删除由业务模板id
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean removeByBusinessTemplateId(String businessTemplateId) {
 		return teamTemplateMapper.deleteByBusinessTemplateId(businessTemplateId);
 	}
 
+	/**
+	 * 获取任务模板id列表由角色配置
+	 *
+	 * @param roleConfig 角色配置
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getMissionTemplateIdsByRoleConfig(String roleConfig) {
 		List<CrRoleConfig> roles = JsonUtil.toJsonObjectArray(roleConfig, CrRoleConfig.class);

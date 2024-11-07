@@ -18,9 +18,21 @@ import com.google.common.collect.Sets;
 
 import lombok.Data;
 
+/**
+ * 场景滤波器Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class SceneFilterServiceImpl implements SceneFilterService {
 
+	/**
+	 * 滤波器可见拓扑
+	 *
+	 * @param topoData 拓扑数据
+	 * @param nodes    节点
+	 */
 	@Override
 	public void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes) {
 		if (nodes == null || null == topoData) {
@@ -42,6 +54,14 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		filterAreas(areas, pieces, elements);
 	}
 
+	/**
+	 * 滤芯
+	 *
+	 * @param topoData       拓扑数据
+	 * @param elements       元素
+	 * @param visibleNodeIds 可见节点id列表
+	 * @param assetNodeIds   资产节点id列表
+	 */
 	private void filterElements(JSONObject topoData, JSONArray elements,
 			List<String> visibleNodeIds, List<String> assetNodeIds) {
 		// empty topo
@@ -83,8 +103,9 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 
 	/**
 	 * 去掉不含节点的 Block
-	 * @param areas Blocks
-	 * @param pieces Labels
+	 *
+	 * @param areas    Blocks
+	 * @param pieces   Labels
 	 * @param elements Nodes
 	 */
 	private void filterAreas(JSONArray areas, JSONArray pieces, JSONArray elements) {
@@ -103,6 +124,9 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 
 	/**
 	 * 要去掉的Block里的Label也要去掉
+	 *
+	 * @param area   面积
+	 * @param pieces 件
 	 */
 	private void filterPieces(Area area, JSONArray pieces) {
 		int i = 0;
@@ -117,6 +141,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 
 	/**
 	 * 移除不可见的节点之后，需要额外移除节点间的连线
+	 *
 	 * @param topoData 拓扑数据
 	 * @param elements 剩余的节点
 	 */
@@ -154,6 +179,9 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 
 /**
  * Area 范围
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 class Area {
@@ -164,12 +192,24 @@ class Area {
 
 	private Float height;
 
+	/**
+	 * 包含
+	 *
+	 * @param coordination 协调
+	 * @return {@code Boolean }
+	 */
 	public Boolean contains(Coordination coordination) {
 		return origin.getX() <= coordination.getX() && coordination.getX() <= origin.getX() + width
 				&& origin.getY() <= coordination.getY()
 				&& coordination.getY() <= origin.getY() + height;
 	}
 
+	/**
+	 * 包含
+	 *
+	 * @param object 对象
+	 * @return {@code Boolean }
+	 */
 	public Boolean contains(Object object) {
 		JSONObject jsonObject = (JSONObject) object;
 		Coordination coordination = JsonUtil.toJsonObject(jsonObject.getString("position2"),
@@ -179,6 +219,9 @@ class Area {
 
 	/**
 	 * area 含有至少一个节点，不隐藏； 否则隐藏 area
+	 *
+	 * @param elements 元素
+	 * @return {@code Boolean }
 	 */
 	public Boolean contains(JSONArray elements) {
 		for (Object element : elements) {
@@ -192,6 +235,9 @@ class Area {
 
 /**
  * 拓扑中的坐标
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 class Coordination {

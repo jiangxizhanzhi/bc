@@ -10,18 +10,26 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 
+/**
+ * 靶场常见Service
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public interface CrCommonService {
 
 	/**
 	 * 获取监控会话
+	 *
 	 * @param localSceneId 本地场景id
-	 * @param studentId 学员id
+	 * @param studentId    学员id
 	 * @return 监控列表
 	 */
 	List<MonitorSession> getMonitorSessions(String localSceneId, String studentId);
 
 	/**
 	 * 判断中台scene是否已经停止
+	 *
 	 * @param sceneData 场景数据
 	 * @return 场景是否停止
 	 */
@@ -29,6 +37,7 @@ public interface CrCommonService {
 
 	/**
 	 * 校验前端输入的 role config
+	 *
 	 * @param roleConfigs 角色配置字符串
 	 * @return 任务模板id列表
 	 */
@@ -36,6 +45,7 @@ public interface CrCommonService {
 
 	/**
 	 * 校验前端输入的 missions scheme
+	 *
 	 * @param missionsScheme 角色任务配置
 	 * @return 返回校验过的 mission template id 列表
 	 */
@@ -43,6 +53,7 @@ public interface CrCommonService {
 
 	/**
 	 * 校验前端输入的红蓝角色配置
+	 *
 	 * @param roleConfigRb 红蓝角色配置
 	 */
 	void validateRbRoleConfig(CrRoleConfigRb roleConfigRb);
@@ -58,8 +69,8 @@ public interface CrCommonService {
 	/**
 	 * 通过房间id获取标记
 	 *
+	 * @param roomId 房间id
 	 * @return {@code List<CrMark>}
-	 * @param roomId
 	 */
 	List<CrMark> getMarkByRoomId(String roomId);
 

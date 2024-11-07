@@ -10,28 +10,70 @@ import lombok.Getter;
 
 import java.util.Date;
 
+/**
+ * EVAL 可变参考探头数据
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("cr_eval_variable_ref_probe_data")
 public class EvalVariableRefProbeData extends BaseTable {
+    /**
+     * id
+     */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    /**
+     * 变量id
+     */
     private String variableId;
 
+    /**
+     * 探针数据id
+     */
     private Integer probeDataId;
 
+    /**
+     * 时间
+     */
     private Date time;
 
+    /**
+     * 格式 化值
+     */
     private String formattedValue;
 
+    /**
+     * 状态
+     */
     private Integer status;
 
+    /**
+     * 状态
+     *
+     * @author SN
+     * @date 2024/11/07
+     */
     public enum Status implements GenericEnum {
+        /**
+         * 没有
+         */
         NONE(0, "无"),
+        /**
+         * 匹配
+         */
         MATCHED(1, "被匹配");
 
+        /**
+         * 代号
+         */
         @Getter
         private final Integer code;
+        /**
+         * 描述
+         */
         @Getter
         private final String desc;
 

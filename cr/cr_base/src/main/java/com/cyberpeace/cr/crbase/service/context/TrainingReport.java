@@ -13,19 +13,34 @@ import lombok.Getter;
 
 /**
  * 训练报告
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class TrainingReport {
 
+	/**
+	 * 教员名称
+	 */
 	@ApiModelProperty(value = "教员姓名")
 	private String teacherName = "";
 
+	/**
+	 * 场景开始时间
+	 */
 	@ApiModelProperty(value = "场景开启时间")
 	private Date sceneStartTime;
 
+	/**
+	 * 训练时间
+	 */
 	@ApiModelProperty(value = "训练时间")
 	private Integer trainingTime = 0;
 
+	/**
+	 * 用户
+	 */
 	@ApiModelProperty(value = "用户列表")
 	private List<UserReport> users = Lists.newArrayList();
 

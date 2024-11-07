@@ -21,6 +21,12 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 我 Web 套接字处理程序
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Component
 @Primary
@@ -28,13 +34,25 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
 	/**
 	 * 1、key=业务数据生成编号。
+	 * <p>
+	 * <p>
 	 * 2、value
+	 * <p>
+	 * <p>
 	 * 2.1、 value的key=该业务场景下的用户id
+	 * <p>
+	 * <p>
 	 * 2.2、value的value=该业务场景下指定用户的session
 	 */
 	private Map<String, Map<String, Set<CpWebSession>>> businessSocketSessionMap = Maps
 			.newConcurrentMap();
 
+	/**
+	 * 建立连接后
+	 *
+	 * @param webSocketSession Web 套接字会话
+	 * @throws Exception 例外
+	 */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
 		WebSocketConnectionContext webSocketContext = (WebSocketConnectionContext) webSocketSession
@@ -51,28 +69,60 @@ public class MyWebSocketHandler implements WebSocketHandler {
 				.add(new CpWebSession(webSocketSession));
 	}
 
+	/**
+	 * 获取插座会期地图
+	 *
+	 * @param identifierId 标识符id
+	 * @return {@code Map<String, Set<CpWebSession>> }
+	 */
 	public Map<String, Set<CpWebSession>> getSocketSessionMap(String identifierId) {
 		return businessSocketSessionMap.get(identifierId);
 	}
 
+	/**
+	 * handle message （处理消息）
+	 *
+	 * @param webSocketSession Web 套接字会话
+	 * @param webSocketMessage Web 套接字消息
+	 * @throws Exception 例外
+	 */
 	@Override
 	public void handleMessage(WebSocketSession webSocketSession,
 			WebSocketMessage<?> webSocketMessage) throws Exception {
 		// 不处理前端发送的消息
 	}
 
+	/**
+	 * 处理传输错误
+	 *
+	 * @param webSocketSession Web 套接字会话
+	 * @param throwable        可投掷
+	 * @throws Exception 例外
+	 */
 	@Override
 	public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable)
 			throws Exception {
 		removeSession(new CpWebSession(webSocketSession));
 	}
 
+	/**
+	 * 连接关闭后
+	 *
+	 * @param webSocketSession Web 套接字会话
+	 * @param closeStatus      关闭状态
+	 * @throws Exception 例外
+	 */
 	@Override
 	public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus)
 			throws Exception {
 		removeSession(new CpWebSession(webSocketSession));
 	}
 
+	/**
+	 * 支持部分消息
+	 *
+	 * @return boolean
+	 */
 	@Override
 	public boolean supportsPartialMessages() {
 		return false;
@@ -80,7 +130,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
 	/**
 	 * 向用户推送websocket消息
-	 * @param message 待推送的websocket消息
+	 *
+	 * @param message   待推送的websocket消息
 	 * @param toAllUser 向该业务的所有用户推送消息。toAllUser目前就实训的共享场景用到
 	 */
 	public void pushMessage(WebSocketMessageContext message, boolean toAllUser) {
@@ -117,6 +168,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
 	/**
 	 * 向用户推送websocket消息
+	 *
 	 * @param message 待推送的websocket消息
 	 * @param userIds 向特定用户推送消息。
 	 */
@@ -141,6 +193,14 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		}
 	}
 
+	/**
+	 * 推送到会话
+	 *
+	 * @param message    消息
+	 * @param sessions   会话
+	 * @param userId     用户id
+	 * @param businessId 业务id
+	 */
 	private void pushToSessions(WebSocketMessageContext message, Set<CpWebSession> sessions,
 			String userId, String businessId) {
 		List<CpWebSession> toBeRemoved = Lists.newArrayList();
@@ -179,6 +239,14 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		}
 	}
 
+	/**
+	 * 发送聊天消息
+	 *
+	 * @param identifierId 标识符id
+	 * @param userId       用户id
+	 * @param chatMessage  聊天消息
+	 * @throws IOException io异常
+	 */
 	public void sendChatMessage(String identifierId, String userId, ChatMessage chatMessage)
 			throws IOException {
 
@@ -194,6 +262,13 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		}
 	}
 
+	/**
+	 * 获取用户会期
+	 *
+	 * @param identifierId 标识符id
+	 * @param userId       用户id
+	 * @return {@code Set<CpWebSession> }
+	 */
 	private Set<CpWebSession> getUserSession(String identifierId, String userId) {
 		Map<String, Set<CpWebSession>> userSocketSessionMap = getSocketSessionMap(identifierId);
 
@@ -210,6 +285,11 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		return webSocketSessions;
 	}
 
+	/**
+	 * 删除会话
+	 *
+	 * @param webSocketSession Web 套接字会话
+	 */
 	private void removeSession(CpWebSession webSocketSession) {
 		if (webSocketSession.isOpen()) {
 			try {

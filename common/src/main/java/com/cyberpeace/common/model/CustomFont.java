@@ -4,8 +4,22 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * 自定义字体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public class CustomFont {
 
+	/**
+	 * 加载字体
+	 *
+	 * @param fontFilename 字体文件名
+	 * @param style        风格
+	 * @param size         大小
+	 * @return {@code Font }
+	 */
 	public Font loadFonts(String fontFilename, int style, int size) {
 		// 字体在resource下的路径
 		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fontFilename);

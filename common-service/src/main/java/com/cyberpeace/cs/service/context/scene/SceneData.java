@@ -6,11 +6,23 @@ import lombok.Data;
 
 import static com.cyberpeace.common.constant.MpSceneStatusConstant.*;
 
+/**
+ * 场景数据
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class SceneData implements Serializable {
 
+	/**
+	 * 拓扑学
+	 */
 	private SceneTopology topology;
 
+	/**
+	 * 插件
+	 */
 	private ScenePlugins plugins;
 
 	/** 

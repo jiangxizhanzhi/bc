@@ -8,27 +8,60 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 靶场得分
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName(value = "cr_score")
 public class CrScore extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 房间id
+	 */
 	private String roomId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 训练得分
+	 */
 	private Integer trainingScore;
 
+	/**
+	 * 训练百分比
+	 */
 	private String trainingPercentage;
 
+	/**
+	 * 技能分数
+	 */
 	private String skillScore;
 
+	/**
+	 * 技能百分比
+	 */
 	private String skillPercentage;
 
+	/**
+	 * 评论
+	 */
 	private String comment;
 
+	/**
+	 * 最终比分
+	 */
 	private Integer finalScore;
 
 	public enum ScoreValue {

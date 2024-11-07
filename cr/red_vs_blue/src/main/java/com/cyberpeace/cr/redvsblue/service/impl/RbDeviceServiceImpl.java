@@ -16,17 +16,33 @@ import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
 /**
+ * RB装置Service实现
  *
+ * @author SN
+ * @date 2024/11/07
  */
 @Service
 public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> implements RbDeviceService {
 
+	/**
+	 * RB装置Mapper
+	 */
 	@Autowired
 	private RbDeviceMapper rbDeviceMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 获取由房间id和自选装置
+	 *
+	 * @param roomId   房间id
+	 * @param deviceId 装置id
+	 * @return {@code List<RbDeviceContext> }
+	 */
 	@Override
 	public List<RbDeviceContext> getByRoomIdAndOptionalDevice(String roomId, String deviceId) {
 		List<RbDevice> devices = rbDeviceMapper.selectByRoomIdAndOptionalDevice(roomId, deviceId);
@@ -41,11 +57,26 @@ public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> i
 		return contexts;
 	}
 
+	/**
+	 * 获取由房间id和装置
+	 *
+	 * @param roomId   房间id
+	 * @param deviceId 装置id
+	 * @return {@code RbDevice }
+	 */
 	@Override
 	public RbDevice getByRoomIdAndDevice(String roomId, String deviceId) {
 		return rbDeviceMapper.selectByRoomIdAndDeviceId(roomId, deviceId);
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param roomId   房间id
+	 * @param deviceId 装置id
+	 * @param userId   用户id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean create(String roomId, String deviceId, String userId) {
 		RbDevice device = new RbDevice();
@@ -55,11 +86,24 @@ public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> i
 		return rbDeviceMapper.insert(device) > 0;
 	}
 
+	/**
+	 * 删除由房间id
+	 *
+	 * @param roomId 房间id
+	 */
 	@Override
 	public void removeByRoomId(String roomId) {
 		rbDeviceMapper.deleteByRoomId(roomId);
 	}
 
+	/**
+	 * 删除由房间id和用户id和装置id
+	 *
+	 * @param roomId   房间id
+	 * @param userId   用户id
+	 * @param deviceId 装置id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean removeByRoomIdAndUserIdAndDeviceId(String roomId, String userId,
 			String deviceId) {

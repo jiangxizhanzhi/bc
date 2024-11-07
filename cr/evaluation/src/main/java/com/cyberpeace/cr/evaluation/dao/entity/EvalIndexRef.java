@@ -10,12 +10,24 @@ import lombok.Getter;
 
 import java.util.Date;
 
+/**
+ * eval 索引 ref
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("cr_eval_index_ref")
 public class EvalIndexRef extends BaseTable {
+    /**
+     * 资源id
+     */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
+    /**
+     * 名称
+     */
     private String name;
 
     /**

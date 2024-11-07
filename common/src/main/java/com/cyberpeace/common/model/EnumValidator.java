@@ -6,17 +6,37 @@ import com.cyberpeace.common.baseinterface.EnumValid;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * 枚举验证器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public class EnumValidator implements ConstraintValidator<EnumValid, Integer> {
 
-    // 枚举校验注解
+    /**
+     * 注解
+     */// 枚举校验注解
     private EnumValid annotation;
 
+    /**
+     * 初始化
+     *
+     * @param constraintAnnotation 约束注释
+     */
     @Override
     public void initialize(EnumValid constraintAnnotation) {
 
         annotation = constraintAnnotation;
     }
 
+    /**
+     * 有效
+     *
+     * @param value                      值
+     * @param constraintValidatorContext 约束验证器上下文
+     * @return boolean
+     */
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext constraintValidatorContext) {
         boolean result = false;

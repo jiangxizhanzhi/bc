@@ -8,6 +8,8 @@ import lombok.Data;
 
 /**
  * 场景更新ws
+ * <p>
+ * <p>
  * 需要发给前端提示刷新场景的
  *
  * @author SN
@@ -18,10 +20,15 @@ public class SceneUpdateWsBo implements Serializable {
 
 	/**
 	 * 代码
+	 * <p>
+	 * <p>
 	 * 更新场景
 	 */
 	private Integer code = SceneWsCode.SCENE_UPDATED;
 
+	/**
+	 * 数据
+	 */
 	private WsData data = new WsData();
 
 	public SceneUpdateWsBo(Integer type) {

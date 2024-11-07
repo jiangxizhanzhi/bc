@@ -34,6 +34,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场场景控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "cr场景相关接口")
 @RestController
 @Slf4j
@@ -41,15 +47,30 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 public class CrSceneController {
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 靶场场景Service
+	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
+	/**
+	 * 更新场景
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PutMapping("/update/dynamic")
 	@ApiOperation("动态更新场景")
 	@RequiresPermissions(
@@ -81,6 +102,8 @@ public class CrSceneController {
 
 	/**
 	 * 获取资产清单
+	 * <p>
+	 * <p>
 	 * 透传中台节点数据
 	 *
 	 * @param req 请求体
@@ -98,8 +121,11 @@ public class CrSceneController {
 
 	/**
 	 * 获取操作系统名字
+	 * <p>
+	 * <p>
 	 * 透传中台节点数据
 	 *
+	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<List<IdNameType>>}
 	 */
 	@ApiOperation("操作系统列表, 需要开启场景(团队、红蓝)")
@@ -116,6 +142,12 @@ public class CrSceneController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 删除节点
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@DeleteMapping("/node/delete")
 	@ApiOperation("动态删除单个节点")
 	@RequiresPermissions(

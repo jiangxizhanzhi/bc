@@ -8,25 +8,58 @@ import lombok.Getter;
 
 import java.io.Serializable;
 
+/**
+ * 系统属性
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("system_property")
 public class SystemProperty implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	@TableField("`desc`")
 	private String desc;
 
+	/**
+	 * 内容
+	 */
 	private String content;
 
+	/**
+	 * 名称枚举
+	 *
+	 * @author SN
+	 * @date 2024/11/07
+	 */
 	public enum NameEnum implements GenericEnum {
 
+		/**
+		 * 导出内置
+		 */
 		EXPORT_BUILTIN(1, "export_builtin"),
+		/**
+		 * 是展会情况
+		 */
 		IS_SHOW_SITUATION(2, "isShowSituation");
 
+		/**
+		 * 代号
+		 */
 		@Getter
 		private final Integer code;
 
+		/**
+		 * 描述
+		 */
 		@Getter
 		private final String desc;
 

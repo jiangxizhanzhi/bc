@@ -14,9 +14,15 @@ import lombok.Data;
 @Data
 public class NameCount implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	/**
+	 * 计数
+	 */
 	@ApiModelProperty(value = "计数")
 	private Integer count;
 

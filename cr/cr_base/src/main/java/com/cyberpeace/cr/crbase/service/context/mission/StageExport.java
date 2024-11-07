@@ -13,12 +13,21 @@ import lombok.Data;
 
 /**
  * 阶段导出
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Data
 public class StageExport {
 
+	/**
+	 * 阶段名称
+	 */
 	private String stageName;
 
+	/**
+	 * 问题
+	 */
 	private List<StageQuestion> questions;
 
 	public StageExport(MissionSchemeObject<TrainingRecordMissionRsp> missionScheme) {

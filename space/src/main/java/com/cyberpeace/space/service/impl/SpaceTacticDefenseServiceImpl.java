@@ -28,6 +28,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间策略防御Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService {
@@ -44,6 +50,9 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	@Autowired
 	private SpaceTacticDefenseCategoryMapper categoryMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	/**
 	 * utilService
@@ -206,6 +215,12 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 
     }
 
+	/**
+	 * 列表由id列表
+	 *
+	 * @param defenseIds 防御id列表
+	 * @return {@code List<SpaceTacticDefense> }
+	 */
 	@Override
 	public List<SpaceTacticDefense> listByIds(List<String> defenseIds) {
 		if(CollectionUtils.isEmpty(defenseIds)){
@@ -214,6 +229,12 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return mapper.selectBatchIds(defenseIds);
 	}
 
+	/**
+	 * 获取由id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code SpaceTacticDefense }
+	 */
 	@Override
 	public SpaceTacticDefense getById(String resourceId) {
 		SpaceTacticDefense defense = mapper.selectById(resourceId);
@@ -223,6 +244,12 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return defense;
 	}
 
+	/**
+	 * 列表由类别id
+	 *
+	 * @param categoryId 类别id
+	 * @return 列表<防御细节>
+	 */
 	@Override
 	public List<DefenseDetail> listByCategoryId(String categoryId) {
 		LambdaQueryWrapper<SpaceTacticDefense> wrapper = new LambdaQueryWrapper<>();
@@ -237,6 +264,11 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		});
 	}
 
+	/**
+	 * 获取框架
+	 *
+	 * @return 动作框架层级
+	 */
 	@Override
 	public SpaceFrameLevel getFrame() {
 		SpaceFrameLevel level = new SpaceFrameLevel("", "");
@@ -257,6 +289,15 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return level;
 	}
 
+	/**
+	 * 获取阶段框架
+	 *
+	 * @param stage       阶段
+	 * @param stageName   阶段名称
+	 * @param defenseMap  防御地图
+	 * @param categoryBos 类别 BOS
+	 * @return {@code SpaceFrameLevel }
+	 */
 	private SpaceFrameLevel getStageFrame(Integer stage, String stageName,
 			Map<String, List<SpaceTacticDefense>> defenseMap,
 			List<TacticDefenseCategoryBo> categoryBos) {

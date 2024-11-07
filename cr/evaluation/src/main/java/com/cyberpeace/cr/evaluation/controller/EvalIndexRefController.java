@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -23,6 +22,12 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * EVAL 索引引用控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "靶场测评-评估关联算法")
 @RestController
 @RequiresAuthentication
@@ -30,15 +35,30 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class EvalIndexRefController {
 
+    /**
+     * eval 索引 ref 映射器
+     */
     @Autowired
     private EvalIndexRefMapper evalIndexRefMapper;
 
+    /**
+     * eval 变量 ref 映射器
+     */
     @Autowired
     private EvalVariableRefMapper evalVariableRefMapper;
 
+    /**
+     * 评估指数裁判Service
+     */
     @Autowired
     private EvalIndexRefService evalIndexRefService;
 
+    /**
+     * 更新
+     *
+     * @param requestData 请求数据
+     * @return {@code BaseRsp<String> }
+     */
     @ApiOperation("更新评估关联算法的评分方式")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PatchMapping("")
@@ -87,6 +107,12 @@ public class EvalIndexRefController {
         return new BaseRsp<>("success");
     }
 
+    /**
+     * 获取
+     *
+     * @param resourceId 资源id
+     * @return {@code BaseRsp<EvalIndexRef> }
+     */
     @ApiOperation("获取单个评估关联算法及评分方式")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("")

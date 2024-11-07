@@ -19,6 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间算法专业知识控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "知识库-算法库-专业能力评估算法")
 @RestController
 @RequestMapping("/space/algorithm/algorithm_expertise")
@@ -32,6 +38,12 @@ public class SpaceAlgorithmExpertiseController extends SpaceControllerBase<Space
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 获取相关地图
+	 *
+	 * @param eList E 列表
+	 * @return {@code Map<String, IdAndName> }
+	 */
 	@Override
 	protected Map<String, IdAndName> getRelatedMap(List<SpaceAlgorithmExpertise> eList) {
 		Map<String, IdAndName> res = Maps.newHashMap();

@@ -35,25 +35,49 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空间操作控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "知识库-防御行动框架-攻击、防御活动管理")
 @RestController
 @RequestMapping("/space/action_frame/action")
 @RequiresAuthentication
 public class SpaceActionController extends SpaceActionFrameBaseController<SpaceActionService, SpaceAction, SpaceActionBo, SpaceActionPageReq> {
 
+	/**
+	 * 方法Service
+	 */
 	@Autowired
 	private SpaceActionMethodService methodService;
 
+	/**
+	 * 工具Service
+	 */
 	@Autowired
 	private ToolService toolService;
 
+	/**
+	 * 策略Service
+	 */
 	@Autowired
 	private SpaceStrategyService strategyService;
 
 
+	/**
+	 * 关系Service
+	 */
 	@Autowired
 	private SpaceActionRelationService relationService;
 
+	/**
+	 * 获取adetail
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<SpaceActionBo> }
+	 */
 	@ApiOperation("详情")
 	@GetMapping("")
 	@Override
@@ -77,17 +101,35 @@ public class SpaceActionController extends SpaceActionFrameBaseController<SpaceA
 		return new BaseRsp<>(bo);
 	}
 
+	/**
+	 * 获取上相关
+	 *
+	 * @param upperIds 上id列表
+	 * @return {@code List<SpaceActionMethod> }
+	 */
 	@Override
 	protected List<SpaceActionMethod> getUpperRelated(List<String> upperIds) {
 		return methodService.listByIds(upperIds);
 	}
 
+	/**
+	 * 获取上id列表
+	 *
+	 * @param req 请求体
+	 * @return {@code List<String> }
+	 */
 	@Override
 	protected List<String> getUpperIds(SpaceActionBo req) {
 		return StreamApiUtils.map(req.getMethod(), IdAndName::getResourceId);
 	}
 
 
+	/**
+	 * 转换
+	 *
+	 * @param ids id列表
+	 * @return {@code List<SpaceActionStrategy> }
+	 */
 	private List<SpaceActionStrategy> convert(List<String> ids) {
 		List<SpaceActionStrategy> res = Lists.newArrayList();
 		if (ids.isEmpty()) {

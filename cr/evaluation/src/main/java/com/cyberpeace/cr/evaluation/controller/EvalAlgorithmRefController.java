@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -39,12 +38,17 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+/**
+ * EVAL 算法 REF 控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Api(tags = "前台-测试靶场-算法管理")
 @RestController
@@ -52,30 +56,52 @@ import java.util.concurrent.Executor;
 @RequiresAuthentication
 public class EvalAlgorithmRefController {
 
+	/**
+	 * eval 算法 ref mapper
+	 */
 	@Autowired
 	private EvalAlgorithmRefMapper evalAlgorithmRefMapper;
 
+	/**
+	 * eval 索引 ref 映射器
+	 */
 	@Autowired
 	private EvalIndexRefMapper evalIndexRefMapper;
 
+	/**
+	 * eval 变量 ref 映射器
+	 */
 	@Autowired
 	private EvalVariableRefMapper evalVariableRefMapper;
 
+	/**
+	 * 远程蟒Service
+	 */
 	@Autowired
 	private RemotePythonService remotePythonService;
 
+	/**
+	 * 评估算法裁判Service
+	 */
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 执行者
+	 */
 	@Qualifier("taskExecutor")
 	@Autowired
 	private Executor executor;
 
 	/**
 	 * 编辑算法
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -121,6 +147,14 @@ public class EvalAlgorithmRefController {
 		return new BaseRsp(res);
 	}
 
+	/**
+	 * 检查矩阵数据
+	 *
+	 * @param req              请求体
+	 * @param res              结果
+	 * @param evalAlgorithmRef eval 算法 ref
+	 * @param matrixData       矩阵数据
+	 */
 	void checkMatrixData(EvalAlgorithmRefReq req, EvalAlgorithmEditRsp res,
 			EvalAlgorithmRef evalAlgorithmRef, String matrixData) {
 		LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
@@ -155,6 +189,13 @@ public class EvalAlgorithmRefController {
 		}
 	}
 
+	/**
+	 * 获取评估算法裁判
+	 *
+	 * @param resourceId 资源id
+	 * @param type       类型
+	 * @return {@code BaseRsp<EvalAlgorithmRsp> }
+	 */
 	@ApiOperation("查询算法")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)

@@ -6,12 +6,10 @@ import com.cyberpeace.common.threadlocal.ThreadLocalContext;
 import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.situation.constant.SituationErrorCode;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Properties;
 

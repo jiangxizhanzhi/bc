@@ -24,6 +24,7 @@ public class SpaceActionPageReq extends FrameBasePageReq {
 		}
 		if(null != this.type){
 			wrapper.eq(SpaceAction::getType, this.type);
+			wrapper.setEntityClass(SpaceAction.class);
 		}
 		return wrapper;
 	}

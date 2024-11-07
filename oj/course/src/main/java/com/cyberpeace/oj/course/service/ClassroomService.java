@@ -1,7 +1,5 @@
 package com.cyberpeace.oj.course.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -15,6 +13,8 @@ import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.*;
 
+import java.util.List;
+
 public interface ClassroomService extends IService<Classroom> {
 
 	/**
@@ -24,14 +24,6 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	Classroom create(Classroom classroom, AuthContext authContext);
-
-	/**
-	 * 前台课程表数据查询
-	 * @param roomListQuery
-	 * @param authContext
-	 * @return
-	 */
-	List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery, AuthContext authContext);
 
 	/**
 	 * 分页查询课时表信息

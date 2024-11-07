@@ -7,18 +7,13 @@ import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.oj.course.controller.req.ClassroomSignInReq;
 import com.cyberpeace.oj.course.controller.res.RemoteHelpReq;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
-import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -27,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @Api(tags = "oj-前台课程表相关")
@@ -41,37 +35,6 @@ public class WebClassroomController {
 
 	@Autowired
 	private ClassroomSignService classroomSignService;
-
-	@ApiOperation("前台课程表信息查询")
-	@GetMapping("/list")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-			MenuConstant.WEB_PERSON_CENTER }, logical = Logical.OR)
-	public BaseRsp<List<TimeScheduleBo>> listCourseSchedule(
-			@ApiParam(name = "month", value = "月份 格式xxxx-xx") @RequestParam("month") String month) {
-
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				true);
-
-		Date startOfDay = TimeUtil.getStartOfDay(
-				TimeUtil.toDate2(TimeUtil.getHeadOrTailDayOfSepecificMonth(month, true)));
-		Date endOfDay = TimeUtil.getEndOfDay(
-				TimeUtil.toDate2(TimeUtil.getHeadOrTailDayOfSepecificMonth(month, false)));
-
-		if (!authContext.getSuperAdmin() && StringUtils.isBlank(authContext.getOrganization())) {
-			return new BaseRsp<>();
-		}
-
-		// 设置查询条件
-		ClassRoomListQuery roomListQuery = new ClassRoomListQuery();
-		roomListQuery.setStartTime(startOfDay);
-		roomListQuery.setEndTime(endOfDay);
-
-		roomListQuery.setOrgId(authContext.getOrganization());
-
-		List<TimeScheduleBo> boList = classroomService.selectTimeList(roomListQuery, authContext);
-
-		return new BaseRsp(boList);
-	}
 
 	@ApiOperation("课堂签到")
 	@PostMapping("/sign_in")

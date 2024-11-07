@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.cyberpeace.oj</groupId>
     <artifactId>oj_base</artifactId>
     <version>${oj.base.version}</version>
     <packaging>jar</packaging>

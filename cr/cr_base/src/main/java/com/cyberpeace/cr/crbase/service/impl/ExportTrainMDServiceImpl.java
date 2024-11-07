@@ -21,7 +21,6 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +30,14 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
-	public static Map<Integer, ExportTrainMDService> register = Maps.newHashMap();
 
 	public static final String BASE_MD_FILE = "README.md";
 
@@ -66,11 +67,6 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
 	@PostConstruct
 	public void init() {
-		if (register.containsKey(getCode())) {
-			throw new Error("declareMessageType=[" + getCode() + "] repeat");
-		}
-
-		register.put(getCode(), this);
 	}
 
 	public Integer getCode() {
@@ -88,9 +84,6 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		if(businessTemplateList.size() < resourceIds.size()){
 			log.warn("部分id不存在");
 		}
-		ExportTrainMDService exportTrainMDService = register.get(type);
-		exportTrainMDService.exportTrainMD(businessTemplateList,
-				path + File.separator + "cr" + File.separator + "场景库", sceneNumber, disableImageExport);
 
 		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path + File.separator + VERSION),
 				StandardCharsets.UTF_8);

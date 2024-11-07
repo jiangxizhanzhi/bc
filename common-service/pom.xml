@@ -8,7 +8,6 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>com.cyberpeace</groupId>
     <artifactId>common-service</artifactId>
     <version>${common.service.version}</version>
     <packaging>jar</packaging>

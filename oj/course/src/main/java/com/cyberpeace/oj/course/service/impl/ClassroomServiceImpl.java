@@ -17,13 +17,7 @@ import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
-import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
-import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
@@ -141,12 +135,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private CrRoleMapper crRoleMapper;
-
-	@Autowired
-	private TeamRoomMapper teamRoomMapper;
-
-	@Autowired
-	private RbRoomMapper rbRoomMapper;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -327,58 +315,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	}
 
-	@Override
-	public List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery,
-			AuthContext authContext) {
-		List<ClassroomBo> classroomBos = new ArrayList<>();
-
-		// 权限过滤
-		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (!CollectionUtils.isEmpty(authCourseIds)) {
-
-			// 公开过滤
-			List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
-					authContext.getIsWeb());
-			if (!CollectionUtils.isEmpty(publicCourseIds)) {
-
-				// 课程表数据查询
-				List<Classroom> classrooms = classroomMapper.selectListByCourse(publicCourseIds,
-						roomListQuery);
-				classroomBos = StreamApiUtils.map(classrooms,
-						classroom -> entityToBo(classroom));
-			}
-		}
-
-		// 单兵 团队 红蓝对抗
-		List<ClassroomBo> crClassroom = crClassroom(roomListQuery.getStartTime(),
-				roomListQuery.getEndTime(), authContext.getUserId());
-		classroomBos.addAll(crClassroom);
-
-		// 竞赛赛事
-		List<ClassroomBo> adClassroom = adClassroom(roomListQuery.getStartTime(),
-				roomListQuery.getEndTime(),
-				authContext.getSuperAdmin() ? CommonConstant.EMPTY_STRING
-						: authContext.getUserId());
-		classroomBos.addAll(adClassroom);
-
-		// 根据开始时间转换为map
-		List<ClassroomBo> splitTimeBos = StreamApiUtils.flatMap(classroomBos,
-				classroomBo -> splitTimeByDay(classroomBo));
-		Map<String, List<ClassroomBo>> startTimeMap = StreamApiUtils.groupBy(splitTimeBos,
-				classroomBo -> TimeUtil.format6(classroomBo.getStartTime()));
-
-		// 对key进行排序
-		List<String> sortKeys = Lists.newArrayList(startTimeMap.keySet()).stream().sorted()
-				.collect(Collectors.toList());
-
-		return StreamApiUtils.map(sortKeys, key -> {
-			TimeScheduleBo scheduleBo = new TimeScheduleBo();
-			scheduleBo.setDate(key);
-			scheduleBo.setClassrooms(startTimeMap.get(key));
-			return scheduleBo;
-		});
-	}
-
 	/** 数据拆分，数据不能跨天，跨几天则为几条*/
 	private List<ClassroomBo> splitTimeByDay(ClassroomBo classroomBo) {
 
@@ -436,73 +372,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				endTime, userId);
 		return StreamApiUtils.map(competitionBos,
 				calendar -> BeanUtils.copy(calendar, ClassroomBo.class));
-	}
-
-	/**
-	 * 团队训练 红蓝对抗
-	 * @param startTime
-	 * @param endTime
-	 * @param userId
-	 * @return
-	 */
-	private List<ClassroomBo> crClassroom(Date startTime, Date endTime, String userId) {
-
-		List<ClassroomBo> classroomBos = Lists.newArrayList();
-
-		List<String> rbIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
-				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
-		if (CollectionUtils.isNotEmpty(rbIds)) {
-			List<RbRoom> rbRooms = rbRoomMapper.selectBatchIds(rbIds);
-			List<RbRoom> rooms = StreamApiUtils.filter(rbRooms,
-					rbRoom -> startTime.before(rbRoom.getStartTime())
-							&& endTime.after(rbRoom.getStartTime()));
-			classroomBos.addAll(StreamApiUtils.map(rooms, rbRoom -> rbClassroom(rbRoom, userId)));
-		}
-
-		List<String> teamIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
-				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-		if (CollectionUtils.isNotEmpty(teamIds)) {
-			List<TeamRoom> teamRooms = teamRoomMapper.selectBatchIds(teamIds);
-			List<TeamRoom> filter = StreamApiUtils.filter(teamRooms,
-					teamRoom -> startTime.before(teamRoom.getStartTime())
-							&& endTime.after(teamRoom.getStartTime()));
-			classroomBos.addAll(
-					StreamApiUtils.map(filter, teamRoom -> teamClassroom(teamRoom, userId)));
-		}
-
-		return classroomBos;
-	}
-
-	/** 团队训练房间数据转换*/
-	private ClassroomBo teamClassroom(TeamRoom teamRoom, String userId) {
-		ClassroomBo classroomBo = new ClassroomBo();
-		classroomBo.setName(teamRoom.getName());
-		classroomBo.setResourceId(teamRoom.getResourceId());
-		classroomBo.setClassify(ClassroomType.TEAM.getCode());
-		classroomBo.setCreateUserId(teamRoom.getCreateUserId());
-		classroomBo.setStartTime(teamRoom.getStartTime());
-		classroomBo.setEndTime(teamRoom.getEndTime());
-
-		CrRole role = crRoleMapper.getCrRoleByRoomIdAndUserId(teamRoom.getResourceId(), userId);
-		classroomBo.setRoleGroup(role.getRoleGroup());
-		return classroomBo;
-	}
-
-	/** 红蓝房间转换*/
-	private ClassroomBo rbClassroom(RbRoom rbRoom, String userId) {
-		ClassroomBo classroomBo = new ClassroomBo();
-		classroomBo.setClassify(ClassroomType.RB.getCode());
-		classroomBo.setName(rbRoom.getName());
-		classroomBo.setResourceId(rbRoom.getResourceId());
-
-		classroomBo.setCreateUserId(rbRoom.getCreateUserId());
-		classroomBo.setStartTime(rbRoom.getStartTime());
-		classroomBo.setEndTime(rbRoom.getEndTime());
-
-		CrRole role = crRoleMapper.getCrRoleByRoomIdAndUserId(rbRoom.getResourceId(), userId);
-		classroomBo.setRoleGroup(role.getRoleGroup());
-
-		return classroomBo;
 	}
 
 	@Override

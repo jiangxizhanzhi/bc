@@ -61,11 +61,6 @@
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>rtks</artifactId>
-            <version>${rtks.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
             <artifactId>course</artifactId>
             <version>${oj.course.version}</version>
         </dependency>
@@ -80,29 +75,9 @@
             <version>${oj.base.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>person</artifactId>
-            <version>${oj.person.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
             <version>${cr.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>red_vs_blue</artifactId>
-            <version>${cr.redvsvblue.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>single_train</artifactId>
-            <version>${cr.single.train.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>team_train</artifactId>
-            <version>${cr.team.train.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
@@ -115,11 +90,6 @@
             <version>${cr.evaluation.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.situation</groupId>
-            <artifactId>situation</artifactId>
-            <version>${situation.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.cyberpeace.space</groupId>
             <artifactId>space</artifactId>
             <version>1.0.0</version>
@@ -128,20 +98,6 @@
             <groupId>com.cyberpeace.gateway</groupId>
             <artifactId>gateway</artifactId>
             <version>${gateway.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                    <groupId>org.springframework.boot</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>logback-classic</artifactId>
-                    <groupId>ch.qos.logback</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
@@ -331,7 +287,7 @@
                     <packages>com.cyberpeace</packages>
                     <excludes>org.spring,org,com.rabbitmq,javax</excludes>
                     <libjars>
-                        rtks-0.0.1-SNAPSHOT.jar,course-0.0.1-SNAPSHOT.jar,cr_base-0.0.1-SNAPSHOT.jar,evaluate-0.0.1-SNAPSHOT.jar,evaluation-0.0.1-SNAPSHOT.jar,oj_base-0.0.1-SNAPSHOT.jar,person-0.0.1-SNAPSHOT.jar,practice-0.0.1-SNAPSHOT.jar,red_vs_blue-0.0.1-SNAPSHOT.jar,single_train-0.0.1-SNAPSHOT.jar,situation-0.0.1-SNAPSHOT.jar,team_train-0.0.1-SNAPSHOT.jar,tool-0.0.1-SNAPSHOT.jar
+                        course-0.0.1-SNAPSHOT.jar,cr_base-0.0.1-SNAPSHOT.jar,evaluate-0.0.1-SNAPSHOT.jar,evaluation-0.0.1-SNAPSHOT.jar,oj_base-0.0.1-SNAPSHOT.jar,practice-0.0.1-SNAPSHOT.jar,tool-0.0.1-SNAPSHOT.jar
                     </libjars>
                 </configuration>
                 <executions>

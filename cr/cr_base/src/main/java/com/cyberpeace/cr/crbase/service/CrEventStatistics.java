@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-import static com.cyberpeace.cr.crbase.service.impl.CrBaseServiceImpl.register;
 
 @Slf4j
 @Service(value = "CrEventStatistics")
@@ -20,7 +19,6 @@ public class CrEventStatistics {
 	@PostConstruct
 	public void register() {
 		if (this.getCode() != null) {
-			register.put(this.getCode(), this);
 		}
 	}
 

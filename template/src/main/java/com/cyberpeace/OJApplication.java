@@ -4,11 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
-@EnableCaching
-@EnableScheduling
+// @EnableCaching
+// @EnableScheduling
 @ServletComponentScan
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class },
 		scanBasePackages = { "com.cyberpeace" })

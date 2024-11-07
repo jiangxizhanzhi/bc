@@ -21,7 +21,6 @@
         <module>course</module>
         <module>practice</module>
         <module>oj_base</module>
-        <module>person</module>
     </modules>
 
     <properties/>

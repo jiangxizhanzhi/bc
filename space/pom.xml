@@ -34,11 +34,6 @@
             <version>${oj.base.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>person</artifactId>
-            <version>${oj.person.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
             <scope>provided</scope>

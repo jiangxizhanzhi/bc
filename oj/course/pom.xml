@@ -20,18 +20,6 @@
     <dependencies>
         <dependency>
             <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>team_train</artifactId>
-            <version>${cr.team.train.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
-            <artifactId>red_vs_blue</artifactId>
-            <version>${cr.redvsvblue.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.cr</groupId>
             <artifactId>cr_base</artifactId>
             <version>${cr.base.version}</version>
             <scope>provided</scope>

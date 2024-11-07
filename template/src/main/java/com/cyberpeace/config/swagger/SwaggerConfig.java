@@ -23,13 +23,6 @@ import java.util.Arrays;
 public class SwaggerConfig {
 
 	@Bean
-	public Docket apiRtks() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.rtks"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("rtks");
-	}
-
-	@Bean
 	public Docket apiTemplate() {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
@@ -69,13 +62,6 @@ public class SwaggerConfig {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.evaluate"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
 				.groupName("es");
-	}
-
-	@Bean
-	public Docket apiSituation() {
-		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.situation"))
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-				.groupName("situation");
 	}
 
 	@Bean

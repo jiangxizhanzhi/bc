@@ -7,13 +7,25 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 技能列表请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @ApiModel
 public class SkillListReq extends PageReqBase {
 
+	/**
+	 * 系统id
+	 */
 	@ApiModelProperty(name = "system_id", value = "体系ID")
 	@Getter
 	private String systemId;
 
+	/**
+	 * 类别id
+	 */
 	@ApiModelProperty(name = "category_id", value = "类别ID")
 	@Getter
 	private String categoryId;

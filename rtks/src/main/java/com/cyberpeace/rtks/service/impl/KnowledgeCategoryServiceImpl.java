@@ -16,14 +16,26 @@ import com.cyberpeace.rtks.service.KnowledgeCategoryService;
 import java.util.List;
 
 /**
+ * 知识类别Service实现
  *
+ * @author SN
+ * @date 2024/11/07
  */
 @Service
 public class KnowledgeCategoryServiceImpl extends ServiceImpl<KnowledgeCategoryMapper, KnowledgeCategory> implements KnowledgeCategoryService {
 
+	/**
+	 * 知识类别Mapper
+	 */
 	@Autowired
 	private KnowledgeCategoryMapper knowledgeCategoryMapper;
 
+	/**
+	 * 分页
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code ListRsp<KnowledgeCategory> }
+	 */
 	@Override
 	public ListRsp<KnowledgeCategory> page(PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
@@ -33,6 +45,12 @@ public class KnowledgeCategoryServiceImpl extends ServiceImpl<KnowledgeCategoryM
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 获取由内容
+	 *
+	 * @param content 内容
+	 * @return {@code List<KnowledgeCategory> }
+	 */
 	@Override
 	public List<KnowledgeCategory> getByContent(String content) {
 		return knowledgeCategoryMapper.getByContent(content);

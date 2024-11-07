@@ -28,25 +28,42 @@ import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 攻击Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class AttackServiceImpl implements AttackService {
 
+	/**
+	 * 锁
+	 */
 	private final Object lock = new Object();
 
+	/**
+	 * 攻击Mapper
+	 */
 	@Autowired
 	private AttackMapper attackMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 缓存攻击
+	 */
 	private volatile AttackCache cachedAttacks;
 
 	/**
 	 * 5.3.7升级到5.4时，处理旧的attack和训练模板的关联
 	 * id变动，条目变动
 	 * rtks_attack_train_rel更新
-	 * @PostConstruct 执行在flyway执行之前
 	 */
 	@PostConstruct
 	private void trainRelUpgrade() {
@@ -96,6 +113,11 @@ public class AttackServiceImpl implements AttackService {
 		}
 	}
 
+	/**
+	 * 获取攻击
+	 *
+	 * @return {@code List<AttackCategoryBo<AttackBackBo>> }
+	 */
 	@Override
 	public List<AttackCategoryBo<AttackBackBo>> getAttacks() {
 		ensureAttackCache();
@@ -123,6 +145,12 @@ public class AttackServiceImpl implements AttackService {
 		return res;
 	}
 
+	/**
+	 * 获取攻击由训练
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<AttackCategoryBo<AttackFrontBo>> }
+	 */
 	@Override
 	public List<AttackCategoryBo<AttackFrontBo>> getAttacksByTraining(String businessTemplateId) {
 		ensureAttackCache();
@@ -144,6 +172,12 @@ public class AttackServiceImpl implements AttackService {
 		return res;
 	}
 
+	/**
+	 * 获取详情由id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code AttackDetail }
+	 */
 	@Override
 	public AttackDetail getDetailById(String resourceId) {
 		ensureAttackCache();
@@ -170,6 +204,12 @@ public class AttackServiceImpl implements AttackService {
 		return detail;
 	}
 
+	/**
+	 * 更新关系
+	 *
+	 * @param resourceId          资源id
+	 * @param businessTemplateIds 业务模板id列表
+	 */
 	@Override
 	public void updateRelations(String resourceId, List<String> businessTemplateIds) {
 		List<String> oldRel = attackMapper.getRelatedTemplateIds(resourceId);
@@ -188,6 +228,11 @@ public class AttackServiceImpl implements AttackService {
 		});
 	}
 
+	/**
+	 * 获取缓存
+	 *
+	 * @return {@code List<AttackCategoryBo<FrameItemBase>> }
+	 */
 	@Override
 	public List<AttackCategoryBo<FrameItemBase>> getCache() {
 		ensureAttackCache();
@@ -198,6 +243,9 @@ public class AttackServiceImpl implements AttackService {
 		}
 	}
 
+	/**
+	 * 确保攻击缓存
+	 */
 	private void ensureAttackCache() {
 		if (null == cachedAttacks) {
 			synchronized (lock) {
@@ -239,6 +287,11 @@ public class AttackServiceImpl implements AttackService {
 		}
 	}
 
+	/**
+	 * 获取老新增功能地图
+	 *
+	 * @return {@code Map<String, String> }
+	 */
 	private Map<String, String> getOldNewMap() {
 		Map<String, String> oldNewMap = Maps.newHashMap();
 		oldNewMap.put("d1b19920f21e44d789ac668411d24e12", "T1595");

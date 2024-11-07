@@ -16,14 +16,25 @@ import com.cyberpeace.rtks.service.CourseNameService;
 import com.google.common.collect.Lists;
 
 /**
+ * 课程名称Service实现
  *
+ * @author SN
+ * @date 2024/11/07
  */
 @Service
 public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseName> implements CourseNameService {
 
+	/**
+	 * 课程名称Mapper
+	 */
 	@Autowired
 	private CourseNameMapper courseNameMapper;
 
+	/**
+	 * 新增课程名称
+	 *
+	 * @param relatedCourseList 相关课程列表
+	 */
 	@Override
 	public void addCourseName(List<RelatedCourse> relatedCourseList) {
 
@@ -36,6 +47,12 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 		saveOrUpdateBatch(courseNameList);
 	}
 
+	/**
+	 * 查询由id列表
+	 *
+	 * @param notExistIds 不存在id列表
+	 * @return {@code List<CourseName> }
+	 */
 	@Override
 	public List<CourseName> selectByIds(List<String> notExistIds) {
 		List<CourseName> courseNames = Lists.newArrayList();
@@ -47,6 +64,12 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 		return courseNames;
 	}
 
+	/**
+	 * 滤波器id
+	 *
+	 * @param courseIds 课程id列表
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> filterId(List<String> courseIds) {
 		if (CollectionUtils.isEmpty(courseIds)) {

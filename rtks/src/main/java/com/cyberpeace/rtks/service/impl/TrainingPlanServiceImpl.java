@@ -44,28 +44,58 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 训练计划Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class TrainingPlanServiceImpl implements TrainingPlanService {
 
+	/**
+	 * 角色控制器
+	 */
 	@Autowired
 	private RoleController roleController;
 
+	/**
+	 * 角色Mapper
+	 */
 	@Autowired
 	private RoleMapper roleMapper;
 
+	/**
+	 * 角色技能关系Mapper
+	 */
 	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
 
+	/**
+	 * 任务模板Mapper
+	 */
 	@Autowired
 	private MissionTemplateMapper missionTemplateMapper;
 
+	/**
+	 * 知识Mapper
+	 */
 	@Autowired
 	private KnowledgeMapper knowledgeMapper;
 
+	/**
+	 * 知识Service
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * Parse tree 节点
+	 *
+	 * @param frame       框架
+	 * @param roleListMap 角色列表映射
+	 */
 	public void parseTreeNode(LevelTreeOutput frame,
 			Map<String, List<RoleDetailOutput>> roleListMap) {
 		if (frame.getChildren() != null) {
@@ -83,6 +113,11 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	}
 
+	/**
+	 * 解析树
+	 *
+	 * @param frame 框架
+	 */
 	@Override
 	public void parseTree(LevelTreeOutput frame) {
 		List<Role> roleList = roleMapper.selectRoleByFrameId(frame.getResourceId());
@@ -99,6 +134,11 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		parseTreeNode(frame, roleListMap);
 	}
 
+	/**
+	 * 获取知识树
+	 *
+	 * @return {@code List<KnowledgeTreeRes> }
+	 */
 	@Override
 	public List<KnowledgeTreeRes> getKnowledgeTree() {
 		List<KnowledgeTreeRes> knowledgeTreeResList = Lists.newArrayList();
@@ -116,6 +156,13 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		return knowledgeTreeResList;
 	}
 
+	/**
+	 * 获取角色输出由角色id
+	 *
+	 * @param resource_id 资源id
+	 * @param type        类型
+	 * @return {@code RoleDetailRes }
+	 */
 	@Override
 	public RoleDetailRes getRoleOutputByRoleId(String resource_id, String type) {
 		Role role = getRoleByRoleId(resource_id);
@@ -141,6 +188,13 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		return roleDetailRes;
 	}
 
+	/**
+	 * 获取知识课程列表
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @param existRoleId 存在角色id
+	 * @return {@code ListRsp<KnowledgeRes> }
+	 */
 	@Override
 	public ListRsp<KnowledgeRes> getKnowledgeCourseList(PageReqBase pageReqBase,
 			String existRoleId) {
@@ -155,6 +209,13 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 获取学习路径树
+	 *
+	 * @param resource_id 资源id
+	 * @param type        类型
+	 * @return {@code RoleDetailRes }
+	 */
 	@Override
 	public RoleDetailRes getLearningPathTree(String resource_id, String type) {
 		Role role = getRoleByRoleId(resource_id);
@@ -196,6 +257,12 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		return roleDetailRes;
 	}
 
+	/**
+	 * 获取角色由角色id
+	 *
+	 * @param existRoleId 存在角色id
+	 * @return {@code Role }
+	 */
 	@Override
 	public Role getRoleByRoleId(String existRoleId) {
 		Role role = roleMapper.selectById(existRoleId);
@@ -206,6 +273,12 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		return role;
 	}
 
+	/**
+	 * 获取角色详情结果由角色id
+	 *
+	 * @param existRoleId 存在角色id
+	 * @return {@code RoleDetailRes }
+	 */
 	@Override
 	public RoleDetailRes getRoleDetailResByRoleId(String existRoleId) {
 		Role role = getRoleByRoleId(existRoleId);
@@ -215,6 +288,13 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		return roleDetailRes;
 	}
 
+	/**
+	 * 获取水平树
+	 *
+	 * @param levelList 级别列表
+	 * @param levelId   水平id
+	 * @return {@code LevelTreeOutput }
+	 */
 	private LevelTreeOutput getLevelTree(List<Level> levelList, String levelId) {
 		LevelTreeOutput levelTreeOutput = new LevelTreeOutput();
 		Level level = new Level();
@@ -272,6 +352,12 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		return levelTreeOutput;
 	}
 
+	/**
+	 * 获取水平树输出从水平
+	 *
+	 * @param frame 框架
+	 * @return {@code LevelTreeOutput }
+	 */
 	LevelTreeOutput getLevelTreeOutputFromLevel(Level frame) {
 		LevelTreeOutput output = new LevelTreeOutput();
 
@@ -284,6 +370,7 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	/**
 	 * 根据岗位编号查询知识点编号
+	 *
 	 * @param roleId
 	 * @return
 	 */

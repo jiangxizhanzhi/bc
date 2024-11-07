@@ -15,25 +15,46 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
+/**
+ * 知识新增请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @ApiModel("")
 public class KnowledgeAddReq implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("知识点id")
 	private String resourceId;
 
+	/**
+	 * 内容
+	 */
 	@NotBlank
 	@ApiModelProperty("知识点名称")
 	private String content;
 
+	/**
+	 * 类别id
+	 */
 	@NotBlank
 	@ApiModelProperty("知识点类别id")
 	private String categoryId;
 
+	/**
+	 * 重量
+	 */
 	@ApiModelProperty("知识点课程权重")
 	private Integer weight = 1;
 
- 	@ApiModelProperty("知识点关联课程")
+	/**
+	 * 课程列表
+	 */
+	@ApiModelProperty("知识点关联课程")
 	private List<RelatedCourse> courseList;
 
 	public void validate() {

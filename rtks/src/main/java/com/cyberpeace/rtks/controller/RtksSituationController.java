@@ -20,15 +20,29 @@ import com.cyberpeace.rtks.service.bo.situation.SituationTrendBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * RTKS 态势控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "RTKS-人才培养态势")
 @RestController
 @RequestMapping("/rtks/situation")
 @RequiresAuthentication
 public class RtksSituationController {
 
+	/**
+	 * RTKS情况Service
+	 */
 	@Autowired
 	private RtksSituationService rtksSituationService;
 
+	/**
+	 * 获取用户排名
+	 *
+	 * @return {@code BaseRsp<RtksSituationRankings> }
+	 */
 	@ApiOperation("网安排名：个人-组织-复合")
 	@GetMapping("/ranking")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -36,6 +50,11 @@ public class RtksSituationController {
 		return new BaseRsp<>(rtksSituationService.getRankings());
 	}
 
+	/**
+	 * 获取新闻
+	 *
+	 * @return {@code BaseRsp<List<NewsBo>> }
+	 */
 	@ApiOperation("动态")
 	@GetMapping("/news")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -44,6 +63,11 @@ public class RtksSituationController {
 		return new BaseRsp<>(newsBos);
 	}
 
+	/**
+	 * 获取情况
+	 *
+	 * @return {@code BaseRsp<List<LevelStatisticBo>> }
+	 */
 	@ApiOperation("网安人才岗位态势")
 	@GetMapping("/situation")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -52,6 +76,11 @@ public class RtksSituationController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 获取趋势
+	 *
+	 * @return {@code BaseRsp<SituationTrendBo> }
+	 */
 	@ApiOperation("网安人才发展趋势")
 	@GetMapping("/trend")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)

@@ -8,6 +8,12 @@ import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 
 import lombok.Data;
 
+/**
+ * 差异
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class Difference<T> {
 

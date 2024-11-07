@@ -41,24 +41,45 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
+ * 知识Service实现
  *
+ * @author SN
+ * @date 2024/11/07
  */
 @Service
 @Slf4j
 public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge> implements KnowledgeService {
 
+	/**
+	 * 知识Mapper
+	 */
 	@Autowired
 	private KnowledgeMapper knowledgeMapper;
 
+	/**
+	 * 相关课程Service
+	 */
 	@Autowired
 	private RelatedCourseService relatedCourseService;
 
+	/**
+	 * 知识类别Service
+	 */
 	@Autowired
 	private KnowledgeCategoryService knowledgeCategoryService;
 
+	/**
+	 * 课程相关Service
+	 */
 	@Autowired
 	private CourseRelatedService courseRelatedService;
 
+	/**
+	 * 分页
+	 *
+	 * @param knowledgeListReq 知识列表请求体
+	 * @return {@code ListRsp<KnowledgeRes> }
+	 */
 	@Override
 	public ListRsp<KnowledgeRes> page(KnowledgeListReq knowledgeListReq) {
 		Page page = knowledgeListReq.toPageParam();
@@ -72,6 +93,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 获取知识由资源id
+	 *
+	 * @param id id
+	 * @return {@code KnowledgeRes }
+	 */
 	@Override
 	public KnowledgeRes getKnowledgeByResourceId(String id) {
 		UserInfo userInfo = UserInfoContext.getUserContext();
@@ -101,6 +128,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		return knowledgeRes;
 	}
 
+	/**
+	 * 获取OR404
+	 *
+	 * @param knowledgeId 知识id
+	 * @return {@code Knowledge }
+	 */
 	@Override
 	public Knowledge getOr404(String knowledgeId) {
 		Knowledge knowledge = getById(knowledgeId);
@@ -111,6 +144,11 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		return knowledge;
 	}
 
+	/**
+	 * 验证
+	 *
+	 * @param knowledge 知识
+	 */
 	@Override
 	public void validate(Knowledge knowledge) {
 		if (knowledgeCategoryService.getById(knowledge.getCategoryId()) == null) {
@@ -119,6 +157,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		}
 	}
 
+	/**
+	 * 获取知识由课程id
+	 *
+	 * @param ids id列表
+	 * @return {@code Map<String, List<CourseRelatedRes>> }
+	 */
 	@Override
 	public Map<String, List<CourseRelatedRes>> getKnowledgeByCourseId(List<String> ids) {
 		if (CollectionUtils.isEmpty(ids)) {
@@ -129,6 +173,12 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		return knowledgeList.stream().collect(Collectors.groupingBy(CourseRelatedRes::getResourceId));
 	}
 
+	/**
+	 * 检查知识结果
+	 *
+	 * @param knowledgeResList  知识结果列表
+	 * @param relatedCourseType 相关课程类型
+	 */
 	@Override
 	public void checkKnowledgeRes(List<KnowledgeRes> knowledgeResList, String relatedCourseType) {
 		List<Knowledge> knowledgeList = Collections.synchronizedList(new ArrayList<>());
@@ -208,6 +258,13 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		updateBatchById(knowledgeList);
 	}
 
+	/**
+	 * 计算过程
+	 *
+	 * @param processBos        处理 BOS
+	 * @param relatedCourseList 相关课程列表
+	 * @return {@code Integer }
+	 */
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,
 			List<RelatedCourse> relatedCourseList) {
 		Map<String, Integer> map = Maps.newHashMap();
@@ -231,12 +288,24 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		}
 	}
 
+	/**
+	 * 获取课程配置
+	 *
+	 * @param knowledgeId 知识id
+	 * @return {@code List<CourseConfig> }
+	 */
 	@Override
 	public List<CourseConfig> getCourseConfigs(String knowledgeId) {
 		Knowledge knowledge = getOr404(knowledgeId);
 		return JsonUtil.toJsonObjectArray(knowledge.getCourses(), CourseConfig.class);
 	}
 
+	/**
+	 * 获取课程由id列表
+	 *
+	 * @param knowledgeIds 知识id列表
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getCourseByIds(List<String> knowledgeIds) {
 		if (CollectionUtils.isEmpty(knowledgeIds)) {
@@ -251,6 +320,11 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		return courseIds;
 	}
 
+	/**
+	 * 获取都知识
+	 *
+	 * @return {@code List<KnowledgeRes> }
+	 */
 	@Override
 	public List<KnowledgeRes> getAllKnowledge() {
 		KnowledgeListReq knowledgeListReq = new KnowledgeListReq();

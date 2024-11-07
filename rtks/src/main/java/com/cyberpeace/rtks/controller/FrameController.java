@@ -46,6 +46,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 框架列表请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 class FrameListReq<T> extends PageReqBase {
 
 	@ApiModelProperty(value = "所属框架id，可以为空")
@@ -59,38 +65,71 @@ class FrameListReq<T> extends PageReqBase {
 	private String keyword;
 }
 
+/**
+ * 框架控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "TRKS-框架管理")
 @RestController
 @RequestMapping("/rtks/frame")
 @RequiresAuthentication
 public class FrameController {
 
+	/**
+	 * 框架Service
+	 */
 	@Autowired
 	private FrameService frameService;
 
+	/**
+	 * 水平Service
+	 */
 	@Autowired
 	private LevelService levelService;
 
+	/**
+	 * 角色Service
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 技能Service
+	 */
 	@Autowired
 	private SkillService skillService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 单框架
+	 */
 	private Boolean singleFrame;
 
+	/**
+	 * 多框架只
+	 */
 	private void multiFrameOnly() {
 		if (singleFrame) {
 			throw new BusinessException(RtksBusinessErrorCode.SINGLE_FRAME_DISABLE);
 		}
 	}
 
+	/**
+	 * 单框架只
+	 */
 	private void singleFrameOnly() {
 		if (!singleFrame) {
 			throw new BusinessException(RtksBusinessErrorCode.MULTI_FRAME_DISABLE);
@@ -102,20 +141,40 @@ public class FrameController {
 	 */
 	private final String DEFAULT_FRAME_ID = "default";
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		String singleFrameConfig = ConfigUtil.getContextProperty("singleFrame");
 		singleFrame = Objects.equals(singleFrameConfig, "true");
 	}
 
+	/**
+	 * 获取Service
+	 *
+	 * @return {@code FrameService }
+	 */
 	protected FrameService getService() {
 		return frameService;
 	}
 
+	/**
+	 * 获取OR404
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code Level }
+	 */
 	protected Level getOr404(String resourceId) {
 		return frameService.getOr404(resourceId);
 	}
 
+	/**
+	 * 获取实体从新增输入
+	 *
+	 * @param frameAddInput 框架新增输入
+	 * @return {@code Level }
+	 */
 	protected Level getEntityFromAddInput(FrameAddInput frameAddInput) {
 		Level frame = new Level();
 		frame.setName(frameAddInput.getName());
@@ -123,6 +182,13 @@ public class FrameController {
 		return frame;
 	}
 
+	/**
+	 * 获取实体从修改输入
+	 *
+	 * @param frameModifyInput 框架修改输入
+	 * @param originEntity     源实体
+	 * @return {@code Level }
+	 */
 	protected Level getEntityFromModifyInput(FrameModifyInput frameModifyInput,
 			Level originEntity) {
 		Level frame = new Level();
@@ -135,6 +201,12 @@ public class FrameController {
 		return frame;
 	}
 
+	/**
+	 * 获取输出从实体
+	 *
+	 * @param frame 框架
+	 * @return {@code FrameOutput }
+	 */
 	protected FrameOutput getOutputFromEntity(Level frame) {
 		FrameOutput output = new FrameOutput();
 
@@ -145,15 +217,33 @@ public class FrameController {
 		return output;
 	}
 
+	/**
+	 * 列表实体
+	 *
+	 * @param page    分页
+	 * @param keyword 关键词
+	 * @return {@code IPage<Level> }
+	 */
 	protected IPage<Level> listEntity(Page<Level> page, String keyword) {
 		multiFrameOnly();
 		return frameService.listEntity(page, keyword);
 	}
 
+	/**
+	 * 获取列表输出从实体
+	 *
+	 * @param frame 框架
+	 * @return {@code FrameOutput }
+	 */
 	protected FrameOutput getListOutputFromEntity(Level frame) {
 		return getOutputFromEntity(frame);
 	}
 
+	/**
+	 * 执行批量删除
+	 *
+	 * @param frameIds 框架id列表
+	 */
 	protected void performBatchDelete(List<String> frameIds) {
 		multiFrameOnly();
 		// 检查输入
@@ -175,6 +265,12 @@ public class FrameController {
 		frameService.removeByIds(frameIds);
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param input 输入
+	 * @return {@code BaseRsp<FrameOutput> }
+	 */
 	@ApiOperation("新增")
 	@PostMapping()
 	public BaseRsp<FrameOutput> create(@RequestBody @Validated FrameAddInput input) {
@@ -185,6 +281,12 @@ public class FrameController {
 		return retrieve(entity.getResourceId());
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param input 输入
+	 * @return {@code BaseRsp<FrameOutput> }
+	 */
 	@ApiOperation("修改")
 	@PutMapping()
 	public BaseRsp<FrameOutput> update(@RequestBody @Validated FrameModifyInput input) {
@@ -199,6 +301,12 @@ public class FrameController {
 		return retrieve(resourceId);
 	}
 
+	/**
+	 * 取回
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<FrameOutput> }
+	 */
 	@ApiOperation("查询")
 	@GetMapping()
 	public BaseRsp<FrameOutput> retrieve(String resource_id) {
@@ -206,6 +314,12 @@ public class FrameController {
 		return new BaseRsp<>(getOutputFromEntity(t));
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
@@ -213,6 +327,12 @@ public class FrameController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<FrameOutput>> }
+	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<FrameOutput>> list(FrameListReq listReq) {
@@ -230,12 +350,23 @@ public class FrameController {
 		return new BaseRsp<>(listRsp);
 	}
 
+	/**
+	 * 获取树
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<LevelTreeOutput> }
+	 */
 	@ApiOperation("指定框架层级数据的全量树形展示")
 	@GetMapping("/tree")
 	public BaseRsp<LevelTreeOutput> getTree(String resource_id) {
 		return new BaseRsp<>(frameService.getTree(resource_id));
 	}
 
+	/**
+	 * 清楚框架
+	 *
+	 * @return {@code BaseRsp<FrameOutput> }
+	 */
 	@ApiOperation("清空默认框架，仅单框架模式下有效")
 	@PostMapping("/clear")
 	public BaseRsp<FrameOutput> clearFrame() {
@@ -264,6 +395,11 @@ public class FrameController {
 		return retrieve(DEFAULT_FRAME_ID);
 	}
 
+	/**
+	 * 重置框架
+	 *
+	 * @return {@code BaseRsp<FrameOutput> }
+	 */
 	@ApiOperation("重置默认框架，仅单框架模式下有效")
 	@PostMapping("/reset")
 	public BaseRsp<FrameOutput> resetFrame() {
@@ -296,6 +432,12 @@ public class FrameController {
 	}
 }
 
+/**
+ * 框架实操
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 enum FrameOperation implements BaseI18n {
 
 	RESET(0, "重置", "Reset"),
@@ -310,6 +452,13 @@ enum FrameOperation implements BaseI18n {
 	@Getter
 	private final String english;
 
+	/**
+	 * 框架实操
+	 *
+	 * @param code    代号
+	 * @param chinese 中文
+	 * @param english 英语
+	 */
 	FrameOperation(Integer code, String chinese, String english) {
 		this.code = code;
 		this.chinese = chinese;

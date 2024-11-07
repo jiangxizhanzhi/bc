@@ -14,8 +14,14 @@ import lombok.Data;
 @Data
 public class RoleResource implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	private String description;
 
 	/**

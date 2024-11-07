@@ -37,27 +37,54 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 知识控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "RTKS-知识点管理")
 @RestController
 @RequestMapping("/rtks/knowledge")
 @RequiresAuthentication
 public class KnowledgeController {
 
+	/**
+	 * 知识Service
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * 课程相关Service
+	 */
 	@Autowired
 	private CourseRelatedService courseRelatedService;
 
+	/**
+	 * 角色Service
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 获取知识
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<KnowledgeRes> }
+	 */
 	@ApiOperation("查询单条")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -69,6 +96,12 @@ public class KnowledgeController {
 		return new BaseRsp<KnowledgeRes>(knowledge);
 	}
 
+	/**
+	 * 新增知识
+	 *
+	 * @param knowledgeAddReq 知识新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("新增单条")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -97,6 +130,12 @@ public class KnowledgeController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 修改知识
+	 *
+	 * @param knowledgeAddReq 知识新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("修改单条")
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -133,6 +172,12 @@ public class KnowledgeController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 删除知识
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -154,6 +199,12 @@ public class KnowledgeController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param knowledgeListReq 知识列表请求体
+	 * @return {@code BaseRsp<List<KnowledgeRes>> }
+	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)

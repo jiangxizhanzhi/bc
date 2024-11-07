@@ -33,18 +33,35 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * RTKS评估控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @RestController
 @RequestMapping("/rtks/statistic")
 @Api(tags = "RTKS-作战能力评估")
 @RequiresAuthentication
 public class RtksEvaluationController {
 
+	/**
+	 * RTKS统计Service
+	 */
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
 
+	/**
+	 * RTKS情况Service
+	 */
 	@Autowired
 	private RtksSituationService rtksSituationService;
 
+	/**
+	 * 获取角色研究记录
+	 *
+	 * @return {@code BaseRsp<RoleStudyBo> }
+	 */
 	@ApiOperation("岗位知识点学习进度统计")
 	@GetMapping("/role/knowledge/study_record")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -60,6 +77,11 @@ public class RtksEvaluationController {
 		return rsp;
 	}
 
+	/**
+	 * 获取角色知识火柴
+	 *
+	 * @return {@code BaseRsp<List<RtksRadarBo>> }
+	 */
 	@ApiOperation("岗位知识点六棱图统计")
 	@GetMapping("/role/knowledge/radar")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -74,6 +96,11 @@ public class RtksEvaluationController {
 		return baseRsp;
 	}
 
+	/**
+	 * 获取知识过程由角色
+	 *
+	 * @return {@code BaseRsp<PercentRes> }
+	 */
 	@ApiOperation("知识点完成进度折线图")
 	@GetMapping("/role/knowledge/percent")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -93,6 +120,7 @@ public class RtksEvaluationController {
 	}
 
 	/**
+	 * Percent Formatter tran
 	 *
 	 * @param percentBos
 	 * @return
@@ -110,6 +138,11 @@ public class RtksEvaluationController {
 		return res;
 	}
 
+	/**
+	 * 获取火柴由角色
+	 *
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("岗位匹配度计算")
 	@GetMapping("/role/match")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -128,6 +161,13 @@ public class RtksEvaluationController {
 		return rsp;
 	}
 
+	/**
+	 * 获取研究记录
+	 *
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 * @return {@code BaseRsp<StudyRecordBo> }
+	 */
 	@ApiOperation("岗位课程学习记录")
 	@GetMapping("/role/course/study")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -151,6 +191,13 @@ public class RtksEvaluationController {
 		return rsp;
 	}
 
+	/**
+	 * 获取任务训练记录
+	 *
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 * @return {@code BaseRsp<SkillTrainingRecordBo> }
+	 */
 	@ApiOperation("岗位评估-岗位技能训练记录")
 	@GetMapping("/role/mission/study")
 	@RequiresPermissions(value = MenuConstant.WEB_PERSON_CENTER)

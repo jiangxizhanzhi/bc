@@ -33,6 +33,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 知识类别控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "RTKS-知识点类别管理")
 @RestController
 @RequestMapping("/rtks/knowledge-category")
@@ -40,15 +46,30 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class KnowledgeCategoryController {
 
+	/**
+	 * 知识类别Service
+	 */
 	@Autowired
 	private KnowledgeCategoryService knowledgeCategoryService;
 
+	/**
+	 * 知识Service
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 获取知识
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<KnowledgeCategory> }
+	 */
 	@ApiOperation("查询单条")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -60,6 +81,12 @@ public class KnowledgeCategoryController {
 		return new BaseRsp<>(knowledgeCategory);
 	}
 
+	/**
+	 * 新增知识
+	 *
+	 * @param knowledgeCategoryAddReq 知识类别新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("新增单条")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -79,6 +106,12 @@ public class KnowledgeCategoryController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 验证
+	 *
+	 * @param content    内容
+	 * @param resourceId 资源id
+	 */
 	private void validate(String content, String resourceId) {
 		List<KnowledgeCategory> knowledgeCategories = knowledgeCategoryService
 				.getByContent(content.trim());
@@ -95,6 +128,12 @@ public class KnowledgeCategoryController {
 
 	}
 
+	/**
+	 * 修改知识
+	 *
+	 * @param knowledgeCategoryOrSystemAddReq 知识类别或系统新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("修改单条")
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -114,6 +153,12 @@ public class KnowledgeCategoryController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 删除知识类别
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -139,6 +184,12 @@ public class KnowledgeCategoryController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code BaseRsp<List<KnowledgeCategory>> }
+	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)

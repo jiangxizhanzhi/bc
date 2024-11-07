@@ -21,18 +21,36 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 能力控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "RTKS-能力库管理")
 @RestController
 @RequestMapping("/rtks")
 @RequiresAuthentication
 public class AbilityController {
 
+	/**
+	 * 能力Service
+	 */
 	@Autowired
 	private AbilityService abilityService;
 
+	/**
+	 * 角色Service
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 获取能力
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<Ability> }
+	 */
 	@ApiOperation("查询单条能力")
 	@GetMapping("/ability")
 	public BaseRsp<Ability> getAbility(
@@ -42,6 +60,12 @@ public class AbilityController {
 		return new BaseRsp(ability);
 	}
 
+	/**
+	 * 新增能力
+	 *
+	 * @param abilityAddReq 能力新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("新增单条能力")
 	@PostMapping("/ability")
 	public BaseRsp<String> addAbility(@RequestBody @Validated AbilityAddReq abilityAddReq) {
@@ -53,6 +77,12 @@ public class AbilityController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 修改能力
+	 *
+	 * @param abilityAddReq 能力新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("修改单条能力")
 	@PutMapping("/ability")
 	public BaseRsp<String> modifyAbility(@RequestBody @Validated AbilityAddReq abilityAddReq) {
@@ -64,6 +94,12 @@ public class AbilityController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 删除功能
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("删除能力")
 	@DeleteMapping("/ability")
 	public BaseRsp<String> deleteAbility(@RequestBody @Validated DeleteReq deleteReq) {
@@ -73,6 +109,12 @@ public class AbilityController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param abilityListReq 能力列表请求体
+	 * @return {@code BaseRsp<List<Ability>> }
+	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/ability/list")
 	public BaseRsp<List<Ability>> list(@Validated AbilityListReq abilityListReq) {

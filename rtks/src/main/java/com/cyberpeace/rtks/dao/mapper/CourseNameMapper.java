@@ -10,11 +10,20 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.rtks.dao.entity.CourseName;
 
 /**
- * @Entity com.cyberpeace.rtks.dao.entity.CourseName
+ * 课程名称Mapper
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @Mapper
 @Repository
 public interface CourseNameMapper extends BaseMapper<CourseName> {
 
+	/**
+	 * 滤波器id
+	 *
+	 * @param courseIds 课程id列表
+	 * @return {@code List<String> }
+	 */
 	List<String> filterId(@Param("courseIds") List<String> courseIds);
 }

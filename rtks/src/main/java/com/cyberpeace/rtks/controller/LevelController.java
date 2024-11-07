@@ -39,24 +39,48 @@ import com.cyberpeace.rtks.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 液位控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "TRKS-框架层级管理")
 @RestController
 @RequestMapping("/rtks/frame/level")
 @RequiresAuthentication
 public class LevelController {
 
+	/**
+	 * 水平Service
+	 */
 	@Autowired
 	private LevelService levelService;
 
+	/**
+	 * 角色Service
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 框架Service
+	 */
 	@Autowired
 	private FrameService frameService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 创造
+	 *
+	 * @param input 输入
+	 * @return {@code BaseRsp<LevelOutput> }
+	 */
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -73,6 +97,12 @@ public class LevelController {
 		return retrieve(entity.getResourceId());
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param input 输入
+	 * @return {@code BaseRsp<LevelOutput> }
+	 */
 	@ApiOperation("修改")
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -92,6 +122,12 @@ public class LevelController {
 		return retrieve(resourceId);
 	}
 
+	/**
+	 * 取回
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<LevelOutput> }
+	 */
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -100,6 +136,12 @@ public class LevelController {
 		return new BaseRsp<>(getOutputFromEntity(t));
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -118,18 +160,42 @@ public class LevelController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取Service
+	 *
+	 * @return {@code LevelService }
+	 */
 	protected LevelService getService() {
 		return levelService;
 	}
 
+	/**
+	 * 获取OR404
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code Level }
+	 */
 	protected Level getOr404(String resourceId) {
 		return levelService.getOr404(resourceId);
 	}
 
+	/**
+	 * 获取实体从新增输入
+	 *
+	 * @param levelAddInput 水平新增输入
+	 * @return {@code Level }
+	 */
 	protected Level getEntityFromAddInput(LevelAddInput levelAddInput) {
 		return getLevelFromInput(levelAddInput, null);
 	}
 
+	/**
+	 * 获取实体从修改输入
+	 *
+	 * @param levelModifyInput Level Modify 输入
+	 * @param originEntity     源实体
+	 * @return {@code Level }
+	 */
 	protected Level getEntityFromModifyInput(LevelModifyInput levelModifyInput,
 			Level originEntity) {
 		Level level = getLevelFromInput(levelModifyInput, originEntity);
@@ -137,6 +203,13 @@ public class LevelController {
 		return level;
 	}
 
+	/**
+	 * 获取水平从输入
+	 *
+	 * @param input        输入
+	 * @param originEntity 源实体
+	 * @return {@code Level }
+	 */
 	private Level getLevelFromInput(LevelInput input, Level originEntity) {
 		Level level = new Level();
 		level.setName(input.getName());
@@ -181,6 +254,12 @@ public class LevelController {
 		return level;
 	}
 
+	/**
+	 * 获取输出从实体
+	 *
+	 * @param level 水平
+	 * @return {@code LevelOutput }
+	 */
 	protected LevelOutput getOutputFromEntity(Level level) {
 		LevelOutput output = new LevelOutput();
 
@@ -193,6 +272,11 @@ public class LevelController {
 		return output;
 	}
 
+	/**
+	 * 执行批量删除
+	 *
+	 * @param ids id列表
+	 */
 	protected void performBatchDelete(List<String> ids) {
 		// 验证输入层级id合法
 		List<Level> levels = levelService.getLevelsByIds(ids);
@@ -211,7 +295,12 @@ public class LevelController {
 		levelService.removeByIds(levelIds);
 	}
 
-	// 检查层级的子层级是否有岗位
+	/**
+	 * 检查水平子级
+	 *
+	 * @param level 水平
+	 * @return boolean
+	 */// 检查层级的子层级是否有岗位
 	private boolean checkLevelChildren(Level level) {
 		boolean result = false;
 		if (!StringUtils.isBlank(level.getFrame())) {
@@ -225,6 +314,13 @@ public class LevelController {
 
 	}
 
+	/**
+	 * 获取水平树孩子
+	 *
+	 * @param frame   框架
+	 * @param levelId 水平id
+	 * @return {@code LevelTreeOutput }
+	 */
 	private LevelTreeOutput getLevelTreeChild(LevelTreeOutput frame, String levelId) {
 
 		if (StringUtils.equals(levelId, frame.getResourceId())) {
@@ -281,7 +377,11 @@ public class LevelController {
 
 	/**
 	 * 给定层级(非框架) 获取其父层级/框架id 如果该id在给定levelIds数组中，则再迭代查找
-	 * */
+	 *
+	 * @param level    水平
+	 * @param levelIds 水平id列表
+	 * @return {@code String }
+	 */
 	private String getAncestorExclude(@NotNull Level level, @NotNull List<String> levelIds) {
 		String parentId = level.getParent();
 		if (!levelIds.contains(parentId)) {

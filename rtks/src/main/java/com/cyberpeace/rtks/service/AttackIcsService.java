@@ -4,23 +4,32 @@ import java.util.List;
 
 import com.cyberpeace.rtks.service.bo.career.*;
 
+/**
+ * 攻击集成电路Service
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 public interface AttackIcsService {
 
 	/**
 	 * 获取全部 ATT&CK 和关联模版个数
+	 *
 	 * @return
 	 */
 	List<AttackCategoryBo<AttackBackBo>> getAttacks();
 
 	/**
 	 * 获取全部 ATT&CK， 当前训练关联的高亮
-	 * @param
+	 *
+	 * @param businessTemplateId 业务模板id
 	 * @return
 	 */
 	List<AttackCategoryBo<AttackFrontBo>> getAttacksByTraining(String businessTemplateId);
 
 	/**
 	 * 读取 ATT&CK 详情
+	 *
 	 * @param resourceId
 	 * @return
 	 */
@@ -28,8 +37,9 @@ public interface AttackIcsService {
 
 	/**
 	 * 更新ATT&CK-场景模板关联
+	 *
 	 * @param resourceId
-	 * @param businessTemplateIds
+	 * @param businessTemplateIds 业务模板id列表
 	 */
 	void updateRelations(String resourceId, List<String> businessTemplateIds);
 

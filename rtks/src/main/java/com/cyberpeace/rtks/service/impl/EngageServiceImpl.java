@@ -29,25 +29,42 @@ import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 聘Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class EngageServiceImpl implements EngageService {
 
+	/**
+	 * 锁
+	 */
 	private final Object lock = new Object();
 
+	/**
+	 * 聘Mapper
+	 */
 	@Autowired
 	private EngageMapper engageMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 缓存互动
+	 */
 	private volatile EngageCache cachedEngages;
 
 	/**
 	 * 5.3.7升级到5.4时，处理旧的attack和训练模板的关联
 	 * id变动，条目变动
 	 * rtks_attack_train_rel更新
-	 * @PostConstruct 执行在flyway执行之前
 	 */
 	@PostConstruct
 	private void trainRelUpgrade() {
@@ -98,6 +115,11 @@ public class EngageServiceImpl implements EngageService {
 		}
 	}
 
+	/**
+	 * 获取从事
+	 *
+	 * @return {@code List<EngageCategoryBo<EngageBackBo>> }
+	 */
 	@Override
 	public List<EngageCategoryBo<EngageBackBo>> getEngages() {
 		ensureEngageCache();
@@ -126,6 +148,12 @@ public class EngageServiceImpl implements EngageService {
 		return res;
 	}
 
+	/**
+	 * 获取详情由id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code EngageDetail }
+	 */
 	@Override
 	public EngageDetail getDetailById(String resourceId) {
 		ensureEngageCache();
@@ -156,6 +184,12 @@ public class EngageServiceImpl implements EngageService {
 		return detail;
 	}
 
+	/**
+	 * 更新关系
+	 *
+	 * @param resourceId          资源id
+	 * @param businessTemplateIds 业务模板id列表
+	 */
 	@Override
 	public void updateRelations(String resourceId, List<String> businessTemplateIds) {
 		List<String> oldRel = engageMapper.getRelatedTemplateIds(resourceId);
@@ -176,6 +210,12 @@ public class EngageServiceImpl implements EngageService {
 		});
 	}
 
+	/**
+	 * 获取从事由训练
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<EngageCategoryBo<EngageFrontBo>> }
+	 */
 	@Override
 	public List<EngageCategoryBo<EngageFrontBo>> getEngagesByTraining(String businessTemplateId) {
 		ensureEngageCache();
@@ -199,6 +239,11 @@ public class EngageServiceImpl implements EngageService {
 		return res;
 	}
 
+	/**
+	 * 获取缓存
+	 *
+	 * @return {@code List<EngageCategoryBo<FrameItemBase>> }
+	 */
 	@Override
 	public List<EngageCategoryBo<FrameItemBase>> getCache() {
 		ensureEngageCache();
@@ -208,6 +253,9 @@ public class EngageServiceImpl implements EngageService {
 		return cachedEngages.getEn();
 	}
 
+	/**
+	 * 确保 Engage 缓存
+	 */
 	private void ensureEngageCache() {
 		if (null == cachedEngages) {
 			synchronized (lock) {
@@ -263,6 +311,11 @@ public class EngageServiceImpl implements EngageService {
 		cachedEngages.setJson(JsonUtil.toJsonString(cachedEngages));
 	}
 
+	/**
+	 * 获取老新增功能地图
+	 *
+	 * @return {@code Map<String, String> }
+	 */
 	private Map<String, String> getOldNewMap() {
 		Map<String, String> oldNewMap = Maps.newHashMap();
 		oldNewMap.put("bd4817120ccc4882a76f432bb27f08f1", "SAC0004");

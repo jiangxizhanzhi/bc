@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 
- * @TableName rtks_knowledge
+ * 知识
+ *
+ * @author SN
+ * @date 2024/11/07
  */
 @TableName(value = "rtks_knowledge")
 @Data

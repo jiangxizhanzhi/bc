@@ -25,19 +25,44 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 相关课程Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Repository
 public class RelatedCourseServiceImpl implements RelatedCourseService {
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 课程名称Service
+	 */
 	@Autowired
 	private CourseNameService courseNameService;
 
+	/**
+	 * 课程统计学Service
+	 */
 	@Autowired
 	private CourseStatisticsService courseStatisticsService;
 
+	/**
+	 * 设置课程结果
+	 *
+	 * @param userInfo          用户信息
+	 * @param courses           课程
+	 * @param relatedCourseList 相关课程列表
+	 * @param processBos        处理 BOS
+	 * @param relatedCourseType 相关课程类型
+	 * @return boolean
+	 */
 	@Override
 	public boolean setCourseResult(UserInfo userInfo, String courses,
 			List<RelatedCourse> relatedCourseList, List<CourseStudyProcessBo> processBos,
@@ -132,6 +157,12 @@ public class RelatedCourseServiceImpl implements RelatedCourseService {
 		return isDeleted;
 	}
 
+	/**
+	 * 获取都课程地图
+	 *
+	 * @param courseList 课程列表
+	 * @return {@code Map<String, CourseInfoBo> }
+	 */
 	private Map<String, CourseInfoBo> getAllCourseMap(List<CourseInfoBo> courseList) {
 		Map<String, CourseInfoBo> map = Maps.newHashMap();
 

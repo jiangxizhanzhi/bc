@@ -10,12 +10,24 @@ import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 态势日志
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("rtks_situation_log")
 public class SituationLog implements Serializable {
 
+	/**
+	 * id
+	 */
 	private Integer id;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
 	/**
@@ -23,12 +35,24 @@ public class SituationLog implements Serializable {
 	 */
 	private String userName;
 
+	/**
+	 * 角色id
+	 */
 	private String roleId;
 
+	/**
+	 * 角色名称
+	 */
 	private String roleName;
 
+	/**
+	 * 类型
+	 */
 	private Integer type;
 
+	/**
+	 * 创建时间
+	 */
 	private Date createTime;
 
 	public enum MatchType implements GenericEnum, BaseI18n {

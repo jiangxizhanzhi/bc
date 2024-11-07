@@ -21,20 +21,46 @@ import com.cyberpeace.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.rtks.service.FrameService;
 import com.cyberpeace.rtks.service.LevelService;
 
+/**
+ * 框架Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements FrameService {
 
+	/**
+	 * 水平Mapper
+	 */
 	@Autowired
 	LevelMapper levelMapper;
 
+	/**
+	 * 水平Service
+	 */
 	@Autowired
 	LevelService levelService;
+
+	/**
+	 * 列表实体
+	 *
+	 * @param page    分页
+	 * @param keyword 关键词
+	 * @return {@code IPage<Level> }
+	 */
 	@Override
 	public IPage<Level> listEntity(Page<Level> page, String keyword) {
 		return levelMapper.listFrame(page, keyword);
 	}
 
+	/**
+	 * 获取树
+	 *
+	 * @param frameId 框架id
+	 * @return {@code LevelTreeOutput }
+	 */
 	@Override
 	public LevelTreeOutput getTree(String frameId) {
 		// {父级层级id:[子层级对象]}
@@ -72,6 +98,12 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		return frameTree;
 	}
 
+	/**
+	 * 获取水平树输出
+	 *
+	 * @param level 水平
+	 * @return {@code LevelTreeOutput }
+	 */
 	private LevelTreeOutput getLevelTreeOutput(Level level) {
 		LevelTreeOutput output = new LevelTreeOutput();
 
@@ -83,6 +115,12 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 	}
 
 
+	/**
+	 * 获取OR404
+	 *
+	 * @param frameId 框架id
+	 * @return {@code Level }
+	 */
 	@Override
 	public Level getOr404(String frameId) {
 		Level frame = levelService.getLevelOrFrameOr404(frameId);
@@ -98,6 +136,8 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 
 	/**
 	 * 给定level对象，确保其为框架，否则报错
+	 *
+	 * @param level 水平
 	 */
 	private void ensureIsFrame(Level level) {
 		if (StringUtils.isNotBlank(level.getParent())) {
@@ -106,6 +146,12 @@ public class FrameServiceImpl extends ServiceImpl<LevelMapper, Level> implements
  		}
 	}
 
+	/**
+	 * 检查框架id列表
+	 *
+	 * @param ids id列表
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> checkFrameIds(List<String> ids) {
 		List<Level> frames = levelMapper.selectBatchIds(ids);

@@ -7,21 +7,42 @@ import com.cyberpeace.common.model.cache.RtksMatch;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 组织排名 bo
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class OrgRankingBo implements Serializable {
 
+	/**
+	 * 组织id
+	 */
 	@ApiModelProperty("组织id")
 	private String orgId;
 
+	/**
+	 * 组织名称
+	 */
 	@ApiModelProperty("组织名称")
 	private String orgName;
 
+	/**
+	 * 非常好
+	 */
 	@ApiModelProperty("优秀人数")
 	private Integer excellent;
 
+	/**
+	 * 合格
+	 */
 	@ApiModelProperty("合格人数")
 	private Integer qualified;
 
+	/**
+	 * 和
+	 */
 	@ApiModelProperty("合计")
 	private Integer sum;
 

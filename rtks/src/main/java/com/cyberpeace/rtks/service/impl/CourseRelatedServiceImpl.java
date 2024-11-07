@@ -16,17 +16,34 @@ import com.cyberpeace.rtks.service.CourseRelatedService;
 import com.google.common.collect.Lists;
 
 /**
+ * 课程相关Service实现
  *
+ * @author SN
+ * @date 2024/11/07
  */
 @Service
 public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, CourseRelated> implements CourseRelatedService {
 
+	/**
+	 * 课程相关Mapper
+	 */
 	@Autowired
 	CourseRelatedMapper courseRelatedMapper;
 
+	/**
+	 * 课程名称Service
+	 */
 	@Autowired
 	CourseNameService courseNameService;
 
+	/**
+	 * 保存课程相关列表
+	 *
+	 * @param relatedCourseList 相关课程列表
+	 * @param resourceId        资源id
+	 * @param type              类型
+	 * @return {@code String }
+	 */
 	@Override
 	public String saveCourseRelatedList(List<RelatedCourse> relatedCourseList, String resourceId,
 			Integer type) {
@@ -56,6 +73,12 @@ public class CourseRelatedServiceImpl extends ServiceImpl<CourseRelatedMapper, C
 		return JsonUtil.toJsonString(courseRelatedList);
 	}
 
+	/**
+	 * 删除课程相关由相关id列表
+	 *
+	 * @param ids  id列表
+	 * @param type 类型
+	 */
 	@Override
 	public void deleteCourseRelatedByRelatedIds(List<String> ids, Integer type) {
 		courseRelatedMapper.deleteByRelatedId(ids, type);

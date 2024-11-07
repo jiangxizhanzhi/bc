@@ -8,10 +8,19 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 水平
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 @TableName("rtks_level")
 public class Level extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
@@ -21,6 +30,9 @@ public class Level extends BaseTable {
 
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	private String description;
 
 	/**

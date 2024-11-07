@@ -14,7 +14,13 @@ import lombok.Data;
 @Data
 public class TechRelation implements Serializable {
 
+	/**
+	 * 业务模板id
+	 */
 	private String businessTemplateId;
 
+	/**
+	 * 技术id
+	 */
 	private String techId;
 }

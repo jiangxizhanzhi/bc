@@ -11,15 +11,35 @@ import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.UserRoleMapper;
 import com.cyberpeace.rtks.service.UserRelateService;
 
+/**
+ * 用户与Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class UserRelateServiceImpl implements UserRelateService {
 
+    /**
+     * 用户角色Mapper
+     */
     @Autowired
     private UserRoleMapper userRoleMapper;
 
+    /**
+     * 角色Mapper
+     */
     @Autowired
     private RoleMapper roleMapper;
 
+    /**
+     * 角色关联用户
+     *
+     * @param roleId   角色id
+     * @param userId   用户id
+     * @param userName 用户名称
+     * @return {@code UserRole }
+     */
     @Override
     public UserRole roleRelateUser(String roleId, String userId, String userName) {
         Role role = roleMapper.selectById(roleId);
@@ -41,6 +61,12 @@ public class UserRelateServiceImpl implements UserRelateService {
         return userRole;
     }
 
+    /**
+     * 获取用户角色信息
+     *
+     * @param userId 用户id
+     * @return {@code UserRole }
+     */
     @Override
     public UserRole getUserRoleInfo(String userId) {
         UserRole userRole = userRoleMapper.selectById(userId);

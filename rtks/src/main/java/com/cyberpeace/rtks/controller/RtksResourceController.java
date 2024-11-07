@@ -28,6 +28,9 @@ import io.swagger.annotations.ApiOperation;
 // @RequiresAuthentication
 public class RtksResourceController {
 
+	/**
+	 * RTKS资源Service
+	 */
 	@Autowired
 	private RtksResourceService rtksResourceService;
 

@@ -34,45 +34,94 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RTKS统计Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RtksStatisticServiceImpl implements RtksStatisticService {
 
+	/**
+	 * 最大百分比
+	 */
 	private final Integer MAX_PERCENT = 100;
 
+	/**
+	 * 树Service
+	 */
 	@Autowired
 	private TreeService treeService;
 
+	/**
+	 * 课程统计学Service
+	 */
 	@Autowired
 	private CourseStatisticsService courseStatisticsService;
 
+	/**
+	 * 知识Mapper
+	 */
 	@Autowired
 	private KnowledgeMapper knowledgeMapper;
 
+	/**
+	 * 角色Mapper
+	 */
 	@Autowired
 	private RoleMapper roleMapper;
 
+	/**
+	 * 靶场任务Mapper
+	 */
 	@Autowired
 	private CrTaskMapper crTaskMapper;
 
+	/**
+	 * 训练评估Mapper
+	 */
 	@Autowired
 	private TrainingEvaluationMapper trainingEvaluationMapper;
 
+	/**
+	 * 技能Service
+	 */
 	@Autowired
 	private SkillService skillService;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 课记录Service
+	 */
 	@Autowired
 	private LessonRecordService lessonRecordService;
 
+	/**
+	 * 角色技能关系Mapper
+	 */
 	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
 
+	/**
+	 * 技能训练Mapper
+	 */
 	@Autowired
 	private SkillTrainingMapper skillTrainingMapper;
 
+	/**
+	 * 角色匹配百分比
+	 *
+	 * @param roleId 角色id
+	 * @param userId 用户id
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer roleMatchPercent(String roleId, String userId) {
 		Integer knowledgeScore = 0;
@@ -95,6 +144,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return floor(result);
 	}
 
+	/**
+	 * 计算雷达
+	 *
+	 * @param roleId 角色id
+	 * @param userId 用户id
+	 * @return {@code List<RtksRadarBo> }
+	 */
 	@Override
 	@Cacheable(cacheNames = "role", key = "#userId")
 	public List<RtksRadarBo> calculateRadar(String roleId, String userId) {
@@ -123,6 +179,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return ret;
 	}
 
+	/**
+	 * 计算知识百分比
+	 *
+	 * @param role   角色
+	 * @param userId 用户id
+	 * @return {@code List<KnowledgeStudyPercentBo> }
+	 */
 	@Override
 	public List<KnowledgeStudyPercentBo> calculateKnowledgePercent(String role, String userId) {
 
@@ -137,8 +200,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 根据技能点或者知识点编号计算对应的进度
+	 *
+	 * @param knowledges 知识
 	 * @param userId
-	 * @param <T>
 	 * @return
 	 */
 	private <T extends SkillAndKnowledgeBase> List<KnowledgeStudyPercentBo>
@@ -154,6 +218,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return percentBoList;
 	}
 
+	/**
+	 * 角色知识学习记录
+	 *
+	 * @param roleId 角色id
+	 * @param userId 用户id
+	 * @return {@code RoleStudyBo }
+	 */
 	@Override
 	public RoleStudyBo roleKnowledgeStudyRecord(String roleId, String userId) {
 		// 1、获取用户角色关联的知识点
@@ -165,9 +236,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 根据技能点或者知识点计算学习的课程数量
+	 *
 	 * @param skillOrKnowledgeIds
 	 * @param userId
-	 * @param <T>
 	 * @return
 	 */
 	private <T extends SkillAndKnowledgeBase> RoleStudyBo
@@ -184,6 +255,15 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return getStudyBo(processBoList);
 	}
 
+	/**
+	 * 计算研究记录
+	 *
+	 * @param userId    用户id
+	 * @param roleId    角色id
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 * @return {@code StudyRecordBo }
+	 */
 	@Override
 	public StudyRecordBo calculateStudyRecord(String userId, String roleId, Date startTime,
 			Date endTime) {
@@ -241,6 +321,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return recordBo;
 	}
 
+	/**
+	 * 获取训练路径
+	 *
+	 * @param userId 用户id
+	 * @param roleId 角色id
+	 * @return {@code List<MissionPathBo> }
+	 */
 	@Override
 	public List<MissionPathBo> getTrainingPath(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
@@ -333,6 +420,15 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return newOrder;
 	}
 
+	/**
+	 * 算训练记录
+	 *
+	 * @param userId    用户id
+	 * @param roleId    角色id
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 * @return {@code SkillTrainingRecordBo }
+	 */
 	@Override
 	public SkillTrainingRecordBo calculateTrainingRecord(String userId, String roleId,
 			Date startTime, Date endTime) {
@@ -379,10 +475,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 将 trainingRaw 训练数据 和  missionContext 任务数据组装成前端展示的内容 trainingBo
-	 * @param trainingMap 
+	 *
+	 * @param trainingMap
 	 * @param missionSkillRel
 	 * @param missionContext
-	 * @param missionPathBoList
+	 * @param missionPathBoList   任务路径 bo 列表
+	 * @param completionStatusMap 完成状态地图
 	 */
 	private void addMissionBoByOrder(Map<String, List<TrainingRaw>> trainingMap,
 			Map<String, List<MissionContext>> missionSkillRel, MissionContext missionContext,
@@ -420,7 +518,10 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		missionPathBoList.add(missionPathBo);
 	}
 
-	/** 获取任务对应的skill
+	/**
+	 * 获取任务对应的skill
+	 *
+	 * @param missionContexts 任务上下文
 	 * @return
 	 */
 	private List<SkillResBase> getSkillsByMission(List<MissionContext> missionContexts) {
@@ -436,8 +537,10 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 将查到的训练以businessTemplateId为键分类收集，一个businessTemplateId可能对应多个训练场景
-	 * @param map 
-	 * @param trainingRaws
+	 *
+	 * @param map
+	 * @param trainingRaws 训练原始
+	 * @param type         类型
 	 */
 	private void mapTrainings(Map<String, List<TrainingRaw>> map, List<TrainingRaw> trainingRaws,
 			Integer type) {
@@ -459,7 +562,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	/**
 	 * 将红蓝训练状态统一成单兵、团队的样子
 	 * UNOPENED(0, "未开始"), OPENING(1, "已开始"), ENDED(2, "已结束") PAUSE(3, "已暂停"), RECOVERY(4, "恢复");
-	 * @param rbs
+	 *
+	 * @param rbs RBS （英语）
 	 */
 	private void handleRbStatus(List<TrainingRaw> rbs) {
 		rbs.forEach((rb) -> {
@@ -468,6 +572,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		});
 	}
 
+	/**
+	 * 转换
+	 *
+	 * @param rbStatus RB状态
+	 * @return {@code Integer }
+	 */
 	private Integer convert(Integer rbStatus) {
 		switch (rbStatus) {
 			case 4:
@@ -487,6 +597,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 根据知识点
+	 *
 	 * @param knowledges
 	 * @return
 	 */
@@ -501,6 +612,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 根据课程进度列表计算岗位学习进度
+	 *
 	 * @param processBoList
 	 * @return
 	 */
@@ -534,6 +646,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 计算角色对应的技能得分
+	 *
+	 * @param roleId 角色id
+	 * @param userId 用户id
 	 * @return
 	 */
 	private Integer calculateSkillScore(String roleId, String userId) {
@@ -553,6 +668,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 计算角色对应的知识点得分
+	 *
 	 * @param roleId
 	 * @param userId
 	 * @return
@@ -585,7 +701,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 计算当前层级下所有知识点的完成度
+	 *
 	 * @param levelId
+	 * @param userId  用户id
 	 * @return
 	 */
 	private Integer calculateRadarByLevel(String levelId, String userId) {
@@ -608,8 +726,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 计算知识点涉及到的所有课时的完成度
+	 *
 	 * @param knowledges 知识点编号
-	 * @param userId 用户编号
+	 * @param userId     用户编号
 	 * @return
 	 */
 	private <T extends SkillAndKnowledgeBase> Integer calculateFinishPercent(List<T> knowledges,
@@ -630,8 +749,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 获取角色列表的所有技能点集合。
-	 *
 	 * 注意去重！
+	 *
 	 * @param roles
 	 * @return
 	 */
@@ -648,8 +767,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 获取角色列表的所有知识点集合。
-	 *
 	 * 产品要求不去重进行计算
+	 *
 	 * @param roles
 	 * @return
 	 */
@@ -668,8 +787,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	 * 计算知识点的完成度。
 	 * 计算方法：
 	 * 该知识点下所有课程的学习进度和课程权重的加权平均。
-	 * @param knowledge 知识点
-	 * @param userId 用户编号
+	 *
+	 * @param knowledge  知识点
+	 * @param userId     用户编号
 	 * @param userWeight 是否使用权重 不是用权重则赋值为1
 	 * @return
 	 */
@@ -727,6 +847,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 根据岗位编号查询技能点或者知识点
+	 *
 	 * @param roleId
 	 * @return
 	 */
@@ -758,6 +879,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 获取所有知识点 并设置权重
+	 *
 	 * @param roleId
 	 * @return
 	 */
@@ -789,6 +911,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 根据知识点或者技能编号查询全部的课程编号
+	 *
 	 * @param skillOrKnowledge
 	 * @return
 	 */
@@ -807,6 +930,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	/**
 	 * 向上取整，防止计算过程中精度丢失导致永远到不了100%
+	 *
 	 * @param num
 	 * @return
 	 */

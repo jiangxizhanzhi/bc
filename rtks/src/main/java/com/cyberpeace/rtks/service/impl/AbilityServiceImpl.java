@@ -19,13 +19,28 @@ import com.cyberpeace.rtks.service.AbilityService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 能力Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class AbilityServiceImpl extends ServiceImpl<AbilityMapper, Ability> implements AbilityService {
 
+	/**
+	 * 能力Mapper
+	 */
 	@Autowired
 	private AbilityMapper abilityMapper;
 
+	/**
+	 * 分页
+	 *
+	 * @param abilityListReq 能力列表请求体
+	 * @return {@code ListRsp<Ability> }
+	 */
 	@Override
 	public ListRsp<Ability> page(AbilityListReq abilityListReq) {
 		Page page = abilityListReq.toPageParam();
@@ -35,6 +50,11 @@ public class AbilityServiceImpl extends ServiceImpl<AbilityMapper, Ability> impl
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 检查id列表
+	 *
+	 * @param abilityIdIds 能力idid列表
+	 */
 	@Override
 	public void checkIds(List<String> abilityIdIds) {
 		List<String> existingIds = abilityMapper.filterIds(abilityIdIds);

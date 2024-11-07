@@ -7,18 +7,29 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * @author yinqingrong
+ * RTKS 雷达 bo
+ *
+ * @author yinqingrong@date 2024/11/07
  */
 @Data
 @ApiModel("六棱图数据")
 public class RtksRadarBo implements Serializable {
 
-	@ApiModelProperty("节点编号")
+    /**
+     * 第一树id
+     */
+    @ApiModelProperty("节点编号")
 	private String firstTreeId;
 
-	@ApiModelProperty("节点名称")
+    /**
+     * 树名称
+     */
+    @ApiModelProperty("节点名称")
 	private String treeName;
 
-	@ApiModelProperty("节点值")
+    /**
+     * 匹配百分比
+     */
+    @ApiModelProperty("节点值")
 	private Integer matchPercent;
 }

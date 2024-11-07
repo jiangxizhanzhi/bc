@@ -5,6 +5,12 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * RTKS资源请求体
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class RtksResourceReq implements Serializable {
 

@@ -27,25 +27,51 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RTKS态势Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 @Slf4j
 public class RtksSituationServiceImpl implements RtksSituationService {
 
+	/**
+	 * RTKS态势Mapper
+	 */
 	@Autowired
 	private RtksSituationMapper rtksSituationMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * RTKS统计Service
+	 */
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
 
+	/**
+	 * RTKS角色火柴记录Mapper
+	 */
 	@Autowired
 	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
 
+	/**
+	 * 获取排名
+	 *
+	 * @return {@code RtksSituationRankings }
+	 */
 	@Override
 	public RtksSituationRankings getRankings() {
 		RtksSituationRankings result = new RtksSituationRankings();
@@ -168,6 +194,11 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
+	/**
+	 * 获取态势
+	 *
+	 * @return {@code List<LevelStatisticBo> }
+	 */
 	@Override
 	public List<LevelStatisticBo> getSituation() {
 		// get levels
@@ -235,6 +266,15 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
+	/**
+	 * 记录态势
+	 *
+	 * @param userId   用户id
+	 * @param userName 用户名称
+	 * @param roleId   角色id
+	 * @param roleName 角色名称
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer recordSituation(String userId, String userName, String roleId, String roleName) {
 		// 计算匹配度
@@ -251,6 +291,11 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return match;
 	}
 
+	/**
+	 * 获取趋势
+	 *
+	 * @return {@code SituationTrendBo }
+	 */
 	@Override
 	public SituationTrendBo getTrends() {
 		SituationTrendBo result = new SituationTrendBo();
@@ -293,6 +338,11 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
+	/**
+	 * 获取新闻
+	 *
+	 * @return {@code List<NewsBo> }
+	 */
 	@Override
 	public List<NewsBo> getNews() {
 		List<NewsBo> result = Lists.newArrayList();
@@ -318,6 +368,13 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
+	/**
+	 * 记录匹配
+	 *
+	 * @param userId 用户id
+	 * @param roleId 角色id
+	 * @param match  火柴
+	 */
 	@Override
 	public void recordMatch(String userId, String roleId, Integer match) {
 		Boolean exist = rtksRoleMatchRecordMapper.existBy(userId, roleId);
@@ -328,6 +385,15 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		}
 	}
 
+	/**
+	 * 对数矩
+	 *
+	 * @param userId   用户id
+	 * @param userName 用户名称
+	 * @param roleId   角色id
+	 * @param roleName 角色名称
+	 * @param match    火柴
+	 */
 	private void logMoment(String userId, String userName, String roleId, String roleName,
 			Integer match) {
 

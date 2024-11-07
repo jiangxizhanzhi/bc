@@ -5,9 +5,18 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 与博博交战
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Data
 public class EngageBackBo extends FrameItemBase implements Serializable {
 
+	/**
+	 * 计数
+	 */
 	@ApiModelProperty("关联的训练模板数")
 	private Integer count = 0;
 }

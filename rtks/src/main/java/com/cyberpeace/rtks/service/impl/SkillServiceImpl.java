@@ -46,34 +46,64 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 技能Service实现
  *
+ * @author SN
+ * @date 2024/11/07
  */
 @Slf4j
 @Service
 public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements SkillService {
 
+	/**
+	 * 技能Mapper
+	 */
 	@Autowired
 	private SkillMapper skillMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 技能任务关系Mapper
+	 */
 	@Autowired
 	private SkillMissionRelationMapper skillMissionRelationMapper;
 
+	/**
+	 * 靶场任务Mapper
+	 */
 	@Autowired
 	private CrTaskMapper crTaskMapper;
 
+	/**
+	 * 技能训练Mapper
+	 */
 	@Autowired
 	private SkillTrainingMapper skillTrainingMapper;
 
+	/**
+	 * 任务模板Mapper
+	 */
 	@Autowired
 	private MissionTemplateMapper missionTemplateMapper;
 
+	/**
+	 * 未提交
+	 */
 	private static final Integer UNSUBMITTED = 0;
 
+	/**
+	 * 完成
+	 */
 	private static final Integer FINISHED = 50;
 
+	/**
+	 * 满分
+	 */
 	private static final Integer FULL_MARKS = 100;
 
 	/**
@@ -81,6 +111,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	 */
 	private static final Integer DONE = 1;
 
+	/**
+	 * 分页
+	 *
+	 * @param skillListReq 技能列表请求体
+	 * @return {@code ListRsp<SkillRes> }
+	 */
 	@Override
 	public ListRsp<SkillRes> page(PageReqBase skillListReq) {
 		Page page = skillListReq.toPageParam();
@@ -94,6 +130,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 分页简单
+	 *
+	 * @param reqBase 请求体基础
+	 * @return {@code ListRsp<SkillSimpleRes> }
+	 */
 	@Override
 	public ListRsp<SkillSimpleRes> pageSimple(PageReqBase reqBase) {
 		Page page = reqBase.toPageParam();
@@ -102,6 +144,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 获取技能由资源id
+	 *
+	 * @param skillId 技能id
+	 * @return {@code SkillRes }
+	 */
 	@Override
 	public SkillRes getSkillByResourceId(String skillId) {
 		Skill skill = skillMapper.selectById(skillId);
@@ -117,6 +165,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return skillRes;
 	}
 
+	/**
+	 * 获取OR404
+	 *
+	 * @param skillId 技能id
+	 * @return {@code Skill }
+	 */
 	@Override
 	public Skill getOr404(String skillId) {
 		Skill skill = getById(skillId);
@@ -127,6 +181,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return skill;
 	}
 
+	/**
+	 * 新增任务关系
+	 *
+	 * @param skillId          技能id
+	 * @param missionTemplates 任务模板
+	 */
 	@Override
 	public void addMissionRelation(String skillId, List<IdWeight> missionTemplates) {
 		if (CollectionUtils.isEmpty(missionTemplates)) {
@@ -158,6 +218,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		skillMissionRelationMapper.insertBatch(relations);
 	}
 
+	/**
+	 * 删除任务关系
+	 *
+	 * @param skillId            技能id
+	 * @param missionTemplateIds 任务模板id列表
+	 */
 	@Override
 	public void deleteMissionRelation(String skillId, List<String> missionTemplateIds) {
 		if (missionTemplateIds.isEmpty()) {
@@ -166,6 +232,11 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		skillMissionRelationMapper.batchDeleteBySkillAndMissions(skillId, missionTemplateIds);
 	}
 
+	/**
+	 * 检查资源id
+	 *
+	 * @param resourceId 资源id
+	 */
 	@Override
 	public void checkResourceId(String resourceId) {
 		CrCommonValidator.validateIdLen(resourceId, RtksBusinessErrorCode.INVALID_SKILL_ID);
@@ -174,6 +245,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		}
 	}
 
+	/**
+	 * 更新任务关系
+	 *
+	 * @param skillId  技能id
+	 * @param missions 任务
+	 */
 	@Override
 	public void updateMissionRelations(String skillId, List<IdWeight> missions) {
 		List<SkillMissionRelation> relations = skillMissionRelationMapper.batchSelect(skillId);
@@ -222,6 +299,11 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		});
 	}
 
+	/**
+	 * 明确任务 rel
+	 *
+	 * @param skillIds 技能id列表
+	 */
 	@Override
 	public void clearMissionRel(List<String> skillIds) {
 		if (skillIds.isEmpty()) {
@@ -230,6 +312,13 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		skillMissionRelationMapper.clearBySkillIds(skillIds);
 	}
 
+	/**
+	 * 计算分数
+	 *
+	 * @param skillId 技能id
+	 * @param userId  用户id
+	 * @return {@code Double }
+	 */
 	@Override
 	public Double calculateScore(String skillId, String userId) {
 		List<IdWeight> missionWeights = skillMissionRelationMapper.listBySkillId(skillId);
@@ -258,12 +347,22 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return calculation.solve();
 	}
 
+	/**
+	 * 全部清除
+	 */
 	@Override
 	public void clearAll() {
 		skillMapper.clearAll();
 		skillMissionRelationMapper.clearAll();
 	}
 
+	/**
+	 * 分页技能列表由角色id
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @param roleId      角色id
+	 * @return {@code ListRsp<SkillProcessRes> }
+	 */
 	@Override
 	public ListRsp<SkillProcessRes> pageSkillListByRoleId(PageReqBase pageReqBase, String roleId) {
 
@@ -321,6 +420,13 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 分页技能路径由角色id
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @param roleId      角色id
+	 * @return {@code ListRsp<SkillPagePath> }
+	 */
 	@Override
 	public ListRsp<SkillPagePath> pageSkillPathByRoleId(PageReqBase pageReqBase, String roleId) {
 		// page skill
@@ -380,6 +486,14 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 创造任务路径分页博
+	 *
+	 * @param missionId     任务id
+	 * @param missionBtMap  Mission BT 地图
+	 * @param btTrainingMap BT系列训练地图
+	 * @return {@code MissionPathPageBo }
+	 */
 	private MissionPathPageBo createMissionPathPageBo(String missionId,
 			Map<String, MissionWithBT> missionBtMap, Map<String, TrainingRaw> btTrainingMap) {
 		MissionPathPageBo missionPathPageBo = new MissionPathPageBo();
@@ -405,6 +519,13 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return missionPathPageBo;
 	}
 
+	/**
+	 * 地图训练
+	 *
+	 * @param map          地图
+	 * @param trainingRaws 训练原始
+	 * @param type         类型
+	 */
 	private void mapTrainings(Map<String, TrainingRaw> map, List<TrainingRaw> trainingRaws,
 			Integer type) {
 		trainingRaws.forEach((training) -> {
@@ -413,6 +534,12 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		});
 	}
 
+	/**
+	 * 创建技能任务地图
+	 *
+	 * @param skillAndMissions 技能和任务
+	 * @return {@code Map<String, List<String>> }
+	 */
 	private Map<String, List<String>>
 			createSkillMissionMap(List<SkillAndMission> skillAndMissions) {
 		Map<String, List<String>> skillMissionMap = Maps.newHashMap();
@@ -427,6 +554,14 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return skillMissionMap;
 	}
 
+	/**
+	 * 创建任务流程 bo
+	 *
+	 * @param missionId  任务id
+	 * @param missionMap 任务图
+	 * @param scoreMap   比分图
+	 * @return {@code MissionProcessBo }
+	 */
 	private MissionProcessBo createMissionProcessBo(String missionId,
 			Map<String, MissionTemplateRes> missionMap, Map<String, CrTaskScore> scoreMap) {
 		MissionTemplateRes mission = missionMap.get(missionId);
@@ -452,6 +587,13 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		return missionProcessBo;
 	}
 
+	/**
+	 * 计算过程
+	 *
+	 * @param processBos        处理 BOS
+	 * @param relatedCourseList 相关课程列表
+	 * @return {@code Integer }
+	 */
 	public Integer calculateProcess(List<CourseStudyProcessBo> processBos,
 			List<RelatedCourse> relatedCourseList) {
 		Map<String, Integer> map = Maps.newHashMap();

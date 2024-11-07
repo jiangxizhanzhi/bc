@@ -31,25 +31,51 @@ import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * RTKS资源Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Slf4j
 @Service
 public class RtksResourceServiceImpl implements RtksResourceService {
 
+	/**
+	 * 水平Mapper
+	 */
 	@Autowired
 	private LevelMapper levelMapper;
 
+	/**
+	 * 知识Service
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * RTKS初始化Service
+	 */
 	@Autowired
 	private RtksInitService rtksInitService;
 
+	/**
+	 * 角色Service
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 负荷
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void load(RtksResourceReq req) {
 		RtksRoleResourceBo bo = req.getRtks();
@@ -75,6 +101,11 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 		}
 	}
 
+	/**
+	 * 保存资源
+	 *
+	 * @param resource 资源
+	 */
 	private void saveResource(RtksRoleResource resource) {
 		if (Boolean.TRUE.equals(roleService.ifNameDuplicate(resource.getName(), ""))) {
 			log.info("duplicated rtks role: [{}]", resource.getName());
@@ -132,6 +163,11 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 		});
 	}
 
+	/**
+	 * 是中国人
+	 *
+	 * @return boolean
+	 */
 	private boolean isChinese() {
 		String lastLevelName = rtksInitService.getLastInitLevelName();
 		Pattern r = Pattern.compile(PatternConstant.CHINESE_CHARACTERS);
@@ -139,6 +175,12 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 		return m.find();
 	}
 
+	/**
+	 * 转换
+	 *
+	 * @param list 列表
+	 * @return {@code List<IdWeight> }
+	 */
 	private List<IdWeight> convert(List<IdAndWeight> list) {
 		List<IdWeight> res = Lists.newArrayList();
 		for (IdAndWeight item : list) {

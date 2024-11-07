@@ -28,21 +28,42 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 任务控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "RTKS-任务管理")
 @RestController
 @RequestMapping("/rtks")
 @RequiresAuthentication
 public class TaskController {
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private TaskService taskService;
 
+	/**
+	 * 角色Service
+	 */
 	@Autowired
 	private RoleService roleService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 获取任务
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<Task> }
+	 */
 	@ApiOperation("查询单条任务")
 	@GetMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -53,6 +74,12 @@ public class TaskController {
 		return new BaseRsp(task);
 	}
 
+	/**
+	 * 新增任务
+	 *
+	 * @param taskAddReq 任务新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("新增单条任务")
 	@PostMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -69,6 +96,12 @@ public class TaskController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 修改任务
+	 *
+	 * @param taskAddReq 任务新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("修改单条任务")
 	@PutMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -86,6 +119,12 @@ public class TaskController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 删除任务
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("删除任务")
 	@DeleteMapping("/task")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
@@ -105,6 +144,12 @@ public class TaskController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code BaseRsp<List<Task>> }
+	 */
 	@ApiOperation("分页查询")
 	@GetMapping("/task/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)

@@ -20,6 +20,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 用户关联控制器
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Api(tags = "RTKS-用户绑定岗位以及相关api")
 @RestController
 @RequestMapping("/relate/user")
@@ -27,12 +33,24 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 public class UserRelateController {
 
+	/**
+	 * 用户与Service
+	 */
 	@Autowired
 	private UserRelateService userRelateService;
 
+	/**
+	 * RTKS情况Service
+	 */
 	@Autowired
 	private RtksSituationService rtksSituationService;
 
+	/**
+	 * 关联用户
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<UserRole> }
+	 */
 	@ApiOperation("用户新增或修改岗位")
 	@PostMapping("/role")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -59,6 +77,11 @@ public class UserRelateController {
 		return rsp;
 	}
 
+	/**
+	 * 获取用户和角色信息
+	 *
+	 * @return {@code BaseRsp<UserRole> }
+	 */
 	@ApiOperation("查询用户和岗位信息")
 	@GetMapping("/role/info")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)

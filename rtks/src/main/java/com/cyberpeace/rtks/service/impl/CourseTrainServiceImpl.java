@@ -24,24 +24,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 课程训练Service实现
+ *
+ * @author SN
+ * @date 2024/11/07
+ */
 @Service
 public class CourseTrainServiceImpl implements CourseTrainService {
 
+	/**
+	 * 角色Mapper
+	 */
 	@Autowired
 	private RoleMapper roleMapper;
 
+	/**
+	 * 知识Service
+	 */
 	@Autowired
 	private KnowledgeService knowledgeService;
 
+	/**
+	 * 技能Service
+	 */
 	@Autowired
 	private SkillService skillService;
 
+	/**
+	 * 课程统计学Service
+	 */
 	@Autowired
 	private CourseStatisticsService courseStatisticsService;
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 获取课程知识
+	 *
+	 * @param userId 用户id
+	 * @param roleId 角色id
+	 * @return {@code List<CourseKnowledgeSkillBo> }
+	 */
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledge(String userId, String roleId) {
 		Role role = roleMapper.selectById(roleId);
@@ -87,6 +115,12 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		return boList;
 	}
 
+	/**
+	 * 获取课程知识由角色id
+	 *
+	 * @param roleId 角色id
+	 * @return {@code List<CourseKnowledgeSkillBo> }
+	 */
 	@Override
 	public List<CourseKnowledgeSkillBo> getCourseKnowledgeByRoleId(String roleId) {
 		Role role = roleMapper.selectById(roleId);
@@ -114,6 +148,13 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		return boList;
 	}
 
+	/**
+	 * 获取角色课程路径
+	 *
+	 * @param roleId     角色id
+	 * @param resourceId 资源id
+	 * @return {@code List<RoleCourseBo> }
+	 */
 	@Override
 	public List<RoleCourseBo> getRoleCoursePath(String roleId, String resourceId) {
 		Role role = roleMapper.selectById(roleId);

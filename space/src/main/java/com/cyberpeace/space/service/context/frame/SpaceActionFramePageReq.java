@@ -32,6 +32,7 @@ public class SpaceActionFramePageReq extends FrameBasePageReq {
 		if (StringUtils.isNotBlank(this.getPattern())) {
 			wrapper.like(SpaceActionFrame::getName, this.getPattern());
 		}
+		wrapper.setEntityClass(SpaceActionFrame.class);
 		return wrapper;
 	}
 

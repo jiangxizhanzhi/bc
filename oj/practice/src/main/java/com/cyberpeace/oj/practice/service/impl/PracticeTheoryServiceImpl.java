@@ -592,15 +592,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 */
 	@Override
 	public Integer batchDelete(List<String> resourceIds) {
-		String practiceId = resourceIds.get(CommonConstant.ZERO);
-		PracticeTheory theory = practiceTheoryMapper.selectById(practiceId);
+//		String practiceId = resourceIds.get(CommonConstant.ZERO);
+//		PracticeTheory theory = practiceTheoryMapper.selectById(practiceId);
 
 		// 习题集数据更新
-		PracticeSet practiceSet = practiceValidateHandler
-				.validatePracticeSetExist(theory.getPracticeSetId());
-		practiceSet.setPracticeCount(null == practiceSet.getPracticeCount()
-				|| practiceSet.getPracticeCount() <= resourceIds.size() ? CommonConstant.ZERO
-						: practiceSet.getPracticeCount() - resourceIds.size());
+//		PracticeSet practiceSet = practiceValidateHandler
+//				.validatePracticeSetExist(theory.getPracticeSetId());
+//		practiceSet.setPracticeCount(null == practiceSet.getPracticeCount()
+//				|| practiceSet.getPracticeCount() <= resourceIds.size() ? CommonConstant.ZERO
+//						: practiceSet.getPracticeCount() - resourceIds.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {
 
@@ -608,7 +608,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			public Integer doInTransaction(TransactionStatus status) {
 				practiceMistakeMapper.deleteByPracticeIds(resourceIds, null);
 				practiceSolvedMapper.deleteByPracticeIds(resourceIds);
-				practiceSetMapper.updateById(practiceSet);
+//				practiceSetMapper.updateById(practiceSet);
 				return practiceTheoryMapper.deleteBatchIds(resourceIds);
 			}
 		});

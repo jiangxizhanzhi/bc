@@ -71,5 +71,5 @@ public class DefenseAddReq {
 	 * 工具
 	 */
 	@ApiModelProperty(value = "工具")
-	private List<TacticTool> tool;
+	private List<String> tool;
 }

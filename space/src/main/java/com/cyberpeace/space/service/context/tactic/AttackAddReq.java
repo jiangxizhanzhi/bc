@@ -1,5 +1,6 @@
 package com.cyberpeace.space.service.context.tactic;
 
+import com.cyberpeace.cr.tool.service.context.TacticTool;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

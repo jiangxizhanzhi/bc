@@ -8,6 +8,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.space.constant.SpaceCommonConstant;
 import com.cyberpeace.space.dao.entity.SpaceTacticDefense;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 空间策略防御Service实现
@@ -43,6 +45,9 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	 */
 	@Autowired
 	private SpaceTacticDefenseMapper mapper;
+
+	@Autowired
+	private ToolService toolService;
 
 	/**
 	 * 类别映射器
@@ -84,9 +89,16 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 				categoryMap.put(category.getResourceId(), category.getName());
 			}
 		}
+
+		// tool
+		List<String> toolIds = StreamApiUtils.distinctFlatMap(iPage.getRecords(),d->JsonUtil.toJsonObjectArray(d.getTool(), String.class));
+		Map<String, String> toolMap = toolService.getIdNameMap(toolIds);
+
 		IPage<DefenseListBo> res = iPage.convert(defense -> {
 			DefenseListBo bo = BeanUtils.copy(defense, DefenseListBo.class);
 			bo.setCategory(categoryMap.get(bo.getCategoryId()));
+			List<String> toolNames = StreamApiUtils.map(JsonUtil.toJsonObjectArray(defense.getTool(), String.class), toolMap::get);
+			bo.setTool(StreamApiUtils.filter(toolNames, Objects::nonNull));
 			return bo;
 		});
 		return PageUtil.getListResult(res);
@@ -99,9 +111,9 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	 */
 	@Override
 	public void add(DefenseAddReq req) {
-		SpaceTacticDefense Defense = this.req2Entity(req);
-		Defense.setResourceId(IDGeneratorUtil.getID());
-		mapper.insert(Defense);
+		SpaceTacticDefense defense = this.req2Entity(req);
+		defense.setResourceId(IDGeneratorUtil.getID());
+		mapper.insert(defense);
 	}
 
 	/**
@@ -112,9 +124,9 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	@Override
 	public void updateDefense(DefenseModifyReq req) {
 		// todo id name
-		SpaceTacticDefense Defense = this.req2Entity(req);
-		Defense.setResourceId(req.getResourceId());
-		mapper.updateById(Defense);
+		SpaceTacticDefense defense = this.req2Entity(req);
+		defense.setResourceId(req.getResourceId());
+		mapper.updateById(defense);
 	}
 
 	/**
@@ -259,7 +271,6 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 		return StreamApiUtils.map(defenseList, defense -> {
 			DefenseDetail detail = BeanUtils.copy(defense, DefenseDetail.class);
 			detail.setTag(JsonUtil.toJsonObjectArray(defense.getTag(), String.class));
-			detail.setTool(JsonUtil.toJsonObjectArray(defense.getTool(), TacticTool.class));
 			return detail;
 		});
 	}
@@ -339,18 +350,18 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	 * @return {@code SpaceTacticDefense }
 	 */
 	private SpaceTacticDefense req2Entity(DefenseAddReq req) {
-		SpaceTacticDefense Defense = new SpaceTacticDefense();
-		Defense.setName(req.getName());
-		Defense.setTacticId(req.getTacticId());
-		Defense.setCategoryId(req.getCategoryId());
-		Defense.setRole(req.getRole());
-		Defense.setTag(JsonUtil.arrayToString(req.getTag()));
-		Defense.setDescription(req.getDescription());
-		Defense.setScene(req.getScene());
-		Defense.setMonitor(req.getMonitor());
-		Defense.setAnalyze(req.getAnalyze());
-		Defense.setTool(JsonUtil.arrayToString(req.getTool()));
-		return Defense;
+		SpaceTacticDefense defense = new SpaceTacticDefense();
+		defense.setName(req.getName());
+		defense.setTacticId(req.getTacticId());
+		defense.setCategoryId(req.getCategoryId());
+		defense.setRole(req.getRole());
+		defense.setTag(JsonUtil.arrayToString(req.getTag()));
+		defense.setDescription(req.getDescription());
+		defense.setScene(req.getScene());
+		defense.setMonitor(req.getMonitor());
+		defense.setAnalyze(req.getAnalyze());
+		defense.setTool(JsonUtil.arrayToString(req.getTool()));
+		return defense;
 	}
 
 	/**
@@ -362,13 +373,14 @@ public class SpaceTacticDefenseServiceImpl implements SpaceTacticDefenseService 
 	private DefenseDetail entity2Bo(SpaceTacticDefense defense) {
 		DefenseDetail detail = BeanUtils.copy(defense, DefenseDetail.class);
 		detail.setTag(JsonUtil.toJsonObjectArray(defense.getTag(), String.class));
-		detail.setTool(JsonUtil.toJsonObjectArray(defense.getTool(), TacticTool.class));
 
 		SpaceTacticDefenseCategory category = categoryMapper.selectById(defense.getCategoryId());
 		if (category != null) {
 			detail.setCategoryName(category.getName());
 		}
-
+		// tool
+		List<String> toolIds = JsonUtil.toJsonObjectArray(defense.getTool(), String.class);
+		detail.setTool(toolService.listTacticTool(toolIds));
 		return detail;
 	}
 

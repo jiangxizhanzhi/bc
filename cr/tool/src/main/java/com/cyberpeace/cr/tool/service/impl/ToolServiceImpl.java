@@ -19,6 +19,7 @@ import com.cyberpeace.cr.tool.dao.mapper.ToolFileMapper;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
 import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.cr.tool.service.context.TacticTool;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -290,4 +291,43 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		}
 		return res;
     }
+
+	/**
+	 * 列出策略工具
+	 *
+	 * @param toolIds 工具id列表
+	 * @return {@code List<TacticTool> }
+	 */
+	@Override
+	public List<TacticTool> listTacticTool(List<String> toolIds) {
+		List<TacticTool> res = Lists.newArrayList();
+		List<Tool> toolList = this.listByIdsInOrder(toolIds);
+		if(toolList.isEmpty()){
+			return res;
+		}
+		List<ToolCategory> toolCategories = toolCategoryService.selectAll();
+		Map<String, String> categoryMap = StreamApiUtils.toMap(toolCategories, ToolCategory::getResourceId, ToolCategory::getCnName);
+		for (Tool tool : toolList) {
+			TacticTool tacticTool = BeanUtils.copy(tool, TacticTool.class);
+			List<String> categoryIds = LocalStringUtil.strToListStr(tool.getCategory());
+			List<String> categoryNames = StreamApiUtils.map(categoryIds, categoryMap::get);
+			categoryNames = StreamApiUtils.filter(categoryNames, Objects::nonNull);
+			tacticTool.setCategoryName(StringUtils.join(categoryNames, ","));
+
+			res.add(tacticTool);
+		}
+		return res;
+	}
+
+	/**
+	 * 获取id名称映射
+	 *
+	 * @param toolIds 工具id列表
+	 * @return {@code Map<String, String> }
+	 */
+	@Override
+	public Map<String, String> getIdNameMap(List<String> toolIds) {
+		List<Tool> toolList = this.listByIdsInOrder(toolIds);
+		return StreamApiUtils.toMap(toolList, Tool::getResourceId, Tool::getName);
+	}
 }

@@ -7,9 +7,11 @@ import com.cyberpeace.cr.tool.controller.res.ToolRsp;
 import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
 import com.cyberpeace.cr.tool.dao.context.ToolListQuery;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
+import com.cyberpeace.cr.tool.service.context.TacticTool;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 工具Service
@@ -73,4 +75,20 @@ public interface ToolService extends IService<Tool> {
 	 * @return {@code List<Tool> }
 	 */
 	List<Tool> listByIdsInOrder(List<String> ids);
+
+	/**
+	 * 列出策略工具
+	 *
+	 * @param toolIds 工具id列表
+	 * @return {@code List<TacticTool> }
+	 */
+	List<TacticTool> listTacticTool(List<String> toolIds);
+
+	/**
+	 * 获取id名称映射
+	 *
+	 * @param toolIds 工具id列表
+	 * @return {@code Map<String, String> }
+	 */
+	Map<String, String> getIdNameMap(List<String> toolIds);
 }

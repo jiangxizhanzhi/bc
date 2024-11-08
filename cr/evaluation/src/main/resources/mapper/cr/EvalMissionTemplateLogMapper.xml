@@ -22,4 +22,11 @@
         GROUP BY
             l.mission_id;
     </select>
+
+    <select id="selectByIds" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalNodeLog">
+        SELECT create_user_id, update_time, operate, node_name FROM cr_eval_node_log WHERE resource_id in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

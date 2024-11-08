@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class ManualExecutionReq implements Serializable {
@@ -20,4 +21,5 @@ public class ManualExecutionReq implements Serializable {
 	@ApiModelProperty("工具")
 	private String tool;
 
+	private List<String> ids;
 }

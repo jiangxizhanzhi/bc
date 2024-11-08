@@ -18,6 +18,10 @@ public enum ExcelHeader {
 			new String[] {"desc"}),
 	TRAIN_PLAN(new String[] {"计划名称", "课程名", "课时名", "开始时间", "结束时间", "组织"},
 			new String[] {"Plan Name", "Course Name", "Course Hour Name", "Start time", "End time", CommonConstant.ORG},
+			new String[] {"desc"}),
+
+	ABNORMAL_DATA(new String[] {"人员", "异常时间", "操作异常", "异常内容"},
+			new String[] {"Role", "Abnormal Item", "Abnormal Operate", "Abnormal Content"},
 			new String[] {"desc"});
 
 

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalMissionLogRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalMissionTemplateLog;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalNodeLog;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,8 @@ import java.util.List;
 public interface EvalMissionTemplateLogMapper extends BaseMapper<EvalMissionTemplateLog> {
 
 	List<EvalMissionLogRsp> getAllByTask(String resourceId);
+
+	List<EvalNodeLog> selectByIds(List<String> ids);
 }
 
 

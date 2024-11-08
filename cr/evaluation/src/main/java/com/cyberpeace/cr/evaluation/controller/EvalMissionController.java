@@ -2,8 +2,8 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -29,7 +29,9 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 import com.cyberpeace.cr.evaluation.service.impl.bo.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -45,6 +47,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -541,5 +546,47 @@ public class EvalMissionController {
         return new BaseRsp<>(collect);
     }
 
+    @ApiOperation("异常数据-导出")
+    @PostMapping(value = "/node/abnormal/export")
+    public void userStatsDataExport(HttpServletResponse response, @RequestBody @Validated ManualExecutionReq manualExecutionReq) {
+        List<EvalNodeLog> nodeLogList = evalMissionTemplateLogMapper.selectByIds(manualExecutionReq.getIds());
+        Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
+        nodeLogList.forEach(evalNodeLog -> {
+            UserInfo userInfo = userInfoMap.get(evalNodeLog.getCreateUserId());
+            if(null == userInfo){
+                return;
+            }
+            evalNodeLog.setCreateUserId(userInfo.getUserName());
+        });
+
+        List<EvalNodeOperateContentRsp> evalNodeOperateContentRspList = this.getNodeLogList().getData();
+        Map<Integer, EvalNodeOperateContentRsp> operateMap = evalNodeOperateContentRspList.stream()
+                .collect(Collectors.toMap(EvalNodeOperateContentRsp::getCode, operate -> operate));
+
+        List<EvalNodeLogRsp> evalNodeLogRsps = new ArrayList<>();
+        for (EvalNodeLog evalNodeLog : nodeLogList) {
+            EvalNodeLogRsp evalNodeLogRsp = new EvalNodeLogRsp();
+            evalNodeLogRsp.setCreateUserId(evalNodeLog.getCreateUserId());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = sdf.format(evalNodeLog.getUpdateTime());
+            evalNodeLogRsp.setUpdateTime(time);
+
+            EvalNodeOperateContentRsp evalNodeOperateContentRsp = operateMap.get(evalNodeLog.getOperate());
+            if (evalNodeOperateContentRsp != null) {
+                evalNodeLogRsp.setOperate(evalNodeOperateContentRsp.getOperate());
+                evalNodeLogRsp.setContent(evalNodeOperateContentRsp.getContent());
+            }
+            evalNodeLogRsps.add(evalNodeLogRsp);
+        }
+
+        List<String> passFields = Lists.newArrayList( "roles","resourceId", "avatar");
+        String sheetName = ExcelHeader.SHEETNAME.getHeader()[0];
+        String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
+                + CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
+
+        File file = ExcelDataHandler.exportExcel(evalNodeLogRsps, filePath, sheetName,
+                passFields, ExcelHeader.ABNORMAL_DATA);
+        FileUtil.setResponse(file, true, response);
+    }
 
 }

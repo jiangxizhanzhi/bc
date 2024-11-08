@@ -549,38 +549,72 @@ public class EvalMissionController {
     @ApiOperation("异常数据-导出")
     @PostMapping(value = "/node/abnormal/export")
     public void userStatsDataExport(HttpServletResponse response, @RequestBody @Validated ManualExecutionReq manualExecutionReq) {
-        List<EvalNodeLog> nodeLogList = evalMissionTemplateLogMapper.selectByIds(manualExecutionReq.getIds());
-        Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
-        nodeLogList.forEach(evalNodeLog -> {
-            UserInfo userInfo = userInfoMap.get(evalNodeLog.getCreateUserId());
-            if(null == userInfo){
-                return;
-            }
-            evalNodeLog.setCreateUserId(userInfo.getUserName());
-        });
+        List<EvalNodeLogRsp> evalNodeLogRsps = new ArrayList<>();
 
+        // 操作内容
         List<EvalNodeOperateContentRsp> evalNodeOperateContentRspList = this.getNodeLogList().getData();
         Map<Integer, EvalNodeOperateContentRsp> operateMap = evalNodeOperateContentRspList.stream()
                 .collect(Collectors.toMap(EvalNodeOperateContentRsp::getCode, operate -> operate));
 
-        List<EvalNodeLogRsp> evalNodeLogRsps = new ArrayList<>();
-        for (EvalNodeLog evalNodeLog : nodeLogList) {
-            EvalNodeLogRsp evalNodeLogRsp = new EvalNodeLogRsp();
-            evalNodeLogRsp.setCreateUserId(evalNodeLog.getCreateUserId());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String time = sdf.format(evalNodeLog.getUpdateTime());
-            evalNodeLogRsp.setUpdateTime(time);
+        Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
+        if (manualExecutionReq.getExportType() == 0) {
+            QueryWrapper<EvalNodeLog> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(EvalNodeLog::getTaskId, manualExecutionReq.getTaskId()).orderByDesc(EvalNodeLog::getCreateTime);
+            List<EvalNodeLog> nodeLogList = evalNodeLogMapper.selectList(queryWrapper);
 
-            EvalNodeOperateContentRsp evalNodeOperateContentRsp = operateMap.get(evalNodeLog.getOperate());
-            if (evalNodeOperateContentRsp != null) {
-                evalNodeLogRsp.setOperate(evalNodeOperateContentRsp.getOperate());
-                evalNodeLogRsp.setContent(evalNodeOperateContentRsp.getContent());
+            nodeLogList.forEach(evalNodeLog -> {
+                UserInfo userInfo = userInfoMap.get(evalNodeLog.getCreateUserId());
+                if(null == userInfo){
+                    return;
+                }
+                evalNodeLog.setCreateUserId(userInfo.getUserName());
+            });
+            for (EvalNodeLog evalNodeLog : nodeLogList) {
+                EvalNodeLogRsp evalNodeLogRsp = new EvalNodeLogRsp();
+                evalNodeLogRsp.setCreateUserId(evalNodeLog.getCreateUserId());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String time = sdf.format(evalNodeLog.getUpdateTime());
+                evalNodeLogRsp.setUpdateTime(time);
+
+                EvalNodeOperateContentRsp evalNodeOperateContentRsp = operateMap.get(evalNodeLog.getOperate());
+                if (evalNodeOperateContentRsp != null) {
+                    evalNodeLogRsp.setOperate(evalNodeOperateContentRsp.getOperate());
+                    evalNodeLogRsp.setContent(evalNodeOperateContentRsp.getContent());
+                }
+                evalNodeLogRsps.add(evalNodeLogRsp);
             }
-            evalNodeLogRsps.add(evalNodeLogRsp);
+        } else if (manualExecutionReq.getExportType() == 1) {
+            QueryWrapper<EvalMissionTemplateLog> queryWrapper = new QueryWrapper<>();
+            List<Integer> operates = new ArrayList<>();
+            operates.add(MissionTemplateStatus.FAIL);
+            operates.add(MissionTemplateStatus.OVERTIME);
+            queryWrapper.lambda().eq(EvalMissionTemplateLog::getTaskId, manualExecutionReq.getTaskId()).in(EvalMissionTemplateLog::getOperate, operates).orderByDesc(EvalMissionTemplateLog::getCreateTime);
+            List<EvalMissionTemplateLog> nodeLogList = evalMissionTemplateLogMapper.selectList(queryWrapper);
+            nodeLogList.forEach(evalNodeLog -> {
+                UserInfo userInfo = userInfoMap.get(evalNodeLog.getCreateUserId());
+                if(null == userInfo){
+                    return;
+                }
+                evalNodeLog.setCreateUserId(userInfo.getUserName());
+            });
+            for (EvalMissionTemplateLog evalNodeLog : nodeLogList) {
+                EvalNodeLogRsp evalNodeLogRsp = new EvalNodeLogRsp();
+                evalNodeLogRsp.setCreateUserId(evalNodeLog.getCreateUserId());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String time = sdf.format(evalNodeLog.getUpdateTime());
+                evalNodeLogRsp.setUpdateTime(time);
+
+                EvalNodeOperateContentRsp evalNodeOperateContentRsp = operateMap.get(evalNodeLog.getOperate());
+                if (evalNodeOperateContentRsp != null) {
+                    evalNodeLogRsp.setOperate(evalNodeOperateContentRsp.getOperate());
+                    evalNodeLogRsp.setContent(evalNodeOperateContentRsp.getContent());
+                }
+                evalNodeLogRsps.add(evalNodeLogRsp);
+            }
         }
 
         List<String> passFields = Lists.newArrayList( "roles","resourceId", "avatar");
-        String sheetName = ExcelHeader.SHEETNAME.getHeader()[0];
+        String sheetName = ExcelHeader.ABNORMAL.getHeader()[0];
         String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
                 + CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
 

@@ -21,5 +21,9 @@ public class ManualExecutionReq implements Serializable {
 	@ApiModelProperty("工具")
 	private String tool;
 
-	private List<String> ids;
+	@ApiModelProperty("任务id")
+	private String taskId;
+
+	@ApiModelProperty("导出类型")
+	private Integer exportType;
 }

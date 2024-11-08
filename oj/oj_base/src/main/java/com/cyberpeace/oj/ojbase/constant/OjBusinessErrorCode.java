@@ -569,4 +569,8 @@ public interface OjBusinessErrorCode {
 	 * 出题范围错误
 	 */
 	String PRACTICE_RANGE_ERROR = "102131";
+	/**
+	 * writeup 无效
+	 */
+	String WRITEUP_INVALID = "102132";
 }

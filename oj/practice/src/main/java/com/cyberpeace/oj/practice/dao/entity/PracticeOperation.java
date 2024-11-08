@@ -67,9 +67,15 @@ public class PracticeOperation extends PracticeBase {
 	@ApiModelProperty("场景存活时间")
 	private Integer destroyDelay;
 
+	/**
+	 * 类型
+	 */
+	@ApiModelProperty(value = "类型，常量type=49，1：攻击，2：防守，3：其他")
+	private Integer type;
+
 	public enum DynamicFlag implements GenericEnum {
 
-		STATIC(0, "静态"), DYNAMIC(1, "动态"), RANDOM(2, "随机");
+		STATIC(0, "静态"), DYNAMIC(1, "动态"), RANDOM(2, "随机"), NOT(3, "非Flag");
 
 		@Getter
 		private Integer code;

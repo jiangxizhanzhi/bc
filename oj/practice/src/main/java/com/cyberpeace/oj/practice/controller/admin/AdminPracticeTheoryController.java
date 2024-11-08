@@ -179,6 +179,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(resourceId);
 		AdminTheoryBo theoryRes = BeanUtils.copy(practiceTheory, AdminTheoryBo.class);
+		theoryRes.setVideo(utilService.handlerFileUrl(practiceTheory.getVideo()));
 
 		return new BaseRsp<>(theoryRes);
 	}

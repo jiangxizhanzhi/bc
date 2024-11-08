@@ -151,6 +151,12 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	@ApiModelProperty("靶标列表，包含镜像id，附件id，命令")
 	private String target;
 
+	/**
+	 * 类型
+	 */
+	@ApiModelProperty(value = "类型，常量type=49，1：攻击，2：防守，3：其他")
+	private Integer type;
+
 //	public void setPractice_set_id(String practiceSetId) {
 //		this.practiceSetId = practiceSetId;
 //	}
@@ -197,21 +203,25 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	@Override
 	public void validate() {
-		if (null != dynamicFlag && dynamicFlag.intValue() == PracticeOperation.DynamicFlag.RANDOM
-				.getCode().intValue()) {
-
-			List<String> answers = JsonUtil.toJsonObjectArray(answer, String.class);
-			String[] files = StringUtils.split(attachmentId, CommonConstant.CODE_COMMA);
-			List<String> notEmptyFile = StreamApiUtils.filter(Arrays.asList(files),
-					file -> StringUtils.isNotBlank(file));
-
-			if (answers.size() != notEmptyFile.size()) {
-				log.error("answers.size() != notEmptyFile.size(),answers.size() ={}，notEmptyFile.size()={}", answers.size(), notEmptyFile.size());
-				throw new BusinessException(
-						OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
+		if (null != dynamicFlag) {
+			if (dynamicFlag.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode()
+					.intValue()) {
+				List<String> answers = JsonUtil.toJsonObjectArray(answer, String.class);
+				String[] files = StringUtils.split(attachmentId, CommonConstant.CODE_COMMA);
+				List<String> notEmptyFile = StreamApiUtils.filter(Arrays.asList(files), file -> StringUtils.isNotBlank(file));
+				if (answers.size() != notEmptyFile.size()) {
+					log.error("answers.size() != notEmptyFile.size(),answers.size() ={}，notEmptyFile.size()={}",
+							answers.size(), notEmptyFile.size());
+					throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
+				}
+			} else if (dynamicFlag.intValue() == PracticeOperation.DynamicFlag.NOT.getCode().intValue()) {
+				// validate not flag
+				if (StringUtils.isBlank(this.writeup)) {
+					throw new BusinessException(OjBusinessErrorCode.WRITEUP_INVALID);
+				}
 			}
 		}
-		validateLength(title, CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE,OjBusinessErrorCode.ANSWER_TOO_LONG);
-
+		validateLength(title, CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE,
+				OjBusinessErrorCode.ANSWER_TOO_LONG);
 	}
 }

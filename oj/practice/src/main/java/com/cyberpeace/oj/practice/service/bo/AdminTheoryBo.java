@@ -85,4 +85,16 @@ public class AdminTheoryBo implements Serializable {
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	/**
+	 * 类型
+	 */
+	@ApiModelProperty("类型，常量type=50， 1：视频题，2：图片题，3：文字题")
+	private Integer type;
+
+	/**
+	 * 视频 URL
+	 */
+	@ApiModelProperty(value = "视频链接")
+	private String video;
+
 }

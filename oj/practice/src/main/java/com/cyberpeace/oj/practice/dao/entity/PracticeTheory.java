@@ -43,6 +43,18 @@ public class PracticeTheory extends PracticeBase {
 	@ApiModelProperty("简答题参考关键字")
 	private String keyword;
 
+	/**
+	 * 类型
+	 */
+	@ApiModelProperty("类型，常量type=50， 1：视频题，2：图片题，3：文字题")
+	private Integer type;
+
+	/**
+	 * 视频 URL
+	 */
+	@ApiModelProperty(value = "视频链接")
+	private String video;
+
 	public enum TheoryType implements GenericEnum {
 
 		SINGLE(0, "single"), MULTIPLE(1, "multiple"), JUDGMENT(2, "judgment"), FILL_BLANK(3, "fill_blank"), SHORT_ANSWER(4,

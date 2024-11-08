@@ -132,4 +132,10 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("内容")
 	private String content;
 
+	/**
+	 * 类型
+	 */
+	@ApiModelProperty(value = "类型，常量type=49，1：攻击，2：防守，3：其他")
+	private Integer type;
+
 }

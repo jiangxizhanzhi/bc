@@ -12,27 +12,112 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 学习统计Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Mapper
 @Repository
 public interface LearnStatsMapper {
 
+    /**
+     * 用户统计查询
+     *
+     * @param users      用户
+     * @param reportCode 报告代号
+     * @param startTime  开始时间
+     * @param endTime    结束时间
+     * @return {@code List<UserStatsBo> }
+     */
     List<UserStatsBo> userStatsSelect(@Param("user_ids") List<String> users, @Param("report_code") Integer reportCode, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
 
+    /**
+     * 课程记录排名
+     *
+     * @param users 用户
+     * @param limit 限制
+     * @return {@code List<JSONObject> }
+     */
     List<JSONObject> lessonRecordRank(@Param("user_ids") List<String> users, @Param("limit") Integer limit);
 
+    /**
+     * 报告完成排名
+     *
+     * @param users      用户
+     * @param reportCode 报告代号
+     * @param limit      限制
+     * @return {@code List<JSONObject> }
+     */
     List<JSONObject> reportFinishRank(@Param("user_ids") List<String> users, @Param("report_code") Integer reportCode, @Param("limit") Integer limit);
 
+    /**
+     * 练习完成排名
+     *
+     * @param users 用户
+     * @param limit 限制
+     * @return {@code List<JSONObject> }
+     */
     List<JSONObject> practiceFinishRank(@Param("user_ids") List<String> users, @Param("limit") Integer limit);
 
+    /**
+     * 课程数量统计
+     *
+     * @param theoryType 理论类型
+     * @param expType    exp 类型
+     * @return {@code JSONObject }
+     */
     JSONObject courseNumStats(@Param("theory_type") Integer theoryType, @Param("exp_type") Integer expType);
 
+    /**
+     * 学习数量统计
+     *
+     * @param resourceId 资源id
+     * @param theoryType 理论类型
+     * @param expType    exp 类型
+     * @return {@code JSONObject }
+     */
     JSONObject learnNumStats(@Param("user_id") String resourceId, @Param("theory_type") Integer theoryType, @Param("exp_type") Integer expType);
 
+    /**
+     * 实践数量统计
+     *
+     * @param resourceId 资源id
+     * @param paperType  纸张类型
+     * @return {@code JSONObject }
+     */
     JSONObject practiceNumStats(@Param("user_id") String resourceId, @Param("paper_type") Integer paperType);
 
+    /**
+     * 了解课程统计信息
+     *
+     * @param page       分页
+     * @param resourceId 资源id
+     * @param theoryType 理论类型
+     * @param expType    exp 类型
+     * @param reportCode 报告代号
+     * @return {@code IPage<PersonalStatsDetail4CourseBo> }
+     */
     IPage<PersonalStatsDetail4CourseBo> learnCourseStats(Page page, @Param("user_id") String resourceId, @Param("theory_type") Integer theoryType, @Param("exp_type") Integer expType, @Param("report_code") Integer reportCode);
 
+    /**
+     * 类积分后
+     *
+     * @param users     用户
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return {@code List<JSONObject> }
+     */
     List<JSONObject> afterClassIntegral(@Param("user_ids") List<String> users, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
 
+    /**
+     * 课程积分
+     *
+     * @param users     用户
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return {@code List<JSONObject> }
+     */
     List<JSONObject> lessonIntegral(@Param("user_ids") List<String> users, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
 }

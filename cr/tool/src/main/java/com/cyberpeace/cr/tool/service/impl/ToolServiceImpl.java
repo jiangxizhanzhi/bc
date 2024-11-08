@@ -32,28 +32,58 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 工具Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service
 public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements ToolService {
 
+	/**
+	 * 工具Mapper
+	 */
 	@Autowired
 	private ToolMapper toolMapper;
 
+	/**
+	 * 工具类别Service
+	 */
 	@Autowired
 	private ToolCategoryService toolCategoryService;
 
+	/**
+	 * 工具文件Mapper
+	 */
 	@Autowired
 	private ToolFileMapper toolFileMapper;
 
+	/**
+	 * 远程终端Service
+	 */
 	@Autowired
 	private RemoteTerminalService remoteTerminalService;
 
+	/**
+	 * 保存批量
+	 *
+	 * @param entityList 实体列表
+	 * @return boolean
+	 */
 	@Override
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "transactionManager")
 	public boolean saveBatch(Collection<Tool> entityList) {
 		return super.saveBatch(entityList);
 	}
 
+	/**
+	 * 设置大约类别
+	 *
+	 * @param toolRsp 工具响应
+	 * @param tool    工具
+	 */
 	private void setAboutCategory(ToolRsp toolRsp, Tool tool) {
 		List<String> categoryList = LocalStringUtil.strToListStr(tool.getCategory());
 		toolRsp.setCategory(categoryList);
@@ -77,6 +107,12 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		toolRsp.setCategoryI18nName(Joiner.on(",").join(i18nName));
 	}
 
+	/**
+	 * 设置大约装置
+	 *
+	 * @param toolRsp 工具响应
+	 * @param tool    工具
+	 */
 	private void setAboutDevice(ToolRsp toolRsp, Tool tool) {
 		if (!StringUtils.isBlank(tool.getImageResourceId())) {
 			DeviceInfo deviceInfo = remoteTerminalService.getById(tool.getImageResourceId());
@@ -84,6 +120,12 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		}
 	}
 
+	/**
+	 * 设置大约文件
+	 *
+	 * @param toolRsp 工具响应
+	 * @param tool    工具
+	 */
 	private void setAboutFile(ToolRsp toolRsp, Tool tool) {
 		List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
 		toolRsp.setFiles(tool.getFiles());
@@ -97,6 +139,13 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		toolRsp.setToolFiles(toolFiles);
 	}
 
+	/**
+	 * 到 bo
+	 *
+	 * @param tool     工具
+	 * @param isDetail 是详情
+	 * @return {@code ToolRsp }
+	 */
 	private ToolRsp toBo(Tool tool, boolean isDetail) {
 		ToolRsp toolRsp = BeanUtils.copy(tool, ToolRsp.class);
 		setAboutCategory(toolRsp, tool);
@@ -117,23 +166,48 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		return toolRsp;
 	}
 
+	/**
+	 * 查询分页
+	 *
+	 * @param page          分页
+	 * @param toolListQuery 工具列表查询
+	 * @param isAdmin       是管理员
+	 * @return {@code IPage<ToolRsp> }
+	 */
 	@Override
 	public IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin) {
 		IPage<Tool> result = toolMapper.list(page, toolListQuery, isAdmin);
 		return result.convert(tool -> toBo(tool, false));
 	}
 
+	/**
+	 * 查询由id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code ToolRsp }
+	 */
 	@Override
 	public ToolRsp selectById(String resourceId) {
 		Tool tool = getById(resourceId);
 		return toBo(tool, true);
 	}
 
+	/**
+	 * 获取由名称
+	 *
+	 * @param name 名称
+	 * @return {@code Tool }
+	 */
 	@Override
 	public Tool getByName(String name) {
 		return toolMapper.selectByName(name);
 	}
 
+	/**
+	 * 验证工具名称存在
+	 *
+	 * @param tool 工具
+	 */
 	@Override
 	public void validateToolNameExist(Tool tool) {
 		// 名称重复性校验
@@ -144,6 +218,11 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		}
 	}
 
+	/**
+	 * 验证编辑工具名称存在
+	 *
+	 * @param tool 工具
+	 */
 	@Override
 	public void validateEditToolNameExist(Tool tool){
 		// 名称重复性校验
@@ -154,6 +233,11 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		}
 	}
 
+	/**
+	 * 统计学
+	 *
+	 * @return {@code List<ToolTypeCount> }
+	 */
 	@Override
 	public List<ToolTypeCount> statistics() {
 		List<ToolTypeCount> typeCounts = new ArrayList<>();
@@ -185,7 +269,13 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		return typeCounts;
 	}
 
-    @Override
+	/**
+	 * 列表由id列表在次序
+	 *
+	 * @param ids id列表
+	 * @return {@code List<Tool> }
+	 */
+	@Override
     public List<Tool> listByIdsInOrder(List<String> ids) {
 		 List<Tool> res =  Lists.newArrayList();
 		if(ids.isEmpty()){

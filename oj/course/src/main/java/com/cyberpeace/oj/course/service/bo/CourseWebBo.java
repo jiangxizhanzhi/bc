@@ -6,59 +6,116 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 课程 Web bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel("前端课程基本信息")
 public class CourseWebBo implements Serializable {
 
-	@ApiModelProperty("资源编号")
+    /**
+     * 资源id
+     */
+    @ApiModelProperty("资源编号")
 	private String resourceId;
 
-	@ApiModelProperty("课程编号")
+    /**
+     * 课程数量
+     */
+    @ApiModelProperty("课程编号")
 	private String courseNum;
 
-	@ApiModelProperty("课程名称")
+    /**
+     * 名称
+     */
+    @ApiModelProperty("课程名称")
 	private String name;
 
-	@ApiModelProperty("课程方向")
+    /**
+     * 类别id
+     */
+    @ApiModelProperty("课程方向")
 	private String categoryId;
 
-	@ApiModelProperty("课程方向名称")
+    /**
+     * 方向名称
+     */
+    @ApiModelProperty("课程方向名称")
 	private String directionName;
 
-	@ApiModelProperty("课程海报")
+    /**
+     * 图标
+     */
+    @ApiModelProperty("课程海报")
 	private String logo;
 
-	@ApiModelProperty("课程难度")
+    /**
+     * 困难
+     */
+    @ApiModelProperty("课程难度")
 	private Integer difficulty;
 
-	@ApiModelProperty("课程创建人")
+    /**
+     * 创造用户id
+     */
+    @ApiModelProperty("课程创建人")
 	private String createUserId;
 
-	@ApiModelProperty("创建人名称")
+    /**
+     * 创造用户名称
+     */
+    @ApiModelProperty("创建人名称")
 	private String createUserName;
 
-	@ApiModelProperty("讲师")
+    /**
+     * 讲师
+     */
+    @ApiModelProperty("讲师")
 	private String lecturer;
 
-	@ApiModelProperty("学分")
+    /**
+     * 得分
+     */
+    @ApiModelProperty("学分")
 	private Integer score;
 
-	@ApiModelProperty("课程类型")
+    /**
+     * 课程类型
+     */
+    @ApiModelProperty("课程类型")
 	private Integer courseType;
 
-	@ApiModelProperty("课程类型")
+    /**
+     * 电子书
+     */
+    @ApiModelProperty("课程类型")
 	private Integer ebook;
 
-	@ApiModelProperty("课程课时数量")
+    /**
+     * 课计数
+     */
+    @ApiModelProperty("课程课时数量")
 	private Integer lessonCount;
 
-	@ApiModelProperty("课程课时时长")
+    /**
+     * 课程时间
+     */
+    @ApiModelProperty("课程课时时长")
 	private Integer courseDuration;
 
-	@ApiModelProperty("是否公开")
+    /**
+     * 是公共
+     */
+    @ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
-	@ApiModelProperty("岗位")
+    /**
+     * 岗位
+     */
+    @ApiModelProperty("岗位")
 	private Integer role;
 
 }

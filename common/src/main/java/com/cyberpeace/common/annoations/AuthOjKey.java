@@ -3,7 +3,9 @@ package com.cyberpeace.common.annoations;
 import java.lang.annotation.*;
 
 /**
- * @author chenzhuo
+ * auth oj key
+ *
+ * @author chenzhuo@date 2024/11/08
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

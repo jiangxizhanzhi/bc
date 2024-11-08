@@ -22,10 +22,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TopoNodeListReq implements Serializable {
 
+	/**
+	 * id
+	 */
 	private String id;
 
+	/**
+	 * 类别
+	 */
 	private Integer category;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
 	/**

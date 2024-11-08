@@ -17,6 +17,9 @@ import lombok.Data;
 @Data
 public class GroupTaskReleaseProgress extends ReleaseProgress implements Serializable {
 
+	/**
+	 * 岗位
+	 */
 	@ApiModelProperty(value = "各角色下发进度")
 	private List<RoleTaskReleaseProgress> role = Lists.newArrayList();
 }

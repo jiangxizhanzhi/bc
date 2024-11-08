@@ -1,10 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.List;
-
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.cache.CrRoleCache;
 import com.cyberpeace.common.constant.WsPath;
@@ -16,15 +11,25 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+/**
+ * 靶场事件听者助手
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 @Slf4j
 public class CrEventListenerHelper {
 
 	/**
 	 * 过滤 ws 推送的节点消息
+	 *
 	 * @param role
 	 * @param data
 	 * @param nodeId
@@ -77,7 +82,8 @@ public class CrEventListenerHelper {
 
 	/**
 	 * 构建需要向页面推送的消息上下文
-	 * @param data 
+	 *
+	 * @param data
 	 * @param businessId
 	 * @return
 	 */

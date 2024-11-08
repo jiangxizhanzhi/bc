@@ -29,6 +29,9 @@ public class SceneNodeListReq extends TopoNodeListReq implements Serializable {
 	 */
 	private List<String> elementIds;
 
+	/**
+	 * 系统类型名称
+	 */
 	private String systemTypeName;
 
 	@Override

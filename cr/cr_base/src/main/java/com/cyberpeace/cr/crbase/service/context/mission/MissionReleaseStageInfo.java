@@ -16,15 +16,30 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 任务发布阶段信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MissionReleaseStageInfo {
 
+	/**
+	 * 阶段
+	 */
 	@ApiModelProperty(value = "阶段")
 	private String stage;
 
+	/**
+	 * 任务信息
+	 */
 	@ApiModelProperty(value = "阶段任务列表")
 	private List<MissionReleaseInfo> missionInfos;
 
+	/**
+	 * 全部发布
+	 */
 	@ApiModelProperty(value = "是否全部下发")
 	private Boolean isAllRelease = true;
 

@@ -34,35 +34,63 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 实践验证处理器
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service
 public class PracticeValidateHandler {
 
+	/**
+	 * 实践设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 实践类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 实践实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 实践理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 系统配置Service
+	 */
 	@Autowired
 	private SystemConfigService systemConfigService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 校验导入时选择题答案长度
+	 *
 	 * @param excelRowData
-	 * @param index
+	 * @param index        指数
 	 */
 	public void validateChoiceAnswerLength(List<String> excelRowData, int index) {
 		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 <= index) {
@@ -80,7 +108,9 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验导入时填空题答案数量
-	 * @param excelRowData
+	 *
+	 * @param excelRowData Excel 行数据
+	 * @param index        指数
 	 */
 	public void validateFillBlankAnswerLength(List<String> excelRowData, int index) {
 		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 < index) {
@@ -95,7 +125,8 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验导入时选择题
-	 * @param answer
+	 *
+	 * @param answer 答案
 	 */
 	public void validateChoiceAnswer(String answer) {
 		if (StringUtils.isBlank(answer) || !(answer.matches(PatternConstant.CHOICE_ANSWER))) {
@@ -106,7 +137,8 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验导入时判断题
-	 * @param answer
+	 *
+	 * @param answer 答案
 	 */
 	public void validateJudgementAnswer(String answer) {
 		if (StringUtils.isBlank(answer) || !(answer.matches(PatternConstant.JUDGEMENT_ANSWER))) {
@@ -117,6 +149,7 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题难度
+	 *
 	 * @param difficulty 习题难度
 	 */
 	public void validateCategoryDifficulty(Integer difficulty) {
@@ -134,6 +167,7 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题类型
+	 *
 	 * @param type 习题类型值
 	 */
 	public void validateTheoryType(int type) {
@@ -151,6 +185,7 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题类型
+	 *
 	 * @param type 习题类型值
 	 */
 	public void validateOnlyTheoryType(int type) {
@@ -172,8 +207,9 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 字段数据长度校验
+	 *
 	 * @param fieldContent
-	 * @param maxLength
+	 * @param maxLength    最大长度
 	 */
 	public void validateFieldLength(String fieldContent, Integer maxLength) {
 		if (fieldContent.length() > maxLength) {
@@ -184,6 +220,7 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验操作题是否存在
+	 *
 	 * @param practiceOperationId
 	 * @return
 	 */
@@ -200,6 +237,7 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题分类类型
+	 *
 	 * @param categoryId
 	 * @param practiceType
 	 * @return
@@ -219,6 +257,7 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验分类是否存在
+	 *
 	 * @param categoryId
 	 * @return
 	 */
@@ -234,6 +273,7 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题集类型
+	 *
 	 * @param practiceSetId
 	 * @param practiceType
 	 * @return
@@ -254,6 +294,8 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题集是否存在
+	 *
+	 * @param practiceSetId 实践设置id
 	 * @return
 	 */
 	public PracticeSet validatePracticeSetExist(String practiceSetId) {
@@ -268,8 +310,9 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 习题集权限校验
+	 *
 	 * @param practiceSetId
-	 * @param authContext
+	 * @param authContext   auth 上下文
 	 */
 	public void validatePracticeSetPermission(String practiceSetId, AuthContext authContext) {
 
@@ -282,8 +325,9 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题名称
+	 *
 	 * @param practiceSetId
-	 * @param title
+	 * @param title         标题
 	 */
 	public void validateOperationTitleExist(String practiceSetId, String title) {
 		String practiceId = practiceOperationMapper.selectByTitle("", title);
@@ -295,6 +339,13 @@ public class PracticeValidateHandler {
 		}
 	}
 
+	/**
+	 * 验证实操标题存在
+	 *
+	 * @param practiceSetId 实践设置id
+	 * @param title         标题
+	 * @param practicePath  实践路径
+	 */
 	public void validateOperationTitleExist(String practiceSetId, String title, String practicePath) {
 		String practiceId = practiceOperationMapper.selectByTitle(practiceSetId, title);
 		if (StringUtils.isNotBlank(practiceId)) {
@@ -307,7 +358,8 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验flag长度 5.3.6系统flag长度仅对动态flag长度做限制 随机与静态flag长度为1-255
-	 * @param flags
+	 *
+	 * @param flags 标志
 	 */
 	public void validateFlagLength(String flags) {
 
@@ -331,8 +383,9 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题内容是否存在
+	 *
 	 * @param practiceSetId
-	 * @param content
+	 * @param content       内容
 	 */
 	public void validateTheoryContentExist(String practiceSetId, String content) {
 		String practiceId = practiceTheoryMapper.selectByContent("", content);
@@ -345,8 +398,9 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验实操习题修改title已存在问题
+	 *
 	 * @param operation
-	 * @param newTitle
+	 * @param newTitle  新标题
 	 */
 	public void validateOperationUpdateTitleExist(PracticeOperation operation, String newTitle) {
 		String existTitleId = practiceOperationMapper.selectByTitle("",
@@ -360,7 +414,9 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 修改时校验场景是否存在
-	 * @param operation
+	 *
+	 * @param operation 实操
+	 * @param topoData  拓扑数据
 	 */
 	public void validateOperationUpdateSceneExist(PracticeOperation operation,
 												  JSONObject topoData) {
@@ -381,6 +437,13 @@ public class PracticeValidateHandler {
 		}
 	}
 
+	/**
+	 * 验证附件长度
+	 *
+	 * @param practiceName 实践名称
+	 * @param dynamicFlag  动态标志
+	 * @param attachments  附件
+	 */
 	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
 			List<String> attachments) {
 		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
@@ -391,6 +454,14 @@ public class PracticeValidateHandler {
 		}
 	}
 
+	/**
+	 * 验证附件长度
+	 *
+	 * @param practiceName 实践名称
+	 * @param dynamicFlag  动态标志
+	 * @param attachments  附件
+	 * @param practicePath 实践路径
+	 */
 	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
 										 List<String> attachments, String practicePath) {
 		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
@@ -400,6 +471,13 @@ public class PracticeValidateHandler {
 		}
 	}
 
+	/**
+	 * 验证理论内容存在排除本身
+	 *
+	 * @param practiceSetId  实践设置id
+	 * @param content        内容
+	 * @param practiceTheory 实践理论
+	 */
 	public void validateTheoryContentExistExcludeItself(String practiceSetId, String content,
 			PracticeTheory practiceTheory) {
 		String practiceId = practiceTheoryMapper.selectByContent("", content);
@@ -411,6 +489,12 @@ public class PracticeValidateHandler {
 		}
 	}
 
+	/**
+	 * 验证填补空白关键词
+	 *
+	 * @param theoryType 理论类型
+	 * @param keyword    关键词
+	 */
 	public void validateFillBlankKeyword(Integer theoryType, String keyword) {
 		if (theoryType == PracticeTheory.TheoryType.SHORT_ANSWER.getCode().intValue()) {
 			JSONArray objects = JSON.parseArray(keyword);
@@ -427,8 +511,9 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验习题集是否有权限访问，无权限抛出名称重复异常
+	 *
 	 * @param practiceSet
-	 * @param userId
+	 * @param userId      用户id
 	 */
 	public void validatePracticeSetPermission(PracticeSet practiceSet, String userId) {
 		if (practiceSet.getCreateUserId().equals(userId)) {
@@ -451,7 +536,8 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 更新隔离模式时校验场景是否存在
-	 * @param operation
+	 *
+	 * @param operation 实操
 	 */
 	public void validateOperationUpdateShareModeSceneExist(PracticeOperation operation) {
 
@@ -470,7 +556,8 @@ public class PracticeValidateHandler {
 
 	/**
 	 * 校验是否为内置资源
-	 * @param practiceSet
+	 *
+	 * @param practiceSet 实践设置
 	 */
 	public void validateBuiltin(PracticeSet practiceSet) {
 		if (practiceSet.isBuiltin()) {

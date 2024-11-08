@@ -23,6 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * 管理附件Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Api(tags = "oj-后台附件相关api")
 @RestController
@@ -30,9 +36,15 @@ import java.util.List;
 @RequiresAuthentication
 public class AdminAttachmentController {
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 

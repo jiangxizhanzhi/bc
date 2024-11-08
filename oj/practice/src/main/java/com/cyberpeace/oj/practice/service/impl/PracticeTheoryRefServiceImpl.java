@@ -25,19 +25,41 @@ import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 实践理论裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 @Slf4j
 public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefMapper, PracticeTheoryRef> implements PracticeTheoryRefService {
 
+	/**
+	 * 实践理论裁判Mapper
+	 */
 	@Autowired
 	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
+	/**
+	 * 实践类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 实践设置Service
+	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
+	/**
+	 * 查询由纸
+	 *
+	 * @param paperId    纸id
+	 * @param viewAnswer 视图答案
+	 * @return {@code List<TheoryLessonBo> }
+	 */
 	@Override
 	public List<TheoryLessonBo> selectByPaper(String paperId, Boolean viewAnswer) {
 
@@ -79,6 +101,13 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 		return theoryList;
 	}
 
+	/**
+	 * 查询由实践id
+	 *
+	 * @param paperId    纸id
+	 * @param practiceId 实践id
+	 * @return {@code PracticeTheory }
+	 */
 	@Override
 	public PracticeTheory selectByPracticeId(String paperId, String practiceId) {
 
@@ -88,6 +117,12 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 		return JsonUtil.toJsonObject(theoryRef.getSnapshot(), PracticeTheory.class);
 	}
 
+	/**
+	 * 导出课程练习
+	 *
+	 * @param pathname 路径
+	 * @param paperId  纸id
+	 */
 	@Override
 	public void exportLessonPractice(String pathname, String paperId) {
 		List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper.selectByPracticeIds(paperId,

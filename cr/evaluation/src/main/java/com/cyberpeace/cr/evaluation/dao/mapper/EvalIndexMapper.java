@@ -7,22 +7,62 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalIndex
+ * 评估指数Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Mapper
 public interface EvalIndexMapper extends BaseMapper<EvalIndex> {
 
+    /**
+     * 查询列表由系统id和水平
+     *
+     * @param systemId 系统id
+     * @param level    水平
+     * @return {@code List<EvalIndex> }
+     */
     List<EvalIndex> selectListBySystemIdAndLevel(String systemId, Integer level);
 
+    /**
+     * 查询id列表由评估系统id列表
+     *
+     * @param evalSystemIds 评估系统id列表
+     * @return {@code List<String> }
+     */
     List<String> selectIdsByEvalSystemIds(List<String> evalSystemIds);
 
+    /**
+     * 删除批量由评估系统id
+     *
+     * @param evalSystemId 评估系统id
+     */
     void deleteBatchByEvalSystemId(String evalSystemId);
 
-	Integer selectAlgorithmSum(List<String> algorithmIds);
+    /**
+     * 查询算法和
+     *
+     * @param algorithmIds 算法id列表
+     * @return {@code Integer }
+     */
+    Integer selectAlgorithmSum(List<String> algorithmIds);
 
-	boolean existByName(String name, String resourceId);
+    /**
+     * 存在由名称
+     *
+     * @param name       名称
+     * @param resourceId 资源id
+     * @return boolean
+     */
+    boolean existByName(String name, String resourceId);
 
-	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
+    /**
+     * 查询使用算法id列表
+     *
+     * @param algorithmIds 算法id列表
+     * @return {@code List<String> }
+     */
+    List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 }
 
 

@@ -607,17 +607,43 @@ public class TimeUtil {
 	}
 }
 
+/**
+ * 时间单位 i18n
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class TimeUnitI18n {
 
+	/**
+	 * 日
+	 */
 	private String day;
 
+	/**
+	 * 小时
+	 */
 	private String hour;
 
+	/**
+	 * 分钟
+	 */
 	private String minute;
 
+	/**
+	 * 第二
+	 */
 	private String second;
 
+	/**
+	 * 时间单位 i18n
+	 *
+	 * @param day    日
+	 * @param hour   小时
+	 * @param minute 分钟
+	 * @param second 第二
+	 */
 	private TimeUnitI18n(String day, String hour, String minute, String second) {
 		this.day = day;
 		this.hour = hour;
@@ -625,6 +651,11 @@ class TimeUnitI18n {
 		this.second = second;
 	}
 
+	/**
+	 * 获取时间单位
+	 *
+	 * @return {@code TimeUnitI18n }
+	 */
 	public static TimeUnitI18n getTimeUnit() {
 		if (CommonContext.isChinese()) {
 			return new TimeUnitI18n("天", "小时", "分钟", "秒");
@@ -633,6 +664,11 @@ class TimeUnitI18n {
 		}
 	}
 
+	/**
+	 * 获取结肠时间单位
+	 *
+	 * @return {@code TimeUnitI18n }
+	 */
 	public static TimeUnitI18n getColonTimeUnit() {
 		return new TimeUnitI18n("天 ", ":", ":", ":");
 	}

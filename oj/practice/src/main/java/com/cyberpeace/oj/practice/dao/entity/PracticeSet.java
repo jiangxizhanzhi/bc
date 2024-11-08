@@ -10,32 +10,56 @@ import com.cyberpeace.common.model.AuthTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 实践设置
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("oj_practice_set")
 public class PracticeSet extends AuthTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 内置
+	 */
 	private boolean builtin;
 
-	/** 名称*/
+	/**
+	 * 名称
+	 */
 	private String name;
 
-	/** 封面*/
+	/**
+	 * 封面
+	 */
 	private String logo;
 
-	/** 练习类型*/
+	/**
+	 * 练习类型
+	 */
 	private Integer practiceType;
 
-	/** 是否公开*/
+	/**
+	 * 是否公开
+	 */
 	@TableField("public")
 	private Boolean isPublic;
 
-	/** 创建者*/
+	/**
+	 * 创建者
+	 */
 	private String createUserId;
 
-	/** 习题集所含习题数量*/
+	/**
+	 * 习题集所含习题数量
+	 */
 	private Integer practiceCount;
 
 	public enum PracticeType implements GenericEnum, MdConvertEnum<Integer, String> {

@@ -16,6 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 系统财产Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "获取系统变量")
 @RestController
 @RequestMapping("/system_property")
@@ -23,9 +29,17 @@ import java.util.List;
 @Slf4j
 public class SystemPropertyController {
 
+    /**
+     * 系统财产Service
+     */
     @Autowired
     private SystemPropertyService systemPropertyService;
 
+    /**
+     * 应用运行信息
+     *
+     * @return {@code BaseRsp<List<SystemProperty>> }
+     */
     @ApiOperation("全量获取")
     @GetMapping("/list")
     public BaseRsp<List<SystemProperty>> appRunningInfo() {

@@ -7,13 +7,25 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 蹼工具类别响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @ApiModel("前台工具分类")
 @Data
 @Builder
 public class WebToolCategoryRsp implements Serializable {
 
+    /**
+     * 资源id
+     */
     private String resourceId;
 
+    /**
+     * 类别i18n名称
+     */
     @ApiModelProperty("工具分类名称")
     private String categoryI18nName;
 }

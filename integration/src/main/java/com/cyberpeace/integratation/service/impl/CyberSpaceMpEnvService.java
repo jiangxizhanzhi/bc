@@ -6,28 +6,45 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
-/*
+/**
+ * 网络空间中台环境Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ *//*
 数字空间mp地址
  */
 @Slf4j
 @Service
 public class CyberSpaceMpEnvService {
 
-    //数字空间mp ip
+    /**
+     * 中台主机
+     *///数字空间mp ip
     private String MP_HOST;
 
-    //数字空间mp端口
+    /**
+     * 中台港口
+     *///数字空间mp端口
     private String MP_PORT;
 
-    //数字空间mp url
+    /**
+     * 中台网址
+     *///数字空间mp url
     private String MP_URL;
 
-    //获取数字空间mp地址
+    /**
+     * 获取中台主机
+     *
+     * @return {@code String }
+     *///获取数字空间mp地址
     public String getMpHost() {
         return MP_URL;
     }
 
-    //初始化
+    /**
+     * 初始化
+     *///初始化
     @PostConstruct
     public void init() {
         MP_HOST = SystemPropUtil.getProp("CYBER_MP_HOST");

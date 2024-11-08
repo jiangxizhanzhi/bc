@@ -25,12 +25,24 @@ import com.cyberpeace.integratation.service.RemotePythonService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 远程蟒Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service
 public class RemotePythonServiceImpl implements RemotePythonService {
 
+	/**
+	 * py 网址
+	 */
 	private String PY_URL;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		String PY_HOST = SystemPropUtil.getProp("PY_HOST");
@@ -38,11 +50,24 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		PY_URL = "http://" + PY_HOST + ":" + PY_PORT;
 	}
 
+	/**
+	 * 获取py主机
+	 *
+	 * @return {@code String }
+	 */
 	@Override
 	public String getPyHost() {
 		return PY_URL;
 	}
 
+	/**
+	 * 生成请求数据
+	 *
+	 * @param algorithmId    算法id
+	 * @param algorithmCode  算法代号
+	 * @param otherArguments 其他参数
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject buildRequestData(String algorithmId, String algorithmCode,
 			List<Serializable> otherArguments) {
 		// 构建传入数据
@@ -54,6 +79,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return json;
 	}
 
+	/**
+	 * 调用
+	 *
+	 * @param requestData 请求数据
+	 * @return {@code String }
+	 */
 	private String invoke(JSONObject requestData) {
 		String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", requestData,
 				String.class);
@@ -64,6 +95,15 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return resp;
 	}
 
+	/**
+	 * format perform
+	 *
+	 * @param algorithmId    算法id
+	 * @param algorithmCode  算法代号
+	 * @param formatData     设置数据格式
+	 * @param otherArguments 其他参数
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> formatPerform(String algorithmId, String algorithmCode,
 			FormatData formatData, List<Serializable> otherArguments) {
@@ -84,6 +124,15 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return results;
 	}
 
+	/**
+	 * match perform
+	 *
+	 * @param algorithmId    算法id
+	 * @param algorithmCode  算法代号
+	 * @param matchData      匹配数据
+	 * @param otherArguments 其他参数
+	 * @return {@code List<Integer> }
+	 */
 	@Override
 	public List<Integer> matchPerform(String algorithmId, String algorithmCode, MatchData matchData,
 			List<Serializable> otherArguments) {
@@ -99,6 +148,15 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return JsonUtil.toJsonObjectArray(resp, Integer.class);
 	}
 
+	/**
+	 * 标记执行
+	 *
+	 * @param algorithmId    算法id
+	 * @param algorithmCode  算法代号
+	 * @param markData       标记数据
+	 * @param otherArguments 其他参数
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer markPerform(String algorithmId, String algorithmCode, MarkData markData,
 			List<Serializable> otherArguments) {
@@ -114,6 +172,15 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return JsonUtil.toJsonObject(resp, Integer.class);
 	}
 
+	/**
+	 * 索引执行
+	 *
+	 * @param algorithmId    算法id
+	 * @param algorithmCode  算法代号
+	 * @param data           数据
+	 * @param otherArguments 其他参数
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer indexPerform(String algorithmId, String algorithmCode, List<Integer> data,
 			List<Serializable> otherArguments) {
@@ -129,6 +196,16 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return JsonUtil.toJsonObject(resp, Integer.class);
 	}
 
+	/**
+	 * 索引 AHP 执行
+	 *
+	 * @param algorithmId    算法id
+	 * @param matrixData     矩阵数据
+	 * @param algorithmCode  算法代号
+	 * @param data           数据
+	 * @param otherArguments 其他参数
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer indexAhpPerform(String algorithmId, String matrixData, String algorithmCode, List<Integer> data,
 			List<Serializable> otherArguments) {
@@ -145,6 +222,16 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return JsonUtil.toJsonObject(resp, Integer.class);
 	}
 
+	/**
+	 * run 算法
+	 *
+	 * @param algorithmId    算法id
+	 * @param algorithmCode  算法代号
+	 * @param data           数据
+	 * @param listData       列出数据
+	 * @param otherArguments 其他参数
+	 * @return {@code Object }
+	 */
 	@Override
 	public Object runAlgorithm(String algorithmId, String algorithmCode, Object data, Object listData, List<Serializable> otherArguments) {
 		JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
@@ -159,6 +246,13 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return  JsonUtil.toJsonObject(resp, Object.class);
 	}
 
+	/**
+	 * 获取格式矩阵数据
+	 *
+	 * @param matrixData 矩阵数据
+	 * @param scores     分数
+	 * @return {@code List<List<String>> }
+	 */
 	public List<List<String>> getFormatMatrixData(String matrixData, List<Integer> scores){
 		JSONArray objects = JSONArray.parseArray(matrixData);
 		List<List<String>> res = new ArrayList<>();

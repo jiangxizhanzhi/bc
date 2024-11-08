@@ -18,19 +18,40 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 
+/**
+ * 办公室Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service
 public class OfficeServiceImpl implements OfficeViewService {
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 课程验证处理器
+	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	/**
+	 * 课程讲义信息
+	 *
+	 * @param lessonId 课id
+	 * @return {@code OfficeFileInfoBo }
+	 */
 	@Override
 	public OfficeFileInfoBo lessonHandoutInfo(String lessonId) {
 		// 课时校验

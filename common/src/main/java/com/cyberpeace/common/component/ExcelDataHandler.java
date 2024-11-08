@@ -31,14 +31,26 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * excel数据处理器 需要什么方法自己加
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Slf4j
 public class ExcelDataHandler {
 
+	/**
+	 * 表
+	 */
 	private Sheet sheet;
 
+	/**
+	 * 练习 册
+	 */
 	private Workbook workbook;
 
+	/**
+	 * 文件输入流
+	 */
 	private FileInputStream fileInputStream;
 
 	/**
@@ -175,6 +187,9 @@ public class ExcelDataHandler {
 		return cell.toString().trim();
 	}
 
+	/**
+	 * 关闭 io
+	 */
 	public void closeIO() {
 		try {
 			fileInputStream.close();
@@ -187,6 +202,8 @@ public class ExcelDataHandler {
 
 	/**
 	 * 获取excel写对象
+	 *
+	 * @param filePath 文件路径
 	 * @return
 	 */
 	private static Workbook createWorkbook(String filePath) {
@@ -209,13 +226,14 @@ public class ExcelDataHandler {
 	}
 
 	/**
+	 * do export excel （导出 excel）
+	 *
 	 * @param dataList    传入对象 对象非基本数据类型
 	 * @param filePath    excel导出的文件路径
-	 * @param sheetName   
+	 * @param sheetName
 	 * @param excelHeader 标题
 	 * @param workbook    导出格式
-	 * @param <T>
-	 * @return
+	 * @param passFields  pass 字段
 	 */
 	private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
 			ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
@@ -297,11 +315,10 @@ public class ExcelDataHandler {
 
 	/**
 	 * excel文件导出
+	 *
 	 * @param data
 	 * @param filePath
 	 * @param excelHeader
-	 * @param <T>
-	 * @return
 	 */
 	public static <T> void exportExcel(List<T> data, String filePath, ExcelHeader excelHeader) {
 
@@ -322,11 +339,12 @@ public class ExcelDataHandler {
 
 	/**
 	 * excel 文件导出
-	 * @param list 导出数据
-	 * @param sheetName sheet名
-	 * @param passFields 过滤字段
+	 *
+	 * @param list        导出数据
+	 * @param filePath    文件路径
+	 * @param sheetName   sheet名
+	 * @param passFields  过滤字段
 	 * @param excelHeader 导出列头
-	 * @param <T> 数据bean
 	 * @return 文件流
 	 */
 	public static <T> File exportExcel(List<T> list, String filePath, String sheetName,

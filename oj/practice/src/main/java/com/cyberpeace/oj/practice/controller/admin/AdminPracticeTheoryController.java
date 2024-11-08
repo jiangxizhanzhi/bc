@@ -46,33 +46,66 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 管理实践理论Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "oj-后台基础理论习题相关api")
 @RestController
 @RequestMapping("oj/admin/theory")
 @RequiresAuthentication
 public class AdminPracticeTheoryController extends PublicController<PracticeTheoryService, PracticeTheory> {
 
+	/**
+	 * 实践理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	/**
+	 * 实践理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 实践类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 实践理论进口Service
+	 */
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
 
+	/**
+	 * 新增
+	 *
+	 * @param theoryAddReq 理论新增请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("理论基础习题新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
@@ -98,7 +131,8 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	/**
 	 * 替换答案
-	 * @param practiceTheory
+	 *
+	 * @param practiceTheory 实践理论
 	 */
 	private void replaceAnswer(PracticeTheory practiceTheory) {
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
@@ -107,6 +141,12 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		}
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param theoryUpdateReq 理论更新请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("理论基础习题修改")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
@@ -126,6 +166,12 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<AdminTheoryBo> }
+	 */
 	@ApiOperation("获取理论基础习题详情")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
@@ -137,6 +183,12 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		return new BaseRsp<>(theoryRes);
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param delReq 戴尔请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("基础理论习题资源删除")
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
@@ -156,6 +208,12 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<PracticeTheoryListBo>> }
+	 */
 	@ApiOperation("分页查询理论基础习题")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
@@ -181,6 +239,12 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	}
 
+	/**
+	 * 进口理论
+	 *
+	 * @param theoryImportReq 理论进口请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("理论习题资源导入")
 	@PostMapping("/import")
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)

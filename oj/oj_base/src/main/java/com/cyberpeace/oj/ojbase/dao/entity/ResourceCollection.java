@@ -8,17 +8,35 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 资源收集
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("oj_resource_collection")
 public class ResourceCollection extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 业务id
+	 */
 	private String businessId;
 
+	/**
+	 * 业务类型
+	 */
 	private Integer businessType;
 
 	public enum BusinessType implements GenericEnum {

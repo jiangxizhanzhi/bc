@@ -6,10 +6,17 @@ import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 
 import java.util.List;
 
+/**
+ * 课场景Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface LessonSceneService {
 
 	/**
 	 * 课时场景启动
+	 *
 	 * @param lessonId
 	 * @param authContext
 	 * @return
@@ -18,6 +25,7 @@ public interface LessonSceneService {
 
 	/**
 	 * 课时场景删除
+	 *
 	 * @param lessonId
 	 * @param authContext
 	 * @return
@@ -26,18 +34,21 @@ public interface LessonSceneService {
 
 	/**
 	 * 课时场景节点重启
+	 *
 	 * @param resourceId
 	 * @param nodeId
-	 * @param authContext
 	 * @param roomId
+	 * @param authContext
 	 * @return
 	 */
 	Boolean restartNode(String resourceId, String nodeId, String roomId, AuthContext authContext);
 
 	/**
 	 * 课时场景节点重建
+	 *
 	 * @param resourceId
 	 * @param nodeId
+	 * @param roomId      房间id
 	 * @param authContext
 	 * @return
 	 */
@@ -45,6 +56,7 @@ public interface LessonSceneService {
 
 	/**
 	 * 课时场景暂停与恢复
+	 *
 	 * @param roomId
 	 * @param resourceId
 	 * @param status
@@ -55,6 +67,7 @@ public interface LessonSceneService {
 
 	/**
 	 * 获取课时监控信息
+	 *
 	 * @param lessonId
 	 * @return
 	 */

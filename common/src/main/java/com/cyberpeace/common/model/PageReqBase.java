@@ -13,19 +13,34 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 分页请求体基础
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @ApiModel
 public class PageReqBase extends PatternBase {
 
+	/**
+	 * 每分页
+	 */
 	@ApiModelProperty(name = "per_page", value = "每页大小")
 	@Getter
 	@Setter
 	private Integer perPage = 10;
 
+	/**
+	 * 分页
+	 */
 	@ApiModelProperty(value = "页号，从1开始")
 	@Getter
 	@Setter
 	private Integer page = 1;
 
+	/**
+	 * 排序
+	 */
 	@ApiModelProperty(value = "排序参数")
 	@Getter
 	@Setter

@@ -7,34 +7,67 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 注意 bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class NoteBo implements Serializable {
 
+    /**
+     * 资源id
+     */
     @ApiModelProperty("笔记资源编号")
     private String resourceId;
 
+    /**
+     * 注释类型
+     */
     @ApiModelProperty("笔记类型 1=笔记 2=实验报告")
     private Integer noteType;
 
+    /**
+     * 业务类型
+     */
     @ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习")
     private Integer businessType;
 
+    /**
+     * 内容
+     */
     @ApiModelProperty("笔记内容")
     private String content;
 
+    /**
+     * 用户id
+     */
     @ApiModelProperty("创建人")
     private String userId;
 
+    /**
+     * 业务id
+     */
     @ApiModelProperty("对应的资源编号")
     private String businessId;
 
+    /**
+     * 创建时间
+     */
     @ApiModelProperty("创建时间")
     private Date createTime;
 
+    /**
+     * 更新时间
+     */
     @ApiModelProperty("更新时间")
     private Date updateTime;
 
+    /**
+     * 是提交
+     */
     @ApiModelProperty("实验报告是否提交")
     private Boolean isSubmit;
 

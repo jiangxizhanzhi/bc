@@ -25,35 +25,73 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @author chenzhuo
+ * 远程拓扑Service实现
+ *
+ * @author chenzhuo@date 2024/11/08
  */
 @Slf4j
 @Service
 public class RemoteTopoServiceImpl implements RemoteTopoService {
 
+	/**
+	 * 复制拓扑网址
+	 */
 	private String COPY_TOPO_URL;
 
+	/**
+	 * 拓扑消化网址
+	 */
 	private String TOPO_DIGEST_URL;
 
+	/**
+	 * 拓扑同步
+	 */
 	private String TOPO_SYNC;
 
+	/**
+	 * 拓扑同步无限
+	 */
 	private String TOPO_SYNC_UNLIMITED;
 
+	/**
+	 * 拓扑取回
+	 */
 	private String TOPO_RETRIEVE;
 
+	/**
+	 * 拓扑删除
+	 */
 	private String TOPO_DELETE;
 
+	/**
+	 * 拓扑出口
+	 */
 	private String TOPO_EXPORT;
 
+	/**
+	 * 批量删除拓扑
+	 */
 	private String BATCH_DELETE_TOPO;
 
+	/**
+	 * 拓扑节点列表
+	 */
 	private String TOPO_NODE_LIST;
 
+	/**
+	 * 拓扑节点统计学
+	 */
 	private String TOPO_NODE_STATISTICS;
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -76,18 +114,36 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param sceneConfig 场景配置
+	 * @return {@code String }
+	 */
 	@Override
 	public String create(SceneConfig sceneConfig) {
 		return IDGeneratorUtil.getID();
 		// todo
 	}
 
+	/**
+	 * 获取拓扑由id
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getTopoById(String topoId) {
 		String targetUrl = TOPO_RETRIEVE + "?id=" + topoId;
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
+	/**
+	 * 复制拓扑
+	 *
+	 * @param originTopoId 起源拓扑id
+	 * @return {@code String }
+	 */
 	@Override
 	public String copyTopo(String originTopoId) {
 		// 兼容mp在url中传递参数的问题
@@ -101,6 +157,12 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		return jsonObject.getString("id");
 	}
 
+	/**
+	 * 获取拓扑消化
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code TopoDigest }
+	 */
 	@Override
 	public TopoDigest getTopoDigest(String topoId) {
 		String targetUrl = TOPO_DIGEST_URL + "?ids=" + topoId;
@@ -124,6 +186,12 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		return topoDigest;
 	}
 
+	/**
+	 * 批量获取拓扑消化
+	 *
+	 * @param topoIds 拓扑id列表
+	 * @return {@code Map<String, TopoDigest> }
+	 */
 	@Override
 	public Map<String, TopoDigest> batchGetTopoDigest(List<String> topoIds) {
 		String targetUrl = TOPO_DIGEST_URL + "?ids=" + String.join("&ids=", topoIds);
@@ -147,6 +215,12 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 				}));
 	}
 
+	/**
+	 * 保存
+	 *
+	 * @param json JSON 格式
+	 * @return {@code String }
+	 */
 	@Override
 	public String save(JSONObject json) {
 		// set userId
@@ -157,6 +231,12 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		return jsonObject.getString("id");
 	}
 
+	/**
+	 * 保存无限
+	 *
+	 * @param json JSON 格式
+	 * @return {@code String }
+	 */
 	@Override
 	public String saveUnlimited(JSONObject json) {
 		String targetUrl = TOPO_SYNC_UNLIMITED;
@@ -165,6 +245,12 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 
+	/**
+	 * 设置支持部分开始
+	 *
+	 * @param topoId          拓扑id
+	 * @param enableRecording 启用录制
+	 */
 	@Override
 	public void setSupportPartialStart(String topoId, Boolean enableRecording) {
 		TopoSupportPartialStartContext context = new TopoSupportPartialStartContext(topoId,
@@ -172,12 +258,24 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		sync(JsonUtil.java2JsonObject(context));
 	}
 
+	/**
+	 * 获取都节点
+	 *
+	 * @param req 请求体
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getAllNodes(TopoNodeListReq req) {
 		String targetUrl = TOPO_NODE_LIST + req.toUrl();
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
 
+	/**
+	 * 获取节点统计学
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getNodeStatistics(String topoId) {
 		String targetUrl = TOPO_NODE_STATISTICS + "?id=" + topoId;
@@ -185,12 +283,24 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		return rsp.getJSONObject(0);
 	}
 
+	/**
+	 * 同步
+	 *
+	 * @param json JSON 格式
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject sync(JSONObject json) {
 		String targetUrl = TOPO_SYNC;
 		return HttpClientUtil.post(targetUrl, json, JSONObject.class);
 	}
 
+	/**
+	 * 删除由id
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean deleteById(String topoId) {
 		JSONObject body = new JSONObject();
@@ -201,12 +311,25 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		return HttpClientUtil.delete(targetUrl, body, Boolean.class);
 	}
 
+	/**
+	 * 出口拓扑
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject exportTopo(String topoId) {
 		String targetUrl = TOPO_EXPORT + topoId;
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
+	/**
+	 * 平等拓扑
+	 *
+	 * @param topo   拓扑
+	 * @param topoId 拓扑id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean equalTopo(JSONObject topo, String topoId) {
 
@@ -219,6 +342,12 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		return JsonUtil.equalJson(topo, topoById);
 	}
 
+	/**
+	 * 批量删除拓扑
+	 *
+	 * @param topoIds 拓扑id列表
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean batchDeleteTopo(List<String> topoIds) {
 
@@ -234,7 +363,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	/**
 	 * 审计需求：sync、copy、delete topo的接口，增加context.accessUserId
-	 * @return 
+	 *
+	 * @param json JSON 格式
 	 */
 	private void setUserContext(JSONObject json) {
 		String currentUserId;

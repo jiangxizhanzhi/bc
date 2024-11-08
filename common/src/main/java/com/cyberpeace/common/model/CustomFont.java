@@ -4,6 +4,12 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * 自定义字体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public class CustomFont {
 
 	public Font loadFonts(String fontFilename, int style, int size) {

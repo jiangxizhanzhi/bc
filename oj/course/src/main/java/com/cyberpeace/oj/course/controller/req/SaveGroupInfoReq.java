@@ -10,17 +10,32 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 保存群信息请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class SaveGroupInfoReq implements Serializable {
 
+	/**
+	 * 课堂id
+	 */
 	@ApiModelProperty("课堂编号")
 	private String classroomId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("分组模板名称")
 	@NotBlank
 	private String name;
 
+	/**
+	 * 数据
+	 */
 	@ApiModelProperty("分组信息")
 	@NotEmpty
 	private List<GroupInfoBo> data;

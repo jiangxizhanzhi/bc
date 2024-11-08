@@ -54,6 +54,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 外部实操Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "外部接口-实操习题相关api")
 @Slf4j
 @AuthKeyUser
@@ -61,27 +67,53 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/gateway/exercise")
 public class ExternalOperationController {
 
+	/**
+	 * 实践实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 实践类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 实践设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 附件Mapper
+	 */
 	@Autowired
 	private AttachmentMapper attachmentMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 实践设置Service
+	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
+	/**
+	 * 实践实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 实践设置列表
+	 *
+	 * @return {@code BaseRsp<List<ExternalPracticeSetBo>> }
+	 */
 	@ApiOperation("习题集查询")
 	@GetMapping("/practice-set/list")
 	public BaseRsp<List<ExternalPracticeSetBo>> practiceSetList() {
@@ -105,6 +137,12 @@ public class ExternalOperationController {
 		return new BaseRsp(practiceSetBos);
 	}
 
+	/**
+	 * 类别列表
+	 *
+	 * @param practiceSetId 实践设置id
+	 * @return {@code BaseRsp<List<ExternalPracticeCategoryBo>> }
+	 */
 	@AuthOjKey
 	@ApiOperation("实操习题分类查询")
 	@GetMapping("/category/list")
@@ -133,6 +171,12 @@ public class ExternalOperationController {
 		return new BaseRsp<>(categoryBos);
 	}
 
+	/**
+	 * 批量获取
+	 *
+	 * @param batchReq 批量请求体
+	 * @return {@code BaseRsp<List<ExternalOperationBo>> }
+	 */
 	@AuthOjKey
 	@ApiOperation("实操习题批量查询")
 	@GetMapping("/batch-get")
@@ -148,6 +192,7 @@ public class ExternalOperationController {
 
 	/**
 	 * 实体类转换为外部字段
+	 *
 	 * @param operation
 	 * @return
 	 */
@@ -187,6 +232,12 @@ public class ExternalOperationController {
 		return externalOperationBo;
 	}
 
+	/**
+	 * 分页列表
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<ListRsp<ExternalOperationBo>> }
+	 */
 	@ApiOperation("实操习题分页查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<ExternalOperationBo>> pageList(OperationPageReq req) {
@@ -219,6 +270,12 @@ public class ExternalOperationController {
 		return new BaseRsp(PageUtil.getListResult(convert));
 	}
 
+	/**
+	 * 获取实操随机
+	 *
+	 * @param choiceReq 选择请求体
+	 * @return {@code BaseRsp<List<ExternalOperationBo>> }
+	 */
 	@ApiOperation("实操习题随机获取数条")
 	@GetMapping("/random-choice")
 	public BaseRsp<List<ExternalOperationBo>>
@@ -254,6 +311,12 @@ public class ExternalOperationController {
 		return new BaseRsp<>(boList);
 	}
 
+	/**
+	 * 搜索计数
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<ExternalOperationCountBo> }
+	 */
 	@ApiOperation("获取各类型习题数量")
 	@GetMapping("/type/count")
 	public BaseRsp<ExternalOperationCountBo> searchCount(OperationPageReq pageReq) {

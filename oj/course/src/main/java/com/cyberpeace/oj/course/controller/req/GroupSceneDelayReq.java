@@ -8,14 +8,26 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * 群场景延迟请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class GroupSceneDelayReq implements Serializable {
 
+	/**
+	 * 课堂id
+	 */
 	@ApiModelProperty("课堂编号")
 	@NotBlank
 	private String classroomId;
 
+	/**
+	 * 结束
+	 */
 	@ApiModelProperty("是否开启场景延时 true=开启 false=不开启")
 	@NotNull
 	private Boolean end;

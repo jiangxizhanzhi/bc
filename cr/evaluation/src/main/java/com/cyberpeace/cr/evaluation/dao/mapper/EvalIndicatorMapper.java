@@ -10,18 +10,53 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator
+ * 评估指示器Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Mapper
 public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 
+	/**
+	 * 查询算法和
+	 *
+	 * @param algorithmIds 算法id列表
+	 * @return {@code Integer }
+	 */
 	Integer selectAlgorithmSum(List<String> algorithmIds);
 
-    IPage<EvalIndicator> listEvalIndicator(Page page, EvalListQuery listQuery);
+	/**
+	 * 列出评估指标
+	 *
+	 * @param page      分页
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<EvalIndicator> }
+	 */
+	IPage<EvalIndicator> listEvalIndicator(Page page, EvalListQuery listQuery);
 
+	/**
+	 * 存在由名称
+	 *
+	 * @param name       名称
+	 * @param resourceId 资源id
+	 * @return boolean
+	 */
 	boolean existByName(String name, String resourceId);
 
+	/**
+	 * 查询使用算法id列表
+	 *
+	 * @param algorithmIds 算法id列表
+	 * @return {@code List<String> }
+	 */
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 
+	/**
+	 * 查询指数使用数量
+	 *
+	 * @param ids id列表
+	 * @return {@code Integer }
+	 */
 	Integer selectIndexUsedNum(List<String> ids);
 }

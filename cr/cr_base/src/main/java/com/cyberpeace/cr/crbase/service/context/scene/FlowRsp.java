@@ -8,10 +8,16 @@ import lombok.Data;
 
 /**
  * 流量列表
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Data
 public class FlowRsp implements Serializable {
 
+	/**
+	 * 数据
+	 */
 	@ApiModelProperty(value = "流量数据")
 	private List<Flow> data;
 

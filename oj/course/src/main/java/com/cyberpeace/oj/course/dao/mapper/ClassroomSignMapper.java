@@ -7,11 +7,18 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 课堂标志Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Mapper
 public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
 
 	/**
 	 * 根据课堂查询签到信息
+	 *
 	 * @param classroomId
 	 * @return
 	 */
@@ -19,6 +26,7 @@ public interface ClassroomSignMapper extends BaseMapper<ClassroomSign> {
 
 	/**
 	 * 根据课堂和用户查询签到信息
+	 *
 	 * @param roomId
 	 * @param userId
 	 * @return

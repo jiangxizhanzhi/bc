@@ -8,70 +8,139 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 管理员课程 bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class AdminLessonBo implements Serializable {
 
-	@ApiModelProperty("资源编号")
+    /**
+     * 资源id
+     */
+    @ApiModelProperty("资源编号")
 	private String resourceId;
 
-	@ApiModelProperty("课程编号")
+    /**
+     * 课程id
+     */
+    @ApiModelProperty("课程编号")
 	private String courseId;
 
-	@ApiModelProperty("课时名称")
+    /**
+     * 名称
+     */
+    @ApiModelProperty("课时名称")
 	private String name;
 
-	@ApiModelProperty("类型")
+    /**
+     * 类型
+     */
+    @ApiModelProperty("类型")
 	private Integer type;
 
-	@ApiModelProperty("讲义类型 0=什么都不是 1=markdown 2=ppt 4=pdf")
+    /**
+     * 讲义类型
+     */
+    @ApiModelProperty("讲义类型 0=什么都不是 1=markdown 2=ppt 4=pdf")
 	private Integer handoutType;
 
-	@ApiModelProperty("讲义地址")
+    /**
+     * 讲义 URL
+     */
+    @ApiModelProperty("讲义地址")
 	private String handoutUrl;
 
-	@ApiModelProperty("讲义名称")
+    /**
+     * 讲义名称
+     */
+    @ApiModelProperty("讲义名称")
 	private String handoutName;
 
-	@ApiModelProperty("讲义原文件地址")
+    /**
+     * origin markdown 文件
+     */
+    @ApiModelProperty("讲义原文件地址")
 	private String originMarkdownFile;
 
-	@ApiModelProperty("视频地址")
+    /**
+     * 视频 URL
+     */
+    @ApiModelProperty("视频地址")
 	private String videoUrl;
 
-	@ApiModelProperty("难度")
+    /**
+     * 困难
+     */
+    @ApiModelProperty("难度")
 	private Integer difficulty;
 
-	@ApiModelProperty("是否公开 true=公开 false=非公开")
+    /**
+     * 是公共
+     */
+    @ApiModelProperty("是否公开 true=公开 false=非公开")
 	private Boolean isPublic;
 
-	@ApiModelProperty("是否必修 0=未配置 1=选修 2=必修")
+    /**
+     * 必修
+     */
+    @ApiModelProperty("是否必修 0=未配置 1=选修 2=必修")
 	private Integer compulsory;
 
-	@ApiModelProperty("销毁时间")
+    /**
+     * 销毁延迟
+     */
+    @ApiModelProperty("销毁时间")
 	private Integer destroyDelay;
 
-	@ApiModelProperty("课时时长")
+    /**
+     * 期间
+     */
+    @ApiModelProperty("课时时长")
 	private Integer duration;
 
-	@ApiModelProperty("拓扑编号")
+    /**
+     * 拓扑id
+     */
+    @ApiModelProperty("拓扑编号")
 	private String topoId;
 
-	@ApiModelProperty("场景共享类型")
+    /**
+     * 场景共享模式
+     */
+    @ApiModelProperty("场景共享类型")
 	private Integer sceneShareMode;
 
-	@ApiModelProperty("场景配置数据")
+    /**
+     * 场景配置
+     */
+    @ApiModelProperty("场景配置数据")
 	private JSONObject sceneConfig;
 
-	@ApiModelProperty("课后练习习题数量")
+    /**
+     * 实践计数
+     */
+    @ApiModelProperty("课后练习习题数量")
 	private Integer practiceCount;
 
-	@ApiModelProperty("试卷编号")
+    /**
+     * 纸id
+     */
+    @ApiModelProperty("试卷编号")
 	private String paperId;
 
-	@ApiModelProperty("知识点")
+    /**
+     * 知识
+     */
+    @ApiModelProperty("知识点")
 	private List<String> knowledge;
 
-	@ApiModelProperty("课时附件数据")
+    /**
+     * 课程档案
+     */
+    @ApiModelProperty("课时附件数据")
 	private List<AttachmentBo> LessonFile;
 
 }

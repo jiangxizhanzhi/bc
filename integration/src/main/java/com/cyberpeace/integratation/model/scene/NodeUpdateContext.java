@@ -15,5 +15,8 @@ import lombok.Data;
 @Data
 public class NodeUpdateContext extends SceneOpsContext implements Serializable {
 
+	/**
+	 * 更新
+	 */
 	private JSONObject update;
 }

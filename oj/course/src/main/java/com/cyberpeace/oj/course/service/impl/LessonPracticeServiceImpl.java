@@ -38,40 +38,84 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+/**
+ * 课实践Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service
 public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
+	/**
+	 * OJ当地场景Service
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * 实践实操裁判Mapper
+	 */
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 当地场景Mapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 推送消息处理程序
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * 开始场景
+	 *
+	 * @param lessonId    课id
+	 * @param practiceId  实践id
+	 * @param authContext auth 上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject startScene(String lessonId, String practiceId, AuthContext authContext) {
 
@@ -109,6 +153,14 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		return remoteSceneService.getById(sceneId, authContext.getUserId());
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param lessonId    课id
+	 * @param practiceId  实践id
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean deleteScene(String lessonId, String practiceId, AuthContext authContext) {
 
@@ -131,6 +183,15 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		return CommonConstant.TRUE;
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param lessonId    课id
+	 * @param practiceId  实践id
+	 * @param nodeId      节点id
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean restartNode(String lessonId, String practiceId, String nodeId,
 			AuthContext authContext) {
@@ -141,6 +202,15 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		return localSceneService.restartNode(localScene.getResourceId(), nodeId);
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param lessonId    课id
+	 * @param practiceId  实践id
+	 * @param nodeId      节点id
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean recreateNode(String lessonId, String practiceId, String nodeId,
 			AuthContext authContext) {
@@ -151,6 +221,15 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		return localSceneService.recreateNode(localScene.getResourceId(), nodeId);
 	}
 
+	/**
+	 * 更新场景状态
+	 *
+	 * @param lessonId    课id
+	 * @param practiceId  实践id
+	 * @param status      状态
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean updateSceneStatus(String lessonId, String practiceId, Integer status,
 			AuthContext authContext) {
@@ -165,6 +244,14 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		}
 	}
 
+	/**
+	 * 获取拓扑场景
+	 *
+	 * @param lessonId    课id
+	 * @param practiceId  实践id
+	 * @param authContext auth 上下文
+	 * @return {@code TopoSceneDataBo }
+	 */
 	@Override
 	public TopoSceneDataBo getTopoScene(String lessonId, String practiceId,
 			AuthContext authContext) {
@@ -192,6 +279,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 	/**
 	 * 课时数据校验
+	 *
 	 * @param lessonId
 	 * @return
 	 */
@@ -207,7 +295,9 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 	/**
 	 * 课后练习习题校验
+	 *
 	 * @param practiceId
+	 * @param courseLesson 课程课程
 	 * @return
 	 */
 	private PracticeOperation validateOperation(String practiceId, CourseLesson courseLesson) {
@@ -225,6 +315,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 	/**
 	 * 获取课后练习业务编号
+	 *
 	 * @param lesson
 	 * @param operation
 	 * @return
@@ -235,6 +326,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 	/**
 	 * 初始化课后练习场景信息
+	 *
 	 * @param lesson
 	 * @param operation
 	 * @param authContext
@@ -257,8 +349,9 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 	/**
 	 * 初始化中台场景信息
-	 * @param operation
+	 *
 	 * @param lesson
+	 * @param operation
 	 * @param ojLocalScene
 	 * @param authContext
 	 * @return
@@ -305,8 +398,10 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 
 	/**
 	 * 节点数据校验
+	 *
 	 * @param lesson
 	 * @param operation
+	 * @param authContext auth 上下文
 	 * @return
 	 */
 	private LocalScene sceneNodeCheck(CourseLesson lesson, PracticeOperation operation,

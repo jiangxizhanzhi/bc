@@ -15,37 +15,85 @@ import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 靶场任务
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("cr_task")
 public class CrTask extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 状态
+	 */
 	private Integer status;
 
+	/**
+	 * 得分
+	 */
 	private Integer score;
 
+	/**
+	 * 任务id
+	 */
 	private String missionId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 用户答案
+	 */
 	private String userAnswer;
 
+	/**
+	 * 发布时间
+	 */
 	private Date releaseTime;
 
+	/**
+	 * 上次提交时间
+	 */
 	private Date lastSubmitTime;
 
+	/**
+	 * 任务开始时间
+	 */
 	private Date taskStartTime;
 
+	/**
+	 * 房间id
+	 */
 	private String roomId;
 
+	/**
+	 * 岗位id
+	 */
 	private String roleId;
 
+	/**
+	 * 业务类型
+	 */
 	private Integer businessType;
 
+	/**
+	 * 任务模板id
+	 */
 	private String missionTemplateId;
 
+	/**
+	 * 备注
+	 */
 	private String remark;
 
 	public Boolean isFinished() {

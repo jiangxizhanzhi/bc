@@ -6,19 +6,37 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 蹼实操列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class WebOperationListReq extends PageReqBase {
 
+	/**
+	 * 类别id
+	 */
 	@ApiModelProperty("方向")
 	private String categoryId;
 
+	/**
+	 * 实践设置id
+	 */
 	@ApiModelProperty("习题集")
 	private String practiceSetId;
 
+	/**
+	 * 解决
+	 */
 	@ApiModelProperty("是否解出")
 	private Boolean solved;
 
+	/**
+	 * 困难
+	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 

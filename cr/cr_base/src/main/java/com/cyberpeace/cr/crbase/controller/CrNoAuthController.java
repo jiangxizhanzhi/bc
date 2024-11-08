@@ -17,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 无需用户认证的接口
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Api(tags = "靶场无需用户认证的接口")
 @RestController
@@ -24,13 +27,25 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/noAuth")
 public class CrNoAuthController {
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 认证
+	 *
+	 * @param token 令 牌
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("辅助鉴权")
 	@GetMapping("/auth")
 	public BaseRsp auth(@ApiParam(name = "token", value = "jwt token") String token) {

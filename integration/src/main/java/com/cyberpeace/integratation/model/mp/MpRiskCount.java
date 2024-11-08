@@ -5,6 +5,12 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 中台风险计数
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MpRiskCount implements Serializable {
 

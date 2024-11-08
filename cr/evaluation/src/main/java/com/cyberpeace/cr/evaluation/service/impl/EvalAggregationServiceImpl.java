@@ -16,14 +16,25 @@ import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
 import com.google.common.collect.Lists;
 
 /**
+ * 评估集合体Service实现
  *
+ * @author SN
+ * @date 2024/11/08
  */
 @Service
 public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMapper, EvalAggregation> implements EvalAggregationService {
 
+	/**
+	 * 评估集合体Mapper
+	 */
 	@Autowired
 	EvalAggregationMapper evalAggregationMapper;
 
+	/**
+	 * 保存批量上下文
+	 *
+	 * @param evalAggregations eval 聚合
+	 */
 	@Override
 	public void saveBatchContext(List<EvalAggregationContext> evalAggregations) {
 		List<EvalAggregation> evalAggregationList = evalAggregations.stream()
@@ -41,6 +52,12 @@ public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMappe
 		this.saveBatch(evalAggregationList);
 	}
 
+	/**
+	 * 获取上下文由评估指示器id
+	 *
+	 * @param evalIndicatorId 评估指示器id
+	 * @return {@code List<EvalAggregationContext> }
+	 */
 	@Override
 	public List<EvalAggregationContext> getContextByEvalIndicatorId(String evalIndicatorId) {
 		List<EvalAggregation> evalAggregationList = evalAggregationMapper

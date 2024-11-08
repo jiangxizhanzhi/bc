@@ -3,13 +3,21 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 import lombok.Data;
 
 /**
- * @Author xuxz
- * @Date 22/7/2022 下午6:29
+ * 评估变量图列表响应
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Data
 public class EvalVariableGraphListRsp extends EvalVariableGraphRsp{
 
+    /**
+     * 变量名称
+     */
     private String variableName;
 
+    /**
+     * 变量id
+     */
     private String variableId;
 }

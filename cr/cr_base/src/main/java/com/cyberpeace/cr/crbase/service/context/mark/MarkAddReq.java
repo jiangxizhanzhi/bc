@@ -19,15 +19,27 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 public class MarkAddReq implements Serializable {
 
+	/**
+	 * 房间id
+	 */
 	@ApiModelProperty(value = "训练房间id")
 	private String roomId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty(value = "描述")
 	private String description;
 
+	/**
+	 * 证据
+	 */
 	@ApiModelProperty(value = "证据")
 	private List<EvidenceBo> evidence;
 

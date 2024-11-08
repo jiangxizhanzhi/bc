@@ -17,21 +17,45 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 课堂聊天处理程序
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Component
 public class ClassroomChatHandler extends ChatWebSocketHandler {
 
+	/**
+	 * 课堂群信息Mapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 课堂Mapper
+	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
+	/**
+	 * 声明消息类型
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer declareMessageType() {
 		return CHAT_TYPE.CLASSROOM.getCode();
 	}
 
+	/**
+	 * 获取群
+	 *
+	 * @param businessId  业务id
+	 * @param chatContent 聊天内容
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getGroup(String businessId, ChatContent chatContent) {
 		String classroomId = chatContent.getTo().getId();

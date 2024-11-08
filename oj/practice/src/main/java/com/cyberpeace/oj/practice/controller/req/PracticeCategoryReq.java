@@ -11,18 +11,33 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * 实践类别请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class PracticeCategoryReq {
 
+    /**
+     * 名称
+     */
     @ApiModelProperty(value = "名称", required = true)
     @NotBlank
     private String name;
 
+    /**
+     * 执业类型
+     */
     @ApiModelProperty(value = "练习类型 0=理论基础 2=实操习题", required = true)
     @NotNull
     private Integer practiceType;
 
+    /**
+     * 父母id
+     */
     @ApiModelProperty("所属父级节点")
     private String parentId;
 

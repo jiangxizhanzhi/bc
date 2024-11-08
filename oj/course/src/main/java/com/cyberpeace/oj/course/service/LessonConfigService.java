@@ -10,45 +10,56 @@ import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
 
 import java.util.List;
 
+/**
+ * 课配置Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface LessonConfigService extends IService<LessonConfig> {
 
-	/**
-	 * 根据课程编号用户编号查询课程目录
-	 * @param courseId 课程编号
-	 * @param authContext
-	 * @return
-	 */
-	LessonConfigBo getLessonConfig(String courseId, AuthContext authContext);
+    /**
+     * 根据课程编号用户编号查询课程目录
+     *
+     * @param courseId    课程编号
+     * @param authContext
+     * @return
+     */
+    LessonConfigBo getLessonConfig(String courseId, AuthContext authContext);
 
-	/**
-	 * 更新课时配置
-	 * @param configBo
-	 * @return
-	 */
-	LessonConfigBo updateLessonConfig(LessonConfigBo configBo);
+    /**
+     * 更新课时配置
+     *
+     * @param configBo
+     * @return
+     */
+    LessonConfigBo updateLessonConfig(LessonConfigBo configBo);
 
-	/**
-	 * 根据课时数据 组装课程目录数据
-	 * @param configContext
-	 * @return
-	 */
-	LessonConfig packageLessonConfig(AddLessonConfigContext configContext);
+    /**
+     * 根据课时数据 组装课程目录数据
+     *
+     * @param configContext
+     * @return
+     */
+    LessonConfig packageLessonConfig(AddLessonConfigContext configContext);
 
-	/**
-	 * 导出课程数据目录
-	 * @param courseId
-	 * @param authContext
-	 * @return
-	 */
-	LessonConfigDumpBo dumpLessonConfig(String courseId, AuthContext authContext);
+    /**
+     * 导出课程数据目录
+     *
+     * @param courseId
+     * @param authContext
+     * @return
+     */
+    LessonConfigDumpBo dumpLessonConfig(String courseId, AuthContext authContext);
 
-	/**
-	 * 章节数据
-	 * @param lessonConfig
-	 * @param courseId
-	 * @param courseLessons
-	 * @return
-	 */
-	List<LessonConfig> loadLessonConfig(LessonConfigDumpBo lessonConfig, String courseId,
+    /**
+     * 章节数据
+     *
+     * @param lessonConfig
+     * @param courseId
+     * @param courseLessons
+     * @return
+     */
+    List<LessonConfig> loadLessonConfig(LessonConfigDumpBo lessonConfig, String courseId,
 			List<CourseLesson> courseLessons);
 }

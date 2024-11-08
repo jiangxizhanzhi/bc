@@ -28,24 +28,48 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 管理课程进口Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "oj-后台课程数据导入相关api")
 @Slf4j(topic = "resourceImport")
 @RestController
 @RequestMapping("/oj/admin/course")
 public class AdminCourseImportController {
 
+	/**
+	 * 课程进口Service
+	 */
 	@Autowired
 	private CourseImportService courseImportService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 课程转 储Service
+	 */
 	@Autowired
 	private CourseDumpService courseDumpService;
 
+	/**
+	 * rmcourse 导入
+	 *
+	 * @param courseImportReq 课程进口请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("资管课程数据导入")
 	@PostMapping("/rm/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
@@ -76,7 +100,16 @@ public class AdminCourseImportController {
 
 	}
 
-    @ApiOperation("课程导出")
+	/**
+	 * 出口
+	 *
+	 * @param resourceId         资源id
+	 * @param isDumpTopo         是转 储拓扑
+	 * @param sceneNumber        场景数
+	 * @param disableImageExport 禁用图像导出
+	 * @return {@code BaseRsp<String> }
+	 */
+	@ApiOperation("课程导出")
     @GetMapping("/rm/course/export")
     public BaseRsp<String> export(
             @RequestParam(value = "resource_id") String resourceId,
@@ -89,6 +122,12 @@ public class AdminCourseImportController {
 		return new BaseRsp<>(filePath);
 	}
 
+	/**
+	 * rm组合课程导入
+	 *
+	 * @param courseImportReq 课程进口请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("资管组合课程数据导入")
 	@PostMapping("/rm/import-combine")
 	public BaseRsp<Boolean>
@@ -104,6 +143,12 @@ public class AdminCourseImportController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重复课程检查
+	 *
+	 * @param courseNamesReq 课程名字请求体
+	 * @return {@code BaseRsp<List<String>> }
+	 */
 	@ApiOperation("课程重复校验")
 	@PostMapping("/import/inspect_duplication")
 	public BaseRsp<List<String>> duplicateCourseInspect(

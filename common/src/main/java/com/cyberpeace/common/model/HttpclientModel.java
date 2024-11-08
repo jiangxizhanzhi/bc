@@ -9,11 +9,23 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 
 import lombok.Data;
 
+/**
+ * httpclient 模型
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class HttpclientModel {
 
+	/**
+	 * 日志
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger("mp");
 
+	/**
+	 * 日志格式化程序
+	 */
 	private static final String LOG_FORMATTER = "httpclientutil |{}|{}|{}|{}";
 
 	/**
@@ -31,12 +43,27 @@ public class HttpclientModel {
 	 */
 	private long callTime;
 
+	/**
+	 * 响应日志最大长度
+	 */
 	private Integer responseLogMaxLength = 2000;
 
+	/**
+	 * 网址
+	 */
 	private String url;
 
+	/**
+	 * 方法
+	 */
 	private String method;
 
+	/**
+	 * httpclient 模型
+	 *
+	 * @param traceId 跟踪id
+	 * @param url     网址
+	 */
 	public HttpclientModel(String traceId, String url) {
 		if (StringUtils.isBlank(traceId)) {
 			this.traceId = IDGeneratorUtil.getID();
@@ -49,11 +76,21 @@ public class HttpclientModel {
 		this.url = url;
 	}
 
+	/**
+	 * 执行远程异常
+	 *
+	 * @param e e
+	 */
 	public void doRemoteException(Exception e) {
 		callTime = System.currentTimeMillis() - startTime;
 		LOG.error(LOG_FORMATTER, new Object[] { callTime, method, url, null }, e);
 	}
 
+	/**
+	 * 新增日志
+	 *
+	 * @param httpResponse HTTP 响应
+	 */
 	public void addLog(String httpResponse) {
 		callTime = System.currentTimeMillis() - startTime;
 		// debug的时候才输出接口返回， 正常情况下输出调用时间，结果可以忽略

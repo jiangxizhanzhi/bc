@@ -1,92 +1,165 @@
 package com.cyberpeace.oj.course.dao.entity;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
+
+/**
+ * 课程课程
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("oj_course_lesson")
 public class CourseLesson extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	@ApiModelProperty("资源编号")
 	private String resourceId;
 
+	/**
+	 * 内置
+	 */
 	@ApiModelProperty("是否为内置")
 	private Boolean builtin;
 
+	/**
+	 * 课程id
+	 */
 	@ApiModelProperty("课程编号")
 	private String courseId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("名称")
 	private String name;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty("课时类型")
 	private Integer type;
 
+	/**
+	 * 讲义类型
+	 */
 	@ApiModelProperty("讲义类型")
 	private Integer handoutType;
 
+	/**
+	 * 讲义 URL
+	 */
 	@ApiModelProperty("讲义路径或者内容")
 	private String handoutUrl;
 
+	/**
+	 * 视频 URL
+	 */
 	@ApiModelProperty("视频地址")
 	private String videoUrl;
 
+	/**
+	 * 困难
+	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	/**
+	 * 是公共
+	 */
 	@TableField("public")
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	/**
+	 * 附件id列表
+	 */
 	@ApiModelProperty("附件编号")
 	private String attachmentIds;
 
+	/**
+	 * 必修
+	 */
 	@ApiModelProperty("必修")
 	private Integer compulsory;
 
+	/**
+	 * 销毁延迟
+	 */
 	@ApiModelProperty("销毁延时")
 	private Integer destroyDelay;
 
+	/**
+	 * 期间
+	 */
 	@ApiModelProperty("课时时长")
 	private Integer duration;
 
+	/**
+	 * 拓扑id
+	 */
 	@ApiModelProperty("拓扑编号")
 	private String topoId;
 
+	/**
+	 * 知识
+	 */
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
+	/**
+	 * 场景共享模式
+	 */
 	@ApiModelProperty("场景模式")
 	private Integer sceneShareMode;
 
+	/**
+	 * origin markdown 文件
+	 */
 	@ApiModelProperty("md讲义原文件地址")
 	private String originMarkdownFile;
 
+	/**
+	 * 创造用户id
+	 */
 	@ApiModelProperty("创建用户")
 	private String createUserId;
 
+	/**
+	 * 纸id
+	 */
 	@ApiModelProperty("试卷编号")
 	private String paperId;
 
+	/**
+	 * 热
+	 */
 	@ApiModelProperty("热度")
 	private Integer heat;
 
+	/**
+	 * 论文 公共
+	 */
 	@ApiModelProperty("课后练习公开")
 	private Boolean paperPublic;
 
+	/**
+	 * 路径
+	 */
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;
 

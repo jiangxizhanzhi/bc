@@ -13,10 +13,25 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+/**
+ * 列出实用程序
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public class ListUtil {
 
+	/**
+	 * 列出实用程序
+	 */
 	private ListUtil() {}
 
+	/**
+	 * list2 字符串
+	 *
+	 * @param list 列表
+	 * @return {@code String }
+	 */
 	public static String list2String(List<String> list) {
 		if (CollectionUtils.isEmpty(list)) {
 			return "";
@@ -30,6 +45,12 @@ public class ListUtil {
 		return stringBuilder.toString();
 	}
 
+	/**
+	 * string2 列表
+	 *
+	 * @param str str
+	 * @return {@code List<String> }
+	 */
 	public static List<String> string2List(String str) {
 		List<String> ret = Lists.newArrayList();
 
@@ -47,6 +68,8 @@ public class ListUtil {
 
 	/**
 	 * 截取列表拼接成字符串 空字符传略过
+	 *
+	 * @param objList OBJ 列表
 	 * @param start
 	 * @param end
 	 * @return
@@ -74,6 +97,8 @@ public class ListUtil {
 
 	/**
 	 * 截取列表拼接成包括换行符的字符串 空字符传略过
+	 *
+	 * @param objList OBJ 列表
 	 * @param start
 	 * @param end
 	 * @return
@@ -120,9 +145,9 @@ public class ListUtil {
 
 	/**
 	 * 比较两个不重复的列表是否包含的元素一致
-	 * @param l1 
+	 *
+	 * @param l1
 	 * @param l2
-	 * @param <T>
 	 * @return
 	 */
 	public static <T> Boolean compare2List(List<T> l1, List<T> l2) {
@@ -137,6 +162,7 @@ public class ListUtil {
 
 	/**
 	 * 返回指定起止的整数列表
+	 *
 	 * @param start
 	 * @param end
 	 * @return
@@ -145,6 +171,12 @@ public class ListUtil {
 		return Lists.newArrayList(IntStream.rangeClosed(start, end).iterator());
 	}
 
+	/**
+	 * 查询随机值
+	 *
+	 * @param list 列表
+	 * @return {@code T }
+	 */
 	public static <T> T selectRandomValue(List<T> list) {
 
 		if (list.isEmpty()) {
@@ -177,6 +209,8 @@ public class ListUtil {
 	/**
 	 * 获取指定长度的包含某指定元素的数组
 	 *
+	 * @param size    大小
+	 * @param element 元素
 	 * @return {@code List<Integer>}
 	 */
 	public static <T> List<T> getRepeatingList(Integer size, T element) {

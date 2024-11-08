@@ -11,22 +11,49 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * eval 算法 ref
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("cr_eval_algorithm_ref")
 public class EvalAlgorithmRef extends BaseTable {
+    /**
+     * 资源id
+     */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
+    /**
+     * 名称
+     */
     private String name;
 
+    /**
+     * 描述
+     */
     private String description;
 
+    /**
+     * 类型
+     */
     private Integer type;
 
+    /**
+     * 算法语言
+     */
     private Integer algorithmLanguage;
 
+    /**
+     * 代号
+     */
     private String code;
 
+    /**
+     * 矩阵数据
+     */
     private String matrixData;
 
     public enum Params implements GenericEnum {
@@ -46,6 +73,10 @@ public class EvalAlgorithmRef extends BaseTable {
             this.desc = desc;
         }
     }
+
+    /**
+     * 模式
+     */
     @ApiModelProperty("算法模型")
     private Integer mode;
 

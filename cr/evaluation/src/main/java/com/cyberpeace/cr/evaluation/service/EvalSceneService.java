@@ -8,11 +8,15 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**
  * 测试靶场-场景管理
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 public interface EvalSceneService {
 
 	/**
 	 * 查看场景
+	 *
 	 * @param mpSceneId
 	 * @param topoId
 	 * @return
@@ -21,6 +25,7 @@ public interface EvalSceneService {
 
 	/**
 	 * 关闭场景
+	 *
 	 * @param localScene
 	 * @return
 	 */
@@ -28,6 +33,7 @@ public interface EvalSceneService {
 
 	/**
 	 * 构造场景流量列表查询参数
+	 *
 	 * @param evalTaskFlowListQuery
 	 * @param evalTask
 	 * @return

@@ -6,14 +6,26 @@ import lombok.Getter;
 
 /**
  * 操作对象
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 public enum Operator implements GenericEnum {
 
+	/**
+	 * 公元前
+	 */
 	BC(1, "bc");
 
+	/**
+	 * 代号
+	 */
 	@Getter
 	private Integer code;
 
+	/**
+	 * 描述
+	 */
 	@Getter
 	private String desc;
 

@@ -2,6 +2,12 @@ package com.cyberpeace.integratation.model.mp;
 
 import java.io.Serializable;
 
+/**
+ * 中台日志
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public class MpLog implements Serializable {
 
 	/**

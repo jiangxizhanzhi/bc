@@ -8,6 +8,12 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.AuthTable;
 import lombok.*;
 
+/**
+ * 纸
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,22 +21,46 @@ import lombok.*;
 @TableName("oj_paper")
 public class Paper extends AuthTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	private String description;
 
+	/**
+	 * 图标
+	 */
 	private String logo;
 
+	/**
+	 * 实践计数
+	 */
 	private Integer practiceCount;
 
+	/**
+	 * 总分
+	 */
 	private Double totalScore;
 
+	/**
+	 * 是公共
+	 */
 	@TableField("public")
 	private Boolean isPublic;
 
+	/**
+	 * 类型
+	 */
 	private Integer type = PaperType.LIB.getCode();
 
 	public enum PaperType implements GenericEnum {

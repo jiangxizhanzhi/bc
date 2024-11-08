@@ -8,6 +8,12 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.*;
 
+/**
+ * 课程类别
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,15 +21,30 @@ import lombok.*;
 @TableName("oj_course_category")
 public class CourseCategory extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 课程类型
+	 */
 	private Integer courseType;
 
+	/**
+	 * 代号
+	 */
 	private String code;
 
+	/**
+	 * 父母id
+	 */
 	private String parentId;
 
 	public enum CourseType implements GenericEnum {

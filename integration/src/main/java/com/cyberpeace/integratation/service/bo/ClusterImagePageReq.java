@@ -4,23 +4,53 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import lombok.Data;
 
+/**
+ * 簇图像分页请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class ClusterImagePageReq {
 
+	/**
+	 * 分页
+	 */
 	private Integer page;
 
+	/**
+	 * 每分页
+	 */
 	private Integer per_page;
 
+	/**
+	 * 图像类型
+	 */
 	private String image_type;
 
+	/**
+	 * 岗位
+	 */
 	private Integer role;
 
+	/**
+	 * 主要分类
+	 */
 	private Integer main_category;
 
+	/**
+	 * 子类别
+	 */
 	private Integer sub_category;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * VM 已启动
+	 */
 	private Boolean vmStarted;
 
 	public String toQuery() {

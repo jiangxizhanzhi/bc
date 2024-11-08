@@ -16,10 +16,17 @@ import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
 import java.util.List;
 
+/**
+ * 实践理论Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 分页查询理论基础练习题
+	 *
 	 * @param page
 	 * @param listQuery
 	 * @param authContext
@@ -30,17 +37,21 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 用户根据编号查询题目详细信息
+	 *
 	 * @param resourceId
 	 * @param userId
+	 * @param isCollected 被收集
 	 * @return
 	 */
 	WebTheoryBo selectById(String resourceId, String userId, Boolean isCollected);
 
 	/**
 	 * 答案提交评估
+	 *
 	 * @param userId
 	 * @param theoryId
 	 * @param userAnswer
+	 * @param isCollected 被收集
 	 * @return
 	 */
 	EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer,
@@ -48,6 +59,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 理论基础习题新增
+	 *
 	 * @param practiceTheory
 	 * @param authContext
 	 * @return
@@ -56,6 +68,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 理论基础习题修改
+	 *
 	 * @param practiceTheory
 	 * @param authContext
 	 * @return
@@ -64,13 +77,16 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 获取所有理论习题编号列表
+	 *
 	 * @param authContext
+	 * @param practiceSetId 实践设置id
 	 * @return
 	 */
 	List<String> selectPracticeListIds(AuthContext authContext, String practiceSetId);
 
 	/**
 	 * 习题批量删除
+	 *
 	 * @param resourceIds
 	 * @return
 	 */
@@ -78,6 +94,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 加载理论习题数据
+	 *
 	 * @param practiceSetId
 	 * @param dumpBo
 	 * @param userId
@@ -88,6 +105,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 导出习题数据
+	 *
 	 * @param practiceTheory
 	 * @return
 	 */
@@ -95,22 +113,33 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 创建远程操作日志
+	 *
 	 * @param practiceId
-	 * @param logContent
+	 * @param logContent 日志内容
 	 */
 	void createMpLog(String practiceId, LogContent logContent);
 
 	/**
 	 * 查询理论习题各类型对应数量
+	 *
 	 * @param theoryListQueryBo
+	 * @param authContext       auth 上下文
 	 * @return
 	 */
 	ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext);
 
+	/**
+	 * 出口医学博士理论实践
+	 *
+	 * @param path     路径
+	 * @param theories 理论
+	 * @return {@code MdTheoryPractice }
+	 */
 	MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 
 	/**
 	 * 统计做题进度
+	 *
 	 * @param practiceSetId
 	 * @return
 	 */
@@ -118,25 +147,42 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	/**
 	 * 查询所有方向上的做题进度
+	 *
 	 * @return
 	 */
 	List<CategoryProgressRes> getProgressByCategory();
 
 	/**
 	 * 查询练习记录
+	 *
 	 * @param webTheoryRecordReq
 	 * @return
 	 */
 	List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq);
 
+	/**
+	 * 获取实践id列表由用户和设置
+	 *
+	 * @param authContext   auth 上下文
+	 * @param practiceSetId 实践设置id
+	 * @return {@code List<String> }
+	 */
 	List<String> getPracticeIdsByUserAndSet(AuthContext authContext, String practiceSetId);
 
 	/**
 	 * 查询题库中的所有的方向
+	 *
 	 * @return
 	 */
 	List<PracticeTheory> getCategoryIdAndSetIds();
 
+	/**
+	 * 分页由查询
+	 *
+	 * @param page      分页
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<ExternalTheoryBo> }
+	 */
 	IPage<ExternalTheoryBo> pageByQuery(Page page, TheoryListQueryBo listQuery);
 
 }

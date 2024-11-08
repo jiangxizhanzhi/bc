@@ -24,10 +24,20 @@ import com.cyberpeace.oj.practice.service.PracticeEvaluateService;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+/**
+ * 实操评估处理器
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service("operation")
 public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 
+	/**
+	 * 评估地图
+	 */
 	private static Map<Integer, PracticeEvaluateService> evaluateMap = Maps.newHashMap();
 
 	static {
@@ -35,12 +45,26 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 		evaluateMap.put(CommonConstant.ZERO, new OperationEvaluate());
 	}
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 实践随机旗Mapper
+	 */
 	@Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
 
+	/**
+	 * 评估由业务
+	 *
+	 * @param userId       用户id
+	 * @param practiceBase 实践基地
+	 * @param userAnswer   用户答案
+	 * @return {@code EvaluateResult }
+	 */
 	@Override
 	public EvaluateResult evaluateByBusiness(String userId, PracticeBase practiceBase,
 			String userAnswer) {
@@ -64,6 +88,7 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 
 	/**
 	 * 获取正确答案
+	 *
 	 * @param userId
 	 * @param practiceOperation
 	 * @return

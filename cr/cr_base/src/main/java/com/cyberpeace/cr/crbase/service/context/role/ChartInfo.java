@@ -10,13 +10,22 @@ import lombok.Getter;
 
 /**
  * 角色图表
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Data
 public class ChartInfo {
 
+	/**
+	 * info 类型
+	 */
 	@ApiModelProperty(value = "用户对抗状态")
 	private Integer infoType;
 
+	/**
+	 * 岗位数据列表
+	 */
 	@ApiModelProperty(value = "角色用户列表")
 	private List<RoleUsers> roleDataList;
 

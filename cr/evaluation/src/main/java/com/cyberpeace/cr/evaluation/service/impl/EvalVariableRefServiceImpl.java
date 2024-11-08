@@ -35,28 +35,64 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 评估变量裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 @Slf4j
 public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMapper, EvalVariableRef> implements EvalVariableRefService {
+    /**
+     * 评估探针数据Service
+     */
     @Autowired
     private EvalProbeDataService evalProbeDataService;
 
+    /**
+     * 评估变量裁判探针数据Service
+     */
     @Autowired
     private EvalVariableRefProbeDataService evalVariableRefProbeDataService;
 
+    /**
+     * 远程蟒Service
+     */
     @Autowired
     private RemotePythonService remotePythonService;
 
+    /**
+     * 事务模板
+     */
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    /**
+     * 评估算法裁判Service
+     */
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
+    /**
+     * 一次格式化大小
+     */
     private static final int onceFormatSize = 1000;
 
+    /**
+     * 格式值长度限制
+     */
     private static final int formatValueLengthLimit = 65535;
 
+    /**
+     * Start 变量算法
+     *
+     * @param evalVariableRef     eval 变量 ref
+     * @param evalAlgorithmRefMap EVAL 算法 Ref Map
+     * @param evalRecord          EVAL 记录
+     * @param evalTask            评估任务
+     * @return {@code String }
+     */
     @Override
     public String startVariableAlgorithm(EvalVariableRef evalVariableRef,
                                        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
@@ -65,6 +101,15 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return startFormat(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
     }
 
+    /**
+     * Start 格式
+     *
+     * @param evalVariableRef     eval 变量 ref
+     * @param evalAlgorithmRefMap EVAL 算法 Ref Map
+     * @param evalRecord          EVAL 记录
+     * @param evalTask            评估任务
+     * @return {@code String }
+     */
     private String startFormat(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "format algorithm start...");
@@ -93,6 +138,16 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return result;
     }
 
+    /**
+     * 执行格式
+     *
+     * @param evalVariableRef  eval 变量 ref
+     * @param evalAlgorithmRef eval 算法 ref
+     * @param evalRecord       EVAL 记录
+     * @param evalTask         评估任务
+     * @param limit            限制
+     * @return {@code String }
+     */
     private String executeFormat(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask, int limit) {
 
         // 变量项探针采集数据
@@ -167,6 +222,15 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return null;
     }
 
+    /**
+     * 开始对战
+     *
+     * @param evalVariableRef     eval 变量 ref
+     * @param evalAlgorithmRefMap EVAL 算法 Ref Map
+     * @param evalRecord          EVAL 记录
+     * @param evalTask            评估任务
+     * @return {@code String }
+     */
     private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "match algorithm start...");
@@ -237,6 +301,15 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
     }
 
+    /**
+     * 开始标记
+     *
+     * @param evalVariableRef     eval 变量 ref
+     * @param evalAlgorithmRefMap EVAL 算法 Ref Map
+     * @param evalRecord          EVAL 记录
+     * @param evalTask            评估任务
+     * @return {@code String }
+     */
     private String startMark(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMarkAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "mark algorithm start...");
@@ -295,6 +368,12 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return null;
     }
 
+    /**
+     * 图
+     *
+     * @param variableId 变量id
+     * @return {@code EvalVariableGraphRsp }
+     */
     @Override
     public EvalVariableGraphRsp graph(String variableId) {
         EvalVariableGraphRsp result = new EvalVariableGraphRsp();
@@ -321,11 +400,24 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return result;
     }
 
+    /**
+     * 源数据
+     *
+     * @param page       分页
+     * @param variableId 变量id
+     * @return {@code ListRsp<EvalVariableDataPageRsp> }
+     */
     @Override
     public ListRsp<EvalVariableDataPageRsp> originData(Page page, String variableId) {
         return evalVariableRefProbeDataService.variableProbeData(page, variableId);
     }
 
+    /**
+     * result 变量
+     *
+     * @param variableId 变量id
+     * @return {@code EvalRecordResultVariableRsp }
+     */
     @Override
     public EvalRecordResultVariableRsp resultVariable(String variableId) {
         EvalVariableRef evalVariableRef = getById(variableId);

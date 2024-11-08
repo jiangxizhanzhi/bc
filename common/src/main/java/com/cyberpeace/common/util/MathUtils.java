@@ -6,13 +6,27 @@ import java.util.Random;
 
 import com.cyberpeace.common.constant.CommonConstant;
 
+/**
+ * math utils
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public class MathUtils {
 
+	/**
+	 * 串行版本 UID
+	 */
 	private static final long serialVersionUID = -3345205828566485102L;
 
-	// 默认除法运算精度
+	/**
+	 * def div scale （定义 div 缩放）
+	 */// 默认除法运算精度
 	private static final Integer DEF_DIV_SCALE = 2;
 
+	/**
+	 * 代码
+	 */
 	private static char[] codes = { '0','1','2','3','4','5','6','7','8','9',
 			'A','B','C','D','E','F','G','H','I','J',
 			'K','L','M','N','O','P','Q','R','S','T',
@@ -20,6 +34,7 @@ public class MathUtils {
 
 	/**
 	 * 返回随机字符串，同时包含数字、大写字母
+	 *
 	 * @param len 字符串长度
 	 * @return String 随机字符串
 	 */
@@ -119,6 +134,7 @@ public class MathUtils {
 
 	/**
 	 * double向上取整除法
+	 *
 	 * @param dividend
 	 * @param divisor
 	 * @return
@@ -133,6 +149,7 @@ public class MathUtils {
 
 	/**
 	 * 向上取整除法
+	 *
 	 * @param dividend
 	 * @param divisor
 	 * @return
@@ -177,6 +194,7 @@ public class MathUtils {
 
 	/**
 	 * 生成随机int值
+	 *
 	 * @param max 最大
 	 * @return
 	 */
@@ -186,6 +204,7 @@ public class MathUtils {
 
 	/**
 	 * 获取0-max之间的随机数
+	 *
 	 * @param max
 	 * @return
 	 */
@@ -195,6 +214,7 @@ public class MathUtils {
 
 	/**
 	 * double向上取整
+	 *
 	 * @param num
 	 * @return
 	 */
@@ -205,6 +225,7 @@ public class MathUtils {
 
 	/**
 	 * 正整数， 四舍五入除法
+	 *
 	 * @param dividend
 	 * @param divisor
 	 * @return

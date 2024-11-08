@@ -1,20 +1,11 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
@@ -22,19 +13,49 @@ import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * 课程统计学Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 课记录Mapper
+	 */
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
+	/**
+	 * 统计由id列表
+	 *
+	 * @param courseIds 课程id列表
+	 * @param userId    用户id
+	 * @return {@code List<CourseStudyProcessBo> }
+	 */
 	@Override
 	public List<CourseStudyProcessBo> statisticByIds(List<String> courseIds, String userId) {
 

@@ -5,6 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * 试卷信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class TestPaperInfo extends Paper {
     /**

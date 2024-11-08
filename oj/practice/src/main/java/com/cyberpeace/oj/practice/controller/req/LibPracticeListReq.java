@@ -6,16 +6,31 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 自由实践列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class LibPracticeListReq extends PageReqBase {
 
+	/**
+	 * 实践设置id
+	 */
 	@ApiModelProperty(name = "practice_set_id", value = "习题集编号")
 	private String practiceSetId;
 
+	/**
+	 * 类别id
+	 */
 	@ApiModelProperty(name = "category_id", value = "分类编号")
 	private String categoryId;
 
+	/**
+	 * 问题类型
+	 */
 	@ApiModelProperty(name = "question_type", value = "题型")
 	private Integer questionType;
 

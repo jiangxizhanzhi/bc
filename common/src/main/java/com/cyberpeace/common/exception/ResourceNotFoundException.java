@@ -2,6 +2,9 @@ package com.cyberpeace.common.exception;
 
 /**
  * 数据库对应资源失败，抛出此异常
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 public class ResourceNotFoundException extends RuntimeException {
 

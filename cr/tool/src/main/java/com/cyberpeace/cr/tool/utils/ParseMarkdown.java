@@ -7,23 +7,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  解析Markdown
- *  传入f.readlines()的返回值或小段内容列表
- *  默认解析标题（##）及正文（###）的内容
- *  也可传入tag，如'*'，则解析两个'*'之间的内容或直到文本结束
+ * 解析Markdown
+ * 传入f.readlines()的返回值或小段内容列表
+ * 默认解析标题（##）及正文（###）的内容
+ * 也可传入tag，如'*'，则解析两个'*'之间的内容或直到文本结束
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 public class ParseMarkdown {
 
 
+	/**
+	 * 文件
+	 */
 	private final File file;
+	/**
+	 * 标题
+	 */
 	public static final String TITLE = "__title__";
 
+	/**
+	 * 标题前缀
+	 */
 	private static final String TITLE_PREFIX = "## ";
 
+	/**
+	 * 标签前缀
+	 */
 	private static final String LABEL_PREFIX = "### ";
 
+	/**
+	 * 数据
+	 */
 	private ArrayListMultimap<String, String> data = ArrayListMultimap.create();
 
+	/**
+	 * 设置地图
+	 *
+	 * @param key   钥匙
+	 * @param value 值
+	 */
 	private void setMap(String key, String value) {
 		String newValue;
 		if (value.startsWith("- ")) {
@@ -34,10 +58,20 @@ public class ParseMarkdown {
 		data.put(key.trim(), newValue.trim());
 	}
 
+	/**
+	 * 获取数据
+	 *
+	 * @return {@code ArrayListMultimap<String, String> }
+	 */
 	public ArrayListMultimap<String, String> getData() {
 		return data;
 	}
 
+	/**
+	 * 解析 Markdown
+	 *
+	 * @param file 文件
+	 */
 	public ParseMarkdown(File file) {
 		this.file = file;
 	}
@@ -52,6 +86,7 @@ public class ParseMarkdown {
 
 	/**
 	 * 加载文件内容
+	 *
 	 * @return
 	 */
 	private List<String> loadFile() {

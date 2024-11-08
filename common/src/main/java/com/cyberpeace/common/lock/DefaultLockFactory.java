@@ -8,10 +8,28 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * 默认锁工厂
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public class DefaultLockFactory implements LockFactory {
+    /**
+     * 实例
+     */
     private static volatile LockFactory instance;
+    /**
+     * 业务锁地图
+     */
     private final Map<String, Object> businessLockMap;
+    /**
+     * 锁类型
+     */
     private String lockType = System.getProperty("lockType");
+    /**
+     * 锁
+     */
     private static Lock lock = new ReentrantLock();
 
     private DefaultLockFactory() {

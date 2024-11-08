@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 /**
  * websocket标记的基类。
  *
- * @author yinqingrong
+ * @author yinqingrong@date 2024/11/08
  */
 public class WsMessageIdentifier implements Serializable {
 
@@ -19,6 +19,9 @@ public class WsMessageIdentifier implements Serializable {
 	 */
 	private String userId;
 
+	/**
+	 * 路径
+	 */
 	private String path;
 
 	/**

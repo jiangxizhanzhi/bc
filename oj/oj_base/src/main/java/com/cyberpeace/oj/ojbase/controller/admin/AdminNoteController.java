@@ -29,18 +29,33 @@ import io.swagger.annotations.ApiOperation;
 
 import java.util.Date;
 
+/**
+ * 管理注意Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "oj-后台笔记相关api")
 @RestController
 @RequestMapping("/oj/admin/note")
 @RequiresAuthentication
 public class AdminNoteController {
 
+	/**
+	 * 注意Service
+	 */
 	@Autowired
 	private NoteService noteService;
 
+	/**
+	 * 注意Mapper
+	 */
 	@Autowired
 	private NoteMapper noteMapper;
 
+	/**
+	 * 注意评估Mapper
+	 */
 	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
 

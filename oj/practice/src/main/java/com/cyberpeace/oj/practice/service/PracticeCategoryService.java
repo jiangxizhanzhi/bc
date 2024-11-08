@@ -9,10 +9,17 @@ import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
 
 import java.util.List;
 
+/**
+ * 实践类别Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface PracticeCategoryService extends IService<PracticeCategory> {
 
 	/**
 	 * 根据类型和名称查询分类信息
+	 *
 	 * @param page
 	 * @param query
 	 * @param children 是否查询子类信息
@@ -22,14 +29,16 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 
 	/**
 	 * 根据分类编号查询分类信息
+	 *
 	 * @param resourceId
-	 * @param children 是否查询子类信息
+	 * @param children   是否查询子类信息
 	 * @return
 	 */
 	CategoryListBo selectById(String resourceId, Boolean children);
 
 	/**
 	 * 更新习题分类
+	 *
 	 * @param category
 	 * @return
 	 */
@@ -37,6 +46,7 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 
 	/**
 	 * 习题分类新增
+	 *
 	 * @param practiceCategory
 	 * @param userId
 	 * @return
@@ -45,6 +55,7 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 
 	/**
 	 * 获取分类的code值 无则生成一个
+	 *
 	 * @param parentId
 	 * @return
 	 */
@@ -52,6 +63,7 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 
 	/**
 	 * 查询列表
+	 *
 	 * @param listQuery
 	 * @param children
 	 * @return
@@ -60,14 +72,16 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 
 	/**
 	 * 查询子类分类编号
+	 *
 	 * @param parentId
-	 * @param self 是否包含本身 true包含 false不包含
+	 * @param self     是否包含本身 true包含 false不包含
 	 * @return
 	 */
 	List<String> selectChildrenIds(String parentId, Boolean self);
 
 	/**
 	 * 批量删除分类
+	 *
 	 * @param resourceIds
 	 * @return
 	 */
@@ -75,6 +89,7 @@ public interface PracticeCategoryService extends IService<PracticeCategory> {
 
 	/**
 	 * 查询或者创建分类
+	 *
 	 * @param categoryName
 	 * @param code
 	 * @param userId

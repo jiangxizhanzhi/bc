@@ -5,9 +5,18 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 暂存任务发布进度
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class StageTaskReleaseProgress extends ReleaseProgress implements Serializable {
 
+	/**
+	 * 阶段名称
+	 */
 	@ApiModelProperty(value = "阶段名称")
 	private String stageName;
 }

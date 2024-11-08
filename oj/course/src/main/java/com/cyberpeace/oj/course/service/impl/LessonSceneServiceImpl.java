@@ -42,43 +42,89 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
+/**
+ * 课场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service
 public class LessonSceneServiceImpl implements LessonSceneService {
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 当地场景Mapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * OJ当地场景Service
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 课堂标志Mapper
+	 */
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
 
+	/**
+	 * 课堂标志Service
+	 */
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	/**
+	 * 课堂群信息Mapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 推送消息处理程序
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * 开始场景
+	 *
+	 * @param lessonId    课id
+	 * @param authContext auth 上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject startScene(String lessonId, AuthContext authContext) {
 
@@ -133,6 +179,13 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		return ojLocalSceneService.getSceneData(initOjLocalScene);
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param lessonId    课id
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean deleteScene(String lessonId, AuthContext authContext) {
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
@@ -149,6 +202,15 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		return CommonConstant.TRUE;
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param lessonId    课id
+	 * @param nodeId      节点id
+	 * @param roomId      房间id
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean restartNode(String lessonId, String nodeId, String roomId, AuthContext authContext) {
 		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, roomId, authContext);
@@ -159,6 +221,15 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		return CommonConstant.TRUE;
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param lessonId    课id
+	 * @param nodeId      节点id
+	 * @param roomId      房间id
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean recreateNode(String lessonId, String nodeId, String roomId,  AuthContext authContext) {
 		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, roomId, authContext);
@@ -169,6 +240,15 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		return CommonConstant.TRUE;
 	}
 
+	/**
+	 * 更新场景状态
+	 *
+	 * @param roomId      房间id
+	 * @param resourceId  资源id
+	 * @param status      状态
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean updateSceneStatus(String roomId, String resourceId, Integer status, AuthContext authContext) {
 
@@ -188,7 +268,8 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	/**
 	 * 清除远程协助信息
-	 * @param ojLocalScene
+	 *
+	 * @param ojLocalScene OJ当地场景
 	 */
 	private void clearAssistance(OjLocalScene ojLocalScene) {
 
@@ -221,6 +302,12 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		}
 	}
 
+	/**
+	 * 课程监视器
+	 *
+	 * @param lessonId 课id
+	 * @return {@code List<SceneMonitorBo> }
+	 */
 	@Override
 	public List<SceneMonitorBo> lessonMonitor(String lessonId) {
 
@@ -235,7 +322,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	/**
 	 * 节点操作前校验
+	 *
 	 * @param lessonId
+	 * @param roomId      房间id
 	 * @param authContext
 	 * @return
 	 */
@@ -280,6 +369,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	/**
 	 * 初始化ojLocalScene
+	 *
 	 * @param courseLesson
 	 * @param authContext
 	 * @return
@@ -297,6 +387,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	/**
 	 * 初始化localscene
+	 *
 	 * @param courseLesson
 	 * @param ojLocalScene
 	 * @param authContext
@@ -341,7 +432,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 	/**
 	 * 场景启动前校验
-	 * @param lessonId
+	 *
+	 * @param lessonId 课id
+	 * @return {@code CourseLesson }
 	 */
 	private CourseLesson lessonSceneStartCheck(String lessonId) {
 

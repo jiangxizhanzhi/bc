@@ -11,21 +11,42 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务修改请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MissionModifyReq implements Serializable {
 
+	/**
+	 * 标题
+	 */
 	@ApiModelProperty(value = "标题", required = true)
 	private String title;
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty(value = "任务id", required = true)
 	private String resourceId;
 
+	/**
+	 * 得分
+	 */
 	@ApiModelProperty(value = "分值", required = true)
 	private Integer score;
 
+	/**
+	 * 技能点
+	 */
 	@ApiModelProperty(value = "技能点", required = true)
 	private String skillPoints;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty(value = "描述", required = true)
 	private String description;
 

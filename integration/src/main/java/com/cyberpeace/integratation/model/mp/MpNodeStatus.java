@@ -5,6 +5,12 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * 中台节点状态
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MpNodeStatus implements Serializable {
 

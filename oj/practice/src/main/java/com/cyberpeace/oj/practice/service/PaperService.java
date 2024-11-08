@@ -12,10 +12,17 @@ import com.cyberpeace.oj.practice.service.bo.RandomPracticeQuery;
 
 import java.util.List;
 
+/**
+ * 纸Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface PaperService extends IService<Paper> {
 
 	/**
 	 * 试卷创建
+	 *
 	 * @param paperContext 修改传入子类
 	 * @return
 	 */
@@ -23,6 +30,7 @@ public interface PaperService extends IService<Paper> {
 
 	/**
 	 * 试卷修改
+	 *
 	 * @param paperContext
 	 * @return
 	 */
@@ -30,6 +38,7 @@ public interface PaperService extends IService<Paper> {
 
 	/**
 	 * 题库数据查询
+	 *
 	 * @param page
 	 * @param queryBo
 	 * @param authContext
@@ -40,9 +49,10 @@ public interface PaperService extends IService<Paper> {
 
 	/**
 	 * 获取随机数量习题
+	 *
 	 * @param practiceQuery
 	 * @param score
-	 * @param authContext 权限数据
+	 * @param authContext   权限数据
 	 * @return
 	 */
 	List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery, Double score,
@@ -50,6 +60,7 @@ public interface PaperService extends IService<Paper> {
 
 	/**
 	 * 查询试卷下习题数量
+	 *
 	 * @param paperId
 	 * @return
 	 */

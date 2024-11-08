@@ -17,36 +17,39 @@ import lombok.Data;
 @Data
 public class CrMark extends BaseTable {
 
-	@TableId(type = IdType.UUID, value = "resource_id")
+    /**
+     * 资源id
+     */
+    @TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	/**
-	 * 名称
-	 */
-	private String name;
+    /**
+     * 名称
+     */
+    private String name;
 
-	/**
-	 * 描述
-	 */
-	private String description;
+    /**
+     * 描述
+     */
+    private String description;
 
-	/**
-	 * 证据
-	 */
-	private String evidence;
+    /**
+     * 证据
+     */
+    private String evidence;
 
-	/**
-	 * 用户id
-	 */
-	private String userId;
+    /**
+     * 用户id
+     */
+    private String userId;
 
-	/**
-	 * 房间id
-	 */
-	private String roomId;
+    /**
+     * 房间id
+     */
+    private String roomId;
 
-	/**
-	 * 训练类型
-	 */
-	private Integer type;
+    /**
+     * 训练类型
+     */
+    private Integer type;
 }

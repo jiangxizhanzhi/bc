@@ -6,10 +6,17 @@ import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 课记录Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface LessonRecordService {
 
     /**
      * 查询时间范围内的学习记录
+     *
      * @param userId
      * @param startTime
      * @param endTime
@@ -19,6 +26,7 @@ public interface LessonRecordService {
 
     /**
      * 计算学习记录属于那些课程
+     *
      * @param recordLesson
      * @param lessons
      * @return

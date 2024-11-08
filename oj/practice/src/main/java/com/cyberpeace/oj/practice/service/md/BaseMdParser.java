@@ -1,23 +1,31 @@
 package com.cyberpeace.oj.practice.service.md;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.mdparser.parser.MdContentParser;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 任务解析
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Service
 public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String> {
 
+	/**
+	 * 解析
+	 *
+	 * @param content 内容
+	 * @return {@code List<TheoryBaseMd> }
+	 */
 	@Override
 	public List<TheoryBaseMd> parse(Object content) {
 		if(content == null){
@@ -56,6 +64,12 @@ public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String>
 		return theoryBaseMdList;
 	}
 
+	/**
+	 * 写入
+	 *
+	 * @param theoryBaseMds 理论基础MDS
+	 * @return {@code String }
+	 */
 	@Override
 	public String write(List<TheoryBaseMd> theoryBaseMds) {
 		String str = System.lineSeparator();

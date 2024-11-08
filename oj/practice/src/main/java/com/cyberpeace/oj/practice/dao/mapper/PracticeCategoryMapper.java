@@ -10,12 +10,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * 实践类别Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Mapper
 @Repository
 public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 
 	/**
 	 * 分页获取一级节点
+	 *
 	 * @param page
 	 * @param pattern
 	 * @param practiceType
@@ -26,6 +33,7 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 
 	/**
 	 * 搜索子分类
+	 *
 	 * @param parentCode
 	 * @return
 	 */
@@ -33,6 +41,7 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 
 	/**
 	 * 查询列表 名称和类型
+	 *
 	 * @param practiceType
 	 * @param pattern
 	 * @return
@@ -42,8 +51,9 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 
 	/**
 	 * 根据分类名称查询分类编号
-	 * @param name
+	 *
 	 * @param practiceType
+	 * @param name
 	 * @return
 	 */
 	String selectByName(@Param("practiceType") Integer practiceType, @Param("name") String name);

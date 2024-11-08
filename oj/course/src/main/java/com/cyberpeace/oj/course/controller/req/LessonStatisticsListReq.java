@@ -6,16 +6,31 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 课统计学列表请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @ApiModel
 @Data
 public class LessonStatisticsListReq extends PageReqBase {
 
+	/**
+	 * 课程id
+	 */
 	@ApiModelProperty("课程ID")
 	private String courseId;
 
+	/**
+	 * 搜索
+	 */
 	@ApiModelProperty("名称查询")
 	private String search;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty("课时类型")
 	private Integer type;
 

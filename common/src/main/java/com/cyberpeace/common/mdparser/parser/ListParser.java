@@ -15,9 +15,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * 列表解析器
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 public class ListParser implements MdContentParser<Collection, String> {
 
+    /**
+     * 解析
+     *
+     * @param content 内容
+     * @return {@code List<String> }
+     */
     @Override
     public List<String> parse(Object content) {
 
@@ -35,6 +47,12 @@ public class ListParser implements MdContentParser<Collection, String> {
         return StreamApiUtils.map(Arrays.asList(items), item -> StringUtils.isNotBlank(item) ? item.trim() : null);
     }
 
+    /**
+     * 写入
+     *
+     * @param content 内容
+     * @return {@code String }
+     */
     @Override
     public String write(Collection content) {
 

@@ -4,16 +4,31 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 组织统计 bo
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel("组织学习统计信息")
 public class OrgStatsBo extends PublicStatsBo {
 
+    /**
+     * 资源id
+     */
     @ApiModelProperty("用户resource_id")
     private String resourceId;
 
+    /**
+     * 组织数据
+     */
     @ApiModelProperty("组织名")
     private String organizationData;
 
+    /**
+     * 组织用户计数
+     */
     @ApiModelProperty("组织人数")
     private Integer orgUserCount;
 

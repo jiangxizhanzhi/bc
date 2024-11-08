@@ -1,9 +1,9 @@
 package com.cyberpeace.common.model;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 名称计数
@@ -14,9 +14,15 @@ import lombok.Data;
 @Data
 public class NameCount implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	/**
+	 * 计数
+	 */
 	@ApiModelProperty(value = "计数")
 	private Integer count;
 

@@ -25,40 +25,43 @@ import lombok.Data;
 import lombok.Getter;
 
 /**
- * @TableName cr_role
+ * 靶场岗位
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @TableName(value = "cr_role")
 @Data
 public class CrRole extends BaseTable {
 
 	/**
-	 *
+	 * 资源id
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
-	 *
+	 * 名称
 	 */
 	private String name;
 
 	/**
-	 *
+	 * 房间id
 	 */
 	private String roomId;
 
 	/**
-	 *
+	 * 描述
 	 */
 	private String description;
 
 	/**
-	 *
+	 * 岗位群
 	 */
 	private Integer roleGroup;
 
 	/**
-	 *
+	 * 节点
 	 */
 	private String nodes;
 
@@ -69,27 +72,27 @@ public class CrRole extends BaseTable {
 	private String nodesSnapshot;
 
 	/**
-	 *
+	 * 用户id列表
 	 */
 	private String userIds;
 
 	/**
-	 *
+	 * 练习纸
 	 */
 	private String exercisePaper;
 
 	/**
-	 *
+	 * 父母资源id
 	 */
 	private String parentResourceId;
 
 	/**
-	 *
+	 * 任务计划
 	 */
 	private String missionScheme;
 
 	/**
-	 *
+	 * 业务类型
 	 */
 	private Integer businessType;
 
@@ -334,5 +337,8 @@ public class CrRole extends BaseTable {
 	 * 单兵训练
 	 */
 	public static final String SINGLE_ROLE_GROUP_NAME = "单兵训练角色";
+	/**
+	 * 单岗位群代号
+	 */
 	public static final Integer SINGLE_ROLE_GROUP_CODE = 1;
 }

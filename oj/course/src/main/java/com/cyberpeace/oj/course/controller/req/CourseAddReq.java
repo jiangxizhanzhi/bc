@@ -13,48 +13,90 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * 课程新增请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel("课程新增信息")
 public class CourseAddReq implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	@NotBlank(groups = { Create.class })
 	@ApiModelProperty("课程名称")
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty("课程描述")
 	private String description;
 
+	/**
+	 * 类别id
+	 */
 	@ApiModelProperty("课程方向")
 	@NotBlank(groups = { Create.class })
 	private String categoryId;
 
+	/**
+	 * 图标
+	 */
 	@ApiModelProperty("课程封面")
 	private String logo;
 
+	/**
+	 * 大纲
+	 */
 	@ApiModelProperty("课程大纲")
 	private String outline;
 
+	/**
+	 * 困难
+	 */
 	@NotNull(groups = { Create.class })
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	/**
+	 * 是公共
+	 */
 	@ApiModelProperty("是否公开")
 	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
+	/**
+	 * 课程类型
+	 */
 	@ApiModelProperty("课程分类 0=基础 2=攻击 3=防御")
 	private Integer courseType;
 
+	/**
+	 * 讲师
+	 */
 	@ApiModelProperty("讲师")
 	private String lecturer;
 
+	/**
+	 * 得分
+	 */
 	@ApiModelProperty("学分")
 	private Integer score;
 
+	/**
+	 * 课程数量
+	 */
 	@ApiModelProperty("课程编号")
 	@NotBlank
 	private String courseNum;
 
+	/**
+	 * 岗位
+	 */
 	@ApiModelProperty("岗位")
 	private Integer role;
 

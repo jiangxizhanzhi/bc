@@ -7,21 +7,45 @@ import com.cyberpeace.constant.SelectI18nName;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 靶场常数配置
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("cr_constants_config")
 public class CrConstantsConfig implements SelectI18nName {
 
+	/**
+	 * id
+	 */
 	@TableId
 	private Integer id;
 
+	/**
+	 * 资源id
+	 */
 	private String resourceId;
 
+	/**
+	 * 代号
+	 */
 	private Integer code;
 
+	/**
+	 * 类型
+	 */
 	private Integer type;
 
+	/**
+	 * 中文名称
+	 */
 	private String cnName;
 
+	/**
+	 * 中文名称
+	 */
 	private String enName;
 
 	public enum ConstantsType {

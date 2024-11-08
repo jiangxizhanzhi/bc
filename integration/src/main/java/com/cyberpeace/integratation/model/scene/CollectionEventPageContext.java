@@ -6,18 +6,38 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 收集事件分页上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class CollectionEventPageContext implements Serializable {
+    /**
+     * id
+     */
     @ApiModelProperty("场景ID")
     private String id;
 
+    /**
+     * 节点id列表
+     */
     private String nodeIds;
 
-    // 探针id, 内置探针为001 ~ 011
+    /**
+     * 探针id
+     */// 探针id, 内置探针为001 ~ 011
     private String probeId;
 
+    /**
+     * 开始时间
+     */
     private Date startTime;
 
+    /**
+     * 结束时间
+     */
     private Date endTime;
 
     /**

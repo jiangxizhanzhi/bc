@@ -6,25 +6,58 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 中台流
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MpFlow implements Serializable {
 
+	/**
+	 * id
+	 */
 	private String id;
 
+	/**
+	 * 标题
+	 */
 	private String title;
 
+	/**
+	 * 流描述
+	 */
 	private String flowDesc;
 
+	/**
+	 * 交互式类型
+	 */
 	private Integer interactiveType;
 
+	/**
+	 * 资源类型
+	 */
 	private Integer resourceType;
 
+	/**
+	 * 文件名称
+	 */
 	private String fileName;
 
+	/**
+	 * 脚本文件
+	 */
 	private String scriptFile;
 
+	/**
+	 * pcap 文件
+	 */
 	private String pcapFile;
 
+	/**
+	 * 类别
+	 */
 	private Integer category;
 
 	public enum resourceTypeEnum implements GenericEnum {

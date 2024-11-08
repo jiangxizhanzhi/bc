@@ -6,6 +6,12 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * md 课程
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MdLesson implements Serializable {
 

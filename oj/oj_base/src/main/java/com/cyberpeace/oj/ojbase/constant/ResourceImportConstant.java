@@ -5,6 +5,9 @@ import java.util.List;
 
 /**
  * 资源导入文件名称配置
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 public interface ResourceImportConstant {
 
@@ -133,9 +136,18 @@ public interface ResourceImportConstant {
 	 */
 	String DATA_JSON = "data.json";
 
+	/**
+	 * 脚本
+	 */
 	String SCRIPT = "script";
 
+	/**
+	 * Writeup MD
+	 */
 	String WRITEUP_MD = "writeup.md";
 
+	/**
+	 * 实践设置图标
+	 */
 	List<String> PRACTICE_SET_LOGO = Arrays.asList("/cpms/built_in/SetLogo1.png", "/cpms/built_in/SetLogo2.png", "/cpms/built_in/SetLogo3.png", "/cpms/built_in/SetLogo4.png", "/cpms/built_in/SetLogo5.png");
 }

@@ -11,21 +11,42 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务方案模板请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MissionSchemeTemplateReq implements Serializable {
 
+	/**
+	 * 标题
+	 */
 	@ApiModelProperty(value = "标题", required = true)
 	private String title;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty(value = "描述", required = true)
 	private String description;
 
+	/**
+	 * 模板
+	 */
 	@ApiModelProperty(value = "模板类型", required = true)
 	private Integer template;
 
+	/**
+	 * 颜色
+	 */
 	@ApiModelProperty(value = "模板颜色", required = true)
 	private Integer color;
 
+	/**
+	 * 战斗配置
+	 */
 	@ApiModelProperty(value = "任务编排", required = true)
 	private List<MissionSchemeStage> combatConfig;
 

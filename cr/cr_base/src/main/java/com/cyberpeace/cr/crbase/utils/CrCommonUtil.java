@@ -29,13 +29,22 @@ import com.google.common.collect.Sets;
 
 /**
  * 一些靶场工具
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 public class CrCommonUtil {
 
+	/**
+	 * 零
+	 */
 	private static final String NULL = "null";
 
 	/**
 	 * 控制最终存入数据库的 role_config 和 missions_scheme json 只包含哪些字段
+	 *
+	 * @param roleConfig 岗位配置
+	 * @return {@code String }
 	 */
 	public static <T> String roleConfig2DbJson(T roleConfig) {
 		SimplePropertyPreFilter missionFilter = new SimplePropertyPreFilter(
@@ -52,6 +61,9 @@ public class CrCommonUtil {
 
 	/**
 	 * 从 roleConfig 读取 任务模板id 列表
+	 *
+	 * @param roles 角色
+	 * @return {@code List<String> }
 	 */
 	public static List<String> getMissionTemplateIds(List<CrRoleConfig> roles) {
 		List<String> missionTemplateIds = Lists.newArrayList();
@@ -63,6 +75,7 @@ public class CrCommonUtil {
 
 	/**
 	 * 从 missions scheme 读取 任务模板id 列表
+	 *
 	 * @param missionsScheme
 	 * @return
 	 */
@@ -75,6 +88,7 @@ public class CrCommonUtil {
 
 	/**
 	 * 校验训练 tag
+	 *
 	 * @param tags
 	 * @return
 	 */
@@ -91,9 +105,9 @@ public class CrCommonUtil {
 
 	/**
 	 * 原地操作，去掉两个列表中相交的元素
+	 *
 	 * @param l1
 	 * @param l2
-	 * @param <T>
 	 */
 	public static <T> void differ2List(List<T> l1, List<T> l2) {
 		if (l1 == null || l1.isEmpty() || l2 == null || l2.isEmpty()) {
@@ -123,6 +137,7 @@ public class CrCommonUtil {
 	/**
 	 * 获取指定长度的填0数组
 	 *
+	 * @param size 大小
 	 * @return {@code List<Integer>}
 	 */
 	public static List<Integer> getZeroList(Integer size) {

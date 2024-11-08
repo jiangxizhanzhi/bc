@@ -5,8 +5,17 @@ import com.cyberpeace.common.util.JsonUtil;
 
 import lombok.Getter;
 
+/**
+ * 场景开始上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public class SceneStartContext extends SceneOpsContext {
 
+	/**
+	 * 引用元数据
+	 */
 	private String reference_meta_data;
 
 	/**
@@ -53,7 +62,6 @@ public class SceneStartContext extends SceneOpsContext {
 
 	/**
 	 * 场景大json。
-	 *
 	 * 该字段传入的情况下，url中拓扑id不起作用。
 	 */
 	private Object cscene;

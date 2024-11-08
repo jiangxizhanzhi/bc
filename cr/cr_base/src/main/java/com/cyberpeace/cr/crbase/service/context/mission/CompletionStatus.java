@@ -6,11 +6,20 @@ import lombok.Data;
 
 /**
  * 任务完成状态
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Data
 public class CompletionStatus implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	private String resourceId;
 
+	/**
+	 * 状态
+	 */
 	private Integer status;
 }

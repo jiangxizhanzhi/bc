@@ -5,13 +5,22 @@ import lombok.Data;
 
 /**
  * 任务类别
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Data
 public class MissionCategory {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty(value = "编号")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 

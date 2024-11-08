@@ -23,6 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 靶场基础Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "靶场公用接口")
 @RestController
 @Slf4j
@@ -30,9 +36,18 @@ import java.util.List;
 @RequiresAuthentication
 public class CrBaseController {
 
+	/**
+	 * 靶场常数Service
+	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	/**
+	 * 获取常数配置
+	 *
+	 * @param type 类型
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("获取常量配置")
 	@GetMapping("/constants_config")
 	public BaseRsp getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
@@ -51,6 +66,11 @@ public class CrBaseController {
 		}
 	}
 
+	/**
+	 * 获取当前时间
+	 *
+	 * @return {@code BaseRsp<CurrentTimeRsp> }
+	 */
 	@ApiOperation("获取当前服务器时间")
 	@GetMapping("/current_time")
 	@RequiresPermissions(

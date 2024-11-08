@@ -7,10 +7,19 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * 理论更新请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel("理论基础练习")
 public class TheoryUpdateReq extends TheoryAddReq {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty(value = "ID", required = true)
 	@NotBlank(groups = { Update.class })
 	private String resourceId;

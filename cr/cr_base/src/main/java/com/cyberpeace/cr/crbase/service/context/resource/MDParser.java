@@ -22,14 +22,32 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * 子关常数
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 interface ZiguanConstants {
 
+	/**
+	 * 判断类型
+	 */
 	Integer JUDGEMENT_TYPE = 0;
 
+	/**
+	 * 单选型
+	 */
 	Integer SINGLE_CHOICE_TYPE = 1;
 
+	/**
+	 * 多选型
+	 */
 	Integer MULTI_CHOICE_TYPE = 2;
 
+	/**
+	 * 任务类型映射
+	 */
 	Map<String, Integer> MISSION_TYPE_MAPPING = new HashMap<String, Integer>() {
 
 		{
@@ -44,10 +62,19 @@ interface ZiguanConstants {
 		}
 	};
 
+	/**
+	 * 正确
+	 */
 	String CORRECT = "A";
 
+	/**
+	 * 错
+	 */
 	String WRONG = "B";
 
+	/**
+	 * 判断答案映射
+	 */
 	Map<String, String> JUDGEMENT_ANSWER_MAPPING = new HashMap<String, String>() {
 
 		{
@@ -56,12 +83,24 @@ interface ZiguanConstants {
 		}
 	};
 
+	/**
+	 * 单训练
+	 */
 	Integer SINGLE_TRAIN = 1;
 
+	/**
+	 * 团队训练
+	 */
 	Integer TEAM_TRAIN = 3;
 
+	/**
+	 * RVB
+	 */
 	Integer RVB = 4;
 
+	/**
+	 * CE类型映射
+	 */
 	Map<String, Integer> CE_TYPE_MAPPING = new HashMap<String, Integer>() {
 
 		{
@@ -71,24 +110,54 @@ interface ZiguanConstants {
 		}
 	};
 
+	/**
+	 * 模板名称
+	 */
 	String TEMPLATE_NAME = "name";
 
+	/**
+	 * 描述
+	 */
 	String DESCRIPTION = "description";
 
+	/**
+	 * 类型
+	 */
 	String TYPE = "type";
 
+	/**
+	 * 类别
+	 */
 	String CATEGORY = "category";
 
+	/**
+	 * 困难
+	 */
 	String DIFFICULTY = "difficulty";
 
+	/**
+	 * 持续时间
+	 */
 	String DURATION_TIME = "duration_time";
 
+	/**
+	 * 预技能
+	 */
 	String PRE_SKILL = "pre_skill";
 
+	/**
+	 * 训练技能
+	 */
 	String TRAIN_SKILL = "train_skill";
 
+	/**
+	 * 岗位信息
+	 */
 	String ROLE_INFO = "role_info";
 
+	/**
+	 * 模板基本信息字段
+	 */
 	Map<String, String> TEMPLATE_BASE_INFO_FIELDS = new HashMap<String, String>() {
 
 		{
@@ -108,16 +177,34 @@ interface ZiguanConstants {
 		}
 	};
 
+	/**
+	 * 任务名称
+	 */
 	String MISSION_TITLE = "title";
 
+	/**
+	 * 得分
+	 */
 	String SCORE = "score";
 
+	/**
+	 * 技能点
+	 */
 	String SKILL_POINTS = "skillPoints";
 
+	/**
+	 * 选择
+	 */
 	String OPTION = "option";
 
+	/**
+	 * 答案
+	 */
 	String ANSWER = "answer";
 
+	/**
+	 * 任务模板字段
+	 */
 	Map<String, String> MISSION_TEMPLATE_FIELDS = new HashMap<String, String>() {
 
 		{
@@ -132,6 +219,9 @@ interface ZiguanConstants {
 		}
 	};
 
+	/**
+	 * 默认任务类别
+	 */
 	Map<String, String> DEFAULT_MISSION_CATEGORIES = new HashMap<String, String>() {
 
 		{
@@ -153,10 +243,19 @@ interface ZiguanConstants {
 		}
 	};
 
+	/**
+	 * 可见节点
+	 */
 	String VISIBLE_NODES = "visibleNodes";
 
+	/**
+	 * 资产节点
+	 */
 	String ASSET_NODES = "assetNodes";
 
+	/**
+	 * 岗位节点类别
+	 */
 	Map<String, String> ROLE_NODES_CATEGORY = new HashMap<String, String>() {
 
 		{
@@ -165,10 +264,19 @@ interface ZiguanConstants {
 		}
 	};
 
+	/**
+	 * 节点 Col
+	 */
 	String NODE_COLL = "节点集合";
 
+	/**
+	 * Mission Col
+	 */
 	String MISSION_COLL = "任务集合";
 
+	/**
+	 * 难度选择
+	 */
 	Map<String, Integer> DIFFICULTY_CHOICE = new HashMap<String, Integer>() {
 
 		{
@@ -178,6 +286,9 @@ interface ZiguanConstants {
 		}
 	};
 
+	/**
+	 * 业务类别
+	 */
 	Map<String, Integer> BUSINESS_CATEGORIES = new HashMap<String, Integer>() {
 
 		{
@@ -191,74 +302,172 @@ interface ZiguanConstants {
 	};
 }
 
+/**
+ * 岗位群名字
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 interface RoleGroupNames {
 
+	/**
+	 * 学员
+	 */
 	String STUDENT = "学员组";
 
+	/**
+	 * 红
+	 */
 	String RED = "红方";
 
+	/**
+	 * 蓝
+	 */
 	String BLUE = "蓝方";
 }
 
 /**
  * 资管标准场景资源模板解析
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Data
 @Slf4j
 public class MDParser {
 
+	/**
+	 * H1
+	 */
 	private static final String H1 = "# ";
 
+	/**
+	 * H2
+	 */
 	private static final String H2 = "## ";
 
+	/**
+	 * H3
+	 */
 	private static final String H3 = "### ";
 
+	/**
+	 * 列出 SEP
+	 */
 	private static final String LIST_SEP = "\n- ";
 
+	/**
+	 * 入口头
+	 */
 	private static final String ENTRY_HEAD = "- ";
 
+	/**
+	 * 线路 SEP
+	 */
 	private static final String LINE_SEP = "\n";
 
+	/**
+	 * 九月
+	 */
 	private static final String SEP = File.separator;
 
+	/**
+	 *
+	 */
 	private static final String BASE_MD_FILE = "README.md";
 
+	/**
+	 * Mission MD 文件
+	 */
 	private static final String MISSION_MD_FILE = "README.md";
 
+	/**
+	 * 撰写文件名称
+	 */
 	private static final String WRITEUP_FILE_NAME = "writeup.md";
 
+	/**
+	 * 违约岗位
+	 */
 	private static final String DEFAULT_ROLE = "学员";
 
+	/**
+	 * md 后缀
+	 */
 	private static final String MD_SUFFIX = ".md";
 
+	/**
+	 * img dir （英语）
+	 */
 	private static final String IMG_DIR = "img";
 
+	/**
+	 * 任务目录
+	 */
 	private static final String TASK_DIR = "task";
 
+	/**
+	 * 图标文件
+	 */
 	private static final String LOGO_FILE = "/logo.png";
 
+	/**
+	 * 图标后缀
+	 */
 	private static final String LOGO_SUFFIX = ".png";
 
+	/**
+	 * 拓扑YAML
+	 */
 	private static final String TOPO_YAML = "/env/topo.yml";
 
+	/**
+	 * dir 路径
+	 */
 	private final String dirPath;
 
+	/**
+	 * 拓扑id
+	 */
 	private final String topoId;
 
+	/**
+	 * 图像
+	 */
 	private Map<String, String> images = Maps.newHashMap();
 
+	/**
+	 * 任务模板
+	 */
 	private List<MissionTemplate> missionTemplates = Lists.newArrayList();
 
+	/**
+	 * 业务模板
+	 */
 	private BusinessTemplate businessTemplate = new BusinessTemplate();
 
+	/**
+	 * 模板上下文
+	 */
 	private TrainingTemplateContext templateContext = new TrainingTemplateContext();
 
 
+	/**
+	 * 文件错误 msg
+	 */
 	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(() -> "");
 
-	// 字段
+	/**
+	 * 归档错误 msg
+	 */// 字段
 	public static ThreadLocal<String> filedErrorMsg = ThreadLocal.withInitial(() -> "");
 
+	/**
+	 * mdparser
+	 *
+	 * @param dirPath dir 路径
+	 * @param topoId  拓扑id
+	 */
 	public MDParser(String dirPath, String topoId) {
 		this.dirPath = dirPath;
 		this.topoId = topoId;
@@ -266,6 +475,8 @@ public class MDParser {
 
 	/**
 	 * 用于验证是否已存在
+	 *
+	 * @return {@code String }
 	 */
 	public String getName() {
 		String mdPath = dirPath + SEP + BASE_MD_FILE;
@@ -275,6 +486,11 @@ public class MDParser {
 		return data.get(ZiguanConstants.TEMPLATE_NAME);
 	}
 
+	/**
+	 * 加载交易错误
+	 *
+	 * @param businessTemplateId 业务模板id
+	 */
 	public void loadDealError(String businessTemplateId) {
 		try {
 			load(businessTemplateId);
@@ -283,8 +499,11 @@ public class MDParser {
 			filedErrorMsg.remove();
 		}
 	}
+
 	/**
 	 * 解析入口
+	 *
+	 * @param businessTemplateId 业务模板id
 	 */
 	public void load(String businessTemplateId) {
 		String mdPath = dirPath + SEP + BASE_MD_FILE;
@@ -389,6 +608,8 @@ public class MDParser {
 
 	/**
 	 * 单兵
+	 *
+	 * @return {@code RoleInfo }
 	 */
 	private RoleInfo single() {
 		return parseRoleMd(DEFAULT_ROLE);
@@ -396,6 +617,9 @@ public class MDParser {
 
 	/**
 	 * 团队
+	 *
+	 * @param roles 角色
+	 * @return {@code List<RoleInfo> }
 	 */
 	private List<RoleInfo> team(List<Role> roles) {
 		List<RoleInfo> infos = Lists.newArrayList();
@@ -405,6 +629,9 @@ public class MDParser {
 
 	/**
 	 * 红蓝
+	 *
+	 * @param groupRoles 组角色
+	 * @return {@code RbRoleInfo }
 	 */
 	private RbRoleInfo rvb(GroupRoles groupRoles) {
 		RbRoleInfo rbRoleInfo = new RbRoleInfo();
@@ -415,6 +642,7 @@ public class MDParser {
 
 	/**
 	 * 解析角色信息（分组， 角色名等）
+	 *
 	 * @param roleInfo
 	 * @return
 	 */
@@ -464,6 +692,7 @@ public class MDParser {
 
 	/**
 	 * 解析一个角色
+	 *
 	 * @param roleName
 	 * @return
 	 */
@@ -493,8 +722,9 @@ public class MDParser {
 
 	/**
 	 * 解析节点信息，（战争迷雾，角色资产）
+	 *
 	 * @param roleInfo
-	 * @param nodeText
+	 * @param nodeText 节点文本
 	 */
 	private void parseRoleNodes(RoleInfo roleInfo, String nodeText) {
 		if (StringUtils.isNotBlank(nodeText)) {
@@ -518,8 +748,9 @@ public class MDParser {
 
 	/**
 	 * 解析节点列表文本
+	 *
 	 * @param nodesText
-	 * @return
+	 * @param nodes     节点
 	 */
 	private void parseNodes(String nodesText, List<Node> nodes) {
 		if (StringUtils.isNotBlank(nodesText)) {
@@ -531,6 +762,7 @@ public class MDParser {
 
 	/**
 	 * 读取模板任务编排信息
+	 *
 	 * @param missionStages
 	 * @return
 	 */
@@ -573,8 +805,10 @@ public class MDParser {
 
 	/**
 	 * 解析任务信息
+	 *
 	 * @param missionDir
-	 * @param missionTitle
+	 * @param missionTitle 任务名称
+	 * @return {@code String }
 	 */
 	private String parseMission(String missionDir, String missionTitle) {
 		// read
@@ -633,6 +867,7 @@ public class MDParser {
 
 	/**
 	 * 生成技能点
+	 *
 	 * @return
 	 */
 	private String genSkillPoints() {
@@ -646,8 +881,10 @@ public class MDParser {
 
 	/**
 	 * 读取并处理 writeup 中的图片
+	 *
+	 * @param template     模板
 	 * @param missionDir
-	 * @param missionTitle
+	 * @param missionTitle 任务名称
 	 */
 	private void handleWriteup(MissionTemplate template, String missionDir, String missionTitle) {
 		List<String> attachments = Lists.newArrayList();
@@ -690,6 +927,7 @@ public class MDParser {
 
 	/**
 	 * 读取topo.yaml里的节点id列表
+	 *
 	 * @return 节点id列表
 	 */
 	private List<String> getValidNodes() {
@@ -706,7 +944,8 @@ public class MDParser {
 
 	/**
 	 * 筛除节点脏数据
-	 * @param nodes 节点列表
+	 *
+	 * @param nodes        节点列表
 	 * @param validNodeIds 存在的节点id列表
 	 */
 	private void filterInvalidNodes(List<Node> nodes, List<String> validNodeIds) {
@@ -726,6 +965,7 @@ public class MDParser {
 
 	/**
 	 * 读取md文件，并移除空行
+	 *
 	 * @param mdPath
 	 * @return
 	 */
@@ -747,12 +987,13 @@ public class MDParser {
 	}
 
 	/**
-	* 解析文本
-	* @param text 文本
-	* @param separator 分隔符
-	* @param mapping 中文字段名映射
-	* @return
-	*/
+	 * 解析文本
+	 *
+	 * @param text      文本
+	 * @param separator 分隔符
+	 * @param mapping   中文字段名映射
+	 * @return
+	 */
 	private Map<String, String> parseText(String text, String separator,
 			Map<String, String> mapping) {
 		String[] parts = text.split(separator);
@@ -774,6 +1015,7 @@ public class MDParser {
 
 	/**
 	 * 处理 md 里的标题
+	 *
 	 * @param label 标题
 	 * @return
 	 */
@@ -789,11 +1031,23 @@ public class MDParser {
 	}
 }
 
+/**
+ * 选择
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class Option implements Serializable {
 
+	/**
+	 * 选项标签
+	 */
 	private Character optionLabel;
 
+	/**
+	 * 选择值
+	 */
 	private String optionValue;
 
 	public Option(Character optionLabel, String optionValue) {
@@ -802,46 +1056,108 @@ class Option implements Serializable {
 	}
 }
 
+/**
+ * RB岗位信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class RbRoleInfo {
 
+	/**
+	 * RED 角色
+	 */
 	private List<RoleInfo> redRoles;
 
+	/**
+	 * 蓝色角色
+	 */
 	private List<RoleInfo> blueRoles;
 }
 
+/**
+ * 岗位信息
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class RoleInfo {
 
+	/**
+	 * 资产节点
+	 */
 	private List<Node> assetNodes = Lists.newArrayList();
 
+	/**
+	 * 可见节点
+	 */
 	private List<Node> visibleNodes = Lists.newArrayList();
 
+	/**
+	 * 任务计划
+	 */
 	private MissionScheme missionsScheme;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
 }
 
+/**
+ * 任务计划
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class MissionScheme {
 
+	/**
+	 * 颜色
+	 */
 	private Integer color = 1;
 
+	/**
+	 * 模板
+	 */
 	private Integer template = 1;
 
+	/**
+	 * 方案数据
+	 */
 	private List<SchemeDatum> schemeData;
 
+	/**
+	 * 任务计划
+	 *
+	 * @param schemeData 方案数据
+	 */
 	public MissionScheme(List<SchemeDatum> schemeData) {
 		this.schemeData = schemeData;
 	}
 }
 
+/**
+ * 方案基准
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class SchemeDatum {
 
+	/**
+	 * 阶段
+	 */
 	private String stage;
 
+	/**
+	 * 任务
+	 */
 	private List<Mission> missions;
 
 	public SchemeDatum(String stageName, List<Mission> missions) {
@@ -850,16 +1166,33 @@ class SchemeDatum {
 	}
 }
 
+/**
+ * 任务
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class Mission {
 
 	private String resourceId;
 
+	/**
+	 * 任务
+	 *
+	 * @param resourceId 资源id
+	 */
 	public Mission(String resourceId) {
 		this.resourceId = resourceId;
 	}
 }
 
+/**
+ * 节点
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class Node {
 
@@ -868,6 +1201,9 @@ class Node {
 	 */
 	private String category;
 
+	/**
+	 * id
+	 */
 	private String id;
 
 	public Node(String id) {
@@ -880,11 +1216,23 @@ class Node {
 	}
 }
 
+/**
+ * 岗位
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class Role {
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	private String desc;
 
 	public Role(String name, String desc) {
@@ -893,20 +1241,49 @@ class Role {
 	}
 }
 
+/**
+ * 组角色
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 class GroupRoles {
 
+	/**
+	 * 学员
+	 */
 	private List<Role> student = Lists.newArrayList();
 
+	/**
+	 * 红
+	 */
 	private List<Role> red = Lists.newArrayList();
 
+	/**
+	 * 蓝
+	 */
 	private List<Role> blue = Lists.newArrayList();
 }
 
+/**
+ * MSG 地图
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 class MsgMap extends HashMap {
 
+	/**
+	 * 映射
+	 */
 	Map<String, String> mapping;
 
+	/**
+	 * MSG 地图
+	 *
+	 * @param mapping 映射
+	 */
 	public MsgMap(Map<String, String> mapping) {
 		super();
 		this.mapping = new HashMap<>();
@@ -917,12 +1294,25 @@ class MsgMap extends HashMap {
 		}
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param key 钥匙
+	 * @return {@code Object }
+	 */
 	@Override
 	public Object get(Object key) {
 		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(), key.toString()));
 		return super.get(key);
 	}
 
+	/**
+	 * 获取或违约
+	 *
+	 * @param key          钥匙
+	 * @param defaultValue 违约值
+	 * @return {@code Object }
+	 */
 	@Override
 	public Object getOrDefault(Object key, Object defaultValue) {
 		MDParser.filedErrorMsg.set(mapping.getOrDefault(key.toString(), key.toString()));

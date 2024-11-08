@@ -22,15 +22,31 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * 工具类别Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "后台-资源管理-工具库-分类管理")
 @RestController
 @RequestMapping("cr/admin/tool/category")
 @RequiresAuthentication
 public class ToolCategoryController {
 
+	/**
+	 * 工具类别Service
+	 */
 	@Autowired
 	private ToolCategoryService toolCategoryService;
 
+	/**
+	 * 获取列表
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @param type        类型
+	 * @return {@code BaseRsp<ListRsp<ToolCategory>> }
+	 */
 	@GetMapping("/list")
 	@ApiOperation("工具分类列表")
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
@@ -41,6 +57,12 @@ public class ToolCategoryController {
 		return new BaseRsp<>(courseInfos);
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<ToolCategoryRsp> }
+	 */
 	@GetMapping()
 	@ApiOperation("工具分类详情")
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
@@ -51,6 +73,12 @@ public class ToolCategoryController {
 		return new BaseRsp<>(toolCategoryRsp);
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param categoryAddReq 类别新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@PostMapping()
 	@ApiOperation("工具分类创建")
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
@@ -61,6 +89,12 @@ public class ToolCategoryController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param categoryUpdateReq 类别更新请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@PatchMapping()
 	@ApiOperation("工具分类更新")
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
@@ -70,6 +104,12 @@ public class ToolCategoryController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@DeleteMapping()
 	@ApiOperation("工具分类批量删除")
 	@RequiresPermissions(MenuConstant.CMS_TOOL)

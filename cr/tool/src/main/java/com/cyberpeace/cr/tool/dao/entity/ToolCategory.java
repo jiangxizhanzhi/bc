@@ -9,23 +9,47 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 工具类别
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @TableName("cr_tool_toolcategory")
 @Data
 public class ToolCategory implements Serializable, SelectI18nName {
 
+	/**
+	 * id
+	 */
 	private Integer id;
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("ID")
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 中文名称
+	 */
 	@ApiModelProperty("中文名称")
 	private String cnName;
 
+	/**
+	 * 中文名称
+	 */
 	@ApiModelProperty("英文名称")
 	private String enName;
 
+	/**
+	 * 类型
+	 */
 	private String type;
 
+	/**
+	 * 串行版本 UID
+	 */
 	private static final long serialVersionUID = 1L;
 }

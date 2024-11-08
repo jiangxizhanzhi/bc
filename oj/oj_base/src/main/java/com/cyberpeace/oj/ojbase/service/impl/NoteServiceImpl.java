@@ -35,19 +35,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 注意Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service
 public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements NoteService {
 
+	/**
+	 * 注意Mapper
+	 */
 	@Autowired
 	private NoteMapper noteMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 注意评估Mapper
+	 */
 	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
 
+	/**
+	 * 查询由独特
+	 *
+	 * @param uniqueContext 独特上下文
+	 * @return {@code NoteBo }
+	 */
 	@Override
 	public NoteBo selectByUnique(NoteUniqueContext uniqueContext) {
 		Note note = noteMapper.selectByCondition(uniqueContext);
@@ -58,6 +79,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		return BeanUtils.copy(note, NoteBo.class);
 	}
 
+	/**
+	 * 新增注意
+	 *
+	 * @param noteAddContext 注意新增上下文
+	 * @return {@code Note }
+	 */
 	@Override
 	public Note addNote(NoteAddContext noteAddContext) {
 		Note note = BeanUtils.copy(noteAddContext, Note.class);
@@ -73,6 +100,14 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		return note;
 	}
 
+	/**
+	 * 分页由用户名称和内容
+	 *
+	 * @param page          分页
+	 * @param noteListQuery 注释列表查询
+	 * @param isWeb         是 Web
+	 * @return {@code IPage<NoteListBo> }
+	 */
 	@Override
 	public IPage<NoteListBo> pageByUserNameAndContent(Page page, AdminNoteListQuery noteListQuery,
 			Boolean isWeb) {
@@ -122,6 +157,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 
 	}
 
+	/**
+	 * 新增和更新报告
+	 *
+	 * @param reportAddReq 报告新增请求体
+	 * @return {@code Note }
+	 */
 	@Override
 	public Note addAndUpdateReport(ReportAddReq reportAddReq) {
 		NoteAddContext noteAddContext = BeanUtils.copy(reportAddReq, NoteAddContext.class);
@@ -156,11 +197,26 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		return note;
 	}
 
+	/**
+	 * 获取计数
+	 *
+	 * @param userId      用户id
+	 * @param noteType    注释类型
+	 * @param resourceIds 资源id列表
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer getCount(String userId, Integer noteType, List<String> resourceIds) {
 		return noteMapper.countByUserId(userId, noteType, resourceIds);
 	}
 
+	/**
+	 * 删除由业务
+	 *
+	 * @param businessId   业务id
+	 * @param noteType     注释类型
+	 * @param businessType 业务类型
+	 */
 	@Override
 	public void deleteByBusiness(String businessId, Integer noteType, Integer businessType) {
 		noteMapper.deleteByBusiness(businessId,noteType,businessType);

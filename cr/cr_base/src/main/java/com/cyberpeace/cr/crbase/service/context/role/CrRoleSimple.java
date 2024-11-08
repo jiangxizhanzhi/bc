@@ -21,14 +21,29 @@ import org.apache.commons.collections.CollectionUtils;
 @Data
 public class CrRoleSimple implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	private String resourceId;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 岗位群
+	 */
 	private Integer roleGroup;
 
+	/**
+	 * 任务计划
+	 */
 	private List<CrRoleMissionSchemeStage> missionScheme;
 
+	/**
+	 * 用户id列表
+	 */
 	private List<String> userIds;
 
 	public CrRoleSimple(CrRole role) {

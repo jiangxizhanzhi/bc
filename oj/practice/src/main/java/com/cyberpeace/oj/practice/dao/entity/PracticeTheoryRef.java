@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * 派生于PracticeOperation, 在试卷中被引用
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Data
 @AllArgsConstructor
@@ -18,7 +21,9 @@ import lombok.NoArgsConstructor;
 @TableName("oj_practice_theory_ref")
 public class PracticeTheoryRef extends PracticeOperationRef {
 
-    /** 选项是否随机*/
+    /**
+     * 选项是否随机
+     */
     private Boolean optionRandom;
 
 }

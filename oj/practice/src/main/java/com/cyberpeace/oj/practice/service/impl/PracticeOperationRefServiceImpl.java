@@ -31,31 +31,68 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 实践实操裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 @Slf4j
 public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperationRefMapper, PracticeOperationRef> implements PracticeOperationRefService {
 
+	/**
+	 * 实践实操裁判Mapper
+	 */
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
+	/**
+	 * 附件Mapper
+	 */
 	@Autowired
 	private AttachmentMapper attachmentMapper;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * OJ当地场景Service
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * 实践随机旗Mapper
+	 */
 	@Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
 
+	/**
+	 * 实践实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 查询由纸id
+	 *
+	 * @param lessonId    课id
+	 * @param paperId     纸id
+	 * @param viewAnswer  视图答案
+	 * @param simpleData  简单数据
+	 * @param authContext auth 上下文
+	 * @return {@code List<OperationLessonBo> }
+	 */
 	@Override
 	public List<OperationLessonBo> selectByPaperId(String lessonId, String paperId,
 			Boolean viewAnswer, Boolean simpleData, AuthContext authContext) {
@@ -131,6 +168,13 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		return operationLessonBos;
 	}
 
+	/**
+	 * 获取随机旗
+	 *
+	 * @param operation 实操
+	 * @param userId    用户id
+	 * @return {@code PracticeRandomFlag }
+	 */
 	private PracticeRandomFlag getRandomFlag(PracticeOperation operation, String userId) {
 
 		PracticeRandomFlag randomFlag = new PracticeRandomFlag();
@@ -151,6 +195,13 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		return randomFlag;
 	}
 
+	/**
+	 * 查询由实践id
+	 *
+	 * @param paperId    纸id
+	 * @param practiceId 实践id
+	 * @return {@code PracticeOperation }
+	 */
 	@Override
 	public PracticeOperation selectByPracticeId(String paperId, String practiceId) {
 		PracticeOperationRef operationRef = practiceOperationRefMapper.selectByPracticeId(paperId,
@@ -158,6 +209,13 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		return JsonUtil.toJsonObject(operationRef.getSnapshot(), PracticeOperation.class);
 	}
 
+	/**
+	 * 导出课程练习
+	 *
+	 * @param pathname           路径
+	 * @param paperId            纸id
+	 * @param disableImageExport 禁用图像导出
+	 */
 	@Override
 	public void exportLessonPractice(String pathname, String paperId, Boolean disableImageExport) {
 
@@ -174,6 +232,12 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 				disableImageExport);
 	}
 
+	/**
+	 * 查询课实践拓扑id列表
+	 *
+	 * @param paperIds 纸id列表
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> selectLessonPracticeTopoIds(List<String> paperIds) {
 
@@ -190,6 +254,13 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		});
 	}
 
+	/**
+	 * 实操由纸
+	 *
+	 * @param paperId  纸id
+	 * @param onlyTopo 只拓扑
+	 * @return {@code List<PracticeOperation> }
+	 */
 	@Override
 	public List<PracticeOperation> operationByPaper(String paperId, boolean onlyTopo) {
 
@@ -204,6 +275,14 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 				operation -> StringUtils.isNotBlank(operation.getTopoId()));
 	}
 
+	/**
+	 * 实操由纸
+	 *
+	 * @param lessonId    课id
+	 * @param paperId     纸id
+	 * @param authContext auth 上下文
+	 * @return {@code List<OjLocalScene> }
+	 */
 	@Override
 	public List<OjLocalScene> operationByPaper(String lessonId, String paperId,
 			AuthContext authContext) {

@@ -6,32 +6,55 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
+/**
+ * 练习论文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("oj_practice_paper")
 public class PracticePaper extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	//题目状态
+	/**
+	 * 实践状态
+	 *///题目状态
 	private String practiceStatus;
 
-	//出题数量
+	/**
+	 * 计数
+	 *///出题数量
 	private Integer count;
 
-	//题目难度
+	/**
+	 * 困难
+	 *///题目难度
 	private String difficulty;
 
-	//题目类型
+	/**
+	 * 类型
+	 *///题目类型
 	private String type;
 
-	//方向选择
+	/**
+	 * 方向
+	 *///方向选择
 	private String direction;
 
-	//是否完成
+	/**
+	 * 结束了
+	 *///是否完成
 	private Boolean isFinish;
 
-	//组卷人
+	/**
+	 * 用户id
+	 *///组卷人
 	private String userId;
 
 }

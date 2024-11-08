@@ -23,29 +23,56 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * md 解析器
+ *
  * @author chenzhuo
- * 仅支持标题和列表 列表仅支持二级
+ * 仅支持标题和列表 列表仅支持二级@date 2024/11/08
  */
 @Slf4j
 public class MdParser {
 
+    /**
+     * head 符号
+     */
     private String HEAD_SYMBOL = "#";
 
+    /**
+     * 内容
+     */
     private List<String> content;
 
+    /**
+     * 标题地图
+     */
     private Map<String, String> titleMap;
 
+    /**
+     * 解析器映射
+     */
     private Map<Class, MdContentParser> parserMap;
 
+    /**
+     * md 解析器
+     *
+     * @param file 文件
+     */
     public MdParser(String file) {
         setFile(file);
         collectParse();
     }
 
+    /**
+     * md 解析器
+     */
     public MdParser() {
         collectParse();
     }
 
+    /**
+     * 设置文件
+     *
+     * @param file 文件
+     */
     public void setFile(String file) {
         if (StringUtils.isBlank(file) || !new File(file).exists()) {
             log.error("File not exist! file_path=[{}]", file);
@@ -56,6 +83,12 @@ public class MdParser {
         titleMap = new ConcurrentHashMap<>();
     }
 
+    /**
+     * 读
+     *
+     * @param cls CLS
+     * @return {@code T }
+     */
     public synchronized <T> T read(Class<T> cls) {
         try {
             return doRead(cls);
@@ -65,10 +98,22 @@ public class MdParser {
         }
     }
 
+    /**
+     * 写入
+     *
+     * @param obj  对象
+     * @param file 文件
+     */
     public synchronized void write(Object obj, File file) {
         doWrite(obj, file);
     }
 
+    /**
+     * 做写入
+     *
+     * @param obj  对象
+     * @param file 文件
+     */
     private void doWrite(Object obj, File file) {
         FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
         if (file.exists()) {
@@ -140,6 +185,13 @@ public class MdParser {
         }
     }
 
+    /**
+     * 做阅读
+     *
+     * @param cls CLS
+     * @return {@code T }
+     * @throws IllegalAccessException 非法访问异常
+     */
     private <T> T doRead(Class<T> cls) throws IllegalAccessException {
         mdKeyMap();
         Object instance = BeanUtils.instantiateClass(cls);
@@ -176,8 +228,6 @@ public class MdParser {
 
     /**
      * 解析markdown文件 返回json数据
-     *
-     * @return
      */
     public void mdKeyMap() {
 
@@ -206,6 +256,13 @@ public class MdParser {
         }
     }
 
+    /**
+     * 获取分配str
+     *
+     * @param length 长度
+     * @param str    str
+     * @return {@code String }
+     */
     private String getAssignStr(int length, String str) {
 
         String assignStr = str;
@@ -224,6 +281,12 @@ public class MdParser {
         parserMap = StreamApiUtils.toMap(beansOfType.values(), MdContentParser::getClass, mdContentParser -> mdContentParser);
     }
 
+    /**
+     * 新增解析 器
+     *
+     * @param cls             CLS
+     * @param mdContentParser MD 内容解析器
+     */
     public void addParser(Class cls, MdContentParser mdContentParser) {
         parserMap.put(cls, mdContentParser);
     }

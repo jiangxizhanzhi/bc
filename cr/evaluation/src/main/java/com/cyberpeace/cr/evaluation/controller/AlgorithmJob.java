@@ -1,30 +1,37 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.HashSet;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * 定时一周清理一次不再使用的备份算法
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Slf4j
 @Component
 public class AlgorithmJob {
 
+	/**
+	 * 评估算法Service
+	 */
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
 
+	/**
+	 * 评估算法Mapper
+	 */
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
 

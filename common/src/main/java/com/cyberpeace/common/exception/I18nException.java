@@ -3,7 +3,16 @@ package com.cyberpeace.common.exception;
 import com.cyberpeace.constant.BaseI18nErrorMsg;
 import lombok.Getter;
 
+/**
+ * i18n 异常
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public class I18nException extends RuntimeException {
+	/**
+	 * i18n 错误 msg
+	 */
 	@Getter
 	private final BaseI18nErrorMsg i18nErrorMsg;
 

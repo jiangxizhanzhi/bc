@@ -11,19 +11,40 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.service.SystemConfigService;
 
+/**
+ * 系统配置Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 public class SystemConfigServiceImpl implements SystemConfigService {
 
+	/**
+	 * 系统配置 URL
+	 */
 	private String SYS_CONFIG_URL;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		SYS_CONFIG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("sys.config.all");
 	}
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	/**
+	 * 获取系统配置
+	 *
+	 * @param name 名称
+	 * @return {@code String }
+	 */
 	@Override
 	public String getSystemConfig(String name) {
 

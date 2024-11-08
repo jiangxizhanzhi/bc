@@ -8,15 +8,30 @@ import com.cyberpeace.common.util.LocalStringUtil;
 
 /**
  * 多选题解析
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Service
 public class MultipleChoiceParser implements MdContentParser<String, String> {
 
+	/**
+	 * 解析
+	 *
+	 * @param content 内容
+	 * @return {@code String }
+	 */
 	@Override
 	public String parse(Object content) {
 		return null;
 	}
 
+	/**
+	 * 写入
+	 *
+	 * @param s s
+	 * @return {@code String }
+	 */
 	@Override
 	public String write(String s) {
 		String str = "";

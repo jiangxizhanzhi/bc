@@ -5,6 +5,12 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * MD 大纲
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MdOutline implements Serializable {
 

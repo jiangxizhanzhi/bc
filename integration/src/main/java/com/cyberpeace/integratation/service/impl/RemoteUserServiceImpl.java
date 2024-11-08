@@ -39,25 +39,55 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 远程用户Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @CacheConfig(cacheNames = { CacheConstant.REMOTE_USER })
 @Slf4j
 @Service
 public class RemoteUserServiceImpl implements RemoteUserService {
 
+	/**
+	 * 令牌身份验证 URL
+	 */
 	private String TOKEN_AUTHENTICATE_URL;
 
+	/**
+	 * 用户信息由id网址
+	 */
 	private String USERINFO_BY_ID_URL;
 
+	/**
+	 * userinfo 列表 URL
+	 */
 	private String USERINFO_LIST_URL;
 
+	/**
+	 * 组织信息列表 URL
+	 */
 	private String ORG_INFO_LIST_URL;
 
+	/**
+	 * 身份验证权限菜单 URL
+	 */
 	private String AUTH_PERMISSION_MENUS_URL;
 
+	/**
+	 * 用户信息id列表网址
+	 */
 	private String USERINFO_IDS_URL;
 
+	/**
+	 * 黑色启用 URL
+	 */
 	private String BLACK_ENABLE_URL;
 
+	/**
+	 * 所有用户缓存
+	 */
 	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(15, TimeUnit.MINUTES)
 			.build(new CacheLoader<String, List<UserInfo>>() {
@@ -69,12 +99,21 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				}
 			});
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	/**
+	 * 远程组织Service
+	 */
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		TOKEN_AUTHENTICATE_URL = mpEnvService.getMpHost()
@@ -90,6 +129,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		BLACK_ENABLE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.auth.blacklist.enabled");
 	}
 
+	/**
+	 * 执行身份验证
+	 *
+	 * @param token 令 牌
+	 * @return {@code UserInfo }
+	 */
 	@Override
 	@Cacheable(key = "#p0")
 	public UserInfo doAuthentication(String token) {
@@ -103,6 +148,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return convertToLocal(mpAuthenticatedUser);
 	}
 
+	/**
+	 * 获取由id
+	 *
+	 * @param userId 用户id
+	 * @return {@code UserInfo }
+	 */
 	@Override
 	public UserInfo getById(String userId) {
 		String targetUrl = USERINFO_BY_ID_URL + userId;
@@ -114,6 +165,15 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfoFromJsonObject(jsonObject);
 	}
 
+	/**
+	 * 获取列表
+	 *
+	 * @param page         分页
+	 * @param perPage      每分页
+	 * @param pattern      模式
+	 * @param organization 组织
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getList(Long page, Long perPage, String pattern, String organization) {
 		String targetUrl = USERINFO_LIST_URL;
@@ -178,6 +238,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfoList;
 	}
 
+	/**
+	 * 获取由id列表
+	 *
+	 * @param ids id列表
+	 * @return {@code List<UserInfo> }
+	 */
 	@Override
 	public List<UserInfo> getByIdList(List<String> ids) {
 		List<UserInfo> userInfoList = new ArrayList<>();
@@ -195,6 +261,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfoList;
 	}
 
+	/**
+	 * 获取id名称地图
+	 *
+	 * @param ids id列表
+	 * @return {@code Map<String, String> }
+	 */
 	@Override
 	public Map<String, String> getIdNameMap(List<String> ids) {
 		Set<String> idsSet = Sets.newHashSet(ids);
@@ -208,6 +280,13 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
 	}
 
+	/**
+	 * 获取id名称地图
+	 *
+	 * @param entities     实体
+	 * @param userIdGetter 用户id吸气剂
+	 * @return {@code Map<String, String> }
+	 */
 	@Override
 	public <T> Map<String, String> getIdNameMap(List<T> entities, Function<T, String> userIdGetter) {
 
@@ -223,6 +302,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return getIdNameMap(userIds);
 	}
 
+	/**
+	 * 获取id用户信息地图
+	 *
+	 * @param ids id列表
+	 * @return {@code Map<String, UserInfo> }
+	 */
 	@Override
 	public Map<String, UserInfo> getIdUserInfoMap(List<String> ids) {
 		Set<String> idsSet = Sets.newHashSet(ids);
@@ -236,6 +321,13 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 	}
 
+	/**
+	 * 列表由组织id
+	 *
+	 * @param organizationId 组织id
+	 * @param children       子级
+	 * @return {@code List<UserInfo> }
+	 */
 	@Override
 	public List<UserInfo> ListByOrgId(String organizationId, boolean children) {
 
@@ -260,6 +352,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return userInfos;
 	}
 
+	/**
+	 * id列表由组织id
+	 *
+	 * @param orgId 组织id
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> idsByOrgId(String orgId) {
 		List<UserInfo> userInfos = ListByOrgId(orgId, true);
@@ -268,9 +366,6 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 编辑角色以后清空缓存
-	 *
-
-	 * @return
 	 */
 	@Override
 	@CacheEvict(allEntries = true)
@@ -278,6 +373,13 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
  	}
 
+	/**
+	 * 搜索用户由用户id在用户列表
+	 *
+	 * @param userId    用户id
+	 * @param userInfos 用户信息
+	 * @return {@code UserInfo }
+	 */
 	@Override
 	public UserInfo searchUserByUserIdInUserList(String userId, List<UserInfo> userInfos) {
 		if(StringUtils.isEmpty(userId) || CollectionUtils.isEmpty(userInfos)) {
@@ -292,6 +394,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return null;
 	}
 
+	/**
+	 * 是演示开启
+	 *
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean isDemoOpen() {
 		return HttpClientUtil.rawGet(BLACK_ENABLE_URL, Boolean.class);
@@ -315,6 +422,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * 获取都用户
+	 *
+	 * @return {@code List<UserInfo> }
+	 */
 	@Override
 	public List<UserInfo> getAllUsers() {
 		List<UserInfo> res = Lists.newArrayList();
@@ -327,6 +439,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return res;
 	}
 
+	/**
+	 * 所有用户
+	 *
+	 * @return {@code Map<String, UserInfo> }
+	 */
 	@Override
 	public Map<String, UserInfo> allUsers() {
 		List<UserInfo> userInfos = getList(null, 0L, null, null).getJSONArray("list")
@@ -339,6 +456,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * 组织用户数据转
 	 *
 	 * @param jsonObject
+	 * @param orgId      组织id
 	 * @return
 	 */
 	private UserInfo userToOrgUserInfo(JSONObject jsonObject, String orgId) {

@@ -9,6 +9,12 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 外部实操计数博
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class ExternalOperationCountBo implements Serializable {
 
@@ -24,12 +30,21 @@ public class ExternalOperationCountBo implements Serializable {
 		this.randoms = 0;
 	}
 
+	/**
+	 * 静力学
+	 */
 	@ApiModelProperty("静态习题数量")
 	private Integer statics;
 
+	/**
+	 * 动力学
+	 */
 	@ApiModelProperty("动态习题数量")
 	private Integer dynamics;
 
+	/**
+	 * 随机数
+	 */
 	@ApiModelProperty("随机习题数量")
 	private Integer randoms;
 

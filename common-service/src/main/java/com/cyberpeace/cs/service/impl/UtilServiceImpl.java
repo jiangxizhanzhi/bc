@@ -13,24 +13,54 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.List;
 
+/**
+ * utilService实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 public class UtilServiceImpl implements UtilService {
 
+	/**
+	 * FDFS 前缀
+	 */
 	private String FDFS_PREFIX;
 
+	/**
+	 * FDFS 启动 STR
+	 */
 	private String FDFS_START_STR;
 
+	/**
+	 * 本地前缀
+	 */
 	private String LOCAL_PREFIX;
 
+	/**
+	 * 本地父路径
+	 */
 	private String LOCAL_PARENT_PATH;
 
+	/**
+	 * 讲义信息 URL
+	 */
 	private String HANDOUT_INFO_URL;
 
+	/**
+	 * 讲义内容 URL
+	 */
 	private String HANDOUT_CONTENT_URL;
 
+	/**
+	 * 远程服务器环境Service
+	 */
 	@Autowired
 	private RemoteServerEnvService remoteServerEnvService;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		FDFS_PREFIX = ConfigUtil.getContextProperty("common.fastdfs.url.prefix");
@@ -41,6 +71,12 @@ public class UtilServiceImpl implements UtilService {
 		HANDOUT_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
 	}
 
+	/**
+	 * 处理程序文件 URL
+	 *
+	 * @param fileUrl 文件 URL
+	 * @return {@code String }
+	 */
 	@Override
 	public String handlerFileUrl(String fileUrl) {
 
@@ -57,6 +93,13 @@ public class UtilServiceImpl implements UtilService {
 		return fileUrl;
 	}
 
+	/**
+	 * Office URL
+	 *
+	 * @param fileUrl 文件 URL
+	 * @param fileId  文件id
+	 * @return {@code String }
+	 */
 	@Override
 	public String officeUrl(String fileUrl, String fileId) {
 
@@ -78,6 +121,12 @@ public class UtilServiceImpl implements UtilService {
 		return officeViewUrl;
 	}
 
+	/**
+	 * 替换文件 URL
+	 *
+	 * @param fileUrl 文件 URL
+	 * @return {@code String }
+	 */
 	@Override
 	public String replaceFileUrl(String fileUrl) {
 
@@ -103,6 +152,12 @@ public class UtilServiceImpl implements UtilService {
 		return fileUrl;
 	}
 
+	/**
+	 * 获取真正路径
+	 *
+	 * @param fileUrl 文件 URL
+	 * @return {@code String }
+	 */
 	@Override
 	public String getRealPath(String fileUrl) {
 
@@ -130,6 +185,13 @@ public class UtilServiceImpl implements UtilService {
 		return fileUrl;
 	}
 
+	/**
+	 * Handler Markdown 文件
+	 *
+	 * @param content      内容
+	 * @param destFilePath 目标文件路径
+	 * @return {@code String }
+	 */
 	@Override
 	public String handlerMarkdownFile(String content, String destFilePath) {
 
@@ -161,6 +223,12 @@ public class UtilServiceImpl implements UtilService {
 		return LocalStringUtil.replaceAll(content, realPathList, nginxUrlList);
 	}
 
+	/**
+	 * 替换 Markdown 文件
+	 *
+	 * @param content 内容
+	 * @return {@code String }
+	 */
 	@Override
 	public String replaceMarkdownFile(String content) {
 

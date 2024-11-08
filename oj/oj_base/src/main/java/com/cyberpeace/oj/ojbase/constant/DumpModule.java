@@ -5,16 +5,31 @@ import lombok.Getter;
 
 /**
  * 目录划分
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 public enum DumpModule implements GenericEnum {
 
+	/**
+	 * 课程
+	 */
 	COURSE(0, "course"),
+	/**
+	 * CTF 实践
+	 */
 	CTF_PRACTICE(1, "ctf");
 
 
+	/**
+	 * 代号
+	 */
 	@Getter
 	private Integer code;
 
+	/**
+	 * 描述
+	 */
 	@Getter
 	private String desc;
 

@@ -18,11 +18,20 @@ import com.google.common.collect.Maps;
  * 本工具类只针对简单对象处理。
  * 简单对象的定义为：对象每一个field对应的value为基本数据类型。
  * 基本数据类型参考java基本数据类型定义。
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 public class ObjUtil {
 
+	/**
+	 * 日志
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(ObjUtil.class);
 
+	/**
+	 * obj util
+	 */
 	private ObjUtil() {}
 
 	/**
@@ -108,6 +117,14 @@ public class ObjUtil {
 		}
 	}
 
+	/**
+	 * 设置田值
+	 *
+	 * @param obj       对象
+	 * @param fieldName 田名称
+	 * @param value     值
+	 * @throws IllegalAccessException 非法访问异常
+	 */
 	public static void setFieldValue(Object obj, String fieldName, String value)
 			throws IllegalAccessException {
 		Field[] fields = getFields(obj);
@@ -153,6 +170,13 @@ public class ObjUtil {
 				+ "], field=[" + fieldName + "] not found");
 	}
 
+	/**
+	 * 获取田值由名称
+	 *
+	 * @param fieldName 田名称
+	 * @param obj       对象
+	 * @return {@code Object }
+	 */
 	public static Object getFieldValueByName(String fieldName, Object obj) {
 		String firstLetter = fieldName.substring(0, 1).toUpperCase();
 		try {
@@ -180,11 +204,23 @@ public class ObjUtil {
 		}
 	}
 
+	/**
+	 * 获取领域
+	 *
+	 * @param obj 对象
+	 * @return {@code Field[] }
+	 */
 	public static Field[] getFields(Object obj) {
 		Class<?> cls = obj.getClass();
 		return getFields(cls);
 	}
 
+	/**
+	 * 获取领域
+	 *
+	 * @param target 目标
+	 * @return {@code Field[] }
+	 */
 	public static Field[] getFields(Class<?> target) {
 
 		Class<?> cls = target;

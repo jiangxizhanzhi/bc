@@ -34,15 +34,30 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 管理实践类别Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "oj-后台习题分类相关api")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/oj/admin/practice/category")
 public class AdminPracticeCategoryController {
 
+	/**
+	 * 实践类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	/**
+	 * 列表
+	 *
+	 * @param categoryListReq 类别列表请求体
+	 * @return {@code BaseRsp<ListRsp<CategoryListBo>> }
+	 */
 	@ApiOperation("分页查询练习分类")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
@@ -61,6 +76,13 @@ public class AdminPracticeCategoryController {
 		return new BaseRsp(PageUtil.getListResult(iPage));
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @param children   子级
+	 * @return {@code BaseRsp<CategoryListBo> }
+	 */
 	@ApiOperation("查询分类详情")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "分类编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "children", value = "是否查询子类", dataTypeClass = Boolean.class) })
@@ -73,6 +95,12 @@ public class AdminPracticeCategoryController {
 		return new BaseRsp<>(categoryListBo);
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param updateReq 更新请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("修改分类信息")
 	@PatchMapping("")
 	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
@@ -90,6 +118,12 @@ public class AdminPracticeCategoryController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 新增
+	 *
+	 * @param categoryReq 类别请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("新增分类信息")
 	@PostMapping("")
 	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
@@ -113,6 +147,12 @@ public class AdminPracticeCategoryController {
 
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param delReq 戴尔请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("批量删除分类信息")
 	@DeleteMapping("")
 	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)

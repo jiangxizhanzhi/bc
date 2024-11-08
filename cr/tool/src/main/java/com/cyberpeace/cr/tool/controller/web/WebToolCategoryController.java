@@ -16,15 +16,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 蹼工具类别Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "前台-资源管理-工具库-分类管理")
 @RestController
 @RequestMapping("cr/tool/category")
 @RequiresAuthentication
 public class WebToolCategoryController {
 
+    /**
+     * 工具类别Service
+     */
     @Autowired
     private ToolCategoryService toolCategoryService;
 
+    /**
+     * 获取列表
+     *
+     * @param type 类型
+     * @return {@code BaseRsp<List<WebToolCategoryRsp>> }
+     */
     @GetMapping("/list")
     @ApiOperation("工具分类列表")
     @RequiresPermissions(MenuConstant.WEB_CR_TOOL_TOOLS)

@@ -11,29 +11,59 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 评估记录新增请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class EvalRecordAddReq implements Serializable {
+    /**
+     * 资源id
+     */
     @ApiModelProperty("ID")
     private String resourceId;
 
+    /**
+     * 名称
+     */
     @ApiModelProperty(value = "名称", required = true)
     private String name;
 
+    /**
+     * 描述
+     */
     @ApiModelProperty("描述")
     private String description;
 
+    /**
+     * 任务id
+     */
     @ApiModelProperty(value = "靶场测评实例ID", required = true)
     private String taskId;
 
+    /**
+     * 系统id
+     */
     @ApiModelProperty(value = "使用指标体系ID", required = true)
     private String systemId;
 
+    /**
+     * 开始时间
+     */
     @ApiModelProperty(value = "开始时间（评估采集数据时间范围）", required = true)
     private Date startTime;
 
+    /**
+     * 结束时间
+     */
     @ApiModelProperty(value = "结束时间（评估采集数据时间范围）", required = true)
     private Date endTime;
 
+    /**
+     * 指标
+     */
     @ApiModelProperty(value = "全量三级指标项", required = true)
     private List<EvalRecordIndexContext> indexes;
 

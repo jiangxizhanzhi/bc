@@ -10,10 +10,19 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 批量删除请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @Slf4j
 public class BatchDeleteReq implements Serializable {
 
+	/**
+	 * id列表
+	 */
 	@ApiModelProperty("resource_id列表")
 	List<String> ids;
 

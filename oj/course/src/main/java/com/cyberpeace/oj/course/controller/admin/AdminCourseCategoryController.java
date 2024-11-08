@@ -40,6 +40,12 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 管理课程类别Controller
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "oj-后台课程分类api")
 @RestController
 @RequestMapping("/oj/admin/course/direction")
@@ -47,15 +53,30 @@ import io.swagger.annotations.ApiOperation;
 @Slf4j
 public class AdminCourseCategoryController {
 
+	/**
+	 * 课程类别Service
+	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
 
+	/**
+	 * 课程类别Mapper
+	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
+	/**
+	 * 课程验证处理器
+	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<CourseCategoryBo>> }
+	 */
 	@ApiOperation("课程分类分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_COURSE_STATISTICS }, logical = Logical.OR)
@@ -70,6 +91,13 @@ public class AdminCourseCategoryController {
 		return new BaseRsp(PageUtil.getListResult(courseCategories));
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @param children   子级
+	 * @return {@code BaseRsp<CourseCategoryBo> }
+	 */
 	@ApiOperation("课程分类详细信息查询")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "resource_id", value = "分类编号", dataTypeClass = String.class),
@@ -84,6 +112,12 @@ public class AdminCourseCategoryController {
 		return new BaseRsp(courseCategoryBo);
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param batchDeleteReq 批量删除请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("课程分类批量删除")
 	@DeleteMapping("/batch")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -93,6 +127,12 @@ public class AdminCourseCategoryController {
 		return new BaseRsp<>(row);
 	}
 
+	/**
+	 * 新增
+	 *
+	 * @param categoryReq 类别请求体
+	 * @return {@code BaseRsp<CategoryRes> }
+	 */
 	@ApiOperation("课程分类新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -115,6 +155,12 @@ public class AdminCourseCategoryController {
 		return new BaseRsp<>(categoryRes);
 	}
 
+	/**
+	 * 补丁
+	 *
+	 * @param updateCategoryReq 更新类别请求体
+	 * @return {@code BaseRsp<CategoryRes> }
+	 */
 	@ApiOperation("课程分类修改")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)

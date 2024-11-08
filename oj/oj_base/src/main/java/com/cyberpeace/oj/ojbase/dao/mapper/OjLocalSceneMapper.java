@@ -7,11 +7,18 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * OJ当地场景Mapper
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Mapper
 public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
 	/**
 	 * 查询私有场景
+	 *
 	 * @param userId
 	 * @param businessId
 	 * @param isWeb
@@ -22,6 +29,7 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
 	/**
 	 * 查询共有场景
+	 *
 	 * @param businessId
 	 * @param shared
 	 * @param isWeb
@@ -32,6 +40,7 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
 	/**
 	 * 查询课堂组场景
+	 *
 	 * @param groupId
 	 * @return
 	 */
@@ -39,6 +48,7 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
 	/**
 	 * 根据用户查询场景启动数量
+	 *
 	 * @param userId
 	 * @return
 	 */
@@ -46,6 +56,7 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
 	/**
 	 * 查询资源启动的场景
+	 *
 	 * @param businessId
 	 * @param fromWeb
 	 * @return
@@ -55,6 +66,7 @@ public interface OjLocalSceneMapper extends BaseMapper<OjLocalScene> {
 
 	/**
 	 * 查询课堂组场景
+	 *
 	 * @param groupIds
 	 * @return
 	 */

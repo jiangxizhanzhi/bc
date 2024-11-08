@@ -7,13 +7,25 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 快照路径结果
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class SnapshotPathRes implements Serializable {
 
+	/**
+	 * 计数
+	 */
 	@ApiModelProperty("快照数量")
 	private Integer count;
 
+	/**
+	 * 路径
+	 */
 	@ApiModelProperty("快照路径 树形结构")
 	private JSONObject path;
 

@@ -42,17 +42,36 @@ public interface BaseI18nErrorMsg extends BaseI18n {
 /**
  * 国际化错误消息接口实现类
  * 仅用于字符串带参数的情形
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 class I18nErrorMsg implements BaseI18nErrorMsg {
+	/**
+	 * 中文
+	 */
 	@Getter
 	private final String chinese;
 
+	/**
+	 * 英语
+	 */
 	@Getter
 	private final String english;
 
+	/**
+	 * 错误代号
+	 */
 	@Getter
 	private final String errorCode;
 
+	/**
+	* i18n 错误 msg
+	*
+	* @param chinese 中文
+	* @param english 英语
+	* @param errorCode 错误代号
+	*/
 	public I18nErrorMsg(String chinese, String english, String errorCode) {
 		this.chinese = chinese;
 		this.english = english;

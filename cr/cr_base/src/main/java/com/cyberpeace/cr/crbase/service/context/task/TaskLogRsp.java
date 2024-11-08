@@ -7,24 +7,57 @@ import lombok.Getter;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 任务日志响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class TaskLogRsp implements Serializable {
+    /**
+     * 房间id
+     */
     private String roomId;
 
+    /**
+     * 任务id
+     */
     private String missionId;
 
+    /**
+     * 任务id
+     */
     private String taskId;
 
+    /**
+     * 名称
+     */
     private String name;
 
+    /**
+     * 行动代号
+     */
     private Integer actionCode;
 
+    /**
+     * 用户id
+     */
     private String userId;
 
+    /**
+     * 行动名称
+     */
     private String actionName;
 
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
+    /**
+     * 创建时间字符串
+     */
     private String createTimeString;
 
     public enum ActionCode implements GenericEnum {

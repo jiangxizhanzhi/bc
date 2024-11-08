@@ -7,6 +7,12 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.*;
 
+/**
+ * 靶场任务日志
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,17 +20,35 @@ import lombok.*;
 @TableName("cr_task_log")
 public class CrTaskLog extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 房间id
+	 */
 	private String roomId;
 
+	/**
+	 * 任务id
+	 */
 	private String missionId;
 
+	/**
+	 * 任务id
+	 */
 	private String taskId;
 
+	/**
+	 * 行动代号
+	 */
 	private Integer actionCode;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
 	public enum ActionCode {

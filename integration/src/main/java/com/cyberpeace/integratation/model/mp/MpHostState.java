@@ -6,6 +6,12 @@ import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 中台主机州
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 public class MpHostState implements Serializable {
 

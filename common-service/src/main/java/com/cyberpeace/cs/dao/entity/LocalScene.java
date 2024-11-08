@@ -14,12 +14,18 @@ import lombok.Getter;
 
 import java.util.Date;
 
+/**
+ * 当地场景
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("local_scene")
 public class LocalScene extends BaseTable {
 
 	/**
-	 *
+	 * 资源id
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -30,7 +36,7 @@ public class LocalScene extends BaseTable {
 	private String mpSceneId;
 
 	/**
-	 *
+	 * 业务代号
 	 */
 	private Integer businessCode;
 
@@ -75,6 +81,9 @@ public class LocalScene extends BaseTable {
 	 */
 	private String topoId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
 	/**
@@ -94,6 +103,9 @@ public class LocalScene extends BaseTable {
 	 */
 	private String sceneName;
 
+	/**
+	 * 场景attr
+	 */
 	private Integer sceneAttr;
 
 	/**

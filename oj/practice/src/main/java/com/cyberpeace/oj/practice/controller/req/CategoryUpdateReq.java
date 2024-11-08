@@ -11,18 +11,33 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
+/**
+ * 类别更新请求体
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class CategoryUpdateReq implements Serializable {
 
+    /**
+     * 名称
+     */
     @ApiModelProperty("名称")
     @NotBlank
     private String name;
 
+    /**
+     * 资源id
+     */
     @ApiModelProperty("编号")
     @NotBlank
     private String resourceId;
 
+    /**
+     * 父母id
+     */
     @ApiModelProperty("父级编号")
     private String parentId;
 

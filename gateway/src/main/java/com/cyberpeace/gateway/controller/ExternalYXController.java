@@ -50,42 +50,84 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 外部 YXCiController
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Api(tags = "外部接口-永信相关api")
 @Slf4j
 @RestController
 @RequestMapping("/gateway/yx")
 public class ExternalYXController {
 
+	/**
+	 * 实践类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	/**
+	 * 实践实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 实践理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
-	
+
+	/**
+	 * 工具Service
+	 */
 	@Autowired
 	private ToolService toolService;
 
+	/**
+	 * 实践理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 实践实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 空间行动框架Mapper
+	 */
 	@Autowired
 	private SpaceActionFrameMapper spaceActionFrameMapper;
 
+	/**
+	 * 评估算法Service
+	 */
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
 
+	/**
+	 * 类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService categoryService;
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<AdminOperationListBo>> }
+	 */
 	@ApiOperation("分页查询实践操作习题")
 	@GetMapping("/operation/list")
 	public BaseRsp<ListRsp<AdminOperationListBo>> list(AdminOperationListReq listReq) {
@@ -108,6 +150,12 @@ public class ExternalYXController {
 		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<ListRsp<ExternalTheoryBo>> }
+	 */
 	@ApiOperation("分页查询理论习题列表")
 	@GetMapping("/theory/list")
 	public BaseRsp<ListRsp<ExternalTheoryBo>> list(TheoryListReq pageReq) {
@@ -129,18 +177,34 @@ public class ExternalYXController {
 
 	}
 
+	/**
+	 * 获取实操由节点
+	 *
+	 * @param operationByNodeReq 实操由节点请求体
+	 * @return {@code BaseRsp<List<AdminOperationListBo>> }
+	 */
 	@ApiOperation("根据镜像id获取实操题列表")
 	@PostMapping("/list/by_node")
 	public BaseRsp<List<AdminOperationListBo>> getOperationByNode(@RequestBody OperationByNodeReq operationByNodeReq) {
 		return new BaseRsp<>(practiceOperationService.getOperationByBodeIds(operationByNodeReq.getNodeIds()));
 	}
 
+	/**
+	 * 工具统计
+	 *
+	 * @return {@code BaseRsp<List<ToolTypeCount>> }
+	 */
 	@ApiOperation("工具统计")
 	@GetMapping("/tools/statistics")
 	public BaseRsp<List<ToolTypeCount>> toolStatistics() {
 		return new BaseRsp<>(toolService.statistics());
 	}
 
+	/**
+	 * 知识统计
+	 *
+	 * @return {@code BaseRsp<List<ToolTypeCount>> }
+	 */
 	@ApiOperation("知识库统计")
 	@GetMapping("/knowledge/statistics")
 	public BaseRsp<List<ToolTypeCount>> knowledgeStatistics() {
@@ -188,6 +252,12 @@ public class ExternalYXController {
 		return new BaseRsp<>(statisticsBos);
 	}
 
+	/**
+	 * 统计学
+	 *
+	 * @param timeList 时间列表
+	 * @return {@code List<MonthCount> }
+	 */
 	private List<MonthCount> statistics(List<String> timeList) {
 		List<MonthCount> monthCounts = new ArrayList<>();
 		for (int i = 0 ; i < 6 ; i++) {
@@ -197,6 +267,11 @@ public class ExternalYXController {
 		return monthCounts;
 	}
 
+	/**
+	 * 框架统计学
+	 *
+	 * @return {@code BaseRsp<List<ToolTypeCount>> }
+	 */
 	@ApiOperation("行动框架统计")
 	@GetMapping("/frame/statistics")
 	public BaseRsp<List<ToolTypeCount>> frameStatistics() {
@@ -230,6 +305,12 @@ public class ExternalYXController {
 		return new BaseRsp<>(countList);
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<EvalAlgorithmRsp>> }
+	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/algorithm/list")
 	public BaseRsp<ListRsp<EvalAlgorithmRsp>> list(EvalAlgorithmListReq listReq) {
@@ -256,6 +337,12 @@ public class ExternalYXController {
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
+	/**
+	 * 获取评估算法响应
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<EvalAlgorithmRsp> }
+	 */
 	@ApiOperation("查询算法")
 	@GetMapping("/algorithm")
 	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRsp(
@@ -276,12 +363,24 @@ public class ExternalYXController {
 		return new BaseRsp(evalAlgorithmRsp);
 	}
 
+	/**
+	 * run 算法
+	 *
+	 * @param evalRunAlgorithmReq 评估跑算法请求体
+	 * @return {@code BaseRsp<Object> }
+	 */
 	@ApiOperation("执行算法")
 	@PostMapping(("/algorithm/run"))
 	public BaseRsp<Object> runAlgorithm(@RequestBody EvalRunAlgorithmReq evalRunAlgorithmReq) {
 		return new BaseRsp<>(evalAlgorithmService.runAlgorithm(evalRunAlgorithmReq.getAlgorithmId(), evalRunAlgorithmReq.getData(), evalRunAlgorithmReq.getListData(), evalRunAlgorithmReq.getOtherArgs()));
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param categoryListReq 类别列表请求体
+	 * @return {@code BaseRsp<ListRsp<CategoryListBo>> }
+	 */
 	@ApiOperation("分页查询练习分类")
 	@GetMapping("/category/list")
 	public BaseRsp<ListRsp<CategoryListBo>> list(@Validated PracticeCategoryListReq categoryListReq) {

@@ -26,16 +26,35 @@ import com.google.common.io.Files;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 附件Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 @Slf4j
 public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachment> implements AttachmentService {
 
+	/**
+	 * 附件Mapper
+	 */
 	@Autowired
 	private AttachmentMapper attachmentMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 查询由id列表
+	 *
+	 * @param attachmentIds 附件id列表
+	 * @param isWeb         是 Web
+	 * @return {@code List<AttachmentBo> }
+	 */
 	@Override
 	public List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb) {
 		if (StringUtils.isNotBlank(attachmentIds)) {
@@ -53,6 +72,12 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return Lists.newArrayList();
 	}
 
+	/**
+	 * 批量获取由id列表
+	 *
+	 * @param attachmentIds 附件id列表
+	 * @return {@code List<Attachment> }
+	 */
 	@Override
 	public List<Attachment> batchGetByIds(List<String> attachmentIds) {
 		if (attachmentIds == null || attachmentIds.size() == 0) {
@@ -62,6 +87,13 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return attachmentMapper.selectBatchIds(attachmentIds, false);
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param filename 文件名
+	 * @param filePath 文件路径
+	 * @return {@code AttachmentBo }
+	 */
 	@Override
 	public AttachmentBo create(String filename, String filePath) {
 		Attachment attachment = Attachment.builder().resourceId(IDGeneratorUtil.getID())
@@ -75,6 +107,15 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return null;
 	}
 
+	/**
+	 * 复制文件
+	 *
+	 * @param originPath 源路径
+	 * @param type       类型
+	 * @param insertDb   插入 DB
+	 * @param renameFile 重命名文件
+	 * @return {@code AttachmentBo }
+	 */
 	@Override
 	public AttachmentBo copyFile(String originPath, Integer type, Boolean insertDb,
 			Boolean renameFile) {
@@ -123,12 +164,29 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return AttachmentBo.builder().filePath(displayName).fileName(origin.getName()).build();
 	}
 
+	/**
+	 * 上传文件
+	 *
+	 * @param type       类型
+	 * @param insert     插入
+	 * @param file       文件
+	 * @param renameFile 重命名文件
+	 * @return {@code AttachmentBo }
+	 */
 	@Override
 	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
 			Boolean renameFile) {
 		return uploadFile(file, type, insert, renameFile);
 	}
 
+	/**
+	 * 上传 DEST
+	 *
+	 * @param destDir dest dir
+	 * @param insert  插入
+	 * @param file    文件
+	 * @return {@code AttachmentBo }
+	 */
 	@Override
 	public AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file) {
 
@@ -173,6 +231,12 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return IDGeneratorUtil.getID() + CommonConstant.PERIOD + afterFix;
 	}
 
+	/**
+	 * 批量插入
+	 *
+	 * @param attachmentPaths 连接路径
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> batchInsert(List<String> attachmentPaths) {
 
@@ -186,6 +250,14 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return StreamApiUtils.map(attachments, Attachment::getResourceId);
 	}
 
+	/**
+	 * 加载图像
+	 *
+	 * @param imageId  图像id
+	 * @param fileName 文件名称
+	 * @param imageDir 图像目录
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean loadImage(String imageId, String fileName, String imageDir) {
 		// 图片附件已存在，不做操作
@@ -202,6 +274,11 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return true;
 	}
 
+	/**
+	 * 加载 ZiGuan 图片
+	 *
+	 * @param images 图像
+	 */
 	@Override
 	public void loadZiguanImages(Map<String, String> images) {
 		if (images.isEmpty()) {
@@ -218,6 +295,15 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		attachmentMapper.batchInsert(attachments);
 	}
 
+	/**
+	 * 上传文件
+	 *
+	 * @param file       文件
+	 * @param type       类型
+	 * @param insertDb   插入 DB
+	 * @param renameFile 重命名文件
+	 * @return {@code AttachmentBo }
+	 */
 	private AttachmentBo uploadFile(MultipartFile file, Integer type, Boolean insertDb,
 			Boolean renameFile) {
 		String destPath = EnumUtils.getEnumDescByCode(type, AttachmentPath.class);
@@ -280,6 +366,12 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return null;
 	}
 
+	/**
+	 * 存在
+	 *
+	 * @param attachmentId 附件id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean isExist(String attachmentId) {
 		Attachment attachment = attachmentMapper.selectById(attachmentId);

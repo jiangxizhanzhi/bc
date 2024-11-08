@@ -8,90 +8,180 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 工具响应
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @ApiModel("工具库信息")
 @Data
 public class ToolRsp implements Serializable {
 
+	/**
+	 * 类别i18n名称
+	 */
 	@ApiModelProperty("多个分类i18n名称逗号分割")
 	private String categoryI18nName;
 
+	/**
+	 * 破获
+	 */
 	@ApiModelProperty("是否破解")
 	private Boolean cracked;
 
+	/**
+	 * 装置名称
+	 */
 	@ApiModelProperty("靶标名称")
 	private String deviceName;
 
+	/**
+	 * id
+	 */
 	private Integer id;
 
+	/**
+	 * 语言
+	 */
 	@ApiModelProperty("工具语言")
 	private List<String> language;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("名称")
 	private String name;
 
+	/**
+	 * 平台
+	 */
 	@ApiModelProperty("平台名称")
 	private List<String> platforms;
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("ID")
 	private String resourceId;
 
+	/**
+	 * 工具类型
+	 */
 	@ApiModelProperty("工具类型")
 	private Integer toolType;
 
+	/**
+	 * 类别
+	 */
 	@ApiModelProperty("工具分类")
 	private List<String> category;
 
+	/**
+	 * 盖
+	 */
 	@ApiModelProperty("封面")
 	private String cover;
 
+	/**
+	 * 封面 URL
+	 */
 	@ApiModelProperty("封面连接")
 	private String coverUrl;
 
+	/**
+	 * 文件
+	 */
 	@ApiModelProperty("附件列表")
 	private String files;
 
+	/**
+	 * 工具文件
+	 */
 	@ApiModelProperty("附件详细列表")
 	private List<ToolFile> toolFiles;
 
+	/**
+	 * 介绍
+	 */
 	@ApiModelProperty("介绍")
 	private String introduction;
 
+	/**
+	 * 版本
+	 */
 	@ApiModelProperty("版本")
 	private String version;
 
+	/**
+	 * 可见
+	 */
 	@ApiModelProperty("是否可见")
 	private Boolean visible;
 
+	/**
+	 * 创建时间
+	 */
 	@ApiModelProperty("创建时间")
 	private String createTime;
 
+	/**
+	 * 更新时间
+	 */
 	@ApiModelProperty("更新时间")
 	private String updateTime;
 
+	/**
+	 * 装置资源id
+	 */
 	@ApiModelProperty("设备资源ID")
 	private String deviceResourceId = "";
 
+	/**
+	 * 家分页
+	 */
 	@ApiModelProperty("主页")
 	private String homePage = "";
 
+	/**
+	 * 图像资源id
+	 */
 	@ApiModelProperty("镜像资源ID")
 	private String imageResourceId = "";
 
+	/**
+	 * 手动
+	 */
 	@ApiModelProperty("手册")
 	private String manual;
 
+	/**
+	 * 场景
+	 */
 	@ApiModelProperty("场景ID")
 	private String scene;
 
+	/**
+	 * 场景数据
+	 */
 	@ApiModelProperty("场景数据")
 	private String sceneData;
 
+	/**
+	 * 标记
+	 */
 	@ApiModelProperty("标签")
 	private List<String> tag;
 
+	/**
+	 * 禁用
+	 */
 	@ApiModelProperty("是否禁用")
 	private Boolean disabled;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty("类型， probe：探测类,attack：攻击类，control：控制类，defense：防御类")
 	private String type;
 }

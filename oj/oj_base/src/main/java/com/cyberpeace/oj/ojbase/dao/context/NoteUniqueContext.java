@@ -7,18 +7,36 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * 注意唯一上下文
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class NoteUniqueContext implements Serializable {
 
+	/**
+	 * 注释类型
+	 */
 	private Integer noteType;
 
+	/**
+	 * 业务类型
+	 */
 	private Integer businessType;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 业务id
+	 */
 	private String businessId;
 
 }

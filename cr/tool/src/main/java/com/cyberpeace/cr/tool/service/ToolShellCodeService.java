@@ -5,8 +5,21 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.tool.dao.entity.ToolShellCode;
 import com.cyberpeace.cr.tool.controller.res.ToolShellCodeRsp;
 
+/**
+ * 工具壳代号Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface ToolShellCodeService extends IService<ToolShellCode> {
 
+	/**
+	 * 查询分页
+	 *
+	 * @param pageReqBase      分页请求体基础
+	 * @param toolShellCodeRsp 工具壳代号响应
+	 * @return {@code ListRsp<ToolShellCode> }
+	 */
 	ListRsp<ToolShellCode> selectPage(PageReqBase pageReqBase,
 			ToolShellCodeRsp toolShellCodeRsp);
 }

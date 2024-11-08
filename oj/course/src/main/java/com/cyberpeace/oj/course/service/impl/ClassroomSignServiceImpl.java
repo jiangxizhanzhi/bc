@@ -43,39 +43,75 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author chenzhuo
+ * 课堂标志Service实现
+ *
+ * @author chenzhuo@date 2024/11/08
  */
 @Slf4j
 @Service
 public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, ClassroomSign> implements ClassroomSignService {
 
+	/**
+	 * 课堂Mapper
+	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
+	/**
+	 * 课堂标志Mapper
+	 */
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
 
+	/**
+	 * 课堂群信息Mapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 当地场景Mapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 聊天 Web 套接字处理程序
+	 */
 	@Autowired
 	private ChatWebSocketHandler chatWebSocketHandler;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 课堂验证处理器
+	 */
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
 
+	/**
+	 * 推送消息处理程序
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * 登录
+	 *
+	 * @param classroomId 课堂id
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
 
@@ -108,6 +144,13 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		return true;
 	}
 
+	/**
+	 * 需要帮助
+	 *
+	 * @param lessonId 课id
+	 * @param nodeId   节点id
+	 * @param roomId   房间id
+	 */
 	@Override
 	public void needHelp(String lessonId, String nodeId, String roomId) {
 
@@ -167,6 +210,12 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	}
 
+	/**
+	 * 帮助
+	 *
+	 * @param classroomId 课堂id
+	 * @param userId      用户id
+	 */
 	@Override
 	public void toHelp(String classroomId, String userId) {
 
@@ -182,6 +231,12 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 	}
 
+	/**
+	 * 结束帮助
+	 *
+	 * @param classroomId 课堂id
+	 * @param userId      用户id
+	 */
 	@Override
 	public void endHelp(String classroomId, String userId) {
 
@@ -206,6 +261,14 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	}
 
+	/**
+	 * 获取帮助状态
+	 *
+	 * @param lessonId 课id
+	 * @param nodeId   节点id
+	 * @param roomId   房间id
+	 * @return {@code HelpStatusBo }
+	 */
 	@Override
 	public HelpStatusBo getHelpStatus(String lessonId, String nodeId, String roomId) {
 
@@ -224,6 +287,13 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	}
 
+	/**
+	 * 获取帮助网址
+	 *
+	 * @param classroomId 课堂id
+	 * @param userId      用户id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getHelpUrl(String classroomId, String userId) {
 		// 房间校验
@@ -288,8 +358,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	/**
 	 * 协助状态更新消息推送
+	 *
 	 * @param classroom
-	 * @param message
+	 * @param message   消息
+	 * @param toUserId  自用户id
 	 */
 	private void pushChatMessage(Classroom classroom, String message, String toUserId) {
 		ChatWsMessageIdentifier messageIdentifier = new ChatWsMessageIdentifier();
@@ -306,7 +378,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	/**
 	 * 获取远程协助信息
+	 *
 	 * @param userId
+	 * @param classRoomId 类房间id
 	 * @return
 	 */
 	private String getNeedHelpMessage(String userId, String classRoomId) {

@@ -52,16 +52,34 @@ import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 实践理论Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Service
 @Slf4j
 public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper, PracticeTheory> implements PracticeTheoryService {
 
+	/**
+	 * 最大内容长度
+	 */
 	private Integer MAX_CONTENT_LENGTH;
 
+	/**
+	 * 最大类别长度
+	 */
 	private Integer MAX_CATEGORY_LENGTH;
 
+	/**
+	 * 被收集
+	 */
 	private final Boolean IS_COLLECTED = Boolean.FALSE;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	private void init() {
 		MAX_CONTENT_LENGTH = Integer
@@ -71,45 +89,92 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
 	}
 
+	/**
+	 * 实践设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 实践理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 资源收集Service
+	 */
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
+	/**
+	 * 理论评估处理器
+	 */
 	@Resource(name = "theory")
 	private TheoryEvaluateHandler theoryEvaluateHandler;
 
+	/**
+	 * 实践解决Mapper
+	 */
 	@Autowired
 	private PracticeSolvedMapper practiceSolvedMapper;
 
+	/**
+	 * 实践类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 实践验证处理器
+	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
+	/**
+	 * 实践类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 实践错误Mapper
+	 */
 	@Autowired
 	private PracticeMistakeMapper practiceMistakeMapper;
 
+	/**
+	 * 实践错误Service
+	 */
 	@Autowired
 	private PracticeMistakeService practiceMistakeService;
 
+	/**
+	 * 分页由查询
+	 *
+	 * @param page        分页
+	 * @param listQuery   列表查询
+	 * @param authContext auth 上下文
+	 * @return {@code IPage<PracticeTheoryListBo> }
+	 */
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
 			AuthContext authContext) {
@@ -218,6 +283,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		});
 	}
 
+	/**
+	 * 分页由查询
+	 *
+	 * @param page      分页
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<ExternalTheoryBo> }
+	 */
 	@Override
 	public IPage<ExternalTheoryBo> pageByQuery(Page page, TheoryListQueryBo listQuery) {
 
@@ -258,6 +330,14 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		});
 	}
 
+	/**
+	 * 查询由id
+	 *
+	 * @param resourceId  资源id
+	 * @param userId      用户id
+	 * @param isCollected 被收集
+	 * @return {@code WebTheoryBo }
+	 */
 	@Override
 	public WebTheoryBo selectById(String resourceId, String userId, Boolean isCollected) {
 
@@ -294,7 +374,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 * 答案置空
 	 *
 	 * @param webTheoryBo
-	 * @param practiceSolved
+	 * @param practiceSolved 练习解决
 	 */
 	private void answerToNull(WebTheoryBo webTheoryBo, PracticeSolved practiceSolved) {
 
@@ -327,7 +407,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	/**
 	 * 答案置空
 	 *
-	 * @param webTheoryBo
+	 * @param webTheoryBo 蹼理论博
 	 */
 	private void answerToNull(WebTheoryBo webTheoryBo) {
 		webTheoryBo.setAnswer(null);
@@ -335,6 +415,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		webTheoryBo.setKeyword(null);
 	}
 
+	/**
+	 * 提交答案
+	 *
+	 * @param userId      用户id
+	 * @param theoryId    理论id
+	 * @param userAnswer  用户答案
+	 * @param isCollected 被收集
+	 * @return {@code EvaluateResult }
+	 */
 	@Override
 	public EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer,
 			Boolean isCollected) {
@@ -388,6 +477,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return evaluateResult;
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param practiceTheory 实践理论
+	 * @param authContext    auth 上下文
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer create(PracticeTheory practiceTheory, AuthContext authContext) {
 
@@ -414,6 +510,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		});
 	}
 
+	/**
+	 * 更新理论
+	 *
+	 * @param practiceTheory 实践理论
+	 * @param authContext    auth 上下文
+	 * @return int
+	 */
 	@Override
 	public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
 
@@ -450,6 +553,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return result[0];
 	}
 
+	/**
+	 * 查询实践列表id列表
+	 *
+	 * @param authContext   auth 上下文
+	 * @param practiceSetId 实践设置id
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> selectPracticeListIds(AuthContext authContext, String practiceSetId) {
 
@@ -474,6 +584,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return practiceTheoryMapper.selectBySetIds(publicIds, authContext.getIsWeb());
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param resourceIds 资源id列表
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer batchDelete(List<String> resourceIds) {
 		String practiceId = resourceIds.get(CommonConstant.ZERO);
@@ -498,6 +614,14 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		});
 	}
 
+	/**
+	 * 负荷实践理论
+	 *
+	 * @param practiceSetId 实践设置id
+	 * @param dumpBo        dump bo
+	 * @param userId        用户id
+	 * @return {@code PracticeTheory }
+	 */
 	@Override
 	public PracticeTheory loadPracticeTheory(String practiceSetId, PracticeTheoryDumpLoadBo dumpBo,
 			String userId) {
@@ -534,6 +658,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return practiceTheory;
 	}
 
+	/**
+	 * 转 储理论
+	 *
+	 * @param practiceTheory 实践理论
+	 * @return {@code PracticeTheoryDumpLoadBo }
+	 */
 	@Override
 	public PracticeTheoryDumpLoadBo dumpTheory(PracticeTheory practiceTheory) {
 		PracticeTheoryDumpLoadBo dumpLoadBo = BeanUtils.copy(practiceTheory,
@@ -546,6 +676,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return dumpLoadBo;
 	}
 
+	/**
+	 * 创造中台日志
+	 *
+	 * @param practiceId 实践id
+	 * @param logContent 日志内容
+	 */
 	@Override
 	public void createMpLog(String practiceId, LogContent logContent) {
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(practiceId);
@@ -554,6 +690,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
 	}
 
+	/**
+	 * 类型计数
+	 *
+	 * @param theoryListQueryBo 理论列表查询博
+	 * @param authContext       auth 上下文
+	 * @return {@code ExternalTheoryCountBo }
+	 */
 	@Override
 	public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo,
 			AuthContext authContext) {
@@ -585,6 +728,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return countBo;
 	}
 
+	/**
+	 * 出口医学博士理论实践
+	 *
+	 * @param path     路径
+	 * @param theories 理论
+	 * @return {@code MdTheoryPractice }
+	 */
 	@Override
 	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
 
@@ -690,6 +840,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return mdTheoryPractice;
 	}
 
+	/**
+	 * 获取进展统计学
+	 *
+	 * @param practiceSetId 实践设置id
+	 * @return {@code ProgressStatisticsRes }
+	 */
 	@Override
 	public ProgressStatisticsRes getProgressStatistics(String practiceSetId) {
 		ProgressStatisticsRes progressStatisticsRes = new ProgressStatisticsRes();
@@ -740,6 +896,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return progressStatisticsRes;
 	}
 
+	/**
+	 * 设置进展比例零
+	 *
+	 * @param type 类型
+	 * @return {@code ProgressProportion }
+	 */
 	public ProgressProportion setProgressProportionZero(int type) {
 		ProgressProportion progressProportion = new ProgressProportion();
 		progressProportion.setDifficulty(type);
@@ -748,6 +910,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return progressProportion;
 	}
 
+	/**
+	 * 获取进展由类别
+	 *
+	 * @return {@code List<CategoryProgressRes> }
+	 */
 	@Override
 	public List<CategoryProgressRes> getProgressByCategory() {
 		List<CategoryProgressRes> categoryProgressResList = new ArrayList<>();
@@ -777,6 +944,12 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 
+	/**
+	 * 获取实践记录
+	 *
+	 * @param webTheoryRecordReq 蹼理论记录请求体
+	 * @return {@code List<PracticeTheoryListBo> }
+	 */
 	@Override
 	public List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq) {
 		//获取所有可见的习题id
@@ -807,6 +980,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	/**
 	 * 获取该用户所有可见的习题id
+	 *
 	 * @param authContext
 	 * @param practiceSetId
 	 * @return
@@ -844,11 +1018,22 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return practiceIds;
 	}
 
+	/**
+	 * 获取类别id和设置id列表
+	 *
+	 * @return {@code List<PracticeTheory> }
+	 */
 	@Override
 	public List<PracticeTheory> getCategoryIdAndSetIds() {
 		return practiceTheoryMapper.selectAllCategoryIds();
 	}
 
+	/**
+	 * 改变标题自理论基础医学博士
+	 *
+	 * @param theory       理论
+	 * @param theoryBaseMd 理论基础医学博士
+	 */
 	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
 		String[] split = theoryBaseMd.getTitle().split("\n");
 		List<String> content = Arrays.asList(split);

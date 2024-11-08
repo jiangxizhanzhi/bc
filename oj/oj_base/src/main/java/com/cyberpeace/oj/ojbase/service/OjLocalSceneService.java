@@ -9,12 +9,19 @@ import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
 
 import java.util.List;
 
+/**
+ * OJ当地场景Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
 	 * 查询ojLocalScene数据 不包含
-	 * @param businessId 资源编号 课程编号 课时编号 习题编号
-	 * @param shared 是否共享 1=私有 2=共享
+	 *
+	 * @param businessId  资源编号 课程编号 课时编号 习题编号
+	 * @param shared      是否共享 1=私有 2=共享
 	 * @param authContext 前后台权限数据
 	 * @return
 	 */
@@ -22,6 +29,7 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
 	 * 初始化ojLocalScene
+	 *
 	 * @param sceneContext
 	 * @return
 	 */
@@ -29,19 +37,24 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
 	 * 设置topo结构中注入flag命令
+	 *
 	 * @param ojLocalScene
+	 * @param topoId       拓扑id
 	 * @return
 	 */
 	JSONObject setDynamicFlag(OjLocalScene ojLocalScene, JSONObject topoId);
 
 	/**
 	 * 删除本地场景
-	 * @param 
+	 *
+	 * @param ojLocalSceneId OJ当地场景id
+	 * @return {@code OjLocalScene }
 	 */
 	OjLocalScene deleteLocalScene(String ojLocalSceneId);
 
 	/**
 	 * 删除本地和中台场景
+	 *
 	 * @param ojLocalScene
 	 * @return
 	 */
@@ -49,20 +62,24 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
 	 * 组装实训场景启动完成消息体
-	 * @param message 场景启动相关消息
+	 *
+	 * @param message      场景启动相关消息
+	 * @param ojLocalScene OJ当地场景
 	 * @return
 	 */
 	JSONObject getStartSceneMessage(String message, OjLocalScene ojLocalScene);
 
 	/**
 	 * 检查场景启动数量是否超过最大数量
+	 *
 	 * @param userId
-	 * @return
+	 * @param createCount 创造计数
 	 */
 	void checkSceneStartCount(String userId, Integer createCount);
 
 	/**
 	 * 查询场景信息
+	 *
 	 * @param ojLocalScene
 	 * @return
 	 */
@@ -70,6 +87,7 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
 	 * 获取监控信息列表
+	 *
 	 * @param ojLocalScenes
 	 * @return
 	 */
@@ -77,6 +95,7 @@ public interface OjLocalSceneService extends IService<OjLocalScene> {
 
 	/**
 	 * 是否开启录屏
+	 *
 	 * @param topoId
 	 * @param record
 	 * @return

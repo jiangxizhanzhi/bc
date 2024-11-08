@@ -16,20 +16,40 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * 远程日志Service实现
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Slf4j
 @Service
 public class RemoteLogServiceImpl implements RemoteLogService {
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	/**
+	 * 日志新增网址
+	 */
 	private String LOG_ADD_URL;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		LOG_ADD_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.log.add");
 	}
 
+	/**
+	 * 新增日志
+	 *
+	 * @param mpLog 中台日志
+	 */
 	@Async
 	public void addLog(MpLog mpLog) {
 		try {
@@ -39,6 +59,15 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 		}
 	}
 
+	/**
+	 * 新增基本信息
+	 *
+	 * @param userInfo        用户信息
+	 * @param operationModule 实操模块
+	 * @param operationType   实操类型
+	 * @param operationTarget 实操目标
+	 * @return {@code MpLog }
+	 */
 	private MpLog addBasicInfo(UserInfo userInfo, OperationModule operationModule,
 			OperationType operationType, String operationTarget) {
 
@@ -56,6 +85,14 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 		return mpLog;
 	}
 
+	/**
+	 * 新增靶场日志
+	 *
+	 * @param userInfo        用户信息
+	 * @param operationModule 实操模块
+	 * @param operationType   实操类型
+	 * @param operationTarget 实操目标
+	 */
 	@Override
 	public void addCrLog(UserInfo userInfo, OperationModule operationModule, OperationType operationType,
 						 String operationTarget) {
@@ -69,6 +106,15 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 
 	}
 
+	/**
+	 * 新增OJ日志
+	 *
+	 * @param userInfo        用户信息
+	 * @param operationModule 实操模块
+	 * @param operationType   实操类型
+	 * @param operationTarget 实操目标
+	 * @param content         内容
+	 */
 	@Override
 	public void addOjLog(UserInfo userInfo, OperationModule operationModule,
 			OperationType operationType, String operationTarget, String content) {

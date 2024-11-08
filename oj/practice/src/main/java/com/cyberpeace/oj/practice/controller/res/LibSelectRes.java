@@ -8,16 +8,31 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 自由查询结果
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @ApiModel
 public class LibSelectRes implements Serializable {
 
+    /**
+     * 实践设置
+     */
     @ApiModelProperty("习题集数据")
     private List<PracticeSetRes> practiceSet;
 
+    /**
+     * 类别
+     */
     @ApiModelProperty("分类数据")
     private List<CategoryListBo> category;
 
+    /**
+     * 问题类型
+     */
     @ApiModelProperty("题目类型 0=单选 1=多选....")
     private List<Integer> questionType;
 }

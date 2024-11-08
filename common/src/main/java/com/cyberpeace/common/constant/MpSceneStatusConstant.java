@@ -1,5 +1,11 @@
 package com.cyberpeace.common.constant;
 
+/**
+ * 中台场景状态不断
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface MpSceneStatusConstant {
 
 

@@ -6,16 +6,31 @@ import lombok.Data;
 
 /**
  * 任务得分
+ *
+ * @author SN
+ * @date 2024/11/08
  */
 @Data
 public class CrTaskScore implements Serializable {
 
+	/**
+	 * 任务id
+	 */
 	private String taskId;
 
+	/**
+	 * 任务模板id
+	 */
 	private String missionTemplateId;
 
+	/**
+	 * 得分
+	 */
 	private Integer score;
 
+	/**
+	 * 满
+	 */
 	private Integer full;
 
 	public Double getPercent() {

@@ -8,20 +8,38 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 实践理论
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 @Data
 @TableName("oj_practice_theory")
 public class PracticeTheory extends PracticeBase {
 
+	/**
+	 * 理论类型
+	 */
 	@ApiModelProperty("理论基础题型")
 	private Integer theoryType;
 
+	/**
+	 * 空白
+	 */
 	@ApiModelProperty("填空题填空内容")
 	private String blank;
 
+	/**
+	 * 选择
+	 */
 	@ApiModelProperty("选择题选项")
 	@TableField("`option`")
 	private String option;
 
+	/**
+	 * 关键词
+	 */
 	@ApiModelProperty("简答题参考关键字")
 	private String keyword;
 

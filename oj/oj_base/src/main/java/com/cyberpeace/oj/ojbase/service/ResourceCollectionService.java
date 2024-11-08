@@ -7,10 +7,17 @@ import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 资源收集Service
+ *
+ * @author SN
+ * @date 2024/11/08
+ */
 public interface ResourceCollectionService extends IService<ResourceCollection> {
 
 	/**
 	 * 资源收藏和取消收藏
+	 *
 	 * @param collectionContext
 	 * @param isCollection
 	 * @return
@@ -19,15 +26,17 @@ public interface ResourceCollectionService extends IService<ResourceCollection> 
 
 	/**
 	 * 查询资源是否被收藏
+	 *
 	 * @param userId
-	 * @param businessId
 	 * @param businessType
+	 * @param businessId
 	 * @return
 	 */
 	Boolean selectByUnique(String userId, Integer businessType, String businessId);
 
 	/**
 	 * 查询
+	 *
 	 * @param userId
 	 * @param businessType
 	 * @return
@@ -36,6 +45,7 @@ public interface ResourceCollectionService extends IService<ResourceCollection> 
 
 	/**
 	 * 批量查询资源有没有被收藏
+	 *
 	 * @param userId
 	 * @param businessType
 	 * @param businessIds
@@ -45,6 +55,7 @@ public interface ResourceCollectionService extends IService<ResourceCollection> 
 
 	/**
 	 * 查看有多少资源被收藏
+	 *
 	 * @param userId
 	 * @param businessType
 	 * @param businessIds

@@ -17,6 +17,14 @@ public class SpaceActionPageReq extends FrameBasePageReq {
 	@ApiModelProperty("类型，1攻击2防御")
 	private Integer type;
 
+	/**
+	 * 方法id
+	 */
+	@Getter
+	@Setter
+	@ApiModelProperty(value = "方法id")
+	private String methodId;
+
 	public LambdaQueryWrapper<SpaceAction> req2QueryWrapper() {
 		LambdaQueryWrapper<SpaceAction> wrapper = new LambdaQueryWrapper<>();
 		if (StringUtils.isNotBlank(this.getPattern())) {
@@ -27,6 +35,11 @@ public class SpaceActionPageReq extends FrameBasePageReq {
 			wrapper.setEntityClass(SpaceAction.class);
 		}
 		return wrapper;
+	}
+
+	@Override
+	public String getUpperId() {
+		return this.methodId;
 	}
 
 }

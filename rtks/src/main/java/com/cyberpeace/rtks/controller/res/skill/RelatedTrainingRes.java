@@ -27,7 +27,7 @@ public class RelatedTrainingRes implements Serializable {
 	private Integer trainingType;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty(value = "训练难度")
 	private Integer difficulty;

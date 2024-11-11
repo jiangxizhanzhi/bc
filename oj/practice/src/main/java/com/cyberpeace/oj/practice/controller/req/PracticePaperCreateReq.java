@@ -31,7 +31,7 @@ public class PracticePaperCreateReq implements Serializable {
 	private Integer count;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("题目难度")
 	@Size(min = 1, message = OjBusinessErrorCode.QUESTION_DIFFICULTY_NOT_SELECTED)

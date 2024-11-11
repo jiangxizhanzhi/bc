@@ -45,7 +45,7 @@ public class MdCtfBase implements Serializable {
 	private List<String> knowledge;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@MdHeadLine(level = 3, name = "难度", convert = DifficultyConvert.class)
 	private Integer difficulty;

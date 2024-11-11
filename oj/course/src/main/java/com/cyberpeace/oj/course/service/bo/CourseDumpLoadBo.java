@@ -41,7 +41,7 @@ public class CourseDumpLoadBo implements Serializable {
 	private String outline;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 
@@ -56,7 +56,7 @@ public class CourseDumpLoadBo implements Serializable {
 	private String modifyUserId;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	private Boolean isPublic;
 

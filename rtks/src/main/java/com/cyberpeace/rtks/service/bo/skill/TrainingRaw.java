@@ -34,7 +34,7 @@ public class TrainingRaw implements Serializable {
 	private Integer durationTime;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

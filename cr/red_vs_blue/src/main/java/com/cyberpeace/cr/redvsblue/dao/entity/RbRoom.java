@@ -74,7 +74,7 @@ public class RbRoom extends BaseTable {
 	private String trainSkill;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

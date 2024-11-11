@@ -1338,7 +1338,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	/**
-	 * 负荷练习实操
+	 * 加载练习实操
 	 *
 	 * @param practiceSetId 练习设置id
 	 * @param dumpBo        dump bo

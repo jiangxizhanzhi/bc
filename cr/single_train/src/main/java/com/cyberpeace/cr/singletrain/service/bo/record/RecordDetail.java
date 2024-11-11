@@ -49,7 +49,7 @@ public class RecordDetail extends RecordRspBase implements Serializable {
 	private String subTypeString;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty(value = "难度")
 	private Integer difficulty;

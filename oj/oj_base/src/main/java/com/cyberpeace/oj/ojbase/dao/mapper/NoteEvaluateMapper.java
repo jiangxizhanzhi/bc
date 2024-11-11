@@ -35,7 +35,7 @@ public interface NoteEvaluateMapper extends BaseMapper<NoteEvaluate> {
 	 * 批量查询数据
 	 *
 	 * @param noteIds
-	 * @param isPublic 是公共
+	 * @param isPublic 是否公开
 	 * @return
 	 */
 	List<NoteEvaluate> selectBatchNoteIds(@Param("noteIds") List<String> noteIds,

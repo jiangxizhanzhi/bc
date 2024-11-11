@@ -460,7 +460,7 @@ public class BusinessTemplateController {
 	}
 
 	/**
-	 * 批量负荷
+	 * 批量加载
 	 *
 	 * @param file 文件
 	 * @return {@code BaseRsp }

@@ -28,9 +28,9 @@ public class ProgressStatisticsRes implements Serializable {
 	private ProgressProportion medium;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
-	@ApiModelProperty("困难")
+	@ApiModelProperty("难度")
 	private ProgressProportion difficulty;
 
 	/**

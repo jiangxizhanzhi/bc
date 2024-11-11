@@ -59,7 +59,7 @@ public class Note extends AuthTable {
 	private String businessId;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@TableField("public")
 	@ApiModelProperty("是否公开")

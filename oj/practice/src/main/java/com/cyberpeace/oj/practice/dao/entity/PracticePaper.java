@@ -33,7 +33,7 @@ public class PracticePaper extends BaseTable {
 	private Integer count;
 
 	/**
-	 * 困难
+	 * 难度
 	 *///题目难度
 	private String difficulty;
 

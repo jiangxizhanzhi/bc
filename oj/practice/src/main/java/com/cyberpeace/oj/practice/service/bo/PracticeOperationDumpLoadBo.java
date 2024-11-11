@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 练习实操转 储负荷博
+ * 练习实操转 储加载博
  *
  * @author SN
  * @date 2024/11/11

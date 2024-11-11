@@ -81,7 +81,7 @@ public class RoomBaseInfo {
 	private Integer durationTime;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;

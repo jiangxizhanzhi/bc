@@ -35,7 +35,7 @@ public class AdminLessonStatisticsRes implements Serializable {
 	private String type;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("课时难度")
 	private Integer difficulty;

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * 负荷课程请求体
+ * 加载课程请求体
  *
  * @author SN
  * @date 2024/11/11

@@ -21,7 +21,7 @@ public interface AttachmentMapper extends BaseMapper<Attachment> {
 	 * 查询批量id列表
 	 *
 	 * @param attachmentIds 附件id列表
-	 * @param isPublic      是公共
+	 * @param isPublic      是否公开
 	 * @return {@code List<Attachment> }
 	 */
 	List<Attachment> selectBatchIds(@Param("attachmentIds") List<String> attachmentIds,

@@ -15,7 +15,7 @@ public enum DifficultyConvert implements MdConvertEnum<Integer, String> {
 	/**
 	 * 难度转换
 	 *
-	 * @param difficulty 困难
+	 * @param difficulty 难度
 	 * @param desc       描述
 	 */
 	DifficultyConvert(Integer difficulty, String desc) {

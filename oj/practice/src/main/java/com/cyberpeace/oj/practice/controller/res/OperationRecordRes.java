@@ -39,7 +39,7 @@ public class OperationRecordRes implements Serializable {
 	private String setName;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;

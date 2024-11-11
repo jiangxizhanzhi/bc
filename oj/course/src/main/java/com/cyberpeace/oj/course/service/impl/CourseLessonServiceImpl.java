@@ -780,7 +780,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	 * 批量公共练习
 	 *
 	 * @param resourceIds 资源id列表
-	 * @param isPublic    是公共
+	 * @param isPublic    是否公开
 	 * @return {@code Boolean }
 	 */
 	@Override

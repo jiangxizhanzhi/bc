@@ -51,7 +51,7 @@ public class WebCourseRes implements Serializable {
 	private String outline;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("课程难度")
 	private Integer difficulty;

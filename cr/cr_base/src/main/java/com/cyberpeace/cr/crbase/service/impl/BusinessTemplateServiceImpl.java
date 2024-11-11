@@ -787,7 +787,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	/**
-	 * 批量负荷
+	 * 批量加载
 	 *
 	 * @param unZipPath un zip 路径
 	 * @return {@code Boolean }
@@ -846,7 +846,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	/**
-	 * 负荷业务模板
+	 * 加载业务模板
 	 *
 	 * @param template 模板
 	 */

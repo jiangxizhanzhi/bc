@@ -67,13 +67,13 @@ public class AdminLessonListBo implements Serializable {
 	private String videoUrl;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("课时公开和隐藏 true 公开")
 	private Boolean isPublic;

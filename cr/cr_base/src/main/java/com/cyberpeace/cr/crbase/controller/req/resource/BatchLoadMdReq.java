@@ -14,7 +14,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 批量负荷医学博士请求体
+ * 批量加载Markdown请求体
  *
  * @author SN
  * @date 2024/11/07

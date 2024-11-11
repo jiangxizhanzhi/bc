@@ -567,7 +567,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	/**
-	 * 负荷练习理论
+	 * 加载练习理论
 	 *
 	 * @param practiceSetId 练习设置id
 	 * @param dumpBo        dump bo
@@ -681,7 +681,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	/**
-	 * 导出医学博士理论练习
+	 * 导出Markdown理论练习
 	 *
 	 * @param path     路径
 	 * @param theories 理论
@@ -981,10 +981,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	/**
-	 * 改变标题自理论基础医学博士
+	 * 改变标题自理论基础Markdown
 	 *
 	 * @param theory       理论
-	 * @param theoryBaseMd 理论基础医学博士
+	 * @param theoryBaseMd 理论基础Markdown
 	 */
 	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
 		String[] split = theoryBaseMd.getTitle().split("\n");

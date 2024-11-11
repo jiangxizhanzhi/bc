@@ -295,7 +295,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	/**
 	 * 进口练习设置
 	 *
-	 * @param loadReq 负荷请求体
+	 * @param loadReq 加载请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("习题集资源数据导入")

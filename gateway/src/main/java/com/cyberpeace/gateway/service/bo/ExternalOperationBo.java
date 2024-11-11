@@ -56,7 +56,7 @@ public class ExternalOperationBo implements Serializable {
 	private String answer;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度(0-初级，1-中级，2-高级)")
 	private Integer difficulty;
@@ -98,7 +98,7 @@ public class ExternalOperationBo implements Serializable {
 	private String fileName;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;

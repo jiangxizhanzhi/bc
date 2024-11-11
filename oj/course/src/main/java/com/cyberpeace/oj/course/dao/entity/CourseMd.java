@@ -53,7 +53,7 @@ public class CourseMd {
 	private String logo;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@MdHeadLine(level = 3, name = "课程难度", convert = DifficultyConvert.class)
 	private Integer difficulty;

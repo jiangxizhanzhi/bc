@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.SystemProperty;
 
 /**
- * 系统财产Service
+ * 系统配置Service
  *
  * @author SN
  * @date 2024/11/07

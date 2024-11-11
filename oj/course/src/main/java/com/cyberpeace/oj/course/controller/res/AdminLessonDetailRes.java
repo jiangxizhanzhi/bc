@@ -53,12 +53,12 @@ public class AdminLessonDetailRes implements Serializable {
     private String video;
 
     /**
-     * 困难
+     * 难度
      */
     private Integer difficulty;
 
     /**
-     * 是公共
+     * 是否公开
      */
     private Integer isPublic;
 

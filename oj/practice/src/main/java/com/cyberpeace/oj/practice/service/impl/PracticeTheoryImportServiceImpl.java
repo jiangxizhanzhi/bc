@@ -117,10 +117,10 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	}
 
 	/**
-	 * 解析课时理论医学博士
+	 * 解析课时理论Markdown
 	 *
 	 * @param lessonFilePah    课时文件咚咚
-	 * @param mdTheoryPractice 医学博士理论练习
+	 * @param mdTheoryPractice Markdown理论练习
 	 * @return {@code List<PracticeTheory> }
 	 */
 	@Override
@@ -833,7 +833,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	 * 改变标题自理论
 	 *
 	 * @param practiceTheory 练习理论
-	 * @param theoryBaseMd   理论基础医学博士
+	 * @param theoryBaseMd   理论基础Markdown
 	 */
 	private void changeTitleToTheory(PracticeTheory practiceTheory, TheoryBaseMd theoryBaseMd) {
 

@@ -40,7 +40,7 @@ public class AdminPracticeSetBo extends AuthTable {
 	private Integer practiceType;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;

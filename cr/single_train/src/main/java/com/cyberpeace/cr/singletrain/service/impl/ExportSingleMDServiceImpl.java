@@ -71,7 +71,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 	}
 
 	/**
-	 * 导出训练医学博士
+	 * 导出训练Markdown
 	 *
 	 * @param businessTemplateList 业务模板列表
 	 * @param path                 路径

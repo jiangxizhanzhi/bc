@@ -96,7 +96,7 @@ public class CrNoAuthController {
 	private RtksRelatedService rtksRelatedService;
 
 	/**
-	 * 批量负荷医学博士
+	 * 批量加载Markdown
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }

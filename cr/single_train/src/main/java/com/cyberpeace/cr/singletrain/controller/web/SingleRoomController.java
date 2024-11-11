@@ -242,7 +242,7 @@ public class SingleRoomController {
 	}
 
 	/**
-	 * 训练记录医学博士
+	 * 训练记录Markdown
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code BaseRsp<String> }

@@ -26,7 +26,7 @@ public enum UploadAttachmentPermission implements GenericEnum {
      */
     CMS_LESSON_ATTACHMENT(2, "后台课时附件上传", FileTypeContant.LESSON_ATTACHMENT, new String[]{MenuConstant.CMS_COURSES}),
     /**
-     * CMS 系列理论医学博士附件
+     * CMS 系列理论Markdown附件
      */
     CMS_THEORY_MD_ATTACHMENT(3, "后台理论MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.CMS_THEORY_PRACTICE }),
     /**
@@ -34,7 +34,7 @@ public enum UploadAttachmentPermission implements GenericEnum {
      */
     CMS_OPERATION_ATTACHMENT(4, "后台实操习题附件上传", FileTypeContant.OPERATION_PRACTICE_ATTACHMENT, new String[]{ MenuConstant.CMS_PRACTICE_OPERATION }),
     /**
-     * CMS 系列实操医学博士附件
+     * CMS 系列实操Markdown附件
      */
     CMS_OPERATION_MD_ATTACHMENT(5, "后台实操习题MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.CMS_PRACTICE_OPERATION }),
     /**

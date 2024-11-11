@@ -55,7 +55,7 @@ public class CourseName implements Serializable {
 	private String directionName;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

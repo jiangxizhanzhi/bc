@@ -68,7 +68,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	public static final String TASK = "task";
 
 	/**
-	 * 医学博士图标
+	 * Markdown图标
 	 */
 	public static final String MD_LOGO = "./logo.png";
 
@@ -164,7 +164,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	/**
-	 * 导出训练医学博士
+	 * 导出训练Markdown
 	 *
 	 * @param businessTemplateList 业务模板列表
 	 * @param path                 路径

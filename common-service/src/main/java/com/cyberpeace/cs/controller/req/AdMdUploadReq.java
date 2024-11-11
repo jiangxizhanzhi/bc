@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 广告医学博士上传请求体
+ * 竞赛markdown上传请求体
  *
  * @author SN
  * @date 2024/11/07

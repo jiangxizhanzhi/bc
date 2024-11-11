@@ -74,7 +74,7 @@ public class TeamRoom extends BaseTable {
 	private Date endTime;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

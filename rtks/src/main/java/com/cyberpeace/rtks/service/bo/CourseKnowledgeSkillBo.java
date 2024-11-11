@@ -63,7 +63,7 @@ public class CourseKnowledgeSkillBo implements Serializable {
 	private String logo;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("课程难度")
 	private Integer difficulty;

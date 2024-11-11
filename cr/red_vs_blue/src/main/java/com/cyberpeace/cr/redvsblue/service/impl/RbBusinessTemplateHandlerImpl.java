@@ -129,7 +129,7 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	}
 
 	/**
-	 * 真正负荷业务资源
+	 * 真正加载业务资源
 	 *
 	 * @param resource 资源
 	 */
@@ -163,7 +163,7 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	}
 
 	/**
-	 * 负荷训练模板
+	 * 加载训练模板
 	 *
 	 * @param templateContext 模板上下文
 	 */

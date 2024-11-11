@@ -30,7 +30,7 @@ public class TheoryListQueryBo extends PatternBase {
 	private Integer solved;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

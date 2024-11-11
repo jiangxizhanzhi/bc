@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 系统财产Service实现
+ * 系统配置Service实现
  *
  * @author SN
  * @date 2024/11/07

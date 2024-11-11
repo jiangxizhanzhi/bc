@@ -23,7 +23,7 @@ public class MissionTemplatePageReq extends PageReqBase {
 	private Integer type;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	@Setter

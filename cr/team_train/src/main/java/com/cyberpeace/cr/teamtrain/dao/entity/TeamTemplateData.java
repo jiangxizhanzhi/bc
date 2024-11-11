@@ -60,7 +60,7 @@ public class TeamTemplateData implements Serializable {
 	private Date createTime;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

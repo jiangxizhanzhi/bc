@@ -35,7 +35,7 @@ public class WebOperationListReq extends PageReqBase {
 	private Boolean solved;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;

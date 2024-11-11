@@ -26,7 +26,7 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * 按课程列出
 	 *
 	 * @param courseIds 课程id列表
-	 * @param isPublic  是公共
+	 * @param isPublic  是否公开
 	 * @return {@code List<CourseLesson> }
 	 */
 	List<CourseLesson> listByCourses(@Param("courseIds") List<String> courseIds,
@@ -47,7 +47,7 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 *
 	 * @param page     分页
 	 * @param context  上下文
-	 * @param isPublic 是公共
+	 * @param isPublic 是否公开
 	 * @param type     类型
 	 * @return {@code IPage<CourseLesson> }
 	 */
@@ -58,7 +58,7 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	 * 查询由公共
 	 *
 	 * @param resourceId 资源id
-	 * @param isPublic   是公共
+	 * @param isPublic   是否公开
 	 * @return {@code CourseLesson }
 	 */
 	CourseLesson selectByPublic(@Param("resourceId") String resourceId,

@@ -30,7 +30,7 @@ import java.util.List;
 public class SystemPropertyController {
 
     /**
-     * 系统财产Service
+     * 系统配置Service
      */
     @Autowired
     private SystemPropertyService systemPropertyService;

@@ -29,7 +29,7 @@ public class OperationPageReq extends PageReqBase {
     private String practiceSet;
 
     /**
-     * 困难
+     * 难度
      */
     @ApiModelProperty("难度查询(0-初级, 1-中级, 2-高级)")
     private Integer difficulty;

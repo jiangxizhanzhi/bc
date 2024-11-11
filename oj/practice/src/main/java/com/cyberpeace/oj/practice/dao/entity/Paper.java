@@ -53,7 +53,7 @@ public class Paper extends AuthTable {
 	private Double totalScore;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@TableField("public")
 	private Boolean isPublic;

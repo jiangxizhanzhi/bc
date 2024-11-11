@@ -28,7 +28,7 @@ public class AdminTheoryListReq extends PageReqBase {
 	private String categoryId;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	private Integer difficulty;

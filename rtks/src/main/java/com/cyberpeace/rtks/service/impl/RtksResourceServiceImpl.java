@@ -72,7 +72,7 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 	private TransactionTemplate transactionTemplate;
 
 	/**
-	 * 负荷
+	 * 加载
 	 *
 	 * @param req 请求体
 	 */

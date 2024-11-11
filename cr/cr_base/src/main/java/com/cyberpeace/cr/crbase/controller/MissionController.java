@@ -471,7 +471,7 @@ public class MissionController {
 	}
 
 	/**
-	 * 批量负荷
+	 * 批量加载
 	 *
 	 * @param file 文件
 	 * @return {@code BaseRsp }
@@ -516,7 +516,7 @@ public class MissionController {
 	 * 解析 mdfile
 	 *
 	 * @param missionId 任务id
-	 * @param md        医学博士
+	 * @param md        Markdown
 	 * @return {@code BaseRsp<ExtractBase> }
 	 */
 	@ApiOperation("解析md文件数据")

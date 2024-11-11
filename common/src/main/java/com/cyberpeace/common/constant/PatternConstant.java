@@ -49,7 +49,7 @@ public interface PatternConstant {
 	String PARSER_MD_TITLE = "#{1,6}[^#]+";
 
 	/**
-	 * 解析 器理论医学博士标题
+	 * 解析 器理论Markdown标题
 	 */
 	String PARSER_THEORY_MD_TITLE = "#{1,2}[^#]+";
 

@@ -39,7 +39,7 @@ public class Attachment extends BaseTable {
 	private String filePath;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@TableField("public")
 	private Boolean isPublic;

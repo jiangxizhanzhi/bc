@@ -58,7 +58,7 @@ public class TrainingBo implements Serializable {
 	private Integer durationTime;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty(value = "训练难度")
 	private Integer difficulty;

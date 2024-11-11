@@ -46,7 +46,7 @@ public class BusinessTemplate extends AuthTable {
 	private Integer businessType;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

@@ -47,7 +47,7 @@ public class RoleCourseBo implements Serializable {
     private Integer courseDuration;
 
     /**
-     * 困难
+     * 难度
      */
     @ApiModelProperty("课程难度")
     private Integer difficulty;

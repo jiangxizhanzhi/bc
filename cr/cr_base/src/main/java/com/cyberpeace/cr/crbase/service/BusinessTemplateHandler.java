@@ -130,7 +130,7 @@ public class BusinessTemplateHandler {
 	}
 
 	/**
-	 * 负荷业务资源
+	 * 加载业务资源
 	 *
 	 * @param resource 资源
 	 */
@@ -140,7 +140,7 @@ public class BusinessTemplateHandler {
 	}
 
 	/**
-	 * 真正负荷业务资源
+	 * 真正加载业务资源
 	 *
 	 * @param resource 资源
 	 */

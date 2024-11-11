@@ -48,7 +48,7 @@ public class ExportTrainMDController {
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
 	/**
-	 * 导出训练医学博士
+	 * 导出训练Markdown
 	 *
 	 * @param resourceId         资源id
 	 * @param type               类型

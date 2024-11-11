@@ -62,7 +62,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 *
 	 * @param page            分页
 	 * @param theoryListQuery 理论列表查询
-	 * @param isPublic        是公共
+	 * @param isPublic        是否公开
 	 * @return {@code IPage<PracticeTheory> }
 	 */
 	IPage<PracticeTheory> pageByQuery(Page page,
@@ -73,7 +73,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * 查询由设置id列表
 	 *
 	 * @param setIds   设置id列表
-	 * @param isPublic 是公共
+	 * @param isPublic 是否公开
 	 * @return {@code List<String> }
 	 */
 	List<String> selectBySetIds(@Param("setIds") List<String> setIds,
@@ -83,7 +83,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * 查询由类别id列表
 	 *
 	 * @param categoryIds 类别id列表
-	 * @param isPublic    是公共
+	 * @param isPublic    是否公开
 	 * @return {@code List<String> }
 	 */
 	List<String> selectByCategoryIds(@Param("categoryIds") List<String> categoryIds,
@@ -103,7 +103,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * 查询简单
 	 *
 	 * @param theoryListQuery 理论列表查询
-	 * @param isPublic        是公共
+	 * @param isPublic        是否公开
 	 * @return {@code List<TheorySimpleBo> }
 	 */
 	List<TheorySimpleBo> selectSimple(@Param("query") TheoryListQuery theoryListQuery,
@@ -120,7 +120,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	/**
 	 * 查询都由创造试卷
 	 *
-	 * @param difficulties 困难
+	 * @param difficulties 难度
 	 * @param types        类型
 	 * @param directions   方向
 	 * @param practiceIds  练习id列表
@@ -135,7 +135,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * 查询由群类别
 	 *
 	 * @param theoryListQuery 理论列表查询
-	 * @param isPublic        是公共
+	 * @param isPublic        是否公开
 	 * @param userId          用户id
 	 * @param authSetIds      认证设置id列表
 	 * @param practiceType    练习类型
@@ -148,10 +148,10 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 											@Param("practiceType") Integer practiceType);
 
 	/**
-	 * 查询由群困难
+	 * 查询由群难度
 	 *
 	 * @param theoryListQuery 理论列表查询
-	 * @param isPublic        是公共
+	 * @param isPublic        是否公开
 	 * @param userId          用户id
 	 * @param authSetIds      认证设置id列表
 	 * @param practiceType    练习类型

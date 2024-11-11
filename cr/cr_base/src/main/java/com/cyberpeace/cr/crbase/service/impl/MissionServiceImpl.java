@@ -609,7 +609,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	/**
-	 * 批量负荷任务模板
+	 * 批量加载任务模板
 	 *
 	 * @param missionTemplates 任务模板
 	 * @return {@code Boolean }
@@ -834,7 +834,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	/**
-	 * 批量负荷方案
+	 * 批量加载方案
 	 *
 	 * @param unZipPath un zip 路径
 	 */

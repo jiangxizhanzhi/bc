@@ -26,7 +26,7 @@ public class CourseContext extends PatternBase {
 	private List<String> directions;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

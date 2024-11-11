@@ -8,6 +8,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.tool.service.ToolService;
 import com.cyberpeace.cr.tool.service.context.TacticTool;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttackCategory;
@@ -33,6 +34,9 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 
 	@Autowired
 	private SpaceTacticAttackCategoryMapper categoryMapper;
+
+	@Autowired
+	private ToolService toolService;
 
 	@Override
 	public ListRsp<AttackListBo> pageAttack(PageReqBase req) {
@@ -146,6 +150,9 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 		if (category != null) {
 			detail.setCategoryName(category.getName());
 		}
+		// tool
+		List<String> toolIds = JsonUtil.toJsonObjectArray(attack.getTool(), String.class);
+		detail.setTool(toolService.listTacticTool(toolIds));
 		return detail;
 	}
 

@@ -53,13 +53,13 @@ public class WebLessonController {
 	private CourseLessonService courseLessonService;
 
 	/**
-	 * 课场景Service
+	 * 课时场景Service
 	 */
 	@Autowired
 	private LessonSceneService lessonSceneService;
 
 	/**
-	 * 课详情
+	 * 课时详情
 	 *
 	 * @param courseId    课程id
 	 * @param learnedType 学习类型

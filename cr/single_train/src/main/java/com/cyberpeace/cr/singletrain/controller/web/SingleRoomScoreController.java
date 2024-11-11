@@ -269,7 +269,7 @@ public class SingleRoomScoreController {
 	}
 
 	/**
-	 * 获取阶段出口
+	 * 获取阶段导出
 	 *
 	 * @param missionSchemeList 任务计划列表
 	 * @return {@code List<StageExport> }

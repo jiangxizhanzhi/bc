@@ -19,21 +19,46 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 实操事件听者
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class OperationEventListener extends MessageListener {
 
+	/**
+	 * 推送消息处理程序
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * OJ当地场景Service
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * 声明消息类型
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer declareMessageType() {
 		return LocalScene.BusinessCode.PRACTICE.getCode();
 	}
 
+	/**
+	 * 上场景删除
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		// 本地数据删除
@@ -48,6 +73,14 @@ public class OperationEventListener extends MessageListener {
 		return true;
 	}
 
+	/**
+	 * 上场景开始过程
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		OjLocalScene ojLocalScene = ojLocalSceneService.getById(businessId);
@@ -72,6 +105,14 @@ public class OperationEventListener extends MessageListener {
 		return true;
 	}
 
+	/**
+	 * 上场景元素
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		OjLocalScene ojLocalScene = ojLocalSceneService.getById(businessId);

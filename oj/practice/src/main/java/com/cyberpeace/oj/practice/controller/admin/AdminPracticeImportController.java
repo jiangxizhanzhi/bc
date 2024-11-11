@@ -22,18 +22,36 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 管理练习进口Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j(topic = "resourceImport")
 @Api(tags = "oj-后台习题资源数据导入api")
 @RestController
 @RequestMapping("/oj/admin/practice/import")
 public class AdminPracticeImportController {
 
+	/**
+	 * 练习设置Service
+	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
+	/**
+	 * 练习设置进口Service
+	 */
 	@Autowired
 	private PracticeSetImportService practiceSetImportService;
 
+	/**
+	 * 导入 rmtheory
+	 *
+	 * @param rmImportReq 马币进口请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("资管理论习题导入")
 	@PostMapping("/rm/theory")
 	public BaseRsp<Boolean> importRMTheory(@RequestBody @Validated RMImportReq rmImportReq) {
@@ -47,6 +65,12 @@ public class AdminPracticeImportController {
 		}
 	}
 
+	/**
+	 * 导入 RMCTF
+	 *
+	 * @param practiceImportReq 练习进口请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("资管实操习题资源导入")
 	@PostMapping("/rm/ctf")
 	public BaseRsp<Boolean>
@@ -76,6 +100,15 @@ public class AdminPracticeImportController {
 		}
 	}
 
+	/**
+	 * 导出
+	 *
+	 * @param practiceSetId      练习设置id
+	 * @param practiceId         练习id
+	 * @param newPath            新建路径
+	 * @param disableImageExport 禁用图像导出
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("实操习题导出")
 	@GetMapping("/rm/ctf/export")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "set_id", value = "习题编号"),
@@ -94,6 +127,12 @@ public class AdminPracticeImportController {
 		return new BaseRsp<>(filePath);
 	}
 
+	/**
+	 * 重复练习设置检查
+	 *
+	 * @param practiceSetsReq 练习集请求体
+	 * @return {@code BaseRsp<List<String>> }
+	 */
 	@ApiOperation("习题集重复校验")
 	@PostMapping("/inspect_duplication")
 	public BaseRsp<List<String>> duplicatePracticeSetInspect(

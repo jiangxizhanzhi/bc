@@ -51,7 +51,7 @@ public class WebToolController {
 	/**
 	 * 获取列表
 	 *
-	 * @param webToolListReq 蹼工具列表请求体
+	 * @param webToolListReq Web工具列表请求体
 	 * @return {@code BaseRsp<ListRsp<WebToolRsp>> }
 	 */
 	@ApiOperation("工具库列表")

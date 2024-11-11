@@ -23,7 +23,7 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 	private SystemPropertyMapper systemPropertyMapper;
 
 	/**
-	 * 获取出口内置
+	 * 获取导出内置
 	 *
 	 * @return boolean
 	 */

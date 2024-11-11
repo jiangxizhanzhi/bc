@@ -32,43 +32,88 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 试卷Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 @Slf4j
 public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements PaperService {
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 练习理论裁判Mapper
+	 */
 	@Autowired
 	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
+	/**
+	 * 练习实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 练习实操裁判Mapper
+	 */
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
+	/**
+	 * 试卷Mapper
+	 */
 	@Autowired
 	private PaperMapper paperMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 练习类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 练习理论裁判Service
+	 */
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
+	/**
+	 * 练习实操裁判Service
+	 */
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
+	/**
+	 * 练习验证处理器
+	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
+	/**
+	 * 创造
+	 *
+	 * @param paperContext 试卷张上下文
+	 * @return {@code Paper }
+	 */
 	@Override
 	public Paper create(PaperContext paperContext) {
 
@@ -103,6 +148,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		return paper;
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param paperContext 试卷张上下文
+	 * @return {@code Paper }
+	 */
 	@Override
 	public Paper update(PaperContext paperContext) {
 
@@ -135,6 +186,14 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		return paper;
 	}
 
+	/**
+	 * 查询自由练习
+	 *
+	 * @param page        分页
+	 * @param queryBo     查询 bo
+	 * @param authContext auth 上下文
+	 * @return {@code IPage<LibPracticeListBo> }
+	 */
 	@Override
 	public IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo,
 			AuthContext authContext) {
@@ -171,6 +230,14 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		}
 	}
 
+	/**
+	 * 查询都自由练习
+	 *
+	 * @param theoryIds    理论id列表
+	 * @param operationIds 实操id列表
+	 * @param page         分页
+	 * @return {@code IPage<LibPracticeListBo> }
+	 */
 	private IPage<LibPracticeListBo> selectAllLibPractice(List<String> theoryIds,
 			List<String> operationIds, Page page) {
 
@@ -201,6 +268,14 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		return page;
 	}
 
+	/**
+	 * 查询随机练习
+	 *
+	 * @param practiceQuery 练习查询
+	 * @param score         得分
+	 * @param authContext   auth 上下文
+	 * @return {@code List<LibPracticeListBo> }
+	 */
 	@Override
 	public List<LibPracticeListBo> selectRandomPractice(RandomPracticeQuery practiceQuery,
 			Double score, AuthContext authContext) {
@@ -272,6 +347,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 	/**
 	 * 理论习题数据转换
+	 *
 	 * @param queryBo
 	 * @param page
 	 * @return
@@ -289,6 +365,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 	/**
 	 * 实操习题数据转换为列表数据
+	 *
 	 * @param operation
 	 * @return
 	 */
@@ -309,6 +386,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		return listBo;
 	}
 
+	/**
+	 * 练习计数由试卷
+	 *
+	 * @param paperId 试卷id
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer practiceCountByPaper(String paperId) {
 		List<String> operationRefIds = practiceOperationRefMapper.selectByPaper(paperId);
@@ -318,6 +401,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 	/**
 	 * 基础习题数据转换为列表数据
+	 *
 	 * @param practiceTheory
 	 * @return
 	 */
@@ -348,9 +432,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 	/**
 	 * 设置相关参数
+	 *
 	 * @param paper
 	 * @param theoryRefs
-	 * @param operationRefs
+	 * @param operationRefs       实操裁判
+	 * @param practiceContextList 练习上下文列表
 	 */
 	private void setPaperRelateData(Paper paper, List<PracticeTheoryRef> theoryRefs,
 			List<PracticeOperationRef> operationRefs,
@@ -384,6 +470,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 	/**
 	 * 理论题数据转换
+	 *
 	 * @param theoryContexts
 	 * @param paper
 	 * @return
@@ -434,6 +521,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 	/**
 	 * 实操习题数据
+	 *
 	 * @param operationContexts
 	 * @param paper
 	 * @return

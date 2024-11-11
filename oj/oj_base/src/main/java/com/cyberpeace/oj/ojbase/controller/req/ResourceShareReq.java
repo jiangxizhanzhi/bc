@@ -9,17 +9,32 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+/**
+ * 资源共享请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel("资源授权操作")
 public class ResourceShareReq {
 
+	/**
+	 * 资源id列表
+	 */
 	@ApiModelProperty("资源ID")
 	@NotEmpty
 	private List<String> resourceIds;
 
+	/**
+	 * 实操认证id列表
+	 */
 	@ApiModelProperty("授权人编号集合")
 	private List<String> operationAuthIds;
 
+	/**
+	 * 实操认证类型
+	 */
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
 	@NotNull
 	private Integer operationAuthType;

@@ -75,7 +75,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	}
 
 	/**
-	 * 蹼查询都
+	 * Web查询都
 	 *
 	 * @return {@code List<WebToolCategoryRsp> }
 	 */

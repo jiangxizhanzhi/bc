@@ -12,7 +12,7 @@ import com.cyberpeace.cs.dao.entity.SystemProperty;
 public interface SystemPropertyService extends IService<SystemProperty> {
 
 	/**
-	 * 获取出口内置
+	 * 获取导出内置
 	 *
 	 * @return boolean
 	 */

@@ -10,18 +10,62 @@ import com.cyberpeace.oj.course.controller.res.AdminLessonStatisticsRes;
 import com.cyberpeace.oj.course.controller.res.HistogramRes;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 
+/**
+ * 课程学习统计学Service
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public interface CourseLearnStatisticsService {
 
+	/**
+	 * 课程直方图
+	 *
+	 * @param authContext auth 上下文
+	 * @return {@code HistogramRes }
+	 */
 	HistogramRes courseHistogram(AuthContext authContext);
 
+	/**
+	 * 方向直方图
+	 *
+	 * @param authContext auth 上下文
+	 * @return {@code HistogramRes }
+	 */
 	HistogramRes directionHistogram(AuthContext authContext);
 
+	/**
+	 * 课程统计列表
+	 *
+	 * @param context     上下文
+	 * @param page        分页
+	 * @param authContext auth 上下文
+	 * @return {@code ListRsp<AdminCourseStatisticsRes> }
+	 */
 	ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page page,
 			AuthContext authContext);
 
+	/**
+	 * 课程统计列表
+	 *
+	 * @param lessonStatisticsListReq 课统计学列表请求体
+	 * @param page                    分页
+	 * @param pageReq                 分页请求体
+	 * @return {@code ListRsp<AdminLessonStatisticsRes> }
+	 */
 	ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String lessonStatisticsListReq,
 			Page page, LessonStatisticsListReq pageReq);
 
+	/**
+	 * 课统计学详情
+	 *
+	 * @param organizationId 组织id
+	 * @param lessonId       课id
+	 * @param usernameLike   username like
+	 * @param page           分页
+	 * @param sort           排序
+	 * @return {@code ListRsp<AdminLessonStatisticsDetailRes> }
+	 */
 	ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
 			String lessonId, String usernameLike, Page page, String sort);
 

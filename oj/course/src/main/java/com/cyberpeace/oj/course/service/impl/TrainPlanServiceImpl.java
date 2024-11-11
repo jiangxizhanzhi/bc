@@ -29,19 +29,40 @@ import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
 
+/**
+ * 训练计划Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan> implements TrainPlanService {
 
+	/**
+	 * 训练计划Mapper
+	 */
 	@Autowired
 	private TrainPlanMapper trainPlanMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 训练计划列表
+	 *
+	 * @param userInfo 用户信息
+	 * @return {@code List<TrainPlanBo> }
+	 */
 	@Override
 	public List<TrainPlanBo> trainPlanList(UserInfo userInfo) {
 		List<TrainPlan> trainPlans = userInfo.isSuperuser() ? trainPlanMapper.all()
@@ -49,6 +70,13 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		return StreamApiUtils.map(trainPlans, trainPlan -> entityToBo(trainPlan, userInfo));
 	}
 
+	/**
+	 * 分页
+	 *
+	 * @param trainPlanReq 训练计划请求体
+	 * @param userInfo     用户信息
+	 * @return {@code IPage<TrainPlanRsp> }
+	 */
 	@Override
 	public IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo) {
 
@@ -67,6 +95,13 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		return result;
 	}
 
+	/**
+	 * 检查名称重复
+	 *
+	 * @param name   名称
+	 * @param id     id
+	 * @param userId 用户id
+	 */
 	@Override
 	public void checkNameRepeat(String name, String id, String userId) {
 		LambdaQueryWrapper<TrainPlan> queryWrapper = new LambdaQueryWrapper<>();
@@ -83,7 +118,13 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		}
 	}
 
-	/** 数据转换*/
+	/**
+	 * 数据转换
+	 *
+	 * @param trainPlan 训练计划
+	 * @param userInfo  用户信息
+	 * @return {@code TrainPlanBo }
+	 */
 	private TrainPlanBo entityToBo(TrainPlan trainPlan, UserInfo userInfo) {
 		TrainPlanBo planBo = BeanUtils.copy(trainPlan, TrainPlanBo.class);
 		planBo.setTrainPlanName(trainPlan.getName());

@@ -46,7 +46,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	private CrRoleService crRoleService;
 
 	/**
-	 * 蹼插座推Service
+	 * Web插座推Service
 	 */
 	@Autowired
 	private WebSocketPushService webSocketPushService;

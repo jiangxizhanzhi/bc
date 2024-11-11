@@ -27,27 +27,57 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 评论Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 @Slf4j
 public class CommentServiceImpl implements CommentService {
 
+	/**
+	 * 评论Mapper
+	 */
 	@Autowired
 	private CommentMapper commentMapper;
 
+	/**
+	 * 评论喜欢Mapper
+	 */
 	@Autowired
 	private CommentLikeMapper commentLikeMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 新增新增功能评论
+	 *
+	 * @param comment 评论
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer addNewComment(Comment comment) {
 		return commentMapper.insert(comment);
 	}
 
+	/**
+	 * 管理新增新增功能评论
+	 *
+	 * @param comment 评论
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer adminAddNewComment(Comment comment) {
 		String replyCommentId = comment.getReplyId() == null ? comment.getRootId()
@@ -60,6 +90,15 @@ public class CommentServiceImpl implements CommentService {
 		return commentMapper.insert(comment);
 	}
 
+	/**
+	 * 分页评论
+	 *
+	 * @param page         分页
+	 * @param businessId   业务id
+	 * @param businessType 业务类型
+	 * @param children     子级
+	 * @return {@code ListRsp<CommentBo> }
+	 */
 	@Override
 	public ListRsp<CommentBo> pageComment(Page page, String businessId, Integer businessType,
 			boolean children) {
@@ -77,6 +116,11 @@ public class CommentServiceImpl implements CommentService {
 		return PageUtil.getListResult(convert);
 	}
 
+	/**
+	 * 设置子级由第一
+	 *
+	 * @param commentBos 评论BOS
+	 */
 	@Override
 	public void setChildrenByFirst(List<CommentBo> commentBos) {
 		for (CommentBo commentBo : commentBos) {
@@ -111,8 +155,9 @@ public class CommentServiceImpl implements CommentService {
 	/**
 	 * 数据格式转换
 	 *
-	 * @param replyComment
+	 * @param userId       用户id
 	 * @param comment
+	 * @param replyComment
 	 * @return
 	 */
 	private CommentBo commentToBo(String userId, Comment comment, CommentBo replyComment) {
@@ -143,6 +188,14 @@ public class CommentServiceImpl implements CommentService {
 		return commentBo;
 	}
 
+	/**
+	 * comment 就像
+	 *
+	 * @param commentId 评论id
+	 * @param isLike    就像
+	 * @param userId    用户id
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer commentIsLike(String commentId, Boolean isLike, String userId) {
 
@@ -154,6 +207,11 @@ public class CommentServiceImpl implements CommentService {
 				: commentLikeMapper.deleteByUserAndId(userId, commentId);
 	}
 
+	/**
+	 * bath delete 评论
+	 *
+	 * @param commentIds 评论id列表
+	 */
 	@Override
 	public void bathDeleteComment(List<String> commentIds) {
 
@@ -174,6 +232,14 @@ public class CommentServiceImpl implements CommentService {
 		});
 	}
 
+	/**
+	 * 分页父母评论
+	 *
+	 * @param page         分页
+	 * @param businessType 业务类型
+	 * @param content      内容
+	 * @return {@code ListRsp<CommentBo> }
+	 */
 	@Override
 	public ListRsp<CommentBo> pageParentComment(Page page, Integer businessType, String content) {
 		IPage<Comment> iPage = commentMapper.selectParent(page, businessType, content);
@@ -182,6 +248,13 @@ public class CommentServiceImpl implements CommentService {
 		return PageUtil.getListResult(convert);
 	}
 
+	/**
+	 * 分页子级评论
+	 *
+	 * @param page       分页
+	 * @param resourceId 资源id
+	 * @return {@code ListRsp<CommentBo> }
+	 */
 	@Override
 	public ListRsp<CommentBo> pageChildrenComment(Page page, String resourceId) {
 		IPage<Comment> iPage = commentMapper.selectAllByParent(page, resourceId);

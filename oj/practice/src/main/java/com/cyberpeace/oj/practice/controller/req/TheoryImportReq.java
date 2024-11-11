@@ -9,14 +9,26 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * 理论进口请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 public class TheoryImportReq implements Serializable {
 
+	/**
+	 * 练习设置id
+	 */
 	@ApiModelProperty(name = "practice_set_id", value = "习题集编号")
 	@NotBlank
 	private String practiceSetId;
 
+	/**
+	 * 文件
+	 */
 	@ApiModelProperty("文件")
 	@NotNull
 	private MultipartFile file;

@@ -32,7 +32,7 @@ public interface MissionWsCode {
 	Integer NOTICE_Code = 4;
 
 	/**
-	 * 锻炼纸代号
+	 * 锻炼试卷代号
 	 */
 	Integer EXERCISE_PAPER_CODE = 5;
 

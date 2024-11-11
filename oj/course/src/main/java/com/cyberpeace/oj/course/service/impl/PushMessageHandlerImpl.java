@@ -23,16 +23,34 @@ import com.cyberpeace.oj.ojbase.service.bo.LessonPracticeWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
 
+/**
+ * 推消息处理器实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class PushMessageHandlerImpl implements PushMessageHandler {
 
+	/**
+	 * 我 Web 套接字处理程序
+	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	/**
+	 * 课堂群信息Mapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 推送课程练习消息
+	 *
+	 * @param data         数据
+	 * @param ojLocalScene OJ当地场景
+	 */
 	@Override
 	public void pushLessonPracticeMessage(JSONObject data, OjLocalScene ojLocalScene) {
 
@@ -56,6 +74,12 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		myWebSocketHandler.pushMessage(messageContext, ojLocalScene.getShared());
 	}
 
+	/**
+	 * 推送课程消息
+	 *
+	 * @param data         数据
+	 * @param ojLocalScene OJ当地场景
+	 */
 	@Override
 	public void pushLessonMessage(JSONObject data, OjLocalScene ojLocalScene) {
 		if (null == ojLocalScene) {
@@ -74,6 +98,12 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		myWebSocketHandler.pushMessage(messageContext, ojLocalScene.getShared());
 	}
 
+	/**
+	 * 推实操消息
+	 *
+	 * @param data         数据
+	 * @param ojLocalScene OJ当地场景
+	 */
 	@Override
 	public void pushOperationMessage(JSONObject data, OjLocalScene ojLocalScene) {
 		if (null == ojLocalScene) {
@@ -93,6 +123,12 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		myWebSocketHandler.pushMessage(messageContext, ojLocalScene.getShared());
 	}
 
+	/**
+	 * 推送课堂消息
+	 *
+	 * @param data         数据
+	 * @param ojLocalScene OJ当地场景
+	 */
 	@Override
 	public void pushClassroomMessage(JSONObject data, OjLocalScene ojLocalScene) {
 
@@ -111,6 +147,12 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		pushMessageToUser(data, ojLocalScene);
 	}
 
+	/**
+	 * 推消息自不场景课堂
+	 *
+	 * @param data    数据
+	 * @param groupId 群id
+	 */
 	@Override
 	public void pushMessageToNoSceneClassroom(JSONObject data, String groupId) {
 
@@ -137,8 +179,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 	/**
 	 * 推送消息给前台正在使用的用户
+	 *
 	 * @param data
-	 * @param ojLocalScene
+	 * @param ojLocalScene OJ当地场景
 	 */
 	private void pushMessageToUser(JSONObject data, OjLocalScene ojLocalScene) {
 		if (null == ojLocalScene) {
@@ -159,9 +202,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 	/**
 	 * 推送消息给后台批量启动场景用户
+	 *
 	 * @param data
 	 * @param ojLocalScene
-	 * @return
 	 */
 	private void pushMessageToClassroom(JSONObject data, OjLocalScene ojLocalScene) {
 
@@ -188,6 +231,11 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 	}
 
+	/**
+	 * 获取删除消息
+	 *
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getDeleteMessage() {
 		JSONObject dataObj = new JSONObject();
@@ -196,6 +244,13 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		return dataObj;
 	}
 
+	/**
+	 * 推送帮助消息
+	 *
+	 * @param data        数据
+	 * @param classroomId 课堂id
+	 * @param userId      用户id
+	 */
 	@Override
 	public void pushHelpMessage(JSONObject data, String classroomId, String userId) {
 		ClassHelpWsMessageIdentifier identifier = new ClassHelpWsMessageIdentifier();
@@ -210,6 +265,12 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		myWebSocketHandler.pushMessage(messageContext, false);
 	}
 
+	/**
+	 * 推送房间提示消息
+	 *
+	 * @param data   数据
+	 * @param userId 用户id
+	 */
 	@Override
 	public void pushRoomTipsMessage(JSONObject data, String userId) {
 		WsMessageIdentifier identifier = new WsMessageIdentifier();

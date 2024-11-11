@@ -11,6 +11,12 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 外部理论计数博
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class ExternalTheoryCountBo implements Serializable {
     
@@ -65,19 +71,24 @@ public class ExternalTheoryCountBo implements Serializable {
 		this.single = single;
 	}
     
-    @ApiModelProperty("单选题数量")
+	/** 单 */
+	@ApiModelProperty("单选题数量")
     private Integer single;
 
-    @ApiModelProperty("多选题数量")
+	/** 倍数 */
+	@ApiModelProperty("多选题数量")
     private Integer multiple;
 
-    @ApiModelProperty("判断题数量")
+	/** 判断 */
+	@ApiModelProperty("判断题数量")
     private Integer judgement;
 
-    @ApiModelProperty("填空题数量")
+	/** 填空 */
+	@ApiModelProperty("填空题数量")
     private Integer fillBlank;
 
-    @ApiModelProperty("简答题数量")
+	/** 短答案 */
+	@ApiModelProperty("简答题数量")
     private Integer shortAnswer;
     
     

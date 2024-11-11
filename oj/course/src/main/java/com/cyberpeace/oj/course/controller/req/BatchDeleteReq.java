@@ -8,10 +8,19 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 批量删除请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 public class BatchDeleteReq implements Serializable {
 
+    /**
+     * 资源id列表
+     */
     @ApiModelProperty("资源编号数组")
     @NotEmpty
     private List<String> resourceIds;

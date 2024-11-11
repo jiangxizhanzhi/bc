@@ -31,31 +31,65 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 练习设置进口Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j(topic = "resourceImport")
 @Service
 public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper, PracticeSet> implements PracticeSetImportService {
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 练习实操进口Service
+	 */
 	@Autowired
 	private PracticeOperationImportService practiceOperationImportService;
 
+	/**
+	 * 练习理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
-	
+
+	/**
+	 * 练习理论进口Service
+	 */
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
 
+	/**
+	 * 进口马币CTF设置
+	 *
+	 * @param path    路径
+	 * @param envReqs env reqs
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> importRmCtfSet(String path, Map<String, String> envReqs) {
 		// 习题集数据处理
@@ -116,6 +150,12 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 		return existOperations;
 	}
 
+	/**
+	 * 进口马币理论设置
+	 *
+	 * @param path 路径
+	 * @return boolean
+	 */
 	@Override
 	public boolean importRmTheorySet(String path) {
 
@@ -206,7 +246,9 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 
 	/**
 	 * 格式化习题集数据
-	 * @param setJson Json化的习题集数据
+	 *
+	 * @param setJson         Json化的习题集数据
+	 * @param practiceSetPath 练习设置路径
 	 * @return
 	 */
 	private PracticeSet jsonParsePracticeSet(JSONObject setJson, String practiceSetPath) {

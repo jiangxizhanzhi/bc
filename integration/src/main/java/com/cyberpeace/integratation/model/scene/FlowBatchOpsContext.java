@@ -4,11 +4,23 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * 流批量老年 退休金 计划上下文
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class FlowBatchOpsContext extends NodeOpsContext {
 
+	/**
+	 * 运行类型
+	 */
 	private Integer run_type;
 
+	/**
+	 * 流
+	 */
 	private List<FlowInfo> flows;
 
 	public void setRunType(Integer runType) {

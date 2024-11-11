@@ -9,10 +9,19 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 
+/**
+ * 资源戴尔请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @ApiModel
 @Data
 public class ResourceDelReq implements Serializable {
 
+	/**
+	 * 资源id列表
+	 */
 	@ApiModelProperty("资源编号")
 	@NotEmpty
 	private List<String> resourceIds;

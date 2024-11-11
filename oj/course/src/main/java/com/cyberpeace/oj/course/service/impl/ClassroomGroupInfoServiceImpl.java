@@ -48,43 +48,90 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课堂群信息Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInfoMapper, ClassroomGroupInfo> implements ClassroomGroupInfoService {
 
+	/**
+	 * 课堂Mapper
+	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
+	/**
+	 * 课堂群信息Mapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 课堂群档案Mapper
+	 */
 	@Autowired
 	private ClassroomGroupArchiveMapper classroomGroupArchiveMapper;
 
+	/**
+	 * OJ当地场景Service
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * 当地场景Mapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 我 Web 套接字处理程序
+	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	/**
+	 * 课堂验证处理器
+	 */
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
 
+	/**
+	 * 查询由课和用户
+	 *
+	 * @param lessonId    课id
+	 * @param roomId      房间id
+	 * @param authContext auth 上下文
+	 * @return {@code ClassroomGroupInfo }
+	 */
 	@Override
 	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, String roomId, AuthContext authContext) {
 
@@ -108,6 +155,13 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		return null;
 	}
 
+	/**
+	 * 获取群信息由房间
+	 *
+	 * @param classroomId 课堂id
+	 * @param authContext auth 上下文
+	 * @return {@code List<GroupInfoBo> }
+	 */
 	@Override
 	public List<GroupInfoBo> getGroupInfoByRoom(String classroomId, AuthContext authContext) {
 
@@ -176,6 +230,13 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 				classroomGroupInfo -> entityTBo(classroomGroupInfo, userInfoMap));
 	}
 
+	/**
+	 * 更新群组信息
+	 *
+	 * @param classroomId 课堂id
+	 * @param groupCount  群计数
+	 * @return {@code List<GroupInfoBo> }
+	 */
 	@Override
 	public List<GroupInfoBo> updateGroupInfo(String classroomId, Integer groupCount) {
 		// 基本数据校验
@@ -240,6 +301,14 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo, userInfoMap));
 	}
 
+	/**
+	 * 保存群信息
+	 *
+	 * @param classroomId 课堂id
+	 * @param name        名称
+	 * @param data        数据
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer saveGroupInfo(String classroomId, String name, List<GroupInfoBo> data) {
 
@@ -262,6 +331,13 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		return classroomGroupArchiveMapper.insert(groupArchive);
 	}
 
+	/**
+	 * 删除 Classroom 存档
+	 *
+	 * @param classroomId    课堂id
+	 * @param groupArchiveId 群档案id
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer deleteClassroomArchive(String classroomId, String groupArchiveId) {
 		// 数据校验
@@ -270,6 +346,13 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		return classroomGroupArchiveMapper.deleteById(groupArchiveId);
 	}
 
+	/**
+	 * 用户组信息
+	 *
+	 * @param classroomId    课堂id
+	 * @param groupArchiveId 群档案id
+	 * @return {@code List<GroupInfoBo> }
+	 */
 	@Override
 	public List<GroupInfoBo> userGroupInfo(String classroomId, String groupArchiveId) {
 
@@ -315,9 +398,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 使用模板时重新设置分组数据
+	 *
 	 * @param groupInfos
 	 * @param courseLesson
-	 * @return
+	 * @param classroom    课堂
 	 */
 	private void resetEntity(List<ClassroomGroupInfo> groupInfos, CourseLesson courseLesson,
 			Classroom classroom) {
@@ -332,6 +416,13 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	}
 
+	/**
+	 * 设置群场景延迟
+	 *
+	 * @param classroomId 课堂id
+	 * @param end         结束
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean setGroupSceneDelay(String classroomId, Boolean end) {
 
@@ -400,7 +491,8 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 推送数据延时消息
-	 * @param ojLocalScene
+	 *
+	 * @param ojLocalScene OJ当地场景
 	 */
 	private void pushGroupSyncMessage(OjLocalScene ojLocalScene) {
 		GroupWsMessageIdentifier identifier = new GroupWsMessageIdentifier();
@@ -417,6 +509,12 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
+	/**
+	 * 获取群场景延迟状态
+	 *
+	 * @param classroomId 课堂id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean getGroupSceneDelayStatus(String classroomId) {
 
@@ -431,6 +529,12 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		return CommonConstant.FALSE;
 	}
 
+	/**
+	 * 查询群档案
+	 *
+	 * @param classroomId 课堂id
+	 * @return {@code List<ClassroomGroupArchiveBo> }
+	 */
 	@Override
 	public List<ClassroomGroupArchiveBo> selectGroupArchive(String classroomId) {
 
@@ -445,6 +549,15 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	}
 
+	/**
+	 * 移动组用户
+	 *
+	 * @param classroomId 课堂id
+	 * @param fromGroupId 从群id
+	 * @param toGroupId   自群id
+	 * @param userId      用户id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean moveGroupUser(String classroomId, String fromGroupId, String toGroupId,
 			String userId) {
@@ -479,6 +592,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 初始化用户分组信息
+	 *
 	 * @param classroomId
 	 * @param courseLesson
 	 * @param userIds
@@ -510,7 +624,8 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 校验场景是否存在
-	 * @param groupInfos
+	 *
+	 * @param groupInfos 群组信息
 	 */
 	public void enableUpdateGroup(List<ClassroomGroupInfo> groupInfos) {
 		for (ClassroomGroupInfo groupInfo : groupInfos) {
@@ -526,7 +641,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 数据类型转换
+	 *
 	 * @param groupInfo
+	 * @param userInfoMap 用户信息映射
 	 * @return
 	 */
 	private GroupInfoBo entityTBo(ClassroomGroupInfo groupInfo, Map<String, UserInfo> userInfoMap) {
@@ -559,6 +676,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 获取需要修改的组 删除空组(用户被删除导致组员为空)
+	 *
+	 * @param classroomId   课堂id
+	 * @param deleteUserIds 删除用户id列表
 	 * @return
 	 */
 	private List<ClassroomGroupInfo> getUpdateAndDeleteNoneGroup(String classroomId,
@@ -614,6 +734,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 课堂数据校验
+	 *
 	 * @param classroomId
 	 * @return
 	 */
@@ -630,6 +751,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 课时数据校验
+	 *
 	 * @param classroom
 	 * @return
 	 */
@@ -645,6 +767,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 	/**
 	 * 组数据
+	 *
 	 * @param groupId
 	 * @return
 	 */

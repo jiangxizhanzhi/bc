@@ -7,7 +7,7 @@ import java.util.List;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 
 /**
- * 出口训练md服务
+ * 导出训练md服务
  *
  * @author SN
  * @date 2024/11/07

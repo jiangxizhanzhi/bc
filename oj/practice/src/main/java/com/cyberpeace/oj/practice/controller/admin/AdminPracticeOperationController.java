@@ -48,30 +48,60 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/**
+ * 管理练习实操Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "oj-后台实践操作练习相关api")
 @RestController
 @RequestMapping("/oj/admin/practice/operation")
 @RequiresAuthentication
 public class AdminPracticeOperationController extends PublicController<PracticeOperationService, PracticeOperation> {
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 练习实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 练习类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 练习验证处理器
+	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<OperationBo> }
+	 */
 	@ApiOperation("详细信息查询")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -83,6 +113,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp(operationBo);
 	}
 
+	/**
+	 * 新增
+	 *
+	 * @param addReq 新增请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("实践操作习题新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -105,6 +141,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 上传附件
+	 *
+	 * @param multipartFile Multipart 文件
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("实操习题附件上传")
 	@PostMapping("/upload_attachment")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -116,6 +158,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp<>(attachmentBo.getResourceId());
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param updateReq 更新请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("实践操作习题修改")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -134,6 +182,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param delReq 戴尔请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("实践操作习题删除")
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -157,6 +211,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<AdminOperationListBo>> }
+	 */
 	@ApiOperation("分页查询实践操作习题")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -183,6 +243,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}
 
+	/**
+	 * 公开报道
+	 *
+	 * @param publicReq 公共请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("批量公开/隐藏题解")
 	@PatchMapping("/writeup_public")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -201,6 +267,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	}
 
+	/**
+	 * 场景拓扑
+	 *
+	 * @param operationId 实操id
+	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 */
 	@ApiOperation("获取场景拓扑信息")
 	@GetMapping("/scene_topo")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -213,6 +285,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp(topoScene);
 	}
 
+	/**
+	 * 更新场景共享
+	 *
+	 * @param sceneShareModeReq 场景共享模式请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("隔离模式设置")
 	@PatchMapping("/scene_share_mode")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -235,6 +313,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 开始场景
+	 *
+	 * @param operationReq 实操请求体
+	 * @return {@code BaseRsp<JSONObject> }
+	 */
 	@ApiOperation("后台场景启动测试")
 	@PostMapping("/start_scene")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -253,6 +337,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param sceneOperationReq 场景实操请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台场景删除")
 	@DeleteMapping("/delete_scene")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -270,6 +360,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 场景节点重新启动
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台场景节点重启")
 	@PostMapping("/scene_node_restart")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -282,6 +378,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 场景节点重建
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台场景节点重建")
 	@PostMapping("/scene_node_recreate")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
@@ -296,6 +398,12 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 场景更新状态
+	 *
+	 * @param sceneStatusReq 场景状态请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台场景暂停与恢复")
 	@PatchMapping("/scene_update_status")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)

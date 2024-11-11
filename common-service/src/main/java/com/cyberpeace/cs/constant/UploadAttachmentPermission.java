@@ -58,7 +58,7 @@ public enum UploadAttachmentPermission implements GenericEnum {
      */
     CMS_LESSON_VIDEO_ATTACHMENT(10,"后台课时视频附件上传", FileTypeContant.VIDEO_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_COURSES}),
     /**
-     * 蹼OJ理论实践
+     * WebOJ理论练习
      */
     WEB_OJ_THEORY_PRACTICE(11, "前台理论题MD编辑器附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[] { MenuConstant.WEB_OJ_THEORY_PRACTICE }),
     /**

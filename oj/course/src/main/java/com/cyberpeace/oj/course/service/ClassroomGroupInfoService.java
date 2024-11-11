@@ -9,18 +9,27 @@ import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 
 import java.util.List;
 
+/**
+ * 课堂群信息Service
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> {
 
 	/**
 	 * 查询课堂场景 前台使用后台直接返回为空
+	 *
 	 * @param lessonId
+	 * @param roomId      房间id
 	 * @param authContext
 	 * @return
 	 */
 	ClassroomGroupInfo selectByLessonAndUser(String lessonId, String roomId, AuthContext authContext);
 
 	/**
-	 *  查询课堂分组信息
+	 * 查询课堂分组信息
+	 *
 	 * @param classroomId
 	 * @param authContext
 	 * @return
@@ -29,6 +38,7 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 
 	/**
 	 * 更新课堂分组信息
+	 *
 	 * @param classroomId
 	 * @param groupCount
 	 * @return
@@ -37,6 +47,7 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 
 	/**
 	 * 课堂分组模板数据保存
+	 *
 	 * @param classroomId
 	 * @param name
 	 * @param data
@@ -46,6 +57,7 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 
 	/**
 	 * 课堂分组模板删除
+	 *
 	 * @param classroomId
 	 * @param groupArchiveId
 	 * @return
@@ -54,6 +66,7 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 
 	/**
 	 * 使用课堂分组模板
+	 *
 	 * @param classroomId
 	 * @param groupArchiveId
 	 * @return
@@ -62,6 +75,7 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 
 	/**
 	 * 设置场景延时
+	 *
 	 * @param classroomId
 	 * @param end
 	 * @return
@@ -70,13 +84,15 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 
 	/**
 	 * 获取课堂场景延时状态 分组中存在课堂场景延时场景状态即为true
+	 *
 	 * @param classroomId
 	 * @return
 	 */
 	Boolean getGroupSceneDelayStatus(String classroomId);
 
 	/**
-	 *	查询分组模板列表
+	 * 查询分组模板列表
+	 *
 	 * @param classroomId
 	 * @return
 	 */
@@ -84,6 +100,7 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 
 	/**
 	 * 移动用户
+	 *
 	 * @param classroomId
 	 * @param fromGroupId
 	 * @param toGroupId
@@ -94,6 +111,7 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 
 	/**
 	 * 初始化分组数据
+	 *
 	 * @param classroomId
 	 * @param courseLesson
 	 * @param userIds

@@ -8,16 +8,36 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * 竞赛环境Service
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class AdEnvService {
 
+	/**
+	 * 竞赛主机
+	 */
 	private String AD_HOST;
 
+	/**
+	 * 竞赛港口
+	 */
 	private String AD_PORT;
 
+	/**
+	 * 竞赛网址
+	 */
 	private String AD_URL;
 
+	/**
+	 * 获取竞赛主机
+	 *
+	 * @return {@code String }
+	 */
 	public String getAdHost() {
 		if (StringUtils.isBlank(AD_HOST)) {
 			return CommonConstant.EMPTY_STRING;
@@ -25,6 +45,9 @@ public class AdEnvService {
 		return AD_URL;
 	}
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		AD_HOST = SystemPropUtil.getProp("AD_HOST");

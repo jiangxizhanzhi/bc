@@ -49,37 +49,79 @@ import java.util.stream.Collectors;
 import static com.cyberpeace.integratation.constant.LogContent.EXERCISE;
 import static com.cyberpeace.integratation.constant.LogContent.THEORY;
 
+/**
+ * 人中心Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 @Slf4j
 public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment> implements PersonCenterService {
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课程课时Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 评论Mapper
+	 */
 	@Autowired
 	private CommentMapper commentMapper;
 
+	/**
+	 * 人中心Mapper
+	 */
 	@Autowired
 	private PersonCenterMapper personCenterMapper;
 
+	/**
+	 * 资源收集Service
+	 */
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 练习实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 练习类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 分页评论
+	 *
+	 * @param page        分页
+	 * @param userId      用户id
+	 * @param parent      父母
+	 * @param authContext auth 上下文
+	 * @return {@code IPage<PersonComment> }
+	 */
 	@Override
 	public IPage<PersonComment> pageComment(Page page, String userId, String parent,
 			AuthContext authContext) {
@@ -96,6 +138,16 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		return iPage.convert(this::commentToBo);
 	}
 
+	/**
+	 * 分页笔记
+	 *
+	 * @param page         分页
+	 * @param userId       用户id
+	 * @param authContext  auth 上下文
+	 * @param businessType 业务类型
+	 * @param practiceType 练习类型
+	 * @return {@code IPage<PersonNote> }
+	 */
 	@Override
 	public IPage<PersonNote> pageNotes(Page page, String userId, AuthContext authContext,
 									   Integer businessType, Integer practiceType) {
@@ -117,8 +169,13 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 	}
 
 	/**
+	 * 分页收集
+	 *
 	 * @param page
-	 * @param userId 用户ID
+	 * @param userId       用户ID
+	 * @param type         类型
+	 * @param authContext  auth 上下文
+	 * @param practiceType 练习类型
 	 * @return
 	 */
 	@Override
@@ -136,6 +193,13 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		return personCenterMapper.selectByUser(page, userId, type, resourceIds, practiceType);
 	}
 
+	/**
+	 * 研究记录
+	 *
+	 * @param userId      用户id
+	 * @param authContext auth 上下文
+	 * @return {@code BaseRsp<StudyRecord> }
+	 */
 	@Override
 	public BaseRsp<StudyRecord> studyRecords(String userId, AuthContext authContext) {
 		List<String> lessonIds = new ArrayList<>();
@@ -172,6 +236,15 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		return rsp;
 	}
 
+	/**
+	 * 学习期间记录
+	 *
+	 * @param userId      用户id
+	 * @param startTime   开始时间
+	 * @param endTime     结束时间
+	 * @param authContext auth 上下文
+	 * @return {@code BaseRsp<BrokenLine> }
+	 */
 	@Override
 	public BaseRsp<BrokenLine> studyPeriodRecords(String userId, Date startTime, Date endTime,
 			AuthContext authContext) {
@@ -233,6 +306,13 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		return baseRsp;
 	}
 
+	/**
+	 * 查询收集练习
+	 *
+	 * @param userId       用户id
+	 * @param practiceType 练习类型
+	 * @return {@code List<CollectionPracticeBo> }
+	 */
 	@Override
 	public List<CollectionPracticeBo> selectCollectionPractice(String userId,
 			Integer practiceType) {
@@ -286,6 +366,13 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		return Lists.newArrayList();
 	}
 
+	/**
+	 * 查询收集资源id列表
+	 *
+	 * @param userId      用户id
+	 * @param authContext auth 上下文
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> selectCollectionResourceIds(String userId, AuthContext authContext) {
 		List<String> resourceIds = new ArrayList<>();

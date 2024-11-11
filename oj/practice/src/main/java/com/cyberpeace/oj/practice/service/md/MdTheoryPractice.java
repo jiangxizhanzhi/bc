@@ -6,6 +6,12 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 医学博士理论练习
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class MdTheoryPractice implements Serializable {
 

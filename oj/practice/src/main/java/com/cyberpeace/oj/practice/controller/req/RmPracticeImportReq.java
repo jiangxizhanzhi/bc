@@ -6,10 +6,18 @@ import lombok.Data;
 
 import java.util.Map;
 
+/**
+ * 马币练习进口请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class RmPracticeImportReq extends RMImportReq {
 
-    /** key=实操题或习题名称 value=topoId*/
+    /**
+     * key=实操题或习题名称 value=topoId
+     */
     @ApiModelProperty("资源和topo映射关系")
     private Map<String, String> envReqs;
 

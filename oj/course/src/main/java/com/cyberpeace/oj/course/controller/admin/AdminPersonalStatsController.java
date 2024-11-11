@@ -35,6 +35,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * 管理个人统计Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "后台-学习统计-个人统计")
 @RestController
 @RequiresAuthentication
@@ -42,9 +48,18 @@ import java.util.List;
 @Slf4j
 public class AdminPersonalStatsController {
 
+	/**
+	 * 学习统计Service
+	 */
 	@Autowired
 	LearnStatsService learnStatsService;
 
+	/**
+	 * 个人统计数据
+	 *
+	 * @param userStatsReq 用户统计请求体
+	 * @return {@code BaseRsp<ListRsp<UserStatsBo>> }
+	 */
 	@ApiOperation("个人统计")
 	@GetMapping("/person-stats")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -53,6 +68,11 @@ public class AdminPersonalStatsController {
 				true, userStatsReq.getStartTime(), userStatsReq.getEndTime()));
 	}
 
+	/**
+	 * 个人统计排名
+	 *
+	 * @return {@code BaseRsp<UserStatsRankBo> }
+	 */
 	@ApiOperation("个人统计排名")
 	@GetMapping("/person-stats-rank")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -60,6 +80,12 @@ public class AdminPersonalStatsController {
 		return new BaseRsp<>(learnStatsService.getUserLearnRank());
 	}
 
+	/**
+	 * 个人统计详情4计数
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<PersonalStatsDetail4CountBo> }
+	 */
 	@ApiOperation("个人课程学习数量统计")
 	@GetMapping("/person-stats-detail/count")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -68,6 +94,13 @@ public class AdminPersonalStatsController {
 		return new BaseRsp<>(learnStatsService.getPersonalStatsDetail4Count(resourceId));
 	}
 
+	/**
+	 * 个人统计细节4 课程
+	 *
+	 * @param pageReq 分页请求体
+	 * @param userId  用户id
+	 * @return {@code BaseRsp<ListRsp<PersonalStatsDetail4CourseBo>> }
+	 */
 	@ApiOperation("个人课程学习统计")
 	@GetMapping("/person-stats-detail/course")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSE_STATISTICS, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -78,6 +111,11 @@ public class AdminPersonalStatsController {
 				learnStatsService.getPersonalStatsDetail4Course(pageReq.toPageParam(), userId));
 	}
 
+	/**
+	 * 类积分前十名
+	 *
+	 * @return {@code BaseRsp<HistogramRes> }
+	 */
 	@ApiOperation("积分排名-组织积分排名Top10")
 	@GetMapping("/class_integral")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -85,6 +123,11 @@ public class AdminPersonalStatsController {
 		return new BaseRsp<>(learnStatsService.getClassIntegralTopTen("org", ""));
 	}
 
+	/**
+	 * 个人积分前十名
+	 *
+	 * @return {@code BaseRsp<HistogramRes> }
+	 */
 	@ApiOperation("积分排名-个人积分排名Top10")
 	@GetMapping("/personal-integral")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -92,6 +135,12 @@ public class AdminPersonalStatsController {
 		return new BaseRsp<>(learnStatsService.getClassIntegralTopTen("person", ""));
 	}
 
+	/**
+	 * 组织统计排名
+	 *
+	 * @param request 请求
+	 * @return {@code BaseRsp<UserStatsRankBo> }
+	 */
 	@ApiOperation("学习统计排名-组织数据")
 	@GetMapping("/org-stats-rank")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -99,6 +148,12 @@ public class AdminPersonalStatsController {
 		return new BaseRsp<>(learnStatsService.getOrgLearnRank(request));
 	}
 
+	/**
+	 * 组织统计数据
+	 *
+	 * @param userStatsReq 用户统计请求体
+	 * @return {@code BaseRsp<ListRsp<OrgStatsBo>> }
+	 */
 	@ApiOperation("学习数据-组织数据")
 	@GetMapping("/org-stats-data")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -107,6 +162,12 @@ public class AdminPersonalStatsController {
                 userStatsReq.getStartTime(), userStatsReq.getEndTime(), true));
 	}
 
+	/**
+	 * 用户统计数据导出
+	 *
+	 * @param response     响应
+	 * @param userStatsReq 用户统计请求体
+	 */
 	@ApiOperation("学习数据-全部数据-导出")
 	@GetMapping(value = "/user-stats-data-export")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -124,7 +185,14 @@ public class AdminPersonalStatsController {
 				passFields, ExcelHeader.STUDY_STATISTIC);
 		FileUtil.setResponse(file, true, response);
 	}
-    @ApiOperation("学习数据-组织数据-导出")
+
+	/**
+	 * 组织统计数据导出
+	 *
+	 * @param response     响应
+	 * @param userStatsReq 用户统计请求体
+	 */
+	@ApiOperation("学习数据-组织数据-导出")
     @GetMapping(value = "/org-stats-data-export")
     public void orgStatsDataExport(HttpServletResponse response, UserStatsReq userStatsReq) {
         ListRsp<OrgStatsBo> orgStatsData = learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), null, null,

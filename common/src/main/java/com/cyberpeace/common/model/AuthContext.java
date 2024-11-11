@@ -39,7 +39,7 @@ public class AuthContext implements Serializable {
 	private Boolean isAdmin;
 
 	/**
-	 * 获取蹼
+	 * 获取Web
 	 *
 	 * @return {@code Boolean }
 	 */

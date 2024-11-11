@@ -27,18 +27,36 @@ import io.swagger.annotations.ApiOperation;
 
 import java.util.List;
 
+/**
+ * 管理课堂场景Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "oj-后台课堂场景相关api")
 @RestController
 @RequestMapping("/oj/admin/classroom/scene")
 @RequiresAuthentication
 public class AdminClassroomSceneController {
 
+	/**
+	 * 课堂场景Service
+	 */
 	@Autowired
 	private ClassroomSceneService classroomSceneService;
 
+	/**
+	 * 推送消息处理程序
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * 开始场景
+	 *
+	 * @param groupSceneReq 群场景请求体
+	 * @return {@code BaseRsp<JSONObject> }
+	 */
 	@ApiOperation("课堂组场景启动")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -51,6 +69,12 @@ public class AdminClassroomSceneController {
 		return new BaseRsp<>(sceneData);
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param groupSceneReq 群场景请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("课堂场景删除")
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -67,6 +91,13 @@ public class AdminClassroomSceneController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 批量开始场景
+	 *
+	 * @param classroomSceneReq 课堂场景请求体
+	 * @return {@code BaseRsp<List<GroupInfoBo>> }
+	 * @throws InterruptedException 中断异常
+	 */
 	@ApiOperation("课堂课堂场景一键启动")
 	@PostMapping("/batch")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -81,6 +112,12 @@ public class AdminClassroomSceneController {
 		return new BaseRsp<>(groupInfoBos);
 	}
 
+	/**
+	 * 批量删除场景
+	 *
+	 * @param classroomSceneReq 课堂场景请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课堂场景一键清除")
 	@DeleteMapping("/batch")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -93,6 +130,12 @@ public class AdminClassroomSceneController {
 		return new BaseRsp<>(CommonConstant.TRUE);
 	}
 
+	/**
+	 * 教室监视器
+	 *
+	 * @param classroomId 课堂id
+	 * @return {@code BaseRsp<List<SceneMonitorBo>> }
+	 */
 	@ApiOperation("课堂场景监控")
 	@GetMapping("/classroom_monitor")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -103,6 +146,12 @@ public class AdminClassroomSceneController {
 		return new BaseRsp<>(sceneMonitorBos);
 	}
 
+	/**
+	 * 暂停
+	 *
+	 * @param groupSceneReq 群场景请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课堂场景暂停与恢复")
 	@PatchMapping("/pause")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)

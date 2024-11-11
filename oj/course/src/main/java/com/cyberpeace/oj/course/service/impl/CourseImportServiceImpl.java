@@ -52,67 +52,136 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课程进口Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j(topic = "resourceImport")
 @Service
 public class CourseImportServiceImpl implements CourseImportService {
 
+	/**
+	 * 课程类别Service
+	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 课程课Service
+	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
+	/**
+	 * 课配置Service
+	 */
 	@Autowired
 	private LessonConfigService lessonConfigService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 试卷Service
+	 */
 	@Autowired
 	private PaperService paperService;
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 练习实操裁判Service
+	 */
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
+	/**
+	 * 练习实操裁判Mapper
+	 */
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
+	/**
+	 * 练习理论裁判Service
+	 */
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
+	/**
+	 * 练习理论裁判Mapper
+	 */
 	@Autowired
 	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 课程验证处理器
+	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	/**
+	 * 课配置Mapper
+	 */
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 练习实操进口Service
+	 */
 	@Autowired
 	private PracticeOperationImportService practiceOperationImportService;
 
+	/**
+	 * 练习理论进口Service
+	 */
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
 
+	/**
+	 * Parse RM 课程
+	 *
+	 * @param path 路径
+	 * @return {@code Course }
+	 */
 	@Override
 	public Course parseRmCourse(String path) {
 		log.info("Start parsing lesson information! course_path=[{}]", path);
@@ -188,6 +257,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 * json数据转为课程 部分字段属性不对应实体类类型 单独处理
 	 *
 	 * @param jsonObject
+	 * @param path       路径
 	 * @return
 	 */
 	private Course jsonParseCourse(JSONObject jsonObject, String path) {
@@ -209,6 +279,15 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return course;
 	}
 
+	/**
+	 * Parse RM 课程
+	 *
+	 * @param course  课程
+	 * @param path    路径
+	 * @param envReqs env reqs
+	 * @param nameMap 名称映射
+	 * @return {@code List<CourseLesson> }
+	 */
 	@Override
 	public List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
 			Map<String, String> nameMap) {
@@ -244,9 +323,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 对课时数据进行处理
+	 *
 	 * @param lessonPath 课时文件所在地址
-	 * @param course 课程信息
-	 * @param envReqs key=课时名称 value=拓扑编号
+	 * @param course     课程信息
+	 * @param envReqs    key=课时名称 value=拓扑编号
+	 * @param nameMap    名称映射
 	 * @return
 	 */
 	private CourseLesson doParseLesson(String lessonPath, Course course,
@@ -291,6 +372,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 *
 	 * @param path
 	 * @param course
+	 * @param envReqs env reqs
 	 * @return
 	 */
 	private CourseLesson parseLesson(String path, Course course, Map<String, String> envReqs) {
@@ -360,9 +442,10 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 课时数据处理
-	 * @param lessonPath 课时目录
+	 *
+	 * @param lessonPath   课时目录
 	 * @param courseLesson 课时数据
-	 * @param courseId 课程编号
+	 * @param courseId     课程编号
 	 */
 	private void parseLessonHandout(String lessonPath, CourseLesson courseLesson, String courseId) {
 
@@ -448,6 +531,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 * 解析课时json数据 处理不能转化的数据
 	 *
 	 * @param jsonObject
+	 * @param lessonReadmePath 课程自述文件路径
 	 * @return
 	 */
 	private CourseLesson jsonParseLesson(JSONObject jsonObject, String lessonReadmePath) {
@@ -498,6 +582,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return courseLesson;
 	}
 
+	/**
+	 * 解析 rm 课程配置
+	 *
+	 * @param course        课程
+	 * @param path          路径
+	 * @param lessonNameMap 课名称映射
+	 * @return {@code List<LessonConfig> }
+	 */
 	@Override
 	public List<LessonConfig> parseRmLessonConfig(Course course, String path,
 			Map<String, String> lessonNameMap) {
@@ -575,6 +667,15 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return lessonConfigs;
 	}
 
+	/**
+	 * R mCourse 导入
+	 *
+	 * @param path             路径
+	 * @param envReqs          env reqs
+	 * @param operationEnvReqs 实操环境要求
+	 * @param authContext      auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean rMCourseImport(String path, Map<String, String> envReqs,
 			Map<String, Map<String, String>> operationEnvReqs, AuthContext authContext) {
@@ -617,7 +718,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 课后练习相关数据存储
-	 * @param lessonPractice
+	 *
+	 * @param lessonPractice 课程练习
 	 */
 	private void saveLessonPractice(List<LessonPracticeImportBo> lessonPractice) {
 		List<Paper> papers = Lists.newArrayList();
@@ -648,8 +750,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 查询需要被删除的拓扑编号
+	 *
 	 * @param lessons 组装完成的课时信息 课时信息使用的是新的拓扑
-	 * @param envReq key=课时名称 value=拓扑编号
+	 * @param envReq  key=课时名称 value=拓扑编号
 	 * @return
 	 */
 	private List<String> selectDeleteTopoIds(List<CourseLesson> lessons,
@@ -665,8 +768,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 获取课程拓扑编号数据
+	 *
 	 * @param lessons 解析完成之后的课时信息
-	 * @param envReq key=课时目录名称 value=拓扑编号
+	 * @param envReq  key=课时目录名称 value=拓扑编号
 	 * @return
 	 */
 	private List<String> selectLessonTopoIds(List<CourseLesson> lessons,
@@ -700,7 +804,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 拓扑数据删除
-	 * @param topoIds
+	 *
+	 * @param topoIds 拓扑id列表
 	 */
 	private void deleteLessonPracticeTopo(List<String> topoIds) {
 
@@ -717,6 +822,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 获取当前课后练习拓扑编号
+	 *
 	 * @param lessons 课时列表
 	 * @return
 	 */
@@ -727,7 +833,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 解析课后练习数据
-	 * @param lessons 课时信息
+	 *
+	 * @param lessons          课时信息
 	 * @param operationEnvReqs 课后练习对应的拓扑数据 key=课时名称 value=<key=实操题目名称， value=拓扑编号>
 	 * @return
 	 */
@@ -807,6 +914,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 初始化试卷数据
+	 *
 	 * @param lesson
 	 * @param practiceContexts
 	 * @return
@@ -822,6 +930,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 将实操题目转换为课后练习数据格式
+	 *
+	 * @param paperId   试卷id
 	 * @param operation
 	 * @return
 	 */
@@ -835,6 +945,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 将题论题转换为课后练习数据格式
+	 *
 	 * @param paperId
 	 * @param theory
 	 * @return
@@ -852,7 +963,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	/**
 	 * 设置习题分数
-	 * @param resourceId 习题编号
+	 *
+	 * @param resourceId   习题编号
 	 * @param practiceType 习题类型
 	 * @return
 	 */
@@ -886,6 +998,13 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return paper;
 	}
 
+	/**
+	 * 生成 COMBINE 课程
+	 *
+	 * @param courseInfo  课程信息
+	 * @param existConfig 存在配置
+	 * @return {@code Course }
+	 */
 	public Course generateCombineCourse(CombinedCourseImportContext courseInfo,
 			List<String> existConfig) {
 
@@ -938,6 +1057,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return course;
 	}
 
+	/**
+	 * 生成课程配置
+	 *
+	 * @param course        课程
+	 * @param courseInfos   课程信息
+	 * @param lessonNameMap 课名称映射
+	 * @return {@code List<LessonConfig> }
+	 */
 	public List<LessonConfig> generateLessonConfig(Course course,
 			List<CombinedCourseImportContext> courseInfos, Map<String, String> lessonNameMap) {
 
@@ -993,6 +1120,13 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return lessonConfigs;
 	}
 
+	/**
+	 * r m组合课程导入
+	 *
+	 * @param courseInfos 课程信息
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 
 	public Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos,
@@ -1084,6 +1218,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return true;
 	}
 
+	/**
+	 * 摧毁失败拓扑
+	 *
+	 * @param envReqs          env reqs
+	 * @param operationEnvReqs 实操环境要求
+	 */
 	@Override
 	public void destroyFailedTopo(Map<String, String> envReqs,
 			Map<String, Map<String, String>> operationEnvReqs) {

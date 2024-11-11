@@ -34,7 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * 出口训练md服务实现
+ * 导出训练md服务实现
  *
  * @author SN
  * @date 2024/11/07
@@ -131,7 +131,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	/**
-	 * 选择类型和出口训练
+	 * 选择类型和导出训练
 	 *
 	 * @param resourceIds        资源id列表
 	 * @param path               路径
@@ -164,7 +164,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	/**
-	 * 出口训练医学博士
+	 * 导出训练医学博士
 	 *
 	 * @param businessTemplateList 业务模板列表
 	 * @param path                 路径
@@ -178,7 +178,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	/**
-	 * 出口写入向上
+	 * 导出写入向上
 	 *
 	 * @param writeUp     写入向上
 	 * @param writeUpFile 写入向上文件
@@ -210,7 +210,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	/**
-	 * 出口场景
+	 * 导出场景
 	 *
 	 * @param topoId             拓扑id
 	 * @param envPath            env 路径
@@ -263,7 +263,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	/**
-	 * 出口IMG和写入向上
+	 * 导出IMG和写入向上
 	 *
 	 * @param writeUp 写入向上
 	 * @param title   标题
@@ -289,7 +289,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	/**
-	 * 出口任务
+	 * 导出任务
 	 *
 	 * @param missionTemplate 任务模板
 	 * @param taskList        任务列表

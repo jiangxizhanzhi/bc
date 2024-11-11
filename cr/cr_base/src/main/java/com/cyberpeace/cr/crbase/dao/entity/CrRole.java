@@ -77,7 +77,7 @@ public class CrRole extends BaseTable {
 	private String userIds;
 
 	/**
-	 * 练习纸
+	 * 练习试卷
 	 */
 	private String exercisePaper;
 

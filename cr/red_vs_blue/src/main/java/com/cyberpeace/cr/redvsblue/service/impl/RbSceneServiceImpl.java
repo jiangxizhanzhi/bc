@@ -422,7 +422,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 * 暂停操作前检查
 	 *
 	 * @param room 房间
-	 * @param flag 旗
+	 * @param flag flag
 	 */
 	private void checkBeforePauseOps(RbRoom room, Integer flag) {
 		if (room == null) {

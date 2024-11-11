@@ -11,18 +11,38 @@ import com.cyberpeace.oj.practice.service.PracticeSetService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 练习身份验证侦听器
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 @Slf4j
 public class PracticeAuthListener extends AuthMessageListener {
 
+	/**
+	 * 练习设置Service
+	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
+	/**
+	 * 声明消息类型
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer declareMessageType() {
 		return LocalScene.BusinessCode.PRACTICE.getCode();
 	}
 
+	/**
+	 * 用户删除时
+	 *
+	 * @param users 用户
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onUserDelete(List<String> users) {
 
@@ -35,6 +55,12 @@ public class PracticeAuthListener extends AuthMessageListener {
 		return true;
 	}
 
+	/**
+	 * 在组织删除时
+	 *
+	 * @param orgs 组织
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onOrgDelete(List<String> orgs) {
 

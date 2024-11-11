@@ -50,7 +50,7 @@ public class WsPath {
 	public static final String LESSON_SCENE = "/ws/course/lesson_scene";
 
 	/**
-	 * 课实践场景
+	 * 课练习场景
 	 */
 	public static final String LESSON_PRACTICE_SCENE = "/ws/course/lesson/operation/scene";
 
@@ -80,7 +80,7 @@ public class WsPath {
 	public static final String NOTICE = "/ws/cr/ce_base/notice";
 
 	/**
-	 * 练习纸
+	 * 练习试卷
 	 */
 	public static final String EXERCISE_PAPER = "/ws/cr/ce_base/exercise_paper";
 

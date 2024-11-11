@@ -11,6 +11,12 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 课堂统计 bo
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 @Builder
@@ -18,12 +24,21 @@ import java.util.List;
 @NoArgsConstructor
 public class ClassroomStatisticBo implements Serializable {
 
+	/**
+	 * 等级分布
+	 */
 	@ApiModelProperty("成绩统计")
 	private GradeDistributionBo gradeDistribution;
 
+	/**
+	 * 标志信息
+	 */
 	@ApiModelProperty("签到统计")
 	private SignInfoBo signInfo;
 
+	/**
+	 * 前 20 名
+	 */
 	@ApiModelProperty("top20")
 	private List<UserNoteScoreBo> top20;
 

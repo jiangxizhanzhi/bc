@@ -7,6 +7,12 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.*;
 
+/**
+ * OJ当地场景
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,21 +20,45 @@ import lombok.*;
 @TableName("oj_local_scene")
 public class OjLocalScene extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 共享
+	 */
 	private Boolean shared;
 
+	/**
+	 * 从 Web
+	 */
 	private Boolean fromWeb;
 
+	/**
+	 * 标志
+	 */
 	private String flags;
 
+	/**
+	 * 业务id
+	 */
 	private String businessId;
 
+	/**
+	 * 业务类型
+	 */
 	private Integer businessType;
 
+	/**
+	 * 当地场景id
+	 */
 	private String localSceneId;
 
 	public enum BusinessType implements GenericEnum {

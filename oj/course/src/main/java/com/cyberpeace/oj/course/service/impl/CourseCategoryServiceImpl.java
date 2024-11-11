@@ -29,16 +29,35 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课程类别Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 @Slf4j
 public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper, CourseCategory> implements CourseCategoryService {
 
+	/**
+	 * 课程类别Mapper
+	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
+	/**
+	 * 课程验证处理器
+	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	/**
+	 * 获取子级id列表
+	 *
+	 * @param directionId 方向id
+	 * @param self        自我
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getChildrenIds(String directionId, Boolean self) {
 		CourseCategory courseCategory = courseCategoryMapper.selectById(directionId);
@@ -52,6 +71,12 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		return directionIds;
 	}
 
+	/**
+	 * 查询都
+	 *
+	 * @param children 子级
+	 * @return {@code List<CourseCategoryBo> }
+	 */
 	@Override
 	public List<CourseCategoryBo> selectAll(Boolean children) {
 		// 查询所有
@@ -66,6 +91,14 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		return BeanUtils.deepCopyList(allCategory, CourseCategoryBo.class);
 	}
 
+	/**
+	 * 分页由搜索
+	 *
+	 * @param page     分页
+	 * @param pattern  模式
+	 * @param children 子级
+	 * @return {@code IPage<CourseCategoryBo> }
+	 */
 	@Override
 	public IPage<CourseCategoryBo> pageBySearch(Page page, String pattern, Boolean children) {
 		IPage<CourseCategory> iPage = courseCategoryMapper.pageBySearch(page, pattern);
@@ -79,6 +112,12 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 				.convert(courseCategory -> BeanUtils.copy(courseCategory, CourseCategoryBo.class));
 	}
 
+	/**
+	 * 保存或更新
+	 *
+	 * @param categoryAddBo 类别新增博
+	 * @return {@code CourseCategory }
+	 */
 	@Override
 	public CourseCategory saveOrUpdate(CategoryAddBo categoryAddBo) {
 
@@ -109,6 +148,12 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		return courseCategory;
 	}
 
+	/**
+	 * 批量删除由id列表
+	 *
+	 * @param resourceIds 资源id列表
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer batchDeleteByIds(List<String> resourceIds) {
 		// 数据校验
@@ -128,6 +173,13 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		return courseCategoryMapper.deleteBatchIds(resourceIds);
 	}
 
+	/**
+	 * 查询由id
+	 *
+	 * @param resourceId 资源id
+	 * @param children   子级
+	 * @return {@code CourseCategoryBo }
+	 */
 	@Override
 	public CourseCategoryBo selectById(String resourceId, Boolean children) {
 
@@ -144,6 +196,12 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 		return BeanUtils.copy(courseCategory, CourseCategoryBo.class);
 	}
 
+	/**
+	 * 获取或创造
+	 *
+	 * @param categoryName 类别名称
+	 * @return {@code CourseCategory }
+	 */
 	@Override
 	public CourseCategory getOrCreate(String categoryName) {
 		String resourceId = IDGeneratorUtil.getID();
@@ -160,7 +218,8 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	}
 
 	/**
-	 * 获取以父节点编号为key的map数据 
+	 * 获取以父节点编号为key的map数据
+	 *
 	 * @param code 为空则为全部数据，非空则为当前节点下的数据（除一级分类，父节点为空）
 	 * @return
 	 */
@@ -180,6 +239,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 
 	/**
 	 * 数据封装转换
+	 *
 	 * @param categories
 	 * @param categoryMap
 	 * @return
@@ -196,6 +256,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 
 	/**
 	 * 课程课时分类组装
+	 *
 	 * @param courseCategory
 	 * @param categoryMap
 	 * @return

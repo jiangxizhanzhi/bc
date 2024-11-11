@@ -21,15 +21,30 @@ import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * Web资源收集Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "oj-前台资源收藏相关api")
 @RestController
 @RequestMapping("/oj/collection")
 @RequiresAuthentication
 public class WebResourceCollectionController {
 
+	/**
+	 * 资源收集Service
+	 */
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
+	/**
+	 * 新增
+	 *
+	 * @param collectionReq 收集请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("资源收藏或取消收藏")
 	@PostMapping("")
 	@RequiresPermissions(

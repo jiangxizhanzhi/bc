@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 锻炼纸请求体
+ * 锻炼试卷请求体
  *
  * @author SN
  * @date 2024/11/07
@@ -15,7 +15,7 @@ import lombok.Data;
 public class ExercisePaperReq implements Serializable {
 
 	/**
-	 * 练习纸
+	 * 练习试卷
 	 */
 	@ApiModelProperty(value = "演习文书")
 	private String exercisePaper;

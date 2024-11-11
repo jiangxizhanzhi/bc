@@ -7,10 +7,19 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 课程转 储请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 public class CourseDumpReq implements Serializable {
 
+	/**
+	 * 资源id列表
+	 */
 	@ApiModelProperty("课程编号")
 	private List<String> resourceIds;
 

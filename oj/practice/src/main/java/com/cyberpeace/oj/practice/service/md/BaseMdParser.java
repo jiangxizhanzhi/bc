@@ -14,10 +14,19 @@ import com.google.common.collect.Lists;
 
 /**
  * 任务解析
+ *
+ * @author SN
+ * @date 2024/11/11
  */
 @Service
 public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String> {
 
+	/**
+	 * 解析
+	 *
+	 * @param content 内容
+	 * @return {@code List<TheoryBaseMd> }
+	 */
 	@Override
 	public List<TheoryBaseMd> parse(Object content) {
 		if(content == null){
@@ -56,6 +65,12 @@ public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String>
 		return theoryBaseMdList;
 	}
 
+	/**
+	 * 写入
+	 *
+	 * @param theoryBaseMds 理论基础MDS
+	 * @return {@code String }
+	 */
 	@Override
 	public String write(List<TheoryBaseMd> theoryBaseMds) {
 		String str = System.lineSeparator();

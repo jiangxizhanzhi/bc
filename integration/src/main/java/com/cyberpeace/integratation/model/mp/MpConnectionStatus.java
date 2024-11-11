@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 中台连接状态
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class MpConnectionStatus implements Serializable {
 

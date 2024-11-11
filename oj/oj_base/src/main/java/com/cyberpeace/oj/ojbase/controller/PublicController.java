@@ -23,18 +23,41 @@ import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
+/**
+ * 公共Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public abstract class PublicController<T extends IService<E>, E> {
 
+	/**
+	 * 基础Service
+	 */
 	@Autowired
 	protected T baseService;
 
+	/**
+	 * 实体类
+	 */
 	protected Class<E> entityClass = currentModelCls();
 
+	/**
+	 * 当前型号 CLS
+	 *
+	 * @return {@code Class<E> }
+	 */
 	@SuppressWarnings("unchecked")
 	private Class<E> currentModelCls() {
 		return (Class<E>) ReflectionKit.getSuperClassGenericType(this.getClass(), 1);
 	}
 
+	/**
+	 * 批量公共
+	 *
+	 * @param requestData 请求数据
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PatchMapping("/batch-public")
 	@ApiOperation("资源公开/隐藏")
 	@RequiresPermissions(
@@ -56,10 +79,9 @@ public abstract class PublicController<T extends IService<E>, E> {
 
 	/**
 	 * 数据更新
+	 *
 	 * @param collection
 	 * @param mapperValue
-	 * @param <U>
-	 * @param <V>
 	 * @return
 	 */
 	protected <U, V> Boolean updateData(Collection<U> collection, Function<U, V> mapperValue) {

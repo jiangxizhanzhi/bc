@@ -26,24 +26,47 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 练习试卷Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "oj-前台自由组卷相关api")
 @RestController
 @RequestMapping("/oj/web/paper")
 @RequiresAuthentication
 public class PracticePaperController {
 
+	/**
+	 * 练习试卷Service
+	 */
 	@Autowired
 	private PracticePaperService practicePaperService;
 
+	/**
+	 * 练习理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	/**
+	 * 试卷练习理论Service
+	 */
 	@Autowired
 	private PaperPracticeTheoryService paperPracticeTheoryService;
 
+	/**
+	 * 练习试卷Mapper
+	 */
 	@Autowired
 	private PracticePaperMapper practicePaperMapper;
 
+	/**
+	 * 获取进展由类别
+	 *
+	 * @return {@code BaseRsp<List<CategoryProgressRes>> }
+	 */
 	@ApiOperation("统计所有方向的做题进度")
 	@GetMapping("/category/progress")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -51,6 +74,11 @@ public class PracticePaperController {
 		return new BaseRsp<>(practiceTheoryService.getProgressByCategory());
 	}
 
+	/**
+	 * 获取试卷设置
+	 *
+	 * @return {@code BaseRsp<PracticePaperCreateReq> }
+	 */
 	@ApiOperation("获取上次的组卷信息")
 	@GetMapping("/paper_setting")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -58,6 +86,12 @@ public class PracticePaperController {
 		return new BaseRsp<>(practicePaperService.getLastPaperSetting());
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param practicePaperCreateReq 练习试卷创造请求体
+	 * @return {@code BaseRsp<PracticePaper> }
+	 */
 	@ApiOperation("组卷")
 	@PostMapping("/create")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -65,6 +99,11 @@ public class PracticePaperController {
 		return new BaseRsp(practicePaperService.createPaper(practicePaperCreateReq));
 	}
 
+	/**
+	 * 获取类别top6
+	 *
+	 * @return {@code BaseRsp<List<CategoryProgressRes>> }
+	 */
 	@ApiOperation("知识技能Top6")
 	@GetMapping("/category_top6")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -81,6 +120,12 @@ public class PracticePaperController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 获取试卷总结
+	 *
+	 * @param paperId 试卷id
+	 * @return {@code BaseRsp<PaperSummaryRes> }
+	 */
 	@ApiOperation("试卷概要")
 	@GetMapping("/summary")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -88,6 +133,12 @@ public class PracticePaperController {
 		return new BaseRsp(practicePaperService.getPaperSummaryRes(paperId));
 	}
 
+	/**
+	 * 获取Web理论博
+	 *
+	 * @param practiceId 练习id
+	 * @return {@code BaseRsp<WebTheoryBo> }
+	 */
 	@ApiOperation("查看练习详情")
 	@GetMapping("/practice_detail")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -95,6 +146,12 @@ public class PracticePaperController {
 		return new BaseRsp<>(paperPracticeTheoryService.getPracticeDetail(practiceId));
 	}
 
+	/**
+	 * 提交答案
+	 *
+	 * @param answerReq 答案请求体
+	 * @return {@code BaseRsp<EvaluateResultTheory> }
+	 */
 	@ApiOperation("提交答案")
 	@PostMapping("/submit_answer")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -102,6 +159,12 @@ public class PracticePaperController {
 		return new BaseRsp<>(paperPracticeTheoryService.submitAnswer(answerReq.getResourceId(), answerReq.getSubmitAnswer()));
 	}
 
+	/**
+	 * 收集
+	 *
+	 * @param collectionReq 收集请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("(取消)收藏")
 	@PostMapping("/practice_collection")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -109,6 +172,12 @@ public class PracticePaperController {
 		return new BaseRsp<>(paperPracticeTheoryService.collection(collectionReq));
 	}
 
+	/**
+	 * 提交论文
+	 *
+	 * @param paperId 试卷id
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("交卷")
 	@GetMapping("/submit_paper")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -119,6 +188,11 @@ public class PracticePaperController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 获取最后5试卷记录
+	 *
+	 * @return {@code BaseRsp<List<PaperRecordRes>> }
+	 */
 	@ApiOperation("最近5条组卷记录")
 	@GetMapping("/record")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -131,6 +205,12 @@ public class PracticePaperController {
 		}
 	}
 
+	/**
+	 * 获取记录总结
+	 *
+	 * @param isFinish 结束了
+	 * @return {@code BaseRsp<List<PaperRecordSummaryResByDay>> }
+	 */
 	@ApiOperation("组卷记录概要")
 	@GetMapping("/record_summary")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -138,6 +218,12 @@ public class PracticePaperController {
 		return new BaseRsp<>(practicePaperService.getAllPaperRecord(isFinish));
 	}
 
+	/**
+	 * 获取试卷记录详情
+	 *
+	 * @param paperId 试卷id
+	 * @return {@code BaseRsp<PaperRecordDetailRes> }
+	 */
 	@ApiOperation("查看组卷详情")
 	@GetMapping("/record_detail")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
@@ -145,6 +231,12 @@ public class PracticePaperController {
 		return new BaseRsp<>(practicePaperService.getPaperRecordDetail(paperId));
 	}
 
+	/**
+	 * 再次练习
+	 *
+	 * @param paperId 试卷id
+	 * @return {@code BaseRsp<PracticePaper> }
+	 */
 	@ApiOperation("再练一次")
 	@GetMapping("/practice_again")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)

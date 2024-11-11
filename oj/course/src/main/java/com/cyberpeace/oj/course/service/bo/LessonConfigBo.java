@@ -13,46 +13,91 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 
+/**
+ * 课程配置 bo
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel("课程目录配置信息")
 public class LessonConfigBo implements Serializable {
 
+	/**
+	 * 课程id
+	 */
 	@ApiModelProperty("课程编号")
 	private String courseId;
 
+	/**
+	 * 指数
+	 */
 	@ApiModelProperty("位置编号")
 	private Integer index;
 
+	/**
+	 * 是学习
+	 */
 	@ApiModelProperty("是否学习")
 	private boolean isLearn;
 
+	/**
+	 * 必修
+	 */
 	@ApiModelProperty("是否必修")
 	private Integer compulsory;
 
+	/**
+	 * 课id
+	 */
 	@ApiModelProperty("课程编号")
 	private String lessonId;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty("课时类型 0-理论 1-实验")
 	private Integer type;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("名称")
 	private String name;
 
+	/**
+	 * 节点类型
+	 */
 	@ApiModelProperty("节点类型")
 	private Integer nodeType;
 
+	/**
+	 * 父母id
+	 */
 	@ApiModelProperty("父节点编号")
 	private String parentId;
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("资源编号")
 	private String resourceId;
 
+	/**
+	 * 章名称
+	 */
 	@ApiModelProperty("章节名称")
 	private String chapterName;
 
+	/**
+	 * 子级
+	 */
 	@ApiModelProperty("子节点")
 	private List<LessonConfigBo> children;
 
+	/**
+	 * 类型索引
+	 */
 	@ApiModelProperty("目录信息索引 课时1 章节1")
 	private String typeIndex;
 

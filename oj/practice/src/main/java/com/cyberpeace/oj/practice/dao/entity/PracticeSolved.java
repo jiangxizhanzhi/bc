@@ -8,29 +8,65 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 练习解决
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @TableName("oj_practice_solved")
 public class PracticeSolved extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 提交用户id
+	 */
 	private String submitUserId;
 
+	/**
+	 * 提交答案
+	 */
 	private String submitAnswer;
 
+	/**
+	 * 得分
+	 */
 	private Double score;
 
+	/**
+	 * 总分
+	 */
 	private Double totalScore;
 
+	/**
+	 * 解决
+	 */
 	private Boolean solved;
 
+	/**
+	 * 练习id
+	 */
 	private String practiceId;
 
+	/**
+	 * 练习类型
+	 */
 	private Integer practiceType;
 
+	/**
+	 * 收集
+	 */
 	private Boolean collection;
 
+	/**
+	 * 是试卷
+	 */
 	private Boolean isPaper = false;
 
 	public enum SolvedStatus implements GenericEnum {

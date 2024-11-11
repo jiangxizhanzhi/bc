@@ -11,11 +11,18 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 练习设置Mapper
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Mapper
 public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	/**
 	 * 根据权限获取可访问的资源数据
+	 *
 	 * @param authContext
 	 * @return
 	 */
@@ -23,6 +30,7 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	/**
 	 * 根据类型和名称分页查询
+	 *
 	 * @param page
 	 * @param listQuery
 	 * @param isPublic
@@ -33,6 +41,7 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	/**
 	 * 根据类型和名称分页查询
+	 *
 	 * @param page
 	 * @param listQuery
 	 * @param isPublic
@@ -43,6 +52,7 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	/**
 	 * 根据习题集类型查询习题集
+	 *
 	 * @param practiceType
 	 * @param isPublic
 	 * @return
@@ -52,6 +62,7 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	/**
 	 * 根据习题集名称查询
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -59,19 +70,52 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 
 	/**
 	 * 根据习题集名称查询
+	 *
 	 * @param name
 	 * @return
 	 */
 	List<PracticeSet> selectByNames(@Param("names") List<String> name);
-	
+
+	/**
+	 * 查询由认证和公共
+	 *
+	 * @param authContext auth 上下文
+	 * @param isPublic    是公共
+	 * @return {@code List<String> }
+	 */
 	List<String> selectByAuthAndPublic(@Param("authContext") AuthContext authContext,
 			@Param("isPublic") Boolean isPublic);
 
+	/**
+	 * 查询练习设置由用户id
+	 *
+	 * @param userId 用户id
+	 * @return {@code List<PracticeSet> }
+	 */
 	List<PracticeSet> selectPracticeSetByUserId(String userId);
 
+	/**
+	 * 查询练习设置由组织id
+	 *
+	 * @param orgId 组织id
+	 * @return {@code List<PracticeSet> }
+	 */
 	List<PracticeSet> selectPracticeSetByOrgId(String orgId);
 
+	/**
+	 * 查询由id列表和类型
+	 *
+	 * @param setIds 设置id列表
+	 * @param type   类型
+	 * @return {@code List<PracticeSet> }
+	 */
 	List<PracticeSet> selectByIdsAndType(@Param("setIds") List<String> setIds,@Param("setType") Integer type);
 
+	/**
+	 * 查询在资源id列表
+	 *
+	 * @param resourceIds 资源id列表
+	 * @return {@code List<PracticeSet> }
+	 */
 	List<PracticeSet> selectInResourceIds(@Param("resourceIds") List<String> resourceIds);
 }

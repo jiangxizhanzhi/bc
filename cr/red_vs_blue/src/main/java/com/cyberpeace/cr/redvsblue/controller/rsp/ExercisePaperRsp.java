@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 锻炼纸响应
+ * 锻炼试卷响应
  *
  * @author SN
  * @date 2024/11/07
@@ -13,7 +13,7 @@ import lombok.Data;
 public class ExercisePaperRsp {
 
 	/**
-	 * 练习纸
+	 * 练习试卷
 	 */
 	@ApiModelProperty(value = "演习文书")
 	private String exercisePaper;

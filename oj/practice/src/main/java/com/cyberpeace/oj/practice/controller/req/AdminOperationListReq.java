@@ -6,13 +6,25 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 管理实操列表请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 public class AdminOperationListReq extends PageReqBase {
 
+    /**
+     * 练习设置id
+     */
     @ApiModelProperty(name = "practice_set_id", value = "习题集")
     private String practiceSetId;
 
+    /**
+     * 类别id
+     */
     @ApiModelProperty(name = "category_id", value = "方向")
     private String categoryId;
 

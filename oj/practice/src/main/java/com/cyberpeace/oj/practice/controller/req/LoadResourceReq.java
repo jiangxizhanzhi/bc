@@ -8,10 +8,19 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * 负荷资源请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 public class LoadResourceReq implements Serializable {
 
+	/**
+	 * 文件
+	 */
 	@ApiModelProperty("数据文件")
 	@NotNull
 	private MultipartFile file;

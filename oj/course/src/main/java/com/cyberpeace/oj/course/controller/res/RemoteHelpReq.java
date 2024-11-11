@@ -6,14 +6,29 @@ import javax.validation.constraints.NotBlank;
 
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * 远程帮助请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public class RemoteHelpReq implements Serializable {
 
+	/**
+	 * 课id
+	 */
 	@NotBlank
 	private String lesson_id;
 
+	/**
+	 * 节点id
+	 */
 	@NotBlank
 	private String node_id;
 
+	/**
+	 * 房间id
+	 */
 	@NotBlank
 	private String room_id;
 

@@ -5,6 +5,12 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 中台事件aggr
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class MpEventAggr implements Serializable {
 

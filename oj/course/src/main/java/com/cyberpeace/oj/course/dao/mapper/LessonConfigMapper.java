@@ -7,11 +7,18 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 课配置Mapper
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Mapper
 public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
 	/**
 	 * 获取课程节点
+	 *
 	 * @param courseId
 	 * @return
 	 */
@@ -19,6 +26,7 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
 	/**
 	 * 根据父节点获取目录配置信息
+	 *
 	 * @param parentId
 	 * @return
 	 */
@@ -26,6 +34,7 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
 	/**
 	 * 根据课程查询所有课程目录配置
+	 *
 	 * @param courseId
 	 * @return
 	 */
@@ -33,6 +42,7 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
 	/**
 	 * 课程下的最后一个课时 第一级目录
+	 *
 	 * @param rootId
 	 * @return
 	 */
@@ -40,6 +50,7 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
 	/**
 	 * 根据课时编号删除课时目录配置
+	 *
 	 * @param lessonIds
 	 * @return
 	 */
@@ -47,6 +58,8 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
 	/**
 	 * 根据课时编号查询
+	 *
+	 * @param courseId  课程id
 	 * @param lessonIds
 	 * @return
 	 */
@@ -55,24 +68,29 @@ public interface LessonConfigMapper extends BaseMapper<LessonConfig> {
 
 	/**
 	 * 删除课程目录
-	 * @param courseId
+	 *
+	 * @param courseId 课程id
+	 * @return int
 	 */
 	int deleteByCourse(String courseId);
 
 	/**
 	 * 批量删除课程目录
-	 * @param courseIds
+	 *
+	 * @param courseIds 课程id列表
 	 */
 	void batchDelete(@Param("courseIds") List<String> courseIds);
 
 	/**
 	 * 更新课时目录
-	 * @param lessonConfig
+	 *
+	 * @param lessonConfig 课程配置
 	 */
 	void updateByCourseAndLesson(@Param("lessonConfig") LessonConfig lessonConfig);
 
 	/**
 	 * 根据课程和名称查询配置数据
+	 *
 	 * @param courseId
 	 * @param name
 	 * @return

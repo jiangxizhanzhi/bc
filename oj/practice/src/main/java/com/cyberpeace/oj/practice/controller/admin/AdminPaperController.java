@@ -38,21 +38,42 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 管理试卷Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "oj-后台课后练习和试卷相关api")
 @RestController
 @RequestMapping("/oj/admin/paper")
 @RequiresAuthentication
 public class AdminPaperController {
 
+	/**
+	 * 试卷Service
+	 */
 	@Autowired
 	private PaperService paperService;
 
+	/**
+	 * 练习类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 查询练习信息
+	 *
+	 * @param practiceListReq 练习列表请求体
+	 * @return {@code BaseRsp<ListRsp<LibPracticeListBo>> }
+	 */
 	@ApiOperation("获取习题库习题列表")
 	@GetMapping("/practice/list")
 	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -79,6 +100,13 @@ public class AdminPaperController {
 		return new BaseRsp(PageUtil.getListResult(iPage));
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param practiceSetId 练习设置id
+	 * @param children      子级
+	 * @return {@code BaseRsp<LibSelectRes> }
+	 */
 	@ApiOperation("题库筛选条件查询")
 	@GetMapping("/select_info")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "practice_set_id", value = "习题集编号", dataTypeClass = String.class),
@@ -113,6 +141,12 @@ public class AdminPaperController {
 		return new BaseRsp<>(libInfoBo);
 	}
 
+	/**
+	 * 获取随机练习
+	 *
+	 * @param randomPracticeReq 随机练习请求体
+	 * @return {@code BaseRsp<List<LibPracticeListBo>> }
+	 */
 	@ApiOperation("获取随机数量题目")
 	@PostMapping("/random/practice")
 	@RequiresPermissions(value = {MenuConstant.CMS_EXERCISES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -142,6 +176,7 @@ public class AdminPaperController {
 
 	/**
 	 * 获取习题类型
+	 *
 	 * @param practiceType
 	 * @return
 	 */
@@ -158,7 +193,9 @@ public class AdminPaperController {
 
 	/**
 	 * 习题集分类查询
+	 *
 	 * @param practiceType
+	 * @param children     子级
 	 * @return
 	 */
 	private List<CategoryListBo> selectPracticeCategory(int practiceType, boolean children) {
@@ -170,6 +207,7 @@ public class AdminPaperController {
 
 	/**
 	 * 获取习题集
+	 *
 	 * @param authContext
 	 * @return
 	 */

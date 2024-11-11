@@ -34,6 +34,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Web注意Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "oj-前台笔记相关api")
 @RestController
 @RequestMapping("/oj/note")
@@ -41,21 +47,42 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class WebNoteController {
 
+	/**
+	 * 注意Service
+	 */
 	@Autowired
 	private NoteService noteService;
 
+	/**
+	 * 注意Mapper
+	 */
 	@Autowired
 	private NoteMapper noteMapper;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 注意评估Mapper
+	 */
 	@Autowired
 	private NoteEvaluateMapper noteEvaluateMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 新增
+	 *
+	 * @param noteReq 注意请求体
+	 * @return {@code BaseRsp<WebNoteRes> }
+	 */
 	@ApiOperation("笔记新增")
 	@PostMapping("")
 	@RequiresPermissions(
@@ -76,6 +103,12 @@ public class WebNoteController {
 		}
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param noteUpdateReq 注意更新请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("笔记修改")
 	@PatchMapping("")
 	@RequiresPermissions(
@@ -91,6 +124,12 @@ public class WebNoteController {
 
 	}
 
+	/**
+	 * 获取注意
+	 *
+	 * @param getNoteReq 获取注意请求体
+	 * @return {@code BaseRsp<WebNoteRes> }
+	 */
 	@ApiOperation("单条笔记查询")
 	@GetMapping("")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_ALL_COURSE,
@@ -148,6 +187,12 @@ public class WebNoteController {
 		return new BaseRsp<>(noteRes);
 	}
 
+	/**
+	 * 上传附件
+	 *
+	 * @param attachmentReq 附件请求体
+	 * @return {@code BaseRsp<AttachmentBo> }
+	 */
 	@ApiOperation("实验报告/笔记文件上传")
 	@PostMapping("/upload_attachment")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
@@ -176,6 +221,12 @@ public class WebNoteController {
 		return new BaseRsp(uploadFile);
 	}
 
+	/**
+	 * 保存
+	 *
+	 * @param reportAddReq 报告新增请求体
+	 * @return {@code BaseRsp<WebNoteRes> }
+	 */
 	@ApiOperation("实验报告保存/更新")
 	@PostMapping("/report")
 	public BaseRsp<WebNoteRes> save(@RequestBody @Validated ReportAddReq reportAddReq) {

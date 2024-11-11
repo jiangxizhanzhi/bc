@@ -2,10 +2,22 @@ package com.cyberpeace.integratation.model.scene;
 
 import java.io.Serializable;
 
+/**
+ * 引用元数据
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public class ReferenceMetaData implements Serializable {
 
+	/**
+	 * 业务id
+	 */
 	private String business_id;
 
+	/**
+	 * 业务名称
+	 */
 	private String business_name;
 
 	/**
@@ -18,6 +30,9 @@ public class ReferenceMetaData implements Serializable {
 	 */
 	private Boolean is_web;
 
+	/**
+	 * 创造用户id
+	 */
 	private String create_user_id;
 
 	public String getBusiness_id() {

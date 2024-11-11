@@ -59,54 +59,112 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课堂场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
+	/**
+	 * 课堂Mapper
+	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
+	/**
+	 * 课堂群信息Mapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * OJ当地场景Service
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 当地场景Mapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 我 Web 套接字处理程序
+	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	/**
+	 * 课堂标志Mapper
+	 */
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
 
+	/**
+	 * 课堂标志Service
+	 */
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	/**
+	 * 推送消息处理程序
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * 课程验证处理器
+	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	/**
+	 * 批量场景映射
+	 */
 	private Map<String, BatchStartSceneHandler> batchSceneMap = Maps.newConcurrentMap();
 
+	/**
+	 * 开始场景
+	 *
+	 * @param groupId     群id
+	 * @param authContext auth 上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject startScene(String groupId, AuthContext authContext) {
 
@@ -157,6 +215,13 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		return ojLocalSceneService.getSceneData(initOjLocalScene);
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param groupId     群id
+	 * @param authContext auth 上下文
+	 * @return {@code String }
+	 */
 	@Override
 	public String deleteScene(String groupId, AuthContext authContext) {
 
@@ -188,6 +253,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		return CommonConstant.EMPTY_STRING;
 	}
 
+	/**
+	 * 删除当地场景
+	 *
+	 * @param localScene 当地场景
+	 * @param groupInfo  组信息
+	 */
 	@Override
 	public void deleteLocalScene(LocalScene localScene, ClassroomGroupInfo groupInfo) {
 
@@ -206,7 +277,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		});
 	}
 
-	/** 重置远程协助信息*/
+	/**
+	 * 重置远程协助信息
+	 *
+	 * @param groupInfo 组信息
+	 * @return {@code List<ClassroomSign> }
+	 */
 	private List<ClassroomSign> resetNeedHelp(ClassroomGroupInfo groupInfo) {
 		// 查询签到的用户
 		List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
@@ -214,7 +290,14 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		return StreamApiUtils.map(userIds,
 				userId -> resetNeedHelp(groupInfo.getClassroomId(), userId));
 	}
-	
+
+	/**
+	 * 重置 需要帮助
+	 *
+	 * @param classroomId 课堂id
+	 * @param userId      用户id
+	 * @return {@code ClassroomSign }
+	 */
 	private ClassroomSign resetNeedHelp(String classroomId, String userId) {
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
 		if (null == classroomSign) {
@@ -228,13 +311,21 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	/**
 	 * 给课堂组用户推送消息
+	 *
 	 * @param groupId
-	 * @param ojEvent
+	 * @param ojEvent OJ 活动
 	 */
 	private void toGroupSocketMessage(String groupId, OjEvent ojEvent) {
 		toGroupSocketMessage(groupId, ojEvent, CommonConstant.EMPTY_STRING);
 	}
 
+	/**
+	 * 批量开始场景
+	 *
+	 * @param classroomId 课堂id
+	 * @param authContext auth 上下文
+	 * @return {@code List<GroupInfoBo> }
+	 */
 	@Override
 	public List<GroupInfoBo> batchStartScene(String classroomId, AuthContext authContext) {
 
@@ -269,6 +360,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		return Lists.newArrayList();
 	}
 
+	/**
+	 * 完成起点
+	 *
+	 * @param classroomId 课堂id
+	 * @param groupId     群id
+	 */
 	@Override
 	public void finishStart(String classroomId, String groupId) {
 		// 未进行批量启动 直接退出
@@ -284,6 +381,13 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	}
 
+	/**
+	 * To Group 套接字消息
+	 *
+	 * @param groupId 群id
+	 * @param ojEvent OJ 活动
+	 * @param message 消息
+	 */
 	@Override
 	public void toGroupSocketMessage(String groupId, OjEvent ojEvent, String message) {
 
@@ -308,11 +412,23 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
+	/**
+	 * 清楚批量开始场景
+	 *
+	 * @param classroomId 课堂id
+	 */
 	@Override
 	public void clearBatchStartScene(String classroomId) {
 		batchSceneMap.remove(classroomId);
 	}
 
+	/**
+	 * 前往 Google 课堂消息
+	 *
+	 * @param sceneBo 场景博
+	 * @param ojEvent OJ 活动
+	 * @param message 消息
+	 */
 	@Override
 	public void toClassroomMessage(StartSceneBo sceneBo, OjEvent ojEvent, String message) {
 		ClassroomWsMessageIdentifier identifier = new ClassroomWsMessageIdentifier();
@@ -335,6 +451,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
+	/**
+	 * 批量删除场景
+	 *
+	 * @param classroomId 课堂id
+	 * @param authContext auth 上下文
+	 */
 	@Override
 	public void batchDeleteScene(String classroomId, AuthContext authContext) {
 
@@ -354,6 +476,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	}
 
+	/**
+	 * 查询监控列表
+	 *
+	 * @param classroomId 课堂id
+	 * @return {@code List<SceneMonitorBo> }
+	 */
 	@Override
 	public List<SceneMonitorBo> selectMonitorList(String classroomId) {
 		// 基本数据校验
@@ -371,6 +499,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		return ojLocalSceneService.selectMonitorList(ojLocalSceneList);
 	}
 
+	/**
+	 * 更新场景状态
+	 *
+	 * @param groupId 群id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean updateSceneStatus(String groupId) {
 		ClassroomGroupInfo groupInfo = validateGroup(groupId);
@@ -397,8 +531,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	/**
 	 * 初始化中台场景信息
-	 * @param lesson
+	 *
 	 * @param groupInfo
+	 * @param lesson
 	 * @param ojLocalScene
 	 * @param authContext
 	 * @return
@@ -441,6 +576,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	/**
 	 * 初始化组场景信息
+	 *
 	 * @param groupInfo
 	 * @param authContext
 	 * @return
@@ -466,8 +602,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	/**
 	 * 向课程websocket推送课堂场景启动消息
+	 *
 	 * @param groupUserIds
-	 * @param courseLesson
+	 * @param courseLesson 课程课程
+	 * @param ojEvent      OJ 活动
 	 */
 	private void toLessonSocketMessage(String groupUserIds, CourseLesson courseLesson,
 			OjEvent ojEvent) {
@@ -484,6 +622,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	/**
 	 * 课堂场景操作同步
+	 *
 	 * @param userIds
 	 * @param lesson
 	 * @param sceneShare
@@ -526,6 +665,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	/**
 	 * 数据存在校验
+	 *
 	 * @param classroomId
 	 * @return
 	 */
@@ -542,6 +682,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	/**
 	 * 数据存在校验
+	 *
 	 * @param groupId
 	 * @return
 	 */
@@ -557,7 +698,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	}
 
 	/**
-	 * 
+	 * 验证课
+	 *
 	 * @param lessonId
 	 * @return
 	 */

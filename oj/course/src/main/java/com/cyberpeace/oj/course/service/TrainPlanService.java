@@ -11,16 +11,37 @@ import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
 
+/**
+ * 训练计划Service
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public interface TrainPlanService extends IService<TrainPlan> {
 
 	/**
 	 * 查询可访问的训练计划列表
+	 *
 	 * @param userInfo
 	 * @return
 	 */
 	List<TrainPlanBo> trainPlanList(UserInfo userInfo);
 
+	/**
+	 * 分页
+	 *
+	 * @param trainPlanReq 训练计划请求体
+	 * @param userInfo     用户信息
+	 * @return {@code IPage<TrainPlanRsp> }
+	 */
 	IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo);
 
+	/**
+	 * 检查名称重复
+	 *
+	 * @param name   名称
+	 * @param id     id
+	 * @param userId 用户id
+	 */
 	void checkNameRepeat(String name, String id, String userId);
 }

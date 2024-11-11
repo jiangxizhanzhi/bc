@@ -4,12 +4,24 @@ import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 分页评论请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class PageCommentReq extends PageReqBase {
 
+    /**
+     * 业务id
+     */
     @ApiModelProperty(name = "business_id", value = "资源编号")
     private String businessId;
 
+    /**
+     * 业务类型
+     */
     @ApiModelProperty(name = "business_type", value = "资源类型 1=课程 2=课时 3=实操题")
     private Integer businessType;
 

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 出口训练md控制器
+ * 导出训练md控制器
  *
  * @author SN
  * @date 2024/11/07
@@ -36,7 +36,7 @@ import java.util.List;
 public class ExportTrainMDController {
 
 	/**
-	 * 出口训练md服务
+	 * 导出训练md服务
 	 */
 	@Qualifier("exportTrainMDServiceImpl")
 	@Autowired
@@ -48,7 +48,7 @@ public class ExportTrainMDController {
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
 	/**
-	 * 出口训练医学博士
+	 * 导出训练医学博士
 	 *
 	 * @param resourceId         资源id
 	 * @param type               类型

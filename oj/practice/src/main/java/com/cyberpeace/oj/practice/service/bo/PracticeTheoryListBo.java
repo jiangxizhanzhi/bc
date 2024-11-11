@@ -7,46 +7,91 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 练习理论列表博
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 public class PracticeTheoryListBo implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("资源编号")
 	private String resourceId;
 
+	/**
+	 * 类别id
+	 */
 	@ApiModelProperty("分类编号")
 	private String categoryId;
 
+	/**
+	 * 是公共
+	 */
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	/**
+	 * 练习设置id
+	 */
 	@ApiModelProperty("习题集")
 	private String practiceSetId;
 
+	/**
+	 * 内容
+	 */
 	@ApiModelProperty("名称")
 	private String content;
 
+	/**
+	 * 困难
+	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	/**
+	 * 创造用户id
+	 */
 	@ApiModelProperty("创建人编号")
 	private String createUserId;
 
+	/**
+	 * 创造用户名称
+	 */
 	@ApiModelProperty("创建人姓名")
 	private String createUserName;
 
+	/**
+	 * 创建时间
+	 */
 	@ApiModelProperty("创建时间")
 	private Date createTime;
 
+	/**
+	 * 更新时间
+	 */
 	@ApiModelProperty("更新时间")
 	private Date updateTime;
 
+	/**
+	 * 练习设置名称
+	 */
 	@ApiModelProperty("习题集名称")
 	private String practiceSetName;
 
+	/**
+	 * 解决
+	 */
 	@ApiModelProperty("解题状态：")
 	private Integer solved;
 
+	/**
+	 * 理论类型
+	 */
 	@ApiModelProperty("题目类型 0=单选 1=")
 	private Integer TheoryType;
 

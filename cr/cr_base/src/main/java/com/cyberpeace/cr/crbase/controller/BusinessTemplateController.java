@@ -237,7 +237,7 @@ public class BusinessTemplateController {
 	}
 
 	/**
-	 * 验证名称补丁
+	 * 验证名称修改
 	 *
 	 * @param nameValidReq 名称有效请求体
 	 * @return {@code BaseRsp<String> }

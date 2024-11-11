@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 出口RBmd服务实现
+ * 导出RBmd服务实现
  *
  * @author SN
  * @date 2024/11/07
@@ -73,7 +73,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 	}
 
 	/**
-	 * 出口训练医学博士
+	 * 导出训练医学博士
 	 *
 	 * @param businessTemplateList 业务模板列表
 	 * @param path                 路径

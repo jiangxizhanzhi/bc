@@ -32,95 +32,230 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 远程场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class RemoteSceneServiceImpl implements RemoteSceneService {
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	/**
+	 * 场景开始网址
+	 */
 	private String SCENE_START_URL;
 
+	/**
+	 * 场景开始测试网址
+	 */
 	private String SCENE_START_TEST_URL;
 
+	/**
+	 * 场景删除网址
+	 */
 	private String SCENE_DELETE_URL;
 
+	/**
+	 * 场景清楚网址
+	 */
 	private String SCENE_CLEAR_URL;
 
+	/**
+	 * 场景取回
+	 */
 	private String SCENE_RETRIEVE;
 
+	/**
+	 * 场景暂停网址
+	 */
 	private String SCENE_PAUSE_URL;
 
+	/**
+	 * 场景取消暂停网址
+	 */
 	private String SCENE_UNPAUSE_URL;
 
+	/**
+	 * 节点创建 URL
+	 */
 	private String NODE_CREATE_URL;
 
+	/**
+	 * 节点重启 URL
+	 */
 	private String NODE_RESTART_URL;
 
+	/**
+	 * 节点重新创建 URL
+	 */
 	private String NODE_RECREATE_URL;
 
+	/**
+	 * 流启动 URL
+	 */
 	private String FLOW_START_URL;
 
+	/**
+	 * 流停止 URL
+	 */
 	private String FLOW_STOP_URL;
 
+	/**
+	 * 流更新参数 URL
+	 */
 	private String FLOW_UPDATE_PARAM_URL;
 
+	/**
+	 * 流批量开始网址
+	 */
 	private String FLOW_BATCH_START_URL;
 
+	/**
+	 * 流批量停网址
+	 */
 	private String FLOW_BATCH_STOP_URL;
 
+	/**
+	 * 节点会话 URL
+	 */
 	private String NODE_SESSION_URL;
 
+	/**
+	 * 流日志 URL
+	 */
 	private String FLOW_LOG_URL;
 
+	/**
+	 * 主机状态 URL
+	 */
 	private String HOST_STATE_URL;
 
+	/**
+	 * 流趋势 URL
+	 */
 	private String FLOW_TREND_URL;
 
+	/**
+	 * 事件聚合 URL
+	 */
 	private String EVENT_AGGR_URL;
 
+	/**
+	 * 风险计数网址
+	 */
 	private String RISK_COUNT_URL;
 
+	/**
+	 * 集合事件 URL
+	 */
 	private String COLLECTION_EVENT_URL;
 
+	/**
+	 * 收集事件数据 URL
+	 */
 	private String COLLECTION_EVENT_DATA_URL;
 
+	/**
+	 * 流记录 URL
+	 */
 	private String FLOW_RECORD_URL;
 
+	/**
+	 * 流检索 URL
+	 */
 	private String FLOW_RETRIEVE_URL;
 
+	/**
+	 * 节点快照 URL
+	 */
 	private String NODE_SNAPSHOT_URL;
 
+	/**
+	 * 快照历史记录 URL
+	 */
 	private String SNAPSHOT_HISTORY_URL;
 
+	/**
+	 * 快照合并 URL
+	 */
 	private String SNAPSHOT_MERGE_URL;
 
+	/**
+	 * 快照删除 URL
+	 */
 	private String SNAPSHOT_DELETE_URL;
 
+	/**
+	 * 连接状态网址
+	 */
 	private String CONNECTION_STATUS_URL;
 
+	/**
+	 * 场景转 储网址
+	 */
 	private String SCENE_DUMP_URL;
 
+	/**
+	 * 节点更新 URL
+	 */
 	private String NODE_UPDATE_URL;
 
+	/**
+	 * 节点删除 URL
+	 */
 	private String NODE_DELETE_URL;
 
+	/**
+	 * 场景更新网址
+	 */
 	private String SCENE_UPDATE_URL;
 
+	/**
+	 * 节点起始 URL
+	 */
 	private String NODE_START_URL;
 
+	/**
+	 * 节点停止 URL
+	 */
 	private String NODE_STOP_URL;
 
+	/**
+	 * 场景节点列表
+	 */
 	private String SCENE_NODE_LIST;
 
+	/**
+	 * 场景节点统计学
+	 */
 	private String SCENE_NODE_STATISTICS;
 
+	/**
+	 * 节点屏幕记录
+	 */
 	private String NODE_SCREEN_RECORD;
 
+	/**
+	 * 攻击类型计数
+	 */
 	private String ATTACK_TYPE_COUNT;
 
+	/**
+	 * 场景趋势
+	 */
 	private String SCENE_TREND;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -209,16 +344,34 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_TREND = MP_HOST + ConfigUtil.getContextProperty("mp.scene.trend");
 	}
 
+	/**
+	 * 开始场景
+	 *
+	 * @param sceneStartContext 场景开始上下文
+	 * @return {@code String }
+	 */
 	@Override
 	public String startScene(SceneStartContext sceneStartContext) {
 		return startScene(sceneStartContext, SCENE_START_URL);
 	}
 
+	/**
+	 * 测试场景
+	 *
+	 * @param sceneStartContext 场景开始上下文
+	 * @return {@code String }
+	 */
 	@Override
 	public String testScene(SceneStartContext sceneStartContext) {
 		return startScene(sceneStartContext, SCENE_START_TEST_URL);
 	}
 
+	/**
+	 * 停场景
+	 *
+	 * @param sceneOpsContext 场景老年 退休金 计划上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopScene(SceneOpsContext sceneOpsContext) {
 		String targetUrl = SCENE_DELETE_URL;
@@ -226,11 +379,24 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 暂停场景
+	 *
+	 * @param sceneOpsContext 场景老年 退休金 计划上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean pauseScene(SceneOpsContext sceneOpsContext) {
 		return HttpClientUtil.post(SCENE_PAUSE_URL, sceneOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 获取由id
+	 *
+	 * @param sceneId 场景id
+	 * @param userId  用户id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getById(String sceneId, String userId) {
 		String targetUrl = SCENE_RETRIEVE + "?id=" + sceneId + "&accessUserId=" + userId;
@@ -238,48 +404,102 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	}
 
+	/**
+	 * 取消暂停场景
+	 *
+	 * @param sceneOpContext 场景OP上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean unpauseScene(SceneOpsContext sceneOpContext) {
 		return HttpClientUtil.post(SCENE_UNPAUSE_URL, sceneOpContext, Boolean.class);
 
 	}
 
+	/**
+	 * 创建节点
+	 *
+	 * @param nodeOpsContext Node Ops 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean createNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_CREATE_URL, nodeOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 更新节点
+	 *
+	 * @param context 上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject updateNode(NodeUpdateContext context) {
 		return HttpClientUtil.post(NODE_UPDATE_URL, context, JSONObject.class);
 	}
 
+	/**
+	 * 删除节点
+	 *
+	 * @param context 上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject deleteNode(NodeOpsContext context) {
 		return HttpClientUtil.post(NODE_DELETE_URL, context, JSONObject.class);
 	}
 
+	/**
+	 * 更新场景
+	 *
+	 * @param context 上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject updateScene(SceneUpdateContext context) {
 		return HttpClientUtil.post(SCENE_UPDATE_URL, context, JSONObject.class);
 	}
 
+	/**
+	 * 起始节点
+	 *
+	 * @param context 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean startNode(NodeOpsContext context) {
 		return HttpClientUtil.post(NODE_START_URL, context, Boolean.class);
 	}
 
+	/**
+	 * 停止节点
+	 *
+	 * @param context 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopNode(NodeOpsContext context) {
 		return HttpClientUtil.post(NODE_STOP_URL, context, Boolean.class);
 	}
 
+	/**
+	 * 获取资产列表
+	 *
+	 * @param req 请求体
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getAssetList(SceneNodeListReq req) {
 		String targetUrl = SCENE_NODE_LIST + req.toUrl();
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
 
+	/**
+	 * 获取资产统计学由场景id
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getAssetsStatisticsBySceneId(String sceneId) {
 		// 只获取一个场景的
@@ -288,6 +508,13 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return rsp.getJSONObject(0);
 	}
 
+	/**
+	 * 屏幕录制
+	 *
+	 * @param sceneId 场景id
+	 * @param nodeId  节点id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject screenrecord(String sceneId, String nodeId) {
 
@@ -295,68 +522,147 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return  HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
+	/**
+	 * 攻击类型计数
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray attackTypeCount(String mpSceneId) {
 		String targetUrl = ATTACK_TYPE_COUNT + "?sceneId=" + mpSceneId;
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
 
+	/**
+	 * 场景趋势
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray sceneTrend(String mpSceneId) {
 		String targetUrl = SCENE_TREND + "?sceneId=" + mpSceneId;
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param nodeOpsContext Node Ops 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean restartNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RESTART_URL, nodeOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param nodeOpsContext Node Ops 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 场景转 储
+	 *
+	 * @param sceneDumpContext 场景转 储上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject sceneDump(SceneDumpContext sceneDumpContext) {
 		return HttpClientUtil.post(SCENE_DUMP_URL, sceneDumpContext, JSONObject.class);
 	}
 
+	/**
+	 * 获取流由id
+	 *
+	 * @param flowId 流id
+	 * @return {@code MpFlow }
+	 */
 	@Override
 	public MpFlow getFlowById(String flowId) {
 		return HttpClientUtil.rawGet(FLOW_RETRIEVE_URL + flowId, MpFlow.class);
 	}
 
+	/**
+	 * Update Flow 参数
+	 *
+	 * @param flowOpsContext 流操作上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
 		return HttpClientUtil.post(FLOW_UPDATE_PARAM_URL, flowOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 启动流程
+	 *
+	 * @param flowOpsContext 流操作上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean startFlow(FlowOpsContext flowOpsContext) {
 		return HttpClientUtil.post(FLOW_START_URL, flowOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 停止流
+	 *
+	 * @param context 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopFlow(FlowOpsContext context) {
 		return HttpClientUtil.post(FLOW_STOP_URL, context, Boolean.class);
 	}
 
+	/**
+	 * 批量开始流
+	 *
+	 * @param flowBatchOpsContext 流批量老年 退休金 计划上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext) {
 		return HttpClientUtil.post(FLOW_BATCH_START_URL, flowBatchOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 批量停流
+	 *
+	 * @param flowBatchOpsContext 流批量老年 退休金 计划上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext) {
 		return HttpClientUtil.post(FLOW_BATCH_STOP_URL, flowBatchOpsContext, Boolean.class);
 	}
 
+	/**
+	 * 获取流记录
+	 *
+	 * @param flowRecordContext 流记录上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getFlowRecords(FlowRecordContext flowRecordContext) {
 		return HttpClientUtil.post(FLOW_RECORD_URL, flowRecordContext, JSONObject.class);
 	}
 
+	/**
+	 * 开始场景
+	 *
+	 * @param context 上下文
+	 * @param url     网址
+	 * @return {@code String }
+	 */
 	private String startScene(SceneStartContext context, String url) {
 		JSONObject data = HttpClientUtil.post(url, context, JSONObject.class);
 
@@ -379,6 +685,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return sceneId;
 	}
 
+	/**
+	 * 获取节点会话
+	 *
+	 * @param sceneIds 场景id列表
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getNodeSessions(List<String> sceneIds) {
 
@@ -390,6 +702,15 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return HttpClientUtil.rawGet(NODE_SESSION_URL + sceneIdStr, JSONArray.class);
 	}
 
+	/**
+	 * 获取节点会话
+	 *
+	 * @param sceneIds 场景id列表
+	 * @param nodeIds  节点id列表
+	 * @param userIds  用户id列表
+	 * @param type     类型
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds,
 			List<String> userIds, String type) {
@@ -412,6 +733,14 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return HttpClientUtil.rawGet(assistanceUrl, JSONArray.class);
 	}
 
+	/**
+	 * 获取援助映射
+	 *
+	 * @param sceneIds 场景id列表
+	 * @param nodeIds  节点id列表
+	 * @param userIds  用户id列表
+	 * @return {@code Map<String, String> }
+	 */
 	@Override
 	public Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
 			List<String> userIds) {
@@ -430,6 +759,13 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return userAssistanceMap;
 	}
 
+	/**
+	 * 获取监控会话
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param studentId 学员id
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getMonitorSessions(String mpSceneId, String studentId) {
 		String url = NODE_SESSION_URL + mpSceneId;
@@ -439,6 +775,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return HttpClientUtil.rawGet(url, JSONArray.class);
 	}
 
+	/**
+	 * 获取流原木
+	 *
+	 * @param flowLogsPageContext 流原木分页上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getFlowLogs(FlowLogsPageContext flowLogsPageContext) {
 		// 该接口必须使用英文
@@ -449,6 +791,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return jsonObject;
 	}
 
+	/**
+	 * 获取主机州
+	 *
+	 * @param elementCommonContext 元素通用上下文
+	 * @return {@code List<MpHostState> }
+	 */
 	@Override
 	public List<MpHostState> getHostState(ElementCommonContext elementCommonContext) {
 		String mpHostStates = HttpClientUtil.rawGetByParam(elementCommonContext, HOST_STATE_URL,
@@ -456,6 +804,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return JsonUtil.toJsonObjectArray(mpHostStates, MpHostState.class);
 	}
 
+	/**
+	 * 获取流趋势
+	 *
+	 * @param elementCommonContext 元素通用上下文
+	 * @return {@code List<MpFlowTrend> }
+	 */
 	@Override
 	public List<MpFlowTrend> getFlowTrend(ElementCommonContext elementCommonContext) {
 		String flowTrends = HttpClientUtil.rawGetByParam(elementCommonContext, FLOW_TREND_URL,
@@ -463,18 +817,36 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return JsonUtil.toJsonObjectArray(flowTrends, MpFlowTrend.class);
 	}
 
+	/**
+	 * 获取事件aggr
+	 *
+	 * @param elementCommonContext 元素通用上下文
+	 * @return {@code MpEventAggr }
+	 */
 	@Override
 	public MpEventAggr getEventAggr(ElementCommonContext elementCommonContext) {
 		return HttpClientUtil.rawGetByParam(elementCommonContext, EVENT_AGGR_URL,
 				MpEventAggr.class);
 	}
 
+	/**
+	 * 获取风险计数
+	 *
+	 * @param elementCommonContext 元素通用上下文
+	 * @return {@code MpRiskCount }
+	 */
 	@Override
 	public MpRiskCount getRiskCount(ElementCommonContext elementCommonContext) {
 		return HttpClientUtil.rawGetByParam(elementCommonContext, RISK_COUNT_URL,
 				MpRiskCount.class);
 	}
 
+	/**
+	 * 获取收集事件
+	 *
+	 * @param collectionEventPageContext 收集事件分页上下文
+	 * @return {@code List<MpCollectionEvent> }
+	 */
 	@Override
 	public List<MpCollectionEvent>
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext) {
@@ -489,6 +861,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
 	}
 
+	/**
+	 * 节点快照
+	 *
+	 * @param snapshotContext 快照上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean nodeSnapshot(NodeSnapshotContext snapshotContext) {
 		return HttpClientUtil.post(NODE_SNAPSHOT_URL,
@@ -496,12 +874,24 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				Boolean.class);
 	}
 
+	/**
+	 * 快照历史记录
+	 *
+	 * @param imageId 图像id
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray snapshotHistory(String imageId) {
 		String requestUrl = String.format(SNAPSHOT_HISTORY_URL, imageId);
 		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
 	}
 
+	/**
+	 * 合并快照
+	 *
+	 * @param mergeSnapshotContext 合并快照上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext) {
 
@@ -511,6 +901,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return null;
 	}
 
+	/**
+	 * 删除快照
+	 *
+	 * @param deleteContext 删除上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean deleteSnapshot(SnapshotDeleteContext deleteContext) {
 		return HttpClientUtil.post(SNAPSHOT_DELETE_URL,
@@ -518,6 +914,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				Boolean.class);
 	}
 
+	/**
+	 * 获取连接状态
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @return {@code List<MpNodeStatus> }
+	 */
 	@Override
 	public List<MpNodeStatus> getConnectionStatus(String mpSceneId) {
 		String url = CONNECTION_STATUS_URL + mpSceneId;
@@ -529,6 +931,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return JsonUtil.toJsonObjectArray(mpNodeStatus, MpNodeStatus.class);
 	}
 
+	/**
+	 * 取代访问ip地址
+	 *
+	 * @param topoData 拓扑数据
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject replaceAccessIp(JSONObject topoData) {
 		if (topoData == null) {
 			return null;
@@ -544,6 +952,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return topoData;
 	}
 
+	/**
+	 * 取代访问ip地址exe
+	 *
+	 * @param elementPorts Element 端口
+	 */
 	@Override
 	public void replaceAccessIpExe(JSONObject elementPorts) {
 		if (elementPorts == null) {

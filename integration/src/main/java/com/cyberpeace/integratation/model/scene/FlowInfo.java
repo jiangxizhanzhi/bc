@@ -4,11 +4,23 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 流程信息
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class FlowInfo implements Serializable {
 
+	/**
+	 * 流id
+	 */
 	private String flow_id;
 
+	/**
+	 * 源ip地址
+	 */
 	private String source_ip;
 
 	public void setFlowId(String flowId) {

@@ -8,6 +8,12 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.*;
 
+/**
+ * 课程记录
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,17 +21,35 @@ import lombok.*;
 @TableName("oj_lesson_record")
 public class LessonRecord extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 课id
+	 */
 	private String lessonId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 课程id
+	 */
 	private String courseId;
 
+	/**
+	 * 房间id
+	 */
 	private String roomId;
 
+	/**
+	 * 学习类型
+	 */
 	private Integer learnedType;
 
 	public enum LearnedType implements GenericEnum {

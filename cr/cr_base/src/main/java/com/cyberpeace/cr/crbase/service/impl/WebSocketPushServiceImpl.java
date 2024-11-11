@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 蹼插座推Service实现
+ * Web插座推Service实现
  *
  * @author SN
  * @date 2024/11/07

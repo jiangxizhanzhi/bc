@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 出口单md服务实现
+ * 导出单md服务实现
  *
  * @author SN
  * @date 2024/11/07
@@ -71,7 +71,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 	}
 
 	/**
-	 * 出口训练医学博士
+	 * 导出训练医学博士
 	 *
 	 * @param businessTemplateList 业务模板列表
 	 * @param path                 路径

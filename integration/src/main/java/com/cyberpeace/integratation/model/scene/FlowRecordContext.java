@@ -2,11 +2,23 @@ package com.cyberpeace.integratation.model.scene;
 
 import lombok.Data;
 
+/**
+ * 流记录上下文
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class FlowRecordContext extends NodeOpsContext {
 
+	/**
+	 * 流id
+	 */
 	private String flow_id;
 
+	/**
+	 * 是批量
+	 */
 	private Boolean is_batch = true;
 
 	public void setFlowId(String flowId) {

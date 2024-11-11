@@ -17,9 +17,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * 理论评估处理器
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service("theory")
 public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 
+	/**
+	 * 评估映射
+	 */
 	private static Map<Integer, PracticeEvaluateService> evaluateMap = Maps.newHashMap();
 
 	static {
@@ -31,6 +40,14 @@ public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 				new ShortAnswerEvaluate());
 	}
 
+	/**
+	 * 评估由业务
+	 *
+	 * @param userId       用户id
+	 * @param practiceBase 练习基地
+	 * @param userAnswer   用户答案
+	 * @return {@code EvaluateResult }
+	 */
 	@Override
 	public EvaluateResult evaluateByBusiness(String userId, PracticeBase practiceBase,
 			String userAnswer) {

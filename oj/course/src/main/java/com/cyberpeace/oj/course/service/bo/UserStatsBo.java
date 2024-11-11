@@ -7,25 +7,49 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * 用户统计 bo
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel("用户学习统计信息")
 public class UserStatsBo extends PublicStatsBo {
 
+    /**
+     * 资源id
+     */
     @ApiModelProperty("用户resource_id")
     private String resourceId;
 
+    /**
+     * 用户名
+     */
     @ApiModelProperty("用户名")
     private String username;
 
+    /**
+     * 名称
+     */
     @ApiModelProperty("用户姓名")
     private String name;
 
+    /**
+     * 组织数据
+     */
     @ApiModelProperty("用户组织信息")
     private String organizationData;
 
+    /**
+     * 角色
+     */
     @ApiModelProperty("用户角色")
     private List<JSONObject> roles;
 
+    /**
+     * 化身
+     */
     @ApiModelProperty("用户头像")
     private String avatar;
 

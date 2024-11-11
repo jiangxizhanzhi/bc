@@ -23,18 +23,40 @@ import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.google.common.collect.Lists;
 
+/**
+ * 课程统计学Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 课记录Mapper
+	 */
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
+	/**
+	 * 统计由id列表
+	 *
+	 * @param courseIds 课程id列表
+	 * @param userId    用户id
+	 * @return {@code List<CourseStudyProcessBo> }
+	 */
 	@Override
 	public List<CourseStudyProcessBo> statisticByIds(List<String> courseIds, String userId) {
 

@@ -49,6 +49,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+/**
+ * 练习实操Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @RestController
 @Api(tags = "oj-前台实践操作练习相关api")
@@ -56,24 +62,48 @@ import java.util.*;
 @RequiresAuthentication
 public class PracticeOperationController {
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 练习类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	/**
+	 * 练习实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 资源收集Service
+	 */
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
+	/**
+	 * 注意Service
+	 */
 	@Autowired
 	private NoteService noteService;
 
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<WebOperationBo> }
+	 */
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -86,6 +116,12 @@ public class PracticeOperationController {
 		return new BaseRsp<>(operationBo);
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<AdminOperationListBo>> }
+	 */
 	@GetMapping("/list")
 	@ApiOperation("获取实践操作列表")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -113,6 +149,12 @@ public class PracticeOperationController {
 		return new BaseRsp<>(PageUtil.getListResult(listBoIPage));
 	}
 
+	/**
+	 * 提交答案
+	 *
+	 * @param answerReq 答案请求体
+	 * @return {@code BaseRsp<EvaluateResult> }
+	 */
 	@ApiOperation("实操练习解答")
 	@PostMapping("/submit_answer")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -130,6 +172,12 @@ public class PracticeOperationController {
 		return new BaseRsp<>(evaluateResult);
 	}
 
+	/**
+	 * 获取练习列表id列表
+	 *
+	 * @param practiceSetId 练习设置id
+	 * @return {@code BaseRsp<List<String>> }
+	 */
 	@ApiOperation("获取所有实操习题编号")
 	@GetMapping("/list/ids")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -142,6 +190,12 @@ public class PracticeOperationController {
 		return new BaseRsp<>(practiceIds);
 	}
 
+	/**
+	 * 开始场景
+	 *
+	 * @param sceneOperationReq 场景实操请求体
+	 * @return {@code BaseRsp<JSONObject> }
+	 */
 	@ApiOperation("场景启动")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -161,6 +215,12 @@ public class PracticeOperationController {
 		return new BaseRsp<>(sceneData);
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param sceneOperationReq 场景实操请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("场景删除")
 	@DeleteMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -178,6 +238,12 @@ public class PracticeOperationController {
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 场景节点重新启动
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("场景节点重启")
 	@PostMapping("/scene_node_restart")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -192,6 +258,12 @@ public class PracticeOperationController {
 
 	}
 
+	/**
+	 * 场景节点重建
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("场景节点重建")
 	@PostMapping("/scene_node_recreate")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -206,6 +278,12 @@ public class PracticeOperationController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 场景更新状态
+	 *
+	 * @param sceneStatusReq 场景状态请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("场景暂停与恢复")
 	@PatchMapping("/scene_update_status")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -218,6 +296,12 @@ public class PracticeOperationController {
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 获取拓扑场景
+	 *
+	 * @param operationId 实操id
+	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 */
 	@ApiOperation("获取场景和拓扑信息")
 	@GetMapping("/topo_scene")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -230,6 +314,12 @@ public class PracticeOperationController {
 		return new BaseRsp<>(topoScene);
 	}
 
+	/**
+	 * 获取进展统计学
+	 *
+	 * @param practiceSetId 练习设置id
+	 * @return {@code BaseRsp<ProgressStatisticsRes> }
+	 */
 	@ApiOperation("获取进度统计")
 	@GetMapping("/progress")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -238,6 +328,11 @@ public class PracticeOperationController {
 		return new BaseRsp<>(practiceOperationService.getProgressStatistics(practiceSetId));
 	}
 
+	/**
+	 * 获取实操统计学结果
+	 *
+	 * @return {@code BaseRsp<OptionStatisticsRes> }
+	 */
 	@ApiOperation("收藏数量和笔记数量")
 	@GetMapping("/statistics")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -258,6 +353,11 @@ public class PracticeOperationController {
 		return new BaseRsp<>(optionStatisticsRes);
 	}
 
+	/**
+	 * 获取实操记录top5
+	 *
+	 * @return {@code BaseRsp<List<OperationRecordRes>> }
+	 */
 	@ApiOperation("解出记录Top5")
 	@GetMapping("/record")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -269,6 +369,13 @@ public class PracticeOperationController {
 		return new BaseRsp<>(operationRecordResList);
 	}
 
+	/**
+	 * 获取都实操记录
+	 *
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 * @return {@code BaseRsp<List<OperationRecordResByDay>> }
+	 */
 	@ApiOperation("所有解出记录")
 	@GetMapping("/all_record")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -302,6 +409,11 @@ public class PracticeOperationController {
 		return new BaseRsp<>(operationRecordResByDays);
 	}
 
+	/**
+	 * 获取类别top6
+	 *
+	 * @return {@code BaseRsp<List<CategoryProgressRes>> }
+	 */
 	@ApiOperation("知识技能Top6")
 	@GetMapping("/category_top6")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -315,6 +427,12 @@ public class PracticeOperationController {
 		return new BaseRsp<>(categoryProgressResList);
 	}
 
+	/**
+	 * 提交答案再
+	 *
+	 * @param answerReq 答案请求体
+	 * @return {@code BaseRsp<EvaluateResult> }
+	 */
 	@ApiOperation("再练一次状态下的提交")
 	@PostMapping("/submit_answer_again")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
@@ -327,6 +445,11 @@ public class PracticeOperationController {
 		return new BaseRsp<>(evaluateResult);
 	}
 
+	/**
+	 * 获取记录练习id列表
+	 *
+	 * @return {@code BaseRsp<List<String>> }
+	 */
 	@ApiOperation("解题记录题目id列表")
 	@GetMapping("/record_all_id")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)

@@ -7,10 +7,19 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 删除资源请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 public class DeleteResourceReq implements Serializable {
 
+	/**
+	 * 资源id列表
+	 */
 	@ApiModelProperty("资源数据编号")
 	private List<String> resourceIds;
 

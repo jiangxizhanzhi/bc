@@ -31,9 +31,21 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 认证和公共Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 public abstract class AuthAndPublicController<T extends IService<E>, E> extends PublicController {
 
+	/**
+	 * 批量认证
+	 *
+	 * @param requestData 请求数据
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PatchMapping("/batch-auth")
 	@ApiOperation("资源授权访问")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
@@ -53,6 +65,12 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 获取认证
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<ReadAuthInfo> }
+	 */
 	@GetMapping("/get_auth")
 	@ApiOperation("获取资源的授权访问信息")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
@@ -71,6 +89,12 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 		return new BaseRsp<>(authInfo);
 	}
 
+	/**
+	 * 获取实操
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<OperationAuthInfo> }
+	 */
 	@GetMapping("/get_share")
 	@ApiOperation("获取资源的权限操作信息")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
@@ -107,6 +131,12 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 	}
 
+	/**
+	 * 批量共享
+	 *
+	 * @param requestData 请求数据
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PatchMapping("/batch-share")
 	@ApiOperation("资源授权操作")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },

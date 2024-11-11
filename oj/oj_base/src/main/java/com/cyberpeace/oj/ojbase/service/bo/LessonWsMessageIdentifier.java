@@ -6,16 +6,31 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 课时WS消息标识符
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class LessonWsMessageIdentifier extends WsMessageIdentifier {
 
+	/**
+	 * 课时id
+	 */
 	private String lessonId;
 
+	/**
+	 * 共享
+	 */
 	private Boolean shared;
 
+	/**
+	 * 从 Web
+	 */
 	private Boolean fromWeb;
 
 }

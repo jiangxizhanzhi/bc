@@ -132,7 +132,7 @@ public class RbRoomDirectorController {
 	private RemoteLogService remoteLogService;
 
 	/**
-	 * 蹼插座推Service
+	 * Web插座推Service
 	 */
 	@Autowired
 	private WebSocketPushService webSocketPushService;
@@ -145,9 +145,9 @@ public class RbRoomDirectorController {
 	RbSceneService rbSceneService;
 
 	/**
-	 * 新增锻炼纸
+	 * 新增锻炼试卷
 	 *
-	 * @param exercisePaperReq 锻炼纸请求体
+	 * @param exercisePaperReq 锻炼试卷请求体
 	 * @return {@code BaseRsp<String> }
 	 */
 	@ApiOperation("提交演习文书")

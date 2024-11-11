@@ -9,10 +9,19 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 外部批量请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @ApiModel
 public class ExternalBatchReq implements Serializable {
 
+	/**
+	 * 资源id列表
+	 */
 	@ApiModelProperty(name = "resource_ids", value = "资源编号数组")
 	@NotEmpty
 	private List<String> resourceIds;

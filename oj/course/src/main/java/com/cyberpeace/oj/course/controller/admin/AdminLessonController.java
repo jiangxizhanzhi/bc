@@ -58,6 +58,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * 管理课Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "oj-后台课时相关api")
 @RestController
 @RequestMapping("/oj/admin/lesson")
@@ -65,30 +71,60 @@ import java.util.List;
 @Slf4j
 public class AdminLessonController extends PublicController<CourseLessonService, CourseLesson> {
 
+	/**
+	 * 课程课Service
+	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
+	/**
+	 * 课程课Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 课场景Service
+	 */
 	@Autowired
 	private LessonSceneService lessonSceneService;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 获取课列表
+	 *
+	 * @param lessonReq 课请求体
+	 * @return {@code BaseRsp<ListRsp<AdminLessonListBo>> }
+	 */
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -132,6 +168,13 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(PageUtil.getListResult(iPage));
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param courseId 课程id
+	 * @param lessonId 课id
+	 * @return {@code BaseRsp<AdminLessonBo> }
+	 */
 	@ApiOperation("后台课时详情查询接口")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -146,6 +189,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(lessonDetail);
 	}
 
+	/**
+	 * 新增
+	 *
+	 * @param lessonAddReq 课新增请求体
+	 * @return {@code BaseRsp<CourseLesson> }
+	 */
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -171,6 +220,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(lesson);
 	}
 
+	/**
+	 * 修改
+	 *
+	 * @param lessonUpdateReq 课更新请求体
+	 * @return {@code BaseRsp<CourseLesson> }
+	 */
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -204,6 +259,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param batchDeleteReq 批量删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课时信息删除")
 	@DeleteMapping("/batch")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -235,6 +296,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 获取附件
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<List<AttachmentBo>> }
+	 */
 	@ApiOperation("课时附件查询")
 	@GetMapping("/attachment")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -251,6 +318,13 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(attachmentBos);
 	}
 
+	/**
+	 * 获取练习列表
+	 *
+	 * @param courseId 课程id
+	 * @param lessonId 课id
+	 * @return {@code BaseRsp<AdminLessonPracticeBo> }
+	 */
 	@ApiOperation("课后练习查询")
 	@GetMapping("/practice")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -267,6 +341,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(practiceByLesson);
 	}
 
+	/**
+	 * 更新课程练习
+	 *
+	 * @param practiceReq 练习请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课后练习修改")
 	@PatchMapping("/practice")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -278,6 +358,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 获取拓扑场景
+	 *
+	 * @param lessonId 课id
+	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 */
 	@ApiOperation("课时场景拓扑信息查询")
 	@GetMapping("/scene_topo")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -291,6 +377,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(topoSceneData);
 	}
 
+	/**
+	 * 公共练习
+	 *
+	 * @param resourcePublicReq 资源公共请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课时练习公开与隐藏")
 	@PatchMapping("/practice/batch_public")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -301,6 +393,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 导入课程
+	 *
+	 * @param importLessonReq 进口课请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课时导入")
 	@PostMapping("/import")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -310,6 +408,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 上传附件
+	 *
+	 * @param multipartFile Multipart 文件
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("课时新增附件上传")
 	@PostMapping("/upload_attachment")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -321,6 +425,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(attachmentBo.getResourceId());
 	}
 
+	/**
+	 * 开始场景
+	 *
+	 * @param lessonSceneReq 课场景请求体
+	 * @return {@code BaseRsp<JSONObject> }
+	 */
 	@ApiOperation("后台课时场景启动")
 	@PostMapping("/start_scene")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -334,6 +444,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(scene);
 	}
 
+	/**
+	 * 更新场景状态
+	 *
+	 * @param sceneStatusReq 场景状态请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台课时场景暂停与恢复")
 	@PatchMapping("/update_status")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -347,6 +463,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param lessonSceneReq 课场景请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台课时场景删除")
 	@DeleteMapping("/delete_scene")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -359,6 +481,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台课时节点重启")
 	@PostMapping("/node_restart")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -371,6 +499,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台课时节点重建")
 	@PostMapping("/node_recreate")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -382,6 +516,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 课程监视器
+	 *
+	 * @param lessonId 课id
+	 * @return {@code BaseRsp<List<SceneMonitorBo>> }
+	 */
 	@ApiOperation("后台课时场景监控")
 	@GetMapping("/lesson_monitor")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -393,6 +533,11 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	}
 
+	/**
+	 * 获取监控刷新间隔
+	 *
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("场景监控信息刷新时间")
 	@GetMapping("/monitor_refresh_interval")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -403,6 +548,12 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	}
 
+	/**
+	 * 查询都课
+	 *
+	 * @param courseId 课程id
+	 * @return {@code BaseRsp<List<SimpleDataRes>> }
+	 */
 	@ApiOperation("查询课程下课时简易数据")
 	@GetMapping("/simple/list")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -425,6 +576,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	/**
 	 * 更新请求转换为实体类
+	 *
 	 * @param lessonUpdateReq
 	 * @return
 	 */
@@ -462,6 +614,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	/**
 	 * 请求体转换为实体类
+	 *
 	 * @param lessonAddReq
 	 * @return
 	 */

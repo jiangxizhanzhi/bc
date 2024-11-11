@@ -38,31 +38,65 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+/**
+ * 试卷练习理论Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeTheoryMapper, PaperPracticeTheory> implements PaperPracticeTheoryService {
 
+	/**
+	 * 试卷练习理论Mapper
+	 */
 	@Autowired
 	private PaperPracticeTheoryMapper paperPracticeTheoryMapper;
 
+	/**
+	 * 理论评估处理器
+	 */
 	@Resource(name = "theory")
 	private TheoryEvaluateHandler theoryEvaluateHandler;
 
+	/**
+	 * 练习错误Service
+	 */
 	@Autowired
 	private PracticeMistakeService practiceMistakeService;
 
+	/**
+	 * 练习解决Mapper
+	 */
 	@Autowired
 	private PracticeSolvedMapper practiceSolvedMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 资源收集Service
+	 */
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 获取练习详情
+	 *
+	 * @param practiceRefId 练习裁判id
+	 * @return {@code WebTheoryBo }
+	 */
 	@Override
 	public WebTheoryBo getPracticeDetail(String practiceRefId) {
 		PaperPracticeTheory paperPracticeTheory = paperPracticeTheoryMapper.selectById(practiceRefId);
@@ -83,6 +117,13 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 		return webTheoryBo;
 	}
 
+	/**
+	 * 提交答案
+	 *
+	 * @param practiceRefId 练习裁判id
+	 * @param submitAnswer  提交答案
+	 * @return {@code EvaluateResultTheory }
+	 */
 	@Override
 	public EvaluateResultTheory submitAnswer(String practiceRefId, String submitAnswer) {
 		PaperPracticeTheory paperPracticeTheory = paperPracticeTheoryMapper.selectById(practiceRefId);
@@ -154,6 +195,12 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 		return evaluateResultTheory;
 	}
 
+	/**
+	 * 收集
+	 *
+	 * @param collectionReq 收集请求体
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean collection(CollectionReq collectionReq) {
 		PaperPracticeTheory paperPracticeTheory = paperPracticeTheoryMapper.selectById(collectionReq.getBusinessId());
@@ -173,6 +220,12 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 				collectionReq.getIsCollection());
 	}
 
+	/**
+	 * 获取练习详情
+	 *
+	 * @param practiceRefIds 练习裁判id列表
+	 * @return {@code List<WebTheoryBo> }
+	 */
 	@Override
 	public List<WebTheoryBo> getPracticeDetail(List<String> practiceRefIds) {
 		List<WebTheoryBo> webTheoryBoList = new ArrayList<>();

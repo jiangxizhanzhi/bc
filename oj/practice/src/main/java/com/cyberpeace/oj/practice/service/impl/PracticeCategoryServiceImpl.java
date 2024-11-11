@@ -35,22 +35,48 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 练习类别Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 @Slf4j
 public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMapper, PracticeCategory> implements PracticeCategoryService {
 
+	/**
+	 * 练习类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 练习实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 分页由列表查询
+	 *
+	 * @param page     分页
+	 * @param query    查询
+	 * @param children 子级
+	 * @return {@code IPage<CategoryListBo> }
+	 */
 	@Override
 	public IPage<CategoryListBo> pageByListQuery(Page page, CategoryListQuery query,
 			Boolean children) {
@@ -61,12 +87,25 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 				.convert(practiceCategory -> entityToListBo(practiceCategory, children));
 	}
 
+	/**
+	 * 查询由id
+	 *
+	 * @param resourceId 资源id
+	 * @param children   子级
+	 * @return {@code CategoryListBo }
+	 */
 	@Override
 	public CategoryListBo selectById(String resourceId, Boolean children) {
 		PracticeCategory practiceCategory = practiceCategoryMapper.selectById(resourceId);
 		return entityToListBo(practiceCategory, children);
 	}
 
+	/**
+	 * 更新类别
+	 *
+	 * @param category 类别
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer updateCategory(PracticeCategory category) {
 
@@ -108,6 +147,13 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		});
 	}
 
+	/**
+	 * 新增类别
+	 *
+	 * @param practiceCategory 练习类别
+	 * @param userId           用户id
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer addCategory(PracticeCategory practiceCategory, String userId) {
 		// 分类名称校验
@@ -122,6 +168,12 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		return practiceCategoryMapper.insert(practiceCategory);
 	}
 
+	/**
+	 * 获取代号由父母
+	 *
+	 * @param parentId 父母id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getCodeByParent(String parentId) {
 
@@ -138,6 +190,13 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		return null;
 	}
 
+	/**
+	 * 列表由类型和名称
+	 *
+	 * @param listQuery 列表查询
+	 * @param children  子级
+	 * @return {@code List<CategoryListBo> }
+	 */
 	@Override
 	public List<CategoryListBo> listByTypeAndName(CategoryListQuery listQuery, Boolean children) {
 		List<PracticeCategory> categoryList = practiceCategoryMapper
@@ -147,6 +206,13 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 				practiceCategory -> entityToListBo(practiceCategory, children));
 	}
 
+	/**
+	 * 查询子级id列表
+	 *
+	 * @param parentId 父母id
+	 * @param self     自我
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> selectChildrenIds(String parentId, Boolean self) {
 
@@ -170,6 +236,12 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		return categoryIds;
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param categoryIds 类别id列表
+	 * @return int
+	 */
 	@Override
 	public int batchDelete(List<String> categoryIds) {
 
@@ -203,6 +275,14 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		return practiceCategoryMapper.deleteBatchIds(allDeleteIds);
 	}
 
+	/**
+	 * 查询类别或创造
+	 *
+	 * @param categoryName 类别名称
+	 * @param practiceType 练习类型
+	 * @param userId       用户id
+	 * @return {@code String }
+	 */
 	@Override
 	public String selectCategoryOrCreate(String categoryName, Integer practiceType, String userId) {
 		String categoryId = practiceCategoryMapper.selectByName(practiceType, categoryName);
@@ -224,7 +304,9 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 	/**
 	 * 实体类转listBo
+	 *
 	 * @param practiceCategory 习题分类实体类
+	 * @param children         子级
 	 * @return
 	 */
 	private CategoryListBo entityToListBo(PracticeCategory practiceCategory, Boolean children) {
@@ -235,6 +317,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 
 	/**
 	 * 组织树结构
+	 *
 	 * @param practiceCategory
 	 * @return
 	 */

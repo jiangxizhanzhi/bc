@@ -22,13 +22,28 @@ import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * 远程组织Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 public class RemoteOrganizationServiceImpl implements RemoteOrganizationService {
 
+	/**
+	 * 中台组织树网址
+	 */
 	private String MP_ORG_TREE_URL;
 
+	/**
+	 * 中台组织信息
+	 */
 	private String MP_ORG_INFO;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		String mpHost = mpEnvService.getMpHost();
@@ -36,9 +51,19 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		MP_ORG_INFO = mpHost + ConfigUtil.getContextProperty("mp.org.info");
 	}
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	/**
+	 * 子级列表
+	 *
+	 * @param orgId 组织id
+	 * @param self  自我
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> childrenList(String orgId, boolean self) {
 
@@ -64,6 +89,12 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return childrenIds;
 	}
 
+	/**
+	 * 获取组织路径
+	 *
+	 * @param orgId 组织id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getOrgPath(String orgId) {
 
@@ -75,12 +106,25 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return orgInfo.getString(JsonKeyConstant.PATH);
 	}
 
+	/**
+	 * 组织名称由id
+	 *
+	 * @param orgId 组织id
+	 * @return {@code String }
+	 */
 	@Override
 	public String orgNameById(String orgId) {
 		JSONObject orgInfo = HttpClientUtil.rawGet(MP_ORG_INFO + orgId, JSONObject.class);
 		return null != orgInfo ? orgInfo.getString("name") : "";
 	}
 
+	/**
+	 * 子级映射
+	 *
+	 * @param orgId 组织id
+	 * @param self  自我
+	 * @return {@code Map<String, String> }
+	 */
 	@Override
 	public Map<String, String> childrenMap(String orgId, boolean self) {
 
@@ -110,6 +154,12 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return orgMap;
 	}
 
+	/**
+	 * 获取组织id由树
+	 *
+	 * @param orgTree 组织树
+	 * @return {@code String }
+	 */
 	@Override
 	public String getOrgIdByTree(String orgTree) {
 		if (StringUtils.isBlank(orgTree)) {
@@ -125,6 +175,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 	/**
 	 * 会返回空值 请自己判断
+	 *
 	 * @param orgStr
 	 * @param orgTree
 	 * @return
@@ -167,6 +218,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 	/**
 	 * 递归子类组织编号
+	 *
 	 * @param orgTree
 	 * @return
 	 */
@@ -194,6 +246,7 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 	/**
 	 * 获取当前组织下的所有子级组织对象集合
+	 *
 	 * @param orgId 指定组织id
 	 * @return 子级对象的集合JSONArray
 	 */
@@ -220,6 +273,12 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return orgs;
 	}
 
+	/**
+	 * 获取父母id列表
+	 *
+	 * @param orgId 组织id
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getParentIds(String orgId) {
 
@@ -239,6 +298,12 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 		return parentIds;
 	}
 
+	/**
+	 * 获取由id
+	 *
+	 * @param orgId 组织id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getById(String orgId) {
 		return HttpClientUtil.rawGet(MP_ORG_INFO + orgId, JSONObject.class);

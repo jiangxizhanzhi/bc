@@ -104,7 +104,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	/**
 	 * 动态标志
 	 */
-	@ApiModelProperty(name = "dynamic_flag", value = "是否为动态flag 0=静态 1=动态 2=随机")
+	@ApiModelProperty(name = "dynamic_flag", value = "是否为动态flag 0=静态 1=动态 2=随机, 3=非flag")
 	private Integer dynamicFlag;
 
 	/**

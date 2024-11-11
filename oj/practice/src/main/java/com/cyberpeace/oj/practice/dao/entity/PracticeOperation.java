@@ -58,7 +58,7 @@ public class PracticeOperation extends PracticeBase {
 	/**
 	 * 是否使用动态FLAG (拥有场景时使用)
 	 */
-	@ApiModelProperty("是否使用动态FLAG")
+	@ApiModelProperty("是否使用动态FLAG 0=静态 1=动态 2=随机, 3=非flag")
 	private Integer dynamicFlag;
 
 	/**

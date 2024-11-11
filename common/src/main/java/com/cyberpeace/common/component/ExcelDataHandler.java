@@ -49,7 +49,7 @@ public class ExcelDataHandler {
     private Workbook workbook;
 
     /**
-     * 文件输入流
+     * 文件输入流量
      */
     private FileInputStream fileInputStream;
 
@@ -61,7 +61,7 @@ public class ExcelDataHandler {
      */
     public ExcelDataHandler(String filePath, int sheetIndex) {
 		try {
-			// 创建文件流
+			// 创建文件流量
 			fileInputStream = new FileInputStream(filePath);
 
 			workbook = WorkbookFactory.create(fileInputStream);
@@ -345,7 +345,7 @@ public class ExcelDataHandler {
      * @param sheetName   sheet名
      * @param passFields  过滤字段
      * @param excelHeader 导出列头
-     * @return 文件流
+     * @return 文件流量
      */
     public static <T> File exportExcel(List<T> list, String filePath, String sheetName,
 			List<String> passFields, ExcelHeader excelHeader) {

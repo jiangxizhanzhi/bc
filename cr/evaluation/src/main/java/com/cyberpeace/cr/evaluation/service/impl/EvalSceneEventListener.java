@@ -82,7 +82,7 @@ public class EvalSceneEventListener extends MessageListener {
 	private EvalTaskMapper evalTaskMapper;
 
 	/**
-	 * 流程代码
+	 * 流量程代码
 	 */
 	private List<String> FLOW_CODES = Lists.newArrayList("node_start_flow", "node_stop_flow");
 
@@ -164,7 +164,7 @@ public class EvalSceneEventListener extends MessageListener {
 	}
 
 	/**
-	 * 流程流消息
+	 * 流量程流量消息
 	 *
 	 * @param context    上下文
 	 * @param businessId 业务id

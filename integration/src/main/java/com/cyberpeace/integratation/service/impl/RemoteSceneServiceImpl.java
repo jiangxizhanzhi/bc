@@ -64,7 +64,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String SCENE_DELETE_URL;
 
 	/**
-	 * 场景清楚网址
+	 * 场景清除网址
 	 */
 	private String SCENE_CLEAR_URL;
 
@@ -99,27 +99,27 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String NODE_RECREATE_URL;
 
 	/**
-	 * 流启动 URL
+	 * 流量启动 URL
 	 */
 	private String FLOW_START_URL;
 
 	/**
-	 * 流停止 URL
+	 * 流量停止 URL
 	 */
 	private String FLOW_STOP_URL;
 
 	/**
-	 * 流更新参数 URL
+	 * 流量更新参数 URL
 	 */
 	private String FLOW_UPDATE_PARAM_URL;
 
 	/**
-	 * 流批量开始网址
+	 * 流量批量开始网址
 	 */
 	private String FLOW_BATCH_START_URL;
 
 	/**
-	 * 流批量停网址
+	 * 流量批量停网址
 	 */
 	private String FLOW_BATCH_STOP_URL;
 
@@ -129,7 +129,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String NODE_SESSION_URL;
 
 	/**
-	 * 流日志 URL
+	 * 流量日志 URL
 	 */
 	private String FLOW_LOG_URL;
 
@@ -139,7 +139,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String HOST_STATE_URL;
 
 	/**
-	 * 流趋势 URL
+	 * 流量趋势 URL
 	 */
 	private String FLOW_TREND_URL;
 
@@ -164,12 +164,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	private String COLLECTION_EVENT_DATA_URL;
 
 	/**
-	 * 流记录 URL
+	 * 流量记录 URL
 	 */
 	private String FLOW_RECORD_URL;
 
 	/**
-	 * 流检索 URL
+	 * 流量检索 URL
 	 */
 	private String FLOW_RETRIEVE_URL;
 
@@ -369,7 +369,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	/**
 	 * 停场景
 	 *
-	 * @param sceneOpsContext 场景老年 退休金 计划上下文
+	 * @param sceneOpsContext 场景操作 计划上下文
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -382,7 +382,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	/**
 	 * 暂停场景
 	 *
-	 * @param sceneOpsContext 场景老年 退休金 计划上下文
+	 * @param sceneOpsContext 场景操作 计划上下文
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -580,9 +580,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	/**
-	 * 获取流由id
+	 * 获取流量由id
 	 *
-	 * @param flowId 流id
+	 * @param flowId 流量id
 	 * @return {@code MpFlow }
 	 */
 	@Override
@@ -593,7 +593,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	/**
 	 * Update Flow 参数
 	 *
-	 * @param flowOpsContext 流操作上下文
+	 * @param flowOpsContext 流量操作上下文
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -602,9 +602,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	/**
-	 * 启动流程
+	 * 启动流量
 	 *
-	 * @param flowOpsContext 流操作上下文
+	 * @param flowOpsContext 流量操作上下文
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -613,7 +613,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	/**
-	 * 停止流
+	 * 停止流量
 	 *
 	 * @param context 上下文
 	 * @return {@code Boolean }
@@ -624,9 +624,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	/**
-	 * 批量开始流
+	 * 批量开始流量
 	 *
-	 * @param flowBatchOpsContext 流批量老年 退休金 计划上下文
+	 * @param flowBatchOpsContext 流量批量操作 计划上下文
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -635,9 +635,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	/**
-	 * 批量停流
+	 * 批量停流量
 	 *
-	 * @param flowBatchOpsContext 流批量老年 退休金 计划上下文
+	 * @param flowBatchOpsContext 流量批量操作 计划上下文
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -646,9 +646,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	/**
-	 * 获取流记录
+	 * 获取流量记录
 	 *
-	 * @param flowRecordContext 流记录上下文
+	 * @param flowRecordContext 流量记录上下文
 	 * @return {@code JSONObject }
 	 */
 	@Override
@@ -776,9 +776,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	/**
-	 * 获取流原木
+	 * 获取流量日志
 	 *
-	 * @param flowLogsPageContext 流原木分页上下文
+	 * @param flowLogsPageContext 流量日志分页上下文
 	 * @return {@code JSONObject }
 	 */
 	@Override
@@ -805,7 +805,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	/**
-	 * 获取流趋势
+	 * 获取流量趋势
 	 *
 	 * @param elementCommonContext 元素通用上下文
 	 * @return {@code List<MpFlowTrend> }

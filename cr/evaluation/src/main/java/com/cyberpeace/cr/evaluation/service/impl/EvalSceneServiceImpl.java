@@ -93,9 +93,9 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 	}
 
 	/**
-	 * 获取元素流列表上下文
+	 * 获取元素流量列表上下文
 	 *
-	 * @param evalTaskFlowListQuery 评估任务流列表查询
+	 * @param evalTaskFlowListQuery 评估任务流量列表查询
 	 * @param evalTask              评估任务
 	 * @return {@code ElementFlowListContext }
 	 */

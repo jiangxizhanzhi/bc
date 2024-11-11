@@ -3,7 +3,7 @@ package com.cyberpeace.integratation.model.scene;
 import lombok.Data;
 
 /**
- * 流记录上下文
+ * 流量记录上下文
  *
  * @author SN
  * @date 2024/11/11
@@ -12,7 +12,7 @@ import lombok.Data;
 public class FlowRecordContext extends NodeOpsContext {
 
 	/**
-	 * 流id
+	 * 流量id
 	 */
 	private String flow_id;
 

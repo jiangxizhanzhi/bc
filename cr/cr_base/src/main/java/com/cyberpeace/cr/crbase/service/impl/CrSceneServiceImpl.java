@@ -115,9 +115,9 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**
-	 * 获取流文件路径
+	 * 获取流量文件路径
 	 *
-	 * @param flowId 流id
+	 * @param flowId 流量id
 	 * @return {@code String }
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**
-	 * 获取节点流上下文列表
+	 * 获取节点流量上下文列表
 	 *
 	 * @param mpSceneId 中台场景id
 	 * @param topoId    拓扑id
@@ -150,7 +150,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**
-	 * 获取节点流列表
+	 * 获取节点流量列表
 	 *
 	 * @param mpSceneId 中台场景id
 	 * @param topoId    拓扑id
@@ -220,7 +220,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	/**
 	 * 过滤流量列表
 	 *
-	 * @param elementFlowList 元素流列表
+	 * @param elementFlowList 元素流量列表
 	 * @param interactiveType 交互式类型
 	 * @param page            分页
 	 * @return {@code ListRsp<ElementFlow> }
@@ -239,9 +239,9 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**
-	 * 设置元素流状态
+	 * 设置元素流量状态
 	 *
-	 * @param elementFlowList 元素流列表
+	 * @param elementFlowList 元素流量列表
 	 * @param mpSceneId       中台场景id
 	 * @param nodeId          节点id
 	 * @return {@code List<ElementFlow> }
@@ -430,7 +430,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**
-	 * 获取靶场流列表
+	 * 获取靶场流量列表
 	 *
 	 * @param context 上下文
 	 * @return {@code ListRsp<ElementFlow> }
@@ -451,7 +451,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	/**
 	 * Update Flow 参数
 	 *
-	 * @param flowOpsContext 流操作上下文
+	 * @param flowOpsContext 流量操作上下文
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -478,11 +478,11 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**
-	 * 启动流
+	 * 启动流量
 	 *
 	 * @param mpSceneId  中台场景id
 	 * @param nodeId     节点id
-	 * @param flows      流
+	 * @param flows      流量
 	 * @param businessId 业务id
 	 * @return {@code Boolean }
 	 */
@@ -520,7 +520,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	/**
-	 * 启动所有流程
+	 * 启动所有流量程
 	 *
 	 * @param mpSceneId  中台场景id
 	 * @param nodeId     节点id

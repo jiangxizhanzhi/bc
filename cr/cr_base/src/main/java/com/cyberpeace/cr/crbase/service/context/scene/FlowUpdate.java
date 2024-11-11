@@ -27,7 +27,7 @@ public class FlowUpdate implements Serializable {
 	private String nodeId;
 
 	/**
-	 * 更新流
+	 * 更新流量
 	 */
 	private List<ElementFlow> updateFlows;
 

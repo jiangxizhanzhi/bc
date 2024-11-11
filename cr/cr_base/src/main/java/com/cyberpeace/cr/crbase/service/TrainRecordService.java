@@ -108,7 +108,7 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	String getTimeCost(String roomId);
 
 	/**
-	 * 获取结肠时间成本
+	 * 获取时间成本
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }

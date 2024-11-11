@@ -413,7 +413,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	}
 
 	/**
-	 * 清楚批量开始场景
+	 * 清除批量开始场景
 	 *
 	 * @param classroomId 课堂id
 	 */

@@ -29,7 +29,7 @@ public interface TaskMapper extends BaseMapper<Task> {
     IPage<Task> listTask(Page page, @Param("pattern") String pattern);
 
     /**
-     * 滤波器id列表
+     * 过滤id列表
      *
      * @param ids id列表
      * @return {@code List<String> }

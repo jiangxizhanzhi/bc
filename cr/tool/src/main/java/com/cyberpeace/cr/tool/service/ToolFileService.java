@@ -16,7 +16,7 @@ public interface ToolFileService extends IService<ToolFile> {
 	ToolFile saveFile(String filePath, boolean transferName);
 
 	/**
-	 * 保存工具关联附件（文件数据流型）
+	 * 保存工具关联附件（文件数据流量型）
 	 * @param multipartFile 文件数据对象
 	 * @return 工具附件数据对象
 	 */

@@ -80,7 +80,7 @@ public interface SkillMissionRelationMapper extends BaseMapper<SkillMissionRelat
 	List<SkillMissionRelation> batchSelect(@Param("resourceId") String resourceId);
 
 	/**
-	 * 清楚由技能id列表
+	 * 清除由技能id列表
 	 *
 	 * @param skillIds 技能id列表
 	 */

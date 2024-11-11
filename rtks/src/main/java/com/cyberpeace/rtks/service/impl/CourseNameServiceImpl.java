@@ -65,7 +65,7 @@ public class CourseNameServiceImpl extends ServiceImpl<CourseNameMapper, CourseN
 	}
 
 	/**
-	 * 滤波器id
+	 * 过滤id
 	 *
 	 * @param courseIds 课程id列表
 	 * @return {@code List<String> }

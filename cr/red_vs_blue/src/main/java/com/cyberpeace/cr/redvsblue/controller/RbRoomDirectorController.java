@@ -132,7 +132,7 @@ public class RbRoomDirectorController {
 	private RemoteLogService remoteLogService;
 
 	/**
-	 * Web插座推Service
+	 * WebSocket推送Service
 	 */
 	@Autowired
 	private WebSocketPushService webSocketPushService;
@@ -491,7 +491,7 @@ public class RbRoomDirectorController {
 	/**
 	 * 停
 	 *
-	 * @param opsReq 老年 退休金 计划请求体
+	 * @param opsReq 操作 计划请求体
 	 * @return {@code BaseRsp }
 	 */
 	@ApiOperation("停止演习")

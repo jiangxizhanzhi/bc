@@ -72,14 +72,14 @@ public class OfficeViewController {
 	}
 
 	/**
-	 * 获取文件流
+	 * 获取文件流量
 	 *
 	 * @param lessonId 课id
 	 * @param response 响应
 	 * @return {@code BaseRsp }
 	 * @throws FileNotFoundException 文件未找到异常
 	 */
-	@ApiOperation("获取课时文件流")
+	@ApiOperation("获取课时文件流量")
 	@GetMapping("/oj/lesson/handout")
 	public BaseRsp getFileStream(
 			@ApiParam(name = "fileId", value = "课时编号") @RequestParam("fileId") String lessonId,

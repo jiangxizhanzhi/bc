@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 中台流趋势
+ * 中台流量趋势
  *
  * @author SN
  * @date 2024/11/11

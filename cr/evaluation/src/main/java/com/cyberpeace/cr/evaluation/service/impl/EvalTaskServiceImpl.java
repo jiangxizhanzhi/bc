@@ -145,7 +145,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	/**
-	 * 获取评估任务老年 退休金 计划上下文
+	 * 获取评估任务操作 计划上下文
 	 *
 	 * @param taskId       任务id
 	 * @param validateUser 验证用户
@@ -334,7 +334,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	/**
-	 * 清楚任务场景
+	 * 清除任务场景
 	 *
 	 * @param evalTaskOpsContext eval task ops 上下文
 	 */
@@ -362,7 +362,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	}
 
 	/**
-	 * 清楚任务和场景
+	 * 清除任务和场景
 	 *
 	 * @param evalTaskOpsContext eval task ops 上下文
 	 */

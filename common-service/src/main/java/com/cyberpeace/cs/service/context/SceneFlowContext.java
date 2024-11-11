@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 场景流上下文
+ * 场景流量上下文
  *
  * @author SN
  * @date 2024/11/07
@@ -18,7 +18,7 @@ import lombok.Data;
 public class SceneFlowContext implements Serializable {
 
 	/**
-	 * 流id
+	 * 流量id
 	 */
 	@ApiModelProperty("流量Id")
 	private String flowId;

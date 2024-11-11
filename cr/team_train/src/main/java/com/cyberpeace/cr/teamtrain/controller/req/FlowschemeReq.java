@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * 流程图请求体
+ * 流量程图请求体
  *
  * @author SN
  * @date 2024/11/07

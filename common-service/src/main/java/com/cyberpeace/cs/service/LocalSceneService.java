@@ -206,21 +206,21 @@ public interface LocalSceneService extends IService<LocalScene> {
 	Boolean recreateNode(String localSceneId, String nodeId);
 
 	/**
-	 * 启动流程
+	 * 启动流量
 	 *
 	 * @param localScene 当地场景
 	 * @param nodeId     节点id
-	 * @param flowId     流id
+	 * @param flowId     流量id
 	 * @return {@code Boolean }
 	 */
 	Boolean startFlow(LocalScene localScene, String nodeId, String flowId);
 
 	/**
-	 * 停止流
+	 * 停止流量
 	 *
 	 * @param localScene 当地场景
 	 * @param nodeId     节点id
-	 * @param flowId     流id
+	 * @param flowId     流量id
 	 * @return {@code Boolean }
 	 */
 	Boolean stopFlow(LocalScene localScene, String nodeId, String flowId);

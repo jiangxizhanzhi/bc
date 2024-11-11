@@ -257,7 +257,7 @@ public class TeamTrainRoomController {
 	/**
 	 * 暂停场景
 	 *
-	 * @param sceneOpsReq 场景老年 退休金 计划请求体
+	 * @param sceneOpsReq 场景操作 计划请求体
 	 * @return {@code BaseRsp }
 	 */
 	@ApiOperation("暂停场景")
@@ -273,7 +273,7 @@ public class TeamTrainRoomController {
 	/**
 	 * 取消暂停场景
 	 *
-	 * @param sceneOpsReq 场景老年 退休金 计划请求体
+	 * @param sceneOpsReq 场景操作 计划请求体
 	 * @return {@code BaseRsp }
 	 */
 	@ApiOperation("从暂停中恢复场景")
@@ -287,7 +287,7 @@ public class TeamTrainRoomController {
 	}
 
 	/**
-	 * 获取流列表
+	 * 获取流量列表
 	 *
 	 * @param room_id 房间id
 	 * @return {@code BaseRsp<FlowRsp> }
@@ -306,7 +306,7 @@ public class TeamTrainRoomController {
 	}
 
 	/**
-	 * 启动流程
+	 * 启动流量程
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
@@ -335,7 +335,7 @@ public class TeamTrainRoomController {
 	}
 
 	/**
-	 * 停止流
+	 * 停止流量
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
@@ -366,7 +366,7 @@ public class TeamTrainRoomController {
 	/**
 	 * 重启节点
 	 *
-	 * @param nodeOpsReq 节点老年 退休金 计划请求体
+	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
 	 */
 	@ApiOperation("重启节点")
@@ -390,7 +390,7 @@ public class TeamTrainRoomController {
 	/**
 	 * 重新创建节点
 	 *
-	 * @param nodeOpsReq 节点老年 退休金 计划请求体
+	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
 	 */
 	@ApiOperation("重建节点")
@@ -536,7 +536,7 @@ public class TeamTrainRoomController {
 	/**
 	 * 批量删除
 	 *
-	 * @param opsReq 老年 退休金 计划请求体
+	 * @param opsReq 操作 计划请求体
 	 * @return {@code BaseRsp<String> }
 	 */
 	@ApiOperation("删除")

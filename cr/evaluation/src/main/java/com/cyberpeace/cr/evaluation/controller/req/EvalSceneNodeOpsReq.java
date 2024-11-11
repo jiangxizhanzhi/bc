@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 评估场景节点老年 退休金 计划请求体
+ * 评估场景节点操作 计划请求体
  *
  * @author SN
  * @date 2024/11/07

@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 单房间老年 退休金 计划请求体
+ * 单房间操作 计划请求体
  *
  * @author SN
  * @date 2024/11/07

@@ -12,7 +12,7 @@ public enum LineEffect {
 	 * 特效
 	 */
 
-	STREAM("stream", "流动"),
+	STREAM("stream", "流量动"),
 	SHINE("shine", "发光");
 
 	@Getter

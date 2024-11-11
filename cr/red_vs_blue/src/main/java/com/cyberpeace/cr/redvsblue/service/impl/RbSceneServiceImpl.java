@@ -88,7 +88,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 	private CrRoleService crRoleService;
 
 	/**
-	 * 场景滤波器Service
+	 * 场景过滤器Service
 	 */
 	@Autowired
 	private SceneFilterService sceneFilterService;
@@ -455,7 +455,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 	}
 
 	/**
-	 * 获取流列表
+	 * 获取流量列表
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<Flow> }

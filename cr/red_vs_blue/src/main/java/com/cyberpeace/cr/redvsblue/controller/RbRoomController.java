@@ -398,7 +398,7 @@ public class RbRoomController {
 	/**
 	 * 批量删除
 	 *
-	 * @param opsReq 老年 退休金 计划请求体
+	 * @param opsReq 操作 计划请求体
 	 * @return {@code BaseRsp<String> }
 	 */
 	@ApiOperation("删除")

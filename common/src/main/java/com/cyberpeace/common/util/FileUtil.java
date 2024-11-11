@@ -255,7 +255,7 @@ public class FileUtil {
 	 * 将字符串写入文件
 	 *
 	 * @param data 要写入的字符串
-	 * @param osw  输出流
+	 * @param osw  输出流量
 	 * @throws IOException io异常
 	 */
 	public static void writeString(String data, OutputStreamWriter osw) throws IOException {
@@ -314,7 +314,7 @@ public class FileUtil {
 	 * @param response 响应
 	 */
 	public static void setResponse(File file, Boolean delete, HttpServletResponse response) {
-		// 以流的形式下载文件。
+		// 以流量的形式下载文件。
 		InputStream fis = null;
 		OutputStream outputStream = null;
 		try {

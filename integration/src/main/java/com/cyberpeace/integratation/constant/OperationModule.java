@@ -64,7 +64,7 @@ public enum OperationModule implements BaseI18n {
 	 */
 	TASK(12, "任务", "task"),
 	/**
-	 * 流
+	 * 流量
 	 */
 	FLOW(13, "流量", "flow"),
 	/**

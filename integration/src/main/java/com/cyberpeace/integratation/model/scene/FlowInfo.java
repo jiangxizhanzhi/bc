@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * 流程信息
+ * 流量信息
  *
  * @author SN
  * @date 2024/11/11
@@ -14,7 +14,7 @@ import lombok.Data;
 public class FlowInfo implements Serializable {
 
 	/**
-	 * 流id
+	 * 流量id
 	 */
 	private String flow_id;
 

@@ -35,7 +35,7 @@ public interface RemoteSceneService {
 	/**
 	 * 停场景
 	 *
-	 * @param sceneOpsContext 场景老年 退休金 计划上下文
+	 * @param sceneOpsContext 场景操作 计划上下文
 	 * @return {@code Boolean }
 	 */
 	Boolean stopScene(SceneOpsContext sceneOpsContext);
@@ -43,7 +43,7 @@ public interface RemoteSceneService {
 	/**
 	 * 暂停场景
 	 *
-	 * @param sceneOpsContext 场景老年 退休金 计划上下文
+	 * @param sceneOpsContext 场景操作 计划上下文
 	 * @return {@code Boolean }
 	 */
 	Boolean pauseScene(SceneOpsContext sceneOpsContext);
@@ -108,7 +108,7 @@ public interface RemoteSceneService {
 	/**
 	 * 启动流量
 	 *
-	 * @param flowOpsContext 流操作上下文
+	 * @param flowOpsContext 流量操作上下文
 	 * @return {@code Boolean }
 	 */
 	Boolean startFlow(FlowOpsContext flowOpsContext);

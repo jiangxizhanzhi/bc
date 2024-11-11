@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 评估流老年 退休金 计划请求体
+ * 评估流量操作 计划请求体
  *
  * @author SN
  * @date 2024/11/07
@@ -41,7 +41,7 @@ public class EvalFlowsOpsReq implements Serializable {
 	private int runType;
 
 	/**
-	 * 流
+	 * 流量
 	 */
 	@ApiModelProperty("流量列表")
 	private List<FlowInfoContext> flows;

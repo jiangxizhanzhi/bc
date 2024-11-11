@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 流原木分页上下文
+ * 流量日志分页上下文
  *
  * @author SN
  * @date 2024/11/11

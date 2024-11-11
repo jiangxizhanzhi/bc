@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 
 /**
- * 元素流
+ * 元素流量
  *
  * @author SN
  * @date 2024/11/07

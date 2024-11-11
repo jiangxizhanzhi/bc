@@ -77,7 +77,7 @@ public class ParseMarkdown {
 	}
 
 	/**
-	 * 处理markdown流程
+	 * 处理markdown流
 	 */
 	public void handler(){
 		loadFile();

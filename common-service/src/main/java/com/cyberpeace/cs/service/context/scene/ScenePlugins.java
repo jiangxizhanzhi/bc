@@ -14,7 +14,7 @@ import lombok.Data;
 public class ScenePlugins implements Serializable {
 
 	/**
-	 * CP 流
+	 * CP 流量
 	 */
 	private CpFlow cpFlow;
 

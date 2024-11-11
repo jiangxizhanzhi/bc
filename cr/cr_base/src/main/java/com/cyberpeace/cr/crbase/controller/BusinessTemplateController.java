@@ -356,7 +356,7 @@ public class BusinessTemplateController {
 	/**
 	 * 重启节点
 	 *
-	 * @param nodeOpsReq 节点老年 退休金 计划请求体
+	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
 	 */
 	@ApiOperation("后台测试场景重启节点")
@@ -381,7 +381,7 @@ public class BusinessTemplateController {
 	/**
 	 * 重新创建节点
 	 *
-	 * @param nodeOpsReq 节点老年 退休金 计划请求体
+	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
 	 */
 	@ApiOperation("后台测试场景重建节点")
@@ -406,7 +406,7 @@ public class BusinessTemplateController {
 	/**
 	 * 创建节点
 	 *
-	 * @param nodeOpsReq 节点老年 退休金 计划请求体
+	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
 	 */
 	@ApiOperation("创建启动节点")

@@ -4,7 +4,7 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 流操作上下文
+ * 流量操作上下文
  *
  * @author SN
  * @date 2024/11/11
@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 public class FlowOpsContext extends NodeOpsContext {
 
     /**
-     * 流id
+     * 流量id
      */
     private String flow_id;
 

@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * EVAL 任务流控制器
+ * EVAL 任务流量控制器
  *
  * @author SN
  * @date 2024/11/07
@@ -60,7 +60,7 @@ public class EvalTaskFlowController {
 	private CrSceneService crSceneService;
 
 	/**
-	 * 获取流列表
+	 * 获取流量列表
 	 *
 	 * @param query 查询
 	 * @return {@code BaseRsp<ListRsp<ElementFlow>> }
@@ -94,7 +94,7 @@ public class EvalTaskFlowController {
 	/**
 	 * Update Flow 参数
 	 *
-	 * @param flowParamUpdateReq 流参数更新请求体
+	 * @param flowParamUpdateReq 流量参数更新请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("修改节点流量的源IP")
@@ -115,9 +115,9 @@ public class EvalTaskFlowController {
 	}
 
 	/**
-	 * 启动所有流
+	 * 启动所有流量
 	 *
-	 * @param evalFlowsOpsReq 评估流老年 退休金 计划请求体
+	 * @param evalFlowsOpsReq 评估流量操作 计划请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("启动全部任务流量")
@@ -136,9 +136,9 @@ public class EvalTaskFlowController {
 	}
 
 	/**
-	 * 启动流程列表
+	 * 启动流量程列表
 	 *
-	 * @param evalFlowsOpsReq 评估流老年 退休金 计划请求体
+	 * @param evalFlowsOpsReq 评估流量操作 计划请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("批量启动任务流量")
@@ -156,10 +156,10 @@ public class EvalTaskFlowController {
 	}
 
 	/**
-	 * 下载流程
+	 * 下载流量
 	 *
 	 * @param taskId 任务id
-	 * @param flowId 流id
+	 * @param flowId 流量id
 	 * @return {@code BaseRsp<FlowDownloadRsp> }
 	 */
 	@ApiOperation("获取流量下载链接")

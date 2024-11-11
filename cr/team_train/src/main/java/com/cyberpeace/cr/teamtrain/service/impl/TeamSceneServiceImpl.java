@@ -78,7 +78,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	private CrRoleService crRoleService;
 
 	/**
-	 * 场景滤波器Service
+	 * 场景过滤器Service
 	 */
 	@Autowired
 	private SceneFilterService sceneFilterService;
@@ -334,7 +334,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	}
 
 	/**
-	 * 获取流列表
+	 * 获取流量列表
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<Flow> }

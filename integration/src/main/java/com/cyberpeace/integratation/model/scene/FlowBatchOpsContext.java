@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * 流批量老年 退休金 计划上下文
+ * 流量批量操作 计划上下文
  *
  * @author SN
  * @date 2024/11/11
@@ -19,7 +19,7 @@ public class FlowBatchOpsContext extends NodeOpsContext {
 	private Integer run_type;
 
 	/**
-	 * 流
+	 * 流量
 	 */
 	private List<FlowInfo> flows;
 

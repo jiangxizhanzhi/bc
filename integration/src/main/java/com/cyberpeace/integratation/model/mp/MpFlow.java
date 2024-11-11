@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 
 /**
- * 中台流
+ * 中台流量
  *
  * @author SN
  * @date 2024/11/11
@@ -26,7 +26,7 @@ public class MpFlow implements Serializable {
 	private String title;
 
 	/**
-	 * 流描述
+	 * 流量描述
 	 */
 	private String flowDesc;
 

@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * 元素流列表
+ * 元素流量列表
  *
  * @author SN
  * @date 2024/11/07
@@ -15,7 +15,7 @@ import lombok.Data;
 public class ElementFlowList implements Serializable {
 
 	/**
-	 * 流
+	 * 流量
 	 */
 	private List<ElementFlow> flows;
 }

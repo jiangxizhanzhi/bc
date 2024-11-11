@@ -1498,7 +1498,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	/**
-	 * 清楚场景和拓扑
+	 * 清除场景和拓扑
 	 *
 	 * @param scenes 场景
 	 * @param topos  拓扑

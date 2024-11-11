@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 评估任务流列表查询
+ * 评估任务流量列表查询
  *
  * @author SN
  * @date 2024/11/07

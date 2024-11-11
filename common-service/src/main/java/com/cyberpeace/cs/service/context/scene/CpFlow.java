@@ -6,7 +6,7 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * CP 流
+ * CP 流量
  *
  * @author SN
  * @date 2024/11/07

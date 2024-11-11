@@ -147,7 +147,7 @@ public class FileTree {
 	/**
 	 * 来自 Stream 输入
 	 *
-	 * @param inputStream 输入流
+	 * @param inputStream 输入流量
 	 * @throws IOException io异常
 	 */
 	public void inputFromStream(InputStream inputStream) throws IOException {

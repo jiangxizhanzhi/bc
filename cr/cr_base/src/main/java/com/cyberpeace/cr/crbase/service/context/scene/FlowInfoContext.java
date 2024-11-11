@@ -14,7 +14,7 @@ import lombok.Data;
 public class FlowInfoContext implements Serializable {
 
 	/**
-	 * 流id
+	 * 流量id
 	 */
 	private String flowId;
 

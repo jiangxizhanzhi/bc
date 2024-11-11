@@ -129,7 +129,7 @@ public class ZipUtil {
 			try {
 				zos.close();
 			} catch (IOException e) {
-				// io流关闭失败 不做任何操作
+				// io流量关闭失败 不做任何操作
 			}
 		}
 
@@ -148,9 +148,9 @@ public class ZipUtil {
 		byte[] buf = new byte[BUFFER_SIZE];
 		// 压缩文件
 		if (sourceFile.isFile()) {
-			// 向zip输出流中添加一个zip实体，构造器中name为zip实体的文件的名字
+			// 向zip输出流量中添加一个zip实体，构造器中name为zip实体的文件的名字
 			zos.putNextEntry(new ZipEntry(name));
-			// copy文件到zip输出流中
+			// copy文件到zip输出流量中
 			int len;
 			FileInputStream in = new FileInputStream(sourceFile);
 			while ((len = in.read(buf)) != -1) {

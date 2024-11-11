@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 流下载响应
+ * 流量下载响应
  *
  * @author SN
  * @date 2024/11/07

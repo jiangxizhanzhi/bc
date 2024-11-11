@@ -555,7 +555,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 	}
 
 	/**
-	 * 创建任务流程 bo
+	 * 创建任务流量 bo
 	 *
 	 * @param missionId  任务id
 	 * @param missionMap 任务图

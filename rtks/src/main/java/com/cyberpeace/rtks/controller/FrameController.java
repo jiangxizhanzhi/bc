@@ -363,7 +363,7 @@ public class FrameController {
 	}
 
 	/**
-	 * 清楚框架
+	 * 清除框架
 	 *
 	 * @return {@code BaseRsp<FrameOutput> }
 	 */

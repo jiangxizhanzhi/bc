@@ -254,11 +254,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	/**
-	 * 启动流程
+	 * 启动流量
 	 *
 	 * @param localScene 当地场景
 	 * @param nodeId     节点id
-	 * @param flowId     流id
+	 * @param flowId     流量id
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -276,11 +276,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	/**
-	 * 停止流
+	 * 停止流量
 	 *
 	 * @param localScene 当地场景
 	 * @param nodeId     节点id
-	 * @param flowId     流id
+	 * @param flowId     流量id
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -296,7 +296,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	/**
-	 * 获取场景流列表
+	 * 获取场景流量列表
 	 *
 	 * @param sceneData       场景数据
 	 * @param interactiveType 交互式类型
@@ -335,10 +335,10 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	/**
-	 * 启动随机流
+	 * 启动随机流量
 	 *
 	 * @param mpSceneId           中台场景id
-	 * @param sceneFlowContextMap 场景流上下文地图
+	 * @param sceneFlowContextMap 场景流量上下文地图
 	 * @return {@code Boolean }
 	 */
 	@Override
@@ -767,7 +767,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	/**
-	 * 获取场景老年 退休金 计划上下文
+	 * 获取场景操作 计划上下文
 	 *
 	 * @param localScene 当地场景
 	 * @return {@code SceneOpsContext }
@@ -784,7 +784,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	/**
-	 * 获取节点老年 退休金 计划上下文
+	 * 获取节点操作 计划上下文
 	 *
 	 * @param localScene 当地场景
 	 * @param nodeId     节点id
@@ -801,11 +801,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	/**
-	 * 获取流老年 退休金 计划上下文
+	 * 获取流量操作 计划上下文
 	 *
 	 * @param localScene 当地场景
 	 * @param nodeId     节点id
-	 * @param flowId     流id
+	 * @param flowId     流量id
 	 * @return {@code FlowOpsContext }
 	 */
 	private FlowOpsContext getFlowOpsContext(LocalScene localScene, String nodeId, String flowId) {

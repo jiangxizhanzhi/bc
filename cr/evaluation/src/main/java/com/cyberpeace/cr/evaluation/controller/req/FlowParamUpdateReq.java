@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 流参数更新请求体
+ * 流量参数更新请求体
  *
  * @author SN
  * @date 2024/11/07
@@ -31,7 +31,7 @@ public class FlowParamUpdateReq implements Serializable {
 	private String nodeId;
 
 	/**
-	 * 流id
+	 * 流量id
 	 */
 	@ApiModelProperty(value = "流量id")
 	@NotNull

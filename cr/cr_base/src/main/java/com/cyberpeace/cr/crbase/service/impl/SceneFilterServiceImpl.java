@@ -19,7 +19,7 @@ import com.google.common.collect.Sets;
 import lombok.Data;
 
 /**
- * 场景滤波器Service实现
+ * 场景过滤器Service实现
  *
  * @author SN
  * @date 2024/11/07
@@ -28,7 +28,7 @@ import lombok.Data;
 public class SceneFilterServiceImpl implements SceneFilterService {
 
 	/**
-	 * 滤波器可见拓扑
+	 * 过滤可见拓扑
 	 *
 	 * @param topoData 拓扑数据
 	 * @param nodes    节点

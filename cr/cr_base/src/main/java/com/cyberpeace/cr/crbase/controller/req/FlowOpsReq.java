@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 流老年 退休金 计划请求体
+ * 流量操作 计划请求体
  *
  * @author SN
  * @date 2024/11/07
@@ -27,7 +27,7 @@ public class FlowOpsReq implements Serializable {
 	private String nodeId;
 
 	/**
-	 * 流id
+	 * 流量id
 	 */
 	@ApiModelProperty("流量id")
 	private String flowId;

@@ -98,7 +98,7 @@ public class ScreenServiceImpl implements ScreenService {
     }
 
     /**
-     * 滤波器以前实体结束时间
+     * 过滤以前实体结束时间
      *
      * @param screenRecordUserRoles 屏幕录制用户角色
      * @param actualEndTime         实体结束时间

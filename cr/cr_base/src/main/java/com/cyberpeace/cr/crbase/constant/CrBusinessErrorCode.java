@@ -164,7 +164,7 @@ public interface CrBusinessErrorCode {
 	String EMPTY_RESOURCE_ID_LIST = "101028";
 
 	/**
-	 * 启动流失败
+	 * 启动流量失败
 	 */// 启动流量失败
 	String START_FLOW_FAILURE = "101029";
 

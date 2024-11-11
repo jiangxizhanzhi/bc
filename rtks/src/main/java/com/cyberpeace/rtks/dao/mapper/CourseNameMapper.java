@@ -20,7 +20,7 @@ import com.cyberpeace.rtks.dao.entity.CourseName;
 public interface CourseNameMapper extends BaseMapper<CourseName> {
 
 	/**
-	 * 滤波器id
+	 * 过滤id
 	 *
 	 * @param courseIds 课程id列表
 	 * @return {@code List<String> }

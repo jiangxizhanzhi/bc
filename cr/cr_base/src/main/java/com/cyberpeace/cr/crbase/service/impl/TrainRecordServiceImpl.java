@@ -169,7 +169,7 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	}
 
 	/**
-	 * 获取结肠时间成本
+	 * 获取耗时
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }

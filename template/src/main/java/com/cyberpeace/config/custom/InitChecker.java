@@ -48,30 +48,38 @@ public class InitChecker {
 	 * 检查中台配置
 	 */
 	private void checkMp() {
-		blankCheck("MP_HOST");
-		blankCheck("MP_PORT");
-		blankCheck("MP_SECRET");
+	    // 检查必要的中台配置项是否设置
+	    blankCheck("MP_HOST");
+	    blankCheck("MP_PORT");
+	    blankCheck("MP_SECRET");
 
-		// 额外校验中台设置项
-		String mpSecret = SystemPropUtil.getProp("MP_SECRET");
-		String[] mpSecretSplit = StringUtils.split(mpSecret, ",");
+	    // 额外校验中台设置项
+	    String mpSecret = SystemPropUtil.getProp("MP_SECRET");
+	    String[] mpSecretSplit = StringUtils.split(mpSecret, ",");
 
-		Integer mpSecretLength = 2;
-		if (null == mpSecretSplit || mpSecretSplit.length != mpSecretLength) {
-			// 格式错误
-			log.error("[MP_SECRET]wrong format, read value=[{}]", mpSecret);
-			throw new Error();
-		}
+	    // 预期的MP_SECRET配置长度
+	    Integer mpSecretLength = 2;
+	    if (null == mpSecretSplit || mpSecretSplit.length != mpSecretLength) {
+	        // 格式错误
+	        log.error("[MP_SECRET]wrong format, read value=[{}]", mpSecret);
+	        throw new Error();
+	    }
 	}
 
+	/**
+	 * 检查配置项是否设置
+	 * @param field 配置项的键
+	 */
 	private void blankCheck(String field) {
-		String value = SystemPropUtil.getProp(field);
+	    // 获取配置项的值
+	    String value = SystemPropUtil.getProp(field);
 
-		if (StringUtils.isBlank(value)) {
-			log.error("[{}]not set!", field);
-			throw new Error();
-		} else {
-			log.info("prop=[{}], value=[{}]", field, value);
-		}
+	    // 检查配置项的值是否为空
+	    if (StringUtils.isBlank(value)) {
+	        log.error("[{}]not set!", field);
+	        throw new Error();
+	    } else {
+	        log.info("prop=[{}], value=[{}]", field, value);
+	    }
 	}
 }

@@ -30,47 +30,47 @@ public interface MenuConstant {
     String WEB_OJ_KNOWLEDGE_COURSE = "oj-knowledge-course";
 
     /**
-     * 蹼OJ理论实践
+     * WebOJ理论实践
      *///理论题
     String WEB_OJ_THEORY_PRACTICE = "oj-practice";
 
     /**
-     * 蹼OJ实践实操
+     * WebOJ实践实操
      *///实操题
     String WEB_OJ_PRACTICE_OPERATION = "oj-practice-capture-flag";
 
     /**
-     * 蹼靶场单训练
+     * Web靶场单训练
      *///单兵训练
     String WEB_CR_SINGLE_TRAIN = "single-list";
 
     /**
-     * 蹼靶场团队训练
+     * Web靶场团队训练
      *///团队训练
     String WEB_CR_TEAM_TRAIN = "group-training";
 
     /**
-     * 蹼靶场红与蓝
+     * Web靶场红与蓝
      *///红蓝对抗
     String WEB_CR_RED_VS_BLUE = "red-vs-blue";
 
     /**
-     * 蹼靶场工具工具
+     * Web靶场工具工具
      *///工具库
     String WEB_CR_TOOL_TOOLS = "tool-magazine";
 
     /**
-     * 蹼靶场工具exp （英文）
+     * Web靶场工具exp （英文）
      *///EXP库
     String WEB_CR_TOOL_EXP = "tool-exp";
 
     /**
-     * 蹼靶场工具shell代码
+     * Web靶场工具shell代码
      *///ShellCode库
     String WEB_CR_TOOL_SHELLCODE = "tool-shell";
 
     /**
-     * 蹼靶场工具GHDB 数据库
+     * Web靶场工具GHDB 数据库
      *///GHDB库
     String WEB_CR_TOOL_GHDB = "ghdb-library";
 
@@ -80,7 +80,7 @@ public interface MenuConstant {
     String WEB_PERSON_CENTER = "personal-folder";
 
     /**
-     * 蹼靶场评估
+     * Web靶场评估
      *///靶场测评
     String WEB_CR_EVALUATION = "range-test-self";
 

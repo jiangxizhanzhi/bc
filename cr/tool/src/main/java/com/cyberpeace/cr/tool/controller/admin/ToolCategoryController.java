@@ -49,7 +49,7 @@ public class ToolCategoryController {
 	 */
 	@GetMapping("/list")
 	@ApiOperation("工具分类列表")
-	@RequiresPermissions(MenuConstant.CMS_TOOL)
+//	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<ListRsp<ToolCategory>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase,
 			@ApiParam(name = "type", value = "工具类型")String type) {

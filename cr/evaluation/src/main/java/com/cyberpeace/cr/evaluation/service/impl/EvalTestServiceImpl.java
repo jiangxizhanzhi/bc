@@ -21,10 +21,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalPersonTestRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRuleMPRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestListRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalTestStatisticsRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalCloudTemplateMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
@@ -96,9 +93,6 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
     @Autowired
     private RemoteSupersetService remoteSupersetService;
-
-    @Autowired
-    private RemoteSceneService remoteSceneService;
 
     @Autowired
     private EvalRecordMapper evalRecordMapper;
@@ -186,25 +180,19 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
                 testRsp.setScore(recordMap.get(test.getResourceId()).getCount());
             }
 
-            // 调用中台接口获取服务类型、试验工具
-            JSONObject sceneLoadInfo = null;
-            try {
-                sceneLoadInfo = remoteSceneService.getSceneLoadInfo(test.getResourceId());
-            } catch (Exception e) {
-                log.info("getSceneLoadInfo error", e);
+            List<EvalTestStepListRsp> steps = evalStepService.getSteps(testRsp.getTestId());
+            JSONArray loads = new JSONArray();
+            for(EvalTestStepListRsp step : steps){
+                loads.addAll(step.getLoadList());
             }
-            if(sceneLoadInfo != null){
-                List<String> cloudServices = (List<String>) sceneLoadInfo.get("cloudServices");
-                Integer toolCount = (Integer) sceneLoadInfo.get("toolCount");
-                List<String> toolList = (List<String>) sceneLoadInfo.get("toolList");
-                testRsp.setCloudServices(cloudServices);
-                testRsp.setToolCount(toolCount);
-                testRsp.setToolList(toolList);
-            }else{
-                testRsp.setCloudServices(new ArrayList<>());
-                testRsp.setToolCount(0);
-                testRsp.setToolList(new ArrayList<>());
-            }
+            List<String> loadName = loads.stream().map(e -> ((JSONObject) e).getString("name")).distinct().collect(Collectors.toList());
+            List<String> cloudServices = new ArrayList<>();
+            cloudServices.add("计算服务");
+            cloudServices.add("容器服务");
+            testRsp.setCloudServices(cloudServices);
+            testRsp.setToolCount(loadName.size());
+            testRsp.setToolList(loadName);
+
             return testRsp;
         });
         return PageUtil.getListResult(evalTestIPage);

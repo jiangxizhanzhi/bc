@@ -67,7 +67,8 @@ public class EvalTestController {
 	@ApiOperation("我的训练列表")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<EvalTestListRsp>> testList(@Validated EvalTestListReq evalTestListReq) {
-		return new BaseRsp<>(evalTestService.testList(evalTestListReq));
+		ListRsp<EvalTestListRsp> evalTestListRspListRsp = evalTestService.testList(evalTestListReq);
+		return new BaseRsp<>(evalTestListRspListRsp);
 	}
 
 	@ApiOperation("查看训练详情")

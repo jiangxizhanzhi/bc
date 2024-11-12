@@ -185,7 +185,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
             for(EvalTestStepListRsp step : steps){
                 loads.addAll(step.getLoadList());
             }
-            List<String> loadName = loads.stream().map(e -> ((JSONObject) e).getString("name")).distinct().collect(Collectors.toList());
+            List<String> loadName = loads.stream().map(e -> ((JSONObject) e).getString("tool_name")).distinct().collect(Collectors.toList());
             List<String> cloudServices = new ArrayList<>();
             cloudServices.add("计算服务");
             cloudServices.add("容器服务");

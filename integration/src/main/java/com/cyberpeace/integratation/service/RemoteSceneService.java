@@ -295,4 +295,12 @@ public interface RemoteSceneService {
 	 * @return {@code JSONObject}
 	 */
 	JSONObject getByArea(String sceneId, String areaId);
+
+	/**
+	 * 获取场景载荷详情
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code JSONObject}
+	 */
+	JSONObject getSceneLoadInfo(String sceneId);
 }

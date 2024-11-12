@@ -143,6 +143,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String GET_BY_AREA_URL;
 
+	private String GET_SCENE_LOAD_INFO;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -245,6 +247,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		HOST_EVENT_LIST = MP_HOST + ConfigUtil.getContextProperty("host.event.list");
 
 		GET_BY_AREA_URL = MP_HOST + ConfigUtil.getContextProperty("scene.by.area");
+
+		GET_SCENE_LOAD_INFO = MP_HOST + ConfigUtil.getContextProperty("get.scene.load.info");
 
 		SAVE_ALERT_RULE = MP_HOST + ConfigUtil.getContextProperty("alert.rule.save");
 
@@ -680,6 +684,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONObject getByArea(String sceneId, String areaId) {
 		String requestUrl = String.format(GET_BY_AREA_URL, sceneId, areaId);
+		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject getSceneLoadInfo(String sceneId) {
+		String requestUrl = String.format(GET_SCENE_LOAD_INFO, sceneId);
 		return HttpClientUtil.rawGet(requestUrl, JSONObject.class);
 	}
 

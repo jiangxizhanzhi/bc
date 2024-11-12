@@ -39,6 +39,7 @@ import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteSupersetService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -59,371 +60,391 @@ import java.util.stream.Collectors;
 @Service
 public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> implements EvalTestService {
 
-	@Autowired
-	private EvalTestMapper evalTestMapper;
+    @Autowired
+    private EvalTestMapper evalTestMapper;
 
-	@Autowired
-	private EvalCloudTemplateMapper evalCloudTemplateMapper;
+    @Autowired
+    private EvalCloudTemplateMapper evalCloudTemplateMapper;
 
-	@Autowired
-	private EvalRuleService evalRuleService;
+    @Autowired
+    private EvalRuleService evalRuleService;
 
-	@Lazy
-	@Autowired
-	private EvalStepService evalStepService;
+    @Lazy
+    @Autowired
+    private EvalStepService evalStepService;
 
-	@Autowired
-	private LocalSceneService localSceneService;
+    @Autowired
+    private LocalSceneService localSceneService;
 
-	@Autowired
-	private RemoteUserService remoteUserService;
+    @Autowired
+    private RemoteUserService remoteUserService;
 
-	@Autowired
-	private TransactionTemplate transactionTemplate;
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
-	@Autowired
-	private RemoteTopoService remoteTopoService;
+    @Autowired
+    private RemoteTopoService remoteTopoService;
 
-	@Autowired
-	private EvalTestInstanceMapper evalTestInstanceMapper;
+    @Autowired
+    private EvalTestInstanceMapper evalTestInstanceMapper;
 
-	@Autowired
-	private EvalTestInstanceService evalTestInstanceService;
+    @Autowired
+    private EvalTestInstanceService evalTestInstanceService;
 
-	@Autowired
-	private EvalInstanceStepService evalInstanceStepService;
+    @Autowired
+    private EvalInstanceStepService evalInstanceStepService;
 
-	@Autowired
-	private RemoteSupersetService remoteSupersetService;
+    @Autowired
+    private RemoteSupersetService remoteSupersetService;
 
-	@Autowired
-	private EvalRecordMapper evalRecordMapper;
+    @Autowired
+    private RemoteSceneService remoteSceneService;
 
-	@Autowired
-	private EvalRuleTemplateService evalRuleTemplateService;
+    @Autowired
+    private EvalRecordMapper evalRecordMapper;
 
-	ObjectMapper objectMapper = new ObjectMapper();
-	@Override
-	public String createByTemplate(EvalTestAddReq evalTestAddReq) {
-		Integer exit = evalTestMapper.exitByName(evalTestAddReq.getName());
-		if (exit != null) {
-			throw new BusinessException(CrBusinessErrorCode.TEST_NAME_REPEAT);
-		}
-		EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(evalTestAddReq.getCloudTemplateId());
-		EvalTest evalTest = BeanUtils.copy(evalCloudTemplate, EvalTest.class);
-		evalTest.setAuthList(evalTestAddReq.getUserIds());
-		String newId = IDGeneratorUtil.getID();
-		evalTest.setResourceId(newId);
-		evalTest.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		evalTest.setTopoId(localSceneService.copyTopo(evalCloudTemplate.getTopoId(), evalTestAddReq.getName()));
-		evalTest.setTemplateName(evalCloudTemplate.getName());
-		evalTest.setDashboardId(remoteSupersetService.createDashboard(evalTestAddReq.getName()));
-		evalTest.setId(null);
-		evalTest.setName(evalTestAddReq.getName());
+    @Autowired
+    private EvalRuleTemplateService evalRuleTemplateService;
 
+    ObjectMapper objectMapper = new ObjectMapper();
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-				Map<String, String> stepIdMap = evalStepService.createByTemplate(evalCloudTemplate.getStepIdList(), newId);
-				evalTest.setTemplateId(evalTestAddReq.getCloudTemplateId());
-				evalRuleService.createByTemplate(evalTestAddReq.getCloudTemplateId(), newId, stepIdMap);
-				evalTestMapper.insert(evalTest);
-			}}
-		);
-		return newId;
-	}
-
-	@Override
-	public ListRsp<EvalTestListRsp> testList(EvalTestListReq evalTestListReq) {
-		IPage<EvalTest> evalTestIPage;
-		if (UserInfoContext.getUserContext().isSuperuser()) {
-			evalTestIPage = evalTestMapper.testPage(evalTestListReq.toPageParam(), evalTestListReq, null);
-		}else {
-			evalTestIPage = evalTestMapper.testPage(evalTestListReq.toPageParam(), evalTestListReq, UserInfoContext.getUserContext().getUserId());
-		}
-		//获取用户信息
-		List<String> userIds = new ArrayList<>();
-		for (EvalTest evalTest : evalTestIPage.getRecords()) {
-			userIds.addAll(evalTest.getAuthList());
-		}
-		Map<String, UserInfo> nameIdMap = remoteUserService.getIdUserInfoMap(userIds);
-		//获取节点数量信息
-		List<String> topoIds = evalTestIPage.getRecords().stream().map(EvalTest::getTopoId).collect(Collectors.toList());
-		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
-		//获取训练任务评估数据
-		List<String> testIds = evalTestIPage.getRecords().stream().map(EvalTest::getResourceId).collect(Collectors.toList());
-		List<TestRecordContext> recordList =  evalRecordMapper.getTestRecordByIds(testIds);
-		Map<String, TestRecordContext> recordMap = recordList.stream().collect(Collectors.toMap(TestRecordContext::getTestId, e -> e));
-		evalTestIPage.convert(test -> {
-			EvalTestListRsp testRsp = BeanUtils.copy(test, EvalTestListRsp.class);
-			testRsp.setTestId(test.getResourceId());
-			List<UserInfo> userInfoList = new ArrayList<>();
-			for (String id : test.getAuthList()) {
-				userInfoList.add(nameIdMap.get(id));
-			}
-			testRsp.setUserInfoList(userInfoList);
-			testRsp.setNodeCount(nodeCountMap.get(test.getTopoId()).getNodeCounts());
-			if (StringUtils.isBlank(test.getCurrentInstanceId())) {
-				testRsp.setStatus(0);
-			} else {
-				testRsp.setStatus(1);
-			}
-			TestRecordContext record = recordMap.get(test.getResourceId());
-			if (record == null) {
-				testRsp.setCount(0);
-				testRsp.setScore(0);
-			} else {
-				testRsp.setCount(recordMap.get(test.getResourceId()).getCount());
-				testRsp.setScore(recordMap.get(test.getResourceId()).getCount());
-			}
-
-			// TODO: 2024/3/22 调用中台接口获取服务类型、试验工具
-			testRsp.setCloudServices(new ArrayList<>());
-			testRsp.setToolCount(0);
-			testRsp.setToolList(new ArrayList<>());
-			return testRsp;
-		});
-		return PageUtil.getListResult(evalTestIPage);
-	}
-
-	@Override
-	public EvalTest getEvalTest(String testId) {
-		EvalTest evalTest = getById(testId);
-
-		//校验试验是否存在
-		if (evalTest == null) {
-			log.error("EvalTest can't find, testId = [{}]", testId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-
-		//校验权限
-		String userId = UserInfoContext.getUserContext().getUserId();
-		if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)
-				&& !evalTest.getOperationAuthIds().contains(userId)) {
-			log.error("Permission denied! userId = [{}]",
-					UserInfoContext.getUserContext().getUserId());
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-		}
-
-		return evalTest;
-	}
-
-	@Override
-	public Boolean deleteTest(String testId) {
-		List<String> instanceIds = evalTestInstanceMapper.selectIdsByTestIdAndStatus(testId, null);
-		for (String instanceId : instanceIds) {
-			evalTestInstanceService.deleteTestInstance(instanceId);
-		}
-		EvalTest evalTest = evalTestMapper.selectById(testId);
-		if (StringUtils.isNotEmpty(evalTest.getTopoId())) {
-			try {
-				remoteTopoService.deleteById(evalTest.getTopoId());
-			} catch (Exception e) {
-				log.error("Evaluate test delete topo fail! testId=[{}], topoId=[{}], catch error:", testId, evalTest.getTopoId(), e);
-			}
-			try {
-				remoteSupersetService.deleteDashboard(Arrays.asList(evalTest.getDashboardId()));
-			} catch (Exception e) {
-				log.error("Evaluate test delete dashboard fail! testId=[{}], dashboardId=[{}], catch error:", testId, evalTest.getDashboardId(), e);
-			}
-		}
-		evalTestMapper.deleteById(testId);
-		return true;
-	}
-
-	@Override
-	public void pause(String testInstanceId) {
-		String localSceneId = evalTestInstanceMapper.selectLocalSceneId(testInstanceId);
-		localSceneService.pauseScene(localSceneId);
-	}
-
-	@Override
-	public void unPause(String testInstanceId) {
-		String localSceneId = evalTestInstanceMapper.selectLocalSceneId(testInstanceId);
-		localSceneService.unpauseScene(localSceneId);
-	}
-
-	@Override
-	public String getDashboardPermalink(String testId) {
-		String dashboardId = evalTestMapper.selectDashboardIdByTestId(testId);
-		if (dashboardId == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		JSONObject dashboardDetail = remoteSupersetService.getDashboardDetail(dashboardId);
-		if (!dashboardDetail.getJSONObject("result").getBoolean("published")) {
-			throw new BusinessException(CrBusinessErrorCode.DASHBOARD_NOT_PUBLISH);
-		}
-		JSONObject permalink = remoteSupersetService.getDashboardPermalink(dashboardId);
-		return permalink.getString("url");
-	}
-
-	@Override
-	public Boolean validateExistTask(String testId, EvalTestInstance.Status status) {
-		List<String> instanceIds = evalTestInstanceMapper.selectIdsByTestIdAndStatus(testId, status.getCode());
-		return !instanceIds.isEmpty();
-	}
-
-	@Override
-	public String startScene(String testId) {
-
-		EvalTest evalTest = getEvalTest(testId);
-
-		EvalTestInstance evalTestInstance = new EvalTestInstance();
-		evalTestInstance.setTestId(testId);
-		evalTestInstance.setTestName(evalTest.getName());
-		evalTestInstance.setCopyedTopoId(remoteTopoService.copyTopo(evalTest.getTopoId()));
-		evalTestInstance.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		evalTestInstance.setResourceId(IDGeneratorUtil.getID());
-
-		//				此处保存mp报警规则数据
-		List<EvalRuleMPRsp> ruleList = evalRuleTemplateService.getRuleList(evalTest.getTemplateId());
-		ruleList.forEach(rule -> rule.setSceneId(evalTestInstance.getCopyedTopoId()));
-		JSONArray objects = objectMapper.convertValue(ruleList, JSONArray.class);
-		localSceneService.saveAlertRule(objects);
+    @Override
+    public String createByTemplate(EvalTestAddReq evalTestAddReq) {
+        Integer exit = evalTestMapper.exitByName(evalTestAddReq.getName());
+        if (exit != null) {
+            throw new BusinessException(CrBusinessErrorCode.TEST_NAME_REPEAT);
+        }
+        EvalCloudTemplate evalCloudTemplate = evalCloudTemplateMapper.selectById(evalTestAddReq.getCloudTemplateId());
+        EvalTest evalTest = BeanUtils.copy(evalCloudTemplate, EvalTest.class);
+        evalTest.setAuthList(evalTestAddReq.getUserIds());
+        String newId = IDGeneratorUtil.getID();
+        evalTest.setResourceId(newId);
+        evalTest.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+        evalTest.setTopoId(localSceneService.copyTopo(evalCloudTemplate.getTopoId(), evalTestAddReq.getName()));
+        evalTest.setTemplateName(evalCloudTemplate.getName());
+        evalTest.setDashboardId(remoteSupersetService.createDashboard(evalTestAddReq.getName()));
+        evalTest.setId(null);
+        evalTest.setName(evalTestAddReq.getName());
 
 
-		List<EvalInstanceStep> instanceSteps = new ArrayList<>();
-		List<EvalStep> evalSteps = evalStepService.selectByTestId(testId);
-		for (EvalStep evalStep : evalSteps) {
-			EvalInstanceStep evalInstanceStep = new EvalInstanceStep();
-			evalInstanceStep.setStage(evalStep.getStage());
-			evalInstanceStep.setTestId(testId);
-			evalInstanceStep.setStepId(evalStep.getResourceId());
-			evalInstanceStep.setTestInstanceId(evalTestInstance.getResourceId());
-			instanceSteps.add(evalInstanceStep);
-		}
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		// 构建本地scene对象
-		LocalScene localScene = createLocalScene(evalTestInstance);
+                                        @Override
+                                        protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
-		//启动中台场景
-		String sceneId = localSceneService.startScene(localScene);
-		localScene.setMpSceneId(sceneId);
-		localScene.setSceneStatus(SceneStatusEnum.START.getCode());
-		Date startTime = new Date();
-		localScene.setStartTime(startTime);
-		evalTestInstance.setStartTime(startTime);
-		evalTestInstance.setLocalSceneId(localScene.getResourceId());
-		evalTestInstance.setMpSceneId(sceneId);
+                                            Map<String, String> stepIdMap = evalStepService.createByTemplate(evalCloudTemplate.getStepIdList(), newId);
+                                            evalTest.setTemplateId(evalTestAddReq.getCloudTemplateId());
+                                            evalRuleService.createByTemplate(evalTestAddReq.getCloudTemplateId(), newId, stepIdMap);
+                                            evalTestMapper.insert(evalTest);
+                                        }
+                                    }
+        );
+        return newId;
+    }
 
-		// 更新模板信息
-		evalTest.setCurrentInstanceId(evalTestInstance.getResourceId());
+    @Override
+    public ListRsp<EvalTestListRsp> testList(EvalTestListReq evalTestListReq) {
+        IPage<EvalTest> evalTestIPage;
+        if (UserInfoContext.getUserContext().isSuperuser()) {
+            evalTestIPage = evalTestMapper.testPage(evalTestListReq.toPageParam(), evalTestListReq, null);
+        } else {
+            evalTestIPage = evalTestMapper.testPage(evalTestListReq.toPageParam(), evalTestListReq, UserInfoContext.getUserContext().getUserId());
+        }
+        //获取用户信息
+        List<String> userIds = new ArrayList<>();
+        for (EvalTest evalTest : evalTestIPage.getRecords()) {
+            userIds.addAll(evalTest.getAuthList());
+        }
+        Map<String, UserInfo> nameIdMap = remoteUserService.getIdUserInfoMap(userIds);
+        //获取节点数量信息
+        List<String> topoIds = evalTestIPage.getRecords().stream().map(EvalTest::getTopoId).collect(Collectors.toList());
+        Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
+        //获取训练任务评估数据
+        List<String> testIds = evalTestIPage.getRecords().stream().map(EvalTest::getResourceId).collect(Collectors.toList());
+        List<TestRecordContext> recordList = evalRecordMapper.getTestRecordByIds(testIds);
+        Map<String, TestRecordContext> recordMap = recordList.stream().collect(Collectors.toMap(TestRecordContext::getTestId, e -> e));
+        evalTestIPage.convert(test -> {
+            EvalTestListRsp testRsp = BeanUtils.copy(test, EvalTestListRsp.class);
+            testRsp.setTestId(test.getResourceId());
+            List<UserInfo> userInfoList = new ArrayList<>();
+            for (String id : test.getAuthList()) {
+                userInfoList.add(nameIdMap.get(id));
+            }
+            testRsp.setUserInfoList(userInfoList);
+            testRsp.setNodeCount(nodeCountMap.get(test.getTopoId()).getNodeCounts());
+            if (StringUtils.isBlank(test.getCurrentInstanceId())) {
+                testRsp.setStatus(0);
+            } else {
+                testRsp.setStatus(1);
+            }
+            TestRecordContext record = recordMap.get(test.getResourceId());
+            if (record == null) {
+                testRsp.setCount(0);
+                testRsp.setScore(0);
+            } else {
+                testRsp.setCount(recordMap.get(test.getResourceId()).getCount());
+                testRsp.setScore(recordMap.get(test.getResourceId()).getCount());
+            }
 
-		try {
-			// 更新本地数据库数据
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            // 调用中台接口获取服务类型、试验工具
+            JSONObject sceneLoadInfo = null;
+            try {
+                sceneLoadInfo = remoteSceneService.getSceneLoadInfo(test.getResourceId());
+            } catch (Exception e) {
+                log.info("getSceneLoadInfo error", e);
+            }
+            if(sceneLoadInfo != null){
+                List<String> cloudServices = (List<String>) sceneLoadInfo.get("cloudServices");
+                Integer toolCount = (Integer) sceneLoadInfo.get("toolCount");
+                List<String> toolList = (List<String>) sceneLoadInfo.get("toolList");
+                testRsp.setCloudServices(cloudServices);
+                testRsp.setToolCount(toolCount);
+                testRsp.setToolList(toolList);
+            }else{
+                testRsp.setCloudServices(new ArrayList<>());
+                testRsp.setToolCount(0);
+                testRsp.setToolList(new ArrayList<>());
+            }
+            return testRsp;
+        });
+        return PageUtil.getListResult(evalTestIPage);
+    }
 
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					localSceneService.save(localScene);
-					evalTestInstanceService.save(evalTestInstance);
-					evalInstanceStepService.saveBatch(instanceSteps);
-					evalTestMapper.updateById(evalTest);
-				}
-			});
-		} catch (Exception e) {
-			// 本地保存数据错误，删除已启动的远程场景
-			localSceneService.stopScene(localScene);
-			log.error("Failed to save local data:", e);
-			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
-		}
-		return evalTestInstance.getResourceId();
-	}
+    @Override
+    public EvalTest getEvalTest(String testId) {
+        EvalTest evalTest = getById(testId);
 
-	@Override
-	public EvalTestStatisticsRsp testStatistics() {
-		EvalTestStatisticsRsp evalTestStatisticsRsp = new EvalTestStatisticsRsp();
-		List<NameCount> overview = new ArrayList<>();
-		overview.add(new NameCount("验证模板", evalCloudTemplateMapper.count()));
-		overview.add(new NameCount("验证任务", evalTestMapper.countByUserId(UserInfoContext.getUserContext().getUserId())));
-		evalTestStatisticsRsp.setOverview(overview);
-		List<NameCount> categoryCount = new ArrayList<>();
-		List<EvalTestCategoryCount> categoryCounts = evalTestInstanceMapper.countByCategoryAndUserId(UserInfoContext.getUserContext().getUserId());
-		Map<Integer, Integer> categoryCountMap = categoryCounts.stream()
-															   .collect(Collectors.toMap(EvalTestCategoryCount::getType, EvalTestCategoryCount::getCount));
-		for (EvalCloudTemplate.TestType type : EvalCloudTemplate.TestType.values()) {
-			categoryCount.add(new NameCount(type.getDesc(), categoryCountMap.getOrDefault(type.getCode(), 0)));
-		}
-		evalTestStatisticsRsp.setCategoryCount(categoryCount);
-		return evalTestStatisticsRsp;
-	}
+        //校验试验是否存在
+        if (evalTest == null) {
+            log.error("EvalTest can't find, testId = [{}]", testId);
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
 
-	@Override
-	public ListRsp<EvalPersonTestRsp> personTestRspListRsp(PageReqBase pageReqBase) {
-		IPage<EvalPersonTestRsp> testRspIPage = evalTestMapper.selectPersonTestPage(pageReqBase.toPageParam(), UserInfoContext.getUserContext().getUserId());
-		testRspIPage.getRecords().forEach(test -> {
-			test.setType(EnumUtils.getEnumDescByCode(Integer.parseInt(test.getType()), EvalCloudTemplate.TestType.class));
-		});
-		return PageUtil.getListResult(testRspIPage);
-	}
+        //校验权限
+        String userId = UserInfoContext.getUserContext().getUserId();
+        if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)
+                && !evalTest.getOperationAuthIds().contains(userId)) {
+            log.error("Permission denied! userId = [{}]",
+                    UserInfoContext.getUserContext().getUserId());
+            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+        }
 
-	@Override
-	public JSONObject getDeviceStatistics(String testId) {
-		String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
-		if (StringUtils.isNotEmpty(localSceneId)) {
-			return localSceneService.getNodeStatistics(localSceneId);
-		} else {
-			String topoId = evalTestMapper.selectTopoIdByTestId(testId);
-			return localSceneService.getNodeStatisticsByTopoId(topoId);
-		}
-	}
+        return evalTest;
+    }
 
-	@Override
-	public JSONArray getDeviceList(String testId, Integer category, String name) {
-		String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
-		if (StringUtils.isNotEmpty(localSceneId)) {
-			EvalTest evalTest = evalTestMapper.selectById(testId);
-			return localSceneService.getAssetListByInstanceId(evalTest.getCurrentInstanceId(), category, name, true);
-		} else {
-			String topoId = evalTestMapper.selectTopoIdByTestId(testId);
-			return localSceneService.getAssetListByTopoId(topoId, category, name);
-		}
-	}
+    @Override
+    public Boolean deleteTest(String testId) {
+        List<String> instanceIds = evalTestInstanceMapper.selectIdsByTestIdAndStatus(testId, null);
+        for (String instanceId : instanceIds) {
+            evalTestInstanceService.deleteTestInstance(instanceId);
+        }
+        EvalTest evalTest = evalTestMapper.selectById(testId);
+        if (StringUtils.isNotEmpty(evalTest.getTopoId())) {
+            try {
+                remoteTopoService.deleteById(evalTest.getTopoId());
+            } catch (Exception e) {
+                log.error("Evaluate test delete topo fail! testId=[{}], topoId=[{}], catch error:", testId, evalTest.getTopoId(), e);
+            }
+            try {
+                remoteSupersetService.deleteDashboard(Arrays.asList(evalTest.getDashboardId()));
+            } catch (Exception e) {
+                log.error("Evaluate test delete dashboard fail! testId=[{}], dashboardId=[{}], catch error:", testId, evalTest.getDashboardId(), e);
+            }
+        }
+        evalTestMapper.deleteById(testId);
+        return true;
+    }
 
-	public JSONArray getCloudDeviceList(String testId, Integer category, String name) {
-		String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
-		if (StringUtils.isNotEmpty(localSceneId)) {
-			EvalTest evalTest = evalTestMapper.selectById(testId);
-			return localSceneService.getAssetCloudListByInstanceId(evalTest.getCurrentInstanceId(), category, name, true);
-		} else {
-			String topoId = evalTestMapper.selectTopoIdByTestId(testId);
-			return localSceneService.getAssetListByTopoId(topoId, category, name);
-		}
-	}
+    @Override
+    public void pause(String testInstanceId) {
+        String localSceneId = evalTestInstanceMapper.selectLocalSceneId(testInstanceId);
+        localSceneService.pauseScene(localSceneId);
+    }
 
-	@Override
-	public List<EvalInstanceSlimContext> listInstance(EvalTest evalTest, Boolean isFinished) {
-		if (isFinished != null && isFinished) {
-			return evalTestInstanceMapper.selectSlimInstanceListByTestIdAndStatus(
-					evalTest.getResourceId(), EvalTestInstance.Status.FINISHED.getCode()
-			);
-		}
+    @Override
+    public void unPause(String testInstanceId) {
+        String localSceneId = evalTestInstanceMapper.selectLocalSceneId(testInstanceId);
+        localSceneService.unpauseScene(localSceneId);
+    }
 
-		List<EvalInstanceSlimContext> evalInstanceSlimContexts = evalTestInstanceMapper
-				.selectSlimInstanceListByTestIdAndStatus(evalTest.getResourceId(), null);
+    @Override
+    public String getDashboardPermalink(String testId) {
+        String dashboardId = evalTestMapper.selectDashboardIdByTestId(testId);
+        if (dashboardId == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        JSONObject dashboardDetail = remoteSupersetService.getDashboardDetail(dashboardId);
+        if (!dashboardDetail.getJSONObject("result").getBoolean("published")) {
+            throw new BusinessException(CrBusinessErrorCode.DASHBOARD_NOT_PUBLISH);
+        }
+        JSONObject permalink = remoteSupersetService.getDashboardPermalink(dashboardId);
+        return permalink.getString("url");
+    }
 
-		if (StringUtils.isEmpty(evalTest.getCurrentInstanceId())) {
-			evalInstanceSlimContexts.add(new EvalInstanceSlimContext());
-		}
-		return evalInstanceSlimContexts;
-	}
+    @Override
+    public Boolean validateExistTask(String testId, EvalTestInstance.Status status) {
+        List<String> instanceIds = evalTestInstanceMapper.selectIdsByTestIdAndStatus(testId, status.getCode());
+        return !instanceIds.isEmpty();
+    }
 
-	private LocalScene createLocalScene(EvalTestInstance evalTestInstance) {
-		LocalScene localScene = new LocalScene();
-		localScene.setBusinessCode(BusinessCode.CLOUD.getCode());
-		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
-		localScene.setBusinessInstanceId(evalTestInstance.getResourceId());
-		localScene.setTopoId(evalTestInstance.getCopyedTopoId());
-		localScene.setResourceId(IDGeneratorUtil.getID());
-		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
-		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
-		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
-		localScene.setSceneName(evalTestInstance.getInstanceName());
-		String appResourceId = evalTestInstance.getTestId();
-		localScene.setMeta(JSON.toJSONString(LocalSceneMeta.builder().appResourceId(appResourceId).build()));
-		return localScene;
-	}
+    @Override
+    public String startScene(String testId) {
+
+        EvalTest evalTest = getEvalTest(testId);
+
+        EvalTestInstance evalTestInstance = new EvalTestInstance();
+        evalTestInstance.setTestId(testId);
+        evalTestInstance.setTestName(evalTest.getName());
+        evalTestInstance.setCopyedTopoId(remoteTopoService.copyTopo(evalTest.getTopoId()));
+        evalTestInstance.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+        evalTestInstance.setResourceId(IDGeneratorUtil.getID());
+
+        //				此处保存mp报警规则数据
+        List<EvalRuleMPRsp> ruleList = evalRuleTemplateService.getRuleList(evalTest.getTemplateId());
+        ruleList.forEach(rule -> rule.setSceneId(evalTestInstance.getCopyedTopoId()));
+        JSONArray objects = objectMapper.convertValue(ruleList, JSONArray.class);
+        localSceneService.saveAlertRule(objects);
+
+
+        List<EvalInstanceStep> instanceSteps = new ArrayList<>();
+        List<EvalStep> evalSteps = evalStepService.selectByTestId(testId);
+        for (EvalStep evalStep : evalSteps) {
+            EvalInstanceStep evalInstanceStep = new EvalInstanceStep();
+            evalInstanceStep.setStage(evalStep.getStage());
+            evalInstanceStep.setTestId(testId);
+            evalInstanceStep.setStepId(evalStep.getResourceId());
+            evalInstanceStep.setTestInstanceId(evalTestInstance.getResourceId());
+            instanceSteps.add(evalInstanceStep);
+        }
+
+        // 构建本地scene对象
+        LocalScene localScene = createLocalScene(evalTestInstance);
+
+        //启动中台场景
+        String sceneId = localSceneService.startScene(localScene);
+        localScene.setMpSceneId(sceneId);
+        localScene.setSceneStatus(SceneStatusEnum.START.getCode());
+        Date startTime = new Date();
+        localScene.setStartTime(startTime);
+        evalTestInstance.setStartTime(startTime);
+        evalTestInstance.setLocalSceneId(localScene.getResourceId());
+        evalTestInstance.setMpSceneId(sceneId);
+
+        // 更新模板信息
+        evalTest.setCurrentInstanceId(evalTestInstance.getResourceId());
+
+        try {
+            // 更新本地数据库数据
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                    localSceneService.save(localScene);
+                    evalTestInstanceService.save(evalTestInstance);
+                    evalInstanceStepService.saveBatch(instanceSteps);
+                    evalTestMapper.updateById(evalTest);
+                }
+            });
+        } catch (Exception e) {
+            // 本地保存数据错误，删除已启动的远程场景
+            localSceneService.stopScene(localScene);
+            log.error("Failed to save local data:", e);
+            throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
+        }
+        return evalTestInstance.getResourceId();
+    }
+
+    @Override
+    public EvalTestStatisticsRsp testStatistics() {
+        EvalTestStatisticsRsp evalTestStatisticsRsp = new EvalTestStatisticsRsp();
+        List<NameCount> overview = new ArrayList<>();
+        overview.add(new NameCount("验证模板", evalCloudTemplateMapper.count()));
+        overview.add(new NameCount("验证任务", evalTestMapper.countByUserId(UserInfoContext.getUserContext().getUserId())));
+        evalTestStatisticsRsp.setOverview(overview);
+        List<NameCount> categoryCount = new ArrayList<>();
+        List<EvalTestCategoryCount> categoryCounts = evalTestInstanceMapper.countByCategoryAndUserId(UserInfoContext.getUserContext().getUserId());
+        Map<Integer, Integer> categoryCountMap = categoryCounts.stream()
+                .collect(Collectors.toMap(EvalTestCategoryCount::getType, EvalTestCategoryCount::getCount));
+        for (EvalCloudTemplate.TestType type : EvalCloudTemplate.TestType.values()) {
+            categoryCount.add(new NameCount(type.getDesc(), categoryCountMap.getOrDefault(type.getCode(), 0)));
+        }
+        evalTestStatisticsRsp.setCategoryCount(categoryCount);
+        return evalTestStatisticsRsp;
+    }
+
+    @Override
+    public ListRsp<EvalPersonTestRsp> personTestRspListRsp(PageReqBase pageReqBase) {
+        IPage<EvalPersonTestRsp> testRspIPage = evalTestMapper.selectPersonTestPage(pageReqBase.toPageParam(), UserInfoContext.getUserContext().getUserId());
+        testRspIPage.getRecords().forEach(test -> {
+            test.setType(EnumUtils.getEnumDescByCode(Integer.parseInt(test.getType()), EvalCloudTemplate.TestType.class));
+        });
+        return PageUtil.getListResult(testRspIPage);
+    }
+
+    @Override
+    public JSONObject getDeviceStatistics(String testId) {
+        String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
+        if (StringUtils.isNotEmpty(localSceneId)) {
+            return localSceneService.getNodeStatistics(localSceneId);
+        } else {
+            String topoId = evalTestMapper.selectTopoIdByTestId(testId);
+            return localSceneService.getNodeStatisticsByTopoId(topoId);
+        }
+    }
+
+    @Override
+    public JSONArray getDeviceList(String testId, Integer category, String name) {
+        String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
+        if (StringUtils.isNotEmpty(localSceneId)) {
+            EvalTest evalTest = evalTestMapper.selectById(testId);
+            return localSceneService.getAssetListByInstanceId(evalTest.getCurrentInstanceId(), category, name, true);
+        } else {
+            String topoId = evalTestMapper.selectTopoIdByTestId(testId);
+            return localSceneService.getAssetListByTopoId(topoId, category, name);
+        }
+    }
+
+    public JSONArray getCloudDeviceList(String testId, Integer category, String name) {
+        String localSceneId = evalTestMapper.selectLocalSceneIdByTestId(testId);
+        if (StringUtils.isNotEmpty(localSceneId)) {
+            EvalTest evalTest = evalTestMapper.selectById(testId);
+            return localSceneService.getAssetCloudListByInstanceId(evalTest.getCurrentInstanceId(), category, name, true);
+        } else {
+            String topoId = evalTestMapper.selectTopoIdByTestId(testId);
+            return localSceneService.getAssetListByTopoId(topoId, category, name);
+        }
+    }
+
+    @Override
+    public List<EvalInstanceSlimContext> listInstance(EvalTest evalTest, Boolean isFinished) {
+        if (isFinished != null && isFinished) {
+            return evalTestInstanceMapper.selectSlimInstanceListByTestIdAndStatus(
+                    evalTest.getResourceId(), EvalTestInstance.Status.FINISHED.getCode()
+            );
+        }
+
+        List<EvalInstanceSlimContext> evalInstanceSlimContexts = evalTestInstanceMapper
+                .selectSlimInstanceListByTestIdAndStatus(evalTest.getResourceId(), null);
+
+        if (StringUtils.isEmpty(evalTest.getCurrentInstanceId())) {
+            evalInstanceSlimContexts.add(new EvalInstanceSlimContext());
+        }
+        return evalInstanceSlimContexts;
+    }
+
+    private LocalScene createLocalScene(EvalTestInstance evalTestInstance) {
+        LocalScene localScene = new LocalScene();
+        localScene.setBusinessCode(BusinessCode.CLOUD.getCode());
+        localScene.setUserId(UserInfoContext.getUserContext().getUserId());
+        localScene.setBusinessInstanceId(evalTestInstance.getResourceId());
+        localScene.setTopoId(evalTestInstance.getCopyedTopoId());
+        localScene.setResourceId(IDGeneratorUtil.getID());
+        localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
+        localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
+        localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
+        localScene.setSceneName(evalTestInstance.getInstanceName());
+        String appResourceId = evalTestInstance.getTestId();
+        localScene.setMeta(JSON.toJSONString(LocalSceneMeta.builder().appResourceId(appResourceId).build()));
+        return localScene;
+    }
 }

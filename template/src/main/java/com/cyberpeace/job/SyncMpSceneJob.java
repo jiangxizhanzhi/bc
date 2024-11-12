@@ -23,28 +23,55 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * 同步mp场景作业
+ *
+ * @author admin
+ * @date 2024/11/12
+ */
 @Slf4j
 @Component
 public class SyncMpSceneJob {
 
+	/**
+	 * 远程场景服务
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 局部场景映射器
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * oj本地场景服务
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * oj本地场景文件夹
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 课堂现场服务
+	 */
 	@Autowired
 	private ClassroomSceneService classroomSceneService;
 
+	/**
+	 * 教室组信息映射器
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 同步mp场景关闭
+	 */
 	@Scheduled(initialDelay = 1000, fixedRate = 300000)
 	public void syncMpSceneClose() {
 		log.info("syncMpSceneClose start");
@@ -65,6 +92,11 @@ public class SyncMpSceneJob {
 		log.info("syncMpSceneClose end");
 	}
 
+	/**
+	 * 同步mp场景关闭
+	 *
+	 * @param localScene 本地场景
+	 */
 	private void syncMpSceneClose(LocalScene localScene) {
 		if (StringUtils.isBlank(localScene.getMpSceneId())) {
 			log.info("mp_scene_id is null, continue....");
@@ -98,16 +130,33 @@ public class SyncMpSceneJob {
 		}
 	}
 
+	/**
+	 * 是oj
+	 *
+	 * @param businessCode 商业代码
+	 * @return {@link Boolean }
+	 */
 	private Boolean isOj(int businessCode) {
 		return businessCode == LocalScene.BusinessCode.LESSON.getCode().intValue()
 				|| businessCode == LocalScene.BusinessCode.PRACTICE.getCode().intValue()
 				|| businessCode == LocalScene.BusinessCode.LESSON_PRACTICE.getCode().intValue();
 	}
 
+	/**
+	 * 是课堂
+	 *
+	 * @param businessCode 业务code码
+	 * @return {@link Boolean }
+	 */
 	private Boolean isClassroom(int businessCode) {
 		return businessCode == LocalScene.BusinessCode.CLASSROOM.getCode().intValue();
 	}
 
+	/**
+	 * 删除课堂场景
+	 *
+	 * @param localScene 本地场景
+	 */
 	private void deleteClassScene(LocalScene localScene) {
 		OjLocalScene ojLocalScene = ojLocalSceneMapper
 				.selectById(localScene.getBusinessInstanceId());

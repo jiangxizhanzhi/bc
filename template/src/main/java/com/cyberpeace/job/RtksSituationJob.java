@@ -1,13 +1,5 @@
 package com.cyberpeace.job;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -15,22 +7,46 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.rtks.dao.mapper.UserRoleMapper;
 import com.cyberpeace.rtks.service.RtksSituationService;
 import com.cyberpeace.rtks.service.bo.UserRoleContext;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * rtks情况工作
+ *
+ * @author admin
+ * @date 2024/11/12
+ */
 @Slf4j
 @Component
 public class RtksSituationJob {
 
+	/**
+	 * 远程用户服务
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 用户角色映射器
+	 */
 	@Autowired
 	private UserRoleMapper userRoleMapper;
 
+	/**
+	 * rtks态势服务
+	 */
 	@Autowired
 	private RtksSituationService rtksSituationService;
 
+	/**
+	 * 计算
+	 */
 	@Scheduled(fixedRate = 1000 * 300)
 	public void calculate() {
 		log.info("start rtks situation job");

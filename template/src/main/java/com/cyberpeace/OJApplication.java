@@ -7,6 +7,12 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * ojapplication
+ *
+ * @author admin
+ * @date 2024/11/12
+ */
 @EnableCaching
 @EnableScheduling
 @ServletComponentScan
@@ -14,6 +20,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 		scanBasePackages = { "com.cyberpeace" })
 public class OJApplication {
 
+	/**
+	 * 主方法
+	 *
+	 * @param args args
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(OJApplication.class, args);
 	}

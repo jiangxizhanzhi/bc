@@ -6,6 +6,12 @@ import com.cyberpeace.common.util.DateUtil;
 
 import java.util.*;
 
+/**
+ * 演示uri枚举
+ *
+ * @author admin
+ * @date 2024/11/12
+ */
 public enum DemonstrationUriEnum {
     SITUATION_RANKING("/ojj/rtks/situation/ranking/","/cpms/demonstration/situationRanking.json","classpath:static/demonstration/situationRanking.json",null),
     SITUATION_SITUATION("/ojj/rtks/situation/situation/","/cpms/demonstration/situationSituation.json","classpath:static/demonstration/situationSituation.json",null),
@@ -21,6 +27,14 @@ public enum DemonstrationUriEnum {
 
     private DemonstrationService demonstrationService;
 
+    /**
+     * 演示uri枚举
+     *
+     * @param uri                  uri
+     * @param filePath             文件路径
+     * @param systemPath           系统路径
+     * @param demonstrationService 示范服务
+     */
     DemonstrationUriEnum(String uri, String filePath, String systemPath, DemonstrationService demonstrationService) {
         this.uri = uri;
         this.filePath = filePath;
@@ -28,23 +42,49 @@ public enum DemonstrationUriEnum {
         this.demonstrationService = demonstrationService;
     }
 
+    /**
+     * 获得演示服务
+     *
+     * @return {@link DemonstrationService }
+     */
     public DemonstrationService getDemonstrationService() {
         return demonstrationService;
     }
 
+    /**
+     * 获取uri
+     *
+     * @return {@link String }
+     */
     public String getUri() {
         return uri;
     }
 
+    /**
+     * 获取文件路径
+     *
+     * @return {@link String }
+     */
     public String getFilePath() {
         return filePath;
     }
 
 
+    /**
+     * 获取系统路径
+     *
+     * @return {@link String }
+     */
     public String getSystemPath() {
         return systemPath;
     }
 
+    /**
+     * 得到uri
+     *
+     * @param uri uri
+     * @return {@link DemonstrationUriEnum }
+     */
     public static DemonstrationUriEnum getByUri(String uri) {
 
         for (DemonstrationUriEnum demonstrationUriEnum : DemonstrationUriEnum.values()) {
@@ -55,11 +95,36 @@ public enum DemonstrationUriEnum {
         return null;
     }
 
+    /**
+     * 示范服务
+     *
+     * @author admin
+     * @date 2024/11/12
+     */
     public interface DemonstrationService {
+        /**
+         * 处理
+         *
+         * @param content 内容
+         * @return {@link String }
+         */
         String deal(String content);
     }
+
+    /**
+     * 形势新闻服务impl
+     *
+     * @author admin
+     * @date 2024/11/12
+     */
     public static class SituationNewsServiceImpl implements DemonstrationService{
 
+        /**
+         * 处理
+         *
+         * @param content 内容
+         * @return {@link String }
+         */
         @Override
         public String deal(String content) {
             List<JSONObject> list = JSONObject.parseArray(content, JSONObject.class);
@@ -70,8 +135,21 @@ public enum DemonstrationUriEnum {
             return JSONObject.toJSONString(list);
         }
     }
+
+    /**
+     * 态势趋势服务impl
+     *
+     * @author admin
+     * @date 2024/11/12
+     */
     public static class SituationTrendServiceImpl implements DemonstrationService{
 
+        /**
+         * 处理
+         *
+         * @param content 内容
+         * @return {@link String }
+         */
         @Override
         public String deal(String content) {
             JSONObject trend = JSONObject.parseObject(content);

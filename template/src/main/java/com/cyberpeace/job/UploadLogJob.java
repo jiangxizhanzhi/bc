@@ -15,23 +15,52 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 上传日志作业
+ *
+ * @author admin
+ * @date 2024/11/12
+ */
 @Slf4j
 @Component
 public class UploadLogJob {
 
+    /**
+     * mp-env服务
+     */
     @Autowired
     private MpEnvService mpEnvService;
 
+    /**
+     * 报告日志url
+     */
     private String REPORT_LOG_URL;
 
+    /**
+     * 正在上传日志
+     */
     private boolean isUploadLog;
 
+    /**
+     * 下载日志url
+     */
     private String DOWNLOAD_LOG_URL = "/cs/admin/log/downloadLog?file_name=";
 
+    /**
+     * 日志类型
+     */
     private String LOG_type = "BC";
 
+    /**
+     * 主机地址
+     */
     private String HOST_ADDRESS;
 
+    /**
+     * init
+     *
+     * @throws UnknownHostException 未知主机异常
+     */
     @PostConstruct
     public void init() throws UnknownHostException {
         REPORT_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.report.log");
@@ -39,6 +68,9 @@ public class UploadLogJob {
         HOST_ADDRESS = SystemPropUtil.getProp("BC_HOST");
     }
 
+    /**
+     * 上传日志
+     */
     @Scheduled(fixedDelayString = "${common.upload.log.interval.time}")
     public void uploadLog(){
         if(isUploadLog){

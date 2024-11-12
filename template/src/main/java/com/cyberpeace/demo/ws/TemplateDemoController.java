@@ -1,13 +1,5 @@
 package com.cyberpeace.demo.ws;
 
-import java.util.Date;
-
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -16,23 +8,49 @@ import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.model.DemoWsMessage;
 import com.cyberpeace.model.DemoWsMessageIdentifier;
 import com.cyberpeace.rtks.dao.entity.Task;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
+/**
+ * 模板演示控制器
+ *
+ * @author admin
+ * @date 2024/11/12
+ */
 @Api(tags = "template的demo")
 @RestController
 @RequestMapping("/template")
 @RequiresAuthentication
 public class TemplateDemoController {
 
+	/**
+	 * 我web套接字处理程序
+	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	/**
+	 * 路径1
+	 */
 	String path1 = "/ws";
 
+	/**
+	 * 路径2
+	 */
 	String path2 = "/ws/course";
 
+	/**
+	 * 发送msg1
+	 *
+	 * @return {@link BaseRsp }<{@link Task }>
+	 */
 	@ApiOperation("测试websocket消息发送1")
 	@GetMapping("/ws")
 	public BaseRsp<Task> sendMsg1() {
@@ -52,6 +70,11 @@ public class TemplateDemoController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 发送消息2
+	 *
+	 * @return {@link BaseRsp }<{@link Task }>
+	 */
 	@ApiOperation("测试websocket消息发送2")
 	@GetMapping("/ws1")
 	public BaseRsp<Task> sendMsg2() {

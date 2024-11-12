@@ -1,14 +1,5 @@
 package com.cyberpeace.job;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
@@ -25,44 +16,81 @@ import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.google.common.cache.Cache;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 场景自动关闭定时任务
+ *
+ * @author admin
+ * @date 2024/11/12
  */
 @Slf4j
 @Component
 public class SceneJob {
 
+	/**
+	 * 局部场景映射器
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 本地场景服务
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程用户服务
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * oj本地场景文件夹
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 推送消息处理程序
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * 教室组信息映射器
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 教室制图器
+	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
+	/**
+	 * 场景缓存
+	 */
 	private Cache<String, String> sceneCache = GuavaCacheUtil.newInstance(CommonConstant.FIFTEEN,
 			TimeUnit.MINUTES, String.class, String.class);
 
+	/**
+	 * 关闭场景
+	 */
 	@Scheduled(fixedRate = 15000)
 	public void closeScene() {
 		log.info("SceneCloseJob start");
@@ -72,6 +100,9 @@ public class SceneJob {
 		log.info("SceneCloseJob end");
 	}
 
+	/**
+	 * 倒计时十五分钟
+	 */
 	@Scheduled(fixedRate = 5000)
 	public void countDownFifteenMin() {
 		log.info("CountDownFifteenMin job start");
@@ -81,6 +112,9 @@ public class SceneJob {
 		log.info("CountDownFifteenMin job end");
 	}
 
+	/**
+	 * 倒计时十五分钟
+	 */
 	private void doCountDownFifteenMin() {
 		Date current = new Date();
 		Date fifteenMin = TimeUtil.addMins(current, CommonConstant.FIFTEEN);
@@ -99,6 +133,11 @@ public class SceneJob {
 		}
 	}
 
+	/**
+	 * 倒计时
+	 *
+	 * @param localScene 当地场景
+	 */
 	private void CountDown(LocalScene localScene) {
 
 		// 如果消息已推送 不重复推送
@@ -149,23 +188,32 @@ public class SceneJob {
 		sceneCache.put(localScene.getResourceId(), localScene.getMpSceneId());
 	}
 
+	/**
+	 * 执行关闭场景的操作
+	 * 此方法用于定期检查并关闭达到自动关闭时间的场景
+	 */
 	private void doCloseScene() {
-		// 1、获取待关闭的场景
-		List<LocalScene> toCloseScenes = localSceneMapper.selectByCloseTime(new Date());
+	    // 1、获取待关闭的场景
+	    List<LocalScene> toCloseScenes = localSceneMapper.selectByCloseTime(new Date());
 
-		// 2、逐个调用远程接口，关闭
-		toCloseScenes.forEach(localScene -> {
+	    // 2、逐个调用远程接口，关闭
+	    toCloseScenes.forEach(localScene -> {
 
-			try {
-				closeScene(localScene);
-			} catch (Exception e) {
-				log.error(
-						"Failed to automatically close the scene, local_scene_id=[{}], catch error:",
-						localScene.getResourceId(), e);
-			}
-		});
+	        try {
+	            closeScene(localScene);
+	        } catch (Exception e) {
+	            log.error(
+	                    "Failed to automatically close the scene, local_scene_id=[{}], catch error:",
+	                    localScene.getResourceId(), e);
+	        }
+	    });
 	}
 
+	/**
+	 * 关闭场景
+	 *
+	 * @param localScene 当地场景
+	 */
 	private void closeScene(LocalScene localScene) {
 
 		// 设置当前线程用户

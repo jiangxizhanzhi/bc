@@ -19,19 +19,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 系统使用状态作业
+ *
+ * @author admin
+ * @date 2024/11/12
+ */
 @Slf4j
 @Component
 public class SystemUseStatusJob {
+	/**
+	 * 系统使用状态服务
+	 */
 	@Autowired
 	private SystemUseStatusService systemUseStatusService;
 
+	/**
+	 * 插入系统使用状态
+	 */
 	private boolean insertSystemUseStatus;
 
+	/**
+	 * init
+	 */
 	@PostConstruct
 	public void init() {{
 		insertSystemUseStatus = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.insertSystemUseStatus"));
 	}}
 
+	/**
+	 * 插入系统使用状态
+	 */
 	@Scheduled(fixedRate =  5 * 60 * 1000)
 	public void insertSystemUseStatus() {
 		log.info("system use status start----------");
@@ -65,6 +83,7 @@ public class SystemUseStatusJob {
 	/**
 	 * 获取内存的使用率
 	 *
+	 * @param resultInfo 结果信息
 	 * @return 内存使用率 0.36
 	 */
 	public static double getMemoryUsage(List<String> resultInfo) {
@@ -84,6 +103,7 @@ public class SystemUseStatusJob {
 	/**
 	 * 获取CPU的使用率
 	 *
+	 * @param cpuInfo cpu信息
 	 * @return CPU使用率 0.36
 	 */
 	public static Double getCpuUsage(List<String> cpuInfo) {
@@ -92,6 +112,7 @@ public class SystemUseStatusJob {
 		df.setRoundingMode(RoundingMode.DOWN);
 		return Double.parseDouble(df.format(100 - id));
 	}
+
 	/**
 	 * 获取disk使用率
 	 *
@@ -102,6 +123,12 @@ public class SystemUseStatusJob {
 		return Double.parseDouble(resultInfo.get(1).split("\\s+")[4].replace("%", ""));
 	}
 
+	/**
+	 * exec shell
+	 *
+	 * @param shell 壳
+	 * @return {@link List }<{@link String }>
+	 */
 	public static List<String> execShell(String shell) {
 		log.info("Start exec shell! command=[{}]", shell);
 

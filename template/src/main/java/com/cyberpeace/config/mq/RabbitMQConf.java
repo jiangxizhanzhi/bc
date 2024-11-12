@@ -15,6 +15,12 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * 兔子mqconf
+ *
+ * @author admin
+ * @date 2024/11/12
+ */
 @Configuration
 public class RabbitMQConf {
 

@@ -279,15 +279,17 @@ public class EvalCloudTemplateServiceImpl extends ServiceImpl<EvalCloudTemplateM
                     LambdaQueryWrapper<EvalRuleTemplate> evalRuleTemplateQueryWrapper = new LambdaQueryWrapper<>();
                     evalRuleTemplateQueryWrapper.eq(EvalRuleTemplate::getCloudTemplateId, resource.getCloudTemplateId());
                     List<String> ruelIds = evalRuleTemplateService.list(evalRuleTemplateQueryWrapper).stream().map(EvalRuleTemplate::getResourceId).collect(Collectors.toList());
-                    DeleteReq deleteReq = new DeleteReq();
-                    deleteReq.setIds(ruelIds);
-                    evalRuleTemplateService.deleteRuleTemplate(deleteReq);
-                    for (EvalRuleTemplateDetailRsp rule : resource.getRuleList()) {
-                        EvalRuleTemplateAddReq ruleTemplateAddReq = BeanUtils.copy(rule, EvalRuleTemplateAddReq.class);
-                        List<EvalHostContext> hosts = rule.getHosts();
-                        List<EvalHostTemplateAddReq> hostList = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(hosts), EvalHostTemplateAddReq.class);
-                        ruleTemplateAddReq.setHostList(hostList);
-                        evalRuleTemplateService.addRuleTemplate(ruleTemplateAddReq);
+                    if(!ruelIds.isEmpty()) {
+                        DeleteReq deleteReq = new DeleteReq();
+                        deleteReq.setIds(ruelIds);
+                        evalRuleTemplateService.deleteRuleTemplate(deleteReq);
+                        for (EvalRuleTemplateDetailRsp rule : resource.getRuleList()) {
+                            EvalRuleTemplateAddReq ruleTemplateAddReq = BeanUtils.copy(rule, EvalRuleTemplateAddReq.class);
+                            List<EvalHostContext> hosts = rule.getHosts();
+                            List<EvalHostTemplateAddReq> hostList = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(hosts), EvalHostTemplateAddReq.class);
+                            ruleTemplateAddReq.setHostList(hostList);
+                            evalRuleTemplateService.addRuleTemplate(ruleTemplateAddReq);
+                        }
                     }
                     try {
                         addCloudTemplate(resource);

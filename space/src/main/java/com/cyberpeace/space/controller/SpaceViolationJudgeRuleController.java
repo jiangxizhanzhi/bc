@@ -1,6 +1,7 @@
 
 package com.cyberpeace.space.controller;
 
+import com.cyberpeace.space.model.controller.SpaceControllerBase;
 import com.cyberpeace.space.service.context.rule.SpaceViolationJudgeRuleBo;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.web.bind.annotation.RequestMapping;

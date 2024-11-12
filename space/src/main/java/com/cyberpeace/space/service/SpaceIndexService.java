@@ -10,4 +10,6 @@ public interface SpaceIndexService {
     IndexTool getToolStatistics();
 
     IndexFrame getFrameIndex();
+
+    String getAiUrl();
 }

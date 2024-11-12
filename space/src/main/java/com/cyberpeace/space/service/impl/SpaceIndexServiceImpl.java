@@ -1,6 +1,15 @@
 package com.cyberpeace.space.service.impl;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
@@ -24,14 +33,8 @@ import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
 import com.cyberpeace.space.service.context.rule.RaceStatistics;
 import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -174,5 +177,14 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 
 		return frame;
 
+	}
+
+	@Override
+	public String getAiUrl() {
+		String ip = SystemPropUtil.getProp("AI_HOST");
+		if (StringUtils.isBlank(ip)) {
+			ip = "10.4.2.3";
+		}
+		return ip;
 	}
 }

@@ -44,4 +44,11 @@ public class SpaceIndexController {
 		return new BaseRsp(res);
 	}
 
+	@ApiOperation("获取大模型地址")
+	@GetMapping("/ai")
+	public BaseRsp<String> getAiUrl() {
+		String aiUrl = indexService.getAiUrl();
+		return new BaseRsp<>(aiUrl);
+	}
+
 }

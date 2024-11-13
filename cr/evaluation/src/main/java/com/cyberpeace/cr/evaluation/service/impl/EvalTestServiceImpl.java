@@ -224,6 +224,9 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
                                         case "fireWall":
                                             imageType = "防火墙服务";
                                             break;
+                                        case "WAF":
+                                            imageType = "WAF防火墙服务";
+                                            break;
                                         default:
                                             imageType = "未知服务";
                                     }

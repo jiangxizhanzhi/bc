@@ -29,10 +29,16 @@ public class TacticTool {
 	private String category;
 
 	/**
-	 * 类别名称
+	 * 工具类型名称
 	 */
 	@ApiModelProperty(value = "工具类型")
 	private String categoryName;
+
+	/**
+	 * 工具类型名称
+	 */
+	@ApiModelProperty(value = "工具类型名称")
+	private String categoryI18nName;
 
 	/**
 	 * 介绍

@@ -192,23 +192,45 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
             EvalTest evalTest = getEvalTest(testRsp.getTestId());
             SceneViewContext sceneViewContext = evalSceneService.viewScene(null, evalTest.getTopoId());
 
-            List<Integer> typeList = new ArrayList<>();
+            List<String> typeList = new ArrayList<>();
             JSONObject topoData = sceneViewContext.getTopoData();
 
             if (topoData != null) {
-                JSONObject topology = topoData.getJSONObject("topology");
-                if (topology != null) {
-                    JSONArray elements = topology.getJSONArray("elements");
-                    if (elements != null) {
-                        elements.forEach(e -> {
-                            JSONObject obj = (JSONObject) e;
-                            if (obj != null) {
-                                Integer type = obj.getInteger("type");
-                                if (type != null) {
-                                    typeList.add(type);
+                JSONObject plugins = topoData.getJSONObject("plugins");
+                if (plugins != null) {
+                    JSONObject cpcloud = plugins.getJSONObject("cpcloud");
+                    if (cpcloud != null) {
+                        JSONObject elements = cpcloud.getJSONObject("elements");
+                        if (elements != null) {
+                            elements.forEach((k, v) -> {
+                                String imageType = ((JSONObject) v).getString("image_type");
+                                if (imageType != null) {
+                                    switch (imageType){
+                                        case "load":
+                                            imageType = "载荷服务";
+                                            break;
+                                        case "VNet":
+                                            imageType = "虚拟网络服务";
+                                            break;
+                                        case "laasVm":
+                                            imageType = "计算服务";
+                                            break;
+                                        case "containerRegistry":
+                                            imageType = "容器服务";
+                                            break;
+                                        case "networkEquipment":
+                                            imageType = "边界设备服务";
+                                            break;
+                                        case "fireWall":
+                                            imageType = "防火墙服务";
+                                            break;
+                                        default:
+                                            imageType = "未知服务";
+                                    }
+                                    typeList.add(imageType);
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }

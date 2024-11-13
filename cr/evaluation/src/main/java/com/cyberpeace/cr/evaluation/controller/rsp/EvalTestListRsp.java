@@ -32,7 +32,7 @@ public class EvalTestListRsp implements Serializable {
 	private String templateName;
 
 	@ApiModelProperty("服务类型")
-	private List<Integer> cloudServices;
+	private List<String> cloudServices;
 
 	@ApiModelProperty("工具数量")
 	private Integer toolCount;

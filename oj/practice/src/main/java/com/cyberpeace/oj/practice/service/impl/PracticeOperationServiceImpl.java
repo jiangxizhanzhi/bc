@@ -287,12 +287,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				practiceOperation.getTitle());
 
 		practiceOperation.setResourceId(IDGeneratorUtil.getID());
-		List<OperationTargetAddBo> targetBoList = Lists.newArrayList();
-		if (practiceOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC
+		List<OperationTargetAddBo> targetBoList = JsonUtil.toJsonObjectArray(targetJson,
+				OperationTargetAddBo.class);
+		if (practiceOperation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.STATIC
 				.getCode().intValue()) {
 			practiceValidateHandler.validateFlagLength(practiceOperation.getAnswer());
-		} else {
-			targetBoList = JsonUtil.toJsonObjectArray(targetJson, OperationTargetAddBo.class);
 		}
 
 		// 数据设置
@@ -394,12 +393,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeOperation operation = practiceValidateHandler
 				.validateOperationExist(updateOperation.getResourceId());
 
-		List<OperationTargetAddBo> targetBoList = Lists.newArrayList();
-		if (updateOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC
+		List<OperationTargetAddBo> targetBoList = JsonUtil.toJsonObjectArray(targetJson,
+				OperationTargetAddBo.class);
+		if (updateOperation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.STATIC
 				.getCode().intValue()) {
 			practiceValidateHandler.validateFlagLength(updateOperation.getAnswer());
-		} else {
-			targetBoList = JsonUtil.toJsonObjectArray(targetJson, OperationTargetAddBo.class);
 		}
 		practiceValidateHandler.validateOperationUpdateTitleExist(operation,
 				updateOperation.getTitle());

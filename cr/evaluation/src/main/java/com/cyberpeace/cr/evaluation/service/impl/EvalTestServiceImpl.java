@@ -19,6 +19,7 @@ import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTestListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
@@ -36,7 +37,6 @@ import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteSupersetService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -99,6 +99,9 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
     @Autowired
     private EvalRuleTemplateService evalRuleTemplateService;
+
+    @Autowired
+    private EvalSceneService evalSceneService;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -185,11 +188,33 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
             for(EvalTestStepListRsp step : steps){
                 loads.addAll(step.getLoadList());
             }
+
+            EvalTest evalTest = getEvalTest(testRsp.getTestId());
+            SceneViewContext sceneViewContext = evalSceneService.viewScene(null, evalTest.getTopoId());
+
+            List<Integer> typeList = new ArrayList<>();
+            JSONObject topoData = sceneViewContext.getTopoData();
+
+            if (topoData != null) {
+                JSONObject topology = topoData.getJSONObject("topology");
+                if (topology != null) {
+                    JSONArray elements = topology.getJSONArray("elements");
+                    if (elements != null) {
+                        elements.forEach(e -> {
+                            JSONObject obj = (JSONObject) e;
+                            if (obj != null) {
+                                Integer type = obj.getInteger("type");
+                                if (type != null) {
+                                    typeList.add(type);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
             List<String> loadName = loads.stream().map(e -> ((JSONObject) e).getString("tool_name")).distinct().collect(Collectors.toList());
-            List<String> cloudServices = new ArrayList<>();
-            cloudServices.add("计算服务");
-            cloudServices.add("容器服务");
-            testRsp.setCloudServices(cloudServices);
+            testRsp.setCloudServices(typeList.stream().distinct().collect(Collectors.toList()));
             testRsp.setToolCount(loadName.size());
             testRsp.setToolList(loadName);
 

@@ -52,4 +52,10 @@ public class WebToolRsp implements Serializable {
     @ApiModelProperty("平台名称")
     private List<String> platforms;
 
+    /**
+     * 介绍
+     */
+    @ApiModelProperty("介绍")
+    private String introduction;
+
 }

@@ -95,7 +95,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	private RemoteLogService remoteLogService;
 
 	/**
-	 * 实践理论进口Service
+	 * 实践理论导入Service
 	 */
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
@@ -241,9 +241,9 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	}
 
 	/**
-	 * 进口理论
+	 * 导入理论
 	 *
-	 * @param theoryImportReq 理论进口请求体
+	 * @param theoryImportReq 理论导入请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("理论习题资源导入")

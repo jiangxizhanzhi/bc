@@ -80,7 +80,7 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	 * 查询由认证和公共
 	 *
 	 * @param authContext auth 上下文
-	 * @param isPublic    是公共
+	 * @param isPublic    是否公开
 	 * @return {@code List<String> }
 	 */
 	List<String> selectByAuthAndPublic(@Param("authContext") AuthContext authContext,

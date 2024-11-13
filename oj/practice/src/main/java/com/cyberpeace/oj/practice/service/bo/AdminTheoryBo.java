@@ -74,13 +74,13 @@ public class AdminTheoryBo implements Serializable {
 	private String keyword;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;

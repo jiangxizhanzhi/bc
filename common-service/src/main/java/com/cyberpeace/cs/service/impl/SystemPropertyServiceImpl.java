@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 系统财产Service实现
+ * 系统配置Service实现
  *
  * @author SN
  * @date 2024/11/08
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Service;
 public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper, SystemProperty> implements SystemPropertyService {
 
 	/**
-	 * 系统财产Mapper
+	 * 系统配置Mapper
 	 */
 	@Autowired
 	private SystemPropertyMapper systemPropertyMapper;
 
 	/**
-	 * 获取出口内置
+	 * 获取导出内置
 	 *
 	 * @return boolean
 	 */

@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 管理课程进口Controller
+ * 管理课程导入Controller
  *
  * @author SN
  * @date 2024/11/08
@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminCourseImportController {
 
 	/**
-	 * 课程进口Service
+	 * 课程导入Service
 	 */
 	@Autowired
 	private CourseImportService courseImportService;
@@ -67,7 +67,7 @@ public class AdminCourseImportController {
 	/**
 	 * rmcourse 导入
 	 *
-	 * @param courseImportReq 课程进口请求体
+	 * @param courseImportReq 课程导入请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("资管课程数据导入")
@@ -101,7 +101,7 @@ public class AdminCourseImportController {
 	}
 
 	/**
-	 * 出口
+	 * 导出
 	 *
 	 * @param resourceId         资源id
 	 * @param isDumpTopo         是转 储拓扑
@@ -125,7 +125,7 @@ public class AdminCourseImportController {
 	/**
 	 * rm组合课程导入
 	 *
-	 * @param courseImportReq 课程进口请求体
+	 * @param courseImportReq 课程导入请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("资管组合课程数据导入")

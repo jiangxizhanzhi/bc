@@ -1635,7 +1635,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	/**
-	 * 负荷实践实操
+	 * 加载实践实操
 	 *
 	 * @param practiceSetId 实践设置id
 	 * @param dumpBo        dump bo
@@ -1826,7 +1826,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	/**
-	 * 查询出口实践
+	 * 查询导出实践
 	 *
 	 * @param setIds     设置id列表
 	 * @param practiceId 实践id
@@ -1840,7 +1840,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	/**
-	 * 出口实务
+	 * 导出实务
 	 *
 	 * @param setPath            设置路径
 	 * @param operations         操作

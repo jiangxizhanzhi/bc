@@ -51,7 +51,7 @@ public class PersonalMistakeRes implements Serializable {
 	private String direction;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;

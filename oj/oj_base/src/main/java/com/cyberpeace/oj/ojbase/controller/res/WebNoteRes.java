@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 蹼注意结果
+ * Web注意结果
  *
  * @author SN
  * @date 2024/11/08

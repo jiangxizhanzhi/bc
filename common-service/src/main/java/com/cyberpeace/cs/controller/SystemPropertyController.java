@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 系统财产Controller
+ * 系统配置Controller
  *
  * @author SN
  * @date 2024/11/08
@@ -30,7 +30,7 @@ import java.util.List;
 public class SystemPropertyController {
 
     /**
-     * 系统财产Service
+     * 系统配置Service
      */
     @Autowired
     private SystemPropertyService systemPropertyService;

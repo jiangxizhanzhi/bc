@@ -6,7 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 蹼课程结果
+ * Web课程结果
  *
  * @author SN
  * @date 2024/11/08
@@ -51,7 +51,7 @@ public class WebCourseRes implements Serializable {
 	private String outline;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("课程难度")
 	private Integer difficulty;

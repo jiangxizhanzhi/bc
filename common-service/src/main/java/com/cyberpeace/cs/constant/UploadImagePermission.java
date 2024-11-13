@@ -54,11 +54,11 @@ public enum UploadImagePermission implements GenericEnum {
 	 */
 	WEB_SINGLE_IMAGE(9, "前台单兵训练", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_CR_SINGLE_TRAIN }),
 	/**
-	 * 蹼评估图像
+	 * Web评估图像
 	 */
 	WEB_EVALUATE_IMAGE(10, "前台靶场测评", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_CR_EVALUATION }),
 	/**
-	 * 蹼实操图像
+	 * Web实操图像
 	 */
 	WEB_OPERATION_IMAGE(11, "前台实操习题", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_OJ_PRACTICE_OPERATION }),
 	/**
@@ -74,7 +74,7 @@ public enum UploadImagePermission implements GenericEnum {
 	 */
 	CMS_OPERATION_IMAGE(14, "后台实操习题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_PRACTICE_OPERATION}),
 	/**
-	 * 蹼OJ理论实践
+	 * WebOJ理论实践
 	 */
 	WEB_OJ_THEORY_PRACTICE(15, "理论题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.WEB_OJ_THEORY_PRACTICE});
 

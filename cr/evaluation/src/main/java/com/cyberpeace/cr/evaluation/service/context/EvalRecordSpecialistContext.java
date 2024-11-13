@@ -21,7 +21,7 @@ public class EvalRecordSpecialistContext implements Serializable {
     private Integer type;
 
     /**
-     * 财产
+     * 配置
      */
     @ApiModelProperty("数据属性")
     private Integer property;

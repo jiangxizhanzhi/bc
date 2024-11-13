@@ -126,7 +126,7 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param page       分页
 	 * @param type       类型
-	 * @param difficulty 困难
+	 * @param difficulty 难度
 	 * @param pattern    模式
 	 * @return {@code IPage<BusinessTemplateSimple> }
 	 */

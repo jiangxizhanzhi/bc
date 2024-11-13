@@ -15,7 +15,6 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -50,7 +49,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 实践理论进口Service实现
+ * 实践理论导入Service实现
  *
  * @author SN
  * @date 2024/11/08
@@ -90,7 +89,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	private TransactionTemplate transactionTemplate;
 
 	/**
-	 * 实践设置Mapper
+	 * 习题集Mapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
@@ -117,10 +116,10 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	}
 
 	/**
-	 * 解析课理论医学博士
+	 * 解析课理论Markdown
 	 *
 	 * @param lessonFilePah    课程档案 PAH
-	 * @param mdTheoryPractice 医学博士理论实践
+	 * @param mdTheoryPractice Markdown理论实践
 	 * @return {@code List<PracticeTheory> }
 	 */
 	@Override
@@ -193,7 +192,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	}
 
 	/**
-	 * 进口理论
+	 * 导入理论
 	 *
 	 * @param practiceSetId 实践设置id
 	 * @param filePath      文件路径
@@ -833,7 +832,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	 * 改变标题自理论
 	 *
 	 * @param practiceTheory 实践理论
-	 * @param theoryBaseMd   理论基础医学博士
+	 * @param theoryBaseMd   理论基础Markdown
 	 */
 	private void changeTitleToTheory(PracticeTheory practiceTheory, TheoryBaseMd theoryBaseMd) {
 

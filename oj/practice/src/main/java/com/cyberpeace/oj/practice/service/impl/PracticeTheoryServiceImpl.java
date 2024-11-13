@@ -407,7 +407,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	/**
 	 * 答案置空
 	 *
-	 * @param webTheoryBo 蹼理论博
+	 * @param webTheoryBo Web理论博
 	 */
 	private void answerToNull(WebTheoryBo webTheoryBo) {
 		webTheoryBo.setAnswer(null);
@@ -615,7 +615,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	/**
-	 * 负荷实践理论
+	 * 加载实践理论
 	 *
 	 * @param practiceSetId 实践设置id
 	 * @param dumpBo        dump bo
@@ -729,7 +729,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	/**
-	 * 出口医学博士理论实践
+	 * 导出Markdown理论实践
 	 *
 	 * @param path     路径
 	 * @param theories 理论
@@ -947,7 +947,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	/**
 	 * 获取实践记录
 	 *
-	 * @param webTheoryRecordReq 蹼理论记录请求体
+	 * @param webTheoryRecordReq Web理论记录请求体
 	 * @return {@code List<PracticeTheoryListBo> }
 	 */
 	@Override
@@ -1029,10 +1029,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	/**
-	 * 改变标题自理论基础医学博士
+	 * 改变标题自理论基础Markdown
 	 *
 	 * @param theory       理论
-	 * @param theoryBaseMd 理论基础医学博士
+	 * @param theoryBaseMd 理论基础Markdown
 	 */
 	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
 		String[] split = theoryBaseMd.getTitle().split("\n");

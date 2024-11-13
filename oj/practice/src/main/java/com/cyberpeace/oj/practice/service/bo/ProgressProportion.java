@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class ProgressProportion implements Serializable {
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;

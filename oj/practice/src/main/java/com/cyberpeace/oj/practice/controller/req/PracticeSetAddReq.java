@@ -40,7 +40,7 @@ public class PracticeSetAddReq implements Serializable {
 	private Integer practiceType;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty(value = "公开", required = true)
 	@NotNull(groups = { Create.class })

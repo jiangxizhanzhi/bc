@@ -29,7 +29,7 @@ public class AdminOperationListReq extends PageReqBase {
     private String categoryId;
 
     /**
-     * 困难
+     * 难度
      */
     @ApiModelProperty(name = "difficulty", value = "难度")
     private Integer difficulty;

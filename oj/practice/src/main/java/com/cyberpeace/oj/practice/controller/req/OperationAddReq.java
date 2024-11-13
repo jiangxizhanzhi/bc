@@ -57,7 +57,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	private String knowledge;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	@NotNull(groups = { Create.class })
@@ -127,7 +127,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	private Double score;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty(name = "is_public", value = "是否公开")
 	private Boolean isPublic;

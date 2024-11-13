@@ -65,7 +65,7 @@ public class Course extends AuthTable {
 	private String outline;
 
     /**
-     * 困难
+     * 难度
      */
     @ApiModelProperty("难度")
 	private Integer difficulty;
@@ -83,7 +83,7 @@ public class Course extends AuthTable {
 	private String modifyUserId;
 
     /**
-     * 是公共
+     * 是否公开
      */
     @TableField("public")
 	@ApiModelProperty("是否公开")

@@ -1,15 +1,14 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
 import com.cyberpeace.common.mdparser.convert.SceneShareConvert;
 import com.cyberpeace.common.mdparser.parser.IntegerParser;
 import com.cyberpeace.common.mdparser.parser.ListParser;
-
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * md ctf 基础
@@ -45,7 +44,7 @@ public class MdCtfBase implements Serializable {
 	private List<String> knowledge;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@MdHeadLine(level = 3, name = "难度", convert = DifficultyConvert.class)
 	private Integer difficulty;

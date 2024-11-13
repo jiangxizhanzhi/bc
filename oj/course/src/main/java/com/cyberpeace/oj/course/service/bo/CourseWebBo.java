@@ -53,7 +53,7 @@ public class CourseWebBo implements Serializable {
 	private String logo;
 
     /**
-     * 困难
+     * 难度
      */
     @ApiModelProperty("课程难度")
 	private Integer difficulty;
@@ -107,7 +107,7 @@ public class CourseWebBo implements Serializable {
 	private Integer courseDuration;
 
     /**
-     * 是公共
+     * 是否公开
      */
     @ApiModelProperty("是否公开")
 	private Boolean isPublic;

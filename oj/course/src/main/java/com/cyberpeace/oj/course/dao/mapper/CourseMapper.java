@@ -29,7 +29,7 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 * @param page          分页
 	 * @param courseContext 课程背景
 	 * @param courseIds     课程id列表
-	 * @param isPublic      是公共
+	 * @param isPublic      是否公开
 	 * @return {@code IPage<Course> }
 	 */
 	IPage<Course> listByPage(Page page, @Param("courseContext") CourseContext courseContext,
@@ -66,7 +66,7 @@ public interface CourseMapper extends BaseMapper<Course> {
 	 *
 	 * @param courseIds   课程id列表
 	 * @param categoryIds 类别id列表
-	 * @param isPublic    是公共
+	 * @param isPublic    是否公开
 	 * @return {@code List<String> }
 	 */
 	List<String> selectIdsByCategory(@Param("courseIds") List<String> courseIds,

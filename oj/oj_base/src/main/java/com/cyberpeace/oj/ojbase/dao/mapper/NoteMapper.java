@@ -13,7 +13,7 @@ import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import java.util.List;
 
 /**
- * 注意Mapper
+ * 笔记Mapper
  *
  * @author SN
  * @date 2024/11/08
@@ -34,7 +34,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 *
 	 * @param page          分页
 	 * @param noteListQuery 注释列表查询
-	 * @param isPublic      是公共
+	 * @param isPublic      是否公开
 	 * @param isSubmit      是提交
 	 * @return {@code IPage<Note> }
 	 */
@@ -72,7 +72,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 	 * 查询由列表查询
 	 *
 	 * @param noteListQuery 注释列表查询
-	 * @param isPublic      是公共
+	 * @param isPublic      是否公开
 	 * @return {@code List<Note> }
 	 */
 	List<Note> selectByListQuery(@Param("noteListQuery") NoteListQuery noteListQuery,

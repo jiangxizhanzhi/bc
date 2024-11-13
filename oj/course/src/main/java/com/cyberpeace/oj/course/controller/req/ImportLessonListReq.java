@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 进口课列表请求体
+ * 导入课列表请求体
  *
  * @author SN
  * @date 2024/11/08

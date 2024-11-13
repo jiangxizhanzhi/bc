@@ -49,7 +49,7 @@ public class TrainMD implements Serializable {
 	private Integer trainType;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@MdHeadLine(level = 3, name = "训练难度", convert = DifficultyConvert.class)
 	private Integer difficulty;

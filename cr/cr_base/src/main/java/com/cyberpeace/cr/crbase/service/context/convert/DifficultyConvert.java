@@ -29,7 +29,7 @@ public enum DifficultyConvert implements MdConvertEnum<Integer, String> {
 	}
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

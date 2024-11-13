@@ -343,7 +343,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	}
 
 	/**
-	 * 出口课程
+	 * 导出课程
 	 *
 	 * @param courseIds 课程id列表
 	 * @param response  响应
@@ -366,7 +366,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	/**
 	 * 导入课程
 	 *
-	 * @param loadCourseReq 负荷课程请求体
+	 * @param loadCourseReq 加载课程请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("后台课程数据导入")

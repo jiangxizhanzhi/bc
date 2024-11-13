@@ -3,7 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 
 /**
- * 蹼插座推Service
+ * Web插座推Service
  *
  * @author SN
  * @date 2024/11/08

@@ -24,7 +24,7 @@ public class CourseStatisticsListReq extends PageReqBase {
 	private String direction;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("课时类型")
 	private Integer difficulty;

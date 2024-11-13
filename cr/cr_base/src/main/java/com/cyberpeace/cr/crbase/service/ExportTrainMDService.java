@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * 出口训练md服务
+ * 导出训练md服务
  *
  * @author SN
  * @date 2024/11/08

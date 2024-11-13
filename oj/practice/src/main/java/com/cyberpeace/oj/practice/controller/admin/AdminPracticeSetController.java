@@ -270,7 +270,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	}
 
 	/**
-	 * 出口实践设置
+	 * 导出实践设置
 	 *
 	 * @param ids      id列表
 	 * @param response 响应
@@ -293,9 +293,9 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	}
 
 	/**
-	 * 进口实践设置
+	 * 导入实践设置
 	 *
-	 * @param loadReq 负荷请求体
+	 * @param loadReq 加载请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("习题集资源数据导入")

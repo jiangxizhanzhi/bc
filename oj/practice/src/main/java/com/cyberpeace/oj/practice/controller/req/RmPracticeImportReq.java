@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.Map;
 
 /**
- * 马币实践进口请求体
+ * 马币实践导入请求体
  *
  * @author SN
  * @date 2024/11/08

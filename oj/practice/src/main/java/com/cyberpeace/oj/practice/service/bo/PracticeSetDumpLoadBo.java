@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 实践设置转 储负荷博
+ * 实践设置转 储加载博
  *
  * @author SN
  * @date 2024/11/08

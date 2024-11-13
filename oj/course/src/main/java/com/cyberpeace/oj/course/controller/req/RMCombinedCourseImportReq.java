@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * rm组合课程进口请求体
+ * rm组合课程导入请求体
  *
  * @author SN
  * @date 2024/11/08

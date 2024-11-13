@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 蹼工具类别Controller
+ * Web工具类别Controller
  *
  * @author SN
  * @date 2024/11/08

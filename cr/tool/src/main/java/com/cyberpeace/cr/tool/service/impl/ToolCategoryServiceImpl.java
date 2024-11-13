@@ -17,8 +17,10 @@ import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.dao.mapper.ToolCategoryMapper;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
+import com.cyberpeace.cr.tool.service.context.ToolTypeCategory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -67,7 +69,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	}
 
 	/**
-	 * 查询都
+	 * 查询全部
 	 *
 	 * @return {@code List<ToolCategory> }
 	 */
@@ -78,7 +80,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	}
 
 	/**
-	 * 蹼查询都
+	 * 前台查询全部
 	 *
 	 * @param type 类型
 	 * @return {@code List<WebToolCategoryRsp> }
@@ -182,5 +184,31 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	public void updateToolCategoryById(ToolCategory toolCategory){
 		validateToolCategoryNameExist(toolCategory);
 		toolCategoryMapper.updateById(toolCategory);
+	}
+
+	/**
+	 * 获取全部类型类别
+	 *
+	 * @return {@code List<ToolTypeCategory> }
+	 */
+	@Override
+	public List<ToolTypeCategory> getAllTypeCategory() {
+		List<ToolCategory> toolCategories = selectAll();
+
+		List<ToolTypeCategory> res = Lists.newArrayList();
+		for (Tool.Type type : Tool.Type.values()) {
+			List<ToolCategory> list = StreamApiUtils.filter(toolCategories,
+					c -> type.getCode().equals(c.getType()));
+			ToolTypeCategory toolTypeCategory = new ToolTypeCategory();
+			toolTypeCategory.setType(type.getCode());
+			toolTypeCategory.setTypeName(type.getDesc());
+			toolTypeCategory.setCategories(StreamApiUtils.map(list,
+					c -> WebToolCategoryRsp.builder().resourceId(c.getResourceId())
+							.categoryI18nName(c.getCnName()).build()));
+
+			res.add(toolTypeCategory);
+		}
+
+		return res;
 	}
 }

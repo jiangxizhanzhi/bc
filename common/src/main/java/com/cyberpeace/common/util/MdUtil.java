@@ -468,7 +468,7 @@ public class MdUtil {
 	/**
 	 * 将入参Markdown文档转换为html文档
 	 *
-	 * @param md 医学博士
+	 * @param md Markdown
 	 * @return {@code String }
 	 */
 	public static String mdToHtmlForApiDoc(String md) {
@@ -502,7 +502,7 @@ public class MdUtil {
 	/**
 	 * MD 转 HTML
 	 *
-	 * @param md      医学博士
+	 * @param md      Markdown
 	 * @param options 选项
 	 * @return {@code String }
 	 */

@@ -64,7 +64,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	private String TOPO_DELETE;
 
 	/**
-	 * 拓扑出口
+	 * 拓扑导出
 	 */
 	private String TOPO_EXPORT;
 
@@ -312,7 +312,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 	/**
-	 * 出口拓扑
+	 * 导出拓扑
 	 *
 	 * @param topoId 拓扑id
 	 * @return {@code JSONObject }

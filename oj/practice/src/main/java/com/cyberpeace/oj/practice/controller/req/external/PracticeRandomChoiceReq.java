@@ -35,7 +35,7 @@ public class PracticeRandomChoiceReq extends PatternBase {
 	private Integer questionType;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty(value = "难度查询", allowableValues = "0, 1, 2")
 	private Integer difficulty;

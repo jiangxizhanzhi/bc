@@ -3,7 +3,7 @@ package com.cyberpeace.oj.practice.service.bo;
 import lombok.Data;
 
 /**
- * 实践理论转 储负荷博
+ * 实践理论转 储加载博
  *
  * @author SN
  * @date 2024/11/08

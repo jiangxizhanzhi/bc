@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 医学博士理论实践
+ * Markdown理论实践
  *
  * @author SN
  * @date 2024/11/08

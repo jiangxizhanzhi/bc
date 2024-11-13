@@ -50,7 +50,7 @@ public class LessonAddReq implements Serializable {
 	private String attachmentIds;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	@NotNull(groups = { Create.class })
@@ -71,7 +71,7 @@ public class LessonAddReq implements Serializable {
 	private Integer compulsory;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty(name = "is_public", value = "是否公开 0=隐藏 1=公开")
 	@NotNull(groups = { Create.class })

@@ -33,7 +33,7 @@ public class CourseStatsBo implements Serializable {
     private String directionName;
 
     /**
-     * 困难
+     * 难度
      */
     @ApiModelProperty("课程难度")
     private Integer difficulty;

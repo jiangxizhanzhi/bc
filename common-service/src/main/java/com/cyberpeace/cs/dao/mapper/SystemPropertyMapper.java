@@ -5,7 +5,7 @@ import com.cyberpeace.cs.dao.entity.SystemProperty;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 系统财产Mapper
+ * 系统配置Mapper
  *
  * @author SN
  * @date 2024/11/08

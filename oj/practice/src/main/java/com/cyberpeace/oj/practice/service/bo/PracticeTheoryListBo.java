@@ -30,7 +30,7 @@ public class PracticeTheoryListBo implements Serializable {
 	private String categoryId;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
@@ -45,7 +45,7 @@ public class PracticeTheoryListBo implements Serializable {
 	private String content;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;

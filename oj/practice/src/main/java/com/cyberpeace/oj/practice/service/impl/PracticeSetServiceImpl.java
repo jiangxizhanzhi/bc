@@ -121,7 +121,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	private PracticeValidateHandler practiceValidateHandler;
 
 	/**
-	 * 系统财产Service
+	 * 系统配置Service
 	 */
 	@Autowired
 	private SystemPropertyService systemPropertyService;
@@ -387,7 +387,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	/**
-	 * 负荷实践设置
+	 * 加载实践设置
 	 *
 	 * @param realPath 实路
 	 * @param userId   用户id
@@ -487,7 +487,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	/**
-	 * 出口实践设置
+	 * 导出实践设置
 	 *
 	 * @param practiceSetId      实践设置id
 	 * @param practiceId         实践id
@@ -585,7 +585,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	/**
-	 * 出口医学博士理论实践
+	 * 导出Markdown理论实践
 	 *
 	 * @param path     路径
 	 * @param theories 理论
@@ -643,7 +643,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	/**
-	 * 做出口设置
+	 * 做导出设置
 	 *
 	 * @param destPath    目标路径
 	 * @param practiceSet 实践设置

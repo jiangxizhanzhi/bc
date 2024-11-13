@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 蹼理论博
+ * Web理论博
  *
  * @author SN
  * @date 2024/11/08

@@ -131,7 +131,7 @@ interface ZiguanConstants {
 	String CATEGORY = "category";
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	String DIFFICULTY = "difficulty";
 

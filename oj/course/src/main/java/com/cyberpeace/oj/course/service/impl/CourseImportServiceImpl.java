@@ -53,7 +53,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 课程进口Service实现
+ * 课程导入Service实现
  *
  * @author SN
  * @date 2024/11/08
@@ -165,13 +165,13 @@ public class CourseImportServiceImpl implements CourseImportService {
 	private RemoteTopoService remoteTopoService;
 
 	/**
-	 * 实践实操进口Service
+	 * 实践实操导入Service
 	 */
 	@Autowired
 	private PracticeOperationImportService practiceOperationImportService;
 
 	/**
-	 * 实践理论进口Service
+	 * 实践理论导入Service
 	 */
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;

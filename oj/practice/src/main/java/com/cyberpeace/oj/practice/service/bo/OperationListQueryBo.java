@@ -27,7 +27,7 @@ public class OperationListQueryBo extends PatternBase {
 	private List<String> categoryIds;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	private Integer difficulty;
 

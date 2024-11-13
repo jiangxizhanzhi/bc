@@ -129,7 +129,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext);
 
 	/**
-	 * 出口医学博士理论实践
+	 * 导出Markdown理论实践
 	 *
 	 * @param path     路径
 	 * @param theories 理论

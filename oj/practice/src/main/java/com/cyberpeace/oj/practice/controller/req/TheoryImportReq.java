@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * 理论进口请求体
+ * 理论导入请求体
  *
  * @author SN
  * @date 2024/11/08

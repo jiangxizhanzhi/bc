@@ -26,7 +26,7 @@ public class ResourcePublicReq implements Serializable {
 	private List<String> resourceIds;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("是否公开")
 	@NotNull

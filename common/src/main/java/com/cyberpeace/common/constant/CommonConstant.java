@@ -251,7 +251,7 @@ public interface CommonConstant {
 	String EXPORT_CTF_PATH = SHARE_DIR + "CTF";
 
 	/**
-	 * 出口训练路径
+	 * 导出训练路径
 	 */
 	String EXPORT_TRAIN_PATH =  SHARE_DIR + "train/";
 

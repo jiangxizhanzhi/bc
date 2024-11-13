@@ -41,7 +41,7 @@ public class AttachmentBo implements Serializable {
 	private String filePath;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("附件公开与隐藏状态 true=公开 false=隐藏")
 	private Boolean isPublic;

@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 蹼实操列表请求体
+ * Web实操列表请求体
  *
  * @author SN
  * @date 2024/11/08
@@ -35,7 +35,7 @@ public class WebOperationListReq extends PageReqBase {
 	private Boolean solved;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;

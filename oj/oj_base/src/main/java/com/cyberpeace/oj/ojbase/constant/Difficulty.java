@@ -5,7 +5,7 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Getter;
 
 /**
- * 困难
+ * 难度
  *
  * @author SN
  * @date 2024/11/08

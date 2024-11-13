@@ -5,6 +5,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
+import com.cyberpeace.cr.tool.service.context.ToolTypeCategory;
 
 import java.util.List;
 
@@ -83,4 +84,12 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	 * @param toolCategory 工具分类数据对象
 	 */
 	void updateToolCategoryById(ToolCategory toolCategory);
+
+	/**
+	 * 获取全部类型类别
+	 *
+	 * @return {@code List<ToolTypeCategory> }
+	 */
+	List<ToolTypeCategory> getAllTypeCategory();
+
 }

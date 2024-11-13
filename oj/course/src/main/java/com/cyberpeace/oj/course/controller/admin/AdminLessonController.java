@@ -376,7 +376,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	/**
 	 * 导入课程
 	 *
-	 * @param importLessonReq 进口课请求体
+	 * @param importLessonReq 导入课请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("课时导入")

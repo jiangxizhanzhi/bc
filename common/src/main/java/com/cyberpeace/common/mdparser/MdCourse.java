@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 医学博士课程
+ * Markdown课程
  *
  * @author SN
  * @date 2024/11/08

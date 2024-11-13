@@ -56,14 +56,14 @@ public class CourseAddReq implements Serializable {
 	private String outline;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@NotNull(groups = { Create.class })
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("是否公开")
 	@NotNull(groups = { Create.class })

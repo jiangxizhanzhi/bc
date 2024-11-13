@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Map;
 
 /**
- * RMCOURSE 课程进口请求体
+ * RMCOURSE 课程导入请求体
  *
  * @author SN
  * @date 2024/11/08

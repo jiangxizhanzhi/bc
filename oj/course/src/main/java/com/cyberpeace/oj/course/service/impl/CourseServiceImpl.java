@@ -206,7 +206,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	private CourseStudyHistoryMapper courseStudyHistoryMapper;
 
 	/**
-	 * 系统财产Service
+	 * 系统配置Service
 	 */
 	@Autowired
 	private SystemPropertyService systemPropertyService;

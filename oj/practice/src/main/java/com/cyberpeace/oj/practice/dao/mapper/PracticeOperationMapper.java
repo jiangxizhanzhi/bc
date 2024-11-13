@@ -24,7 +24,7 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 *
 	 * @param page      分页
 	 * @param listQuery 列表查询
-	 * @param isPublic  是公共
+	 * @param isPublic  是否公开
 	 * @return {@code IPage<PracticeOperation> }
 	 */
 	IPage<PracticeOperation> pageByQuery(@Param("page") Page page,
@@ -34,7 +34,7 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * 查询由设置id列表
 	 *
 	 * @param setIds   设置id列表
-	 * @param isPublic 是公共
+	 * @param isPublic 是否公开
 	 * @return {@code List<String> }
 	 */
 	List<String> selectBySetIds(@Param("setIds") List<String> setIds,
@@ -52,7 +52,7 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * 查询由类别id列表
 	 *
 	 * @param categoryIds 类别id列表
-	 * @param isPublic    是公共
+	 * @param isPublic    是否公开
 	 * @return {@code List<String> }
 	 */
 	List<String> selectByCategoryIds(@Param("categoryIds") List<String> categoryIds,
@@ -90,7 +90,7 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 * 按查询列出
 	 *
 	 * @param listQuery 列表查询
-	 * @param isPublic  是公共
+	 * @param isPublic  是否公开
 	 * @return {@code List<PracticeOperation> }
 	 */
 	List<PracticeOperation> listByQuery(@Param("listQuery") OperationListQuery listQuery,

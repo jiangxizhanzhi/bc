@@ -28,7 +28,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 医学博士理论解析 器
+ * Markdown理论解析 器
  *
  * @author chenzhuo
  * 仅支持标题和列表 列表仅支持二级@date 2024/11/08
@@ -57,7 +57,7 @@ public class MdTheoryParser {
 	private Map<Class, MdContentParser> parserMap;
 
 	/**
-	 * 医学博士理论解析 器
+	 * Markdown理论解析 器
 	 *
 	 * @param file 文件
 	 */
@@ -67,7 +67,7 @@ public class MdTheoryParser {
 	}
 
 	/**
-	 * 医学博士理论解析 器
+	 * Markdown理论解析 器
 	 */
 	public MdTheoryParser() {
 		collectParse();

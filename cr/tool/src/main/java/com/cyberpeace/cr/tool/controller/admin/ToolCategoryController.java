@@ -11,6 +11,7 @@ import com.cyberpeace.cr.tool.controller.req.DeleteReq;
 import com.cyberpeace.cr.tool.controller.res.ToolCategoryRsp;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
+import com.cyberpeace.cr.tool.service.context.ToolTypeCategory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 工具类别Controller
@@ -116,5 +118,17 @@ public class ToolCategoryController {
 	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
 		toolCategoryService.batchDelete(deleteReq.getIds());
 		return new BaseRsp<>();
+	}
+
+	/**
+	 * 获取都
+	 *
+	 * @return {@code BaseRsp<List<ToolTypeCategory>> }
+	 */
+	@ApiOperation("全部工具分类")
+	@GetMapping("/all")
+	public BaseRsp<List<ToolTypeCategory>> getAll() {
+		List<ToolTypeCategory> res = toolCategoryService.getAllTypeCategory();
+		return new BaseRsp<>(res);
 	}
 }

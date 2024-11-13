@@ -8,7 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 医学博士实践设置
+ * Markdown实践设置
  *
  * @author SN
  * @date 2024/11/08

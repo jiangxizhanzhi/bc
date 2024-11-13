@@ -34,7 +34,7 @@ public class CourseInfoBo implements Serializable {
 	private String name;
 
 	/**
-	 * 是公共
+	 * 是否公开
 	 */
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
@@ -64,7 +64,7 @@ public class CourseInfoBo implements Serializable {
 	private String outline;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty("课程难度")
 	private Integer difficulty;

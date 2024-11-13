@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 蹼工具响应
+ * Web工具响应
  *
  * @author SN
  * @date 2024/11/08

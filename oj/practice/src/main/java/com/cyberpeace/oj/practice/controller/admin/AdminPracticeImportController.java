@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 管理实践进口Controller
+ * 管理实践导入Controller
  *
  * @author SN
  * @date 2024/11/08
@@ -41,7 +41,7 @@ public class AdminPracticeImportController {
 	private PracticeSetService practiceSetService;
 
 	/**
-	 * 实践设置进口Service
+	 * 实践设置导入Service
 	 */
 	@Autowired
 	private PracticeSetImportService practiceSetImportService;
@@ -49,7 +49,7 @@ public class AdminPracticeImportController {
 	/**
 	 * 导入 rmtheory
 	 *
-	 * @param rmImportReq 马币进口请求体
+	 * @param rmImportReq 马币导入请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("资管理论习题导入")
@@ -68,7 +68,7 @@ public class AdminPracticeImportController {
 	/**
 	 * 导入 RMCTF
 	 *
-	 * @param practiceImportReq 实践进口请求体
+	 * @param practiceImportReq 实践导入请求体
 	 * @return {@code BaseRsp<Boolean> }
 	 */
 	@ApiOperation("资管实操习题资源导入")
@@ -101,7 +101,7 @@ public class AdminPracticeImportController {
 	}
 
 	/**
-	 * 出口
+	 * 导出
 	 *
 	 * @param practiceSetId      实践设置id
 	 * @param practiceId         实践id

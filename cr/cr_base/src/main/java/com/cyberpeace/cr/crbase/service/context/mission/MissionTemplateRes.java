@@ -39,7 +39,7 @@ public class MissionTemplateRes implements Serializable {
 	private Integer sceneType;
 
 	/**
-	 * 场景困难
+	 * 场景难度
 	 */
 	@ApiModelProperty("场景难度")
 	private Integer sceneDifficulty;

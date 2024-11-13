@@ -60,7 +60,7 @@ public class CommonController {
 	private UtilService utilService;
 
 	/**
-	 * 医学博士上传名称莱恩
+	 * Markdown上传名称莱恩
 	 */
 	private String MD_UPLOAD_NAME_LEN;
 
@@ -173,7 +173,7 @@ public class CommonController {
 	/**
 	 * 解析 mdfile
 	 *
-	 * @param md 医学博士
+	 * @param md Markdown
 	 * @return {@code BaseRsp<ExtractBase> }
 	 */
 	@ApiOperation("解析md压缩包")

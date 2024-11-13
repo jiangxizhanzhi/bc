@@ -34,7 +34,7 @@ public class BatchAuthLessonPracticeReq implements Serializable {
     private String organizationId;
 
     /**
-     * 是公共
+     * 是否公开
      */
     @ApiModelProperty("是否下发")
     private Boolean isPublic;

@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiParam;
 public class ToolImport {
 
 	/**
-	 * 工具资源进口Service
+	 * 工具资源导入Service
 	 */
 	@Autowired
 	private ToolResourceImportService toolResourceImportService;

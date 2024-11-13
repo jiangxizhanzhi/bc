@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 实践设置进口Service实现
+ * 实践设置导入Service实现
  *
  * @author SN
  * @date 2024/11/08
@@ -66,7 +66,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	private PracticeOperationService practiceOperationService;
 
 	/**
-	 * 实践实操进口Service
+	 * 实践实操导入Service
 	 */
 	@Autowired
 	private PracticeOperationImportService practiceOperationImportService;
@@ -78,13 +78,13 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	private PracticeTheoryService practiceTheoryService;
 
 	/**
-	 * 实践理论进口Service
+	 * 实践理论导入Service
 	 */
 	@Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
 
 	/**
-	 * 进口马币CTF设置
+	 * 导入马币CTF设置
 	 *
 	 * @param path    路径
 	 * @param envReqs env reqs
@@ -151,7 +151,7 @@ public class PracticeSetImportServiceImpl extends ServiceImpl<PracticeSetMapper,
 	}
 
 	/**
-	 * 进口马币理论设置
+	 * 导入马币理论设置
 	 *
 	 * @param path 路径
 	 * @return boolean

@@ -36,7 +36,7 @@ public class PaperAddReq implements Serializable {
     private String logo;
 
     /**
-     * 是公共
+     * 是否公开
      */
     @ApiModelProperty("是否公开")
     private Boolean isPublic;

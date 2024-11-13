@@ -45,7 +45,7 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 * @param page          分页
 	 * @param courseContext 课程背景
 	 * @param courseIds     课程id列表
-	 * @param isPublic      是公共
+	 * @param isPublic      是否公开
 	 * @return {@code IPage<AdminCourseStatisticsRes> }
 	 */
 	IPage<AdminCourseStatisticsRes> listCourseByPage(Page page,
@@ -57,7 +57,7 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 *
 	 * @param page     分页
 	 * @param courseId 课程id
-	 * @param isPublic 是公共
+	 * @param isPublic 是否公开
 	 * @param type     类型
 	 * @param search   搜索
 	 * @return {@code IPage<AdminLessonStatisticsRes> }

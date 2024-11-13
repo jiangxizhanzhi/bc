@@ -3,7 +3,7 @@ package com.cyberpeace.oj.practice.service.md;
 import lombok.Data;
 
 /**
- * 理论基础医学博士
+ * 理论基础Markdown
  *
  * @author SN
  * @date 2024/11/08

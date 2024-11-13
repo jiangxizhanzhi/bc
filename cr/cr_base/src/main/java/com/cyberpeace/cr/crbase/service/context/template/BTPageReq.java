@@ -21,7 +21,7 @@ public class BTPageReq extends PageReqBase {
 	private Integer type;
 
 	/**
-	 * 困难
+	 * 难度
 	 */
 	@ApiModelProperty(value = "难度")
 	private Integer difficulty;

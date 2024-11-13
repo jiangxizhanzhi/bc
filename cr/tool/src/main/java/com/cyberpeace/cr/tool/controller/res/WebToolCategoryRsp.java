@@ -8,7 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 蹼工具类别响应
+ * Web工具类别响应
  *
  * @author SN
  * @date 2024/11/08

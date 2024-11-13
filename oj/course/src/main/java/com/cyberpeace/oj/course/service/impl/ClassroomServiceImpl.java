@@ -930,7 +930,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	/**
-	 * 进口训练计划
+	 * 导入训练计划
 	 *
 	 * @param realPath 实路
 	 * @param userInfo 用户信息
@@ -1155,7 +1155,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	/**
-	 * 出口训练计划
+	 * 导出训练计划
 	 *
 	 * @param userInfo 用户信息
 	 * @param filePath 文件路径

@@ -116,9 +116,6 @@ public class ExternalYXController {
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
 
-	/**
-	 * 类别Service
-	 */
 	@Autowired
 	private PracticeCategoryService categoryService;
 
@@ -148,6 +145,14 @@ public class ExternalYXController {
 		IPage<AdminOperationListBo> iPage = practiceOperationService.pageByQuery(page, listQuery);
 
 		return new BaseRsp<>(PageUtil.getListResult(iPage));
+	}
+
+	@GetMapping("/practice/operation")
+	@ApiOperation("获取单个实践操作")
+	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {
+		WebOperationBo operationBo = practiceOperationService.selectById(resourceId);
+
+		return new BaseRsp<>(operationBo);
 	}
 
 	/**

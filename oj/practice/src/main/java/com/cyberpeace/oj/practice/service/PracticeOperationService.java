@@ -57,6 +57,9 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 */
 	WebOperationBo selectById(String resourceId, AuthContext authContext, Boolean isCollected);
 
+
+	WebOperationBo selectById(String resourceId);
+
 	/**
 	 * 分页查询实操习题
 	 *

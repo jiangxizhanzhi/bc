@@ -774,6 +774,58 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return webOperationBo;
 	}
 
+	@Override
+	public WebOperationBo selectById(String resourceId) {
+		AuthContext authContext = new AuthContext();
+		authContext.setIsWeb(false);
+		OperationBo operationBo = selectById(resourceId, authContext);
+		WebOperationBo webOperationBo = BeanUtils.copy(operationBo, WebOperationBo.class);
+
+		// 收藏信息 解题状态查询
+		Boolean result = resourceCollectionService.selectByUnique(authContext.getUserId(),
+				ResourceCollection.BusinessType.OPERATION.getCode(), resourceId);
+
+		webOperationBo.setIsCollection(result);
+
+		// 解题状态
+//		PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
+//				authContext.getUserId(), PracticeCategory.PracticeType.OPERATION.getCode(),
+//				resourceId, isCollected);
+//		if (null == practiceSolved) {
+//			webOperationBo.setAnswer(null);
+//			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
+//			detailBo.setIsSolved(CommonConstant.FALSE);
+//			webOperationBo.setResolvedDetail(detailBo);
+//		} else {
+//			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
+//			if (practiceSolved.getSolved()) {
+//				detailBo.setCorrectAnswer(operationBo.getAnswer());
+//				detailBo.setIsSolved(practiceSolved.getSolved());
+//				detailBo.setSubmitAnswer(practiceSolved.getSubmitAnswer());
+//			} else {
+//				detailBo.setIsSolved(practiceSolved.getSolved());
+//				webOperationBo.setAnswer(null);
+//			}
+//			webOperationBo.setResolvedDetail(detailBo);
+//		}
+
+		// 场景数据
+		if (operationBo.getDynamicEnv() && StringUtils.isNotBlank(operationBo.getTopoId())) {
+			JSONObject sceneConfig = remoteTopoService.getTopoById(operationBo.getTopoId());
+			webOperationBo.setSceneConfigData(sceneConfig);
+
+			OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(
+					operationBo.getResourceId(), operationBo.getSceneShareMode(), authContext);
+
+			if (null != ojLocalScene) {
+				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+				webOperationBo.setSceneData(sceneData);
+			}
+		}
+
+		return webOperationBo;
+	}
+
 	/**
 	 * 分页由查询
 	 *

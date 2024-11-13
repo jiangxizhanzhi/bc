@@ -8,15 +8,30 @@ import lombok.Getter;
 
 import java.io.Serializable;
 
+/**
+ * 系统配置
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @TableName("system_property")
 public class SystemProperty implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	@TableField("`desc`")
 	private String desc;
 
+	/**
+	 * 内容
+	 */
 	private String content;
 
 	public enum NameEnum implements GenericEnum {

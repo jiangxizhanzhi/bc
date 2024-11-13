@@ -22,6 +22,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 态势动效Controller
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @Api(tags = "动效管理")
 @RestController
 @Slf4j
@@ -29,9 +35,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 public class SituationEffectController {
 
+	/**
+	 * 态势动效Service
+	 */
 	@Autowired
 	private SituationEffectService situationEffectService;
 
+	/**
+	 * 列表类别
+	 *
+	 * @return {@code BaseRsp<List<SituationEffectCategoryName>> }
+	 */
 	@ApiOperation("分类列表")
 	@GetMapping("/category/list")
 	// @RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE,
@@ -41,6 +55,12 @@ public class SituationEffectController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 分页类别
+	 *
+	 * @param reqBase 请求体基础
+	 * @return {@code BaseRsp<ListRsp<SituationEffectCategoryName>> }
+	 */
 	@ApiOperation("分类分页列表")
 	@GetMapping("/category/page")
 	public BaseRsp<ListRsp<SituationEffectCategoryName>>
@@ -49,6 +69,12 @@ public class SituationEffectController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 创建类别
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("新增分类")
 	@PostMapping("/category")
 	public BaseRsp createCategory(@RequestBody @Valid SituationEffectCategoryAddReq req) {
@@ -57,6 +83,12 @@ public class SituationEffectController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 修改类别
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("修改分类")
 	@PutMapping("/category")
 	public BaseRsp modifyCategory(@RequestBody @Valid SituationEffectCategoryModifyReq req) {
@@ -65,6 +97,12 @@ public class SituationEffectController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 删除类别
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("删除分类")
 	@DeleteMapping("/category")
 	public BaseRsp deleteCategory(@RequestBody @Valid IdListReq req) {
@@ -73,6 +111,12 @@ public class SituationEffectController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取动效分页
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<ListRsp<SituationEffectBo>> }
+	 */
 	@ApiOperation("动效列表")
 	@GetMapping("/page")
 	public BaseRsp<ListRsp<SituationEffectBo>>
@@ -82,6 +126,12 @@ public class SituationEffectController {
 		return new BaseRsp(res);
 	}
 
+	/**
+	 * 创造
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("新增动效")
 	@PostMapping("/")
 	public BaseRsp create(@RequestBody @Valid SituationEffectAddReq req) {
@@ -90,6 +140,12 @@ public class SituationEffectController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<SituationEffectBo> }
+	 */
 	@ApiOperation("查看动效")
 	@GetMapping("/")
 	public BaseRsp<SituationEffectBo>
@@ -99,6 +155,12 @@ public class SituationEffectController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 修改
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("修改动效")
 	@PutMapping("/")
 	public BaseRsp modify(@RequestBody @Valid SituationEffectModifyReq req) {
@@ -107,6 +169,12 @@ public class SituationEffectController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("删除动效")
 	@DeleteMapping("/")
 	public BaseRsp delete(@RequestBody @Valid IdReq req) {
@@ -115,6 +183,12 @@ public class SituationEffectController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取映射分页
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<ListRsp<SituationEffectMappingBo>> }
+	 */
 	@ApiOperation("动效映射列表")
 	@GetMapping("/mapping/page")
 	public BaseRsp<ListRsp<SituationEffectMappingBo>> getMappingPage(@Validated PageReqBase req) {
@@ -123,6 +197,12 @@ public class SituationEffectController {
 		return new BaseRsp(res);
 	}
 
+	/**
+	 * 创造映射
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("新增动效映射")
 	@PostMapping("/mapping")
 	public BaseRsp createMapping(@RequestBody @Valid SituationEffectMappingAddReq req) {
@@ -131,6 +211,12 @@ public class SituationEffectController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 获取映射详情
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<SituationEffectMappingBo> }
+	 */
 	@ApiOperation("查看映射关系")
 	@GetMapping("/mapping")
 	public BaseRsp<SituationEffectMappingBo>
@@ -140,6 +226,12 @@ public class SituationEffectController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 修改映射
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("修改动效映射")
 	@PutMapping("/mapping")
 	public BaseRsp modifyMapping(@RequestBody @Valid SituationEffectMappingModifyReq req) {
@@ -148,6 +240,12 @@ public class SituationEffectController {
 		return new BaseRsp();
 	}
 
+	/**
+	 * 删除映射
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp }
+	 */
 	@ApiOperation("删除动效映射")
 	@DeleteMapping("/mapping")
 	public BaseRsp deleteMapping(@RequestBody @Valid IdListReq req) {

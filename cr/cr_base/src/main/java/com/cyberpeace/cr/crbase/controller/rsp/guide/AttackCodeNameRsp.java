@@ -5,15 +5,30 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 攻击代号名称响应
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @Data
 public class AttackCodeNameRsp implements Serializable {
 
+	/**
+	 * 代号
+	 */
 	@ApiModelProperty("代号")
 	private Integer code;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("名称")
 	private String name;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty("目标节点支持类型：compound: 同时支持节点和区域、element: 只支持节点、area: 只支持区域")
 	private String type;
 

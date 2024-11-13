@@ -7,10 +7,16 @@ import lombok.Data;
 
 /**
  * 基础模板基础信息
+ *
+ * @author SN
+ * @date 2024/11/13
  */
 @Data
 public class BasicTemplate {
 
+	/**
+	 * 基地信息
+	 */
 	@ApiModelProperty(value = "基础信息", required = true)
 	@NotNull
 	private BaseInfo baseInfo;

@@ -9,28 +9,55 @@ import lombok.Data;
 
 /**
  * 靶场模板公共信息模型
- *  仅使用 operationAuthType， operationAuthIds
- *  不使用 readAuthType， readAuthIds
- * */
+ * 仅使用 operationAuthType， operationAuthIds
+ * 不使用 readAuthType， readAuthIds
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @Data
 @TableName("cr_business_template")
 public class BusinessTemplate extends AuthTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 拓扑id
+	 */
 	private String topoId;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	private String description;
 
+	/**
+	 * 业务类型
+	 */
 	private Integer businessType;
 
+	/**
+	 * 难度
+	 */
 	private Integer difficulty;
 
+	/**
+	 * 创造用户id
+	 */
 	private String createUserId;
 
+	/**
+	 * 图标
+	 */
 	private String logo;
 
 	/**

@@ -8,6 +8,12 @@ import java.util.Set;
 import com.cyberpeace.cs.dao.entity.VideoProgress;
 import com.cyberpeace.cs.service.context.video.VideoProgressReportReq;
 
+/**
+ * 讲义视频Service
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public interface HandoutVideoService {
 
 	/**
@@ -21,6 +27,7 @@ public interface HandoutVideoService {
 
 	/**
 	 * 更新进度
+	 *
 	 * @param req 请求体
 	 */
 	void updateProgress(VideoProgressReportReq req);

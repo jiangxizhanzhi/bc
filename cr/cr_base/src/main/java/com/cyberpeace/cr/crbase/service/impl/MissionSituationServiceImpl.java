@@ -19,10 +19,22 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 任务态势Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 @Slf4j
 public class MissionSituationServiceImpl extends ServiceImpl<MissionSituationMapper, MissionSituation> implements MissionSituationService {
 
+	/**
+	 * 批量创造
+	 *
+	 * @param situationConfig     态势配置
+	 * @param missionTemplateList 任务模板列表
+	 */
 	@Override
 	public void batchCreate(IndustrySituationConfig situationConfig,
 			List<MissionTemplate> missionTemplateList) {
@@ -50,6 +62,12 @@ public class MissionSituationServiceImpl extends ServiceImpl<MissionSituationMap
 		this.saveBatch(situationList);
 	}
 
+	/**
+	 * 获取批量由id列表
+	 *
+	 * @param situationIds 态势id列表
+	 * @return {@code List<MissionSituation> }
+	 */
 	@Override
 	public List<MissionSituation> getBatchByIds(List<String> situationIds) {
 		if (CollectionUtils.isEmpty(situationIds)) {

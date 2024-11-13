@@ -13,14 +13,26 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 批量加载markdown请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @Slf4j
 public class BatchLoadMdReq implements Serializable {
 
+	/**
+	 * env reqs
+	 */
 	@ApiModelProperty(value = "环境参数")
 	@NotEmpty
 	private Map<String, String> envReqs;
 
+	/**
+	 * 路径
+	 */
 	@ApiModelProperty(value = "资管文件路径")
 	@NotEmpty
 	private String path;

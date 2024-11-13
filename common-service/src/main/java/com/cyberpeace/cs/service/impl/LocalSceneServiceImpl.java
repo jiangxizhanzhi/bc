@@ -48,31 +48,57 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author SN
+ * 当地场景Service实现
+ *
+ * @author SN@date 2024/11/11
  */
 @Slf4j
 @Service
 public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalScene> implements LocalSceneService {
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 当地场景Mapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 执行者
+	 */
 	@Autowired
 	@Qualifier("taskExecutor")
 	private Executor executor;
 
+	/**
+	 * 获取由业务实例id
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @return {@code LocalScene }
+	 */
 	@Override
 	public LocalScene getByBusinessInstanceId(String businessInstanceId) {
 
 		return getBaseMapper().getByBusinessInstanceId(businessInstanceId);
 	}
 
+	/**
+	 * 开始场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code String }
+	 */
 	@Override
 	public String startScene(LocalScene localScene) {
 		if (localScene.getRecord() != null) {
@@ -86,6 +112,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.startScene(startContext);
 	}
 
+	/**
+	 * 测试场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code String }
+	 */
 	@Override
 	public String testScene(LocalScene localScene) {
 		SceneStartContext startContext = getSceneStartContext(localScene);
@@ -95,6 +127,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	/**
 	 * 生成场景启动的上下文
+	 *
 	 * @param localScene
 	 * @return
 	 */
@@ -117,6 +150,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return context;
 	}
 
+	/**
+	 * 获取参考元数据
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code ReferenceMetaData }
+	 */
 	private ReferenceMetaData getReferenceMetaData(LocalScene localScene) {
 		ReferenceMetaData referenceMetaData = new ReferenceMetaData();
 
@@ -131,12 +170,24 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return referenceMetaData;
 	}
 
+	/**
+	 * 获取由id
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code LocalScene }
+	 */
 	@Override
 	public LocalScene getById(String localSceneId) {
 
 		return localSceneMapper.selectById(localSceneId);
 	}
 
+	/**
+	 * 停场景
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopScene(String localSceneId) {
 		if (StringUtils.isBlank(localSceneId)) {
@@ -149,6 +200,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return stopScene(localScene);
 	}
 
+	/**
+	 * 停场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopScene(LocalScene localScene) {
 		checkDemonstration();
@@ -162,6 +219,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.stopScene(sceneOpsContext);
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param localSceneId 当地场景id
+	 * @param nodeId       节点id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean restartNode(String localSceneId, String nodeId) {
 		LocalScene localScene = getById(localSceneId);
@@ -179,6 +243,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param localSceneId 当地场景id
+	 * @param nodeId       节点id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean recreateNode(String localSceneId, String nodeId) {
 		LocalScene localScene = getById(localSceneId);
@@ -196,6 +267,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 开始流量
+	 *
+	 * @param localScene 当地场景
+	 * @param nodeId     节点id
+	 * @param flowId     流量id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean startFlow(LocalScene localScene, String nodeId, String flowId) {
 		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
@@ -210,6 +289,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 停流量
+	 *
+	 * @param localScene 当地场景
+	 * @param nodeId     节点id
+	 * @param flowId     流量id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopFlow(LocalScene localScene, String nodeId, String flowId) {
 		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
@@ -222,6 +309,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 获取场景流量列表
+	 *
+	 * @param sceneData       场景数据
+	 * @param interactiveType 交互式类型
+	 * @return {@code Map<String, SceneFlowContext> }
+	 */
 	@Override
 	public Map<String, SceneFlowContext> getSceneFlowList(SceneData sceneData,
 			Integer interactiveType) {
@@ -254,6 +348,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return sceneFlowContextMap;
 	}
 
+	/**
+	 * 开始随机流量
+	 *
+	 * @param mpSceneId           中台场景id
+	 * @param sceneFlowContextMap 场景流量上下文映射
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean startRandomFlow(String mpSceneId,
 			Map<String, SceneFlowContext> sceneFlowContextMap) {
@@ -275,6 +376,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return false;
 	}
 
+	/**
+	 * 暂停场景
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean pauseScene(String localSceneId) {
 		checkDemonstration();
@@ -283,6 +390,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return pauseScene(localScene);
 	}
 
+	/**
+	 * 取消暂停场景
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean unpauseScene(String localSceneId) {
 		checkDemonstration();
@@ -291,6 +404,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return unpauseScene(localScene);
 	}
 
+	/**
+	 * 确保场景暂停
+	 *
+	 * @param localScene 当地场景
+	 */
 	private void ensureScenePaused(LocalScene localScene) {
 		if (!localScene.getSceneStatus().equals(SceneStatusEnum.PAUSE.getCode())) {
 			log.error("scene [{}] is not paused", localScene.getMpSceneId());
@@ -298,18 +416,39 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 	}
 
+	/**
+	 * 保存拓扑
+	 *
+	 * @param topoData     拓扑数据
+	 * @param businessType 业务类型
+	 * @return {@code String }
+	 */
 	@Override
 	public String saveTopo(JSONObject topoData, Integer businessType) {
 		topoData.put("reference_type", businessType);
 		return remoteTopoService.save(topoData);
 	}
 
+	/**
+	 * 保存拓扑
+	 *
+	 * @param topoData 拓扑数据
+	 * @param topoId   拓扑id
+	 * @return {@code String }
+	 */
 	@Override
 	public String saveTopo(JSONObject topoData, String topoId) {
 		topoData.put("id", topoId);
 		return remoteTopoService.save(topoData);
 	}
 
+	/**
+	 * 设置拓扑类型
+	 *
+	 * @param topoId        拓扑id
+	 * @param referenceType 参考类型
+	 * @return {@code String }
+	 */
 	@Override
 	public String setTopoType(String topoId, Integer referenceType) {
 		JSONObject topoData = getTopoData(topoId);
@@ -317,11 +456,23 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteTopoService.saveUnlimited(topoData);
 	}
 
+	/**
+	 * 删除拓扑
+	 *
+	 * @param topoId 拓扑id
+	 */
 	@Override
 	public void deleteTopo(String topoId) {
 		remoteTopoService.deleteById(topoId);
 	}
 
+	/**
+	 * 重命名拓扑
+	 *
+	 * @param topoId 拓扑id
+	 * @param name   名称
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean renameTopo(String topoId, String name) {
 		RenameTopoContext context = new RenameTopoContext(topoId, name);
@@ -329,6 +480,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 				remoteTopoService.sync(JsonUtil.java2JsonObject(context)).getString("name"));
 	}
 
+	/**
+	 * 复制拓扑
+	 *
+	 * @param topoId 拓扑id
+	 * @param name   名称
+	 * @return {@code String }
+	 */
 	@Override
 	public String copyTopo(String topoId, String name) {
 		String copiedTopoId = remoteTopoService.copyTopo(topoId);
@@ -340,6 +498,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return copiedTopoId;
 	}
 
+	/**
+	 * 获取节点计数
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer getNodeCount(LocalScene localScene) {
 		if (null != localScene.getNodeCount()) {
@@ -349,12 +513,25 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 	}
 
+	/**
+	 * 获取节点计数
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer getNodeCount(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		return getNodeCount(localScene);
 	}
 
+	/**
+	 * 获取场景数据
+	 *
+	 * @param localScene 当地场景
+	 * @param userId     用户id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getSceneData(LocalScene localScene, String userId) {
 		if (StringUtils.isNotBlank(localScene.getMpSceneId())) {
@@ -363,6 +540,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return null;
 	}
 
+	/**
+	 * 获取场景数据
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param userId    用户id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getSceneData(String mpSceneId, String userId) {
 		if (StringUtils.isBlank(mpSceneId)) {
@@ -376,6 +560,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return null;
 	}
 
+	/**
+	 * 获取拓扑数据
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getTopoData(String topoId) {
 		JSONObject topo = remoteTopoService.getTopoById(topoId);
@@ -386,6 +576,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return topo;
 	}
 
+	/**
+	 * 确保场景开始
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean ensureSceneStarted(LocalScene localScene) {
 		if (localScene == null) {
@@ -394,6 +590,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return StringUtils.isNotBlank(localScene.getMpSceneId());
 	}
 
+	/**
+	 * 确保场景开始
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean ensureSceneStarted(String localSceneId) {
 		if (StringUtils.isBlank(localSceneId)) {
@@ -403,6 +605,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return ensureSceneStarted(localScene);
 	}
 
+	/**
+	 * 删除远程场景
+	 *
+	 * @param localScene 当地场景
+	 */
 	@Override
 	public void deleteRemoteScene(LocalScene localScene) {
 		checkDemonstration();
@@ -410,6 +617,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		remoteSceneService.stopScene(sceneOpsContext);
 	}
 
+	/**
+	 * 获取监控会话
+	 *
+	 * @param localScene 当地场景
+	 * @param studentId  学员id
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getMonitorSessions(LocalScene localScene, String studentId) {
 		if (null == localScene || StringUtils.isBlank(localScene.getMpSceneId())) {
@@ -418,6 +632,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.getMonitorSessions(localScene.getMpSceneId(), studentId);
 	}
 
+	/**
+	 * 获取主机州列表
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param nodeIds   节点id列表
+	 * @return {@code List<MpHostState> }
+	 */
 	@Override
 	public List<MpHostState> getHostStateList(String mpSceneId, List<String> nodeIds) {
 		ElementCommonContext context = new ElementCommonContext();
@@ -426,6 +647,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.getHostState(context);
 	}
 
+	/**
+	 * 节点快照
+	 *
+	 * @param localScene  当地场景
+	 * @param shotContext 镜头上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean nodeSnapshot(LocalScene localScene, CreateSnapshotContext shotContext) {
 		NodeSnapshotContext snapshotContext = getNodeSnapshotContext(localScene, shotContext);
@@ -433,6 +661,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.nodeSnapshot(snapshotContext);
 	}
 
+	/**
+	 * 快照历史记录
+	 *
+	 * @param sceneId 场景id
+	 * @param imageId 图像id
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray snapshotHistory(String sceneId, String imageId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
@@ -441,6 +676,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.snapshotHistory(imageId);
 	}
 
+	/**
+	 * 合并快照
+	 *
+	 * @param sceneId         场景id
+	 * @param snapshotContext 快照上下文
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
@@ -449,6 +691,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.mergeSnapshot(snapshotContext);
 	}
 
+	/**
+	 * 删除快照
+	 *
+	 * @param sceneId    场景id
+	 * @param nodeId     节点id
+	 * @param snapshotId 快照id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
@@ -463,6 +713,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.deleteSnapshot(deleteContext);
 	}
 
+	/**
+	 * 暂停场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean pauseScene(LocalScene localScene) {
 
@@ -485,6 +741,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 取消暂停场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean unpauseScene(LocalScene localScene) {
 
@@ -511,6 +773,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 获取节点快照上下文
+	 *
+	 * @param localScene 当地场景
+	 * @param context    上下文
+	 * @return {@code NodeSnapshotContext }
+	 */
 	private NodeSnapshotContext getNodeSnapshotContext(LocalScene localScene,
 			CreateSnapshotContext context) {
 		SceneOpsContext opsContext = getSceneOpsContext(localScene);
@@ -520,6 +789,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return snapshotContext;
 	}
 
+	/**
+	 * 获取场景操作上下文
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code SceneOpsContext }
+	 */
 	private SceneOpsContext getSceneOpsContext(LocalScene localScene) {
 		SceneOpsContext sceneOpsContext = new SceneOpsContext();
 		sceneOpsContext.setId(localScene.getMpSceneId());
@@ -531,6 +806,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return sceneOpsContext;
 	}
 
+	/**
+	 * 获取节点操作上下文
+	 *
+	 * @param localScene 当地场景
+	 * @param nodeId     节点id
+	 * @return {@code NodeOpsContext }
+	 */
 	private NodeOpsContext getNodeOpsContext(LocalScene localScene, String nodeId) {
 		NodeOpsContext nodeOpsContext = new NodeOpsContext();
 		nodeOpsContext.setId(localScene.getMpSceneId());
@@ -541,6 +823,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return nodeOpsContext;
 	}
 
+	/**
+	 * 获取流量操作上下文
+	 *
+	 * @param localScene 当地场景
+	 * @param nodeId     节点id
+	 * @param flowId     流量id
+	 * @return {@code FlowOpsContext }
+	 */
 	private FlowOpsContext getFlowOpsContext(LocalScene localScene, String nodeId, String flowId) {
 		FlowOpsContext flowOpsContext = new FlowOpsContext();
 		flowOpsContext.setId(localScene.getMpSceneId());
@@ -552,10 +842,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return flowOpsContext;
 	}
 
-	/** 
+	/**
 	 * 启动场景之前，开关录屏
-	 * @param topoId 
-	 * @param enableRecording
+	 *
+	 * @param topoId
+	 * @param enableRecording 启用录制
 	 */
 	private void switchRecording(String topoId, Boolean enableRecording) {
 		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId,
@@ -563,6 +854,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		remoteTopoService.sync(JsonUtil.java2JsonObject(context));
 	}
 
+	/**
+	 * 创建节点
+	 *
+	 * @param localSceneId 当地场景id
+	 * @param nodeId       节点id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean createNode(String localSceneId, String nodeId) {
 
@@ -581,6 +879,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 更新节点
+	 *
+	 * @param mpSceneId  中台场景id
+	 * @param updateData 更新数据
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean updateNode(String mpSceneId, JSONObject updateData) {
 
@@ -590,6 +895,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 删除节点
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean deleteNode(String mpSceneId, String nodeId) {
 		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
@@ -598,6 +910,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return true;
 	}
 
+	/**
+	 * 更新场景
+	 *
+	 * @param localScene  当地场景
+	 * @param updateScene 更新场景
+	 */
 	@Override
 	public void updateScene(LocalScene localScene, JSONObject updateScene) {
 		checkDemonstration();
@@ -606,6 +924,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		remoteSceneService.updateScene(context);
 	}
 
+	/**
+	 * 起始节点
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean startNode(String mpSceneId, String nodeId) {
 		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
@@ -613,6 +938,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.startNode(context);
 	}
 
+	/**
+	 * 停止节点
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopNode(String mpSceneId, String nodeId) {
 		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
@@ -620,6 +952,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.stopNode(context);
 	}
 
+	/**
+	 * 重新启动节点由场景id
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean restartNodeBySceneId(String mpSceneId, String nodeId) {
 		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
@@ -627,6 +966,15 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.restartNode(context);
 	}
 
+	/**
+	 * 获取资产列表由实例id
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @param category           类别
+	 * @param name               名称
+	 * @param realTimeHostState  真实时间主机州
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getAssetListByInstanceId(String businessInstanceId, Integer category,
 			String name, Boolean realTimeHostState) {
@@ -642,6 +990,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.getAssetList(req);
 	}
 
+	/**
+	 * 获取资产列表由拓扑id
+	 *
+	 * @param topoId   拓扑id
+	 * @param category 类别
+	 * @param name     名称
+	 * @return {@code JSONArray }
+	 */
 	@Override
 	public JSONArray getAssetListByTopoId(String topoId, Integer category, String name) {
 		TopoNodeListReq req = new TopoNodeListReq();
@@ -653,29 +1009,59 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteTopoService.getAllNodes(req);
 	}
 
+	/**
+	 * 获取节点统计学
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getNodeStatistics(String localSceneId) {
 		String mpSceneId = getMpSceneIdOrExceptionByLocalSceneId(localSceneId);
 		return remoteSceneService.getAssetsStatisticsBySceneId(mpSceneId);
 	}
 
+	/**
+	 * 获取节点统计学由拓扑id
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getNodeStatisticsByTopoId(String topoId) {
 		return remoteTopoService.getNodeStatistics(topoId);
 	}
 
+	/**
+	 * 获取中台场景id由业务实例id
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getMpSceneIdByBusinessInstanceId(String businessInstanceId) {
 		LocalScene localScene = getOrExceptionByBusinessInstanceId(businessInstanceId);
 		return localScene.getMpSceneId();
 	}
 
+	/**
+	 * 获取资产列表
+	 *
+	 * @param req 请求体
+	 * @return {@code List<JSONObject> }
+	 */
 	@Override
 	public List<JSONObject> getAssetList(SceneNodeListReq req) {
 		JSONArray rsp = remoteSceneService.getAssetList(req);
 		return rsp.toJavaList(JSONObject.class);
 	}
 
+	/**
+	 * 获取都资产由业务实例id
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @return {@code List<JSONObject> }
+	 */
 	@Override
 	public List<JSONObject> getAllAssetByBusinessInstanceId(String businessInstanceId) {
 		LocalScene localScene = getOrExceptionByBusinessInstanceId(businessInstanceId);
@@ -684,6 +1070,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.getAssetList(req).toJavaList(JSONObject.class);
 	}
 
+	/**
+	 * 获取中台场景id或例外由当地场景id
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code String }
+	 */
 	private String getMpSceneIdOrExceptionByLocalSceneId(String localSceneId) {
 		LocalScene localScene = getOrException(localSceneId);
 		String mpSceneId = localScene.getMpSceneId();
@@ -694,6 +1086,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return mpSceneId;
 	}
 
+	/**
+	 * 获取或例外
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code LocalScene }
+	 */
 	private LocalScene getOrException(String localSceneId) {
 		LocalScene localScene = localSceneMapper.selectById(localSceneId);
 		if (null == localScene) {
@@ -703,6 +1101,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return localScene;
 	}
 
+	/**
+	 * 获取场景更新上下文
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code SceneUpdateContext }
+	 */
 	private SceneUpdateContext getSceneUpdateContext(LocalScene localScene) {
 		SceneUpdateContext sceneUpdateContext = new SceneUpdateContext();
 		sceneUpdateContext.setId(localScene.getMpSceneId());
@@ -711,6 +1115,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return sceneUpdateContext;
 	}
 
+	/**
+	 * 获取节点更新上下文
+	 *
+	 * @param localScene 当地场景
+	 * @param updateData 更新数据
+	 * @return {@code NodeUpdateContext }
+	 */
 	private NodeUpdateContext getNodeUpdateContext(LocalScene localScene, JSONObject updateData) {
 		NodeUpdateContext context = new NodeUpdateContext();
 		context.setId(localScene.getMpSceneId());
@@ -722,6 +1133,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return context;
 	}
 
+	/**
+	 * 获取或例外由中台场景id
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @return {@code LocalScene }
+	 */
 	@Override
 	public LocalScene getOrExceptionByMpSceneId(String mpSceneId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(mpSceneId);
@@ -732,6 +1149,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return localScene;
 	}
 
+	/**
+	 * 获取或例外由业务实例id
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @return {@code LocalScene }
+	 */
 	private LocalScene getOrExceptionByBusinessInstanceId(String businessInstanceId) {
 		LocalScene localScene = localSceneMapper.selectByBusinessInstanceId(businessInstanceId);
 		if (null == localScene) {
@@ -741,6 +1164,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return localScene;
 	}
 
+	/**
+	 * 检查如果当地场景零
+	 *
+	 * @param localScene 当地场景
+	 * @param sceneId    场景id
+	 */
 	private void checkIfLocalSceneNull(LocalScene localScene, String sceneId) {
 		if (null == localScene) {
 			log.error("localScene is null,sceneId =[{}]", sceneId);
@@ -748,6 +1177,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		}
 	}
 
+	/**
+	 * 检查演示
+	 */
 	private void checkDemonstration() {
 		RemoteUserService remoteUserService= SpringContextUtil
 				.getBeanByClass(RemoteUserService.class);

@@ -9,7 +9,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author myy
+ * 导调统计学响应
+ *
+ * @author myy@date 2024/11/12
  */
 @Data
 @NoArgsConstructor
@@ -17,9 +19,15 @@ import java.util.List;
 public class GuideStatisticsRsp implements Serializable {
 
 
+    /**
+     * 总计数
+     */
     @ApiModelProperty("导调总数量")
     private Integer totalCount;
 
+    /**
+     * 列表
+     */
     @ApiModelProperty("导调类型")
     private List<GuideStatisticsDetailRsp> list;
 }

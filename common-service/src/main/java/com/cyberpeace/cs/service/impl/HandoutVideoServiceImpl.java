@@ -26,15 +26,30 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 讲义视频Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class HandoutVideoServiceImpl implements HandoutVideoService {
 
+	/**
+	 * 视频进展Mapper
+	 */
 	@Autowired
 	private VideoProgressMapper videoProgressMapper;
 
+	/**
+	 * 捕获文件夹
+	 */
 	private String CAPTURE_FOLDER;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		CAPTURE_FOLDER = ConfigUtil.getContextProperty("capture.folder");
@@ -43,6 +58,13 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 		}
 	}
 
+	/**
+	 * 获取进展
+	 *
+	 * @param videoPath 视频路径
+	 * @param userId    用户id
+	 * @return {@code VideoProgress }
+	 */
 	@Override
 	public VideoProgress getProgress(String videoPath, String userId) {
 		VideoProgress progress = videoProgressMapper.selectByPathAndUserId(videoPath, userId);
@@ -53,6 +75,11 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 		return progress;
 	}
 
+	/**
+	 * 更新进度
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void updateProgress(VideoProgressReportReq req) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -78,6 +105,13 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 		}
 	}
 
+	/**
+	 * 获取进展批量
+	 *
+	 * @param paths  路径
+	 * @param userId 用户id
+	 * @return {@code Map<String, Set<Integer>> }
+	 */
 	@Override
 	public Map<String, Set<Integer>> getProgressBatch(Collection<String> paths, String userId) {
 		if (CollectionUtils.isEmpty(paths) || StringUtils.isBlank(userId)) {
@@ -89,6 +123,14 @@ public class HandoutVideoServiceImpl implements HandoutVideoService {
 				.newHashSet(JsonUtil.toJsonObjectArray(p.getWatchedPoint(), Integer.class)));
 	}
 
+	/**
+	 * 获取缩略图
+	 *
+	 * @param path   路径
+	 * @param sec    秒
+	 * @param resize 调整
+	 * @return {@code File }
+	 */
 	@Override
 	public File getThumbnail(String path, Integer sec, Boolean resize) {
 		File video = new File(path);

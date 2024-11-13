@@ -11,10 +11,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 批量删除请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @Slf4j
 public class BatchDeleteReq implements Serializable {
 
+	/**
+	 * id列表
+	 */
 	@ApiModelProperty("resource_id列表")
 	private List<String> ids;
 

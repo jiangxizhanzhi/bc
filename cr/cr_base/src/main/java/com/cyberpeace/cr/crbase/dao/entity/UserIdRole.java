@@ -4,10 +4,22 @@ import com.cyberpeace.common.entity.CrRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * 用户id岗位
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 @AllArgsConstructor
 public class UserIdRole {
 
+    /**
+     * 用户id
+     */
     private String userId;
+    /**
+     * 岗位
+     */
     private CrRole role;
 }

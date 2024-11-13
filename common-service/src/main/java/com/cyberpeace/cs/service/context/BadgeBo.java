@@ -14,6 +14,9 @@ import lombok.Data;
 @Data
 public class BadgeBo implements Serializable {
 
+	/**
+	 * 显示
+	 */
 	@ApiModelProperty(value = "是否显示")
 	private Boolean show;
 }

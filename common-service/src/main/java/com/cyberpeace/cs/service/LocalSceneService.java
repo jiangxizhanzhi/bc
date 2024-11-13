@@ -14,38 +14,100 @@ import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
 import com.cyberpeace.integratation.model.scene.SceneNodeListReq;
 
+/**
+ * 当地场景Service
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public interface LocalSceneService extends IService<LocalScene> {
 
+	/**
+	 * 获取由id
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code LocalScene }
+	 */
 	LocalScene getById(String localSceneId);
 
+	/**
+	 * 获取由业务实例id
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @return {@code LocalScene }
+	 */
 	LocalScene getByBusinessInstanceId(String businessInstanceId);
 
+	/**
+	 * 开始场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code String }
+	 */
 	String startScene(LocalScene localScene);
 
+	/**
+	 * 测试场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code String }
+	 */
 	String testScene(LocalScene localScene);
 
+	/**
+	 * 停场景
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Boolean }
+	 */
 	Boolean stopScene(String localSceneId);
 
+	/**
+	 * 停场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Boolean }
+	 */
 	Boolean stopScene(LocalScene localScene);
 
+	/**
+	 * 暂停场景
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Boolean }
+	 */
 	Boolean pauseScene(String localSceneId);
 
+	/**
+	 * 取消暂停场景
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Boolean }
+	 */
 	Boolean unpauseScene(String localSceneId);
 
 	/**
 	 * create topo
+	 *
+	 * @param topoData     拓扑数据
+	 * @param businessType 业务类型
+	 * @return {@code String }
 	 */
 	String saveTopo(JSONObject topoData, Integer businessType);
 
 	/**
 	 * update topo
+	 *
+	 * @param topoData 拓扑数据
+	 * @param topoId   拓扑id
 	 * @return topoId
 	 */
 	String saveTopo(JSONObject topoData, String topoId);
 
 	/**
 	 * 设定topo的类型
-	 * @param topoId 拓扑id
+	 *
+	 * @param topoId        拓扑id
 	 * @param referenceType 类型
 	 * @return 拓扑id
 	 */
@@ -53,13 +115,16 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * delete mp topo
-	 * @param topoId 
-	 * @return
+	 *
+	 * @param topoId
 	 */
 	void deleteTopo(String topoId);
 
 	/**
 	 * 重命名中台场景模板
+	 *
+	 * @param topoId 拓扑id
+	 * @param name   名称
 	 * @return
 	 */
 	Boolean renameTopo(String topoId, String name);
@@ -73,33 +138,105 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	String copyTopo(String topoId, String name);
 
+	/**
+	 * 获取节点计数
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Integer }
+	 */
 	Integer getNodeCount(LocalScene localScene);
 
+	/**
+	 * 获取节点计数
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Integer }
+	 */
 	Integer getNodeCount(String localSceneId);
 
+	/**
+	 * 获取场景数据
+	 *
+	 * @param scene  场景
+	 * @param userId 用户id
+	 * @return {@code JSONObject }
+	 */
 	JSONObject getSceneData(LocalScene scene, String userId);
 
+	/**
+	 * 获取场景数据
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param userId    用户id
+	 * @return {@code JSONObject }
+	 */
 	JSONObject getSceneData(String mpSceneId, String userId);
 
+	/**
+	 * 获取拓扑数据
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject }
+	 */
 	JSONObject getTopoData(String topoId);
 
 	/**
 	 * 执行节点和流量操作前确认场景已开启
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Boolean }
 	 */
 	Boolean ensureSceneStarted(LocalScene localScene);
 
+	/**
+	 * 确保场景开始
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code Boolean }
+	 */
 	Boolean ensureSceneStarted(String localSceneId);
 
+	/**
+	 * 重启节点
+	 *
+	 * @param localSceneId 当地场景id
+	 * @param nodeId       节点id
+	 * @return {@code Boolean }
+	 */
 	Boolean restartNode(String localSceneId, String nodeId);
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param localSceneId 当地场景id
+	 * @param nodeId       节点id
+	 * @return {@code Boolean }
+	 */
 	Boolean recreateNode(String localSceneId, String nodeId);
 
+	/**
+	 * 开始流量
+	 *
+	 * @param localScene 当地场景
+	 * @param nodeId     节点id
+	 * @param flowId     流量id
+	 * @return {@code Boolean }
+	 */
 	Boolean startFlow(LocalScene localScene, String nodeId, String flowId);
 
+	/**
+	 * 停流量
+	 *
+	 * @param localScene 当地场景
+	 * @param nodeId     节点id
+	 * @param flowId     流量id
+	 * @return {@code Boolean }
+	 */
 	Boolean stopFlow(LocalScene localScene, String nodeId, String flowId);
 
 	/**
 	 * 获取场景流量映射表
+	 *
 	 * @param sceneData
 	 * @param interactiveType
 	 * @return Map<String, SceneFlowContext>
@@ -108,6 +245,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 随机启动一个流量
+	 *
 	 * @param mpSceneId
 	 * @param sceneFlowContextMap
 	 * @return Boolean
@@ -116,12 +254,14 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 关闭mp场景
-	 * @param scene
+	 *
+	 * @param scene 场景
 	 */
 	void deleteRemoteScene(LocalScene scene);
 
 	/**
 	 * 获取监控会话
+	 *
 	 * @param localScene
 	 * @param studentId
 	 * @return
@@ -140,6 +280,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 节点快照
+	 *
 	 * @param localScene
 	 * @param context
 	 * @return
@@ -148,6 +289,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 场景快照历史记录
+	 *
 	 * @param sceneId
 	 * @param imageId
 	 * @return
@@ -156,6 +298,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 场景节点快照合并
+	 *
 	 * @param sceneId
 	 * @param snapshotContext
 	 * @return
@@ -164,6 +307,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 删除快照
+	 *
 	 * @param sceneId
 	 * @param nodeId
 	 * @param snapshotId
@@ -173,6 +317,7 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 场景暂停
+	 *
 	 * @param localScene
 	 * @return
 	 */
@@ -180,16 +325,25 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	/**
 	 * 场景从暂停状态恢复为运行状态
+	 *
 	 * @param localScene
 	 * @return
 	 */
 	Boolean unpauseScene(LocalScene localScene);
 
+	/**
+	 * 创建节点
+	 *
+	 * @param localSceneId 当地场景id
+	 * @param nodeId       节点id
+	 * @return {@code Boolean }
+	 */
 	Boolean createNode(String localSceneId, String nodeId);
 
 	/**
 	 * 动态更新节点属性
-	 * @param mpSceneId 场景id
+	 *
+	 * @param mpSceneId  场景id
 	 * @param updateData 更新节点内容，详见 http://10.10.10.11/pages/viewpage.action?pageId=69587011
 	 * @return
 	 */
@@ -207,8 +361,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 	/**
 	 * 动态更新场景
 	 *
-	 * @param localScene 当地场景
-	 * @param updateScene  场景数据
+	 * @param localScene  当地场景
+	 * @param updateScene 场景数据
 	 */
 	void updateScene(LocalScene localScene, JSONObject updateScene);
 
@@ -243,8 +397,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * 通过实例id获取资产列表
 	 *
 	 * @param businessInstanceId 业务实例id
-	 * @param name               业务实例id
 	 * @param category           类别
+	 * @param name               业务实例id
 	 * @param realTimeHostState  是否展示实时主机状态
 	 * @return {@code JSONArray}
 	 */

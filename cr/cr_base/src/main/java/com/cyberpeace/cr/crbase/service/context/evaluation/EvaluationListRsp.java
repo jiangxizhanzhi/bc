@@ -8,12 +8,24 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 评估列表响应
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 public class EvaluationListRsp extends EvaluationListBo implements Serializable {
 
+	/**
+	 * 提交用户名称
+	 */
 	@ApiModelProperty(value = "提交人名称")
 	private String submitUserName;
 
+	/**
+	 * 提交用户头像
+	 */
 	@ApiModelProperty(value = "提交人名称")
 	private String submitUserAvatar;
 

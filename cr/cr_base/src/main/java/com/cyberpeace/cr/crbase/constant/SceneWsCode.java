@@ -13,10 +13,13 @@ public final class SceneWsCode {
 	 */
 	public static final Integer SCENE_UPDATED = 6;
 
-    /**
-     * 场景关闭
-     */
+	/**
+	 * 场景关闭
+	 */
 	public static final Integer SCENE_STOPPED = 9;
 
+	/**
+	 * 场景WS代号
+	 */
 	private SceneWsCode() {}
 }

@@ -22,16 +22,40 @@ import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
+/**
+ * 训练统计学Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 public class TrainStatisticsServiceImpl implements TrainStatisticsService {
+    /**
+     * 靶场任务Mapper
+     */
     @Autowired
     CrTaskMapper crTaskMapper;
 
+    /**
+     * 远程用户Service
+     */
     @Autowired
     RemoteUserService remoteUserService;
 
+    /**
+     * 远程组织Service
+     */
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
+
+    /**
+     * 获取全部统计学详情
+     *
+     * @param detailReq 详情请求体
+     * @param page      分页
+     * @param code      代号
+     * @return {@code ListRsp<StatisticsDetail> }
+     */
     @Override
     public ListRsp<StatisticsDetail> getAllStatisticsDetail(TrainStatisticsDetailReq detailReq, Page page,Integer code) {
         List<StatisticsDetail> rsp = Lists.newArrayList();

@@ -53,30 +53,59 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 靶场场景Service实现
  *
+ * @author SN
+ * @date 2024/11/13
  */
 @Slf4j
 @Service
 public class CrSceneServiceImpl implements CrSceneService {
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * WebSocket处理器
+	 */
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
 
+	/**
+	 * 场景过滤器Service
+	 */
 	@Autowired
 	private SceneFilterService sceneFilterService;
 
+	/**
+	 * 保存拓扑
+	 *
+	 * @param sceneConfigData 场景配置数据
+	 * @param businessCode    业务代号
+	 * @param topoId          拓扑id
+	 * @return {@code String }
+	 */
 	@Override
 	public String saveTopo(SceneConfigData sceneConfigData, BusinessCode businessCode,
 			String topoId) {
@@ -92,6 +121,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return remoteTopoService.save(topoJson);
 	}
 
+	/**
+	 * 获取流量文件路径
+	 *
+	 * @param flowId 流量id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getFlowFilePath(String flowId) {
 		MpFlow mpFlow = remoteSceneService.getFlowById(flowId);
@@ -107,11 +142,27 @@ public class CrSceneServiceImpl implements CrSceneService {
 				: mpFlow.getScriptFile();
 	}
 
+	/**
+	 * 获取节点流量上下文列表
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param topoId    拓扑id
+	 * @param nodeId    节点id
+	 * @return {@code List<FlowInfo> }
+	 */
 	public List<FlowInfo> getNodeFlowContextList(String mpSceneId, String topoId, String nodeId) {
 		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, topoId, nodeId);
 		return BeanUtils.deepCopyList(elementFlowList, FlowInfo.class);
 	}
 
+	/**
+	 * 获取节点流量列表
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param topoId    拓扑id
+	 * @param nodeId    节点id
+	 * @return {@code List<ElementFlow> }
+	 */
 	@Override
 	public List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
 
@@ -137,7 +188,13 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return nodeFlowList;
 	}
 
-	/**获取cpFlow*/
+	/**
+	 * 获取cpFlow
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param topoId    拓扑id
+	 * @return {@code Cpflow }
+	 */
 	private Cpflow getCpFlow(String mpSceneId, String topoId) {
 
 		// 1.创建变量
@@ -166,7 +223,14 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return cpFlow;
 	}
 
-	/**过滤流量列表*/
+	/**
+	 * 过滤流量列表
+	 *
+	 * @param elementFlowList 元素流量列表
+	 * @param interactiveType 交互式类型
+	 * @param page            分页
+	 * @return {@code ListRsp<ElementFlow> }
+	 */
 	private ListRsp<ElementFlow> filterFlowList(List<ElementFlow> elementFlowList,
 			Integer interactiveType, Page page) {
 
@@ -180,6 +244,14 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return PageUtil.getListResult(elementFlowList, page, elementFlowList.size());
 	}
 
+	/**
+	 * 设置元素流量状态
+	 *
+	 * @param elementFlowList 元素流量列表
+	 * @param mpSceneId       中台场景id
+	 * @param nodeId          节点id
+	 * @return {@code List<ElementFlow> }
+	 */
 	@Override
 	public List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList,
 			String mpSceneId, String nodeId) {
@@ -193,6 +265,13 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return elementFlowList;
 	}
 
+	/**
+	 * 获取资产列表
+	 *
+	 * @param req           请求体
+	 * @param withHostState 跟主机状态
+	 * @return {@code List<JSONObject> }
+	 */
 	@Override
 	public List<JSONObject> getAssetList(AssetPageReq req, Boolean withHostState) {
 		String roomId = req.getResource_id();
@@ -223,6 +302,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return localSceneService.getAssetList(listReq);
 	}
 
+	/**
+	 * 获取操作系统名字
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<IdNameType> }
+	 */
 	@Override
 	public List<IdNameType> getOsNames(String roomId) {
 		List<JSONObject> allAssets = localSceneService.getAllAssetByBusinessInstanceId(roomId);
@@ -245,24 +330,48 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return CrCommonUtil.getOsListFromAssets(allAssets);
 	}
 
+	/**
+	 * 发送场景更新场景WS
+	 *
+	 * @param businessId 业务id
+	 */
 	@Override
 	public void sendSceneUpdateSceneWs(String businessId) {
 		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.ASSET_UPDATED);
 		sendWsData(bo, businessId);
 	}
 
+	/**
+	 * 发送场景停止消息
+	 *
+	 * @param businessId 业务id
+	 */
 	@Override
 	public void sendSceneStopMessage(String businessId) {
 		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.SCENE_STOPPED);
 		sendWsData(bo, businessId);
 	}
 
+	/**
+	 * 发送节点删除场景WS
+	 *
+	 * @param businessId 业务id
+	 */
 	@Override
 	public void sendNodeDeleteSceneWs(String businessId) {
 		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.NODE_DELETED);
 		sendWsData(bo, businessId);
 	}
 
+	/**
+	 * 获取层节点场景数据
+	 *
+	 * @param sceneId    场景id
+	 * @param businessId 业务id
+	 * @param areaId     面积id
+	 * @param roleId     岗位id
+	 * @return {@code SceneViewContext }
+	 */
 	@Override
 	public SceneViewContext getLayerNodeSceneData(String sceneId, String businessId, String areaId,
 			String roleId) {
@@ -307,7 +416,13 @@ public class CrSceneServiceImpl implements CrSceneService {
 		webSocketHandler.pushMessage(messageContext, true);
 	}
 
-	/**获取节点流量任务状态*/
+	/**
+	 * 获取节点流量任务状态
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param nodeId    节点id
+	 * @return {@code Integer }
+	 */
 	private Integer getFlowTaskStatus(String mpSceneId, String nodeId) {
 
 		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, null);
@@ -334,6 +449,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return taskStatus;
 	}
 
+	/**
+	 * 获取靶场流量列表
+	 *
+	 * @param context 上下文
+	 * @return {@code ListRsp<ElementFlow> }
+	 */
 	@Override
 	public ListRsp<ElementFlow> getCrFlowList(ElementFlowListContext context) {
 
@@ -347,6 +468,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return filterFlowList(elementFlowList, interactiveType, context.getPage());
 	}
 
+	/**
+	 * 更新流量参数
+	 *
+	 * @param flowOpsContext 流量操作上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
 
@@ -370,6 +497,15 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return result;
 	}
 
+	/**
+	 * 启动流
+	 *
+	 * @param mpSceneId  中台场景id
+	 * @param nodeId     节点id
+	 * @param flows      流
+	 * @param businessId 业务id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
 			String businessId) {
@@ -410,6 +546,15 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return true;
 	}
 
+	/**
+	 * 开始全部流
+	 *
+	 * @param mpSceneId  中台场景id
+	 * @param nodeId     节点id
+	 * @param runType    运行类型
+	 * @param businessId 业务id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType,
 			String businessId) {
@@ -436,6 +581,14 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return true;
 	}
 
+	/**
+	 * 获取节点
+	 *
+	 * @param roleList   岗位列表
+	 * @param businessId 业务id
+	 * @param roleId     岗位id
+	 * @return {@code CrRoleNodesData }
+	 */
 	private CrRoleNodesData getNodes(List<CrRole> roleList, String businessId, String roleId) {
 		if (roleList.isEmpty() || roleList.size() == 1) {
 			// 不是团队或红蓝，不做过滤
@@ -460,6 +613,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		}
 	}
 
+	/**
+	 * 获取节点配置列表
+	 *
+	 * @param roleList 岗位列表
+	 * @return {@code List<CrRoleConfig> }
+	 */
 	@Override
 	public List<CrRoleConfig> getNodeConfigList(List<CrRole> roleList) {
 		List<CrRoleConfig> nodeConfigList = Lists.newArrayList();
@@ -477,6 +636,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return nodeConfigList;
 	}
 
+	/**
+	 * 设置红蓝对抗节点配置
+	 *
+	 * @param context  上下文
+	 * @param roleList 岗位列表
+	 */
 	@Override
 	public void setRbNodeConfig(RbSceneViewContext context, List<CrRole> roleList) {
 		List<CrRoleConfig> redConfigList = Lists.newArrayList();

@@ -36,6 +36,9 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 无需用户认证的接口
+ *
+ * @author SN
+ * @date 2024/11/12
  */
 @Api(tags = "靶场无需用户认证的接口")
 @RestController
@@ -43,39 +46,78 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/noAuth")
 public class CrNoAuthController {
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 业务模板处理器
+	 */
 	@Autowired
 	private BusinessTemplateHandler businessTemplateHandler;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * RTKS相关Service
+	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	/**
+	 * 任务态势Service
+	 */
 	@Autowired
 	private MissionSituationService missionSituationService;
-	
+
+	/**
+	 * 工业态势Service
+	 */
 	@Autowired
 	private IndustrySituationService industrySituationService;
 
+	/**
+	 * 批量加载markdown
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("批量导入资管模板")
 	@PostMapping("/batchLoadMD")
 	public BaseRsp<Boolean> batchLoadMd(@RequestBody @Valid BatchLoadMdReq req) {
@@ -166,8 +208,9 @@ public class CrNoAuthController {
 
 	/**
 	 * 检查是否已存在同名模板
-	 * @param template_names 
-	 * @return true: 存在 
+	 *
+	 * @param template_names
+	 * @return true: 存在
 	 */
 	@ApiOperation("导入模板重名校验")
 	@PostMapping("/drm/check_template_name")
@@ -177,6 +220,13 @@ public class CrNoAuthController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 认证
+	 *
+	 * @param token          令 牌
+	 * @param admin_required 需要管理员
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("辅助鉴权")
 	@GetMapping("/auth")
 	public BaseRsp<Boolean> auth(@ApiParam(name = "token", value = "jwt token") String token,
@@ -196,6 +246,13 @@ public class CrNoAuthController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 演示效果
+	 *
+	 * @param room_id 房间id
+	 * @param ts_id   茨id
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("触发行业态势动效demo")
 	@GetMapping("/ts/demo")
 	public BaseRsp<Boolean> demoEffect(@ApiParam(name = "room_id", value = "训练房间编号") String room_id,

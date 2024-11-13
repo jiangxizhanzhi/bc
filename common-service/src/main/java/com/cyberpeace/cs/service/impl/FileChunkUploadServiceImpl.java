@@ -29,27 +29,57 @@ import com.cyberpeace.cs.service.context.upload.MergeFileRsp;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 文件块上传Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 @Slf4j
 public class FileChunkUploadServiceImpl implements FileChunkUploadService {
 
+	/**
+	 * 块大小
+	 */
 	private final static long CHUNK_SIZE = 50 * 1024 * 1024;
 
+	/**
+	 * ISO 后缀
+	 */
 	private final static String ISO_SUFFIX = ".iso";
 
+	/**
+	 * 上传目录
+	 */
 	private String uploadDir;
 
+	/**
+	 * 文件块Mapper
+	 */
 	@Autowired
 	private FileChunkMapper fileChunkMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		uploadDir = ConfigUtil.getContextProperty("iso.upload.path");
 	}
 
+	/**
+	 * 检查文件
+	 *
+	 * @param md5 md5
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer checkFile(String md5) {
 		List<FileChunk> fileChunkList = getChunkListByMd5(md5);
@@ -63,6 +93,12 @@ public class FileChunkUploadServiceImpl implements FileChunkUploadService {
 		return FileChunkUploadStatus.ONGOING;
 	}
 
+	/**
+	 * 上传区块
+	 *
+	 * @param req 请求体
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer uploadChunk(FileChunkReq req) {
 		if (req.getFile() == null) {
@@ -87,6 +123,12 @@ public class FileChunkUploadServiceImpl implements FileChunkUploadService {
 		return req.getIndex();
 	}
 
+	/**
+	 * 合并文件
+	 *
+	 * @param req 请求体
+	 * @return {@code MergeFileRsp }
+	 */
 	@Override
 	public MergeFileRsp mergeFile(FileMergeReq req) {
 		List<FileChunk> fileChunkList = getChunkListByMd5(req.getMd5());
@@ -115,6 +157,14 @@ public class FileChunkUploadServiceImpl implements FileChunkUploadService {
 		return rsp;
 	}
 
+	/**
+	 * 按随机访问文件上传文件
+	 *
+	 * @param destDir  dest dir
+	 * @param filename 文件名
+	 * @param index    指数
+	 * @param file     文件
+	 */
 	private void uploadFileByRandomAccessFile(String destDir, String filename, Integer index,
 			MultipartFile file) {
 		FileUtil.mkdirs(destDir);
@@ -130,12 +180,25 @@ public class FileChunkUploadServiceImpl implements FileChunkUploadService {
 		}
 	}
 
+	/**
+	 * 获取块列表由md5
+	 *
+	 * @param md5 md5
+	 * @return {@code List<FileChunk> }
+	 */
 	private List<FileChunk> getChunkListByMd5(String md5) {
 		LambdaQueryWrapper<FileChunk> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(FileChunk::getMd5, md5);
 		return fileChunkMapper.selectList(wrapper);
 	}
 
+	/**
+	 * 获取块由md5和指数
+	 *
+	 * @param md5   md5
+	 * @param index 指数
+	 * @return {@code FileChunk }
+	 */
 	private FileChunk getChunkByMd5AndIndex(String md5, Integer index) {
 		LambdaQueryWrapper<FileChunk> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(FileChunk::getMd5, md5).eq(FileChunk::getIndex, index);

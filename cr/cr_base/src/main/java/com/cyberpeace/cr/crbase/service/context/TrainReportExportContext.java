@@ -15,38 +15,77 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 
+/**
+ * 训练报告导出上下文
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 public class TrainReportExportContext extends TrainReportContext {
 
+	/**
+	 * 任务分类
+	 */
 	@ApiModelProperty("任务分类：key 名称 value个数")
 	private String kindMapString;
 
+	/**
+	 * 红方任务分类
+	 */
 	@ApiModelProperty("红方任务分类：key 名称 value个数")
 	private String redMapString;
 
+	/**
+	 * 蓝方任务分类
+	 */
 	@ApiModelProperty("蓝方任务分类：key 名称 value个数")
 	private String blueMapString;
 
+	/**
+	 * 时间列表字符串
+	 */
 	private String timeListString;
 
+	/**
+	 * 红方得分趋势
+	 */
 	@ApiModelProperty("红方得分趋势")
 	private String redTrendsString;
 
+	/**
+	 * 蓝方得分趋势
+	 */
 	@ApiModelProperty("蓝方得分趋势")
 	private String blueTrendsString;
 
+	/**
+	 * 团队得分趋势
+	 */
 	@ApiModelProperty("团队得分趋势")
 	private String teamTrendsString;
 
+	/**
+	 * 攻击流量各类别统计
+	 */
 	@ApiModelProperty("攻击流量各类别统计")
 	private String attackTypeCountString;
 
+	/**
+	 * 场景流量趋势图
+	 */
 	@ApiModelProperty("场景流量趋势图")
 	private String sceneTrendTimeString;
 
+	/**
+	 * 场景流量趋势图
+	 */
 	@ApiModelProperty("场景流量趋势图")
 	private String sceneTrendSizeString;
 
+	/**
+	 * 攻击流量分类总数
+	 */
 	@ApiModelProperty("攻击流量分类总数")
 	private Integer attackTypeAllCount;
 

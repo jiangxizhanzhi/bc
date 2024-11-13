@@ -6,12 +6,21 @@ import lombok.Data;
 
 /**
  * 任务编排模板配置
+ *
+ * @author SN
+ * @date 2024/11/13
  */
 @Data
 public class MissionSchemeTemplateConfig implements Serializable {
 
+	/**
+	 * 模板
+	 */
 	private Integer template;
 
+	/**
+	 * 颜色
+	 */
 	private Integer color;
 
 	public MissionSchemeTemplateConfig(Integer template, Integer color) {

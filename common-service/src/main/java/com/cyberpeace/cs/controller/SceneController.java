@@ -29,6 +29,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 场景Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "场景操作相关api")
 @Slf4j
 @RestController
@@ -36,12 +42,24 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 public class SceneController {
 
+	/**
+	 * 当地场景Mapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 节点快照
+	 *
+	 * @param snapShotReq 折拍摄请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PostMapping("/node/snapshot")
 	@ApiOperation("场景节点打快照")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -61,6 +79,12 @@ public class SceneController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 快照删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@DeleteMapping("/node/snapshot")
 	@ApiOperation("场景节点快照删除")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -73,6 +97,13 @@ public class SceneController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 快照路径
+	 *
+	 * @param sceneId 场景id
+	 * @param imageId 图像id
+	 * @return {@code BaseRsp<JSONArray> }
+	 */
 	@GetMapping("/node/snapshot")
 	@ApiOperation("场景节点快照路径")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -87,6 +118,12 @@ public class SceneController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 更新节点
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PostMapping("/node/update")
 	@ApiOperation("节点属性变更接口")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -98,6 +135,12 @@ public class SceneController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 起始节点
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PostMapping("/node/start")
 	@ApiOperation("单个节点开机")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -110,6 +153,12 @@ public class SceneController {
 	}
 
 
+	/**
+	 * 停止节点
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PostMapping("/node/stop")
 	@ApiOperation("单个节点关机")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -122,6 +171,12 @@ public class SceneController {
 	}
 
 
+	/**
+	 * 重启节点
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PostMapping("/node/restart")
 	@ApiOperation("单个节点重启")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,

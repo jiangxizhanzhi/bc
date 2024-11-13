@@ -9,9 +9,18 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * id列表请求体
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 public class IdListReq {
 
-	@ApiModelProperty("ID列表")
+    /**
+     * id列表
+     */
+    @ApiModelProperty("ID列表")
 	private List<String> ids;
 
 	public List<String> getIds() {

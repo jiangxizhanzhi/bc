@@ -7,10 +7,19 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 
+/**
+ * 视频进度
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @TableName("video_progress")
 public class VideoProgress extends BaseTable {
 
+	/**
+	 * id
+	 */
 	@TableId(type = IdType.AUTO)
 	private Integer id;
 

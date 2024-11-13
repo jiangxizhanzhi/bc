@@ -17,12 +17,21 @@ import lombok.Data;
 @Data
 public class TrainingScore implements Serializable {
 
+	/**
+	 * 得分
+	 */
 	@ApiModelProperty(value = "训练得分")
 	private Integer score = 0;
 
+	/**
+	 * 总数
+	 */
 	@ApiModelProperty(value = "训练总分")
 	private Integer total = 0;
 
+	/**
+	 * 阶段
+	 */
 	@ApiModelProperty(value = "各阶段")
 	private List<StageNameScore> stages = Lists.newArrayList();
 

@@ -10,36 +10,94 @@ import com.cyberpeace.common.util.FileUtil;
 import lombok.Getter;
 
 /**
- * @author chenzhuo
+ * 上传图片权限
+ *
+ * @author chenzhuo@date 2024/11/11
  */
 
 public enum UploadImagePermission implements GenericEnum {
 
-	/** 文件上传权限枚举*/
+	/**
+	 * 文件上传权限枚举
+	 */
 	CMS_COURSE_LOGO(1, "后台课程", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.CMS_COURSES, MenuConstant.WEB_OJ_COURSE }),
+	/**
+	 * CMS 系列练习设置图标
+	 */
 	CMS_PRACTICE_SET_LOGO(2, "后台习题集", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.CMS_EXERCISES }),
+	/**
+	 * Web团队图像
+	 */
 	WEB_TEAM_IMAGE(3, "前台团队训练", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_CR_TEAM_TRAIN }),
+	/**
+	 * CMS 团队形象
+	 */
 	CMS_TEAM_IMAGE(4, "后台团队训练", FileTypeContant.PICTURE_TYPE, new String[]{ MenuConstant.CMS_CR_TEAM_TRAIN }),
+	/**
+	 * Web红蓝图像
+	 */
 	WEB_RED_BLUE_IMAGE(5, "前台红蓝对抗", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_CR_RED_VS_BLUE }),
+	/**
+	 * CMS 红蓝图像
+	 */
 	CMS_RED_BLUE_IMAGE(6, "后台红蓝对抗", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.CMS_RED_VS_BLUE }),
+	/**
+	 * CMS 单张图片
+	 */
 	CMS_SINGLE_IMAGE(7, "后台单兵训练", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.CMS_CR_SINGLE_TRAIN }),
+	/**
+	 * CMS 工具图像
+	 */
 	CMS_TOOL_IMAGE(8, "后台工具库", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_TOOL}),
+	/**
+	 * Web单图像
+	 */
 	WEB_SINGLE_IMAGE(9, "前台单兵训练", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_CR_SINGLE_TRAIN }),
+	/**
+	 * Web评估图像
+	 */
 	WEB_EVALUATE_IMAGE(10, "前台靶场测评", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_CR_EVALUATION }),
+	/**
+	 * Web实操图像
+	 */
 	WEB_OPERATION_IMAGE(11, "前台实操习题", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_OJ_PRACTICE_OPERATION }),
+	/**
+	 * Web课程图像
+	 */
 	WEB_COURSE_IMAGE(12, "前台课程", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.WEB_OJ_COURSE}),
+	/**
+	 * CMS 系列理论图像
+	 */
 	CMS_THEORY_IMAGE(13, "后台理论习题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_THEORY_PRACTICE}),
+	/**
+	 * CMS 系列实操图像
+	 */
 	CMS_OPERATION_IMAGE(14, "后台实操习题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_PRACTICE_OPERATION}),
+	/**
+	 * WebOJ理论练习
+	 */
 	WEB_OJ_THEORY_PRACTICE(15, "理论题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.WEB_OJ_THEORY_PRACTICE});
 
+	/**
+	 * 代号
+	 */
 	@Getter
 	public final Integer code;
 
+	/**
+	 * 描述
+	 */
 	@Getter
 	private final String desc;
 
+	/**
+	 * 文件后缀
+	 */
 	public final String fileSuffix;
 
+	/**
+	 * 菜单id列表
+	 */
 	public final String[] menuIds;
 
 	UploadImagePermission(int type, String desc, String fileSuffix, String[] menuIds) {

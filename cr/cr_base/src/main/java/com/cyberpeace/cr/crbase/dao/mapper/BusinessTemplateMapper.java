@@ -14,48 +14,150 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 
+/**
+ * 业务模板Mapper
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Mapper
 @Repository
 public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
+	/**
+	 * 列出团队模板
+	 *
+	 * @param page      分页
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<BusinessTemplateData> }
+	 */
 	IPage<BusinessTemplateData> listTeamTemplate(Page page,
 			@Param("listQuery") BusinessTemplateQuery listQuery);
 
+	/**
+	 * 查询id列表由用户id
+	 *
+	 * @param userId 用户id
+	 * @return {@code List<String> }
+	 */
 	List<String> selectIdsByUserId(@Param("userId") String userId);
 
+	/**
+	 * 查询业务模板由用户id
+	 *
+	 * @param userId 用户id
+	 * @return {@code List<BusinessTemplate> }
+	 */
 	List<BusinessTemplate> selectBusinessTemplatesByUserId(@Param("userId") String userId);
 
+	/**
+	 * 查询由名称和类型
+	 *
+	 * @param name 名称
+	 * @param type 类型
+	 * @param id   id
+	 * @return {@code BusinessTemplate }
+	 */
 	BusinessTemplate selectByNameAndType(String name, Integer type, String id);
 
+	/**
+	 * 查询由当地场景id
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code BusinessTemplate }
+	 */
 	BusinessTemplate selectByLocalSceneId(String localSceneId);
 
+	/**
+	 * 存在由名称
+	 *
+	 * @param templateName 模板名称
+	 * @return {@code Boolean }
+	 */
 	Boolean existByName(@Param("templateName") String templateName);
 
+	/**
+	 * 获取存在名字
+	 *
+	 * @param templateNames 模板名称
+	 * @return {@code List<String> }
+	 */
 	List<String> getExistedNames(@Param("templateNames") List<String> templateNames);
 
+	/**
+	 * 获取由名称
+	 *
+	 * @param templateName 模板名称
+	 * @return {@code BusinessTemplate }
+	 */
 	BusinessTemplate getByName(@Param("templateName") String templateName);
 
 	/**
 	 * 校验模板名称
+	 *
+	 * @param templateName 模板名称
+	 * @param type         类型
+	 * @param templateId   模板id
+	 * @return {@code Boolean }
 	 */
 	Boolean existByNameAndTypeAndId(@Param("templateName") String templateName,
 			@Param("type") Integer type, @Param("templateId") String templateId);
 
+	/**
+	 * 获取ATTACK相关id列表
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @return {@code List<String> }
+	 */
 	List<String>
 			getAttackRelatedIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
 
+	/**
+	 * 获取Engage相关id列表
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @return {@code List<String> }
+	 */
 	List<String>
 			getEngageRelatedIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
 
+	/**
+	 * 简单列表
+	 *
+	 * @param page       分页
+	 * @param type       类型
+	 * @param difficulty 难度
+	 * @param pattern    模式
+	 * @return {@code IPage<BusinessTemplateSimple> }
+	 */
 	IPage<BusinessTemplateSimple> listSimple(@Param("page") Page page, @Param("type") Integer type,
 			@Param("difficulty") Integer difficulty, @Param("pattern") String pattern);
 
+	/**
+	 * 获取批量id列表由名字
+	 *
+	 * @param businessTemplateNames 业务模板名字
+	 * @param type                  类型
+	 * @return {@code List<String> }
+	 */
 	List<String> getBatchIdsByNames(
 			@Param("business_template_names") List<String> businessTemplateNames,
 			@Param("type") Integer type);
 
+	/**
+	 * 获取全部由id列表
+	 *
+	 * @param resourceIds 资源id列表
+	 * @param type        类型
+	 * @return {@code List<BusinessTemplate> }
+	 */
 	List<BusinessTemplate> getAllByIds(@Param("resourceIds") List<String> resourceIds,
 			@Param("type") Integer type);
 
+	/**
+	 * 获取全部id列表
+	 *
+	 * @return {@code List<String> }
+	 */
 	List<String> getAllIds();
 }

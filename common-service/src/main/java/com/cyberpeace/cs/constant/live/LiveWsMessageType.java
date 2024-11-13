@@ -2,6 +2,7 @@ package com.cyberpeace.cs.constant.live;
 
 /**
  * 直播相关ws消息类型
+ *
  * @author SN
  * @date 2024/05/06
  */
@@ -12,5 +13,8 @@ public final class LiveWsMessageType {
 	 */
 	public static final Integer STATUS = 1;
 
+	/**
+	 * Live WS 消息类型
+	 */
 	private LiveWsMessageType() {}
 }

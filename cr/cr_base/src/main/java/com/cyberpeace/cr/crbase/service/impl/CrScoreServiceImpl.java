@@ -40,49 +40,100 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 靶场得分Service实现
  *
+ * @author SN
+ * @date 2024/11/13
  */
 @Slf4j
 @Service
 public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> implements CrScoreService {
 
+	/**
+	 * 靶场得分Mapper
+	 */
 	@Autowired
 	private CrScoreMapper crScoreMapper;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 靶场任务Mapper
+	 */
 	@Autowired
 	private CrTaskMapper crTaskMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 靶场常数Service
+	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	/**
+	 * 靶场任务日志Mapper
+	 */
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
+
+	/**
+	 * 获取由房间id和用户
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code CrScore }
+	 */
 	@Override
 	public CrScore getByRoomIdAndUser(String roomId, String userId) {
 		return crScoreMapper.getByRoomIdAndUser(roomId, userId);
 	}
 
+	/**
+	 * 获取任务统计学
+	 *
+	 * @param roomId     房间id
+	 * @param crRoleList 靶场岗位列表
+	 * @return {@code MissionsStatistics }
+	 */
 	@Override
 	public MissionsStatistics getMissionsStatistics(String roomId, List<CrRole> crRoleList) {
 		MissionsStatistics missionsStatistics = new MissionsStatistics();
@@ -107,11 +158,25 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return missionsStatistics;
 	}
 
+	/**
+	 * 查询由房间id和用户id列表
+	 *
+	 * @param roomId  房间id
+	 * @param userIds 用户id列表
+	 * @return {@code List<CrScore> }
+	 */
 	@Override
 	public List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds) {
 		return crScoreMapper.selectByRoomIdAndUserIds(roomId, userIds);
 	}
 
+	/**
+	 * 获取任务类别
+	 *
+	 * @param roomId     房间id
+	 * @param crRoleList 靶场岗位列表
+	 * @return {@code Map<String, Integer> }
+	 */
 	@Override
 	public Map<String, Integer> getMissionsCategory(String roomId, List<CrRole> crRoleList) {
 		Map<String, Integer> missionsCategory = Maps.newHashMap();
@@ -132,11 +197,24 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return missionsCategory;
 	}
 
+	/**
+	 * 获取得分由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<CrScore> }
+	 */
 	@Override
 	public List<CrScore> getScoreByRoomId(String roomId) {
 		return crScoreMapper.selectByRoomId(roomId);
 	}
 
+	/**
+	 * 获取得分列表响应
+	 *
+	 * @param roomId   房间id
+	 * @param roleList 岗位列表
+	 * @return {@code List<StudentScoreListRsp> }
+	 */
 	@Override
 	public List<StudentScoreListRsp> getScoreListRsp(String roomId, List<CrRole> roleList) {
 
@@ -196,6 +274,13 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return res;
 	}
 
+	/**
+	 * 获取学员得分
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code StudentScoreRsp }
+	 */
 	@Override
 	public StudentScoreRsp getStudentScore(String roomId, String userId) {
 		// get task score
@@ -272,6 +357,14 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return rsp;
 	}
 
+	/**
+	 * 获取训练报告
+	 *
+	 * @param roomId        房间id
+	 * @param roles         角色
+	 * @param scoreTrendReq 得分趋势请求体
+	 * @return {@code TrainReportContext }
+	 */
 	@Override
 	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles,
 			ScoreTrendReq scoreTrendReq) {
@@ -393,6 +486,13 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return trainReportContext;
 	}
 
+	/**
+	 * 获取技能得分列表
+	 *
+	 * @param roomId 房间id
+	 * @param roles  角色
+	 * @return {@code List<UserSkillScoreContext> }
+	 */
 	@Override
 	public List<UserSkillScoreContext> getSkillScoreList(String roomId, ArrayList<Integer> roles) {
 		List<CrTask> taskList = crTaskService.getByRoomId(roomId);
@@ -409,6 +509,15 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return getSkillScoreList(roomId, userIds, taskList, missionMap);
 	}
 
+	/**
+	 * 获取技能得分列表
+	 *
+	 * @param roomId     房间id
+	 * @param userIds    用户id列表
+	 * @param taskList   任务列表
+	 * @param missionMap 任务映射
+	 * @return {@code List<UserSkillScoreContext> }
+	 */
 	@Override
 	public List<UserSkillScoreContext> getSkillScoreList(String roomId, List<String> userIds,
 			List<CrTask> taskList, Map<String, Mission> missionMap) {
@@ -449,6 +558,13 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return list;
 	}
 
+	/**
+	 * 交易凯特映射
+	 *
+	 * @param taskList 任务列表
+	 * @param userIds  用户id列表
+	 * @return {@code Map<String, Integer> }
+	 */
 	public Map<String, Integer> dealCateMap(List<CrTask> taskList, List<String> userIds) {
 		Map<String, Integer> kindMap = new HashMap<>();
 

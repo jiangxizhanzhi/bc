@@ -10,19 +10,37 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 附件
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Attachment extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 文件名称
+	 */
 	private String fileName;
 
+	/**
+	 * 文件路径
+	 */
 	private String filePath;
 
+	/**
+	 * 是否公共
+	 */
 	@TableField("public")
 	private Boolean isPublic;
 

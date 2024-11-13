@@ -61,6 +61,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
 
+/**
+ * 业务模板Controller
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @Api(tags = "基础模板")
 @RestController
 @Slf4j
@@ -68,23 +74,40 @@ import net.lingala.zip4j.exception.ZipException;
 @RequiresAuthentication
 public class BusinessTemplateController {
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * 获取所有靶场的业务模板
+	 *
+	 * @param listReq 列表请求体
 	 * @return
 	 */
 	@ApiOperation("查询模板列表")
@@ -134,6 +157,8 @@ public class BusinessTemplateController {
 
 	/**
 	 * 获取靶场业务模板的操作权限
+	 *
+	 * @param resource_id 资源id
 	 * @return
 	 */
 	@ApiOperation("查询操作权限")
@@ -149,6 +174,8 @@ public class BusinessTemplateController {
 
 	/**
 	 * 设置靶场业务模板的操作权限
+	 *
+	 * @param shareReq 共享请求体
 	 * @return
 	 */
 	@ApiOperation("批量修改操作权限")
@@ -163,6 +190,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@DeleteMapping()
 	@ApiOperation("批量删除")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -173,6 +206,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 验证名称修改
+	 *
+	 * @param nameValidReq 名称有效请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("校验模板名字")
 	@PatchMapping("/validate_name_patch/")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -183,6 +222,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 测试场景
+	 *
+	 * @param testSceneReq 测试场景请求体
+	 * @return {@code BaseRsp<StartSceneRsp> }
+	 */
 	@ApiOperation("启动后台测试场景")
 	@PostMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -234,6 +279,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>(new StartSceneRsp(sceneId));
 	}
 
+	/**
+	 * 获取场景
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<SceneViewContext> }
+	 */
 	@ApiOperation("查看后台测试场景")
 	@GetMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -247,6 +298,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>(context);
 	}
 
+	/**
+	 * 停止测试场景
+	 *
+	 * @param testSceneReq 测试场景请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("关闭后台场景测试")
 	@DeleteMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -266,6 +323,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台测试场景重启节点")
 	@PostMapping("/testScene/node/restart")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -285,6 +348,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台测试场景重建节点")
 	@PostMapping("/testScene/node/recreate")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -304,6 +373,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 创建节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("创建启动节点")
 	@PostMapping("/node/create")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -323,6 +398,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 批量导出
+	 *
+	 * @param response 响应
+	 * @param dumpReq  导出请求体
+	 */
 	@ApiOperation("批量导出场景模板")
 	@PostMapping("/batchDump")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -348,6 +429,14 @@ public class BusinessTemplateController {
 		}
 	}
 
+	/**
+	 * 批量加载
+	 *
+	 * @param file 文件
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws IOException  io异常
+	 * @throws ZipException zip 异常
+	 */
 	@ApiOperation("批量导入场景模板")
 	@PutMapping("/batchLoad")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -369,6 +458,12 @@ public class BusinessTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 分页简单
+	 *
+	 * @param btPageReq BT系列分页请求体
+	 * @return {@code BaseRsp<List<BusinessTemplateSimple>> }
+	 */
 	@ApiOperation("职业框架-场景模板列表")
 	@GetMapping("/list/simple")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
@@ -380,6 +475,12 @@ public class BusinessTemplateController {
 		return new BaseRsp(res);
 	}
 
+	/**
+	 * 检查模板访问权限
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("创建训练时校验用户是否拥有模板权限")
 	@GetMapping("/check/template/permission")
 	@RequiresPermissions(
@@ -398,10 +499,21 @@ public class BusinessTemplateController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 检查以前测试场景
+	 *
+	 * @param templateId 模板id
+	 */
 	private void checkBeforeTestingScene(String templateId) {
 		// 暂无
 	}
 
+	/**
+	 * 确保模板存在
+	 *
+	 * @param templateId 模板id
+	 * @return {@code BusinessTemplate }
+	 */
 	private BusinessTemplate ensureTemplateExist(String templateId) {
 		BusinessTemplate businessTemplate = businessTemplateService.getById(templateId);
 		if (businessTemplate == null) {

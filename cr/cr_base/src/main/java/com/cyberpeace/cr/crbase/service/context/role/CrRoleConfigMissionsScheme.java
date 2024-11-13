@@ -8,16 +8,28 @@ import lombok.Data;
 
 /**
  * 用于后台模板查询接口返回基本任务信息
+ *
+ * @author SN
+ * @date 2024/11/13
  */
 @Data
 public class CrRoleConfigMissionsScheme implements Serializable {
 
-	@ApiModelProperty(value = "色调")
+    /**
+     * 颜色
+     */
+    @ApiModelProperty(value = "色调")
 	private Integer color;
 
-	@ApiModelProperty(value = "模板")
+    /**
+     * 模板
+     */
+    @ApiModelProperty(value = "模板")
 	private Integer template;
 
-	@ApiModelProperty(value = "任务配置")
+    /**
+     * 方案数据
+     */
+    @ApiModelProperty(value = "任务配置")
 	private List<CrRoleConfigSchemeStage> schemeData;
 }

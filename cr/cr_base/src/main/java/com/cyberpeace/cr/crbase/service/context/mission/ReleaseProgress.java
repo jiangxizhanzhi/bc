@@ -14,9 +14,15 @@ import lombok.Data;
 @Data
 public class ReleaseProgress implements Serializable {
 
+	/**
+	 * 总数
+	 */
 	@ApiModelProperty(value = "总数")
 	private Integer total = 0;
 
+	/**
+	 * 已下发
+	 */
 	@ApiModelProperty(value = "已下发数")
 	private Integer released = 0;
 

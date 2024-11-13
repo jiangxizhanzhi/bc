@@ -14,6 +14,9 @@ import com.cyberpeace.common.util.LocalStringUtil;
 
 /**
  * 训练技能解析
+ *
+ * @author SN
+ * @date 2024/11/13
  */
 @Service
 public class TrainSkillParser implements MdContentParser<Collection, String> {

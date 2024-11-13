@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * 直播状态代号
+ *
  * @author SN
  * @date 2024/05/06
  */
@@ -20,6 +21,9 @@ public final class LiveWsStatusActionCode {
 	 */
 	public static final Integer UNPUBLISH = 2;
 
+	/**
+	 * 住WS状态行动代号
+	 */
 	private LiveWsStatusActionCode() {}
 
 }

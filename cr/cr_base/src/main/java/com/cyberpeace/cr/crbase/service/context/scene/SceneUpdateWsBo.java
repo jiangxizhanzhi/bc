@@ -22,6 +22,9 @@ public class SceneUpdateWsBo implements Serializable {
 	 */
 	private Integer code = SceneWsCode.SCENE_UPDATED;
 
+	/**
+	 * 数据
+	 */
 	private WsData data = new WsData();
 
 	public SceneUpdateWsBo(Integer type) {
@@ -49,6 +52,12 @@ public class SceneUpdateWsBo implements Serializable {
 	}
 }
 
+/**
+ * WS 数据
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 class WsData implements Serializable {
 

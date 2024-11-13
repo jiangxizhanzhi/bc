@@ -8,9 +8,18 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * id请求体
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 public class IdReq {
 
+	/**
+	 * id
+	 */
 	@ApiModelProperty("ID")
 	private String id;
 

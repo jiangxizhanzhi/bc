@@ -17,6 +17,9 @@ import lombok.EqualsAndHashCode;
 @Data
 public class RoleUpdateConfig extends CrRoleNodesData implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "角色名称")
 	private String name;
 

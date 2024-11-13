@@ -11,22 +11,39 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/*
+/**
+ * 业务模板查询
+ *
+ * @author SN
+ * @date 2024/11/13
+ *//*
  * 后台使用的查询类
  */
 @ApiModel
 @Data
 public class BusinessTemplateQuery extends PageReqBase {
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty(value = "业务类型ID")
 	private String type;
 
+	/**
+	 * 搜索
+	 */
 	@ApiModelProperty(value = "检索参数")
 	private String search;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	/**
+	 * id列表
+	 */
 	private List<String> ids;
 
 	public void setSearch(String search) {

@@ -11,10 +11,16 @@ import lombok.Data;
 
 /**
  * 单兵训练角色MarkDown
+ *
+ * @author SN
+ * @date 2024/11/13
  */
 @Data
 public class SingleRoleMD implements Serializable {
 
+	/**
+	 * 任务
+	 */
 	@MdHeadLine(level = 1, name = "任务集合", parser = TaskParser.class)
 	private List<RoleBo> task;
 

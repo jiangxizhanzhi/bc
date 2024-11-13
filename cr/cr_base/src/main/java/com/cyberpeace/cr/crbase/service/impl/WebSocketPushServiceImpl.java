@@ -14,16 +14,41 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * WebSocket推送Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 public class WebSocketPushServiceImpl implements WebSocketPushService {
+    /**
+     * WebSocket处理器
+     */
     @Autowired
     private MyWebSocketHandler webSocketHandler;
 
+    /**
+     * 通知
+     *
+     * @param userList   用户列表
+     * @param code       代号
+     * @param businessId 业务id
+     * @param url        网址
+     */
     @Override
     public void notice(List<String> userList, Integer code,String businessId,String url) {
         sendWsData(new TaskWsData(code), businessId,userList,url);
     }
 
+    /**
+     * 发送 WS 数据
+     *
+     * @param data       数据
+     * @param businessId 业务id
+     * @param userIds    用户id列表
+     * @param url        网址
+     */
     private <T> void sendWsData(T data, String businessId,List<String> userIds,String url) {
         MissionWsIdentifier identifier = new MissionWsIdentifier();
         identifier.setBusinessId(businessId);

@@ -15,15 +15,33 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场常数Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 @Slf4j
 public class CrConstantsServiceImpl implements CrConstantsService {
 
+	/**
+	 * 靶场常数配置Mapper
+	 */
 	@Autowired
 	private CrConstantsConfigMapper crConstantsConfigMapper;
 
+	/**
+	 * 缓存
+	 */
 	private volatile Map<Integer, List<CrConstantsConfig>> cache = Maps.newHashMap();
 
+	/**
+	 * 获取由类型
+	 *
+	 * @param type 类型
+	 * @return {@code List<CrConstantsConfig> }
+	 */
 	@Override
 	public List<CrConstantsConfig> getByType(Integer type) {
 		if (cache.isEmpty()) {
@@ -36,6 +54,9 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 		}
 	}
 
+	/**
+	 * 初始化
+	 */
 	private synchronized void init() {
 		if (cache.isEmpty()) {
 			List<CrConstantsConfig> configs = crConstantsConfigMapper.getAll();
@@ -49,6 +70,13 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 		}
 	}
 
+	/**
+	 * 验证类型
+	 *
+	 * @param type 类型
+	 * @param code 代号
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean validateType(Integer type, Integer code) {
 		if (cache.isEmpty()) {
@@ -67,6 +95,13 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 		return false;
 	}
 
+	/**
+	 * 通用 电气中文名称由类型和代号
+	 *
+	 * @param type 类型
+	 * @param code 代号
+	 * @return {@code String }
+	 */
 	@Override
 	public String geCnNameByTypeAndCode(Integer type, Integer code) {
 		if (type == null || code == null) {

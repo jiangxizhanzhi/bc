@@ -17,15 +17,30 @@ import com.cyberpeace.cr.crbase.service.context.UserData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务下发阶段信息
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 public class MissionReleaseStageInfo implements Serializable {
 
+	/**
+	 * 阶段
+	 */
 	@ApiModelProperty(value = "阶段")
 	private String stage;
 
+	/**
+	 * 任务信息
+	 */
 	@ApiModelProperty(value = "阶段任务列表")
 	private List<MissionReleaseInfo> missionInfos;
 
+	/**
+	 * 是否全部下发
+	 */
 	@ApiModelProperty(value = "是否全部下发")
 	private Boolean isAllRelease = true;
 

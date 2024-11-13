@@ -13,30 +13,36 @@ import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 靶场通知
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @TableName(value = "cr_notice")
 @Data
 public class CrNotice extends BaseTable {
 
     /**
-    * uuid
-    */
+     * uuid
+     */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
     /**
-    * 创建人id
-    */
+     * 创建人id
+     */
     private String createUserId;
     /**
-    * 公告内容
-    */
+     * 公告内容
+     */
     private String context;
     /**
-    * 公告对象
-    */
+     * 公告对象
+     */
     private Integer role;
     /**
-    * 房间id
-    */
+     * 房间id
+     */
     private String roomId;
 
     /**
@@ -44,6 +50,9 @@ public class CrNotice extends BaseTable {
      */
     private Integer isTop;
 
+    /**
+     * 通知用户
+     */
     private String noticeUsers;
 
     public boolean reoveUserId(String userId) {

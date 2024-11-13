@@ -11,6 +11,9 @@ import com.cyberpeace.cs.service.context.RoleBo;
 
 /**
  * 角色解析
+ *
+ * @author SN
+ * @date 2024/11/13
  */
 @Service
 public class RoleParser implements MdContentParser<List<RoleBo>, String> {

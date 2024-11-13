@@ -22,79 +22,163 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * 获取得分响应
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 public class GetScoreRsp implements Serializable {
 
+	/**
+	 * 用户id
+	 */
 	@ApiModelProperty(value = "学员id")
 	private String userId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "学员姓名")
 	private String name;
 
+	/**
+	 * 用户头像
+	 */
 	@ApiModelProperty(value = "学员头像")
 	private String userAvatar;
 
+	/**
+	 * 全部任务计数
+	 */
 	@ApiModelProperty(value = "任务数")
 	private Integer allTaskCount;
 
+	/**
+	 * 完成任务计数
+	 */
 	@ApiModelProperty(value = "完成数")
 	private Integer finishTaskCount;
 
+	/**
+	 * 成功任务计数
+	 */
 	private Integer successTaskCount;
 
+	/**
+	 * 失败任务计数
+	 */
 	private Integer failTaskCount;
 
+	/**
+	 * 主观评分
+	 */
 	@ApiModelProperty(value = "主观题得分")
 	private Integer subjectiveScore;
 
+	/**
+	 * 客观评分
+	 */
 	@ApiModelProperty(value = "客观题得分")
 	private Integer objectiveScore;
 
+	/**
+	 * 能力分数
+	 */
 	@ApiModelProperty(value = "能力得分")
 	private Integer abilityScore;
 
+	/**
+	 * 能力分数列表
+	 */
 	private List<Integer> abilityScoreList;
 
+	/**
+	 * 综合评分
+	 */
 	@ApiModelProperty(value = "综合得分")
 	private Integer synthesisScore;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty(value = "人员角色类型")
 	private Integer type;
 
+	/**
+	 * 指数
+	 */
 	@ApiModelProperty(value = "排名")
 	private Integer index;
 
+	/**
+	 * 岗位名称
+	 */
 	@ApiModelProperty(value = "角色名称")
 	private String roleName;
 
+	/**
+	 * 技能分数上下文列表
+	 */
 	@ApiModelProperty(value = "技能评分")
 	private List<SkillScoreContext> skillScoreContextList;
 
+	/**
+	 * 用户任务列表
+	 */
 	@ApiModelProperty(value = "训练记录")
 	private List<MissionSchemeObject<MissionContext>> userMissionList;
 
+	/**
+	 * 任务日志响应列表
+	 */
 	@ApiModelProperty(value = "动态事件")
 	private List<TaskLogRsp> taskLogRspList;
 
+	/**
+	 * 全部训练得分
+	 */
 	@ApiModelProperty(value = "训练评分总分")
 	private Integer allTrainScore;
 
+	/**
+	 * 全部得分
+	 */
 	@ApiModelProperty(value = "总分")
 	private Integer allScore;
 
+	/**
+	 * 全部目得分
+	 */
 	@ApiModelProperty(value = "客观题总分")
 	private Integer allObjectiveScore;
 
+	/**
+	 * 全部主观得分
+	 */
 	@ApiModelProperty(value = "主观题总分")
 	private Integer allSubjectiveScore;
 
+	/**
+	 * 评分 备注
+	 */
 	@ApiModelProperty(value = "能力评分备注")
 	private String scoreRemark;
 
+	/**
+	 * 技能分数上下文列表字符串
+	 */
 	private String skillScoreContextListString;
 
+	/**
+	 * 训练得分率
+	 */
 	private BigDecimal trainScoreRate;
 
+	/**
+	 * 能力分数率
+	 */
 	private Integer abilityScoreRate;
 
 	/**

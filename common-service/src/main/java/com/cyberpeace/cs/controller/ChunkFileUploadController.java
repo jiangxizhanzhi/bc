@@ -15,6 +15,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 块文件上传Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "文件分片上传")
 @RestController
 @RequestMapping("/chunk/upload")
@@ -22,9 +28,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ChunkFileUploadController {
 
+	/**
+	 * 文件块上传Service
+	 */
 	@Autowired
 	private FileChunkUploadService fileChunkUploadService;
 
+	/**
+	 * 检查文件
+	 *
+	 * @param md5 md5
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("md5文件校验")
 	@GetMapping("/check")
 	public BaseRsp<Integer> checkFile(@ApiParam(value = "文件识别码", name = "md5") String md5) {
@@ -32,6 +47,12 @@ public class ChunkFileUploadController {
 		return new BaseRsp<>(status);
 	}
 
+	/**
+	 * 上传
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("分片文件上传")
 	@PostMapping("")
 	public BaseRsp<Integer> upload(FileChunkReq req) {
@@ -39,6 +60,12 @@ public class ChunkFileUploadController {
 		return new BaseRsp<>(index);
 	}
 
+	/**
+	 * 合并
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<MergeFileRsp> }
+	 */
 	@ApiOperation("分片文件的合并")
 	@PostMapping("/merge")
 	public BaseRsp<MergeFileRsp> merge(@RequestBody FileMergeReq req) {

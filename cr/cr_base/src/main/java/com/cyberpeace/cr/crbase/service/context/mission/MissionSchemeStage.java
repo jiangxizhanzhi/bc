@@ -13,13 +13,22 @@ import lombok.Data;
 
 /**
  * 任务编排阶段
+ *
+ * @author SN
+ * @date 2024/11/13
  */
 @Data
 public class MissionSchemeStage implements Serializable {
 
+	/**
+	 * 阶段名
+	 */
 	@ApiModelProperty(value = "阶段名", required = true)
 	private String stage;
 
+	/**
+	 * 任务列表
+	 */
 	@ApiModelProperty(value = "任务列表", required = true)
 	private List<MissionSchemeMission> templates;
 
@@ -39,12 +48,24 @@ public class MissionSchemeStage implements Serializable {
 	}
 }
 
+/**
+ * 使命 计划 使命
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 class MissionSchemeMission implements Serializable {
 
+	/**
+	 * 标题
+	 */
 	@ApiModelProperty(value = "任务标题", required = true)
 	private String title;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty(value = "任务描述", required = true)
 	private String description;
 

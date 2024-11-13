@@ -15,9 +15,15 @@ import java.io.Serializable;
 public class RedBlueTaskReleaseProgress extends TaskReleaseProgress implements Serializable {
 
 
+	/**
+	 * 红方 角色
+	 */
 	@ApiModelProperty(value = "红方")
 	private GroupTaskReleaseProgress redRoles = new GroupTaskReleaseProgress();
 
+	/**
+	 * 蓝色角色
+	 */
 	@ApiModelProperty(value = "蓝方")
 	private GroupTaskReleaseProgress blueRoles = new GroupTaskReleaseProgress();
 }

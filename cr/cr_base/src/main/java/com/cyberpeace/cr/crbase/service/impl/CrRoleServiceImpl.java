@@ -46,24 +46,45 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 靶场岗位Service实现
  *
+ * @author SN
+ * @date 2024/11/13
  */
 @Slf4j
 @Service
 public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> implements CrRoleService {
 
+	/**
+	 * 靶场岗位Mapper
+	 */
 	@Autowired
 	private CrRoleMapper crRoleMapper;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 获取由id
+	 *
+	 * @param roleId 岗位id
+	 * @return {@code CrRole }
+	 */
 	@Override
 	public CrRole getById(String roleId) {
 		CrRole role = crRoleMapper.selectById(roleId);
@@ -74,6 +95,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return role;
 	}
 
+	/**
+	 * 获取角色
+	 *
+	 * @param roomId    房间id
+	 * @param roleGroup 岗位组
+	 * @return {@code CrRoleContext<MissionContext> }
+	 */
 	@Override
 	public CrRoleContext<MissionContext> getRoles(String roomId, RoleGroup roleGroup) {
 		CrRoleContext<MissionContext> crRoleContext = new CrRoleContext();
@@ -132,11 +160,24 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoleContext;
 	}
 
+	/**
+	 * 获取角色由房间
+	 *
+	 * @param roomId       房间id
+	 * @param businessType 业务类型
+	 * @return {@code List<CrRole> }
+	 */
 	@Override
 	public List<CrRole> getRolesByRoom(String roomId, Integer businessType) {
 		return crRoleMapper.getRolesByRoom(roomId, businessType);
 	}
 
+	/**
+	 * 获取基础任务由岗位
+	 *
+	 * @param crRole 靶场岗位
+	 * @return {@code List<MissionSchemeObject<MissionContext>> }
+	 */
 	@Override
 	public List<MissionSchemeObject<MissionContext>> getBaseMissionByRole(CrRole crRole) {
 		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = Lists.newArrayList();
@@ -157,17 +198,36 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return missionSchemeObjectList;
 	}
 
+	/**
+	 * 获取房间id列表由用户id
+	 *
+	 * @param userId 用户id
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getRoomIdsByUserId(String userId) {
 		return crRoleMapper.getRoomIdsByUserId(userId);
 
 	}
 
+	/**
+	 * 查询靶场岗位由房间id
+	 *
+	 * @param roleQuery 岗位查询
+	 * @return {@code List<CrRole> }
+	 */
 	@Override
 	public List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery) {
 		return crRoleMapper.selectCrRoleByRoomId(roleQuery);
 	}
 
+	/**
+	 * 获取雷达
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code List<Integer> }
+	 */
 	@Override
 	public List<Integer> getRadar(String roomId, String userId) {
 
@@ -222,6 +282,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return radarPoints;
 	}
 
+	/**
+	 * 获取靶场岗位由房间id和用户id
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code CrRole }
+	 */
 	@Override
 	public CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId) {
 
@@ -234,11 +301,24 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRole;
 	}
 
+	/**
+	 * 获取角色由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<CrRole> }
+	 */
 	@Override
 	public List<CrRole> getRolesByRoomId(String roomId) {
 		return crRoleMapper.getRolesByRoomId(roomId);
 	}
 
+	/**
+	 * 获取靶场岗位任务由房间id和用户id
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code List<MissionSchemeObject<MissionContext>> }
+	 */
 	@Override
 	public List<MissionSchemeObject<MissionContext>>
 			getCrRoleMissionByRoomIdAndUserId(String roomId, String userId) {
@@ -276,6 +356,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return missionSchemeObjectList;
 	}
 
+	/**
+	 * 获取靶场岗位任务由房间id和靶场角色
+	 *
+	 * @param roomId  房间id
+	 * @param crRoles 靶场角色
+	 * @return {@code Map<String, List<MissionSchemeObject<MissionContext>>> }
+	 */
 	public Map<String, List<MissionSchemeObject<MissionContext>>> getCrRoleMissionByRoomIdAndCrRoles(String roomId, List<CrRole> crRoles) {
 		List<String> userIds = crRoles.stream().map(a -> a.getUserIdList())
 				.flatMap(Collection::stream).collect(Collectors.toList());
@@ -334,6 +421,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		return resMap;
 	}
+
+	/**
+	 * 获取任务计数
+	 *
+	 * @param crRole 靶场岗位
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer getMissionCount(CrRole crRole) {
 		int count = 0;
@@ -343,6 +437,12 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return count;
 	}
 
+	/**
+	 * 获取用户由岗位用户
+	 *
+	 * @param userList 用户列表
+	 * @return {@code List<NameElement> }
+	 */
 	private List<NameElement> getUserByRoleUsers(List<String> userList) {
 		List<NameElement> userElements = Lists.newArrayList();
 
@@ -359,6 +459,12 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return userElements;
 	}
 
+	/**
+	 * 获取用户名字由岗位用户
+	 *
+	 * @param userList 用户列表
+	 * @return {@code String }
+	 */
 	@Override
 	public String getUserNamesByRoleUsers(List<String> userList) {
 		List<String> userNames = Lists.newArrayList();
@@ -373,6 +479,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return JsonUtil.toJsonString(userNames);
 	}
 
+	/**
+	 * 获取任务计数器
+	 *
+	 * @param roomId    房间id
+	 * @param studentId 学员id
+	 * @return {@code TaskCounter }
+	 */
 	@Override
 	public TaskCounter getTaskCounter(String roomId, String studentId) {
 		TaskCounter taskCounter = new TaskCounter();
@@ -400,6 +513,12 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return taskCounter;
 	}
 
+	/**
+	 * 获取用户数据
+	 *
+	 * @param userIdList 用户id列表
+	 * @return {@code List<UserData> }
+	 */
 	@Override
 	public List<UserData> getUserDatas(List<String> userIdList) {
 		List<UserData> userDataList = Lists.newArrayList();
@@ -414,6 +533,12 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return userDataList;
 	}
 
+	/**
+	 * 查询红蓝对抗学员岗位由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<CrRole> }
+	 */
 	@Override
 	public List<CrRole> selectRbStudentsRoleByRoomId(String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();
@@ -427,16 +552,37 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoleList;
 	}
 
+	/**
+	 * 清除房间角色
+	 *
+	 * @param roomId 房间id
+	 */
 	@Override
 	public void clearRoomRoles(String roomId) {
 		crRoleMapper.batchDeleteByRoomId(roomId);
 	}
 
+	/**
+	 * 查询靶场岗位由房间id和岗位id
+	 *
+	 * @param roomId       房间id
+	 * @param roleId       岗位id
+	 * @param roleGroup    岗位组
+	 * @param businessType 业务类型
+	 * @return {@code List<CrRole> }
+	 */
 	@Override
 	public List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId, Integer roleGroup, Integer businessType) {
 		return crRoleMapper.selectCrRoleByRoomIdAndRoleId(roomId, roleId, roleGroup,businessType);
 	}
 
+	/**
+	 * 获取新增功能房间方案
+	 *
+	 * @param missionsScheme 任务计划
+	 * @param roomId         房间id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getNewRoomScheme(String missionsScheme, String roomId) {
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
@@ -482,6 +628,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	}
 
+	/**
+	 * 查询红蓝对抗学员岗位由房间id和岗位组
+	 *
+	 * @param roomId    房间id
+	 * @param roleGroup 岗位组
+	 * @return {@code List<CrRole> }
+	 */
 	@Override
 	public List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup) {
 		if (!RbRoleGroup.isRvbStudentRole(roleGroup)) {
@@ -494,6 +647,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return selectCrRoleByRoomId(roleQuery);
 	}
 
+	/**
+	 * 检查权限
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code CrRole }
+	 */
 	@Override
 	public CrRole checkPermission(String roomId, String userId) {
 		CrRole crRole = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
@@ -506,6 +666,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRole;
 	}
 
+	/**
+	 * 获取角色由房间和组
+	 *
+	 * @param roomId 房间id
+	 * @param groups 组
+	 * @return {@code List<CrRole> }
+	 */
 	@Override
 	public List<CrRole> getRolesByRoomAndGroups(String roomId, Collection<Integer> groups) {
 		if (CollectionUtils.isEmpty(groups)) {
@@ -514,6 +681,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return crRoleMapper.selectByRoomIdAndGroups(roomId, groups);
 	}
 
+	/**
+	 * 获取训练任务下发信息列表
+	 *
+	 * @param roomId 房间id
+	 * @param code   代号
+	 * @return {@code List<TrainTaskReleaseInfoRsp> }
+	 */
 	@Override
 	public List<TrainTaskReleaseInfoRsp> getTrainTaskReleaseInfoList(String roomId, Integer code) {
 		List<TrainTaskReleaseInfoRsp> res = new ArrayList<>();
@@ -550,6 +724,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return res;
 	}
 
+	/**
+	 * 获取训练人工
+	 *
+	 * @param roomId 房间id
+	 * @param code   代号
+	 * @return {@code List<TrainTaskReleaseInfoRsp> }
+	 */
 	@Override
 	public List<TrainTaskReleaseInfoRsp> getTrainManual(String roomId, Integer code) {
 		List<TrainTaskReleaseInfoRsp> res = new ArrayList<>();
@@ -586,6 +767,11 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return res;
 	}
 
+	/**
+	 * 合岗位常量
+	 *
+	 * @param dashboardInfo 仪表板信息
+	 */
 	@Override
 	public void combineRoleConst(DashboardInfo dashboardInfo) {
 		List<DashboardRole> roleConst = Lists.newArrayList();
@@ -621,6 +807,13 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		dashboardInfo.setRoleConst(roleConst);
 	}
 
+	/**
+	 * 获取用户角色由房间id和岗位组
+	 *
+	 * @param roomId 房间id
+	 * @param groups 组
+	 * @return {@code List<UserRole> }
+	 */
 	@Override
 	public List<UserRole> getUserRolesByRoomIdAndRoleGroups(String roomId, List<Integer> groups) {
 		List<CrRole> roles = this.getRolesByRoomAndGroups(roomId, groups);
@@ -645,6 +838,12 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return userRoleList;
 	}
 
+	/**
+	 * 获取用户岗位映射由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Map<String, CrRole> }
+	 */
 	@Override
 	public Map<String, CrRole> getUserRoleMapByRoomId(String roomId) {
 		Map<String, CrRole> res = Maps.newHashMap();
@@ -657,11 +856,22 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return res;
 	}
 
-    @Override
+	/**
+	 * 恢复节点配置
+	 *
+	 * @param roomId 房间id
+	 */
+	@Override
     public void recoverNodesConfig(String roomId) {
         crRoleMapper.recoverNodesByRoomId(roomId);
     }
 
+	/**
+	 * 获取房间岗位映射由房间id列表
+	 *
+	 * @param roomIdList 房间id列表
+	 * @return {@code Map<String, List<CrRole>> }
+	 */
 	@Override
 	public Map<String, List<CrRole>> getRoomRoleMapByRoomIdList(List<String> roomIdList) {
 		Map<String, List<CrRole>> map = Maps.newHashMap();
@@ -679,6 +889,12 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return map;
 	}
 
+	/**
+	 * 获取批量由房间id列表
+	 *
+	 * @param roomIdList 房间id列表
+	 * @return {@code List<CrRole> }
+	 */
 	@Override
 	public List<CrRole> getBatchByRoomIds(List<String> roomIdList) {
 		if (CollectionUtils.isEmpty(roomIdList)) {

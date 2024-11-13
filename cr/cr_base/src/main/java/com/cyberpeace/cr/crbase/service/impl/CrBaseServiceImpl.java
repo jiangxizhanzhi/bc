@@ -24,12 +24,28 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场基础Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 @Slf4j
 public class CrBaseServiceImpl implements CrBaseService {
 
+	/**
+	 * 注册
+	 */
 	public static Map<BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
+	/**
+	 * 获取训练统计学
+	 *
+	 * @param userId      用户id
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code TrainingStatisticsRsp }
+	 */
 	@Override
 	public TrainingStatisticsRsp getTrainingStatistics(String userId, PageReqBase pageReqBase) {
 		TrainingStatisticsPage page = new TrainingStatisticsPage(pageReqBase);

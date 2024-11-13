@@ -7,289 +7,480 @@ package com.cyberpeace.cr.crbase.constant;
  * <p>
  * 编号定义完成后，需要在wiki填写编号对应的错误原因。
  * wiki地址：http://10.10.10.11/pages/viewpage.action?pageId=27367377
+ *
+ * @author SN
+ * @date 2024/11/11
  */
 public final class CrBusinessErrorCode {
 
-	// 找不到有效目录
+	/**
+	 * 非路径
+	 */// 找不到有效目录
 	public static final String NOT_PATH = "101001";
 
-	// 没有找到md文件
+	/**
+	 * 不markdown路径
+	 */// 没有找到md文件
 	public static final String NOT_MD_PATH = "101002";
 
-	// 文件解压失败
+	/**
+	 * Zip 路径不是额外
+	 */// 文件解压失败
 	public static final String ZIP_PATH_NOT_EXTRA = "101003";
 
-	// 实例不存在
+	/**
+	 * 房间不存在
+	 */// 实例不存在
 	public static final String ROOM_NOT_EXIST = "101004";
 
-	// 无权限操作
+	/**
+	 * 权限被拒绝
+	 */// 无权限操作
 	public static final String PERMISSION_DENIED = "101005";
 
-	// 训练未开始
+	/**
+	 * 训练不开始
+	 */// 训练未开始
 	public static final String TRAIN_NOT_BEGIN = "101006";
 
-	// 训练已结束
+	/**
+	 * 训练是多
+	 */// 训练已结束
 	public static final String TRAIN_IS_OVER = "101007";
 
-	// 训练角色不存在
+	/**
+	 * 岗位不存在错误
+	 */// 训练角色不存在
 	public static final String ROLE_NOT_EXIST_ERROR = "101008";
 
-	// 任务（Task）不存在
+	/**
+	 * 任务不存在错误
+	 */// 任务（Task）不存在
 	public static final String TASK_NOT_EXIST_ERROR = "101009";
 
-	// 评分范围出错
+	/**
+	 * 分数范围误差
+	 */// 评分范围出错
 	public static final String SCORE_RANGE_ERROR = "101010";
 
-	// 更新实例时没有传入resource_id字段
+	/**
+	 * 资源id失踪
+	 */// 更新实例时没有传入resource_id字段
 	public static final String RESOURCE_ID_MISSING = "101011";
 
-	// 任务未下发，不能提交答案
+	/**
+	 * 任务未发布
+	 */// 任务未下发，不能提交答案
 	public static final String MISSION_UNRELEASED = "101012";
 
-	// 任务处于完成状态，不可再次提交答案
+	/**
+	 * 无法提交已完成任务
+	 */// 任务处于完成状态，不可再次提交答案
 	public static final String CANNOT_SUBMIT_FINISHED_TASK = "101013";
 
-	// 指定任务不存在
+	/**
+	 * 任务不存在
+	 */// 指定任务不存在
 	public static final String MISSION_NOT_EXIST = "101014";
 
-	// 找不到指定的用户提交
+	/**
+	 * 未找到任务提交
+	 */// 找不到指定的用户提交
 	public static final String MISSION_SUBMIT_NOT_FOUND = "101015";
 
-	// 任务处于驳回状态不可评分
+	/**
+	 * 任务被拒绝
+	 */// 任务处于驳回状态不可评分
 	public static final String TASK_REJECTED = "101016";
 
-	// 任务已下发
+	/**
+	 * 任务发布
+	 */// 任务已下发
 	public static final String MISSION_ISSUED = "101017";
 
-	// 模板类型不支持
+	/**
+	 * 不支持模板类型
+	 */// 模板类型不支持
 	public static final String TEMPLATE_TYPE_NOT_SUPPORTED = "101018";
 
-	// 模板名称已经存在
+	/**
+	 * 模板名称重复
+	 */// 模板名称已经存在
 	public static final String TEMPLATE_NAME_DUPLICATE = "101019";
 
-	// 角色名称重复
+	/**
+	 * 岗位名称重复
+	 */// 角色名称重复
 	public static final String ROLE_NAME_DUPLICATE = "101020";
 
-	// 场景重复启动
+	/**
+	 * 场景开始重复
+	 */// 场景重复启动
 	public static final String SCENE_START_REPEAT = "101021";
 
-	// 场景不存在
+	/**
+	 * 当地场景不存在
+	 */// 场景不存在
 	public static final String LOCAL_SCENE_NOT_EXIST = "101022";
 
-	// 启动场景时保存本地数据错误
+	/**
+	 * 保存当地数据失败
+	 */// 启动场景时保存本地数据错误
 	public static final String SAVE_LOCAL_DATA_FAILURE = "101023";
 
-	// 文件格式错误
+	/**
+	 * 文件格式错误
+	 */// 文件格式错误
 	public static final String FILE_FORMAT_ERROR = "101024";
 
-	// 工具库分类在使用时不能删除
+	/**
+	 * 工具类别在使用
+	 */// 工具库分类在使用时不能删除
 	public static final String TOOL_CATEGORY_IN_USE = "101025";
 
-	// 指定模板不存在
+	/**
+	 * 模板不存在
+	 */// 指定模板不存在
 	public static final String TEMPLATE_NOT_EXIST = "101026";
 
-	// 场景未开启
+	/**
+	 * 场景不开始
+	 */// 场景未开启
 	public static final String SCENE_NOT_STARTED = "101027";
 
-	// 资源id列表为空
+	/**
+	 * 空资源id列表
+	 */// 资源id列表为空
 	public static final String EMPTY_RESOURCE_ID_LIST = "101028";
 
-	// 启动流量失败
+	/**
+	 * 开始流量失败
+	 */// 启动流量失败
 	public static final String START_FLOW_FAILURE = "101029";
 
-	// 训练已开始
+	/**
+	 * 训练具有开始
+	 */// 训练已开始
 	public static final String TRAIN_HAS_BEGUN = "101030";
 
-	// 训练速率范围超限
+	/**
+	 * 率值范围错误
+	 */// 训练速率范围超限
 	public static final String RATE_VALUE_RANGE_ERROR = "101031";
 
-	// 重启节点失败
+	/**
+	 * 无法重新启动节点
+	 */// 重启节点失败
 	public static final String FAILED_TO_RESTART_NODE = "101032";
 
-	// 重建节点失败
+	/**
+	 * 无法重新创建节点
+	 */// 重建节点失败
 	public static final String FAILED_TO_RECREATE_NODE = "101033";
 
-	// 场景已暂停，不能执行暂停操作
+	/**
+	 * 已暂停
+	 */// 场景已暂停，不能执行暂停操作
 	public static final String ALREADY_PAUSED = "101034";
 
-	// 非暂停状态不能执行恢复操作
+	/**
+	 * 未暂停
+	 */// 非暂停状态不能执行恢复操作
 	public static final String NOT_PAUSED = "101035";
 
-	// 停止流量失败
+	/**
+	 * 停流量失败
+	 */// 停止流量失败
 	public static final String STOP_FLOW_FAILURE = "101036";
 
-	// 非法的阶段名长度
+	/**
+	 * 无效阶段名称
+	 */// 非法的阶段名长度
 	public static final String INVALID_STAGE_NAME = "101037";
 
-	// 非法的任务名称长度
+	/**
+	 * 无效任务名称
+	 */// 非法的任务名称长度
 	public static final String INVALID_MISSION_NAME = "101038";
 
-	// 任务方案阶段名称重复
+	/**
+	 * 重复阶段名称
+	 */// 任务方案阶段名称重复
 	public static final String DUPLICATED_STAGE_NAME = "101039";
 
-	// 阶段内任务名称重复
+	/**
+	 * 重复任务名称
+	 */// 阶段内任务名称重复
 	public static final String DUPLICATED_MISSION_NAME = "101040";
 
-	// 分数超出范围
+	/**
+	 * 得分超出范围
+	 */// 分数超出范围
 	public static final String SCORE_OUT_OF_RANGE = "101041";
 
-	// 答案不可为空
+	/**
+	 * 答案不空
+	 */// 答案不可为空
 	public static final String ANSWER_NOT_NULLABLE = "101042";
 
-	// 选项不可为空
+	/**
+	 * options not nullable （选项不可为空）
+	 */// 选项不可为空
 	public static final String OPTIONS_NOT_NULLABLE = "101043";
 
-	// 选项重复
+	/**
+	 * options duplicate （选项复制）
+	 */// 选项重复
 	public static final String OPTIONS_DUPLICATE = "101044";
 
-	// 录屏开关设置失败
+	/**
+	 * 切换录制失败
+	 */// 录屏开关设置失败
 	public static final String SWITCH_RECORDING_FAILURE = "101045";
 
-	// 存在空任务模板
+	/**
+	 * 空任务模板
+	 */// 存在空任务模板
 	public static final String EMPTY_MISSION_TEMPLATE = "101046";
 
-	// 无效任务模板
+	/**
+	 * 任务模板无效
+	 */// 无效任务模板
 	public static final String MISSION_TEMPLATE_INVALID = "101047";
 
-	// 训练名称长度超出范围，应为4~40
+	/**
+	 * 训练名称长度错误
+	 */// 训练名称长度超出范围，应为4~40
 	public static final String TRAINING_NAME_LEN_ERROR = "101048";
 
-	// 同名训练已存在
+	/**
+	 * 训练名称重复
+	 */// 同名训练已存在
 	public static final String TRAINING_NAME_DUPLICATE = "101049";
 
-	// 当前非训练时间
+	/**
+	 * 训练不运行
+	 */// 当前非训练时间
 	public static final String TRAINING_NOT_RUNNING = "101050";
 
-	// 主机已被占用
+	/**
+	 * 计算机已占用
+	 */// 主机已被占用
 	public static final String MACHINE_OCCUPIED = "101051";
 
-	// 角色成员不可为空
+	/**
+	 * 岗位用户不是空
+	 */// 角色成员不可为空
 	public static final String ROLE_USERS_NOT_BE_EMPTY = "101052";
 
-	// 任务id重复或者部分任务缺失
+	/**
+	 * 任务更少
+	 */// 任务id重复或者部分任务缺失
 	public static final String MISSION_LESS = "101053";
 
-	// 动态新增任务不可与角色既有任务重名
+	/**
+	 * 动态任务标题复制
+	 */// 动态新增任务不可与角色既有任务重名
 	public static final String DYNAMIC_MISSION_TITLE_DUPLICATE = "101054";
 
-	// 资源包错误
+	/**
+	 * 无效资源 zip
+	 */// 资源包错误
 	public static final String INVALID_RESOURCE_ZIP = "101055";
 
-	// 工具名称与系统内已有名称重复
+	/**
+	 * 重复工具名称
+	 */// 工具名称与系统内已有名称重复
 	public static final String DUPLICATED_TOOL_NAME = "101056";
 
-	// 工具分类名称与系统内已有名称重复
+	/**
+	 * 重复工具类别名称
+	 */// 工具分类名称与系统内已有名称重复
 	public static final String DUPLICATED_TOOL_CATEGORY_NAME = "101057";
 
-	// 任务方案名称已存在
+	/**
+	 * 重复任务计划模板标题
+	 */// 任务方案名称已存在
 	public static final String DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE = "101058";
 
-	// 暂停场景失败
+	/**
+	 * 失败自暂停场景
+	 */// 暂停场景失败
 	public static final String FAILED_TO_PAUSE_SCENE = "101059";
 
-	// 恢复场景失败
+	/**
+	 * 失败自取消暂停场景
+	 */// 恢复场景失败
 	public static final String FAILED_TO_UNPAUSE_SCENE = "101060";
 
-	// 单兵训练模板正在使用，删除失败
+	/**
+	 * 单训练模板在使用
+	 */// 单兵训练模板正在使用，删除失败
 	public static final String SINGLE_TRAIN_TEMPLATE_IN_USE = "101061";
 
-	// 空房间时提交任务
+	/**
+	 * 房间不存在 提交任务
+	 */// 空房间时提交任务
 	public static final String ROOM_NOT_EXIST_SUBMIT_MISSION = "101062";
 
-	// 阶段内任务不可为空
+	/**
+	 * 空任务阶段
+	 */// 阶段内任务不可为空
 	public static final String EMPTY_MISSION_STAGE = "101063";
 
-	// 标签个数在1~4之间
+	/**
+	 * 无效标签数量
+	 */// 标签个数在1~4之间
 	public static final String INVALID_TAGS_NUM = "101064";
 
-	// 标签字符长度不正确
+	/**
+	 * 非法标签 len
+	 */// 标签字符长度不正确
 	public static final String ILLEGAL_TAG_LEN = "101065";
 
-	// 标签内容不能重复
+	/**
+	 * 标签重复
+	 */// 标签内容不能重复
 	public static final String TAG_DUPLICATE = "101066";
 
-	// 名称长度非法
+	/**
+	 * 非法名称长度
+	 */// 名称长度非法
 	public static final String ILLEGAL_NAME_LEN = "101067";
 
-	// 非法的技能点数值
+	/**
+	 * 无效技能点值
+	 */// 非法的技能点数值
 	public static final String INVALID_SKILL_POINT_VALUE = "101068";
 
-	// 非法的技能点个数
+	/**
+	 * 技能点大小无效
+	 */// 非法的技能点个数
 	public static final String INVALID_SKILL_POINTS_SIZE = "101069";
 
-	/** 打分必须为正整数 */
+	/**
+	 * 打分必须为正整数
+	 */
 	public static final String INVALID_SCORE = "101070";
 
-	/** 只有超级管理员可以修改雷达图 */
+	/**
+	 * 只有超级管理员可以修改雷达图
+	 */
 	public static final String SUPERUSER_CAN_EDIT_RADAR = "101071";
 
-	/** 非法的标题长度 */
+	/**
+	 * 非法的标题长度
+	 */
 	public static final String ILLEGAL_TITLE_LEN = "101072";
 
-	/** 非法的描述长度 */
+	/**
+	 * 非法的描述长度
+	 */
 	public static final String ILLEGAL_DESC_LEN = "101073";
 
-	/** 导出模板失败 */
+	/**
+	 * 导出模板失败
+	 */
 	public static final String FAILED_TO_DUMP_TEMPLATE = "101074";
 
-	/** 导出任务方案失败 */
+	/**
+	 * 导出任务方案失败
+	 */
 	public static final String FAILED_TO_DUMP_COMBAT_TECH = "101075";
 
-	/** 非法的难度 */
+	/**
+	 * 非法的难度
+	 */
 	public static final String INVALID_DIFFICULTY = "101076";
 
-	/** 非法的训练类型 */
+	/**
+	 * 非法的训练类型
+	 */
 	public static final String INVALID_TRAINING_CATEGORY = "101077";
 
-	/** 无效的角色配置信息 */
+	/**
+	 * 无效的角色配置信息
+	 */
 	public static final String INVALID_ROLE_INFO = "101078";
 
-	/** 非法的任务描述长度 */
+	/**
+	 * 非法的任务描述长度
+	 */
 	public static final String ILLEGAL_MISSION_DESC_LEN = "101079";
 
-	/** 训练已暂停，不能删除场景 */
+	/**
+	 * 训练已暂停，不能删除场景
+	 */
 	public static final String TRAINING_PAUSED = "101080";
 
-	/** 指标项已经使用 */
+	/**
+	 * 指标项已经使用
+	 */
 	public static final String INDICATOR_ALREADY_USED = "101081";
 
-	/** LOGO文件不存在 */
+	/**
+	 * LOGO文件不存在
+	 */
 	public static final String LOGO_NOT_EXIST = "101082";
 
-	/** 测评靶场类型不存在 */
+	/**
+	 * 测评靶场类型不存在
+	 */
 	public static final String EVAL_CATEGORY_NOT_EXIST = "101083";
 
-	/** 测评靶场存在运行任务 */
+	/**
+	 * 测评靶场存在运行任务
+	 */
 	public static final String RUNNING_EVAL_TASK_EXIST = "101084";
 
-	/** 测评靶场任务不在运行 */
+	/**
+	 * 测评靶场任务不在运行
+	 */
 	public static final String EVAL_TASK_NOT_RUNNING = "101085";
 
-	/** 测评靶场任务不存在 */
+	/**
+	 * 测评靶场任务不存在
+	 */
 	public static final String EVAL_TASK_NOT_EXIST = "101086";
 
-	/** 测评靶场步骤不存在 */
+	/**
+	 * 测评靶场步骤不存在
+	 */
 	public static final String EVAL_STEP_NOT_EXIST = "101087";
 
-	/** 测评靶场步骤配置错误 */
+	/**
+	 * 测评靶场步骤配置错误
+	 */
 	public static final String EVAL_STEP_ILLEGAL = "101088";
 
-	/** 测评靶场步骤未启动 */
+	/**
+	 * 测评靶场步骤未启动
+	 */
 	public static final String EVAL_STEP_NOT_STARTED = "101089";
 
-	/** 测评靶场步骤已启动 */
+	/**
+	 * 测评靶场步骤已启动
+	 */
 	public static final String EVAL_STEP_IS_STARTED = "101090";
 
-	/** 测评靶场步骤已结束 */
+	/**
+	 * 测评靶场步骤已结束
+	 */
 	public static final String EVAL_STEP_IS_FINISHED = "101091";
 
-	/** 测评靶场步骤前序步骤未完成 */
+	/**
+	 * 测评靶场步骤前序步骤未完成
+	 */
 	public static final String PRECEDING_STEP_NOT_FINISHED = "101092";
 
-	/** 算法参数重名 */
+	/**
+	 * 算法参数重名
+	 */
 	public static final String PARAM_NAME_DUPLICATE = "101093";
 
-	/** 未实现的方法 */
+	/**
+	 * 未实现的方法
+	 */
 	public static final String NOT_IMPLEMENTED_EXCEPTION = "101094";
 
 	/**
@@ -332,16 +523,24 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String VARIABLE_DID_NOT_GET_PROBE_DATA = "101102";
 
-	/** 未指定节点 */
+	/**
+	 * 未指定节点
+	 */
 	public static final String NOT_SPECIFY_NODE = "101103";
 
-	/** 指定节点下无流量数据 */
+	/**
+	 * 指定节点下无流量数据
+	 */
 	public static final String NO_FLOW_EXISTS_ON_NODE = "101104";
 
-	/** 流量不存在 */
+	/**
+	 * 流量不存在
+	 */
 	public static final String FLOW_NOT_EXIST = "101105";
 
-	/** 流量修改错误 */
+	/**
+	 * 流量修改错误
+	 */
 	public static final String FAILED_TO_UPDATE_FLOW = "101106";
 
 	/**
@@ -374,7 +573,9 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String AGG_ALGORITHM_RESULT_IS_INVALID = "101112";
 
-	/** 二层框架已满 */
+	/**
+	 * 二层框架已满
+	 */
 	public static final String SECOND_FLOOR_FRAME_IS_FULL = "101113";
 
 	/**
@@ -382,52 +583,84 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String TITLE_DUPLICATE = "101114";
 
-	/** 非背景流量不允许修改源IP */
+	/**
+	 * 非背景流量不允许修改源IP
+	 */
 	public static final String NON_BACKGROUND_FLOW_NOT_ALLOWED_TO_MODIFY_SOURCE_IP = "101115";
 
-	/** IP格式错误 */
+	/**
+	 * IP格式错误
+	 */
 	public static final String WRONG_IP_FORMAT = "101116";
 
-	/** 最大支持7个分类 */
+	/**
+	 * 最大支持7个分类
+	 */
 	public static final String MAX_7_CATEGORIES = "101117";
 
-	/** 训练资管导出类型不正确 */
+	/**
+	 * 训练资管导出类型不正确
+	 */
 	public static final String EXPORT_TRAIN_ERROR_TYPE = "101118";
 
-	/** 训练资管导出id都不存在 */
+	/**
+	 * 训练资管导出id都不存在
+	 */
 	public static final String EXPORT_TRAIN_ID_NOT_EXIST = "101119";
 
-	/** 训练资管导出时当前训练下存在重名任务名称 */
+	/**
+	 * 训练资管导出时当前训练下存在重名任务名称
+	 */
 	public static final String EXPORT_TRAIN_DUPLICATED_TASK_TITLE = "101120";
 
-	/** 动态修改任务不可与角色既有任务重名 */
+	/**
+	 * 动态修改任务不可与角色既有任务重名
+	 */
 	public static final String DUPLICATE_DYNAMIC_MISSION_TITLE = "101121";
 
-	/** 请指定一个学员 */
+	/**
+	 * 请指定一个学员
+	 */
 	public static final String PLZ_SPECIFY_ONE_STUDENT = "101122";
 
-	/** 非法的选项长度 */
+	/**
+	 * 非法的选项长度
+	 */
 	public static final String ILLEGAL_OPTION_LEN = "101123";
 
-	/** 工具分类英文名称与系统内已有名称重复  */
+	/**
+	 * 工具分类英文名称与系统内已有名称重复
+	 */
 	public static final String DUPLICATED_TOOL_CATEGORY_ENNAME = "101124";
 
-	/** 题解长度超长 */
+	/**
+	 * 题解长度超长
+	 */
 	public static final String ILLEGAL_WRITEUP_LEN = "101125";
 
-	// 创建启动节点失败
+	/**
+	 * 无法创建节点
+	 */// 创建启动节点失败
 	public static final String FAILED_TO_CREATE_NODE = "101126";
 
-	// 层次分析法 关联矩阵数据包含空数据 或非数字
+	/**
+	 * 矩阵数据为空错误
+	 */// 层次分析法 关联矩阵数据包含空数据 或非数字
 	public static final String MATRIX_DATA_EMPTY_ERROR = "101127";
 
-	// 内置算法禁止编辑
+	/**
+	 * 内置算法禁止删除错误
+	 */// 内置算法禁止编辑
 	public static final String BUILTIN_ALGORITHM_FORBID_DELETE_ERROR = "101128";
 
-	// 评估已启动
+	/**
+	 * 评估具有Been （被）发起错误
+	 */// 评估已启动
 	public static final String EVALUATION_HAS_BEEN_INITIATED_ERROR = "101129";
 
-	// 评分类型错误
+	/**
+	 * 分数类型错误
+	 */// 评分类型错误
 	public static final String SCORE_TYPE_ERROR = "101130";
 	/**
 	 * 空白用户id
@@ -470,10 +703,14 @@ public final class CrBusinessErrorCode {
 	public static final String PLZ_REPLAY_AFTER_SCENE_IS_STOPPED = "101138";
 
 
-	/** 训练手册内容过长 */
+	/**
+	 * 训练手册内容过长
+	 */
 	public static final String INVALID_TRAINING_MANUAL_CONTENT = "101139";
 
-	/** 场景切换中 */
+	/**
+	 * 场景切换中
+	 */
 	public static final String SCENE_SWITCHING = "101140";
 	/**
 	 * 模板删除或未授权
@@ -495,5 +732,8 @@ public final class CrBusinessErrorCode {
 	 */
 	public static final String DESC_TOO_LONG = "101144";
 
+	/**
+	 * 靶场业务错误代号
+	 */
 	private CrBusinessErrorCode() {}
 }

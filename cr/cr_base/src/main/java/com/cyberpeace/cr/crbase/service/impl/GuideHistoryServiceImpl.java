@@ -40,25 +40,52 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
+/**
+ * 导调历史Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Slf4j
 @Service
 public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper, SituationGuideHistory> implements GuideHistoryService {
 
+	/**
+	 * 态势导调历史Mapper
+	 */
 	@Autowired
 	private SituationGuideHisMapper situationGuideHisMapper;
 
+	/**
+	 * 态势处理器Service
+	 */
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
+	/**
+	 * 态势导调Service
+	 */
 	@Autowired
 	private SituationGuideService situationGuideService;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 场景元素缓存
+	 */
 	Cache<String, Map<String, ElementInfo>> sceneElementCache = CacheBuilder.newBuilder()
 																  .expireAfterAccess(1, TimeUnit.HOURS).build();
 
+	/**
+	 * 获取全部选项
+	 *
+	 * @param roomId 房间id
+	 * @return {@code PlaybackOptionRsp }
+	 */
 	@Override
 	public PlaybackOptionRsp getAllOption(String roomId) {
 		PlaybackOptionRsp playbackOptionRsp = new PlaybackOptionRsp();
@@ -81,6 +108,12 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return playbackOptionRsp;
 	}
 
+	/**
+	 * 获取记录
+	 *
+	 * @param screenGuideHistoryReq 屏幕导调历史请求体
+	 * @return {@code List<GuideHistoryRsp> }
+	 */
 	@Override
 	public List<GuideHistoryRsp> getRecord(ScreenGuideHistoryReq screenGuideHistoryReq) {
 		if (CollectionUtils.isEmpty(screenGuideHistoryReq.getEventSubTypeList())) {
@@ -234,6 +267,12 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return guideHistoryRspList;
 	}
 
+	/**
+	 * 获取事件时间列表
+	 *
+	 * @param screenGuideHistoryTimeLineReq 屏幕导调历史时间线请求体
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getEventTimeList(ScreenGuideHistoryTimeLineReq screenGuideHistoryTimeLineReq) {
 		List<String> eventTimes = new ArrayList<>();
@@ -298,6 +337,12 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return eventTimes;
 	}
 
+	/**
+	 * 执行
+	 *
+	 * @param execGuideHisReq 执行导调历史请求体
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean execute(ExecGuideHisReq execGuideHisReq) {
 		List<SituationGuideHistory> situationGuideHistoryList = situationGuideService.guideHistoryRspToSituationGuideHistory(Collections.singletonList(execGuideHisReq));
@@ -307,6 +352,12 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return true;
 	}
 
+	/**
+	 * 获取开始时间
+	 *
+	 * @param screenGuideHistoryTimeLineReq 屏幕导调历史时间线请求体
+	 * @return {@code String }
+	 */
 	@Override
 	public String getStartTime(ScreenGuideHistoryTimeLineReq screenGuideHistoryTimeLineReq) {
 		String startTime = null;
@@ -322,6 +373,12 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return startTime;
 	}
 
+	/**
+	 * 获取结束时间
+	 *
+	 * @param screenGuideHistoryTimeLineReq 屏幕导调历史时间线请求体
+	 * @return {@code String }
+	 */
 	@Override
 	public String getEndTime(ScreenGuideHistoryTimeLineReq screenGuideHistoryTimeLineReq) {
 		String endTime = null;
@@ -337,6 +394,13 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return endTime;
 	}
 
+	/**
+	 * 获取开始时间
+	 *
+	 * @param startTime 开始时间
+	 * @param screenBo  屏幕Bo
+	 * @return {@code String }
+	 */
 	private String getStartTime(String startTime, ScreenBo screenBo) {
 		if (screenBo != null) {
 			if (startTime == null) {
@@ -350,6 +414,13 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return startTime;
 	}
 
+	/**
+	 * 获取结束时间
+	 *
+	 * @param endTime  结束时间
+	 * @param screenBo 屏幕Bo
+	 * @return {@code String }
+	 */
 	private String getEndTime(String endTime, ScreenBo screenBo) {
 		if (screenBo != null) {
 			if (endTime == null) {
@@ -363,7 +434,12 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return endTime;
 	}
 
-	//获取节点ip
+	/**
+	 * 获取元素ip地址
+	 *
+	 * @param elementInfo 元素信息
+	 * @return {@code String }
+	 *///获取节点ip
 	private String getElementIp(ElementInfo elementInfo) {
 		List<PortInfo> portInfoList = new ArrayList<>(elementInfo.getPorts().values());
 		for (PortInfo portInfo : portInfoList) {
@@ -374,6 +450,13 @@ public class GuideHistoryServiceImpl extends ServiceImpl<SituationGuideHisMapper
 		return "";
 	}
 
+	/**
+	 * 设置屏幕Bo时间
+	 *
+	 * @param screenBo  屏幕Bo
+	 * @param startTime 开始时间
+	 * @param endTime   结束时间
+	 */
 	private void setScreenBoTime(ScreenBo screenBo, String startTime, String endTime) {
 		if (screenBo != null) {
 			screenBo.setStartTime(TimeUtil.toDate1(screenBo.getStartTime()).before(TimeUtil.toDate1(startTime)) ? startTime : screenBo.getStartTime());

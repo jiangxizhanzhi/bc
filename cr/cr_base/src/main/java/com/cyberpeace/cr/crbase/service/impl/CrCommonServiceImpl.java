@@ -39,25 +39,53 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场常用Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 @Slf4j
 public class CrCommonServiceImpl implements CrCommonService {
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 靶场标记Mapper
+	 */
 	@Autowired
 	private CrMarkMapper crMarkMapper;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 获取监控会话
+	 *
+	 * @param localSceneId 当地场景id
+	 * @param studentId    学员id
+	 * @return {@code List<MonitorSession> }
+	 */
 	@Override
 	public List<MonitorSession> getMonitorSessions(String localSceneId, String studentId) {
 		// 1. 查询localScene
@@ -119,6 +147,12 @@ public class CrCommonServiceImpl implements CrCommonService {
 		return sessionList;
 	}
 
+	/**
+	 * 验证岗位配置
+	 *
+	 * @param roleConfigs 岗位配置
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> validateRoleConfig(List<CrRoleConfig> roleConfigs) {
 
@@ -138,6 +172,12 @@ public class CrCommonServiceImpl implements CrCommonService {
 		return missionTemplateIds;
 	}
 
+	/**
+	 * 验证任务方案
+	 *
+	 * @param missionsScheme 任务计划
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> validateMissionsScheme(CrRoleConfigMissionsScheme missionsScheme) {
 		List<String> missionTemplateIds = CrCommonUtil.getMissionTemplateIds(missionsScheme);
@@ -178,6 +218,11 @@ public class CrCommonServiceImpl implements CrCommonService {
 		return missionTemplateIds;
 	}
 
+	/**
+	 * 验证红蓝对抗岗位配置
+	 *
+	 * @param roleConfigRb 岗位配置红蓝对抗
+	 */
 	@Override
 	public void validateRbRoleConfig(CrRoleConfigRb roleConfigRb) {
 		List<String> missionTemplateIds = Lists.newArrayList();
@@ -190,6 +235,12 @@ public class CrCommonServiceImpl implements CrCommonService {
 				CrBusinessErrorCode.MISSION_LESS);
 	}
 
+	/**
+	 * 新增标记
+	 *
+	 * @param req  请求体
+	 * @param code 代号
+	 */
 	@Override
 	public void addMark(MarkAddReq req, Integer code) {
 		req.validate();
@@ -205,12 +256,25 @@ public class CrCommonServiceImpl implements CrCommonService {
 		this.pushMarkWs(req.getRoomId(), MissionWsCode.CR_MARK_CREATE);
 	}
 
+	/**
+	 * 获取标记由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<CrMark> }
+	 */
 	@Override
 	public List<CrMark> getMarkByRoomId(String roomId) {
 		return crMarkMapper.selectByRoomId(roomId);
 	}
 
-    @Override
+	/**
+	 * 获取标记由房间id和用户id
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code List<CrMark> }
+	 */
+	@Override
     public List<CrMark> getMarkByRoomIdAndUserId(String roomId, String userId) {
 		return crMarkMapper.selectByRoomIdAndUserId(roomId, userId);
     }
@@ -218,6 +282,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 	/**
 	 * push标记ws
 	 * 暂时借用mission 的ws
+	 *
+	 * @param businessId 业务id
+	 * @param code       代号
 	 */
 	private void pushMarkWs(String businessId, Integer code){
 		crTaskService.pushMissionWS(businessId, code);

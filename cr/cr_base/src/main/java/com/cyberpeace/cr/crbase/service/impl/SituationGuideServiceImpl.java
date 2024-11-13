@@ -61,33 +61,72 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 态势导调Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Slf4j
 @Service
 public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeMapper, SituationGuideScheme> implements SituationGuideService {
 
+    /**
+     * 态势导调历史Mapper
+     */
     @Autowired
     private SituationGuideHisMapper situationGuideHisMapper;
+    /**
+     * 态势导调方案Mapper
+     */
     @Autowired
     private SituationGuideSchemeMapper situationGuideSchemeMapper;
+    /**
+     * 任务Mapper
+     */
     @Autowired
     private MissionMapper missionMapper;
+    /**
+     * 靶场任务Mapper
+     */
     @Autowired
     private CrTaskMapper crTaskMapper;
+    /**
+     * 拓扑处理器Service
+     */
     @Autowired
     private TopoHandlerService topoHandlerService;
+    /**
+     * 当地场景Service
+     */
     @Autowired
     private LocalSceneService localSceneService;
+    /**
+     * 态势处理器Service
+     */
     @Autowired
     private SituationHandlerService situationHandlerService;
+    /**
+     * 远程场景Service
+     */
     @Autowired
     private RemoteSceneService remoteSceneService;
 
+    /**
+     * 最小
+     */
     private static final int MIN_LEN = 1;
 
+    /**
+     * 最大名称长度
+     */
     private static final int MAX_NAME_LEN = 255;
 
     /**
      * 手动导调列表
+     *
+     * @param req 请求体
+     * @return {@code ListRsp<SituationGuideListRsp> }
      */
     @Override
     public ListRsp<SituationGuideListRsp> listByRoomId(ListGuideSchemeReq req) {
@@ -142,6 +181,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result;
     }
 
+    /**
+     * 新增导调方案
+     *
+     * @param req 请求体
+     * @return {@code String }
+     */
     @Override
     public String addGuideScheme(AddGuideSchemeReq req) {
         validGuideSchemeName(req.getEventName(), req.getRoomId(), null);
@@ -157,6 +202,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return situationGuideScheme.getResourceId();
     }
 
+    /**
+     * 获取导调方案详情
+     *
+     * @param resourceId 资源id
+     * @return {@code SituationGuideRsp }
+     */
     @Override
     public SituationGuideRsp getGuideSchemeDetail(String resourceId) {
         SituationGuideScheme situationGuideScheme = getById(resourceId);
@@ -215,6 +266,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return resp;
     }
 
+    /**
+     * 更新导调方案
+     *
+     * @param req 请求体
+     * @return {@code UpdateGuideSchemeReq }
+     */
     @Override
     public UpdateGuideSchemeReq updateGuideScheme(UpdateGuideSchemeReq req) {
         validGuideSchemeName(req.getEventName(), req.getRoomId(), req.getResourceId());
@@ -224,6 +281,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return req;
     }
 
+    /**
+     * 删除导调方案
+     *
+     * @param ids id列表
+     * @return {@code Boolean }
+     */
     @Override
     public Boolean deleteGuideScheme(List<String> ids) {
         if (!CollectionUtils.isEmpty(ids)) {
@@ -236,6 +299,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return false;
     }
 
+    /**
+     * 有效导调方案名称
+     *
+     * @param name       名称
+     * @param roomId     房间id
+     * @param resourceId 资源id
+     */
     private void validGuideSchemeName(String name, String roomId, String resourceId) {
         validateNameLen(name, SituationErrorCode.INVALID_GUIDE_SCHEME_NAME);
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
@@ -251,6 +321,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         }
     }
 
+    /**
+     * 导调实现
+     *
+     * @param req 请求体
+     * @return {@code Boolean }
+     */
     @Override
     public Boolean guideImplement(GuideImplementReq req) {
         SituationGuideScheme guideScheme = getById(req.getResourceId());
@@ -277,6 +353,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return pushDataToRoomByGuide(Boolean.TRUE, his);
     }
 
+    /**
+     * 导调测试
+     *
+     * @param req 请求体
+     * @return {@code Boolean }
+     */
     @Override
     public Boolean guideTest(AddGuideSchemeReq req) {
         String sceneId = viewScene(req.getRoomId());
@@ -286,6 +368,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
     }
 
 
+    /**
+     * 获取导调历史由任务id
+     *
+     * @param missionId 任务id
+     * @param taskId    任务id
+     * @return {@code SituationGuideHistory }
+     */
     @Override
     public SituationGuideHistory getGuideHisByMissionId(String missionId, String taskId) {
         LambdaQueryWrapper<SituationGuideScheme> queryWrapper = new LambdaQueryWrapper<>();
@@ -311,6 +400,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return guideHis;
     }
 
+    /**
+     * 推送数据自房间由导调
+     *
+     * @param isInstance 是否实例
+     * @param his        历史
+     * @return {@code Boolean }
+     */
     @Override
     public Boolean pushDataToRoomByGuide(Boolean isInstance, SituationGuideHistory his) {
         if (Objects.isNull(his) || StringUtils.isBlank(his.getSceneId())) {
@@ -344,6 +440,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return true;
     }
 
+    /**
+     * 攻击 top5
+     *
+     * @param roomId 房间id
+     * @return {@code List<AttackTopFiveRsp> }
+     */
     @Override
     public List<AttackTopFiveRsp> attackTop5(String roomId) {
         Map<String, Integer> cntMap = Maps.newHashMap();
@@ -378,6 +480,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result.subList(0, 5);
     }
 
+    /**
+     * 任务导调
+     *
+     * @param roomId       房间id
+     * @param businessType 业务类型
+     * @return {@code List<GuideRoleStageRsp> }
+     */
     @Override
     public List<GuideRoleStageRsp> missionGuide(String roomId, Integer businessType) {
 
@@ -433,6 +542,16 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result;
     }
 
+    /**
+     * 获取任务响应
+     *
+     * @param missionIds      任务id列表
+     * @param missionGuideMap 任务导调映射
+     * @param missionMap      任务映射
+     * @param guideIdList     导调id列表
+     * @param missionTemplate 任务模板
+     * @return {@code GuideMissionRsp }
+     */
     private GuideMissionRsp getMissionRsp(List<String> missionIds, Map<String, SituationGuideScheme> missionGuideMap, Map<String, Mission> missionMap, List<String> guideIdList, CrRoleConfigMission missionTemplate) {
         GuideMissionRsp guideMissionRsp = new GuideMissionRsp();
         Mission mission = missionMap.get(missionTemplate.getResourceId());
@@ -451,6 +570,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return guideMissionRsp;
     }
 
+    /**
+     * 获取岗位配置
+     *
+     * @param businessType            业务类型
+     * @param situationGuideMissionBo 态势导调任务Bo
+     * @return {@code List<CrRoleConfig> }
+     */
     private List<CrRoleConfig> getRoleConfigs(Integer businessType, SituationGuideMissionBo situationGuideMissionBo) {
         List<CrRoleConfig> crRoleConfigs = new ArrayList<>();
         if (BusinessType.TRAINING_TEAM.getCode().equals(businessType)) {
@@ -465,6 +591,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return crRoleConfigs;
     }
 
+    /**
+     * 导调统计学
+     *
+     * @param roomId 房间id
+     * @return {@code GuideStatisticsRsp }
+     */
     @Override
     public GuideStatisticsRsp guideStatistics(String roomId) {
         GuideStatisticsRsp result = new GuideStatisticsRsp();
@@ -491,6 +623,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result;
     }
 
+    /**
+     * 导调时间分配
+     *
+     * @param roomId 房间id
+     * @return {@code GuideTimeDistributionRsp }
+     */
     @Override
     public GuideTimeDistributionRsp guideTimeDistribution(String roomId) {
         GuideTimeDistributionRsp result = new GuideTimeDistributionRsp();
@@ -527,6 +665,13 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result;
     }
 
+    /**
+     * 获取参数类型
+     *
+     * @param roomId       房间id
+     * @param businessType 业务类型
+     * @return {@code GuideParamTypeRsp }
+     */
     @Override
     public GuideParamTypeRsp getParamType(String roomId, Integer businessType) {
         GuideParamTypeRsp result = new GuideParamTypeRsp();
@@ -580,6 +725,11 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result;
     }
 
+    /**
+     * 列表模型
+     *
+     * @return {@code SituationModelRsp }
+     */
     @Override
     public SituationModelRsp listModel() {
         SituationModelRsp situationModelRsp = new SituationModelRsp();
@@ -605,6 +755,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return situationModelRsp;
     }
 
+    /**
+     * 导调记录
+     *
+     * @param pageReq 分页请求体
+     * @return {@code ListRsp<GuideHistoryRsp> }
+     */
     @Override
     public ListRsp<GuideHistoryRsp> guideRecord(GuideRecordReq pageReq) {
 
@@ -659,6 +815,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return PageUtil.getListResult(resultList, pageReq.toPageParam(), resultList.size());
     }
 
+    /**
+     * 获取中台事件列表
+     *
+     * @param screenGuideHistoryReq 屏幕导调历史请求体
+     * @return {@code List<MpEvent> }
+     */
     @Override
     public List<MpEvent> getMpEventList(ScreenGuideHistoryReq screenGuideHistoryReq) {
         SceneEventContext sceneEventContext = screenGuideHistoryReqToSceneEventContext(screenGuideHistoryReq);
@@ -670,6 +832,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return mpEventArray.toJavaList(MpEvent.class);
     }
 
+    /**
+     * 中台事件自导调历史响应
+     *
+     * @param mpEventList 中台事件列表
+     * @return {@code List<GuideHistoryRsp> }
+     */
     @Override
     public List<GuideHistoryRsp> mpEventToGuideHistoryRsp(List<MpEvent> mpEventList) {
         List<GuideHistoryRsp> result = new ArrayList<>();
@@ -707,6 +875,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return result;
     }
 
+    /**
+     * 导调历史响应自态势导调历史
+     *
+     * @param guideHistoryRspList 导调历史响应列表
+     * @return {@code List<SituationGuideHistory> }
+     */
     @Override
     public List<SituationGuideHistory> guideHistoryRspToSituationGuideHistory(List<ExecGuideHisReq> guideHistoryRspList) {
         List<SituationGuideHistory> situationGuideHistoryList = new ArrayList<>();
@@ -737,6 +911,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return situationGuideHistoryList;
     }
 
+    /**
+     * 屏幕导调历史请求体自场景事件上下文
+     *
+     * @param screenGuideHistoryReq 屏幕导调历史请求体
+     * @return {@code SceneEventContext }
+     */
     @Override
     public SceneEventContext screenGuideHistoryReqToSceneEventContext(ScreenGuideHistoryTimeLineReq screenGuideHistoryReq) {
         SceneEventContext sceneEventContext = new SceneEventContext();
@@ -781,6 +961,8 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     /**
      * 校验导调参数
+     *
+     * @param req 请求体
      */
     private void validGuideSchemeParam(AddGuideSchemeReq req) {
         //任务导调判断是否可新增/编辑
@@ -814,12 +996,24 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         }
     }
 
+    /**
+     * 引发异常错误
+     *
+     * @param b b
+     */
     private void throwExceptionError(boolean b) {
         if (b) {
             throw new BusinessException(SituationErrorCode.INVALID_GUIDE_SCHEME);
         }
     }
 
+    /**
+     * 获取元素id列表
+     *
+     * @param sceneId    场景id
+     * @param isInstance 是否实例
+     * @return {@code List<String> }
+     */
     public List<String> getElementIds(String sceneId, Boolean isInstance) {
 
         SceneData sceneData;
@@ -835,6 +1029,11 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     /**
      * 校验导调名称是否合法
+     *
+     * @param target    目标
+     * @param minLen    最小
+     * @param maxLen    最大 len
+     * @param errorCode 错误代号
      */
     public void validateLength(String target, Integer minLen, Integer maxLen, String errorCode) {
         if (StringUtils.isBlank(target)) {
@@ -853,10 +1052,23 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         }
     }
 
+    /**
+     * 验证名称长度
+     *
+     * @param target    目标
+     * @param errorCode 错误代号
+     */
     public void validateNameLen(String target, String errorCode) {
         validateLength(target, MIN_LEN, MAX_NAME_LEN, errorCode);
     }
 
+    /**
+     * 获取态势拓扑由房间id
+     *
+     * @param roomId       房间id
+     * @param businessType 业务类型
+     * @return {@code SituationTopo }
+     */
     public SituationTopo getSituationTopoByRoomId(String roomId, Integer businessType) {
         SituationGuideSceneBo situationGuideSceneBo = situationGuideSchemeMapper.selectSceneByRoomId(roomId, businessType);
         if (Objects.isNull(situationGuideSceneBo)) {
@@ -870,6 +1082,12 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return situationHandlerService.getSituationTopoBySceneId(situationGuideSceneBo.getTopoId(), false);
     }
 
+    /**
+     * 视图场景
+     *
+     * @param roomId 房间id
+     * @return {@code String }
+     */
     public String viewScene(String roomId) {
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
         if (null == localScene) {
@@ -880,6 +1098,10 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
 
     /**
      * 转化攻击、防御的筛选条件
+     *
+     * @param screenBo 屏幕Bo
+     * @param attack   攻击
+     * @return {@code AttackScreenContext }
      */
     private AttackScreenContext screenToAttackScreenContext(ScreenBo screenBo, Boolean attack) {
         AttackScreenContext screenContext = new AttackScreenContext();
@@ -908,6 +1130,11 @@ public class SituationGuideServiceImpl extends ServiceImpl<SituationGuideSchemeM
         return screenContext;
     }
 
+    /**
+     * 检查房间开放情况
+     *
+     * @param guideScheme 导调方案
+     */
     public void checkRoomOpening(SituationGuideScheme guideScheme) {
         SituationRoomBo situationRoomBo = situationGuideSchemeMapper.selectRoomTrainStatus(guideScheme.getRoomId(), guideScheme.getBusinessType());
 

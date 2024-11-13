@@ -14,30 +14,57 @@ import lombok.Data;
 @Data
 public class TaskStatistics {
 
+	/**
+	 * 未评估
+	 */
 	@ApiModelProperty(value = "未评估数")
 	private Integer notEvaluated;
 
+	/**
+	 * 未评估百分比
+	 */
 	@ApiModelProperty(value = "未评估百分比")
 	private Integer notEvaluatedPercentage;
 
+	/**
+	 * 未完成
+	 */
 	@ApiModelProperty(value = "未完成数")
 	private Integer unfinished;
 
+	/**
+	 * 未完成百分比
+	 */
 	@ApiModelProperty(value = "未完成百分比")
 	private Integer unfinishedPercentage;
 
+	/**
+	 * 失败
+	 */
 	@ApiModelProperty(value = "失败数")
 	private Integer failed;
 
+	/**
+	 * 失败百分比
+	 */
 	@ApiModelProperty(value = "失败百分比")
 	private Integer failedPercentage;
 
+	/**
+	 * 成功
+	 */
 	@ApiModelProperty(value = "成功数")
 	private Integer successful;
 
+	/**
+	 * 成功百分比
+	 */
 	@ApiModelProperty(value = "成功百分比")
 	private Integer successfulPercentage;
 
+	/**
+	 * 任务计数
+	 */
 	@ApiModelProperty(value = "任务总数")
 	private Integer missionCount;
 

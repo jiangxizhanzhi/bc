@@ -28,24 +28,49 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 态势动效Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 @Slf4j
 public class SituationEffectServiceImpl implements SituationEffectService {
 
+	/**
+	 * 态势动效Mapper
+	 */
 	@Autowired
 	private SituationEffectMapper situationEffectMapper;
 
+	/**
+	 * 态势动效类别Mapper
+	 */
 	@Autowired
 	private SituationEffectCategoryMapper situationEffectCategoryMapper;
 
+	/**
+	 * 态势动效映射Mapper
+	 */
 	@Autowired
 	private SituationEffectMappingMapper situationEffectMappingMapper;
 
+	/**
+	 * 列表类别
+	 *
+	 * @return {@code List<SituationEffectCategoryName> }
+	 */
 	@Override
 	public List<SituationEffectCategoryName> listCategory() {
 		return situationEffectCategoryMapper.listAllName();
 	}
 
+	/**
+	 * 创建类别
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void createCategory(SituationEffectCategoryAddReq req) {
 		if (ifCategoryNameDuplicate(req.getName(), "")) {
@@ -58,6 +83,11 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		situationEffectCategoryMapper.insert(category);
 	}
 
+	/**
+	 * 修改类别
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void modifyCategory(SituationEffectCategoryModifyReq req) {
 		if (ifCategoryNameDuplicate(req.getName(), req.getResourceId())) {
@@ -71,11 +101,21 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		situationEffectCategoryMapper.updateById(category);
 	}
 
+	/**
+	 * 删除类别
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void deleteCategory(IdListReq req) {
 		situationEffectCategoryMapper.deleteBatchIds(req.getIds());
 	}
 
+	/**
+	 * 创造动效
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void createEffect(SituationEffectAddReq req) {
 		if (ifEffectNameDuplicate(req.getName(), "")) {
@@ -87,6 +127,11 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		situationEffectMapper.insert(effect);
 	}
 
+	/**
+	 * 修改动效
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void modifyEffect(SituationEffectModifyReq req) {
 		if (ifEffectNameDuplicate(req.getName(), req.getResourceId())) {
@@ -99,11 +144,22 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		situationEffectMapper.updateById(effect);
 	}
 
+	/**
+	 * 删除动效
+	 *
+	 * @param id id
+	 */
 	@Override
 	public void deleteEffect(String id) {
 		situationEffectMapper.deleteById(id);
 	}
 
+	/**
+	 * 分页动效
+	 *
+	 * @param req 请求体
+	 * @return {@code ListRsp<SituationEffectBo> }
+	 */
 	@Override
 	public ListRsp<SituationEffectBo> pageEffect(SituationEffectPageReq req) {
 		Page page = req.toPageParam();
@@ -114,6 +170,12 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 分页类别
+	 *
+	 * @param reqBase 请求体基础
+	 * @return {@code ListRsp<SituationEffectCategoryName> }
+	 */
 	@Override
 	public ListRsp<SituationEffectCategoryName> pageCategory(PageReqBase reqBase) {
 		Page page = reqBase.toPageParam();
@@ -124,6 +186,12 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code SituationEffectBo }
+	 */
 	@Override
 	public SituationEffectBo getDetail(String resourceId) {
 		SituationEffect effect = situationEffectMapper.selectById(resourceId);
@@ -131,6 +199,11 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		return bo;
 	}
 
+	/**
+	 * 创造映射
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void createMapping(SituationEffectMappingAddReq req) {
 		if (ifMappingNameDuplicate(req.getName(), "")) {
@@ -142,6 +215,12 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		situationEffectMappingMapper.insert(mapping);
 	}
 
+	/**
+	 * 获取映射详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code SituationEffectMappingBo }
+	 */
 	@Override
 	public SituationEffectMappingBo getMappingDetail(String resourceId) {
 		SituationEffectMapping mapping = situationEffectMappingMapper.selectById(resourceId);
@@ -149,6 +228,11 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		return bo;
 	}
 
+	/**
+	 * 修改映射
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void modifyMapping(SituationEffectMappingModifyReq req) {
 		if (ifMappingNameDuplicate(req.getName(), req.getResourceId())) {
@@ -160,11 +244,22 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		situationEffectMappingMapper.updateById(mapping);
 	}
 
+	/**
+	 * 删除映射
+	 *
+	 * @param ids id列表
+	 */
 	@Override
 	public void deleteMapping(List<String> ids) {
 		situationEffectMappingMapper.deleteBatchIds(ids);
 	}
 
+	/**
+	 * 分页映射
+	 *
+	 * @param req 请求体
+	 * @return {@code ListRsp<SituationEffectMappingBo> }
+	 */
 	@Override
 	public ListRsp<SituationEffectMappingBo> pageMapping(PageReqBase req) {
 		Page page = req.toPageParam();
@@ -174,6 +269,12 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 映射要求2实体
+	 *
+	 * @param req 请求体
+	 * @return {@code SituationEffectMapping }
+	 */
 	private SituationEffectMapping mappingReq2Entity(SituationEffectMappingAddReq req) {
 		SituationEffectMapping mapping = new SituationEffectMapping();
 		mapping.setName(req.getName());
@@ -187,6 +288,12 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		return mapping;
 	}
 
+	/**
+	 * req2 实体
+	 *
+	 * @param req 请求体
+	 * @return {@code SituationEffect }
+	 */
 	private SituationEffect req2Entity(SituationEffectAddReq req) {
 		SituationEffect effect = new SituationEffect();
 		effect.setName(req.getName());
@@ -196,14 +303,35 @@ public class SituationEffectServiceImpl implements SituationEffectService {
 		return effect;
 	}
 
+	/**
+	 * 如果类别名称重复
+	 *
+	 * @param name       名称
+	 * @param resourceId 资源id
+	 * @return boolean
+	 */
 	private boolean ifCategoryNameDuplicate(String name, String resourceId) {
 		return situationEffectCategoryMapper.ifNameDuplicate(name, resourceId);
 	}
 
+	/**
+	 * 如果动效名称重复
+	 *
+	 * @param name       名称
+	 * @param resourceId 资源id
+	 * @return boolean
+	 */
 	private boolean ifEffectNameDuplicate(String name, String resourceId) {
 		return situationEffectMapper.ifNameDuplicate(name, resourceId);
 	}
 
+	/**
+	 * 如果映射名称重复
+	 *
+	 * @param name       名称
+	 * @param resourceId 资源id
+	 * @return boolean
+	 */
 	private boolean ifMappingNameDuplicate(String name, String resourceId) {
 		return situationEffectMappingMapper.ifNameDuplicate(name, resourceId);
 	}

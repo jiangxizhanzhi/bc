@@ -19,29 +19,59 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 任务矩阵
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 public class TaskMatrix {
+    /**
+     * 成功计数
+     */
     @ApiModelProperty(value = "成功数")
     private Integer successCount;
 
+    /**
+     * 失败计数
+     */
     @ApiModelProperty(value = "失败数")
     private Integer failCount;
 
+    /**
+     * 驳回计数
+     */
     @ApiModelProperty(value = "驳回数")
     private Integer rejectCount;
 
+    /**
+     * 全部计数
+     */
     @ApiModelProperty(value = "总数")
     private Integer allCount;
 
+    /**
+     * 完成计数
+     */
     @ApiModelProperty(value = "完成数")
     private Integer finishCount;
 
+    /**
+     * 得分
+     */
     @ApiModelProperty(value = "得分")
     private Integer score;
 
+    /**
+     * 任务列表
+     */
     @ApiModelProperty(value = "任务列表")
     private List<TaskStage> taskList;
 
+    /**
+     * 耗时
+     */
     @ApiModelProperty(value = "训练时长，单位为秒")
     private Long timeCost;
 
@@ -51,9 +81,15 @@ public class TaskMatrix {
     @ApiModelProperty(value = "是否正在运行")
 	private Boolean started;
 
+    /**
+     * 图标
+     */
     @ApiModelProperty(value = "用户头像")
     private String logo;
 
+    /**
+     * 最终比分
+     */
     @ApiModelProperty(value = "综合得分")
     private Integer finalScore;
 

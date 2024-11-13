@@ -17,6 +17,9 @@ import lombok.Data;
 @Data
 public class CrMark extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 

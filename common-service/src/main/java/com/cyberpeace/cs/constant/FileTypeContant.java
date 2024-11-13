@@ -1,26 +1,46 @@
 package com.cyberpeace.cs.constant;
 
+/**
+ * 文件类型 contant
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public final class FileTypeContant {
 
-	/** 文件类型后缀*/
+	/**
+	 * 文件类型后缀
+	 */
 	public static final String PICTURE_TYPE = "JPEG,PNG,JPG";
 
-	/** 课时讲义允许上传类型*/
+	/**
+	 * 课时讲义允许上传类型
+	 */
 	public static final String LESSON_HANDOUT_TYPE = "ZIP,PDF,DOC,DOCX,PPT,PPTX,XLS,XLSX";
 
-	/** 课程、习题集导入文件上传类型*/
+	/**
+	 * 课程、习题集导入文件上传类型
+	 */
 	public static final String RESOURCE_DATA_IMPORT_TYPE = "ZIP";
 
-	/** markdown编辑器附件上传类型*/
+	/**
+	 * markdown编辑器附件上传类型
+	 */
 	public static final String MD_ATTACHMENT_TYPE = "ZIP,RAR";
 
-	/** 课时附件上传限制类型*/
+	/**
+	 * 课时附件上传限制类型
+	 */
 	public static final String LESSON_ATTACHMENT = "ZIP,RAR";
 
-	/** 实操附件上传限制类型*/
+	/**
+	 * 实操附件上传限制类型
+	 */
 	public static final String OPERATION_PRACTICE_ATTACHMENT = "ZIP";
 
-	/** 工具库文件上传*/
+	/**
+	 * 工具库文件上传
+	 */
 	public static final String TOOL_ATTACHMENT = "ZIP,RAR";
 
 	/**

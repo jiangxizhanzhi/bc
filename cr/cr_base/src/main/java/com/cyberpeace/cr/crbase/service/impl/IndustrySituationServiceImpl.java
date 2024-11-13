@@ -25,23 +25,48 @@ import com.cyberpeace.cr.crbase.service.MissionSituationService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 工业态势Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 @Slf4j
 public class IndustrySituationServiceImpl implements IndustrySituationService {
 
+	/**
+	 * 任务态势Service
+	 */
 	@Autowired
 	private MissionSituationService missionSituationService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 我WebSocket处理器
+	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	/**
+	 * 执行者
+	 */
 	@Autowired
 	@Qualifier("taskExecutor")
 	private Executor executor;
 
+	/**
+	 * 推送态势WS
+	 *
+	 * @param roomId            房间id
+	 * @param missionTemplateId 任务模板id
+	 * @return boolean
+	 */
 	@Override
 	public boolean pushSituationWs(String roomId, String missionTemplateId) {
 		MissionSituation missionSituation = missionSituationService.getById(missionTemplateId);
@@ -52,6 +77,13 @@ public class IndustrySituationServiceImpl implements IndustrySituationService {
 		return pushSituationWs(roomId, missionSituation.getTsId());
 	}
 
+	/**
+	 * 推送态势WS
+	 *
+	 * @param businessId 业务id
+	 * @param tsId       态势id
+	 * @return boolean
+	 */
 	@Override
 	public boolean pushSituationWs(String businessId, Integer tsId) {
 		IndustrySituationWsMessageIdentifier identifier = new IndustrySituationWsMessageIdentifier();
@@ -69,6 +101,13 @@ public class IndustrySituationServiceImpl implements IndustrySituationService {
 		return true;
 	}
 
+	/**
+	 * 做演示动效
+	 *
+	 * @param businessId 业务id
+	 * @param tsId       态势id
+	 * @return boolean
+	 */
 	@Override
 	public boolean doDemoEffect(String businessId, Integer tsId) {
 		if (StringUtils.isBlank(businessId) || null == tsId) {

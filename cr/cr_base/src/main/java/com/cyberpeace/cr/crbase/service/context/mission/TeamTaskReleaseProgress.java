@@ -14,6 +14,9 @@ import java.io.Serializable;
 @Data
 public class TeamTaskReleaseProgress extends TaskReleaseProgress implements Serializable {
 
+	/**
+	 * 各角色进度
+	 */
 	@ApiModelProperty(value = "各角色进度")
 	private GroupTaskReleaseProgress roles = new GroupTaskReleaseProgress();
 

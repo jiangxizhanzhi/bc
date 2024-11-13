@@ -7,13 +7,25 @@ import javax.validation.constraints.NotBlank;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 场景节点操作请求体
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Data
 public class SceneNodeOpsReq implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty(value = "当前业务id", required = true)
 	@NotBlank
 	private String resourceId;
 
+	/**
+	 * 节点id
+	 */
 	@ApiModelProperty(value = "节点id", required = true)
 	@NotBlank
 	private String nodeId;

@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.crbase.constant;
 
 /**
+ * 态势路线状态
+ *
  * @author SN
  * @date 2023/09/25
  */

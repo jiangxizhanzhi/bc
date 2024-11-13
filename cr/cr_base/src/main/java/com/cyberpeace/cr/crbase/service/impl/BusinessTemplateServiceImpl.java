@@ -71,50 +71,95 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 业务模板Service实现
  *
+ * @author SN
+ * @date 2024/11/13
  */
 @Service
 @Slf4j
 public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMapper, BusinessTemplate> implements BusinessTemplateService {
 
+	/**
+	 * 业务模板Mapper
+	 */
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * RTKS相关Service
+	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 业务模板处理器
+	 */
 	@Autowired
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
 
+	/**
+	 * 执行者
+	 */
 	@Autowired
 	@Qualifier("taskExecutor")
 	private Executor executor;
 
+	/**
+	 * 新增模板
+	 *
+	 * @param baseInfo 基地信息
+	 * @return {@code String }
+	 */
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
 		// validate length
@@ -153,6 +198,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplate.getResourceId();
 	}
 
+	/**
+	 * 检查权限
+	 *
+	 * @param businessId 业务id
+	 * @param userId     用户id
+	 */
 	@Override
 	public void checkPermission(String businessId, String userId) {
 		List<String> businessIds = selectAuthIdsByUserId(userId);
@@ -164,6 +215,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 	}
 
+	/**
+	 * 检查权限
+	 *
+	 * @param resourceId 资源id
+	 * @return boolean
+	 */
 	@Override
 	public boolean checkPermission(String resourceId) {
 		BusinessTemplate template = businessTemplateMapper.selectById(resourceId);
@@ -179,11 +236,23 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				|| template.getOperationAuthIds().contains(userInfo.getUserId());
 	}
 
+	/**
+	 * 存在由名称
+	 *
+	 * @param templateName 模板名称
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean existByName(String templateName) {
 		return businessTemplateMapper.existByName(templateName);
 	}
 
+	/**
+	 * 获取存在名字
+	 *
+	 * @param names 名字
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getExistedNames(List<String> names) {
 		if (names == null || names.isEmpty()) {
@@ -192,11 +261,23 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplateMapper.getExistedNames(names);
 	}
 
+	/**
+	 * 获取由名称
+	 *
+	 * @param templateName 模板名称
+	 * @return {@code BusinessTemplate }
+	 */
 	@Override
 	public BusinessTemplate getByName(String templateName) {
 		return businessTemplateMapper.getByName(templateName);
 	}
 
+	/**
+	 * 更新模板
+	 *
+	 * @param businessTemplate 业务模板
+	 * @param baseInfo         基地信息
+	 */
 	@Override
 	public void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo) {
 		// validate length
@@ -223,6 +304,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		updateById(businessTemplate);
 	}
 
+	/**
+	 * 验证名称
+	 *
+	 * @param name       名称
+	 * @param type       类型
+	 * @param resourceId 资源id
+	 */
 	@Override
 	public void validateName(String name, Integer type, String resourceId) {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
@@ -232,6 +320,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 	}
 
+	/**
+	 * 更新任务模板关系
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param before             以前
+	 * @param after              后
+	 */
 	@Override
 	public void updateMissionTemplateRelation(String businessTemplateId, String before,
 			String after) {
@@ -255,6 +350,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				newMissionTemplateIds);
 	}
 
+	/**
+	 * 获取攻击相关id列表
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getAttackRelatedIds(List<String> businessTemplateIds) {
 		if (businessTemplateIds.isEmpty()) {
@@ -263,6 +364,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplateMapper.getAttackRelatedIds(businessTemplateIds);
 	}
 
+	/**
+	 * 获取Engage相关id列表
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getEngageRelatedIds(List<String> businessTemplateIds) {
 		if (businessTemplateIds.isEmpty()) {
@@ -271,6 +378,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplateMapper.getEngageRelatedIds(businessTemplateIds);
 	}
 
+	/**
+	 * 分页简单
+	 *
+	 * @param btPageReq BT系列分页请求体
+	 * @return {@code ListRsp<BusinessTemplateSimple> }
+	 */
 	@Override
 	public ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq) {
 		Page page = btPageReq.toPageParam();
@@ -280,6 +393,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 清除用户认证
+	 *
+	 * @param userId 用户id
+	 */
 	@Override
 	public void clearUserAuth(String userId) {
 		List<BusinessTemplate> businessTemplateList = businessTemplateMapper
@@ -293,6 +411,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		updateBatchById(businessTemplateList);
 	}
 
+	/**
+	 * 查询认证id列表由用户id
+	 *
+	 * @param userId 用户id
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		UserInfo userInfo = UserInfoContext.getUserContext();
@@ -304,6 +428,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 	}
 
+	/**
+	 * 获取由当地场景id
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code BusinessTemplate }
+	 */
 	@Override
 	public BusinessTemplate getByLocalSceneId(String localSceneId) {
 		BusinessTemplate res = businessTemplateMapper.selectByLocalSceneId(localSceneId);
@@ -314,6 +444,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return res;
 	}
 
+	/**
+	 * 分页
+	 *
+	 * @param businessTemplateQuery 业务模板查询
+	 * @return {@code IPage<BusinessTemplateData> }
+	 */
 	@Override
 	public IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -346,6 +482,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	}
 
+	/**
+	 * 获取股票
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code Share }
+	 */
 	@Override
 	public Share getShares(String resourceId) {
 		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(resourceId);
@@ -376,6 +518,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return share;
 	}
 
+	/**
+	 * 批量设置股票
+	 *
+	 * @param shareContext 分享上下文
+	 */
 	@Override
 	public void batchSetShares(ShareContext shareContext) {
 		String shareTeachers = JsonUtil.toJsonString(shareContext.getShareTeachers());
@@ -390,6 +537,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		updateBatchById(businessTemplateList);
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param businessTemplateIds 业务模板id列表
+	 */
 	@Override
 	public void batchDelete(List<String> businessTemplateIds) {
 		if (CollectionUtils.isEmpty(businessTemplateIds)) {
@@ -407,6 +559,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		this.addBatchDeleteLog(businessTemplates, userInfo);
 	}
 
+	/**
+	 * 清除当地
+	 *
+	 * @param template 模板
+	 */
 	@Override
 	public void clearLocal(BusinessTemplate template) {
 		String localSceneId = template.getLocalSceneId();
@@ -421,6 +578,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 	}
 
+	/**
+	 * 创造当地场景
+	 *
+	 * @param template 模板
+	 * @return {@code LocalScene }
+	 */
 	@Override
 	public LocalScene createLocalScene(BusinessTemplate template) {
 
@@ -444,6 +607,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return localScene;
 	}
 
+	/**
+	 * 视图场景
+	 *
+	 * @param template 模板
+	 * @return {@code SceneViewContext }
+	 */
 	@Override
 	public SceneViewContext viewScene(BusinessTemplate template) {
 		SceneViewContext ret = new SceneViewContext();
@@ -464,6 +633,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return ret;
 	}
 
+	/**
+	 * 转换类型自代号
+	 *
+	 * @param code 代号
+	 * @return {@code BusinessCode }
+	 */
 	@Override
 	public BusinessCode convertTypeToCode(Integer code) {
 		BusinessType type = EnumUtils.getEnumByCode(code,
@@ -491,6 +666,14 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
 	}
 
+	/**
+	 * 做导出文件
+	 *
+	 * @param templateIds 模板id列表
+	 * @param tempDir     临时目录
+	 * @return {@code String }
+	 * @throws IOException io异常
+	 */
 	@Override
 	public String makeDumpFile(List<String> templateIds, String tempDir) throws IOException {
 		if (templateIds.isEmpty()) {
@@ -529,6 +712,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return ZipUtil.toZip(tempDir);
 	}
 
+	/**
+	 * 导出模板
+	 *
+	 * @param templateId 模板id
+	 * @return {@code ResourceDumpContext }
+	 */
 	@Override
 	public ResourceDumpContext dumpTemplate(String templateId) {
 		// 1. 获取要导出的模板
@@ -565,6 +754,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return context;
 	}
 
+	/**
+	 * 批量加载
+	 *
+	 * @param unZipPath un zip 路径
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean batchLoad(String unZipPath) {
 		// 1. read data.json
@@ -600,6 +795,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return true;
 	}
 
+	/**
+	 * 加载图像
+	 *
+	 * @param files    文件
+	 * @param imageDir 图像目录
+	 * @return {@code Boolean }
+	 */
 	private Boolean loadImages(Map<String, String> files, String imageDir) {
 		if (files == null || files.size() == 0) {
 			return false;
@@ -611,6 +813,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return true;
 	}
 
+	/**
+	 * 加载业务模板
+	 *
+	 * @param template 模板
+	 */
 	private void loadBusinessTemplate(BusinessTemplate template) {
 		template.setId(null);
 		template.setCreateUserId(UserInfoContext.getUserContext().getUserId());
@@ -626,6 +833,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 	}
 
+	/**
+	 * 获取中台场景数据
+	 *
+	 * @param template 模板
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject getMpSceneData(BusinessTemplate template) {
 		String localSceneId = template.getLocalSceneId();
 		// localSceneId字段为空
@@ -663,6 +876,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return sceneData;
 	}
 
+	/**
+	 * 删除批量
+	 *
+	 * @param businessTemplates 业务模板
+	 */
 	private void deleteBatch(List<BusinessTemplate> businessTemplates) {
 		List<String> businessTemplateIds = StreamApiUtils.map(businessTemplates,
 				BusinessTemplate::getResourceId);
@@ -717,6 +935,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 	}
 
+	/**
+	 * 新增批量删除日志
+	 *
+	 * @param businessTemplateList 业务模板列表
+	 * @param userInfo             用户信息
+	 */
 	private void addBatchDeleteLog(List<BusinessTemplate> businessTemplateList, UserInfo userInfo) {
 		if (businessTemplateList.isEmpty()) {
 			return;

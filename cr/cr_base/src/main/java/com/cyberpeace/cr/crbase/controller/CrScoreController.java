@@ -45,31 +45,62 @@ import com.google.common.collect.Sets;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场得分Controller
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @Api(tags = "团队训练评分")
 @RestController
 @RequestMapping("/cr/training_team/training_team")
 @Slf4j
 public class CrScoreController {
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 靶场得分Service
+	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 训练记录Service
+	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
 
+	/**
+	 * 获取学员得分
+	 *
+	 * @param resource_id 资源id
+	 * @param user_hash   用户id
+	 * @return {@code StudentScoreRsp }
+	 */
 	public StudentScoreRsp getStudentScore(String resource_id, String user_hash) {
 
 		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(resource_id, user_hash);
@@ -116,6 +147,11 @@ public class CrScoreController {
 		return studentScoreRsp;
 	}
 
+	/**
+	 * 更新学员得分
+	 *
+	 * @param studentScoreReq 学员得分请求体
+	 */
 	public void updateStudentScore(StudentScoreReq studentScoreReq) {
 
 		Integer trainingPercentage = Integer
@@ -173,6 +209,12 @@ public class CrScoreController {
 
 	}
 
+	/**
+	 * 获取任务评估
+	 *
+	 * @param missionEvaluationListReq 任务评估列表请求体
+	 * @return {@code BaseRsp<List<MissionEvaluationRsp>> }
+	 */
 	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(MissionEvaluationListReq missionEvaluationListReq) {
 
@@ -229,6 +271,12 @@ public class CrScoreController {
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
+	/**
+	 * 获取团队得分从请求体
+	 *
+	 * @param studentScoreReq 学员得分请求体
+	 * @return {@code CrScore }
+	 */
 	private CrScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
 		CrScore crScore = BeanUtils.copy(studentScoreReq, CrScore.class);
 
@@ -241,6 +289,13 @@ public class CrScoreController {
 		return crScore;
 	}
 
+	/**
+	 * 获取用户任务动态
+	 *
+	 * @param resource_id 资源id
+	 * @param student_id  学员id
+	 * @return {@code MissionDynamicRsp }
+	 */
 	public MissionDynamicRsp getUserMissionDynamic(String resource_id, String student_id) {
 		TaskCounter taskCounter = crRoleService.getTaskCounter(resource_id, student_id);
 
@@ -272,6 +327,13 @@ public class CrScoreController {
 		return missionDynamicRsp;
 	}
 
+	/**
+	 * 获取训练任务报告
+	 *
+	 * @param resource_id 资源id
+	 * @param crRoleList  靶场岗位列表
+	 * @return {@code MissionReport }
+	 */
 	public MissionReport getTrainingMissionReport(String resource_id, List<CrRole> crRoleList) {
 
 		MissionReport missionReport = new MissionReport();
@@ -284,6 +346,13 @@ public class CrScoreController {
 		return missionReport;
 	}
 
+	/**
+	 * 获取训练记录
+	 *
+	 * @param resource_id 资源id
+	 * @param user_hash   用户id
+	 * @return {@code List<MissionSchemeObject<TrainingRecordMissionRsp>> }
+	 */
 	public List<MissionSchemeObject<TrainingRecordMissionRsp>> getTrainingRecord(String resource_id,
 			String user_hash) {
 
@@ -339,6 +408,13 @@ public class CrScoreController {
 		return missionSchemeList;
 	}
 
+	/**
+	 * 获取训练报告
+	 *
+	 * @param resource_id 资源id
+	 * @param crRoleList  靶场岗位列表
+	 * @return {@code List<UserReport> }
+	 */
 	public List<UserReport> getTrainingReport(String resource_id, List<CrRole> crRoleList) {
 
 		List<String> userIds = Lists.newArrayList();
@@ -396,6 +472,11 @@ public class CrScoreController {
 		return userReportList;
 	}
 
+	/**
+	 * 获取模板i18n
+	 *
+	 * @return {@code JSONObject }
+	 */
 	public JSONObject getTemplateI18n() {
 		JSONObject jsonObject = new JSONObject();
 
@@ -406,6 +487,12 @@ public class CrScoreController {
 		return jsonObject;
 	}
 
+	/**
+	 * 获取标题
+	 *
+	 * @param name 名称
+	 * @return {@code String }
+	 */
 	public String getTitle(String name) {
 
 		if (!CommonContext.isChinese()) {
@@ -415,6 +502,12 @@ public class CrScoreController {
 		}
 	}
 
+	/**
+	 * 获取训练记录消息
+	 *
+	 * @param trainRecord 训练记录
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject getTrainRecordMessage(TrainRecord trainRecord) {
 		if (trainRecord == null) {
 			return new JSONObject();

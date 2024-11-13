@@ -6,9 +6,21 @@ import com.cyberpeace.common.util.ConfigUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 配置读取器
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 class ConfigReader {
 
+	/**
+	 * 读
+	 *
+	 * @param name 名称
+	 * @return {@code String }
+	 */
 	public static String read(String name) {
 		String config = ConfigUtil.getContextProperty(name);
 		if (config == null) {
@@ -18,6 +30,12 @@ class ConfigReader {
 		return config;
 	}
 
+	/**
+	 * 读取 int
+	 *
+	 * @param name 名称
+	 * @return {@code Integer }
+	 */
 	public static Integer readInt(String name) {
 		String config = read(name);
 		try {
@@ -28,5 +46,8 @@ class ConfigReader {
 		}
 	}
 
+	/**
+	 * 配置读取器
+	 */
 	private ConfigReader() {}
 }

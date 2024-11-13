@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 系统信息Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "系统信息服务接口")
 @RestController
 @RequestMapping("/system_info")
@@ -19,9 +25,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class SystemInfoController {
 
+	/**
+	 * 系统用状态Service
+	 */
 	@Autowired
 	private SystemUseStatusService systemUseStatusService;
 
+	/**
+	 * 应用运行信息
+	 *
+	 * @return {@code BaseRsp<SystemUseStatusRes> }
+	 */
 	@ApiOperation("靶场应用运行图")
 	@GetMapping("/app_running_info")
 	public BaseRsp<SystemUseStatusRes> appRunningInfo() {

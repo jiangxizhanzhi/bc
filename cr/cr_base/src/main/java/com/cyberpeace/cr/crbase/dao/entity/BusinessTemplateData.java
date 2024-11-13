@@ -4,18 +4,36 @@ import lombok.Data;
 
 /**
  * 靶场模板公共信息类
- * */
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @Data
 public class BusinessTemplateData extends BusinessTemplate {
 
-	private Integer nodesNum;
+    /**
+     * 节点数量
+     */
+    private Integer nodesNum;
 
-	private Integer resourceOccupiedNums;
+    /**
+     * 资源占用数
+     */
+    private Integer resourceOccupiedNums;
 
-	private Integer totalCpu;
+    /**
+     * 总CPU
+     */
+    private Integer totalCpu;
 
-	private Integer totalDisk;
+    /**
+     * 总磁盘
+     */
+    private Integer totalDisk;
 
-	private Integer totalRam;
+    /**
+     * 总内存
+     */
+    private Integer totalRam;
 
 }

@@ -11,14 +11,26 @@ import lombok.Data;
 
 /**
  * 团队训练手册
+ *
+ * @author SN
+ * @date 2024/11/13
  */
 @Data
 public class TrainingManualTeam {
 
+	/**
+	 * 文本
+	 */
 	private StringBuilder text;
 
+	/**
+	 * 阶段
+	 */
 	private List<CrRoleMissionSchemeStage> stages;
 
+	/**
+	 * 任务映射
+	 */
 	private Map<String, Mission> missionMap;
 
 	public TrainingManualTeam(List<CrRoleMissionSchemeStage> stages, Map<String, Mission> missionMap) {

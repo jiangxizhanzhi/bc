@@ -20,7 +20,10 @@ import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**
+ * 业务模板Service
  *
+ * @author SN
+ * @date 2024/11/13
  */
 public interface BusinessTemplateService extends IService<BusinessTemplate> {
 
@@ -123,7 +126,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param templateIds 基础模版id列表
 	 * @param tempDir     临时文件夹
 	 * @return 压缩包路径
-	 * @throws IOException
+	 * @throws IOException io异常
 	 */
 	String makeDumpFile(List<String> templateIds, String tempDir) throws IOException;
 
@@ -229,6 +232,11 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
 	ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq);
 
+	/**
+	 * 清除用户认证
+	 *
+	 * @param user 用户
+	 */
 	void clearUserAuth(String user);
 
 }

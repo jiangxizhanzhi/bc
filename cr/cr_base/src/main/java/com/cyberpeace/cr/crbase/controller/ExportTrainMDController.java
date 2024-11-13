@@ -24,17 +24,38 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 导出训练md控制器
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @Api(tags = "训练资管导出")
 @RestController
 @RequestMapping("/export")
 public class ExportTrainMDController {
 
+	/**
+	 * 导出训练md服务
+	 */
 	@Qualifier("exportTrainMDServiceImpl")
 	@Autowired
 	private ExportTrainMDService exportTrainMDService;
 
+	/**
+	 * 日志
+	 */
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
+	/**
+	 * 导出训练markdown
+	 *
+	 * @param resourceId         资源id
+	 * @param type               类型
+	 * @param sceneNumber        场景数
+	 * @param disableImageExport 禁用图像导出
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("训练资管导出")
 	@GetMapping("/train")
 	public BaseRsp<String> exportTrainMD(

@@ -27,15 +27,30 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 态势回放Controller
+ *
+ * @author SN
+ * @date 2024/11/12
+ */
 @Api(tags = "态势回放")
 @RestController
 @Slf4j
 @RequestMapping("/situation/playback")
 public class SituationPlaybackController {
 
+	/**
+	 * 导调历史Service
+	 */
 	@Autowired
 	private GuideHistoryService guideHistoryService;
 
+	/**
+	 * 刷新
+	 *
+	 * @param screenGuideHistoryReq 屏幕导调历史请求体
+	 * @return {@code BaseRsp<List<GuideHistoryRsp>> }
+	 */
 	@ApiOperation("刷新")
 	@PostMapping("/refresh")
 	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
@@ -45,6 +60,12 @@ public class SituationPlaybackController {
 		return new BaseRsp<>(guideHistoryService.getRecord(screenGuideHistoryReq));
 	}
 
+	/**
+	 * 执行
+	 *
+	 * @param execGuideHisReq 执行导调历史请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("单个执行")
 	@PostMapping("/execute")
 	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)
@@ -52,6 +73,12 @@ public class SituationPlaybackController {
 		return new BaseRsp<>(guideHistoryService.execute(execGuideHisReq));
 	}
 
+	/**
+	 * 获取时间线
+	 *
+	 * @param screenGuideHistoryTimeLineReq 屏幕导调历史时间线请求体
+	 * @return {@code BaseRsp<TimeLineRsp> }
+	 */
 	@ApiOperation("态势复盘时间轴")
 	@PostMapping("/playback/event/time")
 	@RequiresPermissions(value = {MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN}, logical = Logical.OR)

@@ -34,6 +34,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 常用Controller
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Api(tags = "公共服务接口")
 @RestController
 @RequestMapping("/common")
@@ -41,19 +47,37 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CommonController {
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * markdown上传名称长度
+	 */
 	private String MD_UPLOAD_NAME_LEN;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		MD_UPLOAD_NAME_LEN = ConfigUtil.getContextProperty("md.upload.name.len.max");
 	}
 
+	/**
+	 * 图片上传
+	 *
+	 * @param fileCommonUploadReq 文件常见上传请求体
+	 * @return {@code BaseRsp<AttachmentBo> }
+	 */
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
 	public BaseRsp<AttachmentBo> imageUpload(FileCommonUploadReq fileCommonUploadReq) {
@@ -87,6 +111,12 @@ public class CommonController {
 		return new BaseRsp<>(attachmentBo);
 	}
 
+	/**
+	 * 附件上传
+	 *
+	 * @param fileCommonUploadReq 文件常见上传请求体
+	 * @return {@code BaseRsp<AttachmentBo> }
+	 */
 	@ApiOperation("附件上传")
 	@PostMapping("/attachment_upload")
 	public BaseRsp<AttachmentBo> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
@@ -118,7 +148,7 @@ public class CommonController {
 	/**
 	 * 竞赛md统一上传接口
 	 * 去掉权限校验
-	 * 
+	 *
 	 * @param adMdUploadReq 文件常见上传请求体
 	 * @return {@code BaseRsp<AttachmentBo>}
 	 */
@@ -140,6 +170,12 @@ public class CommonController {
 		return new BaseRsp<>(attachmentBo);
 	}
 
+	/**
+	 * 解析 mdfile
+	 *
+	 * @param md markdown
+	 * @return {@code BaseRsp<ExtractBase> }
+	 */
 	@ApiOperation("解析md压缩包")
 	@PostMapping("/parse/md")
 	public BaseRsp<ExtractBase> parseMDFile(@RequestParam("md") MultipartFile md){
@@ -185,6 +221,11 @@ public class CommonController {
 		return new BaseRsp<>(extractBase);
 	}
 
+	/**
+	 * 验证文件名称长度
+	 *
+	 * @param fileName 文件名称
+	 */
 	private void validateFileNameLen(String fileName) {
 		int fileNameLen = fileName == null ? 0 : fileName.length();
 		if (fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
@@ -195,6 +236,11 @@ public class CommonController {
 		}
 	}
 
+	/**
+	 * 获取git版本
+	 *
+	 * @return {@code BaseRsp<Map<String, String>> }
+	 */
 	@ApiOperation("获取git版本信息")
 	@GetMapping("/version")
 	public BaseRsp<Map<String, String>> getGitVersion()  {

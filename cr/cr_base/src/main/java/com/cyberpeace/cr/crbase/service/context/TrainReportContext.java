@@ -19,63 +19,129 @@ import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 训练报告上下文
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Data
 public class TrainReportContext {
 
+	/**
+	 * 红色趋势
+	 */
 	@ApiModelProperty("红方得分趋势")
 	List<StudentScoreTrend> redTrends;
 
+	/**
+	 * 蓝色趋势
+	 */
 	@ApiModelProperty("蓝方得分趋势")
 	List<StudentScoreTrend> blueTrends;
 
+	/**
+	 * 团队趋势
+	 */
 	@ApiModelProperty("团队得分趋势")
 	List<StudentScoreTrend> teamTrends;
 
+	/**
+	 * 获取得分RSP
+	 */
 	@ApiModelProperty("人员得分")
 	List<GetScoreRsp> getScoreRsps;
 
+	/**
+	 * 红获取得分RSP
+	 */
 	@ApiModelProperty("红方人员得分")
 	List<GetScoreRsp> redGetScoreRsps;
 
+	/**
+	 * 蓝获取得分RSP
+	 */
 	@ApiModelProperty("蓝方人员得分")
 	List<GetScoreRsp> blueGetScoreRsps;
 
+	/**
+	 * 任务类计数
+	 */
 	@ApiModelProperty("任务分类个数")
 	private Integer taskKindCount;
 
+	/**
+	 * 类映射
+	 */
 	@ApiModelProperty("任务分类：key 名称 value个数")
 	private Map<String, Integer> kindMap;
 
+	/**
+	 * 红方任务分类
+	 */
 	@ApiModelProperty("红方任务分类：key 名称 value个数")
 	private Map<String, Integer> redMap;
 
+	/**
+	 * 蓝方任务分类
+	 */
 	@ApiModelProperty("蓝方任务分类：key 名称 value个数")
 	private Map<String, Integer> blueMap;
 
+	/**
+	 * 用户角色
+	 */
 	@ApiModelProperty("角色信息")
 	private List<UserRole> userRoles;
 
+	/**
+	 * 房间底信息
+	 */
 	@ApiModelProperty("基础信息")
 	private RoomBaseInfo roomBaseInfo;
 
+	/**
+	 * 教员名称
+	 */
 	private String teacherName;
 
+	/**
+	 * 管理名称
+	 */
 	@ApiModelProperty("管理员")
 	private String adminName;
 
+	/**
+	 * 导演名称
+	 */
 	@ApiModelProperty("导演")
 	private String directorName;
 
+	/**
+	 * 裁判名称
+	 */
 	@ApiModelProperty("裁判")
 	private String refereesName;
 
+	/**
+	 * 时间列表
+	 */
 	private List<Date> timeList = new ArrayList<>();
 
+	/**
+	 * 时间字符串列表
+	 */
 	private List<String> timeStringList = new ArrayList<>();
 
+	/**
+	 * 攻击类型计数
+	 */
 	@ApiModelProperty("攻击流量各类别统计")
 	private List<AttackTypeCount> attackTypeCount;
 
+	/**
+	 * 场景趋势
+	 */
 	@ApiModelProperty("场景流量趋势图")
 	private List<SceneTrend> sceneTrend;
 

@@ -9,6 +9,12 @@ import com.cyberpeace.cs.service.BehaviorRecordService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 行为记录Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Service
 @Slf4j
 public class BehaviorRecordServiceImpl extends ServiceImpl<BehaviorRecordMapper, BehaviorRecordEntity> implements BehaviorRecordService {

@@ -17,12 +17,21 @@ import lombok.Data;
 @Data
 public class RoleTaskReleaseProgress extends ReleaseProgress implements Serializable {
 
+	/**
+	 * 岗位id
+	 */
 	@ApiModelProperty(value = "角色id")
 	private String roleId;
 
+	/**
+	 * 岗位名称
+	 */
 	@ApiModelProperty(value = "角色名称")
 	private String roleName;
 
+	/**
+	 * 阶段
+	 */
 	@ApiModelProperty(value = "阶段进度")
 	private List<StageTaskReleaseProgress> stage = Lists.newArrayList();
 }

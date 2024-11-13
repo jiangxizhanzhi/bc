@@ -24,25 +24,53 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场时间轴Service实现
+ *
+ * @author SN
+ * @date 2024/11/13
+ */
 @Service
 @Slf4j
 public class CrTimelineServiceImpl implements CrTimelineService {
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 靶场常用Service
+	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
+	/**
+	 * 获取复盘事件
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code List<TimeLineEvent> }
+	 */
 	@Override
 	public List<TimeLineEvent> getReplayEvents(String roomId, String userId) {
 		// user info
@@ -103,6 +131,12 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 		return eventList;
 	}
 
+	/**
+	 * 获取时间轴事件由房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<TimeLineEvent> }
+	 */
 	@Override
 	public List<TimeLineEvent> getTimelineEventsByRoomId(String roomId) {
 		List<TimeLineEvent> res = Lists.newArrayList();

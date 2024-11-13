@@ -10,34 +10,83 @@ import com.cyberpeace.common.util.FileUtil;
 import lombok.Getter;
 
 /**
- * @author chenzhuo
+ * 上传附件权限
+ *
+ * @author chenzhuo@date 2024/11/11
  */
 public enum UploadAttachmentPermission implements GenericEnum {
 
-    /** 文件上传权限枚举*/
+    /**
+     * 文件上传权限枚举
+     */
     CMS_COURSE_MD_ATTACHMENT(1, "后台课程MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[] { MenuConstant.CMS_COURSES}),
+    /**
+     * CMS 系列课时附件
+     */
     CMS_LESSON_ATTACHMENT(2, "后台课时附件上传", FileTypeContant.LESSON_ATTACHMENT, new String[]{MenuConstant.CMS_COURSES}),
+    /**
+     * CMS 系列理论markdown附件
+     */
     CMS_THEORY_MD_ATTACHMENT(3, "后台理论MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.CMS_THEORY_PRACTICE }),
+    /**
+     * CMS 系列实操附件
+     */
     CMS_OPERATION_ATTACHMENT(4, "后台实操习题附件上传", FileTypeContant.OPERATION_PRACTICE_ATTACHMENT, new String[]{ MenuConstant.CMS_PRACTICE_OPERATION }),
+    /**
+     * CMS 系列实操markdown附件
+     */
     CMS_OPERATION_MD_ATTACHMENT(5, "后台实操习题MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.CMS_PRACTICE_OPERATION }),
+    /**
+     * CMS 工具附件
+     */
     CMS_TOOL_ATTACHMENT(6, "后台工具库附件上传", FileTypeContant.TOOL_ATTACHMENT, new String[]{ MenuConstant.CMS_TOOL }),
+    /**
+     * Web课程markdown附件
+     */
     WEB_COURSE_MD_ATTACHMENT(7, "前台课程MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.WEB_OJ_COURSE }),
+    /**
+     * CMS 系列任务markdown附件
+     */
     CMS_MISSION_MD_ATTACHMENT(8,"后台任务编辑MD附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_CR_MISSION_SCHEME}),
+    /**
+     * CMS 系列课时讲义附件
+     */
     CMS_LESSON_HANDOUT_ATTACHMENT(9,"后台课时讲义附件上传", FileTypeContant.HANDOUT_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_COURSES}),
+    /**
+     * CMS 系列课时视频附件
+     */
     CMS_LESSON_VIDEO_ATTACHMENT(10,"后台课时视频附件上传", FileTypeContant.VIDEO_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_COURSES}),
-	WEB_OJ_THEORY_PRACTICE(11, "前台理论题MD编辑器附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[] { MenuConstant.WEB_OJ_THEORY_PRACTICE }),
+    /**
+     * WebOJ理论练习
+     */
+    WEB_OJ_THEORY_PRACTICE(11, "前台理论题MD编辑器附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[] { MenuConstant.WEB_OJ_THEORY_PRACTICE }),
+    /**
+     * Web任务markdown附件
+     */
     WEB_MISSION_MD_ATTACHMENT(12, "前台学员答题编辑MD附件上传", FileTypeContant.MD_ATTACHMENT_TYPE,
 					new String[] { MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN,
 							MenuConstant.WEB_CR_SINGLE_TRAIN });
 
+    /**
+     * 代号
+     */
     @Getter
     public final Integer code;
 
+    /**
+     * 描述
+     */
     @Getter
     private final String desc;
 
+    /**
+     * 文件后缀
+     */
     public final String fileSuffix;
 
+    /**
+     * 菜单id列表
+     */
     public final String[] menuIds;
 
     UploadAttachmentPermission(int type, String desc, String fileSuffix, String[] menuIds) {

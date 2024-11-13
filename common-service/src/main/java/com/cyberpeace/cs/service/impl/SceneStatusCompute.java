@@ -4,10 +4,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 
+/**
+ * 场景状态计算
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 public class SceneStatusCompute {
 
 	/**
 	 * 计算场景状态
+	 *
 	 * @param scene
 	 * @return
 	 */
@@ -36,6 +43,9 @@ public class SceneStatusCompute {
 		return SceneStatusEnum.INIT;
 	}
 
+	/**
+	 * 场景状态计算
+	 */
 	private SceneStatusCompute() {}
 
 }

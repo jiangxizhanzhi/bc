@@ -40,22 +40,46 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 直播Service实现
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 @Slf4j
 @Service
 public class LiveServiceImpl implements LiveService {
 
+	/**
+	 * 我Web插座处理器
+	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 发布 URL
+	 */
 	private String PUBLISH_URL;
 
+	/**
+	 * 播放网址
+	 */
 	private String PLAY_URL;
 
+	/**
+	 * 获取流网址
+	 */
 	private String GET_STREAMS_URL;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		String srsHost = SystemPropUtil.getProp("SRS_HOST");
@@ -68,6 +92,12 @@ public class LiveServiceImpl implements LiveService {
 		GET_STREAMS_URL = ProtocolHead.HTTP + srsHost + streamsUrl;
 	}
 
+	/**
+	 * 获取发布网址
+	 *
+	 * @param req 请求体
+	 * @return {@code String }
+	 */
 	@Override
 	public String getPublishUrl(WebRTCReq req) {
 		String roomId = req.getRoomId();
@@ -87,6 +117,12 @@ public class LiveServiceImpl implements LiveService {
 		return String.format(PUBLISH_URL, roomId, userId);
 	}
 
+	/**
+	 * 获取直播
+	 *
+	 * @param req 请求体
+	 * @return {@code LiveStatus }
+	 */
 	@Override
 	public LiveStatus getLive(WebRTCReq req) {
 		Map<String, Set<String>> streams = getStreams();
@@ -100,6 +136,11 @@ public class LiveServiceImpl implements LiveService {
 		return status;
 	}
 
+	/**
+	 * 获取流
+	 *
+	 * @return {@code Map<String, Set<String>> }
+	 */
 	private Map<String, Set<String>> getStreams() {
 		String rawRsp = doHttpGet(GET_STREAMS_URL);
 		SrsStreamApiRes res = JsonUtil.toJsonObject(rawRsp, SrsStreamApiRes.class);
@@ -114,6 +155,11 @@ public class LiveServiceImpl implements LiveService {
 
 	}
 
+	/**
+	 * handle 回调
+	 *
+	 * @param req 请求体
+	 */
 	@Override
 	public void handleCallback(SrsCallbackReq req) {
 		if (req.getAction().equals(SRSAction.ON_PUBLISH)) {
@@ -123,6 +169,12 @@ public class LiveServiceImpl implements LiveService {
 		}
 	}
 
+	/**
+	 * 做http获取
+	 *
+	 * @param url 网址
+	 * @return {@code String }
+	 */
 	private String doHttpGet(String url) {
 		HttpGet request = new HttpGet(url);
 		HttpResponse response = null;
@@ -144,8 +196,9 @@ public class LiveServiceImpl implements LiveService {
 
 	/**
 	 * 推送直播状态消息
+	 *
 	 * @param stream 直播流id
-	 * @param code action code
+	 * @param code   action code
 	 */
 	private void pushLiveStatusMessage(String stream, Integer code) {
 		LiveStatusIdentifier identifier = new LiveStatusIdentifier();
@@ -162,10 +215,22 @@ public class LiveServiceImpl implements LiveService {
 	}
 }
 
+/**
+ * 协议头
+ *
+ * @author SN
+ * @date 2024/11/11
+ */
 class ProtocolHead {
 
+	/**
+	 * http
+	 */
 	public static final String HTTP = "http://";
 
+	/**
+	 * https
+	 */
 	public static final String HTTPS = "https://";
 
 }

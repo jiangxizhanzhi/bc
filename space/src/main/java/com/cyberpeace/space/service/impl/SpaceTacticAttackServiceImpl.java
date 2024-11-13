@@ -9,7 +9,6 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.tool.service.ToolService;
-import com.cyberpeace.cr.tool.service.context.TacticTool;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttack;
 import com.cyberpeace.space.dao.entity.SpaceTacticAttackCategory;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackCategoryMapper;
@@ -144,7 +143,6 @@ public class SpaceTacticAttackServiceImpl implements SpaceTacticAttackService {
 		AttackDetail detail = BeanUtils.copy(attack, AttackDetail.class);
 		detail.setTag(JsonUtil.toJsonObjectArray(attack.getTag(), String.class));
 		detail.setAction(JsonUtil.toJsonObjectArray(attack.getAction(), TacticAction.class));
-		detail.setTool(JsonUtil.toJsonObjectArray(attack.getTool(), TacticTool.class));
 
 		SpaceTacticAttackCategory category = categoryMapper.selectById(attack.getCategoryId());
 		if (category != null) {

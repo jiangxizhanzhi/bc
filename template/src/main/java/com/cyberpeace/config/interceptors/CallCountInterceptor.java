@@ -45,7 +45,7 @@ public class CallCountInterceptor implements HandlerInterceptor {
 			Method method = ((HandlerMethod) handler).getMethod();
 			CallCount callCount = method.getAnnotation(CallCount.class);
 			if (null != callCount) {
-				String name = callCount.name();
+				String name = callCount.value();
 				service.addCount(name);
 			}
 		}

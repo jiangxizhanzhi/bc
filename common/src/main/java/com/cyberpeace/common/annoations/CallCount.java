@@ -14,9 +14,9 @@ import java.lang.annotation.*;
 public @interface CallCount {
 
     /**
-     * 名称
+     * 类型
      *
      * @return {@code String }
      */
-    String name() default "none";
+    String value() default "none";
 }

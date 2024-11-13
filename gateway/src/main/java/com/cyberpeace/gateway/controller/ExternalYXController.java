@@ -3,6 +3,8 @@ package com.cyberpeace.gateway.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.CallCount;
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.OrderNameConstant;
@@ -127,6 +129,7 @@ public class ExternalYXController {
 	 */
 	@ApiOperation("分页查询实践操作习题")
 	@GetMapping("/operation/list")
+	@CallCount(CallType.THEORY)
 	public BaseRsp<ListRsp<AdminOperationListBo>> list(AdminOperationListReq listReq) {
 
 		OperationListQueryBo listQuery = BeanUtils.copy(listReq, OperationListQueryBo.class);
@@ -149,6 +152,7 @@ public class ExternalYXController {
 
 	@GetMapping("/practice/operation")
 	@ApiOperation("获取单个实践操作")
+	@CallCount(CallType.THEORY)
 	public BaseRsp<WebOperationBo> get(@RequestParam("resource_id") String resourceId) {
 		WebOperationBo operationBo = practiceOperationService.selectById(resourceId);
 
@@ -163,6 +167,7 @@ public class ExternalYXController {
 	 */
 	@ApiOperation("分页查询理论习题列表")
 	@GetMapping("/theory/list")
+	@CallCount(CallType.THEORY)
 	public BaseRsp<ListRsp<ExternalTheoryBo>> list(TheoryListReq pageReq) {
 
 		Page page = pageReq.toPageParam();
@@ -190,6 +195,7 @@ public class ExternalYXController {
 	 */
 	@ApiOperation("根据镜像id获取实操题列表")
 	@PostMapping("/list/by_node")
+	@CallCount(CallType.THEORY)
 	public BaseRsp<List<AdminOperationListBo>> getOperationByNode(@RequestBody OperationByNodeReq operationByNodeReq) {
 		return new BaseRsp<>(practiceOperationService.getOperationByBodeIds(operationByNodeReq.getNodeIds()));
 	}
@@ -212,6 +218,7 @@ public class ExternalYXController {
 	 */
 	@ApiOperation("知识库统计")
 	@GetMapping("/knowledge/statistics")
+	@CallCount(CallType.THEORY)
 	public BaseRsp<List<ToolTypeCount>> knowledgeStatistics() {
 		List<ToolTypeCount> statisticsBos = new ArrayList<>();
 		ToolTypeCount courseBo = new ToolTypeCount();
@@ -388,6 +395,7 @@ public class ExternalYXController {
 	 */
 	@ApiOperation("分页查询练习分类")
 	@GetMapping("/category/list")
+	@CallCount(CallType.THEORY)
 	public BaseRsp<ListRsp<CategoryListBo>> list(@Validated PracticeCategoryListReq categoryListReq) {
 
 		Page page = categoryListReq.toPageParam();

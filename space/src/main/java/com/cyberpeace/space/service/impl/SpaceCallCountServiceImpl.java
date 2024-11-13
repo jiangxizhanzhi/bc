@@ -38,7 +38,22 @@ public class SpaceCallCountServiceImpl extends ServiceImpl<SpaceCallCountMapper,
 		}
 	}
 
-    /**
+	/**
+	 * 获取计数由名称
+	 *
+	 * @param name 名称
+	 * @return {@code Integer }
+	 */
+	@Override
+	public Integer getCountByName(String name) {
+		SpaceCallCount count = this.selectByName(name);
+		if (count == null) {
+			return 0;
+		}
+		return count.getCalls();
+	}
+
+	/**
      * 查询由名称
      *
      * @param name 名称

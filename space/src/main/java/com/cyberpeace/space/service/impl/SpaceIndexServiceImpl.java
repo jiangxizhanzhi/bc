@@ -1,14 +1,7 @@
 package com.cyberpeace.space.service.impl;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.constant.CallType;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
@@ -24,17 +17,20 @@ import com.cyberpeace.space.dao.mapper.SpaceBaseAlgorithmMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticAttackMapper;
 import com.cyberpeace.space.dao.mapper.SpaceTacticDefenseMapper;
 import com.cyberpeace.space.dao.mapper.SpaceWarningDictionaryMapper;
-import com.cyberpeace.space.service.SpaceActionFrameService;
-import com.cyberpeace.space.service.SpaceIndexService;
-import com.cyberpeace.space.service.SpaceRuleCommonService;
-import com.cyberpeace.space.service.SpaceStrategyService;
+import com.cyberpeace.space.service.*;
 import com.cyberpeace.space.service.context.index.*;
 import com.cyberpeace.space.service.context.rule.BaseDataRuleStatistics;
 import com.cyberpeace.space.service.context.rule.RaceStatistics;
 import com.cyberpeace.space.service.context.rule.ThreatDetectStatistics;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -82,6 +78,9 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
 
+	@Autowired
+	private SpaceCallCountService callCountService;
+
 	@Override
 	public IndexKnowledge getKnowledgeRepositoryStatistics() {
 		IndexKnowledge res = new IndexKnowledge();
@@ -95,15 +94,18 @@ public class SpaceIndexServiceImpl implements SpaceIndexService {
 		theory.setOnlineExp(courseLessonMapper.selectCount(wrapperExp));
 		theory.setTheoryExam(practiceTheoryMapper.selectCount(null));
 		theory.setExpExam(practiceOperationMapper.selectCount(null));
+		theory.setUse(callCountService.getCountByName(CallType.THEORY));
 		theory.calSum();
 		res.setTheory(theory);
 		// 策略库
 		IndexStrategy strategy = strategyService.getStatistics();
+		strategy.setUse(callCountService.getCountByName(CallType.STRATEGY));
 		res.setStrategy(strategy);
 		// 战法
 		IndexTactic tactic = new IndexTactic();
 		tactic.setAttack(spaceTacticAttackMapper.selectCount(null));
 		tactic.setDefense(spaceTacticDefenseMapper.selectCount(null));
+		tactic.setUse(callCountService.getCountByName(CallType.TACTIC));
 		tactic.calSum();
 		res.setTactic(tactic);
 		// 规则

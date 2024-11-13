@@ -98,7 +98,7 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	CourseLesson selectCourseByCourseAndName(@Param("courseId") String courseId, @Param("name") String name);
 
 	/**
-	 * 查询分钟指数
+	 * 查询最小指数
 	 *
 	 * @param courseId 课程id
 	 * @return {@code Integer }

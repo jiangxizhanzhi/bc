@@ -60,7 +60,7 @@ public class CommonController {
 	private UtilService utilService;
 
 	/**
-	 * Markdown上传名称莱恩
+	 * Markdown上传名称长度
 	 */
 	private String MD_UPLOAD_NAME_LEN;
 
@@ -221,7 +221,7 @@ public class CommonController {
 	}
 
 	/**
-	 * 验证文件名称莱恩
+	 * 验证文件名称长度
 	 *
 	 * @param fileName 文件名称
 	 */

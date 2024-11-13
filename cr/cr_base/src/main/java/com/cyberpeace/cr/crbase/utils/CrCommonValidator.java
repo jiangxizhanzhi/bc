@@ -124,7 +124,7 @@ public class CrCommonValidator {
 	 * 验证得分
 	 *
 	 * @param target    目标
-	 * @param maxValue  麦克斯值
+	 * @param maxValue  最大值
 	 * @param errorCode 错误代号
 	 */
 	public static void validateScore(int target, int maxValue, String errorCode) {
@@ -152,8 +152,8 @@ public class CrCommonValidator {
 	 * 验证大小
 	 *
 	 * @param target    目标
-	 * @param min       分钟
-	 * @param max       麦克斯
+	 * @param min       最小
+	 * @param max       最大
 	 * @param errorCode 错误代号
 	 */
 	public static <T> void validateSize(List<T> target, int min, int max, String errorCode) {
@@ -168,7 +168,7 @@ public class CrCommonValidator {
 	 *
 	 * @param target    目标
 	 * @param minValue  分钟值
-	 * @param maxValue  麦克斯值
+	 * @param maxValue  最大值
 	 * @param errorCode 错误代号
 	 */
 	public static void validateRange(int target, int minValue, int maxValue, String errorCode) {

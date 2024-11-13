@@ -59,37 +59,37 @@ public interface CrCommonConstants {
 	int SKILL_POINTS_SIZE = ConfigReader.readInt("cr.skill.point.size");
 
 	/**
-	 * 技能点分钟值
+	 * 技能点最小值
 	 */
 	int SKILL_POINT_MIN_VALUE = ConfigReader.readInt("cr.skill.point.min");
 
 	/**
-	 * 技能点麦克斯值
+	 * 技能点最大值
 	 */
 	int SKILL_POINT_MAX_VALUE = ConfigReader.readInt("cr.skill.point.max");
 
 	/**
-	 * 分钟阶段名称莱恩
+	 * 最小阶段名称长度
 	 */
 	int MIN_STAGE_NAME_LEN = ConfigReader.readInt("cr.stage.name.len.min");
 
 	/**
-	 * 麦克斯阶段名称莱恩
+	 * 最大阶段名称长度
 	 */
 	int MAX_STAGE_NAME_LEN = ConfigReader.readInt("cr.stage.name.len.max");
 
 	/**
-	 * 得分麦克斯值
+	 * 得分最大值
 	 */
 	int SCORE_MAX_VALUE = ConfigReader.readInt("cr.score.max");
 
 	/**
-	 * 分钟训练名称莱恩
+	 * 最小训练名称长度
 	 */
 	int MIN_TRAINING_NAME_LEN = ConfigReader.readInt("cr.training.name.len.min");
 
 	/**
-	 * 麦克斯训练名称莱恩
+	 * 最大训练名称长度
 	 */
 	int MAX_TRAINING_NAME_LEN = ConfigReader.readInt("cr.training.name.len.max");
 
@@ -99,12 +99,12 @@ public interface CrCommonConstants {
 	String NULL = "null";
 
 	/**
-	 * 分钟标记计数
+	 * 最小标记计数
 	 */
 	Integer MIN_TAG_COUNT = ConfigReader.readInt("cr.tag.count.min");
 
 	/**
-	 * 麦克斯标记计数
+	 * 最大标记计数
 	 */
 	Integer MAX_TAG_COUNT = ConfigReader.readInt("cr.tag.count.max");
 
@@ -119,7 +119,7 @@ public interface CrCommonConstants {
 	Integer MIN_STR_LEN = ConfigReader.readInt("cr.str.len.min");
 
 	/**
-	 * 麦克斯名称str莱恩
+	 * 最大名称str长度
 	 */
 	Integer MAX_NAME_STR_LEN = ConfigReader.readInt("cr.str.len.name.max");
 
@@ -134,7 +134,7 @@ public interface CrCommonConstants {
 	Integer MAX_OPTION_STR_LEN = ConfigReader.readInt("cr.option.len.max");
 
 	/**
-	 * 麦克斯描述莱恩
+	 * 最大描述长度
 	 */
 	Integer MAX_DESC_LEN = ConfigReader.readInt("cr.desc.len.max");
 

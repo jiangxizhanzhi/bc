@@ -259,7 +259,7 @@ public interface CrBusinessErrorCode {
 	String MISSION_TEMPLATE_INVALID = "101047";
 
 	/**
-	 * 训练名称莱恩错误
+	 * 训练名称长度错误
 	 */// 训练名称长度超出范围，应为4~40
 	String TRAINING_NAME_LEN_ERROR = "101048";
 
@@ -354,7 +354,7 @@ public interface CrBusinessErrorCode {
 	String TAG_DUPLICATE = "101066";
 
 	/**
-	 * 非法名称莱恩
+	 * 非法名称长度
 	 */// 名称长度非法
 	String ILLEGAL_NAME_LEN = "101067";
 

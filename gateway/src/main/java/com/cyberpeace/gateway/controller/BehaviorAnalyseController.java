@@ -12,15 +12,29 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 行为分析Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "回调接口")
 @Slf4j
 // @RestController
 @RequestMapping("/cs/behavior/analyse")
 public class BehaviorAnalyseController {
 
+	/**
+	 * 行为分析Service
+	 */
 	@Autowired
 	private BehaviorAnalyseService behaviorAnalyseService;
 
+	/**
+	 * 获取分析结果
+	 *
+	 * @return {@code BaseRsp<BehaviorAnalyseResult> }
+	 */
 	@ApiOperation("分析结果")
 	@GetMapping("")
 	public BaseRsp<BehaviorAnalyseResult> getAnalyseResult() {

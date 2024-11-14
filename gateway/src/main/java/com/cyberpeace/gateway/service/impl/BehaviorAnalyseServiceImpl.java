@@ -24,25 +24,54 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.google.common.collect.Maps;
 
+/**
+ * 行为分析Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 
+	/**
+	 * 行为记录Mapper
+	 */
 	@Autowired
 	private BehaviorRecordMapper behaviorRecordMapper;
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 课程课时Service
+	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
+	/**
+	 * 练习理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 名称缓存
+	 */
 	private Map<String, String> nameCache = Maps.newConcurrentMap();
 
+	/**
+	 * 获取分析结果
+	 *
+	 * @return {@code BehaviorAnalyseResult }
+	 */
 	@Override
 	public BehaviorAnalyseResult getAnalyseResult() {
 		BehaviorAnalyseResult res = new BehaviorAnalyseResult();
@@ -98,6 +127,12 @@ public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 		return res;
 	}
 
+	/**
+	 * 获取理论名称
+	 *
+	 * @param id id
+	 * @return {@code String }
+	 */
 	private String getTheoryName(String id) {
 		if (null == id || "".equals(id)) {
 			return "None";
@@ -114,6 +149,12 @@ public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 		return theory.getTitle();
 	}
 
+	/**
+	 * 获取实操名称
+	 *
+	 * @param id id
+	 * @return {@code String }
+	 */
 	private String getOperationName(String id) {
 		if (null == id || "".equals(id)) {
 			return "None";
@@ -130,6 +171,12 @@ public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 		return operation.getTitle();
 	}
 
+	/**
+	 * 获取最id
+	 *
+	 * @param recordList 记录列表
+	 * @return {@code String }
+	 */
 	private String getMostId(List<BehaviorRecordEntity> recordList) {
 		Map<String, List<BehaviorRecordEntity>> map = StreamApiUtils.groupBy(recordList,
 				BehaviorRecordEntity::getTarget);

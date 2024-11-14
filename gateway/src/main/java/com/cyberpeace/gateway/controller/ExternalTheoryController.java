@@ -47,6 +47,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 外部理论Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "外部接口-理论习题相关api")
 @Slf4j
 @AuthKeyUser
@@ -54,21 +60,41 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/gateway/theory")
 public class ExternalTheoryController {
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 练习类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 练习设置Service
+	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
+	/**
+	 * 练习理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	/**
+	 * 获取练习设置列表
+	 *
+	 * @return {@code BaseRsp<List<ExternalPracticeSetBo>> }
+	 */
 	@ApiOperation("理论基础习题集")
 	@GetMapping("/practice-set/list")
 	public BaseRsp<List<ExternalPracticeSetBo>> getPracticeSetList() {
@@ -92,6 +118,12 @@ public class ExternalTheoryController {
 		return new BaseRsp<>(setBoList);
 	}
 
+	/**
+	 * 获取类别列表
+	 *
+	 * @param practiceSetId 练习设置id
+	 * @return {@code BaseRsp<List<ExternalPracticeCategoryBo>> }
+	 */
 	@AuthOjKey
 	@ApiOperation("理论基础分类-全量获取")
 	@GetMapping("/category/list")
@@ -122,6 +154,12 @@ public class ExternalTheoryController {
 		return new BaseRsp<>(categoryBoList);
 	}
 
+	/**
+	 * 获取理论列表
+	 *
+	 * @param queryParams 查询参数
+	 * @return {@code BaseRsp<ListRsp<PracticeTheory>> }
+	 */
 	@ApiOperation("理论基础题库-分页查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<PracticeTheory>> getTheoryList(PracticeTheoryListReq queryParams) {
@@ -148,6 +186,12 @@ public class ExternalTheoryController {
 		return new BaseRsp<>(PageUtil.getListResult(result));
 	}
 
+	/**
+	 * 批量获取
+	 *
+	 * @param resourceIds 资源id列表
+	 * @return {@code BaseRsp<List<PracticeTheory>> }
+	 */
 	@ApiOperation("理论基础题库-批量查询")
 	@GetMapping("/batch-get")
 	@AuthOjKey
@@ -160,6 +204,12 @@ public class ExternalTheoryController {
 		return new BaseRsp<>(practiceTheoryMapper.batchGet(resourceIds));
 	}
 
+	/**
+	 * 获取理论随机
+	 *
+	 * @param queryParams 查询参数
+	 * @return {@code BaseRsp<List<PracticeTheory>> }
+	 */
 	@ApiOperation("理论基础题库-随机获取数条")
 	@GetMapping("/random-choice")
 	public BaseRsp<List<PracticeTheory>> getTheoryRandom(PracticeRandomChoiceReq queryParams) {
@@ -188,6 +238,12 @@ public class ExternalTheoryController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 搜索计数
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ExternalTheoryCountBo> }
+	 */
 	@ApiOperation("查询各类型理论习题数量")
 	@GetMapping("/type/count")
 	public BaseRsp<ExternalTheoryCountBo> searchCount(@Validated PracticeTheoryListReq listReq) {

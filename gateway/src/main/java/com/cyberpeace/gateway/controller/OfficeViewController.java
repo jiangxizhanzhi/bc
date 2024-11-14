@@ -26,21 +26,42 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * Office视图Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Api(tags = "外部接口-office文件展示相关api")
 @RestController
 @RequestMapping("/gateway/office/")
 public class OfficeViewController {
 
+	/**
+	 * Office视图Service
+	 */
 	@Autowired
 	private OfficeViewService officeViewService;
 
+	/**
+	 * 课程验证处理器
+	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 获取文件信息
+	 *
+	 * @param lessonId 课时id
+	 * @return {@code Map<String, Object> }
+	 */
 	@ApiOperation("获取课时文件信息")
 	@GetMapping("/oj/lesson/handout/info")
 	public Map<String, Object> getFileInfo(
@@ -50,6 +71,14 @@ public class OfficeViewController {
         return ObjUtil.obj2map(officeFileInfoBo);
 	}
 
+	/**
+	 * 获取文件流
+	 *
+	 * @param lessonId 课时id
+	 * @param response 响应
+	 * @return {@code BaseRsp<Void> }
+	 * @throws FileNotFoundException 文件未找到异常
+	 */
 	@ApiOperation("获取课时文件流")
 	@GetMapping("/oj/lesson/handout")
 	public BaseRsp<Void> getFileStream(

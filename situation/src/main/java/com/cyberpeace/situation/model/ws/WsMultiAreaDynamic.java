@@ -11,9 +11,15 @@ import lombok.Data;
 @Data
 public class WsMultiAreaDynamic extends WsMultiNodeDynamic implements Serializable {
 
+	/**
+	 * 源节点信息（更新部分）
+	 */
 	@ApiModelProperty("源节点信息（更新部分）")
 	private ElementInfo sourceElementInfo;
 
+	/**
+	 * 目的区域信息（更新部分）
+	 */
 	@ApiModelProperty("目的区域信息（更新部分）")
 	private AreaInfo targetAreaInfo;
 

@@ -8,9 +8,15 @@ import lombok.Data;
 @Data
 public class KnowledgeTreeRes {
 
+	/**
+	 * 类别
+	 */
 	@ApiModelProperty("类别")
 	private String category;
 
+	/**
+	 * 知识列表
+	 */
 	@ApiModelProperty("知识列表")
 	private List<KnowledgeRes> knowledgeResList;
 

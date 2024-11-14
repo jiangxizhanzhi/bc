@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class SceneIdReq implements Serializable {
 
+	/**
+	 * 场景id
+	 */
 	@ApiModelProperty("场景id")
 	private String sceneId;
 

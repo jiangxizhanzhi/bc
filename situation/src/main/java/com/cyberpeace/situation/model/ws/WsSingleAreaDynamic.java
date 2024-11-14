@@ -10,6 +10,9 @@ import lombok.Data;
 @Data
 public class WsSingleAreaDynamic extends WsSingleNodeDynamic implements Serializable {
 
+	/**
+	 * 目的区域信息（更新部分）
+	 */
 	@ApiModelProperty("目的区域信息（更新部分）")
 	private AreaInfo targetAreaInfo;
 

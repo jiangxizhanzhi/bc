@@ -11,12 +11,21 @@ import lombok.Data;
 @Data
 public class LevelStatisticBo implements Serializable {
 
+	/**
+	 * 层级id
+	 */
 	@ApiModelProperty("层级id")
 	private String levelId;
 
+	/**
+	 * 层级名称
+	 */
 	@ApiModelProperty("层级名称")
 	private String levelName;
 
+	/**
+	 * 岗位列表
+	 */
 	@ApiModelProperty("岗位列表")
 	private List<RoleContext> roles;
 

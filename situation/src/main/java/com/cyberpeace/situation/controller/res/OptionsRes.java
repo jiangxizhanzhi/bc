@@ -12,18 +12,33 @@ import lombok.Data;
 @Data
 public class OptionsRes {
 
+	/**
+	 * 动效类型
+	 */
 	@ApiModelProperty("动效类型")
 	private List<WebAttackType> attackTypeList;
 
+	/**
+	 * 线型
+	 */
 	@ApiModelProperty("线型")
 	private List<LocalType> lineTypeList;
 
+	/**
+	 * 颜色
+	 */
 	@ApiModelProperty("颜色")
 	private List<LocalType> colorList;
 
+	/**
+	 * 节点id和名称
+	 */
 	@ApiModelProperty("节点id和名称")
 	private List<ElementType> elementList;
 
+	/**
+	 * 区域id和名称
+	 */
 	@ApiModelProperty("区域id和名称")
 	private List<ElementType> areaList;
 

@@ -18,12 +18,21 @@ import java.io.Serializable;
 @ApiModel("知识点进度计算")
 public class KnowledgeStudyPercentBo implements Serializable {
 
+	/**
+	 * 知识点编号
+	 */
 	@ApiModelProperty("知识点编号")
 	private String knowledgeId;
 
+	/**
+	 * 知识点名称
+	 */
 	@ApiModelProperty("知识点名称")
 	private String knowledgeName;
 
+	/**
+	 * 知识点完成百分比
+	 */
 	@ApiModelProperty("知识点完成百分比")
 	private Integer percent;
 }

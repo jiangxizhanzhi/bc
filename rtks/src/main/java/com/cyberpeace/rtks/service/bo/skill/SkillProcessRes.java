@@ -11,9 +11,15 @@ import lombok.Data;
 @Data
 public class SkillProcessRes extends SkillResBase implements Serializable {
 
+	/**
+	 * 完成度
+	 */
 	@ApiModelProperty("完成度")
 	private Integer process = 0;
 
+	/**
+	 * 任务完成度
+	 */
 	@ApiModelProperty("任务完成度")
 	private List<MissionProcessBo> missions = Lists.newArrayList();
 }

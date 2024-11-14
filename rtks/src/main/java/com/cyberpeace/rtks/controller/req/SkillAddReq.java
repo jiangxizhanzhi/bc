@@ -21,13 +21,22 @@ import lombok.Data;
 @ApiModel
 public class SkillAddReq implements Serializable {
 
+	/**
+	 * 技能编号
+	 */
 	@ApiModelProperty(value = "技能编号")
 	private String resourceId;
 
+	/**
+	 * 技能内容
+	 */
 	@ApiModelProperty(value = "技能内容")
 	@NotBlank
 	private String content;
 
+	/**
+	 * 关联任务
+	 */
 	@ApiModelProperty("关联任务")
 	private List<IdWeight> missions = Lists.newArrayList();
 

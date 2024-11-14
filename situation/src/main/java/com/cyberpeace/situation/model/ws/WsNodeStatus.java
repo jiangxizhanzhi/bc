@@ -13,9 +13,15 @@ import lombok.Data;
 @Data
 public class WsNodeStatus implements Serializable {
 
+	/**
+	 * 节点状态列表
+	 */
 	@ApiModelProperty("节点状态列表")
 	private List<ElementStatusContext> elementStatus = Lists.newArrayList();
 
+	/**
+	 * 链路状态
+	 */
 	@ApiModelProperty("链路状态")
 	private List<ConnectionStatusContext> connectionStatus = Lists.newArrayList();
 

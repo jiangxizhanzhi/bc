@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class AttackFrontBo extends FrameItemBase implements Serializable {
 
+	/**
+	 * 是否和当前训练关联
+	 */
 	@ApiModelProperty("是否和当前训练关联")
 	private Boolean related = false;
 }

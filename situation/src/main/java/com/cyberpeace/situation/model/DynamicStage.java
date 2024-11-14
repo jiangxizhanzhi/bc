@@ -13,10 +13,16 @@ import lombok.Data;
 @Data
 public class DynamicStage implements Serializable {
 
+	/**
+	 * 阶段名称
+	 */
 	@ApiModelProperty("阶段名称")
 	@NotBlank
 	private String name;
 
+	/**
+	 * 动效数据
+	 */
 	@ApiModelProperty("动效数据")
 	private List<AttackMessageReq> attackMessageReqList;
 

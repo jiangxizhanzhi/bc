@@ -11,9 +11,15 @@ import java.io.Serializable;
 @ApiModel
 public class TaskAddReq implements Serializable {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("资源id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 */
 	@NotBlank
 	@ApiModelProperty("名称")
 	private String content;

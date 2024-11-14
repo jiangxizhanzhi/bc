@@ -8,18 +8,33 @@ import lombok.Data;
 @Data
 public class MultiRoleRankingBo implements Serializable {
 
+	/**
+	 * 用户id
+	 */
 	@ApiModelProperty("用户id")
 	private String userId;
 
+	/**
+	 * 用户名
+	 */
 	@ApiModelProperty("用户名")
 	private String name;
 
+	/**
+	 * 优秀岗位数
+	 */
 	@ApiModelProperty("优秀岗位数")
 	private Integer excellent;
 
+	/**
+	 * 合格岗位数
+	 */
 	@ApiModelProperty("合格岗位数")
 	private Integer qualified;
 
+	/**
+	 * 优秀岗位匹配总数
+	 */
 	@ApiModelProperty("优秀岗位匹配总数")
 	private Integer excellentMatchSum;
 

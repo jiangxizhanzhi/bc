@@ -6,9 +6,15 @@ import lombok.Data;
 @Data
 public class WsMessage<T> {
 
+	/**
+	 * 消息编码
+	 */
 	@ApiModelProperty("消息编码")
 	private String code;
 
+	/**
+	 * 消息内容
+	 */
 	@ApiModelProperty("消息内容")
 	private T data;
 

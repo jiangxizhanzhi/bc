@@ -11,9 +11,15 @@ import lombok.Data;
 @Data
 public class EngageSubCategoryBo<T extends FrameItemBase> implements Serializable {
 
+	/**
+	 * 技术名称
+	 */
 	@ApiModelProperty("技术名称")
 	private String subCategoryName;
 
+	/**
+	 * 子技术
+	 */
 	@ApiModelProperty("子技术")
 	private List<T> engages;
 

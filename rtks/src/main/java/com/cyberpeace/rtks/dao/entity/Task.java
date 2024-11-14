@@ -12,10 +12,16 @@ import lombok.Data;
 @TableName("rtks_task")
 public class Task extends BaseTable {
 
+	/**
+	 * 任务id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	@ApiModelProperty("任务id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("名称")
 	private String content;
 }

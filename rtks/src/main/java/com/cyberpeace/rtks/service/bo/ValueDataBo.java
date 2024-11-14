@@ -11,15 +11,27 @@ import lombok.Data;
 @ApiModel("计算中间存储")
 public class ValueDataBo implements Serializable {
 
+	/**
+	 * 资源编号
+	 */
     @ApiModelProperty("资源编号")
     private String resourceId;
 
+	/**
+	 * 技能或者知识点或者课程名称或者代号
+	 */
     @ApiModelProperty("技能或者知识点或者课程名称或者代号")
     private String content;
 
+	/**
+	 * 进度或者得分
+	 */
     @ApiModelProperty("进度或者得分")
     private Double process = (double) 0;
 
+	/**
+	 * 权重
+	 */
     @ApiModelProperty("权重")
     private Double weight = 1.0;
 

@@ -8,9 +8,15 @@ import lombok.Data;
 @Data
 public class FontStyle implements Serializable {
 
+	/**
+	 * 颜色
+	 */
 	@ApiModelProperty("颜色")
 	private String color;
 
+	/**
+	 * 大小（px）
+	 */
 	@ApiModelProperty("大小（px）")
 	private Integer size;
 

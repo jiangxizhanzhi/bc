@@ -11,15 +11,27 @@ import lombok.Data;
 @Data
 public class RefreshDataRes {
 
+	/**
+	 * 是否自动运行流量
+	 */
 	@ApiModelProperty("是否自动运行流量")
 	private Boolean flowAutoRunResult;
 
+	/**
+	 * 节点和链路状态
+	 */
 	@ApiModelProperty("节点和链路状态")
 	private WsMessage<WsNodeStatus> linkStatus;
 
+	/**
+	 * 流量事件
+	 */
 	@ApiModelProperty("流量事件")
 	private List<WsMessage> flowEvents;
 
+	/**
+	 * 主机采集事件
+	 */
 	@ApiModelProperty("主机采集事件")
 	private List<WsMessage> hostEvents;
 

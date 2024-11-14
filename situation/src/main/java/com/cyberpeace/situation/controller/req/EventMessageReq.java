@@ -12,13 +12,22 @@ import lombok.Data;
 @Data
 public class EventMessageReq implements Serializable {
 
+	/**
+	 * 场景id
+	 */
 	@ApiModelProperty("场景id")
 	@NotEmpty
 	private String sceneId;
 
+	/**
+	 * 消息类型
+	 */
 	@ApiModelProperty("消息类型")
 	private String code;
 
+	/**
+	 * 消息内容
+	 */
 	@ApiModelProperty("消息内容")
 	private WsMultiNodeDynamic data;
 

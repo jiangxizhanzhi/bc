@@ -11,9 +11,15 @@ import java.util.List;
 @ApiModel("进度数据")
 public class PercentRes implements Serializable {
 
+	/**
+	 * x轴，统计项
+	 */
     @ApiModelProperty("x轴，统计项")
     private List<String> xNames;
 
+	/**
+	 * y轴，数值
+	 */
     @ApiModelProperty("y轴，数值")
     private List<Integer> yPercents;
 

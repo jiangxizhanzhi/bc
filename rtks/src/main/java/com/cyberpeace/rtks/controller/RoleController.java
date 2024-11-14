@@ -72,11 +72,17 @@ interface Fields {
 
 class RoleListReq<T> extends PageReqBase {
 
+	/**
+	 * 所属框架id，可以为空
+	 */
 	@ApiModelProperty(value = "所属框架id，可以为空")
 	@Getter
 	@Setter
 	private String frameId;
 
+	/**
+	 * 模糊查询关键词
+	 */
 	@ApiModelProperty(value = "模糊查询关键词")
 	@Getter
 	@Setter

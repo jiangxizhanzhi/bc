@@ -12,9 +12,15 @@ public class Display {
 	@Data
 	public class Label {
 
+	/**
+	 * 颜色
+	 */
 		@ApiModelProperty("颜色")
 		private String fill;
 
+	/**
+	 * 大小（px）
+	 */
 		@ApiModelProperty("大小（px）")
 		private Integer fontSize;
 
@@ -37,12 +43,21 @@ public class Display {
 	@Data
 	public class Body {
 
+	/**
+	 * 边框宽度
+	 */
 		@ApiModelProperty("边框宽度")
 		private Integer strokeWidth;
 
+	/**
+	 * 边框颜色
+	 */
 		@ApiModelProperty("边框颜色")
 		private String stroke;
 
+	/**
+	 * 填充颜色
+	 */
 		@ApiModelProperty("填充颜色")
 		private String fill;
 
@@ -67,15 +82,27 @@ public class Display {
 		}
 	}
 
+	/**
+	 * 区域文本属性
+	 */
 	@ApiModelProperty("区域文本属性")
 	private Label label;
 
+	/**
+	 * 区域填充图片
+	 */
 	@ApiModelProperty("区域填充图片")
 	private String fillPic;
 
+	/**
+	 * 区域区块配置
+	 */
 	@ApiModelProperty("区域区块配置")
 	private Body body;
 
+	/**
+	 * 节点文本属性
+	 */
 	@ApiModelProperty("节点文本属性")
 	private Label text;
 

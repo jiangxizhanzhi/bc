@@ -19,20 +19,35 @@ import org.apache.commons.collections4.CollectionUtils;
 @ApiModel("")
 public class KnowledgeAddReq implements Serializable {
 
+	/**
+	 * 知识点id
+	 */
 	@ApiModelProperty("知识点id")
 	private String resourceId;
 
+	/**
+	 * 知识点名称
+	 */
 	@NotBlank
 	@ApiModelProperty("知识点名称")
 	private String content;
 
+	/**
+	 * 知识点类别id
+	 */
 	@NotBlank
 	@ApiModelProperty("知识点类别id")
 	private String categoryId;
 
+	/**
+	 * 知识点课程权重
+	 */
 	@ApiModelProperty("知识点课程权重")
 	private Integer weight = 1;
 
+	/**
+	 * 知识点关联课程
+	 */
  	@ApiModelProperty("知识点关联课程")
 	private List<RelatedCourse> courseList;
 

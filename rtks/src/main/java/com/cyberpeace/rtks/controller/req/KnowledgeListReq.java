@@ -10,6 +10,9 @@ import lombok.Setter;
 @ApiModel
 public class KnowledgeListReq extends PageReqBase {
 
+	/**
+	 * 类别ID
+	 */
 	@ApiModelProperty(name = "category_id", value = "类别ID")
 	@Getter
 	private String categoryId;

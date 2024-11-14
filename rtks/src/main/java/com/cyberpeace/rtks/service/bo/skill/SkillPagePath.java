@@ -10,6 +10,9 @@ import lombok.Data;
 @Data
 public class SkillPagePath extends SkillResBase implements Serializable {
 
+	/**
+	 * 任务列表
+	 */
 	@ApiModelProperty("任务列表")
 	private List<MissionPathPageBo> missions = Lists.newArrayList();
 }

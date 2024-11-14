@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class FrameAddInput extends FrameInput {
 
+	/**
+	 * 框架名称
+	 */
 	@ApiModelProperty(value = "框架名称")
 	@NotBlank
 	private String name;

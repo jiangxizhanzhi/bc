@@ -16,30 +16,57 @@ import lombok.Data;
 @Data
 public class RoleInput implements Serializable {
 
+	/**
+	 * 岗位名称
+	 */
 	@ApiModelProperty(value = "岗位名称")
 	private String name;
 
+	/**
+	 * 岗位描述
+	 */
 	@ApiModelProperty(value = "岗位描述")
 	private String description;
 
+	/**
+	 * 岗位所属层级id
+	 */
 	@ApiModelProperty(value = "岗位所属层级id")
 	private String levelId;
 
+	/**
+	 * 职责清单
+	 */
 	@ApiModelProperty("职责清单")
 	private List<String> taskIds;
 
+	/**
+	 * 知识点清单
+	 */
 	@ApiModelProperty("知识点清单")
 	private List<String> knowledgeIds;
 
+	/**
+	 * 知识点清单+权重
+	 */
 	@ApiModelProperty("知识点清单+权重")
 	private List<SkillKnowledgeWeight> knowledgeIdWeights = Lists.newArrayList();
 
+	/**
+	 * 技能清单+权重
+	 */
 	@ApiModelProperty("技能清单+权重")
 	private List<IdWeight> skillIdWeights = Lists.newArrayList();
 
+	/**
+	 * 能力清单（暂无）
+	 */
 	@ApiModelProperty("能力清单（暂无）")
 	private List<String> abilityIds = Lists.newArrayList();
 
+	/**
+	 * 知识点权重（百分比）
+	 */
 	@ApiModelProperty("知识点权重（百分比）")
 	private Integer knowledgeWeight;
 

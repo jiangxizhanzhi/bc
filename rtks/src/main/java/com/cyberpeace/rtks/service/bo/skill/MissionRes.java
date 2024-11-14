@@ -10,9 +10,15 @@ import lombok.Data;
 @Data
 public class MissionRes extends MissionTemplateRes implements Serializable {
 
+	/**
+	 * 任务权重
+	 */
 	@ApiModelProperty("任务权重")
 	private Integer weight;
 
+	/**
+	 * rtks技能id
+	 */
 	@ApiModelProperty("rtks技能id")
 	private String skillId;
 }

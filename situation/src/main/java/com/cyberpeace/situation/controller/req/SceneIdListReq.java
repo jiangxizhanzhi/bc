@@ -11,6 +11,9 @@ import lombok.Data;
 @Data
 public class SceneIdListReq implements Serializable {
 
+	/**
+	 * 场景id列表
+	 */
 	@ApiModelProperty("场景id列表")
 	private List<String> sceneIds = Lists.newArrayList();
 

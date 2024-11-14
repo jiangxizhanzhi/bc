@@ -11,9 +11,15 @@ import lombok.Data;
 @Data
 public class SkillTreeRes implements Serializable {
 
+	/**
+	 * 类别
+	 */
 	@ApiModelProperty("类别")
 	private String category;
 
+	/**
+	 * 技能列表
+	 */
 	@ApiModelProperty("技能列表")
 	private List<SkillRes> skillResList;
 

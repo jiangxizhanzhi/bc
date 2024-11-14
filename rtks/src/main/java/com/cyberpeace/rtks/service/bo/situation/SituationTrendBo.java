@@ -13,9 +13,15 @@ import lombok.Data;
 @Data
 public class SituationTrendBo implements Serializable {
 
+	/**
+	 * 日期
+	 */
 	@ApiModelProperty("日期")
 	private List<String> xDates;
 
+	/**
+	 * 人-岗数
+	 */
 	@ApiModelProperty("人-岗数")
 	private List<Integer> yNums;
 

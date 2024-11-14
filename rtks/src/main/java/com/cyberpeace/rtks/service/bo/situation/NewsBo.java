@@ -14,21 +14,39 @@ import lombok.Data;
 @Data
 public class NewsBo implements Serializable {
 
+	/**
+	 * 用户id
+	 */
 	@ApiModelProperty("用户id")
 	private String userId;
 
+	/**
+	 * 用户名称
+	 */
 	@ApiModelProperty("用户名称")
 	private String userName;
 
+	/**
+	 * 岗位id
+	 */
 	@ApiModelProperty("岗位id")
 	private String roleId;
 
+	/**
+	 * 岗位名称
+	 */
 	@ApiModelProperty("岗位名称")
 	private String roleName;
 
+	/**
+	 * 1：合格，2：优秀
+	 */
 	@ApiModelProperty("1：合格，2：优秀")
 	private Integer type;
 
+	/**
+	 * 记录时间
+	 */
 	@ApiModelProperty("记录时间")
 	private Date createTime;
 

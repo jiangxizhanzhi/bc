@@ -12,28 +12,52 @@ import lombok.Getter;
 @TableName("situation_config")
 public class SituationConfig {
 
+	/**
+	 * 自增主键
+	 */
 	@ApiModelProperty("自增主键")
 	private Integer id;
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty("资源id")
 	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 作用域
+	 */
 	@ApiModelProperty("作用域")
 	private String scope;
 
+	/**
+	 * 节点id
+	 */
 	@ApiModelProperty("节点id")
 	private String nodeId;
 
+	/**
+	 * 节点名称
+	 */
 	@ApiModelProperty("节点名称")
 	private String nodeName;
 
+	/**
+	 * 节点类型
+	 */
 	@ApiModelProperty("节点类型")
 	private Integer nodeType;
 
+	/**
+	 * 参数类型
+	 */
 	@ApiModelProperty("参数类型")
 	private Integer attribute;
 
+	/**
+	 * 参数值
+	 */
 	@ApiModelProperty("参数值")
 	private String attributeValue;
 

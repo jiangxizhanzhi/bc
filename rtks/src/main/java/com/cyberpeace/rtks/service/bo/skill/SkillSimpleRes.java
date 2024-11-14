@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class SkillSimpleRes extends SkillResBase implements Serializable {
 
+	/**
+	 * 关联任务数
+	 */
 	@ApiModelProperty("关联任务数")
 	private Integer missionCount;
 }

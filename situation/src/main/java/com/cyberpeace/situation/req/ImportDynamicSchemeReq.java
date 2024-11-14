@@ -12,13 +12,22 @@ import lombok.Data;
 @Data
 public class ImportDynamicSchemeReq {
 
+	/**
+	 * 文件
+	 */
 	@ApiModelProperty(value = "文件", required = true)
 	private MultipartFile file;
 
+	/**
+	 * 场景id
+	 */
 	@ApiModelProperty(value = "场景id", name = "scene_id", required = true)
 	@NotBlank
 	private String scene_id;
 
+	/**
+	 * 是否为实例场景
+	 */
 	@ApiModelProperty(value = "是否为实例场景", name = "is_instance")
 	private Boolean is_instance;
 

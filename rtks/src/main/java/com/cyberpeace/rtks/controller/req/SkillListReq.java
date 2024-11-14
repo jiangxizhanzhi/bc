@@ -10,10 +10,16 @@ import lombok.Setter;
 @ApiModel
 public class SkillListReq extends PageReqBase {
 
+	/**
+	 * 体系ID
+	 */
 	@ApiModelProperty(name = "system_id", value = "体系ID")
 	@Getter
 	private String systemId;
 
+	/**
+	 * 类别ID
+	 */
 	@ApiModelProperty(name = "category_id", value = "类别ID")
 	@Getter
 	private String categoryId;

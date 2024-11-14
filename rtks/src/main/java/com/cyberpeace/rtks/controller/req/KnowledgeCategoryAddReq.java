@@ -11,9 +11,15 @@ import java.io.Serializable;
 @ApiModel
 public class KnowledgeCategoryAddReq implements Serializable {
 
+	/**
+	 * 知识点类别id
+	 */
 	@ApiModelProperty("知识点类别id")
 	private String resourceId;
 
+	/**
+	 * 知识点类别名称
+	 */
 	@NotBlank
 	@ApiModelProperty("知识点类别名称")
 	private String content;

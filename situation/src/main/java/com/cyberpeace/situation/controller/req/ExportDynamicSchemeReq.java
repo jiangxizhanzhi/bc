@@ -9,6 +9,9 @@ import java.io.Serializable;
 @Data
 public class ExportDynamicSchemeReq implements Serializable {
 
+	/**
+	 * 动效方案id
+	 */
     @ApiModelProperty(value = "动效方案id",required = true)
     @NotBlank
     private String resourceId;

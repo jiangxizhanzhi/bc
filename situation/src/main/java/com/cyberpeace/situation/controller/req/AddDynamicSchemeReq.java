@@ -12,10 +12,16 @@ import lombok.Data;
 @Data
 public class AddDynamicSchemeReq implements Serializable {
 
+	/**
+	 * 场景id
+	 */
 	@ApiModelProperty("场景id")
 	@NotBlank
 	private String sceneId;
 
+	/**
+	 * 动效方案名称
+	 */
 	@ApiModelProperty("动效方案名称")
 	@NotBlank(message = SituationErrorCode.EMPTY_SCHEME_NAME)
 	private String name;

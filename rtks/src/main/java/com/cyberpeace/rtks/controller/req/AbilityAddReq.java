@@ -12,9 +12,15 @@ import lombok.Data;
 @ApiModel
 public class AbilityAddReq implements Serializable {
 
+	/**
+	 * 能力id
+	 */
 	@ApiModelProperty("能力id")
 	private String resourceId;
 
+	/**
+	 * 能力名称
+	 */
 	@NotBlank
 	@ApiModelProperty("能力名称")
 	private String content;

@@ -16,10 +16,16 @@ public class RoleModifyInput extends RoleInput {
 	@NotBlank
 	private String resourceId;
 
+	/**
+	 * 岗位名称
+	 */
 	@ApiModelProperty(value = "岗位名称")
 	@NotEmptyString
 	private String name;
 
+	/**
+	 * 岗位所属层级id
+	 */
 	@ApiModelProperty(value = "岗位所属层级id")
 	@NotEmptyString
 	private String levelId;

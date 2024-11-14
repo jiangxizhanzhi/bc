@@ -10,6 +10,9 @@ import java.io.Serializable;
 @ApiModel("岗位信息")
 public class UserRoleAddReq implements Serializable {
 
+	/**
+	 * 岗位编号
+	 */
     @ApiModelProperty("岗位编号")
     private String roleId;
 

@@ -10,18 +10,33 @@ import lombok.Data;
 @Data
 public class OrgRankingBo implements Serializable {
 
+	/**
+	 * 组织id
+	 */
 	@ApiModelProperty("组织id")
 	private String orgId;
 
+	/**
+	 * 组织名称
+	 */
 	@ApiModelProperty("组织名称")
 	private String orgName;
 
+	/**
+	 * 优秀人数
+	 */
 	@ApiModelProperty("优秀人数")
 	private Integer excellent;
 
+	/**
+	 * 合格人数
+	 */
 	@ApiModelProperty("合格人数")
 	private Integer qualified;
 
+	/**
+	 * 合计
+	 */
 	@ApiModelProperty("合计")
 	private Integer sum;
 

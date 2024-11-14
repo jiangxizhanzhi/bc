@@ -49,32 +49,65 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 练习理论导入Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j(topic = "resourceImport")
 @Service
 public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryMapper, PracticeTheory> implements PracticeTheoryImportService {
 
+	/**
+	 * 练习类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 练习验证处理器
+	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
+	/**
+	 * 练习类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 最大内容长度
+	 */
 	private Integer MAX_CONTENT_LENGTH;
 
+	/**
+	 * 最大类别长度
+	 */
 	private Integer MAX_CATEGORY_LENGTH;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	private void init() {
 		MAX_CONTENT_LENGTH = Integer
@@ -83,6 +116,13 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
 	}
 
+	/**
+	 * 解析课时理论markdown
+	 *
+	 * @param lessonFilePah    课时文件咚咚
+	 * @param mdTheoryPractice markdown理论练习
+	 * @return {@code List<PracticeTheory> }
+	 */
 	@Override
 	public List<PracticeTheory> parseLessonTheoryMd(String lessonFilePah,
 			MdTheoryPractice mdTheoryPractice) {
@@ -100,6 +140,13 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return theories;
 	}
 
+	/**
+	 * 解析马币理论
+	 *
+	 * @param path        路径
+	 * @param practiceSet 习题集
+	 * @return {@code List<PracticeTheory> }
+	 */
 	@Override
 	public List<PracticeTheory> parseRmTheory(String path, PracticeSet practiceSet) {
 		// 获取excel数据
@@ -127,6 +174,12 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 				practiceTheory -> practiceTheory.getContent().toUpperCase(Locale.ROOT));
 	}
 
+	/**
+	 * 解析课时理论胜过
+	 *
+	 * @param path 路径
+	 * @return {@code List<PracticeTheory> }
+	 */
 	@Override
 	public List<PracticeTheory> parseLessonTheoryExcel(String path) {
 
@@ -139,6 +192,14 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return StreamApiUtils.map(sheetData, rowData -> excelDataToLessonTheory(rowData, null));
 	}
 
+	/**
+	 * 导入理论
+	 *
+	 * @param practiceSetId 练习设置id
+	 * @param filePath      文件路径
+	 * @param userId        用户id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean importTheory(String practiceSetId, String filePath, String userId) {
 		// 基本数据校验
@@ -177,6 +238,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 将excel数据转换为实体类
+	 *
 	 * @param excelRowData
 	 * @param userId
 	 * @return
@@ -276,6 +338,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 处理习题类型
+	 *
 	 * @param theoryType 习题类型
 	 * @return
 	 */
@@ -298,6 +361,8 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 	 * excel数据转化为实体类
 	 *
 	 * @param excelRowData
+	 * @param practiceSet  习题集
+	 * @param userId       用户id
 	 * @return
 	 */
 	private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet,
@@ -410,6 +475,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 处理填空题答案
+	 *
 	 * @param excelRowData
 	 * @param index
 	 * @return
@@ -450,6 +516,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 处理选项内容
+	 *
 	 * @param excelRowData
 	 * @param start
 	 * @return
@@ -484,6 +551,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 处理选择题答案
+	 *
 	 * @param answer
 	 * @return
 	 */
@@ -500,6 +568,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 处理理论习题类型
+	 *
 	 * @param theoryType 习题类型
 	 * @return
 	 */
@@ -520,6 +589,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 处理习题难度
+	 *
 	 * @param theoryDifficulty 习题难度
 	 * @return
 	 */
@@ -541,6 +611,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 将md文件内容转换为实体类
+	 *
 	 * @param lessonFilePath
 	 * @param theoryBaseMdList
 	 * @param code
@@ -645,6 +716,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 	/**
 	 * 计算权重
+	 *
 	 * @param split
 	 * @return
 	 */
@@ -660,6 +732,12 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 		return weights;
 	}
 
+	/**
+	 * 改变标题自理论
+	 *
+	 * @param practiceTheory 练习理论
+	 * @param theoryBaseMd   理论基础markdown
+	 */
 	private void changeTitleToTheory(PracticeTheory practiceTheory, TheoryBaseMd theoryBaseMd) {
 
 		String[] split = theoryBaseMd.getTitle().split("\n");

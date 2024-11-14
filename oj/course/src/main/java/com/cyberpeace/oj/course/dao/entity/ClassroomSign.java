@@ -10,6 +10,12 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.*;
 
+/**
+ * 教室标志
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,19 +23,40 @@ import lombok.*;
 @TableName("oj_classroom_sign")
 public class ClassroomSign extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 课堂id
+	 */
 	private String classroomId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 登录
+	 */
 	private Boolean signIn;
 
+	/**
+	 * 需要帮助
+	 */
 	private Integer needHelp;
 
+	/**
+	 * 签到时间
+	 */
 	private Date signInTime;
 
+	/**
+	 * 节点id
+	 */
 	private String nodeId;
 
 	public enum NEED_HELP implements GenericEnum {

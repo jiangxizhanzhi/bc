@@ -24,34 +24,58 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课堂验证处理器
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class ClassroomValidateHandler {
 
 
-
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	private void init() {
 
 	}
 
+	/**
+	 * 课堂Mapper
+	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
+	/**
+	 * 远程组织Service
+	 */
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 课堂标志Mapper
+	 */
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
 
+	/**
+	 * 训练计划Mapper
+	 */
 	@Autowired
 	private TrainPlanMapper trainPlanMapper;
 
 	/**
 	 * 训练计划存在性校验
+	 *
 	 * @param planId
 	 * @return
 	 */
@@ -67,6 +91,7 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 课堂签到校验
+	 *
 	 * @param classroomId
 	 * @param userId
 	 * @return
@@ -83,8 +108,10 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 校验课时和组织相同的课时存在
+	 *
 	 * @param lessonId
-	 * @param orgId
+	 * @param orgId    组织id
+	 * @return {@code Classroom }
 	 */
 	public Classroom validateClassroomLessonExist(String lessonId, String orgId) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
@@ -98,9 +125,11 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 校验课时和组织相同的课时存在 并过滤自己本身
+	 *
 	 * @param lessonId
 	 * @param orgId
-	 * @param itself
+	 * @param itself   本身
+	 * @return {@code Classroom }
 	 */
 	public Classroom validateClassroomLessonExistExcludeItself(String lessonId, String orgId, Classroom itself) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
@@ -114,8 +143,9 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 校验课程表开始和结束时间
+	 *
 	 * @param startTime
-	 * @param endTime
+	 * @param endTime   结束时间
 	 */
 	public void validateClassroomStartAndEnd(Date startTime, Date endTime) {
 
@@ -127,6 +157,7 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 校验组织下是否存在用户
+	 *
 	 * @param orgId
 	 * @return
 	 */
@@ -137,6 +168,7 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 校验课程表是否存在
+	 *
 	 * @param classroomId
 	 * @return
 	 */
@@ -153,6 +185,7 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 校验课程表是否存在
+	 *
 	 * @param lessonId
 	 * @param orgId
 	 * @return
@@ -169,9 +202,10 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 时间时间段是否已存在该组织的课程表
+	 *
 	 * @param organizationId
 	 * @param startTime
-	 * @param endTime
+	 * @param endTime        结束时间
 	 */
 	public void validateClassroomTimeOverlap(String organizationId, Date startTime, Date endTime) {
 
@@ -189,10 +223,11 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 校验更新时是否已存在课程表
+	 *
 	 * @param classroomId
 	 * @param organizationId
 	 * @param startTime
-	 * @param endTime
+	 * @param endTime        结束时间
 	 */
 	public void validateUpdateClassroomTimeOverlap(String classroomId, String organizationId,
 			Date startTime, Date endTime) {
@@ -212,8 +247,9 @@ public class ClassroomValidateHandler {
 
 	/**
 	 * 校验是否有权限操作课堂接口
+	 *
 	 * @param classroomId
-	 * @param authContext
+	 * @param authContext auth 上下文
 	 */
 	public void validateLessonPracticeAuth(String classroomId, AuthContext authContext) {
 

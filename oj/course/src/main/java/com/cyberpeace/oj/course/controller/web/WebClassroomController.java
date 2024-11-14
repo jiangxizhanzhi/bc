@@ -30,18 +30,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Web课堂Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台课程表相关")
 @RestController
 @RequestMapping("/oj/course/class/room")
 @RequiresAuthentication
 public class WebClassroomController {
 
+	/**
+	 * 课堂Service
+	 */
 	@Autowired
 	private ClassroomService classroomService;
 
+	/**
+	 * 课堂标志Service
+	 */
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	/**
+	 * 列表课程附表
+	 *
+	 * @param month 月
+	 * @return {@code BaseRsp<List<TimeScheduleBo>> }
+	 */
 	@ApiOperation("前台课程表信息查询")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
@@ -73,6 +91,12 @@ public class WebClassroomController {
 		return new BaseRsp<>(boList);
 	}
 
+	/**
+	 * 课堂登录
+	 *
+	 * @param signInReq 标志在请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课堂签到")
 	@PostMapping("/sign_in")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
@@ -87,6 +111,12 @@ public class WebClassroomController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 需要帮助
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("请求远程协助")
 	@PatchMapping("/need_help")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
@@ -99,6 +129,12 @@ public class WebClassroomController {
 
 	}
 
+	/**
+	 * 获取帮助状态
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<HelpStatusBo> }
+	 */
 	@ApiOperation("获取远程协助状态")
 	@GetMapping("/help_status")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
@@ -109,6 +145,12 @@ public class WebClassroomController {
 		return new BaseRsp<>(helpStatus);
 	}
 
+	/**
+	 * 聊天用户
+	 *
+	 * @param roomId 房间id
+	 * @return {@code BaseRsp<DashboardInfo> }
+	 */
 	@ApiOperation("获取课堂聊天用户信息")
 	@GetMapping("/chat/users")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
@@ -120,6 +162,13 @@ public class WebClassroomController {
 		return new BaseRsp<>(dashboardInfo);
 	}
 
+	/**
+	 * 获取组用户
+	 *
+	 * @param roomId  房间id
+	 * @param groupId 组id
+	 * @return {@code BaseRsp<List<DashboardUser>> }
+	 */
 	@ApiOperation("获取聊天组用户信息")
 	@GetMapping("/chat/members_info")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,

@@ -27,31 +27,64 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
+
+/**
+ * 练习试卷Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, PracticePaper> implements PracticePaperService {
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 练习解决Mapper
+	 */
 	@Autowired
 	private PracticeSolvedMapper practiceSolvedMapper;
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 练习试卷Mapper
+	 */
 	@Autowired
 	private PracticePaperMapper practicePaperMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 试卷练习理论Service
+	 */
 	@Autowired
 	private PaperPracticeTheoryService paperPracticeTheoryService;
 
+	/**
+	 * 试卷练习理论Mapper
+	 */
 	@Autowired
 	private PaperPracticeTheoryMapper paperPracticeTheoryMapper;
 
+	/**
+	 * 获取最后试卷设置
+	 *
+	 * @return {@code PracticePaperCreateReq }
+	 */
 	@Override
 	public PracticePaperCreateReq getLastPaperSetting() {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -73,6 +106,12 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		return practicePaperCreateReq;
 	}
 
+	/**
+	 * 创建试卷
+	 *
+	 * @param practicePaperCreateReq 练习试卷创建请求体
+	 * @return {@code PracticePaper }
+	 */
 	@Override
 	public PracticePaper createPaper(PracticePaperCreateReq practicePaperCreateReq) {
 		int countMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.practice.count.max"));
@@ -146,6 +185,12 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		return practicePaper;
 	}
 
+	/**
+	 * 获取试卷总结结果
+	 *
+	 * @param paperId 试卷id
+	 * @return {@code PaperSummaryRes }
+	 */
 	@Override
 	public PaperSummaryRes getPaperSummaryRes(String paperId) {
 		PaperSummaryRes paperSummaryRes = new PaperSummaryRes();
@@ -165,6 +210,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 
 	/**
 	 * 组卷记录
+	 *
 	 * @return
 	 */
 	@Override
@@ -173,6 +219,12 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		return practicePaperMapper.getPaperRecord(userId);
 	}
 
+	/**
+	 * 获取全部试卷记录
+	 *
+	 * @param isFinish 是否完成
+	 * @return {@code List<PaperRecordSummaryResByDay> }
+	 */
 	@Override
 	public List<PaperRecordSummaryResByDay> getAllPaperRecord(Boolean isFinish) {
 		Map<String, List<PaperRecordSummaryRes>> recordListMap = new HashMap<>();
@@ -208,6 +260,12 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		return sumRecordList;
 	}
 
+	/**
+	 * 获取试卷记录详情
+	 *
+	 * @param paperId 试卷id
+	 * @return {@code PaperRecordDetailRes }
+	 */
 	@Override
 	public PaperRecordDetailRes getPaperRecordDetail(String paperId) {
 		PracticePaper practicePaper = practicePaperMapper.selectById(paperId);
@@ -231,6 +289,12 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		return paperRecordDetailRes;
 	}
 
+	/**
+	 * 练习再
+	 *
+	 * @param paperId 试卷id
+	 * @return {@code PracticePaper }
+	 */
 	@Override
 	public PracticePaper practiceAgain(String paperId) {
 		PracticePaper practicePaper = practicePaperMapper.selectById(paperId);
@@ -265,6 +329,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 
 	/**
 	 * 根据解题状态和用户过滤习题
+	 *
 	 * @param status
 	 * @param authContext
 	 * @return

@@ -7,18 +7,36 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 新增课时配置上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class AddLessonConfigContext implements Serializable {
 
+    /**
+     * 节点类型
+     */
     private Integer nodeType;
 
+    /**
+     * 课程id
+     */
     private String courseId;
 
+    /**
+     * 课时id
+     */
     private String lessonId;
 
+    /**
+     * 名称
+     */
     private String name;
 
 }

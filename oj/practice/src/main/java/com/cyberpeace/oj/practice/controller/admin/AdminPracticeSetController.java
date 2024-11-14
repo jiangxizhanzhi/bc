@@ -54,6 +54,12 @@ import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 管理练习设置Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-后台习题集相关api")
 @RestController
 @RequestMapping("/oj/admin/practice/set")
@@ -61,21 +67,42 @@ import java.util.List;
 @Slf4j
 public class AdminPracticeSetController extends AuthAndPublicController<PracticeSetService, PracticeSet> {
 
+	/**
+	 * 练习设置Service
+	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 新增
+	 *
+	 * @param setAddReq 设置新增请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("习题集新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
@@ -109,6 +136,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param updateReq 更新请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("习题集更新")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
@@ -138,6 +171,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<AdminPracticeSetBo> }
+	 */
 	@ApiOperation("习题集详细信息查询")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
@@ -151,6 +190,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		return new BaseRsp<>(setBo);
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param delReq 戴尔请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("批量删除习题集")
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
@@ -178,6 +223,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param setPageReq 设置分页请求体
+	 * @return {@code BaseRsp<ListRsp<AdminPracticeSetBo>> }
+	 */
 	@ApiOperation("分页查询习题集")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_EXERCISES, MenuConstant.CMS_THEORY_PRACTICE,
@@ -198,6 +249,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}
 
+	/**
+	 * 全部列表
+	 *
+	 * @param practiceType 练习类型
+	 * @return {@code BaseRsp<List<PracticeSetRes>> }
+	 */
 	@GetMapping("/all")
 	@ApiOperation("获取全部的习题集信息")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
@@ -212,6 +269,13 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	}
 
+	/**
+	 * 导出练习设置
+	 *
+	 * @param ids      id列表
+	 * @param response 响应
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("习题集资源数据导出")
 	@GetMapping("/batch_dumps")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
@@ -228,6 +292,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	/**
+	 * 导入练习设置
+	 *
+	 * @param loadReq 加载请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("习题集资源数据导入")
 	@PostMapping("/batch_loads")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)

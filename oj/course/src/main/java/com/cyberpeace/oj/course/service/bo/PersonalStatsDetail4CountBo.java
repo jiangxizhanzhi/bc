@@ -5,30 +5,60 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 个人统计详情4计数Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class PersonalStatsDetail4CountBo implements Serializable {
-    @ApiModelProperty("课程总数")
+	/**
+	 * 课程总数
+	 */
+	@ApiModelProperty("课程总数")
     private Integer courseTotalCount = 0;
 
-    @ApiModelProperty("完成理论课程数量")
+	/**
+	 * 完成理论课程数量
+	 */
+	@ApiModelProperty("完成理论课程数量")
     private Integer theoryCourseTotalCount = 0;
 
-    @ApiModelProperty("实验课程数量")
+	/**
+	 * 实验课程数量
+	 */
+	@ApiModelProperty("实验课程数量")
     private Integer expCourseTotalCount = 0;
 
-    @ApiModelProperty("课后练习数量")
+	/**
+	 * 课后练习数量
+	 */
+	@ApiModelProperty("课后练习数量")
     private Integer afterClassPracticeTotalCount = 0;
 
-    @ApiModelProperty("完成课程数量")
+	/**
+	 * 完成课程数量
+	 */
+	@ApiModelProperty("完成课程数量")
     private Integer finishCoursesCount = 0;
 
-    @ApiModelProperty("完成理论课程数量")
+	/**
+	 * 完成理论课程数量
+	 */
+	@ApiModelProperty("完成理论课程数量")
     private Integer finishTheoryCount = 0;
 
-    @ApiModelProperty("完成实验课程数量")
+	/**
+	 * 完成实验课程数量
+	 */
+	@ApiModelProperty("完成实验课程数量")
     private Integer finishExpCount = 0;
 
-    @ApiModelProperty("完成课后练习数量")
+	/**
+	 * 完成课后练习数量
+	 */
+	@ApiModelProperty("完成课后练习数量")
     private Integer afterClassPractice = 0;
 
 }

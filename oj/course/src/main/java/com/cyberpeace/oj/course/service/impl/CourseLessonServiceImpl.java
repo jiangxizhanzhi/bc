@@ -80,118 +80,242 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课程课时Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, CourseLesson> implements CourseLessonService {
 
+	/**
+	 * 课时记录Mapper
+	 */
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
+	/**
+	 * 课程课时Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 资源收集Service
+	 */
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
+	/**
+	 * 资源收集Mapper
+	 */
 	@Autowired
 	private ResourceCollectionMapper resourceCollectionMapper;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课时配置Service
+	 */
 	@Autowired
 	private LessonConfigService lessonConfigService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 试卷Service
+	 */
 	@Autowired
 	private PaperService paperService;
 
+	/**
+	 * 试卷Mapper
+	 */
 	@Autowired
 	private PaperMapper paperMapper;
 
+	/**
+	 * 课时试卷评估Mapper
+	 */
 	@Autowired
 	private LessonPaperEvaluateMapper lessonPaperEvaluateMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 理论评估处理器
+	 */
 	@Resource(name = "theory")
 	private PracticeEvaluateHandler theoryEvaluateHandler;
 
+	/**
+	 * 课时实操评估处理器
+	 */
 	@Resource(name = "lesson_operation")
 	private LessonOperationEvaluateHandler lessonOperationEvaluateHandler;
 
+	/**
+	 * 练习理论裁判Service
+	 */
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
+	/**
+	 * 练习理论裁判Mapper
+	 */
 	@Autowired
 	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
+	/**
+	 * 练习实操裁判Mapper
+	 */
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
+	/**
+	 * 练习实操裁判Service
+	 */
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 笔记Mapper
+	 */
 	@Autowired
 	private NoteMapper noteMapper;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * OJ当地场景Service
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * 课堂组信息Service
+	 */
 	@Autowired
 	private ClassroomGroupInfoService classroomGroupInfoService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 课程验证处理器
+	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
+	/**
+	 * 课时配置Mapper
+	 */
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
+	/**
+	 * 评论Mapper
+	 */
 	@Autowired
 	private CommentMapper commentMapper;
 
+	/**
+	 * 课堂Service
+	 */
 	@Autowired
 	private ClassroomService classroomService;
 
+	/**
+	 * 课堂Mapper
+	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
+	/**
+	 * 课时练习场景Service
+	 */
 	@Autowired
 	private LessonPracticeSceneService lessonPracticeSceneService;
 
+	/**
+	 * 练习理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 远程组织Service
+	 */
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
+	/**
+	 * 课堂组信息Mapper
+	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
+	/**
+	 * 获取课时详情
+	 *
+	 * @param courseId    课程id
+	 * @param lessonId    课时id
+	 * @param roomId      房间id
+	 * @param learnedType 学习类型
+	 * @param authContext auth 上下文
+	 * @return {@code LessonInfoBo }
+	 */
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext) {
 
@@ -331,6 +455,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return infoBo;
 	}
 
+	/**
+	 * 查询由课程和课时
+	 *
+	 * @param courseId 课程id
+	 * @param lessonId 课时id
+	 * @return {@code AdminLessonBo }
+	 */
 	@Override
 	public AdminLessonBo selectByCourseAndLesson(String courseId, String lessonId) {
 
@@ -404,6 +535,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return lessonInfoBo;
 	}
 
+	/**
+	 * 新增课时
+	 *
+	 * @param courseLesson  课程课时
+	 * @param ojSceneConfig OJ场景配置
+	 * @param practiceList  练习列表
+	 * @return {@code CourseLesson }
+	 */
 	@Override
 	public CourseLesson addLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
@@ -451,6 +590,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return courseLesson;
 	}
 
+	/**
+	 * 更新课时
+	 *
+	 * @param courseLesson  课程课时
+	 * @param ojSceneConfig OJ场景配置
+	 * @param practiceList  练习列表
+	 * @return {@code CourseLesson }
+	 */
 	@Override
 	public CourseLesson updateLesson(CourseLesson courseLesson, JSONObject ojSceneConfig,
 			List<PaperPracticeContext> practiceList) {
@@ -559,6 +706,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return lessonConfigService.packageLessonConfig(configContext);
 	}
 
+	/**
+	 * 分页由上下文
+	 *
+	 * @param page    分页
+	 * @param context 上下文
+	 * @param isWeb   是否Web
+	 * @return {@code IPage<AdminLessonListBo> }
+	 */
 	@Override
 	public IPage<AdminLessonListBo> pageByContext(Page<CourseLesson> page, LessonContext context, boolean isWeb) {
 
@@ -631,6 +786,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return boIPage;
 	}
 
+	/**
+	 * 获取练习计数
+	 *
+	 * @param paperId 试卷id
+	 * @return long
+	 */
 	private long getPracticeCount(String paperId) {
 		LambdaQueryWrapper<PracticeOperationRef> filterOperation = new LambdaQueryWrapper<>();
 		filterOperation.eq(PracticeOperationRef::getPaperId, paperId);
@@ -644,6 +805,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return practiceCount;
 	}
 
+	/**
+	 * 批量公共练习
+	 *
+	 * @param resourceIds 资源id列表
+	 * @param isPublic    是否公开
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean batchPublicPractice(List<String> resourceIds, Boolean isPublic) {
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(resourceIds);
@@ -674,6 +842,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		});
 	}
 
+	/**
+	 * 导入课
+	 *
+	 * @param courseId  课程id
+	 * @param lessonIds 课时id列表
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean importLessons(String courseId, List<String> lessonIds) {
 
@@ -757,7 +932,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	}
 
-	/** 初始化课程目录*/
+	/**
+	 * 初始化课程目录
+	 *
+	 * @param courseLesson 课程课时
+	 * @return {@code LessonConfig }
+	 */
 	private LessonConfig initLessonConfig(CourseLesson courseLesson) {
 		AddLessonConfigContext configContext = AddLessonConfigContext.builder()
 				.lessonId(courseLesson.getResourceId()).courseId(courseLesson.getCourseId())
@@ -766,7 +946,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return lessonConfigService.packageLessonConfig(configContext);
 	}
 
-	/** 重新初始化课时*/
+	/**
+	 * 重新初始化课时
+	 *
+	 * @param lesson   课时
+	 * @param courseId 课程id
+	 */
 	private void reinitLesson(CourseLesson lesson, String courseId) {
 		lesson.setId(null);
 		lesson.setCourseId(courseId);
@@ -782,6 +967,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 	}
 
+	/**
+	 * 提交课时练习
+	 *
+	 * @param answerContext 答案上下文
+	 * @param answers       答案
+	 * @param authContext   auth 上下文
+	 * @return {@code EvaluateResult }
+	 */
 	@Override
 	public EvaluateResult submitLessonPractice(SubmitAnswerContext answerContext,
 			List<PracticeAnswerContext> answers, AuthContext authContext) {
@@ -901,6 +1094,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return evaluateResult;
 	}
 
+	/**
+	 * 练习由课时
+	 *
+	 * @param courseId    课程id
+	 * @param lessonId    课时id
+	 * @param authContext auth 上下文
+	 * @return {@code LessonPracticeBo }
+	 */
 	@Override
 	public LessonPracticeBo practiceByLesson(String courseId, String lessonId,
 			AuthContext authContext) {
@@ -961,6 +1162,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return lessonPracticeBo;
 	}
 
+	/**
+	 * 管理课时练习
+	 *
+	 * @param courseId    课程id
+	 * @param lessonId    课时id
+	 * @param authContext auth 上下文
+	 * @return {@code List<AdminLessonPracticeBo> }
+	 */
 	@Override
 	public List<AdminLessonPracticeBo> adminLessonPractice(String courseId, String lessonId,
 			AuthContext authContext) {
@@ -991,6 +1200,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return practiceBos;
 	}
 
+	/**
+	 * 新增课时练习
+	 *
+	 * @param lessonId     课时id
+	 * @param practiceList 练习列表
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean addLessonPractice(String lessonId, List<PaperPracticeContext> practiceList) {
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
@@ -1000,6 +1216,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return null != paper;
 	}
 
+	/**
+	 * 标记课时练习
+	 *
+	 * @param lessonId    课时id
+	 * @param userId      用户id
+	 * @param level       水平
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean markLessonPractice(String lessonId, String userId, Integer level,
 			AuthContext authContext) {
@@ -1019,6 +1244,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	}
 
+	/**
+	 * 下发课时练习
+	 *
+	 * @param lessonId    课时id
+	 * @param authId      认证id
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean releaseLessonPractice(String lessonId, String authId, AuthContext authContext) {
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
@@ -1043,6 +1276,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	}
 
+	/**
+	 * 获取拓扑场景
+	 *
+	 * @param lessonId    课时id
+	 * @param roomId      房间id
+	 * @param authContext auth 上下文
+	 * @return {@code TopoSceneDataBo }
+	 */
 	@Override
 	public TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext) {
 
@@ -1089,6 +1330,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return topoSceneDataRes;
 	}
 
+	/**
+	 * 上传讲义
+	 *
+	 * @param courseLesson 课程课时
+	 * @param handout      讲义
+	 */
 	@Override
 	public void uploadHandout(CourseLesson courseLesson, String handout) {
 
@@ -1156,6 +1403,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	}
 
+	/**
+	 * 上传视频
+	 *
+	 * @param courseLesson 课程课时
+	 * @param video        视频
+	 */
 	@Override
 	public void uploadVideo(CourseLesson courseLesson, String video) {
 
@@ -1164,6 +1417,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param courseId    课程id
+	 * @param resourceIds 资源id列表
+	 * @param authContext auth 上下文
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer batchDelete(String courseId, List<String> resourceIds, AuthContext authContext) {
 
@@ -1220,6 +1481,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return resourceIds.size();
 	}
 
+	/**
+	 * 复制附件
+	 *
+	 * @param uri URI
+	 * @return {@code String }
+	 */
 	private String copyAttachment(String uri) {
 		String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
 		if (StringUtils.isBlank(uri) || uri.contains(" ") || uri.contains("\n")) {
@@ -1268,8 +1535,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 批量删除课程表
+	 *
 	 * @param classroomIds
-	 * @param authContext
+	 * @param authContext  auth 上下文
 	 */
 	private void batchDeleteClassroom(List<String> classroomIds, AuthContext authContext) {
 
@@ -1291,7 +1559,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 查询课程下的所有场景
+	 *
 	 * @param lessonList
+	 * @param authContext auth 上下文
 	 * @return
 	 */
 	private CourseSceneContext selectCourseScene(List<CourseLesson> lessonList,
@@ -1307,6 +1577,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return new CourseSceneContext(scenes, topos);
 	}
 
+	/**
+	 * 查询课时全部拓扑
+	 *
+	 * @param lessonList 课时列表
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> selectLessonAllTopo(List<CourseLesson> lessonList) {
 		List<String> topos = new ArrayList<>();
@@ -1323,6 +1599,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return topos;
 	}
 
+	/**
+	 * 清除场景和拓扑
+	 *
+	 * @param scenes 场景
+	 * @param topos  拓扑
+	 */
 	@Override
 	public void clearSceneAndTopos(List<OjLocalScene> scenes, List<String> topos) {
 		// 场景删除
@@ -1352,6 +1634,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 	}
 
+	/**
+	 * 查询课时全部场景
+	 *
+	 * @param lessonList  课时列表
+	 * @param authContext auth 上下文
+	 * @return {@code List<OjLocalScene> }
+	 */
 	@Override
 	public List<OjLocalScene> selectLessonAllScene(List<CourseLesson> lessonList, AuthContext authContext) {
 		List<OjLocalScene> scenes = new ArrayList<>();
@@ -1369,6 +1658,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return scenes;
 	}
 
+	/**
+	 * 课时场景由课
+	 *
+	 * @param lessonList  课时列表
+	 * @param authContext auth 上下文
+	 * @return {@code List<OjLocalScene> }
+	 */
 	@Override
 	public List<OjLocalScene> lessonSceneByLessons(List<CourseLesson> lessonList, AuthContext authContext) {
 
@@ -1393,6 +1689,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return scenes;
 	}
 
+	/**
+	 * 课时练习场景由课
+	 *
+	 * @param lessonList  课时列表
+	 * @param authContext auth 上下文
+	 * @return {@code List<OjLocalScene> }
+	 */
 	@Override
 	public List<OjLocalScene> lessonPracticeSceneByLessons(List<CourseLesson> lessonList,
 			AuthContext authContext) {
@@ -1400,6 +1703,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				.operationByPaper(lesson.getResourceId(), lesson.getPaperId(), authContext));
 	}
 
+	/**
+	 * 处理器课时导出
+	 *
+	 * @param courseLesson 课程课时
+	 * @param filePathMap  文件路径映射
+	 * @param destFilePath 目标文件路径
+	 * @return {@code LessonDumpLoadBo }
+	 */
 	@Override
 	public LessonDumpLoadBo handlerLessonDump(CourseLesson courseLesson,
 			Map<String, String> filePathMap, String destFilePath) {
@@ -1495,6 +1806,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		return dumpLoadBo;
 	}
 
+	/**
+	 * 加载课时
+	 *
+	 * @param courseId         课程id
+	 * @param lessonDumpLoadBo 课时导出加载Bo
+	 * @param filePath         文件路径
+	 * @param fileMap          文件映射
+	 * @return {@code CourseLesson }
+	 */
 	@Override
 	public CourseLesson loadLesson(String courseId, LessonDumpLoadBo lessonDumpLoadBo,
 			String filePath, Map<String, String> fileMap) {
@@ -1595,8 +1915,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 加载课时练习拷贝文件
+	 *
 	 * @param dataPath
 	 * @param storePath
+	 * @param filePathMap 文件路径映射
+	 * @param filePath    文件路径
 	 * @return
 	 */
 	private String loadLessonCopyFile(String dataPath, String storePath,
@@ -1614,6 +1937,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 	/**
 	 * 文件拷贝 返回文件名称
+	 *
 	 * @param storeDbPath
 	 * @param destFilePath
 	 * @return
@@ -1634,6 +1958,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	 *
 	 * @param paperEvaluate
 	 * @param paper
+	 * @param viewAnswer    视图答案
+	 * @param authContext   auth 上下文
+	 * @param lessonId      课时id
 	 * @return
 	 */
 	private Map<String, LessonPracticeListBo> handlerPractice(LessonPaperEvaluate paperEvaluate,
@@ -1700,6 +2027,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	/**
 	 * 试卷数据校验
 	 *
+	 * @param lesson 课时
+	 * @param isWeb  是否Web
 	 * @return
 	 */
 	private Paper validatePaper(CourseLesson lesson, Boolean isWeb) {
@@ -1715,7 +2044,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 
-
+	/**
+	 * 创建中台日志
+	 *
+	 * @param lessonInfoBo 课时信息Bo
+	 */
 	@Override
 	public void createMpLog(LessonInfoBo lessonInfoBo) {
 		String operationTarget = lessonInfoBo.getCourseName() + "-" + lessonInfoBo.getName();
@@ -1725,12 +2058,25 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				LogContent.CR_FORMAT.format(OperationType.STUDY, "", content));
 	}
 
+	/**
+	 * 阅读视频进度
+	 *
+	 * @param checkPointConfig 检查点配置
+	 * @param userId           用户id
+	 * @return {@code VideoProgressBo }
+	 */
 	private VideoProgressBo readVideoProgress(String checkPointConfig, String userId) {
 
 		VideoProgressBo res = JsonUtil.toJsonObject(checkPointConfig, VideoProgressBo.class);
 		return res;
 	}
 
+	/**
+	 * 获取默认检查点配置
+	 *
+	 * @param lesson 课时
+	 * @return {@code VideoCheckPointConfig }
+	 */
 	private VideoCheckPointConfig getDefaultCheckPointConfig(CourseLesson lesson) {
 		int duration = VideoUtil.getVideoDuration(utilService.handlerFileUrl(lesson.getVideoUrl()));
 		if (duration == 0) {

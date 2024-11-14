@@ -6,40 +6,79 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 自由练习列表Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class LibPracticeListBo implements Serializable {
 
+	/**
+	 * 习题资源编号
+	 */
 	@ApiModelProperty("习题资源编号")
 	private String resourceId;
 
+	/**
+	 * 填空题空格数量
+	 */
 	@ApiModelProperty("填空题空格数量")
 	private Integer blankCount;
 
+	/**
+	 * 习题标题
+	 */
 	@ApiModelProperty("习题标题")
 	private String title;
 
+	/**
+	 * 习题内容
+	 */
 	@ApiModelProperty("习题内容")
 	private String content;
 
+	/**
+	 * 习题分类
+	 */
 	@ApiModelProperty("习题分类")
 	private String categoryId;
 
+	/**
+	 * 分类名称
+	 */
 	@ApiModelProperty("分类名称")
 	private String categoryName;
 
+	/**
+	 * 类型类型 0=基础理论 1=实操
+	 */
 	@ApiModelProperty("类型类型 0=基础理论 1=实操")
 	private Integer practiceType;
 
+	/**
+	 * 问题类型 0=单选 1=多选 2=判断 3=填空 4=简答 5=实操
+	 */
 	@ApiModelProperty("问题类型 0=单选 1=多选 2=判断 3=填空 4=简答 5=实操")
 	private Integer questionType;
 
+	/**
+	 * 基础理论练习题选项
+	 */
 	@ApiModelProperty("基础理论练习题选项")
 	private String option;
 
+	/**
+	 * 分值
+	 */
 	@ApiModelProperty("分值")
 	private Double score;
 
+	/**
+	 * 答案
+	 */
 	@ApiModelProperty("答案")
 	private String answer;
 }

@@ -10,39 +10,75 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 课堂
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_classroom")
 public class Classroom extends BaseTable {
 
-    @TableId(type = IdType.UUID, value = "resource_id")
+	/**
+	 * 课程表编号
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
     @ApiModelProperty("课程表编号")
     private String resourceId;
 
-    @ApiModelProperty("开始时间")
+	/**
+	 * 开始时间
+	 */
+	@ApiModelProperty("开始时间")
     private Date startTime;
 
-    @ApiModelProperty("结束时间")
+	/**
+	 * 结束时间
+	 */
+	@ApiModelProperty("结束时间")
     private Date endTime;
 
-    @ApiModelProperty("课程编号")
+	/**
+	 * 课程编号
+	 */
+	@ApiModelProperty("课程编号")
     private String courseId;
 
-    @ApiModelProperty("课时编号")
+	/**
+	 * 课时编号
+	 */
+	@ApiModelProperty("课时编号")
     private String lessonId;
 
-    @ApiModelProperty("组织编号")
+	/**
+	 * 组织编号
+	 */
+	@ApiModelProperty("组织编号")
     private String organizationId;
 
-    @ApiModelProperty("子组织编号")
+	/**
+	 * 子组织编号
+	 */
+	@ApiModelProperty("子组织编号")
     private String organizationIds;
 
-    @ApiModelProperty("创建者编号")
+	/**
+	 * 创建者编号
+	 */
+	@ApiModelProperty("创建者编号")
     private String createUserId;
 
-    @ApiModelProperty("训练计划编号")
+	/**
+	 * 训练计划编号
+	 */
+	@ApiModelProperty("训练计划编号")
     private String trainPlanId;
 
-    @TableField(exist=false)
+	/**
+	 * 训练计划
+	 */
+	@TableField(exist=false)
     private TrainPlan trainPlan;
 
 }

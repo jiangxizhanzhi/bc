@@ -88,91 +88,182 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author chenz
+ * 练习实操Service实现
+ *
+ * @author chenz@date 2024/11/14
  */
 @Service
 @Slf4j
 public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationMapper, PracticeOperation> implements PracticeOperationService {
 
-	private final Boolean IS_COLLECTED = Boolean.FALSE;
+    /**
+     * 是否收集
+     */
+    private final Boolean IS_COLLECTED = Boolean.FALSE;
 
-	@Autowired
+    /**
+     * 练习实操Mapper
+     */
+    @Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
-	@Autowired
+    /**
+     * 附件Mapper
+     */
+    @Autowired
 	private AttachmentMapper attachmentMapper;
 
-	@Autowired
+    /**
+     * 附件Service
+     */
+    @Autowired
 	private AttachmentService attachmentService;
 
-	@Autowired
+    /**
+     * 练习设置Mapper
+     */
+    @Autowired
 	private PracticeSetMapper practiceSetMapper;
 
-	@Autowired
+    /**
+     * 远程用户Service
+     */
+    @Autowired
 	private RemoteUserService remoteUserService;
 
-	@Resource(name = "operation")
+    /**
+     * 练习评估处理器
+     */
+    @Resource(name = "operation")
 	private PracticeEvaluateHandler practiceEvaluateHandler;
 
-	@Autowired
+    /**
+     * 资源收集Service
+     */
+    @Autowired
 	private ResourceCollectionService resourceCollectionService;
 
-	@Autowired
+    /**
+     * 练习解决Mapper
+     */
+    @Autowired
 	private PracticeSolvedMapper practiceSolvedMapper;
 
-	@Autowired
+    /**
+     * 远程拓扑Service
+     */
+    @Autowired
 	private RemoteTopoService remoteTopoService;
 
-	@Autowired
+    /**
+     * 练习类别Mapper
+     */
+    @Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
-	@Autowired
+    /**
+     * OJ当地场景Mapper
+     */
+    @Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
-	@Autowired
+    /**
+     * 远程场景Service
+     */
+    @Autowired
 	private RemoteSceneService remoteSceneService;
 
-	@Autowired
+    /**
+     * 当地场景Mapper
+     */
+    @Autowired
 	private LocalSceneMapper localSceneMapper;
 
-	@Autowired
+    /**
+     * 事务模板
+     */
+    @Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Autowired
+    /**
+     * 当地场景Service
+     */
+    @Autowired
 	private LocalSceneService localSceneService;
 
-	@Autowired
+    /**
+     * OJ当地场景Service
+     */
+    @Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
-	@Autowired
+    /**
+     * utilService
+     */
+    @Autowired
 	private UtilService utilService;
 
-	@Autowired
+    /**
+     * 练习验证处理器
+     */
+    @Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
-	@Autowired
+    /**
+     * 练习类别Service
+     */
+    @Autowired
 	private PracticeCategoryService practiceCategoryService;
 
-	@Autowired
+    /**
+     * 远程日志Service
+     */
+    @Autowired
 	private RemoteLogService remoteLogService;
 
-	@Autowired
+    /**
+     * 练习随机flagMapper
+     */
+    @Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
 
-	@Autowired
+    /**
+     * 推送消息处理器
+     */
+    @Autowired
 	private PushMessageHandler pushMessageHandler;
 
-	@Autowired
+    /**
+     * 练习错误Mapper
+     */
+    @Autowired
 	private PracticeMistakeMapper practiceMistakeMapper;
 
-	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
+    /**
+     * 导出日志
+     */
+    private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
-	private static Cache<String, Boolean> sharedPracticeCache = CacheBuilder.newBuilder()
+    /**
+     * 共享练习缓存
+     */
+    private static Cache<String, Boolean> sharedPracticeCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(10, TimeUnit.SECONDS).build();
 
-	private final Object lock = new Object();
+    /**
+     * 锁
+     */
+    private final Object lock = new Object();
 
-	@Override
+    /**
+     * 新增练习实操
+     *
+     * @param practiceOperation 练习实操
+     * @param ojSceneConfig     OJ场景配置
+     * @param authContext       auth 上下文
+     * @return {@code Integer }
+     */
+    @Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
 			JSONObject ojSceneConfig, AuthContext authContext) {
 
@@ -204,14 +295,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		});
 	}
 
-	/**
-	 * 习题集校验
-	 *
-	 * @param practiceSetId
-	 * @param authContext
-	 * @return
-	 */
-	private PracticeSet validatePracticeSet(String practiceSetId, AuthContext authContext) {
+    /**
+     * 习题集校验
+     *
+     * @param practiceSetId
+     * @param authContext
+     * @return
+     */
+    private PracticeSet validatePracticeSet(String practiceSetId, AuthContext authContext) {
 
 		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
 		if (CollectionUtils.isEmpty(authSetIds)) {
@@ -238,13 +329,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return practiceSet;
 	}
 
-	/**
-	 * 习题分类校验
-	 *
-	 * @param categoryId
-	 * @return
-	 */
-	private PracticeCategory validateCategory(String categoryId) {
+    /**
+     * 习题分类校验
+     *
+     * @param categoryId
+     * @return
+     */
+    private PracticeCategory validateCategory(String categoryId) {
 
 		PracticeCategory category = practiceCategoryMapper.selectById(categoryId);
 		if (null == category) {
@@ -263,7 +354,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return category;
 	}
 
-	@Override
+    /**
+     * 更新实操
+     *
+     * @param updateOperation 更新实操
+     * @param ojSceneConfig   OJ场景配置
+     * @return {@code Integer }
+     */
+    @Override
 	public Integer updateOperation(PracticeOperation updateOperation, JSONObject ojSceneConfig) {
 
 		// 数据校验
@@ -328,13 +426,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	}
 
-	/**
-	 * 是否修改了特殊字段
-	 * @param reqOperation 请求
-	 * @param dbOperation 数据源
-	 * @return 是否修改
-	 */
-	private boolean isModifySpecify(PracticeOperation reqOperation, PracticeOperation dbOperation) {
+    /**
+     * 是否修改了特殊字段
+     *
+     * @param reqOperation 请求
+     * @param dbOperation  数据源
+     * @return 是否修改
+     */
+    private boolean isModifySpecify(PracticeOperation reqOperation, PracticeOperation dbOperation) {
 		if(!reqOperation.getDynamicEnv().equals(dbOperation.getDynamicEnv())) {
 			return true;
 		}
@@ -351,11 +450,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return false;
 	}
 
-	/**
-	 * 如果对应的几个字段被修改则删除对应的错题记录和做题记录
-	 * @param updateOperation
-	 */
-	private void delMappedSolvedAndMistake(PracticeOperation updateOperation) {
+    /**
+     * 如果对应的几个字段被修改则删除对应的错题记录和做题记录
+     *
+     * @param updateOperation 更新实操
+     */
+    private void delMappedSolvedAndMistake(PracticeOperation updateOperation) {
 		// 删除解题记录
 		LambdaQueryWrapper<PracticeSolved> practiceSolvedLambdaQueryWrapper = new LambdaQueryWrapper<>();
 		practiceSolvedLambdaQueryWrapper.eq(PracticeSolved::getPracticeId, updateOperation.getResourceId());
@@ -367,7 +467,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceMistakeMapper.delete(practiceMistakeLambdaQueryWrapper);
 	}
 
-	@Override
+    /**
+     * 查询由id
+     *
+     * @param resourceId  资源id
+     * @param authContext auth 上下文
+     * @return {@code OperationBo }
+     */
+    @Override
 	public OperationBo selectById(String resourceId, AuthContext authContext) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
@@ -418,7 +525,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return operationBo;
 	}
 
-	@Override
+    /**
+     * 获取实操文件
+     *
+     * @param attachmentId 附件id
+     * @return {@code List<PracticeOperationFileBo> }
+     */
+    @Override
 	public List<PracticeOperationFileBo> getOperationFile(String attachmentId) {
 
 		if (StringUtils.isBlank(attachmentId)) {
@@ -442,7 +555,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return StreamApiUtils.map(attachmentIds, attachment -> fileToBo(attachment, attachmentMap));
 	}
 
-	@Override
+    /**
+     * 类型计数
+     *
+     * @param authContext auth 上下文
+     * @param listQueryBo 列表查询Bo
+     * @return {@code ExternalOperationCountBo }
+     */
+    @Override
 	public ExternalOperationCountBo typeCount(AuthContext authContext,
 			OperationListQueryBo listQueryBo) {
 		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
@@ -469,7 +589,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return new ExternalOperationCountBo(typeMap);
 	}
 
-	private PracticeOperationFileBo fileToBo(String fileId, Map<String, Attachment> fileMap) {
+    /**
+     * 文件自Bo
+     *
+     * @param fileId  文件id
+     * @param fileMap 文件映射
+     * @return {@code PracticeOperationFileBo }
+     */
+    private PracticeOperationFileBo fileToBo(String fileId, Map<String, Attachment> fileMap) {
 		PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
 		Attachment attachment = fileMap.get(fileId);
 
@@ -478,12 +605,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return fileBo;
 	}
 
-	/**
-	 * 获取随机flag数据
-	 * @param operation
-	 * @return
-	 */
-	private PracticeRandomFlag getRandomFlag(PracticeOperation operation) {
+    /**
+     * 获取随机flag数据
+     *
+     * @param operation
+     * @return
+     */
+    private PracticeRandomFlag getRandomFlag(PracticeOperation operation) {
 
 		if (StringUtils.isBlank(operation.getAttachmentId())) {
 			return null;
@@ -504,11 +632,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return randomFlag;
 	}
 
-	/**
-	 * 设置文件
-	 * @param operationBo
-	 */
-	private void setFile(OperationBo operationBo) {
+    /**
+     * 设置文件
+     *
+     * @param operationBo 实操Bo
+     */
+    private void setFile(OperationBo operationBo) {
 
 		Attachment attachment = attachmentMapper.selectById(operationBo.getAttachmentId());
 		if (null != attachment) {
@@ -517,7 +646,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 	}
 
-	@Override
+    /**
+     * 查询由id
+     *
+     * @param resourceId  资源id
+     * @param authContext auth 上下文
+     * @param isCollected 是否收集
+     * @return {@code WebOperationBo }
+     */
+    @Override
 	public WebOperationBo selectById(String resourceId, AuthContext authContext,
 			Boolean isCollected) {
 
@@ -577,7 +714,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return webOperationBo;
 	}
 
-	@Override
+    /**
+     * 分页由查询
+     *
+     * @param page        分页
+     * @param listQuery   列表查询
+     * @param authContext auth 上下文
+     * @return {@code IPage<AdminOperationListBo> }
+     */
+    @Override
 	public IPage<AdminOperationListBo> pageByQuery(Page page, OperationListQueryBo listQuery,
 			AuthContext authContext) {
 
@@ -672,18 +817,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				listQuery.getSolved(), practiceSolvedMap, practiceSetMap, creatorMap));
 	}
 
-	/**
-	 * 20230809 尽量去除循环查库
-	 * 数据转换
-	 * @param practiceOperation
-	 * @param authContext 
-	 * @param solved 
-	 * @param practiceSolvedMap
-	 * @param practiceSetMap
-	 * @param creatorMap
-	 * @return
-	 */
-	private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
+    /**
+     * 20230809 尽量去除循环查库
+     * 数据转换
+     *
+     * @param practiceOperation
+     * @param authContext
+     * @param solved
+     * @param practiceSolvedMap
+     * @param practiceSetMap
+     * @param creatorMap
+     * @return
+     */
+    private AdminOperationListBo entityToListBo(PracticeOperation practiceOperation,
 			AuthContext authContext, Boolean solved, Map<String, PracticeSolved> practiceSolvedMap,
 			Map<String, PracticeSet> practiceSetMap, Map<String, UserInfo> creatorMap) {
 
@@ -719,7 +865,16 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	}
 
-	@Override
+    /**
+     * 提交答案
+     *
+     * @param userId       用户id
+     * @param resourceId   资源id
+     * @param submitAnswer 提交答案
+     * @param isCollected  是否收集
+     * @return {@code EvaluateResult }
+     */
+    @Override
 	public EvaluateResult submitAnswer(String userId, String resourceId, String submitAnswer,
 			Boolean isCollected) {
 
@@ -756,7 +911,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return evaluateResult;
 	}
 
-	@Override
+    /**
+     * 查询练习id列表
+     *
+     * @param authContext   auth 上下文
+     * @param practiceSetId 练习设置id
+     * @return {@code List<String> }
+     */
+    @Override
 	public List<String> selectPracticeIds(AuthContext authContext, String practiceSetId) {
 		List<String> setIds;
 		if (practiceSetId == null) {
@@ -771,7 +933,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return practiceOperationMapper.selectBySetIds(setIds, authContext.getIsWeb());
 	}
 
-	@Override
+    /**
+     * 启动场景
+     *
+     * @param resourceId  资源id
+     * @param authContext auth 上下文
+     * @return {@code JSONObject }
+     */
+    @Override
 	public JSONObject startScene(String resourceId, AuthContext authContext) {
 
 		// 场景启动数量校验, 5.4.1只限制前台启动场景
@@ -839,7 +1008,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return remoteSceneService.getById(localScene.getMpSceneId(), localScene.getUserId());
 	}
 
-	@Override
+    /**
+     * 删除场景
+     *
+     * @param resourceId  资源id
+     * @param authContext auth 上下文
+     * @return {@code Boolean }
+     */
+    @Override
 	public Boolean deleteScene(String resourceId, AuthContext authContext) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
@@ -853,21 +1029,45 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return CommonConstant.TRUE;
 	}
 
-	@Override
+    /**
+     * 节点重启
+     *
+     * @param resourceId  资源id
+     * @param nodeId      节点id
+     * @param authContext auth 上下文
+     * @return {@code Boolean }
+     */
+    @Override
 	public Boolean nodeRestart(String resourceId, String nodeId, AuthContext authContext) {
 
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
 		return localSceneService.restartNode(localScene.getResourceId(), nodeId);
 	}
 
-	@Override
+    /**
+     * 节点重新创建
+     *
+     * @param resourceId  资源id
+     * @param nodeId      节点id
+     * @param authContext auth 上下文
+     * @return {@code Boolean }
+     */
+    @Override
 	public Boolean nodeRecreate(String resourceId, String nodeId, AuthContext authContext) {
 
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
 		return localSceneService.recreateNode(localScene.getResourceId(), nodeId);
 	}
 
-	@Override
+    /**
+     * 暂停场景
+     *
+     * @param resourceId  资源id
+     * @param status      状态
+     * @param authContext auth 上下文
+     * @return {@code Boolean }
+     */
+    @Override
 	public Boolean pauseScene(String resourceId, Integer status, AuthContext authContext) {
 
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
@@ -891,7 +1091,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 	}
 
-	@Override
+    /**
+     * 获取拓扑场景
+     *
+     * @param operationId 实操id
+     * @param authContext auth 上下文
+     * @return {@code TopoSceneDataBo }
+     */
+    @Override
 	public TopoSceneDataBo getTopoScene(String operationId, AuthContext authContext) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(operationId);
@@ -922,7 +1129,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return topoSceneDataBo;
 	}
 
-	@Override
+    /**
+     * 批量删除
+     *
+     * @param practiceIds 练习id列表
+     * @param authContext auth 上下文
+     * @return {@code Integer }
+     */
+    @Override
 	public Integer batchDelete(List<String> practiceIds, AuthContext authContext) {
 
 		// 查询前后台场景
@@ -992,7 +1206,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		});
 	}
 
-	@Override
+    /**
+     * 处理器导出实操
+     *
+     * @param operation     实操
+     * @param fileStorePath 文件存储路径
+     * @param filePathMap   文件路径映射
+     * @return {@code PracticeOperationDumpLoadBo }
+     */
+    @Override
 	public PracticeOperationDumpLoadBo handlerDumpOperation(PracticeOperation operation,
 			String fileStorePath, Map<String, String> filePathMap) {
 		PracticeOperationDumpLoadBo dumpLoadBo = BeanUtils.copy(operation,
@@ -1038,7 +1260,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return dumpLoadBo;
 	}
 
-	@Override
+    /**
+     * 获取进展统计学
+     *
+     * @param practiceSetId 练习设置id
+     * @return {@code ProgressStatisticsRes }
+     */
+    @Override
 	public ProgressStatisticsRes getProgressStatistics(String practiceSetId) {
 		ProgressStatisticsRes progressStatisticsRes = new ProgressStatisticsRes();
 		List<AdminOperationListBo> practiceOptionListBoList = getAllPracticeTheoryByAuthAndSetId(practiceSetId);
@@ -1073,13 +1301,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return progressStatisticsRes;
 	}
 
-	/**
-	 * 导出附件列表 按顺序排序
-	 * @param operation
-	 * @param filePathMap
-	 * @return
-	 */
-	private List<String> dumpOperationFilePathList(PracticeOperation operation,
+    /**
+     * 导出附件列表 按顺序排序
+     *
+     * @param operation
+     * @param fileStorePath 文件存储路径
+     * @param filePathMap
+     * @return
+     */
+    private List<String> dumpOperationFilePathList(PracticeOperation operation,
 			String fileStorePath, Map<String, String> filePathMap) {
 		if (StringUtils.isBlank(operation.getAttachmentId())) {
 			return Lists.newArrayList();
@@ -1109,14 +1339,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		});
 	}
 
-	/**
-	 * 加载附件列表
-	 * @param filePathList
-	 * @param filePathMap
-	 * @param filePath
-	 * @return
-	 */
-	public String loadOperationPathList(List<String> filePathList, Map<String, String> filePathMap,
+    /**
+     * 加载附件列表
+     *
+     * @param filePathList
+     * @param filePathMap
+     * @param filePath
+     * @return
+     */
+    public String loadOperationPathList(List<String> filePathList, Map<String, String> filePathMap,
 			String filePath) {
 
 		if (CollectionUtils.isEmpty(filePathList)) {
@@ -1141,7 +1372,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	}
 
-	@Override
+    /**
+     * 加载练习实操
+     *
+     * @param practiceSetId 练习设置id
+     * @param dumpBo        导出Bo
+     * @param filePathMap   文件路径映射
+     * @param filePath      文件路径
+     * @param userId        用户id
+     * @return {@code PracticeOperation }
+     */
+    @Override
 	public PracticeOperation loadPracticeOperation(String practiceSetId,
 			PracticeOperationDumpLoadBo dumpBo, Map<String, String> filePathMap, String filePath,
 			String userId) {
@@ -1208,14 +1449,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return operation;
 	}
 
-	/**
-	 * 节点操作前校验
-	 *
-	 * @param practiceId
-	 * @param authContext
-	 * @return
-	 */
-	private LocalScene sceneNodeCheck(String practiceId, AuthContext authContext) {
+    /**
+     * 节点操作前校验
+     *
+     * @param practiceId
+     * @param authContext
+     * @return
+     */
+    private LocalScene sceneNodeCheck(String practiceId, AuthContext authContext) {
 
 		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
 		if (null == operation) {
@@ -1245,14 +1486,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return localScene;
 	}
 
-	/**
-	 * 初始化实训场景数据
-	 *
-	 * @param operation
-	 * @param authContext
-	 * @return
-	 */
-	private OjLocalScene initOjLocalScene(PracticeOperation operation, AuthContext authContext) {
+    /**
+     * 初始化实训场景数据
+     *
+     * @param operation
+     * @param authContext
+     * @return
+     */
+    private OjLocalScene initOjLocalScene(PracticeOperation operation, AuthContext authContext) {
 		// 初始化场景数据
 		InitOjSceneContext initOjSceneContext = InitOjSceneContext.builder()
 				.businessId(operation.getResourceId())
@@ -1264,15 +1505,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return ojLocalSceneService.initOjLocalScene(initOjSceneContext);
 	}
 
-	/**
-	 * 组装localScene数据
-	 *
-	 * @param operation
-	 * @param ojLocalScene
-	 * @param authContext
-	 * @return
-	 */
-	private LocalScene initLocalScene(PracticeOperation operation, OjLocalScene ojLocalScene,
+    /**
+     * 组装localScene数据
+     *
+     * @param operation
+     * @param ojLocalScene
+     * @param authContext
+     * @return
+     */
+    private LocalScene initLocalScene(PracticeOperation operation, OjLocalScene ojLocalScene,
 			AuthContext authContext) {
 
 		LocalScene localScene = new LocalScene();
@@ -1308,7 +1549,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return localScene;
 	}
 
-	@Override
+    /**
+     * 创建中台日志
+     *
+     * @param practiceId 练习id
+     * @param logContent 日志内容
+     */
+    @Override
 	public void createMpLog(String practiceId, LogContent logContent) {
 		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
 		String content = LogContent.PRACTICE_FORMAT.format(operation.getTitle(), logContent);
@@ -1316,14 +1563,28 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				OperationType.EXERCISE, LogContent.EXERCISE.getMsg(), content);
 	}
 
-	@Override
+    /**
+     * 查询导出练习
+     *
+     * @param setIds     设置id列表
+     * @param practiceId 练习id
+     * @return {@code List<PracticeOperation> }
+     */
+    @Override
 	public List<PracticeOperation> selectExportPractice(List<String> setIds, String practiceId) {
 
 		// 查询所有的习题
 		return practiceListByIds(setIds, practiceId);
 	}
 
-	@Override
+    /**
+     * 导出练习
+     *
+     * @param setPath            设置路径
+     * @param operations         操作
+     * @param disableImageExport 禁用图像导出
+     */
+    @Override
 	public void exportPractice(String setPath, List<PracticeOperation> operations, Boolean disableImageExport) {
 
 		for (PracticeOperation operation : operations) {
@@ -1339,7 +1600,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 	}
 
-	@Override
+    /**
+     * 获取选项id列表由认证
+     *
+     * @param authContext   auth 上下文
+     * @param practiceSetId 练习设置id
+     * @return {@code List<String> }
+     */
+    @Override
 	public List<String> getOptionIdsByAuth(AuthContext authContext, String practiceSetId) {
 		List<String> operationIds = new ArrayList<>();
 		// 过滤无权限习题集
@@ -1372,14 +1640,27 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return operationIds;
 	}
 
-	@Override
+    /**
+     * 获取实操记录
+     *
+     * @param userInfo  用户信息
+     * @param startTime 启动时间
+     * @param endTime   结束时间
+     * @return {@code List<OperationRecordRes> }
+     */
+    @Override
 	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime) {
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
 		List<String> operationIds = getOptionIdsByAuth(authContext, null);
 		return practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
 	}
 
-	@Override
+    /**
+     * 获取实操类别进展
+     *
+     * @return {@code List<CategoryProgressRes> }
+     */
+    @Override
 	public List<CategoryProgressRes> getOperationCategoryProgress() {
 		List<AdminOperationListBo> operationList = getAllPracticeTheoryByAuthAndSetId(null);
 		List<PracticeCategory> practiceCategoryList = practiceCategoryMapper.listByTypeAndName(PracticeCategory.PracticeType.OPERATION.getCode(), null);
@@ -1396,7 +1677,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return categoryProgressResList;
 	}
 
-	@Override
+    /**
+     * 提交答案再
+     *
+     * @param userId       用户id
+     * @param resourceId   资源id
+     * @param submitAnswer 提交答案
+     * @return {@code EvaluateResult }
+     */
+    @Override
 	public EvaluateResult submitAnswerAgain(String userId, String resourceId, String submitAnswer) {
 		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
 		if (null == operation) {
@@ -1407,12 +1696,24 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				operation, submitAnswer);
 	}
 
-	@Override
+    /**
+     * 获取类别id和设置id列表
+     *
+     * @return {@code List<PracticeOperation> }
+     */
+    @Override
 	public List<PracticeOperation> getCategoryIdAndSetIds() {
 		return practiceOperationMapper.selectAllCategoryIds();
 	}
 
-	@Override
+    /**
+     * 获取知识点列表由频率
+     *
+     * @param pattern 模式
+     * @param isWeb   是否Web
+     * @return {@code List<String> }
+     */
+    @Override
 	public List<String> getKnowledgeListByFrequency(PatternReq pattern, Boolean isWeb) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -1450,7 +1751,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 	}
 
-	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {
+    /**
+     * 做导出
+     *
+     * @param setPath            设置路径
+     * @param operation          实操
+     * @param disableImageExport 禁用图像导出
+     */
+    private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {
 		EXPORT_LOG.info("Start export practice {}....", operation.getTitle());
 
 		String path = createOperationPath(setPath, operation);
@@ -1486,12 +1794,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		EXPORT_LOG.info("Export practice [{}] successfully", operation.getTitle());
 	}
 
-	/**
-	 * 获取场景导出请求体
-	 * @param operation
-	 * @return
-	 */
-	private SceneDumpContext exportSceneReq(PracticeOperation operation, String practicePath, Boolean disableImageExport) {
+    /**
+     * 获取场景导出请求体
+     *
+     * @param operation
+     * @param practicePath       练习路径
+     * @param disableImageExport 禁用图像导出
+     * @return
+     */
+    private SceneDumpContext exportSceneReq(PracticeOperation operation, String practicePath, Boolean disableImageExport) {
 		SceneDumpContext dumpContext = new SceneDumpContext();
 		dumpContext.setId(operation.getTopoId());
 
@@ -1503,22 +1814,24 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return dumpContext;
 	}
 
-	/**
-	 * 导出题解文件
-	 * @param writeupDir
-	 * @param content
-	 */
-	private void exportWriteup(String writeupDir, String content) {
+    /**
+     * 导出题解文件
+     *
+     * @param writeupDir
+     * @param content    内容
+     */
+    private void exportWriteup(String writeupDir, String content) {
 		File writeupFile = new File(writeupDir, ResourceImportConstant.WRITEUP_MD);
 		MdUtil.writeMdToFile(writeupFile, content);
 	}
 
-	/**
-	 * 附件导出 存在不进行再次导出
-	 * @param dir
-	 * @param attachmentId
-	 */
-	private void exportAttachment(String dir, String attachmentId) {
+    /**
+     * 附件导出 存在不进行再次导出
+     *
+     * @param dir
+     * @param attachmentId 附件id
+     */
+    private void exportAttachment(String dir, String attachmentId) {
 		if (StringUtils.isBlank(attachmentId)) {
 			return;
 		}
@@ -1536,12 +1849,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 	}
 
-	/**
-	 * 数据类型转换
-	 * @param operation
-	 * @return
-	 */
-	private MdCtfBase entityToMd(PracticeOperation operation) {
+    /**
+     * 数据类型转换
+     *
+     * @param operation
+     * @return
+     */
+    private MdCtfBase entityToMd(PracticeOperation operation) {
 
 		MdCtfBase ctfBase = BeanUtils.copy(operation, MdCtfBase.class);
 		UserInfo byId = remoteUserService.getById(operation.getCreateUserId());
@@ -1575,13 +1889,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 	}
 
-	/**
-	 * 随机flag数据转换
-	 * @param attachmentId
-	 * @param answers
-	 * @return
-	 */
-	private Map<String, String> formatterRandom(String attachmentId, List<String> answers) {
+    /**
+     * 随机flag数据转换
+     *
+     * @param attachmentId
+     * @param answers
+     * @return
+     */
+    private Map<String, String> formatterRandom(String attachmentId, List<String> answers) {
 		Map<String, String> fileFlag = Maps.newTreeMap();
 		String[] files = attachmentId.split(CommonConstant.CODE_COMMA);
 
@@ -1608,13 +1923,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	}
 
-	/**
-	 * 创建操作习题文件夹
-	 * @param setPath
-	 * @param operation
-	 * @return
-	 */
-	private String createOperationPath(String setPath, PracticeOperation operation) {
+    /**
+     * 创建操作习题文件夹
+     *
+     * @param setPath
+     * @param operation
+     * @return
+     */
+    private String createOperationPath(String setPath, PracticeOperation operation) {
 		File practicePath = new File(setPath, operation.getTitle());
 		FileUtil.createPath(practicePath);
 
@@ -1626,13 +1942,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return practicePath.getAbsolutePath();
 	}
 
-	/**
-	 * 查询习题列表
-	 * @param setIds 习题集编号
-	 * @param practiceId 习题编号 ,分割
-	 * @return
-	 */
-	private List<PracticeOperation> practiceListByIds(List<String> setIds, String practiceId) {
+    /**
+     * 查询习题列表
+     *
+     * @param setIds     习题集编号
+     * @param practiceId 习题编号 ,分割
+     * @return
+     */
+    private List<PracticeOperation> practiceListByIds(List<String> setIds, String practiceId) {
 
 		List<String> practiceIds = Lists.newArrayList();
 
@@ -1647,7 +1964,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return practiceOperationMapper.selectBatchIds(practiceIds);
 	}
 
-	private List<AdminOperationListBo> getAllPracticeTheoryByAuthAndSetId (String practiceSetId){
+    /**
+     * 获取全部练习理论由认证和设置id
+     *
+     * @param practiceSetId 练习设置id
+     * @return {@code List<AdminOperationListBo> }
+     */
+    private List<AdminOperationListBo> getAllPracticeTheoryByAuthAndSetId (String practiceSetId){
 		PageReqBase pageReqBase = new PageReqBase();
 		pageReqBase.setPer_page(2147483647);
 		OperationListQueryBo listQueryBo = new OperationListQueryBo();

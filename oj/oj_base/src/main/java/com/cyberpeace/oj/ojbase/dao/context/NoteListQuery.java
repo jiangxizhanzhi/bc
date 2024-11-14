@@ -9,18 +9,36 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 笔记列表查询
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class NoteListQuery extends PatternBase {
 
+	/**
+	 * 用户id列表
+	 */
 	private List<String> userIds;
 
+	/**
+	 * 笔记类型
+	 */
 	private Integer noteType;
 
+	/**
+	 * 业务类型
+	 */
 	private Integer businessType;
 
+	/**
+	 * 业务id
+	 */
 	private String businessId;
 
 }

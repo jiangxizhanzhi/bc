@@ -5,6 +5,9 @@ import java.util.List;
 
 /**
  * 资源导入文件名称配置
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 public final class ResourceImportConstant {
 
@@ -137,9 +140,18 @@ public final class ResourceImportConstant {
 	 */
 	public static final String DATA_JSON = "data.json";
 
+	/**
+	 * 脚本
+	 */
 	public static final String SCRIPT = "script";
 
+	/**
+	 * 题解markdown
+	 */
 	public static final String WRITEUP_MD = "writeup.md";
 
+	/**
+	 * 练习设置图标
+	 */
 	public static final List<String> PRACTICE_SET_LOGO = Arrays.asList("/cpms/built_in/SetLogo1.png", "/cpms/built_in/SetLogo2.png", "/cpms/built_in/SetLogo3.png", "/cpms/built_in/SetLogo4.png", "/cpms/built_in/SetLogo5.png");
 }

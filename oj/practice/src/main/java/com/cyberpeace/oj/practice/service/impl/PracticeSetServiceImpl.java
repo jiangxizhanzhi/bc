@@ -56,42 +56,88 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 练习设置Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, PracticeSet> implements PracticeSetService {
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 练习实操Mapper
+	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 练习理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 练习验证处理器
+	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
+	/**
+	 * 系统配置Service
+	 */
 	@Autowired
 	private SystemPropertyService systemPropertyService;
 
+	/**
+	 * 导出日志
+	 */
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
+	/**
+	 * 查询由id
+	 *
+	 * @param resourceId  资源id
+	 * @param authContext auth 上下文
+	 * @return {@code AdminPracticeSetBo }
+	 */
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
 
@@ -114,6 +160,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return entityToSetBo(practiceSet, authContext, userNameMap);
 	}
 
+	/**
+	 * 启用访问权限
+	 *
+	 * @param resourceId  资源id
+	 * @param authContext auth 上下文
+	 */
 	@Override
 	public void enableAccess(String resourceId, AuthContext authContext) {
 
@@ -126,6 +178,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 	}
 
+	/**
+	 * 获取设置id列表
+	 *
+	 * @param authContext auth 上下文
+	 * @param setId       设置id
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> getSetIds(AuthContext authContext, String setId) {
 		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
@@ -147,6 +206,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * 实体类数据转换
 	 *
 	 * @param practiceSet
+	 * @param authContext auth 上下文
+	 * @param userNameMap 用户名称映射
 	 * @return
 	 */
 	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext,
@@ -178,6 +239,15 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return setBo;
 	}
 
+	/**
+	 * 查询由类型和名称
+	 *
+	 * @param page         分页
+	 * @param practiceType 练习类型
+	 * @param pattern      模式
+	 * @param authContext  auth 上下文
+	 * @return {@code IPage<AdminPracticeSetBo> }
+	 */
 	@Override
 	public IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType,
 			String pattern, AuthContext authContext) {
@@ -201,6 +271,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, authContext, userNameMap));
 	}
 
+	/**
+	 * 通过身份验证更新
+	 *
+	 * @param practiceSet 习题集
+	 * @param authContext auth 上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext) {
 
@@ -237,6 +314,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return practiceSetMapper.updateById(practiceSet) > CommonConstant.ZERO;
 	}
 
+	/**
+	 * 启用 Delete
+	 *
+	 * @param resourceIds 资源id列表
+	 * @param authContext auth 上下文
+	 */
 	@Override
 	public void enableDelete(List<String> resourceIds, AuthContext authContext) {
 
@@ -255,6 +338,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 	}
 
+	/**
+	 * 导出练习设置
+	 *
+	 * @param practiceSetIds 练习设置id列表
+	 * @param authContext    auth 上下文
+	 * @return {@code File }
+	 */
 	@Override
 	public File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext) {
 
@@ -298,6 +388,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return new File(zipDest);
 	}
 
+	/**
+	 * 加载练习设置
+	 *
+	 * @param realPath 真实路径
+	 * @param userId   用户id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean loadPracticeSet(String realPath, String userId) {
 		String destPath = realPath.substring(0, realPath.lastIndexOf(CommonConstant.PERIOD));
@@ -366,6 +463,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		});
 	}
 
+	/**
+	 * 重复练习设置检查
+	 *
+	 * @param practiceSets 练习集
+	 * @return {@code List<String> }
+	 */
 	@Override
 	public List<String> duplicatePracticeSetInspect(List<String> practiceSets) {
 		List<String> duplicateName = Lists.newArrayList();
@@ -381,6 +484,15 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return duplicateName;
 	}
 
+	/**
+	 * 导出练习设置
+	 *
+	 * @param practiceSetId      练习设置id
+	 * @param practiceId         练习id
+	 * @param newPath            新建路径
+	 * @param disableImageExport 禁用图像导出
+	 * @return {@code String }
+	 */
 	@Override
 	public String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport) {
 
@@ -434,6 +546,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return destPath;
 	}
 
+	/**
+	 * 清除用户认证
+	 *
+	 * @param userId 用户id
+	 */
 	@Override
 	public void clearUserAuth(String userId) {
 		List<PracticeSet> courseList = practiceSetMapper.selectPracticeSetByUserId(userId);
@@ -446,6 +563,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		updateBatchById(courseList);
 	}
 
+	/**
+	 * 清除组织认证
+	 *
+	 * @param orgId 组织id
+	 */
 	@Override
 	public void clearOrgAuth(String orgId) {
 		List<PracticeSet> courseList = practiceSetMapper.selectPracticeSetByOrgId(orgId);
@@ -457,11 +579,26 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		updateBatchById(courseList);
 	}
 
+	/**
+	 * 导出markdown理论练习
+	 *
+	 * @param path     路径
+	 * @param theories 理论
+	 * @return {@code MdTheoryPractice }
+	 */
 	@Override
 	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
 		return practiceTheoryService.exportMdTheoryPractice(path, theories);
 	}
 
+	/**
+	 * 获取更多练习设置
+	 *
+	 * @param authContext   auth 上下文
+	 * @param practiceSetId 练习设置id
+	 * @param setType       设置类型
+	 * @return {@code List<AdminPracticeSetBo> }
+	 */
 	@Override
 	public List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType) {
 		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
@@ -479,6 +616,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				practiceSet -> entityToSetBo(practiceSet, authContext, userNameMap));
 	}
 
+	/**
+	 * 创建IMG
+	 *
+	 * @param setName 设置名称
+	 * @return {@code String }
+	 */
 	@Override
 	public String createImg(String setName) {
 		List<String> practiceSetLogo = ResourceImportConstant.PRACTICE_SET_LOGO;
@@ -494,6 +637,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return "";
 	}
 
+	/**
+	 * 做导出设置
+	 *
+	 * @param destPath    目标路径
+	 * @param practiceSet 习题集
+	 * @return {@code String }
+	 */
 	private String doExportSet(String destPath, PracticeSet practiceSet) {
 
 		if (StringUtils.isBlank(practiceSet.getLogo())) {
@@ -542,17 +692,36 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return path;
 	}
 
+	/**
+	 * 创建路径
+	 *
+	 * @param destPath 目标路径
+	 * @param setName  设置名称
+	 * @return {@code String }
+	 */
 	private String createPath(String destPath, String setName) {
 		File setPath = new File(destPath, setName);
 		FileUtil.createPath(setPath);
 		return setPath.getAbsolutePath();
 	}
 
-	/** 数据类型转换*/
+	/**
+	 * 数据类型转换
+	 *
+	 * @param practiceSet 习题集
+	 * @return {@code MdPracticeSet }
+	 */
 	private MdPracticeSet entityToMd(PracticeSet practiceSet) {
 		return BeanUtils.copy(practiceSet, MdPracticeSet.class);
 	}
 
+	/**
+	 * 设置列表由id列表
+	 *
+	 * @param setId      设置id
+	 * @param practiceId 练习id
+	 * @return {@code List<PracticeSet> }
+	 */
 	private List<PracticeSet> setListByIds(String setId, String practiceId) {
 
 		if (StringUtils.isNotBlank(practiceId)) {
@@ -574,6 +743,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		return practiceSetMapper.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), false);
 	}
 
+	/**
+	 * 练习列表由id列表
+	 *
+	 * @param practiceId 练习id
+	 * @return {@code List<PracticeOperation> }
+	 */
 	private List<PracticeOperation> practiceListByIds(String practiceId) {
 		if (StringUtils.isBlank(practiceId)) {
 			return Lists.newArrayList();
@@ -586,9 +761,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	/**
 	 * 加载实操习题
+	 *
 	 * @param practiceSetId
 	 * @param operationDumpLoadBos
 	 * @param userId
+	 * @param filePathMap          文件路径映射
+	 * @param filePath             文件路径
 	 * @return
 	 */
 	private List<PracticeOperation> loadPracticeOperation(String practiceSetId,
@@ -600,6 +778,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	/**
 	 * 加载理论习题数据
+	 *
 	 * @param practiceSetId
 	 * @param theoryDumpLoadBos
 	 * @param userId
@@ -613,8 +792,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	/**
 	 * 习题集数据加载
+	 *
 	 * @param setDumpLoadBo
 	 * @param userId
+	 * @param filePath      文件路径
 	 * @return
 	 */
 	private PracticeSet loadPracticeSet(PracticeSetDumpLoadBo setDumpLoadBo, String userId,
@@ -661,9 +842,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	/**
-	 * 
+	 * 导出设置
+	 *
 	 * @param practiceSet
 	 * @param fileStorePath
+	 * @param filePathMap   文件路径映射
 	 * @return
 	 */
 	private PracticeSetDumpLoadBo dumpSet(PracticeSet practiceSet, String fileStorePath,
@@ -688,8 +871,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	/**
 	 * 根据习题集获取要dump的习题数据
+	 *
 	 * @param practiceSet
-	 * @param fileStorePath 
+	 * @param fileStorePath
 	 * @param pathMap
 	 * @return
 	 */
@@ -712,7 +896,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	/**
 	 * 导出实操习题数据
+	 *
 	 * @param practiceSetId
+	 * @param fileStorePath 文件存储路径
+	 * @param filePathMap   文件路径映射
 	 * @return
 	 */
 	private List<PracticeOperationDumpLoadBo> dumpOperation(String practiceSetId,
@@ -733,6 +920,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	/**
 	 * 导出理论习题数据
+	 *
 	 * @param practiceSetId
 	 * @return
 	 */

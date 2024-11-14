@@ -7,20 +7,38 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * 管理列表笔记请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class AdminListNoteReq extends PageReqBase {
 
+	/**
+	 * 姓名查询条件
+	 */
 	@ApiModelProperty(name = "user_name", value = "姓名查询条件")
 	private String userName;
 
+	/**
+	 * 笔记类型 笔记=1 实验报告=2
+	 */
 	@ApiModelProperty(name = "note_type", value = "笔记类型 笔记=1 实验报告=2")
 	@NotNull
 	private Integer noteType;
 
+	/**
+	 * 资源类型 1=课程 2=课时 3=练习 4=课后练习
+	 */
 	@ApiModelProperty(name = "business_type", value = "资源类型 1=课程 2=课时 3=练习 4=课后练习")
 	private Integer businessType;
 
+	/**
+	 * 资源编号 课时
+	 */
 	@ApiModelProperty(name = "business_id", value = "资源编号 课时")
 	private String businessId;
 

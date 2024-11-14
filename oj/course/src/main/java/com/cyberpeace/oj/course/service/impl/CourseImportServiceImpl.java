@@ -58,68 +58,137 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课程导入Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j(topic = "resourceImport")
 @Service
 public class CourseImportServiceImpl implements CourseImportService {
 
-	@Autowired
+    /**
+     * 课程类别Service
+     */
+    @Autowired
 	private CourseCategoryService courseCategoryService;
 
-	@Autowired
+    /**
+     * 附件Service
+     */
+    @Autowired
 	private AttachmentService attachmentService;
 
-	@Autowired
+    /**
+     * 课程Mapper
+     */
+    @Autowired
 	private CourseMapper courseMapper;
 
-	@Autowired
+    /**
+     * 课程课时Mapper
+     */
+    @Autowired
 	private CourseLessonMapper courseLessonMapper;
 
-	@Autowired
+    /**
+     * 课程课时Service
+     */
+    @Autowired
 	private CourseLessonService courseLessonService;
 
-	@Autowired
+    /**
+     * 课时配置Service
+     */
+    @Autowired
 	private LessonConfigService lessonConfigService;
 
-	@Autowired
+    /**
+     * 事务模板
+     */
+    @Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Autowired
+    /**
+     * 试卷Service
+     */
+    @Autowired
 	private PaperService paperService;
 
-	@Autowired
+    /**
+     * 课程Service
+     */
+    @Autowired
 	private CourseService courseService;
 
-	@Autowired
+    /**
+     * 练习实操裁判Service
+     */
+    @Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
-	@Autowired
+    /**
+     * 练习实操裁判Mapper
+     */
+    @Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
-	@Autowired
+    /**
+     * 练习理论裁判Service
+     */
+    @Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
-	@Autowired
+    /**
+     * 练习理论裁判Mapper
+     */
+    @Autowired
 	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
-	@Autowired
+    /**
+     * utilService
+     */
+    @Autowired
 	private UtilService utilService;
 
-	@Autowired
+    /**
+     * 课程验证处理器
+     */
+    @Autowired
 	private CourseValidateHandler courseValidateHandler;
 
-	@Autowired
+    /**
+     * 课时配置Mapper
+     */
+    @Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
-	@Autowired
+    /**
+     * 远程拓扑Service
+     */
+    @Autowired
 	private RemoteTopoService remoteTopoService;
 
-	@Autowired
+    /**
+     * 练习实操导入Service
+     */
+    @Autowired
 	private PracticeOperationImportService practiceOperationImportService;
 
-	@Autowired
+    /**
+     * 练习理论导入Service
+     */
+    @Autowired
 	private PracticeTheoryImportService practiceTheoryImportService;
 
-	@Override
+    /**
+     * 解析马币课程
+     *
+     * @param path 路径
+     * @return {@code Course }
+     */
+    @Override
 	public Course parseRmCourse(String path) {
 		log.info("Start parsing lesson information! course_path=[{}]", path);
 
@@ -195,13 +264,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return course;
 	}
 
-	/**
-	 * json数据转为课程 部分字段属性不对应实体类类型 单独处理
-	 *
-	 * @param jsonObject
-	 * @return
-	 */
-	private Course jsonParseCourse(JSONObject jsonObject, String path) {
+    /**
+     * json数据转为课程 部分字段属性不对应实体类类型 单独处理
+     *
+     * @param jsonObject
+     * @param path       路径
+     * @return
+     */
+    private Course jsonParseCourse(JSONObject jsonObject, String path) {
 
 		// 计算难度值
 		String difficulty = (String) jsonObject.remove("difficulty");
@@ -220,7 +290,16 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return course;
 	}
 
-	@Override
+    /**
+     * 解析马币课时
+     *
+     * @param course  课程
+     * @param path    路径
+     * @param envReqs env reqs
+     * @param nameMap 名称映射
+     * @return {@code List<CourseLesson> }
+     */
+    @Override
 	public List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
 			Map<String, String> nameMap) {
 		List<CourseLesson> allLessons = Lists.newArrayList();
@@ -245,14 +324,15 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	}
 
-	/**
-	 * 对课时数据进行处理
-	 * @param lessonPath 课时文件所在地址
-	 * @param course 课程信息
-	 * @param envReqs key=课时名称 value=拓扑编号
-	 * @return
-	 */
-	private CourseLesson doParseLesson(String lessonPath, Course course,
+    /**
+     * 对课时数据进行处理
+     *
+     * @param lessonPath 课时文件所在地址
+     * @param course     课程信息
+     * @param envReqs    key=课时名称 value=拓扑编号
+     * @return
+     */
+    private CourseLesson doParseLesson(String lessonPath, Course course,
 			Map<String, String> envReqs) {
 		log.info("Start parsing lesson information! lesson_path=[{}]", lessonPath);
 		CourseLesson courseLesson;
@@ -288,14 +368,15 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return courseLesson;
 	}
 
-	/**
-	 * 解析课时数据
-	 *
-	 * @param path
-	 * @param course
-	 * @return
-	 */
-	private CourseLesson parseLesson(String path, Course course, Map<String, String> envReqs) {
+    /**
+     * 解析课时数据
+     *
+     * @param path
+     * @param course
+     * @param envReqs env reqs
+     * @return
+     */
+    private CourseLesson parseLesson(String path, Course course, Map<String, String> envReqs) {
 
 		// 解析课时数据
 		File file = new File(path, ResourceImportConstant.README_NAME);
@@ -360,13 +441,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return courseLesson;
 	}
 
-	/**
-	 * 课时数据处理
-	 * @param lessonPath 课时目录
-	 * @param courseLesson 课时数据
-	 * @param courseId 课程编号
-	 */
-	private void parseLessonHandout(String lessonPath, CourseLesson courseLesson, String courseId) {
+    /**
+     * 课时数据处理
+     *
+     * @param lessonPath   课时目录
+     * @param courseLesson 课时数据
+     * @param courseId     课程编号
+     */
+    private void parseLessonHandout(String lessonPath, CourseLesson courseLesson, String courseId) {
 
 		// 解析课时讲义文件
 		String handoutPath = courseLesson.getType().intValue() == CourseLesson.LessonType.THEORY
@@ -446,13 +528,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	}
 
-	/**
-	 * 解析课时json数据 处理不能转化的数据
-	 *
-	 * @param jsonObject
-	 * @return
-	 */
-	private CourseLesson jsonParseLesson(JSONObject jsonObject, String lessonReadmePath) {
+    /**
+     * 解析课时json数据 处理不能转化的数据
+     *
+     * @param jsonObject
+     * @param lessonReadmePath 课时自述文件路径
+     * @return
+     */
+    private CourseLesson jsonParseLesson(JSONObject jsonObject, String lessonReadmePath) {
 
 		String difficulty = (String) jsonObject.remove("difficulty");
 		Integer difficultyCode = EnumUtils.getEnumCodeByDesc(difficulty, Difficulty.class);
@@ -500,14 +583,15 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return courseLesson;
 	}
 
-	/**
-	 *
-	 * @param course 课程信息
-	 * @param path 课程文件地址
-	 * @param lessonNameMap 课时名和课时的对应关系
-	 * @return
-	 */
-	@Override
+    /**
+     * 解析马币课时配置
+     *
+     * @param course        课程信息
+     * @param path          课程文件地址
+     * @param lessonNameMap 课时名和课时的对应关系
+     * @return
+     */
+    @Override
 	public List<LessonConfig> parseRmLessonConfig(Course course, String path,
 			Map<String, String> lessonNameMap) {
 
@@ -527,7 +611,16 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return lessonConfigs;
 	}
 
-	private void deptChapterPasser(Course course, String path, Map<String, String> lessonNameMap, List<LessonConfig> lessonConfigs, String parentId) {
+    /**
+     * 部门章通行证
+     *
+     * @param course        课程
+     * @param path          路径
+     * @param lessonNameMap 课时名称映射
+     * @param lessonConfigs 课时配置
+     * @param parentId      父母id
+     */
+    private void deptChapterPasser(Course course, String path, Map<String, String> lessonNameMap, List<LessonConfig> lessonConfigs, String parentId) {
 		List<String> dirs = FileUtil.listFileByFile(new File(path), 1, false);
 		List<String> deptChapterPaths = dirs.stream().filter(this::regexChapterPath).collect(Collectors.toList());
 		// 过滤掉镜像文件夹并排序
@@ -564,7 +657,16 @@ public class CourseImportServiceImpl implements CourseImportService {
 		}
 	}
 
-	private void loadLessonAndChapter(Course course, Map<String, String> lessonNameMap, List<LessonConfig> lessonConfigs, String chapterPath, String chapterId) {
+    /**
+     * 加载课时和章
+     *
+     * @param course        课程
+     * @param lessonNameMap 课时名称映射
+     * @param lessonConfigs 课时配置
+     * @param chapterPath   章节路径
+     * @param chapterId     章id
+     */
+    private void loadLessonAndChapter(Course course, Map<String, String> lessonNameMap, List<LessonConfig> lessonConfigs, String chapterPath, String chapterId) {
 		int index = CommonConstant.ONE;
 
 		// 课时数据组装
@@ -605,21 +707,49 @@ public class CourseImportServiceImpl implements CourseImportService {
 		}
 	}
 
-	private Boolean regexLessonPath(String lessonPath) {
+    /**
+     * 正则表达式课时路径
+     *
+     * @param lessonPath 课时路径
+     * @return {@code Boolean }
+     */
+    private Boolean regexLessonPath(String lessonPath) {
 		return regexPath(PatternConstant.REGEX_LESSON_NAME, lessonPath);
 	}
 
-	private Boolean regexChapterPath(String chapterPath) {
+    /**
+     * 正则表达式章节路径
+     *
+     * @param chapterPath 章节路径
+     * @return {@code Boolean }
+     */
+    private Boolean regexChapterPath(String chapterPath) {
 		return regexPath(PatternConstant.REGEX_LESSON_CHAPTER_NAME, chapterPath);
 	}
 
-	private Boolean regexPath(String regex, String path) {
+    /**
+     * 正则表达式路径
+     *
+     * @param regex 正则表达式
+     * @param path  路径
+     * @return {@code Boolean }
+     */
+    private Boolean regexPath(String regex, String path) {
 		Pattern lessonPattern = Pattern.compile(regex);
 		final String name = new File(path).getName();
 		return lessonPattern.matcher(name).find();
 	}
 
-	@Override
+    /**
+     * r课程导入
+     *
+     * @param path             路径
+     * @param envReqs          env reqs
+     * @param operationEnvReqs 实操环境要求
+     * @param authContext      auth 上下文
+     * @return {@code Boolean }
+     */
+    @Override
 	public Boolean rMCourseImport(String path, Map<String, String> envReqs,
 			Map<String, Map<String, String>> operationEnvReqs, AuthContext authContext) {
 
@@ -659,11 +789,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return true;
 	}
 
-	/**
-	 * 课后练习相关数据存储
-	 * @param lessonPractice
-	 */
-	private void saveLessonPractice(List<LessonPracticeImportBo> lessonPractice) {
+    /**
+     * 课后练习相关数据存储
+     *
+     * @param lessonPractice 课时练习
+     */
+    private void saveLessonPractice(List<LessonPracticeImportBo> lessonPractice) {
 		List<Paper> papers = Lists.newArrayList();
 		List<PracticeTheoryRef> theoryRefs = new ArrayList<>();
 		List<PracticeOperationRef> operationRefs = new ArrayList<>();
@@ -690,13 +821,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		}
 	}
 
-	/**
-	 * 查询需要被删除的拓扑编号
-	 * @param lessons 组装完成的课时信息 课时信息使用的是新的拓扑
-	 * @param envReq key=课时名称 value=拓扑编号
-	 * @return
-	 */
-	private List<String> selectDeleteTopoIds(List<CourseLesson> lessons,
+    /**
+     * 查询需要被删除的拓扑编号
+     *
+     * @param lessons 组装完成的课时信息 课时信息使用的是新的拓扑
+     * @param envReq  key=课时名称 value=拓扑编号
+     * @return
+     */
+    private List<String> selectDeleteTopoIds(List<CourseLesson> lessons,
 			Map<String, String> envReq) {
 
 		// 获取课后练习实操习题的拓扑编号
@@ -707,13 +839,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return lessonPracticeTopoIds;
 	}
 
-	/**
-	 * 获取课程拓扑编号数据
-	 * @param lessons 解析完成之后的课时信息
-	 * @param envReq key=课时目录名称 value=拓扑编号
-	 * @return
-	 */
-	private List<String> selectLessonTopoIds(List<CourseLesson> lessons,
+    /**
+     * 获取课程拓扑编号数据
+     *
+     * @param lessons 解析完成之后的课时信息
+     * @param envReq  key=课时目录名称 value=拓扑编号
+     * @return
+     */
+    private List<String> selectLessonTopoIds(List<CourseLesson> lessons,
 			Map<String, String> envReq) {
 		if (CollectionUtils.isEmpty(lessons)) {
 			return Lists.newArrayList();
@@ -742,11 +875,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 						: courseLesson.getTopoId());
 	}
 
-	/**
-	 * 拓扑数据删除
-	 * @param topoIds
-	 */
-	private void deleteLessonPracticeTopo(List<String> topoIds) {
+    /**
+     * 拓扑数据删除
+     *
+     * @param topoIds 拓扑id列表
+     */
+    private void deleteLessonPracticeTopo(List<String> topoIds) {
 
 		try {
 			if (CollectionUtils.isNotEmpty(topoIds)) {
@@ -759,23 +893,25 @@ public class CourseImportServiceImpl implements CourseImportService {
 		}
 	}
 
-	/**
-	 * 获取当前课后练习拓扑编号
-	 * @param lessons 课时列表
-	 * @return
-	 */
-	private List<String> selectLessonPracticeTopoIds(List<CourseLesson> lessons) {
+    /**
+     * 获取当前课后练习拓扑编号
+     *
+     * @param lessons 课时列表
+     * @return
+     */
+    private List<String> selectLessonPracticeTopoIds(List<CourseLesson> lessons) {
 		List<String> paperIds = StreamApiUtils.map(lessons, CourseLesson::getPaperId);
 		return practiceOperationRefService.selectLessonPracticeTopoIds(paperIds);
 	}
 
-	/**
-	 * 解析课后练习数据
-	 * @param lessons 课时信息
-	 * @param operationEnvReqs 课后练习对应的拓扑数据 key=课时名称 value=<key=实操题目名称， value=拓扑编号>
-	 * @return
-	 */
-	private List<LessonPracticeImportBo> parseRmLessonPractice(List<CourseLesson> lessons,
+    /**
+     * 解析课后练习数据
+     *
+     * @param lessons          课时信息
+     * @param operationEnvReqs 课后练习对应的拓扑数据 key=课时名称 value=<key=实操题目名称， value=拓扑编号>
+     * @return
+     */
+    private List<LessonPracticeImportBo> parseRmLessonPractice(List<CourseLesson> lessons,
 			Map<String, Map<String, String>> operationEnvReqs) {
 
 		List<LessonPracticeImportBo> importBos = new ArrayList<>();
@@ -849,13 +985,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return importBos;
 	}
 
-	/**
-	 * 初始化试卷数据
-	 * @param lesson
-	 * @param practiceContexts
-	 * @return
-	 */
-	private Paper initPaper(CourseLesson lesson, List<PaperPracticeContext> practiceContexts) {
+    /**
+     * 初始化试卷数据
+     *
+     * @param lesson
+     * @param practiceContexts
+     * @return
+     */
+    private Paper initPaper(CourseLesson lesson, List<PaperPracticeContext> practiceContexts) {
 		Double totalScore = StreamApiUtils.mapToDouble(practiceContexts,
 				PaperPracticeContext::getScore);
 		return Paper.builder().resourceId(lesson.getResourceId()).name(lesson.getName())
@@ -864,12 +1001,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 				.build();
 	}
 
-	/**
-	 * 将实操题目转换为课后练习数据格式
-	 * @param operation
-	 * @return
-	 */
-	private PracticeOperationRef operationToRef(String paperId, PracticeOperation operation) {
+    /**
+     * 将实操题目转换为课后练习数据格式
+     *
+     * @param paperId   试卷id
+     * @param operation
+     * @return
+     */
+    private PracticeOperationRef operationToRef(String paperId, PracticeOperation operation) {
 		PracticeOperationRef operationRef = new PracticeOperationRef();
 		operationRef.setOriginId(operation.getResourceId());
 		operationRef.setSnapshot(JsonUtil.toJsonString(operation));
@@ -877,13 +1016,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return operationRef;
 	}
 
-	/**
-	 * 将题论题转换为课后练习数据格式
-	 * @param paperId
-	 * @param theory
-	 * @return
-	 */
-	private PracticeTheoryRef theoryToRef(String paperId, PracticeTheory theory) {
+    /**
+     * 将题论题转换为课后练习数据格式
+     *
+     * @param paperId
+     * @param theory
+     * @return
+     */
+    private PracticeTheoryRef theoryToRef(String paperId, PracticeTheory theory) {
 		PracticeTheoryRef theoryRef = new PracticeTheoryRef();
 		String snapshot = JsonUtil.toJsonString(theory);
 		theoryRef.setSnapshot(snapshot);
@@ -894,13 +1034,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return theoryRef;
 	}
 
-	/**
-	 * 设置习题分数
-	 * @param resourceId 习题编号
-	 * @param practiceType 习题类型
-	 * @return
-	 */
-	private PaperPracticeContext initPracticeContext(String resourceId, Integer practiceType) {
+    /**
+     * 设置习题分数
+     *
+     * @param resourceId   习题编号
+     * @param practiceType 习题类型
+     * @return
+     */
+    private PaperPracticeContext initPracticeContext(String resourceId, Integer practiceType) {
 		PaperPracticeContext paperPracticeContext = new PaperPracticeContext();
 		paperPracticeContext.setPracticeType(practiceType);
 		paperPracticeContext.setResourceId(resourceId);
@@ -910,13 +1051,13 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return paperPracticeContext;
 	}
 
-	/**
-	 * 初始化课后练习题
-	 *
-	 * @param courseLesson
-	 * @return
-	 */
-	private Paper initPaper(CourseLesson courseLesson) {
+    /**
+     * 初始化课后练习题
+     *
+     * @param courseLesson
+     * @return
+     */
+    private Paper initPaper(CourseLesson courseLesson) {
 
 		if (courseLesson.getPaperId() != null) {
 			return null;
@@ -930,7 +1071,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return paper;
 	}
 
-	public Course generateCombineCourse(CombinedCourseImportContext courseInfo,
+    /**
+     * 生成合课程
+     *
+     * @param courseInfo  课程信息
+     * @param existConfig 存在配置
+     * @return {@code Course }
+     */
+    public Course generateCombineCourse(CombinedCourseImportContext courseInfo,
 			List<String> existConfig) {
 
 		// 增量更新
@@ -982,7 +1130,15 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return course;
 	}
 
-	public List<LessonConfig> generateLessonConfig(Course course,
+    /**
+     * 生成课时配置
+     *
+     * @param course        课程
+     * @param courseInfos   课程信息
+     * @param lessonNameMap 课时名称映射
+     * @return {@code List<LessonConfig> }
+     */
+    public List<LessonConfig> generateLessonConfig(Course course,
 			List<CombinedCourseImportContext> courseInfos, Map<String, String> lessonNameMap) {
 
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
@@ -1033,7 +1189,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return lessonConfigs;
 	}
 
-	@Override
+    /**
+     * rm组合课程导入
+     *
+     * @param courseInfos 课程信息
+     * @param authContext auth 上下文
+     * @return {@code Boolean }
+     */
+    @Override
 
 	public Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos,
 			AuthContext authContext) {
@@ -1124,7 +1287,13 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return true;
 	}
 
-	@Override
+    /**
+     * 摧毁失败拓扑
+     *
+     * @param envReqs          env reqs
+     * @param operationEnvReqs 实操环境要求
+     */
+    @Override
 	public void destroyFailedTopo(Map<String, String> envReqs,
 			Map<String, Map<String, String>> operationEnvReqs) {
 		List<String> topoIds = Lists.newArrayList();

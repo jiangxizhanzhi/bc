@@ -11,6 +11,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 课堂练习Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 @Builder
@@ -18,12 +24,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClassroomPracticeBo implements Serializable {
 
+	/**
+	 * 是否已发布
+	 */
 	@ApiModelProperty("是否已发布")
 	private Boolean released=true;
 
+	/**
+	 * 是否有习题
+	 */
 	@ApiModelProperty("是否有习题")
 	private Boolean hasPractice=true;
 
+	/**
+	 * 练习完成统计
+	 */
 	@ApiModelProperty("练习完成统计")
 	private ListRsp<PracticePaperEvaluateBo> data;
 }

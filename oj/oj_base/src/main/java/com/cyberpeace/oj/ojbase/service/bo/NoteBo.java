@@ -7,35 +7,68 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 笔记Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class NoteBo implements Serializable {
 
-    @ApiModelProperty("笔记资源编号")
+	/**
+	 * 笔记资源编号
+	 */
+	@ApiModelProperty("笔记资源编号")
     private String resourceId;
 
-    @ApiModelProperty("笔记类型 1=笔记 2=实验报告")
+	/**
+	 * 笔记类型 1=笔记 2=实验报告
+	 */
+	@ApiModelProperty("笔记类型 1=笔记 2=实验报告")
     private Integer noteType;
 
-    @ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习")
+	/**
+	 * 资源类型 1=课程 2=课时 3=练习 4=课后练习
+	 */
+	@ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习")
     private Integer businessType;
 
-    @ApiModelProperty("笔记内容")
+	/**
+	 * 笔记内容
+	 */
+	@ApiModelProperty("笔记内容")
     private String content;
 
-    @ApiModelProperty("创建人")
+	/**
+	 * 创建人
+	 */
+	@ApiModelProperty("创建人")
     private String userId;
 
-    @ApiModelProperty("对应的资源编号")
+	/**
+	 * 对应的资源编号
+	 */
+	@ApiModelProperty("对应的资源编号")
     private String businessId;
 
-    @ApiModelProperty("创建时间")
+	/**
+	 * 创建时间
+	 */
+	@ApiModelProperty("创建时间")
     private Date createTime;
 
-    @ApiModelProperty("更新时间")
+	/**
+	 * 更新时间
+	 */
+	@ApiModelProperty("更新时间")
     private Date updateTime;
 
-    @ApiModelProperty("实验报告是否提交")
+	/**
+	 * 实验报告是否提交
+	 */
+	@ApiModelProperty("实验报告是否提交")
     private Boolean isSubmit;
 
 }

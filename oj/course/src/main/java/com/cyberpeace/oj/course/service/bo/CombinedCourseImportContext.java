@@ -7,40 +7,73 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
+/**
+ * 组合课程导入上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class CombinedCourseImportContext implements Serializable {
 
-    @ApiModelProperty("课时地址绝对路径")
+	/**
+	 * 课时地址绝对路径
+	 */
+	@ApiModelProperty("课时地址绝对路径")
     private String path;
 
-    @ApiModelProperty("课程名称")
+	/**
+	 * 课程名称
+	 */
+	@ApiModelProperty("课程名称")
     @NotBlank
     private String courseName;
 
-    @ApiModelProperty("课程编号")
+	/**
+	 * 课程编号
+	 */
+	@ApiModelProperty("课程编号")
     @NotBlank
     private String courseNum;
 
-    @ApiModelProperty("课程方向")
+	/**
+	 * 课程方向
+	 */
+	@ApiModelProperty("课程方向")
     @NotBlank
     private String categoryName;
 
-    @ApiModelProperty("课程章节")
+	/**
+	 * 课程章节
+	 */
+	@ApiModelProperty("课程章节")
     @NotBlank
     private String chapterName;
 
-    @ApiModelProperty("课时名称")
+	/**
+	 * 课时名称
+	 */
+	@ApiModelProperty("课时名称")
     @NotBlank
     private String lessonName;
 
-    @ApiModelProperty("原课程名称")
+	/**
+	 * 原课程名称
+	 */
+	@ApiModelProperty("原课程名称")
     private String orgCourseName;
 
-    @ApiModelProperty("原课程章节")
+	/**
+	 * 原课程章节
+	 */
+	@ApiModelProperty("原课程章节")
     private String orgChapterName;
 
-    @ApiModelProperty("场景编号")
+	/**
+	 * 场景编号
+	 */
+	@ApiModelProperty("场景编号")
     private String topoId;
 
 }

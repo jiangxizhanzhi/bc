@@ -25,72 +25,132 @@ import lombok.Data;
 
 import static com.cyberpeace.cr.crbase.utils.CrCommonValidator.validateLength;
 
+/**
+ * 实操新增请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Data
 @ApiModel
 public class OperationAddReq implements Serializable, CustomValidate {
 
+	/**
+	 * 标题
+	 */
 	@ApiModelProperty("标题")
 	@NotBlank(groups = { Create.class })
 	private String title;
 
+	/**
+	 * 习题集
+	 */
 	@ApiModelProperty(name = "practice_set_id", value = "习题集")
 	@NotBlank(groups = { Create.class })
 	private String practiceSetId;
 
+	/**
+	 * 方向
+	 */
 	@ApiModelProperty(name = "category_id", value = "方向")
 	@NotBlank(groups = { Create.class })
 	private String categoryId;
 
+	/**
+	 * 知识点
+	 */
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
+	/**
+	 * 难度
+	 */
 	@ApiModelProperty("难度")
 	@NotNull(groups = { Create.class })
 	private Integer difficulty;
 
+	/**
+	 * 题目描述
+	 */
 	@ApiModelProperty("题目描述")
 	@NotBlank(groups = { Create.class })
 	private String content;
 
+	/**
+	 * 附件编号
+	 */
 	@ApiModelProperty(name = "attachment_id", value = "附件编号")
 	private String attachmentId;
 
+	/**
+	 * 是否为动态环境
+	 */
 	@ApiModelProperty(name = "dynamic_env", value = "是否为动态环境")
 	@NotNull(groups = { Create.class })
 	private Boolean dynamicEnv;
 
+	/**
+	 * 场景配置名称
+	 */
 	@ApiModelProperty(name = "scene_config_name", value = "场景配置名称")
 	private String sceneConfigName;
 
+	/**
+	 * 场景配置
+	 */
 	@ApiModelProperty(name = "scene_config_data", value = "场景配置")
 	private String sceneConfigData;
 
+	/**
+	 * 场景共享类型 1=个人 2=共享
+	 */
 	@ApiModelProperty(name = "scene_share_mode", value = "场景共享类型 1=个人 2=共享")
 	private Integer sceneShareMode;
 
+	/**
+	 * 是否为动态flag 0=静态 1=动态 2=随机
+	 */
 	@ApiModelProperty(name = "dynamic_flag", value = "是否为动态flag 0=静态 1=动态 2=随机")
 	private Integer dynamicFlag;
 
+	/**
+	 * 场景存活时间
+	 */
 	@ApiModelProperty(name = "destroy_delay", value = "场景存活时间")
 	@NotNull(groups = { Create.class })
 	private Integer destroyDelay;
 
+	/**
+	 * 答案
+	 */
 	@ApiModelProperty("答案")
 	private String answer;
 
+	/**
+	 * 分数
+	 */
 	@ApiModelProperty("分数")
 	@NotNull(groups = { Create.class })
 	private Double score;
 
+	/**
+	 * 是否公开
+	 */
 	@ApiModelProperty(name = "is_public", value = "是否公开")
 	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
+	/**
+	 * 题解是否公开
+	 */
 	@ApiModelProperty(name = "writeup_public", value = "题解是否公开")
 	@NotNull(groups = { Create.class })
 	private Boolean writeupPublic;
 
+	/**
+	 * 题解
+	 */
 	@ApiModelProperty("题解")
 	private String writeup;
 

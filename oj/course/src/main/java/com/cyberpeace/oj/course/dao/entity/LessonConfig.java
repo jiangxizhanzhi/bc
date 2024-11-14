@@ -9,6 +9,12 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.*;
 
 
+/**
+ * 课时配置
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,20 +22,41 @@ import lombok.*;
 @TableName("oj_lesson_config")
 public class LessonConfig extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 课程id
+	 */
 	private String courseId;
 
+	/**
+	 * 课时id
+	 */
 	private String lessonId;
 
+	/**
+	 * 编号
+	 */
 	@TableField("`index`")
 	private Integer index;
 
+	/**
+	 * 父母id
+	 */
 	private String parentId;
 
+	/**
+	 * 名称
+	 */
 	private String name;
 
+	/**
+	 * 节点类型
+	 */
 	private Integer nodeType;
 
 	public enum NodeType implements GenericEnum {

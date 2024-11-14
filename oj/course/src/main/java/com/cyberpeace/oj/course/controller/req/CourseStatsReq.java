@@ -6,13 +6,25 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 课程统计请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class CourseStatsReq extends PageReqBase {
-    @ApiModelProperty("方向")
+	/**
+	 * 方向
+	 */
+	@ApiModelProperty("方向")
     private String direction;
 
-    @ApiModelProperty("难度")
+	/**
+	 * 难度
+	 */
+	@ApiModelProperty("难度")
     private Integer difficult;
 
 }

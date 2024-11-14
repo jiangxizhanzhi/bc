@@ -6,14 +6,26 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 导入课时列表请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class ImportLessonListReq extends PageReqBase {
 
-    @ApiModelProperty("课程分类")
+	/**
+	 * 课程分类
+	 */
+	@ApiModelProperty("课程分类")
     private String categoryId;
 
-    @ApiModelProperty("当前课程")
+	/**
+	 * 当前课程
+	 */
+	@ApiModelProperty("当前课程")
     private String exceptCourse;
 
 }

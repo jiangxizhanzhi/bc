@@ -5,42 +5,84 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 学习记录
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class StudyRecord implements Serializable {
 
-  @ApiModelProperty("完成课程数")
+	/**
+	 * 完成课程数
+	 */
+	@ApiModelProperty("完成课程数")
   private Integer courseCount;
 
-  @ApiModelProperty("理论课时数")
+	/**
+	 * 理论课时数
+	 */
+	@ApiModelProperty("理论课时数")
   private Integer theoryCount;
 
-  @ApiModelProperty("实验课时数")
+	/**
+	 * 实验课时数
+	 */
+	@ApiModelProperty("实验课时数")
   private Integer ExpCount;
 
-  @ApiModelProperty("学习时长")
+	/**
+	 * 学习时长
+	 */
+	@ApiModelProperty("学习时长")
   private String duration;
 
-  @ApiModelProperty("完成课后练习数")
+	/**
+	 * 完成课后练习数
+	 */
+	@ApiModelProperty("完成课后练习数")
   private Integer practiceFinishCount;
 
-  @ApiModelProperty("完成报告数")
+	/**
+	 * 完成报告数
+	 */
+	@ApiModelProperty("完成报告数")
   private Integer reportCount;
 
-  @ApiModelProperty("课后练习得分")
+	/**
+	 * 课后练习得分
+	 */
+	@ApiModelProperty("课后练习得分")
   private double score;
 
-  @ApiModelProperty("练习排名")
+	/**
+	 * 练习排名
+	 */
+	@ApiModelProperty("练习排名")
   private Integer practiceRanking;
 
-  @ApiModelProperty("用户编号")
+	/**
+	 * 用户编号
+	 */
+	@ApiModelProperty("用户编号")
   private String userId;
 
-  @ApiModelProperty("记录")
+	/**
+	 * 记录
+	 */
+	@ApiModelProperty("记录")
   private String record;
 
-  @ApiModelProperty("完成理论题数")
+	/**
+	 * 完成理论题数
+	 */
+	@ApiModelProperty("完成理论题数")
   private Integer theoryPracticeCount;
 
-  @ApiModelProperty("完成实操题数")
+	/**
+	 * 完成实操题数
+	 */
+	@ApiModelProperty("完成实操题数")
   private Integer operationPracticeCount;
 }

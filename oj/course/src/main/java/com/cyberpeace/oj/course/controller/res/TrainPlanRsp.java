@@ -7,30 +7,60 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 训练计划响应
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class TrainPlanRsp implements Serializable {
 
-    @ApiModelProperty("训练计划编号")
+	/**
+	 * 训练计划编号
+	 */
+	@ApiModelProperty("训练计划编号")
     private String resourceId;
 
-    @ApiModelProperty("训练计划名称")
+	/**
+	 * 训练计划名称
+	 */
+	@ApiModelProperty("训练计划名称")
     private String name;
 
-    @ApiModelProperty("开始时间")
+	/**
+	 * 开始时间
+	 */
+	@ApiModelProperty("开始时间")
     private Date startTime;
 
-    @ApiModelProperty("结束时间")
+	/**
+	 * 结束时间
+	 */
+	@ApiModelProperty("结束时间")
     private Date endTime;
 
-    @ApiModelProperty("更新时间")
+	/**
+	 * 更新时间
+	 */
+	@ApiModelProperty("更新时间")
     private Date updateTime;
 
-    @ApiModelProperty("数量")
+	/**
+	 * 数量
+	 */
+	@ApiModelProperty("数量")
     private Integer count;
 
-    @ApiModelProperty("创建人id")
+	/**
+	 * 创建人id
+	 */
+	@ApiModelProperty("创建人id")
     private String createUserId;
 
-    @ApiModelProperty("创建人名称")
+	/**
+	 * 创建人名称
+	 */
+	@ApiModelProperty("创建人名称")
     private String createUser;
 }

@@ -41,31 +41,63 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课时配置Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, LessonConfig> implements LessonConfigService {
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课时配置Mapper
+	 */
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
+	/**
+	 * 课程课时Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 课时记录Mapper
+	 */
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 讲义视频Service
+	 */
 	@Autowired
 	private HandoutVideoService handoutVideoService;
 
+	/**
+	 * 有效冲突
+	 *
+	 * @param courseId 课程id
+	 */
 	@Override
 	public void validConflict(String courseId) {
 		List<LessonConfig> lessonConfigsConflict = lessonConfigMapper.selectChapterLessonConflict(courseId);
@@ -75,6 +107,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 			throw new BusinessException(OjBusinessErrorCode.COURSE_LESSON_CONFLICT, collect.toString());
 		}
 	}
+
+	/**
+	 * 有效课时和章
+	 *
+	 * @param courseId 课程id
+	 */
 	@Override
 	public void validLessonAndChapter(String courseId) {
 		List<LessonConfig> includeLessonAndChapter = lessonConfigMapper.selectIncludeLessonAndChapter(courseId);
@@ -85,6 +123,13 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		}
 	}
 
+	/**
+	 * 获取课时配置
+	 *
+	 * @param courseId    课程id
+	 * @param authContext auth 上下文
+	 * @return {@code LessonConfigBo }
+	 */
 	@Override
 	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
 
@@ -106,6 +151,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		return configBo;
 	}
 
+	/**
+	 * 更新课时配置
+	 *
+	 * @param configBo 配置Bo
+	 * @return {@code LessonConfigBo }
+	 */
 	@Override
 	public LessonConfigBo updateLessonConfig(LessonConfigBo configBo) {
 
@@ -134,7 +185,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 校验不合理的编排，课时下不允许出现课时和章节
-	 * @param configBo
+	 *
+	 * @param configBo 配置Bo
 	 */
 	private void validLessonConfigBo(LessonConfigBo configBo) {
 
@@ -156,7 +208,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 重新编排目录数据 重置index
-	 * @param configBo
+	 *
+	 * @param configBo 配置Bo
 	 */
 	private void resetLessonConfigBo(LessonConfigBo configBo) {
 
@@ -185,6 +238,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		}
 	}
 
+	/**
+	 * 包课时配置
+	 *
+	 * @param configContext config 上下文
+	 * @return {@code LessonConfig }
+	 */
 	@Override
 	public LessonConfig packageLessonConfig(AddLessonConfigContext configContext) {
 
@@ -208,12 +267,27 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		return lessonConfig;
 	}
 
+	/**
+	 * 导出课时配置
+	 *
+	 * @param courseId    课程id
+	 * @param authContext auth 上下文
+	 * @return {@code LessonConfigDumpBo }
+	 */
 	@Override
 	public LessonConfigDumpBo dumpLessonConfig(String courseId, AuthContext authContext) {
 		LessonConfigBo lessonConfig = getLessonConfig(courseId, authContext);
 		return configToDumpBo(lessonConfig);
 	}
 
+	/**
+	 * 加载课时配置
+	 *
+	 * @param configDumpBo  配置导出Bo
+	 * @param courseId      课程id
+	 * @param courseLessons 课程课
+	 * @return {@code List<LessonConfig> }
+	 */
 	@Override
 	public List<LessonConfig> loadLessonConfig(LessonConfigDumpBo configDumpBo, String courseId,
 			List<CourseLesson> courseLessons) {
@@ -237,9 +311,11 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 数据转换
+	 *
 	 * @param configDumpBos
 	 * @param courseId
 	 * @param lessonNameMap
+	 * @param parentId      父母id
 	 * @return
 	 */
 	private List<LessonConfig> dumpBoToEntity(List<LessonConfigDumpBo> configDumpBos,
@@ -279,6 +355,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 类型转换
+	 *
 	 * @param lessonConfigBo
 	 * @return
 	 */
@@ -301,6 +378,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 数据格式转换
+	 *
 	 * @param courseId
 	 * @param authContext
 	 * @return
@@ -363,7 +441,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 实体类数据转换
+	 *
 	 * @param lessonConfig
+	 * @param lessonMap    课时映射
 	 * @return
 	 */
 	private LessonConfigBo configToBo(LessonConfig lessonConfig,
@@ -384,8 +464,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	/**
 	 * 根据最上级节点组装课程目录
 	 *
-	 * @param node 最上级节点 课程节点
-	 * @param boMap
+	 * @param node  最上级节点 课程节点
+	 * @param boMap Bo映射
 	 */
 	private void setConfigTypeIndex(LessonConfigBo node, Map<String, List<LessonConfigBo>> boMap) {
 
@@ -425,6 +505,13 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		}
 	}
 
+	/**
+	 * CAL 视频进度
+	 *
+	 * @param configJson    配置 JSON
+	 * @param watchedPoints 观看点数
+	 * @return {@code Integer }
+	 */
 	private Integer calVideoProgress(String configJson, Set<Integer> watchedPoints) {
 		if (StringUtils.isBlank(configJson)) {
 			// not configured

@@ -30,15 +30,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 练习设置Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台习题集相关api")
 @RestController
 @RequestMapping("/oj/practice/set")
 @RequiresAuthentication
 public class PracticeSetController {
 
+	/**
+	 * 练习设置Service
+	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
+	/**
+	 * 获取列表
+	 *
+	 * @param setPageReq 设置分页请求体
+	 * @return {@code BaseRsp<ListRsp<AdminPracticeSetBo>> }
+	 */
 	@ApiOperation("获取习题集")
 	@GetMapping("/list")
 	@RequiresPermissions(
@@ -60,6 +75,12 @@ public class PracticeSetController {
 		return new BaseRsp<>(PageUtil.getListResult(boIPage));
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<AdminPracticeSetBo> }
+	 */
 	@ApiOperation("习题集详细信息查询")
 	@GetMapping("/detail")
 	@RequiresPermissions(
@@ -75,6 +96,13 @@ public class PracticeSetController {
 		return new BaseRsp<>(setBo);
 	}
 
+	/**
+	 * 获取更多练习设置
+	 *
+	 * @param resourceId 资源id
+	 * @param setType    设置类型
+	 * @return {@code BaseRsp<List<AdminPracticeSetBo>> }
+	 */
 	@ApiOperation("更多习题集")
 	@GetMapping("/more_set")
 	@RequiresPermissions(

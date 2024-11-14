@@ -15,46 +15,91 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 课时配置Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("课程目录配置信息")
 public class LessonConfigBo implements Serializable {
 
+	/**
+	 * 课程编号
+	 */
 	@ApiModelProperty("课程编号")
 	private String courseId;
 
+	/**
+	 * 位置编号
+	 */
 	@ApiModelProperty("位置编号")
 	private Integer index;
 
+	/**
+	 * 学习进度
+	 */
 	@ApiModelProperty("学习进度")
 	private Integer learn;
 
+	/**
+	 * 是否必修
+	 */
 	@ApiModelProperty("是否必修")
 	private Integer compulsory;
 
+	/**
+	 * 课程编号
+	 */
 	@ApiModelProperty("课程编号")
 	private String lessonId;
 
+	/**
+	 * 课时类型 0-理论 1-实验
+	 */
 	@ApiModelProperty("课时类型 0-理论 1-实验")
 	private Integer type;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("名称")
 	private String name;
 
+	/**
+	 * 节点类型
+	 */
 	@ApiModelProperty("节点类型")
 	private Integer nodeType;
 
+	/**
+	 * 父节点编号
+	 */
 	@ApiModelProperty("父节点编号")
 	private String parentId;
 
+	/**
+	 * 资源编号
+	 */
 	@ApiModelProperty("资源编号")
 	private String resourceId;
 
+	/**
+	 * 章节名称
+	 */
 	@ApiModelProperty("章节名称")
 	private String chapterName;
 
+	/**
+	 * 子节点
+	 */
 	@ApiModelProperty("子节点")
 	private List<LessonConfigBo> children;
 
+	/**
+	 * 目录信息索引 课时1 章节1
+	 */
 	@ApiModelProperty("目录信息索引 课时1 章节1")
 	private String typeIndex;
 

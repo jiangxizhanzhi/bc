@@ -12,6 +12,12 @@ import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 练习设置Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface PracticeSetService extends IService<PracticeSet> {
 
     /**
@@ -28,7 +34,6 @@ public interface PracticeSetService extends IService<PracticeSet> {
      *
      * @param resourceId
      * @param authContext
-     * @return
      */
     void enableAccess(String resourceId, AuthContext authContext);
 
@@ -47,6 +52,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param page
      * @param practiceType
      * @param pattern
+     * @param authContext  auth 上下文
      * @return
      */
     IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType, String pattern,
@@ -65,7 +71,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * 删除前判断是否可删除
      *
      * @param resourceIds
-     * @param authContext
+     * @param authContext auth 上下文
      */
     void enableDelete(List<String> resourceIds, AuthContext authContext);
 
@@ -90,6 +96,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
     /**
      * 检查习题集是否重复
      *
+     * @param practiceSets 练习集
      * @return
      */
     List<String> duplicatePracticeSetInspect(List<String> practiceSets);
@@ -99,18 +106,51 @@ public interface PracticeSetService extends IService<PracticeSet> {
      *
      * @param practiceSetId
      * @param practiceId
+     * @param newPath            新建路径
+     * @param disableImageExport 禁用图像导出
      * @return 导出的文件路径
      */
     String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport);
 
+    /**
+     * 清除用户认证
+     *
+     * @param user 用户
+     */
     void clearUserAuth(String user);
 
+    /**
+     * 清除组织认证
+     *
+     * @param org 组织
+     */
     void clearOrgAuth(String org);
 
+    /**
+     * 导出markdown理论练习
+     *
+     * @param path     路径
+     * @param theories 理论
+     * @return {@code MdTheoryPractice }
+     */
     MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 
+    /**
+     * 获取更多练习设置
+     *
+     * @param authContext   auth 上下文
+     * @param practiceSetId 练习设置id
+     * @param setType       设置类型
+     * @return {@code List<AdminPracticeSetBo> }
+     */
     List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType);
 
+    /**
+     * 创建IMG
+     *
+     * @param setName 设置名称
+     * @return {@code String }
+     */
     String createImg(String setName);
 
 }

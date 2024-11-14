@@ -10,29 +10,53 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 评论请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("资源评论信息")
 public class CommentReq implements Serializable {
 
-    @ApiModelProperty(value = "评论内容")
+	/**
+	 * 评论内容
+	 */
+	@ApiModelProperty(value = "评论内容")
     @NotBlank(message = OjBusinessErrorCode.MESSAGE_CONTENT_IS_NULL)
     private String content;
 
-    @ApiModelProperty("主题信息 课时笔记=课程名称/课时名称 课程笔记=课程名称 实操习题笔记=实操题名称")
+	/**
+	 * 主题信息 课时笔记=课程名称/课时名称 课程笔记=课程名称 实操习题笔记=实操题名称
+	 */
+	@ApiModelProperty("主题信息 课时笔记=课程名称/课时名称 课程笔记=课程名称 实操习题笔记=实操题名称")
     @NotBlank
     private String themeName;
 
-    @ApiModelProperty("资源编号 课程 课时 练习")
+	/**
+	 * 资源编号 课程 课时 练习
+	 */
+	@ApiModelProperty("资源编号 课程 课时 练习")
     @NotBlank
     private String businessId;
 
-    @ApiModelProperty("资源评论编号")
+	/**
+	 * 资源评论编号
+	 */
+	@ApiModelProperty("资源评论编号")
     private String rootId;
 
-    @ApiModelProperty("被回复评论编号")
+	/**
+	 * 被回复评论编号
+	 */
+	@ApiModelProperty("被回复评论编号")
     private String replyId;
 
-    @ApiModelProperty("评论资源类型 1=课程 2=课时 3=实操")
+	/**
+	 * 评论资源类型 1=课程 2=课时 3=实操
+	 */
+	@ApiModelProperty("评论资源类型 1=课程 2=课时 3=实操")
     @NotNull
     private Integer businessType;
 

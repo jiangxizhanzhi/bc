@@ -14,44 +14,83 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 课程新增请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("课程新增信息")
 public class CourseAddReq implements Serializable {
 
+	/**
+	 * 课程名称
+	 */
 	@NotBlank(groups = { Create.class })
 	@ApiModelProperty("课程名称")
 	private String name;
 
+	/**
+	 * 课程描述
+	 */
 	@ApiModelProperty("课程描述")
 	private String description;
 
+	/**
+	 * 课程方向
+	 */
 	@ApiModelProperty("课程方向")
 	@NotBlank(groups = { Create.class })
 	private String categoryId;
 
+	/**
+	 * 课程封面
+	 */
 	@ApiModelProperty("课程封面")
 	private String logo;
 
+	/**
+	 * 课程大纲
+	 */
 	@ApiModelProperty("课程大纲")
 	private String outline;
 
+	/**
+	 * 难度
+	 */
 	@NotNull(groups = { Create.class })
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	/**
+	 * 是否公开
+	 */
 	@ApiModelProperty("是否公开")
 	@NotNull(groups = { Create.class })
 	private Boolean isPublic;
 
+	/**
+	 * 课程分类 0=基础 2=攻击 3=防御
+	 */
 	@ApiModelProperty("课程分类 0=基础 2=攻击 3=防御")
 	private Integer courseType;
 
+	/**
+	 * 讲师
+	 */
 	@ApiModelProperty("讲师")
 	private String lecturer;
 
+	/**
+	 * 学分
+	 */
 	@ApiModelProperty("学分")
 	private Integer score;
 
+	/**
+	 * 课程编号
+	 */
 	@ApiModelProperty("课程编号")
 	@NotBlank
 	private String courseNum;

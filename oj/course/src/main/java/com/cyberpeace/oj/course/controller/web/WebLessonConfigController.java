@@ -22,15 +22,30 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * Web课时配置Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台课程目录相关api")
 @RestController
 @RequestMapping("/oj/lessonconfig")
 @RequiresAuthentication
 public class WebLessonConfigController {
 
+	/**
+	 * 课时配置Service
+	 */
 	@Autowired
 	private LessonConfigService lessonConfigService;
 
+	/**
+	 * 获取课时配置
+	 *
+	 * @param courseId 课程id
+	 * @return {@code BaseRsp<LessonConfigBo> }
+	 */
 	@GetMapping("")
 	@ApiOperation("课程目录查询")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)

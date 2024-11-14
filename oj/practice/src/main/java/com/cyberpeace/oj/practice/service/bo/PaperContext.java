@@ -10,6 +10,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 试卷上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 @AllArgsConstructor
@@ -17,25 +23,46 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaperContext implements Serializable {
 
-    @ApiModelProperty("资源编号 空为新增 非空则修改")
+	/**
+	 * 资源编号 空为新增 非空则修改
+	 */
+	@ApiModelProperty("资源编号 空为新增 非空则修改")
     private String resourceId;
 
-    @ApiModelProperty("名称")
+	/**
+	 * 名称
+	 */
+	@ApiModelProperty("名称")
     private String name;
 
-    @ApiModelProperty("描述")
+	/**
+	 * 描述
+	 */
+	@ApiModelProperty("描述")
     private String description;
 
-    @ApiModelProperty("封面")
+	/**
+	 * 封面
+	 */
+	@ApiModelProperty("封面")
     private String logo;
 
-    @ApiModelProperty("是否公开")
+	/**
+	 * 是否公开
+	 */
+	@ApiModelProperty("是否公开")
     private Boolean isPublic;
 
-    @ApiModelProperty("试卷类型")
+	/**
+	 * 试卷类型
+	 */
+	@ApiModelProperty("试卷类型")
     private Integer type;
 
-    @ApiModelProperty("练习数据体(每个元素需要包含`resource_id`, `practice_type`, `is_option_random`三个属性)")
+	/**
+	 * 练习数据体(每个元素需要包含`resource_id`, `practice_type`, `is_option_random`三个属性)
+	 */
+	@ApiModelProperty("练习数据体(每个元素需要包含`resource_id`, `practice_type`, `is_option_random`三个属性)")
     private List<PaperPracticeContext> practiceList;
 
 }

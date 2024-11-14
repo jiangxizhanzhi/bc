@@ -53,6 +53,12 @@ import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 管理课程Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Api(tags = "oj-后台课程相关api")
 @RestController
@@ -60,28 +66,54 @@ import java.util.List;
 @RequiresAuthentication
 public class AdminCourseController extends AuthAndPublicController<CourseService, Course> {
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课程类别Service
+	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
 
+	/**
+	 * 课程类别Mapper
+	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
-	// LGD在使用 知识点和技能点绑定课程
+	/**
+	 * 获取列表
+	 *
+	 * @param courseListReq 课程列表请求体
+	 * @return {@code BaseRsp<ListRsp<CourseWebBo>> }
+	 */// LGD在使用 知识点和技能点绑定课程
 	@GetMapping("/all/list")
 	@ApiOperation("分页查询全部课程信息")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -109,6 +141,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(courseInfos);
 	}
 
+	/**
+	 * 获取管理课程
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<CourseWebBo>> }
+	 */
 	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -141,6 +179,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 新增
+	 *
+	 * @param addReq 新增请求体
+	 * @return {@code BaseRsp<Course> }
+	 */
 	@ApiOperation("课程新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -172,6 +216,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(courseRsp);
 	}
 
+	/**
+	 * 修改
+	 *
+	 * @param updateReq 更新请求体
+	 * @return {@code BaseRsp<Course> }
+	 */
 	@ApiOperation("课程信息修改")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -191,6 +241,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(courseRsp);
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<AdminCourseRes> }
+	 */
 	@ApiOperation("课程信息查询")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -208,6 +264,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(adminCourseRes);
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param batchDeleteReq 批量删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("批量删除课程信息")
 	@DeleteMapping("/batch")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -230,6 +292,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 上传附件
+	 *
+	 * @param outlineFile 大纲文件
+	 * @return {@code BaseRsp<AttachmentBo> }
+	 */
 	@ApiOperation("课程大纲文件上传")
 	@PostMapping("/outline/upload_attachment")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -251,6 +319,11 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(attachmentBo);
 	}
 
+	/**
+	 * 全部课程
+	 *
+	 * @return {@code BaseRsp<List<SimpleDataRes>> }
+	 */
 	@ApiOperation("查询全部课程信息")
 	@GetMapping("/all/course")
 	@RequiresPermissions(value = {MenuConstant.CMS_COURSES, MenuConstant.CMS_CLASS_ROOM}, logical = Logical.OR)
@@ -270,6 +343,13 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(courseRes);
 	}
 
+	/**
+	 * 导出课程
+	 *
+	 * @param courseIds 课程id列表
+	 * @param response  响应
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -284,6 +364,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	/**
+	 * 导入课程
+	 *
+	 * @param loadCourseReq 加载课程请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)

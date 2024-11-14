@@ -5,10 +5,19 @@ import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 笔记列表Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class NoteListBo extends Note {
 
-    @ApiModelProperty("用户名称")
+	/**
+	 * 用户名称
+	 */
+	@ApiModelProperty("用户名称")
     private String userName;
 
 }

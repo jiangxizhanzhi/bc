@@ -35,6 +35,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * 管理学习统计Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-后台学习统计相关api")
 @RestController
 @RequestMapping("/oj/admin/statistic")
@@ -42,12 +48,23 @@ import java.util.List;
 @Slf4j
 public class AdminLearnStatisticController {
 
+	/**
+	 * 课程学习统计学Service
+	 */
 	@Autowired
 	private CourseLearnStatisticsService courseLearnStatisticsService;
 
+	/**
+	 * 课程类别Service
+	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
 
+	/**
+	 * 课程直方图
+	 *
+	 * @return {@code BaseRsp<HistogramRes> }
+	 */
 	@ApiOperation("课程统计柱状图")
 	@GetMapping("/course_histogram")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -58,6 +75,11 @@ public class AdminLearnStatisticController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 方向直方图
+	 *
+	 * @return {@code BaseRsp<HistogramRes> }
+	 */
 	@ApiOperation("课程方向统计柱状图")
 	@GetMapping("/direction_histogram")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -68,6 +90,12 @@ public class AdminLearnStatisticController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 课程统计学列表
+	 *
+	 * @param courseStatisticsListReq 课程统计学列表请求体
+	 * @return {@code BaseRsp<ListRsp<AdminCourseStatisticsRes>> }
+	 */
 	@ApiOperation("课程学习统计list")
 	@GetMapping("/course_statistics_list")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -89,6 +117,12 @@ public class AdminLearnStatisticController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 课时统计学列表
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<ListRsp<AdminLessonStatisticsRes>> }
+	 */
 	@ApiOperation("课时学习统计list")
 	@GetMapping("/lesson_statistics_list")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
@@ -100,6 +134,12 @@ public class AdminLearnStatisticController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 课时统计学详情
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<ListRsp<AdminLessonStatisticsDetailRes>> }
+	 */
 	@ApiOperation("课时报告统计detail")
 	@GetMapping("/lesson_statistics_detail")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)

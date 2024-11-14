@@ -31,21 +31,45 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
 
+/**
+ * 课程学习统计学Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsService {
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课程课时Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 课程学习统计学Mapper
+	 */
 	@Autowired
 	private CourseLearnStatisticsMapper courseLearnStatisticsMapper;
 
+	/**
+	 * 课程直方图
+	 *
+	 * @param authContext auth 上下文
+	 * @return {@code HistogramRes }
+	 */
 	@Override
 	public HistogramRes courseHistogram(AuthContext authContext) {
 		List<String> courseIds = null;
@@ -57,6 +81,12 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		return getCourseHistogramRes(courses);
 	}
 
+	/**
+	 * 方向直方图
+	 *
+	 * @param authContext auth 上下文
+	 * @return {@code HistogramRes }
+	 */
 	@Override
 	public HistogramRes directionHistogram(AuthContext authContext) {
 		List<String> courseIds = null;
@@ -77,6 +107,12 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		return getCourseHistogramRes(directions);
 	}
 
+	/**
+	 * 获取课程直方图结果
+	 *
+	 * @param courses 课程
+	 * @return {@code HistogramRes }
+	 */
 	private HistogramRes getCourseHistogramRes(List<Course> courses) {
 		List<String> xNames = new ArrayList<>();
 		List<Integer> yValues = new ArrayList<>();
@@ -92,6 +128,14 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 
 	}
 
+	/**
+	 * 课程统计学列表
+	 *
+	 * @param context     上下文
+	 * @param page        分页
+	 * @param authContext auth 上下文
+	 * @return {@code ListRsp<AdminCourseStatisticsRes> }
+	 */
 	@Override
 	public ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page<AdminCourseStatisticsRes> page,
 			AuthContext authContext) {
@@ -107,6 +151,12 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 				.getListResult(adminCourseStatisticsResIPage.convert(this::curseStatisticToBo));
 	}
 
+	/**
+	 * 诅咒统计自Bo
+	 *
+	 * @param adminCourseStatisticsRes 管理课程统计学结果
+	 * @return {@code AdminCourseStatisticsRes }
+	 */
 	private AdminCourseStatisticsRes
 			curseStatisticToBo(AdminCourseStatisticsRes adminCourseStatisticsRes) {
 		UserInfo userInfo = remoteUserService.getById(adminCourseStatisticsRes.getCreateUser());
@@ -114,6 +164,14 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		return adminCourseStatisticsRes;
 	}
 
+	/**
+	 * 课时统计学列表
+	 *
+	 * @param courseId 课程id
+	 * @param page     分页
+	 * @param pageReq  分页请求体
+	 * @return {@code ListRsp<AdminLessonStatisticsRes> }
+	 */
 	@Override
 	public ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String courseId,
 			Page<AdminLessonStatisticsRes> page, LessonStatisticsListReq pageReq) {
@@ -151,6 +209,16 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		return PageUtil.getListResult(rsp);
 	}
 
+	/**
+	 * 课时统计学详情
+	 *
+	 * @param organizationId 组织id
+	 * @param lessonId       课时id
+	 * @param usernameLike   username like
+	 * @param page           分页
+	 * @param sort           排序
+	 * @return {@code ListRsp<AdminLessonStatisticsDetailRes> }
+	 */
 	@Override
 	public ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
 																		  String lessonId, String usernameLike, Page<AdminLessonStatisticsDetailRes> page, String sort) {
@@ -184,6 +252,13 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 		return PageUtil.getListResult(learnedUsers);
 	}
 
+	/**
+	 * 获取用户
+	 *
+	 * @param organizationId 组织id
+	 * @param usernameLike   username like
+	 * @return {@code List<String> }
+	 */
 	public List<String> getUsers(String organizationId, String usernameLike) {
 		List<String> userIds = new ArrayList<>();
 		// 根据用户名pattern + 组织id获取userids

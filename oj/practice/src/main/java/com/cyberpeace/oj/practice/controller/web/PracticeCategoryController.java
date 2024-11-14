@@ -30,21 +30,45 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 练习类别Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台练习分类相关api")
 @RestController
 @RequestMapping("/oj/practice/category")
 @RequiresAuthentication
 public class PracticeCategoryController {
 
+	/**
+	 * 类别Service
+	 */
 	@Autowired
 	private PracticeCategoryService categoryService;
 
+	/**
+	 * 练习理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 列表
+	 *
+	 * @param practiceType  练习类型
+	 * @param pattern       模式
+	 * @param children      子级
+	 * @param practiceSetId 练习设置id
+	 * @return {@code BaseRsp<List<CategoryListBo>> }
+	 */
 	@ApiOperation("查询习题分类列表")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "practice_type", value = "分类类型 0=理论基础 2=实践操作", dataTypeClass = Integer.class),

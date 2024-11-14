@@ -8,23 +8,50 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 笔记评估
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_note_evaluate")
 public class NoteEvaluate extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 得分
+	 */
 	private Double score;
 
+	/**
+	 * 通过
+	 */
 	private Boolean passed;
 
+	/**
+	 * 评估评论
+	 */
 	private String evaluateComment;
 
+	/**
+	 * 计算器id
+	 */
 	private String evaluatorId;
 
+	/**
+	 * 笔记id
+	 */
 	private String noteId;
 
+	/**
+	 * 评估时间
+	 */
 	private Date evaluateTime;
 
 }

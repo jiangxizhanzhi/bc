@@ -23,6 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * 管理附件Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Api(tags = "oj-后台附件相关api")
 @RestController
@@ -30,12 +36,24 @@ import java.util.List;
 @RequiresAuthentication
 public class AdminAttachmentController {
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 上传附件
+	 *
+	 * @param file 文件
+	 * @return {@code BaseRsp<LogoUploadRes> }
+	 */
 	@ApiOperation("logo文件上传")
 	@PostMapping("/image_upload")
 	public BaseRsp<LogoUploadRes> uploadAttachment(@RequestParam("file") MultipartFile file) {
@@ -46,6 +64,12 @@ public class AdminAttachmentController {
 		return new BaseRsp<>(new LogoUploadRes(viewPath));
 	}
 
+	/**
+	 * 批量公共
+	 *
+	 * @param publicReq 公共请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("附件公开与隐藏")
 	@PatchMapping("/batch-public")
 	public BaseRsp<Boolean> batchPublic(@RequestBody @Validated ResourcePublicReq publicReq) {

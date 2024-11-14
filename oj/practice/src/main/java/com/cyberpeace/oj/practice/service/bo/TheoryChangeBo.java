@@ -4,16 +4,37 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 理论改变Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class TheoryChangeBo implements Serializable {
 
-	private String answer;
+    /**
+     * 答案
+     */
+    private String answer;
 
-	private String content;
+    /**
+     * 内容
+     */
+    private String content;
 
-	private Integer theoryType;
+    /**
+     * 理论类型
+     */
+    private Integer theoryType;
 
-	private String blank;
+    /**
+     * 空白
+     */
+    private String blank;
 
-	private String option;
+    /**
+     * 选项
+     */
+    private String option;
 }

@@ -16,18 +16,29 @@ import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 
+/**
+ * 课程课时Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 根据课程编号和课时编号查询课时基本信息
+	 *
 	 * @param courseId
 	 * @param lessonId
+	 * @param roomId      房间id
+	 * @param learnedType 学习类型
+	 * @param authContext auth 上下文
 	 * @return
 	 */
 	LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext);
 
 	/**
 	 * 查询后台课时详情数据
+	 *
 	 * @param courseId
 	 * @param lessonId
 	 * @return
@@ -36,6 +47,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 课时数据新增
+	 *
 	 * @param courseLesson
 	 * @param ojSceneConfig
 	 * @param practiceList
@@ -46,6 +58,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 课时数据修改
+	 *
 	 * @param courseLesson
 	 * @param ojSceneConfig
 	 * @param practiceList
@@ -56,6 +69,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 后台课时列表查询
+	 *
 	 * @param page
 	 * @param context
 	 * @param isWeb
@@ -65,6 +79,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 课后练习公开与隐藏
+	 *
 	 * @param resourceIds
 	 * @param isPublic
 	 * @return
@@ -73,6 +88,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 课时导入
+	 *
 	 * @param courseId
 	 * @param lessonIds
 	 * @return
@@ -81,9 +97,10 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 课后练习答案校验
+	 *
 	 * @param answerContext
-	 * @param authContext
 	 * @param answers
+	 * @param authContext
 	 * @return
 	 */
 	EvaluateResult submitLessonPractice(SubmitAnswerContext answerContext,
@@ -91,6 +108,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 课后练习数据查询
+	 *
 	 * @param courseId
 	 * @param lessonId
 	 * @param authContext
@@ -100,6 +118,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 后台课后练习查询
+	 *
 	 * @param courseId
 	 * @param lessonId
 	 * @param authContext
@@ -110,6 +129,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 新增和修改练习数据
+	 *
 	 * @param resourceId
 	 * @param practiceList
 	 * @return
@@ -118,6 +138,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 课后练习评分
+	 *
 	 * @param resourceId
 	 * @param userId
 	 * @param level
@@ -129,6 +150,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 课后练习下发
+	 *
 	 * @param resourceId
 	 * @param authId
 	 * @param authContext
@@ -138,7 +160,9 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 查询topo和场景数据信息
+	 *
 	 * @param lessonId
+	 * @param roomId      房间id
 	 * @param authContext
 	 * @return
 	 */
@@ -146,20 +170,24 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 上传课时讲义 如果为makdown则解析 数据绑定课时
+	 *
 	 * @param courseLesson
-	 * @param handout
+	 * @param handout      讲义
 	 */
 	void uploadHandout(CourseLesson courseLesson, String handout);
 
 	/**
 	 * 上传视频文件
+	 *
 	 * @param courseLesson
-	 * @param video
+	 * @param video        视频
 	 */
 	void uploadVideo(CourseLesson courseLesson, String video);
 
 	/**
 	 * 课时批量删除
+	 *
+	 * @param courseId    课程id
 	 * @param resourceIds
 	 * @param authContext
 	 * @return
@@ -168,6 +196,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 导出课时数据
+	 *
 	 * @param courseLesson
 	 * @param filePathMap
 	 * @param destFilePath
@@ -178,10 +207,11 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 加载课时数据
-	 * @param courseId 课程编号
+	 *
+	 * @param courseId         课程编号
 	 * @param lessonDumpLoadBo 课时信息数据
-	 * @param filePath 解压后文件存储路径
-	 * @param filePathMap 文件映射关系
+	 * @param filePath         解压后文件存储路径
+	 * @param filePathMap      文件映射关系
 	 * @return
 	 */
 	CourseLesson loadLesson(String courseId, LessonDumpLoadBo lessonDumpLoadBo, String filePath,
@@ -189,12 +219,14 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 创建远程操作日志
-	 * @param lessonInfoBo
+	 *
+	 * @param lessonInfoBo 课时信息Bo
 	 */
 	void createMpLog(LessonInfoBo lessonInfoBo);
 
 	/**
 	 * 根据课时列表查询启动的场景
+	 *
 	 * @param lessonList
 	 * @param authContext
 	 * @return
@@ -203,7 +235,8 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 根据课时查询查询课后练习场景
-	 * @param lessonList 课时列表
+	 *
+	 * @param lessonList  课时列表
 	 * @param authContext 权限
 	 * @return
 	 */
@@ -211,14 +244,16 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 查询课时场景
+	 *
 	 * @param lessonList
 	 * @param authContext
 	 * @return
 	 */
-    List<OjLocalScene> selectLessonAllScene(List<CourseLesson> lessonList, AuthContext authContext);
+	List<OjLocalScene> selectLessonAllScene(List<CourseLesson> lessonList, AuthContext authContext);
 
 	/**
 	 * 获取课程下所有拓扑 包含课后练习
+	 *
 	 * @param lessonList
 	 * @return
 	 */
@@ -226,8 +261,9 @@ public interface CourseLessonService extends IService<CourseLesson> {
 
 	/**
 	 * 清除场景和拓扑数据
+	 *
 	 * @param scenes
-	 * @param topos
+	 * @param topos  拓扑
 	 */
 	void clearSceneAndTopos(List<OjLocalScene> scenes, List<String> topos);
 }

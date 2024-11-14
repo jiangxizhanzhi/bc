@@ -7,10 +7,19 @@ import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
+/**
+ * 重复课程检查请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class DuplicateCourseInspectReq implements Serializable {
 
+	/**
+	 * 待检查课程名称
+	 */
 	@ApiModelProperty("待检查课程名称")
 	@NotEmpty
 	private List<String> fileNames;

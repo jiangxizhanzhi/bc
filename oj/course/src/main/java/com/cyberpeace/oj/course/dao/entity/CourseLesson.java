@@ -14,81 +14,159 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 课程课时
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_course_lesson")
 public class CourseLesson extends BaseTable {
 
+	/**
+	 * 资源编号
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	@ApiModelProperty("资源编号")
 	private String resourceId;
 
+	/**
+	 * 是否为内置
+	 */
 	@ApiModelProperty("是否为内置")
 	private Boolean builtin;
 
+	/**
+	 * 课程编号
+	 */
 	@ApiModelProperty("课程编号")
 	private String courseId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("名称")
 	private String name;
 
+	/**
+	 * 课时类型
+	 */
 	@ApiModelProperty("课时类型")
 	private Integer type;
 
+	/**
+	 * 讲义类型
+	 */
 	@ApiModelProperty("讲义类型")
 	private Integer handoutType;
 
+	/**
+	 * 讲义路径或者内容
+	 */
 	@ApiModelProperty("讲义路径或者内容")
 	private String handoutUrl;
 
+	/**
+	 * 视频地址
+	 */
 	@ApiModelProperty("视频地址")
 	private String videoUrl;
 
+	/**
+	 * 视频检查点
+	 */
 	@ApiModelProperty("视频检查点")
 	private String videoCheckPoint;
 
+	/**
+	 * 难度
+	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	/**
+	 * 是否公开
+	 */
 	@TableField("public")
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	/**
+	 * 附件编号
+	 */
 	@ApiModelProperty("附件编号")
 	private String attachmentIds;
 
+	/**
+	 * 必修
+	 */
 	@ApiModelProperty("必修")
 	private Integer compulsory;
 
+	/**
+	 * 销毁延时
+	 */
 	@ApiModelProperty("销毁延时")
 	private Integer destroyDelay;
 
+	/**
+	 * 课时时长
+	 */
 	@ApiModelProperty("课时时长")
 	private Integer duration;
 
+	/**
+	 * 拓扑编号
+	 */
 	@ApiModelProperty("拓扑编号")
 	private String topoId;
 
+	/**
+	 * 知识点
+	 */
 	@ApiModelProperty("知识点")
 	private String knowledge;
 
+	/**
+	 * 场景模式
+	 */
 	@ApiModelProperty("场景模式")
 	private Integer sceneShareMode;
 
+	/**
+	 * md讲义原文件地址
+	 */
 	@ApiModelProperty("md讲义原文件地址")
 	private String originMarkdownFile;
 
+	/**
+	 * 创建用户
+	 */
 	@ApiModelProperty("创建用户")
 	private String createUserId;
 
+	/**
+	 * 试卷编号
+	 */
 	@ApiModelProperty("试卷编号")
 	private String paperId;
 
+	/**
+	 * 热度
+	 */
 	@ApiModelProperty("热度")
 	private Integer heat;
 
+	/**
+	 * 课后练习公开
+	 */
 	@ApiModelProperty("课后练习公开")
 	private Boolean paperPublic;
 
+	/**
+	 * 路径
+	 */
 	@TableField(exist = false,  value = "资管课时路径")
 	private String path;
 

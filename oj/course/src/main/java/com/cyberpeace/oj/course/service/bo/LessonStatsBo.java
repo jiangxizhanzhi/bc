@@ -5,30 +5,60 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 课时统计Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class LessonStatsBo implements Serializable {
-    @ApiModelProperty("课时resource_id")
+	/**
+	 * 课时resource_id
+	 */
+	@ApiModelProperty("课时resource_id")
     private String resourceId;
 
-    @ApiModelProperty("课程resource_id")
+	/**
+	 * 课程resource_id
+	 */
+	@ApiModelProperty("课程resource_id")
     private String courseId;
 
-    @ApiModelProperty("课时名称")
+	/**
+	 * 课时名称
+	 */
+	@ApiModelProperty("课时名称")
     private String name;
 
-    @ApiModelProperty("课时类型")
+	/**
+	 * 课时类型
+	 */
+	@ApiModelProperty("课时类型")
     private Integer type;
 
-    @ApiModelProperty("课时难度")
+	/**
+	 * 课时难度
+	 */
+	@ApiModelProperty("课时难度")
     private Integer difficulty;
 
-    @ApiModelProperty("学习人数")
+	/**
+	 * 学习人数
+	 */
+	@ApiModelProperty("学习人数")
     private Integer learningCount;
 
-    @ApiModelProperty("提交报告数量")
+	/**
+	 * 提交报告数量
+	 */
+	@ApiModelProperty("提交报告数量")
     private Integer reportCount;
 
-    @ApiModelProperty("完成练习数")
+	/**
+	 * 完成练习数
+	 */
+	@ApiModelProperty("完成练习数")
     private Integer finishPracticeCount;
 
 }

@@ -9,28 +9,52 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 课堂练习请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class ClassroomPracticeReq extends PageReqBase {
 
+	/**
+	 * 课堂编号
+	 */
 	@ApiModelProperty("课堂编号")
 	@NotBlank
 	private String classroomId;
 
+	/**
+	 * 课时编号
+	 */
 	@ApiModelProperty("课时编号")
 	@NotBlank(message = OjBusinessErrorCode.LESSON_INFORMATION_NOT_NULL)
 	private String lessonId;
 
+	/**
+	 * 组织编号
+	 */
 	@ApiModelProperty("组织编号")
 	@NotBlank(message = OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL)
 	private String organizationId;
 
+	/**
+	 * 是否提交
+	 */
 	@ApiModelProperty("是否提交")
 	private Boolean isCommit=null;
 
+	/**
+	 * 是否批改
+	 */
 	@ApiModelProperty("是否批改")
 	private Boolean isMark=null;
 
+	/**
+	 * 姓名
+	 */
 	@ApiModelProperty("姓名")
 	private String username;
 

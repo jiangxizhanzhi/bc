@@ -7,14 +7,26 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * 课时统计请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class LessonStatsReq extends PageReqBase {
-    @NotNull
+	/**
+	 * 课程id
+	 */
+	@NotNull
     @ApiModelProperty("课程id")
     private String course_id;
 
-    @ApiModelProperty("课时类型")
+	/**
+	 * 课时类型
+	 */
+	@ApiModelProperty("课时类型")
     private Integer type;
 
 }

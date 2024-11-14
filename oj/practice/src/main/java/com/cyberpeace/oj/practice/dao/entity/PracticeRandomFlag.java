@@ -8,21 +8,45 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 练习随机flag
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_practice_random_flag")
 public class PracticeRandomFlag extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 附件id
+	 */
 	private String attachmentId;
 
+	/**
+	 * 练习id
+	 */
 	private String practiceId;
 
+	/**
+	 * flag
+	 */
 	private String flag;
 
+	/**
+	 * 类型
+	 */
 	private Integer type;
 
 	public enum FlagType {

@@ -49,6 +49,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 管理课堂Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-后台课程表api")
 @RestController
 @RequestMapping("/oj/admin/course/classroom")
@@ -56,27 +62,54 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AdminClassroomController {
 
+	/**
+	 * 课堂Service
+	 */
 	@Autowired
 	private ClassroomService classroomService;
 
+	/**
+	 * 远程组织Service
+	 */
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
+	/**
+	 * 课堂标志Service
+	 */
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	/**
+	 * 课堂验证处理器
+	 */
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
 
+	/**
+	 * 课程课时Service
+	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 列表
+	 *
+	 * @param classroomListReq 课堂列表请求体
+	 * @return {@code BaseRsp<List<ClassroomBo>> }
+	 */
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -109,6 +142,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(classroomBos);
 	}
 
+	/**
+	 * 批量删除课堂
+	 *
+	 * @param delReq 戴尔请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("后台课程表信息批量删除")
 	@DeleteMapping("delete_batch")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -123,6 +162,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 分页
+	 *
+	 * @param classroomPageReq 课堂分页请求体
+	 * @return {@code BaseRsp<ListRsp<ClassroomBo>> }
+	 */
 	@ApiOperation("后台课程表分页查询")
 	@GetMapping("/list/page")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -156,6 +201,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}
 
+	/**
+	 * 创建类房间
+	 *
+	 * @param classroomReq 课堂请求体
+	 * @return {@code BaseRsp<Classroom> }
+	 */
 	@ApiOperation("后台课程表创建")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -178,6 +229,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(insertResult);
 	}
 
+	/**
+	 * 更新教室
+	 *
+	 * @param classroomReq 课堂请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("后台课程表信息修改")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -192,6 +249,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 删除 Classroom
+	 *
+	 * @param delReq 戴尔请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("后台课程表信息删除")
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -203,6 +266,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 教室监视器
+	 *
+	 * @param monitorReq 监控请求体
+	 * @return {@code BaseRsp<ListRsp<ClassroomMonitorBo>> }
+	 */
 	@ApiOperation("课堂监控获取用户签到列表")
 	@GetMapping("/classroom_monitor")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -215,6 +284,13 @@ public class AdminClassroomController {
 
 	}
 
+	/**
+	 * 帮助
+	 *
+	 * @param classroomId 课堂id
+	 * @param userId      用户id
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("进行远程协助")
 	@GetMapping("/to_help")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -228,6 +304,13 @@ public class AdminClassroomController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	/**
+	 * 结束帮助
+	 *
+	 * @param classroomId 课堂id
+	 * @param userId      用户id
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("结束远程协助")
 	@GetMapping("/end_help")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -241,6 +324,13 @@ public class AdminClassroomController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	/**
+	 * 获取帮助网址
+	 *
+	 * @param classroomId 课堂id
+	 * @param userId      用户id
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("获取远程协助地址")
 	@GetMapping("/get_help")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -253,6 +343,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(helpUrl);
 	}
 
+	/**
+	 * 课堂报告
+	 *
+	 * @param reportReq 报告请求体
+	 * @return {@code BaseRsp<ListRsp<ClassroomReportBo>> }
+	 */
 	@ApiOperation("查询课堂实验报告列表")
 	@GetMapping("/classroom_report")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -265,6 +361,12 @@ public class AdminClassroomController {
 				PageUtil.getListResult(pageReportBo.getData(), page, pageReportBo.getTotal()));
 	}
 
+	/**
+	 * 课堂统计
+	 *
+	 * @param classroomId 课堂id
+	 * @return {@code BaseRsp<ClassroomStatisticBo> }
+	 */
 	@ApiOperation("课堂学习统计")
 	@GetMapping("/classroom_statistic")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -279,6 +381,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(statisticBo);
 	}
 
+	/**
+	 * 课堂练习统计
+	 *
+	 * @param classroomPracticeReq 课堂练习请求体
+	 * @return {@code BaseRsp<ClassroomPracticeBo> }
+	 */
 	@ApiOperation("课堂练习统计")
 	@GetMapping("/practice-statistic")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -302,6 +410,14 @@ public class AdminClassroomController {
 		return new BaseRsp<>(classroomPracticeBo);
 	}
 
+	/**
+	 * 课堂练习详情
+	 *
+	 * @param classroomId 课堂id
+	 * @param lessonId    课时id
+	 * @param userId      用户id
+	 * @return {@code BaseRsp<ClassroomPracticeDetailBo> }
+	 */
 	@ApiOperation("课堂练习详情")
 	@GetMapping("/practice-detail")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -321,6 +437,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(classroomPracticeDetailBo);
 	}
 
+	/**
+	 * 标记课时练习
+	 *
+	 * @param practiceReq 练习请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课后练习评分")
 	@PostMapping("/practice/mark")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -338,6 +460,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 批量认证课时练习
+	 *
+	 * @param practiceReq 练习请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("课后练习下发")
 	@PatchMapping("/practice/batch-auth")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -355,6 +483,13 @@ public class AdminClassroomController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 导入训练计划
+	 *
+	 * @param excelFile Excel 文件
+	 * @param cover     盖
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("训练计划导入")
 	@PostMapping("/train_plan/import")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -384,6 +519,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	/**
+	 * 导出训练计划
+	 *
+	 * @param response 响应
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("训练计划导出")
 	@GetMapping("/train_plan/export")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -397,6 +538,12 @@ public class AdminClassroomController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	/**
+	 * 导出报告
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param classroomId         课堂id
+	 */
 	@ApiOperation("实验报告导出")
 	@GetMapping("/report/export")
 	public void exportReport(HttpServletResponse httpServletResponse,@RequestParam("classroom_id") String classroomId){

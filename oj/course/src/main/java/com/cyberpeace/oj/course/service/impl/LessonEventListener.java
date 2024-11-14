@@ -18,21 +18,46 @@ import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 课时事件监听器
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class LessonEventListener extends MessageListener {
 
+	/**
+	 * OJ当地场景Service
+	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
+	/**
+	 * 推送消息处理器
+	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	/**
+	 * 声明消息类型
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer declareMessageType() {
 		return BusinessCode.LESSON.getCode();
 	}
 
+	/**
+	 * 上场景删除
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 
@@ -44,6 +69,14 @@ public class LessonEventListener extends MessageListener {
 		return true;
 	}
 
+	/**
+	 * 上场景启动过程
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		// 数据校验
@@ -65,6 +98,14 @@ public class LessonEventListener extends MessageListener {
 		return true;
 	}
 
+	/**
+	 * 上场景元素
+	 *
+	 * @param data       数据
+	 * @param businessId 业务id
+	 * @param context    上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 
@@ -80,6 +121,7 @@ public class LessonEventListener extends MessageListener {
 
 	/**
 	 * 数据存在性校验
+	 *
 	 * @param ojLocalSceneId
 	 * @return
 	 */

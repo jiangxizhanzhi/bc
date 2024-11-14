@@ -7,25 +7,55 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 
+/**
+ * 课堂组信息
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_classroom_group_info")
 public class ClassroomGroupInfo extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 课堂id
+	 */
 	private String classroomId;
 
+	/**
+	 * 组不
+	 */
 	private Integer groupNo;
 
+	/**
+	 * 组用户id列表
+	 */
 	private String groupUserIds;
 
+	/**
+	 * 销毁延迟
+	 */
 	private Integer destroyDelay;
 
+	/**
+	 * 场景共享模式
+	 */
 	private Integer sceneShareMode;
 
+	/**
+	 * 课时id
+	 */
 	private String lessonId;
 
+	/**
+	 * 拓扑id
+	 */
 	private String topoId;
 
 }

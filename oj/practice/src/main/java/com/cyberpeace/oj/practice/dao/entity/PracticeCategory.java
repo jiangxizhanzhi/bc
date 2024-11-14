@@ -9,28 +9,47 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 练习类别
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_practice_category")
 public class PracticeCategory extends BaseTable {
 
-	/** 资源ID*/
+	/**
+	 * 资源ID
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
-	/** 名称*/
+	/**
+	 * 名称
+	 */
 	private String name;
 
-	/** 创建者*/
+	/**
+	 * 创建者
+	 */
 	private String createUserId;
 
-	/** 节点编码, 基于父级节点: p1(父节点) -> p1|c1(子节点)*/
+	/**
+	 * 节点编码, 基于父级节点: p1(父节点) -> p1|c1(子节点)
+	 */
 	@JsonIgnore
 	private String code;
 
-	/** 练习类型*/
+	/**
+	 * 练习类型
+	 */
 	@JsonIgnore
 	private Integer practiceType;
 
+	/**
+	 * 父母id
+	 */
 	private String parentId;
 
 	public enum PracticeType implements GenericEnum {

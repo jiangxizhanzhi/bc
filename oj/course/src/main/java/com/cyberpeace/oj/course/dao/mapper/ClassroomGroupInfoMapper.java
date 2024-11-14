@@ -8,11 +8,18 @@ import org.apache.ibatis.annotations.Param;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 
+/**
+ * 课堂组信息Mapper
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Mapper
 public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo> {
 
 	/**
 	 * 根据课堂编号和用户查询分组信息
+	 *
 	 * @param roomId
 	 * @param userId
 	 * @return
@@ -22,6 +29,7 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 
 	/**
 	 * 查询课堂下的分组信息
+	 *
 	 * @param roomId
 	 * @return
 	 */
@@ -29,6 +37,7 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 
 	/**
 	 * 查询课堂下的最后一组组号
+	 *
 	 * @param roomId
 	 * @return
 	 */
@@ -36,9 +45,10 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 
 	/**
 	 * 删除组信息
-	 * @param classroomId
+	 *
+	 * @param classroomId 课堂id
 	 */
-    void deleteByRoom(@Param("roomId") String classroomId);
+	void deleteByRoom(@Param("roomId") String classroomId);
 
 	/**
 	 * 批量更新摧毁延迟

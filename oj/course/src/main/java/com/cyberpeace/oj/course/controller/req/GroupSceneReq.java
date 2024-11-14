@@ -7,10 +7,19 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
+/**
+ * 组场景请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class GroupSceneReq implements Serializable {
 
+	/**
+	 * 课堂组编号
+	 */
 	@ApiModelProperty("课堂组编号")
 	@NotBlank
 	private String groupId;

@@ -34,25 +34,53 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 练习实操导入Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j(topic = "resourceImport")
 @Service
 public class PracticeOperationImportServiceImpl implements PracticeOperationImportService {
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 练习验证处理器
+	 */
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 练习类别Mapper
+	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
+	/**
+	 * 解析课时实操
+	 *
+	 * @param path         路径
+	 * @param practiceTopo 练习拓扑
+	 * @return {@code List<PracticeOperation> }
+	 */
 	@Override
 	public List<PracticeOperation> parseLessonOperation(String path,
 			Map<String, String> practiceTopo) {
@@ -84,6 +112,14 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		return StreamApiUtils.distinctByColumn(operationList, PracticeOperation::getTitle);
 	}
 
+	/**
+	 * 解析课时练习CTF
+	 *
+	 * @param path        路径
+	 * @param envReqs     env reqs
+	 * @param practiceSet 习题集
+	 * @return {@code PracticeOperation }
+	 */
 	@Override
 	public PracticeOperation parseLessonPracticeCtf(String path, Map<String, String> envReqs,
 			PracticeSet practiceSet) {
@@ -136,6 +172,14 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		return operation;
 	}
 
+	/**
+	 * 解析 rm ctf
+	 *
+	 * @param path        路径
+	 * @param envReqs     env reqs
+	 * @param practiceSet 习题集
+	 * @return {@code PracticeOperation }
+	 */
 	@Override
 	public PracticeOperation parseRmCtf(String path, Map<String, String> envReqs,
 			PracticeSet practiceSet) {
@@ -196,6 +240,9 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 	 *
 	 * @param operationData
 	 * @param practiceSet
+	 * @param topoId            拓扑id
+	 * @param attachments       附件
+	 * @param operationFilePath 实操文件路径
 	 * @return
 	 */
 	private PracticeOperation jsonParseOperation(JSONObject operationData, PracticeSet practiceSet,
@@ -274,6 +321,12 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 
 	}
 
+	/**
+	 * Handler 多内容
+	 *
+	 * @param filedContent 归档内容
+	 * @return {@code String }
+	 */
 	private String handlerMultiContent(String filedContent) {
 
 		if (StringUtils.isBlank(filedContent)
@@ -288,7 +341,14 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		return JsonUtil.arrayToString(result);
 	}
 
-	/** 处理实操题答案**/
+	/**
+	 * 处理实操题答案
+	 *
+	 * @param flagType    flag类型
+	 * @param attachments 附件
+	 * @param answers     答案
+	 * @return {@code String }
+	 */
 	private String handlerAnswer(Integer flagType, List<String> attachments, String answers) {
 
 		if (flagType.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()) {
@@ -304,7 +364,13 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		return JsonUtil.arrayToString(flags);
 	}
 
-	/** 计算flag类型*/
+	/**
+	 * 计算flag类型
+	 *
+	 * @param attachments 附件
+	 * @param flag        flag
+	 * @return {@code Integer }
+	 */
 	private Integer flagType(List<String> attachments, String flag) {
 
 		if (StringUtils.isBlank(flag)) {
@@ -319,6 +385,12 @@ public class PracticeOperationImportServiceImpl implements PracticeOperationImpo
 		return PracticeOperation.DynamicFlag.STATIC.getCode();
 	}
 
+	/**
+	 * 场景共享模式
+	 *
+	 * @param sceneShareMode 场景共享模式
+	 * @return {@code Integer }
+	 */
 	private Integer sceneShareMode(String sceneShareMode) {
 		return StringUtils.isNotBlank(sceneShareMode) && sceneShareMode.equals(CommonConstant.RIGHT)
 				? SceneShare.SHARED.getCode()

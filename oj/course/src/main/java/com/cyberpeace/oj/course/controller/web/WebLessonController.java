@@ -36,6 +36,12 @@ import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Web课时Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台课时相关api")
 @RestController
 @RequiresAuthentication
@@ -43,12 +49,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WebLessonController {
 
+	/**
+	 * 课程课时Service
+	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
+	/**
+	 * 课时场景Service
+	 */
 	@Autowired
 	private LessonSceneService lessonSceneService;
 
+	/**
+	 * 课时详情
+	 *
+	 * @param courseId    课程id
+	 * @param learnedType 学习类型
+	 * @param lessonId    课时id
+	 * @param roomId      房间id
+	 * @return {@code BaseRsp<LessonInfoBo> }
+	 */
 	@ApiOperation("课时详情查询")
 	@GetMapping("")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
@@ -67,6 +88,13 @@ public class WebLessonController {
 		return new BaseRsp<>(infoBo);
 	}
 
+	/**
+	 * 课时练习
+	 *
+	 * @param resourceId 资源id
+	 * @param courseId   课程id
+	 * @return {@code BaseRsp<LessonPracticeBo> }
+	 */
 	@ApiOperation("课后练习数据查询")
 	@GetMapping("/practice_after_class")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "resource_id", value = "课时编号", dataTypeClass = String.class),
@@ -84,6 +112,12 @@ public class WebLessonController {
 
 	}
 
+	/**
+	 * 提交答案
+	 *
+	 * @param submitReq 提交请求体
+	 * @return {@code BaseRsp<EvaluateResult> }
+	 */
 	@ApiOperation("课后练习解答")
 	@PostMapping("/submit_answer")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
@@ -103,7 +137,14 @@ public class WebLessonController {
 
 	}
 
-    @ApiOperation("前台课时获取拓扑信息")
+	/**
+	 * 获取拓扑场景
+	 *
+	 * @param lessonId 课时id
+	 * @param roomId   房间id
+	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 */
+	@ApiOperation("前台课时获取拓扑信息")
     @GetMapping("/scene_topo")
     @RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
     public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
@@ -114,6 +155,12 @@ public class WebLessonController {
 		return new BaseRsp<>(topoScene);
 	}
 
+	/**
+	 * 启动场景
+	 *
+	 * @param lessonSceneReq 课时场景请求体
+	 * @return {@code BaseRsp<JSONObject> }
+	 */
 	@ApiOperation("前台课程场景启动")
 	@PostMapping("/start_scene")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
@@ -127,6 +174,12 @@ public class WebLessonController {
 		return new BaseRsp<>(scene);
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param lessonSceneReq 课时场景请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("前台场景删除")
 	@DeleteMapping("/delete_scene")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
@@ -138,6 +191,12 @@ public class WebLessonController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("前台课时场景节点重启")
 	@PostMapping("/node_restart")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
@@ -150,6 +209,12 @@ public class WebLessonController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("前台课时场景节点重建")
 	@PostMapping("/node_recreate")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
@@ -162,6 +227,12 @@ public class WebLessonController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 更新场景状态
+	 *
+	 * @param sceneStatusReq 场景状态请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("前台课时场景暂停与恢复")
 	@PatchMapping("/update_status")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)

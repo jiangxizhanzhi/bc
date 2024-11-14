@@ -8,18 +8,33 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 课时练习提交请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class LessonPracticeSubmitReq implements Serializable {
 
+	/**
+	 * 课程编号
+	 */
 	@ApiModelProperty("课程编号")
 	@NotBlank
 	private String courseId;
 
+	/**
+	 * 课时编号
+	 */
 	@ApiModelProperty("课时编号")
 	@NotBlank
 	private String lessonId;
 
+	/**
+	 * 答案提交
+	 */
 	@ApiModelProperty("答案提交")
 	private List<PracticeSubmitReq> answers;
 

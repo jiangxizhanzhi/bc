@@ -6,17 +6,38 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 启动场景Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class StartSceneBo implements Serializable {
 
+	/**
+	 * 课堂id
+	 */
 	private String classroomId;
 
+	/**
+	 * 组id
+	 */
 	private String groupId;
 
+	/**
+	 * 语言
+	 */
 	private String language;
 
+	/**
+	 * auth 上下文
+	 */
 	private AuthContext authContext;
 
+	/**
+	 * 用户信息
+	 */
 	private UserInfo userInfo;
 
 }

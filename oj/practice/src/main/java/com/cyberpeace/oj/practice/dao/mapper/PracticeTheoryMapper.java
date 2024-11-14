@@ -14,12 +14,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * 练习理论Mapper
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Mapper
 @Repository
 public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
 	/**
 	 * 分页查询理论基础习题 #外部接口使用
+	 *
 	 * @param page
 	 * @param pattern
 	 * @param practiceSetIds
@@ -34,6 +41,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
 	/**
 	 * 随机查询理论习题 #外部接口使用
+	 *
 	 * @param theoryListQuery
 	 * @param count
 	 * @return
@@ -43,40 +51,112 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
 	/**
 	 * 根据编号查询理论习题 #外部接口使用
+	 *
 	 * @param resourceIds
 	 * @return
 	 */
 	List<PracticeTheory> batchGet(@Param("resource_ids") List<String> resourceIds);
 
+	/**
+	 * 分页由查询
+	 *
+	 * @param page            分页
+	 * @param theoryListQuery 理论列表查询
+	 * @param isPublic        是否公开
+	 * @return {@code IPage<PracticeTheory> }
+	 */
 	IPage<PracticeTheory> pageByQuery(Page page,
 			@Param("listQuery") TheoryListQuery theoryListQuery,
 			@Param("isPublic") Boolean isPublic);
 
+	/**
+	 * 查询由设置id列表
+	 *
+	 * @param setIds   设置id列表
+	 * @param isPublic 是否公开
+	 * @return {@code List<String> }
+	 */
 	List<String> selectBySetIds(@Param("setIds") List<String> setIds,
 			@Param("isPublic") Boolean isPublic);
 
+	/**
+	 * 查询由类别id列表
+	 *
+	 * @param categoryIds 类别id列表
+	 * @param isPublic    是否公开
+	 * @return {@code List<String> }
+	 */
 	List<String> selectByCategoryIds(@Param("categoryIds") List<String> categoryIds,
 			@Param("isPublic") Boolean isPublic);
 
+	/**
+	 * 查询由内容
+	 *
+	 * @param practiceSetId 练习设置id
+	 * @param content       内容
+	 * @return {@code String }
+	 */
 	String selectByContent(
 			@Param("practiceSetId") String practiceSetId, @Param("content") String content);
 
+	/**
+	 * 查询简单
+	 *
+	 * @param theoryListQuery 理论列表查询
+	 * @param isPublic        是否公开
+	 * @return {@code List<TheorySimpleBo> }
+	 */
 	List<TheorySimpleBo> selectSimple(@Param("query") TheoryListQuery theoryListQuery,
 			@Param("isPublic") Boolean isPublic);
 
+	/**
+	 * 搜索内置由设置id列表
+	 *
+	 * @param setIds 设置id列表
+	 * @return {@code String }
+	 */
 	String searchBuiltinBySetIds(@Param("setIds") List<String> setIds);
 
+	/**
+	 * 查询全部由创建试卷
+	 *
+	 * @param difficulties 困难
+	 * @param types        类型
+	 * @param directions   方向
+	 * @param practiceIds  练习id列表
+	 * @return {@code List<PracticeTheory> }
+	 */
 	List<PracticeTheory> selectAllByCreatePaper(@Param("difficulties") List<Integer> difficulties,
 												@Param("types") List<Integer> types,
 												@Param("directions") List<String> directions,
 												@Param("practiceIds") List<String> practiceIds);
 
+	/**
+	 * 查询由组类别
+	 *
+	 * @param theoryListQuery 理论列表查询
+	 * @param isPublic        是否公开
+	 * @param userId          用户id
+	 * @param authSetIds      认证设置id列表
+	 * @param practiceType    练习类型
+	 * @return {@code List<CategoryProgressRes> }
+	 */
 	List<CategoryProgressRes> selectByGroupCategory(@Param("listQuery") TheoryListQuery theoryListQuery,
 											@Param("isPublic") Boolean isPublic,
 											@Param("userId") String userId,
 											@Param("authSetIds")List<String> authSetIds,
 											@Param("practiceType") Integer practiceType);
 
+	/**
+	 * 查询由组难度
+	 *
+	 * @param theoryListQuery 理论列表查询
+	 * @param isPublic        是否公开
+	 * @param userId          用户id
+	 * @param authSetIds      认证设置id列表
+	 * @param practiceType    练习类型
+	 * @return {@code List<ProgressProportion> }
+	 */
 	List<ProgressProportion> selectByGroupDifficulty(@Param("listQuery") TheoryListQuery theoryListQuery,
 													 @Param("isPublic") Boolean isPublic,
 													 @Param("userId") String userId,
@@ -85,6 +165,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
 	/**
 	 * 查询现有题目的方向id和习题集id
+	 *
 	 * @return
 	 */
 	List<PracticeTheory> selectAllCategoryIds();

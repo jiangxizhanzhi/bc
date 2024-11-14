@@ -8,47 +8,89 @@ import java.io.Serializable;
 
 /**
  * 课后练习使用
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @Data
 @ApiModel
 public class TheoryLessonBo implements Serializable {
 
-    @ApiModelProperty("快照编号")
+	/**
+	 * 快照编号
+	 */
+	@ApiModelProperty("快照编号")
     private String refId;
 
-    @ApiModelProperty("答案")
+	/**
+	 * 答案
+	 */
+	@ApiModelProperty("答案")
     private String answer;
 
-    @ApiModelProperty("填空题空格数量")
+	/**
+	 * 填空题空格数量
+	 */
+	@ApiModelProperty("填空题空格数量")
     private Integer blankCount;
 
-    @ApiModelProperty("标题")
+	/**
+	 * 标题
+	 */
+	@ApiModelProperty("标题")
     private String title;
 
-    @ApiModelProperty("内容")
+	/**
+	 * 内容
+	 */
+	@ApiModelProperty("内容")
     private String content;
 
-    @ApiModelProperty("选项")
+	/**
+	 * 选项
+	 */
+	@ApiModelProperty("选项")
     private String option;
 
-    @ApiModelProperty("方向名称")
+	/**
+	 * 方向名称
+	 */
+	@ApiModelProperty("方向名称")
     private String directionName;
 
-    @ApiModelProperty("习题类型")
+	/**
+	 * 习题类型
+	 */
+	@ApiModelProperty("习题类型")
     private Integer practiceType;
 
-    @ApiModelProperty("题型")
+	/**
+	 * 题型
+	 */
+	@ApiModelProperty("题型")
     private Integer questionType;
 
-    @ApiModelProperty("难度")
+	/**
+	 * 难度
+	 */
+	@ApiModelProperty("难度")
     private Integer difficulty;
 
-    @ApiModelProperty("资源编号")
+	/**
+	 * 资源编号
+	 */
+	@ApiModelProperty("资源编号")
     private String resourceId;
 
-    @ApiModelProperty("分值")
+	/**
+	 * 分值
+	 */
+	@ApiModelProperty("分值")
     private Double score;
 
-    @ApiModelProperty("是否内置")
+	/**
+	 * 是否内置
+	 */
+	@ApiModelProperty("是否内置")
     private Boolean builtin;
 }

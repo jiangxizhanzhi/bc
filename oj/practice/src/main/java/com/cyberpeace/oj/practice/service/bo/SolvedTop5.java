@@ -5,15 +5,30 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 解决 Top5
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class SolvedTop5 {
 
-    @ApiModelProperty("用户名")
+	/**
+	 * 用户名
+	 */
+	@ApiModelProperty("用户名")
     private String userName;
 
-    @ApiModelProperty("是否解出")
+	/**
+	 * 是否解出
+	 */
+	@ApiModelProperty("是否解出")
     private boolean solved;
 
-    @ApiModelProperty("答题时间")
+	/**
+	 * 答题时间
+	 */
+	@ApiModelProperty("答题时间")
     private Date updateTime;
 }

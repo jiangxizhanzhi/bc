@@ -8,22 +8,43 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * Web实操列表请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class WebOperationListReq extends PageReqBase {
 
+	/**
+	 * 方向
+	 */
 	@ApiModelProperty("方向")
 	private String categoryId;
 
+	/**
+	 * 习题集
+	 */
 	@ApiModelProperty("习题集")
 	private String practiceSetId;
 
+	/**
+	 * 是否解出
+	 */
 	@ApiModelProperty("是否解出")
 	private Boolean solved;
 
+	/**
+	 * 难度
+	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	/**
+	 * 知识点，用逗号隔开多个知识点
+	 */
 	@ApiModelProperty("知识点，用逗号隔开多个知识点")
 	private List<String> knowledge;
 

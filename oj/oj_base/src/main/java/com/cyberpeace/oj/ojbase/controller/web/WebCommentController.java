@@ -27,15 +27,30 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * Web评论Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台评论相关api")
 @RestController
 @RequestMapping("/oj/comment/")
 @RequiresAuthentication
 public class WebCommentController {
 
+	/**
+	 * 评论Service
+	 */
 	@Autowired
 	private CommentService commentService;
 
+	/**
+	 * 列表注释
+	 *
+	 * @param pageCommentReq 分页评论请求体
+	 * @return {@code BaseRsp<ListRsp<CommentBo>> }
+	 */
 	@ApiOperation("查询所有留言")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_PRACTICE_OPERATION , MenuConstant.WEB_OJ_ALL_COURSE }, logical = Logical.OR)
@@ -52,6 +67,12 @@ public class WebCommentController {
 		return new BaseRsp<>(listRsp);
 	}
 
+	/**
+	 * 评论是否喜欢
+	 *
+	 * @param commentIsLikeReq 评论是否喜欢请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("留言点赞")
 	@PostMapping("/is_like")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_PRACTICE_OPERATION , MenuConstant.WEB_OJ_ALL_COURSE }, logical = Logical.OR)
@@ -66,6 +87,12 @@ public class WebCommentController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 获取课程评论
+	 *
+	 * @param commentReq 评论请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@PostMapping("")
 	@ApiOperation("留言新增")
 	@RequiresPermissions(

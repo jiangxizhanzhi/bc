@@ -28,29 +28,56 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * markdown理论解析 器
+ *
  * @author chenzhuo
- * 仅支持标题和列表 列表仅支持二级
+ * 仅支持标题和列表 列表仅支持二级@date 2024/11/14
  */
 @Slf4j
 public class MdTheoryParser {
 
+	/**
+	 * head 符号
+	 */
 	private String HEAD_SYMBOL = "#";
 
+	/**
+	 * 内容
+	 */
 	private List<String> content;
 
+	/**
+	 * 标题映射
+	 */
 	private Map<String, String> titleMap;
 
+	/**
+	 * 解析 器映射
+	 */
 	private Map<Class, MdContentParser> parserMap;
 
+	/**
+	 * markdown理论解析 器
+	 *
+	 * @param file 文件
+	 */
 	public MdTheoryParser(String file) {
 		setFile(file);
 		collectParse();
 	}
 
+	/**
+	 * markdown理论解析 器
+	 */
 	public MdTheoryParser() {
 		collectParse();
 	}
 
+	/**
+	 * 设置文件
+	 *
+	 * @param file 文件
+	 */
 	public void setFile(String file) {
 		if (StringUtils.isBlank(file) || !new File(file).exists()) {
 			log.error("File not exist! file_path=[{}]", file);
@@ -61,6 +88,12 @@ public class MdTheoryParser {
 		titleMap = new ConcurrentHashMap<>();
 	}
 
+	/**
+	 * 读
+	 *
+	 * @param cls CLS
+	 * @return {@code T }
+	 */
 	public synchronized <T> T read(Class<T> cls) {
 		try {
 			return doRead(cls);
@@ -70,10 +103,22 @@ public class MdTheoryParser {
 		}
 	}
 
+	/**
+	 * 写入
+	 *
+	 * @param obj  对象
+	 * @param file 文件
+	 */
 	public synchronized void write(Object obj, File file) {
 		doWrite(obj, file);
 	}
 
+	/**
+	 * 做写入
+	 *
+	 * @param obj  对象
+	 * @param file 文件
+	 */
 	private void doWrite(Object obj, File file) {
 		FileUtil.mkdirs(file.getParentFile().getAbsolutePath());
 		if (file.exists()) {
@@ -146,6 +191,13 @@ public class MdTheoryParser {
 		}
 	}
 
+	/**
+	 * 做阅读
+	 *
+	 * @param cls CLS
+	 * @return {@code T }
+	 * @throws IllegalAccessException 非法访问异常
+	 */
 	private <T> T doRead(Class<T> cls) throws IllegalAccessException {
 		mdKeyMap();
 		Object instance = BeanUtils.instantiateClass(cls);
@@ -184,7 +236,6 @@ public class MdTheoryParser {
 	/**
 	 * 解析markdown文件 返回json数据
 	 * 第一步通过#、##解析题型，第二步通过###解析每道题目
-	 * @return
 	 */
 	public void mdKeyMap() {
 
@@ -213,6 +264,13 @@ public class MdTheoryParser {
 		}
 	}
 
+	/**
+	 * 解析钥匙映射
+	 *
+	 * @param singles     单打
+	 * @param markdownTag Markdown 标签
+	 * @return {@code Map<String, String> }
+	 */
 	public static Map<String, String> parseKeyMap(String singles, String markdownTag) {
 
 		Map<String, String> titleMap = Maps.newTreeMap();
@@ -251,6 +309,13 @@ public class MdTheoryParser {
 		return titleMap;
 	}
 
+	/**
+	 * 设置相对文件路径
+	 *
+	 * @param newPath 新建路径
+	 * @param line    线
+	 * @return {@code String }
+	 */
 	public static String setRelativeFilePath(String newPath, String line) {
 
 		// match img like ![](./img/1.png) ---> ./img/1.png
@@ -277,6 +342,13 @@ public class MdTheoryParser {
 		return line;
 	}
 
+	/**
+	 * 设置新增功能文件路径
+	 *
+	 * @param path 路径
+	 * @param line 线
+	 * @return {@code String }
+	 */
 	public static String setNewFIlePath(String path, String line) {
 		if (line.contains(ConfigUtil.getContextProperty("cr.local.file.prefix"))) {
 			return line;
@@ -306,6 +378,13 @@ public class MdTheoryParser {
 
 	}
 
+	/**
+	 * 获取分配str
+	 *
+	 * @param length 长度
+	 * @param str    str
+	 * @return {@code String }
+	 */
 	private String getAssignStr(int length, String str) {
 
 		String assignStr = str;
@@ -326,6 +405,12 @@ public class MdTheoryParser {
 				mdContentParser -> mdContentParser);
 	}
 
+	/**
+	 * 新增解析 器
+	 *
+	 * @param cls             CLS
+	 * @param mdContentParser markdown内容解析 器
+	 */
 	public void addParser(Class cls, MdContentParser mdContentParser) {
 		parserMap.put(cls, mdContentParser);
 	}

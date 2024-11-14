@@ -35,21 +35,41 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 管理训练计划Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-后台训练计划相关api")
 @RequiresAuthentication
 @RestController
 @RequestMapping("/oj/admin/train/plan")
 public class AdminTrainPlanController {
 
+	/**
+	 * 训练计划Service
+	 */
 	@Autowired
 	private TrainPlanService trainPlanService;
 
+	/**
+	 * 课堂Service
+	 */
 	@Autowired
 	private ClassroomService classroomService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 列表
+	 *
+	 * @return {@code BaseRsp<List<TrainPlanBo>> }
+	 */
 	@ApiOperation("训练计划列表查询全部")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -59,6 +79,12 @@ public class AdminTrainPlanController {
 		return new BaseRsp<>(trainPlanBos);
 	}
 
+	/**
+	 * 分页
+	 *
+	 * @param trainPlanReq 训练计划请求体
+	 * @return {@code BaseRsp<ListRsp<TrainPlanRsp>> }
+	 */
 	@ApiOperation("训练计划列表分页查询")
 	@GetMapping("/list/page")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -80,6 +106,12 @@ public class AdminTrainPlanController {
 		return new BaseRsp<>(listResult);
 	}
 
+	/**
+	 * 新增训练计划
+	 *
+	 * @param trainPlanAddReq 训练计划新增请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("新增单条训练计划")
 	@PostMapping("/train_plan")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -97,6 +129,12 @@ public class AdminTrainPlanController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 新增评估型
+	 *
+	 * @param trainPlanUpdateReq 训练计划更新请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("编辑单条训练计划")
 	@PutMapping("/train_plan")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -113,6 +151,12 @@ public class AdminTrainPlanController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取评估型
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<TrainPlan> }
+	 */
 	@ApiOperation("查询单条训练计划")
 	@GetMapping("/train_plan")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
@@ -123,6 +167,12 @@ public class AdminTrainPlanController {
 		return new BaseRsp<>(assessModel);
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param delReq 戴尔请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("后台计划批量删除")
 	@DeleteMapping("delete_batch")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)

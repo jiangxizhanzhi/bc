@@ -47,34 +47,72 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * OJ当地场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjLocalScene> implements OjLocalSceneService {
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 系统配置Service
+	 */
 	@Autowired
 	private SystemConfigService systemConfigService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 当地场景Mapper
+	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 查询OJ当地场景
+	 *
+	 * @param businessId  业务id
+	 * @param shared      共享
+	 * @param authContext auth 上下文
+	 * @return {@code OjLocalScene }
+	 */
 	@Override
 	public OjLocalScene selectOjLocalScene(String businessId, Integer shared,
 			AuthContext authContext) {
@@ -97,6 +135,12 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 	}
 
+	/**
+	 * 初始化OJ当地场景
+	 *
+	 * @param sceneContext 场景上下文
+	 * @return {@code OjLocalScene }
+	 */
 	@Override
 	public OjLocalScene initOjLocalScene(InitOjSceneContext sceneContext) {
 
@@ -117,6 +161,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 	/**
 	 * 获取固定数量的flag
+	 *
 	 * @param count 数量
 	 * @return
 	 */
@@ -137,6 +182,13 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		return flags;
 	}
 
+	/**
+	 * 设置动态flag
+	 *
+	 * @param ojLocalScene OJ当地场景
+	 * @param topo         拓扑
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject setDynamicFlag(OjLocalScene ojLocalScene, JSONObject topo) {
 
@@ -215,6 +267,12 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		return replaceCommand;
 	}
 
+	/**
+	 * 删除当地场景
+	 *
+	 * @param ojLocalSceneId OJ当地场景id
+	 * @return {@code OjLocalScene }
+	 */
 	@Override
 	public OjLocalScene deleteLocalScene(String ojLocalSceneId) {
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(ojLocalSceneId);
@@ -234,6 +292,12 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		return ojLocalScene;
 	}
 
+	/**
+	 * 删除当地和远程场景
+	 *
+	 * @param ojLocalScene OJ当地场景
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean deleteLocalAndRemoteScene(OjLocalScene ojLocalScene) {
 
@@ -256,6 +320,13 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		return true;
 	}
 
+	/**
+	 * 获取启动场景消息
+	 *
+	 * @param message      消息
+	 * @param ojLocalScene OJ当地场景
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getStartSceneMessage(String message, OjLocalScene ojLocalScene) {
 
@@ -311,6 +382,12 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		return new JSONObject();
 	}
 
+	/**
+	 * 检查场景启动计数
+	 *
+	 * @param userId      用户id
+	 * @param createCount 创建计数
+	 */
 	@Override
 	public void checkSceneStartCount(String userId, Integer createCount) {
 
@@ -334,6 +411,12 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 	}
 
+	/**
+	 * 获取场景数据
+	 *
+	 * @param ojLocalScene OJ当地场景
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject getSceneData(OjLocalScene ojLocalScene) {
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
@@ -373,6 +456,12 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		return sceneData;
 	}
 
+	/**
+	 * 查询监控列表
+	 *
+	 * @param ojLocalScenes OJ 当地场景
+	 * @return {@code List<SceneMonitorBo> }
+	 */
 	@Override
 	public List<SceneMonitorBo> selectMonitorList(List<OjLocalScene> ojLocalScenes) {
 
@@ -416,6 +505,13 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		return lessonMonitorBos;
 	}
 
+	/**
+	 * 切换屏幕记录
+	 *
+	 * @param topoId          拓扑id
+	 * @param enableRecording 启用录制
+	 * @return {@code JSONObject }
+	 */
 	@Override
 	public JSONObject switchScreenRecord(String topoId, Boolean enableRecording) {
 		TopoSwitchRecordingContext context = new TopoSwitchRecordingContext(topoId, enableRecording);

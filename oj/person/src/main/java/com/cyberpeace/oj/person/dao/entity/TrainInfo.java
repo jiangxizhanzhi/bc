@@ -5,15 +5,30 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 训练信息
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class TrainInfo implements Serializable {
 
-  @ApiModelProperty("")
+	/**
+	 * 应用程序id
+	 */
+	@ApiModelProperty("")
   private String appId;
 
-  @ApiModelProperty("")
+	/**
+	 * 应用程序名称
+	 */
+	@ApiModelProperty("")
   private String appName;
 
-  @ApiModelProperty("训练数")
+	/**
+	 * 训练数
+	 */
+	@ApiModelProperty("训练数")
   private Integer count;
 }

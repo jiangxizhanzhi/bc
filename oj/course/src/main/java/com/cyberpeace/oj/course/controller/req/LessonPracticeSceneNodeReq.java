@@ -6,11 +6,20 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * 课时练习场景节点请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class LessonPracticeSceneNodeReq extends LessonPracticeSceneReq {
 
-	@ApiModelProperty("节点编号")
+    /**
+     * 节点编号
+     */
+    @ApiModelProperty("节点编号")
 	@NotBlank
 	private String nodeId;
 

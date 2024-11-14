@@ -5,13 +5,25 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 练习类别Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class PracticeCategoryBo implements Serializable {
 
-    @ApiModelProperty("习题分类名称")
+	/**
+	 * 习题分类名称
+	 */
+	@ApiModelProperty("习题分类名称")
     private String name;
 
-    @ApiModelProperty("习题分类编号")
+	/**
+	 * 习题分类编号
+	 */
+	@ApiModelProperty("习题分类编号")
     private String resourceId;
 
 }

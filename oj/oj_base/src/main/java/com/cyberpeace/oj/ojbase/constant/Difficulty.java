@@ -4,13 +4,36 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 
 import lombok.Getter;
 
+/**
+ * 难度
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public enum Difficulty implements GenericEnum {
 
-	PRIMARY(0, "初级"), MIDDLE(1, "中级"), HIGH(2, "高级");
+	/**
+	 * 初级
+	 */
+	PRIMARY(0, "初级"),
+	/**
+	 * 中级
+	 */
+	MIDDLE(1, "中级"),
+	/**
+	 * 高级
+	 */
+	HIGH(2, "高级");
 
+	/**
+	 * 代号
+	 */
 	@Getter
 	private Integer code;
 
+	/**
+	 * 描述
+	 */
 	@Getter
 	private String desc;
 

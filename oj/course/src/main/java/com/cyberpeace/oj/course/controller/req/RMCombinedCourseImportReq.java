@@ -9,10 +9,19 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * rm组合课程导入请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class RMCombinedCourseImportReq implements Serializable {
 
+	/**
+	 * 组合课程导入参数
+	 */
 	@ApiModelProperty("组合课程导入参数")
 	@NotNull
 	private List<CombinedCourseImportContext> courseInfos;

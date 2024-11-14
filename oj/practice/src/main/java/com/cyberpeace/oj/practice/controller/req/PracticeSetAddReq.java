@@ -9,21 +9,39 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * 练习设置新增请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class PracticeSetAddReq implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotBlank(groups = { Create.class })
 	private String name;
 
+	/**
+	 * 封面地址
+	 */
 	@ApiModelProperty(value = "封面地址")
 	private String logo;
 
+	/**
+	 * 类型 0=理论基础 2=实践操作
+	 */
 	@ApiModelProperty(value = "类型 0=理论基础 2=实践操作", allowableValues = "0,2", required = true)
 	@NotNull(groups = { Create.class })
 	private Integer practiceType;
 
+	/**
+	 * 公开
+	 */
 	@ApiModelProperty(value = "公开", required = true)
 	@NotNull(groups = { Create.class })
 	private Boolean isPublic;

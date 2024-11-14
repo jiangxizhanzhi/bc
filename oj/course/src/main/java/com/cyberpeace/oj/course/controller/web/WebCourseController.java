@@ -40,18 +40,36 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * Web课程Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台课程相关api")
 @RestController
 @RequestMapping("/oj/course")
 @RequiresAuthentication
 public class WebCourseController {
 
+	/**
+	 * 课程Service
+	 */
 	@Autowired
 	private CourseService courseService;
 
+	/**
+	 * 课程方向Service
+	 */
 	@Autowired
 	private CourseCategoryService courseDirectionService;
 
+	/**
+	 * 获取Web课程
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<CourseWebBo>> }
+	 */
 	@ApiOperation("前台课程列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
@@ -80,6 +98,12 @@ public class WebCourseController {
 		return new BaseRsp<>(boListRsp);
 	}
 
+	/**
+	 * 获取课程
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<WebCourseRes> }
+	 */
 	@GetMapping("")
 	@ApiOperation("单条查询")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)

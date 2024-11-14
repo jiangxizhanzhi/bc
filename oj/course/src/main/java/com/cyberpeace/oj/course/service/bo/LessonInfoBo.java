@@ -13,105 +13,207 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 课时信息Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class LessonInfoBo implements Serializable {
 
-	@TableId(type = IdType.UUID, value = "resource_id")
+    /**
+     * 课时编号
+     */
+    @TableId(type = IdType.UUID, value = "resource_id")
 	@ApiModelProperty("课时编号")
 	private String resourceId;
 
-	@ApiModelProperty("课程编号")
+    /**
+     * 课程编号
+     */
+    @ApiModelProperty("课程编号")
 	private String courseId;
 
-	@ApiModelProperty("课程名称")
+    /**
+     * 课程名称
+     */
+    @ApiModelProperty("课程名称")
 	private String courseName;
 
-	@ApiModelProperty("课时名称")
+    /**
+     * 课时名称
+     */
+    @ApiModelProperty("课时名称")
 	private String name;
 
-	@ApiModelProperty("是否为内置课程 true=内置")
+    /**
+     * 是否为内置课程 true=内置
+     */
+    @ApiModelProperty("是否为内置课程 true=内置")
 	private Boolean builtin;
 
-	@ApiModelProperty("类型 0=理论课 1=实验课")
+    /**
+     * 类型 0=理论课 1=实验课
+     */
+    @ApiModelProperty("类型 0=理论课 1=实验课")
 	private Integer type;
 
-	@ApiModelProperty("讲义类型 0=都不是 1=md 2=ppt 3=pdf")
+    /**
+     * 讲义类型 0=都不是 1=md 2=ppt 3=pdf
+     */
+    @ApiModelProperty("讲义类型 0=都不是 1=md 2=ppt 3=pdf")
 	private Integer handoutType;
 
-	@ApiModelProperty("讲义文件地址")
+    /**
+     * 讲义文件地址
+     */
+    @ApiModelProperty("讲义文件地址")
 	private String handoutUrl;
 
-	@ApiModelProperty("视频文件地址")
+    /**
+     * 视频文件地址
+     */
+    @ApiModelProperty("视频文件地址")
 	private String videoUrl;
 
-	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
+    /**
+     * 难度 0=初级 1=中级 2=高级
+     */
+    @ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	private Integer difficulty;
 
-	@ApiModelProperty("是否公开 true=公开")
+    /**
+     * 是否公开 true=公开
+     */
+    @ApiModelProperty("是否公开 true=公开")
 	private Boolean isPublic;
 
-	@ApiModelProperty("0=未配置 1=选修 2=必修")
+    /**
+     * 0=未配置 1=选修 2=必修
+     */
+    @ApiModelProperty("0=未配置 1=选修 2=必修")
 	private Integer compulsory;
 
-	@ApiModelProperty("课时时长")
+    /**
+     * 课时时长
+     */
+    @ApiModelProperty("课时时长")
 	private Integer duration;
 
-	@ApiModelProperty("销毁延时")
+    /**
+     * 销毁延时
+     */
+    @ApiModelProperty("销毁延时")
 	private Integer destroyDelay;
 
-	@ApiModelProperty("拓扑编号")
+    /**
+     * 拓扑编号
+     */
+    @ApiModelProperty("拓扑编号")
 	private String topoId;
 
-	@ApiModelProperty("场景共享类型")
+    /**
+     * 场景共享类型
+     */
+    @ApiModelProperty("场景共享类型")
 	private Integer sceneShareMode;
 
-	@ApiModelProperty("知识点")
+    /**
+     * 知识点
+     */
+    @ApiModelProperty("知识点")
 	private List<String> knowledge;
 
-	@ApiModelProperty("传贱人编号")
+    /**
+     * 传贱人编号
+     */
+    @ApiModelProperty("传贱人编号")
 	private String createUser;
 
-	@ApiModelProperty("试卷编号")
+    /**
+     * 试卷编号
+     */
+    @ApiModelProperty("试卷编号")
 	private String paperId;
 
-	@ApiModelProperty("试卷是否公开 true=公开")
+    /**
+     * 试卷是否公开 true=公开
+     */
+    @ApiModelProperty("试卷是否公开 true=公开")
 	private Boolean paperPublic;
 
-	@ApiModelProperty("热度")
+    /**
+     * 热度
+     */
+    @ApiModelProperty("热度")
 	private Integer heat;
 
-	@ApiModelProperty("是否收藏")
+    /**
+     * 是否收藏
+     */
+    @ApiModelProperty("是否收藏")
 	private Boolean isCollection;
 
-	@ApiModelProperty("附件")
+    /**
+     * 附件
+     */
+    @ApiModelProperty("附件")
 	private List<AttachmentBo> lessonFile;
 
-	@ApiModelProperty("下一节")
+    /**
+     * 下一节
+     */
+    @ApiModelProperty("下一节")
 	private String next;
 
-	@ApiModelProperty("上一节")
+    /**
+     * 上一节
+     */
+    @ApiModelProperty("上一节")
 	private String pre;
 
-	@ApiModelProperty("习题数量")
+    /**
+     * 习题数量
+     */
+    @ApiModelProperty("习题数量")
 	private Integer practiceCount;
 
-	@ApiModelProperty("拓扑数据")
+    /**
+     * 拓扑数据
+     */
+    @ApiModelProperty("拓扑数据")
 	private JSONObject sceneConfigData;
 
-	@ApiModelProperty("场景数据")
+    /**
+     * 场景数据
+     */
+    @ApiModelProperty("场景数据")
 	private JSONObject sceneData;
 
-	@ApiModelProperty("场景配置名称")
+    /**
+     * 场景配置名称
+     */
+    @ApiModelProperty("场景配置名称")
 	private String sceneConfigName;
 
-	@ApiModelProperty("当前用户所属课堂组编号")
+    /**
+     * 当前用户所属课堂组编号
+     */
+    @ApiModelProperty("当前用户所属课堂组编号")
 	private String groupId;
 
-	@ApiModelProperty("课堂编号")
+    /**
+     * 课堂编号
+     */
+    @ApiModelProperty("课堂编号")
 	private String roomId;
 
-	@ApiModelProperty("视频检查点")
+    /**
+     * 视频检查点
+     */
+    @ApiModelProperty("视频检查点")
 	private VideoCheckPointConfig videoCheckPointConfig;
 
 	/**

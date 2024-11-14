@@ -34,40 +34,67 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author chenzhuo
+ * 课程验证处理器
+ *
+ * @author chenzhuo@date 2024/11/14
  */
 @Slf4j
 @Service
 public class CourseValidateHandler {
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课程课时Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 课程类别Mapper
+	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 试卷Mapper
+	 */
 	@Autowired
 	private PaperMapper paperMapper;
 
+	/**
+	 * 练习理论裁判Service
+	 */
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
+	/**
+	 * 练习实操裁判Service
+	 */
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
 	/**
 	 * 校验课时更新时 名称是否已存在
+	 *
 	 * @param existLesson
-	 * @param newName
+	 * @param newName     新增功能名称
 	 */
 	public void validateLessonUpdateNameExist(CourseLesson existLesson, String newName) {
 		String nameExistLesson = courseLessonMapper.selectByCourseAndName(existLesson.getCourseId(),
@@ -81,7 +108,8 @@ public class CourseValidateHandler {
 
 	/**
 	 * 校验课时修改是否存在场景信息
-	 * @param courseLesson
+	 *
+	 * @param courseLesson 课程课时
 	 */
 	public void validateLessonUpdateSceneExist(CourseLesson courseLesson) {
 
@@ -99,9 +127,9 @@ public class CourseValidateHandler {
 
 	/**
 	 * 校验课程权限
+	 *
 	 * @param courseId
 	 * @param authContext
-	 * @return
 	 */
 	public void validateCoursePermission(String courseId, AuthContext authContext) {
 
@@ -129,6 +157,7 @@ public class CourseValidateHandler {
 
 	/**
 	 * 校验课时权限
+	 *
 	 * @param lessonId
 	 * @param authContext
 	 * @return
@@ -149,6 +178,7 @@ public class CourseValidateHandler {
 
 	/**
 	 * 校验课时是否存在
+	 *
 	 * @param lessonId
 	 * @param isPublic
 	 * @return
@@ -165,8 +195,9 @@ public class CourseValidateHandler {
 
 	/**
 	 * 校验课程修改时名称校验问题
+	 *
 	 * @param existCourse
-	 * @param newName
+	 * @param newName     新增功能名称
 	 */
 	public void validateCourseUpdateNameExist(String existCourse, String newName) {
 		String existNameId = courseMapper.selectByName(newName);
@@ -178,6 +209,7 @@ public class CourseValidateHandler {
 
 	/**
 	 * 课程数据存在校验
+	 *
 	 * @param courseId
 	 * @return
 	 */
@@ -193,8 +225,8 @@ public class CourseValidateHandler {
 
 	/**
 	 * 课程名称存在性校验
+	 *
 	 * @param courseName
-	 * @return
 	 */
 	public void validateCourseNameExist(String courseName) {
 		String courseId = courseMapper.selectByName(courseName);
@@ -206,8 +238,8 @@ public class CourseValidateHandler {
 
 	/**
 	 * 课程编号存在性校验
+	 *
 	 * @param courseNum
-	 * @return
 	 */
 	public void validateCourseNumExist(String courseNum) {
 		Course course = courseMapper.selectByCourseNum(courseNum);
@@ -219,7 +251,9 @@ public class CourseValidateHandler {
 
 	/**
 	 * 课程编号存在性校验
+	 *
 	 * @param course
+	 * @param path   路径
 	 * @return
 	 */
 	public Course validateCourseName2NumExist(Course course, String path) {
@@ -243,8 +277,9 @@ public class CourseValidateHandler {
 
 	/**
 	 * 课时名称重复性校验
+	 *
 	 * @param courseId
-	 * @param name
+	 * @param name     名称
 	 */
 	public void validateLessonNameExist(String courseId, String name) {
 		String lessonId = courseLessonMapper.selectByCourseAndName(courseId, name);
@@ -256,7 +291,8 @@ public class CourseValidateHandler {
 
 	/**
 	 * 分类数据能否删除校验
-	 * @param categoryId
+	 *
+	 * @param categoryId 类别id
 	 */
 	public void validateEnableDeleteCategory(String categoryId) {
 		CourseCategory courseCategory = courseCategoryMapper.selectById(categoryId);
@@ -276,6 +312,7 @@ public class CourseValidateHandler {
 
 	/**
 	 * 校验分类数据是否存在
+	 *
 	 * @param categoryId
 	 * @return
 	 */
@@ -292,7 +329,8 @@ public class CourseValidateHandler {
 
 	/**
 	 * 分类名称长度校验
-	 * @param name
+	 *
+	 * @param name 名称
 	 */
 	public void categoryNameLengthValidate(String name) {
 		if (name.length() > 64) {
@@ -303,8 +341,9 @@ public class CourseValidateHandler {
 
 	/**
 	 * 校验课时类型
+	 *
 	 * @param lessonType
-	 * @param accessType
+	 * @param accessType 访问类型
 	 */
 	public void validateLessonType(Integer lessonType, Integer accessType) {
 		if (lessonType.intValue() != accessType) {
@@ -316,7 +355,8 @@ public class CourseValidateHandler {
 
 	/**
 	 * 校验是否为内置资源
-	 * @param course
+	 *
+	 * @param course 课程
 	 */
 	public void validateBuiltin(Course course) {
 		if (course.getBuiltin()) {

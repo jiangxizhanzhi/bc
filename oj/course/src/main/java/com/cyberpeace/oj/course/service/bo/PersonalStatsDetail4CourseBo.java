@@ -5,47 +5,95 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 个人统计详情4课程Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class PersonalStatsDetail4CourseBo implements Serializable {
-    @ApiModelProperty("课程resource_id")
+	/**
+	 * 课程resource_id
+	 */
+	@ApiModelProperty("课程resource_id")
     private String resourceId;
 
-    @ApiModelProperty("课程名称")
+	/**
+	 * 课程名称
+	 */
+	@ApiModelProperty("课程名称")
     private String name;
 
-    @ApiModelProperty("难度")
+	/**
+	 * 难度
+	 */
+	@ApiModelProperty("难度")
     private Integer difficulty;
 
-    @ApiModelProperty("方向名称")
+	/**
+	 * 方向名称
+	 */
+	@ApiModelProperty("方向名称")
     private String directionName;
 
-    @ApiModelProperty("课程图片地址")
+	/**
+	 * 课程图片地址
+	 */
+	@ApiModelProperty("课程图片地址")
     private String logo;
 
-    @ApiModelProperty("课时数量")
+	/**
+	 * 课时数量
+	 */
+	@ApiModelProperty("课时数量")
     private Integer lessonCount;
 
-    @ApiModelProperty("已学习理论课时")
+	/**
+	 * 已学习理论课时
+	 */
+	@ApiModelProperty("已学习理论课时")
     private Integer learnedTheory;
 
-    @ApiModelProperty("已学习实验课时")
+	/**
+	 * 已学习实验课时
+	 */
+	@ApiModelProperty("已学习实验课时")
     private Integer learnedExp;
 
-    @ApiModelProperty("已完成课后练习")
+	/**
+	 * 已完成课后练习
+	 */
+	@ApiModelProperty("已完成课后练习")
     private Integer learnedAfterClassPractice;
 
-    @ApiModelProperty("已提交实验报告")
+	/**
+	 * 已提交实验报告
+	 */
+	@ApiModelProperty("已提交实验报告")
     private Integer learnedExpReport;
 
-    @ApiModelProperty("正在学习课时")
+	/**
+	 * 正在学习课时
+	 */
+	@ApiModelProperty("正在学习课时")
     private String lessonId;
 
-    @ApiModelProperty("最近一次学习时间")
+	/**
+	 * 最近一次学习时间
+	 */
+	@ApiModelProperty("最近一次学习时间")
     private String createTime;
 
-    @ApiModelProperty("课程学习类型")
+	/**
+	 * 课程学习类型
+	 */
+	@ApiModelProperty("课程学习类型")
     private Integer learnedType;
 
-    @ApiModelProperty("课堂id")
+	/**
+	 * 课堂id
+	 */
+	@ApiModelProperty("课堂id")
     private String roomId;
 }

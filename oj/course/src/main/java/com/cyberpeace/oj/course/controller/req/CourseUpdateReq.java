@@ -7,10 +7,19 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * 课程更新请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class CourseUpdateReq extends CourseAddReq {
 
+	/**
+	 * 课程资源编号
+	 */
 	@ApiModelProperty("课程资源编号")
 	@NotBlank(groups = { Update.class })
 	private String resourceId;

@@ -6,16 +6,31 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 课程列表请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @ApiModel
 @Data
 public class CourseListReq extends PageReqBase {
 
+	/**
+	 * 类型 基础=0，攻击=2，防御=3
+	 */
 	@ApiModelProperty("类型 基础=0，攻击=2，防御=3")
 	private Integer eBook;
 
+	/**
+	 * 方向
+	 */
 	@ApiModelProperty("方向")
 	private String direction;
 
+	/**
+	 * 难度
+	 */
 	@ApiModelProperty("难度")
 	private Integer difficulty;
 

@@ -7,13 +7,25 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 课程统计排Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("课程学习排名")
 public class CourseStatsRankBo implements Serializable {
-    @ApiModelProperty("课程学习排名")
+	/**
+	 * 课程学习排名
+	 */
+	@ApiModelProperty("课程学习排名")
     private JSONObject peopleOrderingData;
 
-    @ApiModelProperty("课程方向学习排名")
+	/**
+	 * 课程方向学习排名
+	 */
+	@ApiModelProperty("课程方向学习排名")
     private JSONObject directionOrderingData;
 
 }

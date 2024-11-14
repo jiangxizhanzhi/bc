@@ -8,11 +8,17 @@ import lombok.Data;
 
 /**
  * 同理论基础查询条件, 关闭`questionType`参数
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @Data
 @ApiModel
 public class PracticeOperationListReq extends PracticeTheoryListReq {
 
+    /**
+     * 问题类型
+     */
     @ApiModelProperty(hidden = true)
     private final Integer questionType;
 }

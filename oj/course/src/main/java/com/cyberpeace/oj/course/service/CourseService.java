@@ -11,10 +11,17 @@ import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 
+/**
+ * 课程Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface CourseService extends IService<Course> {
 
 	/**
 	 * 根据编号查询课程信息
+	 *
 	 * @param courseId
 	 * @param authContext
 	 * @return
@@ -23,6 +30,7 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 根据课程编号集合查询课程信息
+	 *
 	 * @param ids
 	 * @return
 	 */
@@ -30,8 +38,11 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 根据课程条件信息查询
+	 *
 	 * @param page
 	 * @param courseContext
+	 * @param authContext   auth 上下文
+	 * @param isWeb         是否Web
 	 * @return
 	 */
 	ListRsp<CourseWebBo> selectPage(Page<Course> page, CourseQueryBo courseContext,
@@ -39,6 +50,7 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 筛选未被删除的课程编号
+	 *
 	 * @param courseIds
 	 * @return
 	 */
@@ -46,6 +58,7 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 课程新增
+	 *
 	 * @param userId
 	 * @param course
 	 * @return
@@ -54,6 +67,7 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 课程修改
+	 *
 	 * @param userId
 	 * @param course
 	 * @return
@@ -62,6 +76,7 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 根据分类查询课程编号
+	 *
 	 * @param category
 	 * @param authContext
 	 * @return
@@ -70,13 +85,16 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 批量删除 暂定课时记录不删除
+	 *
 	 * @param courseIds
+	 * @param authContext auth 上下文
 	 * @return
 	 */
 	Boolean batchDelete(List<String> courseIds, AuthContext authContext);
 
 	/**
 	 * 课程数据导出
+	 *
 	 * @param courseIds
 	 * @param authContext
 	 * @return 文件路径
@@ -85,6 +103,7 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 课程数据导入
+	 *
 	 * @param realPath
 	 * @param authContext
 	 * @return
@@ -93,17 +112,31 @@ public interface CourseService extends IService<Course> {
 
 	/**
 	 * 获取一个随机的课程编号
+	 *
+	 * @param length 长度
 	 * @return
 	 */
 	String getRandomCourseNum(int length);
 
 	/**
 	 * 检查课程是否重复
+	 *
+	 * @param courseNames 课程名字
 	 * @return
 	 */
 	List<String> duplicateCourseInspect(List<String> courseNames);
 
+	/**
+	 * 清除用户认证
+	 *
+	 * @param user 用户
+	 */
 	void clearUserAuth(String user);
 
+	/**
+	 * 清除组织认证
+	 *
+	 * @param org 组织
+	 */
 	void clearOrgAuth(String org);
 }

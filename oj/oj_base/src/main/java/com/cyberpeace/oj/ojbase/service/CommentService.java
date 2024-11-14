@@ -7,10 +7,17 @@ import com.cyberpeace.oj.ojbase.service.bo.CommentBo;
 
 import java.util.List;
 
+/**
+ * 评论Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface CommentService {
 
 	/**
 	 * 新增评论
+	 *
 	 * @param comment
 	 * @return
 	 */
@@ -18,10 +25,11 @@ public interface CommentService {
 
 	/**
 	 * 分页查询评论信息
+	 *
 	 * @param page
 	 * @param businessId
 	 * @param businessType
-	 * @param children 是否查询评论下的回复 true=查询 false不查询
+	 * @param children     是否查询评论下的回复 true=查询 false不查询
 	 * @return
 	 */
 	ListRsp<CommentBo> pageComment(Page<CommentBo> page, String businessId, Integer businessType,
@@ -29,26 +37,31 @@ public interface CommentService {
 
 	/**
 	 * 获取子评论
-	 * @param commentBos
+	 *
+	 * @param commentBos 评论BOS
 	 */
 	void setChildrenByFirst(List<CommentBo> commentBos);
 
 	/**
 	 * 点赞留言
+	 *
 	 * @param commentId
 	 * @param isLike
+	 * @param userId    用户id
 	 * @return
 	 */
 	Integer commentIsLike(String commentId, Boolean isLike, String userId);
 
 	/**
 	 * 删除留言
-	 * @param commentIds
+	 *
+	 * @param commentIds 评论id列表
 	 */
 	void bathDeleteComment(List<String> commentIds);
 
 	/**
-	 *后台分页查询一级留言
+	 * 后台分页查询一级留言
+	 *
 	 * @param page
 	 * @param businessType
 	 * @param content
@@ -58,14 +71,16 @@ public interface CommentService {
 
 	/**
 	 * 后台分页查询二级留言
+	 *
 	 * @param page
-	 * @param resourceId  一级留言的id
+	 * @param resourceId 一级留言的id
 	 * @return
 	 */
 	ListRsp<CommentBo> pageChildrenComment(Page<CommentBo> page, String resourceId);
 
 	/**
 	 * 新增评论
+	 *
 	 * @param comment
 	 * @return
 	 */

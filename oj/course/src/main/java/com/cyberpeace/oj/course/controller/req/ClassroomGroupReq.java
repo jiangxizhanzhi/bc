@@ -8,14 +8,26 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * 课堂组请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class ClassroomGroupReq implements Serializable {
 
+	/**
+	 * 课堂编号
+	 */
 	@ApiModelProperty("课堂编号")
 	@NotBlank
 	private String classroomId;
 
+	/**
+	 * 每组人数
+	 */
 	@ApiModelProperty("每组人数")
 	@NotNull
 	private Integer groupCount;

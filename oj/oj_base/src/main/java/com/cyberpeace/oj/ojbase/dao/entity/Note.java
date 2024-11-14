@@ -11,33 +11,63 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 笔记
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_note")
 public class Note extends AuthTable {
 
+	/**
+	 * 笔记编号
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	@ApiModelProperty("笔记编号")
 	private String resourceId;
 
+	/**
+	 * 笔记类型
+	 */
 	@ApiModelProperty("笔记类型")
 	private Integer noteType;
 
+	/**
+	 * 业务类型
+	 */
 	@ApiModelProperty("业务类型")
 	private Integer businessType;
 
+	/**
+	 * 内容
+	 */
 	@ApiModelProperty("内容")
 	private String content;
 
+	/**
+	 * 用户编号
+	 */
 	@ApiModelProperty("用户编号")
 	private String userId;
 
+	/**
+	 * 业务编号
+	 */
 	@ApiModelProperty("业务编号")
 	private String businessId;
 
+	/**
+	 * 是否公开
+	 */
 	@TableField("public")
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	/**
+	 * 实验报告是否提交
+	 */
 	@ApiModelProperty("实验报告是否提交")
 	private Boolean isSubmit;
 

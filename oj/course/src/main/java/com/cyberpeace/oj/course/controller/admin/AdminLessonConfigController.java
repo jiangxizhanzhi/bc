@@ -18,15 +18,30 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 管理课时配置Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @RestController
 @RequestMapping("/oj/admin/lessonconfig")
 @Api(tags = "oj-后台课程目录相关api")
 @RequiresAuthentication
 public class AdminLessonConfigController {
 
+	/**
+	 * 课时配置Service
+	 */
 	@Autowired
 	private LessonConfigService lessonConfigService;
 
+	/**
+	 * 获取课时配置
+	 *
+	 * @param courseId 课程id
+	 * @return {@code BaseRsp<LessonConfigBo> }
+	 */
 	@ApiOperation("后台课程目录查询")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -40,6 +55,12 @@ public class AdminLessonConfigController {
 		return new BaseRsp<>(lessonConfig);
 	}
 
+	/**
+	 * 设置课时配置
+	 *
+	 * @param configBo 配置Bo
+	 * @return {@code BaseRsp<LessonConfigBo> }
+	 */
 	@ApiOperation("编排课时")
 	@PutMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)

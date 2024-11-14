@@ -5,7 +5,8 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.dao.entity.ClassroomSign;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
 
-public interface ClassroomSignService extends IService<ClassroomSign> {
+public interface
+ClassroomSignService extends IService<ClassroomSign> {
 
 	/**
 	 * 课堂签到

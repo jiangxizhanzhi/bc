@@ -25,15 +25,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 管理评论Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-后台留言相关api")
 @RestController
 @RequestMapping("/oj/admin/comment")
 @RequiresAuthentication
 public class AdminCommentController {
 
+	/**
+	 * 评论Service
+	 */
 	@Autowired
 	private CommentService commentService;
 
+	/**
+	 * 新增评论
+	 *
+	 * @param commentReq 评论请求体
+	 * @return {@code BaseRsp<Integer> }
+	 */
 	@ApiOperation("留言新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
@@ -47,6 +62,12 @@ public class AdminCommentController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("留言删除")
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
@@ -57,6 +78,12 @@ public class AdminCommentController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 父列表
+	 *
+	 * @param pageCommentReq 分页评论请求体
+	 * @return {@code BaseRsp<ListRsp<CommentBo>> }
+	 */
 	@ApiOperation("分页查询一级留言")
 	@GetMapping("list")
 	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
@@ -71,6 +98,12 @@ public class AdminCommentController {
 		return new BaseRsp<>(listRsp);
 	}
 
+	/**
+	 * 子级列表
+	 *
+	 * @param pageChildrenCommentReq 分页子级评论请求体
+	 * @return {@code BaseRsp<ListRsp<CommentBo>> }
+	 */
 	@ApiOperation("分页查询二级留言")
 	@GetMapping("children_list")
 	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)

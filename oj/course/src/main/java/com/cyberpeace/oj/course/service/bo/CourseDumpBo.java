@@ -11,37 +11,70 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * 课程导出Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 public class CourseDumpBo {
 
-    @ApiModelProperty("课时的根节点")
+	/**
+	 * 课时的根节点
+	 */
+	@ApiModelProperty("课时的根节点")
     private String rootParentId;
 
-    @ApiModelProperty("导出的课程目录")
+	/**
+	 * 导出的课程目录
+	 */
+	@ApiModelProperty("导出的课程目录")
     private String exportCoursePath;
 
-    @ApiModelProperty("导出的课程镜像目录")
+	/**
+	 * 导出的课程镜像目录
+	 */
+	@ApiModelProperty("导出的课程镜像目录")
     private String imagePath;
 
-    @ApiModelProperty("课时所有目录")
+	/**
+	 * 课时所有目录
+	 */
+	@ApiModelProperty("课时所有目录")
     private List<LessonConfig> lessonConfig;
 
-    @ApiModelProperty("所有课时")
+	/**
+	 * 所有课时
+	 */
+	@ApiModelProperty("所有课时")
     private List<CourseLesson> courseLessons;
 
-    @ApiModelProperty("课程")
+	/**
+	 * 课程
+	 */
+	@ApiModelProperty("课程")
     private Course course;
 
-    @ApiModelProperty("是否导出拓扑")
+	/**
+	 * 是否导出拓扑
+	 */
+	@ApiModelProperty("是否导出拓扑")
     private Boolean isDumpTopo;
 
-    @ApiModelProperty("场景编号")
+	/**
+	 * 场景编号
+	 */
+	@ApiModelProperty("场景编号")
     private String sceneNumber;
 
-    @ApiModelProperty("是否导出镜像")
+	/**
+	 * 是否导出镜像
+	 */
+	@ApiModelProperty("是否导出镜像")
     private Boolean disableImageExport;
 
 }

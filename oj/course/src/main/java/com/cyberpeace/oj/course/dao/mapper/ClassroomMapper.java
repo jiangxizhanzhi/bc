@@ -10,11 +10,18 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 课堂Mapper
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Mapper
 public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	/**
 	 * 根据组织和课时查询课堂信息
+	 *
 	 * @param orgId
 	 * @param lessonId
 	 * @return
@@ -24,6 +31,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	/**
 	 * 查询课程表数据
+	 *
 	 * @param listQuery
 	 * @return
 	 */
@@ -31,6 +39,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	/**
 	 * 查询课程表数据
+	 *
 	 * @param listQuery
 	 * @return
 	 */
@@ -38,6 +47,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	/**
 	 * 课程表数据查询 查询时间范围内 自己创建的 或者组织下的
+	 *
 	 * @param courseIds
 	 * @param roomListQuery
 	 * @return
@@ -47,12 +57,15 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	/**
 	 * 课程表删除
-	 * @param lessonIds
+	 *
+	 * @param lessonIds 课时id列表
+	 * @return {@code List<Classroom> }
 	 */
 	List<Classroom> selectByLesson(@Param("lessonIds") List<String> lessonIds);
 
 	/**
 	 * 查询该组织的课堂表
+	 *
 	 * @param orgId
 	 * @return
 	 */
@@ -60,6 +73,7 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	/**
 	 * 根据计划查询房间
+	 *
 	 * @param planId
 	 * @return
 	 */
@@ -67,16 +81,47 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 
 	/**
 	 * 根据ids删除房间
+	 *
 	 * @param orgIds
-	 * @return
 	 */
 	void deleteByOrgIds(@Param("orgIds") List<String> orgIds);
 
+	/**
+	 * 分页
+	 *
+	 * @param listQuery   列表查询
+	 * @param userId      用户id
+	 * @param trainPlanId 训练计划id
+	 * @param childrenOrg 子级组织
+	 * @param isAdmin     是否管理
+	 * @param courseIds   课程id列表
+	 * @return {@code IPage<Classroom> }
+	 */
 	IPage<Classroom> page(Page<Classroom> listQuery, String userId, String trainPlanId, List<String> childrenOrg, boolean isAdmin, List<String> courseIds);
 
+	/**
+	 * 查询id列表由计划id列表
+	 *
+	 * @param ids id列表
+	 * @return {@code List<String> }
+	 */
 	List<String> selectIdsByPlanIds(List<String> ids);
 
+	/**
+	 * 查询由用户计划
+	 *
+	 * @param userId 用户id
+	 * @param planId 计划id
+	 * @return {@code List<Classroom> }
+	 */
 	List<Classroom> selectByUserPlan(String userId, String planId);
 
+	/**
+	 * 查询临时任务id列表由用户
+	 *
+	 * @param userId      用户id
+	 * @param isSuperUser 是否超用户
+	 * @return {@code List<String> }
+	 */
 	List<String> selectTempTaskIdsByUser(String userId, boolean isSuperUser);
 }

@@ -14,12 +14,30 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 
+/**
+ * 课时实操评估处理器
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service("lesson_operation")
 public class LessonOperationEvaluateHandler {
 
+	/**
+	 * OJ当地场景Mapper
+	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
+	/**
+	 * 评估由业务
+	 *
+	 * @param userId     用户id
+	 * @param operation  实操
+	 * @param userAnswer 用户答案
+	 * @param lessonId   课时id
+	 * @return {@code EvaluateResult }
+	 */
 	public EvaluateResult evaluateByBusiness(String userId, PracticeOperation operation,
 			String userAnswer, String lessonId) {
 
@@ -39,8 +57,10 @@ public class LessonOperationEvaluateHandler {
 
 	/**
 	 * 获取正确答案
+	 *
 	 * @param userId
 	 * @param practiceOperation
+	 * @param lessonId          课时id
 	 * @return
 	 */
 	private String correctAnswer(String userId, PracticeOperation practiceOperation,
@@ -69,6 +89,7 @@ public class LessonOperationEvaluateHandler {
 
 	/**
 	 * 评估成绩
+	 *
 	 * @param userAnswer
 	 * @param realAnswer
 	 * @param totalScore

@@ -5,15 +5,30 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 训练计划Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class TrainPlanBo implements Serializable {
 
+	/**
+	 * 训练计划编号
+	 */
 	@ApiModelProperty("训练计划编号")
 	private String resourceId;
 
+	/**
+	 * 训练计划名称
+	 */
 	@ApiModelProperty("训练计划名称")
 	private String trainPlanName;
 
+	/**
+	 * 姓名
+	 */
 	@ApiModelProperty("姓名")
 	private String username;
 

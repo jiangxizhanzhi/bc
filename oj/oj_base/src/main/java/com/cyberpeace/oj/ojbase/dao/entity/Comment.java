@@ -8,25 +8,55 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 评论
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_comment")
 public class Comment extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 答id
+	 */
 	private String replyId;
 
+	/**
+	 * 业务id
+	 */
 	private String businessId;
 
+	/**
+	 * 主题名称
+	 */
 	private String themeName;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 内容
+	 */
 	private String content;
 
+	/**
+	 * 业务类型
+	 */
 	private Integer businessType;
 
+	/**
+	 * 根id
+	 */
 	private String rootId;
 
 	public enum CommentType implements GenericEnum {

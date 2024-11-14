@@ -21,18 +21,40 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 练习错误Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMapper, PracticeMistake> implements PracticeMistakeService {
 
+	/**
+	 * 练习错误Mapper
+	 */
 	@Autowired
 	private PracticeMistakeMapper practiceMistakeMapper;
 
+	/**
+	 * 练习设置Mapper
+	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
+	/**
+	 * 练习理论Mapper
+	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
+	/**
+	 * 获取理论错误计数
+	 *
+	 * @param userId      用户id
+	 * @param practiceIds 练习id列表
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer getTheoryMistakeCount(String userId, List<String> practiceIds) {
 		return practiceMistakeMapper.countByUserId(userId, practiceIds);
@@ -40,9 +62,10 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 
 	/**
 	 * 答错次数+1
+	 *
 	 * @param userId
 	 * @param practiceId
-	 * @param practiceType
+	 * @param practiceType 练习类型
 	 */
 	@Override
 	public void addIncorrect(String userId, String practiceId, Integer practiceType) {
@@ -66,9 +89,10 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 
 	/**
 	 * 答对次数+1
+	 *
 	 * @param userId
 	 * @param practiceId
-	 * @param practiceType
+	 * @param practiceType 练习类型
 	 */
 	@Override
 	public void addCorrect(String userId, String practiceId, Integer practiceType) {
@@ -82,6 +106,11 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 		}
 	}
 
+	/**
+	 * 获取练习错误
+	 *
+	 * @return {@code List<PersonalMistakeRes> }
+	 */
 	@Override
 	public List<PersonalMistakeRes> getPracticeMistake() {
 		UserInfo userInfo = UserInfoContext.getUserContext();
@@ -109,6 +138,13 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 		return practiceMistakeMapper.selectByPracticeId(practiceIds, userInfo.getUserId());
 	}
 
+	/**
+	 * 浴缸删除
+	 *
+	 * @param practiceIds 练习id列表
+	 * @param userId      用户id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean bathDelete(List<String> practiceIds, String userId) {
 		practiceMistakeMapper.deleteByPracticeIds(practiceIds, userId);

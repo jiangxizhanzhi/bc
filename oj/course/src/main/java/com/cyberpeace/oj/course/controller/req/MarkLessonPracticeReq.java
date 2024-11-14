@@ -8,22 +8,40 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 
+/**
+ * 标记课时练习请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class MarkLessonPracticeReq implements Serializable {
 
-    @ApiModelProperty("课时编号")
+	/**
+	 * 课时编号
+	 */
+	@ApiModelProperty("课时编号")
     @NotBlank
     private String lessonId;
 
-    @ApiModelProperty("学员id")
+	/**
+	 * 学员id
+	 */
+	@ApiModelProperty("学员id")
     @NotBlank
     private String userId;
 
-    @ApiModelProperty("等级 1=优 2=良 3=中 4=差")
+	/**
+	 * 等级 1=优 2=良 3=中 4=差
+	 */
+	@ApiModelProperty("等级 1=优 2=良 3=中 4=差")
     private Integer level;
 
-    @ApiModelProperty("课堂id")
+	/**
+	 * 课堂id
+	 */
+	@ApiModelProperty("课堂id")
     @NotBlank
     private String classroomId;
 

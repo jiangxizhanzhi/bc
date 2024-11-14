@@ -6,13 +6,25 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 列出时间表
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class ListSchedule implements Serializable {
 
-  @ApiModelProperty("上课时间")
+	/**
+	 * 上课时间
+	 */
+	@ApiModelProperty("上课时间")
   private String date;
 
-  @ApiModelProperty("待上课程")
+	/**
+	 * 待上课程
+	 */
+	@ApiModelProperty("待上课程")
   private List<String> classroomInfo;
 
 }

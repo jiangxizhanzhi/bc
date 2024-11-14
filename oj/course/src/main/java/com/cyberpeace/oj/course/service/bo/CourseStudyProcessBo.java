@@ -6,47 +6,92 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 课程研究过程Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("课程学习进度信息")
 public class CourseStudyProcessBo {
 
-    @ApiModelProperty("课程编号")
+	/**
+	 * 课程编号
+	 */
+	@ApiModelProperty("课程编号")
     private String courseId;
 
-    @ApiModelProperty("课程名称")
+	/**
+	 * 课程名称
+	 */
+	@ApiModelProperty("课程名称")
     private String courseName;
 
-    @ApiModelProperty("课程难度")
+	/**
+	 * 课程难度
+	 */
+	@ApiModelProperty("课程难度")
     private Integer difficulty;
 
-    @ApiModelProperty("理论课数量")
+	/**
+	 * 理论课数量
+	 */
+	@ApiModelProperty("理论课数量")
     private Integer theoryCount = 0;
 
-    @ApiModelProperty("完成理论课数量")
+	/**
+	 * 完成理论课数量
+	 */
+	@ApiModelProperty("完成理论课数量")
     private Integer completeTheory = 0;
 
-    @ApiModelProperty("实验课数量")
+	/**
+	 * 实验课数量
+	 */
+	@ApiModelProperty("实验课数量")
     private Integer exerciseCount = 0;
 
-    @ApiModelProperty("完成实验课数量")
+	/**
+	 * 完成实验课数量
+	 */
+	@ApiModelProperty("完成实验课数量")
     private Integer completeExercise = 0;
 
-    @ApiModelProperty("最后学习时间")
+	/**
+	 * 最后学习时间
+	 */
+	@ApiModelProperty("最后学习时间")
     private Date lastStudyTime;
 
-    @ApiModelProperty("课时总数量")
+	/**
+	 * 课时总数量
+	 */
+	@ApiModelProperty("课时总数量")
     private Integer lessonCount = 0;
 
-    @ApiModelProperty("完成学习数量")
+	/**
+	 * 完成学习数量
+	 */
+	@ApiModelProperty("完成学习数量")
     private Integer completeCount = 0;
 
-    @ApiModelProperty("课程进度")
+	/**
+	 * 课程进度
+	 */
+	@ApiModelProperty("课程进度")
     private Double process = 0d;
 
-    @ApiModelProperty("完成学习时长")
+	/**
+	 * 完成学习时长
+	 */
+	@ApiModelProperty("完成学习时长")
     private Integer completeDuration = 0;
 
-    @ApiModelProperty("是否具有权限访问")
+	/**
+	 * 是否具有权限访问
+	 */
+	@ApiModelProperty("是否具有权限访问")
     private Boolean interview = Boolean.TRUE;
 
 }

@@ -2,8 +2,11 @@ package com.cyberpeace.oj.ojbase.constant;
 
 /**
  * 靶场自定义错误码。
- *  1、从102001开始递增编号；
- *  2、截止编号地址102999；
+ * 1、从102001开始递增编号；
+ * 2、截止编号地址102999；
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 public final class OjBusinessErrorCode {
 
@@ -11,348 +14,579 @@ public final class OjBusinessErrorCode {
 		throw new IllegalStateException("Utility class");
 	}
 
-	/** 习题集类型错误*/
+	/**
+	 * 习题集类型错误
+	 */
 	public static final String PRACTICE_SET_TYPE_ERROR = "102001";
 
-	/** 习题分类类型错误*/
+	/**
+	 * 习题分类类型错误
+	 */
 	public static final String PRACTICE_CATEGORY_TYPE_ERROR = "102002";
 
-	/** 习题集数量不足*/
+	/**
+	 * 习题集数量不足
+	 */
 	public static final String PRACTICE_COUNT_NOT_ENOUGH = "102003";
 
-	/** 资源无权限*/
+	/**
+	 * 资源无权限
+	 */
 	public static final String RESOURCE_PERMISSION = "102004";
 
-	/** 课堂场景已启动*/
+	/**
+	 * 课堂场景已启动
+	 */
 	public static final String CLASS_SCENE_IS_RUNNING = "102005";
 
-	/** 课堂场景启动失败*/
+	/**
+	 * 课堂场景启动失败
+	 */
 	public static final String SCENE_START_FAIL = "102006";
 
-	/** 字段数据过长*/
+	/**
+	 * 字段数据过长
+	 */
 	public static final String CONTENT_FILED_DATA_TOO_LONG = "102007";
 
-	/** 名称已存在*/
+	/**
+	 * 名称已存在
+	 */
 	public static final String NAME_IS_EXIST = "102008";
 
-	/** 资源已存在 */
+	/**
+	 * 资源已存在
+	 */
 	public static final String RESOURCE_IS_EXIST = "102808";
 
-	/** 课程编号已存在*/
+	/**
+	 * 课程编号已存在
+	 */
 	public static final String COURSE_NUM_IS_EXIST = "102009";
 
-	/** 结束时间必须大于开始时间*/
+	/**
+	 * 结束时间必须大于开始时间
+	 */
 	public static final String END_GT_START_TIME = "102010";
 
-	/** 习题集下存在习题*/
+	/**
+	 * 习题集下存在习题
+	 */
 	public static final String SET_UNDER_EXIST_PRACTICE = "102011";
 
-	/** 选择组织下无用户*/
+	/**
+	 * 选择组织下无用户
+	 */
 	public static final String ORGANIZATION_IS_NO_USERS = "102012";
 
-	/** 资源正在被使用*/
+	/**
+	 * 资源正在被使用
+	 */
 	public static final String RESOURCE_USED_NOT_DELETED = "102013";
 
-	/** 该班级在该时间段内已有课程安排*/
+	/**
+	 * 该班级在该时间段内已有课程安排
+	 */
 	public static final String CLASS_IN_SCHEDULES = "102014";
 
-	/** 已存在组织和课时相同的课程安排*/
+	/**
+	 * 已存在组织和课时相同的课程安排
+	 */
 	public static final String CLASS_LESSON_ORG_SAME = "102015";
 
-	/** 存在运行的场景*/
+	/**
+	 * 存在运行的场景
+	 */
 	public static final String SCENE_IS_RUNNING = "102016";
 
-	/** 场景运行过多*/
+	/**
+	 * 场景运行过多
+	 */
 	public static final String SCENE_RUNNING_TOO_MUCH = "102017";
 
-	/** 字段数据过长*/
+	/**
+	 * 字段数据过长
+	 */
 	public static final String FIELD_TOO_LONG = "102018";
 
-	/** 讲义内容错误*/
+	/**
+	 * 讲义内容错误
+	 */
 	public static final String LESSON_HANDOUT_CONTENT_ERROR = "102019";
 
-	/** 课时目录名称错误*/
+	/**
+	 * 课时目录名称错误
+	 */
 	public static final String LESSON_DIR_NAME_ERROR = "102020";
 
-	/** 课堂未签到*/
+	/**
+	 * 课堂未签到
+	 */
 	public static final String CLASS_NOT_SIGN = "102021";
 
-	/** 其他机器正在进行远程协助*/
+	/**
+	 * 其他机器正在进行远程协助
+	 */
 	public static final String OTHER_NODE_IN_ASSISTANCE = "102022";
 
-	/** 非动态环境，无法进行场景启动*/
+	/**
+	 * 非动态环境，无法进行场景启动
+	 */
 	public static final String NON_DYNAMIC_ENVIRONMENT = "102023";
 
-	/** 场景未启动*/
+	/**
+	 * 场景未启动
+	 */
 	public static final String SCENE_NOT_RUNNING = "102024";
 
-	/** 场景暂停中*/
+	/**
+	 * 场景暂停中
+	 */
 	public static final String SCENE_IS_PAUSE = "102025";
 
-	/** 请重新加载题目*/
+	/**
+	 * 请重新加载题目
+	 */
 	public static final String RELOAD_PRACTICE = "102026";
 
+	/**
+	 * 父类别不存在
+	 */
 	public static final String PARENT_CATEGORY_NOT_EXIST = "102027";
 
-	/** 答案不能为空*/
+	/**
+	 * 答案不能为空
+	 */
 	public static final String ANSWER_NOT_NULL = "102028";
 
-	/** 答案长度限制在xxx-xxx*/
+	/**
+	 * 答案长度限制在xxx-xxx
+	 */
 	public static final String ANSWER_TOO_LONG = "102029";
 
-	/** 场景启动成功xxx个，失败xxx个*/
+	/**
+	 * 场景启动成功xxx个，失败xxx个
+	 */
 	public static final String ROOM_SCENE_BATCH_FAILED = "102030";
 
-	/** 课程信息不能为空*/
+	/**
+	 * 课程信息不能为空
+	 */
 	public static final String COURSE_INFORMATION_NOT_NULL = "102031";
 
-	/** 课时信息不能为空*/
+	/**
+	 * 课时信息不能为空
+	 */
 	public static final String LESSON_INFORMATION_NOT_NULL = "102032";
 
-	/** 组织信息不能为空*/
+	/**
+	 * 组织信息不能为空
+	 */
 	public static final String ORG_INFORMATION_NOT_NULL = "102033";
 
-	/**  对应的习题文件未找到*/
+	/**
+	 * 对应的习题文件未找到
+	 */
 	public static final String PRACTICE_OPERATION_FILE_NOT_FOUNT = "102034";
 
-	/** 第x行 训练计划不能为空*/
+	/**
+	 * 第x行 训练计划不能为空
+	 */
 	public static final String TRAIN_PLAN_NAME_IS_NULL = "102035";
 
-	/** 第x行 训练计划已存在*/
+	/**
+	 * 第x行 训练计划已存在
+	 */
 	public static final String LINE_TRAIN_PLAN_EXIST = "102036";
 
-	/** 第x行 训练计划对应课程不存在*/
+	/**
+	 * 第x行 训练计划对应课程不存在
+	 */
 	public static final String PLAN_COURSE_IS_NULL = "102037";
 
-	/** 第x行 检索不到对应课程*/
+	/**
+	 * 第x行 检索不到对应课程
+	 */
 	public static final String PLAN_COURSE_NOT_EXIST = "102038";
 
-	/** 第x行 训练计划对应课时不能为空*/
+	/**
+	 * 第x行 训练计划对应课时不能为空
+	 */
 	public static final String PLAN_LESSON_IS_NULL = "102039";
 
-	/** 第x行 检索不到对应课时*/
+	/**
+	 * 第x行 检索不到对应课时
+	 */
 	public static final String PLAN_LESSON_NOT_EXIST = "102040";
 
-	/** 第x行 计划时间不能为空*/
+	/**
+	 * 第x行 计划时间不能为空
+	 */
 	public static final String PLAN_TIME_IS_NULL = "102041";
 
-	/** 第x行 结束时间大于开始时间*/
+	/**
+	 * 第x行 结束时间大于开始时间
+	 */
 	public static final String PLAN_END_GT_START_TIME = "102042";
 
-	/** 第x行 计划组织不能为空*/
+	/**
+	 * 第x行 计划组织不能为空
+	 */
 	public static final String PLAN_ORG_IS_NULL = "102043";
 
-	/** 第x行 组织计划不存在*/
+	/**
+	 * 第x行 组织计划不存在
+	 */
 	public static final String PLAN_ORG_NOT_EXIST = "102044";
 
-	/** 第x行 课时未公开*/
+	/**
+	 * 第x行 课时未公开
+	 */
 	public static final String PLAN_LESSON_NOT_PUBLIC = "102045";
 
-	// 删除实例时没有传入resource_id字段
+	/**
+	 * 资源id失踪
+	 */// 删除实例时没有传入resource_id字段
 	public static final String RESOURCE_ID_MISSING = "102046";
 
-	/** 对应的课堂未找到*/
+	/**
+	 * 对应的课堂未找到
+	 */
 	public static final String CLASSROOM_NOT_FOUNT = "102047";
 
-	/** 训练计划不能为空*/
+	/**
+	 * 训练计划不能为空
+	 */
 	public static final String TRAIN_PLAN_ID_NOT_NULL = "102048";
 
-	/** 检索不到对应的训练计划*/
+	/**
+	 * 检索不到对应的训练计划
+	 */
 	public static final String TRAIN_PLAN_NOT_FOUND = "102049";
 
-	/** 用户无课堂分组信息*/
+	/**
+	 * 用户无课堂分组信息
+	 */
 	public static final String USER_CLASS_GROUP_NOT_FOUND = "102050";
 
-	/** 用户未进行远程协助请求或者协助已结束*/
+	/**
+	 * 用户未进行远程协助请求或者协助已结束
+	 */
 	public static final String USER_NO_NEED_HELP = "102051";
 
-	/** 学员未接入机器*/
+	/**
+	 * 学员未接入机器
+	 */
 	public static final String HELP_URL_NOT_FOUND = "102052";
 
-	/** 训练计划%s已开始，暂不支持导入*/
+	/**
+	 * 训练计划%s已开始，暂不支持导入
+	 */
 	public static final String CLASSROOM_START_NOT_COVER = "102053";
 
-	/** 资源正在导入*/
+	/**
+	 * 资源正在导入
+	 */
 	public static final String RESOURCE_IN_IMPORT = "102054";
 
-	/** 训练计划已存在*/
+	/**
+	 * 训练计划已存在
+	 */
 	public static final String TRAIN_PLAN_EXIST = "102055";
 
-	/** xxx组织下无用户*/
+	/**
+	 * xxx组织下无用户
+	 */
 	public static final String ORG_UNDER_NO_USERS = "102056";
 
-	/** 开始时间不能为空*/
+	/**
+	 * 开始时间不能为空
+	 */
 	public static final String START_TIME_NOT_NULL = "102057";
 
-	/** 结束时间不能为空*/
+	/**
+	 * 结束时间不能为空
+	 */
 	public static final String END_TIME_NOT_NULL = "102058";
 
-	/** 第xxx行 文件内容缺失*/
+	/**
+	 * 第xxx行 文件内容缺失
+	 */
 	public static final String FILE_CONTENT_MISSING = "102059";
 
-	/** 评论不存在*/
+	/**
+	 * 评论不存在
+	 */
 	public static final String COMMENT_NOT_EXIST = "102060";
 
-	/** 未检索到课时信息*/
+	/**
+	 * 未检索到课时信息
+	 */
 	public static final String NOT_SELECT_LESSON_INFORMATION = "102061";
 
-	/** 留言内容不能为空*/
+	/**
+	 * 留言内容不能为空
+	 */
 	public static final String MESSAGE_CONTENT_IS_NULL = "102062";
 
-	/** 第xxx行 文件内容缺失*/
+	/**
+	 * 第xxx行 文件内容缺失
+	 */
 	public static final String TIME_FORMAT_ERROR = "102063";
 
-	/** xx习题附件过多**/
+	/**
+	 * xx习题附件过多
+	 */
 	public static final String PRACTICE_ATTACHMENT_IS_TOO_MANY = "102064";
 
-	/** 附件数量和答案长度不一致*/
+	/**
+	 * 附件数量和答案长度不一致
+	 */
 	public static final String PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT = "102065";
 
-	/** 方法未实现*/
+	/**
+	 * 方法未实现
+	 */
 	public static final String NOT_IMPLEMENTED_EXCEPTION = "102066";
 
-	/** 导出resource_id错误 资源不存在*/
+	/**
+	 * 导出resource_id错误 资源不存在
+	 */
 	public static final String RESOURCE_ID_NOT_EXIST = "102067";
 
-	/** 实操习题导出失败*/
+	/**
+	 * 实操习题导出失败
+	 */
 	public static final String OPERATION_EXPORT_FAILED = "102068";
 
-	/** 实操习题集导出失败*/
+	/**
+	 * 实操习题集导出失败
+	 */
 	public static final String OPERATION_SET_EXPORT_FAILED = "102069";
 
-	/** 实操习题查询失败*/
+	/**
+	 * 实操习题查询失败
+	 */
 	public static final String OPERATION_EXPORT_QUERY_FAILED = "102070";
 
-	/** 部分附件缺失*/
+	/**
+	 * 部分附件缺失
+	 */
 	public static final String ATTACHMENT_MISSION = "102071";
 
-	/** 该课程包含课时没有所属章节*/
+	/**
+	 * 该课程包含课时没有所属章节
+	 */
 	public static final String LESSON_WITHOUT_CHAPTER = "102072";
 
-	/** 课程导出失败*/
+	/**
+	 * 课程导出失败
+	 */
 	public static final String COURSE_EXPORT_FAILED = "102073";
 
-	/** xxx习题集无LOGO*/
+	/**
+	 * xxx习题集无LOGO
+	 */
 	public static final String PRACTICE_SET_NO_LOGO = "102074";
 
-	/** 传入类型参数错误*/
+	/**
+	 * 传入类型参数错误
+	 */
 	public static final String TYPE_ERROR = "102075";
 
-	/** 讲师最大字符数为64*/
+	/**
+	 * 讲师最大字符数为64
+	 */
 	public static final String MAX_64_CHARACTERS = "102076";
 
-	/** 课程分数最大字符数为1000*/
+	/**
+	 * 课程分数最大字符数为1000
+	 */
 	public static final String MAX_SCORE_1000 = "102077";
 
-	/** 习题方向最长为128*/
+	/**
+	 * 习题方向最长为128
+	 */
 	public static final String MAX_PRACTICE_CATEGORY_128 = "102078";
 
-	/** 课程无LOGO*/
+	/**
+	 * 课程无LOGO
+	 */
 	public static final String NO_DEFAULT_COURSE_LOGO = "102079";
 
-	/** 选择题选项过多*/
+	/**
+	 * 选择题选项过多
+	 */
 	public static final String CHOICE_OPTION_TOO_MANY = "102080";
 
-	/** 存在课时和组织相同的数据*/
+	/**
+	 * 存在课时和组织相同的数据
+	 */
 	public static final String DUPLICATE_DATA_ORG_LESSON = "102081";
 
-	/** 存在组织相同时间冲突的数据*/
+	/**
+	 * 存在组织相同时间冲突的数据
+	 */
 	public static final String TIME_INTERSECTION_UNDER_ORG = "102082";
 
-	/** 习题类型存在错误*/
+	/**
+	 * 习题类型存在错误
+	 */
 	public static final String PRACTICE_TYPE_ERROR = "102083";
 
-	/** 选择题答案格式错误*/
+	/**
+	 * 选择题答案格式错误
+	 */
 	public static final String CHOICE_ANSWER_ERROR = "102084";
 
-	/** 填空题答案至少一个*/
+	/**
+	 * 填空题答案至少一个
+	 */
 	public static final String FILL_BLANK_TOO_LITTLE = "102085";
 
-	/** 选择题选项至少两个*/
+	/**
+	 * 选择题选项至少两个
+	 */
 	public static final String CHOICE_OPTION_TOO_LITTLE = "102086";
 
-	/** 判断题答案格式错误*/
+	/**
+	 * 判断题答案格式错误
+	 */
 	public static final String JUDGEMENT_ANSWER_ERROR = "102087";
 
-	/** 判断题答案格式错误*/
+	/**
+	 * 判断题答案格式错误
+	 */
 	public static final String SHORT_ANSWER_ANSWER_EMPTY_ERROR = "102088";
 
-	/** 关键字不能设置为空*/
+	/**
+	 * 关键字不能设置为空
+	 */
 	public static final String 	KEYWORD_EMPTY_ERROR = "102089";
 
-	/** 习题类型存在错误*/
+	/**
+	 * 习题类型存在错误
+	 */
 	public static final String 	PRACTICE_DIFFICULTY_ERROR = "102090";
 
-	/** 理论基础数据无效上传失败*/
+	/**
+	 * 理论基础数据无效上传失败
+	 */
 	public static final String IMPORT_THEORY_INVALID = "102091";
 
-	/** 习题方向为空*/
+	/**
+	 * 习题方向为空
+	 */
 	public static final String PRACTICE_DIRECTION_EMPTY_ERROR = "102092";
 
-	/** 课时类型不正确，当前类型为xxx*/
+	/**
+	 * 课时类型不正确，当前类型为xxx
+	 */
 	public static final String ACCESS_LESSON_TYPE = "102093";
 
-	/** 所有学员未提交报告 */
+	/**
+	 * 所有学员未提交报告
+	 */
 	public static final String NO_REPORT_CAN_BE_EXPORTED = "102094";
 
-	/** 该班级在该时间段内已有课程安排*/
+	/**
+	 * 该班级在该时间段内已有课程安排
+	 */
 	public static final String IMPORT_CLASS_IN_SCHEDULES = "102095";
 
-	/** 第x行 训练计划对应课程无权限*/
+	/**
+	 * 第x行 训练计划对应课程无权限
+	 */
 	public static final String PLAN_COURSE_NO_PERMISSION = "102096";
 
-	/** 习题集名称重复*/
+	/**
+	 * 习题集名称重复
+	 */
 	public static final String PRACTICE_SET_IS_EXIST = "102097";
 
-	/** 重复导入相同名称课时*/
+	/**
+	 * 重复导入相同名称课时
+	 */
 	public static final String REPEAT_IMPORT_SAME_LESSON_NAME = "102098";
 
-	/** xxx为内置资源，无法导出*/
+	/**
+	 * xxx为内置资源，无法导出
+	 */
 	public static final String UNABLE_TO_EXPORT_BUILTIN_RESOURCE = "102099";
 
-	/** xxx习题集中的xxx习题为内置资源，无法导出 */
+	/**
+	 * xxx习题集中的xxx习题为内置资源，无法导出
+	 */
 	public static final String PRACTICE_SET_CONTAIN_BUILTIN_PRACTICE = "102100";
 
-	/** xxx课程中的xxx课时为内置资源，无法导出 */
+	/**
+	 * xxx课程中的xxx课时为内置资源，无法导出
+	 */
 	public static final String COURSE_CONTAIN_BUILTIN_LESSON = "102101";
 
-	/** xxx课程中的xxx课时中的xxx习题为内置资源，无法导出 */
+	/**
+	 * xxx课程中的xxx课时中的xxx习题为内置资源，无法导出
+	 */
 	public static final String LESSON_CONTAIN_BUILTIN_PRACTICE = "102102";
 
-	/** 已提交的实验报告无法再存草稿 */
+	/**
+	 * 已提交的实验报告无法再存草稿
+	 */
 	public static final String CANT_SAVE_SUBMIT_REPORT = "102123";
 
-	/** 无法对已经通过的实验报告进行提交  */
+	/**
+	 * 无法对已经通过的实验报告进行提交
+	 */
 	public static final String CANT_SUBMIT_EVALUATE_REPORT = "102124";
 
-	/** 组卷时根据所选条件找不到足够的题目数 */
+	/**
+	 * 组卷时根据所选条件找不到足够的题目数
+	 */
 	public static final String NOT_ENOUGH_PRACTICE = "102125";
 
-	/** 原题目已删除，无法收藏 */
+	/**
+	 * 原题目已删除，无法收藏
+	 */
 	public static final String CANT_COLLECT_DELETE_PRACTICE = "102126";
 
-	/** 题目状态未选 */
+	/**
+	 * 题目状态未选
+	 */
 	public static final String QUESTION_STATUS_NOT_SELECTED = "102127";
 
-	/** 题目难度未选 */
+	/**
+	 * 题目难度未选
+	 */
 	public static final String QUESTION_DIFFICULTY_NOT_SELECTED = "102128";
 
-	/** 题目类型未选 */
+	/**
+	 * 题目类型未选
+	 */
 	public static final String QUESTION_TYPE_NOT_SELECTED = "102129";
 
-	/** 题目方向未选 */
+	/**
+	 * 题目方向未选
+	 */
 	public static final String QUESTION_DIRECTION_NOT_SELECTED = "102130";
 
-	/** 出题范围错误 */
+	/**
+	 * 出题范围错误
+	 */
 	public static final String PRACTICE_RANGE_ERROR = "102131";
 
-	/**课程下没有课时*/
+	/**
+	 * 课程下没有课时
+	 */
 	public static final String COURSE_LESSON_NOT_FOUND = "102132";
 
-	/**课时目录结构不正确，课时下存在课时或者章节, 课时和章节同时存在*/
+	/**
+	 * 课时目录结构不正确，课时下存在课时或者章节, 课时和章节同时存在
+	 */
 	public static final String COURSE_LESSON_CONFLICT = "102133";
 
-	/** 用户不属于该课堂中 **/
+	/**
+	 * 用户不属于该课堂中
+	 */
 	public static final String CLASSROOM_USER_NOT_IN = "102134";
 
 }

@@ -6,20 +6,44 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
+/**
+ * 练习错误
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("oj_practice_mistake")
 public class PracticeMistake extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 练习id
+	 */
 	private String practiceId;
 
+	/**
+	 * 练习类型
+	 */
 	private Integer practiceType;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
+	/**
+	 * 正确
+	 */
 	private Integer correct;
 
+	/**
+	 * 不對
+	 */
 	private Integer incorrect;
 }

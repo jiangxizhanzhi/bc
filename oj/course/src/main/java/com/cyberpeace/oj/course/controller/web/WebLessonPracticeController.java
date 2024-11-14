@@ -23,15 +23,31 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * Web课时练习Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台课后练习相关api")
 @RestController
 @RequestMapping("/oj/lesson/practice")
 @RequiresAuthentication
 public class WebLessonPracticeController {
 
+	/**
+	 * 课时练习场景Service
+	 */
 	@Autowired
 	private LessonPracticeSceneService lessonPracticeSceneService;
 
+	/**
+	 * 获取拓扑场景
+	 *
+	 * @param lessonId   课时id
+	 * @param practiceId 练习id
+	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 */
 	@ApiOperation("前台课后练习获取拓扑信息")
 	@GetMapping("/scene_topo")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
@@ -47,6 +63,12 @@ public class WebLessonPracticeController {
 		return new BaseRsp<>(topoScene);
 	}
 
+	/**
+	 * 启动场景
+	 *
+	 * @param sceneReq 场景请求体
+	 * @return {@code BaseRsp<JSONObject> }
+	 */
 	@ApiOperation("前台课后练习场景启动")
 	@PostMapping("/start_scene")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
@@ -59,6 +81,12 @@ public class WebLessonPracticeController {
 		return new BaseRsp<>(scene);
 	}
 
+	/**
+	 * 删除场景
+	 *
+	 * @param sceneReq 场景请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("前台课后练习场景删除")
 	@DeleteMapping("/delete_scene")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
@@ -70,6 +98,12 @@ public class WebLessonPracticeController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("前台课后练习场景节点重启")
 	@PostMapping("/node_restart")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
@@ -83,6 +117,12 @@ public class WebLessonPracticeController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param sceneNodeReq 场景节点请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("前台课后练习场景节点重建")
 	@PostMapping("/node_recreate")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
@@ -96,6 +136,12 @@ public class WebLessonPracticeController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 更新场景状态
+	 *
+	 * @param sceneStatusReq 场景状态请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("前台课后练习场景暂停与恢复")
 	@PatchMapping("/update_status")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)

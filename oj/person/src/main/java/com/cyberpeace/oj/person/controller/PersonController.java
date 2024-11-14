@@ -40,27 +40,54 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 人Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "oj-前台个人中心api")
 @RestController
 @RequestMapping("/oj/person")
 @RequiresAuthentication
 public class PersonController {
 
+	/**
+	 * 人中心Service
+	 */
 	@Autowired
 	private PersonCenterService personCenterService;
 
+	/**
+	 * 练习理论Service
+	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	/**
+	 * 练习实操Service
+	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	RemoteUserService remoteUserService;
 
+	/**
+	 * 练习错误Service
+	 */
 	@Autowired
 	private PracticeMistakeService practiceMistakeService;
 
+	/**
+	 * 列表注释
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<ListRsp<PersonComment>> }
+	 */
 	@ApiOperation("当前用户所有评论")
 	@GetMapping("/comments")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -76,6 +103,12 @@ public class PersonController {
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 
+	/**
+	 * 列出回复
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<ListRsp<PersonComment>> }
+	 */
 	@ApiOperation("当前用户所有回复")
 	@GetMapping("/replies")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -91,6 +124,12 @@ public class PersonController {
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 
+	/**
+	 * 列出注释
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<ListRsp<PersonNote>> }
+	 */
 	@ApiOperation("当前用户所有笔记")
 	@GetMapping("/notes")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -106,6 +145,14 @@ public class PersonController {
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 
+	/**
+	 * 列出集合
+	 *
+	 * @param pageReq      分页请求体
+	 * @param type         类型
+	 * @param practiceType 练习类型
+	 * @return {@code BaseRsp<ListRsp<PersonCollection>> }
+	 */
 	@ApiOperation("当前用户所有收藏")
 	@GetMapping("/collections")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -124,6 +171,11 @@ public class PersonController {
 		return new BaseRsp<>(PageUtil.getListResult(collections));
 	}
 
+	/**
+	 * 课程和练习记录
+	 *
+	 * @return {@code BaseRsp<StudyRecord> }
+	 */
 	@ApiOperation("当前用户学习课程和练习记录")
 	@GetMapping("/study_records")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -135,6 +187,13 @@ public class PersonController {
 		return personCenterService.studyRecords(userId, authContext);
 	}
 
+	/**
+	 * 课程和练习记录由月
+	 *
+	 * @param userId 用户id
+	 * @param isWeb  是否Web
+	 * @return {@code BaseRsp<BrokenLine> }
+	 */
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
 	@RequiresPermissions(
@@ -160,6 +219,11 @@ public class PersonController {
 		return personCenterService.studyPeriodRecords(userId, startTime, endTime, authContext);
 	}
 
+	/**
+	 * 全部收集练习
+	 *
+	 * @return {@code BaseRsp<List<CollectionPracticeBo>> }
+	 */
 	@ApiOperation("查询收藏习题列表")
 	@GetMapping("/my_all_collection_practice")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -189,6 +253,12 @@ public class PersonController {
 
 	}
 
+	/**
+	 * 收集理论取回
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<WebTheoryBo> }
+	 */
 	@ApiOperation("收藏理论题详情页")
 	@GetMapping("/collection_theory_practice_detail")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -198,6 +268,12 @@ public class PersonController {
 		return new BaseRsp<>(theoryBo);
 	}
 
+	/**
+	 * 集合操作检索
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<WebOperationBo> }
+	 */
 	@ApiOperation("收藏实操题详情页")
 	@GetMapping("/collection_operate_practice_detail")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -209,6 +285,12 @@ public class PersonController {
 		return new BaseRsp<>(theoryBo);
 	}
 
+	/**
+	 * 获取练习错误
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code BaseRsp<ListRsp<PersonalMistakeRes>> }
+	 */
 	@ApiOperation("查看理论题错题页面")
 	@GetMapping("/mistake")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -224,6 +306,12 @@ public class PersonController {
 		return new BaseRsp<>(listResult);
 	}
 
+	/**
+	 * 浴缸删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("批量移除错题")
 	@DeleteMapping("/mistake")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -232,6 +320,11 @@ public class PersonController {
 		return new BaseRsp<>(practiceMistakeService.bathDelete(deleteReq.getIds(), userId));
 	}
 
+	/**
+	 * 获取练习错误id列表
+	 *
+	 * @return {@code BaseRsp<List<String>> }
+	 */
 	@ApiOperation("获取错题集id列表")
 	@GetMapping("/mistake_ids")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
@@ -240,6 +333,13 @@ public class PersonController {
 		return new BaseRsp<>(StreamApiUtils.map(personalMistakeResList, PersonalMistakeRes::getPracticeId));
 	}
 
+	/**
+	 * 度假村系列
+	 *
+	 * @param collectionPracticeBos 收集练习BOS
+	 * @param resourceIds           资源id列表
+	 * @return {@code List<CollectionPracticeBo> }
+	 */
 	private List<CollectionPracticeBo> resortCollections(List<CollectionPracticeBo> collectionPracticeBos, List<String> resourceIds) {
 		if(CollectionUtils.isEmpty(collectionPracticeBos) ||
 				CollectionUtils.isEmpty(resourceIds)) {

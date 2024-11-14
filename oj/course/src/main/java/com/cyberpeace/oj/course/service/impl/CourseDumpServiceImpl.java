@@ -35,43 +35,91 @@ import java.util.stream.Collectors;
 import static com.cyberpeace.common.util.MdUtil.saveAsFileWriter;
 import static com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant.*;
 
+/**
+ * 课程导出Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j(topic = "resourceImport")
 @Service
 public class CourseDumpServiceImpl implements CourseDumpService {
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 课程Mapper
+	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
+	/**
+	 * 课程课时Mapper
+	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
+	/**
+	 * 练习理论裁判Service
+	 */
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
+	/**
+	 * 练习实操裁判Service
+	 */
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 课时配置Mapper
+	 */
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
+	/**
+	 * 课程类别Mapper
+	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
+	/**
+	 * 课时配置Service
+	 */
 	@Autowired
 	private LessonConfigService lessonConfigService;
 
+	/**
+	 * r课程导出
+	 *
+	 * @param resourceId         资源id
+	 * @param isDumpTopo         是否导出拓扑
+	 * @param sceneNumber        场景数
+	 * @param disableImageExport 禁用图像导出
+	 * @return {@code String }
+	 */
 	@Override
 	public String rMCourseDump(String resourceId, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
 		log.info("----------course dump start-----------");
@@ -173,6 +221,11 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		return destFilePath;
 	}
 
+	/**
+	 * 合并课程
+	 *
+	 * @param courseDumpBo 课程导出Bo
+	 */
 	private void combineLessons(CourseDumpBo courseDumpBo) {
 		List<CourseLesson> currentLessons = courseDumpBo.getCourseLessons();
 		List<LessonConfig> currentLessonConfigs = courseDumpBo.getLessonConfig();
@@ -208,6 +261,15 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	}
 
+	/**
+	 * 深章
+	 *
+	 * @param courseDumpBo      课程导出Bo
+	 * @param chapterParentPath 章节父路径
+	 * @param parentId          父母id
+	 * @param chapterList       章节列表
+	 * @param lessons           课
+	 */
 	private void deepChapter(CourseDumpBo courseDumpBo, String chapterParentPath, String parentId, List<LessonConfig> chapterList,
 							 Map<String, List<CourseLesson>> lessons) {
 		List<LessonConfig> nextChapterList = chapterList.stream().filter(s -> s.getParentId().equals(parentId)).collect(Collectors.toList());
@@ -222,6 +284,16 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	}
 
 
+	/**
+	 * 合并章节第一
+	 *
+	 * @param courseDumpBo 课程导出Bo
+	 * @param destFilePath 目标文件路径
+	 * @param chapterIndex 章编号
+	 * @param chapterOne   第一章
+	 * @param lessons      课
+	 * @return {@code Map<String, String> }
+	 */
 	private Map<String, String> combineChapterFirst(CourseDumpBo courseDumpBo, String destFilePath, Integer chapterIndex,
 			LessonConfig chapterOne,
 			Map<String, List<CourseLesson>> lessons) {
@@ -243,6 +315,16 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		return filePathMap;
 	}
 
+	/**
+	 * 结合第二章
+	 *
+	 * @param courseDumpBo    课程导出Bo
+	 * @param lastChapter     上一章
+	 * @param index           编号
+	 * @param chapterSecond   第二章
+	 * @param chapterFileName 章文件名称
+	 * @param lessons         课
+	 */
 	private void combineChapterSecond(CourseDumpBo courseDumpBo, Integer lastChapter, int index,
 			LessonConfig chapterSecond, String chapterFileName,
 			Map<String, List<CourseLesson>> lessons) {
@@ -276,6 +358,12 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	}
 
+	/**
+	 * combine课时自述文件markdown
+	 *
+	 * @param pathname 路径
+	 * @param lesson   课时
+	 */
 	private void combineLessonReadmeMD(String pathname, CourseLesson lesson) {
 		log.info("start dump lesson [{}] readme.md!", lesson.getName());
 		String readmeMDFileName = pathname + File.separator + "README.md";
@@ -301,6 +389,13 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	}
 
+	/**
+	 * 合实操课时
+	 *
+	 * @param courseDumpBo 课程导出Bo
+	 * @param pathname     路径
+	 * @param lesson       课时
+	 */
 	private void combineOperationLesson(CourseDumpBo courseDumpBo, String pathname, CourseLesson lesson) {
 		// doc 指导文档doc/pdf/md 包含img文件夹 指导书md
 		String docFile = pathname + File.separator + "doc";
@@ -322,6 +417,12 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		log.info("dump lesson [{}] env & images successfully!", lesson.getName());
 	}
 
+	/**
+	 * 合理论课时
+	 *
+	 * @param pathname 路径
+	 * @param lesson   课时
+	 */
 	private void combineTheoryLesson(String pathname, CourseLesson lesson) {
 		// handout 讲义
 
@@ -331,6 +432,12 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	}
 
+	/**
+	 * 生成讲义
+	 *
+	 * @param lesson      课时
+	 * @param handoutFile 讲义文件
+	 */
 	private void generateHandout(CourseLesson lesson, String handoutFile) {
 		Integer handoutType = lesson.getHandoutType();
 		String handoutUrl = lesson.getHandoutUrl();
@@ -360,6 +467,13 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		}
 	}
 
+	/**
+	 * 生成课时基础
+	 *
+	 * @param pathname           路径
+	 * @param lesson             课时
+	 * @param disableImageExport 禁用图像导出
+	 */
 	private void generateLessonBase(String pathname, CourseLesson lesson, Boolean disableImageExport) {
 		// 存储附件
 		log.info("start dump lesson [{}] attachFile!", lesson.getName());
@@ -403,12 +517,25 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	}
 
+	/**
+	 * 保存附加文件
+	 *
+	 * @param attachFile 附加文件
+	 * @param pathname   路径
+	 */
 	private void saveAttachFile(String attachFile, String pathname) {
 		String[] split = attachFile.split("/");
 		String fileName = split[split.length - 1];
 		FileUtil.copyFile(attachFile, pathname + File.separator + fileName, false);
 	}
 
+	/**
+	 * 合课程内容
+	 *
+	 * @param courseDumpBo 课程导出Bo
+	 * @param categories   类别
+	 * @param allUsers     全部用户
+	 */
 	private void combineCourseContent(CourseDumpBo courseDumpBo,
 			List<CourseCategory> categories, List<UserInfo> allUsers) {
 		// logo保存
@@ -456,11 +583,25 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		FileUtil.mkdirs(courseDumpBo.getImagePath());
 	}
 
+	/**
+	 * 生成大纲markdown
+	 *
+	 * @param destFilePath 目标文件路径
+	 * @param outline      大纲
+	 */
 	private void generateOutlineMD(String destFilePath, String outline) {
 		File file = new File(destFilePath, OUTLINE_NAME);
 		saveAsFileWriter(outline, file.getAbsolutePath());
 	}
 
+	/**
+	 * 生成自述文件markdown
+	 *
+	 * @param pathname     路径
+	 * @param course       课程
+	 * @param categoryName 类别名称
+	 * @param userName     用户名称
+	 */
 	private void generateReadmeMD(String pathname, Course course, String categoryName,
 			String userName) {
 		String readmeMDFileName = pathname + File.separator + "README.md";

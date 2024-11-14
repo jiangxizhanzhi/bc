@@ -276,6 +276,29 @@ public class EvalTaskController {
 		EvalTaskTimeNodesRsp evalTaskTimeNodesRsp = new EvalTaskTimeNodesRsp();
 		evalTaskTimeNodesRsp.setTaskId(taskId);
 
+		EvalTask evalTask = evalTaskService.getTask(taskId);
+		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
+				.getFinishedSteps(taskId);
+		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
+		evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
+		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);
+
+		return new BaseRsp<>(evalTaskTimeNodesRsp);
+	}
+
+	@ApiOperation("查询测评任务时间节点")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("/cloud/time_nodes")
+	public BaseRsp<EvalTaskTimeNodesRsp> getTimeNodesByCloud(
+			@ApiParam(name = "template_id", value = "测评靶场模板id",
+					required = true) @RequestParam("template_id") String templateId,
+			@ApiParam(name = "task_id", value = "测评任务id",
+					required = true) @RequestParam("task_id") String taskId) {
+
+		// 构建返回数据
+		EvalTaskTimeNodesRsp evalTaskTimeNodesRsp = new EvalTaskTimeNodesRsp();
+		evalTaskTimeNodesRsp.setTaskId(taskId);
+
 		// 评估实例对象
 		EvalTestInstance evalTestInstance = evalTestInstanceService.getEvalTestInstanceByResourceId(taskId);
 

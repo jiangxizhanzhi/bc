@@ -19,21 +19,44 @@ import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * 红蓝对抗训练统计学
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 public class RbTrainingStatistics extends CrEventStatistics {
 
-	@Autowired
+    /**
+     * 靶场岗位Mapper
+     */
+    @Autowired
 	CrRoleMapper crRoleMapper;
 
-	@Autowired
+    /**
+     * 红蓝对抗房间Mapper
+     */
+    @Autowired
 	RbRoomMapper rbRoomMapper;
 
-	@Override
+    /**
+     * 获取代号
+     *
+     * @return {@code BusinessCode }
+     */
+    @Override
 	public BusinessCode getCode() {
 		return BusinessCode.RED_VS_BLUE;
 	}
 
-	@Override
+    /**
+     * 获取训练计数
+     *
+     * @param userId 用户id
+     * @return {@code TrainingCount }
+     */
+    @Override
 	public TrainingCount getTrainingCount(String userId) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
 				BusinessType.RED_VS_BLUE.getCode());
@@ -43,7 +66,13 @@ public class RbTrainingStatistics extends CrEventStatistics {
 		return rbRoomMapper.getTrainingCount(roomIds, RbRoom.TrainingStatusCode.ENDED.getCode());
 	}
 
-	@Override
+    /**
+     * 获取相关训练
+     *
+     * @param userId 用户id
+     * @return {@code List<TrainingData> }
+     */
+    @Override
 	public List<TrainingData> getRelatedTraining(String userId) {
 		List<RoomRoleContext> roomRoleContexts = crRoleMapper.getRoomIdsAndRoleGroupByUserIdAndType(
 				userId, BusinessType.RED_VS_BLUE.getCode());
@@ -76,7 +105,13 @@ public class RbTrainingStatistics extends CrEventStatistics {
 		return related;
 	}
 
-	private Integer getState(Integer trainingStatus) {
+    /**
+     * 获取状态
+     *
+     * @param trainingStatus 训练状态
+     * @return {@code Integer }
+     */
+    private Integer getState(Integer trainingStatus) {
 		switch (trainingStatus) {
 			case 4:
 				return 0;

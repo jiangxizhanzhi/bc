@@ -42,24 +42,48 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 评估模板Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "靶场测评-模板")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/template")
 public class EvalTemplateController {
 
+	/**
+	 * 靶场场景Service
+	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 评估模板Service
+	 */
 	@Autowired
 	private EvalTemplateService evalTemplateService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 新增评估模板
+	 *
+	 * @param evaTemplateAddReq 伊娃模板新增请求体
+	 * @return {@code BaseRsp<EvalTemplateIdRsp> }
+	 */
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("")
@@ -77,6 +101,12 @@ public class EvalTemplateController {
 		return new BaseRsp<>(new EvalTemplateIdRsp(evalTemplate.getResourceId()));
 	}
 
+	/**
+	 * 修改 EVAL 模板
+	 *
+	 * @param evaTemplateModifyReq 伊娃模板修改请求体
+	 * @return {@code BaseRsp<EvalTemplateIdRsp> }
+	 */
 	@ApiOperation("模板修改")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PatchMapping("")
@@ -95,6 +125,12 @@ public class EvalTemplateController {
 		return new BaseRsp<>(new EvalTemplateIdRsp(templateId));
 	}
 
+	/**
+	 * 获取评估模板
+	 *
+	 * @param templateId 模板id
+	 * @return {@code BaseRsp<EvalTemplateRsp> }
+	 */
 	@ApiOperation("模板查询")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("")
@@ -120,6 +156,12 @@ public class EvalTemplateController {
 		return new BaseRsp<>(evalTemplateRsp);
 	}
 
+	/**
+	 * 获取评估模板列表
+	 *
+	 * @param evalTemplateListQuery EVAL 模板列表查询
+	 * @return {@code BaseRsp<ListRsp<EvalTemplateListRsp>> }
+	 */
 	@ApiOperation("模板列表查询")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/list")
@@ -140,6 +182,13 @@ public class EvalTemplateController {
 		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
+	/**
+	 * 获取评估模板任务列表
+	 *
+	 * @param templateId 模板id
+	 * @param isFinished 是否finished
+	 * @return {@code BaseRsp<EvalTemplateTaskListRsp> }
+	 */
 	@ApiOperation("模板任务列表查询")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/task_list")
@@ -164,6 +213,12 @@ public class EvalTemplateController {
 		return new BaseRsp<>(evalTemplateTaskListRsp);
 	}
 
+	/**
+	 * 删除 EVAL 模板
+	 *
+	 * @param evalTemplateDeleteReq 评估模板删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("模板删除")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@DeleteMapping("")
@@ -175,6 +230,12 @@ public class EvalTemplateController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 验证基础信息
+	 *
+	 * @param evalTemplateBaseInfoContext eval 模板 base info 上下文
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("模板基础信息校验")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("validate_info")
@@ -184,6 +245,13 @@ public class EvalTemplateController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 请求体自模板
+	 *
+	 * @param evaTemplateAddReq 伊娃模板新增请求体
+	 * @param evalTemplate      eval 模板
+	 * @return {@code EvalTemplate }
+	 */
 	private EvalTemplate reqToTemplate(EvaTemplateAddReq evaTemplateAddReq,
 			EvalTemplate evalTemplate) {
 
@@ -207,6 +275,11 @@ public class EvalTemplateController {
 		return evalTemplate;
 	}
 
+	/**
+	 * 验证请求体
+	 *
+	 * @param evaTemplateAddReq 伊娃模板新增请求体
+	 */
 	private void validateReq(EvaTemplateAddReq evaTemplateAddReq) {
 
 		// 校验基础信息

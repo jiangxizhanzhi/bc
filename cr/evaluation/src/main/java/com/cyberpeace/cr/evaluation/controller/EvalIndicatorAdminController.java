@@ -47,6 +47,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 评估指示器管理Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "后台-测试靶场-指标项管理")
 @RestController
 @RequiresAuthentication
@@ -54,27 +60,54 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EvalIndicatorAdminController {
 
+	/**
+	 * 评估指示器Service
+	 */
 	@Autowired
 	private EvalIndicatorService evalIndicatorService;
 
+	/**
+	 * 评估指示器Mapper
+	 */
 	@Autowired
 	private EvalIndicatorMapper evalIndicatorMapper;
 
+	/**
+	 * 远程蟒Service
+	 */
 	@Autowired
 	private RemotePythonService remotePythonService;
 
+	/**
+	 * 评估算法Mapper
+	 */
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
 
+	/**
+	 * 评估收集Service
+	 */
 	@Autowired
 	private EvalCollectionService evalCollectionService;
 
+	/**
+	 * 评估集合体Service
+	 */
 	@Autowired
 	private EvalAggregationService evalAggregationService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 新增评估指示器
+	 *
+	 * @param evalIndicatorReq 评估指示器请求体
+	 * @return {@code BaseRsp<EvalIndicatorReq> }
+	 */
 	@ApiOperation("新增指标项")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
@@ -105,6 +138,12 @@ public class EvalIndicatorAdminController {
 		return new BaseRsp<>(evalIndicatorReq);
 	}
 
+	/**
+	 * 检查矩阵数据一致性
+	 *
+	 * @param evalAhpAlgorithmReq 评估AHP算法请求体
+	 * @return {@code BaseRsp<List<String>> }
+	 */
 	@ApiOperation("校验矩阵数据一致性")
 	@PostMapping("/check_consistency")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
@@ -118,7 +157,12 @@ public class EvalIndicatorAdminController {
 	}
 
 
-		private void validateReq(EvalIndicatorReq req) {
+	/**
+	 * 验证请求体
+	 *
+	 * @param req 请求体
+	 */
+	private void validateReq(EvalIndicatorReq req) {
 		String resourceId = req.getEvalIndicatorId();
 
 		// 校验名称长度
@@ -136,6 +180,10 @@ public class EvalIndicatorAdminController {
 		
 	}
 
+	/**
+	 * @param evalIndicatorReq 评估指示器请求体
+	 * @return {@code BaseRsp<EvalIndicatorReq> }
+	 */
 	@ApiOperation("编辑指标项")
 	@PutMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
@@ -175,6 +223,12 @@ public class EvalIndicatorAdminController {
 		return new BaseRsp<>(evalIndicatorReq);
 	}
 
+	/**
+	 * 获取评估编号
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<EvalIndicatorRsp> }
+	 */
 	@ApiOperation("查询指标项")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
@@ -193,6 +247,12 @@ public class EvalIndicatorAdminController {
 		return new BaseRsp<>(evalIndicatorRsp);
 	}
 
+	/**
+	 * 转换评估指示器自评估系统响应
+	 *
+	 * @param evalIndicator
+	 * @return {@code EvalIndicatorRsp }
+	 */
 	private EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator) {
 		EvalIndicatorRsp evalSystemRsp = BeanUtils.copy(evalIndicator, EvalIndicatorRsp.class);
 
@@ -212,6 +272,12 @@ public class EvalIndicatorAdminController {
 		return evalSystemRsp;
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<EvalIndicatorRsp>> }
+	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM,
@@ -243,6 +309,12 @@ public class EvalIndicatorAdminController {
 		return new BaseRsp<>(PageUtil.getListResult(data));
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@DeleteMapping()
 	@ApiOperation("批量删除")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)

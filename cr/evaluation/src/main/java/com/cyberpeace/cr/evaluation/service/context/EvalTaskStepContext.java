@@ -6,30 +6,60 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 测评任务步骤上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class EvalTaskStepContext {
 
+	/**
+	 * 步骤Id
+	 */
 	@ApiModelProperty("步骤Id")
 	private String stepId;
 
+	/**
+	 * 步骤阶段
+	 */
 	@ApiModelProperty("步骤阶段")
 	private Integer stage;
 
+	/**
+	 * 步骤标题
+	 */
 	@ApiModelProperty("步骤标题")
 	private String title;
 
+	/**
+	 * 步骤过程
+	 */
 	@ApiModelProperty("步骤过程")
 	private String process;
 
+	/**
+	 * 开始时间
+	 */
 	@ApiModelProperty("开始时间")
 	private Date startTime;
 
+	/**
+	 * 结束时间
+	 */
 	@ApiModelProperty("结束时间")
 	private Date endTime;
 
+	/**
+	 * 步骤状态
+	 */
 	@ApiModelProperty("步骤状态")
 	private Integer status = Status.INIT.getCode();
 
+	/**
+	 * 前序步骤状态
+	 */
 	@ApiModelProperty("前序步骤状态")
 	private Integer preStepStatus = Status.INIT.getCode();
 

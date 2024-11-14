@@ -6,20 +6,38 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 团队个人统计学Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("团队训练个人排名统计信息")
 public class TeamPersonalStatisticsBo implements Serializable {
 
-    @ApiModelProperty("用户resource_id")
+	/**
+	 * 用户resource_id
+	 */
+	@ApiModelProperty("用户resource_id")
     private String userId;
 
-    @ApiModelProperty("用户名")
+	/**
+	 * 用户名
+	 */
+	@ApiModelProperty("用户名")
     private String username;
 
-    @ApiModelProperty("用户姓名")
+	/**
+	 * 用户姓名
+	 */
+	@ApiModelProperty("用户姓名")
     private String name;
 
-    @ApiModelProperty("累计得分")
+	/**
+	 * 累计得分
+	 */
+	@ApiModelProperty("累计得分")
     private Integer totalScore;
 
 }

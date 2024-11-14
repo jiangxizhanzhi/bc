@@ -21,26 +21,55 @@ import com.cyberpeace.cr.singletrain.dao.mapper.SingleRoomMapper;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.google.common.collect.Lists;
 
+/**
+ * 单训练统计学
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 public class SingleTrainStatistics extends CrEventStatistics {
 
+	/**
+	 * 训练记录Mapper
+	 */
 	@Autowired
 	TrainRecordMapper trainRecordMapper;
 
+	/**
+	 * 单房间Mapper
+	 */
 	@Autowired
 	SingleRoomMapper singleRoomMapper;
 
+	/**
+	 * 业务模板Mapper
+	 */
 	@Autowired
 	BusinessTemplateMapper businessTemplateMapper;
 
+	/**
+	 * 单模板Mapper
+	 */
 	@Autowired
 	SingleTemplateMapper singleTemplateMapper;
 
+	/**
+	 * 获取代号
+	 *
+	 * @return {@code BusinessCode }
+	 */
 	@Override
 	public BusinessCode getCode() {
 		return BusinessCode.SINGLE_TRAINING;
 	}
 
+	/**
+	 * 获取训练计数
+	 *
+	 * @param userId 用户id
+	 * @return {@code TrainingCount }
+	 */
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
 		Integer completed = trainRecordMapper.singleTrainCountFinishedByUserIdAndType(userId,
@@ -53,6 +82,12 @@ public class SingleTrainStatistics extends CrEventStatistics {
 		return count;
 	}
 
+	/**
+	 * 获取相关训练
+	 *
+	 * @param userId 用户id
+	 * @return {@code List<TrainingData> }
+	 */
 	@Override
 	public List<TrainingData> getRelatedTraining(String userId) {
 

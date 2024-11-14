@@ -8,56 +8,58 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 /**
- * 
- * @TableName cr_team_template
+ * 团队模板
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @TableName(value = "cr_team_template")
 @Data
 public class TeamTemplate extends BaseTable {
 
 	/**
-	 * 
+	 * 资源id
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
-	 * 
+	 * 业务模板id
 	 */
 	private String businessTemplateId;
 
 	/**
-	 * 
+	 * 前置技能
 	 */
 	private String preSkills;
 
 	/**
-	 * 
+	 * 训练技能
 	 */
 	private String trainSkills;
 
 	/**
-	 * 
+	 * 岗位配置
 	 */
 	private String roleConfig;
 
 	/**
-	 * 
+	 * 子类型
 	 */
 	private Integer subType;
 
 	/**
-	 * 
+	 * 时间线配置
 	 */
 	private String timeLineConfig;
 
 	/**
-	 *
+	 * 持续时间
 	 */
 	private Integer durationTime;
 
 	/**
-	 *
+	 * 人数
 	 */
 	private Integer peopleNumber;
 

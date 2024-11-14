@@ -9,27 +9,54 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 单任务Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("单兵训练任务信息")
 public class SingleMissionBo implements Serializable {
-    @ApiModelProperty("任务标题")
+	/**
+	 * 任务标题
+	 */
+	@ApiModelProperty("任务标题")
     private String title;
 
-    @ApiModelProperty("任务描述")
+	/**
+	 * 任务描述
+	 */
+	@ApiModelProperty("任务描述")
     private String description;
 
-    @ApiModelProperty("任务分类")
+	/**
+	 * 任务分类
+	 */
+	@ApiModelProperty("任务分类")
     private String category;
 
-    @ApiModelProperty("题型")
+	/**
+	 * 题型
+	 */
+	@ApiModelProperty("题型")
     private Integer type;
 
-    @ApiModelProperty("选项")
+	/**
+	 * 选项
+	 */
+	@ApiModelProperty("选项")
     private List<JSONObject> option;
 
-    @ApiModelProperty("任务记录")
+	/**
+	 * 任务记录
+	 */
+	@ApiModelProperty("任务记录")
     private JSONObject trainingRecord;
 
+	/**
+	 * 题解
+	 */
 	@ApiModelProperty(value = "题解")
 	private String writeUp;
 }

@@ -24,6 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 团队训练统计学Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "团队训练统计")
 @RestController
 @RequestMapping("/cr/admin/team_train_statistics")
@@ -31,11 +37,22 @@ import java.util.List;
 @Slf4j
 public class TeamTrainStatisticsController {
 
+    /**
+     * 团队训练统计学
+     */
     @Autowired
     TeamTrainStatisticsService TeamTrainStatistics;
+    /**
+     * 训练统计学Service
+     */
     @Autowired
     TrainStatisticsService trainStatisticsService;
 
+    /**
+     * 获取全部个人排
+     *
+     * @return {@code BaseRsp<List<TeamPersonalStatisticsBo>> }
+     */
     @GetMapping("/personal_rank")
     @ApiOperation("团队训练个人排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
@@ -44,6 +61,11 @@ public class TeamTrainStatisticsController {
         return new BaseRsp<>(rsp);
     }
 
+    /**
+     * 获取组织排
+     *
+     * @return {@code BaseRsp<List<TeamOrganizationStatisticsBo>> }
+     */
     @GetMapping("/organization_rank")
     @ApiOperation("团队训练组织排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
@@ -53,6 +75,12 @@ public class TeamTrainStatisticsController {
     }
 
 
+    /**
+     * 获取全部详情
+     *
+     * @param detailReq 详情请求体
+     * @return {@code BaseRsp<ListRsp<StatisticsDetail>> }
+     */
     @GetMapping("/detail")
     @ApiOperation("团队训练统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)

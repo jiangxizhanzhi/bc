@@ -6,14 +6,29 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 评估记录节点探针请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class EvalRecordNodeProbeReq implements Serializable {
-    @ApiModelProperty("场景节点ID")
+	/**
+	 * 场景节点ID
+	 */
+	@ApiModelProperty("场景节点ID")
     private String id;
 
-    @ApiModelProperty("场景节点名称")
+	/**
+	 * 场景节点名称
+	 */
+	@ApiModelProperty("场景节点名称")
     private String label;
 
-    @ApiModelProperty("场景节点探针数据")
+	/**
+	 * 场景节点探针数据
+	 */
+	@ApiModelProperty("场景节点探针数据")
     private List<EvalRoomPairRsp> data;
 }

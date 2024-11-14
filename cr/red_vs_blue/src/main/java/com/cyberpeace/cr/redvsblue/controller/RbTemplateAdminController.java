@@ -60,6 +60,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗模板管理Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗模板后台")
 @RestController
 @Slf4j
@@ -67,31 +73,61 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/admin/red_vs_blue/red_vs_blue_templates/")
 public class RbTemplateAdminController {
 
-	@Autowired
+    /**
+     * 业务模板Service
+     */
+    @Autowired
 	private BusinessTemplateService businessTemplateService;
 
-	@Autowired
+    /**
+     * 红蓝对抗模板Service
+     */
+    @Autowired
 	private RbTemplateService rbTemplateService;
 
-	@Autowired
+    /**
+     * 靶场常用Service
+     */
+    @Autowired
 	private CrCommonService crCommonService;
 
-	@Autowired
+    /**
+     * 任务模板Service
+     */
+    @Autowired
 	private MissionTemplateService missionTemplateService;
 
-	@Autowired
+    /**
+     * 事务模板
+     */
+    @Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Autowired
+    /**
+     * 当地场景Service
+     */
+    @Autowired
 	private LocalSceneService localSceneService;
 
-	@Autowired
+    /**
+     * 远程日志Service
+     */
+    @Autowired
 	private RemoteLogService remoteLogService;
 
-	@Autowired
+    /**
+     * 业务模板Mapper
+     */
+    @Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
-	@ApiOperation("新增")
+    /**
+     * 创建
+     *
+     * @param addReq 新增请求体
+     * @return {@code BaseRsp<Object> }
+     */
+    @ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<Object> create(@RequestBody @Validated RbTemplateAddReq addReq) {
@@ -125,7 +161,13 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("修改")
+    /**
+     * 更新
+     *
+     * @param modifyReq 修改请求体
+     * @return {@code BaseRsp<Boolean> }
+     */
+    @ApiOperation("修改")
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<Boolean> update(@RequestBody @Validated RbTemplateModifyReq modifyReq) {
@@ -162,7 +204,13 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("删除")
+    /**
+     * 批量删除
+     *
+     * @param deleteReq 删除请求体
+     * @return {@code BaseRsp<String> }
+     */
+    @ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
@@ -170,7 +218,13 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("查询")
+    /**
+     * 获取红蓝对抗模板
+     *
+     * @param resourceId 资源id
+     * @return {@code BaseRsp<RbTemplateRsp> }
+     */
+    @ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
@@ -221,7 +275,12 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
-	public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
+    /**
+     * 交易资产节点映射
+     *
+     * @param roleRsps 岗位RSP
+     */
+    public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
 		for (JSONObject roleRsp : roleRsps) {
 			List<Object> assetNodes = roleRsp.getObject("asset_nodes", ArrayList.class);
 			Map<String,Integer>  assetMap = new HashMap<>();
@@ -237,7 +296,15 @@ public class RbTemplateAdminController {
 			roleRsp.put("assetMap",assetMap);
 		}
 	}
-	private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
+
+    /**
+     * 获取角色
+     *
+     * @param roleArray 岗位数组
+     * @param mapping   映射
+     * @return {@code List<JSONObject> }
+     */
+    private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
 		List<JSONObject> result = Lists.newArrayList();
 		// 逐角色逐阶段读取任务信息
 		roleArray.forEach(role -> {
@@ -255,7 +322,14 @@ public class RbTemplateAdminController {
 		return result;
 	}
 
-	private RbTemplate reqToRbTemplate(RbTemplateAddReq req, RbTemplate rbTemplate) {
+    /**
+     * 请求体自红蓝对抗模板
+     *
+     * @param req        请求体
+     * @param rbTemplate 红蓝对抗模板
+     * @return {@code RbTemplate }
+     */
+    private RbTemplate reqToRbTemplate(RbTemplateAddReq req, RbTemplate rbTemplate) {
 
 		CrRoleConfigRb roleConfigRb = BeanUtils.copy(req, CrRoleConfigRb.class);
 		BaseInfo baseInfo = req.getBaseInfo();

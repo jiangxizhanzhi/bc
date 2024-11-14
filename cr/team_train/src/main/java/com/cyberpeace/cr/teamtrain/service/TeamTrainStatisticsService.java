@@ -9,16 +9,24 @@ import com.cyberpeace.cr.teamtrain.service.bo.TeamOrganizationStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamPersonalStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamStatisticsDetailBo;
 
+/**
+ * 团队训练统计学Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface TeamTrainStatisticsService {
 
 	/**
 	 * 获取团队训练个人排名TOP5
+	 *
 	 * @return 团队训练个人排名
 	 */
 	List<TeamPersonalStatisticsBo> getAllPersonalRankStatistics();
 
 	/**
 	 * 获取团队训练组织排名TOP5
+	 *
 	 * @return 团队训练组织排名
 	 */
 	List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics();

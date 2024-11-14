@@ -56,33 +56,63 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 单房间得分Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "单兵训练评分")
 @RestController
 @RequestMapping("/cr/single_train/single_train")
 @Slf4j
 public class SingleRoomScoreController {
 
+	/**
+	 * 单房间Service
+	 */
 	@Autowired
 	SingleRoomService singleRoomService;
 
+	/**
+	 * 训练记录Service
+	 */
 	@Autowired
 	TrainRecordService trainRecordService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 靶场得分Controller
+	 */
 	@Autowired
 	private CrScoreController crScoreController;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 靶场常数Service
+	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
@@ -141,6 +171,13 @@ public class SingleRoomScoreController {
 		return new BaseRsp<>(data);
 	}
 
+	/**
+	 * 导出训练记录2PDF格式
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param roomId              房间id
+	 * @param index               编号
+	 */
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -198,6 +235,12 @@ public class SingleRoomScoreController {
 
 	}
 
+	/**
+	 * 获取记录详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<RecordDetail> }
+	 */
 	@ApiOperation("查询历史记录详情")
 	@GetMapping("/record/detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -211,6 +254,12 @@ public class SingleRoomScoreController {
 		return new BaseRsp<>(detail);
 	}
 
+	/**
+	 * gettask计数
+	 *
+	 * @param missionReport 任务报告
+	 * @return {@code Object }
+	 */
 	private Object gettaskCount(MissionReport missionReport) {
 		List<Integer> taskCount = Lists.newArrayList();
 
@@ -221,6 +270,12 @@ public class SingleRoomScoreController {
 		return taskCount;
 	}
 
+	/**
+	 * 获取阶段出口
+	 *
+	 * @param missionSchemeList 任务计划列表
+	 * @return {@code List<StageExport> }
+	 */
 	private List<StageExport>
 			getStageExports(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
 

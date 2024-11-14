@@ -7,7 +7,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalResult;
 
 /**
- * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalResult
+ * 测评结果Mapper
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @Mapper
 @Repository

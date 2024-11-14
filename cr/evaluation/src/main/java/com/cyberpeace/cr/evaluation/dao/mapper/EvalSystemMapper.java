@@ -10,14 +10,31 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalSystem;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 
 /**
- * @Entity com.cyberpeace.cr.evaluation.dao.entity.EvalSystem
+ * 测评系统Mapper
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @Mapper
 @Repository
 public interface EvalSystemMapper extends BaseMapper<EvalSystem> {
 
-	IPage<EvalSystem> listEvalSystems(Page<EvalSystem> page, EvalListQuery listQuery);
+    /**
+     * 列表测评系统
+     *
+     * @param page      分页
+     * @param listQuery 列表查询
+     * @return {@code IPage<EvalSystem> }
+     */
+    IPage<EvalSystem> listEvalSystems(Page<EvalSystem> page, EvalListQuery listQuery);
 
+    /**
+     * 存在由名称
+     *
+     * @param name       名称
+     * @param resourceId 资源id
+     * @return boolean
+     */
     boolean existByName(String name, String resourceId);
 }
 

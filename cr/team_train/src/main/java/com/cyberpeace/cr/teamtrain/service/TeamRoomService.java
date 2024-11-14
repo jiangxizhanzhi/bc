@@ -19,85 +19,119 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 
 /**
+ * 团队房间Service
  *
+ * @author SN
+ * @date 2024/11/14
  */
 public interface TeamRoomService extends IService<TeamRoom> {
 
-	/** 通过id获取团队训练
+	/**
+	 * 通过id获取团队训练
+	 *
 	 * @param resourceId 训练实例id
 	 * @return 团队训练实例数据
 	 */
 	TeamRoomData getTeamRoomDataByRoomId(String resourceId);
 
-	/** 创建实例
+	/**
+	 * 创建实例
+	 *
 	 * @param teamTrainRoomContext 团队训练实例数据
 	 * @return 团队训练实例
 	 */
 	TeamRoom create(TeamTrainRoomContext teamTrainRoomContext);
 
-	/** 更新实例
+	/**
+	 * 更新实例
+	 *
 	 * @param teamTrainRoomContext 团队训练实例数据
-	 * @param teamRoom 目标团队实例
+	 * @param teamRoom             目标团队实例
 	 */
 	void updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom);
 
-	/** 列表查询团队训练
+	/**
+	 * 列表查询团队训练
+	 *
 	 * @param listQuery 分页查询体
 	 * @return 团队训练实例分页数据
 	 */
 	IPage<TeamRoomData> list(ListQuery listQuery);
 
-	/** 修改团队训练状态
+	/**
+	 * 修改团队训练状态
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 团队训练实例状态
 	 */
 	Integer changeTrainingStatus(String roomId);
 
-	/** 获取团队训练状态
+	/**
+	 * 获取团队训练状态
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 团队训练实例状态
 	 */
 	Integer getTrainingStatus(String roomId);
 
-	/** 通过businessInstanceId获取学员id
+	/**
+	 * 通过businessInstanceId获取学员id
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 学员列表
 	 */
 	List<UserRole> getUserList(String roomId);
 
-	/**教员获取时间线
+	/**
+	 * 教员获取时间线
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 教员时间线数据
 	 */
 	TimeLineData getTimeLine(String roomId);
 
-	/** 检查是否有教员权限
+	/**
+	 * 检查是否有教员权限
+	 *
 	 * @param roomId 团队训练实例id
 	 * @param userId 用户id
 	 */
 	void checkTeacherPermission(String roomId, String userId);
 
-	/** 检查团队训练是否是已启动状态
+	/**
+	 * 检查团队训练是否是已启动状态
+	 *
 	 * @param roomId 团队训练实例id
 	 */
 	void checkRoomOpening(String roomId);
 
-	/** 学员获取时间线
+	/**
+	 * 学员获取时间线
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 学员时间线数据
 	 */
 	TimeLineData getStudentsTimeLine(String roomId);
 
+	/**
+	 * 获取由当地场景id
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code TeamRoom }
+	 */
 	TeamRoom getByLocalSceneId(String localSceneId);
 
 	/**
 	 * 根据id获取团队训练实例
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 团队训练实例
 	 */
 	TeamRoom getById(String roomId);
 
-	/** 检查是否有学员权限
+	/**
+	 * 检查是否有学员权限
+	 *
 	 * @param roomId 团队训练实例id
 	 * @param userId 用户id
 	 */
@@ -130,17 +164,26 @@ public interface TeamRoomService extends IService<TeamRoom> {
 
 	/**
 	 * 获取聊天框用户列表
-	 * @param myRole 当前用户角色
-	 * @param roomId 房间id
+	 *
+	 * @param myRole        当前用户角色
+	 * @param roomId        房间id
 	 * @param currentUserId 当前用户id
 	 * @return 聊天面板信息
 	 */
 	DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId);
 
-    CrRole checkRoomPermission(String resourceId, String userId);
+	/**
+	 * 检查房间权限
+	 *
+	 * @param resourceId 资源id
+	 * @param userId     用户id
+	 * @return {@code CrRole }
+	 */
+	CrRole checkRoomPermission(String resourceId, String userId);
 
 	/**
 	 * 获取聊天面板用户列表
+	 *
 	 * @param roleId 角色id
 	 * @param roomId 红蓝对抗实例id
 	 * @return 聊天面板用户列表

@@ -11,39 +11,72 @@ import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 评估算法请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class EvalAlgorithmReq {
 
+	/**
+	 * 算法Id
+	 */
 	@ApiModelProperty(value = "算法Id", required = false)
 	private String evalAlgorithmId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotNull
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty(value = "描述", required = false)
 	private String description;
 
+	/**
+	 * 算法类型
+	 */
 	@ApiModelProperty(value = "算法类型", required = true)
 	@NotNull
 	private Integer type;
 
+	/**
+	 * 算法语言
+	 */
 	@ApiModelProperty(value = "算法语言", required = true)
 	@NotNull
 	private Integer algorithmLanguage;
 
+	/**
+	 * 代码
+	 */
 	@ApiModelProperty(value = "代码", required = true)
 	@NotNull
 	private String code;
 
+	/**
+	 * 算法类型
+	 */
 	@ApiModelProperty(value = "算法类型", required = true)
 	@NotNull
 	private Integer mode;
 
+	/**
+	 * 是否为内置算法
+	 */
 	@ApiModelProperty(value = "是否为内置算法", required = true)
 	@NotNull
 	private Integer builtin;
 
+	/**
+	 * 参数列表
+	 */
 	@ApiModelProperty(value = "参数列表", required = true)
 	@NotNull
 	private List<AlgorithmParamContext> params = Lists.newArrayList();

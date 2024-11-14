@@ -4,13 +4,28 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
 import lombok.Data;
 
+/**
+ * 测评任务简洁上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class EvalTaskSlimContext {
 
+	/**
+	 * 任务id
+	 */
 	private String taskId;
 
+	/**
+	 * 任务名称
+	 */
 	private String taskName = CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN) ? "Current test instance" : "当前测试实例";
 
+	/**
+	 * 中台场景id
+	 */
 	private String mpSceneId;
 
 	public void setResourceId(String resourceId) {

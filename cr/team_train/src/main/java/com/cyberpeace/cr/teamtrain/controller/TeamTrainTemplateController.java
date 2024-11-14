@@ -60,44 +60,90 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 团队训练模板Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "团队训练模板")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/team_train/template")
 public class TeamTrainTemplateController {
 
+	/**
+	 * 团队模板Service
+	 */
 	@Autowired
 	TeamTemplateService teamTemplateService;
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	LocalSceneService localSceneService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
-	
+
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 靶场常用Service
+	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * RTKS相关Service
+	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	/**
+	 * 创建
+	 *
+	 * @param addReq 新增请求体
+	 * @return {@code BaseRsp<Void> }
+	 */
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
@@ -131,6 +177,12 @@ public class TeamTrainTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param modifyReq 修改请求体
+	 * @return {@code BaseRsp<Void> }
+	 */
 	@ApiOperation("修改")
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
@@ -167,6 +219,12 @@ public class TeamTrainTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取团队模板
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<TeamTrainTemplateRsp> }
+	 */
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN },
@@ -244,6 +302,12 @@ public class TeamTrainTemplateController {
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
@@ -252,6 +316,12 @@ public class TeamTrainTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<IPage<TeamTemplateData>> }
+	 */
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -282,6 +352,16 @@ public class TeamTrainTemplateController {
 		return new BaseRsp<>(data);
 	}
 
+	/**
+	 * 获取团队训练模板输出由基础信息数据
+	 *
+	 * @param teamTemplateData   团队模板数据
+	 * @param topologyNodesStats 拓扑节点统计
+	 * @param attackRelCount     攻击关联计数
+	 * @param icsRelCount        集成电路关联计数
+	 * @param engageRelCount     Engage关联计数
+	 * @return {@code TeamTrainTemplateRsp }
+	 */
 	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(
 			TeamTemplateData teamTemplateData, Map<String, TopoDigest> topologyNodesStats,
 			Map<String, List<NameCount>> attackRelCount, Map<String, List<NameCount>> icsRelCount,
@@ -333,6 +413,13 @@ public class TeamTrainTemplateController {
 		return teamTrainTemplateRsp;
 	}
 
+	/**
+	 * 请求体自团队模板
+	 *
+	 * @param req          请求体
+	 * @param teamTemplate 团队模板
+	 * @return {@code TeamTemplate }
+	 */
 	private TeamTemplate reqToTeamTemplate(TeamTrainTemplateReq req, TeamTemplate teamTemplate) {
 
 		List<CrRoleConfig> roleConfigs = req.getRoleList();

@@ -39,31 +39,64 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评模板Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, EvalTemplate> implements EvalTemplateService {
 
+	/**
+	 * 附件Service
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 靶场常数Service
+	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	/**
+	 * 测评模板Mapper
+	 */
 	@Autowired
 	private EvalTemplateMapper evalTemplateMapper;
 
+	/**
+	 * 测评任务Service
+	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
+	/**
+	 * 测评任务Mapper
+	 */
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 获取模板
+	 *
+	 * @param templateId 模板id
+	 * @return {@code EvalTemplate }
+	 */
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
 
@@ -87,6 +120,12 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		return evalTemplate;
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param evalTemplateListQuery 测评模板列表查询
+	 * @return {@code IPage<EvalTemplate> }
+	 */
 	@Override
 	public IPage<EvalTemplate> list(@Validated EvalTemplateListQuery evalTemplateListQuery) {
 
@@ -97,6 +136,13 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
                 UserInfoContext.getUserContext().getUserId());
 	}
 
+	/**
+	 * 列出任务
+	 *
+	 * @param evalTemplate 测评模板
+	 * @param isFinished   是否完成
+	 * @return {@code List<EvalTaskSlimContext> }
+	 */
 	@Override
 	public List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate, Boolean isFinished) {
 
@@ -115,6 +161,12 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		return evalTaskSlimContexts;
 	}
 
+	/**
+	 * 获取图标路径
+	 *
+	 * @param attachmentId 附件id
+	 * @return {@code String }
+	 */
 	@Override
 	public String getLogoPath(String attachmentId) {
 		Attachment attachment = attachmentService.getById(attachmentId);
@@ -124,6 +176,12 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		return "";
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param templateIds 模板id列表
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean batchDelete(List<String> templateIds) {
 
@@ -153,6 +211,13 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	}
 
+	/**
+	 * 验证存在任务
+	 *
+	 * @param templateId 模板id
+	 * @param taskStatus 任务状态
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean validateExistTask(String templateId, EvalTask.Status taskStatus) {
 
@@ -163,6 +228,12 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	}
 
+	/**
+	 * 验证基础信息
+	 *
+	 * @param evalTemplateBaseInfoContext 测评模板基础信息上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean validateBaseInfo(EvalTemplateBaseInfoContext evalTemplateBaseInfoContext) {
 
@@ -202,6 +273,12 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		return true;
 	}
 
+	/**
+	 * 验证步骤配置
+	 *
+	 * @param evalTaskStepConfigList 测评任务步骤配置列表
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList) {
 

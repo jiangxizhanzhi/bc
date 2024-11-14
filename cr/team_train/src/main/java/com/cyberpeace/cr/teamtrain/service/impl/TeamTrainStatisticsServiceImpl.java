@@ -23,20 +23,40 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 团队训练统计学Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsService {
 
+    /**
+     * 靶场任务Mapper
+     */
     @Autowired
     CrTaskMapper crTaskMapper;
 
+    /**
+     * 远程用户Service
+     */
     @Autowired
     RemoteUserService remoteUserService;
 
+    /**
+     * 远程组织Service
+     */
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
 
 
+    /**
+     * 获取组织排统计学
+     *
+     * @return {@code List<TeamOrganizationStatisticsBo> }
+     */
     @Override
     public List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics() {
         List<TeamOrganizationStatisticsBo> rsp = Lists.newArrayList();
@@ -120,6 +140,11 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
     }
 
 
+    /**
+     * 获取全部个人排统计学
+     *
+     * @return {@code List<TeamPersonalStatisticsBo> }
+     */
     @Override
     public List<TeamPersonalStatisticsBo> getAllPersonalRankStatistics() {
         List<TeamPersonalStatisticsBo> rsp = Lists.newArrayList();

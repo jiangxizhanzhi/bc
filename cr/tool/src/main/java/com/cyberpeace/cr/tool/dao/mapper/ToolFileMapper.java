@@ -8,9 +8,21 @@ import org.springframework.stereotype.Repository;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
+/**
+ * 工具文件Mapper
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Mapper
 @Repository
 public interface ToolFileMapper extends BaseMapper<ToolFile> {
 
+	/**
+	 * 查询由id列表
+	 *
+	 * @param ids id列表
+	 * @return {@code List<ToolFile> }
+	 */
 	List<ToolFile> selectByIds(@NotEmpty @Param("ids") List<Integer> ids);
 }

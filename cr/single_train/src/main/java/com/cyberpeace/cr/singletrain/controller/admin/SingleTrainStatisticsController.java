@@ -25,6 +25,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 单训练统计学Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "单兵训练统计")
 @RestController
 @RequestMapping("/cr/admin/single_train_statistics")
@@ -32,12 +38,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SingleTrainStatisticsController {
 
+    /**
+     * 单训练统计学
+     */
     @Autowired
     SingleTrainStatisticsService singleTrainStatistics;
+    /**
+     * 训练统计学Service
+     */
     @Autowired
     TrainStatisticsService trainStatisticsService;
 
 
+    /**
+     * 获取全部个人排
+     *
+     * @return {@code BaseRsp<List<SinglePersonalStatisticsBo>> }
+     */
     @GetMapping("/personal_rank")
     @ApiOperation("单兵训练个人排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
@@ -46,6 +63,11 @@ public class SingleTrainStatisticsController {
         return new BaseRsp<>(rsp);
     }
 
+    /**
+     * 获取组织排
+     *
+     * @return {@code BaseRsp<List<SingleOrganizationStatisticsBo>> }
+     */
     @GetMapping("/organization_rank")
     @ApiOperation("单兵训练组织排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
@@ -55,6 +77,12 @@ public class SingleTrainStatisticsController {
     }
 
 
+    /**
+     * 获取全部详情
+     *
+     * @param detailReq 详情请求体
+     * @return {@code BaseRsp<ListRsp<StatisticsDetail>> }
+     */
     @GetMapping("/detail")
     @ApiOperation("单兵训练统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)

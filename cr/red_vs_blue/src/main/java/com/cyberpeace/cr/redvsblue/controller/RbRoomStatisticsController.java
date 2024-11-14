@@ -35,6 +35,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗房间统计学Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗实例统计")
 @RestController
 @Slf4j
@@ -42,21 +48,35 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/red_vs_blue/statistics/")
 public class RbRoomStatisticsController {
 
+	/**
+	 * 红蓝对抗房间得分Service
+	 */
 	@Autowired
 	private RbRoomScoreService rbRoomScoreService;
 
+	/**
+	 * 红蓝对抗房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 查询红蓝实时战况页面 正中间计时器
 	 * 获取实例运行时间和状态
+	 *
+	 * @param resourceId 资源id
 	 * @return
 	 */
 	@ApiOperation("获取实例运行时间和状态")
@@ -78,7 +98,10 @@ public class RbRoomStatisticsController {
 
 	/**
 	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
-	 *     获取实例下的角色任务分类分布数据
+	 * 获取实例下的角色任务分类分布数据
+	 *
+	 * @param resourceId 资源id
+	 * @param roleType   岗位类型
 	 * @return
 	 */
 	@ApiOperation("获取实例下的角色任务分类分布数据")
@@ -100,6 +123,9 @@ public class RbRoomStatisticsController {
 
 	/**
 	 * 指定队伍（红/蓝）排行榜 得分排名 任务进展排名
+	 *
+	 * @param resourceId 资源id
+	 * @param roleType   岗位类型
 	 * @return
 	 */
 	@ApiOperation("指定队伍（红/蓝）排行榜 得分排名")
@@ -121,7 +147,10 @@ public class RbRoomStatisticsController {
 
 	/**
 	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
-	 *     获取实例下的角色任务分类分布数据
+	 * 获取实例下的角色任务分类分布数据
+	 *
+	 * @param resourceId 资源id
+	 * @param roleType   岗位类型
 	 * @return
 	 */
 	@ApiOperation("获取实例下的角色任务分类分布数据")
@@ -143,7 +172,10 @@ public class RbRoomStatisticsController {
 
 	/**
 	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
-	 *     获取实例下的角色任务分类分布数据
+	 * 获取实例下的角色任务分类分布数据
+	 *
+	 * @param resourceId 资源id
+	 * @param roleType   岗位类型
 	 * @return
 	 */
 	@ApiOperation("获取实例下的任务评估数据统计")
@@ -166,6 +198,8 @@ public class RbRoomStatisticsController {
 	/**
 	 * 查询任务状态
 	 * 导演-任务编排 左侧柱状图
+	 *
+	 * @param resourceId 资源id
 	 * @return
 	 */
 	@ApiOperation("查询任务状态")
@@ -199,9 +233,12 @@ public class RbRoomStatisticsController {
 	}
 
 	/**
-	 *  红方/蓝方成绩页面 右侧中折线图 任务进展
-	 *     红蓝实时战况页面 左右两侧 任务进展
-	 *     队内任务下发和完成任务数进展
+	 * 红方/蓝方成绩页面 右侧中折线图 任务进展
+	 * 红蓝实时战况页面 左右两侧 任务进展
+	 * 队内任务下发和完成任务数进展
+	 *
+	 * @param resourceId 资源id
+	 * @param roleType   岗位类型
 	 * @return
 	 */
 	@ApiOperation("获取任务下发和完成任务数进展")
@@ -222,8 +259,11 @@ public class RbRoomStatisticsController {
 	}
 
 	/**
-	 *  红方/蓝方成绩页面 右侧下折线图 得分趋势
-	 *     队伍得分趋势统计
+	 * 红方/蓝方成绩页面 右侧下折线图 得分趋势
+	 * 队伍得分趋势统计
+	 *
+	 * @param resourceId 资源id
+	 * @param roleType   岗位类型
 	 * @return
 	 */
 	@ApiOperation("队伍得分趋势统计")
@@ -248,7 +288,11 @@ public class RbRoomStatisticsController {
 	}
 
 	/**
-	 *  红蓝实时战况页面 正下方 红蓝得分
+	 * 红蓝实时战况页面 正下方 红蓝得分
+	 *
+	 * @param resourceId 资源id
+	 * @param roleType   岗位类型
+	 * @param userId     用户id
 	 * @return
 	 */
 	private JSONObject getRbScoreProgress_6(String resourceId, Integer roleType, String userId) {
@@ -258,6 +302,13 @@ public class RbRoomStatisticsController {
 		return rbRoomScoreService.getAllRbScoreProgress(resourceId, roleType);
 	}
 
+	/**
+	 * 许可检查教员或组
+	 *
+	 * @param resourceId 资源id
+	 * @param userId     用户id
+	 * @param roleType   岗位类型
+	 */
 	private void permissionCheckTeacherOrGroup(String resourceId, String userId, Integer roleType) {
 		CrRole crRole = rbRoomService.checkRoomPermission(resourceId, userId);
 

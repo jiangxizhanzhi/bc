@@ -39,18 +39,18 @@ public interface RbRefereeService {
      */
     List<RbRoleIdNameType> getRoleList(String roomId);
 
-	/**
-	 * 学员提交任务后通知裁判
-	 *
-	 * @param missionId 任务id
-	 */
-	void notifySubmission(String missionId);
+    /**
+     * 学员提交任务后通知裁判
+     *
+     * @param missionId 任务id
+     */
+    void notifySubmission(String missionId);
 
-	/**
-	 * 获取监控会话
-	 *
-	 * @param roomId 房间id
-	 * @return {@code List<MonitorSession>}
-	 */
-	List<MonitorSession> getMonitorSessions(String roomId);
+    /**
+     * 获取监控会话
+     *
+     * @param roomId 房间id
+     * @return {@code List<MonitorSession>}
+     */
+    List<MonitorSession> getMonitorSessions(String roomId);
 }

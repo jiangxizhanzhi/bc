@@ -9,96 +9,192 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝对抗房间响应
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class RbRoomRsp {
 
+	/**
+	 * 红蓝对抗房间id
+	 */
 	@ApiModelProperty(value = "红蓝对抗房间id")
 	private String resourceId;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty(value = "描述")
 	private String description;
 
+	/**
+	 * 类别
+	 */
 	@ApiModelProperty(value = "类别")
 	private Integer category;
 
+	/**
+	 * 前置技能
+	 */
 	@ApiModelProperty(value = "前置技能")
 	private List<String> preSkill;
 
+	/**
+	 * 训练目标
+	 */
 	@ApiModelProperty(value = "训练目标")
 	private List<String> trainSkill;
 
+	/**
+	 * 开始时间
+	 */
 	@ApiModelProperty(value = "开始时间")
 	private Date startTime;
 
+	/**
+	 * 结束时间
+	 */
 	@ApiModelProperty(value = "结束时间")
 	private Date endTime;
 
+	/**
+	 * 模板id
+	 */
 	@ApiModelProperty(value = "模板id")
 	private String template;
 
+	/**
+	 * 模板名称
+	 */
 	@ApiModelProperty(value = "模板名称")
 	private String templateName;
 
+	/**
+	 * 难度
+	 */
 	@ApiModelProperty(value = "难度")
 	private Integer difficult;
 
+	/**
+	 * 自己岗位，基本信息，查列表会查询其他学员角色的内容列表
+	 */
 	@ApiModelProperty(value = "自己岗位，基本信息，查列表会查询其他学员角色的内容列表")
 	private BaseRole rolePermission;
 
+	/**
+	 * 所有岗位(包含教员)，单独查时使用
+	 */
 	@ApiModelProperty(value = "所有岗位(包含教员)，单独查时使用")
 	private List<RbRoomRoleRes> rolesData;
 
+	/**
+	 * 训练时长
+	 */
 	@ApiModelProperty(value = "训练时长")
 	private Integer durationTime;
 
+	/**
+	 * 场景开启时间
+	 */
 	@ApiModelProperty(value = "场景开启时间")
 	private Date sceneStartTime;
 
+	/**
+	 * 场景关闭时间
+	 */
 	@ApiModelProperty(value = "场景关闭时间")
 	private Date sceneEndTime;
 
+	/**
+	 * 训练状态
+	 */
 	@ApiModelProperty(value = "训练状态")
 	private Integer trainingStatus;
 
+	/**
+	 * 运行时间
+	 */
 	@ApiModelProperty(value = "运行时间")
 	private Integer runtime;
 
+	/**
+	 * 节点数
+	 */
 	@ApiModelProperty(value = "节点数")
 	private Integer nodesCount;
 
+	/**
+	 * 录屏开关
+	 */
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
 
+	/**
+	 * 部分启动开关
+	 */
 	@ApiModelProperty(value = "部分启动开关")
 	private Boolean supportPartialStart;
 
+	/**
+	 * LOGO
+	 */
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
+	/**
+	 * 后台模板id，用于查询职业框架关联
+	 */
 	@ApiModelProperty(value = "后台模板id，用于查询职业框架关联")
 	private String businessTemplateId;
 
+	/**
+	 * 是否关联 ATT&CK
+	 */
 	@ApiModelProperty(value = "是否关联 ATT&CK")
 	private Boolean isAttackRelated;
 
+	/**
+	 * 关联 ATT&CK 计数
+	 */
 	@ApiModelProperty(value = "关联 ATT&CK 计数")
 	private List<NameCount> attackCount;
 
+	/**
+	 * 是否关联 ATT&CK ICS
+	 */
 	@ApiModelProperty(value = "是否关联 ATT&CK ICS")
 	private Boolean isIcsRelated;
 
+	/**
+	 * 关联 ATT&CK ICS 计数
+	 */
 	@ApiModelProperty(value = "关联 ATT&CK ICS 计数")
 	private List<NameCount> icsCount;
 
+	/**
+	 * 是否关联 Engage
+	 */
 	@ApiModelProperty(value = "是否关联 Engage")
 	private Boolean isEngageRelated;
 
+	/**
+	 * 关联 Engage 计数
+	 */
 	@ApiModelProperty(value = "关联 Engage 计数")
 	private List<NameCount> engageCount;
 
+	/**
+	 * 拓扑中占用的授权节点数量
+	 */
 	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
 }

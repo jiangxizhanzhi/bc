@@ -9,10 +9,19 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 
+/**
+ * 单人房
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("cr_single_room")
 public class SingleRoom extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
@@ -34,16 +43,19 @@ public class SingleRoom extends BaseTable {
 	/**
 	 * 训练记录(任务完成记录)
 	 * {
-	 *   "5e1de95e1efc475bbbfeacaa31d0cfb3": {
-	 *     "answer": "B",
-	 *     "record": "",
-	 *     "time": 1684312011951
-	 *   },
-	 *   "266966553e6f4c8a91591170b73dc51c": {
-	 *     "answer": "B",
-	 *     "record": "",
-	 *     "time": 1684312008977
-	 *   }
+	 * "5e1de95e1efc475bbbfeacaa31d0cfb3":
+	 * {
+	 * "answer": "B",
+	 * "record": "",
+	 * "time": 1684312011951
+	 * }
+	 * ,
+	 * "266966553e6f4c8a91591170b73dc51c":
+	 * {
+	 * "answer": "B",
+	 * "record": "",
+	 * "time": 1684312008977
+	 * }
 	 * }
 	 */
 	private String trainingRecord;

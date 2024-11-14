@@ -9,14 +9,23 @@ import lombok.Data;
 
 /**
  * 实例角色
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @Data
 public class RoomRole {
 
+	/**
+	 * 用户
+	 */
 	@ApiModelProperty(required = true)
 	@NotNull
 	private List<String> users;
 
+	/**
+	 * 资源id
+	 */
 	private String resourceId;
 
 }

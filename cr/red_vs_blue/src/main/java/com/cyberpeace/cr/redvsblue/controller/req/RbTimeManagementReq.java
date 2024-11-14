@@ -8,19 +8,37 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝对抗时间管理请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class RbTimeManagementReq implements Serializable {
 
+	/**
+	 * 房间id
+	 */
 	@ApiModelProperty(required = true, value = "房间id")
 	@NotNull
 	private String roomId;
 
+	/**
+	 * 天文时间
+	 */
 	@ApiModelProperty(value = "天文时间")
 	private Date astronomicalTime;
 
+	/**
+	 * 作战时间
+	 */
 	@ApiModelProperty(value = "作战时间")
 	private Date combatTime;
 
+	/**
+	 * 速率
+	 */
 	@ApiModelProperty(value = "速率")
 	private Integer rate;
 }

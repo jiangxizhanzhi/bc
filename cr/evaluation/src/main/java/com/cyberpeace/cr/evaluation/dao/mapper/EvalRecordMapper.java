@@ -9,9 +9,24 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 
+/**
+ * 测评记录Mapper
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Mapper
 @Repository
 public interface EvalRecordMapper extends BaseMapper<EvalRecord> {
+    /**
+     * 分页列表
+     *
+     * @param page    分页
+     * @param taskId  任务id
+     * @param status  状态
+     * @param pattern 模式
+     * @return {@code Page<EvalRecordListRsp> }
+     */
     Page<EvalRecordListRsp> pageList(@Param("page") Page<EvalRecordListRsp> page,
                                      @Param("task_id") String taskId,
                                      @Param("status") Integer status,

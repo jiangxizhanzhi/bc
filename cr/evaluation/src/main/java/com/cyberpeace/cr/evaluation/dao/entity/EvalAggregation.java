@@ -8,8 +8,10 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 /**
- * 
- * @TableName cr_eval_aggregation
+ * 测评集合体
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @TableName(value = "cr_eval_aggregation")
 @Data

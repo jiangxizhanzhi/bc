@@ -15,6 +15,12 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
 
+/**
+ * 测评变量裁判Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
     /**
@@ -29,10 +35,12 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
     /**
      * 采集变量项目算法执行
-     * @param evalVariableRef 变量项对象
+     *
+     * @param evalVariableRef     变量项对象
      * @param evalAlgorithmRefMap 评估使用算法Map
-     * @param evalRecord 评估对象
-     * @param evalTask 测评实例对象
+     * @param evalRecord          评估对象
+     * @param evalTask            测评实例对象
+     * @return {@code String }
      */
     String startVariableAlgorithm(EvalVariableRef evalVariableRef,
                                   Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
@@ -41,6 +49,7 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
     /**
      * 获取变量项结果折线图
+     *
      * @param variableId 变量项id
      * @return 变量项目折线图信息
      */
@@ -48,7 +57,8 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
     /**
      * 获取变量项探针原始数据
-     * @param page 分页信息
+     *
+     * @param page       分页信息
      * @param variableId 变量项id
      * @return 探针原始数据分页信息
      */
@@ -56,6 +66,7 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
     /**
      * 获取评估结果变量项信息
+     *
      * @param variableId 变量项id
      * @return 评估结果变量项信息
      */

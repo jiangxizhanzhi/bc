@@ -8,15 +8,30 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝对抗模板岗位响应
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class RbTemplateRoleRsp {
 
+	/**
+	 * 角色名
+	 */
 	@ApiModelProperty(value = "角色名")
 	private String name;
 
+	/**
+	 * 角色组
+	 */
 	@ApiModelProperty(value = "角色组")
 	private Integer roleGroup;
 
+	/**
+	 * 子角色, 冗余
+	 */
 	@ApiModelProperty(value = "子角色, 冗余")
 	private List<RbTemplateRoleRsp> children;
 

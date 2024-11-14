@@ -6,6 +6,12 @@ import com.cyberpeace.cs.service.context.IdNameType;
 
 import lombok.Data;
 
+/**
+ * 红蓝对抗岗位id名称类型
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class RbRoleIdNameType extends IdNameType {
 

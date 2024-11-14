@@ -37,21 +37,42 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 红蓝对抗模板Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗模板前台")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/red_vs_blue_templates/")
 public class RbTemplateController {
 
+	/**
+	 * 红蓝对抗模板Service
+	 */
 	@Autowired
 	private RbTemplateService rbTemplateService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * RTKS相关Service
+	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	/**
+	 * 列表
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<RbTemplateListRsp>> }
+	 */
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -104,6 +125,13 @@ public class RbTemplateController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取红蓝对抗模板响应由基础信息数据
+	 *
+	 * @param rbTemplateData     红蓝对抗模板数据
+	 * @param topologyNodesStats 拓扑节点统计
+	 * @return {@code RbTemplateListRsp }
+	 */
 	private RbTemplateListRsp getRbTemplateRspByBaseInfoData(RbTemplateData rbTemplateData,
 			Map<String, TopoDigest> topologyNodesStats) {
 		RbTemplateListRsp rbTemplateListRsp = new RbTemplateListRsp();

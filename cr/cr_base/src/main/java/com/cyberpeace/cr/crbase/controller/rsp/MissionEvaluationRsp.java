@@ -17,7 +17,7 @@ import lombok.Data;
 public class MissionEvaluationRsp {
 
 	/**
-	 * submit_log_hash
+	 * 评估编号
 	 */
 	@ApiModelProperty(value = "评估编号")
 	private String resourceId;
@@ -127,9 +127,15 @@ public class MissionEvaluationRsp {
 	@Data
 	public class SubmitInfo {
 
+	/**
+	 * 提交时间
+	 */
 		@ApiModelProperty(value = "提交时间")
 		private Date createTime;
 
+	/**
+	 * 提交答案
+	 */
 		@ApiModelProperty(value = "提交答案")
 		private String userAnswer;
 	}

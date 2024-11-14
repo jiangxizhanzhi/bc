@@ -19,6 +19,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗时间Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗实例授时")
 @Slf4j
 @RestController
@@ -26,10 +32,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/time")
 public class RbTimeController {
 
-    @Autowired
+	/**
+	 * 红蓝对抗房间Service
+	 */
+	@Autowired
 	private RbRoomService rbRoomService;
 
-    @ApiOperation("新增/修改")
+	/**
+	 * 创建
+	 *
+	 * @param rbTimeReq 红蓝对抗时间请求体
+	 * @return {@code BaseRsp<RbTimeReq> }
+	 */
+	@ApiOperation("新增/修改")
     @PostMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbTimeReq> create(@RequestBody @Validated RbTimeReq rbTimeReq) {
@@ -40,7 +55,13 @@ public class RbTimeController {
 		return new BaseRsp<>();
     }
 
-    @ApiOperation("查询")
+	/**
+	 * 获取
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<RbTimeReq> }
+	 */
+	@ApiOperation("查询")
     @GetMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbTimeReq>

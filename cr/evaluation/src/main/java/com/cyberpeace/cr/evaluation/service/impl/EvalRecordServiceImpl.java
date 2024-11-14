@@ -64,12 +64,24 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评记录Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRecord> implements EvalRecordService {
+    /**
+     * 测评编号裁判Service
+     */
     @Autowired
     private EvalIndexRefService evalIndexRefService;
 
+    /**
+     * 测评变量裁判Service
+     */
     @Autowired
     private EvalVariableRefService evalVariableRefService;
 
@@ -91,6 +103,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private EvalCollectionService evalCollectionService;
 
+    /**
+     * 测评收集Mapper
+     */
     @Autowired
     private EvalCollectionMapper evalCollectionMapper;
 
@@ -100,69 +115,143 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private EvalIndicatorService evalIndicatorService;
 
+    /**
+     * 事务模板
+     */
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    /**
+     * 测评算法Service
+     */
     @Autowired
     private EvalAlgorithmService evalAlgorithmService;
 
+    /**
+     * 远程场景Service
+     */
     @Autowired
     private RemoteSceneService remoteSceneService;
 
+    /**
+     * 测评探针数据Service
+     */
     @Autowired
     private EvalProbeDataService evalProbeDataService;
 
+    /**
+     * 测评算法裁判Service
+     */
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
+    /**
+     * 测评任务Mapper
+     */
     @Autowired
     private EvalTaskMapper evalTaskMapper;
 
+    /**
+     * 测评任务步骤Service
+     */
     @Autowired
     private EvalTaskStepService evalTaskStepService;
 
+    /**
+     * 测评模板Service
+     */
     @Autowired
     @Lazy
     private EvalTemplateService evalTemplateService;
 
+    /**
+     * 当地场景Service
+     */
     @Autowired
     private LocalSceneService localSceneService;
 
+    /**
+     * 测评变量裁判探针数据Service
+     */
     @Autowired
     private EvalVariableRefProbeDataService evalVariableRefProbeDataService;
 
+    /**
+     * 靶场常数Service
+     */
     @Autowired
     private CrConstantsService crConstantsService;
 
+    /**
+     * 测评变量裁判Mapper
+     */
     @Autowired
     private EvalVariableRefMapper evalVariableRefMapper;
 
+    /**
+     * 远程服务器环境Service
+     */
     @Autowired
     private RemoteServerEnvService remoteServerEnvService;
 
+    /**
+     * 测评结果Mapper
+     */
     @Autowired
     private EvalResultMapper evalResultMapper;
 
+    /**
+     * 测评记录Mapper
+     */
     @Autowired
     private EvalRecordMapper evalRecordMapper;
 
+    /**
+     * 测评编号Mapper
+     */
     @Autowired
     private EvalIndexMapper evalIndexMapper;
 
+    /**
+     * 一次探测数据大小
+     */
     private static final long ONCE_PROBE_DATA_SIZE = 1000L;  // 10/100/1000
 
+    /**
+     * 探针
+     */
     private static final String PROBES = "probes"; // 探针
 
+    /**
+     * 拓扑
+     */
     private static final String TOPOLOGY = "topology"; // 拓扑
 
+    /**
+     * cp集合
+     */
     private static final String CPCOLLECTION = "cpcollection"; // 采集
 
+    /**
+     * 插件
+     */
     private static final String PLUGINS = "plugins"; // 插件
 
+    /**
+     * 场景
+     */
     private static final String SCENE = "scene"; // 场景
 
+    /**
+     * 元素
+     */
     private static final String ELEMENTS = "elements"; // 元素
 
+    /**
+     * 是否存在
+     *
+     * @param requestData 请求数据
+     */
     @Override
     public void isExist(EvalRecordAddReq requestData) {
         LambdaQueryChainWrapper<EvalRecord> querySet = lambdaQuery().eq(EvalRecord::getTaskId, requestData.getTaskId()).eq(EvalRecord::getName, requestData.getName());
@@ -204,6 +293,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalTask;
     }
 
+    /**
+     * 获取实体
+     *
+     * @param resourceId 资源id
+     * @return {@code EvalRecord }
+     */
     @Override
     public EvalRecord getEntity(String resourceId) {
         // 非法请求
@@ -219,6 +314,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalRecord;
     }
 
+    /**
+     * 分页列表
+     *
+     * @param page    分页
+     * @param taskId  任务id
+     * @param status  状态
+     * @param pattern 模式
+     * @return {@code ListRsp<EvalRecordListRsp> }
+     */
     @Override
     public ListRsp<EvalRecordListRsp> pageList(Page page, String taskId, Integer status, String pattern) {
         return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern));
@@ -228,8 +332,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public interface EvalRecordToEvalRecordRsp extends BaseConvertor<EvalRecord, EvalRecordRsp> {
     }
 
+    /**
+     * 测评记录自测评记录响应
+     */
     public static final EvalRecordToEvalRecordRsp evalRecordToEvalRecordRsp = Mappers.getMapper(EvalRecordToEvalRecordRsp.class);
 
+    /**
+     * 获取
+     *
+     * @param recordId 记录id
+     * @return {@code EvalRecordRsp }
+     */
     @Override
     public EvalRecordRsp get(String recordId) {
         EvalRecord evalRecord = getEntity(recordId);
@@ -259,9 +372,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public interface EvalRecordAddReqToEvalRecord extends BaseConvertor<EvalRecordAddReq, EvalRecord> {
     }
 
+    /**
+     * 测评记录新增请求体自测评记录
+     */
     public static final EvalRecordAddReqToEvalRecord evalRecordAddReqToEvalRecord = Mappers.getMapper(EvalRecordAddReqToEvalRecord.class);
 
 
+    /**
+     * 创建
+     *
+     * @param requestData 请求数据
+     * @return {@code EvalRecordRsp }
+     */
     @Override
     public EvalRecordRsp create(EvalRecordAddReq requestData) {
         // 评估对象构建
@@ -573,9 +695,20 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     }
 
+    /**
+     * 测评算法自测评算法裁判
+     */
     public static final EvalAlgorithmToEvalAlgorithmRef evalAlgorithmToEvalAlgorithmRef = Mappers.getMapper(EvalAlgorithmToEvalAlgorithmRef.class);
 
 
+    /**
+     * 生成算法 ref
+     *
+     * @param algorithmId         算法id
+     * @param originAlgorithmMap  起源算法映射
+     * @param evalAlgorithmRefMap 测评算法裁判映射
+     * @return {@code EvalAlgorithmRef }
+     */
     private EvalAlgorithmRef generateAlgorithmRef(String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap) {
         // 取消原逻辑 【已拷贝算法, 不再重复拷贝, evalAlgorithmRefMap获取返回】
 
@@ -591,7 +724,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
 
-
+    /**
+     * 更新
+     *
+     * @param requestData 请求数据
+     * @return {@code EvalRecordRsp }
+     */
     @Override
     public EvalRecordRsp update(EvalRecordAddReq requestData) {
         EvalRecord originEvalRecord = getEntity(requestData.getResourceId());
@@ -655,20 +793,38 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public interface EvalRecordVariableContextToEvalVariableRef extends BaseConvertor<EvalRecordVariableContext, EvalVariableRef> {
     }
 
+    /**
+     * 测评记录变量上下文自测评变量裁判
+     */
     public static final EvalRecordVariableContextToEvalVariableRef evalRecordVariableContextToEvalVariableRef = Mappers.getMapper(EvalRecordVariableContextToEvalVariableRef.class);
 
     @Mapper
     public interface EvalIndexRefToEvalSystemIndexesContext extends BaseConvertor<EvalIndexRef, EvalSystemIndexesContext> {
     }
 
+    /**
+     * 测评编号裁判自测评系统指标上下文
+     */
     public static final EvalIndexRefToEvalSystemIndexesContext evalIndexRefToEvalSystemIndexesContext = Mappers.getMapper(EvalIndexRefToEvalSystemIndexesContext.class);
 
     @Mapper
     public interface EvalVariableRefToEvalSystemIndexesContext extends BaseConvertor<EvalVariableRef, EvalSystemIndexesContext> {
     }
 
+    /**
+     * 测评变量裁判自测评系统指标上下文
+     */
     public static final EvalVariableRefToEvalSystemIndexesContext evalVariableRefToEvalSystemIndexesContext = Mappers.getMapper(EvalVariableRefToEvalSystemIndexesContext.class);
 
+    /**
+     * 生成下一个索引
+     *
+     * @param evalIndexRef     测评编号裁判
+     * @param fullIndexesMap   满指标映射
+     * @param fullVariablesMap 满变量映射
+     * @param isFull           是否满
+     * @return {@code EvalSystemIndexesContext }
+     */
     private EvalSystemIndexesContext generateNextIndexes(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> fullIndexesMap, Map<String, EvalVariableRef> fullVariablesMap, Boolean isFull) {
         EvalSystemIndexesContext evalSystemIndexesContext = evalIndexRefToEvalSystemIndexesContext.from(evalIndexRef);
         evalSystemIndexesContext.setChildren(Lists.newArrayList());
@@ -706,11 +862,25 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalSystemIndexesContext;
     }
 
+    /**
+     * 生成下一个索引
+     *
+     * @param evalIndexRef     测评编号裁判
+     * @param fullIndexesMap   满指标映射
+     * @param fullVariablesMap 满变量映射
+     * @return {@code EvalSystemIndexesContext }
+     */
     private EvalSystemIndexesContext generateNextIndexes(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> fullIndexesMap, Map<String, EvalVariableRef> fullVariablesMap) {
 
         return generateNextIndexes(evalIndexRef, fullIndexesMap, fullVariablesMap, false);
     }
 
+    /**
+     * 删除
+     *
+     * @param recordIds 记录id列表
+     * @return {@code Boolean }
+     */
     @Override
     public Boolean delete(List<String> recordIds) {
         return transactionTemplate.execute(status -> {
@@ -722,6 +892,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
+    /**
+     * 删除记录
+     *
+     * @param taskIds 任务id列表
+     * @return {@code Boolean }
+     */
     @Override
     public Boolean deleteRecord(List<String> taskIds) {
         if (taskIds == null || taskIds.isEmpty()) {
@@ -735,6 +911,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return delete(recordIds);
     }
 
+    /**
+     * 删除关系
+     *
+     * @param recordIds 记录id列表
+     */
     private void deleteRelation(List<String> recordIds) {
         // todo 算法, 同步数据, 计算结果一并删除
         evalIndexRefService.removeByIds(evalIndexRefService.lambdaQuery().in(EvalIndexRef::getRecordId, recordIds).list().stream().map(EvalIndexRef::getResourceId).collect(Collectors.toList()));
@@ -742,6 +923,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalVariableRefService.removeByIds(evalVariableRefService.lambdaQuery().in(EvalVariableRef::getRecordId, recordIds).list().stream().map(EvalVariableRef::getResourceId).collect(Collectors.toList()));
     }
 
+    /**
+     * 记录运行
+     *
+     * @param evalRecord 测评记录
+     * @param evalTask   测评任务
+     * @param isRestart  是否重新启动
+     * @param language   语言
+     */
     @Override
     @Async
     public void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart, String language) {
@@ -782,6 +971,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         );
     }
 
+    /**
+     * 新增结果自测评结果
+     *
+     * @param evalRecord 测评记录
+     */
     private void addResToEvalResult(EvalRecord evalRecord) {
         if (evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())) {
             return;
@@ -885,6 +1079,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalResultMapper.insert(evalResult);
     }
 
+    /**
+     * 获取第五对象
+     *
+     * @param fifthEvalIndexRefMap 第五测评编号裁判映射
+     * @param fifthObj             第五目标
+     * @param current              当前
+     */
     private void getFifthObj(Map<String, EvalVariableRef> fifthEvalIndexRefMap, JSONObject fifthObj, EvalIndexRef current) {
         String fifthIds = current.getNextIds();
         List<String> fifthIdsList = JsonUtil.toJsonObjectArray(fifthIds, String.class);
@@ -900,6 +1101,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
+    /**
+     * 启动变量
+     *
+     * @param evalRecord  测评记录
+     * @param evalTask    测评任务
+     * @param variableIds 变量id列表
+     */
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
         if (variableIds.isEmpty()) {
             EvalLog.info(evalRecord, "variables id is empty, continue.");
@@ -944,6 +1152,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     }
 
+    /**
+     * 启动指标
+     *
+     * @param evalRecord 测评记录
+     */
     private void startIndexes(EvalRecord evalRecord) {
 
         // 体系下指标项
@@ -979,6 +1192,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
+    /**
+     * 同步探测数据
+     *
+     * @param evalRecord  测评记录
+     * @param evalTask    测评任务
+     * @param variableIds 变量id列表
+     */
     private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
         if (variableIds.isEmpty()) {
             EvalLog.info(evalRecord, "variables id is empty, continue.");
@@ -1047,6 +1267,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
+    /**
+     * EXE 集合事件
+     *
+     * @param evalRecord                 测评记录
+     * @param evalVariableRef            测评变量裁判
+     * @param collectionEventPageContext 收集事件分页上下文
+     * @param ipMap                      ip地址映射
+     * @param isFirstCall                是否第一调用
+     */
     private void exeCollectionEvent(EvalRecord evalRecord, EvalVariableRef evalVariableRef, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap, Boolean isFirstCall) {
 
         List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
@@ -1139,6 +1368,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return results;
     }
 
+    /**
+     * 获取节点
+     *
+     * @param roomId 房间id
+     * @return {@code List<EvalRoomPairRsp> }
+     */
     @Override
     public List<EvalRoomPairRsp> getNodes(String roomId) {
         EvalTask evalTask = getTask(roomId);
@@ -1159,6 +1394,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return results;
     }
 
+    /**
+     * 获取探针
+     *
+     * @param roomId 房间id
+     * @param nodeId 节点id
+     * @return {@code List<EvalRoomPairRsp> }
+     */
     @Override
     public List<EvalRoomPairRsp> getProbes(String roomId, String nodeId) {
         EvalTask evalTask = getTask(roomId);
@@ -1193,6 +1435,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return results;
     }
 
+    /**
+     * 获取探针
+     *
+     * @param roomId 房间id
+     * @return {@code Map<String, List<EvalRoomPairRsp>> }
+     */
     @Override
     public Map<String, List<EvalRoomPairRsp>> getProbes(String roomId) {
         EvalTask evalTask = getTask(roomId);
@@ -1220,6 +1468,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return results;
     }
 
+    /**
+     * 获取节点探针
+     *
+     * @param roomId 房间id
+     * @return {@code List<EvalRecordNodeProbeReq> }
+     */
     @Override
     public List<EvalRecordNodeProbeReq> getNodeProbe(String roomId) {
         EvalTask evalTask = getTask(roomId);
@@ -1267,8 +1521,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public interface EvalRecordToEvalRecordResultRsp extends BaseConvertor<EvalRecord, EvalRecordResultRsp> {
     }
 
+    /**
+     * 测评记录自测评记录结果响应
+     */
     public static final EvalRecordToEvalRecordResultRsp evalRecordToEvalRecordResultRsp = Mappers.getMapper(EvalRecordToEvalRecordResultRsp.class);
 
+    /**
+     * 结果
+     *
+     * @param recordId 记录id
+     * @return {@code EvalRecordResultRsp }
+     */
     @Override
     public EvalRecordResultRsp result(String recordId) {
 
@@ -1302,6 +1565,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return result;
     }
 
+    /**
+     * 记录状态枚举
+     *
+     * @return {@code List<EvalRoomIntPairRsp> }
+     */
     @Override
     public List<EvalRoomIntPairRsp> recordStatusEnum() {
 
@@ -1313,6 +1581,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }).collect(Collectors.toList());
     }
 
+    /**
+     * 导出测评记录路径
+     *
+     * @param resourceId 资源id
+     * @param taskId     任务id
+     * @return {@code String }
+     */
     @Override
     public String dumpEvalRecordPath(String resourceId, String taskId) {
         String destPdfPath;
@@ -1338,6 +1613,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return destPdfPath;
     }
 
+    /**
+     * 获取全部周期结果
+     *
+     * @param resourceId 资源id
+     * @return {@code List<EvalSystemResultRsp> }
+     */
     @Override
     public List<EvalSystemResultRsp> getAllCycleResult(String resourceId) {
         List<EvalSystemResultRsp> res = new ArrayList<>();
@@ -1375,6 +1656,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return res;
     }
 
+    /**
+     * 生成下一个指标结果
+     *
+     * @param evalIndexRef       测评编号裁判
+     * @param evalIndexRefMap    测评编号裁判映射
+     * @param evalVariableRefMap 测评变量裁判映射
+     * @param evalResults        测评结果
+     * @return {@code List<EvalSystemResultRsp> }
+     */
     private List<EvalSystemResultRsp> generateNextIndexesRes(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> evalIndexRefMap, Map<String, EvalVariableRef> evalVariableRefMap, List<EvalResult> evalResults) {
         List<EvalSystemResultRsp> res = new ArrayList<>();
         List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
@@ -1434,6 +1724,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return res;
     }
 
+    /**
+     * 设置当前响应
+     *
+     * @param evalResults   测评结果
+     * @param nextId        下一个id
+     * @param rsp           响应
+     * @param evalIndexRef1 测评编号参考文献 1
+     */
     private void setCurrentRsp(List<EvalResult> evalResults, String nextId, EvalSystemResultRsp rsp, EvalIndexRef evalIndexRef1) {
         rsp.setResourceId(evalIndexRef1.getResourceId());
         rsp.setName(evalIndexRef1.getName());
@@ -1454,6 +1752,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
+    /**
+     * 设置周期结果
+     *
+     * @param rsp   响应
+     * @param i     我
+     * @param score 得分
+     */
     private void setCycleResult(EvalSystemResultRsp rsp, int i, Integer score) {
         if (0 == i) {
             rsp.setFirstScore(score);
@@ -1468,6 +1773,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
+    /**
+     * 获取测评记录JSON 格式对象
+     *
+     * @param resourceId 资源id
+     * @param taskId     任务id
+     * @return {@code JSONObject }
+     */
     private JSONObject getEvalRecordJsonObject(String resourceId, String taskId) {
         JSONObject data = new JSONObject();
 
@@ -1534,6 +1846,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return data;
     }
 
+    /**
+     * 获取测评收集
+     *
+     * @param evalVariableRefList 测评变量裁判列表
+     * @return {@code List<EvalCollectionContextRsp> }
+     */
     private List<EvalCollectionContextRsp> getEvalCollection(List<EvalVariableRef> evalVariableRefList) {
         List<EvalCollectionContextRsp> evalCollectionContextList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(evalVariableRefList)) {
@@ -1553,6 +1871,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalCollectionContextList;
     }
 
+    /**
+     * 获取模板i18n
+     *
+     * @return {@code JSONObject }
+     */
     private JSONObject getTemplateI18n() {
         JSONObject jsonObject = new JSONObject();
 
@@ -1563,6 +1886,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return jsonObject;
     }
 
+    /**
+     * 获取标题
+     *
+     * @param name 名称
+     * @return {@code String }
+     */
     private String getTitle(String name) {
 
         if (!CommonContext.isChinese()) {
@@ -1572,6 +1901,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
+    /**
+     * 解析图
+     *
+     * @param result     结果
+     * @param variableId 变量id
+     * @return {@code EvalRecordResultIndexRsp }
+     */
     private EvalRecordResultIndexRsp parseGraph(EvalRecordResultRsp result, String variableId) {
         List<EvalSystemIndexesContext> indexes = result.getIndexes();
         EvalRecordResultIndexRsp evalRecordResultIndexRsp = new EvalRecordResultIndexRsp();
@@ -1583,6 +1919,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalRecordResultIndexRsp;
     }
 
+    /**
+     * 获取其他结果
+     *
+     * @param evalRecordResultIndexRsp 测评记录结果编号响应
+     */
     private void getOtherResult(EvalRecordResultIndexRsp evalRecordResultIndexRsp) {
         List<EvalRecordResultIndexRsp> children = evalRecordResultIndexRsp.getChildren();
         if (CollectionUtils.isNotEmpty(children)) {
@@ -1597,6 +1938,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
+    /**
+     * 设置父母id
+     *
+     * @param evalRecordResultIndexRsp 测评记录结果编号响应
+     */
     private void setParentId(EvalRecordResultIndexRsp evalRecordResultIndexRsp) {
         if (StringUtils.isNotEmpty(evalRecordResultIndexRsp.getNextIds())) {
             List<EvalRecordResultIndexRsp> children = evalRecordResultIndexRsp.getChildren();
@@ -1615,6 +1961,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
     }
 
+    /**
+     * 更改图表
+     *
+     * @param variableId 变量id
+     * @return {@code EvalVariableGraphListRsp }
+     */
     private EvalVariableGraphListRsp changeGraph(String variableId) {
         EvalVariableGraphListRsp result = new EvalVariableGraphListRsp();
         result.setTime(Lists.newArrayList());
@@ -1641,6 +1993,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return result;
     }
 
+    /**
+     * 改变记录状态
+     *
+     * @param enableRecording 启用录制
+     * @return {@code String }
+     */
     private String changeRecordStatus(Boolean enableRecording) {
         if (CommonContext.isChinese()) {
             if (Boolean.TRUE.equals(enableRecording)) {

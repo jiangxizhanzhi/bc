@@ -10,17 +10,35 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 红蓝对抗时间管理
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("cr_rb_time_management")
 public class RbTimeManagement extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	/**
+	 * 房间id
+	 */
 	private String roomId;
 
+	/**
+	 * 天文时间
+	 */
 	private Date astronomicalTime;
 
+	/**
+	 * 战斗时间
+	 */
 	private Date combatTime;
 
 	/**
@@ -33,14 +51,29 @@ public class RbTimeManagement extends BaseTable {
 	 */
 	private Date recoverTime;
 
+	/**
+	 * 比率
+	 */
 	private Integer rate;
 
+	/**
+	 * 状态
+	 */
 	private Integer status;
 
+	/**
+	 * 创建用户id
+	 */
 	private String createUserId;
 
+	/**
+	 * 更新用户id
+	 */
 	private String updateUserId;
 
+	/**
+	 * 结束时间
+	 */
 	private Date endTime;
 
 	public Boolean isStopped() {

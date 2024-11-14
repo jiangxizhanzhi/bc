@@ -19,20 +19,43 @@ import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * 团队训练统计学
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 public class TeamTrainStatistics extends CrEventStatistics {
 
+	/**
+	 * 团队房间Mapper
+	 */
 	@Autowired
 	TeamRoomMapper teamRoomMapper;
 
+	/**
+	 * 靶场岗位Mapper
+	 */
 	@Autowired
 	CrRoleMapper crRoleMapper;
 
+	/**
+	 * 获取代号
+	 *
+	 * @return {@code BusinessCode }
+	 */
 	@Override
 	public BusinessCode getCode() {
 		return BusinessCode.TEAM_TRAINING;
 	}
 
+	/**
+	 * 获取训练计数
+	 *
+	 * @param userId 用户id
+	 * @return {@code TrainingCount }
+	 */
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
@@ -44,6 +67,12 @@ public class TeamTrainStatistics extends CrEventStatistics {
 				TeamRoom.TrainingStatusCode.ENDED.getCode());
 	}
 
+	/**
+	 * 获取相关训练
+	 *
+	 * @param userId 用户id
+	 * @return {@code List<TrainingData> }
+	 */
 	@Override
 	public List<TrainingData> getRelatedTraining(String userId) {
 		List<RoomRoleContext> roomRoleContexts = crRoleMapper.getRoomIdsAndRoleGroupByUserIdAndType(

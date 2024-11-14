@@ -39,28 +39,58 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 团队态势Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class TeamSituationServiceImpl implements TeamSituationService {
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 团队教员Service
+	 */
 	@Autowired
 	private TeamTeacherService teamTeacherService;
 
+	/**
+	 * 团队房间Service
+	 */
 	@Autowired
 	private TeamRoomService teamRoomService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 任务态势Service
+	 */
 	@Autowired
 	private MissionSituationService missionSituationService;
 
+	/**
+	 * 如果显示态势
+	 *
+	 * @param roomId 房间id
+	 * @return {@code EntranceBo }
+	 */
 	@Override
 	public EntranceBo ifShowSituation(String roomId) {
 		TeamRoom room = teamRoomService.getById(roomId);
@@ -71,6 +101,12 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		return res;
 	}
 
+	/**
+	 * 获取态势信息
+	 *
+	 * @param roomId 房间id
+	 * @return {@code TeamSituationInfo }
+	 */
 	@Override
 	public TeamSituationInfo getSituationInfo(String roomId) {
 		TeamSituationInfo res = new TeamSituationInfo();
@@ -124,6 +160,12 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 	}
 
 
+	/**
+	 * 获取top5得分
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<StudentScoreVo> }
+	 */
 	@Override
 	public List<StudentScoreVo> getTop5Score(String roomId) {
 		// 获取该房间已下发的任务
@@ -163,6 +205,15 @@ public class TeamSituationServiceImpl implements TeamSituationService {
 		return res;
 	}
 
+	/**
+	 * 获取路线节点状态
+	 *
+	 * @param nodeName             节点名称
+	 * @param stageMap             阶段映射
+	 * @param submittedMissionIds  提交任务id列表
+	 * @param successfulMissionIds 成功任务id列表
+	 * @return {@code Integer }
+	 */
 	private Integer getRouteNodeStatus(String nodeName, Map<String, List<String>> stageMap,
 			Set<String> submittedMissionIds, Set<String> successfulMissionIds) {
 		List<String> missionIds = stageMap.get(nodeName);

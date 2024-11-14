@@ -25,6 +25,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗统计学Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗统计")
 @RestController
 @RequestMapping("/cr/admin/red_vs_blue_statistics")
@@ -32,10 +38,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RbStatisticsController {
 
+    /**
+     * 红蓝对抗统计学Service
+     */
     @Autowired
     RbStatisticsService rbStatisticsService;
+    /**
+     * 训练统计学Service
+     */
     @Autowired
     TrainStatisticsService trainStatisticsService;
+
+    /**
+     * 获取全部个人排
+     *
+     * @return {@code BaseRsp<List<RbPersonalStatisticsBo>> }
+     */
     @GetMapping("/personal_rank")
     @ApiOperation("红蓝对抗个人排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)
@@ -44,6 +62,11 @@ public class RbStatisticsController {
         return new BaseRsp<>(rsp);
     }
 
+    /**
+     * 获取组织排
+     *
+     * @return {@code BaseRsp<List<RbOrganizationStatisticsBo>> }
+     */
     @GetMapping("/organization_rank")
     @ApiOperation("红蓝对抗组织排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)
@@ -53,6 +76,12 @@ public class RbStatisticsController {
     }
 
 
+    /**
+     * 获取详情全部
+     *
+     * @param detailReq 详情请求体
+     * @return {@code BaseRsp<ListRsp<StatisticsDetail>> }
+     */
     @GetMapping("/detail")
     @ApiOperation("红蓝对抗统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)

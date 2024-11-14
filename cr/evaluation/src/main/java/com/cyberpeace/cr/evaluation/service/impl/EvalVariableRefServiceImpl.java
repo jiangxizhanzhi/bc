@@ -37,34 +37,79 @@ import com.cyberpeace.integratation.service.RemotePythonService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评变量裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMapper, EvalVariableRef> implements EvalVariableRefService {
+    /**
+     * 测评探针数据Service
+     */
     @Autowired
     private EvalProbeDataService evalProbeDataService;
 
+    /**
+     * 测评变量裁判探针数据Service
+     */
     @Autowired
     private EvalVariableRefProbeDataService evalVariableRefProbeDataService;
 
+    /**
+     * 远程蟒Service
+     */
     @Autowired
     private RemotePythonService remotePythonService;
 
+    /**
+     * 事务模板
+     */
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    /**
+     * 测评算法裁判Service
+     */
     @Autowired
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
+    /**
+     * 一次格式化大小
+     */
     private static final int ONCE_FORMAT_SIZE = 1000;
 
+    /**
+     * 格式值长度限制
+     */
     private static final int FORMAT_VALUE_LENGTH_LIMIT = 65535;
 
+    /**
+     * 代号日志格式
+     */
     private static final String CODE_LOG_FORMAT = "code: %s";
 
+    /**
+     * 其他精 氨 酸日志格式
+     */
     private static final String OTHER_ARG_LOG_FORMAT = "other arguments: %s";
 
+    /**
+     * 数据精 氨 酸日志格式
+     */
     private static final String DATA_ARG_LOG_FORMAT = "data argument: %s";
 
+    /**
+     * 启动变量算法
+     *
+     * @param evalVariableRef     测评变量裁判
+     * @param evalAlgorithmRefMap 测评算法裁判映射
+     * @param evalRecord          测评记录
+     * @param evalTask            测评任务
+     * @return {@code String }
+     */
     @Override
     public String startVariableAlgorithm(EvalVariableRef evalVariableRef,
                                        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
@@ -73,6 +118,15 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return startFormat(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
     }
 
+    /**
+     * 启动格式
+     *
+     * @param evalVariableRef     测评变量裁判
+     * @param evalAlgorithmRefMap 测评算法裁判映射
+     * @param evalRecord          测评记录
+     * @param evalTask            测评任务
+     * @return {@code String }
+     */
     private String startFormat(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "format algorithm start...");
@@ -101,6 +155,16 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return result;
     }
 
+    /**
+     * 执行格式
+     *
+     * @param evalVariableRef  测评变量裁判
+     * @param evalAlgorithmRef 测评算法裁判
+     * @param evalRecord       测评记录
+     * @param evalTask         测评任务
+     * @param limit            限制
+     * @return {@code String }
+     */
     private String executeFormat(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTask evalTask, int limit) {
 
         // 变量项探针采集数据
@@ -175,6 +239,15 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return null;
     }
 
+    /**
+     * 启动火柴
+     *
+     * @param evalVariableRef     测评变量裁判
+     * @param evalAlgorithmRefMap 测评算法裁判映射
+     * @param evalRecord          测评记录
+     * @param evalTask            测评任务
+     * @return {@code String }
+     */
     private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "match algorithm start...");
@@ -245,6 +318,14 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
     }
 
+    /**
+     * 启动标记
+     *
+     * @param evalVariableRef     测评变量裁判
+     * @param evalAlgorithmRefMap 测评算法裁判映射
+     * @param evalRecord          测评记录
+     * @return {@code String }
+     */
     private String startMark(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMarkAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "mark algorithm start...");
@@ -303,6 +384,12 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return null;
     }
 
+    /**
+     * 图
+     *
+     * @param variableId 变量id
+     * @return {@code EvalVariableGraphRsp }
+     */
     @Override
     public EvalVariableGraphRsp graph(String variableId) {
         EvalVariableGraphRsp result = new EvalVariableGraphRsp();
@@ -329,11 +416,24 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return result;
     }
 
+    /**
+     * 源数据
+     *
+     * @param page       分页
+     * @param variableId 变量id
+     * @return {@code ListRsp<EvalVariableDataPageRsp> }
+     */
     @Override
     public ListRsp<EvalVariableDataPageRsp> originData(Page page, String variableId) {
         return evalVariableRefProbeDataService.variableProbeData(page, variableId);
     }
 
+    /**
+     * result 变量
+     *
+     * @param variableId 变量id
+     * @return {@code EvalRecordResultVariableRsp }
+     */
     @Override
     public EvalRecordResultVariableRsp resultVariable(String variableId) {
         EvalVariableRef evalVariableRef = getById(variableId);

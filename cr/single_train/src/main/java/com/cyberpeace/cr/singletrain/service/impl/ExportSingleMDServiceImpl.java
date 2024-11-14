@@ -33,25 +33,56 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cs.service.context.RoleBo;
 
+/**
+ * 导出单md服务实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 
+	/**
+	 * 单模板Mapper
+	 */
 	@Autowired
 	private SingleTemplateMapper singleTemplateMapper;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 靶场常数Service
+	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	/**
+	 * 日志
+	 */
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
+	/**
+	 * 获取代号
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer getCode() {
 		return BusinessTypeConvert.SINGLE.to();
 	}
 
+	/**
+	 * 导出训练markdown
+	 *
+	 * @param businessTemplateList 业务模板列表
+	 * @param path                 路径
+	 * @param sceneNumber          场景数
+	 * @param disableImageExport   禁用图像导出
+	 */
 	@Override
 	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {
 

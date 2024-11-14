@@ -57,6 +57,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗房间得分Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗评分")
 @RestController
 @RequiresAuthentication
@@ -64,33 +70,67 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomScoreController {
 
+	/**
+	 * 红蓝对抗房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 红蓝对抗房间得分Service
+	 */
 	@Autowired
 	private RbRoomScoreService rbRoomScoreService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 靶场得分Controller
+	 */
 	@Autowired
 	private CrScoreController crScoreController;
 
+	/**
+	 * 中台环境Service
+	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
+	/**
+	 * 靶场得分Service
+	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
+	/**
+	 * 红蓝对抗时间管理Service
+	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
+	/**
+	 * 导出训练记录2PDF格式
+	 *
+	 * @param httpServletResponse HTTP Servlet 响应
+	 * @param roomId              房间id
+	 * @param roleGroup           岗位组
+	 */
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -130,6 +170,13 @@ public class RbRoomScoreController {
 		}
 	}
 
+	/**
+	 * 获取训练记录JSON 格式对象
+	 *
+	 * @param roomId    房间id
+	 * @param roleGroup 岗位组
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject getTrainRecordJsonObject(String roomId, Integer roleGroup) {
 		JSONObject jsonObject = new JSONObject();
 
@@ -167,6 +214,12 @@ public class RbRoomScoreController {
 		return jsonObject;
 	}
 
+	/**
+	 * 获取阶段RSP
+	 *
+	 * @param missionSchemeList 任务计划列表
+	 * @return {@code List<StageExport> }
+	 */
 	private List<StageExport>
 			getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
 		List<StageExport> stageExports = org.apache.commons.compress.utils.Lists.newArrayList();
@@ -180,6 +233,13 @@ public class RbRoomScoreController {
 		return stageExports;
 	}
 
+	/**
+	 * 获取学员得分
+	 *
+	 * @param resourceId 资源id
+	 * @param userHash   用户id
+	 * @return {@code BaseRsp<StudentScoreRsp> }
+	 */
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -200,6 +260,12 @@ public class RbRoomScoreController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 更新学员得分
+	 *
+	 * @param studentScoreReq 学员得分请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("提交学员评分")
 	@PostMapping("/student_score")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -235,6 +301,12 @@ public class RbRoomScoreController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取任务评估
+	 *
+	 * @param missionEvaluationListReq 任务评估列表请求体
+	 * @return {@code BaseRsp<List<MissionEvaluationRsp>> }
+	 */
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -250,6 +322,8 @@ public class RbRoomScoreController {
 	/**
 	 * 获取动态事件
 	 *
+	 * @param resourceId 资源id
+	 * @param studentId  学员id
 	 * @return
 	 */
 	@ApiOperation("获取学员动态事件")
@@ -272,6 +346,8 @@ public class RbRoomScoreController {
 	/**
 	 * 获取训练报告 - 任务信息统计
 	 *
+	 * @param resourceId 资源id
+	 * @param roleGroup  岗位组
 	 * @return
 	 */
 	@ApiOperation("获取任务信息统计")
@@ -297,6 +373,8 @@ public class RbRoomScoreController {
 	/**
 	 * 获取训练报告 - 任务信息统计
 	 *
+	 * @param resourceId 资源id
+	 * @param userHash   用户id
 	 * @return
 	 */
 	@ApiOperation("获取用户训练记录")
@@ -319,6 +397,8 @@ public class RbRoomScoreController {
 	/**
 	 * 获取训练报告 - 任务信息统计
 	 *
+	 * @param resourceId 资源id
+	 * @param roleGroup  岗位组
 	 * @return
 	 */
 	@ApiOperation("获取用户训练报告")
@@ -363,6 +443,8 @@ public class RbRoomScoreController {
 
 	/**
 	 * 查询训练角色得分信息
+	 *
+	 * @param resourceId 资源id
 	 * @return
 	 */
 	@ApiOperation("查询训练角色得分信息")
@@ -379,6 +461,8 @@ public class RbRoomScoreController {
 	/**
 	 * 查询任务状态
 	 * 导演-任务编排 左侧柱状图
+	 *
+	 * @param resourceId 资源id
 	 * @return
 	 */
 	@ApiOperation("查询任务状态")

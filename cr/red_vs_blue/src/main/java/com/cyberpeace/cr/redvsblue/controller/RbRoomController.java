@@ -87,6 +87,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗房间Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗实例")
 @Slf4j
 @RestController
@@ -94,45 +100,90 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomController {
 
+    /**
+     * 红蓝对抗房间Service
+     */
     @Autowired
     private RbRoomService rbRoomService;
 
+    /**
+     * 靶场岗位Service
+     */
     @Autowired
     private CrRoleService crRoleService;
 
+    /**
+     * 远程拓扑Service
+     */
     @Autowired
     private RemoteTopoService remoteTopoService;
 
+    /**
+     * 事务模板
+     */
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    /**
+     * 红蓝对抗时间管理Service
+     */
     @Autowired
     private RbTimeManagementService rbTimeManagementService;
 
+    /**
+     * 红蓝对抗场景Service
+     */
     @Autowired
     private RbSceneService rbSceneService;
 
+    /**
+     * 红蓝对抗装置Service
+     */
     @Autowired
     private RbDeviceService rbDeviceService;
 
+    /**
+     * 远程日志Service
+     */
     @Autowired
     private RemoteLogService remoteLogService;
 
+    /**
+     * 红蓝对抗模板Mapper
+     */
     @Autowired
     private RbTemplateMapper rbTemplateMapper;
 
+    /**
+     * 红蓝对抗房间Mapper
+     */
     @Autowired
     private RbRoomMapper rbRoomMapper;
 
+    /**
+     * 靶场得分Service
+     */
     @Autowired
     private CrScoreService crScoreService;
 
+    /**
+     * 靶场常数Service
+     */
     @Autowired
     private CrConstantsService crConstantsService;
 
+    /**
+     * 中台环境Service
+     */
     @Autowired
     private MpEnvService mpEnvService;
 
+    /**
+     * 创建
+     *
+     * @param rbRoomReq 红蓝对抗房间请求体
+     * @return {@code BaseRsp<RbRoomRsp> }
+     */
     @ApiOperation("新增")
     @PostMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -160,6 +211,12 @@ public class RbRoomController {
         return getRbRoom(rbRoom.getResourceId());
     }
 
+    /**
+     * 获取红蓝对抗房间
+     *
+     * @param resourceId 资源id
+     * @return {@code BaseRsp<RbRoomRsp> }
+     */
     @ApiOperation("查询")
     @GetMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -172,6 +229,12 @@ public class RbRoomController {
         return new BaseRsp<>(rsp);
     }
 
+    /**
+     * 获取红蓝对抗房间岗位
+     *
+     * @param resourceId 资源id
+     * @return {@code BaseRsp<BaseRole> }
+     */
     @ApiOperation("查询当前用户角色")
     @GetMapping("get_role")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -186,6 +249,12 @@ public class RbRoomController {
         return new BaseRsp<>(res);
     }
 
+    /**
+     * 获取训练介绍
+     *
+     * @param resourceId 资源id
+     * @return {@code BaseRsp<RbRoomRsp> }
+     */
     @ApiOperation("训练说明")
     @GetMapping("train_introduction")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -213,6 +282,12 @@ public class RbRoomController {
         return new BaseRsp<>(rbRoomRsp);
     }
 
+    /**
+     * 列表
+     *
+     * @param listReq 列表请求体
+     * @return {@code BaseRsp<ListRsp<RbRoomRsp>> }
+     */
     @ApiOperation("列表查询")
     @GetMapping("/list")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -226,6 +301,7 @@ public class RbRoomController {
     /**
      * 查询团队训练学员用户列表
      *
+     * @param resourceId 资源id
      * @return
      */
     @ApiOperation("获取控制面板信息，好友信息")
@@ -245,6 +321,8 @@ public class RbRoomController {
     /**
      * 查询红蓝对抗学员用户列表
      *
+     * @param resourceId 资源id
+     * @param id         id
      * @return
      */
     @ApiOperation("获取群组成员列表")
@@ -264,6 +342,12 @@ public class RbRoomController {
         return new BaseRsp<>(json);
     }
 
+    /**
+     * 获取人工
+     *
+     * @param resourceId 资源id
+     * @return {@code BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>> }
+     */
     @ApiOperation("红蓝对抗-训练手册")
     @GetMapping("/manual")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -293,6 +377,12 @@ public class RbRoomController {
         return new BaseRsp<>(res);
     }
 
+    /**
+     * 更新
+     *
+     * @param rbTrainRoomModifyReq 红蓝对抗训练房间修改请求体
+     * @return {@code BaseRsp<RbRoomRsp> }
+     */
     @ApiOperation("修改")
     @PutMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -326,6 +416,12 @@ public class RbRoomController {
         return getRbRoom(rbTrainRoomModifyReq.getResourceId());
     }
 
+    /**
+     * 批量删除
+     *
+     * @param opsReq 操作请求体
+     * @return {@code BaseRsp<String> }
+     */
     @ApiOperation("删除")
     @DeleteMapping()
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -366,6 +462,7 @@ public class RbRoomController {
     /**
      * 获取时间管理数据
      *
+     * @param resourceId 资源id
      * @return
      */
     @ApiOperation("获取时间管理数据")
@@ -409,6 +506,7 @@ public class RbRoomController {
     /**
      * 创建时间管理
      *
+     * @param rbTimeManagementReq 红蓝对抗时间管理请求体
      * @return
      */
     @ApiOperation("创建时间管理")
@@ -451,6 +549,13 @@ public class RbRoomController {
         return new BaseRsp<>(rbTimeManagementRsp);
     }
 
+    /**
+     * 获取设备
+     *
+     * @param roomId         房间id
+     * @param standardDevice 标准设备
+     * @return {@code BaseRsp<List<RbDeviceContext>> }
+     */
     @ApiOperation("获取设备占用情况")
     @GetMapping("/device")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -466,6 +571,13 @@ public class RbRoomController {
         return new BaseRsp<>(ret);
     }
 
+    /**
+     * 获取训练报告
+     *
+     * @param resourceId 资源id
+     * @param scoreCount 得分计数
+     * @return {@code BaseRsp<TrainReportContext> }
+     */
     @ApiOperation("红蓝对抗-任务导调-训练报告")
     @GetMapping("/mission/getTrainReports")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -500,6 +612,16 @@ public class RbRoomController {
         return new BaseRsp<>(trainReport);
     }
 
+    /**
+     * 初始化得分趋势请求体
+     *
+     * @param management    管理
+     * @param roomStartTime 房间启动时间
+     * @param roomEndTime   房间结束时间
+     * @param scoreCount    得分计数
+     * @param replaySceneId 复盘场景id
+     * @return {@code ScoreTrendReq }
+     */
     public ScoreTrendReq initScoreTrendReq(RbTimeManagement management, Date roomStartTime, Date roomEndTime, Integer scoreCount, String replaySceneId) {
         ScoreTrendReq res = new ScoreTrendReq();
         if (management != null) {
@@ -520,6 +642,13 @@ public class RbRoomController {
         return res;
     }
 
+    /**
+     * 训练报告PDF格式
+     *
+     * @param httpServletResponse HTTP Servlet 响应
+     * @param resourceId          资源id
+     * @param scoreCount          得分计数
+     */
     @ApiOperation("红蓝对抗-任务导调-训练报告导出")
     @GetMapping("/mission/TrainReportsPdf")
     @RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -574,6 +703,12 @@ public class RbRoomController {
 
     }
 
+    /**
+     * 初始化红蓝对抗报告
+     *
+     * @param rbRoom      红蓝对抗房间
+     * @param trainReport 训练报告
+     */
     public void initRbReport(RbRoom rbRoom, TrainReportContext trainReport) {
         // 基础信息
         RoomBaseInfo roomBaseInfo = BeanUtils.copy(rbRoom, RoomBaseInfo.class);
@@ -600,6 +735,12 @@ public class RbRoomController {
 
     }
 
+    /**
+     * 合并阶段由创建时间
+     *
+     * @param manuals 手册
+     * @return {@code List<TrainTaskReleaseInfoRsp> }
+     */
     private List<TrainTaskReleaseInfoRsp>
     mergeStageByCreateTime(List<TrainTaskReleaseInfoRsp> manuals) {
         List<TrainTaskReleaseInfoRsp> res = new ArrayList<>(1);

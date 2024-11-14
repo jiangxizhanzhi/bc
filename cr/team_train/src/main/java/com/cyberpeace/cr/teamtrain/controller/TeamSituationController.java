@@ -21,15 +21,30 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 团队态势Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "团队训练行业态势")
 @RestController
 @RequestMapping("/cr/training_team/situation")
 @RequiresAuthentication
 public class TeamSituationController {
 
+	/**
+	 * 团队态势Service
+	 */
 	@Autowired
 	private TeamSituationService teamSituationService;
 
+	/**
+	 * 如果显示入口
+	 *
+	 * @param room_id 房间id
+	 * @return {@code BaseRsp<EntranceBo> }
+	 */
 	@ApiOperation("是否显示行业态势入口")
 	@GetMapping("/entrance")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -40,6 +55,12 @@ public class TeamSituationController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取任务统计学
+	 *
+	 * @param room_id 房间id
+	 * @return {@code BaseRsp<TeamSituationInfo> }
+	 */
 	@ApiOperation("获取态势信息")
 	@GetMapping("/info")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -50,6 +71,12 @@ public class TeamSituationController {
 		return new BaseRsp<>(info);
 	}
 
+	/**
+	 * 获取得分
+	 *
+	 * @param room_id 房间id
+	 * @return {@code BaseRsp<List<StudentScoreVo>> }
+	 */
 	@ApiOperation("Top5训练得分")
 	@GetMapping("/score")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)

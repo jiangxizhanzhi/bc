@@ -3,8 +3,19 @@ package com.cyberpeace.cr.evaluation.utils;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+/**
+ * AHPP计算权重
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public class AHPComputeWeight {
 
+    /**
+     * 主函数
+     *
+     * @param args 参数
+     */
     public static void main(String[] args) {
 
 
@@ -48,7 +59,7 @@ public class AHPComputeWeight {
     }
 
     /**
-     * 返回单例
+     * 返回实例
      *
      * @return
      */
@@ -57,6 +68,13 @@ public class AHPComputeWeight {
     }
 
 
+    /**
+     * 权重
+     *
+     * @param a      一个
+     * @param weight 重量
+     * @param N      n
+     */
     public void weight(double[][] a, double[] weight, int N) {
         // 初始向量Wk
         double[] w0 = new double[N];

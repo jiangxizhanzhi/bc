@@ -16,15 +16,34 @@ import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataCont
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评变量裁判探针数据Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class EvalVariableRefProbeDataServiceImpl extends ServiceImpl<EvalVariableRefProbeDataMapper, EvalVariableRefProbeData> implements EvalVariableRefProbeDataService {
 
+    /**
+     * 可变探测数据结果
+     *
+     * @param variableId 变量id
+     * @return {@code List<EvalVariableRefProbeDataContext> }
+     */
     @Override
     public List<EvalVariableRefProbeDataContext> variableProbeDataResult(String variableId) {
         return this.getBaseMapper().selectVariableProbeDataResult(variableId);
     }
 
+    /**
+     * 可变探针数据
+     *
+     * @param page       分页
+     * @param variableId 变量id
+     * @return {@code ListRsp<EvalVariableDataPageRsp> }
+     */
     @Override
     public ListRsp<EvalVariableDataPageRsp> variableProbeData(Page page, String variableId) {
         return PageUtil.getListResult(this.getBaseMapper().selectVariableProbeData(page, variableId));

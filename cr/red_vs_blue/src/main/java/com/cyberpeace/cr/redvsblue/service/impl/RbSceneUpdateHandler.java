@@ -25,25 +25,50 @@ import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 @Service
 public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 
+	/**
+	 * 红蓝对抗房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 红蓝对抗常用装置Service
+	 */
 	@Autowired
 	private RbCommonDeviceService rbCommonDeviceService;
 
+	/**
+	 * 获取代号
+	 *
+	 * @return {@code Integer }
+	 */
 	@Override
 	protected Integer getCode() {
 		return BusinessCode.RED_VS_BLUE.getCode();
 	}
 
+	/**
+	 * 检查权限
+	 *
+	 * @param roomId 房间id
+	 */
 	@Override
 	protected void checkPermission(String roomId) {
 		rbRoomService.checkTeacherPermission(roomId, UserInfoContext.getUserContext().getUserId());
 	}
 
+	/**
+	 * 更新角色
+	 *
+	 * @param roomId 房间id
+	 * @param req    请求体
+	 */
 	@Override
 	public void updateRoles(String roomId, SceneUpdateReq req) {
 		checkPermission(roomId);
@@ -63,6 +88,12 @@ public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 		crRoleService.updateBatchById(modified);
 	}
 
+	/**
+	 * 删除节点
+	 *
+	 * @param roomId 房间id
+	 * @param nodeId 节点id
+	 */
 	@Override
 	public void deleteNode(String roomId, String nodeId) {
 		checkPermission(roomId);

@@ -42,34 +42,70 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评任务Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> implements EvalTaskService {
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 测评任务Mapper
+	 */
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
 
+	/**
+	 * 测评任务步骤Service
+	 */
 	@Autowired
 	private EvalTaskStepService evalTaskStepService;
 
+	/**
+	 * 测评模板Mapper
+	 */
 	@Autowired
 	private EvalTemplateMapper evalTemplateMapper;
 
+	/**
+	 * 测评场景Service
+	 */
 	@Autowired
 	private EvalSceneService evalSceneService;
 
+	/**
+	 * 测评记录Service
+	 */
 	@Autowired
 	private EvalRecordService evalRecordService;
 
+	/**
+	 * 获取任务
+	 *
+	 * @param taskId 任务id
+	 * @return {@code EvalTask }
+	 */
 	@Override
 	public EvalTask getTask(String taskId) {
 
@@ -92,6 +128,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		return evalTask;
 	}
 
+	/**
+	 * 获取积极任务
+	 *
+	 * @param taskId 任务id
+	 * @return {@code EvalTask }
+	 */
 	@Override
 	public EvalTask getActiveTask(String taskId) {
 
@@ -106,6 +148,13 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		return evalTask;
 	}
 
+	/**
+	 * 获取测评任务操作上下文
+	 *
+	 * @param taskId       任务id
+	 * @param validateUser 验证用户
+	 * @return {@code EvalTaskOpsContext }
+	 */
 	@Override
 	public EvalTaskOpsContext getEvalTaskOpsContext(String taskId, Boolean validateUser) {
 
@@ -120,6 +169,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		return evalTaskOpsContext;
 	}
 
+	/**
+	 * 启动任务
+	 *
+	 * @param evalTemplate 测评模板
+	 * @return {@code String }
+	 */
 	@Override
 	public String startTask(EvalTemplate evalTemplate) {
 
@@ -185,6 +240,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 	}
 
+	/**
+	 * 创建当地场景
+	 *
+	 * @param evalTask 测评任务
+	 * @return {@code LocalScene }
+	 */
 	private LocalScene createLocalScene(EvalTask evalTask) {
 
 		LocalScene localScene = new LocalScene();
@@ -204,6 +265,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		return localScene;
 	}
 
+	/**
+	 * 停止任务
+	 *
+	 * @param evalTaskOpsContext 测评任务操作上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopTask(EvalTaskOpsContext evalTaskOpsContext) {
 
@@ -224,6 +291,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		return true;
 	}
 
+	/**
+	 * 删除任务
+	 *
+	 * @param evalTaskOpsContext 测评任务操作上下文
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean deleteTask(EvalTaskOpsContext evalTaskOpsContext) {
 
@@ -264,6 +337,11 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		return true;
 	}
 
+	/**
+	 * 清除任务场景
+	 *
+	 * @param evalTaskOpsContext 测评任务操作上下文
+	 */
 	@Override
 	public void clearTaskScene(EvalTaskOpsContext evalTaskOpsContext) {
 
@@ -277,12 +355,21 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 	}
 
-	/** 清除任务及其步骤数据*/
+	/**
+	 * 清除任务及其步骤数据
+	 *
+	 * @param taskId 任务id
+	 */
 	private void clearTask(String taskId) {
 		evalTaskStepService.removeByTaskId(taskId);
 		removeById(taskId);
 	}
 
+	/**
+	 * 清除任务和场景
+	 *
+	 * @param evalTaskOpsContext 测评任务操作上下文
+	 */
 	@Override
 	public void clearTaskAndScene(EvalTaskOpsContext evalTaskOpsContext) {
 
@@ -299,6 +386,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 	}
 
+	/**
+	 * 清除当前任务
+	 *
+	 * @param templateId 模板id
+	 * @param taskId     任务id
+	 */
 	@Override
 	public void clearCurrentTask(String templateId, String taskId) {
 		EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
@@ -309,6 +402,14 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		}
 	}
 
+	/**
+	 * 验证名称
+	 *
+	 * @param taskName   任务名称
+	 * @param templateId 模板id
+	 * @param taskId     任务id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean validateName(String taskName, String templateId, String taskId) {
 

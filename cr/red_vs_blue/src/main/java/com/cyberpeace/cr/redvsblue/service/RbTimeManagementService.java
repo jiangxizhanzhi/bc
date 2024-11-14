@@ -8,10 +8,17 @@ import com.cyberpeace.cr.crbase.service.context.training.TrainingTimeCost;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 
+/**
+ * 红蓝对抗时间管理Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface RbTimeManagementService extends IService<RbTimeManagement> {
 
 	/**
 	 * 根据红蓝房间id获取时间管理
+	 *
 	 * @param roomId 红蓝房间id
 	 * @return 时间管理
 	 */
@@ -19,44 +26,50 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 
 	/**
 	 * 获取所有已开始的红蓝房间id
+	 *
 	 * @return
 	 */
 	List<String> getStartedRoomIds();
 
 	/**
 	 * 获取所有时间管理
+	 *
 	 * @return
 	 */
 	List<RbTimeManagement> getAll();
 
 	/**
 	 * 获取所有已停止的
+	 *
 	 * @return
 	 */
 	List<RbTimeManagement> getStopped();
 
 	/**
 	 * 获取所有未停止的
+	 *
 	 * @return
 	 */
 	List<RbTimeManagement> getUnstopped();
 
 	/**
 	 * 更新时间管理器
+	 *
 	 * @param timeManagement 时间管理实例
-	 * @param room 红蓝对抗实例
-	 * @param status 更新状态
-	 * @param userId 用户id
+	 * @param room           红蓝对抗实例
+	 * @param status         更新状态
+	 * @param userId         用户id
 	 */
 	void updateTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
 			String userId);
-	
+
 	/**
 	 * 创建时间管理器
+	 *
 	 * @param timeManagement 时间管理
-	 * @param room 红蓝实例
-	 * @param status 初始状态
-	 * @param userId 用户id
+	 * @param room           红蓝实例
+	 * @param status         初始状态
+	 * @param userId         用户id
 	 */
 	void addTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status, String userId);
 
@@ -76,6 +89,12 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	 */
 	TrainingTimeCost getTimeCostLong(String roomId);
 
+	/**
+	 * 获取结肠时间成本
+	 *
+	 * @param roomId 房间id
+	 * @return {@code String }
+	 */
 	String getColonTimeCost(String roomId);
 
 	/**

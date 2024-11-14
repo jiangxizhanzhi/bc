@@ -28,36 +28,77 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗态势Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class RbSituationServiceImpl implements RbSituationService {
 
+	/**
+	 * 红蓝对抗房间Mapper
+	 */
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 红蓝对抗房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 远程场景Service
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 获取全部红蓝对抗态势
+	 *
+	 * @return {@code List<RbSituation> }
+	 */
 	@Override
 	public List<RbSituation> getAllRbSituation() {
 		return rbRoomMapper.selectAllRunning();
 	}
 
+	/**
+	 * 节点映射
+	 */
 	public Map<String, String> nodeMap = new HashMap<>();
 
+	/**
+	 * 场景id
+	 */
 	public String sceneId;
 
+	/**
+	 * 中台场景id
+	 */
 	public String mpSceneId;
 
+	/**
+	 * 获取红蓝对抗服务器由资源id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code List<RbSituationServer> }
+	 */
 	@Override
 	public List<RbSituationServer> getRbServerByResourceId(String resourceId) {
 		nodeMap.clear();
@@ -122,21 +163,39 @@ public class RbSituationServiceImpl implements RbSituationService {
 		return rbSituationServerList;
 	}
 
+	/**
+	 * 获取场景id
+	 *
+	 * @return {@code String }
+	 */
 	@Override
 	public String getSceneId() {
 		return sceneId;
 	}
 
+	/**
+	 * 获取节点映射
+	 *
+	 * @return {@code Map<String, String> }
+	 */
 	@Override
 	public Map<String, String> getNodeMap() {
 		return nodeMap;
 	}
 
+	/**
+	 * 获取中台场景id
+	 *
+	 * @return {@code String }
+	 */
 	@Override
 	public String getMpSceneId() {
 		return mpSceneId;
 	}
 
+	/**
+	 * 再设置id
+	 */
 	@Override
 	public void reSetId() {
 		mpSceneId = null;

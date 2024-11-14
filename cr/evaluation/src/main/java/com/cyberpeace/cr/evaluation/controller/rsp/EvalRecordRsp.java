@@ -10,36 +10,72 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 评估记录响应
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EvalRecordRsp implements Serializable {
-    @ApiModelProperty("ID")
+	/**
+	 * ID
+	 */
+	@ApiModelProperty("ID")
     private String resourceId;
 
-    @ApiModelProperty("名称")
+	/**
+	 * 名称
+	 */
+	@ApiModelProperty("名称")
     private String name;
 
-    @ApiModelProperty("描述")
+	/**
+	 * 描述
+	 */
+	@ApiModelProperty("描述")
     private String description;
 
-    @ApiModelProperty("靶场测评实例ID")
+	/**
+	 * 靶场测评实例ID
+	 */
+	@ApiModelProperty("靶场测评实例ID")
     private String roomId;
 
-    @ApiModelProperty("使用指标体系ID")
+	/**
+	 * 使用指标体系ID
+	 */
+	@ApiModelProperty("使用指标体系ID")
     private String systemId;
 
-    @ApiModelProperty("开始时间（评估采集数据时间范围）")
+	/**
+	 * 开始时间（评估采集数据时间范围）
+	 */
+	@ApiModelProperty("开始时间（评估采集数据时间范围）")
     private Date startTime;
 
-    @ApiModelProperty("结束时间（评估采集数据时间范围）")
+	/**
+	 * 结束时间（评估采集数据时间范围）
+	 */
+	@ApiModelProperty("结束时间（评估采集数据时间范围）")
     private Date endTime;
 
-    @ApiModelProperty("评估开始时间")
+	/**
+	 * 评估开始时间
+	 */
+	@ApiModelProperty("评估开始时间")
     private Date evalTime;
 
-    @ApiModelProperty("启动状态 1-未评估 2-计算中 3-再次启动")
+	/**
+	 * 启动状态 1-未评估 2-计算中 3-再次启动
+	 */
+	@ApiModelProperty("启动状态 1-未评估 2-计算中 3-再次启动")
     private Integer runStatus;
 
-    @ApiModelProperty("指标体系结构")
+	/**
+	 * 指标体系结构
+	 */
+	@ApiModelProperty("指标体系结构")
     private List<EvalSystemIndexesContext> indexes;
 }

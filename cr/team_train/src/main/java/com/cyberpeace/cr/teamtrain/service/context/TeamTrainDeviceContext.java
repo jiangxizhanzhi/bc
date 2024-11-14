@@ -5,23 +5,47 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 团队训练装置上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class TeamTrainDeviceContext {
-    @ApiModelProperty(value = "自增id")
+	/**
+	 * 自增id
+	 */
+	@ApiModelProperty(value = "自增id")
     private String id;
 
-    @ApiModelProperty(value = "团队id")
+	/**
+	 * 团队id
+	 */
+	@ApiModelProperty(value = "团队id")
     private String roomId;
 
-    @ApiModelProperty(value = "主机id")
+	/**
+	 * 主机id
+	 */
+	@ApiModelProperty(value = "主机id")
     private String deviceId;
 
-    @ApiModelProperty(value = "用户id")
+	/**
+	 * 用户id
+	 */
+	@ApiModelProperty(value = "用户id")
     private String createUserId;
 
-    @ApiModelProperty(value = "用户姓名")
+	/**
+	 * 用户姓名
+	 */
+	@ApiModelProperty(value = "用户姓名")
     private String createUser;
 
-    @ApiModelProperty(value = "创建时间")
+	/**
+	 * 创建时间
+	 */
+	@ApiModelProperty(value = "创建时间")
     private Date createTime;
 }

@@ -6,6 +6,12 @@ import com.cyberpeace.cr.teamtrain.service.bo.situation.TeamSituationInfo;
 
 import java.util.List;
 
+/**
+ * 团队态势Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface TeamSituationService {
 
     /**

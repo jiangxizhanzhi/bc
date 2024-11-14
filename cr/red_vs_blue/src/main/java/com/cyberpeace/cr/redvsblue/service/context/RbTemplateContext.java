@@ -9,14 +9,24 @@ import lombok.Data;
 
 /**
  * 红蓝模板
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @Data
-public class RbTemplateContext extends BasicTemplate {
+public class
+RbTemplateContext extends BasicTemplate {
 
+	/**
+	 * 资源id
+	 */
 	@ApiModelProperty(required = true)
 	@NotNull
 	private String resourceId;
 
+	/**
+	 * 岗位列表
+	 */
 	@ApiModelProperty(required = true)
 	@NotNull
 	private String roleList;

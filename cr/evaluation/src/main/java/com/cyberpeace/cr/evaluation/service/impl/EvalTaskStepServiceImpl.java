@@ -24,16 +24,34 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评任务步骤Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, EvalTaskStep> implements EvalTaskStepService {
 
+	/**
+	 * 测评任务步骤Mapper
+	 */
 	@Autowired
 	private EvalTaskStepMapper evalTaskStepMapper;
 
+	/**
+	 * 测评任务Mapper
+	 */
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
 
+	/**
+	 * 获取任务步骤
+	 *
+	 * @param stepId 步骤id
+	 * @return {@code EvalTaskStep }
+	 */
 	@Override
 	public EvalTaskStep getTaskStep(String stepId) {
 
@@ -48,6 +66,12 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 
 	}
 
+	/**
+	 * 启动步骤
+	 *
+	 * @param evalTaskStep 测评任务步骤
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean startStep(EvalTaskStep evalTaskStep) {
 
@@ -77,6 +101,12 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		return true;
 	}
 
+	/**
+	 * 停止步骤
+	 *
+	 * @param evalTaskStep 测评任务步骤
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopStep(EvalTaskStep evalTaskStep) {
 
@@ -103,6 +133,12 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		return true;
 	}
 
+	/**
+	 * 删除由任务id
+	 *
+	 * @param taskId 任务id
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean removeByTaskId(String taskId) {
 		List<String> stepList = evalTaskStepMapper.selectStepIdsByTaskId(taskId);
@@ -110,6 +146,12 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		return true;
 	}
 
+	/**
+	 * 获取任务步骤
+	 *
+	 * @param taskId 任务id
+	 * @return {@code List<EvalTaskStepContext> }
+	 */
 	@Override
 	public List<EvalTaskStepContext> getTaskSteps(String taskId) {
 
@@ -145,6 +187,12 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		return evalTaskStepContexts;
 	}
 
+	/**
+	 * 获取模板步骤
+	 *
+	 * @param stepConfig 步骤配置
+	 * @return {@code List<EvalTaskStepContext> }
+	 */
 	@Override
 	public List<EvalTaskStepContext> getTemplateSteps(String stepConfig) {
 
@@ -162,6 +210,12 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		return evalTaskStepContexts;
 	}
 
+	/**
+	 * 获取完成步骤
+	 *
+	 * @param taskId 任务id
+	 * @return {@code List<EvalTimeLineContext> }
+	 */
 	@Override
 	public List<EvalTimeLineContext> getFinishedSteps(String taskId) {
 

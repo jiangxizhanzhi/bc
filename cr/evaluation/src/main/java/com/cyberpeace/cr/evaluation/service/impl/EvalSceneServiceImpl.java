@@ -22,13 +22,29 @@ import com.cyberpeace.cs.service.LocalSceneService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评场景Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class EvalSceneServiceImpl implements EvalSceneService {
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 视图场景
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @param topoId    拓扑id
+	 * @return {@code SceneViewContext }
+	 */
 	@Override
 	public SceneViewContext viewScene(String mpSceneId, String topoId) {
 
@@ -58,6 +74,12 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 		return null;
 	}
 
+	/**
+	 * 停止场景
+	 *
+	 * @param localScene 当地场景
+	 * @return {@code Boolean }
+	 */
 	@Override
 	public Boolean stopScene(LocalScene localScene) {
 
@@ -72,6 +94,13 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 		return true;
 	}
 
+	/**
+	 * 获取元素流量列表上下文
+	 *
+	 * @param evalTaskFlowListQuery 测评任务流量列表查询
+	 * @param evalTask              测评任务
+	 * @return {@code ElementFlowListContext }
+	 */
 	@Override
 	public ElementFlowListContext getElementFlowListContext(
 			EvalTaskFlowListQuery evalTaskFlowListQuery, EvalTask evalTask) {

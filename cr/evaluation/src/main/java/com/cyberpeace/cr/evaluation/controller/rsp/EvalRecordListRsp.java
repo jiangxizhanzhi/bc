@@ -7,42 +7,84 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 评估记录列表响应
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("评估列表数据")
 public class EvalRecordListRsp implements Serializable {
-    @ApiModelProperty("ID")
+	/**
+	 * ID
+	 */
+	@ApiModelProperty("ID")
     private String resourceId;
 
-    @ApiModelProperty("名称")
+	/**
+	 * 名称
+	 */
+	@ApiModelProperty("名称")
     private String name;
 
-    @ApiModelProperty("描述")
+	/**
+	 * 描述
+	 */
+	@ApiModelProperty("描述")
     private String description;
 
-    @ApiModelProperty("评估状态")
+	/**
+	 * 评估状态
+	 */
+	@ApiModelProperty("评估状态")
     private Integer status;
 
-    @ApiModelProperty("评分结果")
+	/**
+	 * 评分结果
+	 */
+	@ApiModelProperty("评分结果")
     private Integer score;
 
-    @ApiModelProperty("关联指标体系ID")
+	/**
+	 * 关联指标体系ID
+	 */
+	@ApiModelProperty("关联指标体系ID")
     private String systemId;
 
-    @ApiModelProperty("指标体系名称")
+	/**
+	 * 指标体系名称
+	 */
+	@ApiModelProperty("指标体系名称")
     private String systemName;
 
-    @ApiModelProperty("关联测评任务ID")
+	/**
+	 * 关联测评任务ID
+	 */
+	@ApiModelProperty("关联测评任务ID")
     private String taskId;
 
-    @ApiModelProperty("错误信息")
+	/**
+	 * 错误信息
+	 */
+	@ApiModelProperty("错误信息")
     private String message;
 
-    @ApiModelProperty("评估检索探针开始时间")
+	/**
+	 * 评估检索探针开始时间
+	 */
+	@ApiModelProperty("评估检索探针开始时间")
     private Date startTime;
 
-    @ApiModelProperty("评估检索探针结束时间")
+	/**
+	 * 评估检索探针结束时间
+	 */
+	@ApiModelProperty("评估检索探针结束时间")
     private Date endTime;
 
-    @ApiModelProperty("评估开始时间")
+	/**
+	 * 评估开始时间
+	 */
+	@ApiModelProperty("评估开始时间")
     private Date evalTime;
 }

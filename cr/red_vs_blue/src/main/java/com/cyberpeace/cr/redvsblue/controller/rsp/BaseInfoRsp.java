@@ -15,46 +15,91 @@ import com.cyberpeace.cr.redvsblue.service.context.RbTemplateData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 基础信息响应
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class BaseInfoRsp implements Serializable {
 
+	/**
+	 * 名称
+	 */
 	@NotBlank
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	/**
+	 * 类别
+	 */
 	@ApiModelProperty(value = "类别")
 	private Integer category;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty(value = "描述")
 	private String description;
 
+	/**
+	 * 创建者
+	 */
 	@ApiModelProperty(value = "创建者")
 	private String createUser;
 
+	/**
+	 * 创建时间
+	 */
 	@ApiModelProperty(value = "创建时间")
 	private Date createTime;
 
+	/**
+	 * 难度
+	 */
 	@ApiModelProperty(value = "难度")
 	private Integer difficult;
 
+	/**
+	 * 持续时长
+	 */
 	@ApiModelProperty(value = "持续时长")
 	private Integer durationTime;
 
+	/**
+	 * 前置技能
+	 */
 	@ApiModelProperty(value = "前置技能")
 	private List<String> preSkill;
 
+	/**
+	 * 训练目标
+	 */
 	@ApiModelProperty(value = "训练目标")
 	private List<String> trainSkill;
 
+	/**
+	 * （兼容旧版本前端）
+	 */
 	@ApiModelProperty(value = "（兼容旧版本前端）")
 	private String sceneManagerId;
 
+	/**
+	 * 场景配置
+	 */
 	@ApiModelProperty(value = "场景配置")
 	private JSONObject sceneConfigData;
 
+	/**
+	 * LOGO
+	 */
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
+	/**
+	 * 拓扑
+	 */
 	private String topo;
 
 	public BaseInfoRsp(RbTemplate template, BusinessTemplate businessTemplate) {

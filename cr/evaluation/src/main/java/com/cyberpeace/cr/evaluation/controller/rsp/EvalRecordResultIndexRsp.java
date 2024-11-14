@@ -8,35 +8,71 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 评估记录结果编号响应
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class EvalRecordResultIndexRsp implements Serializable {
-    @ApiModelProperty("ID")
+	/**
+	 * ID
+	 */
+	@ApiModelProperty("ID")
     private String resourceId;
 
-    @ApiModelProperty("指标/变量项名称")
+	/**
+	 * 指标/变量项名称
+	 */
+	@ApiModelProperty("指标/变量项名称")
     private String name;
 
-    @ApiModelProperty("评估分值")
+	/**
+	 * 评估分值
+	 */
+	@ApiModelProperty("评估分值")
     private Integer score;
 
-    @ApiModelProperty("算法ID")
+	/**
+	 * 算法ID
+	 */
+	@ApiModelProperty("算法ID")
     private String algorithmId;
 
-    @ApiModelProperty("算法名称")
+	/**
+	 * 算法名称
+	 */
+	@ApiModelProperty("算法名称")
     private String algorithmName;
 
-    @ApiModelProperty("下一级指标/变量项信息")
+	/**
+	 * 下一级指标/变量项信息
+	 */
+	@ApiModelProperty("下一级指标/变量项信息")
     private List<EvalRecordResultIndexRsp> children;
 
-    @JsonIgnore
+	/**
+	 * 水平
+	 */
+	@JsonIgnore
     private Integer level;
 
-    @JsonIgnore
+	/**
+	 * 下一个id列表
+	 */
+	@JsonIgnore
     private String nextIds;
 
-    @JsonIgnore
+	/**
+	 * parentid
+	 */
+	@JsonIgnore
     private String parentId;
 
-    @ApiModelProperty("算法是否为层次分析法")
+	/**
+	 * 算法是否为层次分析法
+	 */
+	@ApiModelProperty("算法是否为层次分析法")
     private Integer mode;
 }

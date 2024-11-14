@@ -9,16 +9,31 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评任务步骤配置
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @Slf4j
 public class EvalTaskStepConfig {
 
+	/**
+	 * 步骤阶段
+	 */
 	@ApiModelProperty("步骤阶段")
 	private Integer stage;
 
+	/**
+	 * 步骤标题
+	 */
 	@ApiModelProperty("步骤标题")
 	private String title;
 
+	/**
+	 * 步骤过程
+	 */
 	@ApiModelProperty("步骤过程")
 	private String process;
 

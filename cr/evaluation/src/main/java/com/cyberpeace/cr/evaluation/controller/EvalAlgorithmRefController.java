@@ -45,6 +45,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 评估算法裁判Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Api(tags = "前台-测试靶场-算法管理")
 @RestController
@@ -52,30 +58,52 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 public class EvalAlgorithmRefController {
 
+	/**
+	 * 评估算法裁判Mapper
+	 */
 	@Autowired
 	private EvalAlgorithmRefMapper evalAlgorithmRefMapper;
 
+	/**
+	 * 评估编号裁判Mapper
+	 */
 	@Autowired
 	private EvalIndexRefMapper evalIndexRefMapper;
 
+	/**
+	 * 评估变量裁判Mapper
+	 */
 	@Autowired
 	private EvalVariableRefMapper evalVariableRefMapper;
 
+	/**
+	 * 远程蟒Service
+	 */
 	@Autowired
 	private RemotePythonService remotePythonService;
 
+	/**
+	 * 评估算法裁判Service
+	 */
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 执行者
+	 */
 	@Qualifier("taskExecutor")
 	@Autowired
 	private Executor executor;
 
 	/**
 	 * 编辑算法
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -121,6 +149,14 @@ public class EvalAlgorithmRefController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 检查矩阵数据
+	 *
+	 * @param req              请求体
+	 * @param res              结果
+	 * @param evalAlgorithmRef eval 算法 ref
+	 * @param matrixData       矩阵数据
+	 */
 	void checkMatrixData(EvalAlgorithmRefReq req, EvalAlgorithmEditRsp res,
 			EvalAlgorithmRef evalAlgorithmRef, String matrixData) {
 		LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
@@ -155,6 +191,13 @@ public class EvalAlgorithmRefController {
 		}
 	}
 
+	/**
+	 * 获取评估算法裁判
+	 *
+	 * @param resourceId 资源id
+	 * @param type       类型
+	 * @return {@code BaseRsp<EvalAlgorithmRsp> }
+	 */
 	@ApiOperation("查询算法")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)

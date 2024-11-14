@@ -15,14 +15,32 @@ import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评算法裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class EvalAlgorithmRefServiceImpl extends ServiceImpl<EvalAlgorithmRefMapper, EvalAlgorithmRef> implements EvalAlgorithmRefService {
 
+    /**
+     * param 类型
+     */
     private static final String PARAM_TYPE = "param_type";
 
+    /**
+     * 参数值
+     */
     private static final String PARAM_VALUE = "default_value";
 
+    /**
+     * 构建其他参数
+     *
+     * @param argumentsString
+     * @return {@code List<Serializable> }
+     */
     @Override
     public List<Serializable> buildOtherArguments(String argumentsString) {
         List<Serializable> args = Lists.newArrayList();

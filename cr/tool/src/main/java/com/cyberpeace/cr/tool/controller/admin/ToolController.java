@@ -38,21 +38,42 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 工具Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "后台-资源中心-工具库")
 @RestController
 @RequestMapping("/cr/admin/tools")
 @RequiresAuthentication
 public class ToolController {
 
+	/**
+	 * 工具Service
+	 */
 	@Autowired
 	private ToolService toolService;
 
+	/**
+	 * utilService
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 获取列表
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @return {@code BaseRsp<ListRsp<ToolRsp>> }
+	 */
 	@ApiOperation("工具库列表")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
@@ -65,6 +86,12 @@ public class ToolController {
 		return new BaseRsp<>(PageUtil.getListResult(toolBoListRsp));
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<ToolRsp> }
+	 */
 	@ApiOperation("工具详情")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
@@ -74,6 +101,12 @@ public class ToolController {
 		return new BaseRsp<>(toolRsp);
 	}
 
+	/**
+	 * 创建
+	 *
+	 * @param toolReq 工具请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("工具创建")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
@@ -93,6 +126,12 @@ public class ToolController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param toolupdateReq toolupdate请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("工具更新")
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
@@ -110,6 +149,12 @@ public class ToolController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param deleteReq 删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("工具删除")
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)

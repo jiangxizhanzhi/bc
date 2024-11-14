@@ -34,6 +34,13 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 单模板Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Api(tags = "单兵训练模板")
 @RestController
@@ -41,21 +48,42 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/admin/single_train/template")
 public class SingleTemplateController {
 
+	/**
+	 * 单模板Service
+	 */
 	@Autowired
 	private SingleTemplateService singleTemplateService;
 
+	/**
+	 * 常用Service
+	 */
 	@Autowired
 	private CrCommonService commonService;
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 获取
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code BaseRsp<SingleTemplateBo> }
+	 */
 	@GetMapping
 	@ApiOperation("单兵训练模板获取")
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
@@ -66,6 +94,12 @@ public class SingleTemplateController {
 		return new BaseRsp<>(singleTemplateService.get(businessTemplateId));
 	}
 
+	/**
+	 * 创建
+	 *
+	 * @param requestDataRel 请求数据关系
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PostMapping
 	@ApiOperation("单兵训练模板创建")
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
@@ -102,6 +136,12 @@ public class SingleTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 更新
+	 *
+	 * @param requestDataRel 请求数据关系
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PatchMapping
 	@ApiOperation("单兵训练模板更新")
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
@@ -146,6 +186,13 @@ public class SingleTemplateController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 请求体自单模板
+	 *
+	 * @param requestData    请求数据
+	 * @param singleTemplate 单个模板
+	 * @return {@code SingleTemplate }
+	 */
 	private SingleTemplate reqToSingleTemplate(SingleTrainTemplateReq requestData,
 			SingleTemplate singleTemplate) {
 		BaseInfo baseInfo = requestData.getBaseInfo();

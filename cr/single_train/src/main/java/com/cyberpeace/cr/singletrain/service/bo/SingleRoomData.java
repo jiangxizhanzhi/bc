@@ -8,9 +8,18 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 
+/**
+ * 单人房数据
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class SingleRoomData extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
@@ -34,10 +43,10 @@ public class SingleRoomData extends BaseTable {
 	 */
 	private String trainingRecord;
 
-    /**
-     * 训练记录(任务完成记录)
-     */
-    private String subType;
+	/**
+	 * 训练记录(任务完成记录)
+	 */
+	private String subType;
 	/**
 	 * 是否已提交训练(训练已提交标识, 禁止用户重复提交)
 	 */

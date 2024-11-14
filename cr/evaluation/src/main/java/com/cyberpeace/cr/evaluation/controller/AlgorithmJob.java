@@ -17,17 +17,29 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 定时一周清理一次不再使用的备份算法
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @Slf4j
 @Component
 public class AlgorithmJob {
 
+	/**
+	 * 评估算法Service
+	 */
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
 
+	/**
+	 * 评估算法Mapper
+	 */
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
 
+	/**
+	 * 删除全部联合国使用备份
+	 */
 	@Scheduled(fixedRate = 7 * 24 * 60 * 60 * 1000)
 	public void deleteAllUnUsedBackup() {
 

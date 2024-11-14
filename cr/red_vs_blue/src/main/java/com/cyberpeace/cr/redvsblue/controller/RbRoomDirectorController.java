@@ -71,6 +71,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 红蓝对抗房间导演Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Api(tags = "红蓝对抗导演")
 @RestController
@@ -78,41 +84,84 @@ import java.util.stream.Collectors;
 @RequestMapping("/cr/director/red_vs_blue/red_vs_blue/")
 public class RbRoomDirectorController {
 
+	/**
+	 * 红蓝对抗房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 红蓝对抗时间管理Service
+	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 红蓝对抗导演Service
+	 */
 	@Autowired
 	private RbDirectorService rbDirectorService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * WebSocket推送Service
+	 */
 	@Autowired
 	private WebSocketPushService webSocketPushService;
 
+	/**
+	 * 导调历史Service
+	 */
 	@Autowired
 	private GuideHistoryService guideHistoryService;
 
+	/**
+	 * 态势处理器Service
+	 */
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
+	/**
+	 * 红蓝对抗场景Service
+	 */
 	@Autowired
 	RbSceneService rbSceneService;
+
+	/**
+	 * 新增练习试卷
+	 *
+	 * @param exercisePaperReq 练习试卷请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -136,6 +185,13 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取练习论文
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param groupHash          组id
+	 * @return {@code BaseRsp<ExercisePaperRsp> }
+	 */
 	@ApiOperation("获取演习文书")
 	@GetMapping("/get_exercise_paper")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -156,6 +212,8 @@ public class RbRoomDirectorController {
 
 	/**
 	 * 修改开放题解
+	 *
+	 * @param writeUpReq 写入向上请求体
 	 * @return
 	 */
 	@ApiOperation("修改开放题解")
@@ -175,6 +233,8 @@ public class RbRoomDirectorController {
 
 	/**
 	 * 任务下发
+	 *
+	 * @param releaseMissionReq 下发任务请求体
 	 * @return
 	 */
 	@ApiOperation("任务下发")
@@ -205,6 +265,12 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 新增任务信息
+	 *
+	 * @param rbRoomMissionReq 红蓝对抗房间任务请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("动态任务新增")
 	@PostMapping("/mission_info_create")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -226,6 +292,12 @@ public class RbRoomDirectorController {
 				missionService.addDynamic(mission, crRole, rbRoomMissionReq.getMissionStage(),rbRoomMissionReq.getAfterMissionId()));
 	}
 
+	/**
+	 * 新增任务信息
+	 *
+	 * @param rbMissionDeleteReq 红蓝对抗任务删除请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("任务删除")
 	@PostMapping("/mission_delete")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -289,6 +361,12 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取角色
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<CrRbRoleContext> }
+	 */
 	@ApiOperation("查询角色")
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -409,6 +487,8 @@ public class RbRoomDirectorController {
 
 	/**
 	 * 查询红蓝对抗时间线
+	 *
+	 * @param resourceId 资源id
 	 * @return
 	 */
 	@ApiOperation("查询红蓝对抗导演时间线")
@@ -422,6 +502,12 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>(data);
 	}
 
+	/**
+	 * 停止
+	 *
+	 * @param opsReq 操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("停止演习")
 	@PostMapping("/stop")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -472,6 +558,12 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取任务统计学
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<RedBlueTaskReleaseProgress> }
+	 */
 	@ApiOperation("红蓝对抗-任务导调-任务进度")
 	@GetMapping("/mission/progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -482,6 +574,12 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 下发批量任务
+	 *
+	 * @param releaseMissionReq 下发任务请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("批量任务下发")
 	@PostMapping("/batchMissions")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -508,6 +606,12 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取任务列表
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<List<TrainTaskReleaseInfoContext>> }
+	 */
 	@ApiOperation("红蓝对抗-任务导调-任务列表")
 	@GetMapping("/mission/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -569,6 +673,12 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取全部选项
+	 *
+	 * @param roomId 房间id
+	 * @return {@code BaseRsp<PlaybackOptionRsp> }
+	 */
 	@ApiOperation("返回态势回放所有下拉框选项")
 	@GetMapping("/playback/option")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)

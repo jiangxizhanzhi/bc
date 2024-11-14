@@ -9,9 +9,18 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 测评模板列表查询
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @ApiModel
 public class EvalTemplateListQuery extends PageReqBase implements Serializable {
 
+	/**
+	 * 测评类型
+	 */
 	@ApiModelProperty(name = "category_code", value = "测评类型")
 	@Getter
 	@Setter

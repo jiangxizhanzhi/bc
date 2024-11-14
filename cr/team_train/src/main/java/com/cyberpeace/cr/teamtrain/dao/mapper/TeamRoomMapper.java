@@ -15,27 +15,64 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 
 /**
- * @Entity com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom
+ * 团队房间Mapper
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @Mapper
 @Repository
 public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 
+	/**
+	 * 获取团队房间响应由房间id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code TeamRoomData }
+	 */
 	TeamRoomData getTeamRoomRspByRoomId(String resourceId);
 
+	/**
+	 * 列出团队聊天室
+	 *
+	 * @param page      分页
+	 * @param listQuery 列表查询
+	 * @return {@code IPage<TeamRoomData> }
+	 */
 	IPage<TeamRoomData> listTeamRoom(Page<TeamRoomData> page, ListQuery listQuery);
 
+	/**
+	 * 查询由当地场景id
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code TeamRoom }
+	 */
 	TeamRoom selectByLocalSceneId(String localSceneId);
 
+	/**
+	 * 获取训练计数
+	 *
+	 * @param roomIds         房间id列表
+	 * @param completedStatus 完成状态
+	 * @return {@code TrainingCount }
+	 */
 	TrainingCount getTrainingCount(@Param("roomIds") List<String> roomIds,
 			@Param("completedStatus") Integer completedStatus);
 
+	/**
+	 * 查询未完成由id列表
+	 *
+	 * @param roomIds 房间id列表
+	 * @param endCode 结束代号
+	 * @return {@code List<TeamRoom> }
+	 */
 	List<TeamRoom> selectUnfinishedByIds(@Param("roomIds") List<String> roomIds,
 			@Param("endCode") Integer endCode);
 
 	/**
 	 * 用于重名校验
-	 * @param name 
+	 *
+	 * @param name
 	 * @return
 	 */
 	Boolean existByName(@Param("name") String name);

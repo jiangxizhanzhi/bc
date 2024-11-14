@@ -82,53 +82,107 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 单房间Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleRoom> implements SingleRoomService {
 
+	/**
+	 * 单模板Mapper
+	 */
 	@Autowired
 	private SingleTemplateMapper singleTemplateMapper;
 
+	/**
+	 * 单房间Mapper
+	 */
 	@Autowired
 	private SingleRoomMapper singleRoomMapper;
 
+	/**
+	 * 单模板Service
+	 */
 	@Autowired
 	private SingleTemplateService singleTemplateService;
 
+	/**
+	 * 训练记录Service
+	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * RTKS相关Service
+	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	/**
+	 * 数据格式
+	 */
 	private static final String DATA_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+	/**
+	 * scheme 数据字段
+	 */
 	private static final String SCHEME_DATA_FIELD = "scheme_data";
 
+	/**
+	 * 资源id田
+	 */
 	private static final String RESOURCE_ID_FIELD = "resource_id";
 
 	/**
@@ -197,6 +251,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return getRoomInfo(room.getBusinessTemplateId());
 	}
 
+	/**
+	 * 创建当地场景
+	 *
+	 * @param template 模板
+	 * @return {@code LocalScene }
+	 */
 	private LocalScene createLocalScene(BusinessTemplate template) {
 		LocalScene localScene = new LocalScene();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -271,6 +331,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 * 关闭单兵训练房间
 	 *
 	 * @param businessTemplateId 训练业务模板id
+	 * @return {@code Boolean }
 	 */
 	@Override
 	public Boolean deleteRoom(String businessTemplateId) {
@@ -283,6 +344,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 * 关闭单兵训练房间
 	 *
 	 * @param singleRoom 训练房间对象
+	 * @return {@code Boolean }
 	 */
 	@Override
 	public Boolean deleteRoom(SingleRoom singleRoom) {
@@ -775,6 +837,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return timeLineData;
 	}
 
+	/**
+	 * 视图场景
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code SceneViewContext }
+	 */
 	@Override
 	public SceneViewContext viewScene(String businessTemplateId) {
 		BusinessTemplate businessTemplate = businessTemplateService.getById(businessTemplateId);
@@ -803,11 +871,24 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return ret;
 	}
 
+	/**
+	 * 获取由业务模板id和用户id
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param userId             用户id
+	 * @return {@code SingleRoom }
+	 */
 	@Override
 	public SingleRoom getByBusinessTemplateIdAndUserId(String businessTemplateId, String userId) {
 		return singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 	}
 
+	/**
+	 * 获取由业务id
+	 *
+	 * @param businessId 业务id
+	 * @return {@code SingleRoom }
+	 */
 	@Override
 	public SingleRoom getByBusinessId(String businessId) {
 		String[] ids = StringUtils.split(businessId, "_", 2);
@@ -818,6 +899,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return singleRoomMapper.getSingleRoom(ids[0], ids[1]);
 	}
 
+	/**
+	 * 获取中台场景数据
+	 *
+	 * @param room 房间
+	 * @return {@code JSONObject }
+	 */
 	private JSONObject getMpSceneData(SingleRoom room) {
 		if (room == null) {
 			return null;
@@ -857,6 +944,11 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return sceneData;
 	}
 
+	/**
+	 * 清除当地
+	 *
+	 * @param room 房间
+	 */
 	@Override
 	public void clearLocal(SingleRoom room) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -869,11 +961,23 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		});
 	}
 
+	/**
+	 * 获取由业务模板id
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<SingleRoom> }
+	 */
 	@Override
 	public List<SingleRoom> getByBusinessTemplateId(String businessTemplateId) {
 		return singleRoomMapper.selectByTemplateId(businessTemplateId);
 	}
 
+	/**
+	 * 获取训练历史
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<TrainingRecordListBo> }
+	 */
 	@Override
 	public List<TrainingRecordListBo> getTrainHistory(String businessTemplateId) {
 		// get records
@@ -927,6 +1031,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return result;
 	}
 
+	/**
+	 * 提交训练
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code String }
+	 */
 	@Override
 	public String submitTrain(String businessTemplateId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -986,6 +1096,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return singleRoom.getResourceId();
 	}
 
+	/**
+	 * 获取记录详情
+	 *
+	 * @param roomId 房间id
+	 * @return {@code RecordDetail }
+	 */
 	@Override
 	public RecordDetail getRecordDetail(String roomId) {
 		// init
@@ -1108,6 +1224,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return detail;
 	}
 
+	/**
+	 * 获取矩阵进展
+	 *
+	 * @param room 房间
+	 * @return {@code SingleMatrixProgressRsp }
+	 */
 	@Override
 	public SingleMatrixProgressRsp getMatrixProgress(SingleRoom room) {
 		SingleMatrixProgressRsp rsp = new SingleMatrixProgressRsp();
@@ -1170,6 +1292,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return rsp;
 	}
 
+	/**
+	 * 获取矩阵响应
+	 *
+	 * @param btId BT系列id
+	 * @return {@code SingleMatrixProgressRsp }
+	 */
 	@Override
 	public SingleMatrixProgressRsp getMatrixRsp(String btId) {
 
@@ -1225,6 +1353,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return PageUtil.pageList(rsp, pageReq.getPage(), pageReq.getPerPage());
 	}
 
+	/**
+	 * 获取操作系统名字
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<IdNameType> }
+	 */
 	@Override
 	public List<IdNameType> getOsNames(String businessTemplateId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -1235,6 +1369,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return CrCommonUtil.getOsListFromAssets(assetList);
 	}
 
+	/**
+	 * 获取任务映射由方案
+	 *
+	 * @param missionStageSchemes 任务阶段计划
+	 * @return {@code Map<String, Mission> }
+	 */
 	private Map<String, Mission>
 			getMissionMapByScheme(List<MissionStageScheme> missionStageSchemes) {
 		List<String> missionIds = missionService.getMissionIdsByScheme(missionStageSchemes);

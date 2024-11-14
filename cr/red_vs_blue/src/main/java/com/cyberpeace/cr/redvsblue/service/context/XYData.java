@@ -11,9 +11,15 @@ import lombok.Data;
 @Data
 public class XYData {
 
+	/**
+	 * X轴数据
+	 */
 	@ApiModelProperty(value = "X轴数据")
 	private List<String> xData;
 
+	/**
+	 * Y轴数据
+	 */
 	@ApiModelProperty(value = "Y轴数据")
 	private List<Integer> yData;
 

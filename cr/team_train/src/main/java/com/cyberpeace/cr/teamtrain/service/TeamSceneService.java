@@ -8,10 +8,17 @@ import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.TeamSceneViewContext;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 
+/**
+ * 团队场景Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface TeamSceneService {
 
 	/**
 	 * 开启场景
+	 *
 	 * @param roomId 团队训练实例id
 	 * @param userId 用户id
 	 * @return 场景id
@@ -20,6 +27,7 @@ public interface TeamSceneService {
 
 	/**
 	 * 查看场景
+	 *
 	 * @param roomId 团队训练实例id
 	 * @param roleId 角色id
 	 * @return 场景数据
@@ -28,6 +36,7 @@ public interface TeamSceneService {
 
 	/**
 	 * 关闭场景
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 结果（布尔值）
 	 */
@@ -35,12 +44,14 @@ public interface TeamSceneService {
 
 	/**
 	 * 关闭场景后清除本地数据
+	 *
 	 * @param room 团队训练实例id
 	 */
 	void clearLocal(TeamRoom room);
 
 	/**
 	 * 暂停场景
+	 *
 	 * @param roomId
 	 * @return
 	 */
@@ -48,6 +59,7 @@ public interface TeamSceneService {
 
 	/**
 	 * 恢复场景
+	 *
 	 * @param roomId
 	 * @return
 	 */
@@ -55,6 +67,7 @@ public interface TeamSceneService {
 
 	/**
 	 * 获取流量列表
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 流量列表
 	 */

@@ -8,14 +8,29 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 单训练列表请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("前台单兵训练分页查询")
 public class SingleTrainListReq extends PageReqBase implements Serializable {
-    @ApiModelProperty("训练类别")
+	/**
+	 * 训练类别
+	 */
+	@ApiModelProperty("训练类别")
     private Integer category;
 
-    @ApiModelProperty("训练难度")
+	/**
+	 * 训练难度
+	 */
+	@ApiModelProperty("训练难度")
     private Integer difficult;
 
-    private Integer withInstance;
+	/**
+	 * with 实例
+	 */
+	private Integer withInstance;
 }

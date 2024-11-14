@@ -7,24 +7,36 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Web工具响应
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @ApiModel("前台工具库信息")
 @Data
 public class WebToolRsp implements Serializable {
 
+	/** 多个分类i18n名称逗号分割 */
     @ApiModelProperty("多个分类i18n名称逗号分割")
     private String categoryI18nName;
 
+	/** 封面链接 */
     @ApiModelProperty("封面链接")
     private String coverUrl;
 
-    private Integer id;
+	/** id */
+	private Integer id;
 
+	/** 名称 */
     @ApiModelProperty("名称")
     private String name;
 
+	/** ID */
     @ApiModelProperty("ID")
     private String resourceId;
 
+	/** 平台名称 */
     @ApiModelProperty("平台名称")
     private List<String> platforms;
 

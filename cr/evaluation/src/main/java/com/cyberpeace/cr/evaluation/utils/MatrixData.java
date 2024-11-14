@@ -10,8 +10,20 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
 
+/**
+ * 矩阵数据
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public class MatrixData {
 
+    /**
+     * 获取格式矩阵数据
+     *
+     * @param matrixData 矩阵数据
+     * @return {@code double [][] }
+     */
     public static double [][] getFormatMatrixData(String matrixData){
 		JSONArray objects = JSON.parseArray(matrixData);
         double [][] res = new double[objects.size()][];

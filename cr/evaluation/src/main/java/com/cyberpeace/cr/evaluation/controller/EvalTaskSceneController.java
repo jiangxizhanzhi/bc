@@ -23,6 +23,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 评估任务场景Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "靶场测评-场景")
 @Slf4j
 @RestController
@@ -30,12 +36,24 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/eval/scene")
 public class EvalTaskSceneController {
 
+	/**
+	 * 评估任务Service
+	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 重启节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("重启节点")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/node/restart")
@@ -50,6 +68,12 @@ public class EvalTaskSceneController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("重建节点")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/node/recreate")

@@ -21,15 +21,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * 工具shell代码Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "前台-资源中心-ShellCode库")
 @RestController
 @RequestMapping("/cr/tool/shellcode")
 @RequiresAuthentication
 public class ToolShellcodeController {
 
+	/**
+	 * 工具壳代号Service
+	 */
 	@Autowired
 	private ToolShellCodeService toolShellCodeService;
 
+	/**
+	 * 获取列表
+	 *
+	 * @param toolShellCodeListReq 工具壳代号列表请求体
+	 * @return {@code BaseRsp<ListRsp<ToolShellCode>> }
+	 */
 	@GetMapping("/list")
 	@ApiOperation("shellcode列表")
 	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_SHELLCODE)
@@ -42,6 +57,12 @@ public class ToolShellcodeController {
 		return new BaseRsp<>(toolShellCodeListRsp);
 	}
 
+	/**
+	 * 获取详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<ToolShellCode> }
+	 */
 	@GetMapping()
 	@ApiOperation("shellcode详情")
 	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_SHELLCODE)

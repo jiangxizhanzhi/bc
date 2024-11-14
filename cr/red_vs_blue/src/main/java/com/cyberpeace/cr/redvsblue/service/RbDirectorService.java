@@ -2,6 +2,12 @@ package com.cyberpeace.cr.redvsblue.service;
 
 import com.cyberpeace.cr.crbase.service.context.mission.RedBlueTaskReleaseProgress;
 
+/**
+ * 红蓝对抗导演Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface RbDirectorService {
 
 	/**

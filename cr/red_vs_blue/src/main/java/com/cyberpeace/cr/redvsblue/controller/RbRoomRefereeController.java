@@ -44,33 +44,66 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 红蓝对抗房间裁判Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗裁判")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/referee/")
 public class RbRoomRefereeController {
 
+	/**
+	 * 红蓝对抗房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 靶场常用Service
+	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
+	/**
+	 * 红蓝对抗裁判Service
+	 */
 	@Autowired
 	private RbRefereeService rbRefereeService;
 
+	/**
+	 * 靶场徽章Service
+	 */
 	@Autowired
 	private CrBadgeService crBadgeService;
-	
+
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 获取岗位列表
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<List<RbRoleIdNameType>> }
+	 */
 	@ApiOperation("获取角色列表")
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -81,6 +114,12 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取评估列表
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<List<EvaluationListRsp>> }
+	 */
 	@ApiOperation("获取学员的评估列表")
 	@GetMapping("/evaluation/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -93,6 +132,12 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取评估详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<EvaluationMissionRsp> }
+	 */
 	@ApiOperation("获取学员单个评估和任务详情，用于裁决页面")
 	@GetMapping("/evaluation/detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -166,6 +211,8 @@ public class RbRoomRefereeController {
 
 	/**
 	 * 查询红蓝对抗学员用户列表
+	 *
+	 * @param resourceId 资源id
 	 * @return
 	 */
 	@ApiOperation("查询红蓝对抗学员用户列表")
@@ -181,6 +228,8 @@ public class RbRoomRefereeController {
 
 	/**
 	 * 获取统计数据
+	 *
+	 * @param resourceId 资源id
 	 * @return
 	 */
 	@ApiOperation("获取统计数据")
@@ -194,6 +243,12 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 更新提交评估
+	 *
+	 * @param submitEvaluationReq 提交评估请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -213,6 +268,12 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取会话
+	 *
+	 * @param roomId 房间id
+	 * @return {@code BaseRsp<List<MonitorSession>> }
+	 */
 	@ApiOperation("获取监控")
 	@GetMapping("/sessions")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -224,6 +285,12 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取得分列表
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<List<StudentScoreListRsp>> }
+	 */
 	@ApiOperation("获取评分列表")
 	@GetMapping("/score/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -236,6 +303,12 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 如果显示评估徽章
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<BadgeBo> }
+	 */
 	@ApiOperation("任务裁决红点是否显示")
 	@GetMapping("/evaluation/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -247,6 +320,12 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 点击评估徽章
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("任务裁决红点点击取消")
 	@GetMapping("/evaluation/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)

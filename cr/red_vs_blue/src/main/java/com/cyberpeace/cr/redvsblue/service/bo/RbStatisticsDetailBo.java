@@ -9,40 +9,79 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝对抗统计学详情Bo
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel("红蓝对抗统计信息")
 public class RbStatisticsDetailBo implements Serializable {
 
-    @ApiModelProperty("用户id")
+	/**
+	 * 用户id
+	 */
+	@ApiModelProperty("用户id")
     private String userId;
 
-    @ApiModelProperty("用户名")
+	/**
+	 * 用户名
+	 */
+	@ApiModelProperty("用户名")
     private String username;
 
-    @ApiModelProperty("用户姓名")
+	/**
+	 * 用户姓名
+	 */
+	@ApiModelProperty("用户姓名")
     private String name;
 
-    @ApiModelProperty("用户组织信息")
+	/**
+	 * 用户组织信息
+	 */
+	@ApiModelProperty("用户组织信息")
     private String organizationData;
 
-    @ApiModelProperty("用户组织id")
+	/**
+	 * 用户组织id
+	 */
+	@ApiModelProperty("用户组织id")
     private String organizationId;
 
-    @ApiModelProperty("用户角色")
+	/**
+	 * 用户角色
+	 */
+	@ApiModelProperty("用户角色")
     private List<JSONObject> roles;
 
-    @ApiModelProperty("训练次数")
+	/**
+	 * 训练次数
+	 */
+	@ApiModelProperty("训练次数")
     private Integer trainTimes;
 
-    @ApiModelProperty("任务数")
+	/**
+	 * 任务数
+	 */
+	@ApiModelProperty("任务数")
     private Integer taskNum;
 
-    @ApiModelProperty("任务正确率")
+	/**
+	 * 任务正确率
+	 */
+	@ApiModelProperty("任务正确率")
     private Double taskAccuracy;
 
-    @ApiModelProperty("累计得分")
+	/**
+	 * 累计得分
+	 */
+	@ApiModelProperty("累计得分")
     private Integer totalScore;
 
-    @ApiModelProperty("综合排名")
+	/**
+	 * 综合排名
+	 */
+	@ApiModelProperty("综合排名")
     private Integer overallRank;
 }

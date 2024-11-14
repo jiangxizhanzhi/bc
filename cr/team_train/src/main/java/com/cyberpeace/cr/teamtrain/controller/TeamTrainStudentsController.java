@@ -76,7 +76,10 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 团队训练学员Controller
  *
+ * @author SN
+ * @date 2024/11/14
  */
 @Slf4j
 @Api(tags = "团队训练学员")
@@ -84,51 +87,102 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/training_team/training_team_students")
 public class TeamTrainStudentsController {
 
+	/**
+	 * 团队房间Service
+	 */
 	@Autowired
 	private TeamRoomService teamRoomService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
+	/**
+	 * 靶场任务Service
+	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	private MissionService missionService;
 
+	/**
+	 * 训练记录Service
+	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
+	/**
+	 * 靶场常用Service
+	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
+	/**
+	 * 团队装置Service
+	 */
 	@Autowired
 	private TeamDeviceService teamDeviceService;
 
+	/**
+	 * 团队常用装置Service
+	 */
 	@Autowired
 	private TeamCommonDeviceService teamCommonDeviceService;
 
+	/**
+	 * 靶场场景Service
+	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 靶场徽章Service
+	 */
 	@Autowired
 	private CrBadgeService crBadgeService;
 
+	/**
+	 * 团队教员Service
+	 */
 	@Autowired
 	private TeamTeacherService teamTeacherService;
 
+	/**
+	 * 事务模板
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 靶场得分Service
+	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
+	/**
+	 * 获取团队房间
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<TeamRoomRsp> }
+	 */
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -185,6 +239,8 @@ public class TeamTrainStudentsController {
 
 	/**
 	 * 获取任务列表
+	 *
+	 * @param resource_id 资源id
 	 * @return
 	 */
 	@ApiOperation("获取任务列表")
@@ -213,6 +269,12 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(missionSchemeList);
 	}
 
+	/**
+	 * 改变训练状态
+	 *
+	 * @param submitMissionsReq 提交任务请求体
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -241,6 +303,13 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取任务详情
+	 *
+	 * @param resource_id 资源id
+	 * @param mission_id  任务id
+	 * @return {@code BaseRsp<MissionRsp> }
+	 */
 	@ApiOperation("获取任务详情")
 	@GetMapping("/get_mission_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -272,6 +341,8 @@ public class TeamTrainStudentsController {
 
 	/**
 	 * 查询团队训练学员时间轴
+	 *
+	 * @param resource_id 资源id
 	 * @return
 	 */
 	@ApiOperation("查询团队训练时间线")
@@ -285,6 +356,12 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(data);
 	}
 
+	/**
+	 * 创建标记
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Void> }
+	 */
 	@ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -293,6 +370,13 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取任务矩阵
+	 *
+	 * @param resource_id 资源id
+	 * @param user_id     用户id
+	 * @return {@code BaseRsp<TaskMatrix> }
+	 */
 	@ApiOperation("团队对抗-学员任务矩阵")
 	@GetMapping("/task/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -320,6 +404,13 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(teamTaskMatrix);
 	}
 
+	/**
+	 * 复盘用户任务信息
+	 *
+	 * @param resource_id 资源id
+	 * @param user_id     用户id
+	 * @return {@code BaseRsp<TaskMatrix> }
+	 */
 	@ApiOperation("团队对抗-复盘用户任务列表")
 	@GetMapping("/task/replayUserTaskInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -342,6 +433,12 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(teamTaskMatrix);
 	}
 
+	/**
+	 * 如果 show mission matrix badge
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("团队对抗-学员任务矩阵-是否显示红点")
 	@GetMapping("/task/matrix/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -354,6 +451,12 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 点击评估徽章
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<Void> }
+	 */
 	@ApiOperation("任务矩阵红点点击取消")
 	@GetMapping("/matrix/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -365,6 +468,12 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 创建装置
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("新增占用主机")
 	@PostMapping("/device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -389,6 +498,12 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(ret);
 	}
 
+	/**
+	 * 删除设备
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("解除主机占用")
 	@DeleteMapping("/device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -400,6 +515,13 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(ret);
 	}
 
+	/**
+	 * 获取占领设备
+	 *
+	 * @param room_id         房间id
+	 * @param standard_device 标准设备
+	 * @return {@code BaseRsp<List<TeamTrainDeviceContext>> }
+	 */
 	@ApiOperation("查询主机占用情况")
 	@GetMapping("/device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -412,6 +534,14 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(ret);
 	}
 
+	/**
+	 * 获取不还常用设备
+	 *
+	 * @param resource_id 资源id
+	 * @param category    类别
+	 * @param name        名称
+	 * @return {@code BaseRsp<List<TeamCommonDeviceContext>> }
+	 */
 	@ApiOperation("常用资产可添加列表")
 	@GetMapping("/device/common_device/not_yet")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -450,6 +580,12 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(commonDeviceContexts);
 	}
 
+	/**
+	 * 新增装置
+	 *
+	 * @param teamCommonDeviceReq 团队常用装置请求体
+	 * @return {@code BaseRsp<Void> }
+	 */
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -469,6 +605,12 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * del device
+	 *
+	 * @param teamCommonDeviceContext 团队常用装置上下文
+	 * @return {@code BaseRsp<Void> }
+	 */
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -478,6 +620,14 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取已经常用设备
+	 *
+	 * @param resource_id 资源id
+	 * @param category    类别
+	 * @param name        名称
+	 * @return {@code BaseRsp<List<TeamCommonDeviceContext>> }
+	 */
 	@ApiOperation("常用资产已添加列表")
 	@GetMapping("/device/common_device/already")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -510,7 +660,9 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(commonDeviceContexts);
 	}
 
-	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息
+	/**
+	 * 获取单个实例中自己的角色信息，只包括自己角色的基本信息
+	 *
 	 * @param crRoles
 	 * @param userId
 	 * @return
@@ -530,7 +682,9 @@ public class TeamTrainStudentsController {
 		return baseRole;
 	}
 
-	/** 先获取实例列表中自己的角色，再获取所有的学员角色
+	/**
+	 * 先获取实例列表中自己的角色，再获取所有的学员角色
+	 *
 	 * @param crRoles
 	 * @param userId
 	 * @return
@@ -562,9 +716,10 @@ public class TeamTrainStudentsController {
 
 	/**
 	 * 装配 中台过来的设备信息 和 设置占用标志 并过滤 已添加设备
-	 * @param availableDevices 场景中的可用设备，中台的设备状态信息列表
-	 * @param occupyDevices 当前场景已占用的设备列表
-	 * @param roomId 房间id
+	 *
+	 * @param availableDevices          场景中的可用设备，中台的设备状态信息列表
+	 * @param occupyDevices             当前场景已占用的设备列表
+	 * @param roomId                    房间id
 	 * @param allCollectedCommonDevices 已添加的常用资产列表
 	 * @return 可添加的常用资产列表
 	 */
@@ -624,8 +779,9 @@ public class TeamTrainStudentsController {
 	}
 
 	/**
+	 * 组合可用设备
 	 *
-	 * @param availableDevices 常用中可用设备，中台的设备状态信息
+	 * @param availableDevices       常用中可用设备，中台的设备状态信息
 	 * @param collectedCommonDevices 已添加的常用资产列表
 	 * @return 已添加常用资产列表
 	 */

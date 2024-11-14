@@ -7,6 +7,12 @@ import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cs.service.context.IdNameType;
 
+/**
+ * 团队教员Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface TeamTeacherService {
 
 	/**

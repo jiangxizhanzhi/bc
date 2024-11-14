@@ -25,17 +25,35 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 团队训练岗位Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "团队训练角色")
 @RestController
 @RequestMapping("/cr/team_train/role")
 public class TeamTrainRoleController {
 
+	/**
+	 * 团队房间Service
+	 */
 	@Autowired
 	TeamRoomService teamRoomService;
 
+	/**
+	 * 靶场岗位Service
+	 */
 	@Autowired
 	CrRoleService crRoleService;
 
+	/**
+	 * 获取角色
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<CrRoleContext<RoleMissionRsp>> }
+	 */
 	@ApiOperation("团队实例查询角色")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)

@@ -51,6 +51,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 单房间Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Api(tags = "单兵训练")
 @RestController
@@ -58,18 +65,36 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/single_train/room")
 public class SingleRoomController {
 
+	/**
+	 * 单房间Service
+	 */
 	@Autowired
 	private SingleRoomService singleRoomService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 远程拓扑Service
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 创建
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<SingleRoomBo> }
+	 */
 	@PostMapping
 	@ApiOperation("创建")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -85,6 +110,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomBo);
 	}
 
+	/**
+	 * 获取
+	 *
+	 * @param businessTrainId 业务训练id
+	 * @return {@code BaseRsp<SingleRoomBo> }
+	 */
 	@GetMapping
 	@ApiOperation("详情")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -106,6 +137,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(roomInfo);
 	}
 
+	/**
+	 * 获取场景
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SceneViewContext> }
+	 */
 	@ApiOperation("单兵场景详情")
 	@GetMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -117,6 +154,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(context);
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@DeleteMapping
 	@ApiOperation("关闭")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -133,6 +176,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(deleteRoom);
 	}
 
+	/**
+	 * 列表
+	 *
+	 * @param queryParams 查询参数
+	 * @return {@code BaseRsp<ListRsp<SingleRoomListBo>> }
+	 */
 	@GetMapping("/list")
 	@ApiOperation("分页查询")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -140,6 +189,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomService.getSingleTrainPageList(queryParams));
 	}
 
+	/**
+	 * 提交任务
+	 *
+	 * @param requestData 请求数据
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@PostMapping("/mission_submit")
 	@ApiOperation("任务提交")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -151,6 +206,13 @@ public class SingleRoomController {
 				singleRoomService.submitMission(requestData.getBusinessTemplateId(), requestData));
 	}
 
+	/**
+	 * 任务
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param missionId          任务id
+	 * @return {@code BaseRsp<SingleMissionBo> }
+	 */
 	@GetMapping("/mission")
 	@ApiOperation("任务获取")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -159,6 +221,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomService.getMission(businessTemplateId, missionId));
 	}
 
+	/**
+	 * 训练人工
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code BaseRsp<List<ManualStageBo>> }
+	 */
 	@GetMapping("/train_manual")
 	@ApiOperation("训练手册, 需要开启单兵训练")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -167,6 +235,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomService.getTrainManual(businessTemplateId));
 	}
 
+	/**
+	 * 训练记录
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code BaseRsp<List<TrainRecordBo>> }
+	 */
 	@GetMapping("/train_record")
 	@ApiOperation("训练记录")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -175,6 +249,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomService.getTrainRecord(businessTemplateId));
 	}
 
+	/**
+	 * 训练记录markdown
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code BaseRsp<String> }
+	 */
 	@GetMapping("/train_record_markdown")
 	@ApiOperation("训练记录-markdown")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -182,6 +262,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomService.getTrainRecordMarkdown(businessTemplateId));
 	}
 
+	/**
+	 * 训练时间线
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code BaseRsp<TimeLineData> }
+	 */
 	@GetMapping("/time_line")
 	@ApiOperation("训练时间线")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -190,6 +276,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomService.getTimeLineData(businessTemplateId));
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("重启节点")
 	@PostMapping("/scene/node/restart")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -210,6 +302,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("重建节点")
 	@PostMapping("/scene/node/recreate")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -230,6 +328,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 训练历史
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code BaseRsp<List<TrainingRecordListBo>> }
+	 */
 	@ApiOperation("训练历史")
 	@GetMapping("/train_history")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -238,6 +342,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomService.getTrainHistory(businessTemplateId));
 	}
 
+	/**
+	 * 提交训练
+	 *
+	 * @param requestBody 请求正文
+	 * @return {@code BaseRsp<String> }
+	 */
 	@ApiOperation("训练提交")
 	@PostMapping("/train_submit")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -246,6 +356,12 @@ public class SingleRoomController {
 		return new BaseRsp<>(singleRoomService.submitTrain(requestBody.getResourceId()));
 	}
 
+	/**
+	 * 获取任务矩阵
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SingleMatrixProgressRsp> }
+	 */
 	@ApiOperation("获取任务矩阵和训练进度")
 	@GetMapping("/mission/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
@@ -279,6 +395,7 @@ public class SingleRoomController {
 	 * 获取操作系统名字
 	 * 透传中台节点数据
 	 *
+	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<List<IdNameType>>}
 	 */
 	@ApiOperation("操作系统列表, 需要开启场景")

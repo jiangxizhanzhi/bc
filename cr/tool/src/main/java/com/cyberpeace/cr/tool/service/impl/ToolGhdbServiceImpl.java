@@ -15,14 +15,26 @@ import com.cyberpeace.cr.tool.service.ToolGhdbService;
 import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
 
 /**
- * @author yinqingrong
+ * 工具GHDB 数据库Service实现
+ *
+ * @author yinqingrong@date 2024/11/14
  */
 @Service
 public class ToolGhdbServiceImpl extends ServiceImpl<ToolGhdbMapper, ToolGhdb> implements ToolGhdbService {
 
+	/**
+	 * 工具GHDB 数据库Mapper
+	 */
 	@Autowired
 	private ToolGhdbMapper toolGhdbMapper;
 
+	/**
+	 * 列出 GHDB
+	 *
+	 * @param pageReqBase 分页请求体基础
+	 * @param toolGhdbRsp 工具GHDB 数据库响应
+	 * @return {@code ListRsp<ToolGhdb> }
+	 */
 	@Override
 	public ListRsp<ToolGhdb> listGhdb(PageReqBase pageReqBase, ToolGhdbRsp toolGhdbRsp) {
 		Page<ToolGhdb> page = pageReqBase.toPageParam();

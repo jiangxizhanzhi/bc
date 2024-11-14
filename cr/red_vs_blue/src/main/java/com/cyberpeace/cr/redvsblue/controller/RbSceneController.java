@@ -61,6 +61,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗场景Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗场景")
 @Slf4j
 @RestController
@@ -68,37 +74,76 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/red_vs_blue/scene/")
 public class RbSceneController {
 
+	/**
+	 * 红蓝对抗房间Service
+	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
+	/**
+	 * 红蓝对抗场景Service
+	 */
 	@Autowired
 	private RbSceneService rbSceneService;
 
+	/**
+	 * 当地场景Service
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 远程日志Service
+	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	/**
+	 * 红蓝对抗装置Service
+	 */
 	@Autowired
 	private RbDeviceService rbDeviceService;
 
+	/**
+	 * 红蓝对抗常用装置Service
+	 */
 	@Autowired
 	private RbCommonDeviceService rbCommonDeviceService;
 
+	/**
+	 * 靶场场景Service
+	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
+	/**
+	 * 远程用户Service
+	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 场景不启动日志
+	 */
 	private static final String SCENE_NOT_START_LOG = "scene is not started, room id is {}";
 
+	/**
+	 * 锁具厂
+	 */
 	private LockFactory lockFactory = DefaultLockFactory.getInstance();
 
+	/**
+	 * 缓存
+	 */
 	Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.SECONDS)
 			.build();
 
+	/**
+	 * 启动场景
+	 *
+	 * @param sceneStartReq 场景启动请求体
+	 * @return {@code BaseRsp<StartSceneRsp> }
+	 */
 	@ApiOperation("启动场景")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -111,6 +156,12 @@ public class RbSceneController {
 		return new BaseRsp<>(new StartSceneRsp(sceneId));
 	}
 
+	/**
+	 * 停止场景
+	 *
+	 * @param sceneStopReq 场景停止请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("停止场景")
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -121,6 +172,13 @@ public class RbSceneController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 获取场景
+	 *
+	 * @param roomId 房间id
+	 * @param roleId 岗位id
+	 * @return {@code BaseRsp<RbSceneViewContext> }
+	 */
 	@ApiOperation("查看场景")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -134,6 +192,12 @@ public class RbSceneController {
 		return new BaseRsp<>(context);
 	}
 
+	/**
+	 * 暂停场景
+	 *
+	 * @param sceneOpsReq 场景操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("暂停场景")
 	@PostMapping("/pause")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -158,6 +222,12 @@ public class RbSceneController {
 		return new BaseRsp<>(ret);
 	}
 
+	/**
+	 * 取消暂停场景
+	 *
+	 * @param sceneOpsReq 场景操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/unpause")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -183,6 +253,12 @@ public class RbSceneController {
 		return new BaseRsp<>(ret);
 	}
 
+	/**
+	 * 获取流量列表
+	 *
+	 * @param roomId 房间id
+	 * @return {@code BaseRsp<FlowRsp> }
+	 */
 	@ApiOperation("查询流量")
 	@GetMapping("flow")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -197,6 +273,12 @@ public class RbSceneController {
 		return new BaseRsp<>(ret);
 	}
 
+	/**
+	 * 启动流量
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -220,6 +302,12 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 停止流量
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("停止流量")
 	@PostMapping("/flow/stop")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -243,6 +331,12 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 重启节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("重启节点")
 	@PostMapping("/node/restart")
 	public BaseRsp<Boolean> restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
@@ -261,6 +355,12 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("重建节点")
 	@PostMapping("/node/recreate")
 	public BaseRsp<Boolean> recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
@@ -279,6 +379,12 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 创建节点
+	 *
+	 * @param nodeOpsReq 节点操作请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("创建启动节点")
 	@PostMapping("/node/create")
 	public BaseRsp<Boolean> createNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
@@ -322,8 +428,8 @@ public class RbSceneController {
 	 * 透传中台
 	 *
 	 * @param resourceId 资源id
-	 * @param category    类别
-	 * @param name        名称
+	 * @param category   类别
+	 * @param name       名称
 	 * @return {@code BaseRsp<JSONArray>}
 	 */
 	@ApiOperation("设备清单")
@@ -341,6 +447,14 @@ public class RbSceneController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取不还常用设备
+	 *
+	 * @param resourceId 资源id
+	 * @param category   类别
+	 * @param name       名称
+	 * @return {@code BaseRsp<List<RbCommonDeviceContext>> }
+	 */
 	@ApiOperation("常用资产可添加列表")
 	@GetMapping("/device/common_device/not_yet")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -379,6 +493,12 @@ public class RbSceneController {
 		return new BaseRsp<>(commonDeviceContexts);
 	}
 
+	/**
+	 * 新增装置
+	 *
+	 * @param rbCommonDeviceReq 红蓝对抗常用装置请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -396,6 +516,12 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * del device
+	 *
+	 * @param rbCommonDeviceContext 红蓝对抗常用装置上下文
+	 * @return {@code BaseRsp<Boolean> }
+	 */
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -405,6 +531,14 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取已经常用设备
+	 *
+	 * @param resourceId 资源id
+	 * @param category   类别
+	 * @param name       名称
+	 * @return {@code BaseRsp<List<RbCommonDeviceContext>> }
+	 */
 	@ApiOperation("常用资产已添加列表")
 	@GetMapping("/device/common_device/already")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -440,9 +574,10 @@ public class RbSceneController {
 
 	/**
 	 * 根据 场景中可用设备和已占用设备 装配常用资产列表
-	 * @param availableDevices 场景中的可用设备，中台给的设备状态信息
-	 * @param occupyDevices 已占用设备列表
-	 * @param roomId 红蓝房间id
+	 *
+	 * @param availableDevices                场景中的可用设备，中台给的设备状态信息
+	 * @param occupyDevices                   已占用设备列表
+	 * @param roomId                          红蓝房间id
 	 * @param allCollectedCommonDeviceDevices 已添加常用资产列表
 	 * @return 可添加常用资产列表
 	 */
@@ -493,6 +628,13 @@ public class RbSceneController {
 		return commonDeviceContexts;
 	}
 
+	/**
+	 * 组合可用设备
+	 *
+	 * @param availableDevices       可用设备
+	 * @param collectedCommonDevices 收集常用设备
+	 * @return {@code List<RbCommonDeviceContext> }
+	 */
 	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 			List<RbCommonDevice> collectedCommonDevices) {
 		if (CollectionUtils.isEmpty(availableDevices)

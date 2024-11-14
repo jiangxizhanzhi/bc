@@ -18,24 +18,47 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 红蓝对抗态势Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "红蓝对抗城市沙盘")
 @Slf4j
 @RestController
 @RequestMapping("/cr/red_vs_blue/situation/")
 public class RbSituationController {
 
+	/**
+	 * 红蓝对抗态势Service
+	 */
 	@Autowired
 	private RbSituationService rbSituationService;
 
+	/**
+	 * 兔子模板
+	 */
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
 
+	/**
+	 * 获取实例
+	 *
+	 * @return {@code List<RbSituation> }
+	 */
 	@ApiOperation("获取红蓝对抗实例列表")
 	@GetMapping("/get_instances")
 	public List<RbSituation> getInstances() {
 		return rbSituationService.getAllRbSituation();
 	}
 
+	/**
+	 * 获取服务器
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code List<RbSituationServer> }
+	 */
 	@ApiOperation("获取红蓝对抗实例节点数据")
 	@GetMapping("/get_servers")
 	public List<RbSituationServer> getServers(

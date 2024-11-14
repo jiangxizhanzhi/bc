@@ -11,12 +11,24 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 测评变量裁判
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @TableName("cr_eval_variable_ref")
 public class EvalVariableRef extends BaseTable {
+    /**
+     * 资源id
+     */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
+    /**
+     * 名称
+     */
     private String name;
 
     /**

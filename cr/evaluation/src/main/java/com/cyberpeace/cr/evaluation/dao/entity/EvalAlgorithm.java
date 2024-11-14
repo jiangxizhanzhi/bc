@@ -11,8 +11,10 @@ import lombok.Data;
 import lombok.Getter;
 
 /**
- * 
- * @TableName cr_eval_algorithm
+ * 测评算法
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @TableName(value ="cr_eval_algorithm")
 @Data
@@ -106,6 +108,9 @@ public class EvalAlgorithm extends BaseTable {
 
 	}
 
+	/**
+	 * 算法模型
+	 */
     @ApiModelProperty("算法模型")
     private Integer mode;
 
@@ -126,6 +131,9 @@ public class EvalAlgorithm extends BaseTable {
 
     }
 
+	/**
+	 * 是否为内置算法
+	 */
     @ApiModelProperty("是否为内置算法")
     private Integer builtin;
 

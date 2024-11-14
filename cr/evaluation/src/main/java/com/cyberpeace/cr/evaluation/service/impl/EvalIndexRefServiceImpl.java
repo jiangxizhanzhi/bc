@@ -35,22 +35,43 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测评编号裁判Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, EvalIndexRef> implements EvalIndexRefService {
 
+	/**
+	 * 远程蟒Service
+	 */
 	@Autowired
 	private RemotePythonService remotePythonService;
 
+	/**
+	 * 测评变量裁判Service
+	 */
 	@Autowired
 	private EvalVariableRefService evalVariableRefService;
 
+	/**
+	 * 测评算法裁判Service
+	 */
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
 
+	/**
+	 * 测评变量裁判Mapper
+	 */
 	@Autowired
 	private EvalVariableRefMapper evalVariableRefMapper;
 
+	/**
+	 * int2cn
+	 */
 	private final Map<Integer, String> int2cn = new HashMap<Integer, String>() {
 
 		{
@@ -61,6 +82,12 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		}
 	};
 
+	/**
+	 * 获取水平文本
+	 *
+	 * @param level 水平
+	 * @return {@code String }
+	 */
 	private String getLevelText(Integer level) {
 		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
 			return Integer.toString(level);
@@ -68,6 +95,13 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		return int2cn.get(level);
 	}
 
+	/**
+	 * 编号AHP执行
+	 *
+	 * @param matrixData 矩阵数据
+	 * @param data       数据
+	 * @return {@code Integer }
+	 */
 	private Integer indexAhpPerform(String matrixData, List<Integer> data) {
 		int res = 0;
 		JSONArray objects = JSON.parseArray(matrixData);
@@ -88,6 +122,15 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		return res;
 	}
 
+	/**
+	 * 启动编号
+	 *
+	 * @param evalIndexRef       测评编号裁判
+	 * @param evalAlgorithmRef   测评算法裁判
+	 * @param evalIndexRefMap    测评编号裁判映射
+	 * @param evalVariableRefMap 测评变量裁判映射
+	 * @param evalRecord         测评记录
+	 */
 	@Override
 	public void startIndex(EvalIndexRef evalIndexRef, EvalAlgorithmRef evalAlgorithmRef,
 			Map<String, EvalIndexRef> evalIndexRefMap,
@@ -176,6 +219,12 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		}
 	}
 
+	/**
+	 * 查询变量
+	 *
+	 * @param indexId 编号id
+	 * @return {@code List<EvalRoomPairRsp> }
+	 */
 	@Override
 	public List<EvalRoomPairRsp> selectVariables(String indexId) {
 		List<EvalRoomPairRsp> results = Lists.newArrayList();
@@ -228,9 +277,10 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 	/**
 	 * 收集某一指标项下所有变量项ID
-	 * @param evalIndexRef 需要收集的指标项
+	 *
+	 * @param evalIndexRef    需要收集的指标项
 	 * @param evalIndexRefMap 所选指标项的所有次级指标
-	 * @param variableIds 收集变量项id集合
+	 * @param variableIds     收集变量项id集合
 	 */
 	private void collectionVariableIds(EvalIndexRef evalIndexRef,
 			Map<String, EvalIndexRef> evalIndexRefMap, List<String> variableIds) {
@@ -245,6 +295,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		});
 	}
 
+	/**
+	 * 周期映射
+	 */
 	private final Map<Integer, Map<Integer, Integer>> CYCLE_MAP = new HashMap<Integer, Map<Integer, Integer>>() {
 
 		{
@@ -268,6 +321,15 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 	};
 
+	/**
+	 * 第三专家
+	 *
+	 * @param datatype       数据类型
+	 * @param attribute      属性
+	 * @param attributeValue 属性值
+	 * @param value          值
+	 * @return {@code Integer }
+	 */
 	@Override
 	public Integer thirdSpecialist(Integer datatype, Integer attribute, Integer attributeValue,
 			Integer value) {
@@ -293,6 +355,12 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		return 0;
 	}
 
+	/**
+	 * 系统测评变量id列表
+	 *
+	 * @param recordId 记录id
+	 * @return {@code Set<String> }
+	 */
 	@Override
 	public Set<String> systemEvalVariableIds(String recordId) {
 		Set<String> results = Sets.newHashSet();
@@ -314,6 +382,12 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		return results;
 	}
 
+	/**
+	 * 结果编号
+	 *
+	 * @param indexId 编号id
+	 * @return {@code EvalRecordResultIndexRsp }
+	 */
 	@Override
 	public EvalRecordResultIndexRsp resultIndex(String indexId) {
 		EvalIndexRef evalIndexRef = getById(indexId);
@@ -345,6 +419,14 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		return firstIndex;
 	}
 
+	/**
+	 * 集合索引
+	 *
+	 * @param evalRecordResultIndexRsp    测评记录结果编号响应
+	 * @param depth                       深度
+	 * @param evalRecordResultIndexRspMap 测评记录结果编号响应映射
+	 * @return {@code List<EvalRecordResultIndexRsp> }
+	 */
 	private List<EvalRecordResultIndexRsp> collectionIndexes(
 			EvalRecordResultIndexRsp evalRecordResultIndexRsp, Integer depth,
 			Map<String, EvalRecordResultIndexRsp> evalRecordResultIndexRspMap) {

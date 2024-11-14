@@ -6,13 +6,18 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 /**
- * 
- * @TableName cr_eval_indicator
+ * 测评指示器
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 @TableName(value = "cr_eval_indicator")
 @Data
 public class EvalIndicator extends BaseTable {
 
+	/**
+	 * 资源id
+	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 

@@ -7,14 +7,26 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
+/**
+ * 类别新增请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 @ApiModel
 public class CategoryAddReq implements Serializable {
 
+	/**
+	 * 中文名称
+	 */
 	@ApiModelProperty("中文名称")
 	@NotBlank
 	private String cnName;
 
+	/**
+	 * 英文名称
+	 */
 	@ApiModelProperty("英文名称")
 	@NotBlank
 	private String enName;

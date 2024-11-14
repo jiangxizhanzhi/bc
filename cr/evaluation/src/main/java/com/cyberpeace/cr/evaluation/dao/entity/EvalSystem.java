@@ -16,6 +16,9 @@ import lombok.Data;
 @Data
 public class EvalSystem extends BaseTable {
 
+	/**
+	 * ID
+	 */
 	@ApiModelProperty("ID")
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
@@ -38,12 +41,21 @@ public class EvalSystem extends BaseTable {
 	@ApiModelProperty("连线信息")
 	private String connlist;
 
+	/**
+	 * 一级指标数量
+	 */
 	@ApiModelProperty("一级指标数量")
 	private Integer firstIndexNum;
 
+	/**
+	 * 二级指标数量
+	 */
 	@ApiModelProperty("二级指标数量")
 	private Integer secondIndexNum;
 
+	/**
+	 * 三级指标数量
+	 */
 	@ApiModelProperty("三级指标数量")
 	private Integer thirdIndexNum;
 

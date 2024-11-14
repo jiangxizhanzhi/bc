@@ -19,15 +19,30 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 工具GHDB 数据库Controller
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Api(tags = "前台-资源中心-ghdb")
 @RestController
 @RequestMapping("/cr/tool/ghdb")
 @RequiresAuthentication
 public class ToolGhdbController {
 
+	/**
+	 * 工具GHDB 数据库Service
+	 */
 	@Autowired
 	private ToolGhdbService toolGhdbService;
 
+	/**
+	 * 列表
+	 *
+	 * @param toolGhdbListReq 工具GHDB 数据库列表请求体
+	 * @return {@code BaseRsp<ListRsp<ToolGhdb>> }
+	 */
 	@ApiOperation("ghdb列表")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_GHDB)
@@ -37,6 +52,12 @@ public class ToolGhdbController {
 		return new BaseRsp<>(data);
 	}
 
+	/**
+	 * 详情
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<ToolGhdb> }
+	 */
 	@ApiOperation("ghdb详情")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TOOL_GHDB)

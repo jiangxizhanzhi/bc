@@ -10,45 +10,60 @@ import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 
 /**
+ * 测评指示器Service
  *
+ * @author SN
+ * @date 2024/11/14
  */
 public interface EvalIndicatorService extends IService<EvalIndicator> {
 
-	/** 批量保存指标项
+	/**
+	 * 批量保存指标项
+	 *
 	 * @param evalIndicators
 	 * @param userId
-	 * @param collectionIds
+	 * @param collectionIds  收集id列表
 	 */
 	void saveBatchContext(EvalIndicatorReq evalIndicators, String userId,
 			List<String> collectionIds);
 
-	/** 批量删除指标项
+	/**
+	 * 批量删除指标项
+	 *
 	 * @param ids
 	 * @return
 	 */
 	Boolean batchDelete(List<String> ids);
 
-	/** 删除指定指标项的聚合项和采集项
-	 * @param evalIndicatorIds
+	/**
+	 * 删除指定指标项的聚合项和采集项
+	 *
+	 * @param evalIndicatorIds 测评指示器id列表
 	 */
 	void deleteAggregationAndCollection(List<String> evalIndicatorIds);
 
-	/** 批量更新指标项
+	/**
+	 * 批量更新指标项
+	 *
 	 * @param evalIndicatorReq
 	 * @param evalIndicators
 	 * @param userId
-	 * @param collectionIds
+	 * @param collectionIds    收集id列表
 	 */
 	void updateBatchContext(EvalIndicatorReq evalIndicatorReq,
 			List<EvalIndicatorContext> evalIndicators, String userId, List<String> collectionIds);
 
-	/** 分页查询指标项
+	/**
+	 * 分页查询指标项
+	 *
 	 * @param listQuery
 	 * @return
 	 */
 	IPage<EvalIndicator> page(EvalListQuery listQuery);
 
-	/**查询已使用的指标项数量
+	/**
+	 * 查询已使用的指标项数量
+	 *
 	 * @param ids 指标项id列表
 	 * @return
 	 */

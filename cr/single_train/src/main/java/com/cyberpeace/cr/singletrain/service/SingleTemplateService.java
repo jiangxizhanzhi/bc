@@ -9,20 +9,28 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 
+/**
+ * 单模板Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface SingleTemplateService extends IService<SingleTemplate> {
 
 	/**
 	 * 获取单兵模板数据
-	 * @param businessTemplateId 业务模板id 
+	 *
+	 * @param businessTemplateId 业务模板id
 	 * @return 单兵训练模板数据
 	 */
 	SingleTemplateBo get(String businessTemplateId);
 
 	/**
 	 * 更新单兵训练模板
-	 * @param businessTemplateId 业务模板id 
-	 * @param baseInfo 模板基础信息
-	 * @param missionsScheme 任务编排
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param baseInfo           模板基础信息
+	 * @param missionsScheme     任务编排
 	 * @return 更新后的单兵模板
 	 */
 	SingleTemplateBo update(String businessTemplateId, BaseInfo baseInfo,
@@ -30,6 +38,7 @@ public interface SingleTemplateService extends IService<SingleTemplate> {
 
 	/**
 	 * 获取单兵模板
+	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return 单兵模板
 	 */
@@ -37,6 +46,7 @@ public interface SingleTemplateService extends IService<SingleTemplate> {
 
 	/**
 	 * 根据 missions_scheme 获取任务模板id列表
+	 *
 	 * @param missionsScheme 任务编排json
 	 * @return 任务模板id列表
 	 */

@@ -11,40 +11,79 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 团队训练房间修改请求体
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class TeamTrainRoomModifyReq {
 
+	/**
+	 * 实例编号
+	 */
 	@ApiModelProperty(value = "实例编号", required = true)
 	@NotNull
 	private String resourceId;
 
+	/**
+	 * 类别
+	 */
 	@ApiModelProperty(value = "类别")
 	private Integer category;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
+	/**
+	 * 前置技能
+	 */
 	@ApiModelProperty(value = "前置技能")
 	private List<String> preSkill;
 
+	/**
+	 * 训练目标
+	 */
 	@ApiModelProperty(value = "训练目标")
 	private List<String> trainSkill;
 
+	/**
+	 * 开始时间
+	 */
 	@ApiModelProperty(value = "开始时间")
 	private Date startTime;
 
+	/**
+	 * 结束时间
+	 */
 	@ApiModelProperty(value = "结束时间")
 	private Date endTime;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty(value = "描述")
 	private String description;
 
+	/**
+	 * 角色配置
+	 */
 	@ApiModelProperty(value = "角色配置")
 	private String roleConfig;
 
+	/**
+	 * 录屏开关
+	 */
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
 
+	/**
+	 * LOGO
+	 */
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 

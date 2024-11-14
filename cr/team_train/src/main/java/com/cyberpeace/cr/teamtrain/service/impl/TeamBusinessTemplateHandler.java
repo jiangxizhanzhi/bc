@@ -33,27 +33,57 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 团队业务模板处理器
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 @Slf4j
 public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
+	/**
+	 * 团队模板Service
+	 */
 	@Autowired
 	TeamTemplateService teamTemplateService;
 
+	/**
+	 * 业务模板Service
+	 */
 	@Autowired
 	BusinessTemplateService businessTemplateService;
 
+	/**
+	 * 任务Service
+	 */
 	@Autowired
 	MissionService missionService;
 
+	/**
+	 * 任务模板Service
+	 */
 	@Autowired
 	MissionTemplateService missionTemplateService;
 
+	/**
+	 * 设置业务类型
+	 *
+	 * @return {@code BusinessType }
+	 */
 	@Override
 	public BusinessType setBusinessType() {
 		return BusinessType.TRAINING_TEAM;
 	}
 
+	/**
+	 * 保存真实业务
+	 *
+	 * @param basicTemplate 基本模板
+	 * @param businessId    业务id
+	 * @return {@code String }
+	 */
 	@Override
 	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 
@@ -101,6 +131,12 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		return teamTemplate.getResourceId();
 	}
 
+	/**
+	 * 真实导出业务
+	 *
+	 * @param template 模板
+	 * @return {@code ResourceDumpContext }
+	 */
 	@Override
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
 		ResourceDumpContext<TeamTemplate> context = new ResourceDumpContext<>();
@@ -116,6 +152,11 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		return context;
 	}
 
+	/**
+	 * 真实加载业务资源
+	 *
+	 * @param resource 资源
+	 */
 	@Override
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
 		TeamTemplate teamTemplate = ((JSONObject) resource.getBusiness())
@@ -130,6 +171,11 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		}
 	}
 
+	/**
+	 * 删除模板相关
+	 *
+	 * @param businessTemplate 业务模板
+	 */
 	@Override
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		TeamTemplate teamTemplate = teamTemplateService
@@ -141,6 +187,11 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 		teamTemplateService.removeById(teamTemplate.getResourceId());
 	}
 
+	/**
+	 * 加载训练模板
+	 *
+	 * @param templateContext 模板上下文
+	 */
 	@Override
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		TeamTemplate teamTemplate = BeanUtils.copy(templateContext, TeamTemplate.class);

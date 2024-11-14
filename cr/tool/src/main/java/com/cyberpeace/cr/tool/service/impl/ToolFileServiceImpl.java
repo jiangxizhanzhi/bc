@@ -22,15 +22,33 @@ import com.cyberpeace.cr.tool.service.ToolFileService;
 import com.google.common.io.Files;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 工具文件Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Service
 public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> implements ToolFileService {
 
+	/**
+	 * 导入日志
+	 */
 	private static final Logger importLog = LoggerFactory.getLogger("resourceImport");
 
+	/**
+	 * 保存路径
+	 */
 	private final String savePath = "tool"+ File.separator + "tool" + File.separator;
 
+	/**
+	 * 上传路径
+	 */
 	private String uploadPath;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		uploadPath = ConfigUtil.getContextProperty("cr.local.upload.path") + File.separator
@@ -38,6 +56,13 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		ensureDir(uploadPath);
 	}
 
+	/**
+	 * 保存文件
+	 *
+	 * @param filePath     文件路径
+	 * @param transferName 转移名称
+	 * @return {@code ToolFile }
+	 */
 	@Override
 	public ToolFile saveFile(String filePath, boolean transferName) {
 		String fileSuffix = filePath.substring(filePath.lastIndexOf("."));
@@ -63,6 +88,13 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		return newToolFile(fileName, fileName);
 	}
 
+	/**
+	 * 新建工具文件
+	 *
+	 * @param OriginalFileName 源语言文件名称
+	 * @param FileName         文件名称
+	 * @return {@code ToolFile }
+	 */
 	private ToolFile newToolFile(String OriginalFileName, String FileName) {
 		ToolFile toolFile = new ToolFile();
 		toolFile.setFileName(OriginalFileName);
@@ -71,6 +103,12 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		return toolFile;
 	}
 
+	/**
+	 * 保存文件
+	 *
+	 * @param multipartFile Multipart 文件
+	 * @return {@code ToolFile }
+	 */
 	@Override
 	public ToolFile saveFile(MultipartFile multipartFile) {
 		File newFile;
@@ -86,6 +124,11 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 		return newToolFile(multipartFile.getOriginalFilename(), newFile.getName());
 	}
 
+	/**
+	 * 确保目录
+	 *
+	 * @param uploadPath 上传路径
+	 */
 	private void ensureDir(String uploadPath) {
 		File f = new File(uploadPath);
 

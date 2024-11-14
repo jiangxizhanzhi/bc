@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(tags = "外部接口-实操习题相关api")
+@Api(tags = "外部接口-课程课时api")
 @Slf4j
 @RestController
 @RequestMapping("/gateway/course")

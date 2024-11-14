@@ -10,7 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "外部接口-实操习题相关api")
+@Api(tags = "外部接口-规则库相关api")
 @Slf4j
 @RestController
 @RequestMapping("/gateway/rule")

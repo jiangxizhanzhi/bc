@@ -10,37 +10,97 @@ import com.cyberpeace.integratation.model.scene.*;
 
 /**
  * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2
+ *
+ * @author SN
+ * @date 2024/11/14
  */
 public interface RemoteSceneService {
 
 	/**
 	 * 启动前台场景
+	 *
+	 * @param sceneStartContext 场景启动上下文
+	 * @return {@code String }
 	 */
 	String startScene(SceneStartContext sceneStartContext);
 
 	/**
 	 * 启动后台测试场景
+	 *
+	 * @param sceneStartContext 场景启动上下文
+	 * @return {@code String }
 	 */
 	String testScene(SceneStartContext sceneStartContext);
 
+	/**
+	 * 停止场景
+	 *
+	 * @param sceneOpsContext 场景操作上下文
+	 * @return {@code Boolean }
+	 */
 	Boolean stopScene(SceneOpsContext sceneOpsContext);
 
+	/**
+	 * 暂停场景
+	 *
+	 * @param sceneOpsContext 场景操作上下文
+	 * @return {@code Boolean }
+	 */
 	Boolean pauseScene(SceneOpsContext sceneOpsContext);
 
+	/**
+	 * 获取由id
+	 *
+	 * @param sceneId 场景id
+	 * @param userId  用户id
+	 * @return {@code JSONObject }
+	 */
 	JSONObject getById(String sceneId, String userId);
 
+	/**
+	 * 获取由id和面积idfor3d
+	 *
+	 * @param sceneId 场景id
+	 * @param areaId  面积id
+	 * @return {@code JSONObject }
+	 */
 	JSONObject getByIdAndAreaIdFor3D(String sceneId, String areaId);
 
+	/**
+	 * 取消暂停场景
+	 *
+	 * @param sceneOpContext 场景OP上下文
+	 * @return {@code Boolean }
+	 */
 	Boolean unpauseScene(SceneOpsContext sceneOpContext);
 
+	/**
+	 * 重启节点
+	 *
+	 * @param nodeOpsContext 节点操作上下文
+	 * @return {@code Boolean }
+	 */
 	Boolean restartNode(NodeOpsContext nodeOpsContext);
 
+	/**
+	 * 重新创建节点
+	 *
+	 * @param nodeOpsContext 节点操作上下文
+	 * @return {@code Boolean }
+	 */
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 
+	/**
+	 * 场景导出
+	 *
+	 * @param sceneDumpContext 场景导出上下文
+	 * @return {@code JSONObject }
+	 */
 	JSONObject sceneDump(SceneDumpContext sceneDumpContext);
 
 	/**
 	 * 获取流量信息
+	 *
 	 * @param flowId
 	 * @return MpFlow
 	 */
@@ -48,6 +108,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 更新节点流量的源IP
+	 *
 	 * @param flowOpsContext
 	 * @return Boolean
 	 */
@@ -55,18 +116,23 @@ public interface RemoteSceneService {
 
 	/**
 	 * 启动流量
+	 *
+	 * @param flowOpsContext 流量操作上下文
+	 * @return {@code Boolean }
 	 */
 	Boolean startFlow(FlowOpsContext flowOpsContext);
 
 	/**
 	 * 停止流量
-	 * @param context 
+	 *
+	 * @param context
 	 * @return
 	 */
 	Boolean stopFlow(FlowOpsContext context);
 
 	/**
 	 * 批量启动流量
+	 *
 	 * @param flowBatchOpsContext
 	 * @return Boolean
 	 */
@@ -74,6 +140,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 批量停止流量
+	 *
 	 * @param flowBatchOpsContext
 	 * @return Boolean
 	 */
@@ -81,6 +148,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 查询场景节点流量执行记录
+	 *
 	 * @param flowRecordContext
 	 * @return JSONObject
 	 */
@@ -88,6 +156,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取场景节点会话
+	 *
 	 * @param sceneIds
 	 * @return
 	 */
@@ -95,10 +164,11 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取场景场景监控和远程协助地址
+	 *
 	 * @param sceneIds 场景编号
-	 * @param nodeIds 节点编号
-	 * @param userIds 用户编号
-	 * @param type 类型 all=监控和远程协助都获取 assistance=远程协助地址
+	 * @param nodeIds  节点编号
+	 * @param userIds  用户编号
+	 * @param type     类型 all=监控和远程协助都获取 assistance=远程协助地址
 	 * @return
 	 */
 	JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds, List<String> userIds,
@@ -106,8 +176,10 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取所有远程协助列表
+	 *
 	 * @param sceneIds
 	 * @param nodeIds
+	 * @param userIds  用户id列表
 	 * @return key=userId value=地址
 	 */
 	Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
@@ -115,6 +187,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取场景监控会话
+	 *
 	 * @param mpSceneId
 	 * @param studentId
 	 * @return
@@ -123,6 +196,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取流量日志
+	 *
 	 * @param flowLogsPageContext
 	 * @return JSONObject
 	 */
@@ -130,6 +204,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取主机状态
+	 *
 	 * @param elementCommonContext
 	 * @return List<MpHostState>
 	 */
@@ -137,6 +212,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取流量趋势
+	 *
 	 * @param elementCommonContext
 	 * @return List<MpFlowTrend>
 	 */
@@ -144,6 +220,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取事件类型
+	 *
 	 * @param elementCommonContext
 	 * @return MpEventAggr
 	 */
@@ -151,6 +228,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取风险统计
+	 *
 	 * @param elementCommonContext
 	 * @return MpRiskCount
 	 */
@@ -158,6 +236,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取探针采集信息（分页）
+	 *
 	 * @param collectionEventPageContext
 	 * @return MpCollectionEvent
 	 */
@@ -166,6 +245,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 场景节点打快照
+	 *
 	 * @param snapshotContext
 	 * @return
 	 */
@@ -173,6 +253,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 快照历史记录
+	 *
 	 * @param imageId
 	 * @return
 	 */
@@ -180,6 +261,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 快照合并
+	 *
 	 * @param mergeSnapshotContext
 	 * @return
 	 */
@@ -187,6 +269,7 @@ public interface RemoteSceneService {
 
 	/**
 	 * 快照删除
+	 *
 	 * @param deleteContext
 	 * @return
 	 */
@@ -194,17 +277,30 @@ public interface RemoteSceneService {
 
 	/**
 	 * 获取场景下节点及链路状态
+	 *
 	 * @param mpSceneId
 	 * @return JSONObject
 	 */
 	List<MpNodeStatus> getConnectionStatus(String mpSceneId);
 
+	/**
+	 * 取代访问ip地址exe
+	 *
+	 * @param elementPorts Element 端口
+	 */
 	void replaceAccessIpExe(JSONObject elementPorts);
 
+	/**
+	 * 创建节点
+	 *
+	 * @param nodeOpsContext 节点操作上下文
+	 * @return {@code Boolean }
+	 */
 	Boolean createNode(NodeOpsContext nodeOpsContext);
 
 	/**
 	 * 动态更新节点属性
+	 *
 	 * @param context
 	 * @return
 	 */
@@ -230,6 +326,7 @@ public interface RemoteSceneService {
 	 * 启动单个节点
 	 *
 	 * @param context 上下文
+	 * @return {@code Boolean }
 	 */
 	Boolean startNode(NodeOpsContext context);
 
@@ -258,22 +355,77 @@ public interface RemoteSceneService {
 	JSONObject getAssetsStatisticsBySceneId(String sceneId);
 
 
+	/**
+	 * 屏幕录制
+	 *
+	 * @param sceneId 场景id
+	 * @param nodeId  节点id
+	 * @return {@code JSONObject }
+	 */
 	JSONObject screenrecord(String sceneId,String nodeId);
 
+	/**
+	 * 攻击类型计数
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @return {@code JSONArray }
+	 */
 	JSONArray attackTypeCount(String mpSceneId);
 
+	/**
+	 * 场景趋势
+	 *
+	 * @param mpSceneId 中台场景id
+	 * @return {@code JSONArray }
+	 */
 	JSONArray sceneTrend(String mpSceneId);
 
+	/**
+	 * 获取事件总数计数
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code JSONObject }
+	 */
 	JSONObject getEventTotalCount(String sceneId);
 
+	/**
+	 * 获取攻击类型计数组
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code JSONArray }
+	 */
 	JSONArray getAttackTypeCountGroup(String sceneId);
 
+	/**
+	 * 获取事件特 伦 特计数
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code JSONArray }
+	 */
 	JSONArray getEventTrentCount(String sceneId);
 
+	/**
+	 * 获取事件时间列表
+	 *
+	 * @param sceneEventContext 场景事件上下文
+	 * @return {@code JSONArray }
+	 */
 	JSONArray getEventTimeList(SceneEventContext sceneEventContext);
 
+	/**
+	 * 获取事件列表
+	 *
+	 * @param sceneEventContext 场景事件上下文
+	 * @return {@code JSONArray }
+	 */
 	JSONArray getEventList(SceneEventContext sceneEventContext);
 
+	/**
+	 * 获取主机事件列表
+	 *
+	 * @param req 请求体
+	 * @return {@code List<MpHostEvent> }
+	 */
 	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);
 
 	/**

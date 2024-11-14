@@ -8,12 +8,26 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * 竞赛环境Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class AdEnvService {
 
+	/**
+	 * 竞赛网址
+	 */
 	private String AD_URL;
 
+	/**
+	 * 获取竞赛主机
+	 *
+	 * @return {@code String }
+	 */
 	public String getAdHost() {
 		if (StringUtils.isBlank(AD_URL)) {
 			log.warn("compose yml AD_HOST not set");
@@ -22,6 +36,9 @@ public class AdEnvService {
 		return AD_URL;
 	}
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		String AD_HOST = SystemPropUtil.getProp("AD_HOST");

@@ -3,11 +3,23 @@ package com.cyberpeace.integratation.model.scene;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 流量操作上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class FlowOpsContext extends NodeOpsContext {
 
+    /**
+     * 流量id
+     */
     private String flow_id;
 
+    /**
+     * 源ip地址
+     */
     private String source_ip;
 
     public void setFlowId(String flowId) {

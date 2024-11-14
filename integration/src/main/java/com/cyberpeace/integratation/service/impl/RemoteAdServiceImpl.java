@@ -25,17 +25,30 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 远程竞赛Service实现
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Slf4j
 @Service
 public class RemoteAdServiceImpl implements RemoteAdService {
 
+	/** 竞赛环境Service */
 	@Autowired
 	private AdEnvService adEnvService;
 
+	/** 考试用户完成计数网址 */
 	private String EXAM_USER_FINISH_COUNT_URL;
 
+	/** 比赛列表网址 */
 	private String COMPETITION_LIST_URL;
 
+	/**
+	* 初始化
+	*
+	*/
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
@@ -44,6 +57,14 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 				+ ConfigUtil.getContextProperty("ad.competition.list");
 	}
 
+	/**
+	* 比赛列表
+	*
+	* @param startTime 启动时间
+	* @param endTime 结束时间
+	* @param userId 用户id
+	* @return {@code List<CalendarCompetitionBo> }
+	*/
 	@Override
 	public List<CalendarCompetitionBo> competitionList(Date startTime, Date endTime,
 			String userId) {
@@ -62,7 +83,12 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		return StreamApiUtils.map(competitionArray, obj -> jsonToBo((JSONObject) obj));
 	}
 
-	/** 数据转换使用*/
+	/**
+     * 数据转换使用
+     *
+     * @param json JSON 格式
+     * @return {@code CalendarCompetitionBo }
+     */
 	private CalendarCompetitionBo jsonToBo(JSONObject json) {
 		CalendarCompetitionBo bo = new CalendarCompetitionBo();
 		bo.setResourceId(json.getString(JsonKeyConstant.RESOURCE_ID));
@@ -76,6 +102,15 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		return bo;
 	}
 
+	/**
+	* 比赛列表跟最小得分
+	*
+	* @param startTime 启动时间
+	* @param endTime 结束时间
+	* @param userIds 用户id列表
+	* @param minScore 最小得分
+	* @return {@code List<JSONObject> }
+	*/
 	@Override
 	public List<JSONObject> competitionListWithMinScore(String startTime, String endTime,
 			List<String> userIds, Integer minScore) {

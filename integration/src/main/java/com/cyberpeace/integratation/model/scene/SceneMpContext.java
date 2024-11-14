@@ -6,10 +6,22 @@ import java.util.Map;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.google.common.collect.Maps;
 
+/**
+ * 场景中台上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public class SceneMpContext implements Serializable {
 
+	/**
+	 * 访问用户id
+	 */
 	private String access_user_id = UserInfoContext.getUserContext().getUserId();
 
+	/**
+	 * 通过
+	 */
 	private Map<String, String> pass_through = Maps.newHashMap();
 
 	public void setAccessUserId(String access_user_id) {

@@ -4,19 +4,43 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 流量日志分页上下文
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class FlowLogsPageContext implements Serializable {
 
+	/**
+	 * id
+	 */
 	private String id;
 
+	/**
+	 * 启动时间
+	 */
 	private String startTime;
 
+	/**
+	 * 结束时间
+	 */
 	private String endTime;
 
+	/**
+	 * 每分页
+	 */
 	private Integer perPage;
 
+	/**
+	 * 分页
+	 */
 	private Integer page;
 
+	/**
+	 * 排序
+	 */
 	private String sort;
 
 }

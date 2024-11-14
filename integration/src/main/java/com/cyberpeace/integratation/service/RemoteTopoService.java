@@ -9,15 +9,34 @@ import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
 
+/**
+ * 远程拓扑Service
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 public interface RemoteTopoService {
 
+	/**
+	 * 创建
+	 *
+	 * @param sceneConfig 场景配置
+	 * @return {@code String }
+	 */
 	String create(SceneConfig sceneConfig);
 
+	/**
+	 * 获取拓扑由id
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject }
+	 */
 	JSONObject getTopoById(String topoId);
 
 	/**
 	 * 根据中台的csceneId和areaId从中台获取当前areaId指示的分层对应的拓扑信息,
 	 * 3D的吴俊要我们把分层节点放到elements处，这个接口针对其特制
+	 *
 	 * @param topoId 对应中台的csceneId
 	 * @param areaId 分层的id, 如果为顶层，area_id为空
 	 * @return
@@ -32,18 +51,34 @@ public interface RemoteTopoService {
 	 */
 	String copyTopo(String originTopoId);
 
+	/**
+	 * 获取拓扑消化
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code TopoDigest }
+	 */
 	TopoDigest getTopoDigest(String topoId);
 
+	/**
+	 * 批量获取拓扑消化
+	 *
+	 * @param topoIds 拓扑id列表
+	 * @return {@code Map<String, TopoDigest> }
+	 */
 	Map<String, TopoDigest> batchGetTopoDigest(List<String> topoIds);
 
 	/**
 	 * 保存mp拓扑
 	 * 新建和修改用同一个接口
+	 *
+	 * @param json JSON 格式
+	 * @return {@code String }
 	 */
 	String save(JSONObject json);
 
 	/**
 	 * 保存mp拓扑，但不限制节点数量
+	 *
 	 * @param json 拓扑数据
 	 * @return 拓扑id
 	 */
@@ -51,11 +86,15 @@ public interface RemoteTopoService {
 
 	/**
 	 * 返回同步之后的拓扑数据
+	 *
+	 * @param json JSON 格式
+	 * @return {@code JSONObject }
 	 */
 	JSONObject sync(JSONObject json);
 
 	/**
 	 * 删除中台拓扑
+	 *
 	 * @param topoId
 	 * @return
 	 */
@@ -63,6 +102,7 @@ public interface RemoteTopoService {
 
 	/**
 	 * topo配置数据导出 数据可直接请求中台保存接口生成新的topo
+	 *
 	 * @param topoId
 	 * @return
 	 */
@@ -70,6 +110,7 @@ public interface RemoteTopoService {
 
 	/**
 	 * 比较两个topo是否相同
+	 *
 	 * @param topo
 	 * @param topoId
 	 * @return
@@ -78,15 +119,16 @@ public interface RemoteTopoService {
 
 	/**
 	 * 批量删除topo
+	 *
 	 * @param topoIds
-	 * @return
 	 */
 	void batchDeleteTopo(List<String> topoIds);
 
 	/**
 	 * 设置topo部分启动
+	 *
 	 * @param topoId
-	 * @param supportPartialStart
+	 * @param supportPartialStart 支持部分启动
 	 */
 	void setSupportPartialStart(String topoId, Boolean supportPartialStart);
 

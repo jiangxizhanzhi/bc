@@ -6,6 +6,12 @@ import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 中台流量趋势
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class MpFlowTrend implements Serializable {
 

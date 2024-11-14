@@ -4,13 +4,23 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 场景元数据
+ *
+ * @author SN
+ * @date 2024/11/14
+ */
 @Data
 public class SceneMetaData implements Serializable {
 
-	/** 业务数据编号*/
+	/**
+	 * 业务数据编号
+	 */
 	private String businessInstanceId;
 
-	/** 场景名称*/
+	/**
+	 * 场景名称
+	 */
 	private String sceneName;
 
 }

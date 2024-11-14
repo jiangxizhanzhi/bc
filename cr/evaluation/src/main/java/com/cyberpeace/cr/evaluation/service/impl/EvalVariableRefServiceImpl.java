@@ -73,6 +73,13 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return startFormat(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
     }
 
+    @Override
+    public String startVariableAlgorithmByCloud(EvalVariableRef evalVariableRef,
+                                         Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
+                                         EvalRecord evalRecord, EvalTestInstance evalTestInstance) {
+        return startFormatByCloud(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTestInstance);
+    }
+
     private String startFormat(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "format algorithm start...");
@@ -96,6 +103,34 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
             EvalLog.info(evalRecord, evalVariableRef, "format algorithm completed.");
             return startMatch(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+        }
+
+        return result;
+    }
+
+    private String startFormatByCloud(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTestInstance evalTestInstance) {
+        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getFormatAlgorithmId());
+        EvalLog.info(evalRecord, evalVariableRef, "format algorithm start...");
+
+        if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.FORMATTING.getCode())) {
+            EvalLog.info(evalRecord, evalVariableRef, "format algorithm has been completed, continue.");
+            return startMatchByCloud(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTestInstance);
+        }
+
+        // 已经格式化数据数量
+        int count = evalVariableRefProbeDataService.lambdaQuery().eq(EvalVariableRefProbeData::getVariableId, evalVariableRef.getResourceId()).count();
+
+        // 分页执行格式化算法
+        evalVariableRef.setFormatStartTime(new Date());
+        String result = executeFormatByCloud(evalVariableRef, evalAlgorithmRef, evalRecord, evalTestInstance, count);
+        evalVariableRef.setFormatEndTime(new Date());
+
+        if (result == null) {
+            evalVariableRef.setProgress(EvalVariableRef.Progress.MATCHING.getCode());
+            getBaseMapper().updateById(evalVariableRef);
+
+            EvalLog.info(evalRecord, evalVariableRef, "format algorithm completed.");
+            return startMatchByCloud(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTestInstance);
         }
 
         return result;
@@ -175,7 +210,221 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         return null;
     }
 
+    private String executeFormatByCloud(EvalVariableRef evalVariableRef, EvalAlgorithmRef evalAlgorithmRef, EvalRecord evalRecord, EvalTestInstance evalTestInstance, int limit) {
+
+        // 变量项探针采集数据
+        List<EvalProbeData> evalProbeDataList = evalProbeDataService.lambdaQuery()
+                .eq(EvalProbeData::getSceneId, evalTestInstance.getMpSceneId())
+                .eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId())
+                .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
+                .ge(EvalProbeData::getCollectionTime, evalRecord.getStartTime())
+                .le(EvalProbeData::getCollectionTime, evalRecord.getEndTime())
+                .orderByAsc(EvalProbeData::getCollectionTime)
+                .last(String.format("limit %s, %s", limit, ONCE_FORMAT_SIZE))
+                .list();
+
+        // 时间范围内无采集数据情况
+        if (evalProbeDataList.isEmpty()) {
+            if (limit == 0) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_DID_NOT_GET_PROBE_DATA), evalVariableRef.getName());
+            } else {
+                return null;
+            }
+        }
+
+        // 当前采集到的数据量
+        int perFormatSize = evalProbeDataList.size();
+        EvalLog.info(evalRecord, evalVariableRef, String.format("size %s format algorithm calculate start...", perFormatSize));
+
+        // 构建格式化算法数据
+        FormatData data = new FormatData();
+        data.setData(evalProbeDataList.stream().map(EvalProbeData::getContent).collect(Collectors.toList()));
+
+        List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams());
+
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(CODE_LOG_FORMAT, evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(OTHER_ARG_LOG_FORMAT, otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(DATA_ARG_LOG_FORMAT, JsonUtil.toJsonString(data)));
+
+        // 运行匹配算法
+        List<String> formatReturn;
+        try {
+            formatReturn = remotePythonService.formatPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
+        } catch (RemoteServiceException e) {
+            if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FORMAT_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+            }
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_FORMAT_EXECUTE_FAILED), evalVariableRef.getName());
+        }
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("size %s format algorithm calculate result %s", perFormatSize, formatReturn));
+
+        List<EvalVariableRefProbeData> evalVariableRefProbeDataList = Lists.newArrayList();
+        for (int i = 0; i < formatReturn.size(); i++) {
+            String formatValue = formatReturn.get(i);
+            // 格式化算法返回值长度过长
+            if (formatValue.length() > FORMAT_VALUE_LENGTH_LIMIT) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FORMAT_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+            }
+            EvalVariableRefProbeData object = new EvalVariableRefProbeData();
+            EvalProbeData originData = evalProbeDataList.get(i);
+            object.setProbeDataId(originData.getId());
+            object.setVariableId(evalVariableRef.getResourceId());
+            object.setFormattedValue(formatValue);
+            object.setStatus(EvalVariableRefProbeData.Status.NONE.getCode());
+            object.setTime(originData.getCollectionTime());
+
+            evalVariableRefProbeDataList.add(object);
+        }
+
+        evalVariableRefProbeDataService.saveBatch(evalVariableRefProbeDataList);
+        if (perFormatSize == ONCE_FORMAT_SIZE) {
+            return executeFormatByCloud(evalVariableRef, evalAlgorithmRef, evalRecord, evalTestInstance, limit + ONCE_FORMAT_SIZE);
+        }
+
+        return null;
+    }
+
     private String startMatch(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
+        EvalLog.info(evalRecord, evalVariableRef, "match algorithm start...");
+
+        if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.MATCHING.getCode())) {
+            EvalLog.info(evalRecord, evalVariableRef, "match algorithm has been completed, continue.");
+            return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
+        }
+
+        List<EvalVariableRefProbeDataContext> evalVariableRefProbeDataContextList = evalVariableRefProbeDataService
+                .variableProbeDataResult(evalVariableRef.getResourceId());
+        MatchData data = new MatchData();
+
+        // 构建匹配算法数据
+        data.setBaseTime(evalVariableRefProbeDataContextList.get(0).getTime().getTime());
+        data.setData(Lists.newArrayList());
+        evalVariableRefProbeDataContextList.forEach(variableRefProbeDataContext -> {
+            MatchItemData itemData = new MatchItemData();
+            itemData.setT(variableRefProbeDataContext.getTime().getTime() - data.getBaseTime());
+            itemData.setV(variableRefProbeDataContext.getFormattedValue());
+
+            data.getData().add(itemData);
+        });
+
+        List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMatchParams());
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(CODE_LOG_FORMAT, evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(OTHER_ARG_LOG_FORMAT, otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(DATA_ARG_LOG_FORMAT, JsonUtil.toJsonString(data)));
+
+        // 运行匹配算法
+        List<Integer> matchReturn;
+        evalVariableRef.setMatchStartTime(new Date());
+        try {
+            matchReturn = remotePythonService.matchPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
+        } catch (RemoteServiceException e) {
+            if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+            }
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MATCH_EXECUTE_FAILED), evalVariableRef.getName());
+        }
+        evalVariableRef.setMatchEndTime(new Date());
+
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("match algorithm calculate result %s", matchReturn));
+
+        List<EvalVariableRefProbeData> evalVariableRefProbeDataList = evalVariableRefProbeDataService.lambdaQuery()
+                .eq(EvalVariableRefProbeData::getVariableId, evalVariableRef.getResourceId())
+                .list();
+
+        // 执行失败, 返回值异常
+        if (matchReturn.size() != evalVariableRefProbeDataList.size()) {
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+        }
+
+        for (int i = 0; i < evalVariableRefProbeDataList.size(); i++) {
+            // 避免返回值存在[0, 1]外的值
+            if (matchReturn.get(i).equals(EvalVariableRefProbeData.Status.MATCHED.getCode())) {
+                evalVariableRefProbeDataList.get(i).setStatus(EvalVariableRefProbeData.Status.MATCHED.getCode());
+            }
+        }
+
+        evalVariableRef.setProgress(EvalVariableRef.Progress.MARKING.getCode());
+        transactionTemplate.execute(status -> {
+            evalVariableRefProbeDataService.updateBatchById(evalVariableRefProbeDataList);
+            return SqlHelper.retBool(getBaseMapper().updateById(evalVariableRef));
+        });
+
+        EvalLog.info(evalRecord, evalVariableRef, "match algorithm completed.");
+        return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
+    }
+
+    private String startMatchByCloud(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTask evalTask) {
+        EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
+        EvalLog.info(evalRecord, evalVariableRef, "match algorithm start...");
+
+        if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.MATCHING.getCode())) {
+            EvalLog.info(evalRecord, evalVariableRef, "match algorithm has been completed, continue.");
+            return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
+        }
+
+        List<EvalVariableRefProbeDataContext> evalVariableRefProbeDataContextList = evalVariableRefProbeDataService
+                .variableProbeDataResult(evalVariableRef.getResourceId());
+        MatchData data = new MatchData();
+
+        // 构建匹配算法数据
+        data.setBaseTime(evalVariableRefProbeDataContextList.get(0).getTime().getTime());
+        data.setData(Lists.newArrayList());
+        evalVariableRefProbeDataContextList.forEach(variableRefProbeDataContext -> {
+            MatchItemData itemData = new MatchItemData();
+            itemData.setT(variableRefProbeDataContext.getTime().getTime() - data.getBaseTime());
+            itemData.setV(variableRefProbeDataContext.getFormattedValue());
+
+            data.getData().add(itemData);
+        });
+
+        List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMatchParams());
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(CODE_LOG_FORMAT, evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(OTHER_ARG_LOG_FORMAT, otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format(DATA_ARG_LOG_FORMAT, JsonUtil.toJsonString(data)));
+
+        // 运行匹配算法
+        List<Integer> matchReturn;
+        evalVariableRef.setMatchStartTime(new Date());
+        try {
+            matchReturn = remotePythonService.matchPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
+        } catch (RemoteServiceException e) {
+            if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+            }
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_MATCH_EXECUTE_FAILED), evalVariableRef.getName());
+        }
+        evalVariableRef.setMatchEndTime(new Date());
+
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("match algorithm calculate result %s", matchReturn));
+
+        List<EvalVariableRefProbeData> evalVariableRefProbeDataList = evalVariableRefProbeDataService.lambdaQuery()
+                .eq(EvalVariableRefProbeData::getVariableId, evalVariableRef.getResourceId())
+                .list();
+
+        // 执行失败, 返回值异常
+        if (matchReturn.size() != evalVariableRefProbeDataList.size()) {
+            return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.MATCH_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+        }
+
+        for (int i = 0; i < evalVariableRefProbeDataList.size(); i++) {
+            // 避免返回值存在[0, 1]外的值
+            if (matchReturn.get(i).equals(EvalVariableRefProbeData.Status.MATCHED.getCode())) {
+                evalVariableRefProbeDataList.get(i).setStatus(EvalVariableRefProbeData.Status.MATCHED.getCode());
+            }
+        }
+
+        evalVariableRef.setProgress(EvalVariableRef.Progress.MARKING.getCode());
+        transactionTemplate.execute(status -> {
+            evalVariableRefProbeDataService.updateBatchById(evalVariableRefProbeDataList);
+            return SqlHelper.retBool(getBaseMapper().updateById(evalVariableRef));
+        });
+
+        EvalLog.info(evalRecord, evalVariableRef, "match algorithm completed.");
+        return startMark(evalVariableRef, evalAlgorithmRefMap, evalRecord);
+    }
+
+    private String startMatchByCloud(EvalVariableRef evalVariableRef, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap, EvalRecord evalRecord, EvalTestInstance evalTestInstance) {
         EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalVariableRef.getMatchAlgorithmId());
         EvalLog.info(evalRecord, evalVariableRef, "match algorithm start...");
 

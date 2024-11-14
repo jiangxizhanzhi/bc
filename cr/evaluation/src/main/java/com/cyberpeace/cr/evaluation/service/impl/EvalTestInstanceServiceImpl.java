@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -192,6 +193,13 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 				evalTestInstanceOpsContext.getEvalTestInstance().getTestId(),
 				evalTestInstanceOpsContext.getLocalScene().getBusinessInstanceId());
 
+	}
+
+	@Override
+	public EvalTestInstance getEvalTestInstanceByResourceId(String resourceId) {
+		LambdaQueryWrapper<EvalTestInstance> qw = new LambdaQueryWrapper<>();
+		qw.eq(EvalTestInstance :: getResourceId,resourceId);
+		return evalTestInstanceMapper.selectOne(qw);
 	}
 
 	public void clearInstanceAndScene(String localSceneId,String testId, String instanceId) {

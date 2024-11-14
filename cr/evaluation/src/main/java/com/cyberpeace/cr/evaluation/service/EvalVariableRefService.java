@@ -10,10 +10,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultVariableRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableGraphRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
 
 public interface EvalVariableRefService extends IService<EvalVariableRef> {
 
@@ -38,6 +35,17 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
                                   Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
                                   EvalRecord evalRecord,
                                   EvalTask evalTask);
+
+    /**
+     * 采集变量项目算法执行
+     * @param evalVariableRef 变量项对象
+     * @param evalAlgorithmRefMap 评估使用算法Map
+     * @param evalRecord 评估对象
+     * @param evalTestInstance 测评实例对象
+     */
+    String startVariableAlgorithmByCloud(EvalVariableRef evalVariableRef,
+                                  Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
+                                  EvalRecord evalRecord, EvalTestInstance evalTestInstance);
 
     /**
      * 获取变量项结果折线图

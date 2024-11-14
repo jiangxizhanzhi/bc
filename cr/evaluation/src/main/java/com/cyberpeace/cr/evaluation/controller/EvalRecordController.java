@@ -15,10 +15,8 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalVariableProbeDataReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
-import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
-import com.cyberpeace.cr.evaluation.service.EvalRecordService;
-import com.cyberpeace.cr.evaluation.service.EvalTaskService;
-import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
+import com.cyberpeace.cr.evaluation.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,6 +39,9 @@ import java.util.Map;
 public class EvalRecordController {
     @Autowired
     private EvalTaskService evalTaskService;
+
+    @Autowired
+    private EvalTestInstanceService evalTestInstanceService;
 
     @Autowired
     private EvalRecordService evalRecordService;
@@ -155,6 +156,37 @@ public class EvalRecordController {
         // 开始执行
         log.info(String.format("Range Test evaluation %s START.", evalRecord.getName()));
         evalRecordService.recordRun(evalRecord, evalTask, false, CommonContext.getLanguage());
+
+        return new BaseRsp<>(result);
+    }
+
+    @ApiOperation("评估任务开启")
+    @PostMapping("/cloudScene/start")
+    public BaseRsp<Boolean> cloudSceneStart(@RequestBody EvalRecordStartReq requestData) {
+        // 评估对象
+        EvalRecord evalRecord = evalRecordService.getById(requestData.getResourceId());
+        if (evalRecord == null) {
+            log.error("Evaluation not found! resourceId = [{}]", requestData.getResourceId());
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        if (evalRecord.getStatus().equals(EvalRecord.Status.RUNNING.getCode())) {
+            log.error("Evaluation has been initiated! resourceId = [{}]", requestData.getResourceId());
+            throw new BusinessException(CrBusinessErrorCode.EVALUATION_HAS_BEEN_INITIATED_ERROR);
+        }
+
+        // 评估实例对象
+        EvalTestInstance evalTestInstance = evalTestInstanceService.getEvalTestInstanceByResourceId(evalRecord.getTaskId());
+
+        // 设置评估状态、开始时间
+        if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
+            evalRecord.setStatus(EvalRecord.Status.RUNNING.getCode());
+        }
+        evalRecord.setEvalTime(new Date());
+        boolean result = evalRecordService.updateById(evalRecord);
+
+        // 开始执行
+        log.info(String.format("Range Test evaluation %s START.", evalRecord.getName()));
+        evalRecordService.cloudRecordRun(evalRecord, evalTestInstance, false, CommonContext.getLanguage());
 
         return new BaseRsp<>(result);
     }

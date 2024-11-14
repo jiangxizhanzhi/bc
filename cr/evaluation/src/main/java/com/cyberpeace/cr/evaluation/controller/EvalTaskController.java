@@ -3,6 +3,8 @@ package com.cyberpeace.cr.evaluation.controller;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
+import com.cyberpeace.cr.evaluation.service.*;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -29,10 +31,6 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeNodesRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
-import com.cyberpeace.cr.evaluation.service.EvalSceneService;
-import com.cyberpeace.cr.evaluation.service.EvalTaskService;
-import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
-import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
@@ -51,6 +49,9 @@ public class EvalTaskController {
 
 	@Autowired
 	private EvalTemplateService evalTemplateService;
+
+	@Autowired
+	private EvalTestInstanceService evalTestInstanceService;
 
 	@Autowired
 	private EvalTaskService evalTaskService;
@@ -275,11 +276,13 @@ public class EvalTaskController {
 		EvalTaskTimeNodesRsp evalTaskTimeNodesRsp = new EvalTaskTimeNodesRsp();
 		evalTaskTimeNodesRsp.setTaskId(taskId);
 
-		EvalTask evalTask = evalTaskService.getTask(taskId);
+		// 评估实例对象
+		EvalTestInstance evalTestInstance = evalTestInstanceService.getEvalTestInstanceByResourceId(taskId);
+
 		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
 				.getFinishedSteps(taskId);
-		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
-		evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
+		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_start.getMsg(), evalTestInstance.getStartTime()));
+		evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTestInstance.getEndTime()));
 		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);
 
 		return new BaseRsp<>(evalTaskTimeNodesRsp);

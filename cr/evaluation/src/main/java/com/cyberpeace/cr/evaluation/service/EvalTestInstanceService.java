@@ -27,4 +27,5 @@ public interface EvalTestInstanceService extends IService<EvalTestInstance> {
 
 	void clearInstanceAndScene(EvalTestInstanceOpsContext evalTestInstanceOpsContext);
 
+	EvalTestInstance getEvalTestInstanceByResourceId(String resourceId);
 }

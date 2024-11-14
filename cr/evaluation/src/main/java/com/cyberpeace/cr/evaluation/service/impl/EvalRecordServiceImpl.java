@@ -783,6 +783,46 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         );
     }
 
+    @Override
+    @Async
+    public void cloudRecordRun(EvalRecord evalRecord, EvalTestInstance evalTestInstance, Boolean isRestart, String language) {
+        CommonContext.setLanguage(language);
+        EvalLog.info(evalRecord, String.format("Range Test evaluation %s %s.", evalRecord.getName(), Boolean.TRUE.equals(isRestart) ? "RESTART" : "START"));
+        if (StringUtils.isEmpty(evalRecord.getMessage())) {
+            evalRecord.setMessage("");
+        }
+
+        // 需要计算变量项id集合
+        EvalLog.info(evalRecord, "collect wait to calculate variables id...");
+        Set<String> variableIds = evalIndexRefService.systemEvalVariableIds(evalRecord.getResourceId());
+        EvalLog.info(evalRecord, String.format("collect wait to calculate variables id completed: %s", variableIds.toString()));
+
+        // 循环同步采集数据
+        EvalLog.info(evalRecord, "sync remote server [MP] probe data start...");
+        syncProbeDataByCloud(evalRecord, evalTestInstance, variableIds);
+        EvalLog.info(evalRecord, "sync remote server [MP] probe data completed.");
+
+        // 执行变量项
+        EvalLog.info(evalRecord, "calculate variables start...");
+        startVariablesByCloud(evalRecord, evalTestInstance, variableIds);
+        EvalLog.info(evalRecord, "calculate variables completed.");
+
+        // 执行指标项
+        EvalLog.info(evalRecord, "calculate indexes start...");
+        startIndexes(evalRecord);
+        EvalLog.info(evalRecord, "calculate indexes completed.");
+
+        // 添加当前执行结果到结果轮次表中
+        EvalLog.info(evalRecord, "add indexes res start...");
+        addResToEvalResult(evalRecord);
+        EvalLog.info(evalRecord, "add indexes res completed.");
+
+        EvalLog.info(
+                evalRecord,
+                String.format("END, result: %s, cost: %s", evalRecord.getScore(), evalRecord.getEvalEndTime().getTime() - evalRecord.getEvalTime().getTime())
+        );
+    }
+
     private void addResToEvalResult(EvalRecord evalRecord) {
         if (evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())) {
             return;
@@ -945,6 +985,50 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     }
 
+    private void startVariablesByCloud(EvalRecord evalRecord, EvalTestInstance evalTestInstance, Set<String> variableIds) {
+        if (variableIds.isEmpty()) {
+            EvalLog.info(evalRecord, "variables id is empty, continue.");
+            return;
+        }
+
+        List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).list();
+
+        // 运行中变量项为空, 退出执行下一步
+        if (evalVariableRefList.isEmpty()) {
+            EvalLog.info(evalRecord, "variables has been calculated, continue.");
+            return;
+        }
+
+        List<String> usingAlgorithmIds = Lists.newArrayList();
+        evalVariableRefList.forEach(evalVariableRef -> {
+            usingAlgorithmIds.add(evalVariableRef.getFormatAlgorithmId());
+            usingAlgorithmIds.add(evalVariableRef.getMatchAlgorithmId());
+            usingAlgorithmIds.add(evalVariableRef.getMarkAlgorithmId());
+        });
+        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = evalAlgorithmRefService.lambdaQuery().in(EvalAlgorithmRef::getResourceId, usingAlgorithmIds).list().stream().collect(Collectors.toMap(EvalAlgorithmRef::getResourceId, evalAlgorithmRef -> evalAlgorithmRef));
+
+        evalVariableRefList.forEach(evalVariableRef -> {
+            // 采集变量项算法依次执行
+            String result = null;
+            EvalLog.info(evalRecord, evalVariableRef, "start calculate...");
+            if (evalVariableRef.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())) {
+                result = evalVariableRefService.startVariableAlgorithmByCloud(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTestInstance);
+            }
+
+            // 非null返回值为采集变量项运行失败
+            if (!StringUtils.isEmpty(result)) {
+                evalVariableRef.setScore(0);
+                evalVariableRef.setProgress(EvalVariableRef.Progress.EXCEPTION.getCode());
+                evalRecord.setMessage(result + "\n");
+                transactionTemplate.execute(status -> {
+                    evalVariableRefService.updateById(evalVariableRef);
+                    return updateById(evalRecord);
+                });
+            }
+        });
+
+    }
+
     private void startIndexes(EvalRecord evalRecord) {
 
         // 体系下指标项
@@ -1018,6 +1102,74 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
             // 查询当前已同步数据量, 生成页码
             int probeDataCount = evalProbeDataService.lambdaQuery().eq(EvalProbeData::getSceneId, evalTask.getMpSceneId()).eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId()).eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId()).count();
+            if (!SqlHelper.retBool(probeDataCount)) {
+                collectionEventPageContext.setPage(1L);
+            } else {
+                int scale = -(Integer.toString(Math.toIntExact(ONCE_PROBE_DATA_SIZE)).length() - 1);
+                // 数据量向上取整, 生成当前页码
+                int count = new BigDecimal(probeDataCount).setScale(scale, BigDecimal.ROUND_UP).intValue();
+                collectionEventPageContext.setPage((count / ONCE_PROBE_DATA_SIZE) + 1);
+            }
+            collectionEventPageContext.setPageSize(ONCE_PROBE_DATA_SIZE);
+
+            try {
+                exeCollectionEvent(evalRecord, evalVariableRef, collectionEventPageContext, ipMap, true);
+
+                evalVariableRef.setProgress(EvalVariableRef.Progress.FORMATTING.getCode());
+                EvalLog.info(evalRecord, evalVariableRef, "sync data completed.");
+            } catch (RemoteServiceException e) {
+                EvalLog.error(evalRecord, evalVariableRef, "invoke mp probe data api Exception.");
+                // 采集数据报错, 采集变量项中止
+                String msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.GET_PROBE_DATA_FAILED), evalVariableRef.getName());
+                evalRecord.setMessage(msg + "\n");
+                updateById(evalRecord);
+
+                evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());
+                evalVariableRef.setScore(0);
+            }
+            evalVariableRefService.updateById(evalVariableRef);
+
+        });
+    }
+
+    private void syncProbeDataByCloud(EvalRecord evalRecord, EvalTestInstance evalTestInstance, Set<String> variableIds) {
+        if (variableIds.isEmpty()) {
+            EvalLog.info(evalRecord, "variables id is empty, continue.");
+            return;
+        }
+
+        // 获取需要同步数据的变量项
+        List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).list();
+
+        // 没有需要同步数据变量项, 跳过
+        if (evalVariableRefs.isEmpty()) {
+            EvalLog.info(evalRecord, "variables probe data has been sync, continue.");
+            return;
+        }
+        evalVariableRefs.forEach(a -> a.setProgress(EvalVariableRef.Progress.NOT_START.getCode()));
+        // 终端节点IP <nodeId, nodeIp>
+        Map<String, String> ipMap = nodeIpMap(evalTestInstance.getMpSceneId());
+
+        // 循环变量项, invoke mp, 同步采集数据到bc数据库
+        evalVariableRefs.forEach(evalVariableRef -> {
+            // 变量项开始执行
+            if (evalVariableRef.getProgress().equals(EvalVariableRef.Progress.NOT_START.getCode())) {
+                EvalLog.info(evalRecord, evalVariableRef, "probe data sync start.");
+                evalVariableRef.setProgress(EvalVariableRef.Progress.START.getCode());
+                evalVariableRefService.updateById(evalVariableRef);
+            }
+
+            EvalLog.info(evalRecord, evalVariableRef, String.format("used nodeId %s probeId %s.", evalVariableRef.getDeviceId(), evalVariableRef.getProbeId()));
+
+            // 变量项使用同一探针, 数据已经被同步, 跳过
+            CollectionEventPageContext collectionEventPageContext = new CollectionEventPageContext();
+            collectionEventPageContext.setId(evalTestInstance.getMpSceneId());
+            collectionEventPageContext.setNodeIds(evalVariableRef.getDeviceId());
+            collectionEventPageContext.setProbeId(evalVariableRef.getProbeId());
+            collectionEventPageContext.setRequestId(IDGeneratorUtil.getID());
+
+            // 查询当前已同步数据量, 生成页码
+            int probeDataCount = evalProbeDataService.lambdaQuery().eq(EvalProbeData::getSceneId, evalTestInstance.getMpSceneId()).eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId()).eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId()).count();
             if (!SqlHelper.retBool(probeDataCount)) {
                 collectionEventPageContext.setPage(1L);
             } else {

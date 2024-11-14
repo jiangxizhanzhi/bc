@@ -8,6 +8,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTestInstance;
 
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,13 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @param evalTask 测评实例对象
      */
     void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart, String language);
+
+    /**
+     * 评估事件实际运行
+     * @param evalRecord 评估对象
+     * @param evalTestInstance 测评实例对象
+     */
+    void cloudRecordRun(EvalRecord evalRecord, EvalTestInstance evalTestInstance, Boolean isRestart, String language);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`

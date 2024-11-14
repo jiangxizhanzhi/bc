@@ -109,17 +109,23 @@ public class EvalStepServiceImpl extends ServiceImpl<EvalStepMapper, EvalStep> i
 			stepListRsp.setName(evalStep.getName());
 			stepListRsp.setProcess(evalStep.getProcess());
 			stepListRsp.setStage(evalStep.getStage());
-
-			Map<String, String> loadCmdMap = evalStep.getLoadList().stream().collect(Collectors.toMap(LoadSetReq::getLoadId, LoadSetReq::getCommandSet));
-			List<String> loadIds = evalStep.getLoadList().stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
-			if (CollectionUtils.isNotEmpty(loadIds)) {
-				JSONArray loadList = remoteLoadService.getLoadByIds(loadIds);
-				for (Object o : loadList) {
-					JSONObject load = (JSONObject) o;
-					load.put("cmd", loadCmdMap.getOrDefault(load.getString("id"), load.getString("default_cmd")));
+			if(evalStep.getLoadList() != null && evalStep.getLoadList().size() > 0){
+				Map<String, String> loadCmdMap = evalStep.getLoadList()
+						.stream()
+						.filter(req -> req.getLoadId() != null)
+						.collect(Collectors.toMap(LoadSetReq::getLoadId, req -> req.getCommandSet() != null ? req.getCommandSet() : "defaultCommand"));
+				List<String> loadIds = evalStep.getLoadList().stream().map(LoadSetReq::getLoadId).collect(Collectors.toList());
+				if (CollectionUtils.isNotEmpty(loadIds)) {
+					JSONArray loadList = remoteLoadService.getLoadByIds(loadIds);
+					for (Object o : loadList) {
+						JSONObject load = (JSONObject) o;
+						load.put("cmd", loadCmdMap.getOrDefault(load.getString("id"), load.getString("default_cmd")));
+					}
+					stepListRsp.setLoadList(loadList);
+				} else {
+					stepListRsp.setLoadList(new JSONArray());
 				}
-				stepListRsp.setLoadList(loadList);
-			} else {
+			}else{
 				stepListRsp.setLoadList(new JSONArray());
 			}
 			stepListRsps.add(stepListRsp);

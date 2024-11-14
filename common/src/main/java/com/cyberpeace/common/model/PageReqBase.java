@@ -16,16 +16,25 @@ import lombok.Setter;
 @ApiModel
 public class PageReqBase extends PatternBase {
 
+	/**
+	 * 每页大小
+	 */
 	@ApiModelProperty(name = "per_page", value = "每页大小")
 	@Getter
 	@Setter
 	private Integer perPage = 10;
 
+	/**
+	 * 页号，从1开始
+	 */
 	@ApiModelProperty(value = "页号，从1开始")
 	@Getter
 	@Setter
 	private Integer page = 1;
 
+	/**
+	 * 排序参数
+	 */
 	@ApiModelProperty(value = "排序参数")
 	@Getter
 	@Setter

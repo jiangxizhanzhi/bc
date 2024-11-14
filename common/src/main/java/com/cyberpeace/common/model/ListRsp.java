@@ -20,15 +20,27 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ListRsp<T> {
 
+	/**
+	 * 列表
+	 */
 	@ApiModelProperty(value = "列表")
 	private List<T> list = Lists.newArrayList();
 
+	/**
+	 * 总页数
+	 */
 	@ApiModelProperty(value = "总页数")
 	private long total;
 
+	/**
+	 * 最后页
+	 */
 	@ApiModelProperty(value = "最后页")
 	private long lastPage;
 
+	/**
+	 * 当前页
+	 */
 	@ApiModelProperty(value = "当前页")
 	private long currentPage;
 }

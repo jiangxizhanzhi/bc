@@ -12,12 +12,21 @@ import lombok.Getter;
 @Data
 public class DashboardFriend implements Serializable {
 
+	/**
+	 * 分组名称
+	 */
 	@ApiModelProperty("分组名称")
 	private String groupname;
 
+	/**
+	 * 编号
+	 */
 	@ApiModelProperty("编号")
 	private Integer id;
 
+	/**
+	 * 好友列表
+	 */
 	@ApiModelProperty("好友列表")
 	private List<DashboardUser> list;
 

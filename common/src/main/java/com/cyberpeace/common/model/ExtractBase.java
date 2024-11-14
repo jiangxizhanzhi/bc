@@ -20,15 +20,27 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ExtractBase implements Serializable {
 
+	/**
+	 * 文件名称
+	 */
     @ApiModelProperty("文件名称")
     private String fileName;
 
+	/**
+	 * 文件路径
+	 */
     @ApiModelProperty("文件路径")
     private String filePath;
 
+	/**
+	 * 解压文件内容
+	 */
     @ApiModelProperty("解压文件内容")
     private String content;
 
+	/**
+	 * 是否是解压后文件内容 true=是 false=否
+	 */
     @ApiModelProperty("是否是解压后文件内容 true=是 false=否")
     private Boolean isExtract;
 }

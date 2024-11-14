@@ -14,9 +14,15 @@ import lombok.Getter;
 @Data
 public class CrRoleNode implements Serializable {
 
+	/**
+	 * 节点id
+	 */
 	@ApiModelProperty(value = "节点id")
 	private String id;
 
+	/**
+	 * 节点类型
+	 */
 	@ApiModelProperty(value = "节点类型")
 	private Integer category;
 

@@ -9,39 +9,75 @@ import lombok.Getter;
 @Data
 public class ElementFlow implements Serializable {
 
+	/**
+	 * ID
+	 */
 	@ApiModelProperty("ID")
 	private String id;
 
+	/**
+	 * 名称
+	 */
 	@ApiModelProperty("名称")
 	private String name;
 
+	/**
+	 * 描述
+	 */
 	@ApiModelProperty("描述")
 	private String desc;
 
+	/**
+	 * 类型
+	 */
 	@ApiModelProperty("类型")
 	private String type;
 
+	/**
+	 * 分类
+	 */
 	@ApiModelProperty("分类")
 	private Integer category;
 
+	/**
+	 * 交互类型
+	 */
 	@ApiModelProperty("交互类型")
 	private Integer interactiveType;
 
+	/**
+	 * 通常状态
+	 */
 	@ApiModelProperty("通常状态")
 	private Integer commonStatus = 0;
 
+	/**
+	 * 状态
+	 */
 	@ApiModelProperty("状态")
 	private Integer status;
 
+	/**
+	 * 状态信息
+	 */
 	@ApiModelProperty("状态信息")
 	private String statusText;
 
+	/**
+	 * 关联测评任务ID
+	 */
 	@ApiModelProperty("关联测评任务ID")
 	private String taskId;
 
+	/**
+	 * 执行数
+	 */
 	@ApiModelProperty("执行数")
 	private Integer count;
 
+	/**
+	 * 来源IP
+	 */
 	@ApiModelProperty("来源IP")
 	private String sourceIp;
 

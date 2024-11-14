@@ -14,6 +14,9 @@ import lombok.Data;
 @Data
 public class PatternReq implements Serializable {
 
+	/**
+	 * 模糊查询筛选参数
+	 */
 	@ApiModelProperty(value = "模糊查询筛选参数")
 	private String pattern;
 

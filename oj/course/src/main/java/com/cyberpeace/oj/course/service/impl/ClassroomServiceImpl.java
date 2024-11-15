@@ -2202,7 +2202,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			return res;
 		}
 		List<String> planIds = classrooms.stream()
-				.filter(c -> c.getTrainPlanId() != null && c.getTrainPlanId().isEmpty())
+				.filter(c -> c.getTrainPlanId() != null && !c.getTrainPlanId().isEmpty())
 				.map(Classroom::getTrainPlanId).collect(Collectors.toList());
 		if (planIds.isEmpty()) {
 			return StreamApiUtils.map(classrooms, this::entityToBo);

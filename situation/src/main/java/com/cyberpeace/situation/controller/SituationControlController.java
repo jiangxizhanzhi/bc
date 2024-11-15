@@ -15,6 +15,7 @@ import com.cyberpeace.situation.controller.res.AttackMessageHistoryRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
+import com.cyberpeace.situation.dao.entity.Vuln;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.service.AttackMessageHistoryService;
 import com.cyberpeace.situation.service.DynamicSchemeService;
@@ -154,7 +155,7 @@ public class SituationControlController {
 //			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code, false);
 //		} else {
 			//推送普通动效
-			dynamicSchemeService.pushDynamicToRoom(attackMessageBo, elementIds, false);
+			dynamicSchemeService.pushDynamicToRoom(attackMessageBo, elementIds, false, false);
 //		}
 		return new BaseRsp<>();
 	}
@@ -291,4 +292,12 @@ public class SituationControlController {
 		return new BaseRsp(attackMessageHistoryService.getAttackMessageHistoryRes(sceneId, TimeUtil.toDate1(startTime),TimeUtil.toDate1(endTime)));
 	}
 
+	@ApiOperation("漏洞信息查询")
+	@GetMapping("/queryVuln")
+	public BaseRsp<List<Vuln>> queryLeak(@RequestParam(value = "application", required = false) String application,
+										 @RequestParam(value = "node_id", required = false) String nodeId) {
+		// todo 测试用
+		application = "Windows";
+		return new BaseRsp(dynamicSchemeService.queryLeak(application));
+	}
 }

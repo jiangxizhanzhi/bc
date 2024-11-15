@@ -6,6 +6,7 @@ import com.cyberpeace.situation.controller.req.DynamicSchemeReq;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
+import com.cyberpeace.situation.dao.entity.Vuln;
 import com.cyberpeace.situation.model.Instruction;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 
@@ -149,7 +150,9 @@ public interface DynamicSchemeService {
 	void pushDataToRealisticScene(String topoId, Integer step);
 
 
-	void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback);
+	void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback, Boolean isMultiterm);
 
 	public void executeInstruction(Instruction instruction, String topoId);
+
+	List<Vuln> queryLeak(String application);
 }

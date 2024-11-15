@@ -23,4 +23,6 @@ public class WsDefenseDynamic implements Serializable {
 	@ApiModelProperty("持续时间（秒）")
 	private Integer duration;
 
+	@ApiModelProperty("是否成功")
+	private Integer isSucceed;
 }

@@ -21,10 +21,7 @@ import com.cyberpeace.situation.controller.res.AttackMessageHistoryRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
-import com.cyberpeace.situation.dao.entity.AttackMessage;
-import com.cyberpeace.situation.dao.entity.AttackMessageHistory;
-import com.cyberpeace.situation.dao.entity.DynamicScheme;
-import com.cyberpeace.situation.dao.entity.SituationTime;
+import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
@@ -377,8 +374,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	 * @param attackMessageReq 普通动效数据
 	 * @param elementIds 当前场景节点id列表
 	 * @param playback 是否为回放
+	 * @param isMultiterm 是否多数据推送
 	 */
-	public void pushAttackToRoom(AttackMessageReq attackMessageReq, List<String> elementIds, Boolean playback) {
+	public void pushAttackToRoom(AttackMessageReq attackMessageReq, List<String> elementIds, Boolean playback, Boolean isMultiterm) {
 		//构造消息数据
 		WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageReq,
 				WsMultiNodeDynamic.class);
@@ -399,6 +397,41 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		//设置持续时间
 		wsMultiNodeDynamic.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsMultiNodeDynamic> wsMessage;
+
+		// 判断当前任务是否有工具和漏洞信息
+		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
+			// 有信息查询工具信息
+			ToolVuln toolVuln = dynamicSchemeMapper.toolVulnById(attackMessageReq.getTool(), attackMessageReq.getLeak(), 0);
+			if (isMultiterm) {
+				// 多任务推送判断该节点是否有防御成功记录
+				List<Defense> defenses = dynamicSchemeMapper.queryDefenseBySceneId(attackMessageReq.getSceneId());
+				boolean isDefen = false;
+				for (Defense defens : defenses) {
+					if (attackMessageReq.getTargetId().equals(defens.getNodeId()) && attackMessageReq.getLeak().equals(defens.getVulnId())) {
+						// 防御记录中有该节点上该漏洞的防御记录，进攻失败
+						wsMultiNodeDynamic.setIsSucceed(0);
+						isDefen = true;
+						break;
+					}
+				}
+				if (!isDefen && toolVuln != null) {
+					// 没有该节点的防御记录并且工具信息中有改漏洞攻击成功
+					wsMultiNodeDynamic.setIsSucceed(1);
+				} else {
+					wsMultiNodeDynamic.setIsSucceed(0);
+				}
+			} else {
+				if (toolVuln != null) {
+					// 查到工具信息，防御成功
+					wsMultiNodeDynamic.setIsSucceed(1);
+				} else {
+					// 查到工具信息，防御成功
+					wsMultiNodeDynamic.setIsSucceed(0);
+				}
+			}
+		} else {
+			wsMultiNodeDynamic.setIsSucceed(0);
+		}
 
 		if (elementIds.contains(attackMessageReq.getTargetId())) {
 			//设置类型为点对点
@@ -533,8 +566,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							//推送多媒体动效数据
 //							pushMediaToRoom(attackMessageReq, code, false);
 //						} else {
-							//推送普通动效数据
-						pushDynamicToRoom(attackMessageReq, elementIds, false);
+
+						//推送普通动效数据
+						pushDynamicToRoom(attackMessageReq, elementIds, false, true);
 //						}
 						if (attackMessageReq.getIntervalTime() != null) {
 							//进行等待
@@ -631,6 +665,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(
 				MessageType.AttackEffect.getDesc(), wsAttackEffectDynamicBlank);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+
+		// 清空当前场景防御记录
+		dynamicSchemeMapper.deleteDefenseBySceneId(sceneId);
 	}
 
 	/**
@@ -842,7 +879,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					if(!sceneConfigService.isCurrentScheme(sceneId, code)){
 						break;
 					}
-					pushDynamicToRoom(BeanUtils.copy(attackMessageHistory, AttackMessageReq.class), elementIds, true);
+					pushDynamicToRoom(BeanUtils.copy(attackMessageHistory, AttackMessageReq.class), elementIds, true, false);
 					pushPlaybackScheduleToRoom(new AttackMessageHistoryRes(
 							TimeUtil.format1(attackMessageHistory.getCreateTime()), attackMessageHistory.getDescription(), attackMessageHistory.getAttackOrDefense()),
 							attackMessageHistory.getSceneId());
@@ -871,12 +908,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	@Override
-	public void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback){
+	public void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback, Boolean isMultiterm){
 		situationTimeService.addRunTime(attackMessageBo.getSceneId(), attackMessageBo.getDurationTime());
 		if ("defense".equals(attackMessageBo.getAttackOrDefense())) {
-			pushDefenseToRoom(attackMessageBo, playback);
+			// 防御动效推送
+			pushDefenseToRoom(attackMessageBo, playback, isMultiterm);
 		} else {
-			pushAttackToRoom(attackMessageBo, elementIds, playback);
+			// 攻击动效推送
+			pushAttackToRoom(attackMessageBo, elementIds, playback, isMultiterm);
 		}
 	}
 
@@ -929,14 +968,55 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		situationHandlerService.pushDataToRoom(wsMessage, topoId);
 	}
 
-	public void pushDefenseToRoom(AttackMessageReq attackMessageReq, Boolean playback) {
+	@Override
+	public List<Vuln> queryLeak(String application) {
+		List<Vuln> leaks = dynamicSchemeMapper.queryLeak();
+
+		List<Vuln> leakList = new ArrayList<>();
+		for (Vuln leak : leaks) {
+			if (application.contains(leak.getApplication())) {
+				leakList.add(leak);
+			}
+		}
+		return leakList;
+	}
+
+	public void pushDefenseToRoom(AttackMessageReq attackMessageReq, Boolean playback, Boolean isMultiterm) {
 		WsDefenseDynamic wsDefenseDynamic = BeanUtils.copy(attackMessageReq, WsDefenseDynamic.class);
 		DefenseType defenseType = DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class);
 		if (defenseType != null) {
 			wsDefenseDynamic.setDefenseType(defenseType.getDefenseActionType().getCode());
 		}
 		wsDefenseDynamic.setDuration(attackMessageReq.getDurationTime());
+
+		// 判断当前任务是否有工具和漏洞信息
+		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
+			// 有信息查询工具信息
+			ToolVuln toolVuln = dynamicSchemeMapper.toolVulnById(attackMessageReq.getTool(), attackMessageReq.getLeak(), 1);
+			if (toolVuln != null) {
+				// 查到工具信息，防御成功
+				wsDefenseDynamic.setIsSucceed(1);
+				// 判断是否为多方案推送，多方案推送记录防御成功记录
+				if (isMultiterm) {
+					Defense defense = new Defense();
+					defense.setResourceId(IDGeneratorUtil.getID());
+					defense.setSceneId(attackMessageReq.getSceneId());
+					defense.setNodeId(attackMessageReq.getDefenseTargetId());
+					defense.setVulnId(attackMessageReq.getLeak());
+					defense.setDeacription(toolVuln.getDescribe());
+					defense.setCreateTime(new Date());
+					// 记录防御成功数据
+					dynamicSchemeMapper.addDefense(defense);
+				}
+			} else {
+				wsDefenseDynamic.setIsSucceed(0);
+			}
+		} else {
+			wsDefenseDynamic.setIsSucceed(0);
+		}
+
 		WsMessage<WsDefenseDynamic> wsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsDefenseDynamic);
+		// 推送防御动效
 		pushDataToRoom(wsMessage, attackMessageReq, playback, null);
 
 

@@ -2,7 +2,10 @@ package com.cyberpeace.situation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
+import com.cyberpeace.situation.dao.entity.Defense;
 import com.cyberpeace.situation.dao.entity.DynamicScheme;
+import com.cyberpeace.situation.dao.entity.ToolVuln;
+import com.cyberpeace.situation.dao.entity.Vuln;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -41,4 +44,36 @@ public interface DynamicSchemeMapper extends BaseMapper<DynamicScheme> {
 	 */
 	DynamicScheme selectByResourceId(String resourceId);
 
+	/**
+	 * 查询漏洞下拉列表
+	 * @return 漏洞信息
+	 */
+    List<Vuln> queryLeak();
+
+	/**
+	 * 查询工具信息
+	 * @param tool 工具id
+	 * @param leak 漏洞id
+	 * @return 工具信息
+	 */
+	ToolVuln toolVulnById(@Param("tool") String tool, @Param("leak") String leak, @Param("type") Integer type);
+
+	/**
+	 * 新增防御记录
+	 * @param defense defense
+	 */
+	void addDefense(Defense defense);
+
+	/**
+	 * 防御记录查询
+	 * @param sceneId sceneId
+	 * @return Defense
+	 */
+	List<Defense> queryDefenseBySceneId(@Param("sceneId") String sceneId);
+
+	/**
+	 * 清空防御记录
+	 * @param sceneId sceneId
+	 */
+	void deleteDefenseBySceneId(@Param("sceneId") String sceneId);
 }

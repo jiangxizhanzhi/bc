@@ -981,6 +981,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		return leakList;
 	}
 
+	@Override
+	public List<ToolVuln> queryTool(String vulnId, Integer toolType) {
+		List<ToolVuln> toolVulns = dynamicSchemeMapper.queryToolByVulnId(vulnId, toolType);
+		return toolVulns;
+	}
+
 	public void pushDefenseToRoom(AttackMessageReq attackMessageReq, Boolean playback, Boolean isMultiterm) {
 		WsDefenseDynamic wsDefenseDynamic = BeanUtils.copy(attackMessageReq, WsDefenseDynamic.class);
 		DefenseType defenseType = DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class);

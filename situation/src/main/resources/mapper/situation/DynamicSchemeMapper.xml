@@ -56,4 +56,9 @@
         delete from situation_defense
         where scene_id = #{sceneId}
     </delete>
+
+    <select id="queryToolByVulnId" resultType="com.cyberpeace.situation.dao.entity.ToolVuln">
+        <bind name="vulnId" value="'%' + vulnId + '%'"/>
+        select * from situation_tool_vuln where vuln_ids like #{vulnId} and tool_type = #{toolType}
+    </select>
 </mapper>

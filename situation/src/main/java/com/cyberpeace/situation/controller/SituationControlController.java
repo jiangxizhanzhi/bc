@@ -15,6 +15,7 @@ import com.cyberpeace.situation.controller.res.AttackMessageHistoryRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
+import com.cyberpeace.situation.dao.entity.ToolVuln;
 import com.cyberpeace.situation.dao.entity.Vuln;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.service.AttackMessageHistoryService;
@@ -297,7 +298,15 @@ public class SituationControlController {
 	public BaseRsp<List<Vuln>> queryLeak(@RequestParam(value = "application", required = false) String application,
 										 @RequestParam(value = "node_id", required = false) String nodeId) {
 		// todo 测试用
-		application = "Windows";
+		if (application == null) {
+			application = "Windows";
+		}
 		return new BaseRsp(dynamicSchemeService.queryLeak(application));
+	}
+
+	@ApiOperation("工具信息查询")
+	@GetMapping("/queryTool")
+	public BaseRsp<List<ToolVuln>> queryTool(@RequestParam(value = "vuln_id") String vulnId,@RequestParam(value = "tool_type") Integer toolType) {
+		return new BaseRsp(dynamicSchemeService.queryTool(vulnId, toolType));
 	}
 }

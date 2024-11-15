@@ -76,4 +76,6 @@ public interface DynamicSchemeMapper extends BaseMapper<DynamicScheme> {
 	 * @param sceneId sceneId
 	 */
 	void deleteDefenseBySceneId(@Param("sceneId") String sceneId);
+
+	List<ToolVuln> queryToolByVulnId(@Param("vulnId") String vulnId, @Param("toolType") Integer toolType);
 }

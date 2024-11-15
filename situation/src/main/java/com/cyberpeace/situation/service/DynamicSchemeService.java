@@ -6,6 +6,7 @@ import com.cyberpeace.situation.controller.req.DynamicSchemeReq;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
+import com.cyberpeace.situation.dao.entity.ToolVuln;
 import com.cyberpeace.situation.dao.entity.Vuln;
 import com.cyberpeace.situation.model.Instruction;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
@@ -155,4 +156,6 @@ public interface DynamicSchemeService {
 	public void executeInstruction(Instruction instruction, String topoId);
 
 	List<Vuln> queryLeak(String application);
+
+	List<ToolVuln> queryTool(String vulnId, Integer toolType);
 }

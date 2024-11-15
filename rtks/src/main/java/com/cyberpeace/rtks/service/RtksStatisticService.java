@@ -75,4 +75,12 @@ public interface RtksStatisticService {
 	 */
 	SkillTrainingRecordBo calculateTrainingRecord(String userId, String roleId, Date toDate1,
 			Date toDate11);
+
+	/**
+	 * 获取课程研究记录
+	 *
+	 * @param userId 用户id
+	 * @return {@code RoleStudyBo }
+	 */
+	RoleStudyBo getCourseStudyRecord(String userId);
 }

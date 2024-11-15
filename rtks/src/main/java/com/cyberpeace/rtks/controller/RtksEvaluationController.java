@@ -45,19 +45,28 @@ public class RtksEvaluationController {
 	@Autowired
 	private RtksSituationService rtksSituationService;
 
-	@ApiOperation("岗位知识点学习进度统计")
+//	@ApiOperation("岗位知识点学习进度统计")
+//	@GetMapping("/role/knowledge/study_record")
+//	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
+//	public BaseRsp<RoleStudyBo> getRoleStudyRecord() {
+//		String userId = UserInfoContext.getUserContext().getUserId();
+//		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+//		BaseRsp<RoleStudyBo> rsp = new BaseRsp<>();
+//		if (StringUtils.isNotBlank(existRoleId)) {
+//			RoleStudyBo studyBo = rtksStatisticService.roleKnowledgeStudyRecord(existRoleId,
+//					userId);
+//			rsp.setData(studyBo);
+//		}
+//		return rsp;
+//	}
+
+	@ApiOperation("所有课程学习进度统计")
 	@GetMapping("/role/knowledge/study_record")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
-	public BaseRsp<RoleStudyBo> getRoleStudyRecord() {
+	public BaseRsp<RoleStudyBo> getStudyRecord() {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		String existRoleId = UserInfoContext.getUserContext().getRoleId();
-		BaseRsp<RoleStudyBo> rsp = new BaseRsp<>();
-		if (StringUtils.isNotBlank(existRoleId)) {
-			RoleStudyBo studyBo = rtksStatisticService.roleKnowledgeStudyRecord(existRoleId,
-					userId);
-			rsp.setData(studyBo);
-		}
-		return rsp;
+			RoleStudyBo studyBo = rtksStatisticService.getCourseStudyRecord(userId);
+		return new BaseRsp<>(studyBo);
 	}
 
 	@ApiOperation("岗位知识点六棱图统计")

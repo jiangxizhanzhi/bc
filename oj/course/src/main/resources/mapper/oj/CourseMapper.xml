@@ -179,4 +179,7 @@
             read_auth_ids like #{likeOrganization}
         </where>
     </select>
+    <select id="selectAllIds" resultType="java.lang.String">
+        select resource_id from oj_course
+    </select>
 </mapper>

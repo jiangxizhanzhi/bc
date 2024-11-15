@@ -3,6 +3,9 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.service.CourseService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -63,6 +66,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
+
+	@Autowired
+	private CourseMapper courseMapper;
 
 	@Autowired
 	private LessonRecordService lessonRecordService;
@@ -375,6 +381,19 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public RoleStudyBo getCourseStudyRecord(String userId) {
+
+		List<String> courseIds = courseMapper.selectAllIds();
+		// 1、获取课程学习进度
+		List<CourseStudyProcessBo> processBoList = courseStatisticsService.statisticByIds(courseIds,
+				userId);
+
+		// 2、获取技能点对应的课程
+		return getStudyBo(processBoList);
+
 	}
 
 	/**

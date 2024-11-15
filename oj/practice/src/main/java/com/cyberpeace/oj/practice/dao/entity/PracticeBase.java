@@ -102,4 +102,10 @@ public class PracticeBase extends BaseTable implements Serializable {
 	@ApiModelProperty("创建用户id")
 	private String createUserId;
 
+	/**
+	 * 课程方向id
+	 */
+	@ApiModelProperty("课程方向id")
+	private String courseCategoryId;
+
 }

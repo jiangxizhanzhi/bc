@@ -51,6 +51,13 @@ public class OperationAddReq implements Serializable, CustomValidate {
 	private String categoryId;
 
 	/**
+	 * 课程类别id
+	 */
+	@ApiModelProperty(name = "course_category_id", value = "课程方向")
+	@NotBlank(groups = { Create.class })
+	private String courseCategoryId;
+
+	/**
 	 * 知识
 	 */
 	@ApiModelProperty("知识点")
@@ -199,6 +206,10 @@ public class OperationAddReq implements Serializable, CustomValidate {
 
 	public void setAttachment_id(String attachmentId) {
 		this.attachmentId = attachmentId;
+	}
+
+	public void setCourse_category_id(String courseCategoryId) {
+		this.courseCategoryId = courseCategoryId;
 	}
 
 	@Override

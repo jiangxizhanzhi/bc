@@ -44,6 +44,12 @@ public class AdminTheoryBo implements Serializable {
 	private String categoryId;
 
 	/**
+	 * 课程分类id
+	 */
+	@ApiModelProperty(value = "岗位方向", required = true)
+	private String courseCategoryId;
+
+	/**
 	 * 答案
 	 */
 	@ApiModelProperty(value = "答案")

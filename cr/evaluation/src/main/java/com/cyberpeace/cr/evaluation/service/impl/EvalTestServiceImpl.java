@@ -189,11 +189,16 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
                 loads.addAll(step.getLoadList());
             }
 
-            EvalTest evalTest = getEvalTest(testRsp.getTestId());
-            SceneViewContext sceneViewContext = evalSceneService.viewScene(null, evalTest.getTopoId());
-
-            List<String> typeList = new ArrayList<>();
-            JSONObject topoData = sceneViewContext.getTopoData();
+            List<String> typeList = null;
+            JSONObject topoData = null;
+            try {
+                EvalTest evalTest = getEvalTest(testRsp.getTestId());
+                SceneViewContext sceneViewContext = evalSceneService.viewScene(null, evalTest.getTopoId());
+                typeList = new ArrayList<>();
+                topoData = sceneViewContext.getTopoData();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
             if (topoData != null) {
                 JSONObject plugins = topoData.getJSONObject("plugins");
@@ -202,6 +207,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
                     if (cpcloud != null) {
                         JSONObject elements = cpcloud.getJSONObject("elements");
                         if (elements != null) {
+                            List<String> finalTypeList = typeList;
                             elements.forEach((k, v) -> {
                                 String imageType = ((JSONObject) v).getString("image_type");
                                 if (imageType != null) {
@@ -230,7 +236,7 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
                                         default:
                                             imageType = "未知服务";
                                     }
-                                    typeList.add(imageType);
+                                    finalTypeList.add(imageType);
                                 }
                             });
                         }
@@ -260,8 +266,10 @@ public class EvalTestServiceImpl extends ServiceImpl<EvalTestMapper, EvalTest> i
 
         //校验权限
         String userId = UserInfoContext.getUserContext().getUserId();
+        String createUserId = evalTest.getCreateUserId();
+        UserInfo byId = remoteUserService.getById(createUserId);
         if (!evalTest.isFree2Operate() && !evalTest.getCreateUserId().equals(userId)
-                && !evalTest.getOperationAuthIds().contains(userId)) {
+                && !evalTest.getOperationAuthIds().contains(userId) && !byId.isAdmin()) {
             log.error("Permission denied! userId = [{}]",
                     UserInfoContext.getUserContext().getUserId());
             throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);

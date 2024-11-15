@@ -11,10 +11,7 @@ import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmListReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRunAlgorithmReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalAlgorithmRsp;
@@ -25,11 +22,22 @@ import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.cyberpeace.cr.tool.controller.res.ToolTypeCount;
 import com.cyberpeace.cr.tool.dao.context.MonthCount;
 import com.cyberpeace.cr.tool.service.ToolService;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.gateway.controller.req.TheoryListReq;
+import com.cyberpeace.gateway.service.bo.ExternalOperationBo;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.practice.controller.req.AdminOperationListReq;
 import com.cyberpeace.oj.practice.controller.req.OperationByNodeReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
+import com.cyberpeace.oj.practice.controller.req.external.PracticeRandomChoiceReq;
+import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
+import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
@@ -40,6 +48,7 @@ import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryBo;
 import com.cyberpeace.space.dao.entity.SpaceActionFrame;
 import com.cyberpeace.space.dao.mapper.SpaceActionFrameMapper;
 import com.cyberpeace.space.service.context.frame.ActionStatisticsBo;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -118,8 +127,23 @@ public class ExternalYXController {
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
 
+	/**
+	 * 实践类别Mapper
+	 */
 	@Autowired
-	private PracticeCategoryService categoryService;
+	private PracticeCategoryMapper practiceCategoryMapper;
+
+	/**
+	 * 附件Mapper
+	 */
+	@Autowired
+	private AttachmentMapper attachmentMapper;
+
+	/**
+	 * utilService
+	 */
+	@Autowired
+	private UtilService utilService;
 
 	/**
 	 * 列表
@@ -409,5 +433,99 @@ public class ExternalYXController {
 
 		return new BaseRsp(PageUtil.getListResult(iPage));
 	}
+
+	/**
+	 * 获取理论随机
+	 *
+	 * @param queryParams 查询参数
+	 * @return {@code BaseRsp<List<PracticeTheory>> }
+	 */
+	@ApiOperation("理论基础题库-随机获取数条")
+	@GetMapping("/theory/random-choice")
+	@CallCount(CallType.THEORY)
+	public BaseRsp<List<PracticeTheory>> getTheoryRandom(PracticeRandomChoiceReq queryParams) {
+
+		TheoryListQuery listQuery = BeanUtils.copy(queryParams, TheoryListQuery.class);
+		if (org.springframework.util.StringUtils.hasText(queryParams.getCategory())) {
+			listQuery.setCategoryIds(Lists.newArrayList(queryParams.getCategory()));
+		}
+
+		List<PracticeTheory> result = practiceTheoryMapper.randomChoice(listQuery,
+				queryParams.getCount());
+		for (PracticeTheory item : result) {
+			item.setScore(queryParams.getScore());
+		}
+		return new BaseRsp<>(result);
+	}
+
+	/**
+	 * 获取实操随机
+	 *
+	 * @param choiceReq 选择请求体
+	 * @return {@code BaseRsp<List<ExternalOperationBo>> }
+	 */
+	@ApiOperation("实操习题随机获取数条")
+	@GetMapping("/operation/random-choice")
+	@CallCount(CallType.THEORY)
+	public BaseRsp<List<ExternalOperationBo>> getOperationRandom(PracticeRandomChoiceReq choiceReq) {
+
+		OperationListQuery listQuery = BeanUtils.copy(choiceReq, OperationListQuery.class);
+		if (org.springframework.util.StringUtils.hasText(choiceReq.getCategory())) {
+			listQuery.setCategoryIds(Lists.newArrayList(choiceReq.getCategory()));
+		}
+
+		List<PracticeOperation> operationList = practiceOperationMapper.randomChoice(listQuery,
+				choiceReq.getCount());
+		List<ExternalOperationBo> boList = StreamApiUtils.map(operationList,
+				operation -> entityToExternal(operation));
+		for (ExternalOperationBo operationBo : boList) {
+			operationBo.setScore(choiceReq.getScore());
+		}
+
+		return new BaseRsp<>(boList);
+	}
+
+	/**
+	 * 实体类转换为外部字段
+	 *
+	 * @param operation
+	 * @return
+	 */
+	private ExternalOperationBo entityToExternal(PracticeOperation operation) {
+		ExternalOperationBo externalOperationBo = BeanUtils.copy(operation,
+				ExternalOperationBo.class);
+		externalOperationBo.setCreateUser(operation.getCreateUserId());
+
+		// 分类
+		PracticeCategory practiceCategory = practiceCategoryMapper
+				.selectById(operation.getCategoryId());
+		if (null != practiceCategory) {
+			externalOperationBo.setCategoryInfo(practiceCategory.getName());
+		}
+
+		if (org.springframework.util.StringUtils.hasText(operation.getAttachmentId())) {
+			if (null != operation.getDynamicFlag() && operation.getDynamicFlag()
+					.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode().intValue()) {
+
+				List<PracticeOperationFileBo> fileBos = practiceOperationService
+						.getOperationFile(operation.getAttachmentId());
+				externalOperationBo.setAttachment(fileBos);
+
+			} else {
+				Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
+				String fileUrl = utilService.handlerFileUrl(attachment.getFilePath());
+				externalOperationBo.setFileUrl(fileUrl);
+				externalOperationBo.setFileName(attachment.getFileName());
+			}
+
+		}
+
+		externalOperationBo.setIsDynamicEnv(operation.getDynamicEnv());
+		externalOperationBo.setIsDynamicFlag(operation.getDynamicFlag());
+		externalOperationBo.setShareMode(operation.getSceneShareMode());
+
+		return externalOperationBo;
+	}
+
 
 }

@@ -73,6 +73,7 @@
                 <bind name="pattern" value="'%' + query.pattern + '%'"/>
                 and content like #{pattern}
             </if>
+            and `public` = true
         </where>
         order by rand() limit #{limit}
     </select>

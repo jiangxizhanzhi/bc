@@ -1,10 +1,10 @@
 package com.cyberpeace.oj.practice.controller.req.external;
 
-import javax.validation.constraints.NotNull;
-
 import com.cyberpeace.common.model.PatternBase;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * 实践随机选择请求体
@@ -44,7 +44,7 @@ public class PracticeRandomChoiceReq extends PatternBase {
 	 * 计数
 	 */
 	@NotNull
-	@ApiModelProperty("获取数量")
+	@ApiModelProperty(value = "获取数量", required = true)
 	private Integer count;
 
 	/**

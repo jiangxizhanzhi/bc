@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -19,6 +20,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalSystemRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
+import com.cyberpeace.cr.evaluation.service.context.CollectWithStrContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
 import com.cyberpeace.cr.evaluation.service.impl.GXPTIndexServiceImpl;
@@ -26,6 +28,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,10 +39,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "后台-测试靶场-指标体系")
@@ -84,6 +84,9 @@ public class EvalSystemIndexAdminController {
 
 	@Autowired
 	private GXPTIndexServiceImpl gxptIndexService;
+
+	@Autowired
+	private EvalAlgorithmMapper evalAlgorithmMapper;
 
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
@@ -399,6 +402,34 @@ public class EvalSystemIndexAdminController {
 		// 试验之前清空之前的计算结果
 		clearResultBeforeCurrentTest(byId);
 
+		// 处理参数值中的key
+		for (CollectWithStrContext collectWithStrContext : evalSystemTestReq.getFifthIndex()) {
+			try {
+				// 提取格式化算法名称
+				EvalIndicator evalIndicator = evalIndicatorService.getById(collectWithStrContext.getEvalIndicatorId());
+				EvalIndicatorRsp evalIndicatorRsp = evalIndicatorService.convertEvalIndicatorToEvalSystemRsp(evalIndicator);
+				String key = evalAlgorithmMapper.selectById(evalIndicatorRsp.getEvalCollections().get(0).getFormatAlgorithmId()).getName();
+
+				// 依据名称，替换原始数据中的值
+				Map<String, String> replaceMap = new HashMap<>();
+				replaceMap.put("内存使用率", "memoryPercent");
+				replaceMap.put("磁盘使用率", "diskPercent");
+				replaceMap.put("CPU使用率", "cpuPercent");
+
+				if (!StringUtils.isEmpty(key) && (replaceMap.containsKey(key))) {
+					collectWithStrContext.setStr(collectWithStrContext.getStr().replace("data", replaceMap.get(key)));
+				}
+
+				if (!StringUtils.isEmpty(key) && key.equals("JSON属性获取")) {
+					String formatAlgorithmParams = evalIndicatorRsp.getEvalCollections().get(0).getFormatAlgorithmParams();
+					String nextKey = JsonUtil.toJsonObjectArray(formatAlgorithmParams, JSONObject.class).get(0).getString("default_value");
+					collectWithStrContext.setStr(collectWithStrContext.getStr().replace("data", nextKey));
+				}
+
+			} catch (Exception e) {
+				log.error("参数值处理异常", e);
+			}
+		}
 
 		EvalSystemAllRsp result = evalSystemService.testWithStr(evalSystemTestReq);
 

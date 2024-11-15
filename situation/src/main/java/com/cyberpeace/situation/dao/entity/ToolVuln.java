@@ -11,7 +11,7 @@ public class ToolVuln extends BaseTable {
     @TableId(value = "resource_id")
     private String resourceId;
 
-    private String toolNmae;
+    private String toolName;
 
     private String vulnIds;
 

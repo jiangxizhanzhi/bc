@@ -305,6 +305,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		}
 		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
 		theoryListQuery.setResourceIds(practiceIds);
+		theoryListQuery.setCourseCategoryIds(Collections.singletonList(listQuery.getCourseCategoryId()));
 
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery, null);
 

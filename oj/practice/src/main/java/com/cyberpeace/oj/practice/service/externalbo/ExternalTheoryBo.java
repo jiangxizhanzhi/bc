@@ -99,4 +99,7 @@ public class ExternalTheoryBo implements Serializable {
     @ApiModelProperty("关键字 - (简答题题型使用)")
 	private String keyword;
 
+    @ApiModelProperty("岗位方向")
+    private String courseCategoryId;
+
 }

@@ -39,4 +39,9 @@ public class TheoryListQueryBo extends PatternBase {
 	 */
 	private Integer theoryType;
 
+	/**
+	 * 课程类型
+	 */
+	private String courseCategoryId;
+
 }

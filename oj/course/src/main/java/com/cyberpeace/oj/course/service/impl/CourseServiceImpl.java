@@ -1128,4 +1128,37 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		}
 		return courseNum;
 	}
+
+	/**
+	 * 查询分页
+	 *
+	 * @param page          分页
+	 * @param courseContext 课程背景
+	 * @return {@code ListRsp<CourseWebBo> }
+	 */
+	@Override
+	public ListRsp<CourseWebBo> selectPage(Page page, CourseQueryBo courseContext) {
+
+		// 常规条件过滤
+		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, null,
+				false);
+
+		IPage<CourseWebBo> webBoIPage = iPage
+				.convert(this::transferToBo);
+		return PageUtil.getListResult(webBoIPage);
+	}
+
+	/**
+	 * 数据格式转换
+	 *
+	 * @param course
+	 * @return
+	 */
+	private CourseWebBo transferToBo(Course course) {
+		CourseInfoBo courseInfoBo = courseToBo(course, true);
+		CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
+		courseWebBo.setEbook(course.getCourseType());
+		return courseWebBo;
+
+	}
 }

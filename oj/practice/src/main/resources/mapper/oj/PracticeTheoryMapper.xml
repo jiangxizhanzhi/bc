@@ -99,6 +99,12 @@
                     #{categoryId}
                 </foreach>
             </if>
+            <if test="listQuery.courseCategoryIds != null and listQuery.courseCategoryIds.size() != 0">
+                and course_category_id in
+                <foreach collection="listQuery.courseCategoryIds" open="(" close=")" separator="," item="courseCategoryId">
+                    #{courseCategoryId}
+                </foreach>
+            </if>
             <if test="listQuery.questionType != null">
                 and theory_type = #{listQuery.questionType}
             </if>

@@ -1,10 +1,9 @@
 package com.cyberpeace.oj.practice.dao.context;
 
-import java.util.List;
-
 import com.cyberpeace.common.model.PatternBase;
-
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 实操列表查询
@@ -29,6 +28,11 @@ public class OperationListQuery extends PatternBase {
 	 * 类别id列表
 	 */
 	private List<String> categoryIds;
+
+	/**
+	 * 课程方向id
+	 */
+	private List<String> courseCategoryIds;
 
 	/**
 	 * 难度

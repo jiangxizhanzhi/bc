@@ -27,8 +27,13 @@ import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.gateway.controller.req.TheoryListReq;
 import com.cyberpeace.gateway.service.bo.ExternalOperationBo;
+import com.cyberpeace.oj.course.controller.req.CourseListReq;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.service.CourseService;
+import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
+import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.oj.practice.controller.req.AdminOperationListReq;
+import com.cyberpeace.oj.practice.controller.req.AdminTheoryListReq;
 import com.cyberpeace.oj.practice.controller.req.OperationByNodeReq;
 import com.cyberpeace.oj.practice.controller.req.PracticeCategoryListReq;
 import com.cyberpeace.oj.practice.controller.req.external.PracticeRandomChoiceReq;
@@ -58,6 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -144,6 +150,12 @@ public class ExternalYXController {
 	 */
 	@Autowired
 	private UtilService utilService;
+
+	/**
+	 * 课程service
+	 */
+	@Autowired
+	private CourseService courseService;
 
 	/**
 	 * 列表
@@ -525,6 +537,47 @@ public class ExternalYXController {
 		externalOperationBo.setShareMode(operation.getSceneShareMode());
 
 		return externalOperationBo;
+	}
+
+	/**
+	 * 根据方向获取课程
+	 *
+	 * @return {@code BaseRsp<ListRsp<CourseWebBo>> }
+	 */
+	@ApiOperation("根据方向获取课程")
+	@GetMapping("/course/course_category")
+	@CallCount(CallType.THEORY)
+	public BaseRsp<ListRsp<CourseWebBo>> getCourseByCategory(
+			@ApiParam(name = "listReq", value = "查询条件") @Valid CourseListReq courseListReq) {
+		// 组装筛选条件
+		CourseQueryBo context = BeanUtils.copy(courseListReq, CourseQueryBo.class);
+		context.setDirections(Collections.singletonList(courseListReq.getDirection()));
+		return new BaseRsp<>(courseService.selectPage(courseListReq.toPageParam(), context));
+	}
+
+	/**
+	 * 根据方向获取理论题
+	 *
+	 * @return {@code BaseRsp<List<ExternalOperationBo>> }
+	 */
+	@ApiOperation("根据岗位方向获取理论题")
+	@GetMapping("/theory/course_category")
+	@CallCount(CallType.THEORY)
+	public BaseRsp<ListRsp<ExternalTheoryBo>> getTheoryByCategory(
+			@ApiParam(name = "listReq", value = "查询条件") @Valid AdminTheoryListReq theoryListReq) {
+		Page page = theoryListReq.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
+
+		List<String> categoryIds = practiceCategoryService
+				.selectChildrenIds(theoryListReq.getCategoryId(), CommonConstant.TRUE);
+
+		TheoryListQueryBo listQuery = BeanUtils.copy(theoryListReq, TheoryListQueryBo.class);
+		listQuery.setCategoryIds(categoryIds);
+
+		IPage<ExternalTheoryBo> boIPage = practiceTheoryService.pageByQuery(page, listQuery);
+		return new BaseRsp<>(PageUtil.getListResult(boIPage));
 	}
 
 

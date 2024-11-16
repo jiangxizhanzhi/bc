@@ -25,6 +25,12 @@ public class AdminTheoryListReq extends PageReqBase {
 	private String categoryId;
 
 	/**
+	 * 课程类型
+	 */
+	@ApiModelProperty(name = "course_category_id", value = "课程类型")
+	private String courseCategoryId;
+
+	/**
 	 * 难度
 	 */
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
@@ -46,6 +52,10 @@ public class AdminTheoryListReq extends PageReqBase {
 
 	public void setTheory_type(Integer theoryType){
 		this.theoryType = theoryType;
+	}
+
+	public void setCourse_category_id(String courseCategoryId) {
+		this.courseCategoryId = courseCategoryId;
 	}
 
 }

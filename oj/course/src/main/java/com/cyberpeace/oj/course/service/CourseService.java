@@ -1,7 +1,5 @@
 package com.cyberpeace.oj.course.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
@@ -10,6 +8,8 @@ import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+
+import java.util.List;
 
 /**
  * 课程Service
@@ -139,4 +139,12 @@ public interface CourseService extends IService<Course> {
 	 * @param org 组织
 	 */
 	void clearOrgAuth(String org);
+
+	/**
+	 * 分页查询课程
+	 * @param page
+	 * @param courseContext
+	 * @return
+	 */
+	ListRsp<CourseWebBo> selectPage(Page page, CourseQueryBo courseContext);
 }

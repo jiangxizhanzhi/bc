@@ -7,6 +7,7 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -16,6 +17,7 @@ import com.cyberpeace.integratation.model.mp.MpEventAggr;
 import com.cyberpeace.integratation.model.mp.MpFlowTrend;
 import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.mp.MpRiskCount;
+import com.cyberpeace.integratation.service.impl.RemoteTerminalServiceImpl;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.MessageType;
@@ -24,7 +26,10 @@ import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.controller.res.LinkStateRes;
 import com.cyberpeace.situation.controller.res.SceneAllDataRes;
+import com.cyberpeace.situation.dao.entity.Defense;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
+import com.cyberpeace.situation.dao.entity.Vuln;
+import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
@@ -44,6 +49,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,6 +60,12 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	@Autowired
+	private DynamicSchemeMapper dynamicSchemeMapper;
+
+	@Autowired
+	private RemoteTerminalServiceImpl remoteTerminalService;
 
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
@@ -175,7 +187,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
-	private Map<String, ElementInfo> getElements(SceneData sceneData,
+	public Map<String, ElementInfo> getElements(SceneData sceneData,
 			Map<String, AreaInfo> areasInfo) {
 
 		JSONArray elements = sceneData.getElements();
@@ -184,6 +196,43 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		Map<String, ElementInfo> elementsInfo = Maps.newHashMap();
 		Map<String, List<SituationConfig>> elementConfigMap = sceneData.getSituationConfigMap()
 				.getOrDefault(SituationConfig.NodeType.ELEMENT.getCode(), Maps.newHashMap());
+
+		// 获取所有设备id
+		List<String> imageUuids = new ArrayList<>();
+		for (int i = 0; i < elements.size(); i++) {
+			JSONObject element = elements.getJSONObject(i);
+			String elementId = element.getString("id");
+			JSONObject elementExtendedInfo = extendElementInfo.getJSONObject(elementId);
+			imageUuids.add(elementExtendedInfo.getString("image_uuid"));
+		}
+		// 获取设备信息
+		List<DeviceInfo> byIds = remoteTerminalService.getByIds(imageUuids);
+		// 获取所有设备漏洞信息
+		List<String> vulnIds = new ArrayList<>();
+		for (DeviceInfo byId : byIds) {
+			if (byId.getVulns() != null && byId.getVulns().size() != 0) {
+				vulnIds.addAll(byId.getVulns());
+			}
+		}
+		Map<String, Vuln> vulnMap = new HashMap<>();
+		if (vulnIds != null && vulnIds.size() != 0) {
+			List<Vuln> vulnList = dynamicSchemeMapper.queryLeakByIds(vulnIds);
+			vulnMap = vulnList.stream().collect(Collectors.toMap(Vuln::getResourceId, vuln -> vuln));
+		}
+
+		// 获取每个节点的cvss
+		Map<String, Double> cvssMap = new HashMap<>();
+		for (DeviceInfo byId : byIds) {
+			if (vulnMap != null && vulnMap.size() != 0
+					&& byId.getVulns() != null && byId.getVulns().size() != 0) {
+				Double cvss = 0.0;
+				for (String vuln : byId.getVulns()) {
+					Vuln v = vulnMap.get(vuln);
+					cvss = cvss + v.getCvss();
+				}
+				cvssMap.put(byId.getResourceId(), cvss/byId.getVulns().size());
+			}
+		}
 
 		for (int i = 0; i < elements.size(); i++) {
 
@@ -276,6 +325,34 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			List<LeakInfo> leakInfos = leaks.toJavaList(LeakInfo.class);
 			elementInfo.setLeakCount(leaks.size());
 			elementInfo.setLeakInfos(leakInfos);
+
+			elementInfo.setImageUuid(elementExtendedInfo.getString("image_uuid"));
+			if (cvssMap != null && cvssMap.size() != 0) {
+				Double cvss = cvssMap.get(elementExtendedInfo.getString("image_uuid"));
+				if (cvss != null) {
+					String  str = String.format("%.2f",cvss);
+					elementInfo.setCvss(Double.parseDouble(str));
+					// todo cvss严重评级
+					if (cvss != null) {
+						elementInfo.setCvssLevel(3);
+					}
+
+				}
+			}
+//			elementInfo.setCvss(8.8);
+//			DeviceInfo deviceInfo = remoteTerminalService.getById(elementExtendedInfo.getString("image_uuid"));
+			// 获取该节点下防御成功记录
+			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneData.getSceneId(), elementId, 1);
+			if (defenses != null && defenses.size() != 0) {
+				elementInfo.setFlag(2);
+			} else {
+				List<Defense> attacks = dynamicSchemeMapper.queryDefenseByNodeId(sceneData.getSceneId(), elementId, 0);
+				if (attacks != null && attacks.size() != 0) {
+					elementInfo.setFlag(3);
+				} else {
+					elementInfo.setFlag(1);
+				}
+			}
 
 			elementsInfo.put(elementId, elementInfo);
 		}

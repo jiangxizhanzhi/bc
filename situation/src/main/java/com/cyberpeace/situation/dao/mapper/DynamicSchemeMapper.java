@@ -69,7 +69,7 @@ public interface DynamicSchemeMapper extends BaseMapper<DynamicScheme> {
 	 * @param sceneId sceneId
 	 * @return Defense
 	 */
-	List<Defense> queryDefenseBySceneId(@Param("sceneId") String sceneId);
+	List<Defense> queryDefenseBySceneId(@Param("sceneId") String sceneId, @Param("type") Integer type);
 
 	/**
 	 * 清空防御记录
@@ -77,5 +77,30 @@ public interface DynamicSchemeMapper extends BaseMapper<DynamicScheme> {
 	 */
 	void deleteDefenseBySceneId(@Param("sceneId") String sceneId);
 
+	/**
+	 * 获取工具信息
+	 * @param vulnId vulnId
+	 * @param toolType toolType
+	 */
 	List<ToolVuln> queryToolByVulnId(@Param("vulnId") String vulnId, @Param("toolType") Integer toolType);
+
+	/**
+	 * 获取漏洞信息
+	 * @param vulns vulns
+	 */
+    List<Vuln> queryVulnTop(List<String> vulns);
+
+	/**
+	 * 获取攻防记录信息
+	 * @param sceneId sceneId
+	 * @param nodeId nodeId
+	 * @param type type
+	 */
+	List<Defense> queryDefenseByNodeId(String sceneId, String nodeId, Integer type);
+
+	/**
+	 * 根据id查询漏洞信息
+	 * @param vulns vulns
+	 */
+	List<Vuln> queryLeakByIds(List<String> vulns);
 }

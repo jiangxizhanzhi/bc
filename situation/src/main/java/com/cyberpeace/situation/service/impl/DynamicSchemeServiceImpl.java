@@ -5,8 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.scene.DeviceInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.impl.RemoteTerminalServiceImpl;
 import com.cyberpeace.situation.constant.Color;
 import com.cyberpeace.situation.constant.LineType;
 import com.cyberpeace.situation.constant.SituationErrorCode;
@@ -83,6 +85,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Autowired
 	private SituationTimeMapper situationTimeMapper;
+
+	@Autowired
+	private RemoteTerminalServiceImpl remoteTerminalService;
+
+	@Autowired
+	private SituationHandlerServiceImpl situationHandlerServiceImpl;
 
 	//允许上传的图片格式
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
@@ -300,10 +308,22 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	@Override
 	public void getLocalOption(OptionsRes optionsRes) {
 		//获取动效类型
-		optionsRes.setAttackTypeList(StreamApiUtils.map(Lists.newArrayList(AttackType.values()),
+		List<WebAttackType> webAttackTypes = new ArrayList<>();
+		List<WebAttackType> map = StreamApiUtils.map(Lists.newArrayList(AttackType.values()),
 				attackType -> new WebAttackType(attackType.getKeyWord(), attackType.getMsg(),
 						attackType.getActionType().getType(), attackType.getActionType().isSource(),
-						attackType.getActionType().isDurationTime(), attackType.getLeak(), attackType.getTool())));
+						attackType.getActionType().isDurationTime(), attackType.getLeak(), attackType.getTool()));
+		webAttackTypes.addAll(map);
+		// 特殊选择处理
+		webAttackTypes.add(new WebAttackType("ddos", "拒绝服务", "element", true, true, "僵尸网络内攻击者可以控制受害机发送大量数据包，形成拒绝服务攻击", "LOIC"));
+		webAttackTypes.add(new WebAttackType("exploit", "漏洞利用", "element", true, true, "CVE-2021-44228+脏牛提权，Apache Log4j远程代码执行漏洞", "Exp"));
+		webAttackTypes.add(new WebAttackType("host-attack", "主机工具", "element", true, true, "对主机进行攻击", "LOIC"));
+		webAttackTypes.add(new WebAttackType("lateral-movement", "横向移动", "element", true, true, "MES应用服务器对统一安全管理平台发起横向移动", "LOIC"));
+		webAttackTypes.add(new WebAttackType("leveraging-remote-services", "远程服务", "element", true, true, "OwnCloud主机对MES应用服务器发起利用远程服务", "LOIC"));
+		webAttackTypes.add(new WebAttackType("network-scanning", "网络扫描", "element", true, true, "外部攻击机对WEB服务器发起网络扫描", "LOIC"));
+		webAttackTypes.add(new WebAttackType("trojan", "木马攻击", "element", true, true, "统一安全管理平台对工程师站发起木马攻击", "LOIC"));
+
+		optionsRes.setAttackTypeList(webAttackTypes);
 		//获取线型
 		optionsRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),
 				lineType -> new LocalType(lineType.getCode(), lineType.getMsg())));
@@ -398,13 +418,20 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsMultiNodeDynamic.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsMultiNodeDynamic> wsMessage;
 
+		WsCvss wsCvss = new WsCvss();
+		wsCvss.setNodeId(attackMessageReq.getTargetId());
+		wsCvss.setFlag(1);
+
 		// 判断当前任务是否有工具和漏洞信息
 		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
 			// 有信息查询工具信息
 			ToolVuln toolVuln = dynamicSchemeMapper.toolVulnById(attackMessageReq.getTool(), attackMessageReq.getLeak(), 0);
+			// 查询漏洞信息
+			List<Vuln> vulnList = dynamicSchemeMapper.queryLeak();
+			Map<String, Double> cvssMap = vulnList.stream().collect(Collectors.toMap(Vuln::getResourceId, Vuln::getCvss));
 			if (isMultiterm) {
 				// 多任务推送判断该节点是否有防御成功记录
-				List<Defense> defenses = dynamicSchemeMapper.queryDefenseBySceneId(attackMessageReq.getSceneId());
+				List<Defense> defenses = dynamicSchemeMapper.queryDefenseBySceneId(attackMessageReq.getSceneId(), 1);
 				boolean isDefen = false;
 				for (Defense defens : defenses) {
 					if (attackMessageReq.getTargetId().equals(defens.getNodeId()) && attackMessageReq.getLeak().equals(defens.getVulnId())) {
@@ -417,6 +444,20 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				if (!isDefen && toolVuln != null) {
 					// 没有该节点的防御记录并且工具信息中有改漏洞攻击成功
 					wsMultiNodeDynamic.setIsSucceed(1);
+
+					Defense defense = new Defense();
+					defense.setResourceId(IDGeneratorUtil.getID());
+					defense.setSceneId(attackMessageReq.getSceneId());
+					defense.setNodeId(attackMessageReq.getTargetId());
+					defense.setVulnId(attackMessageReq.getLeak());
+					defense.setDeacription(toolVuln.getDescribe());
+					defense.setType(0);
+					defense.setCreateTime(new Date());
+					// 记录防御成功数据
+					dynamicSchemeMapper.addDefense(defense);
+
+					wsCvss.setFlag(3);
+					wsCvss.setCvss(cvssMap.get(attackMessageReq.getLeak()));
 				} else {
 					wsMultiNodeDynamic.setIsSucceed(0);
 				}
@@ -424,6 +465,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				if (toolVuln != null) {
 					// 查到工具信息，防御成功
 					wsMultiNodeDynamic.setIsSucceed(1);
+
+					wsCvss.setFlag(3);
+					wsCvss.setCvss(cvssMap.get(attackMessageReq.getLeak()));
 				} else {
 					// 查到工具信息，防御成功
 					wsMultiNodeDynamic.setIsSucceed(0);
@@ -441,7 +485,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
 
-
+		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsCvss);
+		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null);
 
 		//推送攻击弹窗
 		WsAttackInfo attackInfo = new WsAttackInfo();
@@ -647,6 +692,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				sceneConfigMapper.deleteBySceneId(sceneId);
 				dynamicSchemeMapper.deleteBySceneId(sceneId);
 				attackMessageMapper.deleteBySceneId(sceneId);
+				// 清空当前场景攻防记录
+				dynamicSchemeMapper.deleteDefenseBySceneId(sceneId);
 			}
 		});
 		log.info(String.format("Clear situation scene config, scene id is %s", sceneId));
@@ -969,22 +1016,108 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	@Override
-	public List<Vuln> queryLeak(String application) {
-		List<Vuln> leaks = dynamicSchemeMapper.queryLeak();
-
-		List<Vuln> leakList = new ArrayList<>();
-		for (Vuln leak : leaks) {
-			if (application.contains(leak.getApplication())) {
-				leakList.add(leak);
+	public List<Vuln> queryLeak(String application, String nodeId) {
+		if (nodeId != null) {
+			String imageUuid = remoteTerminalService.queryImageId(nodeId);
+			if (imageUuid == null) {
+				return null;
 			}
+			// 获取设备信息
+			DeviceInfo deviceInfo = remoteTerminalService.getById(imageUuid);
+			if (deviceInfo == null || deviceInfo.getVulns() == null || deviceInfo.getVulns().size() == 0) {
+				return null;
+			}
+			List<String> vulns = deviceInfo.getVulns();
+			List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
+			return leaks;
+		} else {
+			List<Vuln> leaks = dynamicSchemeMapper.queryLeak();
+
+			if (application != null) {
+				List<Vuln> leakList = new ArrayList<>();
+				for (Vuln leak : leaks) {
+					if (application.contains(leak.getApplication())) {
+						leakList.add(leak);
+					}
+				}
+				return leakList;
+			}
+
+			return leaks;
 		}
-		return leakList;
 	}
 
 	@Override
 	public List<ToolVuln> queryTool(String vulnId, Integer toolType) {
 		List<ToolVuln> toolVulns = dynamicSchemeMapper.queryToolByVulnId(vulnId, toolType);
 		return toolVulns;
+	}
+
+	@Override
+	public VulnTop queryVulnTop(String sceneId, String nodeId) {
+		// 获取设备信息
+		DeviceInfo deviceInfo = remoteTerminalService.getById(nodeId);
+
+		if (deviceInfo != null && deviceInfo.getVulns() != null) {
+			List<String> vulns = deviceInfo.getVulns();
+			List<Vuln> vulnList = dynamicSchemeMapper.queryVulnTop(vulns);
+
+			// 获取该节点下防御成功记录
+			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneId, nodeId, 1);
+
+			VulnTop vulnTop = new VulnTop();
+			List<VulnTop.Vulns> vulnsList = new ArrayList<>();
+			List<VulnTop.Defenses> defensesList = new ArrayList<>();
+
+			Double cvssAll = 0.0;
+			Double cvssBll = 0.0;
+			// 填入漏洞信息
+			for (Vuln vuln : vulnList) {
+				VulnTop.Vulns v = new VulnTop.Vulns();
+				v.setVulnId(vuln.getResourceId());
+				v.setVulnNmae(vuln.getName());
+				v.setVulnCvss(vuln.getCvss());
+				v.setVulnLevl(vuln.getType());
+				vulnsList.add(v);
+
+				cvssAll = cvssAll + vuln.getCvss();
+				for (Defense defens : defenses) {
+					if (vuln.getResourceId().equals(defens.getVulnId())) {
+						cvssBll = cvssBll + vuln.getCvss();
+						break;
+					}
+				}
+			}
+
+			List<String> collect = defenses.stream().map(Defense::getVulnId).collect(Collectors.toList());
+			if (collect != null && collect.size() != 0) {
+				List<Vuln> bugs = dynamicSchemeMapper.queryVulnTop(collect);
+				Map<String, String> nameMap = bugs.stream().collect(Collectors.toMap(Vuln::getResourceId, Vuln::getName));
+				// 填入防御信息
+				for (Defense defens : defenses) {
+					VulnTop.Defenses d = new VulnTop.Defenses();
+					d.setDefenseId(defens.getResourceId());
+					d.setDefenseVulnName(nameMap.get(defens.getVulnId()));
+					d.setDescription(defens.getDeacription());
+					defensesList.add(d);
+				}
+			}
+
+			vulnTop.setNodeId(nodeId);
+			vulnTop.setCvss(cvssBll/cvssAll*10);
+			vulnTop.setVulnList(vulnsList);
+			vulnTop.setDefenseList(defensesList);
+
+			if (vulnsList.size() > 5) {
+				vulnTop.setVulnList(vulnsList.subList(0, 5));
+			}
+
+			if (defensesList.size() > 5) {
+				vulnTop.setDefenseList(defensesList.subList(0, 5));
+			}
+			return vulnTop;
+		}
+		return null;
 	}
 
 	public void pushDefenseToRoom(AttackMessageReq attackMessageReq, Boolean playback, Boolean isMultiterm) {
@@ -994,6 +1127,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			wsDefenseDynamic.setDefenseType(defenseType.getDefenseActionType().getCode());
 		}
 		wsDefenseDynamic.setDuration(attackMessageReq.getDurationTime());
+
+		WsCvss wsCvss = new WsCvss();
+		wsCvss.setNodeId(attackMessageReq.getDefenseTargetId());
+		wsCvss.setFlag(1);
 
 		// 判断当前任务是否有工具和漏洞信息
 		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
@@ -1010,10 +1147,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					defense.setNodeId(attackMessageReq.getDefenseTargetId());
 					defense.setVulnId(attackMessageReq.getLeak());
 					defense.setDeacription(toolVuln.getDescribe());
+					defense.setType(1);
 					defense.setCreateTime(new Date());
 					// 记录防御成功数据
 					dynamicSchemeMapper.addDefense(defense);
 				}
+				wsCvss.setFlag(2);
 			} else {
 				wsDefenseDynamic.setIsSucceed(0);
 			}
@@ -1025,6 +1164,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		// 推送防御动效
 		pushDataToRoom(wsMessage, attackMessageReq, playback, null);
 
+		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsCvss);
+		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null);
 
 		//推送防御弹窗
 		WsDefenseInfo wsDefenseInfo = new WsDefenseInfo();

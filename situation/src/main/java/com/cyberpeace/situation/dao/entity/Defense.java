@@ -18,4 +18,7 @@ public class Defense extends BaseTable {
     private String vulnId;
 
     private String deacription;
+
+    // 0 攻击  1防御
+    private Integer type;
 }

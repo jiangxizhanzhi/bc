@@ -22,7 +22,8 @@ public enum MessageType {
 	DefenseDynamic(12,"defense_dynamic"),
 	PlaybackSchedule(13, "playback_schedule"),
 	AttackInfo(14, "attack_info"),
-	DefenseInfo(15, "defense_info");
+	DefenseInfo(15, "defense_info"),
+	Cvss(16, "cvss");
 
 	@Getter
 	private Integer code;

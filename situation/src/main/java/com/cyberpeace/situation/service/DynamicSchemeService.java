@@ -9,6 +9,7 @@ import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.dao.entity.ToolVuln;
 import com.cyberpeace.situation.dao.entity.Vuln;
 import com.cyberpeace.situation.model.Instruction;
+import com.cyberpeace.situation.model.VulnTop;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 
 import java.io.IOException;
@@ -155,7 +156,9 @@ public interface DynamicSchemeService {
 
 	public void executeInstruction(Instruction instruction, String topoId);
 
-	List<Vuln> queryLeak(String application);
+	List<Vuln> queryLeak(String application, String nodeId);
 
 	List<ToolVuln> queryTool(String vulnId, Integer toolType);
+
+	VulnTop queryVulnTop(String sceneId, String nodeId);
 }

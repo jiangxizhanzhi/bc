@@ -64,6 +64,18 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("漏洞信息")
 	private List<LeakInfo> leakInfos;
 
+	@ApiModelProperty("设备id")
+	private String imageUuid;
+
+	@ApiModelProperty("设备类型")
+	private Integer flag;
+
+	@ApiModelProperty("cvss")
+	private Double cvss;
+
+	@ApiModelProperty("设备等级 0 无， 1 低， 2 中， 3 高， 4 严重")
+	private Integer cvssLevel;
+
 	public ElementInfo(JSONObject element) {
 		this.setElementId(element.getString("id"));
 		this.setName(element.getString("name"));

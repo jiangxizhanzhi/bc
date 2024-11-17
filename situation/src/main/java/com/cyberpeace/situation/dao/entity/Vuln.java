@@ -18,10 +18,10 @@ public class Vuln extends BaseTable {
     private String name;
 
     // cvss评分
-    private String cvss;
+    private Double cvss;
 
     // 漏洞类型 0 无， 1 低， 2 中， 3 高， 4 严重
-    private String type;
+    private Integer type;
 
     // 适用平台
     private String application;

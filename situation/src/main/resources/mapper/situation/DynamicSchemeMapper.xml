@@ -43,13 +43,13 @@
 
     <insert id="addDefense">
         insert into situation_defense
-            (resource_id, scene_id, node_id, deacription, vuln_id, create_time)
+            (resource_id, scene_id, node_id, deacription, vuln_id, type, create_time)
         values
-            (#{resourceId}, #{sceneId}, #{nodeId}, #{deacription}, #{vulnId}, #{createTime})
+            (#{resourceId}, #{sceneId}, #{nodeId}, #{deacription}, #{vulnId}, #{type}, #{createTime})
     </insert>
 
     <select id="queryDefenseBySceneId" resultType="com.cyberpeace.situation.dao.entity.Defense">
-        select * from situation_defense where scene_id = #{sceneId}
+        select * from situation_defense where scene_id = #{sceneId} and type = #{type}
     </select>
 
     <delete id="deleteDefenseBySceneId">
@@ -60,5 +60,23 @@
     <select id="queryToolByVulnId" resultType="com.cyberpeace.situation.dao.entity.ToolVuln">
         <bind name="vulnId" value="'%' + vulnId + '%'"/>
         select * from situation_tool_vuln where vuln_ids like #{vulnId} and tool_type = #{toolType}
+    </select>
+
+    <select id="queryVulnTop" resultType="com.cyberpeace.situation.dao.entity.Vuln">
+        select * from situation_vuln where resource_id in
+        <foreach collection="vulns" item="vuln" separator="," close=")" open="(">
+            #{vuln}
+        </foreach>
+    </select>
+
+    <select id="queryDefenseByNodeId" resultType="com.cyberpeace.situation.dao.entity.Defense">
+        select * from situation_defense where scene_id = #{sceneId} and node_id = #{nodeId} and type = #{type}
+    </select>
+
+    <select id="queryLeakByIds" resultType="com.cyberpeace.situation.dao.entity.Vuln">
+        select * from situation_vuln where resource_id in
+        <foreach collection="vulns" item="vuln" separator="," close=")" open="(">
+            #{vuln}
+        </foreach>
     </select>
 </mapper>

@@ -423,6 +423,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsCvss.setFlag(1);
 		wsCvss.setCvss(0.0);
 
+		// 多任务推送判断该节点是否有加固记录
+		List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getTargetId(), 1);
 		// 判断当前任务是否有工具和漏洞信息
 		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
 			// 有信息查询工具信息
@@ -431,8 +433,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			List<Vuln> vulnList = dynamicSchemeMapper.queryLeak();
 			Map<String, Double> cvssMap = vulnList.stream().collect(Collectors.toMap(Vuln::getResourceId, Vuln::getCvss));
 			if (isMultiterm) {
-				// 多任务推送判断该节点是否有防御成功记录
-				List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getTargetId(), 1);
 				boolean isDefen = false;
 				for (Defense defens : defenses) {
 					if (attackMessageReq.getTargetId().equals(defens.getNodeId()) && attackMessageReq.getLeak().equals(defens.getVulnId())) {
@@ -461,6 +461,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					wsCvss.setCvss(cvssMap.get(attackMessageReq.getLeak()));
 				} else {
 					wsMultiNodeDynamic.setIsSucceed(0);
+					wsCvss.setCvss(cvssMap.get(attackMessageReq.getLeak()));
 				}
 			} else {
 				if (toolVuln != null) {
@@ -485,6 +486,29 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			//设置类型为点对区域
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
+
+		String imageUuid = remoteTerminalService.queryImageId(attackMessageReq.getTargetId());
+		if (imageUuid != null) {
+			// 获取设备信息
+			DeviceInfo deviceInfo = remoteTerminalService.getById(imageUuid);
+			if (deviceInfo != null && deviceInfo.getVulns() != null && deviceInfo.getVulns().size() != 0) {
+				List<String> vulns = deviceInfo.getVulns();
+				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
+				Double cvssAll = 0.0;
+				Double cvssBll = 0.0;
+				for (Vuln vuln : leaks) {
+					cvssAll = cvssAll + vuln.getCvss();
+					for (Defense defens : defenses) {
+						if (vuln.getResourceId().equals(defens.getVulnId())) {
+							cvssBll = cvssBll + vuln.getCvss();
+							break;
+						}
+					}
+				}
+				wsCvss.setCvss(cvssBll/cvssAll*10);
+			}
+		}
+
 		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.Cvss.getDesc(), wsCvss);
 		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null);
 
@@ -1047,7 +1071,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			if (application != null) {
 				List<Vuln> leakList = new ArrayList<>();
 				for (Vuln leak : leaks) {
-					if (application.contains(leak.getApplication())) {
+					if (application.toLowerCase().contains(leak.getApplication().toLowerCase())) {
 						leakList.add(leak);
 					}
 				}
@@ -1077,6 +1101,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneId, elementId, 1);
 
 			VulnTop vulnTop = new VulnTop();
+			vulnTop.setCvss(0.0);
 			List<VulnTop.Vulns> vulnsList = new ArrayList<>();
 			List<VulnTop.Defenses> defensesList = new ArrayList<>();
 
@@ -1202,6 +1227,28 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		// 推送防御动效
 		pushDataToRoom(wsMessage, attackMessageReq, playback, null);
 
+		List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getDefenseTargetId(), 1);
+		String imageUuid = remoteTerminalService.queryImageId(attackMessageReq.getDefenseTargetId());
+		if (imageUuid != null) {
+			// 获取设备信息
+			DeviceInfo deviceInfo = remoteTerminalService.getById(imageUuid);
+			if (deviceInfo != null && deviceInfo.getVulns() != null && deviceInfo.getVulns().size() != 0) {
+				List<String> vulns = deviceInfo.getVulns();
+				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
+				Double cvssAll = 0.0;
+				Double cvssBll = 0.0;
+				for (Vuln vuln : leaks) {
+					cvssAll = cvssAll + vuln.getCvss();
+					for (Defense defens : defenses) {
+						if (vuln.getResourceId().equals(defens.getVulnId())) {
+							cvssBll = cvssBll + vuln.getCvss();
+							break;
+						}
+					}
+				}
+				wsCvss.setCvss(cvssBll/cvssAll*10);
+			}
+		}
 		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.Cvss.getDesc(), wsCvss);
 		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null);
 

@@ -334,7 +334,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				if (cvss != null) {
 					String  str = String.format("%.2f", cvss);
 					elementInfo.setCvss(Double.parseDouble(str));
-					// todo cvss严重评级
+					// cvss严重评级
 					if (cvss != null) {
 						if (cvss.compareTo(10.0) <= 0 || cvss.compareTo(9.0) >= 0) {
 							elementInfo.setCvssLevel(4);
@@ -352,16 +352,36 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			}
 			// 获取该节点下防御成功记录
 			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneData.getSceneId(), elementId, 1);
-			if (defenses != null && defenses.size() != 0) {
-				elementInfo.setFlag(2);
-			} else {
-				List<Defense> attacks = dynamicSchemeMapper.queryDefenseByNodeId(sceneData.getSceneId(), elementId, 0);
-				if (attacks != null && attacks.size() != 0) {
-					elementInfo.setFlag(3);
-				} else {
-					elementInfo.setFlag(1);
+			// 获取该节点下攻击成功记录
+			List<Defense> attacks = dynamicSchemeMapper.queryDefenseByNodeId(sceneData.getSceneId(), elementId, 0);
+			int a = 0;
+			for (Defense attack : attacks) {
+				for (Defense defens : defenses) {
+					if (attack.getVulnId().equals(defens.getVulnId())) {
+						a = a + 1;
+						break;
+					}
 				}
 			}
+
+			if (attacks != null && attacks.size() != 0 && a == attacks.size()
+					&& defenses != null && defenses.size() != 0) {
+				elementInfo.setFlag(2);
+			} else if (attacks != null && attacks.size() != 0 && a < attacks.size()) {
+				elementInfo.setFlag(3);
+			} else {
+				elementInfo.setFlag(1);
+			}
+
+//			if (defenses != null && defenses.size() != 0) {
+//				elementInfo.setFlag(2);
+//			} else {
+//				if (attacks != null && attacks.size() != 0) {
+//					elementInfo.setFlag(3);
+//				} else {
+//					elementInfo.setFlag(1);
+//				}
+//			}
 
 			elementsInfo.put(elementId, elementInfo);
 		}

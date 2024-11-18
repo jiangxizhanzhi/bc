@@ -67,6 +67,7 @@
         <foreach collection="vulns" item="vuln" separator="," close=")" open="(">
             #{vuln}
         </foreach>
+        order by cvss desc
     </select>
 
     <select id="queryDefenseByNodeId" resultType="com.cyberpeace.situation.dao.entity.Defense">

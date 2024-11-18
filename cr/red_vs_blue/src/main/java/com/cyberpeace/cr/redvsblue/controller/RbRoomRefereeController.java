@@ -48,7 +48,9 @@ import io.swagger.annotations.ApiParam;
  * RB Room 裁判控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗裁判")
 @RestController
@@ -56,55 +58,72 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/cr/red_vs_blue/referee/")
 public class RbRoomRefereeController {
 
-	/**
-	 * RB房间Service
-	 */
-	@Autowired
+    /**
+     * RB房间Service
+     *
+     * @see RbRoomService
+     */
+    @Autowired
 	private RbRoomService rbRoomService;
 
-	/**
-	 * 靶场任务Service
-	 */
-	@Autowired
+    /**
+     * 靶场任务Service
+     *
+     * @see CrTaskService
+     */
+    @Autowired
 	private CrTaskService crTaskService;
 
-	/**
-	 * 远程用户Service
-	 */
-	@Autowired
+    /**
+     * 远程用户Service
+     *
+     * @see RemoteUserService
+     */
+    @Autowired
 	private RemoteUserService remoteUserService;
 
-	/**
-	 * 靶场常见Service
-	 */
-	@Autowired
+    /**
+     * 靶场常见Service
+     *
+     * @see CrCommonService
+     */
+    @Autowired
 	private CrCommonService crCommonService;
 
-	/**
-	 * RB裁判Service
-	 */
-	@Autowired
+    /**
+     * RB裁判Service
+     *
+     * @see RbRefereeService
+     */
+    @Autowired
 	private RbRefereeService rbRefereeService;
 
-	/**
-	 * 靶场徽章Service
-	 */
-	@Autowired
+    /**
+     * 靶场徽章Service
+     *
+     * @see CrBadgeService
+     */
+    @Autowired
 	private CrBadgeService crBadgeService;
 
-	/**
-	 * 靶场角色Service
-	 */
-	@Autowired
+    /**
+     * 靶场角色Service
+     *
+     * @see CrRoleService
+     */
+    @Autowired
 	private CrRoleService crRoleService;
 
-	/**
-	 * 获取角色列表
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<List<RbRoleIdNameType>> }
-	 */
-	@ApiOperation("获取角色列表")
+    /**
+     * 获取角色列表
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<List<RbRoleIdNameType>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<RbRoleIdNameType>>
+     */
+    @ApiOperation("获取角色列表")
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbRoleIdNameType>> getRoleList(
@@ -113,13 +132,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 获取评估列表
-	 *
-	 * @param req 请求体
-	 * @return {@code BaseRsp<List<EvaluationListRsp>> }
-	 */
-	@ApiOperation("获取学员的评估列表")
+    /**
+     * 获取评估列表
+     *
+     * @param req 请求体
+     * @return {@code BaseRsp<List<EvaluationListRsp>> }
+     * @throws
+     * @see EvaluationListReq
+     * @see BaseRsp<List<EvaluationListRsp>>
+     */
+    @ApiOperation("获取学员的评估列表")
 	@GetMapping("/evaluation/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<EvaluationListRsp>> getEvaluationList(@Validated EvaluationListReq req) {
@@ -131,13 +153,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 获取评估详情
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<EvaluationMissionRsp> }
-	 */
-	@ApiOperation("获取学员单个评估和任务详情，用于裁决页面")
+    /**
+     * 获取评估详情
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<EvaluationMissionRsp> }
+     * @throws
+     * @see String
+     * @see BaseRsp<EvaluationMissionRsp>
+     */
+    @ApiOperation("获取学员单个评估和任务详情，用于裁决页面")
 	@GetMapping("/evaluation/detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<EvaluationMissionRsp> getEvaluationDetail(
@@ -146,14 +171,17 @@ public class RbRoomRefereeController {
 		return new BaseRsp(res);
 	}
 
-	/**
-	 * 5.4弃用
-	 * 更换为不分页的评估列表接口
-	 *
-	 * @param missionEvaluationListReq 任务评价列表请求体
-	 * @return {@code BaseRsp<List<MissionEvaluationRsp>>}
-	 */
-	@ApiOperation("获取学员的评估提交记录-弃用")
+    /**
+     * 5.4弃用
+     * 更换为不分页的评估列表接口
+     *
+     * @param missionEvaluationListReq 任务评价列表请求体
+     * @return {@code BaseRsp<List<MissionEvaluationRsp>>}
+     * @throws
+     * @see RbMissionEvaluationListReq
+     * @see BaseRsp<List<MissionEvaluationRsp>>
+     */
+    @ApiOperation("获取学员的评估提交记录-弃用")
 	@GetMapping("/mission_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionEvaluationRsp>>
@@ -207,13 +235,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
-	/**
-	 * 查询红蓝对抗学员用户列表
-	 *
-	 * @param resource_id 资源id
-	 * @return
-	 */
-	@ApiOperation("查询红蓝对抗学员用户列表")
+    /**
+     * 查询红蓝对抗学员用户列表
+     *
+     * @param resource_id 资源id
+     * @return
+     * @throws
+     * @see String
+     * @see BaseRsp<List<UserRole>>
+     */
+    @ApiOperation("查询红蓝对抗学员用户列表")
 	@GetMapping("/get_user_list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<UserRole>> getUserList(
@@ -223,13 +254,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(data);
 	}
 
-	/**
-	 * 获取统计数据
-	 *
-	 * @param resource_id 资源id
-	 * @return
-	 */
-	@ApiOperation("获取统计数据")
+    /**
+     * 获取统计数据
+     *
+     * @param resource_id 资源id
+     * @return
+     * @throws
+     * @see String
+     * @see BaseRsp<TaskStatisticsInfo>
+     */
+    @ApiOperation("获取统计数据")
 	@GetMapping("/get_statistical_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskStatisticsInfo> getStatisticalInfo(
@@ -239,13 +273,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 更新提交评估
-	 *
-	 * @param submitEvaluationReq 提交评估请求体
-	 * @return {@code BaseRsp<String> }
-	 */
-	@ApiOperation("提交任务的人工评估")
+    /**
+     * 更新提交评估
+     *
+     * @param submitEvaluationReq 提交评估请求体
+     * @return {@code BaseRsp<String> }
+     * @throws
+     * @see SubmitEvaluationReq
+     * @see BaseRsp<String>
+     */
+    @ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> updateSubmitEvaluation(@ApiParam(name = "submitEvaluationReq",
@@ -264,13 +301,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>();
 	}
 
-	/**
-	 * 获取会话
-	 *
-	 * @param room_id 房间id
-	 * @return {@code BaseRsp<List<MonitorSession>> }
-	 */
-	@ApiOperation("获取监控")
+    /**
+     * 获取会话
+     *
+     * @param room_id 房间id
+     * @return {@code BaseRsp<List<MonitorSession>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<MonitorSession>>
+     */
+    @ApiOperation("获取监控")
 	@GetMapping("/sessions")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MonitorSession>> getSessions(
@@ -280,13 +320,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 获取得分列表
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<List<StudentScoreListRsp>> }
-	 */
-	@ApiOperation("获取评分列表")
+    /**
+     * 获取得分列表
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<List<StudentScoreListRsp>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<StudentScoreListRsp>>
+     */
+    @ApiOperation("获取评分列表")
 	@GetMapping("/score/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<StudentScoreListRsp>> getScoreList(
@@ -297,13 +340,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 如果显示评估徽章
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<BadgeBo> }
-	 */
-	@ApiOperation("任务裁决红点是否显示")
+    /**
+     * 如果显示评估徽章
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<BadgeBo> }
+     * @throws
+     * @see String
+     * @see BaseRsp<BadgeBo>
+     */
+    @ApiOperation("任务裁决红点是否显示")
 	@GetMapping("/evaluation/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<BadgeBo> ifShowEvaluationBadge(
@@ -313,13 +359,16 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 点击评估徽章
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp }
-	 */
-	@ApiOperation("任务裁决红点点击取消")
+    /**
+     * 点击评估徽章
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp }
+     * @throws
+     * @see String
+     * @see BaseRsp
+     */
+    @ApiOperation("任务裁决红点点击取消")
 	@GetMapping("/evaluation/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp clickEvaluationBadge(

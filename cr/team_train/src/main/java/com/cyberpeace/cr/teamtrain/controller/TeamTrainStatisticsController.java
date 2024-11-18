@@ -26,7 +26,9 @@ import java.util.List;
  * 团队训练统计学控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "团队训练统计")
 @RestController
@@ -37,6 +39,8 @@ public class TeamTrainStatisticsController {
 
     /**
      * 团队训练统计学
+     *
+     * @see TeamTrainStatisticsService
      */
     @Autowired
     TeamTrainStatisticsService TeamTrainStatistics;
@@ -46,6 +50,8 @@ public class TeamTrainStatisticsController {
      * 获取都个人排
      *
      * @return {@code BaseRsp<List<TeamPersonalStatisticsBo>> }
+     * @throws
+     * @see BaseRsp<List<TeamPersonalStatisticsBo>>
      */
     @GetMapping("/personal_rank")
     @ApiOperation("团队训练个人排名TOP5")
@@ -59,6 +65,8 @@ public class TeamTrainStatisticsController {
      * 获取组织排
      *
      * @return {@code BaseRsp<List<TeamOrganizationStatisticsBo>> }
+     * @throws
+     * @see BaseRsp<List<TeamOrganizationStatisticsBo>>
      */
     @GetMapping("/organization_rank")
     @ApiOperation("团队训练组织排名TOP5")
@@ -74,6 +82,9 @@ public class TeamTrainStatisticsController {
      *
      * @param detailReq 详情请求体
      * @return {@code BaseRsp<ListRsp<TeamStatisticsDetailBo>> }
+     * @throws
+     * @see TeamTrainStatisticsDetailReq
+     * @see BaseRsp<ListRsp<TeamStatisticsDetailBo>>
      */
     @GetMapping("/detail")
     @ApiOperation("团队训练统计详情")

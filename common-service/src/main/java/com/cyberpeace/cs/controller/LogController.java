@@ -18,7 +18,9 @@ import java.io.File;
  * 日志控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "后台日志相关api")
 @RestController
@@ -31,6 +33,9 @@ public class LogController {
 	 *
 	 * @param response 响应
 	 * @param name     名称
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see String
 	 */
 	@ApiOperation("下载日志")
 	@GetMapping("/downloadLog")

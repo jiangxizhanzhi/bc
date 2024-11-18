@@ -7,7 +7,9 @@ import java.util.*;
  * AHPP计算权重
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class AHPComputeWeight {
 
@@ -15,6 +17,8 @@ public class AHPComputeWeight {
      * 主要
      *
      * @param args 参数
+     * @throws
+     * @see String[]
      */
     public static void main(String[] args) {
 
@@ -32,11 +36,15 @@ public class AHPComputeWeight {
 
     /**
      * 单例
+     *
+     * @see AHPComputeWeight
      */
     private static final AHPComputeWeight ACW = new AHPComputeWeight();
 
     /**
      * 平均随机一致性指针
+     *
+     * @see double[]
      */
     private double[] RI = {0.00, 0.00, 0.58, 0.90, 1.12, 1.21, 1.32, 1.41,
             1.45, 1.49};
@@ -53,6 +61,8 @@ public class AHPComputeWeight {
 
     /**
      * 私有构造
+     *
+     * @throws
      */
     private AHPComputeWeight() {
 
@@ -62,6 +72,8 @@ public class AHPComputeWeight {
      * 返回单例
      *
      * @return
+     * @throws
+     * @see AHPComputeWeight
      */
     public static AHPComputeWeight getInstance() {
         return ACW;
@@ -74,6 +86,10 @@ public class AHPComputeWeight {
      * @param a      一个
      * @param weight 重量
      * @param N      n
+     * @throws
+     * @see double[][]
+     * @see double[]
+     * @see int
      */
     public void weight(double[][] a, double[] weight, int N) {
         // 初始向量Wk
@@ -145,6 +161,10 @@ public class AHPComputeWeight {
      * @param v
      * @param scale
      * @return
+     * @throws
+     * @see double
+     * @see int
+     * @see double
      */
     public double round(double v, int scale) {
         if (scale < 0) {
@@ -160,6 +180,8 @@ public class AHPComputeWeight {
      * 返回随机一致性比率
      *
      * @return
+     * @throws
+     * @see double
      */
     public double getCR() {
         return CR;

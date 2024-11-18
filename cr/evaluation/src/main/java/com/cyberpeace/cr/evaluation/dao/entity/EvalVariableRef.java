@@ -10,102 +10,157 @@ import lombok.Getter;
 
 import java.util.Date;
 
+/**
+ * 测评变量裁判
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @see BaseTable
+ * @since 1.0.0
+ */
 @Data
 @TableName("cr_eval_variable_ref")
 public class EvalVariableRef extends BaseTable {
+    /**
+     * 资源id
+     *
+     * @see String
+     */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
+    /**
+     * 名称
+     *
+     * @see String
+     */
     private String name;
 
     /**
      * 变量项得分
+     *
+     * @see Integer
      */
     private Integer score;
 
 
     /**
      * 变量项得分
+     *
+     * @see Integer
      */
     private Integer type;
 
     /**
      * 场景主机节点ID
+     *
+     * @see String
      */
     private String deviceId;
 
     /**
      * 主机使用探针ID
+     *
+     * @see String
      */
     private String probeId;
 
     /**
      * 评估任务ID
+     *
+     * @see String
      */
     private String recordId;
 
     /**
      * 格式化算法ID
+     *
+     * @see String
      */
     private String formatAlgorithmId;
 
     /**
      * 格式化算法其它参数
+     *
+     * @see String
      */
     private String formatParams;
 
     /**
      * 匹配算法ID
+     *
+     * @see String
      */
     private String matchAlgorithmId;
 
     /**
      * 匹配算法其它参数
+     *
+     * @see String
      */
     private String matchParams;
 
     /**
      * 评分算法ID
+     *
+     * @see String
      */
     private String markAlgorithmId;
 
     /**
      * 评分算法其它参数
+     *
+     * @see String
      */
     private String markParams;
 
     /**
      * 进度
+     *
+     * @see Integer
      */
     private Integer progress;
 
     /**
      * 格式化开始时间
+     *
+     * @see Date
      */
     private Date formatStartTime;
 
     /**
      * 格式化结束时间
+     *
+     * @see Date
      */
     private Date formatEndTime;
 
     /**
      * 匹配开始时间
+     *
+     * @see Date
      */
     private Date matchStartTime;
 
     /**
      * 匹配结束时间
+     *
+     * @see Date
      */
     private Date matchEndTime;
 
     /**
      * 评分开始时间
+     *
+     * @see Date
      */
     private Date markStartTime;
 
     /**
      * 评分结束时间
+     *
+     * @see Date
      */
     private Date markEndTime;
 

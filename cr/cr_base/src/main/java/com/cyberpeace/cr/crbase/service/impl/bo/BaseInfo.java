@@ -15,13 +15,17 @@ import lombok.Data;
  * 训练模板基础信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class BaseInfo {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "模板名称", required = true)
 	@NotBlank
@@ -29,6 +33,8 @@ public class BaseInfo {
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练类型", required = true)
 	@NotNull
@@ -36,6 +42,8 @@ public class BaseInfo {
 
 	/**
 	 * 类别
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练类别", required = true)
 	@NotNull
@@ -43,6 +51,8 @@ public class BaseInfo {
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述", required = true)
 	@NotNull
@@ -50,6 +60,8 @@ public class BaseInfo {
 
 	/**
 	 * 图标
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "LOGO", required = true)
 	@NotNull
@@ -57,6 +69,8 @@ public class BaseInfo {
 
 	/**
 	 * 难
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "难度", required = true)
 	@NotNull
@@ -64,6 +78,8 @@ public class BaseInfo {
 
 	/**
 	 * 持续时间
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "持续时长", required = true)
 	@NotNull
@@ -71,6 +87,8 @@ public class BaseInfo {
 
 	/**
 	 * 预技能
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "前置技能", required = true)
 	@NotNull
@@ -78,6 +96,8 @@ public class BaseInfo {
 
 	/**
 	 * 训练技能
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "训练目标", required = true)
 	@NotNull
@@ -85,6 +105,8 @@ public class BaseInfo {
 
 	/**
 	 * 人数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "建议人数", required = true)
 	@NotNull
@@ -92,6 +114,8 @@ public class BaseInfo {
 
 	/**
 	 * 场景配置数据
+	 *
+	 * @see SceneConfigData
 	 */
 	@ApiModelProperty(value = "场景配置", required = true)
 	@NotNull

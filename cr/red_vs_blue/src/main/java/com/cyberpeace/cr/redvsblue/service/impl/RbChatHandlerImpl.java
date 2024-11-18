@@ -19,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
  * RB聊天处理器实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ChatWebSocketHandler
+ * @since 1.0.0
  */
 @Slf4j
 @Component("rbChatHandlerImpl")
@@ -27,6 +30,8 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
@@ -35,6 +40,8 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer declareMessageType() {
@@ -46,6 +53,9 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 	 *
 	 * @param webSocketConnectionContext Web 套接字连接上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see WebSocketConnectionContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean checkInBusiness(WebSocketConnectionContext webSocketConnectionContext) {

@@ -9,43 +9,57 @@ import lombok.Data;
  * 训练概况
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class TrainingSummary {
 
 	/**
 	 * 获取得分目
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "客观得分")
 	private Integer getScoreObjective = 0;
 
 	/**
 	 * 获取得分主观
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "主观得分")
 	private Integer getScoreSubjective = 0;
 
 	/**
 	 * SUM SCORE 目标
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "客观总分")
 	private Integer sumScoreObjective = 0;
 
 	/**
 	 * 总和分数 主观
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "主观总分")
 	private Integer sumScoreSubjective = 0;
 
 	/**
 	 * 时间成本
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "训练用时")
 	private String timeCost;
 
 	/**
 	 * 期间
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "推荐用时")
 	private Integer duration = 0;

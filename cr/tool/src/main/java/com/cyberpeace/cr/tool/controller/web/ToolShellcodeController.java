@@ -25,7 +25,9 @@ import javax.validation.constraints.NotBlank;
  * 工具 shellcode 控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "前台-资源中心-ShellCode库")
 @RestController
@@ -35,6 +37,8 @@ public class ToolShellcodeController {
 
 	/**
 	 * 工具壳代号Service
+	 *
+	 * @see ToolShellCodeService
 	 */
 	@Autowired
 	private ToolShellCodeService toolShellCodeService;
@@ -44,6 +48,9 @@ public class ToolShellcodeController {
 	 *
 	 * @param toolShellCodeListReq 工具壳代号列表请求体
 	 * @return {@code BaseRsp<ListRsp<ToolShellCode>> }
+	 * @throws
+	 * @see ToolShellCodeListReq
+	 * @see BaseRsp<ListRsp<ToolShellCode>>
 	 */
 	@GetMapping("/list")
 	@ApiOperation("shellcode列表")
@@ -62,6 +69,9 @@ public class ToolShellcodeController {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<ToolShellCode> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<ToolShellCode>
 	 */
 	@GetMapping()
 	@ApiOperation("shellcode详情")

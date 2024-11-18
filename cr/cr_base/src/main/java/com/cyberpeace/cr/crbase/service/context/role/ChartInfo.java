@@ -12,21 +12,27 @@ import lombok.Getter;
  * 角色图表
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class ChartInfo {
 
-	/**
-	 * info 类型
-	 */
-	@ApiModelProperty(value = "用户对抗状态")
+    /**
+     * info 类型
+     *
+     * @see Integer
+     */
+    @ApiModelProperty(value = "用户对抗状态")
 	private Integer infoType;
 
-	/**
-	 * 角色数据列表
-	 */
-	@ApiModelProperty(value = "角色用户列表")
+    /**
+     * 角色数据列表
+     *
+     * @see List<RoleUsers>
+     */
+    @ApiModelProperty(value = "角色用户列表")
 	private List<RoleUsers> roleDataList;
 
 	public enum ChartInfoType implements GenericEnum {

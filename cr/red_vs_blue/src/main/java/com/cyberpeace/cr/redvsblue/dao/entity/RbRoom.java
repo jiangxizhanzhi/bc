@@ -16,7 +16,10 @@ import lombok.Getter;
  * RB 会议室
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_rb_room")
@@ -24,97 +27,135 @@ public class RbRoom extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 模板id
+	 *
+	 * @see String
 	 */
 	private String templateId;
 
 	/**
 	 * 模板名称
+	 *
+	 * @see String
 	 */
 	private String templateName;
 
 	/**
 	 * 训练状态
+	 *
+	 * @see Integer
 	 */
 	private Integer trainingStatus;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 创造用户id
+	 *
+	 * @see String
 	 */
 	private String createUserId;
 
 	/**
 	 * 子类型
+	 *
+	 * @see Integer
 	 */
 	private Integer subType;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	private String description;
 
 	/**
 	 * 预技能
+	 *
+	 * @see String
 	 */
 	private String preSkill;
 
 	/**
 	 * 训练技能
+	 *
+	 * @see String
 	 */
 	private String trainSkill;
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	private Integer difficulty;
 
 	/**
 	 * 开始时间
+	 *
+	 * @see Date
 	 */
 	private Date startTime;
 
 	/**
 	 * 结束时间
+	 *
+	 * @see Date
 	 */
 	private Date endTime;
 
 	/**
 	 * 当地场景id
+	 *
+	 * @see String
 	 */
 	private String localSceneId;
 
 	/**
 	 * 已复制拓扑id
+	 *
+	 * @see String
 	 */
 	private String copyedTopoId;
 
 	/**
 	 * 启用录制
+	 *
+	 * @see Boolean
 	 */
 	private Boolean enableRecording;
 
 	/**
 	 * 支持 Partial Start
+	 *
+	 * @see Boolean
 	 */
 	private Boolean supportPartialStart;
 
 	/**
 	 * 图标
+	 *
+	 * @see String
 	 */
 	private String logo;
 
 	/**
 	 * 复盘用的场景id，每次关闭场景时更新
+	 *
+	 * @see String
 	 */
 	private String replaySceneId;
 

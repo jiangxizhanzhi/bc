@@ -13,56 +13,104 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 
 /**
  * 测评靶场-模板的处理
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @see IService
+ * @since 1.0.0
  */
 public interface EvalTemplateService extends IService<EvalTemplate> {
 
-	/** 校验用户身份并获取测评靶场模板实体
+	/**
+	 * 校验用户身份并获取测评靶场模板实体
+	 *
 	 * @param templateId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see EvalTemplate
 	 */
 	EvalTemplate getTemplate(String templateId);
 
-	/** 列表查询测试靶场
+	/**
+	 * 列表查询测试靶场
+	 *
 	 * @param evalTemplateListQuery
 	 * @return
+	 * @throws
+	 * @see EvalTemplateListQuery
+	 * @see IPage<EvalTemplate>
 	 */
 	IPage<EvalTemplate> list(EvalTemplateListQuery evalTemplateListQuery);
 
-	/** 查询测试靶场模板的任务列表
+	/**
+	 * 查询测试靶场模板的任务列表
+	 *
 	 * @param evalTemplate
 	 * @param isFinished
 	 * @return
+	 * @throws
+	 * @see EvalTemplate
+	 * @see Boolean
+	 * @see List<EvalTaskSlimContext>
 	 */
 	List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate, Boolean isFinished);
 
-	/** 获取Logo文件路径
+	/**
+	 * 获取Logo文件路径
+	 *
 	 * @param attachmentId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String getLogoPath(String attachmentId);
 
-	/** 批量删除测评靶场模板
+	/**
+	 * 批量删除测评靶场模板
+	 *
 	 * @param templateIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	Boolean batchDelete(List<String> templateIds);
 
-	/** 判断模板下是否存在指定状态的任务
+	/**
+	 * 判断模板下是否存在指定状态的任务
+	 *
 	 * @param templateId
 	 * @param taskStatus
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see EvalTask.Status
+	 * @see Boolean
 	 */
 	Boolean validateExistTask(String templateId, EvalTask.Status taskStatus);
 
-	/** 校验模板的基础信息
+	/**
+	 * 校验模板的基础信息
+	 *
 	 * @param evalTemplateBaseInfoContext
 	 * @return
+	 * @throws
+	 * @see EvalTemplateBaseInfoContext
+	 * @see Boolean
 	 */
 	Boolean validateBaseInfo(EvalTemplateBaseInfoContext evalTemplateBaseInfoContext);
 
-	/** 校验模板的步骤配置
+	/**
+	 * 校验模板的步骤配置
+	 *
 	 * @param evalTaskStepConfigList
 	 * @return
+	 * @throws
+	 * @see List<EvalTaskStepConfig>
+	 * @see Boolean
 	 */
 	Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList);
 

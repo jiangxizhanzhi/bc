@@ -14,7 +14,9 @@ import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
  * 靶场常见Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public interface CrCommonService {
 
@@ -24,6 +26,10 @@ public interface CrCommonService {
 	 * @param localSceneId 本地场景id
 	 * @param studentId    学员id
 	 * @return 监控列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<MonitorSession>
 	 */
 	List<MonitorSession> getMonitorSessions(String localSceneId, String studentId);
 
@@ -32,6 +38,9 @@ public interface CrCommonService {
 	 *
 	 * @param sceneData 场景数据
 	 * @return 场景是否停止
+	 * @throws
+	 * @see JSONObject
+	 * @see Boolean
 	 */
 	Boolean isStopped(JSONObject sceneData);
 
@@ -40,6 +49,9 @@ public interface CrCommonService {
 	 *
 	 * @param roleConfigs 角色配置字符串
 	 * @return 任务模板id列表
+	 * @throws
+	 * @see List<CrRoleConfig>
+	 * @see List<String>
 	 */
 	List<String> validateRoleConfig(List<CrRoleConfig> roleConfigs);
 
@@ -48,6 +60,9 @@ public interface CrCommonService {
 	 *
 	 * @param missionsScheme 角色任务配置
 	 * @return 返回校验过的 mission template id 列表
+	 * @throws
+	 * @see CrRoleConfigMissionsScheme
+	 * @see List<String>
 	 */
 	List<String> validateMissionsScheme(CrRoleConfigMissionsScheme missionsScheme);
 
@@ -55,6 +70,8 @@ public interface CrCommonService {
 	 * 校验前端输入的红蓝角色配置
 	 *
 	 * @param roleConfigRb 红蓝角色配置
+	 * @throws
+	 * @see CrRoleConfigRb
 	 */
 	void validateRbRoleConfig(CrRoleConfigRb roleConfigRb);
 
@@ -63,6 +80,9 @@ public interface CrCommonService {
 	 *
 	 * @param req  请求体
 	 * @param code 代码
+	 * @throws
+	 * @see MarkAddReq
+	 * @see Integer
 	 */
 	void addMark(MarkAddReq req, Integer code);
 
@@ -71,6 +91,9 @@ public interface CrCommonService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrMark>}
+	 * @throws
+	 * @see String
+	 * @see List<CrMark>
 	 */
 	List<CrMark> getMarkByRoomId(String roomId);
 
@@ -80,6 +103,10 @@ public interface CrCommonService {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code List<CrMark>}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CrMark>
 	 */
 	List<CrMark> getMarkByRoomIdAndUserId(String roomId, String userId);
 }

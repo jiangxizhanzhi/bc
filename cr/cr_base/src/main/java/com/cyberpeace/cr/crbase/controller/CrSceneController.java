@@ -38,7 +38,9 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场场景控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "cr场景相关接口")
 @RestController
@@ -49,18 +51,24 @@ public class CrSceneController {
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 靶场场景Service
+	 *
+	 * @see CrSceneService
 	 */
 	@Autowired
 	private CrSceneService crSceneService;
@@ -70,6 +78,9 @@ public class CrSceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneUpdateReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PutMapping("/update/dynamic")
 	@ApiOperation("动态更新场景")
@@ -108,6 +119,9 @@ public class CrSceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<ListRsp<JSONObject>>}
+	 * @throws
+	 * @see AssetPageReq
+	 * @see BaseRsp<ListRsp<JSONObject>>
 	 */
 	@ApiOperation("资产清单, 需要开启场景(团队、红蓝)")
 	@GetMapping("/asset/list")
@@ -127,6 +141,9 @@ public class CrSceneController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<List<IdNameType>>}
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<IdNameType>>
 	 */
 	@ApiOperation("操作系统列表, 需要开启场景(团队、红蓝)")
 	@GetMapping("/os/list")
@@ -147,6 +164,9 @@ public class CrSceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NodeOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@DeleteMapping("/node/delete")
 	@ApiOperation("动态删除单个节点")

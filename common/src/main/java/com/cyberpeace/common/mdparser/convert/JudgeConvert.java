@@ -5,14 +5,38 @@ package com.cyberpeace.common.mdparser.convert;
  * 评判 CONVERT
  *
  * @author SN
- * @date 2024/11/07
+ * @version 1.0.0
+ * @see Enum
+ * @see Enum
+ * @since 1.0.0@date 2024/11/07
  */
 public enum JudgeConvert implements MdConvertEnum<String, String> {
 
-	CORRECT("A", "正确"), ERROR("B", "错误");
+	/**
+	 * 正确
+	 *
+	 * @see JudgeConvert
+	 */
+	CORRECT("A", "正确"),
+	/**
+	 * 错误
+	 *
+	 * @see JudgeConvert
+	 */
+	ERROR("B", "错误");
 
+	/**
+	 * 答案
+	 *
+	 * @see String
+	 */
 	private String answer;
 
+	/**
+	 * 描述
+	 *
+	 * @see String
+	 */
 	private String desc;
 
 	/**
@@ -20,6 +44,9 @@ public enum JudgeConvert implements MdConvertEnum<String, String> {
 	 *
 	 * @param answer 答案
 	 * @param desc   描述
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	JudgeConvert(String answer, String desc) {
 		this.answer = answer;
@@ -30,6 +57,8 @@ public enum JudgeConvert implements MdConvertEnum<String, String> {
 	 * 自
 	 *
 	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public String to() {
@@ -40,6 +69,8 @@ public enum JudgeConvert implements MdConvertEnum<String, String> {
 	 * re 更改为
 	 *
 	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public String reTo() {

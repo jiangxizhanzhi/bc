@@ -25,7 +25,11 @@ import lombok.extern.slf4j.Slf4j;
  * RB时间管理Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see RbTimeManagementService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -33,18 +37,24 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 
 	/**
 	 * RB时间管理Mapper
+	 *
+	 * @see RbTimeManagementMapper
 	 */
 	@Autowired
 	RbTimeManagementMapper rbTimeManagementMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
 	/**
 	 * RB房间Mapper
+	 *
+	 * @see RbRoomMapper
 	 */
 	@Autowired
 	RbRoomMapper rbRoomMapper;
@@ -54,6 +64,9 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 *
 	 * @param roomId 房间id
 	 * @return {@code RbTimeManagement }
+	 * @throws
+	 * @see String
+	 * @see RbTimeManagement
 	 */
 	@Override
 	public RbTimeManagement getByRoomId(String roomId) {
@@ -65,6 +78,8 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 * 获取开始房间id列表
 	 *
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getStartedRoomIds() {
@@ -76,6 +91,8 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 * 获取都
 	 *
 	 * @return {@code List<RbTimeManagement> }
+	 * @throws
+	 * @see List<RbTimeManagement>
 	 */
 	@Override
 	public List<RbTimeManagement> getAll() {
@@ -86,6 +103,8 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 * 获取停止
 	 *
 	 * @return {@code List<RbTimeManagement> }
+	 * @throws
+	 * @see List<RbTimeManagement>
 	 */
 	@Override
 	public List<RbTimeManagement> getStopped() {
@@ -97,6 +116,8 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 * 获取未停止
 	 *
 	 * @return {@code List<RbTimeManagement> }
+	 * @throws
+	 * @see List<RbTimeManagement>
 	 */
 	@Override
 	public List<RbTimeManagement> getUnstopped() {
@@ -111,6 +132,11 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 * @param room           房间
 	 * @param status         状态
 	 * @param userId         用户id
+	 * @throws
+	 * @see RbTimeManagement
+	 * @see RbRoom
+	 * @see Integer
+	 * @see String
 	 */
 	@Override
 	public void updateTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
@@ -147,6 +173,11 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 * @param room           房间
 	 * @param status         状态
 	 * @param userId         用户id
+	 * @throws
+	 * @see RbTimeManagement
+	 * @see RbRoom
+	 * @see Integer
+	 * @see String
 	 */
 	@Override
 	public void addTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
@@ -172,6 +203,9 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getTimeCost(String roomId) {
@@ -192,6 +226,9 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getColonTimeCost(String roomId) {
@@ -212,6 +249,9 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Date }
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	@Override
     public Date getActualEndTime(String roomId) {

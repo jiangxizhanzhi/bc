@@ -19,7 +19,10 @@ import lombok.Getter;
  * 靶场任务
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_task")
@@ -27,72 +30,100 @@ public class CrTask extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 状态
+	 *
+	 * @see Integer
 	 */
 	private Integer status;
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	private Integer score;
 
 	/**
 	 * 任务id
+	 *
+	 * @see String
 	 */
 	private String missionId;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 用户答案
+	 *
+	 * @see String
 	 */
 	private String userAnswer;
 
 	/**
 	 * 发布时间
+	 *
+	 * @see Date
 	 */
 	private Date releaseTime;
 
 	/**
 	 * 上次提交时间
+	 *
+	 * @see Date
 	 */
 	private Date lastSubmitTime;
 
 	/**
 	 * 任务开始时间
+	 *
+	 * @see Date
 	 */
 	private Date taskStartTime;
 
 	/**
 	 * 房间id
+	 *
+	 * @see String
 	 */
 	private String roomId;
 
 	/**
 	 * 角色id
+	 *
+	 * @see String
 	 */
 	private String roleId;
 
 	/**
 	 * 业务类型
+	 *
+	 * @see Integer
 	 */
 	private Integer businessType;
 
 	/**
 	 * 任务模板id
+	 *
+	 * @see String
 	 */
 	private String missionTemplateId;
 
 	/**
 	 * 备注
+	 *
+	 * @see String
 	 */
 	private String remark;
 

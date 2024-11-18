@@ -12,7 +12,10 @@ import java.util.List;
  * 工具文件Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -23,6 +26,9 @@ public interface ToolFileMapper extends BaseMapper<ToolFile> {
 	 *
 	 * @param ids id列表
 	 * @return {@code List<ToolFile> }
+	 * @throws
+	 * @see List<Integer>
+	 * @see List<ToolFile>
 	 */
 	List<ToolFile> selectByIds(@NotEmpty @Param("ids") List<Integer> ids);
 }

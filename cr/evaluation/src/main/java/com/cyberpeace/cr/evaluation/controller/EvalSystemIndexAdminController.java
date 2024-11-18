@@ -47,7 +47,9 @@ import java.util.stream.Collectors;
  * EVAL System Index 管理控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "后台-测试靶场-指标体系")
 @RestController
@@ -58,24 +60,32 @@ public class EvalSystemIndexAdminController {
 
 	/**
 	 * 评估指数Service
+	 *
+	 * @see EvalIndexService
 	 */
 	@Autowired
 	private EvalIndexService evalIndexService;
 
 	/**
 	 * 评估系统Mapper
+	 *
+	 * @see EvalSystemMapper
 	 */
 	@Autowired
 	private EvalSystemMapper evalSystemMapper;
 
 	/**
 	 * 评估系统Service
+	 *
+	 * @see EvalSystemService
 	 */
 	@Autowired
 	private EvalSystemService evalSystemService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -85,6 +95,9 @@ public class EvalSystemIndexAdminController {
 	 *
 	 * @param evalSystemReq 评估系统请求体
 	 * @return {@code BaseRsp<EvalSystem> }
+	 * @throws
+	 * @see EvalSystemReq
+	 * @see BaseRsp<EvalSystem>
 	 */
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
@@ -110,6 +123,9 @@ public class EvalSystemIndexAdminController {
 	 *
 	 * @param evalSystemReq 评估系统请求体
 	 * @return {@code BaseRsp<EvalSystem> }
+	 * @throws
+	 * @see EvalSystemReq
+	 * @see BaseRsp<EvalSystem>
 	 */
 	@ApiOperation("编辑体系指标")
 	@PutMapping("")
@@ -142,6 +158,9 @@ public class EvalSystemIndexAdminController {
 	 *
 	 * @param evalSystemReq 评估系统请求体
 	 * @return {@code EvalSystem }
+	 * @throws
+	 * @see EvalSystemReq
+	 * @see EvalSystem
 	 */
 	private EvalSystem saveEvalIndex(@Validated @RequestBody EvalSystemReq evalSystemReq) {
 		validateReq(evalSystemReq);
@@ -179,6 +198,10 @@ public class EvalSystemIndexAdminController {
 	 * @param connlist       连接列表
 	 * @param thirdIndexList 第三个索引列表
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see List<EvalIndex>
+	 * @see String
 	 */
 	private String changeConnlist(String connlist, List<EvalIndex> thirdIndexList) {
 		for (EvalIndex evalIndex : thirdIndexList) {
@@ -191,6 +214,8 @@ public class EvalSystemIndexAdminController {
 	 * 验证请求体
 	 *
 	 * @param req 请求体
+	 * @throws
+	 * @see EvalSystemReq
 	 */
 	private void validateReq(EvalSystemReq req) {
 		String resourceId = req.getEvalSystemId();
@@ -214,6 +239,9 @@ public class EvalSystemIndexAdminController {
 	 *
 	 * @param secondIndexList 第二个索引列表
 	 * @param thirdIndexList  第三个索引列表
+	 * @throws
+	 * @see List<IndexContext>
+	 * @see List<EvalIndex>
 	 */
 	private void changeChildrenIds(List<IndexContext> secondIndexList,
 			List<EvalIndex> thirdIndexList) {
@@ -231,6 +259,9 @@ public class EvalSystemIndexAdminController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<EvalSystemRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<EvalSystemRsp>
 	 */
 	@ApiOperation("查询体系指标")
 	@GetMapping("")
@@ -252,6 +283,9 @@ public class EvalSystemIndexAdminController {
 	 *
 	 * @param evalSystem 评估系统
 	 * @return {@code EvalSystemRsp }
+	 * @throws
+	 * @see EvalSystem
+	 * @see EvalSystemRsp
 	 */
 	private EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem) {
 		EvalSystemRsp evalSystemRsp = BeanUtils.copy(evalSystem, EvalSystemRsp.class);
@@ -273,6 +307,10 @@ public class EvalSystemIndexAdminController {
 	 * @param indexContextList 索引上下文列表
 	 * @param level            水平
 	 * @return {@code List<EvalIndex> }
+	 * @throws
+	 * @see List<IndexContext>
+	 * @see Integer
+	 * @see List<EvalIndex>
 	 */
 	private List<EvalIndex> convertIndexReqToIndex(List<IndexContext> indexContextList,
 			Integer level) {
@@ -310,6 +348,9 @@ public class EvalSystemIndexAdminController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@DeleteMapping()
 	@ApiOperation("批量删除")
@@ -326,6 +367,9 @@ public class EvalSystemIndexAdminController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<EvalSystemRsp>> }
+	 * @throws
+	 * @see EvalNameListReq
+	 * @see BaseRsp<ListRsp<EvalSystemRsp>>
 	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")

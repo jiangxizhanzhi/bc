@@ -17,12 +17,16 @@ import com.google.common.collect.Sets;
  * 列出实用程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class ListUtil {
 
 	/**
 	 * 列出实用程序
+	 *
+	 * @throws
 	 */
 	private ListUtil() {}
 
@@ -31,6 +35,9 @@ public class ListUtil {
 	 *
 	 * @param list 列表
 	 * @return {@code String }
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	public static String list2String(List<String> list) {
 		if (CollectionUtils.isEmpty(list)) {
@@ -50,6 +57,9 @@ public class ListUtil {
 	 *
 	 * @param str str
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	public static List<String> string2List(String str) {
 		List<String> ret = Lists.newArrayList();
@@ -73,6 +83,11 @@ public class ListUtil {
 	 * @param start
 	 * @param end
 	 * @return
+	 * @throws
+	 * @see List<T>
+	 * @see int
+	 * @see int
+	 * @see String
 	 */
 	public static <T> String joinList(List<T> objList, int start, int end) {
 
@@ -102,6 +117,11 @@ public class ListUtil {
 	 * @param start
 	 * @param end
 	 * @return
+	 * @throws
+	 * @see List<T>
+	 * @see int
+	 * @see int
+	 * @see String
 	 */
 	public static <T> String joinLineSeparatorList(List<T> objList, int start, int end) {
 
@@ -131,6 +151,12 @@ public class ListUtil {
 	 * @param perPage  页尺寸
 	 * @param listSize 数据长度
 	 * @return {@code List<E>}
+	 * @throws
+	 * @see List<E>
+	 * @see int
+	 * @see int
+	 * @see int
+	 * @see List<E>
 	 */
 	public static <E> List<E> pageList(List<E> list, int page, int perPage, int listSize) {
 		int startIndex = (page - 1) * perPage;
@@ -149,6 +175,10 @@ public class ListUtil {
 	 * @param l1
 	 * @param l2
 	 * @return
+	 * @throws
+	 * @see List<T>
+	 * @see List<T>
+	 * @see Boolean
 	 */
 	public static <T> Boolean compare2List(List<T> l1, List<T> l2) {
 		if (l1.size() != l2.size()) {
@@ -166,6 +196,10 @@ public class ListUtil {
 	 * @param start
 	 * @param end
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see Integer
+	 * @see List<Integer>
 	 */
 	public static List<Integer> listRangeInt(Integer start, Integer end) {
 		return Lists.newArrayList(IntStream.rangeClosed(start, end).iterator());
@@ -176,6 +210,9 @@ public class ListUtil {
 	 *
 	 * @param list 列表
 	 * @return {@code T }
+	 * @throws
+	 * @see List<T>
+	 * @see T
 	 */
 	public static <T> T selectRandomValue(List<T> list) {
 
@@ -192,6 +229,10 @@ public class ListUtil {
 	 * @param l1 l1
 	 * @param l2 l2
 	 * @return {@code List<T>}
+	 * @throws
+	 * @see List<T>
+	 * @see List<T>
+	 * @see List<T>
 	 */
 	public static <T> List<T> mergeWithOldOrder(List<T> l1, List<T> l2) {
 		List<T> res = Lists.newArrayList();
@@ -212,6 +253,10 @@ public class ListUtil {
 	 * @param size    大小
 	 * @param element 元素
 	 * @return {@code List<Integer>}
+	 * @throws
+	 * @see Integer
+	 * @see T
+	 * @see List<T>
 	 */
 	public static <T> List<T> getRepeatingList(Integer size, T element) {
 		List<T> points = Lists.newArrayList();
@@ -227,6 +272,10 @@ public class ListUtil {
 	 * @param c1 l1
 	 * @param c2 l2
 	 * @return {@code List<E>}
+	 * @throws
+	 * @see Collection<E>
+	 * @see Collection<E>
+	 * @see List<E>
 	 */
 	public static <E> List<E> intersect(Collection<E> c1, Collection<E> c2) {
 		List<E> res = Lists.newArrayList();

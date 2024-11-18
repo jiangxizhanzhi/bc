@@ -11,24 +11,32 @@ import org.springframework.web.socket.WebSocketSession;
  * CP Web 会话
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class CpWebSession {
 
 	/**
-	 * 会期
+	 * 会话
+	 *
+	 * @see WebSocketSession
 	 */
 	private WebSocketSession session;
 
 	/**
 	 * 锁
+	 *
+	 * @see ReentrantLock
 	 */
 	private ReentrantLock lock;
 
 	/**
 	 * CP Web 会话
 	 *
-	 * @param session 会期
+	 * @param session 会话
+	 * @throws
+	 * @see WebSocketSession
 	 */
 	public CpWebSession(WebSocketSession session) {
 		this.session = session;
@@ -39,7 +47,8 @@ public class CpWebSession {
 	 * 发送消息
 	 *
 	 * @param message 消息
-	 * @throws IOException io异常
+	 * @throws @throws IOException io异常
+	 * @see TextMessage
 	 */
 	public void sendMessage(TextMessage message) throws IOException {
 		try {
@@ -56,6 +65,8 @@ public class CpWebSession {
 	 * 获取会期
 	 *
 	 * @return {@code WebSocketSession }
+	 * @throws
+	 * @see WebSocketSession
 	 */
 	public WebSocketSession getSession() {
 		return session;
@@ -65,6 +76,8 @@ public class CpWebSession {
 	 * 设置会期
 	 *
 	 * @param session 会期
+	 * @throws
+	 * @see WebSocketSession
 	 */
 	public void setSession(WebSocketSession session) {
 		this.session = session;
@@ -74,6 +87,8 @@ public class CpWebSession {
 	 * 获取属性
 	 *
 	 * @return {@code Map<String, Object> }
+	 * @throws
+	 * @see Map<String, Object>
 	 */
 	public Map<String, Object> getAttributes() {
 		return this.session.getAttributes();
@@ -83,6 +98,8 @@ public class CpWebSession {
 	 * 获取id
 	 *
 	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	public String getId() {
 		return this.session.getId();
@@ -92,6 +109,8 @@ public class CpWebSession {
 	 * 是开启
 	 *
 	 * @return boolean
+	 * @throws
+	 * @see boolean
 	 */
 	public boolean isOpen() {
 		return session.isOpen();
@@ -100,7 +119,7 @@ public class CpWebSession {
 	/**
 	 * 关闭
 	 *
-	 * @throws IOException io异常
+	 * @throws @throws IOException io异常
 	 */
 	public void close() throws IOException {
 		session.close();
@@ -111,6 +130,9 @@ public class CpWebSession {
 	 *
 	 * @param obj 对象
 	 * @return boolean
+	 * @throws
+	 * @see Object
+	 * @see boolean
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -126,6 +148,8 @@ public class CpWebSession {
 	 * 散 列代号
 	 *
 	 * @return int
+	 * @throws
+	 * @see int
 	 */
 	@Override
 	public int hashCode() {

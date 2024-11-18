@@ -93,6 +93,8 @@ import lombok.extern.slf4j.Slf4j;
  * 团队训练房间控制器
  *
  * @author SN
+ * @version 1.0.0
+ * @since 1.0.0
  * @date 2024/11/07
  */
 @Api(tags = "团队训练实例")
@@ -104,96 +106,128 @@ public class TeamTrainRoomController {
 
 	/**
 	 * 团队房间Service
+	 *
+	 * @see TeamRoomService
 	 */
 	@Autowired
 	private TeamRoomService teamRoomService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 团队场景Service
+	 *
+	 * @see TeamSceneService
 	 */
 	@Autowired
 	private TeamSceneService teamSceneService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * 训练记录Service
+	 *
+	 * @see TrainRecordService
 	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
 	/**
 	 * 团队模板Mapper
+	 *
+	 * @see TeamTemplateMapper
 	 */
 	@Autowired
 	private TeamTemplateMapper teamTemplateMapper;
 
 	/**
 	 * 团队房间Mapper
+	 *
+	 * @see TeamRoomMapper
 	 */
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
 
 	/**
 	 * RTKS相关Service
+	 *
+	 * @see RtksRelatedService
 	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
 	/**
 	 * 靶场得分Service
+	 *
+	 * @see CrScoreService
 	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
 	/**
 	 * 屏幕Service
+	 *
+	 * @see ScreenService
 	 */
 	@Autowired
 	private ScreenService screenService;
 
 	/**
 	 * 靶场常数Service
+	 *
+	 * @see CrConstantsService
 	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
@@ -203,6 +237,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param sceneStartReq 场景开始请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -222,6 +259,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param sceneStopReq 场景停请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("停止场景")
 	@DeleteMapping("/scene")
@@ -242,6 +282,10 @@ public class TeamTrainRoomController {
 	 * @param resource_id 资源id
 	 * @param role_id     角色id
 	 * @return {@code BaseRsp<TeamSceneViewContext> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<TeamSceneViewContext>
 	 */
 	@ApiOperation("查看场景")
 	@GetMapping("/scene")
@@ -259,6 +303,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param sceneOpsReq 场景操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("暂停场景")
 	@PostMapping("/scene/pause")
@@ -275,6 +322,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param sceneOpsReq 场景操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/scene/unpause")
@@ -291,6 +341,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param room_id 房间id
 	 * @return {@code BaseRsp<FlowRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<FlowRsp>
 	 */
 	@ApiOperation("查询流量")
 	@GetMapping("flow")
@@ -310,6 +363,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see FlowOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
@@ -339,6 +395,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see FlowOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("停止流量")
 	@PostMapping("/flow/stop")
@@ -368,6 +427,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneNodeOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("重启节点")
 	@PostMapping("/scene/node/restart")
@@ -392,6 +454,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneNodeOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("重建节点")
 	@PostMapping("/scene/node/recreate")
@@ -416,6 +481,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param teamTrainRoomReq 团队训练房间请求体
 	 * @return {@code BaseRsp<TeamRoomRsp> }
+	 * @throws
+	 * @see TeamTrainRoomReq
+	 * @see BaseRsp<TeamRoomRsp>
 	 */
 	@ApiOperation("新增")
 	@PostMapping()
@@ -451,6 +519,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param teamTrainRoomModifyReq 团队训练房间修改请求体
 	 * @return {@code BaseRsp<TeamRoomRsp> }
+	 * @throws
+	 * @see TeamTrainRoomModifyReq
+	 * @see BaseRsp<TeamRoomRsp>
 	 */
 	@ApiOperation("修改")
 	@PutMapping()
@@ -485,6 +556,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<TeamRoomRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TeamRoomRsp>
 	 */
 	@ApiOperation("查询")
 	@GetMapping()
@@ -519,6 +593,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param crRoles 靶场角色
 	 * @return {@code List<TeamRoomRoleRes> }
+	 * @throws
+	 * @see List<CrRole>
+	 * @see List<TeamRoomRoleRes>
 	 */
 	private List<TeamRoomRoleRes> getTeamRoomRoleRes(List<CrRole> crRoles) {
 		List<TeamRoomRoleRes> teamRoomRoleResList = Lists.newArrayList();
@@ -538,6 +615,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param opsReq 操作 计划请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
@@ -584,6 +664,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<TeamRoomRsp>> }
+	 * @throws
+	 * @see TeamRoomListReq
+	 * @see BaseRsp<ListRsp<TeamRoomRsp>>
 	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
@@ -600,6 +683,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resourceIdReq 资源id请求体
 	 * @return {@code BaseRsp<Map> }
+	 * @throws
+	 * @see ResourceIdReq
+	 * @see BaseRsp<Map>
 	 */
 	@ApiOperation("修改团队训练状态")
 	@PostMapping("/start_end_team")
@@ -625,6 +711,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<Map> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<Map>
 	 */
 	@ApiOperation("查询团队训练状态")
 	@GetMapping("/start_end_team")
@@ -644,6 +733,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<UserRole>>
 	 */
 	@ApiOperation("查询团队训练学员用户列表")
 	@GetMapping("/get_user_list")
@@ -661,6 +753,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TimeLineData>
 	 */
 	@ApiOperation("查询团队训练时间轴")
 	@GetMapping("/get_time_line")
@@ -677,6 +772,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("查询团队训练训练手册")
 	@GetMapping("/get_training_manual")
@@ -694,6 +792,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param writeUpReq 写入向上请求体
 	 * @return
+	 * @throws
+	 * @see WriteUpReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("修改开放题解")
 	@PostMapping("/update_show_write_up")
@@ -715,6 +816,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param releaseMissionReq 释放任务请求体
 	 * @return
+	 * @throws
+	 * @see ReleaseMissionReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("任务下发")
 	@PostMapping("/missions")
@@ -751,7 +855,11 @@ public class TeamTrainRoomController {
 	 * @param crRoles 靶场角色
 	 * @param userId  用户id
 	 * @return {@code BaseRole }
-	 */// 获取单个实例中自己的角色信息，只包括自己角色的基本信息
+	 * @throws
+	 * @see List<CrRole>
+	 * @see String
+	 * @see BaseRole
+	 */ // 获取单个实例中自己的角色信息，只包括自己角色的基本信息
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
 		crRoles.forEach(crRole -> {
@@ -773,6 +881,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param releaseMissionReq 释放任务请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ReleaseMissionReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("批量任务下发")
 	@PostMapping("/batchMissions")
@@ -802,6 +913,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<TeamTaskReleaseProgress> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TeamTaskReleaseProgress>
 	 */
 	@ApiOperation("团队对抗-任务导调-任务进度")
 	@GetMapping("/mission/progress")
@@ -869,6 +983,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<List<TrainTaskReleaseInfoRsp>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<TrainTaskReleaseInfoRsp>>
 	 */
 	@ApiOperation("团队对抗-任务导调-任务列表")
 	@GetMapping("/mission/list")
@@ -891,6 +1008,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<List<TrainTaskReleaseInfoRsp>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<TrainTaskReleaseInfoRsp>>
 	 */
 	@ApiOperation("团队对抗-训练手册")
 	@GetMapping("/manual")
@@ -918,6 +1038,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<DashboardInfo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<DashboardInfo>
 	 */
 	@ApiOperation("获取聊天框用户列表")
 	@GetMapping("/dashboard_info")
@@ -938,6 +1061,10 @@ public class TeamTrainRoomController {
 	 * @param resource_id 资源id
 	 * @param scoreCount  得分计数
 	 * @return {@code BaseRsp<TrainReportContext> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see BaseRsp<TrainReportContext>
 	 */
 	@ApiOperation("团队对抗-任务导调-训练报告")
 	@GetMapping("/mission/getTrainReports")
@@ -978,6 +1105,10 @@ public class TeamTrainRoomController {
 	 * @param httpServletResponse HTTP Servlet 响应
 	 * @param resource_id         资源id
 	 * @param scoreCount          得分计数
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see String
+	 * @see Integer
 	 */
 	@ApiOperation("团队对抗-任务导调-训练报告导出")
 	@GetMapping("/mission/TrainReportsPdf")
@@ -1033,6 +1164,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param room        房间
 	 * @param trainReport 训练报告
+	 * @throws
+	 * @see TeamRoom
+	 * @see TrainReportContext
 	 */
 	public void initTeamReport(TeamRoom room, TrainReportContext trainReport) {
 		// 基础信息
@@ -1059,6 +1193,10 @@ public class TeamTrainRoomController {
 	 * @param resource_id 资源id
 	 * @param id          id
 	 * @return {@code BaseRsp<JSONObject> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("获取聊天框群组成员列表")
 	@GetMapping("/members_info")
@@ -1081,6 +1219,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param rbMissionDeleteReq RB任务删除请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see MissionDeleteReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("任务删除")
 	@PostMapping("/mission_delete")
@@ -1151,6 +1292,10 @@ public class TeamTrainRoomController {
 	 * @param resource_id 资源id
 	 * @param node_id     节点id
 	 * @return {@code BaseRsp<List<ScreenRecordUserRole>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<ScreenRecordUserRole>>
 	 */
 	@ApiOperation("团队对抗-复盘设备")
 	@GetMapping("/task/replayUserTimeInfo")
@@ -1184,6 +1329,9 @@ public class TeamTrainRoomController {
 	 *
 	 * @param manuals 手册
 	 * @return {@code List<TrainTaskReleaseInfoRsp> }
+	 * @throws
+	 * @see List<TrainTaskReleaseInfoRsp>
+	 * @see List<TrainTaskReleaseInfoRsp>
 	 */
 	private List<TrainTaskReleaseInfoRsp> mergeStageByCreateTime(List<TrainTaskReleaseInfoRsp> manuals) {
 		List<TrainTaskReleaseInfoRsp> res = new ArrayList<>(1);

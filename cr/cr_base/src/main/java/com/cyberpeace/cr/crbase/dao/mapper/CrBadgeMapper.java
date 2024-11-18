@@ -13,7 +13,10 @@ import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
  * 靶场徽章映射
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Repository
 @Mapper
@@ -23,6 +26,8 @@ public interface CrBadgeMapper extends BaseMapper<CrBadge> {
 	 * 插入批量
 	 *
 	 * @param badgeList 徽章列表
+	 * @throws
+	 * @see List<CrBadge>
 	 */
 	void insertBatch(@Param("badgeList") List<CrBadge> badgeList);
 
@@ -33,6 +38,11 @@ public interface CrBadgeMapper extends BaseMapper<CrBadge> {
 	 * @param type       类型
 	 * @param userId     用户id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean existByBusinessIdAndTypeAndUserId(@Param("businessId") String businessId,
 			@Param("type") Integer type, @Param("userId") String userId);
@@ -43,6 +53,10 @@ public interface CrBadgeMapper extends BaseMapper<CrBadge> {
 	 * @param businessId 业务id
 	 * @param type       类型
 	 * @param userId     用户id
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
 	 */
 	void removeBatchByBusinessIdAndTypeAndUserId(@Param("businessId") String businessId,
 			@Param("type") Integer type, @Param("userId") String userId);

@@ -31,12 +31,16 @@ import com.google.common.collect.Sets;
  * 一些靶场工具
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class CrCommonUtil {
 
 	/**
 	 * 零
+	 *
+	 * @see String
 	 */
 	private static final String NULL = "null";
 
@@ -45,6 +49,9 @@ public class CrCommonUtil {
 	 *
 	 * @param roleConfig 角色配置
 	 * @return {@code String }
+	 * @throws
+	 * @see T
+	 * @see String
 	 */
 	public static <T> String roleConfig2DbJson(T roleConfig) {
 		SimplePropertyPreFilter missionFilter = new SimplePropertyPreFilter(
@@ -64,6 +71,9 @@ public class CrCommonUtil {
 	 *
 	 * @param roles 角色
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<CrRoleConfig>
+	 * @see List<String>
 	 */
 	public static List<String> getMissionTemplateIds(List<CrRoleConfig> roles) {
 		List<String> missionTemplateIds = Lists.newArrayList();
@@ -78,6 +88,9 @@ public class CrCommonUtil {
 	 *
 	 * @param missionsScheme
 	 * @return
+	 * @throws
+	 * @see CrRoleConfigMissionsScheme
+	 * @see List<String>
 	 */
 	public static List<String> getMissionTemplateIds(CrRoleConfigMissionsScheme missionsScheme) {
 		List<String> missionTemplateIds = Lists.newArrayList();
@@ -91,6 +104,9 @@ public class CrCommonUtil {
 	 *
 	 * @param tags
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	public static String handleTrainingTag(List<String> tags) {
 		CrCommonValidator.validateSize(tags, CrCommonConstants.MIN_TAG_COUNT,
@@ -107,7 +123,10 @@ public class CrCommonUtil {
 	 * 原地操作，去掉两个列表中相交的元素
 	 *
 	 * @param l1
-	 * @param l2
+	 * @param l2 L2
+	 * @throws
+	 * @see List<T>
+	 * @see List<T>
 	 */
 	public static <T> void differ2List(List<T> l1, List<T> l2) {
 		if (l1 == null || l1.isEmpty() || l2 == null || l2.isEmpty()) {
@@ -129,6 +148,8 @@ public class CrCommonUtil {
 	 * 获取雷达图初始点数列表
 	 *
 	 * @return {@code List<Integer>}
+	 * @throws
+	 * @see List<Integer>
 	 */
 	public static List<Integer> getInitPoints() {
 		return getZeroList(CrCommonConstants.SKILL_POINTS_SIZE);
@@ -139,6 +160,9 @@ public class CrCommonUtil {
 	 *
 	 * @param size 大小
 	 * @return {@code List<Integer>}
+	 * @throws
+	 * @see Integer
+	 * @see List<Integer>
 	 */
 	public static List<Integer> getZeroList(Integer size) {
 		return ListUtil.getRepeatingList(size, 0);
@@ -149,6 +173,9 @@ public class CrCommonUtil {
 	 *
 	 * @param sum    总和
 	 * @param addend 加数
+	 * @throws
+	 * @see List<Integer>
+	 * @see List<Integer>
 	 */
 	public static void integratePoints(List<Integer> sum, List<Integer> addend) {
 		if (sum.size() != addend.size()) {
@@ -165,6 +192,10 @@ public class CrCommonUtil {
 	 * @param all 所有
 	 * @param get 获取
 	 * @return {@code List<Integer>}
+	 * @throws
+	 * @see List<Integer>
+	 * @see List<Integer>
+	 * @see List<Integer>
 	 */
 	public static List<Integer> calculateRadar(List<Integer> all, List<Integer> get) {
 		List<Integer> res = Lists.newArrayList();
@@ -179,6 +210,9 @@ public class CrCommonUtil {
 	 *
 	 * @param optionString 选项字符串
 	 * @return {@code List<MissionOption>}
+	 * @throws
+	 * @see String
+	 * @see List<MissionOption>
 	 */
 	public static List<MissionOption> parseOption(String optionString) {
 		if (StringUtils.isBlank(optionString) || optionString.equals(NULL)) {
@@ -193,6 +227,9 @@ public class CrCommonUtil {
 	 *
 	 * @param answerString 回答字符串
 	 * @return {@code String}
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static String handleMultiAnswer(String answerString) {
 		List<String> characterList = JsonUtil.toJsonObjectArray(answerString, String.class);
@@ -210,6 +247,10 @@ public class CrCommonUtil {
 	 * @param answerString 回答字符串
 	 * @param missionType  任务类型
 	 * @return {@code String}
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
 	 */
 	public static String getHandledAnswer(String answerString, Integer missionType) {
 		if (missionType.equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
@@ -226,6 +267,9 @@ public class CrCommonUtil {
 	 *
 	 * @param assetList 资产列表
 	 * @return {@code List<IdNameType>}
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see List<IdNameType>
 	 */
 	public static List<IdNameType> getOsListFromAssets(List<JSONObject> assetList) {
 		Set<String> osTypeSet = Sets.newHashSet();
@@ -251,6 +295,9 @@ public class CrCommonUtil {
 	 *
 	 * @param missionSchemeJson 任务计划json
 	 * @return {@code List<String>}
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	public static List<String> getDynamicMissionIdsByRoleMissionScheme(String missionSchemeJson) {
 		List<String> res = Lists.newArrayList();
@@ -274,6 +321,10 @@ public class CrCommonUtil {
 	 * @param userIdList  用户id列表
 	 * @param userInfoMap 用户信息
 	 * @return {@code String}
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, UserInfo>
+	 * @see List<String>
 	 */
 	public static List<String> getUserNamesByUserIds(List<String> userIdList,
 			Map<String, UserInfo> userInfoMap) {
@@ -292,6 +343,10 @@ public class CrCommonUtil {
 	 * @param userIdList  用户id列表
 	 * @param userInfoMap 用户信息
 	 * @return {@code List<UserData>}
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, UserInfo>
+	 * @see List<UserData>
 	 */
 	public static List<UserData> getUserDataList(List<String> userIdList,
 			Map<String, UserInfo> userInfoMap) {

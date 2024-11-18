@@ -60,7 +60,9 @@ import lombok.extern.slf4j.Slf4j;
  * RB Room 用户控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗学员")
 @RestController
@@ -69,91 +71,120 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/red_vs_blue/user/")
 public class RbRoomUserController {
 
-	/**
-	 * RB房间Service
-	 */
-	@Autowired
+    /**
+     * RB房间Service
+     *
+     * @see RbRoomService
+     */
+    @Autowired
 	private RbRoomService rbRoomService;
 
-	/**
-	 * 靶场任务Service
-	 */
-	@Autowired
+    /**
+     * 靶场任务Service
+     *
+     * @see CrTaskService
+     */
+    @Autowired
 	private CrTaskService crTaskService;
 
-	/**
-	 * 远程用户Service
-	 */
-	@Autowired
+    /**
+     * 远程用户Service
+     *
+     * @see RemoteUserService
+     */
+    @Autowired
 	private RemoteUserService remoteUserService;
 
-	/**
-	 * RB装置Service
-	 */
-	@Autowired
+    /**
+     * RB装置Service
+     *
+     * @see RbDeviceService
+     */
+    @Autowired
 	private RbDeviceService rbDeviceService;
 
-	/**
-	 * RB时间管理Service
-	 */
-	@Autowired
+    /**
+     * RB时间管理Service
+     *
+     * @see RbTimeManagementService
+     */
+    @Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
-	/**
-	 * 靶场常见Service
-	 */
-	@Autowired
+    /**
+     * 靶场常见Service
+     *
+     * @see CrCommonService
+     */
+    @Autowired
 	private CrCommonService crCommonService;
 
-	/**
-	 * 靶场角色Service
-	 */
-	@Autowired
+    /**
+     * 靶场角色Service
+     *
+     * @see CrRoleService
+     */
+    @Autowired
 	private CrRoleService crRoleService;
 
-	/**
-	 * 屏幕Service
-	 */
-	@Autowired
+    /**
+     * 屏幕Service
+     *
+     * @see ScreenService
+     */
+    @Autowired
 	private ScreenService screenService;
 
-	/**
-	 * 靶场徽章Service
-	 */
-	@Autowired
+    /**
+     * 靶场徽章Service
+     *
+     * @see CrBadgeService
+     */
+    @Autowired
 	private CrBadgeService crBadgeService;
 
-	/**
-	 * 事务模板
-	 */
-	@Autowired
+    /**
+     * 事务模板
+     *
+     * @see TransactionTemplate
+     */
+    @Autowired
 	private TransactionTemplate transactionTemplate;
 
-	/**
-	 * RB裁判Service
-	 */
-	@Autowired
+    /**
+     * RB裁判Service
+     *
+     * @see RbRefereeService
+     */
+    @Autowired
 	private RbRefereeService rbRefereeService;
 
-	/**
-	 * 任务Service
-	 */
-	@Autowired
+    /**
+     * 任务Service
+     *
+     * @see MissionService
+     */
+    @Autowired
 	private MissionService missionService;
 
-	/**
-	 * 靶场得分Service
-	 */
-	@Autowired
+    /**
+     * 靶场得分Service
+     *
+     * @see CrScoreService
+     */
+    @Autowired
 	private CrScoreService crScoreService;
 
-	/**
-	 * 获取运行状态
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<Map> }
-	 */
-	@ApiOperation("获取红蓝实例运行状态")
+    /**
+     * 获取运行状态
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<Map> }
+     * @throws
+     * @see String
+     * @see BaseRsp<Map>
+     */
+    @ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Map> getRunningStatus(
@@ -166,13 +197,16 @@ public class RbRoomUserController {
 		return new BaseRsp<>(map);
 	}
 
-	/**
-	 * 获取任务方案信息
-	 *
-	 * @param resource_id 资源id
-	 * @return
-	 */
-	@ApiOperation("获取任务方案信息")
+    /**
+     * 获取任务方案信息
+     *
+     * @param resource_id 资源id
+     * @return
+     * @throws
+     * @see String
+     * @see BaseRsp<List<MissionInfoRsp>>
+     */
+    @ApiOperation("获取任务方案信息")
 	@GetMapping("/get_mission_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionInfoRsp>> getMissionInfo(
@@ -256,13 +290,16 @@ public class RbRoomUserController {
 		return new BaseRsp(missionInfoRsps);
 	}
 
-	/**
-	 * 开始任务
-	 *
-	 * @param submitMissionsReq 提交任务请求体
-	 * @return {@code BaseRsp<String> }
-	 */
-	@ApiOperation("开始答题")
+    /**
+     * 开始任务
+     *
+     * @param submitMissionsReq 提交任务请求体
+     * @return {@code BaseRsp<String> }
+     * @throws
+     * @see SubmitMissionsReq
+     * @see BaseRsp<String>
+     */
+    @ApiOperation("开始答题")
 	@PostMapping("/begin_mission")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
@@ -286,13 +323,16 @@ public class RbRoomUserController {
 		return new BaseRsp<>();
 	}
 
-	/**
-	 * 提交任务
-	 *
-	 * @param submitMissionsReq 提交任务请求体
-	 * @return {@code BaseRsp<String> }
-	 */
-	@ApiOperation("提交任务答案")
+    /**
+     * 提交任务
+     *
+     * @param submitMissionsReq 提交任务请求体
+     * @return {@code BaseRsp<String> }
+     * @throws
+     * @see SubmitMissionsReq
+     * @see BaseRsp<String>
+     */
+    @ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
@@ -321,13 +361,16 @@ public class RbRoomUserController {
 		return new BaseRsp<>();
 	}
 
-	/**
-	 * 创建设备
-	 *
-	 * @param req 请求体
-	 * @return {@code BaseRsp<Boolean> }
-	 */
-	@ApiOperation("新增占用主机")
+    /**
+     * 创建设备
+     *
+     * @param req 请求体
+     * @return {@code BaseRsp<Boolean> }
+     * @throws
+     * @see RbDeviceReq
+     * @see BaseRsp<Boolean>
+     */
+    @ApiOperation("新增占用主机")
 	@PostMapping("/device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> createDevice(@RequestBody @Valid RbDeviceReq req) {
@@ -354,13 +397,16 @@ public class RbRoomUserController {
 		return new BaseRsp<>(ret);
 	}
 
-	/**
-	 * 删除设备
-	 *
-	 * @param req 请求体
-	 * @return {@code BaseRsp<Boolean> }
-	 */
-	@ApiOperation("解除主机占用")
+    /**
+     * 删除设备
+     *
+     * @param req 请求体
+     * @return {@code BaseRsp<Boolean> }
+     * @throws
+     * @see RbDeviceReq
+     * @see BaseRsp<Boolean>
+     */
+    @ApiOperation("解除主机占用")
 	@DeleteMapping("/device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> deleteDevice(@RequestBody @Valid RbDeviceReq req) {
@@ -371,14 +417,18 @@ public class RbRoomUserController {
 		return new BaseRsp<>(ret);
 	}
 
-	/**
-	 * 获取任务矩阵
-	 *
-	 * @param resource_id 资源id
-	 * @param user_id     用户id
-	 * @return {@code BaseRsp<TaskMatrix> }
-	 */
-	@ApiOperation("红蓝对抗-任务矩阵")
+    /**
+     * 获取任务矩阵
+     *
+     * @param resource_id 资源id
+     * @param user_id     用户id
+     * @return {@code BaseRsp<TaskMatrix> }
+     * @throws
+     * @see String
+     * @see String
+     * @see BaseRsp<TaskMatrix>
+     */
+    @ApiOperation("红蓝对抗-任务矩阵")
 	@GetMapping("/task/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskMatrix> getTaskMatrix(
@@ -404,14 +454,18 @@ public class RbRoomUserController {
 		return new BaseRsp<>(rbTaskMatrix);
 	}
 
-	/**
-	 * 复盘用户任务信息
-	 *
-	 * @param resource_id 资源id
-	 * @param user_id     用户id
-	 * @return {@code BaseRsp<TaskMatrix> }
-	 */
-	@ApiOperation("红蓝对抗-用户维度复盘")
+    /**
+     * 复盘用户任务信息
+     *
+     * @param resource_id 资源id
+     * @param user_id     用户id
+     * @return {@code BaseRsp<TaskMatrix> }
+     * @throws
+     * @see String
+     * @see String
+     * @see BaseRsp<TaskMatrix>
+     */
+    @ApiOperation("红蓝对抗-用户维度复盘")
 	@GetMapping("/task/replayUserTaskInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskMatrix> replayUserTaskInfo(
@@ -434,13 +488,16 @@ public class RbRoomUserController {
 		return new BaseRsp<>(rbTaskMatrix);
 	}
 
-	/**
-	 * 如果 show mission matrix badge
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<Boolean> }
-	 */
-	@ApiOperation("红蓝对抗-学员任务矩阵-是否显示红点标记")
+    /**
+     * 如果 show mission matrix badge
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<Boolean> }
+     * @throws
+     * @see String
+     * @see BaseRsp<Boolean>
+     */
+    @ApiOperation("红蓝对抗-学员任务矩阵-是否显示红点标记")
 	@GetMapping("/task/matrix/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> ifShowMissionMatrixBadge(@ApiParam(name = "resource_id",
@@ -452,13 +509,16 @@ public class RbRoomUserController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 点击评估徽章
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp }
-	 */
-	@ApiOperation("任务矩阵红点点击取消")
+    /**
+     * 点击评估徽章
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp }
+     * @throws
+     * @see String
+     * @see BaseRsp
+     */
+    @ApiOperation("任务矩阵红点点击取消")
 	@GetMapping("/matrix/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp clickEvaluationBadge(@ApiParam(name = "resource_id", value = "红蓝对抗训练id",
@@ -469,14 +529,18 @@ public class RbRoomUserController {
 		return new BaseRsp<>();
 	}
 
-	/**
-	 * 回复用户时间信息
-	 *
-	 * @param resource_id 资源id
-	 * @param node_id     节点id
-	 * @return {@code BaseRsp<List<ScreenRecordUserRole>> }
-	 */
-	@ApiOperation("红蓝对抗-复盘设备")
+    /**
+     * 回复用户时间信息
+     *
+     * @param resource_id 资源id
+     * @param node_id     节点id
+     * @return {@code BaseRsp<List<ScreenRecordUserRole>> }
+     * @throws
+     * @see String
+     * @see String
+     * @see BaseRsp<List<ScreenRecordUserRole>>
+     */
+    @ApiOperation("红蓝对抗-复盘设备")
 	@GetMapping("/task/replayUserTimeInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<ScreenRecordUserRole>> replyUserTimeInfo(
@@ -503,13 +567,16 @@ public class RbRoomUserController {
 		return new BaseRsp<>(resList);
 	}
 
-	/**
-	 * 创造标记
-	 *
-	 * @param req 请求体
-	 * @return {@code BaseRsp }
-	 */
-	@ApiOperation("新增标记")
+    /**
+     * 创造标记
+     *
+     * @param req 请求体
+     * @return {@code BaseRsp }
+     * @throws
+     * @see MarkAddReq
+     * @see BaseRsp
+     */
+    @ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req) {
@@ -517,13 +584,16 @@ public class RbRoomUserController {
 		return new BaseRsp();
 	}
 
-	/**
-	 * 查询红蓝训练学员时间轴
-	 *
-	 * @param resource_id 资源id
-	 * @return
-	 */
-	@ApiOperation("红蓝对抗学员时间轴")
+    /**
+     * 查询红蓝训练学员时间轴
+     *
+     * @param resource_id 资源id
+     * @return
+     * @throws
+     * @see String
+     * @see BaseRsp<TimeLineData>
+     */
+    @ApiOperation("红蓝对抗学员时间轴")
 	@GetMapping("/get_time_line")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getTimeLine(
@@ -532,14 +602,18 @@ public class RbRoomUserController {
 		return new BaseRsp(data);
 	}
 
-	/**
-	 * 获取任务详情
-	 *
-	 * @param resource_id 资源id
-	 * @param mission_id  任务id
-	 * @return {@code BaseRsp<MissionRsp> }
-	 */
-	@ApiOperation("获取任务详情")
+    /**
+     * 获取任务详情
+     *
+     * @param resource_id 资源id
+     * @param mission_id  任务id
+     * @return {@code BaseRsp<MissionRsp> }
+     * @throws
+     * @see String
+     * @see String
+     * @see BaseRsp<MissionRsp>
+     */
+    @ApiOperation("获取任务详情")
 	@GetMapping("/get_mission_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<MissionRsp> getMissionDetail(

@@ -12,7 +12,9 @@ import lombok.Data;
  * 单训练模板请求体相对
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 @ApiModel("单兵训练模板")
@@ -20,6 +22,8 @@ public class SingleTrainTemplateReqRel {
 
 	/**
 	 * 事件数据
+	 *
+	 * @see EventDataReq
 	 */
 	@ApiModelProperty(value = "基础数据", required = true)
 	@NotNull
@@ -27,6 +31,8 @@ public class SingleTrainTemplateReqRel {
 
 	/**
 	 * 任务计划
+	 *
+	 * @see CrRoleConfigMissionsScheme
 	 */
 	@ApiModelProperty("任务方案")
 	private CrRoleConfigMissionsScheme missionsScheme;

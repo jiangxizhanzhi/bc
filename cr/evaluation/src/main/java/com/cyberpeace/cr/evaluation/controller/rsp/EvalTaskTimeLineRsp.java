@@ -13,37 +13,50 @@ import lombok.Data;
  * 评估任务时间线响应
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class EvalTaskTimeLineRsp implements Serializable {
 
 	/**
 	 * 任务id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("测评任务Id")
 	private String taskId;
 
 	/**
 	 * 开始时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty("开始时间")
 	private Date startTime;
 
 	/**
 	 * 结束时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty("结束时间")
 	private Date endTime;
 
 	/**
 	 * 数据
+	 *
+	 * @see List<EvalTimeLineContext>
 	 */
 	@ApiModelProperty("测评步骤记录")
 	private List<EvalTimeLineContext> data;
 
 	/**
 	 * 当前时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty("当前时间")
 	private Date currentTime;

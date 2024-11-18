@@ -27,19 +27,27 @@ import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;
  * RB常见装置Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see RbCommonDeviceService
+ * @since 1.0.0
  */
 @Service
 public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper, RbCommonDevice> implements RbCommonDeviceService {
 
 	/**
 	 * RB常见装置Mapper
+	 *
+	 * @see RbCommonDeviceMapper
 	 */
 	@Autowired
 	private RbCommonDeviceMapper rbCommonDeviceMapper;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
@@ -50,6 +58,10 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	 * @param roomId                  房间id
 	 * @param commonDeviceContextList 常见设备上下文列表
 	 * @return {@code List<RbCommonDeviceContext> }
+	 * @throws
+	 * @see String
+	 * @see List<RbCommonDeviceContext>
+	 * @see List<RbCommonDeviceContext>
 	 */
 	@Override
 	public List<RbCommonDeviceContext> filterVisibleCommonDevices(String roomId,
@@ -89,6 +101,10 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	 * @param roomId        房间id
 	 * @param collectUserId 收集用户id
 	 * @return {@code List<RbCommonDevice> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<RbCommonDevice>
 	 */
 	@Override
 	public List<RbCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId) {
@@ -100,6 +116,9 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<RbCommonDevice> }
+	 * @throws
+	 * @see String
+	 * @see List<RbCommonDevice>
 	 */
 	@Override
 	public List<RbCommonDevice> getAllCollectedCommonDeviceDevices(String roomId) {
@@ -110,6 +129,8 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	 * 新增列表自收集
 	 *
 	 * @param commonDeviceContextList 常见设备上下文列表
+	 * @throws
+	 * @see List<RbCommonDeviceContext>
 	 */
 	@Override
 	public void addListToCollect(List<RbCommonDeviceContext> commonDeviceContextList) {
@@ -131,6 +152,8 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	 * 新增自收集
 	 *
 	 * @param commonDeviceContext 通用设备上下文
+	 * @throws
+	 * @see RbCommonDeviceContext
 	 */
 	@Override
 	public void addToCollect(RbCommonDeviceContext commonDeviceContext) {
@@ -148,6 +171,8 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	 * del collect
 	 *
 	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void delCollect(String resourceId) {
@@ -158,6 +183,8 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	 * 删除由装置id
 	 *
 	 * @param deviceId 装置id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void deleteByDeviceId(String deviceId) {
@@ -168,6 +195,8 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	 * 戴尔由房间id
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void delByRoomId(String roomId) {

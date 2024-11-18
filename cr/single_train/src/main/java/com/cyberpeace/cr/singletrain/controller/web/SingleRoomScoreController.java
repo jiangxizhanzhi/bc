@@ -60,7 +60,9 @@ import lombok.extern.slf4j.Slf4j;
  * 单房间评分控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "单兵训练评分")
 @RestController
@@ -70,48 +72,64 @@ public class SingleRoomScoreController {
 
 	/**
 	 * 单房间Service
+	 *
+	 * @see SingleRoomService
 	 */
 	@Autowired
 	SingleRoomService singleRoomService;
 
 	/**
 	 * 训练记录Service
+	 *
+	 * @see TrainRecordService
 	 */
 	@Autowired
 	TrainRecordService trainRecordService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 靶场得分控制器
+	 *
+	 * @see CrScoreController
 	 */
 	@Autowired
 	private CrScoreController crScoreController;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 中台环境Service
+	 *
+	 * @see MpEnvService
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 靶场常数Service
+	 *
+	 * @see CrConstantsService
 	 */
 	@Autowired
 	private CrConstantsService crConstantsService;

@@ -27,25 +27,34 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
  * 屏幕Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ScreenService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
 public class ScreenServiceImpl implements ScreenService {
     /**
      * 远程场景Service
+     *
+     * @see RemoteSceneService
      */
     @Autowired
     private RemoteSceneService remoteSceneService;
 
     /**
      * 当地场景Service
+     *
+     * @see LocalSceneService
      */
     @Autowired
     private LocalSceneService localSceneService;
 
     /**
      * 靶场角色Service
+     *
+     * @see CrRoleService
      */
     @Autowired
     private CrRoleService crRoleService;
@@ -58,6 +67,12 @@ public class ScreenServiceImpl implements ScreenService {
      * @param nodeId        节点id
      * @param groups        组
      * @return {@code List<ScreenRecordUserRole> }
+     * @throws
+     * @see String
+     * @see String
+     * @see String
+     * @see Collection<Integer>
+     * @see List<ScreenRecordUserRole>
      */
     @Override
 	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String replaySceneId , String nodeId, Collection<Integer> groups) {
@@ -103,6 +118,10 @@ public class ScreenServiceImpl implements ScreenService {
      * @param screenRecordUserRoles 屏幕录制用户角色
      * @param actualEndTime         实体结束时间
      * @return {@code List<ScreenRecordUserRole> }
+     * @throws
+     * @see List<ScreenRecordUserRole>
+     * @see Date
+     * @see List<ScreenRecordUserRole>
      */
     @Override
     public List<ScreenRecordUserRole> filterBeforeActualEndTime(List<ScreenRecordUserRole> screenRecordUserRoles, Date actualEndTime) {

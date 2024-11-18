@@ -11,13 +11,18 @@ import lombok.Setter;
  * 工具GHDB 数据库列表请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @ApiModel
 public class ToolGhdbListReq extends PageReqBase {
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "标题")
 	@Getter
@@ -26,6 +31,8 @@ public class ToolGhdbListReq extends PageReqBase {
 
 	/**
 	 * 作者
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "作者")
 	@Getter

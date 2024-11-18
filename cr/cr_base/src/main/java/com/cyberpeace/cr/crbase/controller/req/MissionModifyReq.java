@@ -15,37 +15,50 @@ import lombok.Data;
  * 任务修改请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class MissionModifyReq implements Serializable {
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "标题", required = true)
 	private String title;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务id", required = true)
 	private String resourceId;
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "分值", required = true)
 	private Integer score;
 
 	/**
 	 * 技能点
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "技能点", required = true)
 	private String skillPoints;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述", required = true)
 	private String description;

@@ -11,7 +11,10 @@ import java.io.Serializable;
  * 提交任务请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel("任务提交")
@@ -19,6 +22,8 @@ public class SubmitMissionReq implements Serializable {
 
     /**
      * 任务资源id
+     *
+     * @see String
      */
     @NotNull
     @ApiModelProperty("任务id")
@@ -26,6 +31,8 @@ public class SubmitMissionReq implements Serializable {
 
     /**
      * 训练记录
+     *
+     * @see String
      */
     @NotNull
     @ApiModelProperty("记录内容")
@@ -33,6 +40,8 @@ public class SubmitMissionReq implements Serializable {
 
     /**
      * 答案
+     *
+     * @see String
      */
     @NotNull
     @ApiModelProperty("用户提交答案")
@@ -40,6 +49,8 @@ public class SubmitMissionReq implements Serializable {
 
     /**
      * 业务模板id
+     *
+     * @see String
      */
     @NotNull
     @ApiModelProperty("业务模板ID")

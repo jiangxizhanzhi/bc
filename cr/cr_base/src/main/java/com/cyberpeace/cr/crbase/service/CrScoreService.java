@@ -20,7 +20,10 @@ import com.cyberpeace.cr.crbase.service.context.score.UserSkillScoreContext;
  * 靶场得分Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see IService
+ * @since 1.0.0
  */
 public interface CrScoreService extends IService<CrScore> {
 
@@ -30,6 +33,10 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return 学员成绩
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrScore
 	 */
 	CrScore getByRoomIdAndUser(String roomId, String userId);
 
@@ -39,6 +46,10 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param roomId     训练实例id
 	 * @param crRoleList 角色列表
 	 * @return 任务统计
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
+	 * @see MissionsStatistics
 	 */
 	MissionsStatistics getMissionsStatistics(String roomId, List<CrRole> crRoleList);
 
@@ -48,6 +59,10 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param roomId  训练实例id
 	 * @param userIds 学员id列表
 	 * @return 学员成绩列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<CrScore>
 	 */
 	List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
 
@@ -57,6 +72,10 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param roomId     训练实例id
 	 * @param crRoleList 角色列表
 	 * @return 任务类别统计
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
+	 * @see Map<String, Integer>
 	 */
 	Map<String, Integer> getMissionsCategory(String roomId, List<CrRole> crRoleList);
 
@@ -65,6 +84,9 @@ public interface CrScoreService extends IService<CrScore> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<StudentScoreListRsp>}
+	 * @throws
+	 * @see String
+	 * @see List<CrScore>
 	 */
 	List<CrScore> getScoreByRoomId(String roomId);
 
@@ -74,6 +96,10 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param roomId   房间id
 	 * @param roleList 角色列表
 	 * @return {@code List<StudentScoreListRsp>}
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
+	 * @see List<StudentScoreListRsp>
 	 */
 	List<StudentScoreListRsp> getScoreListRsp(String roomId, List<CrRole> roleList);
 
@@ -83,6 +109,10 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code StudentScoreRsp}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see StudentScoreRsp
 	 */
 	StudentScoreRsp getStudentScore(String roomId, String userId);
 
@@ -93,6 +123,11 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param roles         角色
 	 * @param scoreTrendReq 得分趋势请求体
 	 * @return {@code TrainReportContext }
+	 * @throws
+	 * @see String
+	 * @see ArrayList<Integer>
+	 * @see ScoreTrendReq
+	 * @see TrainReportContext
 	 */
 	TrainReportContext getTrainReport(String resource_id, ArrayList<Integer> roles, ScoreTrendReq scoreTrendReq);
 
@@ -102,6 +137,10 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param roomId 房间id
 	 * @param roles  角色
 	 * @return {@code List<UserSkillScoreContext> }
+	 * @throws
+	 * @see String
+	 * @see ArrayList<Integer>
+	 * @see List<UserSkillScoreContext>
 	 */
 	List<UserSkillScoreContext> getSkillScoreList(String roomId,ArrayList<Integer> roles);
 
@@ -113,6 +152,12 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @param taskList   任务列表
 	 * @param missionMap 任务图
 	 * @return {@code List<UserSkillScoreContext> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<CrTask>
+	 * @see Map<String, Mission>
+	 * @see List<UserSkillScoreContext>
 	 */
 	List<UserSkillScoreContext> getSkillScoreList(String roomId,List<String> userIds, List<CrTask> taskList, Map<String, Mission> missionMap);
 }

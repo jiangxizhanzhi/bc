@@ -11,12 +11,16 @@ import java.util.Date;
  * date util
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class DateUtil {
 
 	/**
 	 * 拍摄模式
+	 *
+	 * @see String
 	 */
 	public static final String SHOT_PATTERN = "yyyy-MM-dd";
 
@@ -26,6 +30,10 @@ public class DateUtil {
 	 * @param date    日期
 	 * @param pattern 模式
 	 * @return {@code String }
+	 * @throws
+	 * @see Date
+	 * @see String
+	 * @see String
 	 */
 	public static String DateToString(Date date, String pattern) {
 		if (date == null) {
@@ -44,6 +52,10 @@ public class DateUtil {
 	 * @param strDate str 日期
 	 * @param pattern 模式
 	 * @return {@code Date }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Date
 	 */
 	public static Date StringToDate(String strDate, String pattern) {
 		SimpleDateFormat formatter = new SimpleDateFormat(pattern);
@@ -57,6 +69,10 @@ public class DateUtil {
 	 * @param date1 日期1
 	 * @param date2 日期2
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see Date
+	 * @see Date
+	 * @see Boolean
 	 */
 	public static Boolean isSameYear(Date date1, Date date2) {
 		if (date1==null||date2==null) return false;

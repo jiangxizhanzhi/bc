@@ -68,7 +68,11 @@ import lombok.extern.slf4j.Slf4j;
  * 团队房间Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see TeamRoomService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -76,78 +80,104 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	/**
 	 * 团队房间Mapper
+	 *
+	 * @see TeamRoomMapper
 	 */
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
 
 	/**
 	 * 团队模板Mapper
+	 *
+	 * @see TeamTemplateMapper
 	 */
 	@Autowired
 	private TeamTemplateMapper teamTemplateMapper;
 
 	/**
 	 * 训练记录Service
+	 *
+	 * @see TrainRecordService
 	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
 	/**
 	 * 团队模板Service
+	 *
+	 * @see TeamTemplateService
 	 */
 	@Autowired
 	private TeamTemplateService teamTemplateService;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 靶场时间轴Service
+	 *
+	 * @see CrTimelineService
 	 */
 	@Autowired
 	private CrTimelineService crTimelineService;
 
 	/**
 	 * RTKS相关Service
+	 *
+	 * @see RtksRelatedService
 	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
@@ -157,6 +187,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code TeamRoomData }
+	 * @throws
+	 * @see String
+	 * @see TeamRoomData
 	 */
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
@@ -174,6 +207,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param teamTrainRoomContext 团队训练房间上下文
 	 * @return {@code TeamRoom }
+	 * @throws
+	 * @see TeamTrainRoomContext
+	 * @see TeamRoom
 	 */
 	@Override
 	public TeamRoom create(TeamTrainRoomContext teamTrainRoomContext) {
@@ -254,6 +290,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param missionsScheme
 	 * @param roomId         房间id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<MissionStageScheme>
 	 */
 	private List<MissionStageScheme> getNewRoomScheme(String missionsScheme, String roomId) {
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
@@ -302,6 +342,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param teamTrainRoomContext 团队训练房间上下文
 	 * @param teamRoom             团队会议室
+	 * @throws
+	 * @see TeamTrainRoomContext
+	 * @see TeamRoom
 	 */
 	@Override
 	public void updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom) {
@@ -376,6 +419,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<TeamRoomData> }
+	 * @throws
+	 * @see ListQuery
+	 * @see IPage<TeamRoomData>
 	 */
 	@Override
 	public IPage<TeamRoomData> list(ListQuery listQuery) {
@@ -392,6 +438,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public Integer changeTrainingStatus(String roomId) {
@@ -436,6 +485,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public Integer getTrainingStatus(String roomId) {
@@ -449,6 +501,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<UserRole> }
+	 * @throws
+	 * @see String
+	 * @see List<UserRole>
 	 */
 	@Override
 	public List<UserRole> getUserList(String roomId) {
@@ -497,6 +552,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code TeamRoom }
+	 * @throws
+	 * @see String
+	 * @see TeamRoom
 	 */
 	@Override
 	public TeamRoom getByLocalSceneId(String localSceneId) {
@@ -513,6 +571,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TeamRoom }
+	 * @throws
+	 * @see String
+	 * @see TeamRoom
 	 */
 	@Override
 	public TeamRoom getById(String roomId) {
@@ -529,6 +590,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TimeLineData }
+	 * @throws
+	 * @see String
+	 * @see TimeLineData
 	 */
 	@Override
 	public TimeLineData getStudentsTimeLine(String roomId) {
@@ -547,6 +611,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TimeLineData }
+	 * @throws
+	 * @see String
+	 * @see TimeLineData
 	 */
 	@Override
 	public TimeLineData getTimeLine(String roomId) {
@@ -564,6 +631,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void checkStudentPermission(String roomId, String userId) {
@@ -575,6 +645,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrRole> }
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	@Override
 	public List<CrRole> getStudentsRoles(String roomId) {
@@ -587,6 +660,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param req 请求体
 	 * @return {@code List<EvaluationListRsp> }
+	 * @throws
+	 * @see EvaluationListReq
+	 * @see List<EvaluationListRsp>
 	 */
 	@Override
 	public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
@@ -599,6 +675,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Integer}
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public Integer getDuration(String roomId) {
@@ -618,6 +697,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param roomId        房间id
 	 * @param currentUserId 当前用户id
 	 * @return {@code DashboardInfo }
+	 * @throws
+	 * @see CrRole
+	 * @see String
+	 * @see String
+	 * @see DashboardInfo
 	 */
 	@Override
 	public DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId) {
@@ -718,6 +802,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code CrRole }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrRole
 	 */
 	@Override
 	public CrRole checkRoomPermission(String roomId, String userId) {
@@ -742,6 +830,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param roleId 角色id
 	 * @param roomId 房间id
 	 * @return {@code List<DashboardUser> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<DashboardUser>
 	 */
 	@Override
 	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
@@ -774,6 +866,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TeamRoom }
+	 * @throws
+	 * @see String
+	 * @see TeamRoom
 	 */
 	@Override
 	public TeamRoom getOrExceptionById(String roomId) {
@@ -791,6 +886,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code TimeLineData }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TimeLineData
 	 */
 	@Override
 	public TimeLineData getTimeLine(String roomId, String userId) {
@@ -809,6 +908,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code ListRsp<TeamRoomRsp> }
+	 * @throws
+	 * @see ListQuery
+	 * @see ListRsp<TeamRoomRsp>
 	 */
 	@Override
 	public ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery) {
@@ -899,6 +1001,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param filePath    文件路径
 	 * @param jarFilePath jar 文件路径
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	private String confirmAvatarFile(String filePath, String jarFilePath) {
 		File file = new File(filePath);
@@ -933,6 +1039,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param role        角色
 	 * @param userInfoMap 用户信息地图
 	 * @return {@code List<DashboardUser> }
+	 * @throws
+	 * @see CrRole
+	 * @see Map<String, UserInfo>
+	 * @see List<DashboardUser>
 	 */
 	private List<DashboardUser> buildDashboardUser(CrRole role, Map<String, UserInfo> userInfoMap) {
 		return role.getUserIdList().stream()
@@ -947,6 +1057,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param userId      用户id
 	 * @param userInfoMap 用户信息地图
 	 * @return {@code DashboardUser }
+	 * @throws
+	 * @see CrRole
+	 * @see String
+	 * @see Map<String, UserInfo>
+	 * @see DashboardUser
 	 */
 	private DashboardUser buildDashboardUser(CrRole role, String userId, Map<String, UserInfo> userInfoMap) {
 		UserInfo userInfo = userInfoMap.get(userId);
@@ -972,6 +1087,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
@@ -983,6 +1101,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * 检查房间开放情况
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void checkRoomOpening(String roomId) {
@@ -1005,6 +1125,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param roomId 房间id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private void permissionCheck(String roomId, String userId) {
 		TeamRoom teamRoom = getById(roomId);
@@ -1028,6 +1151,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param roomId    房间id
 	 * @param userId    用户id
 	 * @param roleGroup 角色组
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	private void permissionCheck(String roomId, String userId, Integer roleGroup) {
 		TeamRoom teamRoom = getById(roomId);
@@ -1057,6 +1184,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param teamRoomId 团队房间id
 	 * @return {@code LocalScene }
+	 * @throws
+	 * @see String
+	 * @see LocalScene
 	 */
 	private LocalScene getLocalScene(String teamRoomId) {
 		TeamRoom teamRoom = teamRoomMapper.selectById(teamRoomId);
@@ -1078,6 +1208,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 *
 	 * @param timeLineData 时间线数据
 	 * @param roomId       房间id
+	 * @throws
+	 * @see TimeLineData
+	 * @see String
 	 */
 	private void setTime(TimeLineData timeLineData, String roomId) {
 		TeamRoomData teamRoom = getTeamRoomDataByRoomId(roomId);
@@ -1116,6 +1249,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * 验证名称
 	 *
 	 * @param name 名称
+	 * @throws
+	 * @see String
 	 */
 	private void validateName(String name) {
 		// check if duplicate
@@ -1132,7 +1267,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	 * @param userId      用户id
 	 * @param userInfoMap 用户信息地图
 	 * @return {@code BaseRole }
-	 */// 先获取实例列表中自己的角色，再获取所有的学员角色
+	 * @throws
+	 * @see List<CrRole>
+	 * @see String
+	 * @see Map<String, UserInfo>
+	 * @see BaseRole
+	 */ // 先获取实例列表中自己的角色，再获取所有的学员角色
 	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId,
 			Map<String, UserInfo> userInfoMap) {
 		BaseRole baseRole = new BaseRole();

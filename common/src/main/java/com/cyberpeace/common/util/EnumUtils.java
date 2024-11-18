@@ -10,7 +10,9 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
  * enum utils
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class EnumUtils {
 
@@ -21,6 +23,10 @@ public class EnumUtils {
 	 * @param code      代号
 	 * @param enumClass enum 类
 	 * @return {@code T }
+	 * @throws
+	 * @see Integer
+	 * @see Class<T>
+	 * @see T
 	 */
 	public static <T extends GenericEnum> T getEnumByCode(Integer code, Class<T> enumClass) {
 		return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getCode().equals(code))
@@ -34,6 +40,10 @@ public class EnumUtils {
 	 * @param code      代号
 	 * @param enumClass enum 类
 	 * @return {@code String }
+	 * @throws
+	 * @see Integer
+	 * @see Class<T>
+	 * @see String
 	 */
 	public static <T extends GenericEnum> String getEnumDescByCode(Integer code,
 			Class<T> enumClass) {
@@ -48,6 +58,10 @@ public class EnumUtils {
 	 * @param desc      描述
 	 * @param enumClass enum 类
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Class<T>
+	 * @see Integer
 	 */
 	public static <T extends GenericEnum> Integer getEnumCodeByDesc(String desc,
 			Class<T> enumClass) {
@@ -60,6 +74,9 @@ public class EnumUtils {
 	 *
 	 * @param enumClass
 	 * @return
+	 * @throws
+	 * @see Class<T>
+	 * @see List<Integer>
 	 */
 	public static <T extends GenericEnum> List<Integer> getListCode(Class<T> enumClass) {
 		return Arrays.stream(enumClass.getEnumConstants()).map(t -> t.getCode())
@@ -71,6 +88,9 @@ public class EnumUtils {
 	 *
 	 * @param enumClass enum 类
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see Class<T>
+	 * @see List<String>
 	 */
 	public static <T extends GenericEnum> List<String> getListDesc(Class<T> enumClass) {
 		return Arrays.stream(enumClass.getEnumConstants()).map(GenericEnum::getDesc).collect(Collectors.toList());

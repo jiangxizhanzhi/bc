@@ -9,13 +9,17 @@ import lombok.Data;
  * 评估系统列表响应
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class EvalSystemListRsp {
 
 	/**
 	 * 评估系统id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "评估体系Id", required = true)
 	@NotNull
@@ -23,6 +27,8 @@ public class EvalSystemListRsp {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotNull
@@ -30,12 +36,16 @@ public class EvalSystemListRsp {
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述", required = false)
 	private String description;
 
 	/**
 	 * 第一指数数量
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "一级指标数量", required = true)
 	@NotNull
@@ -43,6 +53,8 @@ public class EvalSystemListRsp {
 
 	/**
 	 * 第二指数数量
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "二级指标数量", required = true)
 	@NotNull
@@ -50,6 +62,8 @@ public class EvalSystemListRsp {
 
 	/**
 	 * 第三指数数量
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "三级指标数量", required = true)
 	@NotNull

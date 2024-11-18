@@ -27,7 +27,10 @@ import lombok.extern.slf4j.Slf4j;
  * RB导演Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see RbDirectorService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -35,12 +38,16 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
@@ -50,6 +57,9 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code RedBlueTaskReleaseProgress }
+	 * @throws
+	 * @see String
+	 * @see RedBlueTaskReleaseProgress
 	 */
 	@Override
 	public RedBlueTaskReleaseProgress getTaskReleaseProgress(String roomId) {
@@ -120,6 +130,9 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getReplaySceneId(String roomId) {

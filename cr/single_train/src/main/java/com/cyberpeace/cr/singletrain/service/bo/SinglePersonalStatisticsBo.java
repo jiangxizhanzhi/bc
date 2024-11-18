@@ -10,6 +10,9 @@ import java.io.Serializable;
  * 单个个人统计 bo
  *
  * @author SN
+ * @version 1.0.0
+ * @see Serializable
+ * @since 1.0.0
  * @date 2024/11/07
  */
 @Data
@@ -18,24 +21,32 @@ public class SinglePersonalStatisticsBo implements Serializable {
 
     /**
      * 用户id
+     *
+     * @see String
      */
     @ApiModelProperty("用户resource_id")
     private String userId;
 
     /**
      * 用户名
+     *
+     * @see String
      */
     @ApiModelProperty("用户名")
     private String username;
 
     /**
      * 名称
+     *
+     * @see String
      */
     @ApiModelProperty("用户姓名")
     private String name;
 
     /**
      * 总分
+     *
+     * @see Integer
      */
     @ApiModelProperty("累计得分")
     private Integer totalScore;

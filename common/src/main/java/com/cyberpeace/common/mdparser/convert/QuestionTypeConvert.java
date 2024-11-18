@@ -5,15 +5,75 @@ package com.cyberpeace.common.mdparser.convert;
  * 问题类型转换
  *
  * @author SN
+ * @version 1.0.0
+ * @see Enum
+ * @since 1.0.0
  * @date 2024/11/07
  */
 public enum QuestionTypeConvert implements MdConvertEnum<Integer, String> {
 
-	JUDGE(0, "判断"), SINGLE_CHOICE(1, "单选"), MULTIPLE_CHOICE(2, "多选"), BLANK(3, "填空"), FAQ(4,
-			"问答"), ATTACK(5, "攻击"), DEFENCE(6, "防御"), FILE(7, "文件");
+	/**
+	 * 判断
+	 *
+	 * @see QuestionTypeConvert
+	 */
+	JUDGE(0, "判断"),
+	/**
+	 * 单选
+	 *
+	 * @see QuestionTypeConvert
+	 */
+	SINGLE_CHOICE(1, "单选"),
+	/**
+	 * 多项选择
+	 *
+	 * @see QuestionTypeConvert
+	 */
+	MULTIPLE_CHOICE(2, "多选"),
+	/**
+	 * 空白
+	 *
+	 * @see QuestionTypeConvert
+	 */
+	BLANK(3, "填空"),
+	/**
+	 * 常见问题
+	 *
+	 * @see QuestionTypeConvert
+	 */
+	FAQ(4,
+			"问答"),
+	/**
+	 * 攻击
+	 *
+	 * @see QuestionTypeConvert
+	 */
+	ATTACK(5, "攻击"),
+	/**
+	 * 防御
+	 *
+	 * @see QuestionTypeConvert
+	 */
+	DEFENCE(6, "防御"),
+	/**
+	 * 文件
+	 *
+	 * @see QuestionTypeConvert
+	 */
+	FILE(7, "文件");
 
+	/**
+	 * 任务类型
+	 *
+	 * @see Integer
+	 */
 	private Integer taskType;
 
+	/**
+	 * 描述
+	 *
+	 * @see String
+	 */
 	private String desc;
 
 	/**
@@ -21,6 +81,9 @@ public enum QuestionTypeConvert implements MdConvertEnum<Integer, String> {
 	 *
 	 * @param taskType 任务类型
 	 * @param desc     描述
+	 * @throws
+	 * @see Integer
+	 * @see String
 	 */
 	QuestionTypeConvert(Integer taskType, String desc) {
 		this.taskType = taskType;
@@ -31,6 +94,8 @@ public enum QuestionTypeConvert implements MdConvertEnum<Integer, String> {
 	 * 自
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer to() {
@@ -41,6 +106,8 @@ public enum QuestionTypeConvert implements MdConvertEnum<Integer, String> {
 	 * re 更改为
 	 *
 	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public String reTo() {

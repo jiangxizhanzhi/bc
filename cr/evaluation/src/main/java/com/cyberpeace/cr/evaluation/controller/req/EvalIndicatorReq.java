@@ -15,13 +15,17 @@ import lombok.Data;
  * 评估指示器请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class EvalIndicatorReq {
 
 	/**
 	 * 评估指示器id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "指标项Id", required = true)
 	@NotNull
@@ -29,6 +33,8 @@ public class EvalIndicatorReq {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotNull
@@ -36,6 +42,8 @@ public class EvalIndicatorReq {
 
 	/**
 	 * 数据类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "数据类型", required = true)
 	@NotNull
@@ -43,6 +51,8 @@ public class EvalIndicatorReq {
 
 	/**
 	 * 属性
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "指标属性", required = true)
 	@NotNull
@@ -50,18 +60,24 @@ public class EvalIndicatorReq {
 
 	/**
 	 * 属性值
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "指标属性值", required = false)
 	private Integer attributeValue;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述", required = false)
 	private String description;
 
 	/**
 	 * 连接列表
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "连接线", required = true)
 	@NotNull
@@ -69,6 +85,8 @@ public class EvalIndicatorReq {
 
 	/**
 	 * EVAL 集合
+	 *
+	 * @see List<EvalCollectionContext>
 	 */
 	@ApiModelProperty(value = "采集项列表", required = true)
 	@NotNull
@@ -76,6 +94,8 @@ public class EvalIndicatorReq {
 
 	/**
 	 * eval 聚合
+	 *
+	 * @see List<EvalAggregationContext>
 	 */
 	@ApiModelProperty(value = "聚合项列表", required = true)
 	@NotNull
@@ -83,6 +103,8 @@ public class EvalIndicatorReq {
 
 	/**
 	 * 评估指示器
+	 *
+	 * @see List<EvalIndicatorContext>
 	 */
 	@ApiModelProperty(value = "指标项列表", required = true)
 	@NotNull

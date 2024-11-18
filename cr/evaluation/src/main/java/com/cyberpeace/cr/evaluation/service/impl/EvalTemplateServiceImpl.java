@@ -42,7 +42,11 @@ import java.util.Objects;
  * 评估模板Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalTemplateService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -50,42 +54,56 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 靶场常数Service
+	 *
+	 * @see CrConstantsService
 	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
 	/**
 	 * 评估模板Mapper
+	 *
+	 * @see EvalTemplateMapper
 	 */
 	@Autowired
 	private EvalTemplateMapper evalTemplateMapper;
 
 	/**
 	 * 评估任务Service
+	 *
+	 * @see EvalTaskService
 	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
 	/**
 	 * 评估任务Mapper
+	 *
+	 * @see EvalTaskMapper
 	 */
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
@@ -95,6 +113,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	 *
 	 * @param templateId 模板id
 	 * @return {@code EvalTemplate }
+	 * @throws
+	 * @see String
+	 * @see EvalTemplate
 	 */
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
@@ -122,6 +143,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	 *
 	 * @param evalTemplateListQuery EVAL 模板列表查询
 	 * @return {@code IPage<EvalTemplate> }
+	 * @throws
+	 * @see EvalTemplateListQuery
+	 * @see IPage<EvalTemplate>
 	 */
 	@Override
 	public IPage<EvalTemplate> list(@Validated EvalTemplateListQuery evalTemplateListQuery) {
@@ -139,6 +163,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	 * @param evalTemplate eval 模板
 	 * @param isFinished   已完成
 	 * @return {@code List<EvalTaskSlimContext> }
+	 * @throws
+	 * @see EvalTemplate
+	 * @see Boolean
+	 * @see List<EvalTaskSlimContext>
 	 */
 	@Override
 	public List<EvalTaskSlimContext> listTask(EvalTemplate evalTemplate, Boolean isFinished) {
@@ -163,6 +191,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	 *
 	 * @param attachmentId attachmentid
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getLogoPath(String attachmentId) {
@@ -178,6 +209,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	 *
 	 * @param templateIds 模板id列表
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean batchDelete(List<String> templateIds) {
@@ -214,6 +248,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	 * @param templateId 模板id
 	 * @param taskStatus 任务状态
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see EvalTask.Status
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean validateExistTask(String templateId, EvalTask.Status taskStatus) {
@@ -230,6 +268,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	 *
 	 * @param evalTemplateBaseInfoContext eval 模板 base info 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see EvalTemplateBaseInfoContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean validateBaseInfo(EvalTemplateBaseInfoContext evalTemplateBaseInfoContext) {
@@ -274,6 +315,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 	 *
 	 * @param evalTaskStepConfigList 评估任务步骤配置列表
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<EvalTaskStepConfig>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean validateStepConfig(List<EvalTaskStepConfig> evalTaskStepConfigList) {

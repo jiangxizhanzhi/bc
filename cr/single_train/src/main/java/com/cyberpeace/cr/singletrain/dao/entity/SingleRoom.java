@@ -13,7 +13,10 @@ import lombok.Data;
  * 单人房
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_single_room")
@@ -21,22 +24,30 @@ public class SingleRoom extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 引用单兵训练模板id
+	 *
+	 * @see String
 	 */
 	private String businessTemplateId;
 
 	/**
 	 * 训练开始时间
+	 *
+	 * @see Date
 	 */
 	private Date startTime;
 
 	/**
 	 * 训练结束时间
+	 *
+	 * @see Date
 	 */
 	private Date endTime;
 
@@ -57,21 +68,29 @@ public class SingleRoom extends BaseTable {
 	 * "time": 1684312008977
 	 * }
 	 * }
+	 *
+	 * @see String
 	 */
 	private String trainingRecord;
 
 	/**
 	 * 是否已提交训练(训练已提交标识, 禁止用户重复提交)
+	 *
+	 * @see Boolean
 	 */
 	private Boolean isFinish;
 
 	/**
 	 * 引用场景id
+	 *
+	 * @see String
 	 */
 	private String localSceneId;
 
 	/**
 	 * 训练用户
+	 *
+	 * @see String
 	 */
 	private String userId;
 

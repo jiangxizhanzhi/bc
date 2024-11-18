@@ -51,7 +51,11 @@ import lombok.extern.slf4j.Slf4j;
  * RB房间得分Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see RbRoomScoreService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -59,42 +63,56 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * RB时间管理Service
+	 *
+	 * @see RbTimeManagementService
 	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 靶场任务提交Mapper
+	 *
+	 * @see CrTaskSubmitMapper
 	 */
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -104,6 +122,9 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<RoleScore> }
+	 * @throws
+	 * @see String
+	 * @see List<RoleScore>
 	 */
 	@Override
 	public List<RoleScore> getRoleScoreInfo(String roomId) {
@@ -166,6 +187,9 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TimeData }
+	 * @throws
+	 * @see String
+	 * @see TimeData
 	 */
 	@Override
 	public TimeData getRbTimeData(String roomId) {
@@ -197,6 +221,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code XYData }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see XYData
 	 */
 	@Override
 	public XYData getRbMissionCategory(String roomId, Integer roleType) {
@@ -235,6 +263,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getRbMembersRanking(String roomId, Integer roleType) {
@@ -265,6 +297,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getRbMissionEvaluation(String roomId, Integer roleType) {
@@ -318,6 +354,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getRbLeaderBoard(String roomId, Integer roleType) {
@@ -359,6 +399,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getRbScoreProgress(String roomId, Integer roleType) {
@@ -389,6 +433,11 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId      房间id
 	 * @param roleUserIds 角色用户id列表
 	 * @return {@code List<Integer> }
+	 * @throws
+	 * @see TimeData
+	 * @see String
+	 * @see RoleUserIds
+	 * @see List<Integer>
 	 */
 	private List<Integer> getScoreProgress(TimeData timeData, String roomId, RoleUserIds roleUserIds) {
 		// 一次取出所有用户的得分纪录
@@ -413,6 +462,11 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId    房间id
 	 * @param roleGroup 角色组
 	 * @return {@code List<Integer> }
+	 * @throws
+	 * @see TimeData
+	 * @see String
+	 * @see CrRole.RbRoleGroup
+	 * @see List<Integer>
 	 */
 	private List<Integer> getScoreProgress(TimeData timeData, String roomId, CrRole.RbRoleGroup roleGroup){
 		RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, roleGroup));
@@ -425,6 +479,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getAllRbScoreProgress(String roomId, Integer roleType) {
@@ -460,6 +518,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getRbMissionProgress(String roomId, Integer roleType) {
@@ -514,6 +576,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code List<RankData> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<RankData>
 	 */
 	private List<RankData> getUserScoreMissionData(String roomId, Integer roleType) {
 
@@ -593,6 +659,10 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 * @param roomId   房间id
 	 * @param roleType 角色类型
 	 * @return {@code RoleUserIds }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see RoleUserIds
 	 */
 	private RoleUserIds getRoleInfo(String roomId, Integer roleType) {
 		return getRoleInfo(new RoleQuery(roomId, roleType));
@@ -603,6 +673,9 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	 *
 	 * @param roleQuery 角色查询
 	 * @return {@code RoleUserIds }
+	 * @throws
+	 * @see RoleQuery
+	 * @see RoleUserIds
 	 */
 	private RoleUserIds getRoleInfo(RoleQuery roleQuery) {
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);

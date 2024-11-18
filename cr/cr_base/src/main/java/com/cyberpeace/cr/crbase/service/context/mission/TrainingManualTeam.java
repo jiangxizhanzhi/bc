@@ -13,23 +13,31 @@ import lombok.Data;
  * 团队训练手册
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class TrainingManualTeam {
 
 	/**
-	 * 发短信
+	 * 文本
+	 *
+	 * @see StringBuffer
 	 */
 	private StringBuffer text;
 
 	/**
 	 * 阶段
+	 *
+	 * @see List<CrRoleMissionSchemeStage>
 	 */
 	private List<CrRoleMissionSchemeStage> stages;
 
 	/**
 	 * 任务图
+	 *
+	 * @see Map<String, Mission>
 	 */
 	private Map<String, Mission> missionMap;
 

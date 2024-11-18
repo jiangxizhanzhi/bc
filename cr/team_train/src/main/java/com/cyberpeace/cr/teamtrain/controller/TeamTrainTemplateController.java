@@ -67,7 +67,9 @@ import io.swagger.annotations.ApiOperation;
  * 团队训练模板控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "团队训练模板")
 @RestController
@@ -77,60 +79,80 @@ public class TeamTrainTemplateController {
 
 	/**
 	 * 团队模板Service
+	 *
+	 * @see TeamTemplateService
 	 */
 	@Autowired
 	TeamTemplateService teamTemplateService;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	LocalSceneService localSceneService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 靶场常见Service
+	 *
+	 * @see CrCommonService
 	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * RTKS相关Service
+	 *
+	 * @see RtksRelatedService
 	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
 	/**
 	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
 	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
@@ -140,6 +162,9 @@ public class TeamTrainTemplateController {
 	 *
 	 * @param addReq 新增请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see TeamTrainTemplateAddReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("新增")
 	@PostMapping()
@@ -179,6 +204,9 @@ public class TeamTrainTemplateController {
 	 *
 	 * @param modifyReq 修改请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see TeamTrainTemplateModifyReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("修改")
 	@PatchMapping()
@@ -221,6 +249,9 @@ public class TeamTrainTemplateController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<TeamTrainTemplateRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TeamTrainTemplateRsp>
 	 */
 	@ApiOperation("查询")
 	@GetMapping()
@@ -282,6 +313,9 @@ public class TeamTrainTemplateController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
@@ -313,6 +347,9 @@ public class TeamTrainTemplateController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<TeamTrainTemplateRsp>> }
+	 * @throws
+	 * @see TeamTemplateListReq
+	 * @see BaseRsp<ListRsp<TeamTrainTemplateRsp>>
 	 */
 	@ApiOperation("前台列表查询")
 	@GetMapping("/list")
@@ -353,6 +390,13 @@ public class TeamTrainTemplateController {
 	 * @param icsRelCount        集成电路相对计数
 	 * @param engageRelCount     聘相对计数
 	 * @return {@code TeamTrainTemplateRsp }
+	 * @throws
+	 * @see TeamTemplateData
+	 * @see Map<String, TopoDigest>
+	 * @see Map<String, List<NameCount>>
+	 * @see Map<String, List<NameCount>>
+	 * @see Map<String, List<NameCount>>
+	 * @see TeamTrainTemplateRsp
 	 */
 	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(
 			TeamTemplateData teamTemplateData, Map<String, TopoDigest> topologyNodesStats,
@@ -411,6 +455,10 @@ public class TeamTrainTemplateController {
 	 * @param req          请求体
 	 * @param teamTemplate 团队模板
 	 * @return {@code TeamTemplate }
+	 * @throws
+	 * @see TeamTrainTemplateReq
+	 * @see TeamTemplate
+	 * @see TeamTemplate
 	 */
 	private TeamTemplate reqToTeamTemplate(TeamTrainTemplateReq req, TeamTemplate teamTemplate) {
 

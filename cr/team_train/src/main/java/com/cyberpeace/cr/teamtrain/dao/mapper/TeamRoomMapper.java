@@ -18,7 +18,10 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
  * 团队房间Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -29,6 +32,9 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code TeamRoomData }
+	 * @throws
+	 * @see String
+	 * @see TeamRoomData
 	 */
 	TeamRoomData getTeamRoomRspByRoomId(String resourceId);
 
@@ -38,6 +44,10 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 * @param page      分页
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<TeamRoomData> }
+	 * @throws
+	 * @see Page
+	 * @see ListQuery
+	 * @see IPage<TeamRoomData>
 	 */
 	IPage<TeamRoomData> listTeamRoom(Page page, ListQuery listQuery);
 
@@ -46,6 +56,9 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code TeamRoom }
+	 * @throws
+	 * @see String
+	 * @see TeamRoom
 	 */
 	TeamRoom selectByLocalSceneId(String localSceneId);
 
@@ -55,6 +68,10 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 * @param roomIds         房间id列表
 	 * @param completedStatus 完成状态
 	 * @return {@code TrainingCount }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
+	 * @see TrainingCount
 	 */
 	TrainingCount getTrainingCount(@Param("roomIds") List<String> roomIds,
 			@Param("completedStatus") Integer completedStatus);
@@ -65,6 +82,10 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 * @param roomIds 房间id列表
 	 * @param endCode 结束代号
 	 * @return {@code List<TeamRoom> }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<TeamRoom>
 	 */
 	List<TeamRoom> selectUnfinishedByIds(@Param("roomIds") List<String> roomIds,
 			@Param("endCode") Integer endCode);
@@ -74,6 +95,9 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	 *
 	 * @param name
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean existByName(@Param("name") String name);
 }

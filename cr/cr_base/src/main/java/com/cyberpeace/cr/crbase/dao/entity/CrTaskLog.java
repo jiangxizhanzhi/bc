@@ -11,7 +11,10 @@ import lombok.*;
  * 靶场任务日志
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @AllArgsConstructor
@@ -22,32 +25,44 @@ public class CrTaskLog extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 房间id
+	 *
+	 * @see String
 	 */
 	private String roomId;
 
 	/**
 	 * 任务id
+	 *
+	 * @see String
 	 */
 	private String missionId;
 
 	/**
 	 * 任务id
+	 *
+	 * @see String
 	 */
 	private String taskId;
 
 	/**
 	 * 行动代号
+	 *
+	 * @see Integer
 	 */
 	private Integer actionCode;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 

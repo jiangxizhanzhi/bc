@@ -15,10 +15,34 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.ListRsp;
 import com.google.common.collect.Lists;
 
+/**
+ * 分页util
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
+ */
 public class PageUtil {
 
+	/**
+	 * 分页util
+	 *
+	 * @throws
+	 */
 	private PageUtil() {}
 
+	/**
+	 * 转换列表结果
+	 *
+	 * @param page 分页
+	 * @param func 函数
+	 * @return {@code ListRsp }
+	 * @throws
+	 * @see IPage<T>
+	 * @see Function<T, U>
+	 * @see ListRsp
+	 */
 	public static <T, U> ListRsp transformListResult(IPage<T> page, Function<T, U> func) {
 		List<U> outputs = new ArrayList<>();
 		for (T record : page.getRecords()) {
@@ -33,6 +57,15 @@ public class PageUtil {
 		return ret;
 	}
 
+	/**
+	 * 获取列表结果
+	 *
+	 * @param data 数据
+	 * @return {@code ListRsp<K> }
+	 * @throws
+	 * @see IPage
+	 * @see ListRsp<K>
+	 */
 	public static <K> ListRsp<K> getListResult(IPage data) {
 
 		if (null == data) {
@@ -49,6 +82,19 @@ public class PageUtil {
 		return ret;
 	}
 
+	/**
+	 * 获取列表结果
+	 *
+	 * @param data  数据
+	 * @param page  分页
+	 * @param total 总数
+	 * @return {@code ListRsp<K> }
+	 * @throws
+	 * @see List<K>
+	 * @see Page
+	 * @see long
+	 * @see ListRsp<K>
+	 */
 	public static <K> ListRsp<K> getListResult(List<K> data, Page page, long total) {
 
 		// 空数据直接返回
@@ -111,11 +157,29 @@ public class PageUtil {
 		return listRsp;
 	}
 
+	/**
+	 * 获取零结果
+	 *
+	 * @return {@code ListRsp }
+	 * @throws
+	 * @see ListRsp
+	 */
 	public static ListRsp getNullResult() {
 		return ListRsp.builder().list(Lists.newArrayList()).lastPage(CommonConstant.ZERO)
 				.currentPage(CommonConstant.ONE).total(CommonConstant.ZERO).build();
 	}
 
+	/**
+	 * 设置分页次序
+	 *
+	 * @param page      分页
+	 * @param orderName 次序名称
+	 * @param asc       ASC
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see boolean
+	 */
 	public static void setPageOrder(Page page, String orderName, boolean asc) {
 		OrderItem orderItem = new OrderItem(orderName, asc);
 		if (CollectionUtils.isEmpty(page.getOrders())) {
@@ -133,6 +197,11 @@ public class PageUtil {
 	 * @param page    页码
 	 * @param perPage 页尺寸
 	 * @return {@code ListRsp<T>}
+	 * @throws
+	 * @see List<T>
+	 * @see Integer
+	 * @see Integer
+	 * @see ListRsp<T>
 	 */
 	public static <T> ListRsp<T> pageList(List<T> list, Integer page, Integer perPage) {
 		IPage<T> resPage = new Page<>(page, perPage, list.size());

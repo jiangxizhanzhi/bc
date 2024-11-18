@@ -15,7 +15,10 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
  * 任务计划模板映射器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -27,6 +30,10 @@ public interface MissionSchemeTemplateMapper extends BaseMapper<MissionSchemeTem
 	 * @param page    分页
 	 * @param pattern 模式
 	 * @return {@code IPage<MissionSchemeTemplate> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see IPage<MissionSchemeTemplate>
 	 */
 	IPage<MissionSchemeTemplate> list(Page page, String pattern);
 
@@ -34,6 +41,8 @@ public interface MissionSchemeTemplateMapper extends BaseMapper<MissionSchemeTem
 	 * 批量插入
 	 *
 	 * @param missionSchemeTemplates 任务计划模板
+	 * @throws
+	 * @see List<MissionSchemeTemplate>
 	 */
 	void batchInsert(
 			@Param("missionSchemeTemplates") List<MissionSchemeTemplate> missionSchemeTemplates);
@@ -43,6 +52,9 @@ public interface MissionSchemeTemplateMapper extends BaseMapper<MissionSchemeTem
 	 *
 	 * @param title 标题
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean existByTitle(@Param("title") String title);
 

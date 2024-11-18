@@ -7,19 +7,25 @@ import lombok.Data;
  * 任务完成数
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class MissionCompletion {
 
 	/**
 	 * 任务状态
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "任务状态")
 	private Integer missionStatus;
 
 	/**
 	 * 完成数量
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "任务完成数")
 	private Integer completeNum;

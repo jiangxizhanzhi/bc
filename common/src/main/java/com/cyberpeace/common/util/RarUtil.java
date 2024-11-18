@@ -12,8 +12,12 @@ import java.io.RandomAccessFile;
 
 
 /**
- * @Author xuxz
- * @Date 30/1/2023 下午3:40
+ * rar util （英语）
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
  */
 @Slf4j
 public class RarUtil {
@@ -22,7 +26,9 @@ public class RarUtil {
      *
      * @param sourceRar 压缩文件
      * @param outDir    解压结果路径
-     * @throws Exception
+     * @throws
+     * @see String
+     * @see String
      */
     public static void unrarToDest(String sourceRar, String outDir) {
         File file = new File(sourceRar);

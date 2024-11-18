@@ -25,31 +25,42 @@ import com.google.common.collect.Lists;
  * 单训练统计学
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see CrEventStatistics
+ * @since 1.0.0
  */
 @Service
 public class SingleTrainStatistics extends CrEventStatistics {
 
 	/**
 	 * 训练记录Mapper
+	 *
+	 * @see TrainRecordMapper
 	 */
 	@Autowired
 	TrainRecordMapper trainRecordMapper;
 
 	/**
 	 * 单房间Mapper
+	 *
+	 * @see SingleRoomMapper
 	 */
 	@Autowired
 	SingleRoomMapper singleRoomMapper;
 
 	/**
 	 * 业务模板Mapper
+	 *
+	 * @see BusinessTemplateMapper
 	 */
 	@Autowired
 	BusinessTemplateMapper businessTemplateMapper;
 
 	/**
 	 * 单模板Mapper
+	 *
+	 * @see SingleTemplateMapper
 	 */
 	@Autowired
 	SingleTemplateMapper singleTemplateMapper;
@@ -58,6 +69,8 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	 * 获取代号
 	 *
 	 * @return {@code LocalScene.BusinessCode }
+	 * @throws
+	 * @see LocalScene.BusinessCode
 	 */
 	@Override
 	public LocalScene.BusinessCode getCode() {
@@ -69,6 +82,9 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	 *
 	 * @param userId 用户id
 	 * @return {@code TrainingCount }
+	 * @throws
+	 * @see String
+	 * @see TrainingCount
 	 */
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
@@ -87,6 +103,9 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<TrainingData> }
+	 * @throws
+	 * @see String
+	 * @see List<TrainingData>
 	 */
 	@Override
 	public List<TrainingData> getRelatedTraining(String userId) {

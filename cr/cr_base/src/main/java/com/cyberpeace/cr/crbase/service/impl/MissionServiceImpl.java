@@ -51,7 +51,11 @@ import lombok.extern.slf4j.Slf4j;
  * 任务Service实现
  *
  * @author yinqingrong
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see MissionService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -59,71 +63,95 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	/**
 	 * 任务Mapper
+	 *
+	 * @see MissionMapper
 	 */
 	@Autowired
 	private MissionMapper missionMapper;
 
 	/**
 	 * 任务模板Mapper
+	 *
+	 * @see MissionTemplateMapper
 	 */
 	@Autowired
 	private MissionTemplateMapper missionTemplateMapper;
 
 	/**
 	 * 靶场任务Mapper
+	 *
+	 * @see CrTaskMapper
 	 */
 	@Autowired
 	private CrTaskMapper crTaskMapper;
 
 	/**
 	 * 靶场角色Mapper
+	 *
+	 * @see CrRoleMapper
 	 */
 	@Autowired
 	private CrRoleMapper crRoleMapper;
 
 	/**
 	 * 靶场任务日志Mapper
+	 *
+	 * @see CrTaskLogMapper
 	 */
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
 
 	/**
 	 * 靶场常数Service
+	 *
+	 * @see CrConstantsService
 	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
 	/**
 	 * 任务方案模板Mapper
+	 *
+	 * @see MissionSchemeTemplateMapper
 	 */
 	@Autowired
 	private MissionSchemeTemplateMapper missionSchemeTemplateMapper;
 
 	/**
 	 * 雷达标签Mapper
+	 *
+	 * @see RadarLabelMapper
 	 */
 	@Autowired
 	private RadarLabelMapper radarLabelMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 靶场徽章Service
+	 *
+	 * @see CrBadgeService
 	 */
 	@Autowired
 	private CrBadgeService crBadgeService;
 
 	/**
 	 * 类别缓存
+	 *
+	 * @see Map<String, MissionCategoryCache>
 	 */
 	private volatile Map<String, MissionCategoryCache> categoryCache;
 
 	/**
 	 * 锁
+	 *
+	 * @see Object
 	 */
 	private Object lock = new Object();
 
@@ -132,6 +160,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param missionTemplate 任务模板
 	 * @return {@code MissionTemplate }
+	 * @throws
+	 * @see MissionTemplate
+	 * @see MissionTemplate
 	 */
 	@Override
 	public MissionTemplate addMissionTemplate(MissionTemplate missionTemplate) {
@@ -144,6 +175,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param missionTemplateId 任务模板id
 	 * @return {@code MissionTemplate }
+	 * @throws
+	 * @see String
+	 * @see MissionTemplate
 	 */
 	@Override
 	public MissionTemplate getByMissionTemplateId(String missionTemplateId) {
@@ -154,6 +188,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 更新任务模板
 	 *
 	 * @param missionTemplate 任务模板
+	 * @throws
+	 * @see MissionTemplate
 	 */
 	@Override
 	public void updateMissionTemplate(MissionTemplate missionTemplate) {
@@ -165,6 +201,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param missionId 任务id
 	 * @return {@code Mission }
+	 * @throws
+	 * @see String
+	 * @see Mission
 	 */
 	@Override
 	public Mission getById(String missionId) {
@@ -176,6 +215,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param resourceIds 资源id列表
 	 * @return {@code List<Mission> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<Mission>
 	 */
 	@Override
 	public List<Mission> batchGet(List<String> resourceIds) {
@@ -202,6 +244,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<Mission> }
+	 * @throws
+	 * @see String
+	 * @see List<Mission>
 	 */
 	@Override
 	public List<Mission> batchGetByRoom(String roomId) {
@@ -214,6 +259,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param missionId     任务id
 	 * @param roleId        角色id
 	 * @param currentUserId 当前用户id
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void release(String missionId, String roleId, String currentUserId) {
@@ -274,6 +323,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param roomId        房间id
 	 * @param roleId        角色id
 	 * @param currentUserId 当前用户id
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void roleRelease(String roomId, String roleId, String currentUserId) {
@@ -315,6 +368,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param stage          阶段
 	 * @param afterMissionId 后任务id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see Mission
+	 * @see CrRole
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean addDynamic(Mission mission, CrRole role, Integer stage,String afterMissionId) {
@@ -346,6 +405,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 列表类别
 	 *
 	 * @return {@code List<MissionCategory> }
+	 * @throws
+	 * @see List<MissionCategory>
 	 */
 	@Override
 	public List<MissionCategory> listCategories() {
@@ -363,6 +424,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Map<String, MissionCompletion> }
+	 * @throws
+	 * @see String
+	 * @see Map<String, MissionCompletion>
 	 */
 	@Override
 	public Map<String, MissionCompletion> getMissionStatusData(String roomId) {
@@ -388,6 +452,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param categoryId 类别id
 	 * @return {@code MissionCategory }
+	 * @throws
+	 * @see String
+	 * @see MissionCategory
 	 */
 	@Override
 	public MissionCategory getCategoryById(String categoryId) {
@@ -403,6 +470,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param userId             用户id
 	 * @param roomId             房间id
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 * @see String
+	 * @see Map<String, String>
 	 */
 	@Override
 	public Map<String, String> copyScheme(List<String> missionTemplateIds, String userId,
@@ -438,6 +510,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param missionId   任务id
 	 * @param showWriteup 显示 Writeup
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public void openOrCloseWriteup(String missionId, Boolean showWriteup) {
@@ -467,6 +542,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 新增方案模板
 	 *
 	 * @param schemeTemplate 方案模板
+	 * @throws
+	 * @see MissionSchemeTemplate
 	 */
 	@Override
 	public void addSchemeTemplate(MissionSchemeTemplate schemeTemplate) {
@@ -477,6 +554,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 批量删除方案模板
 	 *
 	 * @param schemeTemplateIds 方案模板id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public void batchDeleteSchemeTemplate(List<String> schemeTemplateIds) {
@@ -488,6 +567,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param schemeTemplateId 方案模板id
 	 * @return {@code MissionSchemeTemplate }
+	 * @throws
+	 * @see String
+	 * @see MissionSchemeTemplate
 	 */
 	@Override
 	public MissionSchemeTemplate getSchemeTemplateById(String schemeTemplateId) {
@@ -498,6 +580,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 更新任务方案模板由id
 	 *
 	 * @param toUpdateSchemeTemplate 更新 Scheme 模板
+	 * @throws
+	 * @see MissionSchemeTemplate
 	 */
 	@Override
 	public void updateMissionSchemeTemplateById(MissionSchemeTemplate toUpdateSchemeTemplate) {
@@ -509,6 +593,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param pageReqBase 分页请求体基础
 	 * @return {@code ListRsp<MissionSchemeTemplateRsp> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see ListRsp<MissionSchemeTemplateRsp>
 	 */
 	@Override
 	public ListRsp<MissionSchemeTemplateRsp> pageSchemeTemplateRsp(PageReqBase pageReqBase) {
@@ -525,6 +612,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code MissionSchemeTemplateRsp }
+	 * @throws
+	 * @see String
+	 * @see MissionSchemeTemplateRsp
 	 */
 	@Override
 	public MissionSchemeTemplateRsp getSchemeTemplateRspById(String resourceId) {
@@ -539,6 +629,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param roomId    房间id
 	 * @param studentId 学员id
 	 * @return {@code List<DynamicData> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<DynamicData>
 	 */
 	@Override
 	public List<DynamicData> getTaskLogByRoomIdAndUserId(String roomId, String studentId) {
@@ -565,6 +659,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param schemeTemplate 方案模板
 	 * @return {@code MissionSchemeTemplateRsp }
+	 * @throws
+	 * @see MissionSchemeTemplate
+	 * @see MissionSchemeTemplateRsp
 	 */
 	private MissionSchemeTemplateRsp schemeTemplateToRsp(MissionSchemeTemplate schemeTemplate) {
 		MissionSchemeTemplateRsp templateRsp = BeanUtils.deepCopy(schemeTemplate,
@@ -586,6 +683,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getTeamTrainingManual(String roomId) {
@@ -613,6 +713,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param missionTemplates 任务模板
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<MissionTemplate>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates) {
@@ -642,6 +745,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param stage                  阶段
 	 * @param missionId              任务id
 	 * @param afterMissionId         后任务id
+	 * @throws
+	 * @see List<MissionStageScheme>
+	 * @see Integer
+	 * @see String
+	 * @see String
 	 */
 	private void addDynamicMissionInfo(List<MissionStageScheme> missionStageSchemeList,
 			Integer stage, String missionId,String afterMissionId) {
@@ -690,6 +798,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param missionStageScheme 任务阶段计划
 	 * @param resourceId         资源id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see MissionStageScheme
+	 * @see String
+	 * @see List<String>
 	 */
 	private List<String> getDynamicIds(MissionStageScheme missionStageScheme, String resourceId) {
 
@@ -709,6 +821,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param title
 	 * @param missionIds
 	 * @return true ：重名
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	private Boolean checkNameDuplicate(String title, List<String> missionIds) {
 		if (missionIds.isEmpty()) {
@@ -721,6 +837,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 获取任务内容
 	 *
 	 * @param schemeData 方案数据
+	 * @throws
+	 * @see MissionSchemeObject<AddTemplateMission>
 	 */
 	@Override
 	public void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData) {
@@ -751,6 +869,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 验证任务
 	 *
 	 * @param colorMission 色彩使命
+	 * @throws
+	 * @see ColorMission<AddTemplateMission>
 	 */
 	@Override
 	public void validateMission(ColorMission<AddTemplateMission> colorMission) {
@@ -765,6 +885,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * Missions Scheme 验证者
 	 *
 	 * @param missionsScheme 任务计划
+	 * @throws
+	 * @see JSONObject
 	 */
 	@Override
 	public void missionsSchemeValidator(JSONObject missionsScheme) {
@@ -813,7 +935,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param templateIds 模板id列表
 	 * @param tempDir     临时目录
 	 * @return {@code String }
-	 * @throws IOException io异常
+	 * @throws @throws IOException io异常
+	 * @see List<String>
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String makeDumpFile(List<String> templateIds, String tempDir) throws IOException {
@@ -837,6 +962,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 批量加载方案
 	 *
 	 * @param unZipPath un zip 路径
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void batchLoadScheme(String unZipPath) {
@@ -870,6 +997,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 获取雷达标签
 	 *
 	 * @return {@code List<RadarLabel> }
+	 * @throws
+	 * @see List<RadarLabel>
 	 */
 	@Override
 	public List<RadarLabel> getRadarLabel() {
@@ -880,6 +1009,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 更新 Radar 标签
 	 *
 	 * @param radarLabelList 雷达标签列表
+	 * @throws
+	 * @see List<RadarLabel>
 	 */
 	@Override
 	public void updateRadarLabel(List<RadarLabel> radarLabelList) {
@@ -893,6 +1024,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * 检查 Scheme 模板标题重复
 	 *
 	 * @param title 标题
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void checkSchemeTemplateTitleDuplicate(String title) {
@@ -908,6 +1041,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param missionStageSchemes 任务阶段计划
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<MissionStageScheme>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getMissionIdsByScheme(List<MissionStageScheme> missionStageSchemes) {
@@ -921,6 +1057,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param pageReq 分页请求体
 	 * @return {@code ListRsp<MissionTemplateRes> }
+	 * @throws
+	 * @see MissionTemplatePageReq
+	 * @see ListRsp<MissionTemplateRes>
 	 */
 	@Override
 	public ListRsp<MissionTemplateRes> pageMissionTemplate(MissionTemplatePageReq pageReq) {
@@ -936,6 +1075,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param roomId     房间id
 	 * @param crRoleList 靶场角色列表
 	 * @return {@code List<Mission> }
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
+	 * @see List<Mission>
 	 */
 	@Override
 	public List<Mission> batchGetByRoomAndCrRoles(String roomId, List<CrRole> crRoleList) {
@@ -954,6 +1097,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param missionId 任务id
 	 * @param roomId    房间id
 	 * @param title     标题
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void updateMissionValidate(String missionId, String roomId, String title) {
@@ -985,6 +1132,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 * @param roleId        角色id
 	 * @param currentUserId 当前用户id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean batchRelease(List<String> missionIds, String roleId, String currentUserId) {
@@ -1057,6 +1209,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code MissionDetail }
+	 * @throws
+	 * @see String
+	 * @see MissionDetail
 	 */
 	@Override
 	public MissionDetail getDetailById(String resourceId) {
@@ -1081,6 +1236,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param missionIds 任务id列表
 	 * @return {@code Map<String, Mission> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, Mission>
 	 */
 	@Override
 	public Map<String, Mission> getMissionMapByIds(List<String> missionIds) {
@@ -1096,6 +1254,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	 *
 	 * @param templateIds 模板id列表
 	 * @return {@code String }
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	private String dumpSchemeTemplates(List<String> templateIds) {
 		List<MissionSchemeTemplate> templateList = missionSchemeTemplateMapper
@@ -1105,6 +1266,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	/**
 	 * do init （执行初始化）
+	 *
+	 * @throws
 	 */
 	private void doInit() {
 		List<CrConstantsConfig> missionCategories = crConstantsService
@@ -1121,6 +1284,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	/**
 	 * 确保缓存
+	 *
+	 * @throws
 	 */
 	private void ensureCache() {
 		if (null == categoryCache) {

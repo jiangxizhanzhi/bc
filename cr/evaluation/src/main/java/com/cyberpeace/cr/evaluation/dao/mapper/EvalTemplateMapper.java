@@ -14,7 +14,10 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
  * 评估模板Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -27,6 +30,11 @@ public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 	 * @param evalTemplateListQuery EVAL 模板列表查询
 	 * @param userId                用户id
 	 * @return {@code IPage<EvalTemplate> }
+	 * @throws
+	 * @see Page
+	 * @see EvalTemplateListQuery
+	 * @see String
+	 * @see IPage<EvalTemplate>
 	 */
 	IPage<EvalTemplate> listEvalTemplates(Page page, EvalTemplateListQuery evalTemplateListQuery,
 			String userId);
@@ -38,6 +46,11 @@ public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 	 * @param userId       用户id
 	 * @param templateId   模板id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean existByNameAndUserIdAndId(@Param("templateName") String templateName,
 			@Param("createUserId") String userId, @Param("templateId") String templateId);

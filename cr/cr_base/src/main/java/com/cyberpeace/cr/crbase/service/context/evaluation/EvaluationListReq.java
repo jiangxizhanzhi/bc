@@ -12,7 +12,10 @@ import lombok.Data;
  * 评估列表请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @ApiModel
 @Data
@@ -20,6 +23,8 @@ public class EvaluationListReq implements Serializable {
 
     /**
      * 房间id
+     *
+     * @see String
      */
     @NotNull
     @ApiModelProperty(value = "训练ID")
@@ -27,18 +32,24 @@ public class EvaluationListReq implements Serializable {
 
     /**
      * 用户id
+     *
+     * @see String
      */
     @ApiModelProperty(value = "学员ID")
     private String user_id;
 
     /**
      * 角色id
+     *
+     * @see String
      */
     @ApiModelProperty(value = "角色id")
     private String role_id;
 
     /**
      * 状态
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "评估状态")
     private Integer status;

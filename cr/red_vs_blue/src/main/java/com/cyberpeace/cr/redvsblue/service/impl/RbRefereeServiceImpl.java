@@ -30,7 +30,10 @@ import lombok.extern.slf4j.Slf4j;
  * RB裁判Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see RbRefereeService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -38,42 +41,56 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * 靶场得分Service
+	 *
+	 * @see CrScoreService
 	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 靶场徽章Service
+	 *
+	 * @see CrBadgeService
 	 */
 	@Autowired
 	private CrBadgeService crBadgeService;
 
 	/**
 	 * 靶场常见Service
+	 *
+	 * @see CrCommonService
 	 */
 	@Autowired
 	private CrCommonService crCommonService;
@@ -83,6 +100,9 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 	 *
 	 * @param req 请求体
 	 * @return {@code List<EvaluationListRsp> }
+	 * @throws
+	 * @see EvaluationListReq
+	 * @see List<EvaluationListRsp>
 	 */
 	@Override
 	public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
@@ -94,6 +114,9 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<StudentScoreListRsp> }
+	 * @throws
+	 * @see String
+	 * @see List<StudentScoreListRsp>
 	 */
 	@Override
 	public List<StudentScoreListRsp> getScoreList(String roomId) {
@@ -108,6 +131,9 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<RbRoleIdNameType> }
+	 * @throws
+	 * @see String
+	 * @see List<RbRoleIdNameType>
 	 */
 	@Override
 	public List<RbRoleIdNameType> getRoleList(String roomId) {
@@ -132,6 +158,8 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 	 * 通知提交
 	 *
 	 * @param missionId 任务id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void notifySubmission(String missionId) {
@@ -150,6 +178,9 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<MonitorSession> }
+	 * @throws
+	 * @see String
+	 * @see List<MonitorSession>
 	 */
 	@Override
 	public List<MonitorSession> getMonitorSessions(String roomId) {
@@ -176,6 +207,9 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	private List<String> getRefereeIdsByRoomId(String roomId) {
 		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,

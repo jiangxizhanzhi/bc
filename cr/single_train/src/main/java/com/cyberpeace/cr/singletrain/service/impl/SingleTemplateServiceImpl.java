@@ -40,7 +40,11 @@ import lombok.extern.slf4j.Slf4j;
  * 单模板Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see SingleTemplateService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -48,30 +52,40 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 
 	/**
 	 * 单模板Mapper
+	 *
+	 * @see SingleTemplateMapper
 	 */
 	@Autowired
 	private SingleTemplateMapper singleTemplateMapper;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
@@ -81,6 +95,9 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code SingleTemplateBo }
+	 * @throws
+	 * @see String
+	 * @see SingleTemplateBo
 	 */
 	@Override
 	public SingleTemplateBo get(String businessTemplateId) {
@@ -117,6 +134,11 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 	 * @param baseInfo           训练基础数据
 	 * @param missionsScheme     训练任务方案
 	 * @return 更新后的单兵训练数据对象
+	 * @throws
+	 * @see String
+	 * @see BaseInfo
+	 * @see JSONObject
+	 * @see SingleTemplateBo
 	 */
 	@Override
 	public SingleTemplateBo update(String businessTemplateId, BaseInfo baseInfo,
@@ -157,6 +179,9 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code SingleTemplate }
+	 * @throws
+	 * @see String
+	 * @see SingleTemplate
 	 */
 	@Override
 	public SingleTemplate getByBusinessTemplateId(String businessTemplateId) {
@@ -168,6 +193,9 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 	 *
 	 * @param missionsScheme 任务计划
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getMissionTemplateIdsByMissionsScheme(String missionsScheme) {
@@ -184,6 +212,9 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 	 *
 	 * @param btId BT系列id
 	 * @return {@code SingleMatrixProgressRsp }
+	 * @throws
+	 * @see String
+	 * @see SingleMatrixProgressRsp
 	 */
 	@Override
 	public SingleMatrixProgressRsp getSingleMatrix(String btId) {
@@ -223,6 +254,9 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 	 *
 	 * @param missionsScheme 任务计划
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	private JSONObject getMissionTemplates(String missionsScheme) {
 		// get missionTemplates mapping

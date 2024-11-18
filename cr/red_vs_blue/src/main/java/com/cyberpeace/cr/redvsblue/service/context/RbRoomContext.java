@@ -13,13 +13,17 @@ import lombok.Data;
  * 红蓝实例
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class RbRoomContext {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -27,6 +31,8 @@ public class RbRoomContext {
 
 	/**
 	 * 模板
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -34,6 +40,8 @@ public class RbRoomContext {
 
 	/**
 	 * 类别
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -41,6 +49,8 @@ public class RbRoomContext {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(required = true)
 	@NotBlank
@@ -48,6 +58,8 @@ public class RbRoomContext {
 
 	/**
 	 * 预技能
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -55,6 +67,8 @@ public class RbRoomContext {
 
 	/**
 	 * 训练技能
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -62,6 +76,8 @@ public class RbRoomContext {
 
 	/**
 	 * 难
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -69,6 +85,8 @@ public class RbRoomContext {
 
 	/**
 	 * 开始时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -76,6 +94,8 @@ public class RbRoomContext {
 
 	/**
 	 * 结束时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -83,6 +103,8 @@ public class RbRoomContext {
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -90,6 +112,8 @@ public class RbRoomContext {
 
 	/**
 	 * 角色配置
+	 *
+	 * @see List<RoomRole>
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -97,16 +121,22 @@ public class RbRoomContext {
 
 	/**
 	 * 启用录制
+	 *
+	 * @see Boolean
 	 */
 	private Boolean enableRecording;
 
 	/**
 	 * 支持 Partial Start
+	 *
+	 * @see Boolean
 	 */
 	private Boolean supportPartialStart;
 
 	/**
 	 * 图标
+	 *
+	 * @see String
 	 */
 	private String logo;
 }

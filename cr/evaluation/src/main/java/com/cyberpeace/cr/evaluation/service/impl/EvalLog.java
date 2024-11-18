@@ -10,11 +10,15 @@ import org.slf4j.LoggerFactory;
  * 评估日志
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class EvalLog {
     /**
      * 日志
+     *
+     * @see Logger
      */
     private static final Logger LOG = LoggerFactory.getLogger("eval");
 
@@ -23,6 +27,9 @@ public class EvalLog {
      *
      * @param evalRecord EVAL 记录
      * @param msg        味精
+     * @throws
+     * @see EvalRecord
+     * @see String
      */
     static void info(EvalRecord evalRecord, String msg) {
         LOG.info(String.format("ID %s: %s", evalRecord.getResourceId(), msg));
@@ -34,6 +41,10 @@ public class EvalLog {
      * @param evalRecord      EVAL 记录
      * @param evalVariableRef eval 变量 ref
      * @param msg             味精
+     * @throws
+     * @see EvalRecord
+     * @see EvalVariableRef
+     * @see String
      */
     static void info(EvalRecord evalRecord, EvalVariableRef evalVariableRef, String msg) {
         String newMsg = String.format("variable %s [%s] %s", evalVariableRef.getResourceId(), evalVariableRef.getName(), msg);
@@ -46,6 +57,10 @@ public class EvalLog {
      * @param evalRecord   EVAL 记录
      * @param evalIndexRef eval 索引 ref
      * @param msg          味精
+     * @throws
+     * @see EvalRecord
+     * @see EvalIndexRef
+     * @see String
      */
     static void info(EvalRecord evalRecord, EvalIndexRef evalIndexRef, String msg) {
         String newMsg = String.format("index %s [%s] %s", evalIndexRef.getResourceId(), evalIndexRef.getName(), msg);
@@ -57,6 +72,9 @@ public class EvalLog {
      *
      * @param evalRecord EVAL 记录
      * @param msg        味精
+     * @throws
+     * @see EvalRecord
+     * @see String
      */
     static void error(EvalRecord evalRecord, String msg) {
         LOG.error(String.format("ID %s: %s", evalRecord.getResourceId(), msg));
@@ -68,6 +86,10 @@ public class EvalLog {
      * @param evalRecord      EVAL 记录
      * @param evalVariableRef eval 变量 ref
      * @param msg             味精
+     * @throws
+     * @see EvalRecord
+     * @see EvalVariableRef
+     * @see String
      */
     static void error(EvalRecord evalRecord, EvalVariableRef evalVariableRef, String msg) {
         String newMsg = String.format("variable %s [%s] %s", evalVariableRef.getResourceId(), evalVariableRef.getName(), msg);
@@ -80,6 +102,10 @@ public class EvalLog {
      * @param evalRecord   EVAL 记录
      * @param evalIndexRef eval 索引 ref
      * @param msg          味精
+     * @throws
+     * @see EvalRecord
+     * @see EvalIndexRef
+     * @see String
      */
     static void error(EvalRecord evalRecord, EvalIndexRef evalIndexRef, String msg) {
         String newMsg = String.format("index %s [%s] %s", evalIndexRef.getResourceId(), evalIndexRef.getName(), msg);
@@ -91,6 +117,9 @@ public class EvalLog {
      *
      * @param evalRecord EVAL 记录
      * @param msg        味精
+     * @throws
+     * @see EvalRecord
+     * @see String
      */
     static void debug(EvalRecord evalRecord, String msg) {
         LOG.debug(String.format("ID %s: %s", evalRecord.getResourceId(), msg));
@@ -102,6 +131,10 @@ public class EvalLog {
      * @param evalRecord      EVAL 记录
      * @param evalVariableRef eval 变量 ref
      * @param msg             味精
+     * @throws
+     * @see EvalRecord
+     * @see EvalVariableRef
+     * @see String
      */
     static void debug(EvalRecord evalRecord, EvalVariableRef evalVariableRef, String msg) {
         String newMsg = String.format("variable %s [%s] %s", evalVariableRef.getResourceId(), evalVariableRef.getName(), msg);
@@ -114,6 +147,10 @@ public class EvalLog {
      * @param evalRecord   EVAL 记录
      * @param evalIndexRef eval 索引 ref
      * @param msg          味精
+     * @throws
+     * @see EvalRecord
+     * @see EvalIndexRef
+     * @see String
      */
     static void debug(EvalRecord evalRecord, EvalIndexRef evalIndexRef, String msg) {
         String newMsg = String.format("index %s [%s] %s", evalIndexRef.getResourceId(), evalIndexRef.getName(), msg);

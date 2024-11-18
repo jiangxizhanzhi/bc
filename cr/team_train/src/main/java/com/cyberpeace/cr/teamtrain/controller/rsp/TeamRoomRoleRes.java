@@ -12,67 +12,90 @@ import lombok.Data;
  * 团队房间角色结果
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class TeamRoomRoleRes implements Serializable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "编号")
 	private String resourceId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
 	/**
 	 * 训练团队
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "房间id")
 	private String trainingTeam;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述")
 	private String description;
 
 	/**
 	 * 角色组
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "角色组")
 	private Integer roleGroup;
 
 	/**
 	 * 节点
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "节点")
 	private String nodes;
 
 	/**
 	 * 用户
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "用户列表")
 	private List<String> users;
 
 	/**
 	 * 用户id列表
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "用户id列表字符串")
 	private String userIds;
 
 	/**
 	 * 用户数据
+	 *
+	 * @see List<UserData>
 	 */
 	@ApiModelProperty(value = "用户数据")
 	private List<UserData> usersData;
 
 	/**
 	 * 任务计划
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务编排")
 	private String missionScheme;

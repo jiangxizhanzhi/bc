@@ -13,7 +13,10 @@ import com.cyberpeace.cr.crbase.dao.entity.CrMark;
  * 靶场标记映射
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -24,6 +27,9 @@ public interface CrMarkMapper extends BaseMapper<CrMark> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrMark> }
+	 * @throws
+	 * @see String
+	 * @see List<CrMark>
 	 */
 	List<CrMark> selectByRoomId(@Param("roomId") String roomId);
 
@@ -33,6 +39,10 @@ public interface CrMarkMapper extends BaseMapper<CrMark> {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code List<CrMark> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CrMark>
 	 */
 	List<CrMark> selectByRoomIdAndUserId(@Param("roomId") String roomId,
 			@Param("userId") String userId);

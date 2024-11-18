@@ -9,11 +9,16 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
  *
  * @author SN
  * @date 2024/11/07
+ * @version 1.0.0
+ * @see HttpEntityEnclosingRequestBase
+ * @since 1.0.0
  */
 public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
 
 	/**
 	 * 方法名称
+	 *
+	 * @see String
 	 */
 	public static final String METHOD_NAME = "DELETE";
 

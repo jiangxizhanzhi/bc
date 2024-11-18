@@ -66,7 +66,11 @@ import lombok.extern.slf4j.Slf4j;
  * RB房间Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see RbRoomService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -74,66 +78,88 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	/**
 	 * RB房间Mapper
+	 *
+	 * @see RbRoomMapper
 	 */
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
 
 	/**
 	 * RB模板Service
+	 *
+	 * @see RbTemplateService
 	 */
 	@Autowired
 	private RbTemplateService rbTemplateService;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * RB时间管理Service
+	 *
+	 * @see RbTimeManagementService
 	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 靶场时间轴Service
+	 *
+	 * @see CrTimelineService
 	 */
 	@Autowired
 	private CrTimelineService crTimelineService;
 
 	/**
 	 * RTKS相关Service
+	 *
+	 * @see RtksRelatedService
 	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
@@ -143,6 +169,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public Integer getTrainingStatus(String roomId) {
@@ -156,6 +185,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomIds 房间id列表
 	 * @return {@code List<RbRoom> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<RbRoom>
 	 */
 	@Override
 	public List<RbRoom> getByIds(List<String> roomIds) {
@@ -169,6 +201,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * 获取都
 	 *
 	 * @return {@code List<RbRoom> }
+	 * @throws
+	 * @see List<RbRoom>
 	 */
 	@Override
 	public List<RbRoom> getAll() {
@@ -180,6 +214,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<RbRoomData> }
+	 * @throws
+	 * @see ListQuery
+	 * @see IPage<RbRoomData>
 	 */
 	@Override
 	public IPage<RbRoomData> list(ListQuery listQuery) {
@@ -195,6 +232,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * 计数都
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer countAll() {
@@ -206,6 +245,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param rbRoomContext RB 房间上下文
 	 * @return {@code RbRoom }
+	 * @throws
+	 * @see RbRoomContext
+	 * @see RbRoom
 	 */
 	@Override
 	public RbRoom create(RbRoomContext rbRoomContext) {
@@ -276,6 +318,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code RbRoomData }
+	 * @throws
+	 * @see String
+	 * @see RbRoomData
 	 */
 	@Override
 	public RbRoomData getRbRoomDataByRoomId(String resourceId) {
@@ -294,6 +339,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param roleId 角色id
 	 * @param roomId 房间id
 	 * @return {@code List<DashboardUser> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<DashboardUser>
 	 */
 	@Override
 	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
@@ -347,6 +396,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param roomId        房间id
 	 * @param currentUserId 当前用户id
 	 * @return {@code DashboardInfo }
+	 * @throws
+	 * @see CrRole
+	 * @see String
+	 * @see String
+	 * @see DashboardInfo
 	 */
 	@Override
 	public DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId) {
@@ -518,6 +572,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param filePath    文件路径
 	 * @param jarFilePath jar 文件路径
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	private String confirmAvatarFile(String filePath, String jarFilePath) {
 		File file = new File(filePath);
@@ -551,6 +609,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param crRole 靶场角色
 	 * @return {@code String }
+	 * @throws
+	 * @see CrRole
+	 * @see String
 	 */
 	private String getFullRoleName(CrRole crRole) {
 		String roleName = EnumUtils.getEnumDescByCode(crRole.getRoleGroup(),
@@ -575,6 +636,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param rbRoomContext RB 房间上下文
 	 * @param rbRoom        RB 会议室
+	 * @throws
+	 * @see RbRoomContext
+	 * @see RbRoom
 	 */
 	@Override
 	public void updateRbRoom(RbRoomContext rbRoomContext, RbRoom rbRoom) {
@@ -652,6 +716,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param roomId    房间id
 	 * @param userId    用户id
 	 * @param roleGroup 角色组
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrRole.RbRoleGroup
 	 */
 	private void permissionCheck(String roomId, String userId, CrRole.RbRoleGroup roleGroup) {
 		RbRoom rbRoom = getById(roomId);
@@ -673,6 +741,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void checkDirectorPermission(String roomId, String userId) {
@@ -684,6 +755,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void checkRefereePermission(String roomId, String userId) {
@@ -694,6 +768,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * 检查房间开放情况
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void checkRoomOpening(String roomId) {
@@ -726,6 +802,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * 检查室未关闭
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void checkRoomUnclosed(String roomId) {
@@ -748,6 +826,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrRole> }
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	@Override
 	public List<CrRole> getStudentsRoles(String roomId) {
@@ -760,6 +841,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public Integer getDuration(String roomId) {
@@ -778,6 +862,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @return {@code RbRoom }
+	 * @throws
+	 * @see String
+	 * @see RbRoom
 	 */
 	@Override
 	public RbRoom getOrExceptionById(String roomId) {
@@ -795,6 +882,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code TimeLineData }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TimeLineData
 	 */
 	@Override
 	public TimeLineData getReplayTimeline(String roomId, String userId) {
@@ -814,6 +905,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TimeLineData }
+	 * @throws
+	 * @see String
+	 * @see TimeLineData
 	 */
 	@Override
 	public TimeLineData getStudentsTimeLine(String roomId) {
@@ -832,6 +926,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @return {@code RbRoomRsp }
+	 * @throws
+	 * @see String
+	 * @see RbRoomRsp
 	 */
 	@Override
 	public RbRoomRsp getRoomRsp(String roomId) {
@@ -865,6 +962,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code ListRsp<RbRoomRsp> }
+	 * @throws
+	 * @see ListQuery
+	 * @see ListRsp<RbRoomRsp>
 	 */
 	@Override
 	public ListRsp<RbRoomRsp> listRoom(ListQuery listQuery) {
@@ -944,6 +1044,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void checkStudentPermission(String roomId, String userId) {
@@ -967,6 +1070,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<UserRole> }
+	 * @throws
+	 * @see String
+	 * @see List<UserRole>
 	 */
 	@Override
 	public List<UserRole> getUserList(String roomId) {
@@ -1014,6 +1120,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TimeLineData }
+	 * @throws
+	 * @see String
+	 * @see TimeLineData
 	 */
 	@Override
 	public TimeLineData getMissionTimeline(String roomId) {
@@ -1030,6 +1139,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code CrRole }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrRole
 	 */
 	@Override
 	public CrRole checkRoomPermission(String roomId, String userId) {
@@ -1053,6 +1166,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param roomId 房间id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
@@ -1071,6 +1187,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param userId
 	 * @param userInfoMap 用户信息地图
 	 * @return
+	 * @throws
+	 * @see List<CrRole>
+	 * @see String
+	 * @see Map<String, UserInfo>
+	 * @see BaseRole
 	 */
 	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId,
 			Map<String, UserInfo> userInfoMap) {
@@ -1114,6 +1235,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param crRoles     cr角色
 	 * @param userInfoMap
 	 * @return {@code List<RbRoomRoleRes>}
+	 * @throws
+	 * @see List<CrRole>
+	 * @see Map<String, UserInfo>
+	 * @see List<RbRoomRoleRes>
 	 */
 	private List<RbRoomRoleRes> getRbRoomRoleRes(List<CrRole> crRoles,
 			Map<String, UserInfo> userInfoMap) {
@@ -1160,6 +1285,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param rbTemplateData RB 模板数据
 	 * @param roomId         房间id
 	 * @return {@code List<CrRole> }
+	 * @throws
+	 * @see RbTemplate
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData, String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();
@@ -1197,6 +1326,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param redRoles  RED 角色
 	 * @param roleGroup 角色组
 	 * @return {@code CrRole }
+	 * @throws
+	 * @see String
+	 * @see int
+	 * @see JSONArray
+	 * @see CrRole.RbRoleGroup
+	 * @see CrRole
 	 */
 	private CrRole getRoleByJson(String roomId, int index, JSONArray redRoles,
 			CrRole.RbRoleGroup roleGroup) {
@@ -1225,6 +1360,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * @param missionsScheme
 	 * @param roomId         房间id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<MissionStageScheme>
 	 */
 	private List<MissionStageScheme> getNewRoomScheme(String missionsScheme, String roomId) {
 		ColorMission<AddTemplateMission> colorMission = JSON.parseObject(missionsScheme,
@@ -1272,6 +1411,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 * 验证名称
 	 *
 	 * @param name 名称
+	 * @throws
+	 * @see String
 	 */
 	private void validateName(String name) {
 		// check if duplicate
@@ -1287,6 +1428,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 *
 	 * @param timeLineData 时间线数据
 	 * @param roomId       房间id
+	 * @throws
+	 * @see TimeLineData
+	 * @see String
 	 */
 	private void setTime(TimeLineData timeLineData, String roomId) {
 		// get start time and endtime

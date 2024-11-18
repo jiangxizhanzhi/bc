@@ -19,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
  * 测试场景事件听者
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MessageListener
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -27,12 +30,16 @@ public class TestSceneEventListener extends MessageListener {
 
 	/**
 	 * Web 套接字处理程序
+	 *
+	 * @see MyWebSocketHandler
 	 */
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
@@ -41,6 +48,8 @@ public class TestSceneEventListener extends MessageListener {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer declareMessageType() {
@@ -54,6 +63,11 @@ public class TestSceneEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
@@ -69,6 +83,11 @@ public class TestSceneEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
@@ -83,6 +102,11 @@ public class TestSceneEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
@@ -92,8 +116,13 @@ public class TestSceneEventListener extends MessageListener {
 	}
 
 	/**
+	 * 推送数据自Web
+	 *
 	 * @param data       数据
 	 * @param businessId 业务id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private void pushDataToWeb(String data, String businessId) {
 		// 构建需要向页面推送的消息上下文

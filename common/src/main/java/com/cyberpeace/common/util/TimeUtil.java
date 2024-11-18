@@ -12,10 +12,28 @@ import com.cyberpeace.common.model.CommonContext;
 
 import lombok.Data;
 
+/**
+ * 时间利用率
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
+ */
 public class TimeUtil {
 
+	/**
+	 * 天 zh
+	 *
+	 * @see String
+	 */
 	private static final String DAY_ZH = "天";
 
+	/**
+	 * 日
+	 *
+	 * @see String
+	 */
 	private static final String DAY_EN = "Day";
 
 	/**
@@ -24,6 +42,10 @@ public class TimeUtil {
 	 * @param start
 	 * @param end
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see Date
+	 * @see long
 	 */
 	public static long getIntervalSeconds(Date start, Date end) {
 		if (null == start || null == end || end.before(start)) {
@@ -39,6 +61,10 @@ public class TimeUtil {
 	 * @param start
 	 * @param end
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see Date
+	 * @see long
 	 */
 	public static long getIntervalDay(Date start, Date end) {
 		if (null == start || null == end || end.before(start)) {
@@ -56,6 +82,9 @@ public class TimeUtil {
 	 *
 	 * @param bits 验证码位数，比如bits=6代表6位的验证码
 	 * @return
+	 * @throws
+	 * @see int
+	 * @see String
 	 */
 	public static String getVerifyCode(int bits) {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -73,6 +102,10 @@ public class TimeUtil {
 	 * @param month yyyy-MM格式，"2018-04"
 	 * @param head  true为获取指定月份第一天；false获取指定月份最后一天
 	 * @return yyyy-MM-dd，"2018-04-30"
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see String
 	 */
 	public static String getHeadOrTailDayOfSepecificMonth(String month, boolean head) {
 		String[] ss = month.split("-");
@@ -92,7 +125,11 @@ public class TimeUtil {
 	/**
 	 * 获取指定天的第一秒，0点0点0秒
 	 *
+	 * @param date 日期
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see Date
 	 */
 	public static Date getStartOfDay(Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -108,7 +145,11 @@ public class TimeUtil {
 	/**
 	 * 获取指定天的最后一秒，23点59分59秒
 	 *
+	 * @param date 日期
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see Date
 	 */
 	public static Date getEndOfDay(Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -125,12 +166,23 @@ public class TimeUtil {
 	 * 获取当前小时，0-23之间的值
 	 *
 	 * @return
+	 * @throws
+	 * @see int
 	 */
 	public static int getCurrentHour() {
 		Date date = new Date();
 		return date.getHours();
 	}
 
+	/**
+	 * 小时2 现在
+	 *
+	 * @param date 日期
+	 * @return int
+	 * @throws
+	 * @see Date
+	 * @see int
+	 */
 	public static int hours2Now(Date date) {
 		if (null == date) {
 			return 0;
@@ -143,6 +195,8 @@ public class TimeUtil {
 	 * 获取当前的年和月
 	 *
 	 * @return 如果现在是2018/08/01，返回201808
+	 * @throws
+	 * @see String
 	 */
 	public static String thisMonth() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMM");
@@ -152,7 +206,11 @@ public class TimeUtil {
 	/**
 	 * 获取当前月的前一个月的月份
 	 *
+	 * @param input 输入
 	 * @return 如果现在是2018/08/01，返回201807
+	 * @throws
+	 * @see int
+	 * @see String
 	 */
 	public static String previouseMonth(int input) {
 		Calendar calendar = Calendar.getInstance();
@@ -167,6 +225,9 @@ public class TimeUtil {
 	 *
 	 * @param time
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	public static Date toDate1(String time) {
 		if (null == time) {
@@ -187,6 +248,9 @@ public class TimeUtil {
 	 *
 	 * @param time
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	public static Date toDate2(String time) {
 		if (null == time) {
@@ -207,6 +271,9 @@ public class TimeUtil {
 	 *
 	 * @param time
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	public static Date toDate3(String time) {
 		if (StringUtils.isBlank(time)) {
@@ -227,6 +294,9 @@ public class TimeUtil {
 	 *
 	 * @param time
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	public static Date toDate4(String time) {
 		if (StringUtils.isBlank(time)) {
@@ -248,6 +318,9 @@ public class TimeUtil {
 	 *
 	 * @param time
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	public static Date toDate5(String time) {
 		if (StringUtils.isBlank(time)) {
@@ -277,6 +350,9 @@ public class TimeUtil {
 	 *
 	 * @param time
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	public static Date toDate6(String time) {
 		if (StringUtils.isBlank(time)) {
@@ -294,6 +370,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format1(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -305,6 +384,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format2(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
@@ -316,6 +398,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format3(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -327,6 +412,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format4(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd");
@@ -338,6 +426,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format5(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -349,6 +440,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format6(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -360,6 +454,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format7(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -371,6 +468,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format8(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
@@ -379,8 +479,12 @@ public class TimeUtil {
 
 	/**
 	 * 格式化成07-12 18:00的形式
+	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format9(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm");
@@ -389,8 +493,12 @@ public class TimeUtil {
 
 	/**
 	 * 格式化成2017-07-12 18:00的形式
+	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see String
 	 */
 	public static String format10(Date date) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -402,6 +510,9 @@ public class TimeUtil {
 	 *
 	 * @param date
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see Date
 	 */
 	public static Date toZero(Date date) {
 		SimpleDateFormat simp = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
@@ -418,7 +529,13 @@ public class TimeUtil {
 	/**
 	 * 在指定的时间base基础上，增加toAdd秒
 	 *
+	 * @param base  基础
+	 * @param toAdd 自新增
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see long
+	 * @see Date
 	 */
 	public static Date addSeconds(Date base, long toAdd) {
 		return new Date(base.getTime() + toAdd * 1000);
@@ -427,7 +544,13 @@ public class TimeUtil {
 	/**
 	 * 在指定的时间base基础上，增加toAdd分
 	 *
+	 * @param base  基础
+	 * @param toAdd 自新增
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see long
+	 * @see Date
 	 */
 	public static Date addMins(Date base, long toAdd) {
 		return new Date(base.getTime() + toAdd * 1000 * 60);
@@ -436,7 +559,13 @@ public class TimeUtil {
 	/**
 	 * 在指定的时间base基础上，增加toAdd小时
 	 *
+	 * @param base  基础
+	 * @param toAdd 自新增
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see long
+	 * @see Date
 	 */
 	public static Date addHours(Date base, long toAdd) {
 		return new Date(base.getTime() + toAdd * 1000 * 60 * 60);
@@ -445,7 +574,13 @@ public class TimeUtil {
 	/**
 	 * 在指定的时间base基础上，增加toAdd月
 	 *
+	 * @param base  基础
+	 * @param toAdd 自新增
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see int
+	 * @see Date
 	 */
 	public static Date addMonths(Date base, int toAdd) {
 		Calendar calendar = Calendar.getInstance();
@@ -457,7 +592,13 @@ public class TimeUtil {
 	/**
 	 * 在指定的时间base基础上，增加toAdd年
 	 *
+	 * @param base  基础
+	 * @param toAdd 自新增
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see int
+	 * @see Date
 	 */
 	public static Date addYears(Date base, int toAdd) {
 		Calendar calendar = Calendar.getInstance();
@@ -469,7 +610,13 @@ public class TimeUtil {
 	/**
 	 * 在指定的时间base基础上，增加toAdd日
 	 *
+	 * @param base  基础
+	 * @param toAdd 自新增
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see int
+	 * @see Date
 	 */
 	public static Date addDates(Date base, int toAdd) {
 		Calendar calendar = Calendar.getInstance();
@@ -481,7 +628,13 @@ public class TimeUtil {
 	/**
 	 * 在指定的时间base基础上，减少toReduce小时
 	 *
+	 * @param base     基础
+	 * @param toReduce 减少
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see long
+	 * @see Date
 	 */
 	public static Date reduceHours(Date base, long toReduce) {
 		return new Date(base.getTime() - toReduce * 1000 * 60 * 60);
@@ -490,7 +643,13 @@ public class TimeUtil {
 	/**
 	 * 在指定的时间base基础上，较少toAdd日
 	 *
+	 * @param base     基础
+	 * @param toReduce 减少
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see int
+	 * @see Date
 	 */
 	public static Date reduceDates(Date base, int toReduce) {
 		Calendar calendar = Calendar.getInstance();
@@ -502,7 +661,13 @@ public class TimeUtil {
 	/**
 	 * 获取两日期时间间隔天数，包含首尾日期（传入参数为日期）
 	 *
+	 * @param dtBegin DT 开始
+	 * @param dtEnd   结束
 	 * @return
+	 * @throws
+	 * @see Date
+	 * @see Date
+	 * @see int
 	 */
 	public static int getDaysBetween(Date dtBegin, Date dtEnd) {
 		return new Long((dtEnd.getTime() - dtBegin.getTime()) / 86400000).intValue() + 1;
@@ -513,6 +678,9 @@ public class TimeUtil {
 	 *
 	 * @param str
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see boolean
 	 */
 	public static boolean isValidDate(String str) {
 		boolean convertSuccess = true;
@@ -532,6 +700,10 @@ public class TimeUtil {
 
 	/**
 	 * 获取当前日期（只获取日）
+	 *
+	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	public static String getDay() {
 		SimpleDateFormat sd = new SimpleDateFormat("dd");
@@ -544,17 +716,45 @@ public class TimeUtil {
 	 * @param start 开始
 	 * @param end   结束
 	 * @return {@code String}
+	 * @throws
+	 * @see Date
+	 * @see Date
+	 * @see String
 	 */
 	public static String getTimeInterval(Date start, Date end) {
 		long sec = getIntervalSeconds(start, end);
 		return duration2String(sec, null);
 	}
 
+	/**
+	 * 获取时间间隔
+	 *
+	 * @param start    启动
+	 * @param end      结束
+	 * @param unitI18n 单元 I18N
+	 * @return {@code String }
+	 * @throws
+	 * @see Date
+	 * @see Date
+	 * @see TimeUnitI18n
+	 * @see String
+	 */
 	public static String getTimeInterval(Date start, Date end, TimeUnitI18n unitI18n) {
 		long sec = getIntervalSeconds(start, end);
 		return duration2String(sec, unitI18n);
 	}
 
+	/**
+	 * 获取结肠时间间隔
+	 *
+	 * @param start 启动
+	 * @param end   结束
+	 * @return {@code String }
+	 * @throws
+	 * @see Date
+	 * @see Date
+	 * @see String
+	 */
 	public static String getColonTimeInterval(Date start, Date end) {
 		long sec = getIntervalSeconds(start, end);
 		return duration2String(sec, TimeUnitI18n.getColonTimeUnit());
@@ -566,11 +766,25 @@ public class TimeUtil {
 	 *
 	 * @param sec 秒数
 	 * @return {@code String}
+	 * @throws
+	 * @see long
+	 * @see String
 	 */
 	public static String duration2String(long sec) {
 		return duration2String(sec, null);
 	}
 
+	/**
+	 * duration2 字符串
+	 *
+	 * @param sec      秒
+	 * @param unitI18n 单元 I18N
+	 * @return {@code String }
+	 * @throws
+	 * @see long
+	 * @see TimeUnitI18n
+	 * @see String
+	 */
 	public static String duration2String(long sec, TimeUnitI18n unitI18n) {
 		long min = sec / 60;
 		sec = sec % 60;
@@ -599,17 +813,50 @@ public class TimeUtil {
 	}
 }
 
+/**
+ * 时间单位 i18n
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
+ */
 @Data
 class TimeUnitI18n {
 
+	/**
+	 * 日
+	 */
 	private String day;
 
+	/**
+	 * 小时
+	 */
 	private String hour;
 
+	/**
+	 * 分钟
+	 */
 	private String minute;
 
+	/**
+	 * 第二
+	 */
 	private String second;
 
+	/**
+	 * 时间单位 i18n
+	 *
+	 * @param day    日
+	 * @param hour   小时
+	 * @param minute 分钟
+	 * @param second 第二
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 */
 	private TimeUnitI18n(String day, String hour, String minute, String second) {
 		this.day = day;
 		this.hour = hour;
@@ -617,6 +864,13 @@ class TimeUnitI18n {
 		this.second = second;
 	}
 
+	/**
+	 * 获取时间单位
+	 *
+	 * @return {@code TimeUnitI18n }
+	 * @throws
+	 * @see TimeUnitI18n
+	 */
 	public static TimeUnitI18n getTimeUnit() {
 		if (CommonContext.isChinese()) {
 			return new TimeUnitI18n("天", "小时", "分钟", "秒");
@@ -625,6 +879,13 @@ class TimeUnitI18n {
 		}
 	}
 
+	/**
+	 * 获取结肠时间单位
+	 *
+	 * @return {@code TimeUnitI18n }
+	 * @throws
+	 * @see TimeUnitI18n
+	 */
 	public static TimeUnitI18n getColonTimeUnit() {
 		return new TimeUnitI18n("天 ", ":", ":", ":");
 	}

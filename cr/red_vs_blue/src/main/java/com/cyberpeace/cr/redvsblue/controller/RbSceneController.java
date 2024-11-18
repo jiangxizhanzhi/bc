@@ -63,7 +63,9 @@ import lombok.extern.slf4j.Slf4j;
  * RB场景控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗场景")
 @Slf4j
@@ -74,59 +76,79 @@ public class RbSceneController {
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * RB场景Service
+	 *
+	 * @see RbSceneService
 	 */
 	@Autowired
 	private RbSceneService rbSceneService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * RB装置Service
+	 *
+	 * @see RbDeviceService
 	 */
 	@Autowired
 	private RbDeviceService rbDeviceService;
 
 	/**
 	 * RB常见装置Service
+	 *
+	 * @see RbCommonDeviceService
 	 */
 	@Autowired
 	private RbCommonDeviceService rbCommonDeviceService;
 
 	/**
 	 * 靶场场景Service
+	 *
+	 * @see CrSceneService
 	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 锁具厂
+	 *
+	 * @see LockFactory
 	 */
 	private LockFactory lockFactory = DefaultLockFactory.getInstance();
 
 	/**
 	 * 缓存
+	 *
+	 * @see Cache<String, String>
 	 */
 	Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.SECONDS)
 			.build();
@@ -136,6 +158,9 @@ public class RbSceneController {
 	 *
 	 * @param sceneStartReq 场景开始请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("启动场景")
 	@PostMapping("")
@@ -153,6 +178,9 @@ public class RbSceneController {
 	 *
 	 * @param sceneStopReq 场景停请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("停止场景")
 	@DeleteMapping("")
@@ -170,6 +198,10 @@ public class RbSceneController {
 	 * @param room_id 房间id
 	 * @param role_id 角色id
 	 * @return {@code BaseRsp<RbSceneViewContext> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<RbSceneViewContext>
 	 */
 	@ApiOperation("查看场景")
 	@GetMapping("")
@@ -187,6 +219,9 @@ public class RbSceneController {
 	 *
 	 * @param sceneOpsReq 场景操作 计划请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("暂停场景")
 	@PostMapping("/pause")
@@ -217,6 +252,9 @@ public class RbSceneController {
 	 *
 	 * @param sceneOpsReq 场景操作 计划请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("从暂停中恢复场景")
 	@PostMapping("/unpause")
@@ -248,6 +286,9 @@ public class RbSceneController {
 	 *
 	 * @param room_id 房间id
 	 * @return {@code BaseRsp<FlowRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<FlowRsp>
 	 */
 	@ApiOperation("查询流量")
 	@GetMapping("flow")
@@ -267,6 +308,9 @@ public class RbSceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see FlowOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("启动流量")
 	@PostMapping("/flow")
@@ -296,6 +340,9 @@ public class RbSceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see FlowOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("停止流量")
 	@PostMapping("/flow/stop")
@@ -325,6 +372,9 @@ public class RbSceneController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneNodeOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("重启节点")
 	@PostMapping("/node/restart")
@@ -349,6 +399,9 @@ public class RbSceneController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneNodeOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("重建节点")
 	@PostMapping("/node/recreate")
@@ -373,6 +426,9 @@ public class RbSceneController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneNodeOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("创建启动节点")
 	@PostMapping("/node/create")
@@ -398,6 +454,9 @@ public class RbSceneController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<JSONObject>}
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("设备统计")
 	@GetMapping("/device/count")
@@ -419,6 +478,11 @@ public class RbSceneController {
 	 * @param category    类别
 	 * @param name        名称
 	 * @return {@code BaseRsp<JSONArray>}
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see BaseRsp<JSONArray>
 	 */
 	@ApiOperation("设备清单")
 	@GetMapping("/device/list")
@@ -441,6 +505,11 @@ public class RbSceneController {
 	 * @param category    类别
 	 * @param name        名称
 	 * @return {@code BaseRsp<List<RbCommonDeviceContext>> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see BaseRsp<List<RbCommonDeviceContext>>
 	 */
 	@ApiOperation("常用资产可添加列表")
 	@GetMapping("/device/common_device/not_yet")
@@ -484,6 +553,9 @@ public class RbSceneController {
 	 *
 	 * @param rbCommonDeviceReq RB常见装置请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see RbCommonDeviceReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
@@ -509,6 +581,9 @@ public class RbSceneController {
 	 *
 	 * @param rbCommonDeviceContext RB 通用设备上下文
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see RbCommonDeviceContext
+	 * @see BaseRsp
 	 */
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
@@ -526,6 +601,11 @@ public class RbSceneController {
 	 * @param category    类别
 	 * @param name        名称
 	 * @return {@code BaseRsp<List<RbCommonDeviceContext>> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see BaseRsp<List<RbCommonDeviceContext>>
 	 */
 	@ApiOperation("常用资产已添加列表")
 	@GetMapping("/device/common_device/already")
@@ -567,6 +647,12 @@ public class RbSceneController {
 	 * @param roomId                          红蓝房间id
 	 * @param allCollectedCommonDeviceDevices 已添加常用资产列表
 	 * @return 可添加常用资产列表
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see List<RbDeviceContext>
+	 * @see String
+	 * @see List<RbCommonDevice>
+	 * @see List<RbCommonDeviceContext>
 	 */
 	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 			List<RbDeviceContext> occupyDevices, String roomId,
@@ -621,6 +707,10 @@ public class RbSceneController {
 	 * @param availableDevices       可用设备
 	 * @param collectedCommonDevices 收集常用设备
 	 * @return {@code List<RbCommonDeviceContext> }
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see List<RbCommonDevice>
+	 * @see List<RbCommonDeviceContext>
 	 */
 	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 			List<RbCommonDevice> collectedCommonDevices) {

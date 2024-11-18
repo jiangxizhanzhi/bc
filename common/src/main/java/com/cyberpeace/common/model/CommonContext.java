@@ -8,20 +8,28 @@ import com.cyberpeace.common.constant.WebConstant;
  * 常见上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class CommonContext {
 
 	/**
 	 * 语言上下文
+	 *
+	 * @see ThreadLocal<String>
 	 */
 	private static final ThreadLocal<String> languageContext = new ThreadLocal();
 	/**
 	 * ip地址上下文
+	 *
+	 * @see ThreadLocal<String>
 	 */
 	private static final ThreadLocal<String> ipContext = new ThreadLocal();
 	/**
 	 * 授权上下文
+	 *
+	 * @see ThreadLocal<String>
 	 */
 	private static final ThreadLocal<String> authorizationContext = new ThreadLocal();
 

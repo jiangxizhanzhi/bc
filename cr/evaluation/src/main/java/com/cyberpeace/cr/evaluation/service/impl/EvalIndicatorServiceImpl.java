@@ -30,43 +30,59 @@ import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
  * 评估指示器Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalIndicatorService
+ * @since 1.0.0
  */
 @Service
 public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, EvalIndicator> implements EvalIndicatorService {
 
-	/**
-	 * 事务模板
-	 */
-	@Autowired
+    /**
+     * 事务模板
+     *
+     * @see TransactionTemplate
+     */
+    @Autowired
 	private TransactionTemplate transactionTemplate;
 
-	/**
-	 * 评估指示器Mapper
-	 */
-	@Autowired
+    /**
+     * 评估指示器Mapper
+     *
+     * @see EvalIndicatorMapper
+     */
+    @Autowired
 	private EvalIndicatorMapper evalIndicatorMapper;
 
-	/**
-	 * 评估集合体Mapper
-	 */
-	@Autowired
+    /**
+     * 评估集合体Mapper
+     *
+     * @see EvalAggregationMapper
+     */
+    @Autowired
 	private EvalAggregationMapper evalAggregationMapper;
 
-	/**
-	 * 评估收集Mapper
-	 */
-	@Autowired
+    /**
+     * 评估收集Mapper
+     *
+     * @see EvalCollectionMapper
+     */
+    @Autowired
 	private EvalCollectionMapper evalCollectionMapper;
 
-	/**
-	 * 保存批量上下文
-	 *
-	 * @param evalIndicatorReq 评估指示器请求体
-	 * @param userId           用户id
-	 * @param collectionIds    收集id列表
-	 */
-	@Override
+    /**
+     * 保存批量上下文
+     *
+     * @param evalIndicatorReq 评估指示器请求体
+     * @param userId           用户id
+     * @param collectionIds    收集id列表
+     * @throws
+     * @see EvalIndicatorReq
+     * @see String
+     * @see List<String>
+     */
+    @Override
 	public void saveBatchContext(EvalIndicatorReq evalIndicatorReq, String userId,
 			List<String> collectionIds) {
 
@@ -79,16 +95,22 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		this.saveBatch(evalIndicatorList);
 	}
 
-	/**
-	 * 转换评估指示器请求体自评估指示器
-	 *
-	 * @param evalIndicatorContext EVAL 指标上下文
-	 * @param evalIndicatorReq     评估指示器请求体
-	 * @param userId               用户id
-	 * @param collectionIds        收集id列表
-	 * @return {@code EvalIndicator }
-	 */
-	private EvalIndicator convertEvalIndicatorReqToEvalIndicator(
+    /**
+     * 转换评估指示器请求体自评估指示器
+     *
+     * @param evalIndicatorContext EVAL 指标上下文
+     * @param evalIndicatorReq     评估指示器请求体
+     * @param userId               用户id
+     * @param collectionIds        收集id列表
+     * @return {@code EvalIndicator }
+     * @throws
+     * @see EvalIndicatorContext
+     * @see EvalIndicatorReq
+     * @see String
+     * @see List<String>
+     * @see EvalIndicator
+     */
+    private EvalIndicator convertEvalIndicatorReqToEvalIndicator(
 			EvalIndicatorContext evalIndicatorContext, EvalIndicatorReq evalIndicatorReq,
 			String userId, List<String> collectionIds) {
 		EvalIndicator evalIndicator = BeanUtils.copy(evalIndicatorContext, EvalIndicator.class);
@@ -116,13 +138,16 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		return evalIndicator;
 	}
 
-	/**
-	 * 批量删除
-	 *
-	 * @param evalIndicatorIds 评估指示器id列表
-	 * @return {@code Boolean }
-	 */
-	@Override
+    /**
+     * 批量删除
+     *
+     * @param evalIndicatorIds 评估指示器id列表
+     * @return {@code Boolean }
+     * @throws
+     * @see List<String>
+     * @see Boolean
+     */
+    @Override
 	public Boolean batchDelete(List<String> evalIndicatorIds) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -138,12 +163,14 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		return true;
 	}
 
-	/**
-	 * 删除聚合和集合
-	 *
-	 * @param evalIndicatorIds 评估指示器id列表
-	 */
-	@Override
+    /**
+     * 删除聚合和集合
+     *
+     * @param evalIndicatorIds 评估指示器id列表
+     * @throws
+     * @see List<String>
+     */
+    @Override
 	public void deleteAggregationAndCollection(List<String> evalIndicatorIds) {
 		List<String> evalAggregationIds = StreamApiUtils.map(
 				evalAggregationMapper.selectIdsByEvalIndicatorIds(evalIndicatorIds),
@@ -160,15 +187,20 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		}
 	}
 
-	/**
-	 * 更新批量上下文
-	 *
-	 * @param evalIndicatorReq 评估指示器请求体
-	 * @param evalIndicators   评估指示器
-	 * @param userId           用户id
-	 * @param collectionIds    收集id列表
-	 */
-	@Override
+    /**
+     * 更新批量上下文
+     *
+     * @param evalIndicatorReq 评估指示器请求体
+     * @param evalIndicators   评估指示器
+     * @param userId           用户id
+     * @param collectionIds    收集id列表
+     * @throws
+     * @see EvalIndicatorReq
+     * @see List<EvalIndicatorContext>
+     * @see String
+     * @see List<String>
+     */
+    @Override
 	public void updateBatchContext(EvalIndicatorReq evalIndicatorReq,
 			List<EvalIndicatorContext> evalIndicators, String userId, List<String> collectionIds) {
 		List<EvalIndicator> evalIndicatorList = evalIndicators.stream()
@@ -180,26 +212,32 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		this.updateBatchById(evalIndicatorList);
 	}
 
-	/**
-	 * 分页
-	 *
-	 * @param listQuery 列表查询
-	 * @return {@code IPage<EvalIndicator> }
-	 */
-	@Override
+    /**
+     * 分页
+     *
+     * @param listQuery 列表查询
+     * @return {@code IPage<EvalIndicator> }
+     * @throws
+     * @see EvalListQuery
+     * @see IPage<EvalIndicator>
+     */
+    @Override
 	public IPage<EvalIndicator> page(EvalListQuery listQuery) {
 		Page page = listQuery.toPageParam();
 
 		return evalIndicatorMapper.listEvalIndicator(page, listQuery);
 	}
 
-	/**
-	 * 查询指数使用数量
-	 *
-	 * @param ids id列表
-	 * @return {@code Integer }
-	 */
-	@Override
+    /**
+     * 查询指数使用数量
+     *
+     * @param ids id列表
+     * @return {@code Integer }
+     * @throws
+     * @see List<String>
+     * @see Integer
+     */
+    @Override
 	public Integer selectIndexUsedNum(List<String> ids) {
 		return evalIndicatorMapper.selectIndexUsedNum(ids);
 	}

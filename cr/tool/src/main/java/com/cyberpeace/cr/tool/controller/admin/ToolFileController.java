@@ -28,7 +28,9 @@ import io.swagger.annotations.ApiOperation;
  * 工具文件控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "工具附件")
@@ -39,6 +41,8 @@ public class ToolFileController {
 
 	/**
 	 * 工具文件Service
+	 *
+	 * @see ToolFileService
 	 */
 	@Autowired
 	private ToolFileService toolFileService;
@@ -48,6 +52,9 @@ public class ToolFileController {
 	 *
 	 * @param file 文件
 	 * @return {@code BaseRsp<ToolFile> }
+	 * @throws
+	 * @see MultipartFile
+	 * @see BaseRsp<ToolFile>
 	 */
 	@ApiOperation("上传工具附件")
 	@PostMapping("/upload_tool_file")

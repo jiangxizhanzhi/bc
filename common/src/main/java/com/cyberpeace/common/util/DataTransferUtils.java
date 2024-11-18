@@ -4,7 +4,9 @@ package com.cyberpeace.common.util;
  * 数据传输实用程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class DataTransferUtils {
 
@@ -13,6 +15,9 @@ public class DataTransferUtils {
 	 *
 	 * @param num
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see Integer
 	 */
 	public static Integer nullToZero(Integer num) {
 		if (null == num) {
@@ -26,6 +31,9 @@ public class DataTransferUtils {
 	 *
 	 * @param num
 	 * @return
+	 * @throws
+	 * @see Double
+	 * @see Double
 	 */
 	public static Double nullToZero(Double num) {
 		if (null == num) {

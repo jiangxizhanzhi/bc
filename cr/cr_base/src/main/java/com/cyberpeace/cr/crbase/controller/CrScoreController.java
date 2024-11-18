@@ -46,7 +46,9 @@ import java.util.stream.Collectors;
  * 靶场得分控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "团队训练评分")
 @RestController
@@ -56,36 +58,48 @@ public class CrScoreController {
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 靶场得分Service
+	 *
+	 * @see CrScoreService
 	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 训练记录Service
+	 *
+	 * @see TrainRecordService
 	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
@@ -97,6 +111,10 @@ public class CrScoreController {
 	 * @param resource_id 资源id
 	 * @param user_hash   用户哈希
 	 * @return {@code StudentScoreRsp }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see StudentScoreRsp
 	 */
 	public StudentScoreRsp getStudentScore(String resource_id, String user_hash) {
 
@@ -148,6 +166,8 @@ public class CrScoreController {
 	 * 更新学员得分
 	 *
 	 * @param studentScoreReq 学员得分请求体
+	 * @throws
+	 * @see StudentScoreReq
 	 */
 	public void updateStudentScore(StudentScoreReq studentScoreReq) {
 
@@ -216,6 +236,8 @@ public class CrScoreController {
 	 * 更新提交评估
 	 *
 	 * @param submitEvaluationReq 提交评估请求体
+	 * @throws
+	 * @see SubmitEvaluationReq
 	 */
 	public void updateSubmitEvaluation(SubmitEvaluationReq submitEvaluationReq) {
 
@@ -234,6 +256,9 @@ public class CrScoreController {
 	 *
 	 * @param missionEvaluationListReq 任务评估列表请求体
 	 * @return {@code BaseRsp<List<MissionEvaluationRsp>> }
+	 * @throws
+	 * @see MissionEvaluationListReq
+	 * @see BaseRsp<List<MissionEvaluationRsp>>
 	 */
 	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(MissionEvaluationListReq missionEvaluationListReq) {
@@ -296,6 +321,9 @@ public class CrScoreController {
 	 *
 	 * @param studentScoreReq 学员得分请求体
 	 * @return {@code CrScore }
+	 * @throws
+	 * @see StudentScoreReq
+	 * @see CrScore
 	 */
 	private CrScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
 		CrScore crScore = BeanUtils.copy(studentScoreReq, CrScore.class);
@@ -315,6 +343,10 @@ public class CrScoreController {
 	 * @param resource_id 资源id
 	 * @param student_id  学员id
 	 * @return {@code MissionDynamicRsp }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MissionDynamicRsp
 	 */
 	public MissionDynamicRsp getUserMissionDynamic(String resource_id, String student_id) {
 		TaskCounter taskCounter = crRoleService.getTaskCounter(resource_id, student_id);
@@ -353,6 +385,10 @@ public class CrScoreController {
 	 * @param resource_id 资源id
 	 * @param crRoleList  靶场角色列表
 	 * @return {@code MissionReport }
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
+	 * @see MissionReport
 	 */
 	public MissionReport getTrainingMissionReport(String resource_id, List<CrRole> crRoleList) {
 
@@ -372,6 +408,10 @@ public class CrScoreController {
 	 * @param resource_id 资源id
 	 * @param user_hash   用户哈希
 	 * @return {@code List<MissionSchemeObject<TrainingRecordMissionRsp>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<MissionSchemeObject<TrainingRecordMissionRsp>>
 	 */
 	public List<MissionSchemeObject<TrainingRecordMissionRsp>> getTrainingRecord(String resource_id,
 			String user_hash) {
@@ -434,6 +474,10 @@ public class CrScoreController {
 	 * @param resource_id 资源id
 	 * @param crRoleList  靶场角色列表
 	 * @return {@code List<UserReport> }
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
+	 * @see List<UserReport>
 	 */
 	public List<UserReport> getTrainingReport(String resource_id, List<CrRole> crRoleList) {
 
@@ -496,6 +540,8 @@ public class CrScoreController {
 	 * 获取模板i18n
 	 *
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see JSONObject
 	 */
 	public JSONObject getTemplateI18n() {
 		JSONObject jsonObject = new JSONObject();
@@ -512,6 +558,9 @@ public class CrScoreController {
 	 *
 	 * @param name 名称
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public String getTitle(String name) {
 
@@ -527,6 +576,9 @@ public class CrScoreController {
 	 *
 	 * @param trainRecord 训练记录
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see TrainRecord
+	 * @see JSONObject
 	 */
 	private JSONObject getTrainRecordMessage(TrainRecord trainRecord) {
 		if (trainRecord == null) {

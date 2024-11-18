@@ -21,7 +21,10 @@ import java.util.List;
  * 任务模板请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @Slf4j
@@ -29,54 +32,72 @@ public class MissionTemplateReq implements Serializable {
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "标题", required = true)
 	private String title;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述", required = true)
 	private String description;
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "分值", required = true)
 	private Integer score;
 
 	/**
 	 * 技能点
+	 *
+	 * @see List<Integer>
 	 */
 	@ApiModelProperty(value = "技能点", required = true)
 	private List<Integer> skillPoints;
 
 	/**
 	 * 答案
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "标准答案", required = true)
 	private String answer;
 
 	/**
 	 * 选择
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "选择题选项，非选择题为\"null\"", required = true)
 	private String option;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "任务类型（单选、填空等）", required = true)
 	private Integer type;
 
 	/**
 	 * 类别
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务类别（密码破解、网络侦查等）", required = true)
 	private String category;
 
 	/**
 	 * 写入向上
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "题解", required = true)
 	private String writeUp;

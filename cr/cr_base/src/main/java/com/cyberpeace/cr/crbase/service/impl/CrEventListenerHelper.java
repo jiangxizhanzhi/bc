@@ -23,7 +23,9 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场事件听者助手
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -36,6 +38,11 @@ public class CrEventListenerHelper {
 	 * @param data
 	 * @param nodeId
 	 * @return
+	 * @throws
+	 * @see CrRole
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public String filterDataByRole(CrRole role, String data, String nodeId) {
 		WsSceneReportBO report;
@@ -88,6 +95,10 @@ public class CrEventListenerHelper {
 	 * @param data
 	 * @param businessId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see WebSocketMessageContext
 	 */
 	public WebSocketMessageContext makeContext(String data, String businessId) {
 		// 构建需要向页面推送的消息上下文

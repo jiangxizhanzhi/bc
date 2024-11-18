@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
  * 图片解析器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class PictureParser implements MdContentParser<String, String> {
@@ -18,6 +21,9 @@ public class PictureParser implements MdContentParser<String, String> {
 	 *
 	 * @param content 内容
 	 * @return {@code String }
+	 * @throws
+	 * @see Object
+	 * @see String
 	 */
 	@Override
 	public String parse(Object content) {
@@ -29,6 +35,9 @@ public class PictureParser implements MdContentParser<String, String> {
 	 *
 	 * @param content 内容
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String write(String content) {

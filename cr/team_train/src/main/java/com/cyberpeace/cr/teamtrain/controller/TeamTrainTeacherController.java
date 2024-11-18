@@ -45,69 +45,91 @@ import io.swagger.annotations.ApiParam;
  * 团队训练教员控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "团队训练实例-教员")
 @RestController
 @RequestMapping("/cr/training_team/training_team_teacher")
 public class TeamTrainTeacherController {
 
-	/**
-	 * 靶场常见Service
-	 */
-	@Autowired
+    /**
+     * 靶场常见Service
+     *
+     * @see CrCommonService
+     */
+    @Autowired
 	CrCommonService crCommonService;
 
-	/**
-	 * 团队房间Service
-	 */
-	@Autowired
+    /**
+     * 团队房间Service
+     *
+     * @see TeamRoomService
+     */
+    @Autowired
 	private TeamRoomService teamRoomService;
 
-	/**
-	 * 靶场任务Service
-	 */
-	@Autowired
+    /**
+     * 靶场任务Service
+     *
+     * @see CrTaskService
+     */
+    @Autowired
 	private CrTaskService crTaskService;
 
-	/**
-	 * 团队教员Service
-	 */
-	@Autowired
+    /**
+     * 团队教员Service
+     *
+     * @see TeamTeacherService
+     */
+    @Autowired
 	private TeamTeacherService teamTeacherService;
 
-	/**
-	 * 团队场景Service
-	 */
-	@Autowired
+    /**
+     * 团队场景Service
+     *
+     * @see TeamSceneService
+     */
+    @Autowired
 	private TeamSceneService teamSceneService;
 
-	/**
-	 * 靶场角色Service
-	 */
-	@Autowired
+    /**
+     * 靶场角色Service
+     *
+     * @see CrRoleService
+     */
+    @Autowired
 	private CrRoleService crRoleService;
 
-	/**
-	 * 任务Service
-	 */
-	@Autowired
+    /**
+     * 任务Service
+     *
+     * @see MissionService
+     */
+    @Autowired
 	private MissionService missionService;
 
-	/**
-	 * 靶场徽章Service
-	 */
-	@Autowired
+    /**
+     * 靶场徽章Service
+     *
+     * @see CrBadgeService
+     */
+    @Autowired
 	private CrBadgeService crBadgeService;
 
-	/**
-	 * 获取会话
-	 *
-	 * @param room_id    房间id
-	 * @param student_id 学员id
-	 * @return {@code BaseRsp<List<MonitorSession>> }
-	 */
-	@ApiOperation("获取桌面监控")
+    /**
+     * 获取会话
+     *
+     * @param room_id    房间id
+     * @param student_id 学员id
+     * @return {@code BaseRsp<List<MonitorSession>> }
+     * @throws
+     * @see String
+     * @see String
+     * @see BaseRsp<List<MonitorSession>>
+     */
+    @ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<MonitorSession>> getSessions(
@@ -122,13 +144,16 @@ public class TeamTrainTeacherController {
 				crCommonService.getMonitorSessions(room.getLocalSceneId(), student_id));
 	}
 
-	/**
-	 * 获取角色列表
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<List<IdNameType>> }
-	 */
-	@ApiOperation("获取角色列表")
+    /**
+     * 获取角色列表
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<List<IdNameType>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<IdNameType>>
+     */
+    @ApiOperation("获取角色列表")
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<IdNameType>> getRoleList(
@@ -137,13 +162,16 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 获取评估列表
-	 *
-	 * @param req 请求体
-	 * @return {@code BaseRsp<List<EvaluationListRsp>> }
-	 */
-	@ApiOperation("获取学员的评估提交记录")
+    /**
+     * 获取评估列表
+     *
+     * @param req 请求体
+     * @return {@code BaseRsp<List<EvaluationListRsp>> }
+     * @throws
+     * @see EvaluationListReq
+     * @see BaseRsp<List<EvaluationListRsp>>
+     */
+    @ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/evaluation/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<EvaluationListRsp>> getEvaluationList(@Validated EvaluationListReq req) {
@@ -155,13 +183,16 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 获取评估详情
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<EvaluationMissionRsp> }
-	 */
-	@ApiOperation("获取学员单个评估和任务详情，用于裁决页面")
+    /**
+     * 获取评估详情
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<EvaluationMissionRsp> }
+     * @throws
+     * @see String
+     * @see BaseRsp<EvaluationMissionRsp>
+     */
+    @ApiOperation("获取学员单个评估和任务详情，用于裁决页面")
 	@GetMapping("/evaluation/detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<EvaluationMissionRsp> getEvaluationDetail(
@@ -170,13 +201,16 @@ public class TeamTrainTeacherController {
 		return new BaseRsp(res);
 	}
 
-	/**
-	 * 获取得分列表
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<List<StudentScoreListRsp>> }
-	 */
-	@ApiOperation("获取评分列表")
+    /**
+     * 获取得分列表
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<List<StudentScoreListRsp>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<StudentScoreListRsp>>
+     */
+    @ApiOperation("获取评分列表")
 	@GetMapping("/score/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<StudentScoreListRsp>> getScoreList(
@@ -187,13 +221,16 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 新增任务信息
-	 *
-	 * @param rbRoomMissionReq RB房间任务请求体
-	 * @return {@code BaseRsp<Boolean> }
-	 */
-	@ApiOperation("动态任务新增")
+    /**
+     * 新增任务信息
+     *
+     * @param rbRoomMissionReq RB房间任务请求体
+     * @return {@code BaseRsp<Boolean> }
+     * @throws
+     * @see TeamRoomMissionReq
+     * @see BaseRsp<Boolean>
+     */
+    @ApiOperation("动态任务新增")
 	@PostMapping("/mission_info_create")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<Boolean>
@@ -214,16 +251,21 @@ public class TeamTrainTeacherController {
 				missionService.addDynamic(mission, crRole, rbRoomMissionReq.getMissionStage(),rbRoomMissionReq.getAfterMissionId()));
 	}
 
-	/**
-	 * 获取设备列表
-	 * 透传中台
-	 *
-	 * @param resource_id 资源id
-	 * @param category    类别
-	 * @param name        名称
-	 * @return {@code BaseRsp<JSONArray>}
-	 */
-	@ApiOperation("设备清单")
+    /**
+     * 获取设备列表
+     * 透传中台
+     *
+     * @param resource_id 资源id
+     * @param category    类别
+     * @param name        名称
+     * @return {@code BaseRsp<JSONArray>}
+     * @throws
+     * @see String
+     * @see Integer
+     * @see String
+     * @see BaseRsp<JSONArray>
+     */
+    @ApiOperation("设备清单")
 	@GetMapping("/device/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<JSONArray> getDeviceList(
@@ -237,14 +279,17 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 获取设备统计数据
-	 * 透传中台
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<JSONObject>}
-	 */
-	@ApiOperation("设备统计")
+    /**
+     * 获取设备统计数据
+     * 透传中台
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<JSONObject>}
+     * @throws
+     * @see String
+     * @see BaseRsp<JSONObject>
+     */
+    @ApiOperation("设备统计")
 	@GetMapping("/device/statistics")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<JSONObject> getDeviceStatistics(
@@ -254,15 +299,19 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 获取复盘时间行
-	 * 传入用户id，则展示事件，否则只提供开始时间、结束时间
-	 *
-	 * @param resource_id 资源id
-	 * @param user_id     用户id
-	 * @return {@code BaseRsp<TimeLineData>}
-	 */
-	@ApiOperation("复盘时间轴")
+    /**
+     * 获取复盘时间行
+     * 传入用户id，则展示事件，否则只提供开始时间、结束时间
+     *
+     * @param resource_id 资源id
+     * @param user_id     用户id
+     * @return {@code BaseRsp<TimeLineData>}
+     * @throws
+     * @see String
+     * @see String
+     * @see BaseRsp<TimeLineData>
+     */
+    @ApiOperation("复盘时间轴")
 	@GetMapping("/replay/timeline")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TimeLineData> getReviewTimeLine(
@@ -273,13 +322,16 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 获取任务状态统计数据
-	 *
-	 * @param resource_id 资源id
-	 * @return
-	 */
-	@ApiOperation("获取任务状态统计数据")
+    /**
+     * 获取任务状态统计数据
+     *
+     * @param resource_id 资源id
+     * @return
+     * @throws
+     * @see String
+     * @see BaseRsp<TaskStatisticsInfo>
+     */
+    @ApiOperation("获取任务状态统计数据")
 	@GetMapping("/get_statistical_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TaskStatisticsInfo> getStatisticalInfo(
@@ -289,13 +341,16 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 是复盘启用
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<String> }
-	 */
-	@ApiOperation("查询复盘所需scene_id")
+    /**
+     * 是复盘启用
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<String> }
+     * @throws
+     * @see String
+     * @see BaseRsp<String>
+     */
+    @ApiOperation("查询复盘所需scene_id")
 	@GetMapping("/replay/enable")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String> isReplayEnabled(
@@ -305,13 +360,16 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 如果显示评估徽章
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<BadgeBo> }
-	 */
-	@ApiOperation("任务裁决红点是否显示")
+    /**
+     * 如果显示评估徽章
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp<BadgeBo> }
+     * @throws
+     * @see String
+     * @see BaseRsp<BadgeBo>
+     */
+    @ApiOperation("任务裁决红点是否显示")
 	@GetMapping("/evaluation/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<BadgeBo> ifShowEvaluationBadge(
@@ -321,13 +379,16 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	/**
-	 * 点击评估徽章
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp }
-	 */
-	@ApiOperation("任务裁决红点点击取消")
+    /**
+     * 点击评估徽章
+     *
+     * @param resource_id 资源id
+     * @return {@code BaseRsp }
+     * @throws
+     * @see String
+     * @see BaseRsp
+     */
+    @ApiOperation("任务裁决红点点击取消")
 	@GetMapping("/evaluation/badge/click")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp clickEvaluationBadge(

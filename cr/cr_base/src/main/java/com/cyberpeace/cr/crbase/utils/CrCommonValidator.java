@@ -21,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场常见验证人
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 public class CrCommonValidator {
@@ -30,6 +32,8 @@ public class CrCommonValidator {
 	 * 验证id是否为空
 	 *
 	 * @param id id
+	 * @throws
+	 * @see String
 	 */
 	public static void validateId(String id) {
 		if (StringUtils.isBlank(id)) {
@@ -42,6 +46,8 @@ public class CrCommonValidator {
 	 * 验证用户id是否空
 	 *
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
 	 */
 	public static void validateUserId(String userId) {
 		if (StringUtils.isBlank(userId)) {
@@ -57,6 +63,11 @@ public class CrCommonValidator {
 	 * @param minLen    最小
 	 * @param maxLen    最大 len
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see Integer
+	 * @see String
 	 */
 	public static void validateLength(String target, Integer minLen, Integer maxLen,
 			String errorCode) {
@@ -85,6 +96,9 @@ public class CrCommonValidator {
 	 *
 	 * @param target    目标
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see List<T>
+	 * @see String
 	 */
 	public static <T> void validateListIfEmpty(List<T> target, String errorCode) {
 		if (target.isEmpty()) {
@@ -98,6 +112,9 @@ public class CrCommonValidator {
 	 *
 	 * @param target    目标
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	public static void checkStringListDuplicate(List<String> target, String errorCode) {
 		Set<String> stringSet = Sets.newHashSet(target);
@@ -112,6 +129,9 @@ public class CrCommonValidator {
 	 *
 	 * @param target    目标
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static void checkStringExist(String target, String errorCode) {
 		if (target == null || target.isEmpty()) {
@@ -126,6 +146,10 @@ public class CrCommonValidator {
 	 * @param target    目标
 	 * @param maxValue  最大值
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see int
+	 * @see int
+	 * @see String
 	 */
 	public static void validateScore(int target, int maxValue, String errorCode) {
 		if (target < 0 || target > maxValue) {
@@ -140,6 +164,10 @@ public class CrCommonValidator {
 	 * @param target    目标
 	 * @param size      大小
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see List<T>
+	 * @see int
+	 * @see String
 	 */
 	public static <T> void validateSize(List<T> target, int size, String errorCode) {
 		if (target.size() != size) {
@@ -155,6 +183,11 @@ public class CrCommonValidator {
 	 * @param min       最小
 	 * @param max       最大
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see List<T>
+	 * @see int
+	 * @see int
+	 * @see String
 	 */
 	public static <T> void validateSize(List<T> target, int min, int max, String errorCode) {
 		if (target.size() < min || target.size() > max) {
@@ -170,6 +203,11 @@ public class CrCommonValidator {
 	 * @param minValue  分钟值
 	 * @param maxValue  最大值
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see int
+	 * @see int
+	 * @see int
+	 * @see String
 	 */
 	public static void validateRange(int target, int minValue, int maxValue, String errorCode) {
 		if (target < minValue || target > maxValue) {
@@ -183,6 +221,9 @@ public class CrCommonValidator {
 	 *
 	 * @param target    目标
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static void validateNameLen(String target, String errorCode) {
 		validateLength(target, CrCommonConstants.MIN_STR_LEN, CrCommonConstants.MAX_NAME_STR_LEN,
@@ -194,6 +235,9 @@ public class CrCommonValidator {
 	 *
 	 * @param target    目标
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static void validateDescLen(String target, String errorCode) {
 		validateLength(target, CrCommonConstants.MIN_STR_LEN, CrCommonConstants.MAX_DESC_LEN,
@@ -205,6 +249,9 @@ public class CrCommonValidator {
 	 *
 	 * @param target    目标
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static void validateTextLen(String target, String errorCode) {
 		validateLength(target, CrCommonConstants.ZERO_STR_LEN, CrCommonConstants.MAX_TEXT_LEN,
@@ -216,6 +263,9 @@ public class CrCommonValidator {
 	 *
 	 * @param target
 	 * @param errorCode 错误代号
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static void validateIdLen(String target, String errorCode) {
 		validateLength(target, CrCommonConstants.MIN_STR_LEN,
@@ -226,6 +276,8 @@ public class CrCommonValidator {
 	 * 校验字符串是否为ipv4地址
 	 *
 	 * @param ip ip地址
+	 * @throws
+	 * @see String
 	 */
 	public static void validateIp(String ip) {
 
@@ -249,6 +301,9 @@ public class CrCommonValidator {
 	 *
 	 * @param matrixData 矩阵数据
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	public static List<String> validateAhpMatrixDataOrder(String matrixData){
 		JSONArray objects = JSONArray.parseArray(matrixData);

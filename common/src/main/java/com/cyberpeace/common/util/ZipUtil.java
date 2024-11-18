@@ -16,9 +16,24 @@ import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
+/**
+ * zip 实用程序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
+ */
 @Slf4j
 public class ZipUtil {
 
+	/**
+	 * 生成路径
+	 *
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 */
 	public static String generatePath() {
 		String tmpPath;
 		if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -30,6 +45,15 @@ public class ZipUtil {
 		return file.getPath();
 	}
 
+	/**
+	 * 解压 到 tmp 路径
+	 *
+	 * @param zipPath Zip 路径
+	 * @return {@code String }
+	 * @throws @throws ZipException zip 异常
+	 * @see String
+	 * @see String
+	 */
 	public static String unZipToTmpPath(String zipPath) throws ZipException {
 		ZipFile zipFile = new ZipFile(zipPath);
 		String tmpPath = generatePath();
@@ -39,9 +63,14 @@ public class ZipUtil {
 
 	/**
 	 * 压缩文件解压
+	 *
 	 * @param zipPath
 	 * @param destPath
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	public static Boolean unzipToDest(String zipPath, String destPath) {
 
@@ -59,15 +88,27 @@ public class ZipUtil {
 		}
 	}
 
+	/**
+	 * 缓冲区大小
+	 */
 	private static final int BUFFER_SIZE = 2 * 1024;
 
+	/**
+	 * 后缀
+	 *
+	 * @see String
+	 */
 	private static final String SUFFIX = ".zip";
 
 	/**
 	 * 将某文件夹下所有文件压缩，生成zip包到该文件夹下
 	 * 如 /tmp/xyz/* ---> /tmp/xyz/xyz.zip
+	 *
 	 * @param srcDir 被压缩的文件夹路径
-	 * @throws RuntimeException
+	 * @return {@code String }
+	 * @throws @throws RuntimeException 运行时异常
+	 * @see String
+	 * @see String
 	 */
 	public static String toZip(String srcDir) throws RuntimeException {
 		ZipOutputStream zos = null;
@@ -102,9 +143,14 @@ public class ZipUtil {
 
 	/**
 	 * 压缩文件到目的文件夹 文件名称为src文件夹名称.zip
-	 * @param srcDir 需要压缩的文件夹
+	 *
+	 * @param srcDir  需要压缩的文件夹
 	 * @param destDir 目标文件夹
 	 * @return 压缩后文件地址
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public static String toZipDest(String srcDir, String destDir) {
 
@@ -138,10 +184,14 @@ public class ZipUtil {
 
 	/**
 	 * 递归压缩方法
+	 *
 	 * @param sourceFile 源文件
-	 * @param zos		 zip输出流
-	 * @param name		 压缩后的名称
-	 * @throws Exception
+	 * @param zos        zip输出流
+	 * @param name       压缩后的名称
+	 * @throws @throws Exception 例外
+	 * @see File
+	 * @see ZipOutputStream
+	 * @see String
 	 */
 	private static void compress(File sourceFile, ZipOutputStream zos, String name)
 			throws Exception {

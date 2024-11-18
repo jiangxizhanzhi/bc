@@ -48,7 +48,9 @@ import java.util.List;
  * EVAL Indicator 管理控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "后台-测试靶场-指标项管理")
 @RestController
@@ -59,42 +61,56 @@ public class EvalIndicatorAdminController {
 
 	/**
 	 * 评估指示器Service
+	 *
+	 * @see EvalIndicatorService
 	 */
 	@Autowired
 	private EvalIndicatorService evalIndicatorService;
 
 	/**
 	 * 评估指示器Mapper
+	 *
+	 * @see EvalIndicatorMapper
 	 */
 	@Autowired
 	private EvalIndicatorMapper evalIndicatorMapper;
 
 	/**
-	 * 远程蟒Service
+	 * 远程PythonService
+	 *
+	 * @see RemotePythonService
 	 */
 	@Autowired
 	private RemotePythonService remotePythonService;
 
 	/**
 	 * 评估算法Mapper
+	 *
+	 * @see EvalAlgorithmMapper
 	 */
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
 
 	/**
 	 * 评估收集Service
+	 *
+	 * @see EvalCollectionService
 	 */
 	@Autowired
 	private EvalCollectionService evalCollectionService;
 
 	/**
 	 * 评估集合体Service
+	 *
+	 * @see EvalAggregationService
 	 */
 	@Autowired
 	private EvalAggregationService evalAggregationService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -104,6 +120,9 @@ public class EvalIndicatorAdminController {
 	 *
 	 * @param evalIndicatorReq 评估指示器请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see EvalIndicatorReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("新增指标项")
 	@PostMapping("")
@@ -140,6 +159,9 @@ public class EvalIndicatorAdminController {
 	 *
 	 * @param evalAhpAlgorithmReq 评估AHP算法请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see EvalAhpAlgorithmReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("校验矩阵数据一致性")
 	@PostMapping("/check_consistency")
@@ -158,6 +180,8 @@ public class EvalIndicatorAdminController {
 	 * 验证请求体
 	 *
 	 * @param req 请求体
+	 * @throws
+	 * @see EvalIndicatorReq
 	 */
 	private void validateReq(EvalIndicatorReq req) {
 		String resourceId = req.getEvalIndicatorId();
@@ -206,6 +230,9 @@ public class EvalIndicatorAdminController {
 	 *
 	 * @param evalIndicatorReq 评估指示器请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see EvalIndicatorReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("编辑指标项")
 	@PutMapping("")
@@ -251,6 +278,9 @@ public class EvalIndicatorAdminController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<EvalIndicatorRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<EvalIndicatorRsp>
 	 */
 	@ApiOperation("查询指标项")
 	@GetMapping("")
@@ -274,6 +304,9 @@ public class EvalIndicatorAdminController {
 	 *
 	 * @param evalIndicator 评估指标
 	 * @return {@code EvalIndicatorRsp }
+	 * @throws
+	 * @see EvalIndicator
+	 * @see EvalIndicatorRsp
 	 */
 	private EvalIndicatorRsp convertEvalIndicatorToEvalSystemRsp(EvalIndicator evalIndicator) {
 		EvalIndicatorRsp evalSystemRsp = BeanUtils.copy(evalIndicator, EvalIndicatorRsp.class);
@@ -299,6 +332,9 @@ public class EvalIndicatorAdminController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<EvalIndicatorRsp>> }
+	 * @throws
+	 * @see EvalNameListReq
+	 * @see BaseRsp<ListRsp<EvalIndicatorRsp>>
 	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
@@ -336,6 +372,9 @@ public class EvalIndicatorAdminController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see BatchDeleteReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@DeleteMapping()
 	@ApiOperation("批量删除")

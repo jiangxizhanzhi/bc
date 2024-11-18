@@ -11,79 +11,106 @@ import lombok.Data;
  * 靶场模板公共信息类
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class BusinessTemplateRsp implements Serializable {
 
 	/**
 	 * id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "冗余字段，resource_id")
 	private String id;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "唯一标识符")
 	private String resourceId;
 
 	/**
 	 * 场景经理id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "拓扑id，前端兼容")
 	private String sceneManagerId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "模板名称")
 	private String name;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "模板描述")
 	private String description;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练类型")
 	private Integer type;
 
 	/**
 	 * 难
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练难度")
 	private Integer difficult;
 
 	/**
 	 * 创建时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty(value = "创建时间")
 	private Date createTime;
 
 	/**
 	 * 创建用户
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "创建人名字")
 	private String createUser;
 
 	/**
 	 * 共享
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "授权操作类型")
 	private Integer share;
 
 	/**
 	 * 分享教师
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "授权操作用户列表")
 	private List<String> shareTeachers;
 
 	/**
 	 * 场景配置信息
+	 *
+	 * @see SceneConfigRsp
 	 */
 	@ApiModelProperty(value = "场景编排")
 	private SceneConfigRsp sceneConfigInfo;

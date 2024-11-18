@@ -12,7 +12,10 @@ import com.cyberpeace.cs.dao.entity.Attachment;
  * 附件映射器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface AttachmentMapper extends BaseMapper<Attachment> {
@@ -23,6 +26,10 @@ public interface AttachmentMapper extends BaseMapper<Attachment> {
 	 * @param attachmentIds 附件id列表
 	 * @param isPublic      是否公开
 	 * @return {@code List<Attachment> }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
+	 * @see List<Attachment>
 	 */
 	List<Attachment> selectBatchIds(@Param("attachmentIds") List<String> attachmentIds,
 			@Param("isPublic") Boolean isPublic);
@@ -32,6 +39,9 @@ public interface AttachmentMapper extends BaseMapper<Attachment> {
 	 *
 	 * @param filePath 文件路径
 	 * @return {@code Attachment }
+	 * @throws
+	 * @see String
+	 * @see Attachment
 	 */
 	Attachment selectByPath(@Param("filePath") String filePath);
 
@@ -39,6 +49,8 @@ public interface AttachmentMapper extends BaseMapper<Attachment> {
 	 * 批量插入
 	 *
 	 * @param attachments 附件
+	 * @throws
+	 * @see List<Attachment>
 	 */
 	void batchInsert(@Param("attachments") List<Attachment> attachments);
 }

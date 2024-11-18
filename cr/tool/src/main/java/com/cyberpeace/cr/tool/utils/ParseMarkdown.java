@@ -13,32 +13,44 @@ import java.util.List;
  * 也可传入tag，如'*'，则解析两个'*'之间的内容或直到文本结束
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class ParseMarkdown {
 
 
 	/**
 	 * 文件
+	 *
+	 * @see File
 	 */
 	private final File file;
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	public static final String TITLE = "__title__";
 
 	/**
 	 * 标题前缀
+	 *
+	 * @see String
 	 */
 	private static final String TITLE_PREFIX = "## ";
 
 	/**
 	 * 标签前缀
+	 *
+	 * @see String
 	 */
 	private static final String LABEL_PREFIX = "### ";
 
 	/**
 	 * 数据
+	 *
+	 * @see ArrayListMultimap<String, String>
 	 */
 	private ArrayListMultimap<String, String> data = ArrayListMultimap.create();
 
@@ -47,6 +59,9 @@ public class ParseMarkdown {
 	 *
 	 * @param key   钥匙
 	 * @param value 值
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private void setMap(String key, String value) {
 		String newValue;
@@ -62,6 +77,8 @@ public class ParseMarkdown {
 	 * 获取数据
 	 *
 	 * @return {@code ArrayListMultimap<String, String> }
+	 * @throws
+	 * @see ArrayListMultimap<String, String>
 	 */
 	public ArrayListMultimap<String, String> getData() {
 		return data;
@@ -71,6 +88,8 @@ public class ParseMarkdown {
 	 * 解析 Markdown
 	 *
 	 * @param file 文件
+	 * @throws
+	 * @see File
 	 */
 	public ParseMarkdown(File file) {
 		this.file = file;
@@ -78,6 +97,8 @@ public class ParseMarkdown {
 
 	/**
 	 * 处理markdown流
+	 *
+	 * @throws
 	 */
 	public void handler(){
 		loadFile();
@@ -88,6 +109,8 @@ public class ParseMarkdown {
 	 * 加载文件内容
 	 *
 	 * @return
+	 * @throws
+	 * @see List<String>
 	 */
 	private List<String> loadFile() {
 		BufferedReader reader = null;
@@ -116,6 +139,8 @@ public class ParseMarkdown {
 
 	/**
 	 * 解析文件内容
+	 *
+	 * @throws
 	 */
 	private void parse() {
 		List<String> lines = loadFile();

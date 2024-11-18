@@ -34,7 +34,10 @@ import lombok.extern.slf4j.Slf4j;
  * 单训练统计学Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see SingleTrainStatisticsService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -42,24 +45,32 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
 
     /**
      * 靶场任务Mapper
+     *
+     * @see CrTaskMapper
      */
     @Autowired
     CrTaskMapper crTaskMapper;
 
     /**
      * 远程用户Service
+     *
+     * @see RemoteUserService
      */
     @Autowired
     RemoteUserService remoteUserService;
 
     /**
      * 远程组织Service
+     *
+     * @see RemoteOrganizationService
      */
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
 
     /**
      * utilService
+     *
+     * @see UtilService
      */
     @Autowired
     private UtilService utilService;
@@ -68,6 +79,8 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
      * 获取组织排统计学
      *
      * @return {@code List<SingleOrganizationStatisticsBo> }
+     * @throws
+     * @see List<SingleOrganizationStatisticsBo>
      */
     @Override
     public List<SingleOrganizationStatisticsBo> getOrganizationRankStatistics() {
@@ -156,6 +169,8 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
      * 获取都个人排统计学
      *
      * @return {@code List<SinglePersonalStatisticsBo> }
+     * @throws
+     * @see List<SinglePersonalStatisticsBo>
      */
     @Override
     public List<SinglePersonalStatisticsBo> getAllPersonalRankStatistics() {
@@ -208,6 +223,10 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
      * @param detailReq 详情请求体
      * @param page      分页
      * @return {@code ListRsp<SingleStatisticsDetailBo> }
+     * @throws
+     * @see SingleTrainStatisticsDetailReq
+     * @see Page
+     * @see ListRsp<SingleStatisticsDetailBo>
      */
     @Override
     public ListRsp<SingleStatisticsDetailBo> getAllStatisticsDetail(SingleTrainStatisticsDetailReq detailReq, Page page) {

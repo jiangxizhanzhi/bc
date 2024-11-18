@@ -17,7 +17,11 @@ import java.util.stream.Collectors;
  * 系统用状态Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see SystemUseStatusService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -25,6 +29,8 @@ public class SystemUseStatusServiceImpl extends ServiceImpl<SystemUseStatusMappe
 
 	/**
 	 * 系统用状态映射
+	 *
+	 * @see SystemUseStatusMapper
 	 */
 	@Autowired
 	private SystemUseStatusMapper systemUseStatusMapper;
@@ -33,6 +39,8 @@ public class SystemUseStatusServiceImpl extends ServiceImpl<SystemUseStatusMappe
 	 * 显示全部
 	 *
 	 * @return {@code SystemUseStatusRes }
+	 * @throws
+	 * @see SystemUseStatusRes
 	 */
 	@Override
 	public SystemUseStatusRes showAll() {
@@ -55,6 +63,10 @@ public class SystemUseStatusServiceImpl extends ServiceImpl<SystemUseStatusMappe
 	 * @param cpuUsage    CPU 使用率
 	 * @param memoryUsage 内存使用情况
 	 * @param diskUsage   磁盘使用情况
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void insert(String cpuUsage, String memoryUsage, String diskUsage) {
@@ -68,6 +80,8 @@ public class SystemUseStatusServiceImpl extends ServiceImpl<SystemUseStatusMappe
 
 	/**
 	 * 删除
+	 *
+	 * @throws
 	 */
 	@Override
 	public void delete() {

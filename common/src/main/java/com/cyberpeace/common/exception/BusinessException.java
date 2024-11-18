@@ -10,12 +10,17 @@ import lombok.Getter;
  * 业务处理异常
  *
  * @author yinqingrong
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see RuntimeException
+ * @since 1.0.0
  */
 public class BusinessException extends RuntimeException {
 
 	/**
 	 * 错误信息
+	 *
+	 * @see String
 	 */
 	@Getter
 	private String errorMessage;

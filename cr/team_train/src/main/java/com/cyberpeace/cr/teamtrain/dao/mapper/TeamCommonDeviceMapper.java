@@ -13,7 +13,10 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice;
  * 团队常见装置Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -25,6 +28,10 @@ public interface TeamCommonDeviceMapper extends BaseMapper<TeamCommonDevice> {
      * @param roomId        房间id
      * @param collectUserId 收集用户id
      * @return {@code List<TeamCommonDevice> }
+     * @throws
+     * @see String
+     * @see String
+     * @see List<TeamCommonDevice>
      */
     List<TeamCommonDevice> selectByCollectUserAndRoomId(@Param("roomId") String roomId, @Param("collectUserId") String collectUserId);
 
@@ -33,6 +40,9 @@ public interface TeamCommonDeviceMapper extends BaseMapper<TeamCommonDevice> {
      *
      * @param roomId 房间id
      * @return {@code List<TeamCommonDevice> }
+     * @throws
+     * @see String
+     * @see List<TeamCommonDevice>
      */
     List<TeamCommonDevice> selectAllDevices(@Param("roomId") String roomId);
 
@@ -40,6 +50,8 @@ public interface TeamCommonDeviceMapper extends BaseMapper<TeamCommonDevice> {
      * 删除由资源id
      *
      * @param resourceId 资源id
+     * @throws
+     * @see String
      */
     void deleteByResourceId(@Param("resourceId") String resourceId);
 
@@ -47,6 +59,8 @@ public interface TeamCommonDeviceMapper extends BaseMapper<TeamCommonDevice> {
      * 删除由装置id
      *
      * @param nodeId 节点id
+     * @throws
+     * @see String
      */
     void deleteByDeviceId(@Param("nodeId") String nodeId);
 
@@ -54,6 +68,8 @@ public interface TeamCommonDeviceMapper extends BaseMapper<TeamCommonDevice> {
      * 删除由房间id
      *
      * @param roomId 房间id
+     * @throws
+     * @see String
      */
     void deleteByRoomId(@Param("roomId") String roomId);
 
@@ -61,6 +77,8 @@ public interface TeamCommonDeviceMapper extends BaseMapper<TeamCommonDevice> {
      * 插入列表
      *
      * @param teamCommonDeviceList 团队通用设备列表
+     * @throws
+     * @see List<TeamCommonDevice>
      */
     void insertList(@Param("teamCommonDeviceList") List<TeamCommonDevice> teamCommonDeviceList);
 }

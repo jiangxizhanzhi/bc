@@ -21,42 +21,56 @@ import java.util.stream.Collectors;
  * 任务矩阵
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class TaskMatrix {
     /**
      * 成功计数
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "成功数")
     private Integer successCount;
 
     /**
      * 失败计数
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "失败数")
     private Integer failCount;
 
     /**
      * 拒绝计数
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "驳回数")
     private Integer rejectCount;
 
     /**
      * 都计数
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "总数")
     private Integer allCount;
 
     /**
      * 完成计数
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "完成数")
     private Integer finishCount;
 
     /**
      * 得分
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "得分")
     private Integer score;
@@ -64,24 +78,32 @@ public class TaskMatrix {
 
     /**
      * 任务列表
+     *
+     * @see List<TaskStage>
      */
     @ApiModelProperty(value = "任务列表")
     private List<TaskStage> taskList;
 
     /**
      * 时间成本
+     *
+     * @see String
      */
     @ApiModelProperty(value = "训练时长")
     private String timeCost;
 
     /**
      * 图标
+     *
+     * @see String
      */
     @ApiModelProperty(value = "用户头像")
     private String logo;
 
     /**
      * 最终比分
+     *
+     * @see Integer
      */
     @ApiModelProperty(value = "综合得分")
     private Integer finalScore;

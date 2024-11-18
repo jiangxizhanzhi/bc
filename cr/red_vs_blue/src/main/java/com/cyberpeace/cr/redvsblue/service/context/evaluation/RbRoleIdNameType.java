@@ -10,7 +10,10 @@ import lombok.Data;
  * RB角色id名称类型
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see IdNameType
+ * @since 1.0.0
  */
 @Data
 public class RbRoleIdNameType extends IdNameType {

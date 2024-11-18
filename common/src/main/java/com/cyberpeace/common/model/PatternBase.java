@@ -14,12 +14,20 @@ import lombok.Data;
  * 图案基底
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @ApiModel
 @Data
 public class PatternBase implements Serializable {
 
+	/**
+	 * 模式
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty(value = "模糊查询筛选参数")
 	private String pattern;
 

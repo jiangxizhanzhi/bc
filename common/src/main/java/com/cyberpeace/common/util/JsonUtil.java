@@ -27,13 +27,17 @@ import lombok.extern.slf4j.Slf4j;
  * json序列化和反序列化工具类
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 public class JsonUtil {
 
 	/**
 	 * JSON 实用程序
+	 *
+	 * @throws
 	 */
 	private JsonUtil() {}
 
@@ -42,6 +46,9 @@ public class JsonUtil {
 	 *
 	 * @param obj 对象
 	 * @return {@code String }
+	 * @throws
+	 * @see Object
+	 * @see String
 	 */
 	public static String toJsonString(Object obj) {
 		if (null == obj) {
@@ -58,9 +65,13 @@ public class JsonUtil {
 	/**
 	 * 到 JSON 对象数组
 	 *
-	 * @param text  发短信
+	 * @param text  文本
 	 * @param clazz 克拉兹
 	 * @return {@code List<T> }
+	 * @throws
+	 * @see String
+	 * @see Class<T>
+	 * @see List<T>
 	 */
 	public static <T> List<T> toJsonObjectArray(String text, Class<T> clazz) {
 		if (StringUtils.isBlank(text)) {
@@ -73,9 +84,13 @@ public class JsonUtil {
 	/**
 	 * 到 JSON 对象
 	 *
-	 * @param text  发短信
+	 * @param text  文本
 	 * @param clazz 克拉兹
 	 * @return {@code T }
+	 * @throws
+	 * @see String
+	 * @see Class<T>
+	 * @see T
 	 */
 	public static <T> T toJsonObject(String text, Class<T> clazz) {
 		return JSONObject.parseObject(text, clazz);
@@ -87,6 +102,10 @@ public class JsonUtil {
 	 * @param inputStream 输入流
 	 * @param clazz       克拉兹
 	 * @return {@code T }
+	 * @throws
+	 * @see InputStream
+	 * @see Class<T>
+	 * @see T
 	 */
 	@SneakyThrows
 	public static <T> T toJsonObject(InputStream inputStream, Class<T> clazz) {
@@ -112,6 +131,9 @@ public class JsonUtil {
 	 *
 	 * @param objArr
 	 * @return
+	 * @throws
+	 * @see List<T>
+	 * @see String
 	 */
 	public static <T> String arrayToString(List<T> objArr) {
 		if (null == objArr) {
@@ -125,6 +147,9 @@ public class JsonUtil {
 	 *
 	 * @param text
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see JSONArray
 	 */
 	public static JSONArray stringToArray(String text) {
 		return JSONArray.parseArray(text);
@@ -133,10 +158,15 @@ public class JsonUtil {
 	/**
 	 * 转 JSON tObject
 	 *
-	 * @param text     发短信
+	 * @param text     文本
 	 * @param type     类型
 	 * @param features 特征
 	 * @return {@code T }
+	 * @throws
+	 * @see String
+	 * @see TypeReference<T>
+	 * @see Feature...
+	 * @see T
 	 */
 	public static <T> T toJsonTObject(String text, TypeReference<T> type, Feature... features) {
 		return JSON.parseObject(text, type, features);
@@ -149,6 +179,10 @@ public class JsonUtil {
 	 * @param jsonObject 原json数据
 	 * @param mapping    原json的key与新key的映射关系
 	 * @return
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 * @see JSONObject
 	 */
 	public static JSONObject filedConvert(JSONObject jsonObject, String mapping) {
 
@@ -176,6 +210,9 @@ public class JsonUtil {
 	 *
 	 * @param source
 	 * @return
+	 * @throws
+	 * @see T
+	 * @see JSONObject
 	 */
 	public static <T> JSONObject java2JsonObject(T source) {
 		return (JSONObject) JSONObject.toJSON(source);
@@ -187,6 +224,10 @@ public class JsonUtil {
 	 * @param source         源
 	 * @param namingStrategy 命名策略
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see T
+	 * @see PropertyNamingStrategy
+	 * @see JSONObject
 	 */
 	public static <T> JSONObject java2JsonObject(T source, PropertyNamingStrategy namingStrategy) {
 		SerializeConfig config = new SerializeConfig();
@@ -200,6 +241,10 @@ public class JsonUtil {
 	 * @param obj
 	 * @param namingStrategy
 	 * @return
+	 * @throws
+	 * @see Object
+	 * @see PropertyNamingStrategy
+	 * @see String
 	 */
 	public static String toJsonString(Object obj, PropertyNamingStrategy namingStrategy) {
 		if (null == obj) {
@@ -222,6 +267,10 @@ public class JsonUtil {
 	 * @param objArr
 	 * @param namingStrategy 命名策略
 	 * @return
+	 * @throws
+	 * @see List<T>
+	 * @see PropertyNamingStrategy
+	 * @see String
 	 */
 	public static <T> String arrayToString(List<T> objArr, PropertyNamingStrategy namingStrategy) {
 		if (null == objArr) {
@@ -238,6 +287,10 @@ public class JsonUtil {
 	 * @param json1
 	 * @param json2
 	 * @return
+	 * @throws
+	 * @see JSONObject
+	 * @see JSONObject
+	 * @see boolean
 	 */
 	public static boolean equalJson(JSONObject json1, JSONObject json2) {
 
@@ -257,6 +310,9 @@ public class JsonUtil {
 	 *
 	 * @param jsonObject JSON 对象
 	 * @return {@code TreeMap<String, String> }
+	 * @throws
+	 * @see JSONObject
+	 * @see TreeMap<String, String>
 	 */
 	private static TreeMap<String, String> toTreeMap(JSONObject jsonObject) {
 

@@ -17,7 +17,10 @@ import lombok.extern.slf4j.Slf4j;
  * 批量加载Markdown请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @Slf4j
@@ -25,6 +28,8 @@ public class BatchLoadMdReq implements Serializable {
 
 	/**
 	 * env reqs
+	 *
+	 * @see Map<String, String>
 	 */
 	@ApiModelProperty(value = "环境参数")
 	@NotEmpty
@@ -32,6 +37,8 @@ public class BatchLoadMdReq implements Serializable {
 
 	/**
 	 * 路径
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "资管文件路径")
 	@NotEmpty

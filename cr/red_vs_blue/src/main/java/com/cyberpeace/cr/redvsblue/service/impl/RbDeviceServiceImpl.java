@@ -19,19 +19,27 @@ import com.cyberpeace.integratation.service.RemoteUserService;
  * RB装置Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see RbDeviceService
+ * @since 1.0.0
  */
 @Service
 public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> implements RbDeviceService {
 
 	/**
 	 * RB装置Mapper
+	 *
+	 * @see RbDeviceMapper
 	 */
 	@Autowired
 	private RbDeviceMapper rbDeviceMapper;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -42,6 +50,10 @@ public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> i
 	 * @param roomId   房间id
 	 * @param deviceId 装置id
 	 * @return {@code List<RbDeviceContext> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<RbDeviceContext>
 	 */
 	@Override
 	public List<RbDeviceContext> getByRoomIdAndOptionalDevice(String roomId, String deviceId) {
@@ -63,6 +75,10 @@ public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> i
 	 * @param roomId   房间id
 	 * @param deviceId 装置id
 	 * @return {@code RbDevice }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see RbDevice
 	 */
 	@Override
 	public RbDevice getByRoomIdAndDevice(String roomId, String deviceId) {
@@ -76,6 +92,11 @@ public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> i
 	 * @param deviceId 装置id
 	 * @param userId   用户id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean create(String roomId, String deviceId, String userId) {
@@ -90,6 +111,8 @@ public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> i
 	 * 删除由房间id
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void removeByRoomId(String roomId) {
@@ -103,6 +126,11 @@ public class RbDeviceServiceImpl extends ServiceImpl<RbDeviceMapper, RbDevice> i
 	 * @param userId   用户id
 	 * @param deviceId 装置id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean removeByRoomIdAndUserIdAndDeviceId(String roomId, String userId,

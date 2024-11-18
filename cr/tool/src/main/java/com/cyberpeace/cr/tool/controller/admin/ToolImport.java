@@ -19,7 +19,9 @@ import io.swagger.annotations.ApiParam;
  * 工具导入
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "资源库导入")
 @RestController
@@ -28,6 +30,8 @@ public class ToolImport {
 
 	/**
 	 * 工具资源进口Service
+	 *
+	 * @see ToolResourceImportService
 	 */
 	@Autowired
 	private ToolResourceImportService toolResourceImportService;
@@ -37,6 +41,9 @@ public class ToolImport {
 	 *
 	 * @param path 路径
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("工具导入")
 	@GetMapping("tool/import")

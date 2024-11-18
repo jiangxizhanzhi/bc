@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
  * 整数解析器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class IntegerParser implements MdContentParser<Object, String> {
@@ -20,6 +23,9 @@ public class IntegerParser implements MdContentParser<Object, String> {
      *
      * @param content 内容
      * @return {@code Object }
+     * @throws
+     * @see Object
+     * @see Object
      */
     @Override
     public Object parse(Object content) {
@@ -37,6 +43,9 @@ public class IntegerParser implements MdContentParser<Object, String> {
      *
      * @param value 值
      * @return {@code String }
+     * @throws
+     * @see Object
+     * @see String
      */
     @Override
     public String write(Object value) {

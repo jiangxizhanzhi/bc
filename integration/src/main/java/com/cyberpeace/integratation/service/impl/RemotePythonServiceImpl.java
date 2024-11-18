@@ -26,7 +26,7 @@ import com.cyberpeace.integratation.service.RemotePythonService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 远程蟒Service实现
+ * 远程PythonService实现
  *
  * @author SN
  * @date 2024/11/11

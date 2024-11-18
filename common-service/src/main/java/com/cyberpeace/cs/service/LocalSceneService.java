@@ -18,7 +18,10 @@ import com.cyberpeace.integratation.model.scene.SceneNodeListReq;
  * 当地场景Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see IService
+ * @since 1.0.0
  */
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -27,6 +30,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code LocalScene }
+	 * @throws
+	 * @see String
+	 * @see LocalScene
 	 */
 	LocalScene getById(String localSceneId);
 
@@ -35,6 +41,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param businessInstanceId 业务实例id
 	 * @return {@code LocalScene }
+	 * @throws
+	 * @see String
+	 * @see LocalScene
 	 */
 	LocalScene getByBusinessInstanceId(String businessInstanceId);
 
@@ -43,6 +52,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localScene 当地场景
 	 * @return {@code String }
+	 * @throws
+	 * @see LocalScene
+	 * @see String
 	 */
 	String startScene(LocalScene localScene);
 
@@ -51,6 +63,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localScene 当地场景
 	 * @return {@code String }
+	 * @throws
+	 * @see LocalScene
+	 * @see String
 	 */
 	String testScene(LocalScene localScene);
 
@@ -59,6 +74,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean stopScene(String localSceneId);
 
@@ -67,6 +85,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localScene 当地场景
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see LocalScene
+	 * @see Boolean
 	 */
 	Boolean stopScene(LocalScene localScene);
 
@@ -75,6 +96,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean pauseScene(String localSceneId);
 
@@ -83,6 +107,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean unpauseScene(String localSceneId);
 
@@ -92,6 +119,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param topoData     拓扑数据
 	 * @param businessType 业务类型
 	 * @return {@code String }
+	 * @throws
+	 * @see JSONObject
+	 * @see Integer
+	 * @see String
 	 */
 	String saveTopo(JSONObject topoData, Integer businessType);
 
@@ -101,6 +132,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param topoData 拓扑数据
 	 * @param topoId   拓扑id
 	 * @return topoId
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 * @see String
 	 */
 	String saveTopo(JSONObject topoData, String topoId);
 
@@ -110,13 +145,19 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param topoId        拓扑id
 	 * @param referenceType 类型
 	 * @return 拓扑id
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
 	 */
 	String setTopoType(String topoId, Integer referenceType);
 
 	/**
 	 * delete mp topo
 	 *
-	 * @param topoId
+	 * @param topoId 拓扑id
+	 * @throws
+	 * @see String
 	 */
 	void deleteTopo(String topoId);
 
@@ -126,6 +167,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param topoId 拓扑id
 	 * @param name   名称
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean renameTopo(String topoId, String name);
 
@@ -134,6 +179,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localScene 当地场景
 	 * @return {@code Integer }
+	 * @throws
+	 * @see LocalScene
+	 * @see Integer
 	 */
 	Integer getNodeCount(LocalScene localScene);
 
@@ -142,6 +190,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer getNodeCount(String localSceneId);
 
@@ -151,6 +202,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param scene  场景
 	 * @param userId 用户id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see LocalScene
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getSceneData(LocalScene scene, String userId);
 
@@ -160,6 +215,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param mpSceneId 中台场景id
 	 * @param userId    用户id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getSceneData(String mpSceneId, String userId);
 
@@ -168,6 +227,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param topoId 拓扑id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getTopoData(String topoId);
 
@@ -176,6 +238,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localScene 当地场景
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see LocalScene
+	 * @see Boolean
 	 */
 	Boolean ensureSceneStarted(LocalScene localScene);
 
@@ -184,6 +249,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean ensureSceneStarted(String localSceneId);
 
@@ -193,6 +261,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param localSceneId 当地场景id
 	 * @param nodeId       节点id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean restartNode(String localSceneId, String nodeId);
 
@@ -202,6 +274,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param localSceneId 当地场景id
 	 * @param nodeId       节点id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean recreateNode(String localSceneId, String nodeId);
 
@@ -212,6 +288,11 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param nodeId     节点id
 	 * @param flowId     流量id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see LocalScene
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean startFlow(LocalScene localScene, String nodeId, String flowId);
 
@@ -222,6 +303,11 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param nodeId     节点id
 	 * @param flowId     流量id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see LocalScene
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean stopFlow(LocalScene localScene, String nodeId, String flowId);
 
@@ -231,6 +317,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param sceneData
 	 * @param interactiveType
 	 * @return Map<String, SceneFlowContext>
+	 * @throws
+	 * @see SceneData
+	 * @see Integer
+	 * @see Map<String, SceneFlowContext>
 	 */
 	Map<String, SceneFlowContext> getSceneFlowList(SceneData sceneData, Integer interactiveType);
 
@@ -240,6 +330,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param mpSceneId
 	 * @param sceneFlowContextMap
 	 * @return Boolean
+	 * @throws
+	 * @see String
+	 * @see Map<String, SceneFlowContext>
+	 * @see Boolean
 	 */
 	Boolean startRandomFlow(String mpSceneId, Map<String, SceneFlowContext> sceneFlowContextMap);
 
@@ -247,6 +341,8 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * 关闭mp场景
 	 *
 	 * @param scene 场景
+	 * @throws
+	 * @see LocalScene
 	 */
 	void deleteRemoteScene(LocalScene scene);
 
@@ -256,6 +352,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param localScene
 	 * @param studentId
 	 * @return
+	 * @throws
+	 * @see LocalScene
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray getMonitorSessions(LocalScene localScene, String studentId);
 
@@ -266,6 +366,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param mpSceneId 场景id
 	 * @param nodeIds   节点id列表
 	 * @return {@code List<MpHostState>}
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<MpHostState>
 	 */
 	List<MpHostState> getHostStateList(String mpSceneId, List<String> nodeIds);
 
@@ -275,6 +379,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param localScene
 	 * @param context
 	 * @return
+	 * @throws
+	 * @see LocalScene
+	 * @see CreateSnapshotContext
+	 * @see Boolean
 	 */
 	Boolean nodeSnapshot(LocalScene localScene, CreateSnapshotContext context);
 
@@ -284,6 +392,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param sceneId
 	 * @param imageId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray snapshotHistory(String sceneId, String imageId);
 
@@ -293,6 +405,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param sceneId
 	 * @param snapshotContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see MergeSnapshotContext
+	 * @see JSONObject
 	 */
 	JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext);
 
@@ -303,6 +419,11 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param nodeId
 	 * @param snapshotId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId);
 
@@ -311,6 +432,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localScene
 	 * @return
+	 * @throws
+	 * @see LocalScene
+	 * @see Boolean
 	 */
 	Boolean pauseScene(LocalScene localScene);
 
@@ -319,6 +443,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localScene
 	 * @return
+	 * @throws
+	 * @see LocalScene
+	 * @see Boolean
 	 */
 	Boolean unpauseScene(LocalScene localScene);
 
@@ -328,6 +455,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param localSceneId 当地场景id
 	 * @param nodeId       节点id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean createNode(String localSceneId, String nodeId);
 
@@ -337,6 +468,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param mpSceneId  场景id
 	 * @param updateData 更新节点内容，详见 http://10.10.10.11/pages/viewpage.action?pageId=69587011
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see JSONObject
+	 * @see Boolean
 	 */
 	Boolean updateNode(String mpSceneId, JSONObject updateData);
 
@@ -346,6 +481,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param mpSceneId 场景id
 	 * @param nodeId    节点id
 	 * @return {@code Boolean}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean deleteNode(String mpSceneId, String nodeId);
 
@@ -354,6 +493,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localScene  当地场景
 	 * @param updateScene 场景数据
+	 * @throws
+	 * @see LocalScene
+	 * @see JSONObject
 	 */
 	void updateScene(LocalScene localScene, JSONObject updateScene);
 
@@ -363,6 +505,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param mpSceneId 国会议员场景id
 	 * @param nodeId    节点id
 	 * @return {@code Boolean}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean startNode(String mpSceneId, String nodeId);
 
@@ -372,6 +518,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param mpSceneId 国会议员场景id
 	 * @param nodeId    节点id
 	 * @return {@code Boolean}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean stopNode(String mpSceneId, String nodeId);
 
@@ -381,6 +531,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param mpSceneId 国会议员场景id
 	 * @param nodeId    节点id
 	 * @return {@code Boolean}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean restartNodeBySceneId(String mpSceneId, String nodeId);
 
@@ -392,6 +546,12 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param name               业务实例id
 	 * @param realTimeHostState  是否展示实时主机状态
 	 * @return {@code JSONArray}
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
+	 * @see JSONArray
 	 */
 	JSONArray getAssetListByInstanceId(String businessInstanceId, Integer category, String name,
 			Boolean realTimeHostState);
@@ -403,6 +563,11 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param category 类别
 	 * @param name     名称
 	 * @return {@code JSONArray}
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray getAssetListByTopoId(String topoId, Integer category, String name);
 
@@ -411,6 +576,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code JSONObject}
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getNodeStatistics(String localSceneId);
 
@@ -419,6 +587,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param topoId 拓扑id
 	 * @return {@code JSONObject}
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getNodeStatisticsByTopoId(String topoId);
 
@@ -427,6 +598,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param businessInstanceId 业务实例id
 	 * @return {@code String}
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String getMpSceneIdByBusinessInstanceId(String businessInstanceId);
 
@@ -435,6 +609,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param req 请求体
 	 * @return {@code List<JSONObject>}
+	 * @throws
+	 * @see SceneNodeListReq
+	 * @see List<JSONObject>
 	 */
 	List<JSONObject> getAssetList(SceneNodeListReq req);
 
@@ -443,6 +620,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param businessInstanceId 业务实例id
 	 * @return {@code List<JSONObject>}
+	 * @throws
+	 * @see String
+	 * @see List<JSONObject>
 	 */
 	List<JSONObject> getAllAssetByBusinessInstanceId(String businessInstanceId);
 
@@ -451,6 +631,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 *
 	 * @param mpSceneId 议员scenen id
 	 * @return {@code LocalScene}
+	 * @throws
+	 * @see String
+	 * @see LocalScene
 	 */
 	LocalScene getOrExceptionByMpSceneId(String mpSceneId);
 }

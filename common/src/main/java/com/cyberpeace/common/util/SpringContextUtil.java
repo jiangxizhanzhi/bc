@@ -7,13 +7,31 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 
+/**
+ * Spring 上下文实用程序
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @see ApplicationContextAware
+ * @since 1.0.0
+ */
 public class SpringContextUtil implements ApplicationContextAware {
 
 	/**
 	 * Spring应用上下文环境
+	 *
+	 * @see ApplicationContext
 	 */
 	private static ApplicationContext applicationContext;
 
+	/**
+	 * 获取行为依赖上下文
+	 *
+	 * @return {@code ApplicationContext }
+	 * @throws
+	 * @see ApplicationContext
+	 */
 	public static ApplicationContext getApplicationContext() {
 		return applicationContext;
 	}
@@ -21,24 +39,53 @@ public class SpringContextUtil implements ApplicationContextAware {
 	/**
 	 * 实现了ApplicationContextAware 接口，必须实现该方法；
 	 * 通过传递applicationContext参数初始化成员变量applicationContext
+	 *
 	 * @param applicationContext
-	 * @throws BeansException
+	 * @throws @throws BeansException bean 异常
+	 * @see ApplicationContext
 	 */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		SpringContextUtil.applicationContext = applicationContext;
 	}
 
+	/**
+	 * 获取豆
+	 *
+	 * @param name 名称
+	 * @return {@code T }
+	 * @throws @throws BeansException bean 异常
+	 * @see String
+	 * @see T
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getBean(String name) throws BeansException {
 		return (T) applicationContext.getBean(name);
 	}
 
+	/**
+	 * 获取豆由类
+	 *
+	 * @param cls CLS
+	 * @return {@code T }
+	 * @throws @throws BeansException bean 异常
+	 * @see Class<T>
+	 * @see T
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getBeanByClass(Class<T> cls) throws BeansException {
 		return (T) applicationContext.getBean(cls);
 	}
 
+	/**
+	 * 获取豆之类型
+	 *
+	 * @param type 类型
+	 * @return {@code Map<String, T> }
+	 * @throws @throws BeansException bean 异常
+	 * @see Class<T>
+	 * @see Map<String, T>
+	 */
 	public static <T> Map<String, T> getBeansOfType(@Nullable Class<T> type) throws BeansException {
 		return applicationContext.getBeansOfType(type);
 	}

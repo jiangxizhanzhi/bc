@@ -14,39 +14,54 @@ import java.util.Date;
  * EVAL 可变参考探头数据
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_eval_variable_ref_probe_data")
 public class EvalVariableRefProbeData extends BaseTable {
     /**
      * id
+     *
+     * @see Integer
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
      * 变量id
+     *
+     * @see String
      */
     private String variableId;
 
     /**
      * 探针数据id
+     *
+     * @see Integer
      */
     private Integer probeDataId;
 
     /**
      * 时间
+     *
+     * @see Date
      */
     private Date time;
 
     /**
      * 格式 化值
+     *
+     * @see String
      */
     private String formattedValue;
 
     /**
      * 状态
+     *
+     * @see Integer
      */
     private Integer status;
 

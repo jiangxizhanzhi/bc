@@ -27,7 +27,9 @@ import io.swagger.annotations.ApiOperation;
  * 评估任务场景控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "靶场测评-场景")
 @Slf4j
@@ -38,12 +40,16 @@ public class EvalTaskSceneController {
 
 	/**
 	 * 评估任务Service
+	 *
+	 * @see EvalTaskService
 	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -53,6 +59,9 @@ public class EvalTaskSceneController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvalSceneNodeOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("重启节点")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -73,6 +82,9 @@ public class EvalTaskSceneController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvalSceneNodeOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("重建节点")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)

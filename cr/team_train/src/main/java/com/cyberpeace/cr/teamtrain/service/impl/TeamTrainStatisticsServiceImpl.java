@@ -33,7 +33,10 @@ import lombok.extern.slf4j.Slf4j;
  * 团队训练统计学Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see TeamTrainStatisticsService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -41,18 +44,24 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
 
     /**
      * 靶场任务Mapper
+     *
+     * @see CrTaskMapper
      */
     @Autowired
     CrTaskMapper crTaskMapper;
 
     /**
      * 远程用户Service
+     *
+     * @see RemoteUserService
      */
     @Autowired
     RemoteUserService remoteUserService;
 
     /**
      * 远程组织Service
+     *
+     * @see RemoteOrganizationService
      */
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
@@ -62,6 +71,8 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
      * 获取组织排统计学
      *
      * @return {@code List<TeamOrganizationStatisticsBo> }
+     * @throws
+     * @see List<TeamOrganizationStatisticsBo>
      */
     @Override
     public List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics() {
@@ -150,6 +161,8 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
      * 获取都个人排统计学
      *
      * @return {@code List<TeamPersonalStatisticsBo> }
+     * @throws
+     * @see List<TeamPersonalStatisticsBo>
      */
     @Override
     public List<TeamPersonalStatisticsBo> getAllPersonalRankStatistics() {
@@ -203,6 +216,10 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
      * @param detailReq 详情请求体
      * @param page      分页
      * @return {@code ListRsp<TeamStatisticsDetailBo> }
+     * @throws
+     * @see TeamTrainStatisticsDetailReq
+     * @see Page
+     * @see ListRsp<TeamStatisticsDetailBo>
      */
     @Override
     public ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page) {

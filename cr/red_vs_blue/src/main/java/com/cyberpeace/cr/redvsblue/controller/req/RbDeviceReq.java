@@ -11,13 +11,18 @@ import lombok.Data;
  * RB装置请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class RbDeviceReq implements Serializable {
 
 	/**
 	 * 房间id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "红蓝房间id")
 	@NotEmpty
@@ -25,6 +30,8 @@ public class RbDeviceReq implements Serializable {
 
 	/**
 	 * 装置id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "设备id")
 	@NotEmpty

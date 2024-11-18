@@ -10,20 +10,38 @@ import lombok.Data;
 import lombok.Getter;
 
 /**
-* 仪表板好友
-*
-* @author SN
-* @date 2024/11/07
-*/
+ * 仪表板好友
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
+ */
 @Data
 public class DashboardFriend implements Serializable {
 
+	/**
+	 * 组名
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("分组名称")
 	private String groupname;
 
+	/**
+	 * id
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty("编号")
 	private Integer id;
 
+	/**
+	 * 列表
+	 *
+	 * @see List<DashboardUser>
+	 */
 	@ApiModelProperty("好友列表")
 	private List<DashboardUser> list;
 

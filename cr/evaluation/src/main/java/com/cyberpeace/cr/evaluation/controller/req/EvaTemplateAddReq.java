@@ -14,13 +14,18 @@ import lombok.Data;
  * 伊娃模板新增请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see EvaTemplateBaseInfoReq
+ * @since 1.0.0
  */
 @Data
 public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 
 	/**
 	 * 场景配置数据
+	 *
+	 * @see SceneConfigData
 	 */
 	@ApiModelProperty(value = "拓扑配置", required = true)
 	@NotNull
@@ -28,6 +33,8 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 
 	/**
 	 * 步骤配置
+	 *
+	 * @see List<EvalTaskStepConfig>
 	 */
 	@ApiModelProperty(value = "步骤配置", required = true)
 	@NotNull

@@ -12,7 +12,10 @@ import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
  * 评估指示器Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 
@@ -21,6 +24,9 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	 *
 	 * @param algorithmIds 算法id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer selectAlgorithmSum(List<String> algorithmIds);
 
@@ -30,6 +36,10 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	 * @param page      分页
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<EvalIndicator> }
+	 * @throws
+	 * @see Page
+	 * @see EvalListQuery
+	 * @see IPage<EvalIndicator>
 	 */
 	IPage<EvalIndicator> listEvalIndicator(Page page, EvalListQuery listQuery);
 
@@ -39,6 +49,10 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	 * @param name       名称
 	 * @param resourceId 资源id
 	 * @return boolean
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see boolean
 	 */
 	boolean existByName(String name, String resourceId);
 
@@ -47,6 +61,9 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	 *
 	 * @param algorithmIds 算法id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 
@@ -55,6 +72,9 @@ public interface EvalIndicatorMapper extends BaseMapper<EvalIndicator> {
 	 *
 	 * @param ids id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer selectIndexUsedNum(List<String> ids);
 }

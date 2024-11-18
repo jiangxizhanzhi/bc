@@ -13,31 +13,42 @@ import lombok.Data;
  * 训练统计总体情况
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class TrainingStatisticsRsp implements Serializable {
 
 	/**
 	 * 不完全
+	 *
+	 * @see List<TrainingCountRsp>
 	 */
 	@ApiModelProperty(value = "未完成训练统计")
 	private List<TrainingCountRsp> incomplete;
 
 	/**
 	 * 完成
+	 *
+	 * @see List<TrainingCountRsp>
 	 */
 	@ApiModelProperty(value = "已完成训练统计")
 	private List<TrainingCountRsp> completed;
 
 	/**
 	 * 关系
+	 *
+	 * @see ListRsp<TrainingData>
 	 */
 	@ApiModelProperty(value = "相关训练")
 	private ListRsp<TrainingData> relation;
 
 	/**
 	 * 训练类型地图
+	 *
+	 * @see Map<Integer, Integer>
 	 */
 	@ApiModelProperty(value = "训练类型分布")
 	Map<Integer, Integer> trainingTypeMap;

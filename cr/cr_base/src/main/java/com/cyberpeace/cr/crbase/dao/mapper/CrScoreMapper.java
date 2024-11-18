@@ -13,35 +13,49 @@ import com.cyberpeace.cr.crbase.dao.entity.CrScore;
  * 靶场得分映射
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
 public interface CrScoreMapper extends BaseMapper<CrScore> {
 
-	/**
-	 * 获取由房间id和用户
-	 *
-	 * @param roomId 房间id
-	 * @param userId 用户id
-	 * @return {@code CrScore }
-	 */
-	CrScore getByRoomIdAndUser(String roomId, String userId);
+    /**
+     * 获取由房间id和用户
+     *
+     * @param roomId 房间id
+     * @param userId 用户id
+     * @return {@code CrScore }
+     * @throws
+     * @see String
+     * @see String
+     * @see CrScore
+     */
+    CrScore getByRoomIdAndUser(String roomId, String userId);
 
-	/**
-	 * 查询由房间id和用户id列表
-	 *
-	 * @param roomId  房间id
-	 * @param userIds 用户id列表
-	 * @return {@code List<CrScore> }
-	 */
-	List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
+    /**
+     * 查询由房间id和用户id列表
+     *
+     * @param roomId  房间id
+     * @param userIds 用户id列表
+     * @return {@code List<CrScore> }
+     * @throws
+     * @see String
+     * @see List<String>
+     * @see List<CrScore>
+     */
+    List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
 
-	/**
-	 * 查询由房间id
-	 *
-	 * @param roomId 房间id
-	 * @return {@code List<CrScore> }
-	 */
-	List<CrScore> selectByRoomId(@Param("roomId") String roomId);
+    /**
+     * 查询由房间id
+     *
+     * @param roomId 房间id
+     * @return {@code List<CrScore> }
+     * @throws
+     * @see String
+     * @see List<CrScore>
+     */
+    List<CrScore> selectByRoomId(@Param("roomId") String roomId);
 }

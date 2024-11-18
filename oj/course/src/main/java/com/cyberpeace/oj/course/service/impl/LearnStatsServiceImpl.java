@@ -804,7 +804,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	}
 
 	/**
-	 * 获取违约开始时间
+	 * 获取默认开始时间
 	 *
 	 * @param startTimeStr 开始时间 STR
 	 * @param endTime      结束时间

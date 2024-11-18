@@ -28,7 +28,10 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场时间轴Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see CrTimelineService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -36,30 +39,40 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 靶场常见Service
+	 *
+	 * @see CrCommonService
 	 */
 	@Autowired
 	private CrCommonService crCommonService;
@@ -70,6 +83,10 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code List<TimeLineEvent> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<TimeLineEvent>
 	 */
 	@Override
 	public List<TimeLineEvent> getReplayEvents(String roomId, String userId) {
@@ -136,6 +153,9 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<TimeLineEvent> }
+	 * @throws
+	 * @see String
+	 * @see List<TimeLineEvent>
 	 */
 	@Override
 	public List<TimeLineEvent> getTimelineEventsByRoomId(String roomId) {

@@ -9,23 +9,32 @@ import lombok.Data;
  * 包含时间信息的obj
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Comparable
+ * @since 1.0.0
  */
 @Data
 public class ObjWithTime implements Comparable<ObjWithTime> {
 
 	/**
 	 * 时间
+	 *
+	 * @see Date
 	 */
 	private Date time;
 
 	/**
 	 * 值
+	 *
+	 * @see Integer
 	 */
 	private Integer value = 1;
 
 	/**
 	 * 起源
+	 *
+	 * @see Map
 	 */
 	private Map origin;
 

@@ -65,7 +65,11 @@ import lombok.extern.slf4j.Slf4j;
  * 业务模板Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see BusinessTemplateService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -73,60 +77,80 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	/**
 	 * 业务模板映射
+	 *
+	 * @see BusinessTemplateMapper
 	 */
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * RTKS相关Service
+	 *
+	 * @see RtksRelatedService
 	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
 	/**
 	 * 业务模板处理器
+	 *
+	 * @see BusinessTemplateHandler
 	 */
 	@Autowired
 	@Qualifier("businessTemplateHandler")
@@ -137,6 +161,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param baseInfo 基地信息
 	 * @return {@code String }
+	 * @throws
+	 * @see BaseInfo
+	 * @see String
 	 */
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
@@ -180,6 +207,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param businessId 业务id
 	 * @param userId     用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void checkPermission(String businessId, String userId) {
@@ -197,6 +227,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param resourceId 资源id
 	 * @return boolean
+	 * @throws
+	 * @see String
+	 * @see boolean
 	 */
 	@Override
 	public boolean checkPermission(String resourceId) {
@@ -218,6 +251,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param templateName 模板名称
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean existByName(String templateName) {
@@ -229,6 +265,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param names 名字
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getExistedNames(List<String> names) {
@@ -243,6 +282,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param templateName 模板名称
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getIdByName(String templateName) {
@@ -254,6 +296,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param businessTemplate 业务模板
 	 * @param baseInfo         基地信息
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see BaseInfo
 	 */
 	@Override
 	public void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo) {
@@ -287,6 +332,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 * @param name       名称
 	 * @param type       类型
 	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
 	 */
 	@Override
 	public void validateName(String name, Integer type, String resourceId) {
@@ -303,6 +352,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 * @param businessTemplateId 业务模板id
 	 * @param before             以前
 	 * @param after              后
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void updateMissionTemplateRelation(String businessTemplateId, String before,
@@ -332,6 +385,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getAttackRelatedIds(List<String> businessTemplateIds) {
@@ -346,6 +402,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getEngageRelatedIds(List<String> businessTemplateIds) {
@@ -360,6 +419,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param btPageReq BT系列分页请求体
 	 * @return {@code ListRsp<BusinessTemplateSimple> }
+	 * @throws
+	 * @see BTPageReq
+	 * @see ListRsp<BusinessTemplateSimple>
 	 */
 	@Override
 	public ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq) {
@@ -374,6 +436,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 * 清除用户身份验证
 	 *
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void clearUserAuth(String userId) {
@@ -393,6 +457,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
@@ -410,6 +477,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code BusinessTemplate }
+	 * @throws
+	 * @see String
+	 * @see BusinessTemplate
 	 */
 	@Override
 	public BusinessTemplate getByLocalSceneId(String localSceneId) {
@@ -426,6 +496,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param businessTemplateQuery 业务模板查询
 	 * @return {@code IPage<BusinessTemplateData> }
+	 * @throws
+	 * @see BusinessTemplateQuery
+	 * @see IPage<BusinessTemplateData>
 	 */
 	@Override
 	public IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
@@ -461,6 +534,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code Share }
+	 * @throws
+	 * @see String
+	 * @see Share
 	 */
 	@Override
 	public Share getShares(String resourceId) {
@@ -496,6 +572,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 * 批量设置股票
 	 *
 	 * @param shareContext 分享上下文
+	 * @throws
+	 * @see ShareContext
 	 */
 	@Override
 	public void batchSetShares(ShareContext shareContext) {
@@ -516,6 +594,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param basicTemplate 基本模板
 	 * @return {@code BusinessTemplate }
+	 * @throws
+	 * @see BasicTemplate
+	 * @see BusinessTemplate
 	 */
 	private BusinessTemplate getBusinessTemplate(BasicTemplate basicTemplate) {
 		BaseInfo baseInfo = basicTemplate.getBaseInfo();
@@ -536,6 +617,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean batchDelete(List<String> businessTemplateIds) {
@@ -598,6 +682,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 * 清除本地
 	 *
 	 * @param template 模板
+	 * @throws
+	 * @see BusinessTemplate
 	 */
 	@Override
 	public void clearLocal(BusinessTemplate template) {
@@ -618,6 +704,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param template 模板
 	 * @return {@code LocalScene }
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see LocalScene
 	 */
 	@Override
 	public LocalScene createLocalScene(BusinessTemplate template) {
@@ -647,6 +736,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param template 模板
 	 * @return {@code SceneViewContext }
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see SceneViewContext
 	 */
 	@Override
 	public SceneViewContext viewScene(BusinessTemplate template) {
@@ -673,6 +765,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param code 代号
 	 * @return {@code LocalScene.BusinessCode }
+	 * @throws
+	 * @see Integer
+	 * @see LocalScene.BusinessCode
 	 */
 	@Override
 	public LocalScene.BusinessCode convertTypeToCode(Integer code) {
@@ -707,7 +802,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 * @param templateIds 模板id列表
 	 * @param tempDir     临时目录
 	 * @return {@code String }
-	 * @throws IOException io异常
+	 * @throws @throws IOException io异常
+	 * @see List<String>
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String makeDumpFile(List<String> templateIds, String tempDir) throws IOException {
@@ -752,6 +850,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param templateId 模板id
 	 * @return {@code ResourceDumpContext }
+	 * @throws
+	 * @see String
+	 * @see ResourceDumpContext
 	 */
 	@Override
 	public ResourceDumpContext dumpTemplate(String templateId) {
@@ -791,6 +892,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param unZipPath un zip 路径
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean batchLoad(String unZipPath) {
@@ -833,6 +937,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 * @param files    文件
 	 * @param imageDir 图像目录
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see Map<String, String>
+	 * @see String
+	 * @see Boolean
 	 */
 	private Boolean loadImages(Map<String, String> files, String imageDir) {
 		if (files == null || files.size() == 0) {
@@ -849,6 +957,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 * 加载业务模板
 	 *
 	 * @param template 模板
+	 * @throws
+	 * @see BusinessTemplate
 	 */
 	private void loadBusinessTemplate(BusinessTemplate template) {
 		template.setId(null);
@@ -870,6 +980,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	 *
 	 * @param template 模板
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see JSONObject
 	 */
 	private JSONObject getMpSceneData(BusinessTemplate template) {
 		String localSceneId = template.getLocalSceneId();

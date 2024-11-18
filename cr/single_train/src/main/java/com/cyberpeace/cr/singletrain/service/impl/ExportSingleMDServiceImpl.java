@@ -32,31 +32,42 @@ import java.util.stream.Collectors;
  * 导出单md服务实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ExportTrainMDServiceImpl
+ * @since 1.0.0
  */
 @Service
 public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 
 	/**
 	 * 单模板Mapper
+	 *
+	 * @see SingleTemplateMapper
 	 */
 	@Autowired
 	private SingleTemplateMapper singleTemplateMapper;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 靶场常数Service
+	 *
+	 * @see CrConstantsService
 	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
 	/**
 	 * 日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
@@ -64,6 +75,8 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 	 * 获取代号
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer getCode() {
@@ -77,6 +90,11 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 	 * @param path                 路径
 	 * @param sceneNumber          场景数
 	 * @param disableImageExport   禁用图像导出
+	 * @throws
+	 * @see List<BusinessTemplate>
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {

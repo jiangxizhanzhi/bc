@@ -25,7 +25,10 @@ import io.swagger.annotations.ApiModelProperty;
  * 靶场通知
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @TableName(value = "cr_notice")
 @Data
@@ -33,33 +36,47 @@ public class CrNotice extends BaseTable {
 
     /**
      * uuid
+     *
+     * @see String
      */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
     /**
      * 创建人id
+     *
+     * @see String
      */
     private String createUserId;
     /**
      * 公告内容
+     *
+     * @see String
      */
     private String context;
     /**
      * 公告对象
+     *
+     * @see Integer
      */
     private Integer role;
     /**
      * 房间id
+     *
+     * @see String
      */
     private String roomId;
 
     /**
      * 是否置顶0否1是
+     *
+     * @see Integer
      */
     private Integer isTop;
 
     /**
      * 通知用户
+     *
+     * @see String
      */
     private String noticeUsers;
 

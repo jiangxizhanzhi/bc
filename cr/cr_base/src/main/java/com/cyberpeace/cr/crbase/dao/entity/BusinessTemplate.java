@@ -13,7 +13,10 @@ import lombok.Getter;
  * 靶场模板公共信息模型
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see AuthTable
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_business_template")
@@ -21,47 +24,65 @@ public class BusinessTemplate extends AuthTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 拓扑id
+	 *
+	 * @see String
 	 */
 	private String topoId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	private String description;
 
 	/**
 	 * 业务类型
+	 *
+	 * @see Integer
 	 */
 	private Integer businessType;
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	private Integer difficulty;
 
 	/**
 	 * 创造用户id
+	 *
+	 * @see String
 	 */
 	private String createUserId;
 
 	/**
 	 * 图标
+	 *
+	 * @see String
 	 */
 	private String logo;
 
 	/**
 	 * 用于关联后台测试场景
+	 *
+	 * @see String
 	 */
 	private String localSceneId;
 

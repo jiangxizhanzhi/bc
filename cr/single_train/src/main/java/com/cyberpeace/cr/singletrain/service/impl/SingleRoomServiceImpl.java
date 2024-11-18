@@ -80,7 +80,11 @@ import lombok.extern.slf4j.Slf4j;
  * 单房间Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see SingleRoomService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -88,78 +92,104 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 	/**
 	 * 单模板Mapper
+	 *
+	 * @see SingleTemplateMapper
 	 */
 	@Autowired
 	private SingleTemplateMapper singleTemplateMapper;
 
 	/**
 	 * 单房间Mapper
+	 *
+	 * @see SingleRoomMapper
 	 */
 	@Autowired
 	private SingleRoomMapper singleRoomMapper;
 
 	/**
 	 * 单模板Service
+	 *
+	 * @see SingleTemplateService
 	 */
 	@Autowired
 	private SingleTemplateService singleTemplateService;
 
 	/**
 	 * 训练记录Service
+	 *
+	 * @see TrainRecordService
 	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * RTKS相关Service
+	 *
+	 * @see RtksRelatedService
 	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
@@ -169,6 +199,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 训练模板id
 	 * @return 单兵训练房间信息
+	 * @throws
+	 * @see String
+	 * @see SingleRoomBo
 	 */
 	@Override
 	public SingleRoomBo createRoom(String businessTemplateId) {
@@ -236,6 +269,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param template 模板
 	 * @return {@code LocalScene }
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see LocalScene
 	 */
 	private LocalScene createLocalScene(BusinessTemplate template) {
 		LocalScene localScene = new LocalScene();
@@ -265,6 +301,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 训练业务模板id
 	 * @return SingleRoomBo
+	 * @throws
+	 * @see String
+	 * @see SingleRoomBo
 	 */
 	@Override
 	public SingleRoomBo getRoomInfo(String businessTemplateId) {
@@ -312,6 +351,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 训练业务模板id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean deleteRoom(String businessTemplateId) {
@@ -325,6 +367,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param singleRoom 训练房间对象
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see SingleRoom
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean deleteRoom(SingleRoom singleRoom) {
@@ -358,6 +403,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param queryParams 查询条件
 	 * @return 单兵训练列表
+	 * @throws
+	 * @see SingleTrainListReq
+	 * @see ListRsp<SingleRoomListBo>
 	 */
 	@Override
 	public ListRsp<SingleRoomListBo> getSingleTrainPageList(SingleTrainListReq queryParams) {
@@ -489,6 +537,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 * @param businessTemplateId 训练业务模板id
 	 * @param missionId          任务id
 	 * @return SingleMissionBo
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see SingleMissionBo
 	 */
 	@Override
 	public SingleMissionBo getMission(String businessTemplateId, String missionId) {
@@ -543,6 +595,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 * @param businessTemplateId 训练业务模板id
 	 * @param requestData        提交任务内容
 	 * @return bool
+	 * @throws
+	 * @see String
+	 * @see SubmitMissionReq
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean submitMission(String businessTemplateId, SubmitMissionReq requestData) {
@@ -592,6 +648,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 训练业务模板id
 	 * @return 任务方案与任务训练记录
+	 * @throws
+	 * @see String
+	 * @see List<TrainRecordBo>
 	 */
 	@Override
 	public List<TrainRecordBo> getTrainRecord(String businessTemplateId) {
@@ -650,6 +709,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 训练业务模板id
 	 * @return String
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getTrainRecordMarkdown(String businessTemplateId) {
@@ -713,6 +775,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 训练业务模板id
 	 * @return String
+	 * @throws
+	 * @see String
+	 * @see List<ManualStageBo>
 	 */
 	@Override
 	public List<ManualStageBo> getTrainManual(String businessTemplateId) {
@@ -757,6 +822,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 训练业务模板id
 	 * @return TrainTimeLineBo
+	 * @throws
+	 * @see String
+	 * @see TimeLineData
 	 */
 	@Override
 	public TimeLineData getTimeLineData(String businessTemplateId) {
@@ -821,6 +889,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code SceneViewContext }
+	 * @throws
+	 * @see String
+	 * @see SceneViewContext
 	 */
 	@Override
 	public SceneViewContext viewScene(String businessTemplateId) {
@@ -856,6 +927,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 * @param businessTemplateId 业务模板id
 	 * @param userId             用户id
 	 * @return {@code SingleRoom }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see SingleRoom
 	 */
 	@Override
 	public SingleRoom getByBusinessTemplateIdAndUserId(String businessTemplateId, String userId) {
@@ -867,6 +942,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessId 业务id
 	 * @return {@code SingleRoom }
+	 * @throws
+	 * @see String
+	 * @see SingleRoom
 	 */
 	@Override
 	public SingleRoom getByBusinessId(String businessId) {
@@ -883,6 +961,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param room 房间
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see SingleRoom
+	 * @see JSONObject
 	 */
 	private JSONObject getMpSceneData(SingleRoom room) {
 		if (room == null) {
@@ -927,6 +1008,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 * 清除本地
 	 *
 	 * @param room 房间
+	 * @throws
+	 * @see SingleRoom
 	 */
 	@Override
 	public void clearLocal(SingleRoom room) {
@@ -945,6 +1028,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code List<SingleRoom> }
+	 * @throws
+	 * @see String
+	 * @see List<SingleRoom>
 	 */
 	@Override
 	public List<SingleRoom> getByBusinessTemplateId(String businessTemplateId) {
@@ -956,6 +1042,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code List<TrainingRecordListBo> }
+	 * @throws
+	 * @see String
+	 * @see List<TrainingRecordListBo>
 	 */
 	@Override
 	public List<TrainingRecordListBo> getTrainHistory(String businessTemplateId) {
@@ -1015,6 +1104,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String submitTrain(String businessTemplateId) {
@@ -1081,6 +1173,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param roomId 房间id
 	 * @return {@code RecordDetail }
+	 * @throws
+	 * @see String
+	 * @see RecordDetail
 	 */
 	@Override
 	public RecordDetail getRecordDetail(String roomId) {
@@ -1210,6 +1305,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param room 房间
 	 * @return {@code SingleMatrixProgressRsp }
+	 * @throws
+	 * @see SingleRoom
+	 * @see SingleMatrixProgressRsp
 	 */
 	@Override
 	public SingleMatrixProgressRsp getMatrixProgress(SingleRoom room) {
@@ -1278,6 +1376,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param btId BT系列id
 	 * @return {@code SingleMatrixProgressRsp }
+	 * @throws
+	 * @see String
+	 * @see SingleMatrixProgressRsp
 	 */
 	@Override
 	public SingleMatrixProgressRsp getMatrixRsp(String btId) {
@@ -1315,6 +1416,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param pageReq 分页请求体
 	 * @return {@code ListRsp<JSONObject>}
+	 * @throws
+	 * @see AssetPageReq
+	 * @see ListRsp<JSONObject>
 	 */
 	@Override
 	public ListRsp<JSONObject> getAssetList(AssetPageReq pageReq) {
@@ -1334,6 +1438,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code List<IdNameType> }
+	 * @throws
+	 * @see String
+	 * @see List<IdNameType>
 	 */
 	@Override
 	public List<IdNameType> getOsNames(String businessTemplateId) {
@@ -1350,6 +1457,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param missionStageSchemes 任务阶段计划
 	 * @return {@code Map<String, Mission> }
+	 * @throws
+	 * @see List<MissionStageScheme>
+	 * @see Map<String, Mission>
 	 */
 	private Map<String, Mission>
 			getMissionMapByScheme(List<MissionStageScheme> missionStageSchemes) {
@@ -1368,6 +1478,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code List<MissionTemplate>}
+	 * @throws
+	 * @see String
+	 * @see List<MissionTemplate>
 	 */
 	private List<MissionTemplate>
 			getMissionTemplateListByBusinessTemplateId(String businessTemplateId) {

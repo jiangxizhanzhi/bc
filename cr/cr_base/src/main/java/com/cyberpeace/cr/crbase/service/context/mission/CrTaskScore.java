@@ -8,28 +8,39 @@ import lombok.Data;
  * 任务得分
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class CrTaskScore implements Serializable {
 
 	/**
 	 * 任务id
+	 *
+	 * @see String
 	 */
 	private String taskId;
 
 	/**
 	 * 任务模板id
+	 *
+	 * @see String
 	 */
 	private String missionTemplateId;
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	private Integer score;
 
 	/**
 	 * 满
+	 *
+	 * @see Integer
 	 */
 	private Integer full;
 

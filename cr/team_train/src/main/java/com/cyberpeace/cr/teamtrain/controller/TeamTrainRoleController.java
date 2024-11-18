@@ -29,7 +29,9 @@ import io.swagger.annotations.ApiParam;
  * 团队训练角色控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "团队训练角色")
 @RestController
@@ -38,12 +40,16 @@ public class TeamTrainRoleController {
 
 	/**
 	 * 团队房间Service
+	 *
+	 * @see TeamRoomService
 	 */
 	@Autowired
 	TeamRoomService teamRoomService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	CrRoleService crRoleService;
@@ -53,6 +59,9 @@ public class TeamTrainRoleController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<CrRoleContext<RoleMissionRsp>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<CrRoleContext<RoleMissionRsp>>
 	 */
 	@ApiOperation("团队实例查询角色")
 	@GetMapping()

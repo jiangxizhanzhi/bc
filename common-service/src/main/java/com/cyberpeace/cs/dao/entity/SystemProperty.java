@@ -12,7 +12,10 @@ import java.io.Serializable;
  * 系统属性
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @TableName("system_property")
@@ -20,17 +23,23 @@ public class SystemProperty implements Serializable {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@TableField("`desc`")
 	private String desc;
 
 	/**
 	 * 内容
+	 *
+	 * @see String
 	 */
 	private String content;
 

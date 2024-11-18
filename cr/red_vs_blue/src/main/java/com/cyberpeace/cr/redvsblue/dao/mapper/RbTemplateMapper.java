@@ -16,7 +16,10 @@ import com.cyberpeace.cr.redvsblue.service.context.RbTemplateData;
  * RB模板Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface RbTemplateMapper extends BaseMapper<RbTemplate> {
@@ -26,6 +29,9 @@ public interface RbTemplateMapper extends BaseMapper<RbTemplate> {
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code RbTemplate }
+	 * @throws
+	 * @see String
+	 * @see RbTemplate
 	 */
 	RbTemplate selectByBusinessTemplateId(String businessTemplateId);
 
@@ -35,6 +41,10 @@ public interface RbTemplateMapper extends BaseMapper<RbTemplate> {
 	 * @param page      分页
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<RbTemplateData> }
+	 * @throws
+	 * @see Page
+	 * @see ListQuery
+	 * @see IPage<RbTemplateData>
 	 */
 	IPage<RbTemplateData> listRbTemplate(Page page, ListQuery listQuery);
 
@@ -43,6 +53,9 @@ public interface RbTemplateMapper extends BaseMapper<RbTemplate> {
 	 *
 	 * @param ids id列表
 	 * @return {@code List<RbTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<RbTemplate>
 	 */
 	List<RbTemplate> getRbTemplateByBusinessIds(List<String> ids);
 
@@ -51,6 +64,9 @@ public interface RbTemplateMapper extends BaseMapper<RbTemplate> {
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean deleteByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
 
@@ -59,6 +75,9 @@ public interface RbTemplateMapper extends BaseMapper<RbTemplate> {
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return {@code List<RbTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<RbTemplate>
 	 */
 	List<RbTemplate> batchGetByBusinessId(List<String> businessTemplateIds);
 }

@@ -9,7 +9,10 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalAggregation;
  * 评估集合体Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 public interface EvalAggregationMapper extends BaseMapper<EvalAggregation> {
 
@@ -18,6 +21,9 @@ public interface EvalAggregationMapper extends BaseMapper<EvalAggregation> {
 	 *
 	 * @param evalIndicatorIds 评估指示器id列表
 	 * @return {@code List<EvalAggregation> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<EvalAggregation>
 	 */
 	List<EvalAggregation> selectIdsByEvalIndicatorIds(List<String> evalIndicatorIds);
 
@@ -26,6 +32,9 @@ public interface EvalAggregationMapper extends BaseMapper<EvalAggregation> {
 	 *
 	 * @param algorithmIds 算法id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer selectAlgorithmNum(List<String> algorithmIds);
 
@@ -34,6 +43,9 @@ public interface EvalAggregationMapper extends BaseMapper<EvalAggregation> {
 	 *
 	 * @param algorithmIds 算法id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 }

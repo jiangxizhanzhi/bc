@@ -8,34 +8,63 @@ import com.cyberpeace.common.model.user.UserInfo;
 import lombok.Data;
 
 /**
+ * rtks 匹配度缓存
  *
-
-
- rtks 匹配度缓存
- *
- *
-
- @author SN
- *
- @date 2024/11/07
-
-
+ * @author SN@version 1.0.0
+ * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class RtksMatch implements Serializable {
 
+	/**
+	 * 用户id
+	 *
+	 * @see String
+	 */
 	private String userId;
 
+	/**
+	 * 组织id
+	 *
+	 * @see String
+	 */
 	private String orgId;
 
+	/**
+	 * 岗位id
+	 *
+	 * @see String
+	 */
 	private String roleId;
 
+	/**
+	 * 岗位名称
+	 *
+	 * @see String
+	 */
 	private String roleName;
 
+	/**
+	 * 火柴
+	 *
+	 * @see Integer
+	 */
 	private Integer match;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	private String name;
 
+	/**
+	 * 组织名称
+	 *
+	 * @see String
+	 */
 	private String orgName;
 
 	/**

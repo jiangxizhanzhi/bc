@@ -47,7 +47,10 @@ import lombok.extern.slf4j.Slf4j;
  * 团队场景Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see TeamSceneService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -55,48 +58,64 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 	/**
 	 * 团队房间Service
+	 *
+	 * @see TeamRoomService
 	 */
 	@Autowired
 	private TeamRoomService teamRoomService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 场景过滤器Service
+	 *
+	 * @see SceneFilterService
 	 */
 	@Autowired
 	private SceneFilterService sceneFilterService;
 
 	/**
 	 * 训练记录Service
+	 *
+	 * @see TrainRecordService
 	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
 	/**
 	 * 团队常见装置Service
+	 *
+	 * @see TeamCommonDeviceService
 	 */
 	@Autowired
 	private TeamCommonDeviceService teamCommonDeviceService;
 
 	/**
 	 * 靶场场景Service
+	 *
+	 * @see CrSceneService
 	 */
 	@Autowired
 	private CrSceneService crSceneService;
@@ -107,6 +126,10 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -166,6 +189,10 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 * @param roomId 房间id
 	 * @param roleId 角色id
 	 * @return {@code TeamSceneViewContext }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TeamSceneViewContext
 	 */
 	@Override
 	public TeamSceneViewContext viewScene(String roomId, String roleId) {
@@ -223,6 +250,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean stopScene(String roomId) {
@@ -269,6 +299,8 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 * 清除本地
 	 *
 	 * @param room 房间
+	 * @throws
+	 * @see TeamRoom
 	 */
 	@Override
 	public void clearLocal(TeamRoom room) {
@@ -291,6 +323,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean pauseScene(String roomId) {
@@ -315,6 +350,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean unpauseScene(String roomId) {
@@ -338,6 +376,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<Flow> }
+	 * @throws
+	 * @see String
+	 * @see List<Flow>
 	 */
 	@Override
 	public List<Flow> getFlowList(String roomId) {
@@ -405,6 +446,11 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 * @param category 类别
 	 * @param name     名称
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see JSONArray
 	 */
 	@Override
 	public JSONArray getAssetList(String roomId, Integer category, String name) {
@@ -423,6 +469,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getNodeStatistics(String roomId) {
@@ -442,6 +491,10 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 * @param topoId 拓扑id
 	 * @param nodes  节点
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see CrRoleNodesData
+	 * @see JSONObject
 	 */
 	private JSONObject getTopoData(String topoId, CrRoleNodesData nodes) {
 		JSONObject topoData = localSceneService.getTopoData(topoId).getJSONObject("scene_config");
@@ -459,6 +512,11 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 * @param roleList 角色列表
 	 * @param roleId   角色id
 	 * @return {@code CrRoleNodesData }
+	 * @throws
+	 * @see CrRole
+	 * @see List<CrRole>
+	 * @see String
+	 * @see CrRoleNodesData
 	 */
 	private CrRoleNodesData getNodes(CrRole selfRole, List<CrRole> roleList, String roleId) {
 
@@ -490,6 +548,11 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 * @param teamRoom     团队会议室
 	 * @param topoId       拓扑id
 	 * @return {@code LocalScene }
+	 * @throws
+	 * @see Integer
+	 * @see TeamRoom
+	 * @see String
+	 * @see LocalScene
 	 */
 	private LocalScene createLocalScene(Integer businessCode, TeamRoom teamRoom, String topoId) {
 		LocalScene localScene = new LocalScene();
@@ -516,6 +579,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	 *
 	 * @param room 房间
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see TeamRoom
+	 * @see JSONObject
 	 */
 	private JSONObject getMpSceneData(TeamRoom room) {
 		String localSceneId = room.getLocalSceneId();

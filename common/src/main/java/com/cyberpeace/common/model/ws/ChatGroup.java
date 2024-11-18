@@ -11,7 +11,9 @@ import java.util.List;
  * 聊天组
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 @Builder
@@ -21,18 +23,26 @@ public class ChatGroup {
 
 	/**
 	 * 用户id列表
+	 *
+	 * @see List<String>
 	 */
 	private List<String> userIds;
 	/**
 	 * 群id
+	 *
+	 * @see String
 	 */
 	private String groupId;
 	/**
 	 * 群名称
+	 *
+	 * @see String
 	 */
 	private String groupName;
 	/**
 	 * 角色名称
+	 *
+	 * @see String
 	 */
 	private String roleName;
 }

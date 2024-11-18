@@ -28,7 +28,10 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场基础Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see CrBaseService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -36,6 +39,8 @@ public class CrBaseServiceImpl implements CrBaseService {
 
 	/**
 	 * 注册
+	 *
+	 * @see Map<BusinessCode, CrEventStatistics>
 	 */
 	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
@@ -45,6 +50,10 @@ public class CrBaseServiceImpl implements CrBaseService {
 	 * @param userId 用户id
 	 * @param page   分页
 	 * @return {@code TrainingStatisticsRsp }
+	 * @throws
+	 * @see String
+	 * @see TrainingStatisticsPage
+	 * @see TrainingStatisticsRsp
 	 */
 	@Override
 	public TrainingStatisticsRsp getTrainingStatistics(String userId, TrainingStatisticsPage page) {
@@ -115,12 +124,17 @@ public class CrBaseServiceImpl implements CrBaseService {
  * 训练比较仪
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Comparator
+ * @since 1.0.0
  */
 class TrainingComparator implements Comparator<TrainingData> {
 
 	/**
 	 * ASC
+	 *
+	 * @see Boolean
 	 */
 	private final Boolean asc;
 
@@ -128,6 +142,8 @@ class TrainingComparator implements Comparator<TrainingData> {
 	 * 训练比较仪
 	 *
 	 * @param asc ASC
+	 * @throws
+	 * @see Boolean
 	 */
 	public TrainingComparator(Boolean asc) {
 		this.asc = asc;
@@ -139,6 +155,10 @@ class TrainingComparator implements Comparator<TrainingData> {
 	 * @param o1 o1
 	 * @param o2 O2
 	 * @return int
+	 * @throws
+	 * @see TrainingData
+	 * @see TrainingData
+	 * @see int
 	 */
 	@Override
 	public int compare(TrainingData o1, TrainingData o2) {

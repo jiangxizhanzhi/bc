@@ -18,7 +18,10 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleTrainStats;
  * 单房间Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -30,6 +33,10 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 * @param businessTemplateId 业务模板id
 	 * @param userId             用户id
 	 * @return {@code SingleRoom }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see SingleRoom
 	 */
 	SingleRoom getSingleRoom(@Param("business_template_id") String businessTemplateId,
 			@Param("user_id") String userId);
@@ -44,6 +51,14 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 * @param difficult    难
 	 * @param businessType 业务类型
 	 * @return {@code IPage<SingleRoomList> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see Integer
+	 * @see Integer
+	 * @see IPage<SingleRoomList>
 	 */
 	IPage<SingleRoomList> singleTrainSearch(@Param("page") Page page,
 			@Param("user_id") String userId, @Param("pattern") String pattern,
@@ -57,6 +72,11 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 * @param dateRange           日期范围
 	 * @param businessType        业务类型
 	 * @return {@code List<SingleTrainStats> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<SingleTrainStats>
 	 */
 	List<SingleTrainStats> singleTrainStats(
 			@Param("business_template_ids") List<String> businessTemplateIds,
@@ -68,6 +88,9 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer countByUserId(@Param("userId") String userId);
 
@@ -76,6 +99,9 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer countUnfinishedByUserId(@Param("userId") String userId);
 
@@ -84,6 +110,9 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<SingleRoom> }
+	 * @throws
+	 * @see String
+	 * @see List<SingleRoom>
 	 */
 	List<SingleRoom> selectByUserId(@Param("userId") String userId);
 
@@ -92,6 +121,9 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<SingleRoom> }
+	 * @throws
+	 * @see String
+	 * @see List<SingleRoom>
 	 */
 	List<SingleRoom> selectUnfinishedByUserId(@Param("userId") String userId);
 
@@ -100,6 +132,9 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 *
 	 * @param roomIds 房间id列表
 	 * @return {@code List<SingleRoom> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<SingleRoom>
 	 */
 	List<SingleRoom> selectByRoomIds(@Param("roomIds") List<String> roomIds);
 
@@ -108,6 +143,9 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code List<SingleRoom> }
+	 * @throws
+	 * @see String
+	 * @see List<SingleRoom>
 	 */
 	List<SingleRoom> selectByTemplateId(@Param("businessTemplateId") String businessTemplateId);
 
@@ -117,6 +155,10 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	 * @param userId 用户id
 	 * @param type   类型
 	 * @return {@code List<SingleRoom> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<SingleRoom>
 	 */
 	List<SingleRoom> selectAllByUserId(@Param("userId") String userId, @Param("type") Integer type);
 }

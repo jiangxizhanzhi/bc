@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.*;
  * EVAL 索引引用控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "靶场测评-评估关联算法")
 @RestController
@@ -38,18 +40,24 @@ public class EvalIndexRefController {
 
     /**
      * 评估指数裁判Mapper
+     *
+     * @see EvalIndexRefMapper
      */
     @Autowired
     private EvalIndexRefMapper evalIndexRefMapper;
 
     /**
      * 评估变量裁判Mapper
+     *
+     * @see EvalVariableRefMapper
      */
     @Autowired
     private EvalVariableRefMapper evalVariableRefMapper;
 
     /**
      * 评估指数裁判Service
+     *
+     * @see EvalIndexRefService
      */
     @Autowired
     private EvalIndexRefService evalIndexRefService;
@@ -59,6 +67,9 @@ public class EvalIndexRefController {
      *
      * @param requestData 请求数据
      * @return {@code BaseRsp<String> }
+     * @throws
+     * @see EvalIndexRefReq
+     * @see BaseRsp<String>
      */
     @ApiOperation("更新评估关联算法的评分方式")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -113,6 +124,9 @@ public class EvalIndexRefController {
      *
      * @param resourceId 资源id
      * @return {@code BaseRsp<EvalIndexRef> }
+     * @throws
+     * @see String
+     * @see BaseRsp<EvalIndexRef>
      */
     @ApiOperation("获取单个评估关联算法及评分方式")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)

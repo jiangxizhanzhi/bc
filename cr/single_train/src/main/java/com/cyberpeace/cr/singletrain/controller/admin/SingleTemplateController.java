@@ -38,7 +38,9 @@ import io.swagger.annotations.ApiOperation;
  * 单个模板控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "单兵训练模板")
@@ -49,30 +51,40 @@ public class SingleTemplateController {
 
 	/**
 	 * 单模板Service
+	 *
+	 * @see SingleTemplateService
 	 */
 	@Autowired
 	private SingleTemplateService singleTemplateService;
 
 	/**
 	 * 常见Service
+	 *
+	 * @see CrCommonService
 	 */
 	@Autowired
 	private CrCommonService commonService;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -82,6 +94,9 @@ public class SingleTemplateController {
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code BaseRsp<SingleTemplateBo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<SingleTemplateBo>
 	 */
 	@GetMapping
 	@ApiOperation("单兵训练模板获取")
@@ -98,6 +113,9 @@ public class SingleTemplateController {
 	 *
 	 * @param requestDataRel 请求数据关系
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SingleTrainTemplateReqRel
+	 * @see BaseRsp
 	 */
 	@PostMapping
 	@ApiOperation("单兵训练模板创建")
@@ -140,6 +158,9 @@ public class SingleTemplateController {
 	 *
 	 * @param requestDataRel 请求数据关系
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SingleTrainTemplateUpdateReqRel
+	 * @see BaseRsp
 	 */
 	@PatchMapping
 	@ApiOperation("单兵训练模板更新")
@@ -191,6 +212,10 @@ public class SingleTemplateController {
 	 * @param requestData    请求数据
 	 * @param singleTemplate 单个模板
 	 * @return {@code SingleTemplate }
+	 * @throws
+	 * @see SingleTrainTemplateReq
+	 * @see SingleTemplate
+	 * @see SingleTemplate
 	 */
 	private SingleTemplate reqToSingleTemplate(SingleTrainTemplateReq requestData,
 			SingleTemplate singleTemplate) {

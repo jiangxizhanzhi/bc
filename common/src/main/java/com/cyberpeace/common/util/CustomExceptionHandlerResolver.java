@@ -10,7 +10,10 @@ import org.springframework.web.servlet.ModelAndView;
  * 自定义异常处理程序解析程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see HandlerExceptionResolver
+ * @since 1.0.0
  */
 public class CustomExceptionHandlerResolver implements HandlerExceptionResolver {
 
@@ -22,6 +25,12 @@ public class CustomExceptionHandlerResolver implements HandlerExceptionResolver 
 	 * @param o                   o
 	 * @param e                   e
 	 * @return {@code ModelAndView }
+	 * @throws
+	 * @see HttpServletRequest
+	 * @see HttpServletResponse
+	 * @see Object
+	 * @see Exception
+	 * @see ModelAndView
 	 */
 	@Override
 	public ModelAndView resolveException(HttpServletRequest httpServletRequest,

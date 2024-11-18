@@ -9,7 +9,10 @@ import lombok.Data;
  * 工具壳代号列表请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -17,18 +20,24 @@ public class ToolShellCodeListReq extends PageReqBase {
 
 	/**
 	 * 平台
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "平台")
 	private String platform;
 
 	/**
 	 * 作者
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "作者")
 	private String author;
 
 	/**
 	 * EDB 验证
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty(name = "edb_verified", value = "是否验证")
 	private Boolean edbVerified;

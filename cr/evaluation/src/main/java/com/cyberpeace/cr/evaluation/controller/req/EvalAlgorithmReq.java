@@ -15,19 +15,25 @@ import lombok.Data;
  * 评估算法请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class EvalAlgorithmReq {
 
 	/**
 	 * 评估算法id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "算法Id", required = false)
 	private String evalAlgorithmId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotNull
@@ -35,12 +41,16 @@ public class EvalAlgorithmReq {
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述", required = false)
 	private String description;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "算法类型", required = true)
 	@NotNull
@@ -48,6 +58,8 @@ public class EvalAlgorithmReq {
 
 	/**
 	 * 算法语言
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "算法语言", required = true)
 	@NotNull
@@ -55,6 +67,8 @@ public class EvalAlgorithmReq {
 
 	/**
 	 * 代号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "代码", required = true)
 	@NotNull
@@ -62,6 +76,8 @@ public class EvalAlgorithmReq {
 
 	/**
 	 * 模式
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "算法类型", required = true)
 	@NotNull
@@ -69,6 +85,8 @@ public class EvalAlgorithmReq {
 
 	/**
 	 * 内置
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "是否为内置算法", required = true)
 	@NotNull
@@ -76,6 +94,8 @@ public class EvalAlgorithmReq {
 
 	/**
 	 * 参数
+	 *
+	 * @see List<AlgorithmParamContext>
 	 */
 	@ApiModelProperty(value = "参数列表", required = true)
 	@NotNull

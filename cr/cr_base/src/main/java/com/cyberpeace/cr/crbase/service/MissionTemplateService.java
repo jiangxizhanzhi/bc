@@ -12,7 +12,10 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
  * 任务模板Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see IService
+ * @since 1.0.0
  */
 public interface MissionTemplateService extends IService<MissionTemplate> {
 
@@ -21,6 +24,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param schemeJson json字符串
 	 * @return 任务模板列表
+	 * @throws
+	 * @see String
+	 * @see List<MissionTemplate>
 	 */
 	List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson);
 
@@ -29,6 +35,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param templateIds 任务模板id列表
 	 * @return 任务模板集合
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, MissionTemplate>
 	 */
 	Map<String, MissionTemplate> getMappingByIds(List<String> templateIds);
 
@@ -37,6 +46,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param schemeJson json字符串
 	 * @return 任务模板集合
+	 * @throws
+	 * @see String
+	 * @see Map<String, MissionTemplate>
 	 */
 	Map<String, MissionTemplate> getMappingBySchemeJson(String schemeJson);
 
@@ -44,6 +56,8 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * 批量插入任务模板
 	 *
 	 * @param missionTemplateList 任务模板列表
+	 * @throws
+	 * @see List<MissionTemplate>
 	 */
 	void batchInsert(List<MissionTemplate> missionTemplateList);
 
@@ -51,6 +65,8 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * 批量删除任务模板
 	 *
 	 * @param missionTemplateIds 任务模板id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void batchDelete(List<String> missionTemplateIds);
 
@@ -59,6 +75,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @param missionTemplateIds 任务模板id列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	void batchUpdateBusinessTemplateId(String businessTemplateId, List<String> missionTemplateIds);
 
@@ -67,6 +86,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param missionSchemeJson json字符串
 	 * @return 任务模板id列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> getIdsByMissionsSchemeJson(String missionSchemeJson);
 
@@ -75,6 +97,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param missionTemplateIds 任务模板id列表
 	 * @return 任务信息集合
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, MissionTemplateRes>
 	 */
 	Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds);
 
@@ -83,6 +108,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param businessTemplateId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> getIdsByBusinessTemplateId(String businessTemplateId);
 
@@ -91,6 +119,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param schemeJsonList json字符串列表
 	 * @return 任务模板集合
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, MissionTemplate>
 	 */
 	Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList);
 
@@ -99,6 +130,9 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 *
 	 * @param missionTemplateIds 任务模板id列表
 	 * @return {@code List<MissionTemplate>}
+	 * @throws
+	 * @see Collection<String>
+	 * @see List<MissionTemplate>
 	 */
 	List<MissionTemplate> getBatchByIds(Collection<String> missionTemplateIds);
 }

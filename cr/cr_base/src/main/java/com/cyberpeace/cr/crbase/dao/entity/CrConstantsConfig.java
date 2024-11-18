@@ -11,7 +11,10 @@ import lombok.Getter;
  * 靶场常数配置
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see SelectI18nName
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_constants_config")
@@ -19,32 +22,44 @@ public class CrConstantsConfig implements SelectI18nName {
 
 	/**
 	 * id
+	 *
+	 * @see Integer
 	 */
 	@TableId
 	private Integer id;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	private String resourceId;
 
 	/**
 	 * 代号
+	 *
+	 * @see Integer
 	 */
 	private Integer code;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	private Integer type;
 
 	/**
 	 * 中文名称
+	 *
+	 * @see String
 	 */
 	private String cnName;
 
 	/**
 	 * 中文名称
+	 *
+	 * @see String
 	 */
 	private String enName;
 

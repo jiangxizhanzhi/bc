@@ -4,7 +4,9 @@ package com.cyberpeace.common.baseinterface;
  * 枚举实现此接口 可使用EnumUtils获取枚举相关信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public interface GenericEnum {
 
@@ -12,6 +14,8 @@ public interface GenericEnum {
      * 获取代号
      *
      * @return {@code Integer }
+     * @throws
+     * @see Integer
      */
     Integer getCode();
 
@@ -19,6 +23,8 @@ public interface GenericEnum {
      * 获取描述
      *
      * @return {@code String }
+     * @throws
+     * @see String
      */
     String getDesc();
 

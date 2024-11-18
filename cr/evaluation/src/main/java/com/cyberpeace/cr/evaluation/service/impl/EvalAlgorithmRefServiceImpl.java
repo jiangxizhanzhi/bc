@@ -17,7 +17,11 @@ import java.util.List;
  * 评估算法裁判Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalAlgorithmRefService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -25,16 +29,22 @@ public class EvalAlgorithmRefServiceImpl extends ServiceImpl<EvalAlgorithmRefMap
 
     /**
      * 参数名称
+     *
+     * @see String
      */
     private final String PARAM_NAME = "param_name";
 
     /**
      * param 类型
+     *
+     * @see String
      */
     private final String PARAM_TYPE = "param_type";
 
     /**
      * 参数值
+     *
+     * @see String
      */
     private final String PARAM_VALUE = "default_value";
 
@@ -43,6 +53,9 @@ public class EvalAlgorithmRefServiceImpl extends ServiceImpl<EvalAlgorithmRefMap
      *
      * @param argumentsString arguments 字符串
      * @return {@code List<Serializable> }
+     * @throws
+     * @see String
+     * @see List<Serializable>
      */
     @Override
     public List<Serializable> buildOtherArguments(String argumentsString) {

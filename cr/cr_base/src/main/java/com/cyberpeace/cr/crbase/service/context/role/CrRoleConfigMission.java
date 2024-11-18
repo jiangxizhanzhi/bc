@@ -9,25 +9,34 @@ import lombok.Data;
  * 用于后台模板查询接口返回基本任务信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class CrRoleConfigMission implements Serializable {
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务名称")
 	private String title;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务id")
 	private String resourceId;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务描述")
 	private String description;

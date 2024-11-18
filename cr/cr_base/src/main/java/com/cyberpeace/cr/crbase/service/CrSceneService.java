@@ -18,7 +18,9 @@ import com.cyberpeace.integratation.model.scene.FlowOpsContext;
  * 靶场场景Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public interface CrSceneService {
 
@@ -29,6 +31,11 @@ public interface CrSceneService {
 	 * @param businessCode    训练类型
 	 * @param topoId          拓扑id
 	 * @return 拓扑id
+	 * @throws
+	 * @see SceneConfigData
+	 * @see LocalScene.BusinessCode
+	 * @see String
+	 * @see String
 	 */
 	String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
 			String topoId);
@@ -38,6 +45,9 @@ public interface CrSceneService {
 	 *
 	 * @param flowId 流量id
 	 * @return 流量文件路径
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String getFlowFilePath(String flowId);
 
@@ -48,6 +58,11 @@ public interface CrSceneService {
 	 * @param topoId
 	 * @param nodeId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see List<FlowInfo>
 	 */
 	List<FlowInfo> getNodeFlowContextList(String mpSceneId, String topoId, String nodeId);
 
@@ -56,6 +71,9 @@ public interface CrSceneService {
 	 *
 	 * @param elementFlowListContext 节点流量查询体
 	 * @return 节点流量列表
+	 * @throws
+	 * @see ElementFlowListContext
+	 * @see ListRsp<ElementFlow>
 	 */
 	ListRsp<ElementFlow> getCrFlowList(ElementFlowListContext elementFlowListContext);
 
@@ -64,6 +82,9 @@ public interface CrSceneService {
 	 *
 	 * @param flowOpsContext 流量操作上下文
 	 * @return 布尔值
+	 * @throws
+	 * @see FlowOpsContext
+	 * @see Boolean
 	 */
 	Boolean updateFlowParam(FlowOpsContext flowOpsContext);
 
@@ -75,6 +96,12 @@ public interface CrSceneService {
 	 * @param flows      流量列表
 	 * @param businessId 业务id
 	 * @return 启动结果（布尔值）
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<FlowInfoContext>
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
 			String businessId);
@@ -87,6 +114,12 @@ public interface CrSceneService {
 	 * @param runType    启动类型
 	 * @param businessId 业务id
 	 * @return 启动结果（布尔值）
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType, String businessId);
 
@@ -97,6 +130,11 @@ public interface CrSceneService {
 	 * @param topoId    拓扑id
 	 * @param nodeId    节点id
 	 * @return 节点流量列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see List<ElementFlow>
 	 */
 	List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId);
 
@@ -107,6 +145,11 @@ public interface CrSceneService {
 	 * @param mpSceneId       中台场景id
 	 * @param nodeId          节点id
 	 * @return 节点流量列表
+	 * @throws
+	 * @see List<ElementFlow>
+	 * @see String
+	 * @see String
+	 * @see List<ElementFlow>
 	 */
 	List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList, String mpSceneId,
 			String nodeId);
@@ -120,6 +163,10 @@ public interface CrSceneService {
 	 * @param req           请求体
 	 * @param withHostState 实时主机状态
 	 * @return {@code List<JSONObject>}
+	 * @throws
+	 * @see AssetPageReq
+	 * @see Boolean
+	 * @see List<JSONObject>
 	 */
 	List<JSONObject> getAssetList(AssetPageReq req, Boolean withHostState);
 
@@ -128,6 +175,9 @@ public interface CrSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<IdNameType>}
+	 * @throws
+	 * @see String
+	 * @see List<IdNameType>
 	 */
 	List<IdNameType> getOsNames(String roomId);
 
@@ -135,6 +185,8 @@ public interface CrSceneService {
 	 * 发送场景动态更新ws
 	 *
 	 * @param businessId 业务标识
+	 * @throws
+	 * @see String
 	 */
 	void sendSceneUpdateSceneWs(String businessId);
 
@@ -142,6 +194,8 @@ public interface CrSceneService {
 	 * 发送场景停止消息
 	 *
 	 * @param businessId 业务标识
+	 * @throws
+	 * @see String
 	 */
 	void sendSceneStopMessage(String businessId);
 
@@ -149,6 +203,8 @@ public interface CrSceneService {
 	 * 发送节点动态删除ws
 	 *
 	 * @param businessId 业务标识
+	 * @throws
+	 * @see String
 	 */
 	void sendNodeDeleteSceneWs(String businessId);
 }

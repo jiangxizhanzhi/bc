@@ -16,7 +16,10 @@ import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
  * 靶场角色映射
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -27,6 +30,9 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 *
 	 * @param roleQuery 角色查询
 	 * @return {@code List<CrRole> }
+	 * @throws
+	 * @see RoleQuery
+	 * @see List<CrRole>
 	 */
 	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
 
@@ -35,6 +41,9 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> getRoomIdsByUserId(String userId);
 
@@ -44,6 +53,10 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code CrRole }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrRole
 	 */
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 
@@ -52,6 +65,9 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean batchDeleteByRoomId(@Param("roomId") String roomId);
 
@@ -61,6 +77,10 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 * @param userId 用户id
 	 * @param code   代号
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
 	 */
 	List<String> getRoomIdsByUserIdAndType(@Param("userId") String userId,
 			@Param("code") Integer code);
@@ -71,6 +91,10 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 * @param userId
 	 * @param code
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<RoomRoleContext>
 	 */
 	List<RoomRoleContext> getRoomIdsAndRoleGroupByUserIdAndType(@Param("userId") String userId,
 			@Param("code") Integer code);
@@ -81,6 +105,10 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 * @param roomId       房间id
 	 * @param businessType 业务类型
 	 * @return {@code List<CrRole> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<CrRole>
 	 */
 	List<CrRole> getRolesByRoom(String roomId, Integer businessType);
 
@@ -90,6 +118,10 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 * @param roomId
 	 * @param roleId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
 
@@ -99,6 +131,10 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 * @param roomId    房间id
 	 * @param missionId 任务id
 	 * @return {@code CrRole }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrRole
 	 */
 	CrRole selectByRoomIdAndMissionId(@Param("roomId") String roomId,
 			@Param("missionId") String missionId);
@@ -109,6 +145,10 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 * @param roomId 房间id
 	 * @param groups 组
 	 * @return {@code List<CrRole>}
+	 * @throws
+	 * @see String
+	 * @see Collection<Integer>
+	 * @see List<CrRole>
 	 */
 	List<CrRole> selectByRoomIdAndGroups(@Param("roomId") String roomId,
 			@Param("groups") Collection<Integer> groups);
@@ -118,6 +158,9 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrRole> }
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	List<CrRole> getRolesByRoomId(@Param("roomId") String roomId);
 
@@ -125,6 +168,8 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 * 恢复节点由房间id
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	void recoverNodesByRoomId(@Param("roomId") String roomId);
 
@@ -133,6 +178,9 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	 *
 	 * @param roomIdList 房间id列表
 	 * @return {@code List<CrRole> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<CrRole>
 	 */
 	List<CrRole> selectBatchByRoomIds(@Param("roomIdList") List<String> roomIdList);
 }

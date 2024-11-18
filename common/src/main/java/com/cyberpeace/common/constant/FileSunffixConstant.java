@@ -8,6 +8,10 @@ import lombok.Getter;
  * 文件 sunffix 常量
  *
  * @author SN
+ * @version 1.0.0
+ * @see Enum
+ * @see Enum
+ * @since 1.0.0
  * @date 2024/11/07
  */
 public enum FileSunffixConstant implements GenericEnum {
@@ -94,6 +98,9 @@ public enum FileSunffixConstant implements GenericEnum {
 	 *
 	 * @param code 代号
 	 * @param desc 描述
+	 * @throws
+	 * @see Integer
+	 * @see Integer
 	 */
 	FileSunffixConstant(Integer code, String desc) {
 		this.code = code;

@@ -13,7 +13,10 @@ import com.cyberpeace.cr.tool.dao.entity.ToolGhdb;
  * 工具GHDB 数据库Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -26,6 +29,11 @@ public interface ToolGhdbMapper extends BaseMapper<ToolGhdb> {
 	 * @param author 作者
 	 * @param title  标题
 	 * @return {@code IPage<ToolGhdb> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see String
+	 * @see IPage<ToolGhdb>
 	 */
 	IPage<ToolGhdb> list(Page page, @Param("author") String author, @Param("title") String title);
 }

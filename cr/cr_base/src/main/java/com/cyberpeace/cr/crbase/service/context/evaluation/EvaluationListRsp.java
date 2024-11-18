@@ -12,19 +12,27 @@ import lombok.Data;
  * 评估列表响应
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see EvaluationListBo
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class EvaluationListRsp extends EvaluationListBo implements Serializable {
 
 	/**
 	 * 提交用户名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "提交人名称")
 	private String submitUserName;
 
 	/**
 	 * 提交用户头像
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "提交人名称")
 	private String submitUserAvatar;

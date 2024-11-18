@@ -494,7 +494,7 @@ public class RoleController {
 	}
 
 	/**
-	 * 获取课程发短信
+	 * 获取课程文本
 	 *
 	 * @param role  角色
 	 * @param field 田

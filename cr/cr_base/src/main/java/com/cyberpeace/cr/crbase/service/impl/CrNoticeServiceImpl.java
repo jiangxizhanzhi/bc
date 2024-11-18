@@ -34,19 +34,27 @@ import java.util.stream.Collectors;
  * 靶场通知Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see CrNoticeService
+ * @since 1.0.0
  */
 @Service
 public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> implements CrNoticeService {
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * WebSocket推送Service
+	 *
+	 * @see WebSocketPushService
 	 */
 	@Autowired
 	private WebSocketPushService webSocketPushService;
@@ -57,6 +65,10 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	 * @param roomId 房间id
 	 * @param isRb   是 RB
 	 * @return {@code List<CrNoticeRsp> }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see List<CrNoticeRsp>
 	 */
 	@Override
 	public List<CrNoticeRsp> queryList(String roomId, boolean isRb) {
@@ -83,6 +95,8 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	 * 通知
 	 *
 	 * @param crNoticeReq 靶场通知请求体
+	 * @throws
+	 * @see CrNoticeReq
 	 */
 	@Override
 	public void notice(CrNoticeReq crNoticeReq) {
@@ -119,6 +133,10 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	 * @param roomId 房间id
 	 * @param isRb   是 RB
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean hasNewInfo(String roomId, boolean isRb) {
@@ -136,6 +154,8 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	 * Remve 和 Notice
 	 *
 	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void remveAndNotice(String resourceId) {
@@ -154,6 +174,10 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	 * @param roomId 房间id
 	 * @param isRb   是 RB
 	 * @return {@code List<CrNotice> }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see List<CrNotice>
 	 */
 	public List<CrNotice> getList(String roomId, boolean isRb) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -177,6 +201,9 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	 *
 	 * @param list
 	 * @return
+	 * @throws
+	 * @see List<CrNotice>
+	 * @see List<CrNotice>
 	 */
 	public List<CrNotice> topDeal(List<CrNotice> list) {
 		if (CollectionUtils.isEmpty(list)) {
@@ -200,6 +227,10 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	 * @param role 角色
 	 * @param isRb 是 RB
 	 * @return {@code List<Integer> }
+	 * @throws
+	 * @see Integer
+	 * @see boolean
+	 * @see List<Integer>
 	 */
 	public List<Integer> dealRole(Integer role, boolean isRb) {
 		List<Integer> list = new ArrayList<>();

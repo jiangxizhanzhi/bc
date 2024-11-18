@@ -6,13 +6,33 @@ import java.util.Random;
 
 import com.cyberpeace.common.constant.CommonConstant;
 
+/**
+ * math utils
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
+ */
 public class MathUtils {
 
+	/**
+	 * 版本 UID
+	 */
 	private static final long serialVersionUID = -3345205828566485102L;
 
-	// 默认除法运算精度
+	/**
+	 * def div scale （定义 div 缩放）
+	 *
+	 * @see Integer
+	 */ // 默认除法运算精度
 	private static final Integer DEF_DIV_SCALE = 2;
 
+	/**
+	 * 代码
+	 *
+	 * @see char[]
+	 */
 	private static char[] codes = { '0','1','2','3','4','5','6','7','8','9',
 			'A','B','C','D','E','F','G','H','I','J',
 			'K','L','M','N','O','P','Q','R','S','T',
@@ -20,8 +40,12 @@ public class MathUtils {
 
 	/**
 	 * 返回随机字符串，同时包含数字、大写字母
+	 *
 	 * @param len 字符串长度
 	 * @return String 随机字符串
+	 * @throws
+	 * @see int
+	 * @see String
 	 */
 	public static String randomStr(int len){
 		if(len == CommonConstant.ZERO){
@@ -52,6 +76,10 @@ public class MathUtils {
 	 * @param value1 被加数
 	 * @param value2 加数
 	 * @return 两个参数的和
+	 * @throws
+	 * @see Double
+	 * @see Double
+	 * @see Double
 	 */
 	public static Double add(Double value1, Double value2) {
 		BigDecimal b1 = new BigDecimal(Double.toString(value1));
@@ -65,6 +93,10 @@ public class MathUtils {
 	 * @param value1 被减数
 	 * @param value2 减数
 	 * @return 两个参数的差
+	 * @throws
+	 * @see Double
+	 * @see Double
+	 * @see double
 	 */
 	public static double sub(Double value1, Double value2) {
 		BigDecimal b1 = new BigDecimal(Double.toString(value1));
@@ -78,6 +110,10 @@ public class MathUtils {
 	 * @param value1 被乘数
 	 * @param value2 乘数
 	 * @return 两个参数的积
+	 * @throws
+	 * @see Double
+	 * @see Double
+	 * @see Double
 	 */
 	public static Double mul(Double value1, Double value2) {
 
@@ -92,6 +128,10 @@ public class MathUtils {
 	 * @param dividend 被除数
 	 * @param divisor  除数
 	 * @return 两个参数的商
+	 * @throws
+	 * @see Double
+	 * @see Double
+	 * @see Double
 	 */
 	public static Double divide(Double dividend, Double divisor) {
 		return divide(dividend, divisor, DEF_DIV_SCALE);
@@ -104,6 +144,11 @@ public class MathUtils {
 	 * @param divisor  除数
 	 * @param scale    表示表示需要精确到小数点以后几位。
 	 * @return 两个参数的商
+	 * @throws
+	 * @see Double
+	 * @see Double
+	 * @see Integer
+	 * @see Double
 	 */
 	public static Double divide(Double dividend, Double divisor, Integer scale) {
 		if (scale < 0) {
@@ -119,9 +164,14 @@ public class MathUtils {
 
 	/**
 	 * double向上取整除法
+	 *
 	 * @param dividend
 	 * @param divisor
 	 * @return
+	 * @throws
+	 * @see Double
+	 * @see Double
+	 * @see Integer
 	 */
 	public static Integer ceilDivide(Double dividend, Double divisor) {
 		if (null == divisor || divisor.doubleValue() == new Double(0).doubleValue()) {
@@ -133,9 +183,14 @@ public class MathUtils {
 
 	/**
 	 * 向上取整除法
+	 *
 	 * @param dividend
 	 * @param divisor
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see Integer
+	 * @see Integer
 	 */
 	public static Integer divide(Integer dividend, Integer divisor) {
 		if (null == divisor || divisor.intValue() == 0) {
@@ -165,6 +220,10 @@ public class MathUtils {
 	 * @param value 需要四舍五入的数字
 	 * @param scale 小数点后保留几位
 	 * @return 四舍五入后的结果
+	 * @throws
+	 * @see double
+	 * @see int
+	 * @see double
 	 */
 	public static double round(double value, int scale) {
 		if (scale < 0) {
@@ -177,8 +236,12 @@ public class MathUtils {
 
 	/**
 	 * 生成随机int值
+	 *
 	 * @param max 最大
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see int
 	 */
 	public static int randomInt(Integer max) {
 		return (int) (max * Math.random());
@@ -186,8 +249,12 @@ public class MathUtils {
 
 	/**
 	 * 获取0-max之间的随机数
+	 *
 	 * @param max
 	 * @return
+	 * @throws
+	 * @see int
+	 * @see int
 	 */
 	public static int randomRange(int max) {
 		return new Random().nextInt(max);
@@ -195,8 +262,12 @@ public class MathUtils {
 
 	/**
 	 * double向上取整
+	 *
 	 * @param num
 	 * @return
+	 * @throws
+	 * @see Double
+	 * @see int
 	 */
 	public static int ceil(Double num) {
 		double ceil = Math.ceil(num);
@@ -205,9 +276,14 @@ public class MathUtils {
 
 	/**
 	 * 正整数， 四舍五入除法
+	 *
 	 * @param dividend
 	 * @param divisor
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see Integer
+	 * @see Integer
 	 */
 	public static Integer roundDivide(Integer dividend, Integer divisor) {
 		if (null == divisor || divisor == 0) {

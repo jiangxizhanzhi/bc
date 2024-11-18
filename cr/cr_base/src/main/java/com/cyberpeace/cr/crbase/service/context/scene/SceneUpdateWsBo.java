@@ -13,7 +13,10 @@ import lombok.Data;
  * 需要发给前端提示刷新场景的
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/06/01
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class SceneUpdateWsBo implements Serializable {
@@ -23,11 +26,15 @@ public class SceneUpdateWsBo implements Serializable {
 	 * <p>
 	 * <p>
 	 * 更新场景
+	 *
+	 * @see Integer
 	 */
 	private Integer code = SceneWsCode.SCENE_UPDATED;
 
 	/**
 	 * 数据
+	 *
+	 * @see WsData
 	 */
 	private WsData data = new WsData();
 
@@ -56,11 +63,22 @@ public class SceneUpdateWsBo implements Serializable {
 	}
 }
 
+/**
+ * WS 数据
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @see Serializable
+ * @since 1.0.0
+ */
 @Data
 class WsData implements Serializable {
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	private Integer type;
 }

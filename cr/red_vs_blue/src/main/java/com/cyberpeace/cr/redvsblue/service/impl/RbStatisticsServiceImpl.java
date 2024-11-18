@@ -33,7 +33,10 @@ import lombok.extern.slf4j.Slf4j;
  * RB统计学Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see RbStatisticsService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -41,18 +44,24 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
 
     /**
      * 靶场任务Mapper
+     *
+     * @see CrTaskMapper
      */
     @Autowired
     CrTaskMapper crTaskMapper;
 
     /**
      * 远程用户Service
+     *
+     * @see RemoteUserService
      */
     @Autowired
     RemoteUserService remoteUserService;
 
     /**
      * 远程组织Service
+     *
+     * @see RemoteOrganizationService
      */
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
@@ -62,6 +71,8 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
      * 获取组织排统计学
      *
      * @return {@code List<RbOrganizationStatisticsBo> }
+     * @throws
+     * @see List<RbOrganizationStatisticsBo>
      */
     @Override
     public List<RbOrganizationStatisticsBo> getOrganizationRankStatistics() {
@@ -151,6 +162,8 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
      * 获取都个人排统计学
      *
      * @return {@code List<RbPersonalStatisticsBo> }
+     * @throws
+     * @see List<RbPersonalStatisticsBo>
      */
     @Override
     public List<RbPersonalStatisticsBo> getAllPersonalRankStatistics() {
@@ -205,6 +218,10 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
      * @param detailReq 详情请求体
      * @param page      分页
      * @return {@code ListRsp<RbStatisticsDetailBo> }
+     * @throws
+     * @see RbStatisticsDetailReq
+     * @see Page
+     * @see ListRsp<RbStatisticsDetailBo>
      */
     @Override
     public ListRsp<RbStatisticsDetailBo> getAllStatisticsDetail(RbStatisticsDetailReq detailReq, Page page) {

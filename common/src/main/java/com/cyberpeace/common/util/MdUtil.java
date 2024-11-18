@@ -32,16 +32,30 @@ import org.apache.shiro.util.CollectionUtils;
 
 /**
  * markdown操作工具类
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
  */
 @Slf4j
 public class MdUtil {
 
+	/**
+	 * markdownutil
+	 *
+	 * @throws
+	 */
 	private MdUtil() {}
 
 	/**
 	 * 解析markdown文件 返回json数据
+	 *
 	 * @param file markdown文件 不做文件存在判断 请在业务代码中判断
 	 * @return
+	 * @throws
+	 * @see File
+	 * @see JSONObject
 	 */
 	public static JSONObject parseJsonMarkdown(File file) {
 
@@ -79,7 +93,14 @@ public class MdUtil {
 
 	/**
 	 * 校验行内容
-	 * @param lineContent
+	 *
+	 * @param lineContent 行内容
+	 * @param path        路径
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	private static String validateMarkdownContent(String lineContent, String path) {
 		String[] titleArray = lineContent.split(" ");
@@ -93,8 +114,12 @@ public class MdUtil {
 
 	/**
 	 * md内容写入文件 对应的文件写入md同级的img目录
+	 *
 	 * @param file
-	 * @param content
+	 * @param content 内容
+	 * @throws
+	 * @see File
+	 * @see String
 	 */
 	public static void writeMdToFile(File file, String content) {
 		String mdContent = dumpMarkdownImages(file, content);
@@ -103,9 +128,14 @@ public class MdUtil {
 
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
-	 * @param mdFile md文件
-     * @param content md内容
+	 *
+	 * @param mdFile  md文件
+	 * @param content md内容
 	 * @return
+	 * @throws
+	 * @see File
+	 * @see String
+	 * @see String
 	 */
 	public static String dumpMarkdownImages(File mdFile, String content) {
         String img = new File(mdFile.getParentFile().getAbsolutePath(), "img").getAbsolutePath();
@@ -145,7 +175,16 @@ public class MdUtil {
 		return content;
 	}
 
-    private static String getRealPath(String fileUrl) {
+	/**
+	 * 获取真实路径
+	 *
+	 * @param fileUrl 文件 URL
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
+	private static String getRealPath(String fileUrl) {
 
         String LOCAL_PREFIX = ConfigUtil.getContextProperty("cr.local.file.prefix");
         String LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
@@ -169,8 +208,12 @@ public class MdUtil {
 
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
+	 *
 	 * @param markdownPath
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static String parseMarkdown(String markdownPath) {
 		Set<String> matchImgPath = getMatchImgPath(markdownPath);
@@ -184,8 +227,12 @@ public class MdUtil {
 
 	/**
 	 * 匹配md文件中的压缩包相对路径地址
+	 *
 	 * @param markdownPath
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	private static List<String> getMatchZipRarPath(String markdownPath) {
 		// 获取markdown文件内容
@@ -204,6 +251,15 @@ public class MdUtil {
 		return finalMatchList;
 	}
 
+	/**
+	 * 匹配 Zip Rar 路径
+	 *
+	 * @param content 内容
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 */
 	private static List<String> matchZipRarPath(String content) {
 		if(!content.startsWith(CommonConstant.PERIOD)
 				&& !content.startsWith(File.separator)) {
@@ -222,8 +278,12 @@ public class MdUtil {
 
 	/**
 	 * 匹配md文件中的相对路径地址
+	 *
 	 * @param markdownPath
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Set<String>
 	 */
 	private static Set<String> getMatchImgPath(String markdownPath) {
 		// 获取markdown文件内容
@@ -243,8 +303,14 @@ public class MdUtil {
 
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
+	 *
 	 * @param markdownPath
+	 * @param handoutPath  讲义路径
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public static String parseMarkdown(String markdownPath, String handoutPath) {
 		// 获取md文件中的图片路径
@@ -252,6 +318,21 @@ public class MdUtil {
 		return replaceImgContent(markdownPath, matchStrSet, handoutPath);
 	}
 
+	/**
+	 * 替换 ZIP 或 RAR 内容
+	 *
+	 * @param currentDir   当前目录
+	 * @param content      内容
+	 * @param matchStrList match str 列表
+	 * @param handoutPath  讲义路径
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
+	 * @see String
+	 * @see String
+	 */
 	public static String replaceZipOrRarContent(String currentDir,
 												String content,
 												List<String> matchStrList,
@@ -279,10 +360,16 @@ public class MdUtil {
 
 	/**
 	 * 将md文件中的相对路径替换为绝对路径
+	 *
 	 * @param markdownPath
 	 * @param matchStrSet
 	 * @param handoutPath
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Set<String>
+	 * @see String
+	 * @see String
 	 */
 	private static String replaceImgContent(String markdownPath, Set<String> matchStrSet, String handoutPath) {
 
@@ -321,11 +408,15 @@ public class MdUtil {
 		return content;
 	}
 
-	
 
 	/**
 	 * markdown内容过滤掉代码块
+	 *
+	 * @param content 内容
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static String filterCodeContent(String content) {
 		// 匹配```代码块```
@@ -337,6 +428,21 @@ public class MdUtil {
 		return LocalStringUtil.replaceToBlank(tmp, singleMatchStr);
 	}
 
+	/**
+	 * 附加
+	 *
+	 * @param content 内容
+	 * @param coding  编码
+	 * @param builder 建筑工人
+	 * @param type    类型
+	 * @return boolean
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see StringBuilder
+	 * @see int
+	 * @see boolean
+	 */
 	private static boolean append(String content, boolean coding, StringBuilder builder, int type) {
 		// 如果开始和结尾在一行里 直接跳过此行
 		boolean singleLine = content.trim().length() >= CommonConstant.FOUR
@@ -378,14 +484,29 @@ public class MdUtil {
 
 	/**
 	 * 读取md文件内容 不包含代码块
+	 *
 	 * @param file
 	 * @return
+	 * @throws
+	 * @see File
+	 * @see String
 	 */
 	public static String getContentWithOutCode(File file) {
 		String content = FileUtil.getContent(file);
 		return filterCodeContent(content);
 	}
 
+	/**
+	 * 保存如文件作家
+	 *
+	 * @param content  内容
+	 * @param savefile 保存文件
+	 * @return {@code File }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see File
+	 */
 	public static File saveAsFileWriter(String content, String savefile) {
 		FileWriter fwriter = null;
         File file = new File(savefile);
@@ -410,6 +531,12 @@ public class MdUtil {
 
 	/**
 	 * 将入参Markdown文档转换为html文档
+	 *
+	 * @param md markdown
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static String mdToHtmlForApiDoc(String md) {
 		// 按需添加扩展
@@ -438,6 +565,18 @@ public class MdUtil {
 													 .set(EmojiExtension.USE_IMAGE_TYPE, EmojiImageType.IMAGE_ONLY);
 		return mdToHtml(md, options);
 	}
+
+	/**
+	 * markdown自HTML格式
+	 *
+	 * @param md      markdown
+	 * @param options 选项
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see MutableDataSet
+	 * @see String
+	 */
 	private static String mdToHtml(String md, MutableDataSet options) {
 		// uncomment to convert soft-breaks to hard breaks
 //		options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");

@@ -10,7 +10,9 @@ import com.cyberpeace.common.model.NameCount;
  * RTKS相关Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public interface RtksRelatedService {
 
@@ -18,6 +20,8 @@ public interface RtksRelatedService {
 	 * 删除任务模板时，删除技能和任务的关联
 	 *
 	 * @param missionTemplateIds 任务模板id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void deleteSkillMissionRelation(List<String> missionTemplateIds);
 
@@ -25,6 +29,8 @@ public interface RtksRelatedService {
 	 * 删除场景模板时，删除attack关联
 	 *
 	 * @param businessTemplateIds 业务模板id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void clearAttackRel(List<String> businessTemplateIds);
 
@@ -32,6 +38,8 @@ public interface RtksRelatedService {
 	 * 删除场景模板时，删除 engage关联
 	 *
 	 * @param businessTemplateIds 业务模板id 列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void clearEngageRel(List<String> businessTemplateIds);
 
@@ -39,6 +47,8 @@ public interface RtksRelatedService {
 	 * 去除单个场景模板和attack、engage框架的关联
 	 *
 	 * @param btId BT系列id
+	 * @throws
+	 * @see String
 	 */
 	void clearAttackEngageRel(String btId);
 
@@ -47,6 +57,9 @@ public interface RtksRelatedService {
 	 *
 	 * @param btId
 	 * @param relatedTechs 相关技术
+	 * @throws
+	 * @see String
+	 * @see Collection<String>
 	 */
 	void createAttackEngageRel(String btId, Collection<String> relatedTechs);
 
@@ -58,6 +71,9 @@ public interface RtksRelatedService {
 	 *
 	 * @param businessTemplateIds btId列表
 	 * @return map
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, List<NameCount>>
 	 */
 	Map<String, List<NameCount>> countAttackRel(List<String> businessTemplateIds);
 
@@ -69,6 +85,9 @@ public interface RtksRelatedService {
 	 *
 	 * @param businessTemplateIds btId列表
 	 * @return map
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, List<NameCount>>
 	 */
 	Map<String, List<NameCount>> countEngageRel(List<String> businessTemplateIds);
 
@@ -80,6 +99,9 @@ public interface RtksRelatedService {
 	 *
 	 * @param businessTemplateIds btId列表
 	 * @return map
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, List<NameCount>>
 	 */
 	Map<String, List<NameCount>> countIcsRel(List<String> businessTemplateIds);
 }

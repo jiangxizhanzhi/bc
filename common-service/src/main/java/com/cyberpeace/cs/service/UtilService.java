@@ -4,7 +4,9 @@ package com.cyberpeace.cs.service;
  * utilService
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public interface UtilService {
 
@@ -13,6 +15,9 @@ public interface UtilService {
 	 *
 	 * @param fileUrl
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String handlerFileUrl(String fileUrl);
 
@@ -22,6 +27,10 @@ public interface UtilService {
 	 * @param fileUrl 传名称获取路径均可
 	 * @param fileId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	String officeUrl(String fileUrl, String fileId);
 
@@ -30,6 +39,9 @@ public interface UtilService {
 	 *
 	 * @param fileUrl
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String replaceFileUrl(String fileUrl);
 
@@ -38,6 +50,9 @@ public interface UtilService {
 	 *
 	 * @param fileUrl
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String getRealPath(String fileUrl);
 
@@ -47,6 +62,10 @@ public interface UtilService {
 	 * @param content      markdown内容 内容中地址为绝对地址 请显示用MdUtil先读取一下
 	 * @param destFilePath 目的文件夹地址 nginx可转发文件路径
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	String handlerMarkdownFile(String content, String destFilePath);
 
@@ -55,6 +74,9 @@ public interface UtilService {
 	 *
 	 * @param content
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String replaceMarkdownFile(String content);
 

@@ -14,68 +14,94 @@ import lombok.Getter;
  * 评估算法
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @TableName(value ="cr_eval_algorithm")
 @Data
 public class EvalAlgorithm extends BaseTable {
-    
 
+
+    /**
+     * 资源id
+     *
+     * @see String
+     */
     @TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
     /**
      * 名称
+     *
+     * @see String
      */
     @ApiModelProperty("名称")
     private String name;
 
     /**
      * 描述
+     *
+     * @see String
      */
     @ApiModelProperty("描述")
     private String description;
 
     /**
      * 格式化算法：1，匹配算法：2，评分算法：3，聚合算法：4
+     *
+     * @see Integer
      */
     @ApiModelProperty("算法类型")
     private Integer type;
 
     /**
-     * 
+     * 算法语言
+     *
+     * @see Integer
      */
     @ApiModelProperty("算法语言")
     private Integer algorithmLanguage;
 
     /**
      * 算法语言
-        1：python
+     * 1：python
+     *
+     * @see String
      */
     @ApiModelProperty("算法内容")
     private String code;
 
-	/**
-	 * 状态
-	 0：代表正常，1：代表编辑过，页面看不到
-	 */
-	@ApiModelProperty("算法状态。0：代表正常，1：代表编辑过，页面看不到")
+    /**
+     * 状态
+     * 0：代表正常，1：代表编辑过，页面看不到
+     *
+     * @see Integer
+     */
+    @ApiModelProperty("算法状态。0：代表正常，1：代表编辑过，页面看不到")
 	private Integer state = 0;
 
     /**
-     * 
+     * 参数
+     *
+     * @see String
      */
     @ApiModelProperty("算法可配置参数")
     private String params;
 
     /**
-     * 
+     * 参数数量
+     *
+     * @see Integer
      */
     @ApiModelProperty("算法可配置参数数量")
     private Integer paramsNum;
 
     /**
      * 创建人
+     *
+     * @see String
      */
     @ApiModelProperty("创建者ID")
     private String createUserId;
@@ -108,6 +134,11 @@ public class EvalAlgorithm extends BaseTable {
 
 	}
 
+    /**
+     * 模式
+     *
+     * @see Integer
+     */
     @ApiModelProperty("算法模型")
     private Integer mode;
 
@@ -128,6 +159,11 @@ public class EvalAlgorithm extends BaseTable {
 
     }
 
+    /**
+     * 内置
+     *
+     * @see Integer
+     */
     @ApiModelProperty("是否为内置算法")
     private Integer builtin;
 

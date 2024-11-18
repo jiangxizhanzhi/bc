@@ -27,19 +27,27 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
  * 团队常见装置Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see TeamCommonDeviceService
+ * @since 1.0.0
  */
 @Service
 public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMapper, TeamCommonDevice> implements TeamCommonDeviceService {
 
 	/**
 	 * 团队常见装置Mapper
+	 *
+	 * @see TeamCommonDeviceMapper
 	 */
 	@Autowired
 	private TeamCommonDeviceMapper teamCommonDeviceMapper;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
@@ -50,6 +58,10 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	 * @param roomId           房间id
 	 * @param allCommonDevices 所有常见设备
 	 * @return {@code List<TeamCommonDeviceContext> }
+	 * @throws
+	 * @see String
+	 * @see List<TeamCommonDeviceContext>
+	 * @see List<TeamCommonDeviceContext>
 	 */
 	@Override
 	public List<TeamCommonDeviceContext> filterVisibleCommonDevices(String roomId,
@@ -88,6 +100,10 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	 * @param roomId        房间id
 	 * @param collectUserId 收集用户id
 	 * @return {@code List<TeamCommonDevice> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<TeamCommonDevice>
 	 */
 	@Override
 	public List<TeamCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId) {
@@ -99,6 +115,9 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<TeamCommonDevice> }
+	 * @throws
+	 * @see String
+	 * @see List<TeamCommonDevice>
 	 */
 	@Override
 	public List<TeamCommonDevice> getAllCollectedCommonDeviceDevices(String roomId) {
@@ -109,6 +128,8 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	 * 新增列表自收集
 	 *
 	 * @param commonDeviceContextList 常见设备上下文列表
+	 * @throws
+	 * @see List<TeamCommonDeviceContext>
 	 */
 	@Override
 	public void addListToCollect(List<TeamCommonDeviceContext> commonDeviceContextList) {
@@ -130,6 +151,8 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	 * 新增自收集
 	 *
 	 * @param commonDeviceContext 通用设备上下文
+	 * @throws
+	 * @see TeamCommonDeviceContext
 	 */
 	@Override
 	public void addToCollect(TeamCommonDeviceContext commonDeviceContext) {
@@ -147,6 +170,8 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	 * del collect
 	 *
 	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void delCollect(String resourceId) {
@@ -157,6 +182,8 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	 * 删除由装置id
 	 *
 	 * @param nodeId 节点id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void deleteByDeviceId(String nodeId) {
@@ -167,6 +194,8 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	 * 戴尔由房间id
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void delByRoomId(String roomId) {

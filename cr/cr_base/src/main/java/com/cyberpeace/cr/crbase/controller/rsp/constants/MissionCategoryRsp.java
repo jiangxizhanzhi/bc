@@ -7,19 +7,25 @@ import lombok.Data;
  * 任务类别响应
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class MissionCategoryRsp {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("类型id")
 	private String resourceId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("名称")
 	private String name;

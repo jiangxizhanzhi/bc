@@ -17,13 +17,19 @@ import com.cyberpeace.cr.tool.controller.res.ToolGhdbRsp;
 /**
  * 工具GHDB 数据库Service实现
  *
- * @author yinqingrong@date 2024/11/07
+ * @author yinqingrong@date 2024/11/07@see ServiceImpl
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @see ToolGhdbService
+ * @since 1.0.0
  */
 @Service
 public class ToolGhdbServiceImpl extends ServiceImpl<ToolGhdbMapper, ToolGhdb> implements ToolGhdbService {
 
 	/**
 	 * 工具GHDB 数据库Mapper
+	 *
+	 * @see ToolGhdbMapper
 	 */
 	@Autowired
 	private ToolGhdbMapper toolGhdbMapper;
@@ -34,6 +40,10 @@ public class ToolGhdbServiceImpl extends ServiceImpl<ToolGhdbMapper, ToolGhdb> i
 	 * @param pageReqBase 分页请求体基础
 	 * @param toolGhdbRsp 工具GHDB 数据库响应
 	 * @return {@code ListRsp<ToolGhdb> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see ToolGhdbRsp
+	 * @see ListRsp<ToolGhdb>
 	 */
 	@Override
 	public ListRsp<ToolGhdb> listGhdb(PageReqBase pageReqBase, ToolGhdbRsp toolGhdbRsp) {

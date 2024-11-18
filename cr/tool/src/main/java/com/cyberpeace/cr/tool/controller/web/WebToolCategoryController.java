@@ -22,7 +22,9 @@ import java.util.List;
  * Web 工具类别控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "前台-资源管理-工具库-分类管理")
 @RestController
@@ -32,6 +34,8 @@ public class WebToolCategoryController {
 
     /**
      * 工具类别Service
+     *
+     * @see ToolCategoryService
      */
     @Autowired
     private ToolCategoryService toolCategoryService;
@@ -41,6 +45,9 @@ public class WebToolCategoryController {
      *
      * @param pageReqBase 分页请求体基础
      * @return {@code BaseRsp<List<WebToolCategoryRsp>> }
+     * @throws
+     * @see PageReqBase
+     * @see BaseRsp<List<WebToolCategoryRsp>>
      */
     @GetMapping("/list")
     @ApiOperation("工具分类列表")

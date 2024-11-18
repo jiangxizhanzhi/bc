@@ -10,12 +10,17 @@ import lombok.Setter;
  * 任务模板分页请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see PageReqBase
+ * @since 1.0.0
  */
 public class MissionTemplatePageReq extends PageReqBase {
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("类型")
 	@Getter
@@ -24,6 +29,8 @@ public class MissionTemplatePageReq extends PageReqBase {
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("难度")
 	@Setter

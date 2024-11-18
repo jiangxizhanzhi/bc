@@ -16,6 +16,9 @@ import lombok.NoArgsConstructor;
  *
  * @author SN
  * @date 2024/11/07
+ * @version 1.0.0
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @AllArgsConstructor
@@ -25,6 +28,8 @@ public class ListRsp<T> implements Serializable {
 
 	/**
 	 * 列表
+	 *
+	 * @see List<T>
 	 */
 	@ApiModelProperty(value = "列表")
 	private List<T> list = Lists.newArrayList();

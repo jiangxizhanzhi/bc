@@ -13,7 +13,10 @@ import java.io.Serializable;
  * 提取基础
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -24,24 +27,32 @@ public class ExtractBase implements Serializable {
 
     /**
      * 文件名称
+     *
+     * @see String
      */
     @ApiModelProperty("文件名称")
     private String fileName;
 
     /**
      * 文件路径
+     *
+     * @see String
      */
     @ApiModelProperty("文件路径")
     private String filePath;
 
     /**
      * 内容
+     *
+     * @see String
      */
     @ApiModelProperty("解压文件内容")
     private String content;
 
     /**
      * 是提取
+     *
+     * @see Boolean
      */
     @ApiModelProperty("是否是解压后文件内容 true=是 false=否")
     private Boolean isExtract;

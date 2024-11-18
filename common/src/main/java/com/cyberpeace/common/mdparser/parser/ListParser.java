@@ -19,7 +19,10 @@ import java.util.List;
  * 列表解析器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class ListParser implements MdContentParser<Collection, String> {
@@ -29,6 +32,9 @@ public class ListParser implements MdContentParser<Collection, String> {
      *
      * @param content 内容
      * @return {@code List<String> }
+     * @throws
+     * @see Object
+     * @see List<String>
      */
     @Override
     public List<String> parse(Object content) {
@@ -52,6 +58,9 @@ public class ListParser implements MdContentParser<Collection, String> {
      *
      * @param content 内容
      * @return {@code String }
+     * @throws
+     * @see Collection
+     * @see String
      */
     @Override
     public String write(Collection content) {

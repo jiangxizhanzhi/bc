@@ -11,13 +11,18 @@ import lombok.Data;
  * 红蓝模板
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BasicTemplate
+ * @since 1.0.0
  */
 @Data
 public class RbTemplateContext extends BasicTemplate {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -25,6 +30,8 @@ public class RbTemplateContext extends BasicTemplate {
 
 	/**
 	 * 角色列表
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(required = true)
 	@NotNull

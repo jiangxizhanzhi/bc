@@ -39,7 +39,9 @@ import java.util.Map;
  * EVAL 记录控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "靶场测评-评估")
 @RestController
@@ -49,24 +51,32 @@ import java.util.Map;
 public class EvalRecordController {
     /**
      * 评估任务Service
+     *
+     * @see EvalTaskService
      */
     @Autowired
     private EvalTaskService evalTaskService;
 
     /**
      * 评估记录Service
+     *
+     * @see EvalRecordService
      */
     @Autowired
     private EvalRecordService evalRecordService;
 
     /**
      * 评估指数裁判Service
+     *
+     * @see EvalIndexRefService
      */
     @Autowired
     private EvalIndexRefService evalIndexRefService;
 
     /**
      * 评估变量裁判Service
+     *
+     * @see EvalVariableRefService
      */
     @Autowired
     private EvalVariableRefService evalVariableRefService;
@@ -76,6 +86,9 @@ public class EvalRecordController {
      *
      * @param queryParams 查询参数
      * @return {@code BaseRsp<ListRsp<EvalRecordListRsp>> }
+     * @throws
+     * @see EvalRecordListReq
+     * @see BaseRsp<ListRsp<EvalRecordListRsp>>
      */
     @ApiOperation("获取靶场测评实例评估（分页）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -93,6 +106,8 @@ public class EvalRecordController {
      * 状态枚举
      *
      * @return {@code BaseRsp<List<EvalRoomIntPairRsp>> }
+     * @throws
+     * @see BaseRsp<List<EvalRoomIntPairRsp>>
      */
     @ApiOperation("评估状态枚举（查询用）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -106,6 +121,9 @@ public class EvalRecordController {
      *
      * @param requestData 请求数据
      * @return {@code BaseRsp<EvalRecordRsp> }
+     * @throws
+     * @see EvalRecordAddReq
+     * @see BaseRsp<EvalRecordRsp>
      */
     @ApiOperation("创建评估")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -121,6 +139,9 @@ public class EvalRecordController {
      *
      * @param requestData 请求数据
      * @return {@code BaseRsp<EvalRecordRsp> }
+     * @throws
+     * @see EvalRecordAddReq
+     * @see BaseRsp<EvalRecordRsp>
      */
     @ApiOperation("更新评估")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -136,6 +157,9 @@ public class EvalRecordController {
      *
      * @param recordId 记录id
      * @return {@code BaseRsp<EvalRecordRsp> }
+     * @throws
+     * @see String
+     * @see BaseRsp<EvalRecordRsp>
      */
     @ApiOperation("获取单个评估")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -149,6 +173,9 @@ public class EvalRecordController {
      *
      * @param requestData 请求数据
      * @return {@code BaseRsp<Boolean> }
+     * @throws
+     * @see BatchDeleteReq
+     * @see BaseRsp<Boolean>
      */
     @ApiOperation("评估任务删除")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -162,6 +189,9 @@ public class EvalRecordController {
      *
      * @param roomId 房间id
      * @return {@code BaseRsp<List<EvalRoomPairRsp>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<EvalRoomPairRsp>>
      */
     @ApiOperation("场景终端节点获取")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -176,6 +206,10 @@ public class EvalRecordController {
      * @param roomId 房间id
      * @param nodeId 节点id
      * @return {@code BaseRsp<List<EvalRoomPairRsp>> }
+     * @throws
+     * @see String
+     * @see String
+     * @see BaseRsp<List<EvalRoomPairRsp>>
      */
     @ApiOperation("终端使用探针信息获取")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -190,6 +224,9 @@ public class EvalRecordController {
      *
      * @param roomId 房间id
      * @return {@code BaseRsp<Map<String, List<EvalRoomPairRsp>>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<Map<String, List<EvalRoomPairRsp>>>
      */
     @ApiOperation("终端使用探针信息获取-批量")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -203,6 +240,9 @@ public class EvalRecordController {
      *
      * @param roomId 房间id
      * @return {@code BaseRsp<List<EvalRecordNodeProbeReq>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<EvalRecordNodeProbeReq>>
      */
     @ApiOperation("场景使用终端/探针")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -216,6 +256,9 @@ public class EvalRecordController {
      *
      * @param requestData 请求数据
      * @return {@code BaseRsp<Boolean> }
+     * @throws
+     * @see EvalRecordStartReq
+     * @see BaseRsp<Boolean>
      */
     @ApiOperation("评估任务开启")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -254,6 +297,9 @@ public class EvalRecordController {
      *
      * @param recordId 记录id
      * @return {@code BaseRsp<EvalRecordResultRsp> }
+     * @throws
+     * @see String
+     * @see BaseRsp<EvalRecordResultRsp>
      */
     @ApiOperation("评估任务结果")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -267,6 +313,9 @@ public class EvalRecordController {
      *
      * @param indexId 指数id
      * @return {@code BaseRsp<List<EvalRoomPairRsp>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<EvalRoomPairRsp>>
      */
     @ApiOperation("获取某一级指标项下全部变量项")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -280,6 +329,9 @@ public class EvalRecordController {
      *
      * @param variableId 变量id
      * @return {@code BaseRsp<EvalVariableGraphRsp> }
+     * @throws
+     * @see String
+     * @see BaseRsp<EvalVariableGraphRsp>
      */
     @ApiOperation("变量项采集信息（折线图）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -293,6 +345,9 @@ public class EvalRecordController {
      *
      * @param queryParams 查询参数
      * @return {@code BaseRsp<ListRsp<EvalVariableDataPageRsp>> }
+     * @throws
+     * @see EvalVariableProbeDataReq
+     * @see BaseRsp<ListRsp<EvalVariableDataPageRsp>>
      */
     @ApiOperation("变量项采集信息（原始数据）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -306,6 +361,9 @@ public class EvalRecordController {
      *
      * @param indexId 指数id
      * @return {@code BaseRsp<EvalRecordResultIndexRsp> }
+     * @throws
+     * @see String
+     * @see BaseRsp<EvalRecordResultIndexRsp>
      */
     @ApiOperation("评估任务结果（指标项信息）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -319,6 +377,9 @@ public class EvalRecordController {
      *
      * @param variableId 变量id
      * @return {@code BaseRsp<EvalRecordResultVariableRsp> }
+     * @throws
+     * @see String
+     * @see BaseRsp<EvalRecordResultVariableRsp>
      */
     @ApiOperation("评估任务结果（变量项信息）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -333,6 +394,10 @@ public class EvalRecordController {
      * @param httpServletResponse HTTP Servlet 响应
      * @param resourceId          资源id
      * @param taskId              任务id
+     * @throws
+     * @see HttpServletResponse
+     * @see String
+     * @see String
      */
     @ApiOperation("评估详情导出为PDF")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -348,6 +413,9 @@ public class EvalRecordController {
      *
      * @param resourceId 资源id
      * @return {@code BaseRsp<List<EvalSystemResultRsp>> }
+     * @throws
+     * @see String
+     * @see BaseRsp<List<EvalSystemResultRsp>>
      */
     @ApiOperation("评估任务结果-5轮评估记录")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)

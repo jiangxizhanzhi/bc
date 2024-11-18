@@ -18,7 +18,10 @@ import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStati
  * 靶场任务映射
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -30,6 +33,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param userId    用户id
 	 * @param missionId 任务id
 	 * @return {@code CrTask }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrTask
 	 */
 	CrTask selectByUserIdAndMissionId(String userId, String missionId);
 
@@ -39,6 +46,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRoomIdAndUserId(String roomId, String userId);
 
@@ -48,6 +59,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId  房间id
 	 * @param userIds 用户id列表
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
 
@@ -57,6 +72,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	Integer countByRoomIdAndUserId(String roomId, String userId);
 
@@ -66,6 +85,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId     房间id
 	 * @param statusList 状态列表
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see List<Integer>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRoomIdAndStatusList(String roomId, List<Integer> statusList);
 
@@ -75,6 +98,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId     房间id
 	 * @param statusList 状态列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see List<Integer>
+	 * @see Integer
 	 */
 	Integer countByRoomIdAndStatusList(String roomId, List<Integer> statusList);
 
@@ -85,6 +112,11 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param userId     用户id
 	 * @param statusList 状态列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<Integer>
+	 * @see Integer
 	 */
 	Integer countByRoomIdAndUserIdAndStatusList(String roomId, String userId,
 			List<Integer> statusList);
@@ -96,6 +128,11 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param userId     用户id
 	 * @param statusList 状态列表
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<Integer>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRoomIdAndUserIdAndStatusList(String roomId, String userId,
 			List<Integer> statusList);
@@ -107,6 +144,11 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param userIds    用户id列表
 	 * @param statusList 状态列表
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<Integer>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRoomIdAndUserIdsAndStatusList(String roomId, List<String> userIds,
 			List<Integer> statusList);
@@ -116,6 +158,9 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRoomId(String roomId);
 
@@ -124,6 +169,9 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 *
 	 * @param roleId 角色id
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRole(String roleId);
 
@@ -132,6 +180,9 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 *
 	 * @param roleIds 角色id列表
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRoles(List<String> roleIds);
 
@@ -141,6 +192,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId     房间id
 	 * @param missionIds 任务id列表
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByRoomIdAndMissionIds(String roomId, List<String> missionIds);
 
@@ -151,6 +206,11 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param userIds    用户id列表
 	 * @param missionIds 任务id列表
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectReportedByUserIdsAndMissionIds(String roomId, List<String> userIds,
 			List<String> missionIds);
@@ -161,6 +221,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId  房间id
 	 * @param userIds 用户id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer countUnreportedByRoomIdAndUserIds(String roomId, List<String> userIds);
 
@@ -169,6 +233,9 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 *
 	 * @param missionId 任务id
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByMissionId(String missionId);
 
@@ -178,6 +245,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId  房间id
 	 * @param userIds 用户id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectIdsByRoomIdAndUserIds(String roomId, List<String> userIds);
 
@@ -187,6 +258,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> selectIdsByRoomIdAndUserId(String roomId, String userId);
 
@@ -194,6 +269,8 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * 批量插入
 	 *
 	 * @param tasks 任务
+	 * @throws
+	 * @see List<CrTask>
 	 */
 	void batchInsert(List<CrTask> tasks);
 
@@ -204,6 +281,11 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param crRoleIds  靶场角色id列表
 	 * @param statusList 状态列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<Integer>
+	 * @see Integer
 	 */
 	Integer countByRoomIdAndRoleIdsAndStatusList(String roomId, List<String> crRoleIds,
 			List<Integer> statusList);
@@ -214,6 +296,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId    房间id
 	 * @param crRoleIds 靶场角色id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 
@@ -223,6 +309,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param userId
 	 * @param missionTemplateIds
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<CrTaskScore>
 	 */
 	List<CrTaskScore> getScoreByMissionTemplateIdAndUserId(@Param("userId") String userId,
 			@Param("missionTemplateIds") List<String> missionTemplateIds);
@@ -233,6 +323,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param userId
 	 * @param missionTemplateIds
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Set<String>
+	 * @see List<CompletionStatus>
 	 */
 	List<CompletionStatus> getCompletionStatusByUserIdAndMissionTemplateIds(
 			@Param("userId") String userId,
@@ -244,6 +338,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param statusList   状态列表
 	 * @param businessType 业务类型
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see List<Integer>
+	 * @see Integer
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByStatusListAndType(List<Integer> statusList, Integer businessType);
 
@@ -255,6 +353,12 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param limit        限制
 	 * @param user_ids     用户id列表
 	 * @return {@code List<TrainingPersonalStatistics> }
+	 * @throws
+	 * @see List<Integer>
+	 * @see Integer
+	 * @see Integer
+	 * @see List<String>
+	 * @see List<TrainingPersonalStatistics>
 	 */
 	List<TrainingPersonalStatistics> selectPersonalStatistics(List<Integer> statusList,
 			Integer businessType, Integer limit, List<String> user_ids);
@@ -266,6 +370,11 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param businessType 业务类型
 	 * @param limit        限制
 	 * @return {@code List<TrainingPersonalStatistics> }
+	 * @throws
+	 * @see List<Integer>
+	 * @see Integer
+	 * @see Integer
+	 * @see List<TrainingPersonalStatistics>
 	 */
 	List<TrainingPersonalStatistics> selectAllPersonalStatistics(List<Integer> statusList,
 			Integer businessType, Integer limit);
@@ -275,6 +384,9 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 *
 	 * @param missionIds 任务id列表
 	 * @return {@code List<CrTask> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> selectByMissionIds(List<String> missionIds);
 
@@ -284,6 +396,10 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code List<TaskScoreContext> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<TaskScoreContext>
 	 */
 	List<TaskScoreContext> selectScoreContextByRoomIdAndUserId(@Param("roomId") String roomId,
 			@Param("userId") String userId);

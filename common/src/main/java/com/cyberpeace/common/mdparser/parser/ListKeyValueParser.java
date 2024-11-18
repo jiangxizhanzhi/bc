@@ -16,7 +16,10 @@ import java.util.Map;
  * 列表钥匙值解析 器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class ListKeyValueParser implements MdContentParser<Map<String, String>, String> {
@@ -26,6 +29,9 @@ public class ListKeyValueParser implements MdContentParser<Map<String, String>, 
 	 *
 	 * @param content 内容
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see Object
+	 * @see Map<String, String>
 	 */
 	@Override
 	public Map<String, String> parse(Object content) {
@@ -56,6 +62,9 @@ public class ListKeyValueParser implements MdContentParser<Map<String, String>, 
 	 *
 	 * @param map 地图
 	 * @return {@code String }
+	 * @throws
+	 * @see Map<String, String>
+	 * @see String
 	 */
 	@Override
 	public String write(Map<String, String> map) {

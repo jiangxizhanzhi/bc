@@ -32,7 +32,9 @@ import lombok.extern.slf4j.Slf4j;
  * EVAL 任务流量控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "靶场测评-流量")
@@ -43,18 +45,24 @@ public class EvalTaskFlowController {
 
 	/**
 	 * 评估任务Service
+	 *
+	 * @see EvalTaskService
 	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
 	/**
 	 * 评估场景Service
+	 *
+	 * @see EvalSceneService
 	 */
 	@Autowired
 	private EvalSceneService evalSceneService;
 
 	/**
 	 * 靶场场景Service
+	 *
+	 * @see CrSceneService
 	 */
 	@Autowired
 	private CrSceneService crSceneService;
@@ -64,6 +72,9 @@ public class EvalTaskFlowController {
 	 *
 	 * @param query 查询
 	 * @return {@code BaseRsp<ListRsp<ElementFlow>> }
+	 * @throws
+	 * @see EvalTaskFlowListQuery
+	 * @see BaseRsp<ListRsp<ElementFlow>>
 	 */
 	@ApiOperation("获取任务流量列表")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -96,6 +107,9 @@ public class EvalTaskFlowController {
 	 *
 	 * @param flowParamUpdateReq 流量参数更新请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see FlowParamUpdateReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("修改节点流量的源IP")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -119,6 +133,9 @@ public class EvalTaskFlowController {
 	 *
 	 * @param evalFlowsOpsReq 评估流量操作 计划请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvalFlowsOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("启动全部任务流量")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -140,6 +157,9 @@ public class EvalTaskFlowController {
 	 *
 	 * @param evalFlowsOpsReq 评估流量操作 计划请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvalFlowsOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("批量启动任务流量")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -161,6 +181,10 @@ public class EvalTaskFlowController {
 	 * @param taskId 任务id
 	 * @param flowId 流量id
 	 * @return {@code BaseRsp<FlowDownloadRsp> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<FlowDownloadRsp>
 	 */
 	@ApiOperation("获取流量下载链接")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)

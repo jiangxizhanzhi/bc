@@ -15,19 +15,25 @@ import lombok.Data;
  * 学员得分响应
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class StudentScoreRsp {
 
 	/**
 	 * 能力百分比
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "能力占比")
 	private String abilityPercentage = "";
 
 	/**
 	 * 能力分数
+	 *
+	 * @see List<Integer>
 	 */
 	@ApiModelProperty(value = "能力分")
 	private List<Integer> abilityScore = CrCommonUtil
@@ -35,42 +41,56 @@ public class StudentScoreRsp {
 
 	/**
 	 * 能力分数结果
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "能力分值")
 	private Integer abilityScoreResult = 0;
 
 	/**
 	 * 评论
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "评语")
 	private String comment = "";
 
 	/**
 	 * 最终比分
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "最终分数")
 	private Integer finalScore = 0;
 
 	/**
 	 * 训练百分比
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "训练占比")
 	private String trainingPercentage = "";
 
 	/**
 	 * 训练总结
+	 *
+	 * @see TrainingSummary
 	 */
 	@ApiModelProperty(value = "训练分数")
 	private TrainingSummary trainingSummary;
 
 	/**
 	 * 任务统计
+	 *
+	 * @see TaskStatistics
 	 */
 	@ApiModelProperty(value = "任务统计")
 	private TaskStatistics taskStatistics;
 
 	/**
 	 * 训练得分
+	 *
+	 * @see TrainingScore
 	 */
 	@ApiModelProperty(value = "阶段统计")
 	private TrainingScore trainingScore;

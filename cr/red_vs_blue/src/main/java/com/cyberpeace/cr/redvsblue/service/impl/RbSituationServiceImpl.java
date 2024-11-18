@@ -28,7 +28,10 @@ import java.util.Map;
  * RB情况Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see RbSituationService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -36,30 +39,40 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 	/**
 	 * RB房间Mapper
+	 *
+	 * @see RbRoomMapper
 	 */
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
 	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
@@ -68,6 +81,8 @@ public class RbSituationServiceImpl implements RbSituationService {
 	 * 获取都RB情况
 	 *
 	 * @return {@code List<RbSituation> }
+	 * @throws
+	 * @see List<RbSituation>
 	 */
 	@Override
 	public List<RbSituation> getAllRbSituation() {
@@ -76,16 +91,22 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 	/**
 	 * 节点映射
+	 *
+	 * @see Map<String, String>
 	 */
 	public Map<String, String> nodeMap = new HashMap<>();
 
 	/**
 	 * 场景id
+	 *
+	 * @see String
 	 */
 	public String sceneId;
 
 	/**
 	 * 中台场景id
+	 *
+	 * @see String
 	 */
 	public String mpSceneId;
 
@@ -94,6 +115,9 @@ public class RbSituationServiceImpl implements RbSituationService {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code List<RbSituationServer> }
+	 * @throws
+	 * @see String
+	 * @see List<RbSituationServer>
 	 */
 	@Override
 	public List<RbSituationServer> getRbServerByResourceId(String resourceId) {
@@ -159,6 +183,8 @@ public class RbSituationServiceImpl implements RbSituationService {
 	 * 获取场景id
 	 *
 	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public String getSceneId() {
@@ -169,6 +195,8 @@ public class RbSituationServiceImpl implements RbSituationService {
 	 * 获取节点地图
 	 *
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see Map<String, String>
 	 */
 	@Override
 	public Map<String, String> getNodeMap() {
@@ -179,6 +207,8 @@ public class RbSituationServiceImpl implements RbSituationService {
 	 * 获取中台场景id
 	 *
 	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public String getMpSceneId() {

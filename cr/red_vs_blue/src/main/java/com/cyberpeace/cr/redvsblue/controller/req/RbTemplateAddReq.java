@@ -14,13 +14,18 @@ import lombok.Data;
  * RB模板新增请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BasicTemplate
+ * @since 1.0.0
  */
 @Data
 public class RbTemplateAddReq extends BasicTemplate {
 
 	/**
 	 * RED 角色
+	 *
+	 * @see List<CrRoleConfig>
 	 */
 	@ApiModelProperty(required = true, value = "红方角色")
 	@NotNull
@@ -28,6 +33,8 @@ public class RbTemplateAddReq extends BasicTemplate {
 
 	/**
 	 * 蓝色角色
+	 *
+	 * @see List<CrRoleConfig>
 	 */
 	@ApiModelProperty(required = true, value = "蓝方角色")
 	@NotNull

@@ -28,7 +28,10 @@ import lombok.extern.slf4j.Slf4j;
  * 团队教员Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see TeamTeacherService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -36,36 +39,48 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 
 	/**
 	 * 团队房间Service
+	 *
+	 * @see TeamRoomService
 	 */
 	@Autowired
 	private TeamRoomService teamRoomService;
 
 	/**
 	 * 靶场得分Service
+	 *
+	 * @see CrScoreService
 	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 靶场徽章Service
+	 *
+	 * @see CrBadgeService
 	 */
 	@Autowired
 	private CrBadgeService crBadgeService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
@@ -75,6 +90,9 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<StudentScoreListRsp> }
+	 * @throws
+	 * @see String
+	 * @see List<StudentScoreListRsp>
 	 */
 	@Override
 	public List<StudentScoreListRsp> getScoreList(String roomId) {
@@ -89,6 +107,9 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<IdNameType> }
+	 * @throws
+	 * @see String
+	 * @see List<IdNameType>
 	 */
 	@Override
 	public List<IdNameType> getRoleList(String roomId) {
@@ -111,6 +132,10 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code TimeLineData }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TimeLineData
 	 */
 	@Override
 	public TimeLineData getReplayTimeline(String roomId, String userId) {
@@ -122,6 +147,9 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TaskStatisticsInfo }
+	 * @throws
+	 * @see String
+	 * @see TaskStatisticsInfo
 	 */
 	@Override
 	public TaskStatisticsInfo getTaskStatisticsInfo(String roomId) {
@@ -133,6 +161,9 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getReplaySceneId(String roomId) {
@@ -157,6 +188,8 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	 * 通知提交
 	 *
 	 * @param missionId 任务id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void notifySubmission(String missionId) {
@@ -175,6 +208,9 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	private List<String> getTeacherIdsByRoomId(String roomId) {
 		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,

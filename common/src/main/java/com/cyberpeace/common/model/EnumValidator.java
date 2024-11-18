@@ -10,13 +10,18 @@ import javax.validation.ConstraintValidatorContext;
  * 枚举验证器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ConstraintValidator
+ * @since 1.0.0
  */
 public class EnumValidator implements ConstraintValidator<EnumValid, Integer> {
 
     /**
      * 注解
-     */// 枚举校验注解
+     *
+     * @see EnumValid
+     */ // 枚举校验注解
     private EnumValid annotation;
 
     /**

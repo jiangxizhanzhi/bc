@@ -14,7 +14,10 @@ import lombok.Getter;
  * 靶场任务提交
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_task_submit")
@@ -22,62 +25,86 @@ public class CrTaskSubmit extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 房间id
+	 *
+	 * @see String
 	 */
 	private String roomId;
 
 	/**
 	 * 任务id
+	 *
+	 * @see String
 	 */
 	private String taskId;
 
 	/**
 	 * 答案
+	 *
+	 * @see String
 	 */
 	private String answer;
 
 	/**
 	 * 答案外延
+	 *
+	 * @see String
 	 */
 	private String answerExtension;
 
 	/**
 	 * 计算器id
+	 *
+	 * @see String
 	 */
 	private String evaluatorId;
 
 	/**
 	 * 评估时间
+	 *
+	 * @see Date
 	 */
 	private Date evaluateTime;
 
 	/**
 	 * 评估状态
+	 *
+	 * @see Integer
 	 */
 	private Integer evaluateStatus;
 
 	/**
 	 * 原因
+	 *
+	 * @see Integer
 	 */
 	private Integer reason;
 
 	/**
 	 * 详情
+	 *
+	 * @see String
 	 */
 	private String detail;
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	private Integer score;
 
 	/**
 	 * 任务分数
+	 *
+	 * @see Integer
 	 */
 	private Integer missionScore;
 

@@ -37,7 +37,9 @@ import lombok.extern.slf4j.Slf4j;
  * RB 机房统计控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗实例统计")
 @RestController
@@ -46,38 +48,49 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/cr/red_vs_blue/statistics/")
 public class RbRoomStatisticsController {
 
-	/**
-	 * RB房间得分Service
-	 */
-	@Autowired
+    /**
+     * RB房间得分Service
+     *
+     * @see RbRoomScoreService
+     */
+    @Autowired
 	private RbRoomScoreService rbRoomScoreService;
 
-	/**
-	 * RB房间Service
-	 */
-	@Autowired
+    /**
+     * RB房间Service
+     *
+     * @see RbRoomService
+     */
+    @Autowired
 	private RbRoomService rbRoomService;
 
-	/**
-	 * 靶场角色Service
-	 */
-	@Autowired
+    /**
+     * 靶场角色Service
+     *
+     * @see CrRoleService
+     */
+    @Autowired
 	private CrRoleService crRoleService;
 
-	/**
-	 * 远程用户Service
-	 */
-	@Autowired
+    /**
+     * 远程用户Service
+     *
+     * @see RemoteUserService
+     */
+    @Autowired
 	private RemoteUserService remoteUserService;
 
-	/**
-	 * 查询红蓝实时战况页面 正中间计时器
-	 * 获取实例运行时间和状态
-	 *
-	 * @param resource_id 资源id
-	 * @return
-	 */
-	@ApiOperation("获取实例运行时间和状态")
+    /**
+     * 查询红蓝实时战况页面 正中间计时器
+     * 获取实例运行时间和状态
+     *
+     * @param resource_id 资源id
+     * @return
+     * @throws
+     * @see String
+     * @see BaseRsp<TimeDataRsp>
+     */
+    @ApiOperation("获取实例运行时间和状态")
 	@GetMapping("/rb_time_data")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeDataRsp> getRbTimeData(
@@ -93,15 +106,19 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(timeDataRsp);
 	}
 
-	/**
-	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
-	 * 获取实例下的角色任务分类分布数据
-	 *
-	 * @param resource_id 资源id
-	 * @param role_type   角色类型
-	 * @return
-	 */
-	@ApiOperation("获取实例下的角色任务分类分布数据")
+    /**
+     * 红蓝实时战况页面 左右两侧 任务分类 柱状图
+     * 获取实例下的角色任务分类分布数据
+     *
+     * @param resource_id 资源id
+     * @param role_type   角色类型
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     * @see BaseRsp<XYData>
+     */
+    @ApiOperation("获取实例下的角色任务分类分布数据")
 	@GetMapping("/team_mission_category")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<XYData> getRbMissionCategory(
@@ -116,14 +133,18 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(data);
 	}
 
-	/**
-	 * 指定队伍（红/蓝）排行榜 得分排名 任务进展排名
-	 *
-	 * @param resource_id 资源id
-	 * @param role_type   角色类型
-	 * @return
-	 */
-	@ApiOperation("指定队伍（红/蓝）排行榜 得分排名")
+    /**
+     * 指定队伍（红/蓝）排行榜 得分排名 任务进展排名
+     *
+     * @param resource_id 资源id
+     * @param role_type   角色类型
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     * @see BaseRsp<JSONObject>
+     */
+    @ApiOperation("指定队伍（红/蓝）排行榜 得分排名")
 	@GetMapping("/team_leader_board")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbLeaderBoard(
@@ -138,15 +159,19 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(data);
 	}
 
-	/**
-	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
-	 * 获取实例下的角色任务分类分布数据
-	 *
-	 * @param resource_id 资源id
-	 * @param role_type   角色类型
-	 * @return
-	 */
-	@ApiOperation("获取实例下的角色任务分类分布数据")
+    /**
+     * 红蓝实时战况页面 左右两侧 任务分类 柱状图
+     * 获取实例下的角色任务分类分布数据
+     *
+     * @param resource_id 资源id
+     * @param role_type   角色类型
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     * @see BaseRsp<JSONObject>
+     */
+    @ApiOperation("获取实例下的角色任务分类分布数据")
 	@GetMapping("/team_members_ranking")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMembersRanking(
@@ -161,15 +186,19 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(data);
 	}
 
-	/**
-	 * 红蓝实时战况页面 左右两侧 任务分类 柱状图
-	 * 获取实例下的角色任务分类分布数据
-	 *
-	 * @param resource_id 资源id
-	 * @param role_type   角色类型
-	 * @return
-	 */
-	@ApiOperation("获取实例下的任务评估数据统计")
+    /**
+     * 红蓝实时战况页面 左右两侧 任务分类 柱状图
+     * 获取实例下的角色任务分类分布数据
+     *
+     * @param resource_id 资源id
+     * @param role_type   角色类型
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     * @see BaseRsp<JSONObject>
+     */
+    @ApiOperation("获取实例下的任务评估数据统计")
 	@GetMapping("/team_mission_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMissionEvaluation(
@@ -184,14 +213,17 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(data);
 	}
 
-	/**
-	 * 查询任务状态
-	 * 导演-任务编排 左侧柱状图
-	 *
-	 * @param resource_id 资源id
-	 * @return
-	 */
-	@ApiOperation("查询任务状态")
+    /**
+     * 查询任务状态
+     * 导演-任务编排 左侧柱状图
+     *
+     * @param resource_id 资源id
+     * @return
+     * @throws
+     * @see String
+     * @see BaseRsp<List<MissionsStatistic>>
+     */
+    @ApiOperation("查询任务状态")
 	@GetMapping("/missions_statistics")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionsStatistic>> getMissionsStatistics(
@@ -221,16 +253,20 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(missionsStatistics);
 	}
 
-	/**
-	 * 红方/蓝方成绩页面 右侧中折线图 任务进展
-	 * 红蓝实时战况页面 左右两侧 任务进展
-	 * 队内任务下发和完成任务数进展
-	 *
-	 * @param resource_id 资源id
-	 * @param role_type   角色类型
-	 * @return
-	 */
-	@ApiOperation("获取任务下发和完成任务数进展")
+    /**
+     * 红方/蓝方成绩页面 右侧中折线图 任务进展
+     * 红蓝实时战况页面 左右两侧 任务进展
+     * 队内任务下发和完成任务数进展
+     *
+     * @param resource_id 资源id
+     * @param role_type   角色类型
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     * @see BaseRsp<JSONObject>
+     */
+    @ApiOperation("获取任务下发和完成任务数进展")
 	@GetMapping("/team_mission_progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbMissionProgress(
@@ -245,15 +281,19 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(data);
 	}
 
-	/**
-	 * 红方/蓝方成绩页面 右侧下折线图 得分趋势
-	 * 队伍得分趋势统计
-	 *
-	 * @param resource_id 资源id
-	 * @param role_type   角色类型
-	 * @return
-	 */
-	@ApiOperation("队伍得分趋势统计")
+    /**
+     * 红方/蓝方成绩页面 右侧下折线图 得分趋势
+     * 队伍得分趋势统计
+     *
+     * @param resource_id 资源id
+     * @param role_type   角色类型
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     * @see BaseRsp<JSONObject>
+     */
+    @ApiOperation("队伍得分趋势统计")
 	@GetMapping("/team_score_progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getRbScoreProgress(
@@ -272,29 +312,38 @@ public class RbRoomStatisticsController {
 		return new BaseRsp(data);
 	}
 
-	/**
-	 * 红蓝实时战况页面 正下方 红蓝得分
-	 *
-	 * @param resource_id 资源id
-	 * @param role_type   角色类型
-	 * @param userId      用户id
-	 * @return
-	 */
-	private JSONObject getRbScoreProgress_6(String resource_id, Integer role_type, String userId) {
+    /**
+     * 红蓝实时战况页面 正下方 红蓝得分
+     *
+     * @param resource_id 资源id
+     * @param role_type   角色类型
+     * @param userId      用户id
+     * @return
+     * @throws
+     * @see String
+     * @see Integer
+     * @see String
+     * @see JSONObject
+     */
+    private JSONObject getRbScoreProgress_6(String resource_id, Integer role_type, String userId) {
 
 		rbRoomService.checkRoomPermission(resource_id, userId);
 
 		return rbRoomScoreService.getAllRbScoreProgress(resource_id, role_type);
 	}
 
-	/**
-	 * 许可检查教员或群
-	 *
-	 * @param resource_id 资源id
-	 * @param userId      用户id
-	 * @param role_type   角色类型
-	 */
-	private void permissionCheckTeacherOrGroup(String resource_id, String userId, Integer role_type) {
+    /**
+     * 许可检查教员或群
+     *
+     * @param resource_id 资源id
+     * @param userId      用户id
+     * @param role_type   角色类型
+     * @throws
+     * @see String
+     * @see String
+     * @see Integer
+     */
+    private void permissionCheckTeacherOrGroup(String resource_id, String userId, Integer role_type) {
 		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
 
 		if (crRole.isRvbStudent() && !crRole.getRoleGroup().equals(role_type)) {

@@ -18,37 +18,51 @@ import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
  * 评估算法Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalAlgorithmService
+ * @since 1.0.0
  */
 @Service
 public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, EvalAlgorithm> implements EvalAlgorithmService {
 
 	/**
 	 * 评估算法Mapper
+	 *
+	 * @see EvalAlgorithmMapper
 	 */
 	@Autowired
 	EvalAlgorithmMapper evalAlgorithmMapper;
 
 	/**
 	 * 评估集合体Mapper
+	 *
+	 * @see EvalAggregationMapper
 	 */
 	@Autowired
 	EvalAggregationMapper evalAggregationMapper;
 
 	/**
 	 * 评估收集Mapper
+	 *
+	 * @see EvalCollectionMapper
 	 */
 	@Autowired
 	EvalCollectionMapper evalCollectionMapper;
 
 	/**
 	 * 评估指数Mapper
+	 *
+	 * @see EvalIndexMapper
 	 */
 	@Autowired
 	EvalIndexMapper evalIndexMapper;
 
 	/**
 	 * 评估指示器Mapper
+	 *
+	 * @see EvalIndicatorMapper
 	 */
 	@Autowired
 	EvalIndicatorMapper evalIndicatorMapper;
@@ -58,6 +72,9 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	 *
 	 * @param ids id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	@Override
 	public Integer selectUsedNum(List<String> ids) {
@@ -73,6 +90,9 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	 *
 	 * @param ids id列表
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean delete(List<String> ids) {
@@ -85,6 +105,8 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	 * 更新州由id
 	 *
 	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void updateStateById(String resourceId) {
@@ -96,6 +118,9 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	 *
 	 * @param type 类型
 	 * @return {@code List<EvalAlgorithm> }
+	 * @throws
+	 * @see String
+	 * @see List<EvalAlgorithm>
 	 */
 	@Override
 	public List<EvalAlgorithm> selectByType(String type) {
@@ -107,6 +132,9 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<EvalAlgorithm> }
+	 * @throws
+	 * @see EvalListQuery
+	 * @see IPage<EvalAlgorithm>
 	 */
 	@Override
 	public IPage<EvalAlgorithm> page(EvalListQuery listQuery) {
@@ -121,6 +149,9 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	 *
 	 * @param ids id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> selectUsedAlgorithmIds(List<String> ids) {
@@ -137,6 +168,8 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 	 * 更新州由id列表
 	 *
 	 * @param algorithmIds 算法id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public void updateStateByIds(List<String> algorithmIds) {

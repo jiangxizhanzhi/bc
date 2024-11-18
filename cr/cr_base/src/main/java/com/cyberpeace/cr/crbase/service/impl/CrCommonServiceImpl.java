@@ -43,7 +43,10 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场常见Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see CrCommonService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -51,24 +54,32 @@ public class CrCommonServiceImpl implements CrCommonService {
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 靶场标记Mapper
+	 *
+	 * @see CrMarkMapper
 	 */
 	@Autowired
 	private CrMarkMapper crMarkMapper;
@@ -79,6 +90,10 @@ public class CrCommonServiceImpl implements CrCommonService {
 	 * @param localSceneId 当地场景id
 	 * @param studentId    学员id
 	 * @return {@code List<MonitorSession> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<MonitorSession>
 	 */
 	@Override
 	public List<MonitorSession> getMonitorSessions(String localSceneId, String studentId) {
@@ -143,6 +158,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 	 *
 	 * @param sceneData 场景数据
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see JSONObject
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean isStopped(JSONObject sceneData) {
@@ -155,6 +173,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 	 *
 	 * @param roleConfigs 角色配置
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<CrRoleConfig>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> validateRoleConfig(List<CrRoleConfig> roleConfigs) {
@@ -180,6 +201,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 	 *
 	 * @param missionsScheme 任务计划
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see CrRoleConfigMissionsScheme
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> validateMissionsScheme(CrRoleConfigMissionsScheme missionsScheme) {
@@ -225,6 +249,8 @@ public class CrCommonServiceImpl implements CrCommonService {
 	 * 验证RB角色配置
 	 *
 	 * @param roleConfigRb 角色配置 RB
+	 * @throws
+	 * @see CrRoleConfigRb
 	 */
 	@Override
 	public void validateRbRoleConfig(CrRoleConfigRb roleConfigRb) {
@@ -243,6 +269,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 	 *
 	 * @param req  请求体
 	 * @param code 代号
+	 * @throws
+	 * @see MarkAddReq
+	 * @see Integer
 	 */
 	@Override
 	public void addMark(MarkAddReq req, Integer code) {
@@ -263,6 +292,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrMark> }
+	 * @throws
+	 * @see String
+	 * @see List<CrMark>
 	 */
 	@Override
 	public List<CrMark> getMarkByRoomId(String roomId) {
@@ -275,6 +307,10 @@ public class CrCommonServiceImpl implements CrCommonService {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code List<CrMark> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CrMark>
 	 */
 	@Override
     public List<CrMark> getMarkByRoomIdAndUserId(String roomId, String userId) {

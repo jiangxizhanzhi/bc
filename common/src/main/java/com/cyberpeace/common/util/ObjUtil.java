@@ -18,11 +18,26 @@ import com.google.common.collect.Maps;
  * 本工具类只针对简单对象处理。
  * 简单对象的定义为：对象每一个field对应的value为基本数据类型。
  * 基本数据类型参考java基本数据类型定义。
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
  */
 public class ObjUtil {
 
+	/**
+	 * 日志
+	 *
+	 * @see Logger
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(ObjUtil.class);
 
+	/**
+	 * obj util
+	 *
+	 * @throws
+	 */
 	private ObjUtil() {}
 
 	/**
@@ -31,6 +46,9 @@ public class ObjUtil {
 	 *
 	 * @param obj
 	 * @return
+	 * @throws
+	 * @see Object
+	 * @see Map<String, Object>
 	 */
 	public static Map<String, Object> obj2map(Object obj) {
 		if (null == obj) {
@@ -58,6 +76,9 @@ public class ObjUtil {
 	 *
 	 * @param obj
 	 * @return
+	 * @throws
+	 * @see Object
+	 * @see TreeMap<String, Object>
 	 */
 	public static TreeMap<String, Object> obj2TreemapExcludeEmpty(Object obj) {
 		TreeMap<String, Object> result = Maps.newTreeMap();
@@ -87,6 +108,10 @@ public class ObjUtil {
 	 * @param obj       要修改的对象
 	 * @param fieldName 对象要设置值的field
 	 * @param value     需要设置的值
+	 * @throws
+	 * @see Object
+	 * @see String
+	 * @see Object
 	 */
 	public static void setCertainFieldValue(Object obj, String fieldName, Object value) {
 		Field[] fields = getFields(obj);
@@ -108,6 +133,17 @@ public class ObjUtil {
 		}
 	}
 
+	/**
+	 * 设置田值
+	 *
+	 * @param obj       对象
+	 * @param fieldName 田名称
+	 * @param value     值
+	 * @throws @throws IllegalAccessException 非法访问异常
+	 * @see Object
+	 * @see String
+	 * @see String
+	 */
 	public static void setFieldValue(Object obj, String fieldName, String value)
 			throws IllegalAccessException {
 		Field[] fields = getFields(obj);
@@ -131,6 +167,10 @@ public class ObjUtil {
 	 * @param obj
 	 * @param fieldName
 	 * @return
+	 * @throws
+	 * @see Object
+	 * @see String
+	 * @see String
 	 */
 	public static String getCertainFieldValue(Object obj, String fieldName) {
 		Field[] fields = getFields(obj);
@@ -153,6 +193,17 @@ public class ObjUtil {
 				+ "], field=[" + fieldName + "] not found");
 	}
 
+	/**
+	 * 获取田值由名称
+	 *
+	 * @param fieldName 田名称
+	 * @param obj       对象
+	 * @return {@code Object }
+	 * @throws
+	 * @see String
+	 * @see Object
+	 * @see Object
+	 */
 	public static Object getFieldValueByName(String fieldName, Object obj) {
 		String firstLetter = fieldName.substring(0, 1).toUpperCase();
 		try {
@@ -180,11 +231,29 @@ public class ObjUtil {
 		}
 	}
 
+	/**
+	 * 获取领域
+	 *
+	 * @param obj 对象
+	 * @return {@code Field[] }
+	 * @throws
+	 * @see Object
+	 * @see Field[]
+	 */
 	public static Field[] getFields(Object obj) {
 		Class<?> cls = obj.getClass();
 		return getFields(cls);
 	}
 
+	/**
+	 * 获取领域
+	 *
+	 * @param target 目标
+	 * @return {@code Field[] }
+	 * @throws
+	 * @see Class<?>
+	 * @see Field[]
+	 */
 	public static Field[] getFields(Class<?> target) {
 
 		Class<?> cls = target;

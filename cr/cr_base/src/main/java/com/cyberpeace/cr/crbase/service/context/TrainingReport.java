@@ -15,31 +15,41 @@ import lombok.Getter;
  * 训练报告
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class TrainingReport {
 
 	/**
 	 * 教员名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "教员姓名")
 	private String teacherName = "";
 
 	/**
 	 * 场景开始时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty(value = "场景开启时间")
 	private Date sceneStartTime;
 
 	/**
 	 * 训练时间
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练时间")
 	private Integer trainingTime = 0;
 
 	/**
 	 * 用户
+	 *
+	 * @see List<UserReport>
 	 */
 	@ApiModelProperty(value = "用户列表")
 	private List<UserReport> users = Lists.newArrayList();

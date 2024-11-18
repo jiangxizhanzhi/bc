@@ -16,13 +16,17 @@ import lombok.Data;
  * 团队训练房间请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class TeamTrainRoomReq {
 
 	/**
 	 * 模板
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "模板id", required = true)
 	@NotNull
@@ -30,6 +34,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 类别
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "类别", required = true)
 	@NotNull
@@ -37,6 +43,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotBlank
@@ -44,6 +52,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 预技能
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "前置技能", required = true)
 	@NotNull
@@ -51,6 +61,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 训练技能
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "训练目标", required = true)
 	@NotNull
@@ -58,6 +70,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 难
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "难度", required = true)
 	@NotNull
@@ -65,6 +79,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 开始时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty(value = "开始时间", required = true)
 	@NotNull
@@ -72,6 +88,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 结束时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty(value = "结束时间", required = true)
 	@NotNull
@@ -79,6 +97,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述", required = true)
 	@NotNull
@@ -86,6 +106,8 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 角色配置
+	 *
+	 * @see List<RoleConfig>
 	 */
 	@ApiModelProperty(value = "角色配置", required = true)
 	@NotNull
@@ -93,12 +115,16 @@ public class TeamTrainRoomReq {
 
 	/**
 	 * 启用录制
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
 
 	/**
 	 * 图标
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
@@ -113,19 +139,25 @@ public class TeamTrainRoomReq {
  * 角色配置
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class RoleConfig {
 
 	/**
 	 * 角色组
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "角色组")
 	private Integer roleGroup;
 
 	/**
 	 * 用户
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "用户id列表")
 	private List<String> users;

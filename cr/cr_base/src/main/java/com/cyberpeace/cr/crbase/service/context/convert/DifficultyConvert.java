@@ -6,11 +6,32 @@ import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
  * 资管难度转换
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Enum
+ * @see MdConvertEnum
+ * @since 1.0.0
  */
 public enum DifficultyConvert implements MdConvertEnum<Integer, String> {
 
-	PRIMARY(1, "低"), INTERMEDIATE(2, "中"), ADVANCED(3, "高");;
+	/**
+	 * 低
+	 *
+	 * @see DifficultyConvert
+	 */
+	PRIMARY(1, "低"),
+	/**
+	 * 中
+	 *
+	 * @see DifficultyConvert
+	 */
+	INTERMEDIATE(2, "中"),
+	/**
+	 * 高
+	 *
+	 * @see DifficultyConvert
+	 */
+	ADVANCED(3, "高");;
 
 	/**
 	 * 难度转换
@@ -23,8 +44,18 @@ public enum DifficultyConvert implements MdConvertEnum<Integer, String> {
 		this.desc = desc;
 	}
 
+	/**
+	 * 难度
+	 *
+	 * @see Integer
+	 */
 	private Integer difficulty;
 
+	/**
+	 * 描述
+	 *
+	 * @see String
+	 */
 	private String desc;
 
 	/**

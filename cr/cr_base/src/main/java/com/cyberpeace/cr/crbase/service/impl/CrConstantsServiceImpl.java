@@ -19,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场常数Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see CrConstantsService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -27,12 +30,16 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 
 	/**
 	 * 靶场常数配置Mapper
+	 *
+	 * @see CrConstantsConfigMapper
 	 */
 	@Autowired
 	private CrConstantsConfigMapper crConstantsConfigMapper;
 
 	/**
 	 * 缓存
+	 *
+	 * @see Map<Integer, List<CrConstantsConfig>>
 	 */
 	private volatile Map<Integer, List<CrConstantsConfig>> cache = Maps.newHashMap();
 
@@ -41,6 +48,9 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 	 *
 	 * @param type 类型
 	 * @return {@code List<CrConstantsConfig> }
+	 * @throws
+	 * @see Integer
+	 * @see List<CrConstantsConfig>
 	 */
 	@Override
 	public List<CrConstantsConfig> getByType(Integer type) {
@@ -56,6 +66,8 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	private synchronized void init() {
 		if (cache.isEmpty()) {
@@ -76,6 +88,10 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 	 * @param type 类型
 	 * @param code 代号
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see Integer
+	 * @see Integer
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean validateType(Integer type, Integer code) {
@@ -101,6 +117,10 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 	 * @param type 类型
 	 * @param code 代号
 	 * @return {@code String }
+	 * @throws
+	 * @see Integer
+	 * @see Integer
+	 * @see String
 	 */
 	@Override
 	public String geCnNameByTypeAndCode(Integer type, Integer code) {

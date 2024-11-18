@@ -4,12 +4,16 @@ package com.cyberpeace.common.model.user;
  * 用户信息上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class UserInfoContext {
 
 	/**
 	 * 用户上下文
+	 *
+	 * @see ThreadLocal<UserInfo>
 	 */
 	private static final ThreadLocal<UserInfo> userContext = new ThreadLocal();
 

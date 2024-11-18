@@ -15,45 +15,61 @@ import lombok.Getter;
  * 用户看到的红点提示
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/06/07
+ * @since 1.0.0
  */
 @Data
 public class CrBadge {
 
 	/**
 	 * id
+	 *
+	 * @see Integer
 	 */
 	@TableId(type = IdType.AUTO)
 	private Integer id;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	private Integer type;
 
 	/**
 	 * 业务id
+	 *
+	 * @see String
 	 */
 	private String businessId;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 额外
+	 *
+	 * @see String
 	 */
 	private String extra;
 
 	/**
 	 * 创建时间
+	 *
+	 * @see Date
 	 */
 	@TableField(fill = FieldFill.INSERT)
 	private Date createTime;
 
 	/**
 	 * 更新时间
+	 *
+	 * @see Date
 	 */
 	@TableField(fill = FieldFill.INSERT_UPDATE)
 	private Date updateTime;

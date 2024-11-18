@@ -10,7 +10,10 @@ import java.util.List;
  * 团队装置Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 public interface TeamDeviceMapper extends BaseMapper<TeamTrainDevice> {
     /**
@@ -19,6 +22,10 @@ public interface TeamDeviceMapper extends BaseMapper<TeamTrainDevice> {
      * @param roomId   房间id
      * @param deviceId 装置id
      * @return {@code TeamTrainDevice }
+     * @throws
+     * @see String
+     * @see String
+     * @see TeamTrainDevice
      */
     TeamTrainDevice selectByRoomIdAndDeviceId(@Param("roomId") String roomId, @Param("deviceId") String deviceId);
 
@@ -28,6 +35,10 @@ public interface TeamDeviceMapper extends BaseMapper<TeamTrainDevice> {
      * @param roomId       房间id
      * @param deviceId     装置id
      * @param createUserId 创造用户id
+     * @throws
+     * @see String
+     * @see String
+     * @see String
      */
     void deleteByRoomIdAndDeviceIdAndCreateUserId(@Param("roomId") String roomId,
                                                   @Param("deviceId") String deviceId,
@@ -39,6 +50,10 @@ public interface TeamDeviceMapper extends BaseMapper<TeamTrainDevice> {
      * @param roomId   房间id
      * @param deviceId 装置id
      * @return {@code List<TeamTrainDevice> }
+     * @throws
+     * @see String
+     * @see String
+     * @see List<TeamTrainDevice>
      */
     List<TeamTrainDevice> selectAllByRoomIdAndDeviceId(@Param("roomId") String roomId,
                                                        @Param("deviceId") String deviceId);

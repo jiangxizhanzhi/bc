@@ -8,7 +8,10 @@ import org.apache.ibatis.annotations.Mapper;
  * 系统属性映射器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface SystemPropertyMapper extends BaseMapper<SystemProperty> {
@@ -18,6 +21,9 @@ public interface SystemPropertyMapper extends BaseMapper<SystemProperty> {
 	 *
 	 * @param name 名称
 	 * @return {@code SystemProperty }
+	 * @throws
+	 * @see String
+	 * @see SystemProperty
 	 */
 	SystemProperty selectByName(String name);
 

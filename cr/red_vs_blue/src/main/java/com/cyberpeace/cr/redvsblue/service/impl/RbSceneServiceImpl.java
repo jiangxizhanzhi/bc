@@ -47,7 +47,10 @@ import lombok.extern.slf4j.Slf4j;
  * RB场景Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see RbSceneService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -55,70 +58,94 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	/**
 	 * 暂停标志
+	 *
+	 * @see Integer
 	 */
 	private static final Integer PAUSE_FLAG = 1;
 
 	/**
 	 * 取消暂停标志
+	 *
+	 * @see Integer
 	 */
 	private static final Integer UNPAUSE_FLAG = 2;
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 场景过滤器Service
+	 *
+	 * @see SceneFilterService
 	 */
 	@Autowired
 	private SceneFilterService sceneFilterService;
 
 	/**
 	 * RB时间管理Service
+	 *
+	 * @see RbTimeManagementService
 	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 靶场场景Service
+	 *
+	 * @see CrSceneService
 	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
 	/**
 	 * RB装置Service
+	 *
+	 * @see RbDeviceService
 	 */
 	@Autowired
 	private RbDeviceService rbDeviceService;
 
 	/**
 	 * RB常见装置Service
+	 *
+	 * @see RbCommonDeviceService
 	 */
 	@Autowired
 	private RbCommonDeviceService rbCommonDeviceService;
@@ -129,6 +156,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -192,6 +223,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 * @param room   房间
 	 * @param topoId 拓扑id
 	 * @return {@code LocalScene }
+	 * @throws
+	 * @see RbRoom
+	 * @see String
+	 * @see LocalScene
 	 */
 	private LocalScene createLocalScene(RbRoom room, String topoId) {
 		LocalScene localScene = new LocalScene();
@@ -219,6 +254,10 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 * @param roomId 房间id
 	 * @param roleId 角色id
 	 * @return {@code RbSceneViewContext }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see RbSceneViewContext
 	 */
 	@Override
 	public RbSceneViewContext viewScene(String roomId, String roleId) {
@@ -285,6 +324,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean stopScene(String roomId) {
@@ -332,6 +374,8 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 * 清除本地
 	 *
 	 * @param room 房间
+	 * @throws
+	 * @see RbRoom
 	 */
 	@Override
 	public void clearLocal(RbRoom room) {
@@ -352,6 +396,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean pauseScene(String roomId) {
@@ -387,6 +434,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean unpauseScene(String roomId) {
@@ -423,6 +473,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 *
 	 * @param room 房间
 	 * @param flag flag
+	 * @throws
+	 * @see RbRoom
+	 * @see Integer
 	 */
 	private void checkBeforePauseOps(RbRoom room, Integer flag) {
 		if (room == null) {
@@ -459,6 +512,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<Flow> }
+	 * @throws
+	 * @see String
+	 * @see List<Flow>
 	 */
 	@Override
 	public List<Flow> getFlowList(String roomId) {
@@ -526,6 +582,11 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 * @param category 类别
 	 * @param name     名称
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see JSONArray
 	 */
 	@Override
 	public JSONArray getAssetList(String roomId, Integer category, String name) {
@@ -544,6 +605,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getNodeStatistics(String roomId) {
@@ -562,6 +626,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 *
 	 * @param room 房间
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see RbRoom
+	 * @see JSONObject
 	 */
 	private JSONObject getMpSceneData(RbRoom room) {
 		String localSceneId = room.getLocalSceneId();
@@ -605,6 +672,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 *
 	 * @param room 房间
 	 * @return {@code SceneData }
+	 * @throws
+	 * @see RbRoom
+	 * @see SceneData
 	 */
 	public SceneData getSceneData(RbRoom room) {
 		JSONObject sceneData = getMpSceneData(room);
@@ -621,6 +691,11 @@ public class RbSceneServiceImpl implements RbSceneService {
 	 * @param roleList 角色列表
 	 * @param roleId   角色id
 	 * @return {@code CrRoleNodesData }
+	 * @throws
+	 * @see CrRole
+	 * @see List<CrRole>
+	 * @see String
+	 * @see CrRoleNodesData
 	 */
 	private CrRoleNodesData getNodes(CrRole selfRole, List<CrRole> roleList, String roleId) {
 

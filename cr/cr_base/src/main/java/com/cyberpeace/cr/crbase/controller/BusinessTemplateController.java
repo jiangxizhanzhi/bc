@@ -69,7 +69,9 @@ import net.lingala.zip4j.exception.ZipException;
  * 业务模板控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "基础模板")
 @RestController
@@ -80,30 +82,40 @@ public class BusinessTemplateController {
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -113,6 +125,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return
+	 * @throws
+	 * @see TemplateReq
+	 * @see BaseRsp<ListRsp<BusinessTemplateRsp>>
 	 */
 	@ApiOperation("查询模板列表")
 	@GetMapping("/list")
@@ -161,6 +176,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<Share>
 	 */
 	@ApiOperation("查询操作权限")
 	@GetMapping("/getShares")
@@ -178,6 +196,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param shareReq 共享请求体
 	 * @return
+	 * @throws
+	 * @see ShareReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("批量修改操作权限")
 	@PostMapping("/batchSetShares")
@@ -196,6 +217,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@DeleteMapping()
 	@ApiOperation("批量删除")
@@ -241,6 +265,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param nameValidReq 名称有效请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see NameValidReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("校验模板名字")
 	@PatchMapping("/validate_name_patch/")
@@ -257,6 +284,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param testSceneReq 测试场景请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see TestSceneReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("启动后台测试场景")
 	@PostMapping("/testScene")
@@ -314,6 +344,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<SceneViewContext> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<SceneViewContext>
 	 */
 	@ApiOperation("查看后台测试场景")
 	@GetMapping("/testScene")
@@ -333,6 +366,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param testSceneReq 测试场景请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see TestSceneReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("关闭后台场景测试")
 	@DeleteMapping("/testScene")
@@ -358,6 +394,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneNodeOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("后台测试场景重启节点")
 	@PostMapping("/testScene/node/restart")
@@ -383,6 +422,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneNodeOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("后台测试场景重建节点")
 	@PostMapping("/testScene/node/recreate")
@@ -408,6 +450,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param nodeOpsReq 节点操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneNodeOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("创建启动节点")
 	@PostMapping("/node/create")
@@ -433,6 +478,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param response 响应
 	 * @param dumpReq  转 储请求体
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see BatchDumpReq
 	 */
 	@ApiOperation("批量导出场景模板")
 	@PostMapping("/batchDump")
@@ -464,8 +512,10 @@ public class BusinessTemplateController {
 	 *
 	 * @param file 文件
 	 * @return {@code BaseRsp }
-	 * @throws IOException  io异常
+	 * @throws @throws      IOException io异常
 	 * @throws ZipException zip 异常
+	 * @see MultipartFile
+	 * @see BaseRsp
 	 */
 	@ApiOperation("批量导入场景模板")
 	@PutMapping("/batchLoad")
@@ -493,6 +543,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param btPageReq BT系列分页请求体
 	 * @return {@code BaseRsp<List<BusinessTemplateSimple>> }
+	 * @throws
+	 * @see BTPageReq
+	 * @see BaseRsp<List<BusinessTemplateSimple>>
 	 */
 	@ApiOperation("职业框架-场景模板列表")
 	@GetMapping("/list/simple")
@@ -510,6 +563,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("创建训练时校验用户是否拥有模板权限")
 	@GetMapping("/check/template/permission")
@@ -533,6 +589,8 @@ public class BusinessTemplateController {
 	 * 检查以前测试场景
 	 *
 	 * @param templateId 模板id
+	 * @throws
+	 * @see String
 	 */
 	private void checkBeforeTestingScene(String templateId) {
 		// 暂无
@@ -543,6 +601,9 @@ public class BusinessTemplateController {
 	 *
 	 * @param templateId 模板id
 	 * @return {@code BusinessTemplate }
+	 * @throws
+	 * @see String
+	 * @see BusinessTemplate
 	 */
 	private BusinessTemplate ensureTemplateExist(String templateId) {
 		BusinessTemplate businessTemplate = businessTemplateService.getById(templateId);

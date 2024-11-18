@@ -20,7 +20,9 @@ import java.util.List;
  * 系统属性控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "获取系统变量")
 @RestController
@@ -31,6 +33,8 @@ public class SystemPropertyController {
 
     /**
      * 系统配置Service
+     *
+     * @see SystemPropertyService
      */
     @Autowired
     private SystemPropertyService systemPropertyService;
@@ -39,6 +43,8 @@ public class SystemPropertyController {
      * 应用运行信息
      *
      * @return {@code BaseRsp<List<SystemProperty>> }
+     * @throws
+     * @see BaseRsp<List<SystemProperty>>
      */
     @ApiOperation("全量获取")
     @GetMapping("/list")

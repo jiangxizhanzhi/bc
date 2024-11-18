@@ -86,7 +86,9 @@ import lombok.extern.slf4j.Slf4j;
  * RB 房间控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗实例")
 @Slf4j
@@ -97,72 +99,96 @@ public class RbRoomController {
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * RB时间管理Service
+	 *
+	 * @see RbTimeManagementService
 	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
 	/**
 	 * RB场景Service
+	 *
+	 * @see RbSceneService
 	 */
 	@Autowired
 	private RbSceneService rbSceneService;
 
 	/**
 	 * RB装置Service
+	 *
+	 * @see RbDeviceService
 	 */
 	@Autowired
 	private RbDeviceService rbDeviceService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * RB模板Mapper
+	 *
+	 * @see RbTemplateMapper
 	 */
 	@Autowired
 	private RbTemplateMapper rbTemplateMapper;
 
 	/**
 	 * RB房间Mapper
+	 *
+	 * @see RbRoomMapper
 	 */
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
 
 	/**
 	 * 靶场得分Service
+	 *
+	 * @see CrScoreService
 	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
 	/**
 	 * 靶场常数Service
+	 *
+	 * @see CrConstantsService
 	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
@@ -172,6 +198,9 @@ public class RbRoomController {
 	 *
 	 * @param rbRoomReq RB房间请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see RbRoomReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("新增")
 	@PostMapping()
@@ -203,6 +232,9 @@ public class RbRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<RbRoomRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<RbRoomRsp>
 	 */
 	@ApiOperation("查询")
 	@GetMapping()
@@ -219,6 +251,9 @@ public class RbRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<BaseRole> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<BaseRole>
 	 */
 	@ApiOperation("查询当前用户角色")
 	@GetMapping("get_role")
@@ -238,6 +273,9 @@ public class RbRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<RbRoomRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<RbRoomRsp>
 	 */
 	@ApiOperation("训练说明")
 	@GetMapping("train_introduction")
@@ -265,6 +303,9 @@ public class RbRoomController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<RbRoomRsp>> }
+	 * @throws
+	 * @see RbTemplateListReq
+	 * @see BaseRsp<ListRsp<RbRoomRsp>>
 	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
@@ -281,6 +322,9 @@ public class RbRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<DashboardInfo>
 	 */
 	@ApiOperation("获取控制面板信息，好友信息")
 	@GetMapping("/dashboard_info")
@@ -301,6 +345,10 @@ public class RbRoomController {
 	 * @param resource_id 资源id
 	 * @param id          id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("获取群组成员列表")
 	@GetMapping("/members_info")
@@ -327,6 +375,9 @@ public class RbRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>>
 	 */
 	@ApiOperation("红蓝对抗-训练手册")
 	@GetMapping("/manual")
@@ -361,6 +412,9 @@ public class RbRoomController {
 	 *
 	 * @param rbTrainRoomModifyReq RB训练房间修改请求体
 	 * @return {@code BaseRsp<RbRoomRsp> }
+	 * @throws
+	 * @see RbRoomModifyReq
+	 * @see BaseRsp<RbRoomRsp>
 	 */
 	@ApiOperation("修改")
 	@PutMapping()
@@ -400,6 +454,9 @@ public class RbRoomController {
 	 *
 	 * @param opsReq 操作 计划请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
@@ -445,6 +502,9 @@ public class RbRoomController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<RbTimeManagementRsp>
 	 */
 	@ApiOperation("获取时间管理数据")
 	@GetMapping("/get_time_management")
@@ -491,6 +551,9 @@ public class RbRoomController {
 	 *
 	 * @param rbTimeManagementReq RB时间管理请求体
 	 * @return
+	 * @throws
+	 * @see RbTimeManagementReq
+	 * @see BaseRsp<RbTimeManagementRsp>
 	 */
 	@ApiOperation("创建时间管理")
 	@PostMapping("/create_time_management")
@@ -538,6 +601,10 @@ public class RbRoomController {
 	 * @param room_id         房间id
 	 * @param standard_device 标准设备
 	 * @return {@code BaseRsp<List<RbDeviceContext>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<RbDeviceContext>>
 	 */
 	@ApiOperation("获取设备占用情况")
 	@GetMapping("/device")
@@ -559,6 +626,10 @@ public class RbRoomController {
 	 * @param resource_id 资源id
 	 * @param scoreCount  得分计数
 	 * @return {@code BaseRsp<TrainReportContext> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see BaseRsp<TrainReportContext>
 	 */
 	@ApiOperation("红蓝对抗-任务导调-训练报告")
 	@GetMapping("/mission/getTrainReports")
@@ -602,6 +673,13 @@ public class RbRoomController {
 	 * @param scoreCount    得分计数
 	 * @param replaySceneId 复盘场景id
 	 * @return {@code ScoreTrendReq }
+	 * @throws
+	 * @see RbTimeManagement
+	 * @see Date
+	 * @see Date
+	 * @see Integer
+	 * @see String
+	 * @see ScoreTrendReq
 	 */
 	public ScoreTrendReq initScoreTrendReq(RbTimeManagement management, Date roomStartTime,Date roomEndTime, Integer scoreCount, String replaySceneId) {
 		ScoreTrendReq res = new ScoreTrendReq();
@@ -629,6 +707,10 @@ public class RbRoomController {
 	 * @param httpServletResponse HTTP Servlet 响应
 	 * @param resource_id         资源id
 	 * @param scoreCount          得分计数
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see String
+	 * @see Integer
 	 */
 	@ApiOperation("红蓝对抗-任务导调-训练报告导出")
 	@GetMapping("/mission/TrainReportsPdf")
@@ -684,6 +766,9 @@ public class RbRoomController {
 	 *
 	 * @param rbRoom      RB 会议室
 	 * @param trainReport 训练报告
+	 * @throws
+	 * @see RbRoom
+	 * @see TrainReportContext
 	 */
 	public void initRbReport(RbRoom rbRoom, TrainReportContext trainReport) {
 		// 基础信息
@@ -716,6 +801,9 @@ public class RbRoomController {
 	 *
 	 * @param manuals 手册
 	 * @return {@code List<TrainTaskReleaseInfoRsp> }
+	 * @throws
+	 * @see List<TrainTaskReleaseInfoRsp>
+	 * @see List<TrainTaskReleaseInfoRsp>
 	 */
 	private List<TrainTaskReleaseInfoRsp>
 			mergeStageByCreateTime(List<TrainTaskReleaseInfoRsp> manuals) {

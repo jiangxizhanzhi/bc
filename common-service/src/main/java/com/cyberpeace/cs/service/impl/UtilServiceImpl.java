@@ -17,49 +17,68 @@ import java.util.List;
  * utilService实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see UtilService
+ * @since 1.0.0
  */
 @Service
 public class UtilServiceImpl implements UtilService {
 
 	/**
 	 * FDFS 前缀
+	 *
+	 * @see String
 	 */
 	private String FDFS_PREFIX;
 
 	/**
 	 * FDFS 启动 STR
+	 *
+	 * @see String
 	 */
 	private String FDFS_START_STR;
 
 	/**
 	 * 本地前缀
+	 *
+	 * @see String
 	 */
 	private String LOCAL_PREFIX;
 
 	/**
 	 * 本地父路径
+	 *
+	 * @see String
 	 */
 	private String LOCAL_PARENT_PATH;
 
 	/**
 	 * 讲义信息 URL
+	 *
+	 * @see String
 	 */
 	private String HANDOUT_INFO_URL;
 
 	/**
 	 * 讲义内容 URL
+	 *
+	 * @see String
 	 */
 	private String HANDOUT_CONTENT_URL;
 
 	/**
 	 * 远程服务器环境Service
+	 *
+	 * @see RemoteServerEnvService
 	 */
 	@Autowired
 	private RemoteServerEnvService remoteServerEnvService;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -76,6 +95,9 @@ public class UtilServiceImpl implements UtilService {
 	 *
 	 * @param fileUrl 文件 URL
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String handlerFileUrl(String fileUrl) {
@@ -99,6 +121,10 @@ public class UtilServiceImpl implements UtilService {
 	 * @param fileUrl 文件 URL
 	 * @param fileId  文件id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String officeUrl(String fileUrl, String fileId) {
@@ -126,6 +152,9 @@ public class UtilServiceImpl implements UtilService {
 	 *
 	 * @param fileUrl 文件 URL
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String replaceFileUrl(String fileUrl) {
@@ -157,6 +186,9 @@ public class UtilServiceImpl implements UtilService {
 	 *
 	 * @param fileUrl 文件 URL
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getRealPath(String fileUrl) {
@@ -191,6 +223,10 @@ public class UtilServiceImpl implements UtilService {
 	 * @param content      内容
 	 * @param destFilePath 目标文件路径
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String handlerMarkdownFile(String content, String destFilePath) {
@@ -228,6 +264,9 @@ public class UtilServiceImpl implements UtilService {
 	 *
 	 * @param content 内容
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String replaceMarkdownFile(String content) {

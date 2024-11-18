@@ -39,7 +39,9 @@ import java.util.List;
  * 工具控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "后台-资源中心-工具库")
 @RestController
@@ -49,18 +51,24 @@ public class ToolController {
 
 	/**
 	 * 工具Service
+	 *
+	 * @see ToolService
 	 */
 	@Autowired
 	private ToolService toolService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -70,6 +78,9 @@ public class ToolController {
 	 *
 	 * @param pageReqBase 分页请求体基础
 	 * @return {@code BaseRsp<ListRsp<ToolRsp>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<ToolRsp>>
 	 */
 	@ApiOperation("工具库列表")
 	@GetMapping("/list")
@@ -88,6 +99,9 @@ public class ToolController {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<ToolRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<ToolRsp>
 	 */
 	@ApiOperation("工具详情")
 	@GetMapping()
@@ -103,6 +117,9 @@ public class ToolController {
 	 *
 	 * @param toolReq 工具请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see ToolAddReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("工具创建")
 	@PostMapping()
@@ -125,6 +142,9 @@ public class ToolController {
 	 *
 	 * @param toolupdateReq 工具更新请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see ToolUpdateReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("工具更新")
 	@PatchMapping()
@@ -145,6 +165,9 @@ public class ToolController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("工具删除")
 	@DeleteMapping()

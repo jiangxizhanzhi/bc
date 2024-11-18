@@ -12,25 +12,33 @@ import lombok.Data;
  * RB模板角色响应
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class RbTemplateRoleRsp {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "角色名")
 	private String name;
 
 	/**
 	 * 角色组
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "角色组")
 	private Integer roleGroup;
 
 	/**
 	 * 子级
+	 *
+	 * @see List<RbTemplateRoleRsp>
 	 */
 	@ApiModelProperty(value = "子角色, 冗余")
 	private List<RbTemplateRoleRsp> children;

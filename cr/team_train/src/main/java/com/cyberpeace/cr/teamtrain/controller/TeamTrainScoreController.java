@@ -59,7 +59,9 @@ import lombok.extern.slf4j.Slf4j;
  * 团队训练得分控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "团队训练评分")
 @RestController
@@ -69,42 +71,56 @@ public class TeamTrainScoreController {
 
 	/**
 	 * 团队房间Service
+	 *
+	 * @see TeamRoomService
 	 */
 	@Autowired
 	TeamRoomService teamRoomService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 靶场得分控制器
+	 *
+	 * @see CrScoreController
 	 */
 	@Autowired
 	private CrScoreController crScoreController;
 
 	/**
 	 * 靶场得分Service
+	 *
+	 * @see CrScoreService
 	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 中台环境Service
+	 *
+	 * @see MpEnvService
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
 	/**
 	 * 训练记录Service
+	 *
+	 * @see TrainRecordService
 	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
@@ -114,6 +130,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param httpServletResponse HTTP Servlet 响应
 	 * @param roomId              房间id
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see String
 	 */
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
@@ -156,6 +175,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param httpServletResponse HTTP Servlet 响应
 	 * @param roomId              房间id
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see String
 	 */
 	@ApiOperation("训练记录导出为html")
 	@GetMapping("/train2html")
@@ -189,6 +211,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	private JSONObject getTrainRecordJsonObject(String roomId) {
 		JSONObject jsonObject = new JSONObject();
@@ -236,6 +261,10 @@ public class TeamTrainScoreController {
 	 * @param resource_id 资源id
 	 * @param user_hash   用户哈希
 	 * @return {@code BaseRsp<StudentScoreRsp> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<StudentScoreRsp>
 	 */
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
@@ -260,6 +289,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param studentScoreReq 学员得分请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see StudentScoreReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("提交学员评分")
 	@PostMapping("/student_score")
@@ -281,6 +313,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param submitEvaluationReq 提交评估请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see SubmitEvaluationReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
@@ -300,6 +335,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param missionEvaluationListReq 任务评估列表请求体
 	 * @return {@code BaseRsp<List<MissionEvaluationRsp>>}
+	 * @throws
+	 * @see MissionEvaluationListReq
+	 * @see BaseRsp<List<MissionEvaluationRsp>>
 	 */
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
@@ -319,6 +357,10 @@ public class TeamTrainScoreController {
 	 * @param resource_id 资源id
 	 * @param student_id  学员id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<MissionDynamicRsp>
 	 */
 	@ApiOperation("获取学员动态事件")
 	@GetMapping("/get_user_mission_dynamic")
@@ -338,6 +380,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<MissionReport>
 	 */
 	@ApiOperation("获取任务信息统计")
 	@GetMapping("/get_training_mission_report")
@@ -359,6 +404,10 @@ public class TeamTrainScoreController {
 	 * @param resource_id 资源id
 	 * @param user_hash   用户哈希
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<MissionSchemeObject<TrainingRecordMissionRsp>>>
 	 */
 	@ApiOperation("获取用户训练记录")
 	@GetMapping("/get_training_record")
@@ -382,6 +431,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TrainingReport>
 	 */
 	@ApiOperation("获取用户训练报告")
 	@GetMapping("/get_training_report")
@@ -427,6 +479,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param trainingTime 训练时间
 	 * @return {@code String }
+	 * @throws
+	 * @see Integer
+	 * @see String
 	 */
 	private String getDuration(Integer trainingTime) {
 		String duration = "";
@@ -474,6 +529,9 @@ public class TeamTrainScoreController {
 	 *
 	 * @param missionSchemeList 任务计划列表
 	 * @return {@code List<StageExport> }
+	 * @throws
+	 * @see List<MissionSchemeObject<TrainingRecordMissionRsp>>
+	 * @see List<StageExport>
 	 */
 	private List<StageExport>
 			getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {

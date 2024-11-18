@@ -13,7 +13,9 @@ import lombok.Data;
  * 提交评估请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 @Slf4j
@@ -21,36 +23,48 @@ public class SubmitEvaluationReq {
 
 	/**
 	 * 房间id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "房间ID")
 	private String roomId;
 
 	/**
 	 * 提交id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务提交id")
 	private String submitId;
 
 	/**
 	 * 评估状态
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "评估结果")
 	private Integer evaluateStatus;
 
 	/**
 	 * 原因
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "预设原因")
 	private Integer reason;
 
 	/**
 	 * 详情
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "裁决详情")
 	private String detail;
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "分数改判")
 	private Integer score;

@@ -12,25 +12,34 @@ import lombok.Data;
  * 训练分数
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/05/23
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class TrainingScore implements Serializable {
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练得分")
 	private Integer score = 0;
 
 	/**
 	 * 总
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练总分")
 	private Integer total = 0;
 
 	/**
 	 * 阶段
+	 *
+	 * @see List<StageNameScore>
 	 */
 	@ApiModelProperty(value = "各阶段")
 	private List<StageNameScore> stages = Lists.newArrayList();

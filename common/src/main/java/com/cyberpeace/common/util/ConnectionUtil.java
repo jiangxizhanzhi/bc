@@ -7,14 +7,17 @@ import com.rabbitmq.client.ConnectionFactory;
  * 连接实用程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class ConnectionUtil {
 	/**
 	 * 建立与RabbitMQ的连接
 	 *
 	 * @return
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see Connection
 	 */
 	public static Connection getConnection() throws Exception {
 		//定义连接工厂

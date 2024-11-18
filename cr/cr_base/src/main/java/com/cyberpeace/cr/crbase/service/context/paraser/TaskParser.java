@@ -13,16 +13,37 @@ import com.cyberpeace.cs.service.context.RoleBo;
  * 任务解析
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class TaskParser implements MdContentParser<List<RoleBo>, String> {
 
+	/**
+	 * 解析
+	 *
+	 * @param content 内容
+	 * @return {@code List<RoleBo> }
+	 * @throws
+	 * @see Object
+	 * @see List<RoleBo>
+	 */
 	@Override
 	public List<RoleBo> parse(Object content) {
 		return null;
 	}
 
+	/**
+	 * 写入
+	 *
+	 * @param roleBos 岗位BOS
+	 * @return {@code String }
+	 * @throws
+	 * @see List<RoleBo>
+	 * @see String
+	 */
 	@Override
 	public String write(List<RoleBo> roleBos) {
 		String str = "";

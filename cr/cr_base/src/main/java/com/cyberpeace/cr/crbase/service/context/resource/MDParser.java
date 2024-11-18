@@ -26,27 +26,37 @@ import java.util.*;
  * 子关常数
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 interface ZiguanConstants {
 
 	/**
 	 * 判断类型
+	 *
+	 * @see Integer
 	 */
 	Integer JUDGEMENT_TYPE = 0;
 
 	/**
 	 * 单选型
+	 *
+	 * @see Integer
 	 */
 	Integer SINGLE_CHOICE_TYPE = 1;
 
 	/**
 	 * 多选型
+	 *
+	 * @see Integer
 	 */
 	Integer MULTI_CHOICE_TYPE = 2;
 
 	/**
 	 * 任务类型映射
+	 *
+	 * @see Map<String, Integer>
 	 */
 	Map<String, Integer> MISSION_TYPE_MAPPING = new HashMap<String, Integer>() {
 
@@ -64,16 +74,22 @@ interface ZiguanConstants {
 
 	/**
 	 * 正确
+	 *
+	 * @see String
 	 */
 	String CORRECT = "A";
 
 	/**
 	 * 错
+	 *
+	 * @see String
 	 */
 	String WRONG = "B";
 
 	/**
 	 * 判断答案映射
+	 *
+	 * @see Map<String, String>
 	 */
 	Map<String, String> JUDGEMENT_ANSWER_MAPPING = new HashMap<String, String>() {
 
@@ -85,21 +101,29 @@ interface ZiguanConstants {
 
 	/**
 	 * 单训练
+	 *
+	 * @see Integer
 	 */
 	Integer SINGLE_TRAIN = 1;
 
 	/**
 	 * 团队训练
+	 *
+	 * @see Integer
 	 */
 	Integer TEAM_TRAIN = 3;
 
 	/**
 	 * RVB
+	 *
+	 * @see Integer
 	 */
 	Integer RVB = 4;
 
 	/**
 	 * CE 类型映射
+	 *
+	 * @see Map<String, Integer>
 	 */
 	Map<String, Integer> CE_TYPE_MAPPING = new HashMap<String, Integer>() {
 
@@ -112,51 +136,71 @@ interface ZiguanConstants {
 
 	/**
 	 * 模板名称
+	 *
+	 * @see String
 	 */
 	String TEMPLATE_NAME = "name";
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	String DESCRIPTION = "description";
 
 	/**
 	 * 类型
+	 *
+	 * @see String
 	 */
 	String TYPE = "type";
 
 	/**
 	 * 类别
+	 *
+	 * @see String
 	 */
 	String CATEGORY = "category";
 
 	/**
 	 * 难度
+	 *
+	 * @see String
 	 */
 	String DIFFICULTY = "difficulty";
 
 	/**
 	 * 持续时间
+	 *
+	 * @see String
 	 */
 	String DURATION_TIME = "duration_time";
 
 	/**
 	 * 预技能
+	 *
+	 * @see String
 	 */
 	String PRE_SKILL = "pre_skill";
 
 	/**
 	 * 训练技能
+	 *
+	 * @see String
 	 */
 	String TRAIN_SKILL = "train_skill";
 
 	/**
 	 * 角色信息
+	 *
+	 * @see String
 	 */
 	String ROLE_INFO = "role_info";
 
 	/**
 	 * 模板基本信息字段
+	 *
+	 * @see Map<String, String>
 	 */
 	Map<String, String> TEMPLATE_BASE_INFO_FIELDS = new HashMap<String, String>() {
 
@@ -179,31 +223,43 @@ interface ZiguanConstants {
 
 	/**
 	 * 任务名称
+	 *
+	 * @see String
 	 */
 	String MISSION_TITLE = "title";
 
 	/**
 	 * 得分
+	 *
+	 * @see String
 	 */
 	String SCORE = "score";
 
 	/**
 	 * 技能点
+	 *
+	 * @see String
 	 */
 	String SKILL_POINTS = "skillPoints";
 
 	/**
 	 * 选择
+	 *
+	 * @see String
 	 */
 	String OPTION = "option";
 
 	/**
 	 * 答案
+	 *
+	 * @see String
 	 */
 	String ANSWER = "answer";
 
 	/**
 	 * 任务模板字段
+	 *
+	 * @see Map<String, String>
 	 */
 	Map<String, String> MISSION_TEMPLATE_FIELDS = new HashMap<String, String>() {
 
@@ -221,6 +277,8 @@ interface ZiguanConstants {
 
 	/**
 	 * 默认任务类别
+	 *
+	 * @see Map<String, String>
 	 */
 	Map<String, String> DEFAULT_MISSION_CATEGORIES = new HashMap<String, String>() {
 
@@ -245,16 +303,22 @@ interface ZiguanConstants {
 
 	/**
 	 * 可见节点
+	 *
+	 * @see String
 	 */
 	String VISIBLE_NODES = "visibleNodes";
 
 	/**
 	 * 资产节点
+	 *
+	 * @see String
 	 */
 	String ASSET_NODES = "assetNodes";
 
 	/**
 	 * 角色节点类别
+	 *
+	 * @see Map<String, String>
 	 */
 	Map<String, String> ROLE_NODES_CATEGORY = new HashMap<String, String>() {
 
@@ -266,16 +330,22 @@ interface ZiguanConstants {
 
 	/**
 	 * 节点 Col
+	 *
+	 * @see String
 	 */
 	String NODE_COLL = "节点集合";
 
 	/**
 	 * Mission Col
+	 *
+	 * @see String
 	 */
 	String MISSION_COLL = "任务集合";
 
 	/**
 	 * 难度选择
+	 *
+	 * @see Map<String, Integer>
 	 */
 	Map<String, Integer> DIFFICULTY_CHOICE = new HashMap<String, Integer>() {
 
@@ -288,6 +358,8 @@ interface ZiguanConstants {
 
 	/**
 	 * 业务类别
+	 *
+	 * @see Map<String, Integer>
 	 */
 	Map<String, Integer> BUSINESS_CATEGORIES = new HashMap<String, Integer>() {
 
@@ -306,22 +378,30 @@ interface ZiguanConstants {
  * 角色组名称
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 interface RoleGroupNames {
 
 	/**
 	 * 学员
+	 *
+	 * @see String
 	 */
 	String STUDENT = "学员组";
 
 	/**
 	 * 红
+	 *
+	 * @see String
 	 */
 	String RED = "红方";
 
 	/**
 	 * 蓝
+	 *
+	 * @see String
 	 */
 	String BLUE = "蓝方";
 }
@@ -330,7 +410,9 @@ interface RoleGroupNames {
  * 资管标准场景资源模板解析
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 @Slf4j
@@ -338,128 +420,178 @@ public class MDParser {
 
 	/**
 	 * H1
+	 *
+	 * @see String
 	 */
 	private static final String H1 = "# ";
 
 	/**
 	 * H2
+	 *
+	 * @see String
 	 */
 	private static final String H2 = "## ";
 
 	/**
 	 * H3
+	 *
+	 * @see String
 	 */
 	private static final String H3 = "### ";
 
 	/**
 	 * 列出 SEP
+	 *
+	 * @see String
 	 */
 	private static final String LIST_SEP = "\n- ";
 
 	/**
 	 * 入口头
+	 *
+	 * @see String
 	 */
 	private static final String ENTRY_HEAD = "- ";
 
 	/**
 	 * 线路 SEP
+	 *
+	 * @see String
 	 */
 	private static final String LINE_SEP = "\n";
 
 	/**
 	 * 九月
+	 *
+	 * @see String
 	 */
 	private static final String SEP = File.separator;
 
 	/**
 	 * 基本 MD 文件
+	 *
+	 * @see String
 	 */
 	private static final String BASE_MD_FILE = "README.md";
 
 	/**
 	 * Mission MD 文件
+	 *
+	 * @see String
 	 */
 	private static final String MISSION_MD_FILE = "README.md";
 
 	/**
 	 * 撰写文件名称
+	 *
+	 * @see String
 	 */
 	private static final String WRITEUP_FILE_NAME = "writeup.md";
 
 	/**
 	 * 默认角色
+	 *
+	 * @see String
 	 */
 	private static final String DEFAULT_ROLE = "学员";
 
 	/**
 	 * md 后缀
+	 *
+	 * @see String
 	 */
 	private static final String MD_SUFFIX = ".md";
 
 	/**
 	 * img dir （英语）
+	 *
+	 * @see String
 	 */
 	private static final String IMG_DIR = "img";
 
 	/**
 	 * 任务目录
+	 *
+	 * @see String
 	 */
 	private static final String TASK_DIR = "task";
 
 	/**
 	 * 图标文件
+	 *
+	 * @see String
 	 */
 	private static final String LOGO_FILE = "/logo.png";
 
 	/**
 	 * 图标后缀
+	 *
+	 * @see String
 	 */
 	private static final String LOGO_SUFFIX = ".png";
 
 	/**
 	 * 拓扑YAML
+	 *
+	 * @see String
 	 */
 	private static final String TOPO_YAML = "/env/topo.yml";
 
 	/**
 	 * dir 路径
+	 *
+	 * @see String
 	 */
 	private final String dirPath;
 
 	/**
 	 * 拓扑id
+	 *
+	 * @see String
 	 */
 	private final String topoId;
 
 	/**
 	 * 图像
+	 *
+	 * @see Map<String, String>
 	 */
 	private Map<String, String> images = Maps.newHashMap();
 
 	/**
 	 * 任务模板
+	 *
+	 * @see List<MissionTemplate>
 	 */
 	private List<MissionTemplate> missionTemplates = Lists.newArrayList();
 
 	/**
 	 * 业务模板
+	 *
+	 * @see BusinessTemplate
 	 */
 	private BusinessTemplate businessTemplate = new BusinessTemplate();
 
 	/**
 	 * 模板上下文
+	 *
+	 * @see TrainingTemplateContext
 	 */
 	private TrainingTemplateContext templateContext = new TrainingTemplateContext();
 
 
 	/**
 	 * 文件错误 msg
+	 *
+	 * @see ThreadLocal<String>
 	 */
 	public static ThreadLocal<String> fileErrorMsg = ThreadLocal.withInitial(() -> "");
 
 	/**
 	 * 归档错误 msg
-	 */// 字段
+	 *
+	 * @see ThreadLocal<String>
+	 */ // 字段
 	public static ThreadLocal<String> filedErrorMsg = ThreadLocal.withInitial(() -> "");
 
 	public MDParser(String dirPath, String topoId) {
@@ -996,18 +1128,25 @@ public class MDParser {
  * 选择
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 class Option implements Serializable {
 
 	/**
 	 * 选项标签
+	 *
+	 * @see Character
 	 */
 	private Character optionLabel;
 
 	/**
 	 * 选择值
+	 *
+	 * @see String
 	 */
 	private String optionValue;
 
@@ -1021,18 +1160,24 @@ class Option implements Serializable {
  * RB 角色信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class RbRoleInfo {
 
 	/**
 	 * RED 角色
+	 *
+	 * @see List<RoleInfo>
 	 */
 	private List<RoleInfo> redRoles;
 
 	/**
 	 * 蓝色角色
+	 *
+	 * @see List<RoleInfo>
 	 */
 	private List<RoleInfo> blueRoles;
 }
@@ -1041,28 +1186,38 @@ class RbRoleInfo {
  * 角色信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class RoleInfo {
 
 	/**
 	 * 资产节点
+	 *
+	 * @see List<Node>
 	 */
 	private List<Node> assetNodes = Lists.newArrayList();
 
 	/**
 	 * 可见节点
+	 *
+	 * @see List<Node>
 	 */
 	private List<Node> visibleNodes = Lists.newArrayList();
 
 	/**
 	 * 任务计划
+	 *
+	 * @see MissionScheme
 	 */
 	private MissionScheme missionsScheme;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
@@ -1072,23 +1227,31 @@ class RoleInfo {
  * 任务计划
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class MissionScheme {
 
 	/**
 	 * 颜色
+	 *
+	 * @see Integer
 	 */
 	private Integer color = 1;
 
 	/**
 	 * 模板
+	 *
+	 * @see Integer
 	 */
 	private Integer template = 1;
 
 	/**
 	 * 方案数据
+	 *
+	 * @see List<SchemeDatum>
 	 */
 	private List<SchemeDatum> schemeData;
 
@@ -1101,18 +1264,24 @@ class MissionScheme {
  * 方案基准
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class SchemeDatum {
 
 	/**
 	 * 阶段
+	 *
+	 * @see String
 	 */
 	private String stage;
 
 	/**
 	 * 任务
+	 *
+	 * @see List<Mission>
 	 */
 	private List<Mission> missions;
 
@@ -1126,13 +1295,17 @@ class SchemeDatum {
  * 任务
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class Mission {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	private String resourceId;
 
@@ -1145,18 +1318,24 @@ class Mission {
  * 节点
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class Node {
 
 	/**
 	 * 给前端用的
+	 *
+	 * @see String
 	 */
 	private String category;
 
 	/**
 	 * id
+	 *
+	 * @see String
 	 */
 	private String id;
 
@@ -1174,18 +1353,24 @@ class Node {
  * 角色
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class Role {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	private String desc;
 
@@ -1199,23 +1384,31 @@ class Role {
  * 组角色
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class GroupRoles {
 
 	/**
 	 * 学员
+	 *
+	 * @see List<Role>
 	 */
 	private List<Role> student = Lists.newArrayList();
 
 	/**
 	 * 红
+	 *
+	 * @see List<Role>
 	 */
 	private List<Role> red = Lists.newArrayList();
 
 	/**
 	 * 蓝
+	 *
+	 * @see List<Role>
 	 */
 	private List<Role> blue = Lists.newArrayList();
 }
@@ -1224,12 +1417,17 @@ class GroupRoles {
  * MSG 地图
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see HashMap
+ * @since 1.0.0
  */
 class MsgMap extends HashMap {
 
 	/**
 	 * 映射
+	 *
+	 * @see Map<String, String>
 	 */
 	Map<String, String> mapping;
 

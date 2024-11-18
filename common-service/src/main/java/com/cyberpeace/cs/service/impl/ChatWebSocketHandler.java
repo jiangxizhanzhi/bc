@@ -34,7 +34,10 @@ import lombok.extern.slf4j.Slf4j;
  * 聊天 Web 套接字处理程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MyWebSocketHandler
+ * @since 1.0.0
  */
 @Slf4j
 @Component
@@ -42,6 +45,8 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 注册
+	 *
+	 * @see Map<Integer, ChatWebSocketHandler>
 	 */
 	private static Map<Integer, ChatWebSocketHandler> register = Maps.newHashMap();
 
@@ -49,6 +54,8 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	public Integer declareMessageType() {
 		return CHAT_TYPE.COMMON.type;
@@ -56,6 +63,8 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -73,6 +82,10 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param businessId  业务编号 做扩展使用
 	 * @param chatContent
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see ChatContent
+	 * @see List<String>
 	 */
 	public List<String> getGroup(String businessId, ChatContent chatContent) {
 		return chatContent.getTo().getMembers();
@@ -84,6 +97,10 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param businessId  业务编号 做扩展使用
 	 * @param chatContent
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see ChatContent
+	 * @see List<String>
 	 */
 	public List<String> getFriends(String businessId, ChatContent chatContent) {
 		String toUserId = chatContent.getTo().getId();
@@ -99,6 +116,9 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 *
 	 * @param webSocketContext
 	 * @return
+	 * @throws
+	 * @see WebSocketConnectionContext
+	 * @see Boolean
 	 */
 	public Boolean checkInBusiness(WebSocketConnectionContext webSocketContext) {
 		return true;
@@ -108,6 +128,8 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * 是否发送给自己
 	 *
 	 * @return
+	 * @throws
+	 * @see Boolean
 	 */
 	public Boolean sendSelf() {
 		return false;
@@ -117,7 +139,8 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * 建立连接后
 	 *
 	 * @param session 会期
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see WebSocketSession
 	 */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -145,6 +168,9 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 *
 	 * @param webSocketConnectionContext Web 套接字连接上下文
 	 * @return {@code ChatWebSocketHandler }
+	 * @throws
+	 * @see WebSocketConnectionContext
+	 * @see ChatWebSocketHandler
 	 */
 	private ChatWebSocketHandler getHandler(WebSocketConnectionContext webSocketConnectionContext) {
 		String businessType = webSocketConnectionContext.getOriginParams()
@@ -162,7 +188,9 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 *
 	 * @param session 会期
 	 * @param message 消息
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see WebSocketSession
+	 * @see WebSocketMessage<?>
 	 */
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
@@ -211,6 +239,11 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param mine
 	 * @param message    消息
 	 * @param role       角色
+	 * @throws
+	 * @see ChatWsMessageIdentifier
+	 * @see UserInfo
+	 * @see String
+	 * @see String
 	 */
 	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message,
 			String role) {
@@ -226,6 +259,12 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param message
 	 * @param messageType
 	 * @param role        角色
+	 * @throws
+	 * @see ChatWsMessageIdentifier
+	 * @see UserInfo
+	 * @see String
+	 * @see MESSAGE_TYPE
+	 * @see String
 	 */
 	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message,
 			MESSAGE_TYPE messageType, String role) {
@@ -239,6 +278,10 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param chatContent
 	 * @param senderName
 	 * @return
+	 * @throws
+	 * @see ChatContent
+	 * @see String
+	 * @see ChatMessage
 	 */
 	public ChatMessage contentToMessage(ChatContent chatContent, String senderName) {
 		ChatMineContent mine = chatContent.getMine();
@@ -268,6 +311,10 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param identifier
 	 * @param chatMessage
 	 * @param userIds     用户id列表
+	 * @throws
+	 * @see WsMessageIdentifier
+	 * @see ChatMessage
+	 * @see List<String>
 	 */
 	private void doPushChatMessage(WsMessageIdentifier identifier, ChatMessage chatMessage,
 			List<String> userIds) {
@@ -284,6 +331,12 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	 * @param messageType
 	 * @param role        角色
 	 * @return
+	 * @throws
+	 * @see UserInfo
+	 * @see String
+	 * @see MESSAGE_TYPE
+	 * @see String
+	 * @see ChatMessage
 	 */
 	private ChatMessage convertToChatMessage(UserInfo mine, String message,
 			MESSAGE_TYPE messageType, String role) {

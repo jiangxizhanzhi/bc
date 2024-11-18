@@ -36,27 +36,37 @@ import com.google.common.collect.Lists;
  * HTTP 客户端实用程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class HttpClientUtil {
 
 	/**
 	 * 日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger("mp");
 
 	/**
 	 * HTTP 客户端实用程序
+	 *
+	 * @throws
 	 */
 	private HttpClientUtil() {}
 
 	/**
 	 * 默认标头
+	 *
+	 * @see List<Header>
 	 */
 	private static List<Header> defaultHeaders;
 
 	/**
 	 * 成功后缀
+	 *
+	 * @see String
 	 */
 	private static final String SUCCESS_POSTFIX = "-000000";
 
@@ -67,6 +77,11 @@ public class HttpClientUtil {
 	 * @param body       输入参数
 	 * @param resultType 返回的数据类型
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Object
+	 * @see Class<T>
+	 * @see T
 	 */
 	public static <T> T post(String url, Object body, Class<T> resultType) {
 		// 1、设置请求线程数据
@@ -92,6 +107,11 @@ public class HttpClientUtil {
 	 * @param body       身体
 	 * @param resultType 结果类型
 	 * @return {@code T }
+	 * @throws
+	 * @see String
+	 * @see Object
+	 * @see Class<T>
+	 * @see T
 	 */
 	public static <T> T delete(String url, Object body, Class<T> resultType) {
 		// 1、设置请；线程数据
@@ -116,6 +136,10 @@ public class HttpClientUtil {
 	 * @param url
 	 * @param resultType
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Class<T>
+	 * @see T
 	 */
 	public static <T> T rawSpecialGet(String url, Class<T> resultType) {
 		// 1、设置请求线程数据
@@ -152,6 +176,10 @@ public class HttpClientUtil {
 	 * @param url
 	 * @param resultType
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Class<T>
+	 * @see T
 	 */
 	public static <T> T rawGet(String url, Class<T> resultType) {
 		// 1、设置请求线程数据
@@ -173,6 +201,8 @@ public class HttpClientUtil {
 	 * 设置请求上下文
 	 *
 	 * @param url 网址
+	 * @throws
+	 * @see String
 	 */
 	private static void setContext(String url) {
 		HttpclientModel httpclientModel = new HttpclientModel(TraceIdContext.getTraceId(), url);
@@ -185,6 +215,10 @@ public class HttpClientUtil {
 	 * @param httpRequest HTTP 请求
 	 * @param resultType  结果类型
 	 * @return {@code T }
+	 * @throws
+	 * @see HttpUriRequest
+	 * @see Class<T>
+	 * @see T
 	 */
 	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
 		HttpResponse response = null;
@@ -226,6 +260,10 @@ public class HttpClientUtil {
 	 * @param httpResponse http返回
 	 * @param resultType   需要序列化的类型
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Class<T>
+	 * @see T
 	 */
 	private static <T> T parseHttpResponse(String httpResponse, Class<T> resultType) {
 
@@ -260,6 +298,8 @@ public class HttpClientUtil {
 	 * 后期使用池化
 	 *
 	 * @return
+	 * @throws
+	 * @see HttpClient
 	 */
 	private static HttpClient getClient() {
 
@@ -270,6 +310,8 @@ public class HttpClientUtil {
 	 * 默认加载的http请求头
 	 *
 	 * @return
+	 * @throws
+	 * @see List<Header>
 	 */
 	private static List<Header> defaultHeader() {
 		if (null != defaultHeaders) {
@@ -298,6 +340,9 @@ public class HttpClientUtil {
 	 *
 	 * @param baseRsp
 	 * @return
+	 * @throws
+	 * @see BaseRsp
+	 * @see boolean
 	 */
 	private static boolean isSuccess(BaseRsp baseRsp) {
 		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
@@ -310,6 +355,11 @@ public class HttpClientUtil {
 	 * @param url        接口地址
 	 * @param resultType
 	 * @return
+	 * @throws
+	 * @see Object
+	 * @see String
+	 * @see Class<T>
+	 * @see T
 	 */
 	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {
 

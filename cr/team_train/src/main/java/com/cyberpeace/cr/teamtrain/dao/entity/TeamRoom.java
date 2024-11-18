@@ -16,7 +16,10 @@ import lombok.Getter;
  * 团队会议室
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @TableName(value = "cr_team_room")
 @Data
@@ -24,102 +27,142 @@ public class TeamRoom extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 团队模板id
+	 *
+	 * @see String
 	 */
 	private String teamTemplateId;
 
 	/**
 	 * 团队模板名称
+	 *
+	 * @see String
 	 */
 	private String teamTemplateName;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	private String description;
 
 	/**
 	 * 子类型
+	 *
+	 * @see Integer
 	 */
 	private Integer subType;
 
 	/**
 	 * 预科技能
+	 *
+	 * @see String
 	 */
 	private String preSkills;
 
 	/**
 	 * 训练技能
+	 *
+	 * @see String
 	 */
 	private String trainSkills;
 
 	/**
 	 * 开始时间
+	 *
+	 * @see Date
 	 */
 	private Date startTime;
 
 	/**
 	 * 结束时间
+	 *
+	 * @see Date
 	 */
 	private Date endTime;
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	private Integer difficulty;
 
 	/**
 	 * 训练状态
+	 *
+	 * @see Integer
 	 */
 	private Integer trainingStatus;
 
 	/**
 	 * 时间线配置
+	 *
+	 * @see String
 	 */
 	private String timeLineConfig;
 
 	/**
 	 * 创造用户id
+	 *
+	 * @see String
 	 */
 	private String createUserId;
 
 	/**
 	 * 修改用户id
+	 *
+	 * @see String
 	 */
 	private String modifyUserId;
 
 	/**
 	 * 当地场景id
+	 *
+	 * @see String
 	 */
 	private String localSceneId;
 
 	/**
 	 * 已复制拓扑id
+	 *
+	 * @see String
 	 */
 	private String copyedTopoId;
 
 	/**
 	 * 是否开启录屏
+	 *
+	 * @see Boolean
 	 */
 	private Boolean enableRecording;
 
 	/**
 	 * 图标
+	 *
+	 * @see String
 	 */
 	private String logo;
 
 	/**
 	 * 复盘用的场景id，每次关闭场景时更新
+	 *
+	 * @see String
 	 */
 	private String replaySceneId;
 

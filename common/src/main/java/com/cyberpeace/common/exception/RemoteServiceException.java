@@ -5,7 +5,10 @@ package com.cyberpeace.common.exception;
  *
  * @author yinqingrong
  * 调用mp的服务出错，抛出此异常
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see RuntimeException
+ * @since 1.0.0
  */
 public class RemoteServiceException extends RuntimeException {
 

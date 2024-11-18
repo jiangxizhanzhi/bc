@@ -10,18 +10,25 @@ import lombok.Data;
  * 任务ws推送状态更新
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class MissionWsUpdateStatusMessage implements Serializable {
 
 	/**
 	 * 代号
+	 *
+	 * @see Integer
 	 */
 	private Integer code = MissionWsCode.MISSION_WS_UPDATE_STATUS;
 
 	/**
 	 * 运行状态
+	 *
+	 * @see Integer
 	 */
 	private Integer runningStatus;
 

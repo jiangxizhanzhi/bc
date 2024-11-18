@@ -37,7 +37,11 @@ import lombok.extern.slf4j.Slf4j;
  * RB模板Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see RbTemplateService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -45,30 +49,40 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 
 	/**
 	 * RB模板Mapper
+	 *
+	 * @see RbTemplateMapper
 	 */
 	@Autowired
 	RbTemplateMapper rbTemplateMapper;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	LocalSceneService localSceneService;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	MissionTemplateService missionTemplateService;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -78,6 +92,9 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code RbTemplate }
+	 * @throws
+	 * @see String
+	 * @see RbTemplate
 	 */
 	@Override
 	public RbTemplate getRbTemplateByBusinessId(String resourceId) {
@@ -97,6 +114,10 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 	 * @param rbTemplateContext rb 模板上下文
 	 * @param businessTemplate  业务模板
 	 * @return {@code RbTemplate }
+	 * @throws
+	 * @see RbTemplateContext
+	 * @see BusinessTemplate
+	 * @see RbTemplate
 	 */
 	@Override
 	public RbTemplate update(RbTemplateContext rbTemplateContext,
@@ -148,6 +169,9 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 	 *
 	 * @param businessIds 业务id列表
 	 * @return {@code List<RbTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<RbTemplate>
 	 */
 	@Override
 	public List<RbTemplate> getRbTemplateByBusinessIds(List<String> businessIds) {
@@ -158,6 +182,8 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 	 * 批量删除
 	 *
 	 * @param businessTemplateIds 业务模板id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public void batchDelete(List<String> businessTemplateIds) {
@@ -169,6 +195,9 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<RbTemplateData> }
+	 * @throws
+	 * @see ListQuery
+	 * @see IPage<RbTemplateData>
 	 */
 	@Override
 	public IPage<RbTemplateData> page(ListQuery listQuery) {
@@ -187,6 +216,9 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 	 *
 	 * @param roleConfig 角色配置
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getMissionTemplateIdsByRoleConfig(String roleConfig) {

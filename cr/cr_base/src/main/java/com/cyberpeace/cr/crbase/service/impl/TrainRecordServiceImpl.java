@@ -16,7 +16,11 @@ import com.cyberpeace.cr.crbase.service.TrainRecordService;
  * 训练记录Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see TrainRecordService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -24,6 +28,8 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 
 	/**
 	 * 训练记录Mapper
+	 *
+	 * @see TrainRecordMapper
 	 */
 	@Autowired
 	private TrainRecordMapper trainRecordMapper;
@@ -35,6 +41,11 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 * @param businessTemplateId 业务模板id
 	 * @param userId             用户id
 	 * @param businessType       业务类型
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public void saveRecord(String name, String businessTemplateId, String userId,
@@ -50,6 +61,12 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 * @param roomId             房间id
 	 * @param userId             用户id
 	 * @param businessType       业务类型
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public void saveRecord(String name, String businessTemplateId, String roomId, String userId,
@@ -73,6 +90,11 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 * @param userId             用户id
 	 * @param businessType       业务类型
 	 * @param extra              额外
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see String
 	 */
 	@Override
 	public void updateExtraDate(String businessTemplateId, String userId, Integer businessType,
@@ -86,6 +108,10 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 * @param businessTemplateId 业务模板id
 	 * @param userId             用户id
 	 * @param businessType       业务类型
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public void updateEndDate(String businessTemplateId, String userId, Integer businessType) {
@@ -99,6 +125,11 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 * @param userId             用户id
 	 * @param businessType       业务类型
 	 * @param extra              额外
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see String
 	 */
 	@Override
 	public void updateEndDate(String businessTemplateId, String userId, Integer businessType,
@@ -111,6 +142,9 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 *
 	 * @param roomId       房间id
 	 * @param businessType 业务类型
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	@Override
 	public void updateEndDate(String roomId, Integer businessType) {
@@ -122,6 +156,9 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 *
 	 * @param roomId  房间id
 	 * @param endTime 结束时间
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	@Override
 	public void updateEndTimeByRoomId(String roomId, Date endTime) {
@@ -132,6 +169,8 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 * 更新结束日期
 	 *
 	 * @param businessTemplateId 业务模板id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void updateEndDate(String businessTemplateId) {
@@ -143,6 +182,9 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TrainRecord }
+	 * @throws
+	 * @see String
+	 * @see TrainRecord
 	 */
 	@Override
 	public TrainRecord getByRoomId(String roomId) {
@@ -154,6 +196,9 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getTimeCost(String roomId) {
@@ -173,6 +218,9 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 *
 	 * @param roomId 房间id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getColonTimeCost(String roomId) {
@@ -192,6 +240,9 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Date }
+	 * @throws
+	 * @see String
+	 * @see Date
 	 */
 	@Override
     public Date getActualEndTime(String roomId) {

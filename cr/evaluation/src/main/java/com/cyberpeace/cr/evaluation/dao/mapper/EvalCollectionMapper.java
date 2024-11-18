@@ -5,13 +5,18 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalCollectionContextRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalCollection;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 评估收集Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
+@Mapper
 public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 
 	/**
@@ -19,6 +24,9 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	 *
 	 * @param evalIndicatorIds 评估指示器id列表
 	 * @return {@code List<EvalCollection> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<EvalCollection>
 	 */
 	List<EvalCollection> selectIdsByEvalIndicatorIds(List<String> evalIndicatorIds);
 
@@ -27,6 +35,9 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	 *
 	 * @param algorithmIds 算法id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer selectAlgorithmSum(List<String> algorithmIds);
 
@@ -34,6 +45,8 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	 * 获取maxid
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	Integer getMaxId();
 
@@ -42,6 +55,9 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	 *
 	 * @param algorithmIds 算法id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 
@@ -50,6 +66,9 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	 *
 	 * @param indexId 指数id
 	 * @return {@code List<EvalCollection> }
+	 * @throws
+	 * @see String
+	 * @see List<EvalCollection>
 	 */
 	List<EvalCollection> selectBythirdIndexId(String indexId);
 
@@ -58,6 +77,9 @@ public interface EvalCollectionMapper extends BaseMapper<EvalCollection> {
 	 *
 	 * @param evalIndicatorIds 评估指示器id列表
 	 * @return {@code List<EvalCollectionContextRsp> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<EvalCollectionContextRsp>
 	 */
 	List<EvalCollectionContextRsp> selectByEvalIndicatorIds(List<String> evalIndicatorIds);
 }

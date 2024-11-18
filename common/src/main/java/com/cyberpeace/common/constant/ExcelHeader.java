@@ -6,7 +6,10 @@ import com.cyberpeace.common.model.CommonContext;
  * Excel 标题
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Enum
+ * @since 1.0.0
  */
 public enum ExcelHeader {
 
@@ -60,6 +63,10 @@ public enum ExcelHeader {
 	 * @param cnName 中文名称
 	 * @param enName 中文名称
 	 * @param header 页眉
+	 * @throws
+	 * @see String[]
+	 * @see String[]
+	 * @see String[]
 	 */
 	ExcelHeader(String[] cnName, String[] enName, String[] header) {
 		this.cnName = cnName;
@@ -71,6 +78,8 @@ public enum ExcelHeader {
 	 * 获取中文名称
 	 *
 	 * @return {@code String[] }
+	 * @throws
+	 * @see String[]
 	 */
 	public String[] getCnName() {
 		return cnName;
@@ -80,6 +89,8 @@ public enum ExcelHeader {
 	 * 获取中文名称
 	 *
 	 * @return {@code String[] }
+	 * @throws
+	 * @see String[]
 	 */
 	public String[] getEnName() {
 		return enName;
@@ -89,6 +100,8 @@ public enum ExcelHeader {
 	 * 获取页眉
 	 *
 	 * @return {@code String[] }
+	 * @throws
+	 * @see String[]
 	 */
 	public String[] getHeader() {
 		return CommonContext.isChinese() ? getCnName() : getEnName();

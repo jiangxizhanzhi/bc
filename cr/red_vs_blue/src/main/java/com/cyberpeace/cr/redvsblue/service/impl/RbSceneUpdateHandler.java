@@ -20,25 +20,34 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
  * 红蓝前台动态更新角色资产
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/05/12
+ * @see BaseCrSceneUpdateHandler
+ * @since 1.0.0
  */
 @Service
 public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * RB常见装置Service
+	 *
+	 * @see RbCommonDeviceService
 	 */
 	@Autowired
 	private RbCommonDeviceService rbCommonDeviceService;
@@ -47,6 +56,8 @@ public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 	 * 获取代号
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	protected Integer getCode() {
@@ -57,6 +68,8 @@ public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 	 * 检查权限
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	protected void checkPermission(String roomId) {
@@ -68,6 +81,9 @@ public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 	 *
 	 * @param roomId 房间id
 	 * @param req    请求体
+	 * @throws
+	 * @see String
+	 * @see SceneUpdateReq
 	 */
 	@Override
 	public void updateRoles(String roomId, SceneUpdateReq req) {
@@ -93,6 +109,9 @@ public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 	 *
 	 * @param roomId 房间id
 	 * @param nodeId 节点id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void deleteNode(String roomId, String nodeId) {

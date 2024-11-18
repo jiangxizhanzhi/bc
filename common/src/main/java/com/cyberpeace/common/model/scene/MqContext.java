@@ -6,27 +6,38 @@ import java.io.Serializable;
  * MQ 上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 public class MqContext implements Serializable {
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String USER_ID;
 
 	/**
 	 * 叫链id
+	 *
+	 * @see String
 	 */
 	private String CALL_CHAIN_ID;
 
 	/**
 	 * 现场
+	 *
+	 * @see Locale
 	 */
 	private Locale LOCALE;
 
 	/**
 	 * 通过
+	 *
+	 * @see String
 	 */
 	private String PASS_THROUGH;
 

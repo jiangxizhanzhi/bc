@@ -18,7 +18,10 @@ import java.util.Date;
  * 当地场景
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("local_scene")
@@ -26,47 +29,65 @@ public class LocalScene extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * mp的场景id，只有在场景启动后才会有该值
+	 *
+	 * @see String
 	 */
 	private String mpSceneId;
 
 	/**
 	 * 业务代号
+	 *
+	 * @see Integer
 	 */
 	private Integer businessCode;
 
 	/**
 	 * mp场景启动时间，只有在场景启动后才会有该值
+	 *
+	 * @see Date
 	 */
 	private Date startTime;
 
 	/**
 	 * 场景实际停止时间，用户点了停止。
+	 *
+	 * @see Date
 	 */
 	private Date endTime;
 
 	/**
 	 * 只有限定时间等场景才会有销毁时间，到点自动调用场景销毁。
+	 *
+	 * @see Date
 	 */
 	private Date destroyTime;
 
 	/**
 	 * 0=手动；1=自动
+	 *
+	 * @see Integer
 	 */
 	private Integer destroyMode;
 
 	/**
 	 * 业务id
+	 *
+	 * @see String
 	 */
 	private String businessInstanceId;
 
 	/**
 	 * 场景状态
+	 *
+	 * @see Integer
 	 */
 	private Integer sceneStatus;
 
@@ -75,16 +96,22 @@ public class LocalScene extends BaseTable {
 	 * <p>
 	 * <p>
 	 * 场景恢复后，destroyTime相应顺延。
+	 *
+	 * @see Date
 	 */
 	private Date pauseTime;
 
 	/**
 	 * 场景使用的topoId
+	 *
+	 * @see String
 	 */
 	private String topoId;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
@@ -93,6 +120,8 @@ public class LocalScene extends BaseTable {
 	 * <p>
 	 * <p>
 	 * 单兵等不限制场景时长等使用场景中，不需要设置该值。
+	 *
+	 * @see Integer
 	 */
 	private Integer sceneTtl;
 
@@ -101,21 +130,29 @@ public class LocalScene extends BaseTable {
 	 * <p>
 	 * <p>
 	 * 记录该值，避免重复请求mp
+	 *
+	 * @see Integer
 	 */
 	private Integer nodeCount;
 
 	/**
 	 * 场景名
+	 *
+	 * @see String
 	 */
 	private String sceneName;
 
 	/**
 	 * 场景attr
+	 *
+	 * @see Integer
 	 */
 	private Integer sceneAttr;
 
 	/**
 	 * 是否开启录屏功能，默认为 null
+	 *
+	 * @see Boolean
 	 */
 	@TableField(exist = false)
 	private Boolean record = null;
@@ -134,8 +171,6 @@ public class LocalScene extends BaseTable {
 	 * <p>
 	 * <p>
 	 * }
-	 *
-	 *
 	 * <p>
 	 * <p>
 	 * <p>
@@ -149,6 +184,8 @@ public class LocalScene extends BaseTable {
 	 * <p>
 	 * <p>
 	 * 实训课后联系=course_id/lesson_id/paper_id
+	 *
+	 * @see String
 	 */
 	private String meta;
 

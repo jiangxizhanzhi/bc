@@ -12,7 +12,10 @@ import java.util.List;
  * 评估变量裁判Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -22,6 +25,9 @@ public interface EvalVariableRefMapper extends BaseMapper<EvalVariableRef> {
      *
      * @param recordId
      * @return
+     * @throws
+     * @see String
+     * @see List<String>
      */
     List<String>  getVariableIdByRecordId(@Param("recordId") String recordId);
 
@@ -30,6 +36,9 @@ public interface EvalVariableRefMapper extends BaseMapper<EvalVariableRef> {
      *
      * @param recordId
      * @return
+     * @throws
+     * @see String
+     * @see List<EvalVariableRef>
      */
     List<EvalVariableRef> getByRecordId(@Param("recordId") String recordId);
 
@@ -39,6 +48,9 @@ public interface EvalVariableRefMapper extends BaseMapper<EvalVariableRef> {
      *
      * @param evalIndicatorIds 评估指示器id列表
      * @return {@code List<EvalVariableRef> }
+     * @throws
+     * @see List<String>
+     * @see List<EvalVariableRef>
      */
     List<EvalVariableRef> getVariableIdByRecordIds(List<String> evalIndicatorIds);
 }

@@ -22,7 +22,10 @@ import lombok.Data;
  * 场景过滤器Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see SceneFilterService
+ * @since 1.0.0
  */
 @Service
 public class SceneFilterServiceImpl implements SceneFilterService {
@@ -32,6 +35,9 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 	 *
 	 * @param topoData 拓扑数据
 	 * @param nodes    节点
+	 * @throws
+	 * @see JSONObject
+	 * @see CrRoleNodesData
 	 */
 	@Override
 	public void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes) {
@@ -61,6 +67,11 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 	 * @param elements       元素
 	 * @param visibleNodeIds 可见节点id列表
 	 * @param assetNodeIds   资产节点id列表
+	 * @throws
+	 * @see JSONObject
+	 * @see JSONArray
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	private void filterElements(JSONObject topoData, JSONArray elements,
 			List<String> visibleNodeIds, List<String> assetNodeIds) {
@@ -107,6 +118,10 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 	 * @param areas    Blocks
 	 * @param pieces   Labels
 	 * @param elements Nodes
+	 * @throws
+	 * @see JSONArray
+	 * @see JSONArray
+	 * @see JSONArray
 	 */
 	private void filterAreas(JSONArray areas, JSONArray pieces, JSONArray elements) {
 		int k = 0;
@@ -127,6 +142,9 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 	 *
 	 * @param area   面积
 	 * @param pieces 件
+	 * @throws
+	 * @see Area
+	 * @see JSONArray
 	 */
 	private void filterPieces(Area area, JSONArray pieces) {
 		int i = 0;
@@ -144,6 +162,9 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 	 *
 	 * @param topoData 拓扑数据
 	 * @param elements 剩余的节点
+	 * @throws
+	 * @see JSONObject
+	 * @see JSONArray
 	 */
 	private void removeInvalidConnections(JSONObject topoData, JSONArray elements) {
 		JSONArray connections = topoData.getJSONObject("topology").getJSONArray("connections");
@@ -181,15 +202,32 @@ public class SceneFilterServiceImpl implements SceneFilterService {
  * Area 范围
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class Area {
 
+	/**
+	 * 起源
+	 *
+	 * @see Coordination
+	 */
 	private Coordination origin;
 
+	/**
+	 * 宽度
+	 *
+	 * @see Float
+	 */
 	private Float width;
 
+	/**
+	 * 高度
+	 *
+	 * @see Float
+	 */
 	private Float height;
 
 	/**
@@ -237,12 +275,24 @@ class Area {
  * 拓扑中的坐标
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class Coordination {
 
+	/**
+	 * x
+	 *
+	 * @see Float
+	 */
 	private Float x;
 
+	/**
+	 * y
+	 *
+	 * @see Float
+	 */
 	private Float y;
 }

@@ -28,7 +28,9 @@ import io.swagger.annotations.ApiParam;
  * 工具类别控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "后台-资源管理-工具库-分类管理")
 @RestController
@@ -38,6 +40,8 @@ public class ToolCategoryController {
 
 	/**
 	 * 工具类别Service
+	 *
+	 * @see ToolCategoryService
 	 */
 	@Autowired
 	private ToolCategoryService toolCategoryService;
@@ -47,6 +51,9 @@ public class ToolCategoryController {
 	 *
 	 * @param pageReqBase 分页请求体基础
 	 * @return {@code BaseRsp<ListRsp<ToolCategory>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<ListRsp<ToolCategory>>
 	 */
 	@GetMapping("/list")
 	@ApiOperation("工具分类列表")
@@ -62,6 +69,9 @@ public class ToolCategoryController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<ToolCategoryRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<ToolCategoryRsp>
 	 */
 	@GetMapping()
 	@ApiOperation("工具分类详情")
@@ -78,6 +88,9 @@ public class ToolCategoryController {
 	 *
 	 * @param categoryAddReq 类别新增请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see CategoryAddReq
+	 * @see BaseRsp<String>
 	 */
 	@PostMapping()
 	@ApiOperation("工具分类创建")
@@ -94,6 +107,9 @@ public class ToolCategoryController {
 	 *
 	 * @param categoryUpdateReq 类别更新请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see CategoryUpdateReq
+	 * @see BaseRsp<String>
 	 */
 	@PatchMapping()
 	@ApiOperation("工具分类更新")
@@ -109,6 +125,9 @@ public class ToolCategoryController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
 	 */
 	@DeleteMapping()
 	@ApiOperation("工具分类批量删除")

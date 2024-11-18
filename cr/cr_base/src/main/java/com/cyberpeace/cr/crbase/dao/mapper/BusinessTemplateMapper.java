@@ -18,7 +18,10 @@ import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
  * 业务模板映射
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -30,6 +33,10 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 * @param page      分页
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<BusinessTemplateData> }
+	 * @throws
+	 * @see Page
+	 * @see BusinessTemplateQuery
+	 * @see IPage<BusinessTemplateData>
 	 */
 	IPage<BusinessTemplateData> listTeamTemplate(Page page,
 			@Param("listQuery") BusinessTemplateQuery listQuery);
@@ -39,6 +46,9 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> selectIdsByUserId(@Param("userId") String userId);
 
@@ -47,6 +57,9 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<BusinessTemplate> }
+	 * @throws
+	 * @see String
+	 * @see List<BusinessTemplate>
 	 */
 	List<BusinessTemplate> selectBusinessTemplatesByUserId(@Param("userId") String userId);
 
@@ -57,6 +70,11 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 * @param type 类型
 	 * @param id   id
 	 * @return {@code BusinessTemplate }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see BusinessTemplate
 	 */
 	BusinessTemplate selectByNameAndType(String name, Integer type, String id);
 
@@ -65,6 +83,9 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param localSceneId 当地场景id
 	 * @return {@code BusinessTemplate }
+	 * @throws
+	 * @see String
+	 * @see BusinessTemplate
 	 */
 	BusinessTemplate selectByLocalSceneId(String localSceneId);
 
@@ -73,6 +94,9 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param templateName 模板名称
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean existByName(@Param("templateName") String templateName);
 
@@ -81,6 +105,9 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param templateNames 模板名称
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> getExistedNames(@Param("templateNames") List<String> templateNames);
 
@@ -89,6 +116,9 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param templateName 模板名称
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String getIdByName(@Param("templateName") String templateName);
 
@@ -99,6 +129,11 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 * @param type         类型
 	 * @param templateId   模板id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean existByNameAndTypeAndId(@Param("templateName") String templateName,
 			@Param("type") Integer type, @Param("templateId") String templateId);
@@ -108,6 +143,9 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String>
 			getAttackRelatedIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
@@ -117,6 +155,9 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String>
 			getEngageRelatedIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
@@ -129,6 +170,12 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 * @param difficulty 难度
 	 * @param pattern    模式
 	 * @return {@code IPage<BusinessTemplateSimple> }
+	 * @throws
+	 * @see Page
+	 * @see Integer
+	 * @see Integer
+	 * @see String
+	 * @see IPage<BusinessTemplateSimple>
 	 */
 	IPage<BusinessTemplateSimple> listSimple(@Param("page") Page page, @Param("type") Integer type,
 			@Param("difficulty") Integer difficulty, @Param("pattern") String pattern);
@@ -139,6 +186,10 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 * @param businessTemplateNames 业务模板名字
 	 * @param type                  类型
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<String>
 	 */
 	List<String> getBatchIdsByNames(
 			@Param("business_template_names") List<String> businessTemplateNames,
@@ -150,6 +201,10 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 * @param resourceIds 资源id列表
 	 * @param type        类型
 	 * @return {@code List<BusinessTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<BusinessTemplate>
 	 */
 	List<BusinessTemplate> getAllByIds(@Param("resourceIds") List<String> resourceIds,
 			@Param("type") Integer type);
@@ -158,6 +213,8 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	 * 获取都id列表
 	 *
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
 	 */
 	List<String> getAllIds();
 }

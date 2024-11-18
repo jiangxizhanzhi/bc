@@ -13,17 +13,31 @@ import lombok.Data;
  * httpclient 模型
  *
  * @author SN
+ * @version 1.0.0
+ * @since 1.0.0
  * @date 2024/11/07
  */
 @Data
 public class HttpclientModel {
 
+	/**
+	 * 日志
+	 *
+	 * @see Logger
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger("mp");
 
+	/**
+	 * 日志格式化程序
+	 *
+	 * @see String
+	 */
 	private static final String LOG_FORMATTER = "httpclientutil |{}|{}|{}|{}";
 
 	/**
 	 * 发送给对端系统的跟踪路由
+	 *
+	 * @see String
 	 */
 	private String traceId;
 
@@ -37,10 +51,25 @@ public class HttpclientModel {
 	 */
 	private long callTime;
 
+	/**
+	 * 响应日志最大长度
+	 *
+	 * @see Integer
+	 */
 	private Integer responseLogMaxLength = 2000;
 
+	/**
+	 * 网址
+	 *
+	 * @see String
+	 */
 	private String url;
 
+	/**
+	 * 方法
+	 *
+	 * @see String
+	 */
 	private String method;
 
 	/**
@@ -48,6 +77,9 @@ public class HttpclientModel {
 	 *
 	 * @param traceId 跟踪id
 	 * @param url     网址
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public HttpclientModel(String traceId, String url) {
 		if (StringUtils.isBlank(traceId)) {
@@ -65,6 +97,8 @@ public class HttpclientModel {
 	 * 执行远程异常
 	 *
 	 * @param e e
+	 * @throws
+	 * @see Exception
 	 */
 	public void doRemoteException(Exception e) {
 		callTime = System.currentTimeMillis() - startTime;
@@ -75,6 +109,8 @@ public class HttpclientModel {
 	 * 新增日志
 	 *
 	 * @param httpResponse HTTP 响应
+	 * @throws
+	 * @see String
 	 */
 	public void addLog(String httpResponse) {
 		callTime = System.currentTimeMillis() - startTime;

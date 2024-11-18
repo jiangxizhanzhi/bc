@@ -39,7 +39,9 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场基础控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "靶场公用接口")
 @RestController
@@ -50,12 +52,16 @@ public class CrBaseController {
 
 	/**
 	 * 靶场基础Service
+	 *
+	 * @see CrBaseService
 	 */
 	@Autowired
 	private CrBaseService crBaseService;
 
 	/**
 	 * 靶场常数Service
+	 *
+	 * @see CrConstantsService
 	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
@@ -65,6 +71,9 @@ public class CrBaseController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<TrainingStatisticsRsp> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<TrainingStatisticsRsp>
 	 */
 	@ApiOperation("个人中心训练统计")
 	@GetMapping("/training_statistics")
@@ -84,6 +93,9 @@ public class CrBaseController {
 	 *
 	 * @param type 类型
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see Integer
+	 * @see BaseRsp
 	 */
 	@ApiOperation("获取常量配置")
 	@GetMapping("/constants_config")
@@ -106,6 +118,8 @@ public class CrBaseController {
 	 * 获取当前时间
 	 *
 	 * @return {@code BaseRsp<CurrentTimeRsp> }
+	 * @throws
+	 * @see BaseRsp<CurrentTimeRsp>
 	 */
 	@ApiOperation("获取当前服务器时间")
 	@GetMapping("/current_time")
@@ -123,6 +137,8 @@ public class CrBaseController {
 	 * 获取授权类型
 	 *
 	 * @return {@code BaseRsp<List<CodeNameRsp>> }
+	 * @throws
+	 * @see BaseRsp<List<CodeNameRsp>>
 	 */
 	@ApiOperation("获取当前用户拥有权限的训练类型")
 	@GetMapping("/authorized_type")

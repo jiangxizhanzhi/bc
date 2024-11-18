@@ -16,7 +16,10 @@ import com.cyberpeace.cr.crbase.service.context.role.UserRole;
  * 靶场角色Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see IService
+ * @since 1.0.0
  */
 public interface CrRoleService extends IService<CrRole> {
 
@@ -25,6 +28,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param roleId 角色id
 	 * @return 角色
+	 * @throws
+	 * @see String
+	 * @see CrRole
 	 */
 	CrRole getById(String roleId);
 
@@ -34,6 +40,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId    训练实例id
 	 * @param roleGroup 角色组
 	 * @return 角色相关数据
+	 * @throws
+	 * @see String
+	 * @see CrRole.RoleGroup
+	 * @see CrRoleContext<MissionContext>
 	 */
 	CrRoleContext<MissionContext> getRoles(String roomId, CrRole.RoleGroup roleGroup);
 
@@ -43,6 +53,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId       训练实例id
 	 * @param businessType 业务类型
 	 * @return 角色列表
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<CrRole>
 	 */
 	List<CrRole> getRolesByRoom(String roomId, Integer businessType);
 
@@ -51,6 +65,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param crRole 角色
 	 * @return 角色任务列表
+	 * @throws
+	 * @see CrRole
+	 * @see List<MissionSchemeObject<MissionContext>>
 	 */
 	List<MissionSchemeObject<MissionContext>> getBaseMissionByRole(CrRole crRole);
 
@@ -59,6 +76,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param userId 用户id
 	 * @return 有权限的团队训练ID列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> getRoomIdsByUserId(String userId);
 
@@ -67,6 +87,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param roleQuery 查询体
 	 * @return 角色列表
+	 * @throws
+	 * @see RoleQuery
+	 * @see List<CrRole>
 	 */
 	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
 
@@ -76,6 +99,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return 角色
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrRole
 	 */
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 
@@ -84,6 +111,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrRole>}
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	List<CrRole> getRolesByRoomId(String roomId);
 
@@ -93,6 +123,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return 角色任务列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<MissionSchemeObject<MissionContext>>
 	 */
 	List<MissionSchemeObject<MissionContext>> getCrRoleMissionByRoomIdAndUserId(String roomId,
 			String userId);
@@ -104,6 +138,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId  房间id
 	 * @param crRoles 靶场角色
 	 * @return {@code Map<String,List<MissionSchemeObject<MissionContext>>> }
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
+	 * @see Map<String,List<MissionSchemeObject<MissionContext>>>
 	 */
 	Map<String,List<MissionSchemeObject<MissionContext>>> getCrRoleMissionByRoomIdAndCrRoles(String roomId,
 																				List<CrRole> crRoles);
@@ -113,6 +151,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param crRole 角色
 	 * @return 任务数量
+	 * @throws
+	 * @see CrRole
+	 * @see Integer
 	 */
 	Integer getMissionCount(CrRole crRole);
 
@@ -121,6 +162,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param userList 用户id列表
 	 * @return 用户名列表
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	String getUserNamesByRoleUsers(List<String> userList);
 
@@ -130,6 +174,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId    训练实例id
 	 * @param studentId 学员id
 	 * @return (已完成 ， 未下发 ， 已下发)
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TaskCounter
 	 */
 	TaskCounter getTaskCounter(String roomId, String studentId);
 
@@ -138,6 +186,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param userIdList 用户id列表
 	 * @return 用户信息列表
+	 * @throws
+	 * @see List<String>
+	 * @see List<UserData>
 	 */
 	List<UserData> getUserDatas(List<String> userIdList);
 
@@ -146,6 +197,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param roomId 训练实例id
 	 * @return 角色列表
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	List<CrRole> selectRbStudentsRoleByRoomId(String roomId);
 
@@ -153,6 +207,8 @@ public interface CrRoleService extends IService<CrRole> {
 	 * 删除训练房间后删除训练角色
 	 *
 	 * @param roomId 训练实例id
+	 * @throws
+	 * @see String
 	 */
 	void clearRoomRoles(String roomId);
 
@@ -162,6 +218,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 训练实例id
 	 * @param roleId 角色id
 	 * @return 其能看到的分组角色列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
 
@@ -171,6 +231,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return 雷达数值
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<Integer>
 	 */
 	List<Integer> getRadar(String roomId, String userId);
 
@@ -180,6 +244,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param missionsScheme 任务编排json字符串
 	 * @param roomId         训练实例id
 	 * @return 新的任务编排json字符串
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	String getNewRoomScheme(String missionsScheme, String roomId);
 
@@ -189,6 +257,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId    训练实例id
 	 * @param roleGroup 角色组
 	 * @return 角色列表
+	 * @throws
+	 * @see String
+	 * @see int
+	 * @see List<CrRole>
 	 */
 	List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup);
 
@@ -198,6 +270,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrRole
 	 */
 	CrRole checkPermission(String roomId, String userId);
 
@@ -207,6 +283,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 房间id
 	 * @param groups 组
 	 * @return {@code List<CrRole>}
+	 * @throws
+	 * @see String
+	 * @see Collection<Integer>
+	 * @see List<CrRole>
 	 */
 	List<CrRole> getRolesByRoomAndGroups(String roomId, Collection<Integer> groups);
 
@@ -216,6 +296,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 房间id
 	 * @param code   代号
 	 * @return {@code List<TrainTaskReleaseInfoRsp> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<TrainTaskReleaseInfoRsp>
 	 */
 	List<TrainTaskReleaseInfoRsp> getTrainTaskReleaseInfoList(String roomId, Integer code);
 
@@ -225,6 +309,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 房间id
 	 * @param code   代号
 	 * @return {@code List<TrainTaskReleaseInfoRsp> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<TrainTaskReleaseInfoRsp>
 	 */
 	List<TrainTaskReleaseInfoRsp> getTrainManual(String roomId, Integer code);
 
@@ -232,6 +320,8 @@ public interface CrRoleService extends IService<CrRole> {
 	 * 组合角色 const
 	 *
 	 * @param dashboardInfo 仪表板信息
+	 * @throws
+	 * @see DashboardInfo
 	 */
 	void combineRoleConst(DashboardInfo dashboardInfo);
 
@@ -241,6 +331,10 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 房间id
 	 * @param groups 组
 	 * @return {@code List<UserRole> }
+	 * @throws
+	 * @see String
+	 * @see List<Integer>
+	 * @see List<UserRole>
 	 */
 	List<UserRole> getUserRolesByRoomIdAndRoleGroups(String roomId, List<Integer> groups);
 
@@ -249,6 +343,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Map<String, CrRole>}
+	 * @throws
+	 * @see String
+	 * @see Map<String, CrRole>
 	 */
 	Map<String, CrRole> getUserRoleMapByRoomId(String roomId);
 
@@ -256,6 +353,8 @@ public interface CrRoleService extends IService<CrRole> {
 	 * 恢复角色节点配置到创建房间时的快照
 	 *
 	 * @param roomId 房间id
+	 * @throws
+	 * @see String
 	 */
 	void recoverNodesConfig(String roomId);
 
@@ -264,6 +363,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param roomIdList 房间id列表
 	 * @return {@code Map<String, List<CrRole>>}
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, List<CrRole>>
 	 */
 	Map<String, List<CrRole>> getRoomRoleMapByRoomIdList(List<String> roomIdList);
 
@@ -272,6 +374,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 *
 	 * @param roomIdList 房间id列表
 	 * @return {@code List<CrRole>}
+	 * @throws
+	 * @see List<String>
+	 * @see List<CrRole>
 	 */
 	List<CrRole> getBatchByRoomIds(List<String> roomIdList);
 }

@@ -38,50 +38,68 @@ import java.util.stream.Collectors;
  * 评估指数裁判Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalIndexRefService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
 public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, EvalIndexRef> implements EvalIndexRefService {
 
 	/**
-	 * 远程蟒Service
+	 * 远程PythonService
+	 *
+	 * @see RemotePythonService
 	 */
 	@Autowired
 	private RemotePythonService remotePythonService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 评估变量裁判Service
+	 *
+	 * @see EvalVariableRefService
 	 */
 	@Autowired
 	private EvalVariableRefService evalVariableRefService;
 
 	/**
 	 * 评估算法裁判Service
+	 *
+	 * @see EvalAlgorithmRefService
 	 */
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
 
 	/**
 	 * 评估算法Mapper
+	 *
+	 * @see EvalAlgorithmMapper
 	 */
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
 
 	/**
 	 * 评估变量裁判Mapper
+	 *
+	 * @see EvalVariableRefMapper
 	 */
 	@Autowired
 	private EvalVariableRefMapper evalVariableRefMapper;
 
 	/**
 	 * int2cn
+	 *
+	 * @see Map<Integer, String>
 	 */
 	private final Map<Integer, String> int2cn = new HashMap<Integer, String>() {
 
@@ -94,10 +112,13 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	};
 
 	/**
-	 * 获取水平发短信
+	 * 获取水平文本
 	 *
 	 * @param level 水平
 	 * @return {@code String }
+	 * @throws
+	 * @see Integer
+	 * @see String
 	 */
 	private String getLevelText(Integer level) {
 		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
@@ -112,6 +133,10 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 * @param matrixData 矩阵数据
 	 * @param data       数据
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see List<Integer>
+	 * @see Integer
 	 */
 	private Integer indexAhpPerform(String matrixData, List<Integer> data) {
 		int res = 0;
@@ -141,6 +166,12 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 * @param evalIndexRefMap    EVAL 索引参考图
 	 * @param evalVariableRefMap eval 变量 ref map
 	 * @param evalRecord         EVAL 记录
+	 * @throws
+	 * @see EvalIndexRef
+	 * @see EvalAlgorithmRef
+	 * @see Map<String, EvalIndexRef>
+	 * @see Map<String, EvalVariableRef>
+	 * @see EvalRecord
 	 */
 	@Override
 	public void startIndex(EvalIndexRef evalIndexRef, EvalAlgorithmRef evalAlgorithmRef,
@@ -235,6 +266,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 *
 	 * @param indexId 指数id
 	 * @return {@code List<EvalRoomPairRsp> }
+	 * @throws
+	 * @see String
+	 * @see List<EvalRoomPairRsp>
 	 */
 	@Override
 	public List<EvalRoomPairRsp> selectVariables(String indexId) {
@@ -292,6 +326,10 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 * @param evalIndexRef    需要收集的指标项
 	 * @param evalIndexRefMap 所选指标项的所有次级指标
 	 * @param variableIds     收集变量项id集合
+	 * @throws
+	 * @see EvalIndexRef
+	 * @see Map<String, EvalIndexRef>
+	 * @see List<String>
 	 */
 	private void collectionVariableIds(EvalIndexRef evalIndexRef,
 			Map<String, EvalIndexRef> evalIndexRefMap, List<String> variableIds) {
@@ -308,6 +346,8 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 	/**
 	 * 周期图
+	 *
+	 * @see Map<Integer, Map<Integer, Integer>>
 	 */
 	private final Map<Integer, Map<Integer, Integer>> CYCLE_MAP = new HashMap<Integer, Map<Integer, Integer>>() {
 
@@ -340,6 +380,12 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 * @param attributeValue 属性值
 	 * @param value          值
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
+	 * @see Integer
+	 * @see Integer
+	 * @see Integer
+	 * @see Integer
 	 */
 	@Override
 	public Integer thirdSpecialist(Integer datatype, Integer attribute, Integer attributeValue,
@@ -371,6 +417,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 *
 	 * @param recordId 记录id
 	 * @return {@code Set<String> }
+	 * @throws
+	 * @see String
+	 * @see Set<String>
 	 */
 	@Override
 	public Set<String> systemEvalVariableIds(String recordId) {
@@ -398,6 +447,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 *
 	 * @param indexId 指数id
 	 * @return {@code EvalRecordResultIndexRsp }
+	 * @throws
+	 * @see String
+	 * @see EvalRecordResultIndexRsp
 	 */
 	@Override
 	public EvalRecordResultIndexRsp resultIndex(String indexId) {
@@ -437,6 +489,11 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 * @param depth                       深度
 	 * @param evalRecordResultIndexRspMap 评估记录结果指数响应地图
 	 * @return {@code List<EvalRecordResultIndexRsp> }
+	 * @throws
+	 * @see EvalRecordResultIndexRsp
+	 * @see Integer
+	 * @see Map<String, EvalRecordResultIndexRsp>
+	 * @see List<EvalRecordResultIndexRsp>
 	 */
 	private List<EvalRecordResultIndexRsp> collectionIndexes(
 			EvalRecordResultIndexRsp evalRecordResultIndexRsp, Integer depth,

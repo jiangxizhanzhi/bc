@@ -39,7 +39,9 @@ import lombok.extern.slf4j.Slf4j;
  * 无需用户认证的接口
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "靶场无需用户认证的接口")
 @RestController
@@ -49,48 +51,64 @@ public class CrNoAuthController {
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 业务模板处理器
+	 *
+	 * @see BusinessTemplateHandler
 	 */
 	@Autowired
 	private BusinessTemplateHandler businessTemplateHandler;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * RTKS相关Service
+	 *
+	 * @see RtksRelatedService
 	 */
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
@@ -100,6 +118,9 @@ public class CrNoAuthController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see BatchLoadMdReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("批量导入资管模板")
 	@PostMapping("/batchLoadMD")
@@ -178,6 +199,9 @@ public class CrNoAuthController {
 	 *
 	 * @param template_names
 	 * @return true: 存在
+	 * @throws
+	 * @see List<String>
+	 * @see BaseRsp<List<String>>
 	 */
 	@ApiOperation("导入模板重名校验")
 	@PostMapping("/drm/check_template_name")
@@ -192,6 +216,9 @@ public class CrNoAuthController {
 	 *
 	 * @param token 令 牌
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp
 	 */
 	@ApiOperation("辅助鉴权")
 	@GetMapping("/auth")

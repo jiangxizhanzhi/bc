@@ -20,7 +20,9 @@ import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
  * 靶场任务Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public interface CrTaskService {
 
@@ -29,6 +31,9 @@ public interface CrTaskService {
 	 *
 	 * @param taskId 可执行任务id
 	 * @return 可执行任务
+	 * @throws
+	 * @see String
+	 * @see CrTask
 	 */
 	CrTask getById(String taskId);
 
@@ -38,6 +43,10 @@ public interface CrTaskService {
 	 * @param missionId 任务id
 	 * @param userId    用户id
 	 * @return Task 实例
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TaskContext
 	 */
 	TaskContext getByMissionAndUser(String missionId, String userId);
 
@@ -47,6 +56,10 @@ public interface CrTaskService {
 	 * @param roomId    训练实例id
 	 * @param missionId 任务id
 	 * @param answer    答案
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	void submitMissions(String roomId, String missionId, String answer);
 
@@ -57,6 +70,11 @@ public interface CrTaskService {
 	 * @param missionIds 任务id列表
 	 * @param answer     答案集合
 	 * @return 任务总分
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Map<String, String>
+	 * @see Integer
 	 */
 	Integer batchSubmitMissions(String roomId, List<String> missionIds, Map<String, String> answer);
 
@@ -66,6 +84,10 @@ public interface CrTaskService {
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return List<Task>  实例列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<TaskContext>
 	 */
 	List<TaskContext> getByRoomIdAndUser(String roomId, String userId);
 
@@ -74,6 +96,9 @@ public interface CrTaskService {
 	 *
 	 * @param roomId 训练实例id
 	 * @return List<Task>  实例列表
+	 * @throws
+	 * @see String
+	 * @see List<TaskContext>
 	 */
 	List<TaskContext> getTaskContextByRoomId(String roomId);
 
@@ -83,6 +108,10 @@ public interface CrTaskService {
 	 * @param roomId  训练实例id
 	 * @param userIds 用户id列表
 	 * @return List<Task>  实例列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<TaskContext>
 	 */
 	List<TaskContext> getTaskContextByRoomIdAndUsers(String roomId, List<String> userIds);
 
@@ -90,6 +119,8 @@ public interface CrTaskService {
 	 * 用户开始任务
 	 *
 	 * @param task 可执行任务
+	 * @throws
+	 * @see CrTask
 	 */
 	void startTask(CrTask task);
 
@@ -99,6 +130,10 @@ public interface CrTaskService {
 	 * @param userId    用户id
 	 * @param missionId 任务id
 	 * @return 唯一对应的task
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrTask
 	 */
 	CrTask getByUserIdAndMissionId(String userId, String missionId);
 
@@ -108,6 +143,10 @@ public interface CrTaskService {
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return Task列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getByRoomIdAndUserId(String roomId, String userId);
 
@@ -117,6 +156,10 @@ public interface CrTaskService {
 	 * @param roomId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	Integer countByRoomIdAndUserId(String roomId, String userId);
 
@@ -125,6 +168,9 @@ public interface CrTaskService {
 	 *
 	 * @param roomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getFinished(String roomId);
 
@@ -133,6 +179,9 @@ public interface CrTaskService {
 	 *
 	 * @param roomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer countFinished(String roomId);
 
@@ -141,6 +190,9 @@ public interface CrTaskService {
 	 *
 	 * @param roomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer countUnsubmitted(String roomId);
 
@@ -149,6 +201,9 @@ public interface CrTaskService {
 	 *
 	 * @param roomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer countUnfinished(String roomId);
 
@@ -158,6 +213,10 @@ public interface CrTaskService {
 	 * @param roomId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	Integer countFinishedByRoomIdAndUserId(String roomId, String userId);
 
@@ -167,6 +226,10 @@ public interface CrTaskService {
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return Task列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getFinishedByRoomIdAndUserId(String roomId, String userId);
 
@@ -176,6 +239,10 @@ public interface CrTaskService {
 	 * @param roomId  训练实例id
 	 * @param userIds 用户id列表
 	 * @return Task列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getFinishedByRoomIdAndUserIds(String roomId, List<String> userIds);
 
@@ -184,6 +251,9 @@ public interface CrTaskService {
 	 *
 	 * @param roomId 训练实例id
 	 * @return 可执行任务列表
+	 * @throws
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getByRoomId(String roomId);
 
@@ -192,6 +262,9 @@ public interface CrTaskService {
 	 *
 	 * @param roleId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getByRole(String roleId);
 
@@ -200,6 +273,9 @@ public interface CrTaskService {
 	 *
 	 * @param roleIds 角色id列表
 	 * @return Task列表
+	 * @throws
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getByRoles(List<String> roleIds);
 
@@ -209,6 +285,10 @@ public interface CrTaskService {
 	 * @param roomId     房间id
 	 * @param missionIds 任务id列表
 	 * @return Task列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getByMissions(String roomId, List<String> missionIds);
 
@@ -219,6 +299,11 @@ public interface CrTaskService {
 	 * @param userIds    用户id列表
 	 * @param missionIds 任务id列表
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<String>
+	 * @see List<CrTask>
 	 */
 	List<CrTask> getReportedByUserIdsAndMissions(String roomId, List<String> userIds,
 			List<String> missionIds);
@@ -229,6 +314,10 @@ public interface CrTaskService {
 	 * @param roomId  房间id
 	 * @param userIds 用户id列表
 	 * @return 个数
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer countUnreportedByUsers(String roomId, List<String> userIds);
 
@@ -237,6 +326,9 @@ public interface CrTaskService {
 	 *
 	 * @param missionId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean isReleasedByMission(String missionId);
 
@@ -246,6 +338,10 @@ public interface CrTaskService {
 	 * @param roomId  房间id
 	 * @param userIds 用户id列表
 	 * @return Task的id列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> getIdsByUserIds(String roomId, List<String> userIds);
 
@@ -255,6 +351,10 @@ public interface CrTaskService {
 	 * @param roomId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> getIdsByOptionalUserId(String roomId, String userId);
 
@@ -265,6 +365,11 @@ public interface CrTaskService {
 	 * @param answer          答案
 	 * @param userId          用户id
 	 * @param answerExtension 答案额外信息
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	void submitAnswer(String missionId, String answer, String userId, String answerExtension);
 
@@ -277,6 +382,13 @@ public interface CrTaskService {
 	 * @param reason         评分理由
 	 * @param evaluateStatus 评估状态
 	 * @param currentUserId  当前用户id
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Integer
+	 * @see Integer
+	 * @see String
 	 */
 	void submitEvaluation(String taskSubmitId, Integer score, String detail, Integer reason,
 			Integer evaluateStatus, String currentUserId);
@@ -286,6 +398,9 @@ public interface CrTaskService {
 	 *
 	 * @param missionEvaluationQuery 分页查询体
 	 * @return 任务评估
+	 * @throws
+	 * @see MissionEvaluationQuery
+	 * @see IPage<MissionEvaluationContext>
 	 */
 	IPage<MissionEvaluationContext>
 			getMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery);
@@ -295,6 +410,9 @@ public interface CrTaskService {
 	 *
 	 * @param businessId 业务id
 	 * @param code       推送代号
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	void pushMissionWS(String businessId, Integer code);
 
@@ -304,6 +422,10 @@ public interface CrTaskService {
 	 * @param businessId 业务id
 	 * @param userIds    用户id列表
 	 * @param code       代号
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	void pushMissionWsToUsers(String businessId, List<String> userIds, Integer code);
 
@@ -312,6 +434,9 @@ public interface CrTaskService {
 	 *
 	 * @param businessId    业务id
 	 * @param runningStatus 运行状态
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	void pushStatusWs(String businessId, Integer runningStatus);
 
@@ -320,6 +445,9 @@ public interface CrTaskService {
 	 *
 	 * @param missionEvaluationQuery 分页查询体
 	 * @return 任务评估
+	 * @throws
+	 * @see MissionEvaluationQuery
+	 * @see IPage<MissionEvaluationContext>
 	 */
 	IPage<MissionEvaluationContext>
 			getRbMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery);
@@ -329,6 +457,9 @@ public interface CrTaskService {
 	 *
 	 * @param resourceId 可执行任务id
 	 * @return 提交列表
+	 * @throws
+	 * @see String
+	 * @see List<CrTaskSubmit>
 	 */
 	List<CrTaskSubmit> getOrderedSubmitsByTask(String resourceId);
 
@@ -339,6 +470,11 @@ public interface CrTaskService {
 	 * @param missionAnswer 任务答案
 	 * @param missionType   任务类型
 	 * @return bool
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see Boolean
 	 */
 	Boolean judgeObjective(String userAnswer, String missionAnswer, Integer missionType);
 
@@ -348,6 +484,10 @@ public interface CrTaskService {
 	 * @param roomId    训练实例id
 	 * @param crRoleIds 角色id列表
 	 * @return 未完成个数
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer countUnfinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 
@@ -357,6 +497,10 @@ public interface CrTaskService {
 	 * @param roomId    训练实例id
 	 * @param crRoleIds 角色id列表
 	 * @return 未提交个数
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer countUnsubmittedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 
@@ -366,6 +510,10 @@ public interface CrTaskService {
 	 * @param roomId    训练实例id
 	 * @param crRoleIds 角色id列表
 	 * @return 完成任务个数
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer countFinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 
@@ -375,6 +523,10 @@ public interface CrTaskService {
 	 * @param roomId    训练实例id
 	 * @param crRoleIds 角色id列表
 	 * @return 任务个数
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 
@@ -383,6 +535,9 @@ public interface CrTaskService {
 	 *
 	 * @param req 请求体
 	 * @return {@code List<EvaluationListRsp>}
+	 * @throws
+	 * @see EvaluationListReq
+	 * @see List<EvaluationListRsp>
 	 */
 	List<EvaluationListRsp> getEvaluationList(EvaluationListReq req);
 
@@ -391,6 +546,9 @@ public interface CrTaskService {
 	 *
 	 * @param taskSubmitId 任务提交id
 	 * @return {@code EvaluationMissionBo}
+	 * @throws
+	 * @see String
+	 * @see EvaluationMissionRsp
 	 */
 	EvaluationMissionRsp getEvaluationById(String taskSubmitId);
 
@@ -400,6 +558,10 @@ public interface CrTaskService {
 	 * @param resource_id 资源id
 	 * @param userId      用户id
 	 * @return {@code TaskMatrix }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TaskMatrix
 	 */
 	TaskMatrix getTaskMatrixExcludeTimeCost(String resource_id,String userId);
 
@@ -408,6 +570,9 @@ public interface CrTaskService {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TaskStatisticsInfo}
+	 * @throws
+	 * @see String
+	 * @see TaskStatisticsInfo
 	 */
 	TaskStatisticsInfo getTaskStatisticsInfoByRoomId(String roomId);
 
@@ -416,6 +581,9 @@ public interface CrTaskService {
 	 *
 	 * @param taskId 任务id
 	 * @return {@code List<CrTaskRejectRsp> }
+	 * @throws
+	 * @see String
+	 * @see List<CrTaskRejectRsp>
 	 */
 	List<CrTaskRejectRsp> getTaskRejctsByTaskId(String taskId);
 
@@ -427,6 +595,12 @@ public interface CrTaskService {
 	 * @param userId          用户id
 	 * @param answerExtension 答案外延
 	 * @param remark          备注
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	void submitAnswer(String missionId, String answer, String userId, String answerExtension,String remark);
 
@@ -437,6 +611,11 @@ public interface CrTaskService {
 	 * @param missionId 任务id
 	 * @param answer    答案
 	 * @param remark    备注
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	void submitMissions(String roomId, String missionId, String answer,String remark);
 }

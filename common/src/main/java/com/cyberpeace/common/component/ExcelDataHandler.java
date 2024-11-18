@@ -30,36 +30,46 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * excel数据处理器 需要什么方法自己加
+ * Excel 数据处理程序
  *
  * @author SN
- * @date 2024/11/07
+ * @version 1.0.0
+ * @since 1.0.0@date 2024/11/18
  */
 @Slf4j
 public class ExcelDataHandler {
 
-    /**
-     * 表
-     */
-    private Sheet sheet;
+	/**
+	 * 表
+	 *
+	 * @see Sheet
+	 */
+	private Sheet sheet;
 
-    /**
-     * 练习 册
-     */
-    private Workbook workbook;
+	/**
+	 * 练习 册
+	 *
+	 * @see Workbook
+	 */
+	private Workbook workbook;
 
-    /**
-     * 文件输入流量
-     */
-    private FileInputStream fileInputStream;
+	/**
+	 * 文件输入流量
+	 *
+	 * @see FileInputStream
+	 */
+	private FileInputStream fileInputStream;
 
-    /**
-     * 构造参数 初始化excel数据
-     *
-     * @param filePath   文件路径
-     * @param sheetIndex sheet表名
-     */
-    public ExcelDataHandler(String filePath, int sheetIndex) {
+	/**
+	 * 构造参数 初始化excel数据
+	 *
+	 * @param filePath   文件路径
+	 * @param sheetIndex sheet表名
+	 * @throws
+	 * @see String
+	 * @see int
+	 */
+	public ExcelDataHandler(String filePath, int sheetIndex) {
 		try {
 			// 创建文件流量
 			fileInputStream = new FileInputStream(filePath);
@@ -83,13 +93,16 @@ public class ExcelDataHandler {
 		}
 	}
 
-    /**
-     * 构造函数，初始化excel数据
-     *
-     * @param filePath  excel路径
-     * @param sheetName sheet表名
-     */
-    public ExcelDataHandler(String filePath, String sheetName) {
+	/**
+	 * 构造函数，初始化excel数据
+	 *
+	 * @param filePath  excel路径
+	 * @param sheetName sheet表名
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
+	public ExcelDataHandler(String filePath, String sheetName) {
 		try {
 			fileInputStream = new FileInputStream(filePath);
 
@@ -113,24 +126,31 @@ public class ExcelDataHandler {
 		}
 	}
 
-    /**
-     * excel数据读取
-     *
-     * @param startRow
-     * @return
-     */
-    public List<List<String>> getSheetData(int startRow) {
+	/**
+	 * excel数据读取
+	 *
+	 * @param startRow
+	 * @return
+	 * @throws
+	 * @see int
+	 * @see List<List<String>>
+	 */
+	public List<List<String>> getSheetData(int startRow) {
 		return getSheetData(startRow, CommonConstant.ZERO);
 	}
 
-    /**
-     * excel文件数据读取
-     *
-     * @param startRow 开始行读取 0从第一行开始读取
-     * @param endRow   结束行 0=不限制结尾 非0则读取startRow-endRow之间的数据
-     * @return
-     */
-    public List<List<String>> getSheetData(int startRow, int endRow) {
+	/**
+	 * excel文件数据读取
+	 *
+	 * @param startRow 开始行读取 0从第一行开始读取
+	 * @param endRow   结束行 0=不限制结尾 非0则读取startRow-endRow之间的数据
+	 * @return
+	 * @throws
+	 * @see int
+	 * @see int
+	 * @see List<List<String>>
+	 */
+	public List<List<String>> getSheetData(int startRow, int endRow) {
 
 		int rows = sheet.getPhysicalNumberOfRows();
 		int endIndex = endRow == CommonConstant.ZERO ? rows : (rows < endRow ? rows : endRow);
@@ -161,14 +181,18 @@ public class ExcelDataHandler {
 		return rowList;
 	}
 
-    /**
-     * 根据行和列的索引获取单元格的数据
-     *
-     * @param row
-     * @param column
-     * @return
-     */
-    public String getExcelDateByIndex(int row, int column) {
+	/**
+	 * 根据行和列的索引获取单元格的数据
+	 *
+	 * @param row
+	 * @param column
+	 * @return
+	 * @throws
+	 * @see int
+	 * @see int
+	 * @see String
+	 */
+	public String getExcelDateByIndex(int row, int column) {
 		Row sheetRow = sheet.getRow(row);
 		Cell cell = sheetRow.getCell(column);
 		if (null == cell) {
@@ -187,10 +211,12 @@ public class ExcelDataHandler {
 		return cell.toString().trim();
 	}
 
-    /**
-     * 关闭 io
-     */
-    public void closeIO() {
+	/**
+	 * 关闭 io
+	 *
+	 * @throws
+	 */
+	public void closeIO() {
 		try {
 			fileInputStream.close();
 			workbook.close();
@@ -200,13 +226,16 @@ public class ExcelDataHandler {
 		}
 	}
 
-    /**
-     * 获取excel写对象
-     *
-     * @param filePath 文件路径
-     * @return
-     */
-    private static Workbook createWorkbook(String filePath) {
+	/**
+	 * 获取excel写对象
+	 *
+	 * @param filePath 文件路径
+	 * @return
+	 * @throws
+	 * @see String
+	 * @see Workbook
+	 */
+	private static Workbook createWorkbook(String filePath) {
 		String fileSuffix = FileUtil.getFileSuffix(filePath);
 
 		if (StringUtils.isBlank(fileSuffix)) {
@@ -225,17 +254,24 @@ public class ExcelDataHandler {
 		throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 	}
 
-    /**
-     * do export excel （导出 excel）
-     *
-     * @param dataList    传入对象 对象非基本数据类型
-     * @param filePath    excel导出的文件路径
-     * @param sheetName
-     * @param excelHeader 标题
-     * @param workbook    导出格式
-     * @param passFields  pass 字段
-     */
-    private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
+	/**
+	 * do export excel （导出 excel）
+	 *
+	 * @param dataList    传入对象 对象非基本数据类型
+	 * @param filePath    excel导出的文件路径
+	 * @param sheetName
+	 * @param excelHeader 标题
+	 * @param workbook    导出格式
+	 * @param passFields  pass 字段
+	 * @throws
+	 * @see List<T>
+	 * @see String
+	 * @see String
+	 * @see ExcelHeader
+	 * @see Workbook
+	 * @see List<String>
+	 */
+	private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
 			ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
 
 		// 先创建父级目录
@@ -313,14 +349,18 @@ public class ExcelDataHandler {
 
 	}
 
-    /**
-     * excel文件导出
-     *
-     * @param data
-     * @param filePath
-     * @param excelHeader
-     */
-    public static <T> void exportExcel(List<T> data, String filePath, ExcelHeader excelHeader) {
+	/**
+	 * excel文件导出
+	 *
+	 * @param data
+	 * @param filePath
+	 * @param excelHeader Excel 标题
+	 * @throws
+	 * @see List<T>
+	 * @see String
+	 * @see ExcelHeader
+	 */
+	public static <T> void exportExcel(List<T> data, String filePath, ExcelHeader excelHeader) {
 
 		Workbook workbook = null;
 		try {
@@ -337,17 +377,24 @@ public class ExcelDataHandler {
 		}
 	}
 
-    /**
-     * excel 文件导出
-     *
-     * @param list        导出数据
-     * @param filePath    文件路径
-     * @param sheetName   sheet名
-     * @param passFields  过滤字段
-     * @param excelHeader 导出列头
-     * @return 文件流量
-     */
-    public static <T> File exportExcel(List<T> list, String filePath, String sheetName,
+	/**
+	 * excel 文件导出
+	 *
+	 * @param list        导出数据
+	 * @param filePath    文件路径
+	 * @param sheetName   sheet名
+	 * @param passFields  过滤字段
+	 * @param excelHeader 导出列头
+	 * @return 文件流量
+	 * @throws
+	 * @see List<T>
+	 * @see String
+	 * @see String
+	 * @see List<String>
+	 * @see ExcelHeader
+	 * @see File
+	 */
+	public static <T> File exportExcel(List<T> list, String filePath, String sheetName,
 			List<String> passFields, ExcelHeader excelHeader) {
 
 		File file = new File(filePath);

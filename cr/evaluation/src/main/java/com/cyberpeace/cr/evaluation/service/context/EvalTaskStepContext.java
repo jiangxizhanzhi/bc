@@ -10,55 +10,73 @@ import lombok.Getter;
  * Eval 任务步骤上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class EvalTaskStepContext {
 
 	/**
 	 * 步id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("步骤Id")
 	private String stepId;
 
 	/**
 	 * 阶段
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("步骤阶段")
 	private Integer stage;
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("步骤标题")
 	private String title;
 
 	/**
 	 * 过程
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("步骤过程")
 	private String process;
 
 	/**
 	 * 开始时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty("开始时间")
 	private Date startTime;
 
 	/**
 	 * 结束时间
+	 *
+	 * @see Date
 	 */
 	@ApiModelProperty("结束时间")
 	private Date endTime;
 
 	/**
 	 * 状态
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("步骤状态")
 	private Integer status = Status.INIT.getCode();
 
 	/**
 	 * 前步状态
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("前序步骤状态")
 	private Integer preStepStatus = Status.INIT.getCode();

@@ -12,23 +12,34 @@ import java.util.concurrent.locks.ReentrantLock;
  * 默认锁工厂
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see LockFactory
+ * @since 1.0.0
  */
 public class DefaultLockFactory implements LockFactory {
     /**
      * 实例
+     *
+     * @see LockFactory
      */
     private static volatile LockFactory instance;
     /**
      * 业务锁地图
+     *
+     * @see Map<String, Object>
      */
     private final Map<String, Object> businessLockMap;
     /**
      * 锁类型
+     *
+     * @see String
      */
     private String lockType = System.getProperty("lockType");
     /**
      * 锁
+     *
+     * @see Lock
      */
     private static Lock lock = new ReentrantLock();
 

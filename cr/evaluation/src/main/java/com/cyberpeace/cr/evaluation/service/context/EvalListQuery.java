@@ -12,7 +12,10 @@ import lombok.Data;
  * 评估列表查询
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see PageReqBase
+ * @since 1.0.0
  *//*
  * 前台使用的查询类
  */
@@ -22,18 +25,24 @@ public class EvalListQuery extends PageReqBase {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "类型")
 	private Integer type;
 
 	/**
 	 * id列表
+	 *
+	 * @see List<String>
 	 */
 	private List<String> ids;
 

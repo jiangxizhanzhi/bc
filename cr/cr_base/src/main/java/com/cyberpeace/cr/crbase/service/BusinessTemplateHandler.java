@@ -20,7 +20,9 @@ import com.google.common.collect.Maps;
  * 业务模板处理器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -28,6 +30,8 @@ public class BusinessTemplateHandler {
 
 	/**
 	 * 注册
+	 *
+	 * @see Map<BusinessType, BusinessTemplateHandler>
 	 */
 	private static Map<BusinessTemplate.BusinessType, BusinessTemplateHandler> register = Maps
 			.newHashMap();
@@ -36,6 +40,8 @@ public class BusinessTemplateHandler {
 	 * 设置业务类型
 	 *
 	 * @return {@code BusinessTemplate.BusinessType }
+	 * @throws
+	 * @see BusinessTemplate.BusinessType
 	 */
 	public BusinessTemplate.BusinessType setBusinessType() {
 		return null;
@@ -46,6 +52,9 @@ public class BusinessTemplateHandler {
 	 *
 	 * @param type 类型
 	 * @return {@code BusinessTemplateHandler }
+	 * @throws
+	 * @see Integer
+	 * @see BusinessTemplateHandler
 	 */
 	public BusinessTemplateHandler getHandler(Integer type) {
 		BusinessTemplate.BusinessType businessType = getBusinessType(type);
@@ -54,6 +63,8 @@ public class BusinessTemplateHandler {
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -66,6 +77,10 @@ public class BusinessTemplateHandler {
 	 * @param basicTemplate 基本模板
 	 * @param businessId    业务id
 	 * @return {@code String }
+	 * @throws
+	 * @see BasicTemplate
+	 * @see String
+	 * @see String
 	 */
 	public String saveBusiness(BasicTemplate basicTemplate, String businessId) {
 		BusinessTemplate.BusinessType businessType = getBusinessType(
@@ -82,6 +97,10 @@ public class BusinessTemplateHandler {
 	 * @param basicTemplate 基本模板
 	 * @param businessId    业务id
 	 * @return {@code String }
+	 * @throws
+	 * @see BasicTemplate
+	 * @see String
+	 * @see String
 	 */
 	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 		// 业务定义自己的保存操作
@@ -94,6 +113,9 @@ public class BusinessTemplateHandler {
 	 *
 	 * @param businessType 业务类型
 	 * @return {@code BusinessTemplate.BusinessType }
+	 * @throws
+	 * @see Integer
+	 * @see BusinessTemplate.BusinessType
 	 */
 	private BusinessTemplate.BusinessType getBusinessType(Integer businessType) {
 		// 校验外部传入的类型在BusinessTemplate.BusinessType声明的范围内
@@ -111,6 +133,9 @@ public class BusinessTemplateHandler {
 	 *
 	 * @param template 模板
 	 * @return {@code ResourceDumpContext }
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see ResourceDumpContext
 	 */
 	public ResourceDumpContext dumpBusiness(BusinessTemplate template) {
 		BusinessTemplateHandler handler = getHandler(template.getBusinessType());
@@ -123,6 +148,9 @@ public class BusinessTemplateHandler {
 	 *
 	 * @param template 模板
 	 * @return {@code ResourceDumpContext }
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see ResourceDumpContext
 	 */
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
 		log.error("method not implemented, plz do not use it");
@@ -133,6 +161,8 @@ public class BusinessTemplateHandler {
 	 * 加载业务资源
 	 *
 	 * @param resource 资源
+	 * @throws
+	 * @see ResourceDumpContext
 	 */
 	public void loadBusinessResource(ResourceDumpContext resource) {
 		BusinessTemplateHandler handler = getHandler(resource.getType());
@@ -143,6 +173,8 @@ public class BusinessTemplateHandler {
 	 * 真正加载业务资源
 	 *
 	 * @param resource 资源
+	 * @throws
+	 * @see ResourceDumpContext
 	 */
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
 		log.error("method not implemented, plz do not use it");
@@ -153,6 +185,8 @@ public class BusinessTemplateHandler {
 	 * 删除后台模板时删除相关训练模板
 	 *
 	 * @param businessTemplate 业务模板
+	 * @throws
+	 * @see BusinessTemplate
 	 */
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
 		log.error("method not implemented, plz do not use it");
@@ -163,6 +197,8 @@ public class BusinessTemplateHandler {
 	 * 用于资管导入不同类型的训练模板
 	 *
 	 * @param templateContext 模板上下文
+	 * @throws
+	 * @see TrainingTemplateContext
 	 */
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		log.error("method not implemented, plz do not use it");
@@ -173,6 +209,8 @@ public class BusinessTemplateHandler {
 	 * 在 del 之前检查
 	 *
 	 * @param businessTemplate 业务模板
+	 * @throws
+	 * @see BusinessTemplate
 	 */
 	public void checkBeforeDel(BusinessTemplate businessTemplate) {}
 }

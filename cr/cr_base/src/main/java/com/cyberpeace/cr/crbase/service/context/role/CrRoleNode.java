@@ -13,19 +13,26 @@ import lombok.Getter;
  * 节点简要信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class CrRoleNode implements Serializable {
 
 	/**
 	 * id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "节点id")
 	private String id;
 
 	/**
 	 * 类别
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "节点类型")
 	private Integer category;

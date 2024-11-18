@@ -44,7 +44,9 @@ import java.util.List;
  * 评估任务控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "靶场测评-任务")
 @Slf4j
@@ -55,24 +57,32 @@ public class EvalTaskController {
 
 	/**
 	 * 评估模板Service
+	 *
+	 * @see EvalTemplateService
 	 */
 	@Autowired
 	private EvalTemplateService evalTemplateService;
 
 	/**
 	 * 评估任务Service
+	 *
+	 * @see EvalTaskService
 	 */
 	@Autowired
 	private EvalTaskService evalTaskService;
 
 	/**
 	 * 评估场景Service
+	 *
+	 * @see EvalSceneService
 	 */
 	@Autowired
 	private EvalSceneService evalSceneService;
 
 	/**
 	 * 评估任务步Service
+	 *
+	 * @see EvalTaskStepService
 	 */
 	@Autowired
 	private EvalTaskStepService evalTaskStepService;
@@ -82,6 +92,9 @@ public class EvalTaskController {
 	 *
 	 * @param evalTaskStepReq 评估任务步请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvalTaskStepReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("启动步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -104,6 +117,9 @@ public class EvalTaskController {
 	 *
 	 * @param evalTaskStepReq 评估任务步请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvalTaskStepReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("完成步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -127,6 +143,9 @@ public class EvalTaskController {
 	 *
 	 * @param evalTaskStartReq 评估任务开始请求体
 	 * @return {@code BaseRsp<EvalTaskIdRsp> }
+	 * @throws
+	 * @see EvalTaskStartReq
+	 * @see BaseRsp<EvalTaskIdRsp>
 	 */
 	@ApiOperation("启动测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -154,6 +173,9 @@ public class EvalTaskController {
 	 *
 	 * @param evalTaskStopReq 评估任务停请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvalTaskStopReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("关闭测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -186,6 +208,10 @@ public class EvalTaskController {
 	 * @param templateId 模板id
 	 * @param taskId     任务id
 	 * @return {@code BaseRsp<EvalTaskRsp> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<EvalTaskRsp>
 	 */
 	@ApiOperation("查询测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -230,6 +256,9 @@ public class EvalTaskController {
 	 *
 	 * @param evalTaskDeleteReq 评估任务删除请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see EvalTaskDeleteReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("删除测评任务")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -250,6 +279,10 @@ public class EvalTaskController {
 	 * @param templateId 模板id
 	 * @param taskId     任务id
 	 * @return {@code BaseRsp<List<EvalTaskStepContext>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<EvalTaskStepContext>>
 	 */
 	@ApiOperation("查询测评任务步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -285,6 +318,10 @@ public class EvalTaskController {
 	 * @param templateId 模板id
 	 * @param taskId     任务id
 	 * @return {@code BaseRsp<EvalTaskTimeLineRsp> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<EvalTaskTimeLineRsp>
 	 */
 	@ApiOperation("查询测评任务时间线")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -324,6 +361,10 @@ public class EvalTaskController {
 	 * @param templateId 模板id
 	 * @param taskId     任务id
 	 * @return {@code BaseRsp<EvalTaskTimeNodesRsp> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<EvalTaskTimeNodesRsp>
 	 */
 	@ApiOperation("查询测评任务时间节点")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)

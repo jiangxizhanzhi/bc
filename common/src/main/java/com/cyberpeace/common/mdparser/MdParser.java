@@ -27,28 +27,38 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author chenzhuo
  * 仅支持标题和列表 列表仅支持二级
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 public class MdParser {
 
     /**
      * head 符号
+     *
+     * @see String
      */
     private String HEAD_SYMBOL = "#";
 
     /**
      * 内容
+     *
+     * @see List<String>
      */
     private List<String> content;
 
     /**
      * 标题地图
+     *
+     * @see Map<String, String>
      */
     private Map<String, String> titleMap;
 
     /**
      * 解析器映射
+     *
+     * @see Map<Class, MdContentParser>
      */
     private Map<Class, MdContentParser> parserMap;
 

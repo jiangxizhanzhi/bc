@@ -10,19 +10,26 @@ import lombok.Data;
  * 任务配置
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class MissionConfig implements Serializable {
 
 	/**
 	 * 角色资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "角色id", required = true)
 	private String roleResourceId;
 
 	/**
 	 * 任务
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "任务id列表", required = true)
 	private List<String> missions;

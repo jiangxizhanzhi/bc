@@ -15,7 +15,10 @@ import lombok.extern.slf4j.Slf4j;
  * 业务模板事件听者
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see AuthMessageListener
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -23,6 +26,8 @@ public class BusinessTemplateEventListener extends AuthMessageListener {
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
@@ -31,6 +36,8 @@ public class BusinessTemplateEventListener extends AuthMessageListener {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer declareMessageType() {
@@ -42,6 +49,9 @@ public class BusinessTemplateEventListener extends AuthMessageListener {
 	 *
 	 * @param users 用户
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onUserDelete(List<String> users) {

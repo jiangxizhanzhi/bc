@@ -17,7 +17,10 @@ import java.util.List;
  * 团队训练聊天处理器实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ChatWebSocketHandler
+ * @since 1.0.0
  */
 @Slf4j
 @Component("teamTrainChatHandlerImpl")
@@ -25,6 +28,8 @@ public class TeamTrainChatHandlerImpl extends ChatWebSocketHandler {
 
     /**
      * 靶场角色Service
+     *
+     * @see CrRoleService
      */
     @Autowired
     private CrRoleService crRoleService;
@@ -33,6 +38,8 @@ public class TeamTrainChatHandlerImpl extends ChatWebSocketHandler {
      * 声明消息类型
      *
      * @return {@code Integer }
+     * @throws
+     * @see Integer
      */
     @Override
     public Integer declareMessageType() {
@@ -44,6 +51,9 @@ public class TeamTrainChatHandlerImpl extends ChatWebSocketHandler {
      *
      * @param webSocketConnectionContext Web 套接字连接上下文
      * @return {@code Boolean }
+     * @throws
+     * @see WebSocketConnectionContext
+     * @see Boolean
      */
     @Override
     public Boolean checkInBusiness(WebSocketConnectionContext webSocketConnectionContext) {

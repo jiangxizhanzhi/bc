@@ -27,54 +27,75 @@ import com.rabbitmq.client.Channel;
  * 身份验证消息侦听器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ChannelAwareMessageListener
+ * @since 1.0.0
  */
 @Service
 public class AuthMessageListener implements ChannelAwareMessageListener {
 
 	/**
 	 * 日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger log = LoggerFactory.getLogger("mq");
 
 	/**
 	 * 注册
+	 *
+	 * @see Map<Integer, AuthMessageListener>
 	 */
 	private static Map<Integer, AuthMessageListener> register = Maps.newHashMap();
 
 	/**
 	 * 用户
+	 *
+	 * @see String
 	 */
 	private final String USER = "user_delete";
 
 	/**
 	 * 角色
+	 *
+	 * @see String
 	 */
 	private final String ROLE = "role_delete";
 
 	/**
 	 * 角色更新
+	 *
+	 * @see String
 	 */
 	private final String ROLE_UPDATE = "role_modify";
 
 	/**
 	 * 用户更新
+	 *
+	 * @see String
 	 */
 	private final String USER_UPDATE = "user_modify";
 
 	/**
 	 * 组织
+	 *
+	 * @see String
 	 */
 	private final String ORG = "org_delete";
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -90,7 +111,9 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 	 *
 	 * @param message 消息
 	 * @param channel 渠道
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see Message
+	 * @see Channel
 	 */
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
@@ -115,6 +138,8 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 	 * 每个子类需要重写该方法，保证返回值唯一
 	 *
 	 * @return
+	 * @throws
+	 * @see Integer
 	 */
 	public Integer declareMessageType() {
 		return -1;
@@ -125,6 +150,9 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 	 *
 	 * @param users 用户
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	public Boolean onUserDelete(List<String> users) {
 		return false;
@@ -135,6 +163,9 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 	 *
 	 * @param orgs 组织
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	public Boolean onOrgDelete(List<String> orgs) {
 		return false;
@@ -147,6 +178,11 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		return false;
@@ -159,6 +195,11 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
 		return false;
@@ -169,6 +210,9 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 	 *
 	 * @param message 消息
 	 * @return boolean
+	 * @throws
+	 * @see String
+	 * @see boolean
 	 */
 	private boolean dispatch(String message) {
 		JSONObject object;

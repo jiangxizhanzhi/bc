@@ -34,7 +34,9 @@ import io.swagger.annotations.ApiParam;
  * Web 工具控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "前台-资源中心-工具库")
 @RestController
@@ -44,6 +46,8 @@ public class WebToolController {
 
 	/**
 	 * 工具Service
+	 *
+	 * @see ToolService
 	 */
 	@Autowired
 	private ToolService toolService;
@@ -53,6 +57,9 @@ public class WebToolController {
 	 *
 	 * @param webToolListReq Web工具列表请求体
 	 * @return {@code BaseRsp<ListRsp<WebToolRsp>> }
+	 * @throws
+	 * @see WebToolListReq
+	 * @see BaseRsp<ListRsp<WebToolRsp>>
 	 */
 	@ApiOperation("工具库列表")
 	@GetMapping("/list")
@@ -83,6 +90,9 @@ public class WebToolController {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<ToolRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<ToolRsp>
 	 */
 	@ApiOperation("工具详情")
 	@GetMapping()

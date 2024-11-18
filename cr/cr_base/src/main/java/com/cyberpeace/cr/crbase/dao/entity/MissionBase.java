@@ -16,19 +16,26 @@ import lombok.Getter;
  * 任务基地
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 public class MissionBase extends BaseTable {
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "分值")
 	protected Integer score;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务id")
 	@TableId(type = IdType.UUID, value = "resource_id")
@@ -36,54 +43,72 @@ public class MissionBase extends BaseTable {
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务名称")
 	private String title;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务描述")
 	private String description;
 
 	/**
 	 * 技能点
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "技能点")
 	private String skillPoints;
 
 	/**
 	 * 答案
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务答案")
 	private String answer;
 
 	/**
 	 * 选择
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "选项")
 	private String option;
 
 	/**
 	 * 类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "类型")
 	private Integer type;
 
 	/**
 	 * 类别id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "类别")
 	private String categoryId;
 
 	/**
 	 * 写入向上
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "题解")
 	private String writeUp;
 
 	/**
 	 * 创造用户id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "创建者id")
 	private String createUserId;

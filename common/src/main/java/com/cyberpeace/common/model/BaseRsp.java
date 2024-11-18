@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
  * 基础响应
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 @AllArgsConstructor
@@ -17,21 +19,29 @@ public class BaseRsp<T> {
 
 	/**
 	 * 数据
+	 *
+	 * @see T
 	 */
 	public T data;
 
 	/**
 	 * 代号
+	 *
+	 * @see String
 	 */
 	public String code = "OJ-000000";
 
 	/**
 	 * 消息
+	 *
+	 * @see String
 	 */
 	public String message;
 
 	/**
 	 * 保留字段
+	 *
+	 * @see String
 	 */
 	public String detail;
 

@@ -13,7 +13,11 @@ import lombok.Data;
  * 工具类别
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @see SelectI18nName
+ * @since 1.0.0
  */
 @TableName("cr_tool_toolcategory")
 @Data
@@ -21,11 +25,15 @@ public class ToolCategory implements Serializable, SelectI18nName {
 
 	/**
 	 * id
+	 *
+	 * @see Integer
 	 */
 	private Integer id;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("ID")
 	@TableId(type = IdType.UUID, value = "resource_id")
@@ -33,12 +41,16 @@ public class ToolCategory implements Serializable, SelectI18nName {
 
 	/**
 	 * 中文名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("中文名称")
 	private String cnName;
 
 	/**
 	 * 中文名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("英文名称")
 	private String enName;

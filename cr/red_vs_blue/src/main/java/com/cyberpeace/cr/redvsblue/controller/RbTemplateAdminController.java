@@ -63,7 +63,9 @@ import lombok.extern.slf4j.Slf4j;
  * RB 模板 Admin Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗模板后台")
 @RestController
@@ -74,54 +76,72 @@ public class RbTemplateAdminController {
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
 	/**
 	 * RB模板Service
+	 *
+	 * @see RbTemplateService
 	 */
 	@Autowired
 	private RbTemplateService rbTemplateService;
 
 	/**
 	 * 靶场常见Service
+	 *
+	 * @see CrCommonService
 	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * 业务模板Mapper
+	 *
+	 * @see BusinessTemplateMapper
 	 */
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
 	/**
 	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
 	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
@@ -131,6 +151,9 @@ public class RbTemplateAdminController {
 	 *
 	 * @param addReq 新增请求体
 	 * @return {@code BaseRsp<Object> }
+	 * @throws
+	 * @see RbTemplateAddReq
+	 * @see BaseRsp<Object>
 	 */
 	@ApiOperation("新增")
 	@PostMapping()
@@ -171,6 +194,9 @@ public class RbTemplateAdminController {
 	 *
 	 * @param modifyReq 修改请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see RbTemplateModifyReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("修改")
 	@PatchMapping()
@@ -214,6 +240,9 @@ public class RbTemplateAdminController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("删除")
 	@DeleteMapping()
@@ -240,6 +269,9 @@ public class RbTemplateAdminController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<RbTemplateRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<RbTemplateRsp>
 	 */
 	@ApiOperation("查询")
 	@GetMapping()
@@ -296,6 +328,8 @@ public class RbTemplateAdminController {
 	 * 交易资产节点映射
 	 *
 	 * @param roleRsps 角色 RSP
+	 * @throws
+	 * @see List<JSONObject>
 	 */
 	public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
 		for (JSONObject roleRsp : roleRsps) {
@@ -320,6 +354,10 @@ public class RbTemplateAdminController {
 	 * @param roleArray 角色数组
 	 * @param mapping   映射
 	 * @return {@code List<JSONObject> }
+	 * @throws
+	 * @see JSONArray
+	 * @see Map<String, MissionTemplate>
+	 * @see List<JSONObject>
 	 */
 	private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
 		List<JSONObject> result = Lists.newArrayList();
@@ -345,6 +383,10 @@ public class RbTemplateAdminController {
 	 * @param req        请求体
 	 * @param rbTemplate RB 模板
 	 * @return {@code RbTemplate }
+	 * @throws
+	 * @see RbTemplateAddReq
+	 * @see RbTemplate
+	 * @see RbTemplate
 	 */
 	private RbTemplate reqToRbTemplate(RbTemplateAddReq req, RbTemplate rbTemplate) {
 

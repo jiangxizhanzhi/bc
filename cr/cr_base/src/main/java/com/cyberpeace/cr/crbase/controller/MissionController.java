@@ -68,7 +68,9 @@ import net.lingala.zip4j.exception.ZipException;
  * 任务控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "任务相关接口")
 @RestController
@@ -79,48 +81,64 @@ public class MissionController {
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 任务计划模板映射器
+	 *
+	 * @see MissionSchemeTemplateMapper
 	 */
 	@Autowired
 	private MissionSchemeTemplateMapper missionSchemeTemplateMapper;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 公共控制器
+	 *
+	 * @see CommonController
 	 */
 	@Autowired
 	private CommonController commonController;
@@ -131,6 +149,10 @@ public class MissionController {
 	 * @param resource_id 资源id
 	 * @param user_hash   用户哈希
 	 * @return {@code BaseRsp<List<Integer>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<Integer>>
 	 */
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
@@ -148,6 +170,8 @@ public class MissionController {
 	 * 获取雷达标签
 	 *
 	 * @return {@code BaseRsp<JSONObject> }
+	 * @throws
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("获取任务技能点")
 	@GetMapping("/missions/radar_labels")
@@ -169,6 +193,9 @@ public class MissionController {
 	 *
 	 * @param labels 标签
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see LabelReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("后台更新任务技能点")
 	@PostMapping("/missions/radar_labels")
@@ -200,6 +227,9 @@ public class MissionController {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<MissionTemplateRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<MissionTemplateRsp>
 	 */
 	@ApiOperation("获取任务模板详情")
 	@GetMapping("/missions")
@@ -219,6 +249,9 @@ public class MissionController {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<MissionDetail> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<MissionDetail>
 	 */
 	@ApiOperation("获取前台任务详情")
 	@GetMapping("/detail")
@@ -235,6 +268,9 @@ public class MissionController {
 	 *
 	 * @param missionTemplateReq 任务模板请求体
 	 * @return {@code BaseRsp<MissionTemplateRsp> }
+	 * @throws
+	 * @see MissionTemplateReq
+	 * @see BaseRsp<MissionTemplateRsp>
 	 */
 	@ApiOperation("新增任务")
 	@PostMapping("/missions")
@@ -261,6 +297,9 @@ public class MissionController {
 	 *
 	 * @param modifyReq 修改请求体
 	 * @return {@code BaseRsp<MissionTemplateRsp> }
+	 * @throws
+	 * @see MissionTemplateModifyReq
+	 * @see BaseRsp<MissionTemplateRsp>
 	 */
 	@ApiOperation("后台更新任务")
 	@PutMapping("/missions")
@@ -290,6 +329,9 @@ public class MissionController {
 	 *
 	 * @param missionModifyReq 任务修改请求体
 	 * @return {@code BaseRsp<?> }
+	 * @throws
+	 * @see MissionModifyReq
+	 * @see BaseRsp<?>
 	 */
 	@ApiOperation("前台更新任务")
 	@PutMapping("/mission_update")
@@ -314,6 +356,8 @@ public class MissionController {
 	 * 列表类别
 	 *
 	 * @return {@code BaseRsp<List<MissionCategory>> }
+	 * @throws
+	 * @see BaseRsp<List<MissionCategory>>
 	 */
 	@ApiOperation("获取任务类型")
 	@GetMapping("/missions/get_category/")
@@ -330,6 +374,9 @@ public class MissionController {
 	 *
 	 * @param templateReq 模板请求体
 	 * @return {@code BaseRsp<?> }
+	 * @throws
+	 * @see MissionSchemeTemplateReq
+	 * @see BaseRsp<?>
 	 */
 	@ApiOperation("创建任务方案")
 	@PostMapping("/combat_techs")
@@ -354,6 +401,9 @@ public class MissionController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<?> }
+	 * @throws
+	 * @see BatchDeleteReq
+	 * @see BaseRsp<?>
 	 */
 	@ApiOperation("批量删除任务方案")
 	@DeleteMapping("/combat_techs/batch_destroy/")
@@ -380,6 +430,9 @@ public class MissionController {
 	 *
 	 * @param templateModifyReq 模板修改请求体
 	 * @return {@code BaseRsp<?> }
+	 * @throws
+	 * @see MissionSchemeTemplateModifyReq
+	 * @see BaseRsp<?>
 	 */
 	@ApiOperation("编辑任务方案")
 	@PutMapping("/combat_techs")
@@ -403,6 +456,9 @@ public class MissionController {
 	 *
 	 * @param pageReqBase 分页请求体基础
 	 * @return {@code BaseRsp<List<MissionSchemeTemplateRsp>> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see BaseRsp<List<MissionSchemeTemplateRsp>>
 	 */
 	@ApiOperation("分页查询任务方案")
 	@GetMapping("/combat_techs/list")
@@ -429,6 +485,9 @@ public class MissionController {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<MissionSchemeTemplateRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<MissionSchemeTemplateRsp>
 	 */
 	@ApiOperation("查询单个任务方案")
 	@GetMapping("/combat_techs")
@@ -445,6 +504,9 @@ public class MissionController {
 	 *
 	 * @param response 响应
 	 * @param dumpReq  转 储请求体
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see BatchDumpReq
 	 */
 	@ApiOperation("批量导出任务方案")
 	@PostMapping("/combat_techs/dump")
@@ -475,8 +537,10 @@ public class MissionController {
 	 *
 	 * @param file 文件
 	 * @return {@code BaseRsp }
-	 * @throws IOException  io异常
+	 * @throws @throws      IOException io异常
 	 * @throws ZipException zip 异常
+	 * @see MultipartFile
+	 * @see BaseRsp
 	 */
 	@ApiOperation("批量导入任务方案")
 	@PutMapping("/combat_tech/load")
@@ -501,6 +565,9 @@ public class MissionController {
 	 *
 	 * @param pageReq 分页请求体
 	 * @return {@code BaseRsp<List<MissionTemplateRes>> }
+	 * @throws
+	 * @see MissionTemplatePageReq
+	 * @see BaseRsp<List<MissionTemplateRes>>
 	 */
 	@ApiOperation("RTKS-获取任务模板列表")
 	@GetMapping("/mission_templates")
@@ -518,6 +585,10 @@ public class MissionController {
 	 * @param missionId 任务id
 	 * @param md        Markdown
 	 * @return {@code BaseRsp<ExtractBase> }
+	 * @throws
+	 * @see String
+	 * @see MultipartFile
+	 * @see BaseRsp<ExtractBase>
 	 */
 	@ApiOperation("解析md文件数据")
 	@PostMapping("/parse/md")
@@ -570,6 +641,9 @@ public class MissionController {
 	 *
 	 * @param missionTemplateReq 任务模板请求体
 	 * @return {@code MissionTemplate }
+	 * @throws
+	 * @see MissionTemplateReq
+	 * @see MissionTemplate
 	 */
 	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {
 		MissionTemplate missionTemplate = BeanUtils.copy(missionTemplateReq, MissionTemplate.class);
@@ -588,6 +662,9 @@ public class MissionController {
 	 *
 	 * @param modifyReq 修改请求体
 	 * @return {@code MissionTemplate }
+	 * @throws
+	 * @see MissionTemplateModifyReq
+	 * @see MissionTemplate
 	 */
 	private MissionTemplate requestToMissionTemplate(MissionTemplateModifyReq modifyReq) {
 		MissionTemplate missionTemplate = BeanUtils.copy(modifyReq, MissionTemplate.class);
@@ -604,6 +681,9 @@ public class MissionController {
 	 *
 	 * @param writeup 撰写
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private String getAttachments(String writeup) {
 		if (writeup == null || writeup.length() < CrCommonConstants.GENERATED_UUID_LENGTH) {
@@ -622,6 +702,9 @@ public class MissionController {
 	 *
 	 * @param templateModifyReq 模板修改请求体
 	 * @return {@code MissionSchemeTemplate }
+	 * @throws
+	 * @see MissionSchemeTemplateModifyReq
+	 * @see MissionSchemeTemplate
 	 */
 	private MissionSchemeTemplate
 			requestToSchemeTemplate(MissionSchemeTemplateModifyReq templateModifyReq) {
@@ -664,6 +747,9 @@ public class MissionController {
 	 *
 	 * @param templateReq 模板请求体
 	 * @return {@code MissionSchemeTemplate }
+	 * @throws
+	 * @see MissionSchemeTemplateReq
+	 * @see MissionSchemeTemplate
 	 */
 	private MissionSchemeTemplate requestToSchemeTemplate(MissionSchemeTemplateReq templateReq) {
 		MissionSchemeTemplate schemeTemplate = BeanUtils.copy(templateReq,
@@ -681,6 +767,9 @@ public class MissionController {
 	 *
 	 * @param missionModifyReq 任务修改请求体
 	 * @return {@code Mission }
+	 * @throws
+	 * @see MissionModifyReq
+	 * @see Mission
 	 */
 	private Mission requestToMission(MissionModifyReq missionModifyReq) {
 		Mission mission = missionService.getById(missionModifyReq.getResourceId());
@@ -707,6 +796,9 @@ public class MissionController {
 	 *
 	 * @param missionTemplate 任务模板
 	 * @return {@code MissionTemplateRsp }
+	 * @throws
+	 * @see MissionTemplate
+	 * @see MissionTemplateRsp
 	 */
 	private MissionTemplateRsp missionTemplateToRsp(MissionTemplate missionTemplate) {
 		MissionTemplateRsp missionTemplateRsp = BeanUtils.copy(missionTemplate,

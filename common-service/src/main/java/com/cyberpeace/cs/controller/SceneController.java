@@ -33,7 +33,9 @@ import lombok.extern.slf4j.Slf4j;
  * 场景控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "场景操作相关api")
 @Slf4j
@@ -44,12 +46,16 @@ public class SceneController {
 
 	/**
 	 * 当地场景映射
+	 *
+	 * @see LocalSceneMapper
 	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -59,6 +65,9 @@ public class SceneController {
 	 *
 	 * @param snapShotReq 折拍摄请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NodeSnapShotReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PostMapping("/node/snapshot")
 	@ApiOperation("场景节点打快照")
@@ -84,6 +93,9 @@ public class SceneController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NodeSnapshotDeleteReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@DeleteMapping("/node/snapshot")
 	@ApiOperation("场景节点快照删除")
@@ -103,6 +115,10 @@ public class SceneController {
 	 * @param sceneId 场景id
 	 * @param imageId 图像id
 	 * @return {@code BaseRsp<JSONArray> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<JSONArray>
 	 */
 	@GetMapping("/node/snapshot")
 	@ApiOperation("场景节点快照路径")
@@ -123,6 +139,9 @@ public class SceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NodeUpdateReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PostMapping("/node/update")
 	@ApiOperation("节点属性变更接口")
@@ -140,6 +159,9 @@ public class SceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NodeOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PostMapping("/node/start")
 	@ApiOperation("单个节点开机")
@@ -158,6 +180,9 @@ public class SceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NodeOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PostMapping("/node/stop")
 	@ApiOperation("单个节点关机")
@@ -176,6 +201,9 @@ public class SceneController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NodeOpsReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@PostMapping("/node/restart")
 	@ApiOperation("单个节点重启")

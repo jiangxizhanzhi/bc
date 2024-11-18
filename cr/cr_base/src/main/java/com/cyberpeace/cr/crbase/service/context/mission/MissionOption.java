@@ -11,13 +11,18 @@ import lombok.Data;
  * 任务选项
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class MissionOption implements Serializable {
 
 	/**
 	 * 选项标签
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "选项,字段名称保持optionLabel")
 	@JsonProperty("optionLabel")
@@ -25,6 +30,8 @@ public class MissionOption implements Serializable {
 
 	/**
 	 * 选择值
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "选项值,字段名称保持optionValue")
 	@JsonProperty("optionValue")

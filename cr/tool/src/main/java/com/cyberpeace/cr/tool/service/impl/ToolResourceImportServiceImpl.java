@@ -35,30 +35,41 @@ import net.lingala.zip4j.exception.ZipException;
  * 工具资源进口Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ToolResourceImportService
+ * @since 1.0.0
  */
 @Service
 public class ToolResourceImportServiceImpl implements ToolResourceImportService {
 
 	/**
 	 * 日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
 	/**
 	 * 工具文件Service
+	 *
+	 * @see ToolFileService
 	 */
 	@Autowired
 	private ToolFileService toolFileService;
 
 	/**
 	 * 工具类别Service
+	 *
+	 * @see ToolCategoryService
 	 */
 	@Autowired
 	private ToolCategoryService toolCategoryService;
 
 	/**
 	 * 工具Service
+	 *
+	 * @see ToolService
 	 */
 	@Autowired
 	private ToolService toolService;
@@ -67,6 +78,8 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * 导入单个或多个工具
 	 *
 	 * @param path 服务器工具存放目录
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void importResource(String path) {
@@ -111,6 +124,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param toolDir 单个tool所在目录
 	 * @return
+	 * @throws
+	 * @see File
+	 * @see Tool
 	 */
 	private Tool importTool(File toolDir) {
 		File mdFile = getMdFile(toolDir);
@@ -136,6 +152,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param mdFile markdown文件对象
 	 * @return
+	 * @throws
+	 * @see File
+	 * @see ArrayListMultimap<String, String>
 	 */
 	private ArrayListMultimap<String, String> parseMdFile(File mdFile) {
 		ParseMarkdown parseMarkdown = new ParseMarkdown(mdFile);
@@ -149,6 +168,10 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @param data   markdown中的数据
 	 * @param mdFile markdown文件
 	 * @return
+	 * @throws
+	 * @see ArrayListMultimap<String, String>
+	 * @see File
+	 * @see Tool
 	 */
 	private Tool convertTool(ArrayListMultimap<String, String> data, File mdFile) {
 		Tool tool = new Tool();
@@ -204,6 +227,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param tool         工具
 	 * @param introduction 介绍
+	 * @throws
+	 * @see Tool
+	 * @see List<String>
 	 */
 	private void setIntroduction(Tool tool, List<String> introduction) {
 		String s = toStr(introduction);
@@ -215,6 +241,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param tool         工具
 	 * @param languageList 语言列表
+	 * @throws
+	 * @see Tool
+	 * @see List<String>
 	 */
 	private void setLanguage(Tool tool, List<String> languageList) {
 		for (int i = 0; i < languageList.size(); i++) {
@@ -230,6 +259,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param tool     工具
 	 * @param category 类别
+	 * @throws
+	 * @see Tool
+	 * @see List<String>
 	 */
 	private void setCategory(Tool tool, List<String> category) {
 		List<String> resourceIds = Lists.newArrayList();
@@ -250,6 +282,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param tool            工具
 	 * @param imageResourceId 图像资源id
+	 * @throws
+	 * @see Tool
+	 * @see List<String>
 	 */
 	private void setImageResourceIdAndToolType(Tool tool, List<String> imageResourceId) {
 		String imageName = toStr(imageResourceId);
@@ -269,6 +304,10 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @param tool     工具
 	 * @param versions 版本
 	 * @param mdFile   md 文件
+	 * @throws
+	 * @see Tool
+	 * @see List<String>
+	 * @see File
 	 */
 	private void setVersionAndFiles(Tool tool, List<String> versions, File mdFile) {
 		if (versions.isEmpty()) {
@@ -308,6 +347,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param version 版本
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private String getVersion(String version) {
 		String[] ss = StringUtils.split(version, " ");
@@ -328,6 +370,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param tool    工具
 	 * @param cracked 破获
+	 * @throws
+	 * @see Tool
+	 * @see List<String>
 	 */
 	private void setCracked(Tool tool, List<String> cracked) {
 		String s = toStr(cracked);
@@ -341,6 +386,10 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @param tool   工具
 	 * @param logo   图标
 	 * @param mdFile md 文件
+	 * @throws
+	 * @see Tool
+	 * @see List<String>
+	 * @see File
 	 */
 	private void setCover(Tool tool, List<String> logo, File mdFile) {
 		ToolFile toolFile = uploadFile(toStr(logo), mdFile, true);
@@ -358,6 +407,11 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 * @param mdFile       markdown文件
 	 * @param transferName true表示使用随机文件名
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see File
+	 * @see boolean
+	 * @see ToolFile
 	 */
 	private ToolFile uploadFile(String string, File mdFile, boolean transferName) {
 		// 兼容 [IDA_Pro_v7.0(MacOS).zip](./zip/IDA_Pro_v7.0(MacOS).zip) 格式的数据
@@ -380,6 +434,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param stringList 字符串列表
 	 * @return {@code String }
+	 * @throws
+	 * @see List<String>
+	 * @see String
 	 */
 	private String toStr(List<String> stringList) {
 		if (stringList == null) {
@@ -393,6 +450,9 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 	 *
 	 * @param file 初始目录
 	 * @return
+	 * @throws
+	 * @see File
+	 * @see File
 	 */
 	private File getMdFile(File file) {
 		File[] files = file.listFiles();

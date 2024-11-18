@@ -37,43 +37,59 @@ import com.cyberpeace.cs.service.LocalSceneService;
  * 团队模板Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see TeamTemplateService
+ * @since 1.0.0
  */
 @Service
 public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, TeamTemplate> implements TeamTemplateService {
 
 	/**
 	 * 业务模板Service
+	 *
+	 * @see BusinessTemplateService
 	 */
 	@Autowired
 	BusinessTemplateService businessTemplateService;
 
 	/**
 	 * 业务模板Mapper
+	 *
+	 * @see BusinessTemplateMapper
 	 */
 	@Autowired
 	BusinessTemplateMapper businessTemplateMapper;
 
 	/**
 	 * 团队模板Mapper
+	 *
+	 * @see TeamTemplateMapper
 	 */
 	@Autowired
 	private TeamTemplateMapper teamTemplateMapper;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -83,6 +99,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<TeamTemplateData> }
+	 * @throws
+	 * @see ListQuery
+	 * @see IPage<TeamTemplateData>
 	 */
 	@Override
 	public IPage<TeamTemplateData> page(ListQuery listQuery) {
@@ -100,6 +119,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 *
 	 * @param teamTrainTemplateContext 团队训练模板上下文
 	 * @return {@code TeamTemplate }
+	 * @throws
+	 * @see TeamTrainTemplateContext
+	 * @see TeamTemplate
 	 */
 	@Override
 	public TeamTemplate create(TeamTrainTemplateContext teamTrainTemplateContext) {
@@ -154,6 +176,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 *
 	 * @param baseInfo 基地信息
 	 * @return {@code BusinessTemplate }
+	 * @throws
+	 * @see BaseInfo
+	 * @see BusinessTemplate
 	 */
 	private BusinessTemplate getBusinessTemplateFromBaseInfoInput(BaseInfo baseInfo) {
 		BusinessTemplate businessTemplate = new BusinessTemplate();
@@ -171,6 +196,10 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 * @param input            输入
 	 * @param businessTemplate 业务模板
 	 * @return {@code TeamTemplate }
+	 * @throws
+	 * @see TeamTrainTemplateContext
+	 * @see BusinessTemplate
+	 * @see TeamTemplate
 	 */
 	@Override
 	public TeamTemplate updateTeamTemplate(TeamTrainTemplateContext input,
@@ -222,6 +251,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code TeamTemplate }
+	 * @throws
+	 * @see String
+	 * @see TeamTemplate
 	 */
 	@Override
 	public TeamTemplate getByTemplateBusinessId(String resourceId) {
@@ -237,6 +269,8 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 * 批量删除
 	 *
 	 * @param businessTemplateIds 业务模板id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public void batchDelete(List<String> businessTemplateIds) {
@@ -248,6 +282,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 *
 	 * @param businessIds 业务id列表
 	 * @return {@code List<TeamTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<TeamTemplate>
 	 */
 	@Override
 	public List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> businessIds) {
@@ -259,6 +296,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean removeByBusinessTemplateId(String businessTemplateId) {
@@ -270,6 +310,9 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 	 *
 	 * @param roleConfig 角色配置
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getMissionTemplateIdsByRoleConfig(String roleConfig) {

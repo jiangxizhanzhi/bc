@@ -61,7 +61,9 @@ import lombok.extern.slf4j.Slf4j;
  * RB Room Score 控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗评分")
 @RestController
@@ -72,54 +74,72 @@ public class RbRoomScoreController {
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * RB房间得分Service
+	 *
+	 * @see RbRoomScoreService
 	 */
 	@Autowired
 	private RbRoomScoreService rbRoomScoreService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 靶场得分控制器
+	 *
+	 * @see CrScoreController
 	 */
 	@Autowired
 	private CrScoreController crScoreController;
 
 	/**
 	 * 中台环境Service
+	 *
+	 * @see MpEnvService
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
 	/**
 	 * 靶场得分Service
+	 *
+	 * @see CrScoreService
 	 */
 	@Autowired
 	private CrScoreService crScoreService;
 
 	/**
 	 * RB时间管理Service
+	 *
+	 * @see RbTimeManagementService
 	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
@@ -130,6 +150,10 @@ public class RbRoomScoreController {
 	 * @param httpServletResponse HTTP Servlet 响应
 	 * @param roomId              房间id
 	 * @param role_group          角色组
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see String
+	 * @see Integer
 	 */
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
@@ -175,6 +199,10 @@ public class RbRoomScoreController {
 	 * @param roomId    房间id
 	 * @param roleGroup 角色组
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see JSONObject
 	 */
 	private JSONObject getTrainRecordJsonObject(String roomId, Integer roleGroup) {
 		JSONObject jsonObject = new JSONObject();
@@ -218,6 +246,9 @@ public class RbRoomScoreController {
 	 *
 	 * @param missionSchemeList 任务计划列表
 	 * @return {@code List<StageExport> }
+	 * @throws
+	 * @see List<MissionSchemeObject<TrainingRecordMissionRsp>>
+	 * @see List<StageExport>
 	 */
 	private List<StageExport>
 			getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
@@ -238,6 +269,10 @@ public class RbRoomScoreController {
 	 * @param resource_id 资源id
 	 * @param user_hash   用户哈希
 	 * @return {@code BaseRsp<StudentScoreRsp> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<StudentScoreRsp>
 	 */
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
@@ -262,6 +297,9 @@ public class RbRoomScoreController {
 	 *
 	 * @param studentScoreReq 学员得分请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see StudentScoreReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("提交学员评分")
 	@PostMapping("/student_score")
@@ -282,6 +320,9 @@ public class RbRoomScoreController {
 	 *
 	 * @param submitEvaluationReq 提交评估请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see SubmitEvaluationReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("提交任务的人工评估")
 	@PostMapping("/submit_evaluation")
@@ -303,6 +344,9 @@ public class RbRoomScoreController {
 	 *
 	 * @param missionEvaluationListReq 任务评估列表请求体
 	 * @return {@code BaseRsp<List<MissionEvaluationRsp>> }
+	 * @throws
+	 * @see MissionEvaluationListReq
+	 * @see BaseRsp<List<MissionEvaluationRsp>>
 	 */
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
@@ -322,6 +366,10 @@ public class RbRoomScoreController {
 	 * @param resource_id 资源id
 	 * @param student_id  学员id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<MissionDynamicRsp>
 	 */
 	@ApiOperation("获取学员动态事件")
 	@GetMapping("/get_user_mission_dynamic")
@@ -344,6 +392,10 @@ public class RbRoomScoreController {
 	 * @param resource_id 资源id
 	 * @param role_group  角色组
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see BaseRsp<MissionReport>
 	 */
 	@ApiOperation("获取任务信息统计")
 	@GetMapping("/get_training_mission_report")
@@ -369,6 +421,10 @@ public class RbRoomScoreController {
 	 * @param resource_id 资源id
 	 * @param user_hash   用户哈希
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<MissionSchemeObject<TrainingRecordMissionRsp>>>
 	 */
 	@ApiOperation("获取用户训练记录")
 	@GetMapping("/get_training_record")
@@ -391,6 +447,10 @@ public class RbRoomScoreController {
 	 * @param resource_id 资源id
 	 * @param role_group  角色组
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see BaseRsp<TrainingReport>
 	 */
 	@ApiOperation("获取用户训练报告")
 	@GetMapping("/get_training_report")
@@ -435,6 +495,9 @@ public class RbRoomScoreController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<RoleScore>>
 	 */
 	@ApiOperation("查询训练角色得分信息")
 	@GetMapping("/get_role_score_info")
@@ -452,6 +515,9 @@ public class RbRoomScoreController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<MissionsStatistic>>
 	 */
 	@ApiOperation("查询任务状态")
 	@GetMapping("/missions_statistics")

@@ -10,12 +10,25 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * shell 工具
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
+ */
 @Slf4j
 public class ShellUtils {
 
 	/**
 	 * 运行shell脚本
+	 *
 	 * @param shell 需要运行的shell脚本
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	public static List<String> execShell(String shell) {
 		log.info("Start exec shell! command=[{}]", shell);
@@ -46,7 +59,12 @@ public class ShellUtils {
 
 	/**
 	 * 运行shell脚本
+	 *
 	 * @param shell 需要运行的shell脚本
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public static String execErrorShell(String shell) {
 		log.info("Start exec shell! command=[{}]", shell);

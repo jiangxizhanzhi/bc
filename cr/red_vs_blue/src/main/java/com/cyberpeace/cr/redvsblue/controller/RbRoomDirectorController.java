@@ -74,7 +74,9 @@ import java.util.stream.Collectors;
  * RB房间导演控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "红蓝对抗导演")
@@ -85,54 +87,72 @@ public class RbRoomDirectorController {
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * RB时间管理Service
+	 *
+	 * @see RbTimeManagementService
 	 */
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * RB导演Service
+	 *
+	 * @see RbDirectorService
 	 */
 	@Autowired
 	private RbDirectorService rbDirectorService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * WebSocket推送Service
+	 *
+	 * @see WebSocketPushService
 	 */
 	@Autowired
 	private WebSocketPushService webSocketPushService;
@@ -140,6 +160,8 @@ public class RbRoomDirectorController {
 
 	/**
 	 * RB场景Service
+	 *
+	 * @see RbSceneService
 	 */
 	@Autowired
 	RbSceneService rbSceneService;
@@ -149,6 +171,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param exercisePaperReq 锻炼试卷请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see ExercisePaperReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
@@ -179,6 +204,10 @@ public class RbRoomDirectorController {
 	 * @param businessTemplateId 业务模板id
 	 * @param group_hash         组哈希
 	 * @return {@code BaseRsp<ExercisePaperRsp> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see BaseRsp<ExercisePaperRsp>
 	 */
 	@ApiOperation("获取演习文书")
 	@GetMapping("/get_exercise_paper")
@@ -203,6 +232,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param writeUpReq 写入向上请求体
 	 * @return
+	 * @throws
+	 * @see WriteUpReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("修改开放题解")
 	@PostMapping("/update_show_write_up")
@@ -224,6 +256,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param releaseMissionReq 释放任务请求体
 	 * @return
+	 * @throws
+	 * @see ReleaseMissionReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("任务下发")
 	@PostMapping("/missions")
@@ -258,6 +293,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param rbRoomMissionReq RB房间任务请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see RbRoomMissionReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("动态任务新增")
 	@PostMapping("/mission_info_create")
@@ -285,6 +323,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param rbMissionDeleteReq RB任务删除请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see MissionDeleteReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("任务删除")
 	@PostMapping("/mission_delete")
@@ -354,6 +395,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<CrRbRoleContext> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<CrRbRoleContext>
 	 */
 	@ApiOperation("查询角色")
 	@GetMapping("/roles")
@@ -477,6 +521,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TimeLineData>
 	 */
 	@ApiOperation("查询红蓝对抗导演时间线")
 	@GetMapping("/mission_timeline")
@@ -493,6 +540,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param opsReq 操作 计划请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see SceneOpsReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("停止演习")
 	@PostMapping("/stop")
@@ -547,6 +597,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<RedBlueTaskReleaseProgress> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<RedBlueTaskReleaseProgress>
 	 */
 	@ApiOperation("红蓝对抗-任务导调-任务进度")
 	@GetMapping("/mission/progress")
@@ -562,6 +615,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param releaseMissionReq 释放任务请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ReleaseMissionReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("批量任务下发")
 	@PostMapping("/batchMissions")
@@ -594,6 +650,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<List<TrainTaskReleaseInfoContext>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<TrainTaskReleaseInfoContext>>
 	 */
 	@ApiOperation("红蓝对抗-任务导调-任务列表")
 	@GetMapping("/mission/list")
@@ -623,6 +682,10 @@ public class RbRoomDirectorController {
 	 * @param resource_id 资源id
 	 * @param user_id     用户id
 	 * @return {@code BaseRsp<TimeLineData>}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<TimeLineData>
 	 */
 	@ApiOperation("导演-复盘时间轴")
 	@GetMapping("/replay/timeline")
@@ -641,6 +704,9 @@ public class RbRoomDirectorController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<String>}
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("查询复盘所需scene_id")
 	@GetMapping("/replay/enable")

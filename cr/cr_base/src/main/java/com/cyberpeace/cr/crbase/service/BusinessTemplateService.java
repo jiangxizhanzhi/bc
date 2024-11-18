@@ -22,7 +22,10 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
  * 业务模板Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see IService
+ * @since 1.0.0
  */
 public interface BusinessTemplateService extends IService<BusinessTemplate> {
 
@@ -31,6 +34,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param businessTemplateQuery 分页查询体
 	 * @return 业务模板数据
+	 * @throws
+	 * @see BusinessTemplateQuery
+	 * @see IPage<BusinessTemplateData>
 	 */
 	IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery);
 
@@ -39,6 +45,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param resourceId 训练模板id
 	 * @return 授权数据
+	 * @throws
+	 * @see String
+	 * @see Share
 	 */
 	Share getShares(String resourceId);
 
@@ -46,6 +55,8 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * 批量修改多个训练模板的权限
 	 *
 	 * @param shareContext 授权信息
+	 * @throws
+	 * @see ShareContext
 	 */
 	void batchSetShares(ShareContext shareContext);
 
@@ -54,6 +65,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param baseInfo 训练模板基础信息
 	 * @return 训练模板id
+	 * @throws
+	 * @see BaseInfo
+	 * @see String
 	 */
 	String addTemplate(BaseInfo baseInfo);
 
@@ -62,6 +76,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param userId 用户id
 	 * @return 该用户有权查看的训练模板
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> selectAuthIdsByUserId(String userId);
 
@@ -70,6 +87,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param resourceId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BusinessTemplate
 	 */
 	BusinessTemplate getByLocalSceneId(String resourceId);
 
@@ -78,6 +98,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param businessTemplateIds 训练业务模板id列表
 	 * @return 布尔值
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	Boolean batchDelete(List<String> businessTemplateIds);
 
@@ -85,6 +108,8 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * 关闭后台测试场景之后删除本地数据
 	 *
 	 * @param template 业务模板
+	 * @throws
+	 * @see BusinessTemplate
 	 */
 	void clearLocal(BusinessTemplate template);
 
@@ -93,6 +118,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param template 业务模板
 	 * @return 本地场景
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see LocalScene
 	 */
 	LocalScene createLocalScene(BusinessTemplate template);
 
@@ -101,6 +129,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param template 业务模板
 	 * @return 场景数据
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see SceneViewContext
 	 */
 	SceneViewContext viewScene(BusinessTemplate template);
 
@@ -109,6 +140,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param type 类型
 	 * @return 类型代号
+	 * @throws
+	 * @see Integer
+	 * @see LocalScene.BusinessCode
 	 */
 	LocalScene.BusinessCode convertTypeToCode(Integer type);
 
@@ -117,6 +151,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param templateId 业务模板id
 	 * @return 导出模型
+	 * @throws
+	 * @see String
+	 * @see ResourceDumpContext
 	 */
 	ResourceDumpContext dumpTemplate(String templateId);
 
@@ -126,7 +163,10 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param templateIds 基础模版id列表
 	 * @param tempDir     临时文件夹
 	 * @return 压缩包路径
-	 * @throws IOException io异常
+	 * @throws @throws IOException io异常
+	 * @see List<String>
+	 * @see String
+	 * @see String
 	 */
 	String makeDumpFile(List<String> templateIds, String tempDir) throws IOException;
 
@@ -135,6 +175,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param unZipPath 解压路径
 	 * @return 布尔值
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean batchLoad(String unZipPath);
 
@@ -143,6 +186,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param businessId 业务模板id
 	 * @param userId     用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	void checkPermission(String businessId, String userId);
 
@@ -151,6 +197,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param resourceId 业务模板id
 	 * @return boolean
+	 * @throws
+	 * @see String
+	 * @see boolean
 	 */
 	boolean checkPermission(String resourceId);
 
@@ -159,6 +208,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param templateName 业务模板id
 	 * @return 布尔值
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean existByName(String templateName);
 
@@ -167,6 +219,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param names 名称列表
 	 * @return 已存在的名称列表
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> getExistedNames(List<String> names);
 
@@ -178,6 +233,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param templateName 模板名称
 	 * @return 模板id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	String getIdByName(String templateName);
 
@@ -186,6 +244,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param businessTemplate 业务模板
 	 * @param baseInfo         更新基础信息
+	 * @throws
+	 * @see BusinessTemplate
+	 * @see BaseInfo
 	 */
 	void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo);
 
@@ -195,6 +256,10 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param name       模板名称
 	 * @param type       类型
 	 * @param resourceId 模板id
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
 	 */
 	void validateName(String name, Integer type, String resourceId);
 
@@ -207,6 +272,10 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param businessTemplateId 业务模板id
 	 * @param before             旧的任务编排字符串
 	 * @param after              新的任务编排字符串
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	void updateMissionTemplateRelation(String businessTemplateId, String before, String after);
 
@@ -215,6 +284,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return 和ATT&CK关联的模板id列表
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> getAttackRelatedIds(List<String> businessTemplateIds);
 
@@ -223,6 +295,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return 和ENGAGE关联的模板id列表
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> getEngageRelatedIds(List<String> businessTemplateIds);
 
@@ -231,6 +306,9 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 *
 	 * @param btPageReq 分页查询体
 	 * @return 业务模板简略信息
+	 * @throws
+	 * @see BTPageReq
+	 * @see ListRsp<BusinessTemplateSimple>
 	 */
 	ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq);
 
@@ -238,6 +316,8 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * 清除用户身份验证
 	 *
 	 * @param user 用户
+	 * @throws
+	 * @see String
 	 */
 	void clearUserAuth(String user);
 

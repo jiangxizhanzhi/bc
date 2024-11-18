@@ -9,35 +9,83 @@ import java.io.Serializable;
  * Dashboard 用户
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class DashboardUser implements Serializable {
 
+	/**
+	 * 用户名
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("用户登录名")
 	private String username;
 
+	/**
+	 * 名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("用户展示名")
 	private String name;
 
+	/**
+	 * 岗位
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("角色")
 	private String role;
 
+	/**
+	 * 岗位类型
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("角色类型")
 	private String roleType;
 
+	/**
+	 * 岗位代号
+	 *
+	 * @see Integer
+	 */
 	@ApiModelProperty("角色码")
 	private Integer roleCode;
 
+	/**
+	 * id
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("编号")
 	private String id;
 
+	/**
+	 * 化身
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("头像地址")
 	private String avatar;
 
+	/**
+	 * 标志
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("登陆")
 	private String sign;
 
+	/**
+	 * 状态
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("状态")
 	private String status;
 

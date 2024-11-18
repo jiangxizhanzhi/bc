@@ -15,18 +15,24 @@ import lombok.Data;
  * 阶段导出
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class StageExport {
 
 	/**
 	 * 阶段名称
+	 *
+	 * @see String
 	 */
 	private String stageName;
 
 	/**
 	 * 问题
+	 *
+	 * @see List<StageQuestion>
 	 */
 	private List<StageQuestion> questions;
 

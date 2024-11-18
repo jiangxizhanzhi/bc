@@ -19,87 +19,165 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 
 /**
+ * 团队房间Service
  *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @see IService
+ * @since 1.0.0
  */
 public interface TeamRoomService extends IService<TeamRoom> {
 
-	/** 通过id获取团队训练
+	/**
+	 * 通过id获取团队训练
+	 *
 	 * @param resourceId 训练实例id
 	 * @return 团队训练实例数据
+	 * @throws
+	 * @see String
+	 * @see TeamRoomData
 	 */
 	TeamRoomData getTeamRoomDataByRoomId(String resourceId);
 
-	/** 创建实例
+	/**
+	 * 创建实例
+	 *
 	 * @param teamTrainRoomContext 团队训练实例数据
 	 * @return 团队训练实例
+	 * @throws
+	 * @see TeamTrainRoomContext
+	 * @see TeamRoom
 	 */
 	TeamRoom create(TeamTrainRoomContext teamTrainRoomContext);
 
-	/** 更新实例
+	/**
+	 * 更新实例
+	 *
 	 * @param teamTrainRoomContext 团队训练实例数据
-	 * @param teamRoom 目标团队实例
+	 * @param teamRoom             目标团队实例
+	 * @throws
+	 * @see TeamTrainRoomContext
+	 * @see TeamRoom
 	 */
 	void updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom);
 
-	/** 列表查询团队训练
+	/**
+	 * 列表查询团队训练
+	 *
 	 * @param listQuery 分页查询体
 	 * @return 团队训练实例分页数据
+	 * @throws
+	 * @see ListQuery
+	 * @see IPage<TeamRoomData>
 	 */
 	IPage<TeamRoomData> list(ListQuery listQuery);
 
-	/** 修改团队训练状态
+	/**
+	 * 修改团队训练状态
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 团队训练实例状态
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer changeTrainingStatus(String roomId);
 
-	/** 获取团队训练状态
+	/**
+	 * 获取团队训练状态
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 团队训练实例状态
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer getTrainingStatus(String roomId);
 
-	/** 通过businessInstanceId获取学员id
+	/**
+	 * 通过businessInstanceId获取学员id
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 学员列表
+	 * @throws
+	 * @see String
+	 * @see List<UserRole>
 	 */
 	List<UserRole> getUserList(String roomId);
 
-	/**教员获取时间线
+	/**
+	 * 教员获取时间线
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 教员时间线数据
+	 * @throws
+	 * @see String
+	 * @see TimeLineData
 	 */
 	TimeLineData getTimeLine(String roomId);
 
-	/** 检查是否有教员权限
+	/**
+	 * 检查是否有教员权限
+	 *
 	 * @param roomId 团队训练实例id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	void checkTeacherPermission(String roomId, String userId);
 
-	/** 检查团队训练是否是已启动状态
+	/**
+	 * 检查团队训练是否是已启动状态
+	 *
 	 * @param roomId 团队训练实例id
+	 * @throws
+	 * @see String
 	 */
 	void checkRoomOpening(String roomId);
 
-	/** 学员获取时间线
+	/**
+	 * 学员获取时间线
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 学员时间线数据
+	 * @throws
+	 * @see String
+	 * @see TimeLineData
 	 */
 	TimeLineData getStudentsTimeLine(String roomId);
 
+	/**
+	 * 获取由当地场景id
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code TeamRoom }
+	 * @throws
+	 * @see String
+	 * @see TeamRoom
+	 */
 	TeamRoom getByLocalSceneId(String localSceneId);
 
 	/**
 	 * 根据id获取团队训练实例
+	 *
 	 * @param roomId 团队训练实例id
 	 * @return 团队训练实例
+	 * @throws
+	 * @see String
+	 * @see TeamRoom
 	 */
 	TeamRoom getById(String roomId);
 
-	/** 检查是否有学员权限
+	/**
+	 * 检查是否有学员权限
+	 *
 	 * @param roomId 团队训练实例id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	void checkStudentPermission(String roomId, String userId);
 
@@ -108,6 +186,9 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code List<CrRole>}
+	 * @throws
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	List<CrRole> getStudentsRoles(String roomId);
 
@@ -116,6 +197,9 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 *
 	 * @param req 请求体
 	 * @return {@code List<EvaluationListRsp>}
+	 * @throws
+	 * @see EvaluationListReq
+	 * @see List<EvaluationListRsp>
 	 */
 	List<EvaluationListRsp> getEvaluationList(EvaluationListReq req);
 
@@ -124,26 +208,51 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Integer}
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer getDuration(String roomId);
 
 
 	/**
 	 * 获取聊天框用户列表
-	 * @param myRole 当前用户角色
-	 * @param roomId 房间id
+	 *
+	 * @param myRole        当前用户角色
+	 * @param roomId        房间id
 	 * @param currentUserId 当前用户id
 	 * @return 聊天面板信息
+	 * @throws
+	 * @see CrRole
+	 * @see String
+	 * @see String
+	 * @see DashboardInfo
 	 */
 	DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId);
 
-    CrRole checkRoomPermission(String resourceId, String userId);
+	/**
+	 * 检查房间权限
+	 *
+	 * @param resourceId 资源id
+	 * @param userId     用户id
+	 * @return {@code CrRole }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see CrRole
+	 */
+	CrRole checkRoomPermission(String resourceId, String userId);
 
 	/**
 	 * 获取聊天面板用户列表
+	 *
 	 * @param roleId 角色id
 	 * @param roomId 红蓝对抗实例id
 	 * @return 聊天面板用户列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<DashboardUser>
 	 */
 	List<DashboardUser> getMembersInfo(String roleId, String roomId);
 
@@ -152,6 +261,9 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code TeamRoom}
+	 * @throws
+	 * @see String
+	 * @see TeamRoom
 	 */
 	TeamRoom getOrExceptionById(String roomId);
 
@@ -161,6 +273,10 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param roomId 房间id
 	 * @param userId 用户id
 	 * @return {@code TimeLineData}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see TimeLineData
 	 */
 	TimeLineData getTimeLine(String roomId, String userId);
 
@@ -169,6 +285,9 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code ListRsp<TeamRoomRsp>}
+	 * @throws
+	 * @see ListQuery
+	 * @see ListRsp<TeamRoomRsp>
 	 */
 	ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery);
 }

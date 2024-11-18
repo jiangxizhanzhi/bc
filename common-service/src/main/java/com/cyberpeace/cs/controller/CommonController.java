@@ -38,7 +38,9 @@ import lombok.extern.slf4j.Slf4j;
  * 公共控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "公共服务接口")
 @RestController
@@ -49,23 +51,31 @@ public class CommonController {
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * Markdown上传名称长度
+	 *
+	 * @see String
 	 */
 	private String MD_UPLOAD_NAME_LEN;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -77,6 +87,9 @@ public class CommonController {
 	 *
 	 * @param fileCommonUploadReq 文件常见上传请求体
 	 * @return {@code BaseRsp<AttachmentBo> }
+	 * @throws
+	 * @see FileCommonUploadReq
+	 * @see BaseRsp<AttachmentBo>
 	 */
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
@@ -116,6 +129,9 @@ public class CommonController {
 	 *
 	 * @param fileCommonUploadReq 文件常见上传请求体
 	 * @return {@code BaseRsp<AttachmentBo> }
+	 * @throws
+	 * @see FileCommonUploadReq
+	 * @see BaseRsp<AttachmentBo>
 	 */
 	@ApiOperation("附件上传")
 	@PostMapping("/attachment_upload")
@@ -153,6 +169,9 @@ public class CommonController {
 	 *
 	 * @param adMdUploadReq 文件常见上传请求体
 	 * @return {@code BaseRsp<AttachmentBo>}
+	 * @throws
+	 * @see AdMdUploadReq
+	 * @see BaseRsp<AttachmentBo>
 	 */
 	@ApiOperation("竞赛md统一上传接口")
 	@PostMapping("/ad_upload")
@@ -177,6 +196,9 @@ public class CommonController {
 	 *
 	 * @param md Markdown
 	 * @return {@code BaseRsp<ExtractBase> }
+	 * @throws
+	 * @see MultipartFile
+	 * @see BaseRsp<ExtractBase>
 	 */
 	@ApiOperation("解析md压缩包")
 	@PostMapping("/parse/md")
@@ -224,6 +246,8 @@ public class CommonController {
 	 * 验证文件名称长度
 	 *
 	 * @param fileName 文件名称
+	 * @throws
+	 * @see String
 	 */
 	private void validateFileNameLen(String fileName) {
 		int fileNameLen = fileName == null ? 0 : fileName.length();
@@ -239,6 +263,8 @@ public class CommonController {
 	 * 获取git版本
 	 *
 	 * @return {@code BaseRsp<Map<String, String>> }
+	 * @throws
+	 * @see BaseRsp<Map<String, String>>
 	 */
 	@ApiOperation("获取git版本信息")
 	@GetMapping("/version")

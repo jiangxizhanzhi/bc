@@ -13,7 +13,10 @@ import java.util.List;
  * 评估指数裁判Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -24,6 +27,10 @@ public interface EvalIndexRefMapper extends BaseMapper<EvalIndexRef> {
      * @param recordId 记录id
      * @param level    水平
      * @return {@code List<EvalRecordResultIndexRsp> }
+     * @throws
+     * @see String
+     * @see Integer
+     * @see List<EvalRecordResultIndexRsp>
      */
     List<EvalRecordResultIndexRsp> selectResultIndexes(@Param("record_id")String recordId, @Param("level") Integer level);
 }

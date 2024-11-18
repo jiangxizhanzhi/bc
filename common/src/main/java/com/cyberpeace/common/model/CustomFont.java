@@ -8,7 +8,9 @@ import java.io.InputStream;
  * 自定义字体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class CustomFont {
 

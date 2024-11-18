@@ -15,7 +15,10 @@ import lombok.Data;
  * 业务模板查询
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see PageReqBase
+ * @since 1.0.0
  *//*
  * 后台使用的查询类
  */
@@ -25,24 +28,32 @@ public class BusinessTemplateQuery extends PageReqBase {
 
 	/**
 	 * 类型
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "业务类型ID")
 	private String type;
 
 	/**
 	 * 搜索
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "检索参数")
 	private String search;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称")
 	private String name;
 
 	/**
 	 * id列表
+	 *
+	 * @see List<String>
 	 */
 	private List<String> ids;
 

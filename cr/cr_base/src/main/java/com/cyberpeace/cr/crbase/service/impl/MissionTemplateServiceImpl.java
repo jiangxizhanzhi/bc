@@ -31,7 +31,11 @@ import lombok.extern.slf4j.Slf4j;
  * 任务模板Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see MissionTemplateService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -39,18 +43,24 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 
 	/**
 	 * 任务模板Mapper
+	 *
+	 * @see MissionTemplateMapper
 	 */
 	@Autowired
 	MissionTemplateMapper missionTemplateMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
 	/**
 	 * RTKS相关Service
+	 *
+	 * @see RtksRelatedService
 	 */
 	@Autowired
 	RtksRelatedService rtksRelatedService;
@@ -60,6 +70,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param schemeJson 方案 JSON
 	 * @return {@code List<MissionTemplate> }
+	 * @throws
+	 * @see String
+	 * @see List<MissionTemplate>
 	 */
 	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
@@ -75,6 +88,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param templateIds 模板id列表
 	 * @return {@code Map<String, MissionTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, MissionTemplate>
 	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingByIds(List<String> templateIds) {
@@ -90,6 +106,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param schemeJson 方案 JSON
 	 * @return {@code Map<String, MissionTemplate> }
+	 * @throws
+	 * @see String
+	 * @see Map<String, MissionTemplate>
 	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingBySchemeJson(String schemeJson) {
@@ -101,6 +120,8 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 * 批量插入
 	 *
 	 * @param missionTemplateList 任务模板列表
+	 * @throws
+	 * @see List<MissionTemplate>
 	 */
 	@Override
 	public void batchInsert(List<MissionTemplate> missionTemplateList) {
@@ -114,6 +135,8 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 * 批量删除
 	 *
 	 * @param missionTemplateIds 任务模板id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public void batchDelete(List<String> missionTemplateIds) {
@@ -136,6 +159,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @param missionTemplateIds 任务模板id列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public void batchUpdateBusinessTemplateId(String businessTemplateId,
@@ -151,6 +177,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param schemeJson 方案 JSON
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getIdsByMissionsSchemeJson(String schemeJson) {
@@ -164,6 +193,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param missionTemplateIds 任务模板id列表
 	 * @return {@code Map<String, MissionTemplateRes> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, MissionTemplateRes>
 	 */
 	@Override
 	public Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds) {
@@ -184,6 +216,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getIdsByBusinessTemplateId(String businessTemplateId) {
@@ -195,6 +230,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param schemeJsonList scheme JSON 列表
 	 * @return {@code Map<String, MissionTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, MissionTemplate>
 	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList) {
@@ -210,6 +248,9 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	 *
 	 * @param missionTemplateIds 任务模板id列表
 	 * @return {@code List<MissionTemplate> }
+	 * @throws
+	 * @see Collection<String>
+	 * @see List<MissionTemplate>
 	 */
 	@Override
 	public List<MissionTemplate> getBatchByIds(Collection<String> missionTemplateIds) {

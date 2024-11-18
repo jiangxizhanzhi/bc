@@ -14,12 +14,17 @@ import java.util.Properties;
  * config 实用程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see PropertyPlaceholderConfigurer
+ * @since 1.0.0
  */
 public class ConfigUtil extends PropertyPlaceholderConfigurer {
 
     /**
      * ctx 属性映射
+     *
+     * @see Map<String, String>
      */
     private static Map<String, String> ctxPropertiesMap;
 
@@ -28,6 +33,9 @@ public class ConfigUtil extends PropertyPlaceholderConfigurer {
      *
      * @param name
      * @return
+     * @throws
+     * @see String
+     * @see String
      */
     public static String getContextProperty(String name) {
         return ctxPropertiesMap.get(name);
@@ -38,6 +46,9 @@ public class ConfigUtil extends PropertyPlaceholderConfigurer {
      *
      * @param prefix key的前缀
      * @return 返回符合条件的所有属性，map的key为属性名、value为属性值
+     * @throws
+     * @see String
+     * @see Map<String, String>
      */
     public static Map<String, String> getSubPropertiesMap(String prefix) {
         Map<String, String> subMap = Maps.newHashMap();
@@ -56,7 +67,9 @@ public class ConfigUtil extends PropertyPlaceholderConfigurer {
      *
      * @param beanFactoryToProcess Bean Factory 到 Process
      * @param props                道具
-     * @throws BeansException bean 异常
+     * @throws @throws BeansException bean 异常
+     * @see ConfigurableListableBeanFactory
+     * @see Properties
      */
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess,

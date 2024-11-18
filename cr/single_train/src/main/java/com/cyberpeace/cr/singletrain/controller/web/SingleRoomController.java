@@ -51,7 +51,9 @@ import lombok.extern.slf4j.Slf4j;
  * 单房间控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "单兵训练")
@@ -62,24 +64,32 @@ public class SingleRoomController {
 
 	/**
 	 * 单房间Service
+	 *
+	 * @see SingleRoomService
 	 */
 	@Autowired
 	private SingleRoomService singleRoomService;
 
 	/**
 	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
 	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;

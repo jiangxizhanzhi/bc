@@ -9,31 +9,42 @@ import lombok.Getter;
  * auth 表
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 public class AuthTable extends BaseTable {
 
 	/**
 	 * 实操认证类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("授权操作类型 1=共享 2=自定义")
 	private Integer operationAuthType;
 
 	/**
 	 * 实操认证id列表
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("授权操作用户编号 ,为编号分割符")
 	private String operationAuthIds;
 
 	/**
 	 * 读取身份验证类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("授权访问类型 1=共享 2=自定义")
 	private Integer readAuthType;
 
 	/**
 	 * 读认证id列表
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("授权访问组织编号 ,为分割符")
 	private String readAuthIds;

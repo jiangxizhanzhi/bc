@@ -11,43 +11,57 @@ import lombok.Getter;
  * 任务统计
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class MissionsStatistic {
 
 	/**
 	 * 角色组
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "角色组")
 	private Integer roleGroup;
 
 	/**
 	 * 用户名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "用户名")
 	private String userName;
 
 	/**
 	 * 用户资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "用户id")
 	private String userResourceId;
 
 	/**
 	 * 释放任务计数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "下发任务数")
 	private Integer releaseMissionsCount;
 
 	/**
 	 * 方案任务计数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "任务总数")
 	private Integer schemeMissionsCount;
 
 	/**
 	 * 完成任务计数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "完成任务数")
 	private Integer completeMissionsCount;

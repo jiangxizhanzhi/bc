@@ -26,7 +26,11 @@ import java.util.List;
  * 评估任务步Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalTaskStepService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -34,12 +38,16 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 
 	/**
 	 * 评估任务步Mapper
+	 *
+	 * @see EvalTaskStepMapper
 	 */
 	@Autowired
 	private EvalTaskStepMapper evalTaskStepMapper;
 
 	/**
 	 * 评估任务Mapper
+	 *
+	 * @see EvalTaskMapper
 	 */
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
@@ -49,6 +57,9 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	 *
 	 * @param stepId 步id
 	 * @return {@code EvalTaskStep }
+	 * @throws
+	 * @see String
+	 * @see EvalTaskStep
 	 */
 	@Override
 	public EvalTaskStep getTaskStep(String stepId) {
@@ -69,6 +80,9 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	 *
 	 * @param evalTaskStep 评估任务步骤
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see EvalTaskStep
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean startStep(EvalTaskStep evalTaskStep) {
@@ -103,6 +117,9 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	 *
 	 * @param evalTaskStep 评估任务步骤
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see EvalTaskStep
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean stopStep(EvalTaskStep evalTaskStep) {
@@ -135,6 +152,9 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	 *
 	 * @param taskId 任务id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean removeByTaskId(String taskId) {
@@ -148,6 +168,9 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	 *
 	 * @param taskId 任务id
 	 * @return {@code List<EvalTaskStepContext> }
+	 * @throws
+	 * @see String
+	 * @see List<EvalTaskStepContext>
 	 */
 	@Override
 	public List<EvalTaskStepContext> getTaskSteps(String taskId) {
@@ -189,6 +212,9 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	 *
 	 * @param stepConfig 步骤配置
 	 * @return {@code List<EvalTaskStepContext> }
+	 * @throws
+	 * @see String
+	 * @see List<EvalTaskStepContext>
 	 */
 	@Override
 	public List<EvalTaskStepContext> getTemplateSteps(String stepConfig) {
@@ -212,6 +238,9 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	 *
 	 * @param taskId 任务id
 	 * @return {@code List<EvalTimeLineContext> }
+	 * @throws
+	 * @see String
+	 * @see List<EvalTimeLineContext>
 	 */
 	@Override
 	public List<EvalTimeLineContext> getFinishedSteps(String taskId) {

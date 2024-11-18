@@ -25,7 +25,9 @@ import java.util.List;
  * RB 统计控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗统计")
 @RestController
@@ -36,6 +38,8 @@ public class RbStatisticsController {
 
     /**
      * RB训练统计学
+     *
+     * @see RbStatisticsService
      */
     @Autowired
     RbStatisticsService RbTrainStatistics;
@@ -45,6 +49,8 @@ public class RbStatisticsController {
      * 获取都个人排
      *
      * @return {@code BaseRsp<List<RbPersonalStatisticsBo>> }
+     * @throws
+     * @see BaseRsp<List<RbPersonalStatisticsBo>>
      */
     @GetMapping("/personal_rank")
     @ApiOperation("红蓝对抗个人排名TOP5")
@@ -58,6 +64,8 @@ public class RbStatisticsController {
      * 获取组织排
      *
      * @return {@code BaseRsp<List<RbOrganizationStatisticsBo>> }
+     * @throws
+     * @see BaseRsp<List<RbOrganizationStatisticsBo>>
      */
     @GetMapping("/organization_rank")
     @ApiOperation("红蓝对抗组织排名TOP5")
@@ -73,6 +81,9 @@ public class RbStatisticsController {
      *
      * @param detailReq 详情请求体
      * @return {@code BaseRsp<ListRsp<RbStatisticsDetailBo>> }
+     * @throws
+     * @see RbStatisticsDetailReq
+     * @see BaseRsp<ListRsp<RbStatisticsDetailBo>>
      */
     @GetMapping("/detail")
     @ApiOperation("红蓝对抗统计详情")

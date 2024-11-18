@@ -17,7 +17,10 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionWithBT;
  * 任务模板映射器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -27,6 +30,8 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	 * 批量插入
 	 *
 	 * @param missionTemplates 任务模板
+	 * @throws
+	 * @see List<MissionTemplate>
 	 */
 	void batchInsert(@Param("missionTemplates") List<MissionTemplate> missionTemplates);
 
@@ -35,6 +40,9 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @param missionTemplateIds 任务模板id列表
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	void batchUpdateBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId,
 			@Param("missionTemplateIds") List<String> missionTemplateIds);
@@ -47,6 +55,12 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	 * @param difficulty 难度
 	 * @param pattern    模式
 	 * @return {@code IPage<MissionTemplateRes> }
+	 * @throws
+	 * @see Page
+	 * @see Integer
+	 * @see Integer
+	 * @see String
+	 * @see IPage<MissionTemplateRes>
 	 */
 	IPage<MissionTemplateRes> pageWithBusiness(@Param("page") Page page,
 			@Param("type") Integer type, @Param("difficulty") Integer difficulty,
@@ -57,6 +71,9 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	 *
 	 * @param missionTemplateIds 任务模板id列表
 	 * @return {@code List<MissionTemplateRes> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<MissionTemplateRes>
 	 */
 	List<MissionTemplateRes>
 			listWithBusiness(@Param("missionTemplateIds") List<String> missionTemplateIds);
@@ -66,6 +83,9 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	 *
 	 * @param missionTemplateIds 任务模板id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> validateIds(@Param("missionTemplateIds") List<String> missionTemplateIds);
 
@@ -74,6 +94,9 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	List<String> selectByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
 
@@ -82,6 +105,9 @@ public interface MissionTemplateMapper extends BaseMapper<MissionTemplate> {
 	 *
 	 * @param missionTemplateIds 任务模板id列表
 	 * @return {@code List<MissionWithBT> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<MissionWithBT>
 	 */
 	List<MissionWithBT>
 			batchGetWithBusiness(@Param("missionTemplateIds") List<String> missionTemplateIds);

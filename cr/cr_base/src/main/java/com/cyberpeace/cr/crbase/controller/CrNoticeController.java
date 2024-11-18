@@ -29,7 +29,9 @@ import java.util.List;
  * 靶场通知控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "公告")
 @RestController
@@ -39,6 +41,8 @@ public class CrNoticeController {
 
 	/**
 	 * 靶场通知Service
+	 *
+	 * @see CrNoticeService
 	 */
 	@Autowired
 	private CrNoticeService crNoticeService;
@@ -48,6 +52,9 @@ public class CrNoticeController {
 	 *
 	 * @param crNoticeReq 靶场通知请求体
 	 * @return {@code BaseRsp<CrNotice> }
+	 * @throws
+	 * @see CrNoticeReq
+	 * @see BaseRsp<CrNotice>
 	 */
 	@ApiOperation("新增")
 	@PostMapping()
@@ -64,6 +71,9 @@ public class CrNoticeController {
 	 *
 	 * @param crNoticeReq 靶场通知请求体
 	 * @return {@code BaseRsp<CrNotice> }
+	 * @throws
+	 * @see CrNoticeReq
+	 * @see BaseRsp<CrNotice>
 	 */
 	@ApiOperation("置顶取消置顶")
 	@PostMapping("/top")
@@ -82,6 +92,9 @@ public class CrNoticeController {
 	 *
 	 * @param crNoticeReq 靶场通知请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see CrNoticeReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("删除")
 	@PostMapping("/delete")
@@ -98,6 +111,9 @@ public class CrNoticeController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<List<CrNoticeRsp>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<CrNoticeRsp>>
 	 */
 	@ApiOperation("红蓝查询")
 	@GetMapping("/rb/list")
@@ -116,6 +132,10 @@ public class CrNoticeController {
 	 * @param resource_id 资源id
 	 * @param is_rb       是 RB
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("查询是否有新消息")
 	@GetMapping("/hasNewInfo")
@@ -135,6 +155,9 @@ public class CrNoticeController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<List<CrNoticeRsp>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<CrNoticeRsp>>
 	 */
 	@ApiOperation("团队查询")
 	@GetMapping("/teamList/list")

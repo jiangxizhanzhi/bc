@@ -48,7 +48,9 @@ import java.util.stream.Collectors;
  * EVAL 算法管理控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "后台-测试靶场-算法管理")
@@ -59,18 +61,24 @@ public class EvalAlgorithmAdminController {
 
 	/**
 	 * 评估算法Service
+	 *
+	 * @see EvalAlgorithmService
 	 */
 	@Autowired
 	private EvalAlgorithmService evalAlgorithmService;
 
 	/**
 	 * 评估算法Mapper
+	 *
+	 * @see EvalAlgorithmMapper
 	 */
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -80,6 +88,9 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param req
 	 * @return
+	 * @throws
+	 * @see EvalAlgorithmReq
+	 * @see BaseRsp<EvalAlgorithm>
 	 */
 	@PostMapping("")
 	@ApiOperation("新增算法")
@@ -98,6 +109,9 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param req 请求体
 	 * @return {@code EvalAlgorithm }
+	 * @throws
+	 * @see EvalAlgorithmReq
+	 * @see EvalAlgorithm
 	 */
 	private EvalAlgorithm convertEvalAlgorithmReqToEvalAlgorithm(EvalAlgorithmReq req) {
 
@@ -117,6 +131,8 @@ public class EvalAlgorithmAdminController {
 	 * 验证请求体
 	 *
 	 * @param req 请求体
+	 * @throws
+	 * @see EvalAlgorithmReq
 	 */
 	private void validateReq(EvalAlgorithmReq req) {
 		String resourceId = req.getEvalAlgorithmId();
@@ -148,6 +164,9 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param req
 	 * @return
+	 * @throws
+	 * @see EvalAlgorithmReq
+	 * @see BaseRsp<String>
 	 */
 	@PutMapping("")
 	@ApiOperation("编辑算法")
@@ -194,6 +213,8 @@ public class EvalAlgorithmAdminController {
 	 * 检查算法模式
 	 *
 	 * @param evalAlgorithmId 评估算法id
+	 * @throws
+	 * @see String
 	 */
 	private void checkAlgorithmMode(String evalAlgorithmId) {
 		LambdaQueryWrapper<EvalAlgorithm> queryWrapper =  new LambdaQueryWrapper<>();
@@ -211,6 +232,9 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param deleteReq
 	 * @return
+	 * @throws
+	 * @see BatchDeleteReq
+	 * @see BaseRsp
 	 */
 
 	@DeleteMapping("")
@@ -253,6 +277,9 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<EvalAlgorithmRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<EvalAlgorithmRsp>
 	 */
 	@ApiOperation("查询算法")
 	@GetMapping("")
@@ -280,6 +307,9 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param type 类型
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<EvalAlgorithmRsp>>
 	 */
 	@GetMapping("/type")
 	@ApiOperation("根据类型查询算法列表")
@@ -308,6 +338,8 @@ public class EvalAlgorithmAdminController {
 	 * 获取都
 	 *
 	 * @return {@code BaseRsp<List<EvalAlgorithmRsp>> }
+	 * @throws
+	 * @see BaseRsp<List<EvalAlgorithmRsp>>
 	 */
 	@ApiOperation("获取全部算法")
 	@GetMapping("/getAll")
@@ -337,6 +369,9 @@ public class EvalAlgorithmAdminController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<EvalAlgorithmRsp>> }
+	 * @throws
+	 * @see EvalAlgorithmListReq
+	 * @see BaseRsp<ListRsp<EvalAlgorithmRsp>>
 	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")

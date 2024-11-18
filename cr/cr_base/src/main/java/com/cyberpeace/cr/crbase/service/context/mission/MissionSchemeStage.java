@@ -14,19 +14,25 @@ import lombok.Data;
  * 任务编排阶段
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class MissionSchemeStage {
 
 	/**
 	 * 阶段
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "阶段名", required = true)
 	private String stage;
 
 	/**
 	 * 模板
+	 *
+	 * @see List<MissionSchemeMission>
 	 */
 	@ApiModelProperty(value = "任务列表", required = true)
 	private List<MissionSchemeMission> templates;
@@ -51,19 +57,25 @@ public class MissionSchemeStage {
  * 使命 计划 使命
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 class MissionSchemeMission {
 
 	/**
 	 * 标题
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务标题", required = true)
 	private String title;
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "任务描述", required = true)
 	private String description;

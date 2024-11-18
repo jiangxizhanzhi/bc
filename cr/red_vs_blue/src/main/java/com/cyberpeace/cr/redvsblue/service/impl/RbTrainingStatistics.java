@@ -23,19 +23,26 @@ import com.google.common.collect.Maps;
  * RB训练统计学
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see CrEventStatistics
+ * @since 1.0.0
  */
 @Service
 public class RbTrainingStatistics extends CrEventStatistics {
 
 	/**
 	 * 靶场角色Mapper
+	 *
+	 * @see CrRoleMapper
 	 */
 	@Autowired
 	CrRoleMapper crRoleMapper;
 
 	/**
 	 * RB房间Mapper
+	 *
+	 * @see RbRoomMapper
 	 */
 	@Autowired
 	RbRoomMapper rbRoomMapper;
@@ -44,6 +51,8 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	 * 获取代号
 	 *
 	 * @return {@code LocalScene.BusinessCode }
+	 * @throws
+	 * @see LocalScene.BusinessCode
 	 */
 	@Override
 	public LocalScene.BusinessCode getCode() {
@@ -55,6 +64,9 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	 *
 	 * @param userId 用户id
 	 * @return {@code TrainingCount }
+	 * @throws
+	 * @see String
+	 * @see TrainingCount
 	 */
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
@@ -71,6 +83,9 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<TrainingData> }
+	 * @throws
+	 * @see String
+	 * @see List<TrainingData>
 	 */
 	@Override
 	public List<TrainingData> getRelatedTraining(String userId) {
@@ -110,6 +125,9 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	 *
 	 * @param trainingStatus 训练状态
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
+	 * @see Integer
 	 */
 	private Integer getState(Integer trainingStatus) {
 		switch (trainingStatus) {

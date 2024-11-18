@@ -31,7 +31,11 @@ import java.util.stream.Collectors;
  * 工具类别Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see ToolCategoryService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -40,12 +44,16 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 
 	/**
 	 * 工具类别Mapper
+	 *
+	 * @see ToolCategoryMapper
 	 */
 	@Autowired
 	private ToolCategoryMapper toolCategoryMapper;
 
 	/**
 	 * 工具Mapper
+	 *
+	 * @see ToolMapper
 	 */
 	@Autowired
 	private ToolMapper toolMapper;
@@ -55,6 +63,9 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code ListRsp<ToolCategory> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see ListRsp<ToolCategory>
 	 */
 	@Override
 	public ListRsp<ToolCategory> selectPage(PageReqBase listReq) {
@@ -67,6 +78,8 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 * 查询都
 	 *
 	 * @return {@code List<ToolCategory> }
+	 * @throws
+	 * @see List<ToolCategory>
 	 */
 	@Override
 	@Cacheable
@@ -78,6 +91,8 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 * Web查询都
 	 *
 	 * @return {@code List<WebToolCategoryRsp> }
+	 * @throws
+	 * @see List<WebToolCategoryRsp>
 	 */
 	public List<WebToolCategoryRsp> webSelectAll() {
 		List<ToolCategory> toolCategories = selectAll();
@@ -93,6 +108,9 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 *
 	 * @param name 名称
 	 * @return {@code ToolCategory }
+	 * @throws
+	 * @see String
+	 * @see ToolCategory
 	 */
 	@Override
 	@Cacheable(key = "#p0")
@@ -106,6 +124,9 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 *
 	 * @param name 名称
 	 * @return {@code ToolCategory }
+	 * @throws
+	 * @see String
+	 * @see ToolCategory
 	 */
 	@Override
 	@CacheEvict(allEntries = true)
@@ -123,6 +144,8 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 * 批量删除
 	 *
 	 * @param resourceIds 资源id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	@CacheEvict(allEntries = true)
@@ -142,6 +165,8 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 * 验证工具类别名称存在
 	 *
 	 * @param toolCategory 工具类别
+	 * @throws
+	 * @see ToolCategory
 	 */
 	@Override
 	public void validateToolCategoryNameExist(ToolCategory toolCategory) {
@@ -163,6 +188,8 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 * 保存工具类别
 	 *
 	 * @param toolCategory 工具类别
+	 * @throws
+	 * @see ToolCategory
 	 */
 	@Override
 	@CacheEvict(allEntries = true)
@@ -174,6 +201,8 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	 * 更新工具类别由id
 	 *
 	 * @param toolCategory 工具类别
+	 * @throws
+	 * @see ToolCategory
 	 */
 	@Override
 	@CacheEvict(allEntries = true)

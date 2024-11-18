@@ -12,22 +12,48 @@ import org.apache.commons.lang3.StringUtils;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.google.common.collect.Lists;
 
+/**
+ * local string util （本地字符串 util）
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
+ */
 public class LocalStringUtil {
 
+	/**
+	 * local string util （本地字符串 util）
+	 *
+	 * @throws
+	 */
 	private LocalStringUtil() {}
 
-    /**
-     * 前后增加换行符
-     * @param value
-     * @return
-     */
-    public static String frontBackLine(String value) {
+	/**
+	 * 前后增加换行符
+	 *
+	 * @param value
+	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
+	public static String frontBackLine(String value) {
         if (StringUtils.isBlank(value)) {
             value = CommonConstant.EMPTY_STRING;
         }
         return System.lineSeparator() + value + System.lineSeparator();
     }
 
+	/**
+	 * 蛇形大小写格式
+	 *
+	 * @param name 名称
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	public static String snakeCaseFormat(String name) {
 		final StringBuilder result = new StringBuilder();
 
@@ -72,15 +98,44 @@ public class LocalStringUtil {
 		return result.toString();
 	}
 
+	/**
+	 * str 到 list
+	 *
+	 * @param data 数据
+	 * @return {@code List<Integer> }
+	 * @throws
+	 * @see String
+	 * @see List<Integer>
+	 */
 	public static List<Integer> strToList(String data) {
 		return Arrays.stream(StringUtils.split(data, ',')).map(Integer::parseInt)
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * str 列出 str
+	 *
+	 * @param data 数据
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 */
 	public static List<String> strToListStr(String data) {
 		return Arrays.stream(StringUtils.split(data, ',')).collect(Collectors.toList());
 	}
 
+	/**
+	 * str remove sub str
+	 *
+	 * @param ids  id列表
+	 * @param data 数据
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 */
 	public static String strRemoveSubStr(String ids, String data) {
 		List<String> strings = JsonUtil.toJsonObjectArray(ids, String.class);
 
@@ -92,9 +147,14 @@ public class LocalStringUtil {
 
 	/**
 	 * 根据正则表达是获取内容中的匹配数据
+	 *
 	 * @param content
-	 * @param regex 正则表达式
+	 * @param regex   正则表达式
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
 	 */
 	public static List<String> getMatchStr(String content, String regex) {
 
@@ -110,9 +170,14 @@ public class LocalStringUtil {
 
 	/**
 	 * 根据正则表达是获取内容中url的匹配数据
+	 *
 	 * @param content
-	 * @param regex 正则表达式集合
+	 * @param regex   正则表达式集合
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
 	 */
 	public static List<String> getMatchUrlStr(String content, String regex) {
 
@@ -128,10 +193,16 @@ public class LocalStringUtil {
 
 	/**
 	 * 根据正则表达是获取内容中的匹配数据
+	 *
 	 * @param content 内容
-	 * @param regex 正则表达式
-	 * @param index 子匹配序号
+	 * @param regex   正则表达式
+	 * @param index   子匹配序号
 	 * @return 匹配到的字符串列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
 	 */
 	public static List<String> getMatchStr(String content, String regex, Integer index) {
 
@@ -145,6 +216,17 @@ public class LocalStringUtil {
 		return strList;
 	}
 
+	/**
+	 * 获取火柴str布尔
+	 *
+	 * @param content 内容
+	 * @param regex   正则表达式
+	 * @return boolean
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see boolean
+	 */
 	public static boolean getMatchStrBool(String content, String regex) {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(content);
@@ -153,9 +235,14 @@ public class LocalStringUtil {
 
 	/**
 	 * 根据正则表达是获取内容中的匹配数据 仅匹配一个
+	 *
 	 * @param content
 	 * @param regex
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public static String getFirstMatchStr(String content, String regex) {
 
@@ -169,10 +256,16 @@ public class LocalStringUtil {
 
 	/**
 	 * 根据正则表达是获取内容中的匹配数据 仅匹配一个
+	 *
 	 * @param content
 	 * @param regex
-	 * @param index 子匹配序号
+	 * @param index   子匹配序号
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see String
 	 */
 	public static String getFirstMatchStr(String content, String regex, Integer index) {
 
@@ -183,12 +276,19 @@ public class LocalStringUtil {
 		}
 		return matchStr.get(CommonConstant.ZERO).trim();
 	}
+
 	/**
 	 * 根据正则表达是获取内容中的匹配数据 匹配全部
+	 *
 	 * @param content
 	 * @param regex
-	 * @param index 子匹配序号
+	 * @param index   子匹配序号
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see List<String>
 	 */
 	public static List<String> getAllMatchStr(String content, String regex, Integer index) {
 
@@ -197,12 +297,19 @@ public class LocalStringUtil {
 
 		return matchStr;
 	}
+
 	/**
 	 * 数据替换
+	 *
 	 * @param content
 	 * @param old
 	 * @param newValue
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<String>
+	 * @see String
 	 */
 	public static String replaceAll(String content, List<String> old, List<String> newValue) {
 
@@ -225,8 +332,12 @@ public class LocalStringUtil {
 
 	/**
 	 * 获取随机长度字符串
+	 *
 	 * @param length
 	 * @return
+	 * @throws
+	 * @see int
+	 * @see String
 	 */
 	public static String getRandomStr(int length) {
 		String randomStr = IDGeneratorUtil.getID();
@@ -237,6 +348,17 @@ public class LocalStringUtil {
 		return randomStr + getRandomStr(length - randomStr.length());
 	}
 
+	/**
+	 * 替换为空白
+	 *
+	 * @param content  内容
+	 * @param matchStr 匹配力量
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see String
+	 */
 	public static String replaceToBlank(String content, List<String> matchStr) {
 		if (StringUtils.isBlank(content) || CollectionUtils.isEmpty(matchStr)) {
 			return content;
@@ -249,6 +371,15 @@ public class LocalStringUtil {
 		return content;
 	}
 
+	/**
+	 * 转移
+	 *
+	 * @param search 搜索
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	public static String transfer(String search) {
 		String newPattern = search;
 

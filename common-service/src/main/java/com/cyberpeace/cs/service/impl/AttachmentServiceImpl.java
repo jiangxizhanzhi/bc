@@ -30,7 +30,11 @@ import lombok.extern.slf4j.Slf4j;
  * 附件Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see AttachmentService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -38,12 +42,16 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 
 	/**
 	 * 附件映射器
+	 *
+	 * @see AttachmentMapper
 	 */
 	@Autowired
 	private AttachmentMapper attachmentMapper;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
@@ -54,6 +62,10 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @param attachmentIds 附件id列表
 	 * @param isWeb         是 Web
 	 * @return {@code List<AttachmentBo> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<AttachmentBo>
 	 */
 	@Override
 	public List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb) {
@@ -77,6 +89,9 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 *
 	 * @param attachmentIds 附件id列表
 	 * @return {@code List<Attachment> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<Attachment>
 	 */
 	@Override
 	public List<Attachment> batchGetByIds(List<String> attachmentIds) {
@@ -93,6 +108,10 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @param filename 文件名
 	 * @param filePath 文件路径
 	 * @return {@code AttachmentBo }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AttachmentBo
 	 */
 	@Override
 	public AttachmentBo create(String filename, String filePath) {
@@ -115,6 +134,12 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @param insertDb   插入 DB
 	 * @param renameFile 重命名文件
 	 * @return {@code AttachmentBo }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see Boolean
+	 * @see Boolean
+	 * @see AttachmentBo
 	 */
 	@Override
 	public AttachmentBo copyFile(String originPath, Integer type, Boolean insertDb,
@@ -172,6 +197,12 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @param file       文件
 	 * @param renameFile 重命名文件
 	 * @return {@code AttachmentBo }
+	 * @throws
+	 * @see Integer
+	 * @see Boolean
+	 * @see MultipartFile
+	 * @see Boolean
+	 * @see AttachmentBo
 	 */
 	@Override
 	public AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file,
@@ -186,6 +217,11 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @param insert  插入
 	 * @param file    文件
 	 * @return {@code AttachmentBo }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see MultipartFile
+	 * @see AttachmentBo
 	 */
 	@Override
 	public AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file) {
@@ -225,6 +261,9 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 *
 	 * @param fileName
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public String reFileName(String fileName) {
 		String afterFix = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -236,6 +275,9 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 *
 	 * @param attachmentPaths 连接路径
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> batchInsert(List<String> attachmentPaths) {
@@ -257,6 +299,11 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @param fileName 文件名称
 	 * @param imageDir 图像目录
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean loadImage(String imageId, String fileName, String imageDir) {
@@ -278,6 +325,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * 加载 ZiGuan 图片
 	 *
 	 * @param images 图像
+	 * @throws
+	 * @see Map<String, String>
 	 */
 	@Override
 	public void loadZiguanImages(Map<String, String> images) {
@@ -303,6 +352,12 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @param insertDb   插入 DB
 	 * @param renameFile 重命名文件
 	 * @return {@code AttachmentBo }
+	 * @throws
+	 * @see MultipartFile
+	 * @see Integer
+	 * @see Boolean
+	 * @see Boolean
+	 * @see AttachmentBo
 	 */
 	private AttachmentBo uploadFile(MultipartFile file, Integer type, Boolean insertDb,
 			Boolean renameFile) {
@@ -349,6 +404,11 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 * @param filePath 文件路径
 	 * @param idIsName 文件名和id是否一致
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see AttachmentBo
 	 */
 	private AttachmentBo create(String filename, String filePath, Boolean idIsName) {
 		if (idIsName == null || !idIsName) {
@@ -371,6 +431,9 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	 *
 	 * @param attachmentId 附件id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean isExist(String attachmentId) {

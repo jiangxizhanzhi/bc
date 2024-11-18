@@ -14,48 +14,66 @@ import lombok.Data;
  * 时间数据
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class TimeData {
 
 	/**
 	 * 状态
+	 *
+	 * @see Integer
 	 */
 	private Integer status;
 
 	/**
 	 * 开始时间
+	 *
+	 * @see Date
 	 */
 	private Date startTime;
 
 	/**
 	 * 结束时间
+	 *
+	 * @see Date
 	 */
 	private Date endTime;
 
 	/**
 	 * x 最大时间
+	 *
+	 * @see Date
 	 */
 	private Date xMaxTime;
 
 	/**
 	 * X 数据
+	 *
+	 * @see List<String>
 	 */
 	private List<String> xData;
 
 	/**
 	 * 时间列表
+	 *
+	 * @see List<Date>
 	 */
 	private List<Date> timeList;
 
 	/**
 	 * 运行
+	 *
+	 * @see Integer
 	 */
 	private Integer running;
 
 	/**
 	 * 积累值
+	 *
+	 * @see Integer
 	 */
 	private Integer accumulatedValue;
 

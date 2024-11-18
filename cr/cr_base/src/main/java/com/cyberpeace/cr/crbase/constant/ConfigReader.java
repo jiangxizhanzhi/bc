@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
  * 配置读取器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 class ConfigReader {

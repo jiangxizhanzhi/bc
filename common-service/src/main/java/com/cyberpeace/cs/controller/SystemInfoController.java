@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
  * 系统信息控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "系统信息服务接口")
 @RestController
@@ -27,6 +29,8 @@ public class SystemInfoController {
 
 	/**
 	 * 系统用状态Service
+	 *
+	 * @see SystemUseStatusService
 	 */
 	@Autowired
 	private SystemUseStatusService systemUseStatusService;
@@ -35,6 +39,8 @@ public class SystemInfoController {
 	 * 应用运行信息
 	 *
 	 * @return {@code BaseRsp<SystemUseStatusRes> }
+	 * @throws
+	 * @see BaseRsp<SystemUseStatusRes>
 	 */
 	@ApiOperation("靶场应用运行图")
 	@GetMapping("/app_running_info")

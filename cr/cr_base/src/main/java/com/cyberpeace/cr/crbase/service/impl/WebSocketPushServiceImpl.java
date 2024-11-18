@@ -18,12 +18,17 @@ import java.util.List;
  * WebSocket推送Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see WebSocketPushService
+ * @since 1.0.0
  */
 @Service
 public class WebSocketPushServiceImpl implements WebSocketPushService {
     /**
      * Web 套接字处理程序
+     *
+     * @see MyWebSocketHandler
      */
     @Autowired
     private MyWebSocketHandler webSocketHandler;
@@ -35,6 +40,11 @@ public class WebSocketPushServiceImpl implements WebSocketPushService {
      * @param code       代号
      * @param businessId 业务id
      * @param url        网址
+     * @throws
+     * @see List<String>
+     * @see Integer
+     * @see String
+     * @see String
      */
     @Override
     public void notice(List<String> userList, Integer code,String businessId,String url) {
@@ -48,6 +58,11 @@ public class WebSocketPushServiceImpl implements WebSocketPushService {
      * @param businessId 业务id
      * @param userIds    用户id列表
      * @param url        网址
+     * @throws
+     * @see T
+     * @see String
+     * @see List<String>
+     * @see String
      */
     private <T> void sendWsData(T data, String businessId,List<String> userIds,String url) {
         MissionWsIdentifier identifier = new MissionWsIdentifier();

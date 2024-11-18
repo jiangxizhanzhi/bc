@@ -13,20 +13,28 @@ import lombok.Data;
  * RB场景视图上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see SceneViewContext
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class RbSceneViewContext extends SceneViewContext implements Serializable {
 
-	/**
-	 * RED 角色
-	 */
-	@ApiModelProperty(value = "红方角色")
+    /**
+     * RED 角色
+     *
+     * @see List<CrRoleConfig>
+     */
+    @ApiModelProperty(value = "红方角色")
 	private List<CrRoleConfig> redRoles;
 
-	/**
-	 * 蓝色角色
-	 */
-	@ApiModelProperty(value = "蓝方角色")
+    /**
+     * 蓝色角色
+     *
+     * @see List<CrRoleConfig>
+     */
+    @ApiModelProperty(value = "蓝方角色")
 	private List<CrRoleConfig> blueRoles;
 }

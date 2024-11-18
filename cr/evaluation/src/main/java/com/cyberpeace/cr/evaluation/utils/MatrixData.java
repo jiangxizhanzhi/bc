@@ -12,7 +12,9 @@ import java.util.Iterator;
  * 矩阵数据
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class MatrixData {
 
@@ -21,6 +23,9 @@ public class MatrixData {
      *
      * @param matrixData 矩阵数据
      * @return {@code double [][] }
+     * @throws
+     * @see String
+     * @see double [][]
      */
     public static double [][] getFormatMatrixData(String matrixData){
         JSONArray objects = JSONArray.parseArray(matrixData);

@@ -13,7 +13,10 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
  * 附件Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see IService
+ * @since 1.0.0
  */
 public interface AttachmentService extends IService<Attachment> {
 
@@ -23,6 +26,10 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @param attachmentIds
 	 * @param isWeb
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<AttachmentBo>
 	 */
 	List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb);
 
@@ -31,6 +38,9 @@ public interface AttachmentService extends IService<Attachment> {
 	 *
 	 * @param attachmentIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<Attachment>
 	 */
 	List<Attachment> batchGetByIds(List<String> attachmentIds);
 
@@ -40,6 +50,10 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @param filename
 	 * @param filePath
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AttachmentBo
 	 */
 	AttachmentBo create(String filename, String filePath);
 
@@ -51,6 +65,12 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @param file
 	 * @param renameFile
 	 * @return
+	 * @throws
+	 * @see Integer
+	 * @see Boolean
+	 * @see MultipartFile
+	 * @see Boolean
+	 * @see AttachmentBo
 	 */
 	AttachmentBo uploadFile(Integer type, Boolean insert, MultipartFile file, Boolean renameFile);
 
@@ -61,6 +81,11 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @param insert  是否插入数据库
 	 * @param file    上传的源文件
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see MultipartFile
+	 * @see AttachmentBo
 	 */
 	AttachmentBo uploadDest(String destDir, boolean insert, MultipartFile file);
 
@@ -72,6 +97,12 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @param insert     true表示记录写入数据库
 	 * @param renameFile true表示会对文件重命名
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see Boolean
+	 * @see Boolean
+	 * @see AttachmentBo
 	 */
 	AttachmentBo copyFile(String originPath, Integer type, Boolean insert, Boolean renameFile);
 
@@ -80,6 +111,9 @@ public interface AttachmentService extends IService<Attachment> {
 	 *
 	 * @param attachmentPaths
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> batchInsert(List<String> attachmentPaths);
 
@@ -90,6 +124,11 @@ public interface AttachmentService extends IService<Attachment> {
 	 * @param fileName 文件名称
 	 * @param imageDir 图像目录
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean loadImage(String imageId, String fileName, String imageDir);
 
@@ -97,6 +136,8 @@ public interface AttachmentService extends IService<Attachment> {
 	 * 资管平台导入时，图片附件插入数据库
 	 *
 	 * @param images 图像
+	 * @throws
+	 * @see Map<String, String>
 	 */
 	void loadZiguanImages(Map<String, String> images);
 
@@ -105,6 +146,9 @@ public interface AttachmentService extends IService<Attachment> {
 	 *
 	 * @param attachmentId 附件id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean isExist(String attachmentId);
 

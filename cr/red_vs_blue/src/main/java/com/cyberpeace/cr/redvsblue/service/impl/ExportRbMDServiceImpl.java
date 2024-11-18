@@ -34,31 +34,42 @@ import java.util.stream.Collectors;
  * 导出RBmd服务实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ExportTrainMDServiceImpl
+ * @since 1.0.0
  */
 @Service
 public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 
 	/**
 	 * RB模板Mapper
+	 *
+	 * @see RbTemplateMapper
 	 */
 	@Autowired
 	private RbTemplateMapper rbTemplateMapper;
 
 	/**
 	 * 任务模板Service
+	 *
+	 * @see MissionTemplateService
 	 */
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
 	/**
 	 * 靶场常数Service
+	 *
+	 * @see CrConstantsService
 	 */
 	@Autowired
 	private CrConstantsService crConstantsService;
 
 	/**
 	 * 日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
@@ -66,6 +77,8 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 	 * 获取代号
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer getCode(){
@@ -78,7 +91,12 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 	 * @param businessTemplateList 业务模板列表
 	 * @param path                 路径
 	 * @param sceneNumber          场景数
-	 * @param disableImageExport
+	 * @param disableImageExport   禁用图像导出
+	 * @throws
+	 * @see List<BusinessTemplate>
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {

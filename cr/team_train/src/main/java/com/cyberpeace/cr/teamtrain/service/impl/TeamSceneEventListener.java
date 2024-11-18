@@ -27,61 +27,81 @@ import lombok.extern.slf4j.Slf4j;
  * 团队场景事件听者
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MessageListener
+ * @since 1.0.0
  */
 @Slf4j
 @Service
 public class TeamSceneEventListener extends MessageListener {
 
-	/**
-	 * 我 Web 套接字处理程序
-	 */
-	@Autowired
+    /**
+     * 我的ws处理程序
+     *
+     * @see MyWebSocketHandler
+     */
+    @Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
-	/**
-	 * 团队房间Service
-	 */
-	@Autowired
+    /**
+     * 团队房间Service
+     *
+     * @see TeamRoomService
+     */
+    @Autowired
 	private TeamRoomService teamRoomService;
 
-	/**
-	 * 团队场景Service
-	 */
-	@Autowired
+    /**
+     * 团队场景Service
+     *
+     * @see TeamSceneService
+     */
+    @Autowired
 	private TeamSceneService teamSceneService;
 
-	/**
-	 * 靶场角色Service
-	 */
-	@Autowired
+    /**
+     * 靶场角色Service
+     *
+     * @see CrRoleService
+     */
+    @Autowired
 	private CrRoleService crRoleService;
 
-	/**
-	 * 靶场事件听者助手
-	 */
-	@Autowired
+    /**
+     * 靶场事件听者助手
+     *
+     * @see CrEventListenerHelper
+     */
+    @Autowired
 	private CrEventListenerHelper crEventListenerHelper;
 
-	/**
-	 * 声明消息类型
-	 *
-	 * @return {@code Integer }
-	 */
-	@Override
+    /**
+     * 声明消息类型
+     *
+     * @return {@code Integer }
+     * @throws
+     * @see Integer
+     */
+    @Override
 	public Integer declareMessageType() {
 		return LocalScene.BusinessCode.TEAM_TRAINING.getCode();
 	}
 
-	/**
-	 * 上场景删除
-	 *
-	 * @param data       数据
-	 * @param businessId 业务id
-	 * @param context    上下文
-	 * @return {@code Boolean }
-	 */
-	@Override
+    /**
+     * 上场景删除
+     *
+     * @param data       数据
+     * @param businessId 业务id
+     * @param context    上下文
+     * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see String
+     * @see MqContext
+     * @see Boolean
+     */
+    @Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
 		TeamRoom room = teamRoomService.getById(businessId);
 
@@ -90,30 +110,40 @@ public class TeamSceneEventListener extends MessageListener {
 		return true;
 	}
 
-	/**
-	 * 上场景开始过程
-	 *
-	 * @param data       数据
-	 * @param businessId 业务id
-	 * @param context    上下文
-	 * @return {@code Boolean }
-	 */
-	@Override
+    /**
+     * 上场景开始过程
+     *
+     * @param data       数据
+     * @param businessId 业务id
+     * @param context    上下文
+     * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see String
+     * @see MqContext
+     * @see Boolean
+     */
+    @Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
 
 		return true;
 	}
 
-	/**
-	 * 上场景元素
-	 *
-	 * @param data       数据
-	 * @param businessId 业务id
-	 * @param context    上下文
-	 * @return {@code Boolean }
-	 */
-	@Override
+    /**
+     * 上场景元素
+     *
+     * @param data       数据
+     * @param businessId 业务id
+     * @param context    上下文
+     * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see String
+     * @see MqContext
+     * @see Boolean
+     */
+    @Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		// get roles
 		List<CrRole> roles = crRoleService.getRolesByRoom(businessId,
@@ -137,26 +167,33 @@ public class TeamSceneEventListener extends MessageListener {
 		return true;
 	}
 
-	/**
-	 * 场景消息统一推送
-	 *
-	 * @param data
-	 * @param businessId 业务id
-	 */
-	private void pushDataToWeb(String data, String businessId) {
+    /**
+     * 场景消息统一推送
+     *
+     * @param data
+     * @param businessId 业务id
+     * @throws
+     * @see String
+     * @see String
+     */
+    private void pushDataToWeb(String data, String businessId) {
 		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
 				businessId);
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
-	/**
-	 * 推送消息给某个角色的所有用户
-	 *
-	 * @param data       数据
-	 * @param businessId 业务id
-	 * @param userIds    用户id列表
-	 */
-	private void pushDataToWebByUserIds(String data, String businessId, List<String> userIds) {
+    /**
+     * 推送消息给某个角色的所有用户
+     *
+     * @param data       数据
+     * @param businessId 业务id
+     * @param userIds    用户id列表
+     * @throws
+     * @see String
+     * @see String
+     * @see List<String>
+     */
+    private void pushDataToWebByUserIds(String data, String businessId, List<String> userIds) {
 		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
 				businessId);
 		myWebSocketHandler.pushMessageToUsers(messageContext, userIds);

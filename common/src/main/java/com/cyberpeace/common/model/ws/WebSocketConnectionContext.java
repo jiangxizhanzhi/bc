@@ -13,7 +13,10 @@ import lombok.NoArgsConstructor;
  * websocket连接需要的上下文
  *
  * @author yinqingrong
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see WsMessageIdentifier
+ * @since 1.0.0
  */
 @Data
 @AllArgsConstructor
@@ -23,6 +26,8 @@ public class WebSocketConnectionContext extends WsMessageIdentifier {
 
 	/**
 	 * 建立连接时的原始请求信息
+	 *
+	 * @see Map<String, String>
 	 */
 	private Map<String, String> originParams = Maps.newTreeMap();
 

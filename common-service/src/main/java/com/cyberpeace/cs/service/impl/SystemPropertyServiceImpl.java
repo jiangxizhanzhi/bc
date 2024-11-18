@@ -11,13 +11,19 @@ import org.springframework.stereotype.Service;
  * 系统配置Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see SystemPropertyService
+ * @since 1.0.0
  */
 @Service
 public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper, SystemProperty> implements SystemPropertyService {
 
 	/**
 	 * 系统属性映射器
+	 *
+	 * @see SystemPropertyMapper
 	 */
 	@Autowired
 	private SystemPropertyMapper systemPropertyMapper;
@@ -26,6 +32,8 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 	 * 获取导出内置
 	 *
 	 * @return boolean
+	 * @throws
+	 * @see boolean
 	 */
 	@Override
 	public boolean getExportBuiltin() {

@@ -37,7 +37,9 @@ import lombok.extern.slf4j.Slf4j;
  * EVAL 系统控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "前台-测试靶场-获取树形指标体系")
 @RestController
@@ -48,24 +50,32 @@ public class EvalSystemController {
 
 	/**
 	 * 评估指数Service
+	 *
+	 * @see EvalIndexService
 	 */
 	@Autowired
 	private EvalIndexService evalIndexService;
 
 	/**
 	 * 评估收集Mapper
+	 *
+	 * @see EvalCollectionMapper
 	 */
 	@Autowired
 	private EvalCollectionMapper evalCollectionMapper;
 
 	/**
 	 * 评估指示器Service
+	 *
+	 * @see EvalIndicatorService
 	 */
 	@Autowired
 	private EvalIndicatorService evalIndicatorService;
 
 	/**
 	 * 评估系统Service
+	 *
+	 * @see EvalSystemService
 	 */
 	@Autowired
 	private EvalSystemService evalSystemService;
@@ -75,6 +85,9 @@ public class EvalSystemController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<EvalSystemTreeRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<EvalSystemTreeRsp>
 	 */
 	@ApiOperation("查询体系指标")
 	@GetMapping("")
@@ -96,6 +109,9 @@ public class EvalSystemController {
 	 *
 	 * @param evalSystem 评估系统
 	 * @return {@code EvalSystemTreeRsp }
+	 * @throws
+	 * @see EvalSystem
+	 * @see EvalSystemTreeRsp
 	 */
 	private EvalSystemTreeRsp convertEvalSystemToEvalSystemTreeRsp(EvalSystem evalSystem) {
 		EvalSystemRsp evalSystemRsp = BeanUtils.copy(evalSystem, EvalSystemRsp.class);
@@ -169,6 +185,10 @@ public class EvalSystemController {
 	 * @param ids                  id列表
 	 * @param evalSystemTreeRspMap 评估系统树响应地图
 	 * @return {@code List<EvalSystemTreeRsp> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, EvalSystemTreeRsp>
+	 * @see List<EvalSystemTreeRsp>
 	 */
 	private List<EvalSystemTreeRsp> getChildrens(List<String> ids,
 			Map<String, EvalSystemTreeRsp> evalSystemTreeRspMap) {
@@ -186,6 +206,10 @@ public class EvalSystemController {
 	 * @param secondIndexes 第二个索引
 	 * @param thirdIndexes  第三索引
 	 * @return {@code Map<String, EvalSystemTreeRsp> }
+	 * @throws
+	 * @see List<IndexContext>
+	 * @see List<IndexContext>
+	 * @see Map<String, EvalSystemTreeRsp>
 	 */
 	private Map<String, EvalSystemTreeRsp> getMapByIndex(List<IndexContext> secondIndexes,
 			List<IndexContext> thirdIndexes) {
@@ -211,6 +235,10 @@ public class EvalSystemController {
 	 * @param indexContext 索引上下文
 	 * @param code         代号
 	 * @return {@code EvalSystemTreeRsp }
+	 * @throws
+	 * @see IndexContext
+	 * @see Integer
+	 * @see EvalSystemTreeRsp
 	 */
 	private EvalSystemTreeRsp convertIndexToEvalSystemTreeRsp(IndexContext indexContext,
 			Integer code) {

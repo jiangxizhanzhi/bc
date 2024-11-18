@@ -15,7 +15,10 @@ import java.util.List;
  * 工具类别Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -27,6 +30,10 @@ public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 	 * @param page    分页
 	 * @param pattern 模式
 	 * @return {@code IPage<ToolCategory> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see IPage<ToolCategory>
 	 */
 	IPage<ToolCategory> list(Page page, @Param("pattern") String pattern);
 
@@ -35,6 +42,9 @@ public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 	 *
 	 * @param ids id列表
 	 * @return {@code List<ToolCategory> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<ToolCategory>
 	 */
 	List<ToolCategory> selectByResourceIds(@NotEmpty @Param("ids") List<String> ids);
 
@@ -43,6 +53,9 @@ public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 	 *
 	 * @param ids id列表
 	 * @return {@code List<ToolCategory> }
+	 * @throws
+	 * @see List<Integer>
+	 * @see List<ToolCategory>
 	 */
 	List<ToolCategory> selectByIds(@NotEmpty @Param("ids") List<Integer> ids);
 
@@ -52,6 +65,10 @@ public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 	 * @param name       名称
 	 * @param resourceId 资源id
 	 * @return {@code ToolCategory }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ToolCategory
 	 */
 	ToolCategory getByCnName(@NotEmpty @Param("name") String name, @Param("resourceId") String resourceId);
 
@@ -61,6 +78,10 @@ public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 	 * @param enName     中文名称
 	 * @param resourceId 资源id
 	 * @return {@code ToolCategory }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ToolCategory
 	 */
 	ToolCategory getByEnName(@Param("enName") String enName, @Param("resourceId") String resourceId);
 }

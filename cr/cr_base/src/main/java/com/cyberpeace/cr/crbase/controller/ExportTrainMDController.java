@@ -28,7 +28,9 @@ import java.util.List;
  * 导出训练md控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "训练资管导出")
 @RestController
@@ -37,6 +39,8 @@ public class ExportTrainMDController {
 
 	/**
 	 * 导出训练md服务
+	 *
+	 * @see ExportTrainMDService
 	 */
 	@Qualifier("exportTrainMDServiceImpl")
 	@Autowired
@@ -44,6 +48,8 @@ public class ExportTrainMDController {
 
 	/**
 	 * 日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
@@ -55,6 +61,12 @@ public class ExportTrainMDController {
 	 * @param sceneNumber        场景数
 	 * @param disableImageExport 禁用图像导出
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("训练资管导出")
 	@GetMapping("/train")

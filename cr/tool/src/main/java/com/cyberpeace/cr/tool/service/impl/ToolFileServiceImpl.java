@@ -26,28 +26,40 @@ import org.springframework.web.multipart.MultipartFile;
  * 工具文件Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see ToolFileService
+ * @since 1.0.0
  */
 @Service
 public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> implements ToolFileService {
 
 	/**
 	 * 日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
 	/**
 	 * 保存路径
+	 *
+	 * @see String
 	 */
 	private final String savePath = "tool"+ File.separator + "tool" + File.separator;
 
 	/**
 	 * 上传路径
+	 *
+	 * @see String
 	 */
 	private String uploadPath;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -62,6 +74,10 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 	 * @param filePath     文件路径
 	 * @param transferName 转移名称
 	 * @return {@code ToolFile }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see ToolFile
 	 */
 	@Override
 	public ToolFile saveFile(String filePath, boolean transferName) {
@@ -95,6 +111,10 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 	 * @param OriginalFileName 源语言文件名称
 	 * @param FileName         文件名称
 	 * @return {@code ToolFile }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ToolFile
 	 */
 	private ToolFile newToolFile(String OriginalFileName, String FileName) {
 		ToolFile toolFile = new ToolFile();
@@ -109,6 +129,9 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 	 *
 	 * @param multipartFile Multipart 文件
 	 * @return {@code ToolFile }
+	 * @throws
+	 * @see MultipartFile
+	 * @see ToolFile
 	 */
 	@Override
 	public ToolFile saveFile(MultipartFile multipartFile) {
@@ -129,6 +152,8 @@ public class ToolFileServiceImpl extends ServiceImpl<ToolFileMapper, ToolFile> i
 	 * 确保 dir
 	 *
 	 * @param uploadPath 上传路径
+	 * @throws
+	 * @see String
 	 */
 	private void ensureDir(String uploadPath) {
 		File f = new File(uploadPath);

@@ -37,80 +37,111 @@ import java.util.*;
  * 导出训练md服务实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ExportTrainMDService
+ * @since 1.0.0
  */
 @Service
 public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
 	/**
 	 * 注册
+	 *
+	 * @see Map<Integer, ExportTrainMDService>
 	 */
 	public static Map<Integer, ExportTrainMDService> register = Maps.newHashMap();
 
 	/**
 	 * 基本 MD 文件
+	 *
+	 * @see String
 	 */
 	public static final String BASE_MD_FILE = "README.md";
 
 	/**
 	 * IMG
+	 *
+	 * @see String
 	 */
 	public static final String IMG = "img";
 
 	/**
 	 * 写入向上文件
+	 *
+	 * @see String
 	 */
 	public static final String WRITE_UP_FILE = "writeup.md";
 
 	/**
 	 * 任务
+	 *
+	 * @see String
 	 */
 	public static final String TASK = "task";
 
 	/**
 	 * Markdown图标
+	 *
+	 * @see String
 	 */
 	public static final String MD_LOGO = "./logo.png";
 
 	/**
 	 * 环境
+	 *
+	 * @see String
 	 */
 	public static final String ENV = "env";
 
 	/**
 	 * 图像
+	 *
+	 * @see String
 	 */
 	public static final String IMAGES = "images";
 
 	/**
 	 * 版本
+	 *
+	 * @see String
 	 */
 	public static final String VERSION = "version.txt";
 
 	/**
 	 * 任务计划
+	 *
+	 * @see String
 	 */
 	public static final String MISSIONS_SCHEME = "missions_scheme";
 
 	/**
 	 * 日志
+	 *
+	 * @see Logger
 	 */
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
 	/**
 	 * 业务模板Mapper
+	 *
+	 * @see BusinessTemplateMapper
 	 */
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
 	/**
 	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
 	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -125,6 +156,8 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * 获取代号
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	public Integer getCode() {
 		return -1;
@@ -138,7 +171,12 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * @param type               类型
 	 * @param sceneNumber        场景数
 	 * @param disableImageExport 禁用图像导出
-	 * @throws IOException io异常
+	 * @throws @throws IOException io异常
+	 * @see List<String>
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public void chooseTypeAndExportTrain(List<String> resourceIds, String path, Integer type, String sceneNumber, Boolean disableImageExport) throws IOException {
@@ -170,6 +208,11 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * @param path                 路径
 	 * @param sceneNumber          场景数
 	 * @param disableImageExport   禁用图像导出
+	 * @throws
+	 * @see List<BusinessTemplate>
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {
@@ -183,6 +226,10 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * @param writeUp     写入向上
 	 * @param writeUpFile 写入向上文件
 	 * @param title       标题
+	 * @throws
+	 * @see String
+	 * @see File
+	 * @see String
 	 */
 	public void exportWriteUp(String writeUp, File writeUpFile, String title){
 		FileWriter fw = null;
@@ -218,6 +265,13 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * @param sceneNumber        场景数
 	 * @param disableImageExport 禁用图像导出
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see Map<String, String>
 	 */
 	public Map<String, String> exportScene(String topoId, String envPath, String imagePath, String sceneNumber, Boolean disableImageExport){
 		SceneDumpContext sceneDumpContext = new SceneDumpContext();
@@ -243,6 +297,10 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * @param missionTemplateMap 任务模板地图
 	 * @param schemeData         方案数据
 	 * @param trainName          训练名称
+	 * @throws
+	 * @see Map<String, MissionTemplate>
+	 * @see List<CrRoleConfigSchemeStage>
+	 * @see String
 	 */
 	public void validateTaskTile(Map<String, MissionTemplate> missionTemplateMap, List<CrRoleConfigSchemeStage> schemeData, String trainName){
 		List<String> titleList = new ArrayList<>();
@@ -268,6 +326,10 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * @param writeUp 写入向上
 	 * @param title   标题
 	 * @param task    任务
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see File
 	 */
 	public void exportImgAndWriteUp(String writeUp, String title, File task){
 		File imgFile = new File(task.getPath() + File.separator + IMG);
@@ -295,6 +357,11 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	 * @param taskList        任务列表
 	 * @param constantMap     常量映射
 	 * @param taskFile        任务文件
+	 * @throws
+	 * @see MissionTemplate
+	 * @see List<String>
+	 * @see Map<String, String>
+	 * @see File
 	 */
 	public void exportMission(MissionTemplate missionTemplate, List<String> taskList, Map<String, String> constantMap,File taskFile){
 		//单个任务导出

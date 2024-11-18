@@ -20,7 +20,9 @@ import java.util.List;
  * RB 情况控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "红蓝对抗城市沙盘")
 @Slf4j
@@ -30,12 +32,16 @@ public class RbSituationController {
 
 	/**
 	 * RB情况Service
+	 *
+	 * @see RbSituationService
 	 */
 	@Autowired
 	private RbSituationService rbSituationService;
 
 	/**
 	 * 兔子模板
+	 *
+	 * @see RabbitTemplate
 	 */
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
@@ -44,6 +50,8 @@ public class RbSituationController {
 	 * 获取实例
 	 *
 	 * @return {@code List<RbSituation> }
+	 * @throws
+	 * @see List<RbSituation>
 	 */
 	@ApiOperation("获取红蓝对抗实例列表")
 	@GetMapping("/get_instances")
@@ -56,6 +64,9 @@ public class RbSituationController {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code List<RbSituationServer> }
+	 * @throws
+	 * @see String
+	 * @see List<RbSituationServer>
 	 */
 	@ApiOperation("获取红蓝对抗实例节点数据")
 	@GetMapping("/get_servers")

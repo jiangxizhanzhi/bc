@@ -7,7 +7,9 @@ import com.cyberpeace.common.model.user.UserInfo;
  * 权限获取
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class AuthContextUtils {
 
@@ -16,7 +18,11 @@ public class AuthContextUtils {
 	 *
 	 * @param userInfo 用户信息
 	 * @param isWeb    是 Web
-	 * @return
+	 * @return AuthContext
+	 * @throws
+	 * @see UserInfo
+	 * @see UserInfo
+	 * @see UserInfo
 	 */
 	public static AuthContext constructAuth(UserInfo userInfo, boolean isWeb) {
 		AuthContext authContext = new AuthContext();

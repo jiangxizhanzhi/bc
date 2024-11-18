@@ -4,15 +4,37 @@ package com.cyberpeace.common.mdparser.convert;
  * 场景共享转换
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Enum
+ * @see MdConvertEnum
+ * @since 1.0.0
  */
 public enum SceneShareConvert implements MdConvertEnum<Integer, String> {
 
+	/**
+	 * @see SceneShareConvert
+	 */
 	PRIVATE(1, "否"),
+	/**
+	 * 共享
+	 *
+	 * @see SceneShareConvert
+	 */
 	SHARE(2, "是");
 
+	/**
+	 * 代号
+	 *
+	 * @see Integer
+	 */
 	private Integer code;
 
+	/**
+	 * 模式
+	 *
+	 * @see String
+	 */
 	private String mode;
 
 	/**

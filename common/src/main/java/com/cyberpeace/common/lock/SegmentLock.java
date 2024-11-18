@@ -7,16 +7,20 @@ import java.util.concurrent.locks.ReentrantLock;
  * 段锁
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class SegmentLock {
 
     /**
-     * 违约段计数
+     * 默认段计数
      */
     private int defaultSegmentCount = 16;
     /**
      * 锁
+     *
+     * @see Lock[]
      */
     private final Lock[] locks;
 

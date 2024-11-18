@@ -55,51 +55,69 @@ import lombok.extern.slf4j.Slf4j;
  * 靶场场景Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see CrSceneService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
 public class CrSceneServiceImpl implements CrSceneService {
 
-	/**
-	 * 当地场景Service
-	 */
-	@Autowired
+    /**
+     * 当地场景Service
+     *
+     * @see LocalSceneService
+     */
+    @Autowired
 	private LocalSceneService localSceneService;
 
-	/**
-	 * 远程拓扑Service
-	 */
-	@Autowired
+    /**
+     * 远程拓扑Service
+     *
+     * @see RemoteTopoService
+     */
+    @Autowired
 	private RemoteTopoService remoteTopoService;
 
-	/**
-	 * 远程场景Service
-	 */
-	@Autowired
+    /**
+     * 远程场景Service
+     *
+     * @see RemoteSceneService
+     */
+    @Autowired
 	private RemoteSceneService remoteSceneService;
 
-	/**
-	 * 靶场角色Service
-	 */
-	@Autowired
+    /**
+     * 靶场角色Service
+     *
+     * @see CrRoleService
+     */
+    @Autowired
 	private CrRoleService crRoleService;
 
-	/**
-	 * Web 套接字处理程序
-	 */
-	@Autowired
+    /**
+     * Web 套接字处理程序
+     *
+     * @see MyWebSocketHandler
+     */
+    @Autowired
 	private MyWebSocketHandler webSocketHandler;
 
-	/**
-	 * 保存拓扑
-	 *
-	 * @param sceneConfigData 场景配置数据
-	 * @param businessCode    业务代号
-	 * @param topoId          拓扑id
-	 * @return {@code String }
-	 */
-	@Override
+    /**
+     * 保存拓扑
+     *
+     * @param sceneConfigData 场景配置数据
+     * @param businessCode    业务代号
+     * @param topoId          拓扑id
+     * @return {@code String }
+     * @throws
+     * @see SceneConfigData
+     * @see LocalScene.BusinessCode
+     * @see String
+     * @see String
+     */
+    @Override
 	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
 			String topoId) {
 		JSONObject topoJson = new JSONObject();
@@ -114,13 +132,16 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return remoteTopoService.save(topoJson);
 	}
 
-	/**
-	 * 获取流量文件路径
-	 *
-	 * @param flowId 流量id
-	 * @return {@code String }
-	 */
-	@Override
+    /**
+     * 获取流量文件路径
+     *
+     * @param flowId 流量id
+     * @return {@code String }
+     * @throws
+     * @see String
+     * @see String
+     */
+    @Override
 	public String getFlowFilePath(String flowId) {
 		MpFlow mpFlow = remoteSceneService.getFlowById(flowId);
 
@@ -135,29 +156,39 @@ public class CrSceneServiceImpl implements CrSceneService {
 				: mpFlow.getScriptFile();
 	}
 
-	/**
-	 * 获取节点流量上下文列表
-	 *
-	 * @param mpSceneId 中台场景id
-	 * @param topoId    拓扑id
-	 * @param nodeId    节点id
-	 * @return {@code List<FlowInfo> }
-	 */
-	@Override
+    /**
+     * 获取节点流量上下文列表
+     *
+     * @param mpSceneId 中台场景id
+     * @param topoId    拓扑id
+     * @param nodeId    节点id
+     * @return {@code List<FlowInfo> }
+     * @throws
+     * @see String
+     * @see String
+     * @see String
+     * @see List<FlowInfo>
+     */
+    @Override
 	public List<FlowInfo> getNodeFlowContextList(String mpSceneId, String topoId, String nodeId) {
 		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, topoId, nodeId);
 		return BeanUtils.deepCopyList(elementFlowList, FlowInfo.class);
 	}
 
-	/**
-	 * 获取节点流量列表
-	 *
-	 * @param mpSceneId 中台场景id
-	 * @param topoId    拓扑id
-	 * @param nodeId    节点id
-	 * @return {@code List<ElementFlow> }
-	 */
-	@Override
+    /**
+     * 获取节点流量列表
+     *
+     * @param mpSceneId 中台场景id
+     * @param topoId    拓扑id
+     * @param nodeId    节点id
+     * @return {@code List<ElementFlow> }
+     * @throws
+     * @see String
+     * @see String
+     * @see String
+     * @see List<ElementFlow>
+     */
+    @Override
 	public List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
 
 		if (StringUtils.isEmpty(nodeId)) {
@@ -182,14 +213,18 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return nodeFlowList;
 	}
 
-	/**
-	 * 获取cpFlow
-	 *
-	 * @param mpSceneId 中台场景id
-	 * @param topoId    拓扑id
-	 * @return {@code CpFlow }
-	 */
-	private CpFlow getCpFlow(String mpSceneId, String topoId) {
+    /**
+     * 获取cpFlow
+     *
+     * @param mpSceneId 中台场景id
+     * @param topoId    拓扑id
+     * @return {@code CpFlow }
+     * @throws
+     * @see String
+     * @see String
+     * @see CpFlow
+     */
+    private CpFlow getCpFlow(String mpSceneId, String topoId) {
 
 		// 1.创建变量
 		UserInfo userInfo = UserInfoContext.getUserContext();
@@ -217,15 +252,20 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return cpFlow;
 	}
 
-	/**
-	 * 过滤流量列表
-	 *
-	 * @param elementFlowList 元素流量列表
-	 * @param interactiveType 交互式类型
-	 * @param page            分页
-	 * @return {@code ListRsp<ElementFlow> }
-	 */
-	private ListRsp<ElementFlow> filterFlowList(List<ElementFlow> elementFlowList,
+    /**
+     * 过滤流量列表
+     *
+     * @param elementFlowList 元素流量列表
+     * @param interactiveType 交互式类型
+     * @param page            分页
+     * @return {@code ListRsp<ElementFlow> }
+     * @throws
+     * @see List<ElementFlow>
+     * @see Integer
+     * @see Page
+     * @see ListRsp<ElementFlow>
+     */
+    private ListRsp<ElementFlow> filterFlowList(List<ElementFlow> elementFlowList,
 			Integer interactiveType, Page page) {
 
 		// 按照流量类型过滤数据
@@ -238,15 +278,20 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return PageUtil.getListResult(elementFlowList, page, elementFlowList.size());
 	}
 
-	/**
-	 * 设置元素流量状态
-	 *
-	 * @param elementFlowList 元素流量列表
-	 * @param mpSceneId       中台场景id
-	 * @param nodeId          节点id
-	 * @return {@code List<ElementFlow> }
-	 */
-	@Override
+    /**
+     * 设置元素流量状态
+     *
+     * @param elementFlowList 元素流量列表
+     * @param mpSceneId       中台场景id
+     * @param nodeId          节点id
+     * @return {@code List<ElementFlow> }
+     * @throws
+     * @see List<ElementFlow>
+     * @see String
+     * @see String
+     * @see List<ElementFlow>
+     */
+    @Override
 	public List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList,
 			String mpSceneId, String nodeId) {
 
@@ -259,14 +304,18 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return elementFlowList;
 	}
 
-	/**
-	 * 获取资产列表
-	 *
-	 * @param req           请求体
-	 * @param withHostState 使用主机状态
-	 * @return {@code List<JSONObject> }
-	 */
-	@Override
+    /**
+     * 获取资产列表
+     *
+     * @param req           请求体
+     * @param withHostState 使用主机状态
+     * @return {@code List<JSONObject> }
+     * @throws
+     * @see AssetPageReq
+     * @see Boolean
+     * @see List<JSONObject>
+     */
+    @Override
 	public List<JSONObject> getAssetList(AssetPageReq req, Boolean withHostState) {
 		String roomId = req.getResource_id();
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -296,13 +345,16 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return localSceneService.getAssetList(listReq);
 	}
 
-	/**
-	 * 获取操作系统名字
-	 *
-	 * @param roomId 房间id
-	 * @return {@code List<IdNameType> }
-	 */
-	@Override
+    /**
+     * 获取操作系统名字
+     *
+     * @param roomId 房间id
+     * @return {@code List<IdNameType> }
+     * @throws
+     * @see String
+     * @see List<IdNameType>
+     */
+    @Override
 	public List<IdNameType> getOsNames(String roomId) {
 		List<JSONObject> allAssets = localSceneService.getAllAssetByBusinessInstanceId(roomId);
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -324,46 +376,55 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return CrCommonUtil.getOsListFromAssets(allAssets);
 	}
 
-	/**
-	 * 发送场景更新场景WS
-	 *
-	 * @param businessId 业务id
-	 */
-	@Override
+    /**
+     * 发送场景更新场景WS
+     *
+     * @param businessId 业务id
+     * @throws
+     * @see String
+     */
+    @Override
 	public void sendSceneUpdateSceneWs(String businessId) {
 		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.ASSET_UPDATED);
 		sendWsData(bo, businessId);
 	}
 
-	/**
-	 * 发送场景停消息
-	 *
-	 * @param businessId 业务id
-	 */
-	@Override
+    /**
+     * 发送场景停消息
+     *
+     * @param businessId 业务id
+     * @throws
+     * @see String
+     */
+    @Override
 	public void sendSceneStopMessage(String businessId) {
 		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.SCENE_STOPPED);
 		sendWsData(bo, businessId);
 	}
 
-	/**
-	 * 发送节点删除场景WS
-	 *
-	 * @param businessId 业务id
-	 */
-	@Override
+    /**
+     * 发送节点删除场景WS
+     *
+     * @param businessId 业务id
+     * @throws
+     * @see String
+     */
+    @Override
 	public void sendNodeDeleteSceneWs(String businessId) {
 		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.NODE_DELETED);
 		sendWsData(bo, businessId);
 	}
 
-	/**
-	 * 发送ws数据
-	 *
-	 * @param data       数据
-	 * @param businessId 业务标识
-	 */
-	private <T> void sendWsData(T data, String businessId) {
+    /**
+     * 发送ws数据
+     *
+     * @param data       数据
+     * @param businessId 业务标识
+     * @throws
+     * @see T
+     * @see String
+     */
+    private <T> void sendWsData(T data, String businessId) {
 		MissionWsIdentifier identifier = new MissionWsIdentifier();
 		identifier.setBusinessId(businessId);
 		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
@@ -374,14 +435,18 @@ public class CrSceneServiceImpl implements CrSceneService {
 		webSocketHandler.pushMessage(messageContext, true);
 	}
 
-	/**
-	 * 启动流量前校验流量任务状态
-	 *
-	 * @param mpSceneId 中台场景id
-	 * @param nodeId    节点id
-	 * @return {@code Boolean }
-	 */
-	private Boolean checkFlowTaskStatus(String mpSceneId, String nodeId) {
+    /**
+     * 启动流量前校验流量任务状态
+     *
+     * @param mpSceneId 中台场景id
+     * @param nodeId    节点id
+     * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see String
+     * @see Boolean
+     */
+    private Boolean checkFlowTaskStatus(String mpSceneId, String nodeId) {
 
 		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);
 
@@ -399,14 +464,18 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return true;
 	}
 
-	/**
-	 * 获取节点流量任务状态
-	 *
-	 * @param mpSceneId 中台场景id
-	 * @param nodeId    节点id
-	 * @return {@code Integer }
-	 */
-	private Integer getFlowTaskStatus(String mpSceneId, String nodeId) {
+    /**
+     * 获取节点流量任务状态
+     *
+     * @param mpSceneId 中台场景id
+     * @param nodeId    节点id
+     * @return {@code Integer }
+     * @throws
+     * @see String
+     * @see String
+     * @see Integer
+     */
+    private Integer getFlowTaskStatus(String mpSceneId, String nodeId) {
 
 		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, null);
 
@@ -429,13 +498,16 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return taskStatus;
 	}
 
-	/**
-	 * 获取靶场流量列表
-	 *
-	 * @param context 上下文
-	 * @return {@code ListRsp<ElementFlow> }
-	 */
-	@Override
+    /**
+     * 获取靶场流量列表
+     *
+     * @param context 上下文
+     * @return {@code ListRsp<ElementFlow> }
+     * @throws
+     * @see ElementFlowListContext
+     * @see ListRsp<ElementFlow>
+     */
+    @Override
 	public ListRsp<ElementFlow> getCrFlowList(ElementFlowListContext context) {
 
 		String mpSceneId = context.getMpSceneId();
@@ -448,13 +520,16 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return filterFlowList(elementFlowList, interactiveType, context.getPage());
 	}
 
-	/**
-	 * Update Flow 参数
-	 *
-	 * @param flowOpsContext 流量操作上下文
-	 * @return {@code Boolean }
-	 */
-	@Override
+    /**
+     * Update Flow 参数
+     *
+     * @param flowOpsContext 流量操作上下文
+     * @return {@code Boolean }
+     * @throws
+     * @see FlowOpsContext
+     * @see Boolean
+     */
+    @Override
 	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
 
 		CrCommonValidator.validateIp(flowOpsContext.getSourceIp());
@@ -477,16 +552,22 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return result;
 	}
 
-	/**
-	 * 启动流量
-	 *
-	 * @param mpSceneId  中台场景id
-	 * @param nodeId     节点id
-	 * @param flows      流量
-	 * @param businessId 业务id
-	 * @return {@code Boolean }
-	 */
-	@Override
+    /**
+     * 启动流量
+     *
+     * @param mpSceneId  中台场景id
+     * @param nodeId     节点id
+     * @param flows      流量
+     * @param businessId 业务id
+     * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see String
+     * @see List<FlowInfoContext>
+     * @see String
+     * @see Boolean
+     */
+    @Override
 	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
 			String businessId) {
 
@@ -519,16 +600,22 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return true;
 	}
 
-	/**
-	 * 启动所有流量程
-	 *
-	 * @param mpSceneId  中台场景id
-	 * @param nodeId     节点id
-	 * @param runType    运行类型
-	 * @param businessId 业务id
-	 * @return {@code Boolean }
-	 */
-	@Override
+    /**
+     * 启动所有流量程
+     *
+     * @param mpSceneId  中台场景id
+     * @param nodeId     节点id
+     * @param runType    运行类型
+     * @param businessId 业务id
+     * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see String
+     * @see Integer
+     * @see String
+     * @see Boolean
+     */
+    @Override
 	public Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType,
 			String businessId) {
 

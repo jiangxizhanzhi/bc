@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
  * 角色成绩
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @NoArgsConstructor
 @Data
@@ -21,24 +23,32 @@ public class RoleScore {
 
 	/**
 	 * 角色名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "角色名称")
 	private String roleName;
 
 	/**
 	 * 角色组
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "角色组")
 	private Integer roleGroup;
 
 	/**
 	 * 得分
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "得分")
 	private Integer score;
 
 	/**
 	 * 任务信息
+	 *
+	 * @see List<Integer>
 	 */
 	@ApiModelProperty(value = "任务信息")
 	private List<Integer> missionsInfo;

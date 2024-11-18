@@ -11,17 +11,24 @@ import com.google.common.collect.Maps;
  * websocket标记的基类。
  *
  * @author yinqingrong
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 public class WsMessageIdentifier implements Serializable {
 
 	/**
 	 * 需要发送消息的用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 路径
+	 *
+	 * @see String
 	 */
 	private String path;
 

@@ -17,13 +17,18 @@ import lombok.Setter;
  * 分页请求体基础
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see PatternBase
+ * @since 1.0.0
  */
 @ApiModel
 public class PageReqBase extends PatternBase {
 
 	/**
 	 * 每分页
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(name = "per_page", value = "每页大小")
 	@Getter
@@ -32,6 +37,8 @@ public class PageReqBase extends PatternBase {
 
 	/**
 	 * 分页
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "页号，从1开始")
 	@Getter
@@ -40,6 +47,8 @@ public class PageReqBase extends PatternBase {
 
 	/**
 	 * 排序
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "排序参数")
 	@Getter

@@ -12,7 +12,10 @@ import org.springframework.stereotype.Repository;
  * 评估记录Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -25,6 +28,12 @@ public interface EvalRecordMapper extends BaseMapper<EvalRecord> {
      * @param status  状态
      * @param pattern 模式
      * @return {@code Page<EvalRecordListRsp> }
+     * @throws
+     * @see Page
+     * @see String
+     * @see Integer
+     * @see String
+     * @see Page<EvalRecordListRsp>
      */
     Page<EvalRecordListRsp> pageList(@Param("page") Page page,
                                      @Param("task_id") String task_id,

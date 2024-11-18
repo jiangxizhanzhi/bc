@@ -12,13 +12,19 @@ import lombok.Data;
  * 组任务下发进度
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/05/15
+ * @see ReleaseProgress
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class GroupTaskReleaseProgress extends ReleaseProgress implements Serializable {
 
 	/**
 	 * 角色
+	 *
+	 * @see List<RoleTaskReleaseProgress>
 	 */
 	@ApiModelProperty(value = "各角色下发进度")
 	private List<RoleTaskReleaseProgress> role = Lists.newArrayList();

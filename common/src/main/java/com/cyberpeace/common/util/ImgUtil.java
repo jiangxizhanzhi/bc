@@ -21,7 +21,9 @@ import java.util.List;
  * img util
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 public class ImgUtil {
@@ -31,8 +33,10 @@ public class ImgUtil {
 	 *
 	 * @param webpPath WebP 路径
 	 * @param jpgPath  JPG 路径
-	 * @throws IOException io异常
-	 *///webp格式的图片转成jpg格式的图片
+	 * @throws @throws IOException io异常
+	 * @see String
+	 * @see String
+	 */ //webp格式的图片转成jpg格式的图片
 	public static void webpToJpg(String webpPath, String jpgPath) throws IOException {
 		if(!jpgPath.endsWith("jpg")){
 			log.error("Illegal Picture Suffix! jpgPath = [{}]", jpgPath);
@@ -57,8 +61,10 @@ public class ImgUtil {
 	 *
 	 * @param file 文件
 	 * @return {@code String }
-	 * @throws IOException io异常
-	 *///获取图片的真实格式
+	 * @throws @throws IOException io异常
+	 * @see File
+	 * @see String
+	 */ //获取图片的真实格式
 	public static String imgType(File file) throws IOException {
 		InputStream inputStream = new FileInputStream(file);
 		// 读取文件前几位
@@ -92,6 +98,9 @@ public class ImgUtil {
 	 *
 	 * @param bytes 字节
 	 * @return {@code String }
+	 * @throws
+	 * @see byte[]
+	 * @see String
 	 */
 	public static String bytes2Hex(byte[] bytes) {
 		StringBuilder sb = new StringBuilder();
@@ -110,7 +119,12 @@ public class ImgUtil {
 	 * @param text            文字内容
 	 * @param destPicture     目标图片路径
 	 * @return
-	 * @throws IOException io异常
+	 * @throws @throws IOException io异常
+	 * @see String
+	 * @see Font
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public static String addTextToImage(String originalPicture, Font font, String text, String destPicture) throws IOException {
 		// Load the image
@@ -144,8 +158,12 @@ public class ImgUtil {
 	 * 绘制字符串
 	 *
 	 * @param g2d  G2D
-	 * @param text 发短信
+	 * @param text 文本
 	 * @param y    y
+	 * @throws
+	 * @see Graphics2D
+	 * @see String
+	 * @see int
 	 */
 	private static void drawString(Graphics2D g2d, String text, int y) {
 		FontMetrics fm = g2d.getFontMetrics();
@@ -176,9 +194,14 @@ public class ImgUtil {
 	 * 插入换行符
 	 *
 	 * @param fm         调频
-	 * @param text       发短信
+	 * @param text       文本
 	 * @param lineLength 线路长度
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see FontMetrics
+	 * @see String
+	 * @see int
+	 * @see List<String>
 	 */
 	private static List<String> insertNewlines(FontMetrics fm, String text, int lineLength) {
 		List<String> lines = new ArrayList<>();

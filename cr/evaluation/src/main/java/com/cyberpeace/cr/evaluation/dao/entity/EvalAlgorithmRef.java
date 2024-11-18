@@ -15,44 +15,61 @@ import java.util.List;
  * eval 算法 ref
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_eval_algorithm_ref")
 public class EvalAlgorithmRef extends BaseTable {
     /**
      * 资源id
+     *
+     * @see String
      */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
     /**
      * 名称
+     *
+     * @see String
      */
     private String name;
 
     /**
      * 描述
+     *
+     * @see String
      */
     private String description;
 
     /**
      * 类型
+     *
+     * @see Integer
      */
     private Integer type;
 
     /**
      * 算法语言
+     *
+     * @see Integer
      */
     private Integer algorithmLanguage;
 
     /**
      * 代号
+     *
+     * @see String
      */
     private String code;
 
     /**
      * 矩阵数据
+     *
+     * @see String
      */
     private String matrixData;
 
@@ -100,6 +117,8 @@ public class EvalAlgorithmRef extends BaseTable {
 
     /**
      * 模式
+     *
+     * @see Integer
      */
     @ApiModelProperty("算法模型")
     private Integer mode;

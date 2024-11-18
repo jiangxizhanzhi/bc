@@ -15,7 +15,9 @@ import lombok.Data;
  * 事件数据请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 @ApiModel("基础数据")
@@ -23,6 +25,8 @@ public class EventDataReq {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotBlank
@@ -30,6 +34,8 @@ public class EventDataReq {
 
 	/**
 	 * 描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "描述", required = true)
 	@NotNull
@@ -37,6 +43,8 @@ public class EventDataReq {
 
 	/**
 	 * 类别
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练类型", required = true)
 	@NotNull
@@ -44,6 +52,8 @@ public class EventDataReq {
 
 	/**
 	 * 难
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "训练难度", required = true)
 	@NotNull
@@ -51,6 +61,8 @@ public class EventDataReq {
 
 	/**
 	 * 持续时间
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "建议时间, 单位:h", required = true)
 	@NotNull
@@ -58,6 +70,8 @@ public class EventDataReq {
 
 	/**
 	 * 预技能
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "前置技能", required = true)
 	@NotNull
@@ -65,6 +79,8 @@ public class EventDataReq {
 
 	/**
 	 * 训练技能
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "训练技能", required = true)
 	@NotNull
@@ -72,6 +88,8 @@ public class EventDataReq {
 
 	/**
 	 * 场景配置数据
+	 *
+	 * @see SceneConfigData
 	 */
 	@ApiModelProperty(value = "场景拓扑", required = true)
 	@NotNull
@@ -79,6 +97,8 @@ public class EventDataReq {
 
 	/**
 	 * 图标
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("LOGO")
 	private String logo;

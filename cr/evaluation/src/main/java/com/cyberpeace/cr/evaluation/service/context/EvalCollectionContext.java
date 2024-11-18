@@ -9,13 +9,17 @@ import lombok.Data;
  * eval 集合上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class EvalCollectionContext {
 
 	/**
 	 * 评估收集id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "采集项id", required = true)
 	@NotNull
@@ -23,6 +27,8 @@ public class EvalCollectionContext {
 
 	/**
 	 * 评估指示器id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "指标项id", required = true)
 	@NotNull
@@ -30,6 +36,8 @@ public class EvalCollectionContext {
 
 	/**
 	 * 格式算法id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "格式化算法id", required = true)
 	@NotNull
@@ -37,6 +45,8 @@ public class EvalCollectionContext {
 
 	/**
 	 * 格式算法参数
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "格式化算法参数", required = true)
 	@NotNull
@@ -44,6 +54,8 @@ public class EvalCollectionContext {
 
 	/**
 	 * 检波算法id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "检测算法id", required = true)
 	@NotNull
@@ -51,6 +63,8 @@ public class EvalCollectionContext {
 
 	/**
 	 * 检测算法参数
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "检测算法参数", required = true)
 	@NotNull
@@ -58,6 +72,8 @@ public class EvalCollectionContext {
 
 	/**
 	 * 得分算法id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "评分算法id", required = true)
 	@NotNull
@@ -65,6 +81,8 @@ public class EvalCollectionContext {
 
 	/**
 	 * 评分算法参数
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "评分算法参数", required = true)
 	@NotNull
@@ -72,6 +90,8 @@ public class EvalCollectionContext {
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "名称", required = true)
 	@NotNull

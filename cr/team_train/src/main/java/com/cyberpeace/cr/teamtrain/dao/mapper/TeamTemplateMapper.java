@@ -17,7 +17,10 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
  * 团队模板Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -29,6 +32,10 @@ public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 	 * @param page      分页
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<TeamTemplateData> }
+	 * @throws
+	 * @see Page
+	 * @see ListQuery
+	 * @see IPage<TeamTemplateData>
 	 */
 	IPage<TeamTemplateData> listTeamTemplate(Page page, ListQuery listQuery);
 
@@ -37,6 +44,9 @@ public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code TeamTemplate }
+	 * @throws
+	 * @see String
+	 * @see TeamTemplate
 	 */
 	TeamTemplate getByBusinessId(String resourceId);
 
@@ -45,6 +55,9 @@ public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 	 *
 	 * @param ids id列表
 	 * @return {@code List<TeamTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<TeamTemplate>
 	 */
 	List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> ids);
 
@@ -53,6 +66,9 @@ public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 	 *
 	 * @param businessTemplateId 业务模板id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean deleteByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
 
@@ -61,6 +77,9 @@ public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 	 *
 	 * @param businessTemplateIds 业务模板id列表
 	 * @return {@code List<TeamTemplate> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<TeamTemplate>
 	 */
 	List<TeamTemplate> batchGetByBusinessId(List<String> businessTemplateIds);
 }

@@ -14,31 +14,42 @@ import lombok.Data;
  * 团队、红蓝角色Markdown
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class TeamAndRBMD implements Serializable {
 
 	/**
 	 * 节点
+	 *
+	 * @see String
 	 */
 	@MdHeadLine(level = 1, name = "节点集合")
 	private String node;
 
 	/**
 	 * 请参阅 Node
+	 *
+	 * @see List<String>
 	 */
 	@MdHeadLine(level = 2, name = "战争迷雾", parser = ListParser.class)
 	private List<String>  seeNode;
 
 	/**
 	 * 使用节点
+	 *
+	 * @see List<String>
 	 */
 	@MdHeadLine(level = 2, name = "用户资产", parser = ListParser.class)
 	private List<String>  useNode;
 
 	/**
 	 * 任务
+	 *
+	 * @see List<RoleBo>
 	 */
 	@MdHeadLine(level = 1, name = "任务集合", parser = TaskParser.class)
 	private List<RoleBo> task;

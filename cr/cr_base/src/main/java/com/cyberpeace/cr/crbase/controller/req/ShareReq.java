@@ -11,13 +11,17 @@ import lombok.Data;
  * 共享请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class ShareReq {
 
 	/**
 	 * id列表
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "模板id")
 	@NotNull
@@ -25,6 +29,8 @@ public class ShareReq {
 
 	/**
 	 * 共享模式
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty(value = "授权类别")
 	@NotNull
@@ -32,6 +38,8 @@ public class ShareReq {
 
 	/**
 	 * 分享教师
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty(value = "授权人员id")
 	@NotNull

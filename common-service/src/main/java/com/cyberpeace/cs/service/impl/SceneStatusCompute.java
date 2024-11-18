@@ -8,7 +8,9 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
  * 场景状态计算
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public class SceneStatusCompute {
 
@@ -17,6 +19,9 @@ public class SceneStatusCompute {
 	 *
 	 * @param scene
 	 * @return
+	 * @throws
+	 * @see JSONObject
+	 * @see LocalScene.SceneStatusEnum
 	 */
 	public static LocalScene.SceneStatusEnum compute(JSONObject scene) {
 		LocalScene.SceneStatusEnum[] constants = LocalScene.SceneStatusEnum.class

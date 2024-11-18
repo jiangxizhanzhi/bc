@@ -16,7 +16,10 @@ import java.util.List;
  * 工具Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -29,6 +32,11 @@ public interface ToolMapper extends BaseMapper<Tool> {
      * @param toolListQuery 工具列表查询
      * @param isAdmin       是管理员
      * @return {@code IPage<Tool> }
+     * @throws
+     * @see Page
+     * @see ToolListQuery
+     * @see Boolean
+     * @see IPage<Tool>
      */
     IPage<Tool> list(Page page, @Param("listQuery") ToolListQuery toolListQuery, @Param("isAdmin") Boolean isAdmin);
 
@@ -37,6 +45,9 @@ public interface ToolMapper extends BaseMapper<Tool> {
      *
      * @param name 名称
      * @return {@code Tool }
+     * @throws
+     * @see String
+     * @see Tool
      */
     Tool selectByName(@NotEmpty @Param("name") String name);
 
@@ -45,6 +56,9 @@ public interface ToolMapper extends BaseMapper<Tool> {
      *
      * @param resourceId 资源id
      * @return {@code List<Tool> }
+     * @throws
+     * @see String
+     * @see List<Tool>
      */
     List<Tool> selectByCategory(@Param("resourceId") String resourceId);
 
@@ -54,6 +68,10 @@ public interface ToolMapper extends BaseMapper<Tool> {
      * @param name       名称
      * @param resourceId 资源id
      * @return {@code Tool }
+     * @throws
+     * @see String
+     * @see String
+     * @see Tool
      */
     Tool selectOtherByName(@Param("name") String name,@Param("resourceId") String resourceId);
 

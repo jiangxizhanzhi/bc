@@ -14,31 +14,41 @@ import java.util.List;
  * 学员得分趋势
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Data
 public class StudentScoreTrend {
 
-	/**
-	 * 用户数据
-	 */
-	@ApiModelProperty("用户信息")
+    /**
+     * 用户数据
+     *
+     * @see UserData
+     */
+    @ApiModelProperty("用户信息")
 	private UserData userData;
 
-	/**
-	 * 分数趋势
-	 */
-	@ApiModelProperty("得分趋势列表")
+    /**
+     * 分数趋势
+     *
+     * @see List<ScoreTrend>
+     */
+    @ApiModelProperty("得分趋势列表")
 	private List<ScoreTrend> scoreTrends;
 
-	/**
-	 * 角色
-	 */
-	private Integer role;
-	/**
-	 * 分数总和
-	 */
-	@ApiModelProperty("最终得分用于排序")
+    /**
+     * 角色
+     *
+     * @see Integer
+     */
+    private Integer role;
+    /**
+     * 分数总和
+     *
+     * @see Integer
+     */
+    @ApiModelProperty("最终得分用于排序")
 	private Integer scoreSum;
 
 

@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
  * 单训练统计学控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Api(tags = "单兵训练统计")
 @RestController
@@ -36,6 +38,8 @@ public class SingleTrainStatisticsController {
 
     /**
      * 单训练统计学
+     *
+     * @see SingleTrainStatisticsService
      */
     @Autowired
     SingleTrainStatisticsService singleTrainStatistics;
@@ -45,6 +49,8 @@ public class SingleTrainStatisticsController {
      * 获取都个人排
      *
      * @return {@code BaseRsp<List<SinglePersonalStatisticsBo>> }
+     * @throws
+     * @see BaseRsp<List<SinglePersonalStatisticsBo>>
      */
     @GetMapping("/personal_rank")
     @ApiOperation("单兵训练个人排名TOP5")
@@ -58,6 +64,8 @@ public class SingleTrainStatisticsController {
      * 获取组织排
      *
      * @return {@code BaseRsp<List<SingleOrganizationStatisticsBo>> }
+     * @throws
+     * @see BaseRsp<List<SingleOrganizationStatisticsBo>>
      */
     @GetMapping("/organization_rank")
     @ApiOperation("单兵训练组织排名TOP5")
@@ -73,6 +81,9 @@ public class SingleTrainStatisticsController {
      *
      * @param detailReq 详情请求体
      * @return {@code BaseRsp<ListRsp<SingleStatisticsDetailBo>> }
+     * @throws
+     * @see SingleTrainStatisticsDetailReq
+     * @see BaseRsp<ListRsp<SingleStatisticsDetailBo>>
      */
     @GetMapping("/detail")
     @ApiOperation("单兵训练统计详情")

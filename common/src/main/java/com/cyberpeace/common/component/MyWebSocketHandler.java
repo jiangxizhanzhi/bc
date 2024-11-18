@@ -22,10 +22,13 @@ import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 我 Web 套接字处理程序
+ * 我的 Web 套接字处理程序
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see WebSocketHandler
+ * @since 1.0.0
  */
 @Slf4j
 @Component
@@ -43,6 +46,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * <p>
 	 * <p>
 	 * 2.2、value的value=该业务场景下指定用户的session
+	 *
+	 * @see Map<String, Map<String, Set<CpWebSession>>>
 	 */
 	private Map<String, Map<String, Set<CpWebSession>>> businessSocketSessionMap = Maps
 			.newConcurrentMap();
@@ -51,7 +56,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * 建立连接后
 	 *
 	 * @param webSocketSession Web 套接字会话
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see WebSocketSession
 	 */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
@@ -74,6 +80,9 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 *
 	 * @param identifierId 标识符id
 	 * @return {@code Map<String, Set<CpWebSession>> }
+	 * @throws
+	 * @see String
+	 * @see Map<String, Set<CpWebSession>>
 	 */
 	public Map<String, Set<CpWebSession>> getSocketSessionMap(String identifierId) {
 		return businessSocketSessionMap.get(identifierId);
@@ -84,7 +93,9 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 *
 	 * @param webSocketSession Web 套接字会话
 	 * @param webSocketMessage Web 套接字消息
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see WebSocketSession
+	 * @see WebSocketMessage<?>
 	 */
 	@Override
 	public void handleMessage(WebSocketSession webSocketSession,
@@ -97,7 +108,9 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 *
 	 * @param webSocketSession Web 套接字会话
 	 * @param throwable        可投掷
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see WebSocketSession
+	 * @see Throwable
 	 */
 	@Override
 	public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable)
@@ -110,7 +123,9 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 *
 	 * @param webSocketSession Web 套接字会话
 	 * @param closeStatus      关闭状态
-	 * @throws Exception 例外
+	 * @throws @throws Exception 例外
+	 * @see WebSocketSession
+	 * @see CloseStatus
 	 */
 	@Override
 	public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus)
@@ -122,6 +137,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * 支持部分消息
 	 *
 	 * @return boolean
+	 * @throws
+	 * @see boolean
 	 */
 	@Override
 	public boolean supportsPartialMessages() {
@@ -133,6 +150,9 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 *
 	 * @param message   待推送的websocket消息
 	 * @param toAllUser 向该业务的所有用户推送消息。toAllUser目前就实训的共享场景用到
+	 * @throws
+	 * @see WebSocketMessageContext
+	 * @see boolean
 	 */
 	public void pushMessage(WebSocketMessageContext message, boolean toAllUser) {
 		String businessId = message.getMessageIdentifier().getIdentifierId();
@@ -171,6 +191,9 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 *
 	 * @param message 待推送的websocket消息
 	 * @param userIds 向特定用户推送消息。
+	 * @throws
+	 * @see WebSocketMessageContext
+	 * @see List<String>
 	 */
 	public void pushMessageToUsers(WebSocketMessageContext message, List<String> userIds) {
 		String businessId = message.getMessageIdentifier().getIdentifierId();
@@ -200,6 +223,11 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * @param sessions   会话
 	 * @param userId     用户id
 	 * @param businessId 业务id
+	 * @throws
+	 * @see WebSocketMessageContext
+	 * @see Set<CpWebSession>
+	 * @see String
+	 * @see String
 	 */
 	private void pushToSessions(WebSocketMessageContext message, Set<CpWebSession> sessions,
 			String userId, String businessId) {
@@ -245,7 +273,10 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * @param identifierId 标识符id
 	 * @param userId       用户id
 	 * @param chatMessage  聊天消息
-	 * @throws IOException io异常
+	 * @throws @throws IOException io异常
+	 * @see String
+	 * @see String
+	 * @see ChatMessage
 	 */
 	public void sendChatMessage(String identifierId, String userId, ChatMessage chatMessage)
 			throws IOException {
@@ -268,6 +299,10 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * @param identifierId 标识符id
 	 * @param userId       用户id
 	 * @return {@code Set<CpWebSession> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Set<CpWebSession>
 	 */
 	private Set<CpWebSession> getUserSession(String identifierId, String userId) {
 		Map<String, Set<CpWebSession>> userSocketSessionMap = getSocketSessionMap(identifierId);
@@ -289,6 +324,8 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * 删除会话
 	 *
 	 * @param webSocketSession Web 套接字会话
+	 * @throws
+	 * @see CpWebSession
 	 */
 	private void removeSession(CpWebSession webSocketSession) {
 		if (webSocketSession.isOpen()) {

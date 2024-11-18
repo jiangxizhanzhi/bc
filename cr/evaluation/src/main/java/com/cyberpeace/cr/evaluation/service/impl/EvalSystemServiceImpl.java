@@ -21,25 +21,35 @@ import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
  * 评估系统Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalSystemService
+ * @since 1.0.0
  */
 @Service
 public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSystem> implements EvalSystemService {
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 评估指数Mapper
+	 *
+	 * @see EvalIndexMapper
 	 */
 	@Autowired
 	private EvalIndexMapper evalIndexMapper;
 
 	/**
 	 * 评估系统Mapper
+	 *
+	 * @see EvalSystemMapper
 	 */
 	@Autowired
 	private EvalSystemMapper evalSystemMapper;
@@ -49,6 +59,9 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 	 *
 	 * @param evalSystemIds 评估系统id列表
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean batchDelete(List<String> evalSystemIds) {
@@ -74,6 +87,9 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 	 *
 	 * @param listQuery 列表查询
 	 * @return {@code IPage<EvalSystem> }
+	 * @throws
+	 * @see EvalListQuery
+	 * @see IPage<EvalSystem>
 	 */
 	@Override
 	public IPage<EvalSystem> page(EvalListQuery listQuery) {

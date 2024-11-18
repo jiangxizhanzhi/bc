@@ -13,7 +13,10 @@ import java.util.List;
  * 评估变量裁判探针数据Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 public interface EvalVariableRefProbeDataMapper extends BaseMapper<EvalVariableRefProbeData> {
     /**
@@ -21,6 +24,9 @@ public interface EvalVariableRefProbeDataMapper extends BaseMapper<EvalVariableR
      *
      * @param variableId 变量id
      * @return {@code List<EvalVariableRefProbeDataContext> }
+     * @throws
+     * @see String
+     * @see List<EvalVariableRefProbeDataContext>
      */
     List<EvalVariableRefProbeDataContext> selectVariableProbeDataResult(@Param("variable_id") String variableId);
 
@@ -30,6 +36,10 @@ public interface EvalVariableRefProbeDataMapper extends BaseMapper<EvalVariableR
      * @param page       分页
      * @param variableId 变量id
      * @return {@code Page<EvalVariableDataPageRsp> }
+     * @throws
+     * @see Page
+     * @see String
+     * @see Page<EvalVariableDataPageRsp>
      */
     Page<EvalVariableDataPageRsp> selectVariableProbeData(@Param("page") Page page, @Param("variable_id") String variableId);
 }

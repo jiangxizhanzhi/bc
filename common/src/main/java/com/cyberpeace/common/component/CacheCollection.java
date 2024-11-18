@@ -12,13 +12,17 @@ import com.google.common.cache.CacheBuilder;
  * 缓存集合
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Component
 public class CacheCollection {
 
 	/**
 	 * RTKS 情况缓存
+	 *
+	 * @see Cache<String, RtksMatch>
 	 */
 	private static Cache<String, RtksMatch> rtksSituationCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(10, TimeUnit.MINUTES).build();
@@ -27,6 +31,8 @@ public class CacheCollection {
 	 * 获取情况缓存
 	 *
 	 * @return {@code Cache<String, RtksMatch> }
+	 * @throws
+	 * @see Cache<String, RtksMatch>
 	 */
 	public Cache<String, RtksMatch> getSituationCache() {
 		return rtksSituationCache;

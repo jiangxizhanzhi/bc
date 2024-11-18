@@ -16,16 +16,37 @@ import com.cyberpeace.common.util.LocalStringUtil;
  * 训练技能解析
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MdContentParser
+ * @since 1.0.0
  */
 @Service
 public class TrainSkillParser implements MdContentParser<Collection, String> {
 
+	/**
+	 * 解析
+	 *
+	 * @param content 内容
+	 * @return {@code Collection }
+	 * @throws
+	 * @see Object
+	 * @see Collection
+	 */
 	@Override
 	public Collection parse(Object content) {
 		return null;
 	}
 
+	/**
+	 * 写入
+	 *
+	 * @param content 内容
+	 * @return {@code String }
+	 * @throws
+	 * @see Collection
+	 * @see String
+	 */
 	@Override
 	public String write(Collection content) {
 		if (ObjectUtils.isEmpty(content)) {

@@ -7,7 +7,9 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
  * 场景过滤器Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public interface SceneFilterService {
 
@@ -16,6 +18,9 @@ public interface SceneFilterService {
 	 *
 	 * @param topoData 场景拓扑数据
 	 * @param nodes    角色节点数据
+	 * @throws
+	 * @see JSONObject
+	 * @see CrRoleNodesData
 	 */
 	void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes);
 }

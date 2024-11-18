@@ -9,79 +9,110 @@ import lombok.Data;
  * 多表关联的团队模板
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class RbTemplateData implements Serializable {
 
-	/**
-	 * cr_team_templateId
-	 */
-	private String resourceId;
+    /**
+     * cr_team_templateId
+     *
+     * @see String
+     */
+    private String resourceId;
 
-	/**
-	 * 拓扑id
-	 */
-	private String topoId;
+    /**
+     * 拓扑id
+     *
+     * @see String
+     */
+    private String topoId;
 
-	/**
-	 * 名称
-	 */
-	private String name;
+    /**
+     * 名称
+     *
+     * @see String
+     */
+    private String name;
 
-	/**
-	 * 类别
-	 */
-	private Integer category;
+    /**
+     * 类别
+     *
+     * @see Integer
+     */
+    private Integer category;
 
-	/**
-	 * 描述
-	 */
-	private String description;
+    /**
+     * 描述
+     *
+     * @see String
+     */
+    private String description;
 
-	/**
-	 * 业务类型
-	 */
-	private Integer businessType;
+    /**
+     * 业务类型
+     *
+     * @see Integer
+     */
+    private Integer businessType;
 
-	/**
-	 * 创造用户id
-	 */
-	private String createUserId;
+    /**
+     * 创造用户id
+     *
+     * @see String
+     */
+    private String createUserId;
 
-	/**
-	 * 创建时间
-	 */
-	private Date createTime;
+    /**
+     * 创建时间
+     *
+     * @see Date
+     */
+    private Date createTime;
 
-	/**
-	 * 难度
-	 */
-	private Integer difficulty;
+    /**
+     * 难度
+     *
+     * @see Integer
+     */
+    private Integer difficulty;
 
-	/**
-	 * 预技能
-	 */
-	private String preSkill;
+    /**
+     * 预技能
+     *
+     * @see String
+     */
+    private String preSkill;
 
-	/**
-	 * 训练技能
-	 */
-	private String trainSkill;
+    /**
+     * 训练技能
+     *
+     * @see String
+     */
+    private String trainSkill;
 
-	/**
-	 * 角色配置
-	 */
-	private String roleConfig;
+    /**
+     * 角色配置
+     *
+     * @see String
+     */
+    private String roleConfig;
 
-	/**
-	 * 子类型
-	 */
-	private Integer subType;
+    /**
+     * 子类型
+     *
+     * @see Integer
+     */
+    private Integer subType;
 
-	/**
-	 * 持续时间
-	 */
-	private Integer durationTime;
+    /**
+     * 持续时间
+     *
+     * @see Integer
+     */
+    private Integer durationTime;
 
 }

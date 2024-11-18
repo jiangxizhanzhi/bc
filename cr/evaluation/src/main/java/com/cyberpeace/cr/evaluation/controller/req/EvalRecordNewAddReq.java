@@ -15,54 +15,73 @@ import java.util.List;
  * 评估记录新增功能新增请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class EvalRecordNewAddReq implements Serializable {
     /**
      * 资源id
+     *
+     * @see String
      */
     @ApiModelProperty("ID")
     private String resourceId;
 
     /**
      * 名称
+     *
+     * @see String
      */
     @ApiModelProperty(value = "名称", required = true)
     private String name;
 
     /**
      * 描述
+     *
+     * @see String
      */
     @ApiModelProperty("描述")
     private String description;
 
     /**
      * 任务id
+     *
+     * @see String
      */
     @ApiModelProperty(value = "靶场测评实例ID", required = true)
     private String taskId;
 
     /**
      * 系统id
+     *
+     * @see String
      */
     @ApiModelProperty(value = "使用指标体系ID", required = true)
     private String systemId;
 
     /**
      * 开始时间
+     *
+     * @see Date
      */
     @ApiModelProperty(value = "开始时间（评估采集数据时间范围）", required = true)
     private Date startTime;
 
     /**
      * 结束时间
+     *
+     * @see Date
      */
     @ApiModelProperty(value = "结束时间（评估采集数据时间范围）", required = true)
     private Date endTime;
 
     /**
      * 指标
+     *
+     * @see List<EvalRecordIndexContext>
      */
     @ApiModelProperty(value = "全量体系指标项", required = true)
     private List<EvalRecordIndexContext> indexes;

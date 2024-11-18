@@ -18,7 +18,11 @@ import java.util.List;
  * 评估变量裁判探针数据Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalVariableRefProbeDataService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -29,6 +33,9 @@ public class EvalVariableRefProbeDataServiceImpl extends ServiceImpl<EvalVariabl
      *
      * @param variableId 变量id
      * @return {@code List<EvalVariableRefProbeDataContext> }
+     * @throws
+     * @see String
+     * @see List<EvalVariableRefProbeDataContext>
      */
     @Override
     public List<EvalVariableRefProbeDataContext> variableProbeDataResult(String variableId) {
@@ -41,6 +48,10 @@ public class EvalVariableRefProbeDataServiceImpl extends ServiceImpl<EvalVariabl
      * @param page       分页
      * @param variableId 变量id
      * @return {@code ListRsp<EvalVariableDataPageRsp> }
+     * @throws
+     * @see Page
+     * @see String
+     * @see ListRsp<EvalVariableDataPageRsp>
      */
     @Override
     public ListRsp<EvalVariableDataPageRsp> variableProbeData(Page page, String variableId) {

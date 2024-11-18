@@ -18,12 +18,16 @@ import com.google.common.collect.Maps;
  * 更新角色
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/05/12
+ * @since 1.0.0
  */
 public abstract class BaseCrSceneUpdateHandler {
 
 	/**
 	 * 处理程序映射
+	 *
+	 * @see Map<Integer, BaseCrSceneUpdateHandler>
 	 */
 	private static final Map<Integer, BaseCrSceneUpdateHandler> HANDLER_MAP = Maps.newHashMap();
 
@@ -32,6 +36,9 @@ public abstract class BaseCrSceneUpdateHandler {
 	 *
 	 * @param type 类型
 	 * @return {@code BaseCrSceneUpdateHandler }
+	 * @throws
+	 * @see Integer
+	 * @see BaseCrSceneUpdateHandler
 	 */
 	public static BaseCrSceneUpdateHandler getHandler(Integer type) {
 		return HANDLER_MAP.get(type);
@@ -41,11 +48,15 @@ public abstract class BaseCrSceneUpdateHandler {
 	 * 获取业务类型code
 	 *
 	 * @return {@code Integer}
+	 * @throws
+	 * @see Integer
 	 */
 	protected abstract Integer getCode();
 
 	/**
 	 * 基础靶场场景更新处理器
+	 *
+	 * @throws
 	 */
 	protected BaseCrSceneUpdateHandler() {
 		HANDLER_MAP.put(getCode(), this);
@@ -55,6 +66,8 @@ public abstract class BaseCrSceneUpdateHandler {
 	 * 检查权限
 	 *
 	 * @param businessInstanceId 业务实例id
+	 * @throws
+	 * @see String
 	 */
 	protected abstract void checkPermission(String businessInstanceId);
 
@@ -63,6 +76,9 @@ public abstract class BaseCrSceneUpdateHandler {
 	 *
 	 * @param roomId 业务实例id
 	 * @param req    请求体
+	 * @throws
+	 * @see String
+	 * @see SceneUpdateReq
 	 */
 	public abstract void updateRoles(String roomId, SceneUpdateReq req);
 
@@ -71,6 +87,9 @@ public abstract class BaseCrSceneUpdateHandler {
 	 *
 	 * @param roomId 房间id
 	 * @param nodeId 节点id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	public abstract void deleteNode(String roomId, String nodeId);
 
@@ -80,6 +99,10 @@ public abstract class BaseCrSceneUpdateHandler {
 	 * @param role           角色
 	 * @param roleConfigList 角色配置列表
 	 * @param modified       修改角色列表
+	 * @throws
+	 * @see CrRole
+	 * @see List<RoleUpdateConfig>
+	 * @see List<CrRole>
 	 */
 	protected void filterModified(CrRole role, List<RoleUpdateConfig> roleConfigList,
 			List<CrRole> modified) {
@@ -106,6 +129,10 @@ public abstract class BaseCrSceneUpdateHandler {
 	 * @param role   角色
 	 * @param nodeId 节点id
 	 * @return {@code String}
+	 * @throws
+	 * @see CrRole
+	 * @see String
+	 * @see String
 	 */
 	protected String getFilteredNodesData(CrRole role, String nodeId) {
 		CrRoleNodesData nodesData = JsonUtil.toJsonObject(role.getNodes(), CrRoleNodesData.class);
@@ -120,6 +147,10 @@ public abstract class BaseCrSceneUpdateHandler {
 	 * @param roleList 角色列表
 	 * @param nodeId   节点id
 	 * @return {@code List<CrRole>}
+	 * @throws
+	 * @see List<CrRole>
+	 * @see String
+	 * @see List<CrRole>
 	 */
 	protected List<CrRole> getAffectedRoles(List<CrRole> roleList, String nodeId) {
 		List<CrRole> modifiedRoles = Lists.newArrayList();

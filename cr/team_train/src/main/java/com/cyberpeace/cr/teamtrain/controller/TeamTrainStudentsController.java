@@ -76,7 +76,9 @@ import lombok.extern.slf4j.Slf4j;
  * 团队训练学员控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "团队训练学员")
@@ -86,90 +88,120 @@ public class TeamTrainStudentsController {
 
 	/**
 	 * 团队房间Service
+	 *
+	 * @see TeamRoomService
 	 */
 	@Autowired
 	private TeamRoomService teamRoomService;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
 
 	/**
 	 * 靶场任务Service
+	 *
+	 * @see CrTaskService
 	 */
 	@Autowired
 	private CrTaskService crTaskService;
 
 	/**
 	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
 	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	/**
 	 * 任务Service
+	 *
+	 * @see MissionService
 	 */
 	@Autowired
 	private MissionService missionService;
 
 	/**
 	 * 训练记录Service
+	 *
+	 * @see TrainRecordService
 	 */
 	@Autowired
 	private TrainRecordService trainRecordService;
 
 	/**
 	 * 靶场常见Service
+	 *
+	 * @see CrCommonService
 	 */
 	@Autowired
 	private CrCommonService crCommonService;
 
 	/**
 	 * 团队装置Service
+	 *
+	 * @see TeamDeviceService
 	 */
 	@Autowired
 	private TeamDeviceService teamDeviceService;
 
 	/**
 	 * 团队常见装置Service
+	 *
+	 * @see TeamCommonDeviceService
 	 */
 	@Autowired
 	private TeamCommonDeviceService teamCommonDeviceService;
 
 	/**
 	 * 靶场场景Service
+	 *
+	 * @see CrSceneService
 	 */
 	@Autowired
 	private CrSceneService crSceneService;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 靶场徽章Service
+	 *
+	 * @see CrBadgeService
 	 */
 	@Autowired
 	private CrBadgeService crBadgeService;
 
 	/**
 	 * 团队教员Service
+	 *
+	 * @see TeamTeacherService
 	 */
 	@Autowired
 	private TeamTeacherService teamTeacherService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 靶场得分Service
+	 *
+	 * @see CrScoreService
 	 */
 	@Autowired
 	private CrScoreService crScoreService;
@@ -179,6 +211,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<TeamRoomRsp> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TeamRoomRsp>
 	 */
 	@ApiOperation("查询")
 	@GetMapping()
@@ -218,6 +253,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<TeamRoomRsp>>}
+	 * @throws
+	 * @see TeamRoomListReq
+	 * @see BaseRsp<ListRsp<TeamRoomRsp>>
 	 */
 	@ApiOperation("列表查询")
 	@GetMapping("/list")
@@ -234,6 +272,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<MissionSchemeObject<SchemeListMissionRsp>>>
 	 */
 	@ApiOperation("获取任务列表")
 	@GetMapping("/get_mission_scheme")
@@ -266,6 +307,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param submitMissionsReq 提交任务请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see SubmitMissionsReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("提交任务答案")
 	@PostMapping("/submit_missions")
@@ -301,6 +345,10 @@ public class TeamTrainStudentsController {
 	 * @param resource_id 资源id
 	 * @param mission_id  任务id
 	 * @return {@code BaseRsp<MissionRsp> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<MissionRsp>
 	 */
 	@ApiOperation("获取任务详情")
 	@GetMapping("/get_mission_detail")
@@ -336,6 +384,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param resource_id 资源id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TimeLineData>
 	 */
 	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
@@ -353,6 +404,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see MarkAddReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("新增标记")
 	@PostMapping("/mark")
@@ -368,6 +422,10 @@ public class TeamTrainStudentsController {
 	 * @param resource_id 资源id
 	 * @param user_id     用户id
 	 * @return {@code BaseRsp<TaskMatrix> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<TaskMatrix>
 	 */
 	@ApiOperation("团队对抗-学员任务矩阵")
 	@GetMapping("/task/matrix")
@@ -402,6 +460,10 @@ public class TeamTrainStudentsController {
 	 * @param resource_id 资源id
 	 * @param user_id     用户id
 	 * @return {@code BaseRsp<TaskMatrix> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<TaskMatrix>
 	 */
 	@ApiOperation("团队对抗-复盘用户任务列表")
 	@GetMapping("/task/replayUserTaskInfo")
@@ -431,6 +493,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("团队对抗-学员任务矩阵-是否显示红点")
 	@GetMapping("/task/matrix/badge")
@@ -449,6 +514,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp
 	 */
 	@ApiOperation("任务矩阵红点点击取消")
 	@GetMapping("/matrix/badge/click")
@@ -466,6 +534,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see TeamTrainDeviceReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("新增占用主机")
 	@PostMapping("/device")
@@ -496,6 +567,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see TeamTrainDeviceReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("解除主机占用")
 	@DeleteMapping("/device")
@@ -509,11 +583,15 @@ public class TeamTrainStudentsController {
 	}
 
 	/**
-	 * 获取占领设备
+	 * 获取占用设备
 	 *
 	 * @param room_id         房间id
 	 * @param standard_device 标准设备
 	 * @return {@code BaseRsp<List<TeamTrainDeviceContext>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<TeamTrainDeviceContext>>
 	 */
 	@ApiOperation("查询主机占用情况")
 	@GetMapping("/device")
@@ -534,6 +612,11 @@ public class TeamTrainStudentsController {
 	 * @param category    类别
 	 * @param name        名称
 	 * @return {@code BaseRsp<List<TeamCommonDeviceContext>> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see BaseRsp<List<TeamCommonDeviceContext>>
 	 */
 	@ApiOperation("常用资产可添加列表")
 	@GetMapping("/device/common_device/not_yet")
@@ -578,6 +661,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param teamCommonDeviceReq 团队常见装置请求体
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see TeamCommonDeviceReq
+	 * @see BaseRsp
 	 */
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
@@ -603,6 +689,9 @@ public class TeamTrainStudentsController {
 	 *
 	 * @param teamCommonDeviceContext 团队通用设备上下文
 	 * @return {@code BaseRsp }
+	 * @throws
+	 * @see TeamCommonDeviceContext
+	 * @see BaseRsp
 	 */
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
@@ -620,6 +709,11 @@ public class TeamTrainStudentsController {
 	 * @param category    类别
 	 * @param name        名称
 	 * @return {@code BaseRsp<List<TeamCommonDeviceContext>> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see BaseRsp<List<TeamCommonDeviceContext>>
 	 */
 	@ApiOperation("常用资产已添加列表")
 	@GetMapping("/device/common_device/already")
@@ -659,6 +753,10 @@ public class TeamTrainStudentsController {
 	 * @param crRoles
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see List<CrRole>
+	 * @see String
+	 * @see BaseRole
 	 */
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
@@ -681,6 +779,10 @@ public class TeamTrainStudentsController {
 	 * @param crRoles
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see List<CrRole>
+	 * @see String
+	 * @see BaseRole
 	 */
 	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();
@@ -715,6 +817,12 @@ public class TeamTrainStudentsController {
 	 * @param roomId                    房间id
 	 * @param allCollectedCommonDevices 已添加的常用资产列表
 	 * @return 可添加的常用资产列表
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see List<TeamTrainDeviceContext>
+	 * @see String
+	 * @see List<TeamCommonDevice>
+	 * @see List<TeamCommonDeviceContext>
 	 */
 	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 			List<TeamTrainDeviceContext> occupyDevices, String roomId,
@@ -776,6 +884,10 @@ public class TeamTrainStudentsController {
 	 * @param availableDevices       常用中可用设备，中台的设备状态信息
 	 * @param collectedCommonDevices 已添加的常用资产列表
 	 * @return 已添加常用资产列表
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see List<TeamCommonDevice>
+	 * @see List<TeamCommonDeviceContext>
 	 */
 	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 			List<TeamCommonDevice> collectedCommonDevices) {

@@ -16,33 +16,46 @@ import org.apache.commons.collections.CollectionUtils;
  * 角色简要信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/05/15
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class CrRoleSimple implements Serializable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	private String resourceId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 角色组
+	 *
+	 * @see Integer
 	 */
 	private Integer roleGroup;
 
 	/**
 	 * 任务计划
+	 *
+	 * @see List<CrRoleMissionSchemeStage>
 	 */
 	private List<CrRoleMissionSchemeStage> missionScheme;
 
 	/**
 	 * 用户id列表
+	 *
+	 * @see List<String>
 	 */
 	private List<String> userIds;
 

@@ -39,7 +39,11 @@ import com.google.common.collect.Sets;
  * 工具Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see ToolService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -47,24 +51,32 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 
 	/**
 	 * 工具Mapper
+	 *
+	 * @see ToolMapper
 	 */
 	@Autowired
 	private ToolMapper toolMapper;
 
 	/**
 	 * 工具类别Service
+	 *
+	 * @see ToolCategoryService
 	 */
 	@Autowired
 	private ToolCategoryService toolCategoryService;
 
 	/**
 	 * 工具文件Mapper
+	 *
+	 * @see ToolFileMapper
 	 */
 	@Autowired
 	private ToolFileMapper toolFileMapper;
 
 	/**
 	 * 远程终端Service
+	 *
+	 * @see RemoteTerminalService
 	 */
 	@Autowired
 	private RemoteTerminalService remoteTerminalService;
@@ -74,6 +86,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 *
 	 * @param entityList 实体列表
 	 * @return boolean
+	 * @throws
+	 * @see Collection<Tool>
+	 * @see boolean
 	 */
 	@Override
 	@Transactional(rollbackFor = { Exception.class }, transactionManager = "transactionManager")
@@ -86,6 +101,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 *
 	 * @param toolRsp 工具响应
 	 * @param tool    工具
+	 * @throws
+	 * @see ToolRsp
+	 * @see Tool
 	 */
 	private void setAboutCategory(ToolRsp toolRsp, Tool tool) {
 		List<String> categoryList = LocalStringUtil.strToListStr(tool.getCategory());
@@ -115,6 +133,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 *
 	 * @param toolRsp 工具响应
 	 * @param tool    工具
+	 * @throws
+	 * @see ToolRsp
+	 * @see Tool
 	 */
 	private void setAboutDevice(ToolRsp toolRsp, Tool tool) {
 		if (!StringUtils.isBlank(tool.getImageResourceId())) {
@@ -128,6 +149,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 *
 	 * @param toolRsp 工具响应
 	 * @param tool    工具
+	 * @throws
+	 * @see ToolRsp
+	 * @see Tool
 	 */
 	private void setAboutFile(ToolRsp toolRsp, Tool tool) {
 		List<Integer> fileList = LocalStringUtil.strToList(tool.getFiles());
@@ -148,6 +172,10 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 * @param tool     工具
 	 * @param isDetail 是详情
 	 * @return {@code ToolRsp }
+	 * @throws
+	 * @see Tool
+	 * @see boolean
+	 * @see ToolRsp
 	 */
 	private ToolRsp toBo(Tool tool, boolean isDetail) {
 		ToolRsp toolRsp = BeanUtils.copy(tool, ToolRsp.class);
@@ -174,6 +202,11 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 * @param toolListQuery 工具列表查询
 	 * @param isAdmin       是管理员
 	 * @return {@code IPage<ToolRsp> }
+	 * @throws
+	 * @see Page
+	 * @see ToolListQuery
+	 * @see Boolean
+	 * @see IPage<ToolRsp>
 	 */
 	@Override
 	public IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin) {
@@ -186,6 +219,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code ToolRsp }
+	 * @throws
+	 * @see String
+	 * @see ToolRsp
 	 */
 	@Override
 	public ToolRsp selectById(String resourceId) {
@@ -198,6 +234,9 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 *
 	 * @param name 名称
 	 * @return {@code Tool }
+	 * @throws
+	 * @see String
+	 * @see Tool
 	 */
 	@Override
 	public Tool getByName(String name) {
@@ -208,6 +247,8 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 * 验证工具名称存在
 	 *
 	 * @param tool 工具
+	 * @throws
+	 * @see Tool
 	 */
 	@Override
 	public void validateToolNameExist(Tool tool) {
@@ -223,6 +264,8 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	 * 验证编辑工具名称存在
 	 *
 	 * @param tool 工具
+	 * @throws
+	 * @see Tool
 	 */
 	@Override
 	public void validateEditToolNameExist(Tool tool){

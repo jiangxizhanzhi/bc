@@ -49,7 +49,9 @@ import java.util.concurrent.Executor;
  * EVAL 算法 REF 控制器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "前台-测试靶场-算法管理")
@@ -60,42 +62,56 @@ public class EvalAlgorithmRefController {
 
 	/**
 	 * 评估算法裁判Mapper
+	 *
+	 * @see EvalAlgorithmRefMapper
 	 */
 	@Autowired
 	private EvalAlgorithmRefMapper evalAlgorithmRefMapper;
 
 	/**
 	 * 评估指数裁判Mapper
+	 *
+	 * @see EvalIndexRefMapper
 	 */
 	@Autowired
 	private EvalIndexRefMapper evalIndexRefMapper;
 
 	/**
 	 * 评估变量裁判Mapper
+	 *
+	 * @see EvalVariableRefMapper
 	 */
 	@Autowired
 	private EvalVariableRefMapper evalVariableRefMapper;
 
 	/**
-	 * 远程蟒Service
+	 * 远程PythonService
+	 *
+	 * @see RemotePythonService
 	 */
 	@Autowired
 	private RemotePythonService remotePythonService;
 
 	/**
 	 * 评估算法裁判Service
+	 *
+	 * @see EvalAlgorithmRefService
 	 */
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 执行者
+	 *
+	 * @see Executor
 	 */
 	@Qualifier("taskExecutor")
 	@Autowired
@@ -106,6 +122,9 @@ public class EvalAlgorithmRefController {
 	 *
 	 * @param req
 	 * @return
+	 * @throws
+	 * @see EvalAlgorithmRefReq
+	 * @see BaseRsp<EvalAlgorithmEditRsp>
 	 */
 	@PutMapping("")
 	@ApiOperation("编辑算法")
@@ -156,6 +175,11 @@ public class EvalAlgorithmRefController {
 	 * @param res              结果
 	 * @param evalAlgorithmRef eval 算法 ref
 	 * @param matrixData       矩阵数据
+	 * @throws
+	 * @see EvalAlgorithmRefReq
+	 * @see EvalAlgorithmEditRsp
+	 * @see EvalAlgorithmRef
+	 * @see String
 	 */
 	void checkMatrixData(EvalAlgorithmRefReq req, EvalAlgorithmEditRsp res,
 			EvalAlgorithmRef evalAlgorithmRef, String matrixData) {
@@ -197,6 +221,10 @@ public class EvalAlgorithmRefController {
 	 * @param resourceId 资源id
 	 * @param type       类型
 	 * @return {@code BaseRsp<EvalAlgorithmRsp> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see BaseRsp<EvalAlgorithmRsp>
 	 */
 	@ApiOperation("查询算法")
 	@GetMapping("")

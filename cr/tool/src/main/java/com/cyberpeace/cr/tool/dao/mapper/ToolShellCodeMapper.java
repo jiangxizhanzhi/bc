@@ -11,7 +11,10 @@ import org.springframework.stereotype.Repository;
  * 工具壳代号Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -25,6 +28,12 @@ public interface ToolShellCodeMapper extends BaseMapper<ToolShellCode> {
 	 * @param platform    平台
 	 * @param edbVerified EDB 验证
 	 * @return {@code IPage<ToolShellCode> }
+	 * @throws
+	 * @see Page
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see IPage<ToolShellCode>
 	 */
 	IPage<ToolShellCode> list(Page page, @Param("author") String author,
 			@Param("platform") String platform, @Param("edbVerified") Boolean edbVerified);

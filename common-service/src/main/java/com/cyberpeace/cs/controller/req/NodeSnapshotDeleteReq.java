@@ -13,7 +13,10 @@ import lombok.Data;
  * 节点快照删除请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -21,6 +24,8 @@ public class NodeSnapshotDeleteReq implements Serializable {
 
 	/**
 	 * 场景id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("场景编号")
 	@NotBlank
@@ -28,6 +33,8 @@ public class NodeSnapshotDeleteReq implements Serializable {
 
 	/**
 	 * 节点id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("节点编号")
 	@NotEmpty
@@ -35,6 +42,8 @@ public class NodeSnapshotDeleteReq implements Serializable {
 
 	/**
 	 * 快照id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("快照编号")
 	@NotBlank

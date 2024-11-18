@@ -19,13 +19,19 @@ import com.google.common.collect.Lists;
  * 评估集合体Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see EvalAggregationService
+ * @since 1.0.0
  */
 @Service
 public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMapper, EvalAggregation> implements EvalAggregationService {
 
 	/**
 	 * 评估集合体Mapper
+	 *
+	 * @see EvalAggregationMapper
 	 */
 	@Autowired
 	EvalAggregationMapper evalAggregationMapper;
@@ -34,6 +40,8 @@ public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMappe
 	 * 保存批量上下文
 	 *
 	 * @param evalAggregations eval 聚合
+	 * @throws
+	 * @see List<EvalAggregationContext>
 	 */
 	@Override
 	public void saveBatchContext(List<EvalAggregationContext> evalAggregations) {
@@ -57,6 +65,9 @@ public class EvalAggregationServiceImpl extends ServiceImpl<EvalAggregationMappe
 	 *
 	 * @param evalIndicatorId 评估指示器id
 	 * @return {@code List<EvalAggregationContext> }
+	 * @throws
+	 * @see String
+	 * @see List<EvalAggregationContext>
 	 */
 	@Override
 	public List<EvalAggregationContext> getContextByEvalIndicatorId(String evalIndicatorId) {

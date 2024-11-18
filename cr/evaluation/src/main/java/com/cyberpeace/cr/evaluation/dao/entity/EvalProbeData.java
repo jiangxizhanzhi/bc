@@ -12,44 +12,61 @@ import java.util.Date;
  * EVAL 探针数据
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @TableName("cr_eval_probe_data")
 public class EvalProbeData extends BaseTable {
     /**
      * id
+     *
+     * @see Integer
      */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
      * 场景id
+     *
+     * @see String
      */
     private String sceneId;
 
     /**
      * 装置id
+     *
+     * @see String
      */
     private String deviceId;
 
     /**
      * 探针id
+     *
+     * @see String
      */
     private String probeId;
 
     /**
      * 收集时间
+     *
+     * @see Date
      */
     private Date collectionTime;
 
     /**
      * 装置ip地址
+     *
+     * @see String
      */
     private String deviceIp;
 
     /**
      * 内容
+     *
+     * @see String
      */
     private String content;
 

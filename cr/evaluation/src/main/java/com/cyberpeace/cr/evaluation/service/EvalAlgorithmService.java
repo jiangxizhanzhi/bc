@@ -11,7 +11,10 @@ import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
  * 评估算法Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see IService
+ * @since 1.0.0
  */
 public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 
@@ -20,6 +23,9 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 *
 	 * @param ids
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	Integer selectUsedNum(List<String> ids);
 
@@ -28,6 +34,9 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 *
 	 * @param ids
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	Boolean delete(List<String> ids);
 
@@ -35,6 +44,8 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 * 更新算法
 	 *
 	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
 	 */
 	void updateStateById(String resourceId);
 
@@ -43,6 +54,9 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 *
 	 * @param type
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<EvalAlgorithm>
 	 */
 	List<EvalAlgorithm> selectByType(String type);
 
@@ -51,6 +65,9 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 *
 	 * @param listQuery
 	 * @return
+	 * @throws
+	 * @see EvalListQuery
+	 * @see IPage<EvalAlgorithm>
 	 */
 	IPage<EvalAlgorithm> page(EvalListQuery listQuery);
 
@@ -59,6 +76,9 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 *
 	 * @param algorithmIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	List<String> selectUsedAlgorithmIds(List<String> algorithmIds);
 
@@ -66,6 +86,8 @@ public interface EvalAlgorithmService extends IService<EvalAlgorithm> {
 	 * 更新已使用的算法状态为隐藏
 	 *
 	 * @param selectUsedAlgorithmIds 查询使用算法id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	void updateStateByIds(List<String> selectUsedAlgorithmIds);
 }

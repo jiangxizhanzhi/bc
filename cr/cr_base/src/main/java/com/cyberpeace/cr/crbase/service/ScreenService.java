@@ -10,7 +10,9 @@ import java.util.List;
  * 屏幕Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 public interface ScreenService {
 
@@ -23,6 +25,12 @@ public interface ScreenService {
      * @param nodeId        设备Id
      * @param groups        组
      * @return
+     * @throws
+     * @see String
+     * @see String
+     * @see String
+     * @see Collection<Integer>
+     * @see List<ScreenRecordUserRole>
      */
     List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String replaySceneId , String nodeId, Collection<Integer> groups);
 
@@ -32,6 +40,10 @@ public interface ScreenService {
      * @param screenRecordUserRoles 复盘时间
      * @param actualEndTime         场景结束时间
      * @return
+     * @throws
+     * @see List<ScreenRecordUserRole>
+     * @see Date
+     * @see List<ScreenRecordUserRole>
      */
     List<ScreenRecordUserRole> filterBeforeActualEndTime(List<ScreenRecordUserRole> screenRecordUserRoles, Date actualEndTime);
 }

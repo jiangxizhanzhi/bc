@@ -27,7 +27,10 @@ import lombok.extern.slf4j.Slf4j;
  * RB场景事件听者
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see MessageListener
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -35,30 +38,40 @@ public class RbSceneEventListener extends MessageListener {
 
 	/**
 	 * Web 套接字处理程序
+	 *
+	 * @see MyWebSocketHandler
 	 */
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
 
 	/**
 	 * RB房间Service
+	 *
+	 * @see RbRoomService
 	 */
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	/**
 	 * RB场景Service
+	 *
+	 * @see RbSceneService
 	 */
 	@Autowired
 	private RbSceneService rbSceneService;
 
 	/**
 	 * 靶场事件听者助手
+	 *
+	 * @see CrEventListenerHelper
 	 */
 	@Autowired
 	private CrEventListenerHelper crEventListenerHelper;
 
 	/**
 	 * 靶场角色Service
+	 *
+	 * @see CrRoleService
 	 */
 	@Autowired
 	private CrRoleService crRoleService;
@@ -67,6 +80,8 @@ public class RbSceneEventListener extends MessageListener {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer declareMessageType() {
@@ -80,6 +95,11 @@ public class RbSceneEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
@@ -95,6 +115,11 @@ public class RbSceneEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
@@ -109,6 +134,11 @@ public class RbSceneEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
@@ -139,6 +169,9 @@ public class RbSceneEventListener extends MessageListener {
 	 *
 	 * @param data
 	 * @param businessId 业务id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private void pushDataToWeb(String data, String businessId) {
 		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
@@ -152,6 +185,10 @@ public class RbSceneEventListener extends MessageListener {
 	 * @param data       数据
 	 * @param businessId 业务id
 	 * @param userIds    用户id列表
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
 	 */
 	private void pushDataToWebByUserIds(String data, String businessId, List<String> userIds) {
 		WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,

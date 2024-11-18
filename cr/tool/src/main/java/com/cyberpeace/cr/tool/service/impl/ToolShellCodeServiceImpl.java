@@ -16,7 +16,11 @@ import org.springframework.stereotype.Service;
  * 工具壳代号Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @see ServiceImpl
+ * @see ToolShellCodeService
+ * @since 1.0.0
  */
 @Service
 public class ToolShellCodeServiceImpl extends ServiceImpl<ToolShellCodeMapper, ToolShellCode>
@@ -24,6 +28,8 @@ public class ToolShellCodeServiceImpl extends ServiceImpl<ToolShellCodeMapper, T
 
 	/**
 	 * 工具壳代号Mapper
+	 *
+	 * @see ToolShellCodeMapper
 	 */
 	@Autowired
 	private ToolShellCodeMapper toolShellCodeMapper;
@@ -34,6 +40,10 @@ public class ToolShellCodeServiceImpl extends ServiceImpl<ToolShellCodeMapper, T
 	 * @param pageReqBase      分页请求体基础
 	 * @param toolShellCodeRsp 工具壳代号响应
 	 * @return {@code ListRsp<ToolShellCode> }
+	 * @throws
+	 * @see PageReqBase
+	 * @see ToolShellCodeRsp
+	 * @see ListRsp<ToolShellCode>
 	 */
 	@Override
 	public ListRsp<ToolShellCode> selectPage(PageReqBase pageReqBase,
@@ -51,6 +61,9 @@ public class ToolShellCodeServiceImpl extends ServiceImpl<ToolShellCodeMapper, T
 	 *
 	 * @param toolShellCode 工具壳代号
 	 * @return {@code ToolShellCode }
+	 * @throws
+	 * @see ToolShellCode
+	 * @see ToolShellCode
 	 */
 	public ToolShellCode removeContent(ToolShellCode toolShellCode) {
 		toolShellCode.setContent("");

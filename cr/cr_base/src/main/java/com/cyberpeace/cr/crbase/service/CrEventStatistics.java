@@ -17,7 +17,9 @@ import static com.cyberpeace.cr.crbase.service.impl.CrBaseServiceImpl.register;
  * 靶场事件统计学
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/07
+ * @since 1.0.0
  */
 @Slf4j
 @Service(value = "CrEventStatistics")
@@ -25,6 +27,8 @@ public class CrEventStatistics {
 
 	/**
 	 * 注册
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void register() {
@@ -37,6 +41,8 @@ public class CrEventStatistics {
 	 * 获取代号
 	 *
 	 * @return {@code LocalScene.BusinessCode }
+	 * @throws
+	 * @see LocalScene.BusinessCode
 	 */
 	public LocalScene.BusinessCode getCode() {
 		return null;
@@ -47,6 +53,9 @@ public class CrEventStatistics {
 	 *
 	 * @param userId 用户id
 	 * @return {@code TrainingCount }
+	 * @throws
+	 * @see String
+	 * @see TrainingCount
 	 */
 	public TrainingCount getTrainingCount(String userId) {
 		log.error("Method not implemented! userId = [{}]", userId);
@@ -58,6 +67,9 @@ public class CrEventStatistics {
 	 *
 	 * @param userId 用户id
 	 * @return {@code List<TrainingData> }
+	 * @throws
+	 * @see String
+	 * @see List<TrainingData>
 	 */
 	public List<TrainingData> getRelatedTraining(String userId) {
 		log.error("Method not implemented! userId = [{}]", userId);

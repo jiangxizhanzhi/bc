@@ -496,14 +496,19 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
 				Double cvssAll = 0.0;
 				Double cvssBll = 0.0;
+				List<Vuln> we = leaks;
 				for (Vuln vuln : leaks) {
 					cvssAll = cvssAll + vuln.getCvss();
 					for (Defense defens : defenses) {
 						if (vuln.getResourceId().equals(defens.getVulnId())) {
-							cvssBll = cvssBll + vuln.getCvss();
+							we.remove(vuln);
+//							cvssBll = cvssBll + vuln.getCvss();
 							break;
 						}
 					}
+				}
+				for (Vuln vuln : we) {
+					cvssBll = cvssBll + vuln.getCvss();
 				}
 				wsCvss.setCvss(cvssBll/cvssAll*10);
 			}
@@ -1105,6 +1110,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			List<VulnTop.Vulns> vulnsList = new ArrayList<>();
 			List<VulnTop.Defenses> defensesList = new ArrayList<>();
 
+			List<Vuln> we = vulnList;
 			Double cvssAll = 0.0;
 			Double cvssBll = 0.0;
 			// 填入漏洞信息
@@ -1130,10 +1136,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				cvssAll = cvssAll + vuln.getCvss();
 				for (Defense defens : defenses) {
 					if (vuln.getResourceId().equals(defens.getVulnId())) {
-						cvssBll = cvssBll + vuln.getCvss();
+						we.remove(vuln);
+//						cvssBll = cvssBll + vuln.getCvss();
 						break;
 					}
 				}
+			}
+			for (Vuln vuln : we) {
+				cvssBll = cvssBll + vuln.getCvss();
 			}
 
 			List<String> collect = defenses.stream().map(Defense::getVulnId).collect(Collectors.toList());
@@ -1237,14 +1247,19 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
 				Double cvssAll = 0.0;
 				Double cvssBll = 0.0;
+				List<Vuln> we = leaks;
 				for (Vuln vuln : leaks) {
 					cvssAll = cvssAll + vuln.getCvss();
 					for (Defense defens : defenses) {
 						if (vuln.getResourceId().equals(defens.getVulnId())) {
-							cvssBll = cvssBll + vuln.getCvss();
+							we.remove(vuln);
+//							cvssBll = cvssBll + vuln.getCvss();
 							break;
 						}
 					}
+				}
+				for (Vuln vuln : we) {
+					cvssBll = cvssBll + vuln.getCvss();
 				}
 				wsCvss.setCvss(cvssBll/cvssAll*10);
 			}

@@ -496,20 +496,23 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
 				Double cvssAll = 0.0;
 				Double cvssBll = 0.0;
+				List<Vuln> we = BeanUtils.deepCopyList(leaks, Vuln.class);
 				for (Vuln vuln : leaks) {
 					cvssAll = cvssAll + vuln.getCvss();
 					for (Defense defens : defenses) {
 						if (vuln.getResourceId().equals(defens.getVulnId())) {
-							leaks.remove(vuln);
+							we.remove(vuln);
 //							cvssBll = cvssBll + vuln.getCvss();
 							break;
 						}
 					}
 				}
-				for (Vuln vuln : leaks) {
+				for (Vuln vuln : we) {
 					cvssBll = cvssBll + vuln.getCvss();
 				}
-				wsCvss.setCvss(cvssBll/cvssAll*10);
+				Double cvss = cvssBll/cvssAll*10;
+				String str = String.format("%.2f", cvss);
+				wsCvss.setCvss(Double.parseDouble(str));
 			}
 		}
 
@@ -1108,7 +1111,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			vulnTop.setCvss(0.0);
 			List<VulnTop.Vulns> vulnsList = new ArrayList<>();
 			List<VulnTop.Defenses> defensesList = new ArrayList<>();
-
+			List<Vuln> we = BeanUtils.deepCopyList(vulnList, Vuln.class);
 			Double cvssAll = 0.0;
 			Double cvssBll = 0.0;
 			// 填入漏洞信息
@@ -1134,7 +1137,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				cvssAll = cvssAll + vuln.getCvss();
 				for (Defense defens : defenses) {
 					if (vuln.getResourceId().equals(defens.getVulnId())) {
-						vulnList.remove(vuln);
+						we.remove(vuln);
 //						cvssBll = cvssBll + vuln.getCvss();
 						break;
 					}
@@ -1159,7 +1162,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			}
 
 			vulnTop.setNodeId(nodeId);
-			vulnTop.setCvss(cvssBll/cvssAll*10);
+			Double cvss = cvssBll/cvssAll*10;
+			String str = String.format("%.2f", cvss);
+			vulnTop.setCvss(Double.parseDouble(str));
 			vulnTop.setVulnList(vulnsList);
 			vulnTop.setDefenseList(defensesList);
 
@@ -1245,20 +1250,23 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				List<Vuln> leaks = dynamicSchemeMapper.queryLeakByIds(vulns);
 				Double cvssAll = 0.0;
 				Double cvssBll = 0.0;
+				List<Vuln> we = BeanUtils.deepCopyList(leaks, Vuln.class);
 				for (Vuln vuln : leaks) {
 					cvssAll = cvssAll + vuln.getCvss();
 					for (Defense defens : defenses) {
 						if (vuln.getResourceId().equals(defens.getVulnId())) {
-							leaks.remove(vuln);
+							we.remove(vuln);
 //							cvssBll = cvssBll + vuln.getCvss();
 							break;
 						}
 					}
 				}
-				for (Vuln vuln : leaks) {
+				for (Vuln vuln : we) {
 					cvssBll = cvssBll + vuln.getCvss();
 				}
-				wsCvss.setCvss(cvssBll/cvssAll*10);
+				Double cvss = cvssBll/cvssAll*10;
+				String str = String.format("%.2f", cvss);
+				wsCvss.setCvss(Double.parseDouble(str));
 			}
 		}
 		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.Cvss.getDesc(), wsCvss);

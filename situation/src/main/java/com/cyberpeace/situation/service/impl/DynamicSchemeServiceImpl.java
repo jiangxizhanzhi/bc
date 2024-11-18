@@ -1143,7 +1143,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					}
 				}
 			}
-			for (Vuln vuln : vulnList) {
+			for (Vuln vuln : we) {
 				cvssBll = cvssBll + vuln.getCvss();
 			}
 

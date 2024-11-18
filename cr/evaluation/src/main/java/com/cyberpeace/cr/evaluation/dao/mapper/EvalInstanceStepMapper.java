@@ -24,7 +24,7 @@ public interface EvalInstanceStepMapper extends BaseMapper<EvalInstanceStep> {
 
 	List<String> selectRunningGuideIds();
 
-	List<EvalTimeLineContext> selectTimeNodes(@Param("instanceId") String instanceId);
+	List<EvalTimeLineContext> selectTimeNodes(@Param("param1") String param1,@Param("param2") String param2,@Param("param3") String param3);
 
 	List<EvalCodeStageRsp> getAllStages(@Param("instanceId") String instanceId);
 

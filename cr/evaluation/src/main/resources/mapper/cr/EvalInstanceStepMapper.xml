@@ -32,11 +32,15 @@
     </select>
 
     <select id="selectTimeNodes" resultType="com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext">
+        select '' step_id,'场景开始时间' title,start_time end_time from cr_eval_test_instance where resource_id = #{param1}
+        union
         select instance_step.resource_id step_id, step.name title, end_time
         from cr_eval_test_instance_step instance_step
-        left join cr_eval_step step on instance_step.step_id = step.resource_id
+                 left join cr_eval_step step on instance_step.step_id = step.resource_id
         where instance_step.end_time is not null
-        and instance_step.test_instance_id = #{instanceId}
+          and instance_step.test_instance_id = #{param2}
+        union select '' step_id,'场景关闭时间' title,end_time end_time from cr_eval_test_instance where resource_id = #{param3}
+
     </select>
 
     <select id="getAllStages" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalCodeStageRsp">

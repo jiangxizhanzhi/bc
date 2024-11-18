@@ -121,7 +121,7 @@ public class EvalTestInstanceServiceImpl extends ServiceImpl<EvalTestInstanceMap
 	public EvalTaskTimeNodesRsp getTimeNodes(String instanceId) {
 		EvalTaskTimeNodesRsp evalTaskTimeNodesRsp = new EvalTaskTimeNodesRsp();
 		evalTaskTimeNodesRsp.setTaskId(instanceId);
-		evalTaskTimeNodesRsp.setData(evalInstanceStepMapper.selectTimeNodes(instanceId));
+		evalTaskTimeNodesRsp.setData(evalInstanceStepMapper.selectTimeNodes(instanceId,instanceId,instanceId));
 		return evalTaskTimeNodesRsp;
 	}
 

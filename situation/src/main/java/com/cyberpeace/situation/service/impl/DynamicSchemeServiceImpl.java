@@ -426,13 +426,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		// 判断当前任务是否有工具和漏洞信息
 		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
 			// 有信息查询工具信息
-			ToolVuln toolVuln = dynamicSchemeMapper.toolVulnById(attackMessageReq.getTool(), attackMessageReq.getLeak(), 0);
+			List<ToolVuln> toolVuln = dynamicSchemeMapper.toolVulnById(attackMessageReq.getTool(), attackMessageReq.getLeak(), 0);
 			// 查询漏洞信息
 			List<Vuln> vulnList = dynamicSchemeMapper.queryLeak();
 			Map<String, Double> cvssMap = vulnList.stream().collect(Collectors.toMap(Vuln::getResourceId, Vuln::getCvss));
 			if (isMultiterm) {
 				// 多任务推送判断该节点是否有防御成功记录
-				List<Defense> defenses = dynamicSchemeMapper.queryDefenseBySceneId(attackMessageReq.getSceneId(), 1);
+				List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getTargetId(), 1);
 				boolean isDefen = false;
 				for (Defense defens : defenses) {
 					if (attackMessageReq.getTargetId().equals(defens.getNodeId()) && attackMessageReq.getLeak().equals(defens.getVulnId())) {
@@ -442,7 +442,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						break;
 					}
 				}
-				if (!isDefen && toolVuln != null) {
+				if (!isDefen && toolVuln != null && toolVuln.size() != 0) {
 					// 没有该节点的防御记录并且工具信息中有改漏洞攻击成功
 					wsMultiNodeDynamic.setIsSucceed(1);
 
@@ -451,7 +451,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					defense.setSceneId(attackMessageReq.getSceneId());
 					defense.setNodeId(attackMessageReq.getTargetId());
 					defense.setVulnId(attackMessageReq.getLeak());
-					defense.setDeacription(toolVuln.getDescribe());
+					defense.setDeacription(toolVuln.get(0).getDescribe());
 					defense.setType(0);
 					defense.setCreateTime(new Date());
 					// 记录防御成功数据
@@ -1088,7 +1088,18 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				v.setVulnId(vuln.getResourceId());
 				v.setVulnNmae(vuln.getName());
 				v.setVulnCvss(vuln.getCvss());
-				v.setVulnLevl(vuln.getType());
+				if (vuln.getType() == 4) {
+					v.setVulnLevl("严重");
+				} else if (vuln.getType() == 3) {
+					v.setVulnLevl("高危");
+				} else if (vuln.getType() == 2) {
+					v.setVulnLevl("中危");
+				} else if (vuln.getType() == 1) {
+					v.setVulnLevl("低危");
+				} else {
+					v.setVulnLevl("正常");
+				}
+				v.setVulnNumber(vuln.getNumber());
 				vulnsList.add(v);
 
 				cvssAll = cvssAll + vuln.getCvss();
@@ -1147,24 +1158,39 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		// 判断当前任务是否有工具和漏洞信息
 		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
 			// 有信息查询工具信息
-			ToolVuln toolVuln = dynamicSchemeMapper.toolVulnById(attackMessageReq.getTool(), attackMessageReq.getLeak(), 1);
-			if (toolVuln != null) {
+			List<ToolVuln> toolVuln = dynamicSchemeMapper.toolVulnById(attackMessageReq.getTool(), attackMessageReq.getLeak(), 1);
+			if (toolVuln != null && toolVuln.size() != 0) {
 				// 查到工具信息，防御成功
 				wsDefenseDynamic.setIsSucceed(1);
+				wsCvss.setFlag(2);
 				// 判断是否为多方案推送，多方案推送记录防御成功记录
 				if (isMultiterm) {
+					// 多任务推送判断该加固节点是否有攻击成功记录
+					List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getDefenseTargetId(), 0);
+					if (defenses != null && defenses.size() != 0) {
+						// 有被攻击记录，判断是否为第一次加固，第一次为修复，第二次为加固
+						List<Defense> defenseList =
+								dynamicSchemeMapper.queryDefenseByNodeId(attackMessageReq.getSceneId(), attackMessageReq.getDefenseTargetId(), 1);
+						if (defenseList == null || defenseList.size() == 0) {
+							// 为第一次加固，是修复攻击漏洞，返回状态为正常
+							wsCvss.setFlag(1);
+						} else {
+							// 为第二次加固，返回状态为加固成功
+							wsCvss.setFlag(2);
+						}
+					}
+
 					Defense defense = new Defense();
 					defense.setResourceId(IDGeneratorUtil.getID());
 					defense.setSceneId(attackMessageReq.getSceneId());
 					defense.setNodeId(attackMessageReq.getDefenseTargetId());
 					defense.setVulnId(attackMessageReq.getLeak());
-					defense.setDeacription(toolVuln.getDescribe());
+					defense.setDeacription(toolVuln.get(0).getDescribe());
 					defense.setType(1);
 					defense.setCreateTime(new Date());
 					// 记录防御成功数据
 					dynamicSchemeMapper.addDefense(defense);
 				}
-				wsCvss.setFlag(2);
 			} else {
 				wsDefenseDynamic.setIsSucceed(0);
 			}

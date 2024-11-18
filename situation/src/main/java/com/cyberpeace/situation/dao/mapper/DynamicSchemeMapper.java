@@ -56,7 +56,7 @@ public interface DynamicSchemeMapper extends BaseMapper<DynamicScheme> {
 	 * @param leak 漏洞id
 	 * @return 工具信息
 	 */
-	ToolVuln toolVulnById(@Param("tool") String tool, @Param("leak") String leak, @Param("type") Integer type);
+	List<ToolVuln> toolVulnById(@Param("tool") String tool, @Param("leak") String leak, @Param("type") Integer type);
 
 	/**
 	 * 新增防御记录

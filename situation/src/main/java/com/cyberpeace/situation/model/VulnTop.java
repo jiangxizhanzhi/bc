@@ -22,7 +22,9 @@ public class VulnTop {
 
         private Double vulnCvss;
 
-        private Integer vulnLevl;
+        private String vulnLevl;
+
+        private String vulnNumber;
     }
 
     @Data

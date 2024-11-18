@@ -327,20 +327,29 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setLeakInfos(leakInfos);
 
 			elementInfo.setImageUuid(elementExtendedInfo.getString("image_uuid"));
+			elementInfo.setCvss(0.0);
+			elementInfo.setCvssLevel(0);
 			if (cvssMap != null && cvssMap.size() != 0) {
 				Double cvss = cvssMap.get(elementExtendedInfo.getString("image_uuid"));
 				if (cvss != null) {
-					String  str = String.format("%.2f",cvss);
+					String  str = String.format("%.2f", cvss);
 					elementInfo.setCvss(Double.parseDouble(str));
 					// todo cvss严重评级
 					if (cvss != null) {
-						elementInfo.setCvssLevel(3);
+						if (cvss.compareTo(10.0) <= 0 || cvss.compareTo(9.0) >= 0) {
+							elementInfo.setCvssLevel(4);
+						} else if (cvss.compareTo(9.0) < 0 || cvss.compareTo(7.0) >= 0) {
+							elementInfo.setCvssLevel(3);
+						} else if (cvss.compareTo(7.0) < 0 || cvss.compareTo(4.0) >= 0) {
+							elementInfo.setCvssLevel(2);
+						} else if (cvss.compareTo(4.0) <= 0 || cvss.compareTo(0.1) >= 0) {
+							elementInfo.setCvssLevel(1);
+						} else {
+							elementInfo.setCvssLevel(0);
+						}
 					}
-
 				}
 			}
-//			elementInfo.setCvss(8.8);
-//			DeviceInfo deviceInfo = remoteTerminalService.getById(elementExtendedInfo.getString("image_uuid"));
 			// 获取该节点下防御成功记录
 			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneData.getSceneId(), elementId, 1);
 			if (defenses != null && defenses.size() != 0) {

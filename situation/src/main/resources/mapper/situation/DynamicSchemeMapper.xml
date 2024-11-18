@@ -79,4 +79,12 @@
             #{vuln}
         </foreach>
     </select>
+
+    <select id="queryToolById" resultType="com.cyberpeace.situation.dao.entity.ToolVuln">
+        select * from situation_tool_vuln where resource_id = #{tool}
+    </select>
+
+    <select id="queryById" resultType="com.cyberpeace.situation.dao.entity.Vuln">
+        select * from situation_vuln where resource_id = #{leak}
+    </select>
 </mapper>

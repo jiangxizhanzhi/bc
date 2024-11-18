@@ -421,6 +421,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		WsCvss wsCvss = new WsCvss();
 		wsCvss.setNodeId(attackMessageReq.getTargetId());
 		wsCvss.setFlag(1);
+		wsCvss.setCvss(0.0);
 
 		// 判断当前任务是否有工具和漏洞信息
 		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
@@ -463,7 +464,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				}
 			} else {
 				if (toolVuln != null) {
-					// 查到工具信息，防御成功
+					// 查到工具信息，攻击成功
 					wsMultiNodeDynamic.setIsSucceed(1);
 
 					wsCvss.setFlag(3);
@@ -484,8 +485,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			//设置类型为点对区域
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
-
-		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsCvss);
+		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.Cvss.getDesc(), wsCvss);
 		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null);
 
 		//推送攻击弹窗
@@ -500,8 +500,19 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		if (attackType != null) {
 			attackInfo.setAttackName(attackType.getMsg());
 		}
-		attackInfo.setLeak(attackMessageReq.getLeak());
-		attackInfo.setTool(attackMessageReq.getTool());
+		if (attackMessageReq.getTool() != null) {
+			ToolVuln toolVuln = dynamicSchemeMapper.queryToolById(attackMessageReq.getTool());
+			if (toolVuln != null) {
+				attackInfo.setTool(toolVuln.getToolName());
+			}
+		}
+
+		if (attackMessageReq.getLeak() != null) {
+			Vuln vuln = dynamicSchemeMapper.queryById(attackMessageReq.getLeak());
+			if (vuln != null) {
+				attackInfo.setLeak(vuln.getName());
+			}
+		}
 		attackInfo.setDuration(attackMessageReq.getDurationTime());
 		//校验漏洞是否匹配
 		List<String> leaks = elementInfoMap.get(attackMessageReq.getTargetId()).getLeakInfos().stream().map(LeakInfo::getName).collect(Collectors.toList());
@@ -1054,7 +1065,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	@Override
-	public VulnTop queryVulnTop(String sceneId, String nodeId) {
+	public VulnTop queryVulnTop(String sceneId, String nodeId, String elementId) {
 		// 获取设备信息
 		DeviceInfo deviceInfo = remoteTerminalService.getById(nodeId);
 
@@ -1063,7 +1074,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			List<Vuln> vulnList = dynamicSchemeMapper.queryVulnTop(vulns);
 
 			// 获取该节点下防御成功记录
-			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneId, nodeId, 1);
+			List<Defense> defenses = dynamicSchemeMapper.queryDefenseByNodeId(sceneId, elementId, 1);
 
 			VulnTop vulnTop = new VulnTop();
 			List<VulnTop.Vulns> vulnsList = new ArrayList<>();
@@ -1131,6 +1142,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		WsCvss wsCvss = new WsCvss();
 		wsCvss.setNodeId(attackMessageReq.getDefenseTargetId());
 		wsCvss.setFlag(1);
+		wsCvss.setCvss(0.0);
 
 		// 判断当前任务是否有工具和漏洞信息
 		if (attackMessageReq.getLeak() != null && attackMessageReq.getTool() != null) {
@@ -1164,7 +1176,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		// 推送防御动效
 		pushDataToRoom(wsMessage, attackMessageReq, playback, null);
 
-		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsCvss);
+		WsMessage<WsCvss> wsCvssWsMessage = new WsMessage<>(MessageType.Cvss.getDesc(), wsCvss);
 		pushDataToRoom(wsCvssWsMessage, attackMessageReq, playback, null);
 
 		//推送防御弹窗
@@ -1175,8 +1187,19 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		if (defenseType != null) {
 			wsDefenseInfo.setDefenseName(defenseType.getMsg());
 		}
-		wsDefenseInfo.setTool(attackMessageReq.getTool());
-		wsDefenseInfo.setLeak(attackMessageReq.getLeak());
+		if (attackMessageReq.getTool() != null) {
+			ToolVuln toolVuln = dynamicSchemeMapper.queryToolById(attackMessageReq.getTool());
+			if (toolVuln != null) {
+				wsDefenseInfo.setTool(toolVuln.getToolName());
+			}
+		}
+
+		if (attackMessageReq.getLeak() != null) {
+			Vuln vuln = dynamicSchemeMapper.queryById(attackMessageReq.getLeak());
+			if (vuln != null) {
+				wsDefenseInfo.setLeak(vuln.getName());
+			}
+		}
 		defenseType = DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class);
 		if (defenseType != null) {
 			wsDefenseInfo.setResult(defenseType.getSuccessDesc());

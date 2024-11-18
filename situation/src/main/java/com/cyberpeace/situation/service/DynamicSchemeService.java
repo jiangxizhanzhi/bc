@@ -160,5 +160,5 @@ public interface DynamicSchemeService {
 
 	List<ToolVuln> queryTool(String vulnId, Integer toolType);
 
-	VulnTop queryVulnTop(String sceneId, String nodeId);
+	VulnTop queryVulnTop(String sceneId, String nodeId, String elementId);
 }

@@ -46,7 +46,11 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 课堂标志Service实现
  *
- * @author chenzhuo@date 2024/11/14
+ * @author chenzhuo@date 2024/11/14@see ServiceImpl
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see ClassroomSignService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -54,54 +58,72 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 
 	/**
 	 * 课堂Mapper
+	 *
+	 * @see ClassroomMapper
 	 */
 	@Autowired
 	private ClassroomMapper classroomMapper;
 
 	/**
 	 * 课堂标志Mapper
+	 *
+	 * @see ClassroomSignMapper
 	 */
 	@Autowired
 	private ClassroomSignMapper classroomSignMapper;
 
 	/**
 	 * 课堂组信息Mapper
+	 *
+	 * @see ClassroomGroupInfoMapper
 	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
 	/**
 	 * OJ当地场景Mapper
+	 *
+	 * @see OjLocalSceneMapper
 	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	/**
 	 * 当地场景Mapper
+	 *
+	 * @see LocalSceneMapper
 	 */
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
 	/**
 	 * 聊天WebSocket处理器
+	 *
+	 * @see ChatWebSocketHandler
 	 */
 	@Autowired
 	private ChatWebSocketHandler chatWebSocketHandler;
 
 	/**
 	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
 	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
 	/**
 	 * 课堂验证处理器
+	 *
+	 * @see ClassroomValidateHandler
 	 */
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
 
 	/**
 	 * 推送消息处理器
+	 *
+	 * @see PushMessageHandler
 	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
@@ -112,6 +134,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	 * @param classroomId 课堂id
 	 * @param authContext auth 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean signIn(String classroomId, AuthContext authContext) {
@@ -151,6 +177,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	 * @param lessonId 课时id
 	 * @param nodeId   节点id
 	 * @param roomId   房间id
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void needHelp(String lessonId, String nodeId, String roomId) {
@@ -216,6 +246,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	 *
 	 * @param classroomId 课堂id
 	 * @param userId      用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void toHelp(String classroomId, String userId) {
@@ -237,6 +270,9 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	 *
 	 * @param classroomId 课堂id
 	 * @param userId      用户id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void endHelp(String classroomId, String userId) {
@@ -269,6 +305,11 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	 * @param nodeId   节点id
 	 * @param roomId   房间id
 	 * @return {@code HelpStatusBo }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see HelpStatusBo
 	 */
 	@Override
 	public HelpStatusBo getHelpStatus(String lessonId, String nodeId, String roomId) {
@@ -294,6 +335,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	 * @param classroomId 课堂id
 	 * @param userId      用户id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getHelpUrl(String classroomId, String userId) {
@@ -363,6 +408,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	 * @param classroom
 	 * @param message   消息
 	 * @param toUserId  自用户id
+	 * @throws
+	 * @see Classroom
+	 * @see String
+	 * @see String
 	 */
 	private void pushChatMessage(Classroom classroom, String message, String toUserId) {
 		ChatWsMessageIdentifier messageIdentifier = new ChatWsMessageIdentifier();
@@ -383,6 +432,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	 * @param userId
 	 * @param classRoomId 类房间id
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	private String getNeedHelpMessage(String userId, String classRoomId) {
 

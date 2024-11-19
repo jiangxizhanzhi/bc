@@ -28,42 +28,57 @@ import com.google.common.collect.Maps;
  * 行为分析Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see BehaviorAnalyseService
+ * @since 1.0.0
  */
 public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 
 	/**
 	 * 行为记录Mapper
+	 *
+	 * @see BehaviorRecordMapper
 	 */
 	@Autowired
 	private BehaviorRecordMapper behaviorRecordMapper;
 
 	/**
 	 * 课程Service
+	 *
+	 * @see CourseService
 	 */
 	@Autowired
 	private CourseService courseService;
 
 	/**
 	 * 课程课时Service
+	 *
+	 * @see CourseLessonService
 	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
 	/**
 	 * 练习理论Service
+	 *
+	 * @see PracticeTheoryService
 	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
 	/**
 	 * 练习实操Service
+	 *
+	 * @see PracticeOperationService
 	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
 	/**
 	 * 名称缓存
+	 *
+	 * @see Map<String, String>
 	 */
 	private Map<String, String> nameCache = Maps.newConcurrentMap();
 
@@ -71,6 +86,8 @@ public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 	 * 获取分析结果
 	 *
 	 * @return {@code BehaviorAnalyseResult }
+	 * @throws
+	 * @see BehaviorAnalyseResult
 	 */
 	@Override
 	public BehaviorAnalyseResult getAnalyseResult() {
@@ -132,6 +149,9 @@ public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 	 *
 	 * @param id id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private String getTheoryName(String id) {
 		if (null == id || "".equals(id)) {
@@ -154,6 +174,9 @@ public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 	 *
 	 * @param id id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	private String getOperationName(String id) {
 		if (null == id || "".equals(id)) {
@@ -176,6 +199,9 @@ public class BehaviorAnalyseServiceImpl implements BehaviorAnalyseService {
 	 *
 	 * @param recordList 记录列表
 	 * @return {@code String }
+	 * @throws
+	 * @see List<BehaviorRecordEntity>
+	 * @see String
 	 */
 	private String getMostId(List<BehaviorRecordEntity> recordList) {
 		Map<String, List<BehaviorRecordEntity>> map = StreamApiUtils.groupBy(recordList,

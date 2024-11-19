@@ -45,7 +45,11 @@ import lombok.extern.slf4j.Slf4j;
  * 课时配置Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see ServiceImpl
+ * @see LessonConfigService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -53,42 +57,56 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
 	/**
 	 * 课时配置Mapper
+	 *
+	 * @see LessonConfigMapper
 	 */
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
 	/**
 	 * 课程课时Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 课时记录Mapper
+	 *
+	 * @see LessonRecordMapper
 	 */
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 讲义视频Service
+	 *
+	 * @see HandoutVideoService
 	 */
 	@Autowired
 	private HandoutVideoService handoutVideoService;
@@ -97,6 +115,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * 有效冲突
 	 *
 	 * @param courseId 课程id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void validConflict(String courseId) {
@@ -112,6 +132,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * 有效课时和章
 	 *
 	 * @param courseId 课程id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void validLessonAndChapter(String courseId) {
@@ -129,6 +151,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param courseId    课程id
 	 * @param authContext auth 上下文
 	 * @return {@code LessonConfigBo }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see LessonConfigBo
 	 */
 	@Override
 	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
@@ -156,6 +182,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 *
 	 * @param configBo 配置Bo
 	 * @return {@code LessonConfigBo }
+	 * @throws
+	 * @see LessonConfigBo
+	 * @see LessonConfigBo
 	 */
 	@Override
 	public LessonConfigBo updateLessonConfig(LessonConfigBo configBo) {
@@ -187,6 +216,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * 校验不合理的编排，课时下不允许出现课时和章节
 	 *
 	 * @param configBo 配置Bo
+	 * @throws
+	 * @see LessonConfigBo
 	 */
 	private void validLessonConfigBo(LessonConfigBo configBo) {
 
@@ -210,6 +241,8 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * 重新编排目录数据 重置index
 	 *
 	 * @param configBo 配置Bo
+	 * @throws
+	 * @see LessonConfigBo
 	 */
 	private void resetLessonConfigBo(LessonConfigBo configBo) {
 
@@ -243,6 +276,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 *
 	 * @param configContext config 上下文
 	 * @return {@code LessonConfig }
+	 * @throws
+	 * @see AddLessonConfigContext
+	 * @see LessonConfig
 	 */
 	@Override
 	public LessonConfig packageLessonConfig(AddLessonConfigContext configContext) {
@@ -273,6 +309,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param courseId    课程id
 	 * @param authContext auth 上下文
 	 * @return {@code LessonConfigDumpBo }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see LessonConfigDumpBo
 	 */
 	@Override
 	public LessonConfigDumpBo dumpLessonConfig(String courseId, AuthContext authContext) {
@@ -287,6 +327,11 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param courseId      课程id
 	 * @param courseLessons 课程课
 	 * @return {@code List<LessonConfig> }
+	 * @throws
+	 * @see LessonConfigDumpBo
+	 * @see String
+	 * @see List<CourseLesson>
+	 * @see List<LessonConfig>
 	 */
 	@Override
 	public List<LessonConfig> loadLessonConfig(LessonConfigDumpBo configDumpBo, String courseId,
@@ -317,6 +362,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param lessonNameMap
 	 * @param parentId      父母id
 	 * @return
+	 * @throws
+	 * @see List<LessonConfigDumpBo>
+	 * @see String
+	 * @see Map<String, String>
+	 * @see String
+	 * @see List<LessonConfig>
 	 */
 	private List<LessonConfig> dumpBoToEntity(List<LessonConfigDumpBo> configDumpBos,
 			String courseId, Map<String, String> lessonNameMap, String parentId) {
@@ -358,6 +409,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 *
 	 * @param lessonConfigBo
 	 * @return
+	 * @throws
+	 * @see LessonConfigBo
+	 * @see LessonConfigDumpBo
 	 */
 	private LessonConfigDumpBo configToDumpBo(LessonConfigBo lessonConfigBo) {
 
@@ -382,6 +436,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param courseId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see List<LessonConfigBo>
 	 */
 	private List<LessonConfigBo> getConfigBo(String courseId, AuthContext authContext) {
 		// 查询课程下所有课时
@@ -445,6 +503,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param lessonConfig
 	 * @param lessonMap    课时映射
 	 * @return
+	 * @throws
+	 * @see LessonConfig
+	 * @see Map<String, CourseLesson>
+	 * @see LessonConfigBo
 	 */
 	private LessonConfigBo configToBo(LessonConfig lessonConfig,
 			Map<String, CourseLesson> lessonMap) {
@@ -466,6 +528,9 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 *
 	 * @param node  最上级节点 课程节点
 	 * @param boMap Bo映射
+	 * @throws
+	 * @see LessonConfigBo
+	 * @see Map<String, List<LessonConfigBo>>
 	 */
 	private void setConfigTypeIndex(LessonConfigBo node, Map<String, List<LessonConfigBo>> boMap) {
 
@@ -511,6 +576,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 	 * @param configJson    配置 JSON
 	 * @param watchedPoints 观看点数
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see Set<Integer>
+	 * @see Integer
 	 */
 	private Integer calVideoProgress(String configJson, Set<Integer> watchedPoints) {
 		if (StringUtils.isBlank(configJson)) {

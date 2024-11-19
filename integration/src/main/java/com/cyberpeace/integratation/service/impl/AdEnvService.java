@@ -12,7 +12,9 @@ import javax.annotation.PostConstruct;
  * 竞赛环境Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -20,6 +22,8 @@ public class AdEnvService {
 
 	/**
 	 * 竞赛网址
+	 *
+	 * @see String
 	 */
 	private String AD_URL;
 
@@ -27,6 +31,8 @@ public class AdEnvService {
 	 * 获取竞赛主机
 	 *
 	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	public String getAdHost() {
 		if (StringUtils.isBlank(AD_URL)) {
@@ -38,6 +44,8 @@ public class AdEnvService {
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {

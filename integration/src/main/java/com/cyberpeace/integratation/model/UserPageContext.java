@@ -13,7 +13,10 @@ import lombok.NoArgsConstructor;
  * 用户分页上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @Builder
@@ -23,21 +26,29 @@ public class UserPageContext implements Serializable {
 
 	/**
 	 * 用户名
+	 *
+	 * @see String
 	 */
 	private String username;
 
 	/**
 	 * id列表
+	 *
+	 * @see String
 	 */
 	private String ids;
 
 	/**
 	 * 每分页
+	 *
+	 * @see Integer
 	 */
 	private Integer perPage;
 
 	/**
 	 * 分页
+	 *
+	 * @see Integer
 	 */
 	private Integer page;
 

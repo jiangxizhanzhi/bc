@@ -35,31 +35,42 @@ import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
  * 课程学习统计学Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see CourseLearnStatisticsService
+ * @since 1.0.0
  */
 @Service
 public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsService {
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
 	/**
 	 * 课程课时Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 课程学习统计学Mapper
+	 *
+	 * @see CourseLearnStatisticsMapper
 	 */
 	@Autowired
 	private CourseLearnStatisticsMapper courseLearnStatisticsMapper;
@@ -69,6 +80,9 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	 *
 	 * @param authContext auth 上下文
 	 * @return {@code HistogramRes }
+	 * @throws
+	 * @see AuthContext
+	 * @see HistogramRes
 	 */
 	@Override
 	public HistogramRes courseHistogram(AuthContext authContext) {
@@ -86,6 +100,9 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	 *
 	 * @param authContext auth 上下文
 	 * @return {@code HistogramRes }
+	 * @throws
+	 * @see AuthContext
+	 * @see HistogramRes
 	 */
 	@Override
 	public HistogramRes directionHistogram(AuthContext authContext) {
@@ -112,6 +129,9 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	 *
 	 * @param courses 课程
 	 * @return {@code HistogramRes }
+	 * @throws
+	 * @see List<Course>
+	 * @see HistogramRes
 	 */
 	private HistogramRes getCourseHistogramRes(List<Course> courses) {
 		List<String> xNames = new ArrayList<>();
@@ -135,6 +155,11 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	 * @param page        分页
 	 * @param authContext auth 上下文
 	 * @return {@code ListRsp<AdminCourseStatisticsRes> }
+	 * @throws
+	 * @see CourseContext
+	 * @see Page<AdminCourseStatisticsRes>
+	 * @see AuthContext
+	 * @see ListRsp<AdminCourseStatisticsRes>
 	 */
 	@Override
 	public ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page<AdminCourseStatisticsRes> page,
@@ -156,6 +181,9 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	 *
 	 * @param adminCourseStatisticsRes 管理课程统计学结果
 	 * @return {@code AdminCourseStatisticsRes }
+	 * @throws
+	 * @see AdminCourseStatisticsRes
+	 * @see AdminCourseStatisticsRes
 	 */
 	private AdminCourseStatisticsRes
 			curseStatisticToBo(AdminCourseStatisticsRes adminCourseStatisticsRes) {
@@ -171,6 +199,11 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	 * @param page     分页
 	 * @param pageReq  分页请求体
 	 * @return {@code ListRsp<AdminLessonStatisticsRes> }
+	 * @throws
+	 * @see String
+	 * @see Page<AdminLessonStatisticsRes>
+	 * @see LessonStatisticsListReq
+	 * @see ListRsp<AdminLessonStatisticsRes>
 	 */
 	@Override
 	public ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String courseId,
@@ -218,6 +251,13 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	 * @param page           分页
 	 * @param sort           排序
 	 * @return {@code ListRsp<AdminLessonStatisticsDetailRes> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Page<AdminLessonStatisticsDetailRes>
+	 * @see String
+	 * @see ListRsp<AdminLessonStatisticsDetailRes>
 	 */
 	@Override
 	public ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
@@ -258,6 +298,10 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	 * @param organizationId 组织id
 	 * @param usernameLike   username like
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
 	 */
 	public List<String> getUsers(String organizationId, String usernameLike) {
 		List<String> userIds = new ArrayList<>();

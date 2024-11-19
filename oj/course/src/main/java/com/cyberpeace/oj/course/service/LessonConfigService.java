@@ -14,7 +14,10 @@ import java.util.List;
  * 课时配置Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see IService
+ * @since 1.0.0
  */
 public interface LessonConfigService extends IService<LessonConfig> {
 
@@ -24,6 +27,10 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 * @param courseId    课程编号
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see LessonConfigBo
 	 */
 	LessonConfigBo getLessonConfig(String courseId, AuthContext authContext);
 
@@ -32,6 +39,9 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 *
 	 * @param configBo
 	 * @return
+	 * @throws
+	 * @see LessonConfigBo
+	 * @see LessonConfigBo
 	 */
 	LessonConfigBo updateLessonConfig(LessonConfigBo configBo);
 
@@ -40,6 +50,9 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 *
 	 * @param configContext
 	 * @return
+	 * @throws
+	 * @see AddLessonConfigContext
+	 * @see LessonConfig
 	 */
 	LessonConfig packageLessonConfig(AddLessonConfigContext configContext);
 
@@ -49,6 +62,10 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 * @param courseId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see LessonConfigDumpBo
 	 */
 	LessonConfigDumpBo dumpLessonConfig(String courseId, AuthContext authContext);
 
@@ -59,6 +76,11 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 * @param courseId
 	 * @param courseLessons
 	 * @return
+	 * @throws
+	 * @see LessonConfigDumpBo
+	 * @see String
+	 * @see List<CourseLesson>
+	 * @see List<LessonConfig>
 	 */
 	List<LessonConfig> loadLessonConfig(LessonConfigDumpBo lessonConfig, String courseId,
 			List<CourseLesson> courseLessons);
@@ -67,6 +89,8 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 * 有效冲突
 	 *
 	 * @param courseId 课程id
+	 * @throws
+	 * @see String
 	 */
 	void validConflict(String courseId);
 
@@ -74,6 +98,8 @@ public interface LessonConfigService extends IService<LessonConfig> {
 	 * 有效课时和章
 	 *
 	 * @param courseId 课程id
+	 * @throws
+	 * @see String
 	 */
 	void validLessonAndChapter(String courseId);
 }

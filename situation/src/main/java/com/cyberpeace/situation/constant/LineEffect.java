@@ -6,18 +6,43 @@ import com.google.common.collect.Lists;
 
 import lombok.Getter;
 
+/**
+ * 特效
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see Enum
+ * @since 1.0.0
+ */
 public enum LineEffect {
 
 	/**
-	 * 特效
+	 * 流动
+	 *
+	 * @see LineEffect
 	 */
-
 	STREAM("stream", "流动"),
+	/**
+	 * 发光
+	 *
+	 * @see LineEffect
+	 */
 	SHINE("shine", "发光");
 
+	/**
+	 * 代号
+	 *
+	 * @see String
+	 */
 	@Getter
 	private String code;
 
+	/**
+	 * 描述
+	 *
+	 * @see String
+	 */
 	@Getter
 	private String desc;
 

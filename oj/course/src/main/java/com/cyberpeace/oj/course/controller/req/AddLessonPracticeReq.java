@@ -13,7 +13,10 @@ import java.util.List;
  * 新增课时练习请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -21,6 +24,8 @@ public class AddLessonPracticeReq implements Serializable {
 
 	/**
 	 * 课程编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	@NotBlank
@@ -28,6 +33,8 @@ public class AddLessonPracticeReq implements Serializable {
 
 	/**
 	 * 习题数据
+	 *
+	 * @see List<PaperPracticeContext>
 	 */
 	@ApiModelProperty("习题数据")
 	private List<PaperPracticeContext> practiceList;

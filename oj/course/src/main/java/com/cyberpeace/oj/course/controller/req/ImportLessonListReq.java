@@ -10,22 +10,29 @@ import lombok.Data;
  * 导入课时列表请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 @ApiModel
 public class ImportLessonListReq extends PageReqBase {
 
-	/**
-	 * 课程分类
-	 */
-	@ApiModelProperty("课程分类")
+    /**
+     * 课程分类
+     *
+     * @see String
+     */
+    @ApiModelProperty("课程分类")
     private String categoryId;
 
-	/**
-	 * 当前课程
-	 */
-	@ApiModelProperty("当前课程")
+    /**
+     * 当前课程
+     *
+     * @see String
+     */
+    @ApiModelProperty("当前课程")
     private String exceptCourse;
 
 }

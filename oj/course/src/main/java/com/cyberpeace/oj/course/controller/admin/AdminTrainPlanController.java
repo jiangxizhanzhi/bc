@@ -39,7 +39,9 @@ import io.swagger.annotations.ApiParam;
  * 管理训练计划Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台训练计划相关api")
 @RequiresAuthentication
@@ -49,18 +51,24 @@ public class AdminTrainPlanController {
 
 	/**
 	 * 训练计划Service
+	 *
+	 * @see TrainPlanService
 	 */
 	@Autowired
 	private TrainPlanService trainPlanService;
 
 	/**
 	 * 课堂Service
+	 *
+	 * @see ClassroomService
 	 */
 	@Autowired
 	private ClassroomService classroomService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -69,6 +77,8 @@ public class AdminTrainPlanController {
 	 * 列表
 	 *
 	 * @return {@code BaseRsp<List<TrainPlanBo>> }
+	 * @throws
+	 * @see BaseRsp<List<TrainPlanBo>>
 	 */
 	@ApiOperation("训练计划列表查询全部")
 	@GetMapping("/list")
@@ -84,6 +94,9 @@ public class AdminTrainPlanController {
 	 *
 	 * @param trainPlanReq 训练计划请求体
 	 * @return {@code BaseRsp<ListRsp<TrainPlanRsp>> }
+	 * @throws
+	 * @see TrainPlanReq
+	 * @see BaseRsp<ListRsp<TrainPlanRsp>>
 	 */
 	@ApiOperation("训练计划列表分页查询")
 	@GetMapping("/list/page")
@@ -111,6 +124,9 @@ public class AdminTrainPlanController {
 	 *
 	 * @param trainPlanAddReq 训练计划新增请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see TrainPlanAddReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("新增单条训练计划")
 	@PostMapping("/train_plan")
@@ -134,6 +150,9 @@ public class AdminTrainPlanController {
 	 *
 	 * @param trainPlanUpdateReq 训练计划更新请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see TrainPlanUpdateReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("编辑单条训练计划")
 	@PutMapping("/train_plan")
@@ -156,6 +175,9 @@ public class AdminTrainPlanController {
 	 *
 	 * @param resource_id 资源id
 	 * @return {@code BaseRsp<TrainPlan> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<TrainPlan>
 	 */
 	@ApiOperation("查询单条训练计划")
 	@GetMapping("/train_plan")
@@ -172,6 +194,9 @@ public class AdminTrainPlanController {
 	 *
 	 * @param delReq 戴尔请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("后台计划批量删除")
 	@DeleteMapping("delete_batch")

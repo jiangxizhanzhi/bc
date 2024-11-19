@@ -18,7 +18,10 @@ import org.apache.commons.lang3.StringUtils;
  * 课程新增请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel("课程新增信息")
@@ -26,6 +29,8 @@ public class CourseAddReq implements Serializable {
 
 	/**
 	 * 课程名称
+	 *
+	 * @see String
 	 */
 	@NotBlank(groups = { Create.class })
 	@ApiModelProperty("课程名称")
@@ -33,12 +38,16 @@ public class CourseAddReq implements Serializable {
 
 	/**
 	 * 课程描述
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程描述")
 	private String description;
 
 	/**
 	 * 课程方向
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程方向")
 	@NotBlank(groups = { Create.class })
@@ -46,18 +55,24 @@ public class CourseAddReq implements Serializable {
 
 	/**
 	 * 课程封面
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程封面")
 	private String logo;
 
 	/**
 	 * 课程大纲
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程大纲")
 	private String outline;
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	@NotNull(groups = { Create.class })
 	@ApiModelProperty("难度")
@@ -65,6 +80,8 @@ public class CourseAddReq implements Serializable {
 
 	/**
 	 * 是否公开
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否公开")
 	@NotNull(groups = { Create.class })
@@ -72,24 +89,32 @@ public class CourseAddReq implements Serializable {
 
 	/**
 	 * 课程分类 0=基础 2=攻击 3=防御
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课程分类 0=基础 2=攻击 3=防御")
 	private Integer courseType;
 
 	/**
 	 * 讲师
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("讲师")
 	private String lecturer;
 
 	/**
 	 * 学分
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("学分")
 	private Integer score;
 
 	/**
 	 * 课程编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	@NotBlank

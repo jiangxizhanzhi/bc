@@ -15,7 +15,10 @@ import java.util.List;
  * 课堂统计Bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -26,18 +29,24 @@ public class ClassroomStatisticBo implements Serializable {
 
 	/**
 	 * 成绩统计
+	 *
+	 * @see GradeDistributionBo
 	 */
 	@ApiModelProperty("成绩统计")
 	private GradeDistributionBo gradeDistribution;
 
 	/**
 	 * 签到统计
+	 *
+	 * @see SignInfoBo
 	 */
 	@ApiModelProperty("签到统计")
 	private SignInfoBo signInfo;
 
 	/**
 	 * top20
+	 *
+	 * @see List<UserNoteScoreBo>
 	 */
 	@ApiModelProperty("top20")
 	private List<UserNoteScoreBo> top20;

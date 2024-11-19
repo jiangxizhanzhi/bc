@@ -9,18 +9,25 @@ import lombok.Data;
  * 标记数据
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class MarkData implements Serializable {
 
 	/**
 	 * 基准时间
+	 *
+	 * @see Long
 	 */
 	private Long baseTime;
 
 	/**
 	 * 数据
+	 *
+	 * @see List<MarkItemData>
 	 */
 	List<MarkItemData> data;
 }

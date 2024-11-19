@@ -22,7 +22,9 @@ import io.swagger.annotations.ApiParam;
  * 管理课时配置Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @RestController
 @RequestMapping("/oj/admin/lessonconfig")
@@ -30,19 +32,24 @@ import io.swagger.annotations.ApiParam;
 @RequiresAuthentication
 public class AdminLessonConfigController {
 
-	/**
-	 * 课时配置Service
-	 */
-	@Autowired
+    /**
+     * 课时配置Service
+     *
+     * @see LessonConfigService
+     */
+    @Autowired
 	private LessonConfigService lessonConfigService;
 
-	/**
-	 * 获取课时配置
-	 *
-	 * @param courseId 课程id
-	 * @return {@code BaseRsp<LessonConfigBo> }
-	 */
-	@ApiOperation("后台课程目录查询")
+    /**
+     * 获取课时配置
+     *
+     * @param courseId 课程id
+     * @return {@code BaseRsp<LessonConfigBo> }
+     * @throws
+     * @see String
+     * @see BaseRsp<LessonConfigBo>
+     */
+    @ApiOperation("后台课程目录查询")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<LessonConfigBo> getLessonConfig(@ApiParam(name = "course_id",
@@ -55,13 +62,16 @@ public class AdminLessonConfigController {
 		return new BaseRsp<>(lessonConfig);
 	}
 
-	/**
-	 * 设置课时配置
-	 *
-	 * @param configBo 配置Bo
-	 * @return {@code BaseRsp<LessonConfigBo> }
-	 */
-	@ApiOperation("编排课时")
+    /**
+     * 设置课时配置
+     *
+     * @param configBo 配置Bo
+     * @return {@code BaseRsp<LessonConfigBo> }
+     * @throws
+     * @see LessonConfigBo
+     * @see BaseRsp<LessonConfigBo>
+     */
+    @ApiOperation("编排课时")
 	@PutMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<LessonConfigBo> setLessonConfig(

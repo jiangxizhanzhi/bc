@@ -16,7 +16,10 @@ import lombok.Data;
  * 导入课时请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -24,6 +27,8 @@ public class ImportLessonReq implements Serializable {
 
 	/**
 	 * 课程编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	@NotBlank(message = OjBusinessErrorCode.COURSE_INFORMATION_NOT_NULL)
@@ -31,6 +36,8 @@ public class ImportLessonReq implements Serializable {
 
 	/**
 	 * 课时编号列表
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty("课时编号列表")
 	@NotEmpty(message = OjBusinessErrorCode.LESSON_INFORMATION_NOT_NULL)

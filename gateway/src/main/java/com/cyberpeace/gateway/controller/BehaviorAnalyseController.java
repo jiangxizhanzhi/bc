@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
  * 行为分析Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "回调接口")
 @Slf4j
@@ -26,6 +28,8 @@ public class BehaviorAnalyseController {
 
 	/**
 	 * 行为分析Service
+	 *
+	 * @see BehaviorAnalyseService
 	 */
 	@Autowired
 	private BehaviorAnalyseService behaviorAnalyseService;
@@ -34,6 +38,8 @@ public class BehaviorAnalyseController {
 	 * 获取分析结果
 	 *
 	 * @return {@code BaseRsp<BehaviorAnalyseResult> }
+	 * @throws
+	 * @see BaseRsp<BehaviorAnalyseResult>
 	 */
 	@ApiOperation("分析结果")
 	@GetMapping("")

@@ -10,17 +10,24 @@ import com.google.common.collect.Maps;
  * 场景中台上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 public class SceneMpContext implements Serializable {
 
 	/**
 	 * 访问用户id
+	 *
+	 * @see String
 	 */
 	private String access_user_id = UserInfoContext.getUserContext().getUserId();
 
 	/**
 	 * 通过
+	 *
+	 * @see Map<String, String>
 	 */
 	private Map<String, String> pass_through = Maps.newHashMap();
 

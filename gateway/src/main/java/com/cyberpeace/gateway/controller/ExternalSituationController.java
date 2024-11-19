@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
  * 外部态势Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "外部接口-态势相关api")
 @Slf4j
@@ -26,12 +28,16 @@ public class ExternalSituationController {
 
 	/**
 	 * 态势处理器Service
+	 *
+	 * @see SituationHandlerService
 	 */
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 拓扑处理器Service
+	 *
+	 * @see TopoHandlerService
 	 */
 	@Autowired
 	private TopoHandlerService topoHandlerService;
@@ -42,6 +48,10 @@ public class ExternalSituationController {
 	 * @param sceneId 场景id
 	 * @param topoId  拓扑id
 	 * @return {@code BaseRsp<SituationTopo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<SituationTopo>
 	 */
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")

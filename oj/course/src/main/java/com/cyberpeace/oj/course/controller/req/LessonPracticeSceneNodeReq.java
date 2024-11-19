@@ -10,7 +10,10 @@ import javax.validation.constraints.NotBlank;
  * 课时练习场景节点请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see LessonPracticeSceneReq
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -18,6 +21,8 @@ public class LessonPracticeSceneNodeReq extends LessonPracticeSceneReq {
 
     /**
      * 节点编号
+     *
+     * @see String
      */
     @ApiModelProperty("节点编号")
 	@NotBlank

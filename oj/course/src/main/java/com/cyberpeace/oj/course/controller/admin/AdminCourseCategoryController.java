@@ -44,7 +44,9 @@ import io.swagger.annotations.ApiOperation;
  * 管理课程类别Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台课程分类api")
 @RestController
@@ -55,18 +57,24 @@ public class AdminCourseCategoryController {
 
 	/**
 	 * 课程类别Service
+	 *
+	 * @see CourseCategoryService
 	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
 
 	/**
 	 * 课程类别Mapper
+	 *
+	 * @see CourseCategoryMapper
 	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
 	/**
 	 * 课程验证处理器
+	 *
+	 * @see CourseValidateHandler
 	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
@@ -76,6 +84,9 @@ public class AdminCourseCategoryController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<CourseCategoryBo>> }
+	 * @throws
+	 * @see CourseCategoryListReq
+	 * @see BaseRsp<ListRsp<CourseCategoryBo>>
 	 */
 	@ApiOperation("课程分类分页查询")
 	@GetMapping("/list")
@@ -97,6 +108,10 @@ public class AdminCourseCategoryController {
 	 * @param resourceId 资源id
 	 * @param children   子级
 	 * @return {@code BaseRsp<CourseCategoryBo> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see BaseRsp<CourseCategoryBo>
 	 */
 	@ApiOperation("课程分类详细信息查询")
 	@ApiImplicitParams({
@@ -117,6 +132,9 @@ public class AdminCourseCategoryController {
 	 *
 	 * @param batchDeleteReq 批量删除请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see BatchDeleteReq
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("课程分类批量删除")
 	@DeleteMapping("/batch")
@@ -132,6 +150,9 @@ public class AdminCourseCategoryController {
 	 *
 	 * @param categoryReq 类别请求体
 	 * @return {@code BaseRsp<CategoryRes> }
+	 * @throws
+	 * @see SaveCourseCategoryReq
+	 * @see BaseRsp<CategoryRes>
 	 */
 	@ApiOperation("课程分类新增")
 	@PostMapping("")
@@ -160,6 +181,9 @@ public class AdminCourseCategoryController {
 	 *
 	 * @param updateCategoryReq 更新类别请求体
 	 * @return {@code BaseRsp<CategoryRes> }
+	 * @throws
+	 * @see UpdateCategoryReq
+	 * @see BaseRsp<CategoryRes>
 	 */
 	@ApiOperation("课程分类修改")
 	@PatchMapping("")

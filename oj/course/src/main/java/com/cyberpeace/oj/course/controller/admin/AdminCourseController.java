@@ -57,7 +57,10 @@ import java.util.List;
  * 管理课程Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see AuthAndPublicController
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "oj-后台课程相关api")
@@ -68,42 +71,56 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	/**
 	 * 课程Service
+	 *
+	 * @see CourseService
 	 */
 	@Autowired
 	private CourseService courseService;
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
 	/**
 	 * 课程类别Service
+	 *
+	 * @see CourseCategoryService
 	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
 
 	/**
 	 * 课程类别Mapper
+	 *
+	 * @see CourseCategoryMapper
 	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 远程日志Service
+	 *
+	 * @see RemoteLogService
 	 */
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -113,7 +130,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 *
 	 * @param courseListReq 课程列表请求体
 	 * @return {@code BaseRsp<ListRsp<CourseWebBo>> }
-	 */// LGD在使用 知识点和技能点绑定课程
+	 * @throws
+	 * @see CourseListReq
+	 * @see BaseRsp<ListRsp<CourseWebBo>>
+	 */ // LGD在使用 知识点和技能点绑定课程
 	@GetMapping("/all/list")
 	@ApiOperation("分页查询全部课程信息")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
@@ -146,6 +166,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ListRsp<CourseWebBo>> }
+	 * @throws
+	 * @see CourseAdminListReq
+	 * @see BaseRsp<ListRsp<CourseWebBo>>
 	 */
 	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
@@ -184,6 +207,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 *
 	 * @param addReq 新增请求体
 	 * @return {@code BaseRsp<Course> }
+	 * @throws
+	 * @see CourseAddReq
+	 * @see BaseRsp<Course>
 	 */
 	@ApiOperation("课程新增")
 	@PostMapping("")
@@ -221,6 +247,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 *
 	 * @param updateReq 更新请求体
 	 * @return {@code BaseRsp<Course> }
+	 * @throws
+	 * @see CourseUpdateReq
+	 * @see BaseRsp<Course>
 	 */
 	@ApiOperation("课程信息修改")
 	@PatchMapping("")
@@ -246,6 +275,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 *
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<AdminCourseRes> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<AdminCourseRes>
 	 */
 	@ApiOperation("课程信息查询")
 	@GetMapping("")
@@ -269,6 +301,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 *
 	 * @param batchDeleteReq 批量删除请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see BatchDeleteReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("批量删除课程信息")
 	@DeleteMapping("/batch")
@@ -297,6 +332,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 *
 	 * @param outlineFile 大纲文件
 	 * @return {@code BaseRsp<AttachmentBo> }
+	 * @throws
+	 * @see MultipartFile
+	 * @see BaseRsp<AttachmentBo>
 	 */
 	@ApiOperation("课程大纲文件上传")
 	@PostMapping("/outline/upload_attachment")
@@ -323,6 +361,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 * 全部课程
 	 *
 	 * @return {@code BaseRsp<List<SimpleDataRes>> }
+	 * @throws
+	 * @see BaseRsp<List<SimpleDataRes>>
 	 */
 	@ApiOperation("查询全部课程信息")
 	@GetMapping("/all/course")
@@ -349,6 +389,10 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 * @param courseIds 课程id列表
 	 * @param response  响应
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see List<String>
+	 * @see HttpServletResponse
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
@@ -369,6 +413,9 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	 *
 	 * @param loadCourseReq 加载课程请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see LoadCourseReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")

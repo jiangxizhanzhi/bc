@@ -33,7 +33,11 @@ import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
  * 训练计划Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see ServiceImpl
+ * @see TrainPlanService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -41,18 +45,24 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 	/**
 	 * 训练计划Mapper
+	 *
+	 * @see TrainPlanMapper
 	 */
 	@Autowired
 	private TrainPlanMapper trainPlanMapper;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
@@ -62,6 +72,9 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	 *
 	 * @param userInfo 用户信息
 	 * @return {@code List<TrainPlanBo> }
+	 * @throws
+	 * @see UserInfo
+	 * @see List<TrainPlanBo>
 	 */
 	@Override
 	public List<TrainPlanBo> trainPlanList(UserInfo userInfo) {
@@ -76,6 +89,10 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	 * @param trainPlanReq 训练计划请求体
 	 * @param userInfo     用户信息
 	 * @return {@code IPage<TrainPlanRsp> }
+	 * @throws
+	 * @see TrainPlanReq
+	 * @see UserInfo
+	 * @see IPage<TrainPlanRsp>
 	 */
 	@Override
 	public IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo) {
@@ -101,6 +118,10 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	 * @param name   名称
 	 * @param id     id
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void checkNameRepeat(String name, String id, String userId) {
@@ -124,6 +145,10 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	 * @param trainPlan 训练计划
 	 * @param userInfo  用户信息
 	 * @return {@code TrainPlanBo }
+	 * @throws
+	 * @see TrainPlan
+	 * @see UserInfo
+	 * @see TrainPlanBo
 	 */
 	private TrainPlanBo entityToBo(TrainPlan trainPlan, UserInfo userInfo) {
 		TrainPlanBo planBo = BeanUtils.copy(trainPlan, TrainPlanBo.class);

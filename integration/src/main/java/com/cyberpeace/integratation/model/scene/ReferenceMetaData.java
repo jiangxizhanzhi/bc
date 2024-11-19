@@ -6,32 +6,45 @@ import java.io.Serializable;
  * 引用元数据
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 public class ReferenceMetaData implements Serializable {
 
 	/**
 	 * 业务id
+	 *
+	 * @see String
 	 */
 	private String business_id;
 
 	/**
 	 * 业务名称
+	 *
+	 * @see String
 	 */
 	private String business_name;
 
 	/**
 	 * 1xx=实训；2xx=靶场
+	 *
+	 * @see Integer
 	 */
 	private Integer business_code;
 
 	/**
 	 * oj专用，暂时不用
+	 *
+	 * @see Boolean
 	 */
 	private Boolean is_web;
 
 	/**
 	 * 创建用户id
+	 *
+	 * @see String
 	 */
 	private String create_user_id;
 

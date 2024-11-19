@@ -14,7 +14,9 @@ import com.cyberpeace.oj.course.dao.context.CourseContext;
  * 课程学习统计学Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 public interface CourseLearnStatisticsService {
 
@@ -23,6 +25,9 @@ public interface CourseLearnStatisticsService {
 	 *
 	 * @param authContext auth 上下文
 	 * @return {@code HistogramRes }
+	 * @throws
+	 * @see AuthContext
+	 * @see HistogramRes
 	 */
 	HistogramRes courseHistogram(AuthContext authContext);
 
@@ -31,6 +36,9 @@ public interface CourseLearnStatisticsService {
 	 *
 	 * @param authContext auth 上下文
 	 * @return {@code HistogramRes }
+	 * @throws
+	 * @see AuthContext
+	 * @see HistogramRes
 	 */
 	HistogramRes directionHistogram(AuthContext authContext);
 
@@ -41,6 +49,11 @@ public interface CourseLearnStatisticsService {
 	 * @param page        分页
 	 * @param authContext auth 上下文
 	 * @return {@code ListRsp<AdminCourseStatisticsRes> }
+	 * @throws
+	 * @see CourseContext
+	 * @see Page<AdminCourseStatisticsRes>
+	 * @see AuthContext
+	 * @see ListRsp<AdminCourseStatisticsRes>
 	 */
 	ListRsp<AdminCourseStatisticsRes> courseStatisticsList(CourseContext context, Page<AdminCourseStatisticsRes> page,
 			AuthContext authContext);
@@ -52,6 +65,11 @@ public interface CourseLearnStatisticsService {
 	 * @param page                    分页
 	 * @param pageReq                 分页请求体
 	 * @return {@code ListRsp<AdminLessonStatisticsRes> }
+	 * @throws
+	 * @see String
+	 * @see Page<AdminLessonStatisticsRes>
+	 * @see LessonStatisticsListReq
+	 * @see ListRsp<AdminLessonStatisticsRes>
 	 */
 	ListRsp<AdminLessonStatisticsRes> LessonStatisticsList(String lessonStatisticsListReq,
 			Page<AdminLessonStatisticsRes> page, LessonStatisticsListReq pageReq);
@@ -65,6 +83,13 @@ public interface CourseLearnStatisticsService {
 	 * @param page           分页
 	 * @param sort           排序
 	 * @return {@code ListRsp<AdminLessonStatisticsDetailRes> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Page<AdminLessonStatisticsDetailRes>
+	 * @see String
+	 * @see ListRsp<AdminLessonStatisticsDetailRes>
 	 */
 	ListRsp<AdminLessonStatisticsDetailRes> LessonStatisticsDetail(String organizationId,
 			String lessonId, String usernameLike, Page<AdminLessonStatisticsDetailRes> page, String sort);

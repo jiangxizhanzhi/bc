@@ -18,7 +18,9 @@ import com.cyberpeace.gateway.controller.req.NfsUmountReq;
  * NFS挂载Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "外部接口-nfs挂载相关api")
 @RestController
@@ -27,16 +29,22 @@ public class NfsMountController {
 
 	/**
 	 * 挂载指令
+	 *
+	 * @see String
 	 */
 	private String MOUNT_SHELL = "mount -t nfs -o nolock -o soft %s:%s %s";
 
 	/**
 	 * 卸载指令
+	 *
+	 * @see String
 	 */
 	private String UMOUNT_SHELL = "umount %s";
 
 	/**
 	 * mkdir
+	 *
+	 * @see String
 	 */
 	private String MKDIR = "mkdir -p %s";
 
@@ -45,6 +53,9 @@ public class NfsMountController {
 	 *
 	 * @param nfsMountReq NFS挂载请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NfsMountReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("NFS目录挂载")
 	@PostMapping("/mount")
@@ -65,6 +76,9 @@ public class NfsMountController {
 	 *
 	 * @param umountReq umount请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see NfsUmountReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("NFS目录卸载")
 	@PostMapping("/umount")

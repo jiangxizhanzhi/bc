@@ -34,7 +34,9 @@ import java.util.List;
  * Web课堂Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "oj-前台课程表相关")
 @RestController
@@ -44,12 +46,16 @@ public class WebClassroomController {
 
 	/**
 	 * 课堂Service
+	 *
+	 * @see ClassroomService
 	 */
 	@Autowired
 	private ClassroomService classroomService;
 
 	/**
 	 * 课堂标志Service
+	 *
+	 * @see ClassroomSignService
 	 */
 	@Autowired
 	private ClassroomSignService classroomSignService;
@@ -59,6 +65,9 @@ public class WebClassroomController {
 	 *
 	 * @param month 月
 	 * @return {@code BaseRsp<List<TimeScheduleBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<TimeScheduleBo>>
 	 */
 	@ApiOperation("前台课程表信息查询")
 	@GetMapping("/list")
@@ -96,6 +105,9 @@ public class WebClassroomController {
 	 *
 	 * @param signInReq 标志在请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ClassroomSignInReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课堂签到")
 	@PostMapping("/sign_in")
@@ -116,6 +128,9 @@ public class WebClassroomController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see RemoteHelpReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("请求远程协助")
 	@PatchMapping("/need_help")
@@ -134,6 +149,9 @@ public class WebClassroomController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<HelpStatusBo> }
+	 * @throws
+	 * @see RemoteHelpReq
+	 * @see BaseRsp<HelpStatusBo>
 	 */
 	@ApiOperation("获取远程协助状态")
 	@GetMapping("/help_status")
@@ -150,6 +168,9 @@ public class WebClassroomController {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code BaseRsp<DashboardInfo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<DashboardInfo>
 	 */
 	@ApiOperation("获取课堂聊天用户信息")
 	@GetMapping("/chat/users")
@@ -168,6 +189,10 @@ public class WebClassroomController {
 	 * @param roomId  房间id
 	 * @param groupId 组id
 	 * @return {@code BaseRsp<List<DashboardUser>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<List<DashboardUser>>
 	 */
 	@ApiOperation("获取聊天组用户信息")
 	@GetMapping("/chat/members_info")

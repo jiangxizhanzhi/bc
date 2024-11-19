@@ -78,7 +78,11 @@ import lombok.extern.slf4j.Slf4j;
  * 课堂Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see ServiceImpl
+ * @see ClassroomService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -86,150 +90,200 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
     /**
      * 课堂Mapper
+     *
+     * @see ClassroomMapper
      */
     @Autowired
     private ClassroomMapper classroomMapper;
 
     /**
      * 课程Mapper
+     *
+     * @see CourseMapper
      */
     @Autowired
     private CourseMapper courseMapper;
 
     /**
      * 课程课时Mapper
+     *
+     * @see CourseLessonMapper
      */
     @Autowired
     private CourseLessonMapper courseLessonMapper;
 
     /**
      * 远程组织Service
+     *
+     * @see RemoteOrganizationService
      */
     @Autowired
     private RemoteOrganizationService remoteOrganizationService;
 
     /**
      * 远程用户Service
+     *
+     * @see RemoteUserService
      */
     @Autowired
     private RemoteUserService remoteUserService;
 
     /**
      * 课堂标志Mapper
+     *
+     * @see ClassroomSignMapper
      */
     @Autowired
     private ClassroomSignMapper classroomSignMapper;
 
     /**
      * 笔记Service
+     *
+     * @see NoteService
      */
     @Autowired
     private NoteService noteService;
 
     /**
      * 笔记评估Mapper
+     *
+     * @see NoteEvaluateMapper
      */
     @Autowired
     private NoteEvaluateMapper noteEvaluateMapper;
 
     /**
      * 笔记Mapper
+     *
+     * @see NoteMapper
      */
     @Autowired
     private NoteMapper noteMapper;
 
     /**
      * 课堂组信息Mapper
+     *
+     * @see ClassroomGroupInfoMapper
      */
     @Autowired
     private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
     /**
      * 事务模板
+     *
+     * @see TransactionTemplate
      */
     @Autowired
     private TransactionTemplate transactionTemplate;
 
     /**
      * OJ当地场景Mapper
+     *
+     * @see OjLocalSceneMapper
      */
     @Autowired
     private OjLocalSceneMapper ojLocalSceneMapper;
 
     /**
      * 课堂组信息Service
+     *
+     * @see ClassroomGroupInfoService
      */
     @Autowired
     private ClassroomGroupInfoService classroomGroupInfoService;
 
     /**
      * 课堂验证处理器
+     *
+     * @see ClassroomValidateHandler
      */
     @Autowired
     private ClassroomValidateHandler classroomValidateHandler;
 
     /**
      * 课程验证处理器
+     *
+     * @see CourseValidateHandler
      */
     @Autowired
     private CourseValidateHandler courseValidateHandler;
 
     /**
      * 试卷Mapper
+     *
+     * @see PaperMapper
      */
     @Autowired
     private PaperMapper paperMapper;
 
     /**
      * 课时试卷评估Mapper
+     *
+     * @see LessonPaperEvaluateMapper
      */
     @Autowired
     private LessonPaperEvaluateMapper lessonPaperEvaluateMapper;
 
     /**
      * 练习理论裁判Service
+     *
+     * @see PracticeTheoryRefService
      */
     @Autowired
     private PracticeTheoryRefService practiceTheoryRefService;
 
     /**
      * 练习实操裁判Service
+     *
+     * @see PracticeOperationRefService
      */
     @Autowired
     private PracticeOperationRefService practiceOperationRefService;
 
     /**
      * 训练计划Mapper
+     *
+     * @see TrainPlanMapper
      */
     @Autowired
     private TrainPlanMapper trainPlanMapper;
 
     /**
      * 远程竞赛Service
+     *
+     * @see RemoteAdService
      */
     @Autowired
     private RemoteAdService remoteAdService;
 
     /**
      * 靶场岗位Mapper
+     *
+     * @see CrRoleMapper
      */
     @Autowired
     private CrRoleMapper crRoleMapper;
 
     /**
      * 团队房间Mapper
+     *
+     * @see TeamRoomMapper
      */
     @Autowired
     private TeamRoomMapper teamRoomMapper;
 
     /**
      * 红蓝对抗房间Mapper
+     *
+     * @see RbRoomMapper
      */
     @Autowired
     private RbRoomMapper rbRoomMapper;
 
     /**
      * 中台环境Service
+     *
+     * @see MpEnvService
      */
     @Autowired
     private MpEnvService mpEnvService;
@@ -240,6 +294,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param classroom   课堂
      * @param authContext auth 上下文
      * @return {@code Classroom }
+     * @throws
+     * @see Classroom
+     * @see AuthContext
+     * @see Classroom
      */
     @Override
     public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -295,6 +353,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param classroom   课堂
      * @param authContext auth 上下文
      * @return {@code Boolean }
+     * @throws
+     * @see Classroom
+     * @see AuthContext
+     * @see Boolean
      */
     @Override
     public Boolean updateClassroom(Classroom classroom, AuthContext authContext) {
@@ -364,6 +426,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param orgId  组织id
      * @param course 课程
      * @return boolean
+     * @throws
+     * @see String
+     * @see Course
+     * @see boolean
      */
     private boolean changeCourse(String orgId, Course course) {
 
@@ -395,6 +461,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param update       更新
      * @param courseLesson 课程课时
      * @return boolean
+     * @throws
+     * @see Classroom
+     * @see Classroom
+     * @see CourseLesson
+     * @see boolean
      */
     private boolean changeGroup(Classroom current, Classroom update, CourseLesson courseLesson) {
         boolean enableChange = !current.getLessonId().equals(update.getLessonId());
@@ -411,6 +482,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param classroom    课堂
      * @param courseLesson 课程课时
      * @return {@code List<ClassroomGroupInfo> }
+     * @throws
+     * @see Classroom
+     * @see CourseLesson
+     * @see List<ClassroomGroupInfo>
      */
     private List<ClassroomGroupInfo> reInitGroup(Classroom classroom, CourseLesson courseLesson) {
 
@@ -423,7 +498,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
     /**
      * 校验数据课堂表数据是否可以改变
      *
-     * @param classroom
+     * @param classroom 课堂
+     * @throws
+     * @see Classroom
      */
     private void validateChangeClassroom(Classroom classroom) {
 
@@ -451,6 +528,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param roomListQuery 房间列表查询
      * @param authContext   auth 上下文
      * @return {@code List<TimeScheduleBo> }
+     * @throws
+     * @see ClassRoomListQuery
+     * @see AuthContext
+     * @see List<TimeScheduleBo>
      */
     @Override
     public List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery,
@@ -510,6 +591,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param classroomBo 课堂Bo
      * @return {@code List<ClassroomBo> }
+     * @throws
+     * @see ClassroomBo
+     * @see List<ClassroomBo>
      */
     private List<ClassroomBo> splitTimeByDay(ClassroomBo classroomBo) {
 
@@ -561,6 +645,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param endTime
      * @param userId
      * @return
+     * @throws
+     * @see Date
+     * @see Date
+     * @see String
+     * @see List<ClassroomBo>
      */
     private List<ClassroomBo> adClassroom(Date startTime, Date endTime, String userId) {
 
@@ -577,6 +666,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param endTime
      * @param userId
      * @return
+     * @throws
+     * @see Date
+     * @see Date
+     * @see String
+     * @see List<ClassroomBo>
      */
     private List<ClassroomBo> crClassroom(Date startTime, Date endTime, String userId) {
 
@@ -612,6 +706,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param teamRoom 团队会议室
      * @param userId   用户id
      * @return {@code ClassroomBo }
+     * @throws
+     * @see TeamRoom
+     * @see String
+     * @see ClassroomBo
      */
     private ClassroomBo teamClassroom(TeamRoom teamRoom, String userId) {
         ClassroomBo classroomBo = new ClassroomBo();
@@ -633,6 +731,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param rbRoom 红蓝对抗房间
      * @param userId 用户id
      * @return {@code ClassroomBo }
+     * @throws
+     * @see RbRoom
+     * @see String
+     * @see ClassroomBo
      */
     private ClassroomBo rbClassroom(RbRoom rbRoom, String userId) {
         ClassroomBo classroomBo = new ClassroomBo();
@@ -656,6 +758,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param roomListQuery 房间列表查询
      * @param authContext   auth 上下文
      * @return {@code List<ClassroomBo> }
+     * @throws
+     * @see ClassRoomListQuery
+     * @see AuthContext
+     * @see List<ClassroomBo>
      */
     @Override
     public List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext) {
@@ -690,6 +796,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param page        分页
      * @param classroomId 课堂id
      * @return {@code ListRsp<ClassroomMonitorBo> }
+     * @throws
+     * @see Page<ClassroomMonitorBo>
+     * @see String
+     * @see ListRsp<ClassroomMonitorBo>
      */
     @Override
     public ListRsp<ClassroomMonitorBo> selectSignList(Page<ClassroomMonitorBo> page, String classroomId) {
@@ -732,6 +842,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param userName    用户名称
      * @param page        分页
      * @return {@code PageReportBo }
+     * @throws
+     * @see String
+     * @see String
+     * @see Page<Object>
+     * @see PageReportBo
      */
     @Override
     public PageReportBo selectClassroomReport(String classroomId, String userName, Page<Object> page) {
@@ -772,6 +887,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param classroomId 课堂id
      * @param authContext auth 上下文
      * @return {@code ClassroomStatisticBo }
+     * @throws
+     * @see String
+     * @see AuthContext
+     * @see ClassroomStatisticBo
      */
     @Override
     public ClassroomStatisticBo classroomStatistic(String classroomId, AuthContext authContext) {
@@ -833,6 +952,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param authContext   auth 上下文
      * @param lessonId      课时id
      * @return
+     * @throws
+     * @see LessonPaperEvaluate
+     * @see Paper
+     * @see Boolean
+     * @see AuthContext
+     * @see String
+     * @see Map<String, LessonPracticeListBo>
      */
     private Map<String, LessonPracticeListBo> handlerPractice(LessonPaperEvaluate paperEvaluate,
                                                               Paper paper, Boolean viewAnswer, AuthContext authContext, String lessonId) {
@@ -902,6 +1028,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param lessonId    课时id
      * @param userId      用户id
      * @return {@code ClassroomPracticeDetailBo }
+     * @throws
+     * @see String
+     * @see String
+     * @see String
+     * @see ClassroomPracticeDetailBo
      */
     @Override
     public ClassroomPracticeDetailBo practiceDetail(String classroomId, String lessonId,
@@ -950,6 +1081,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param cpContext CP 上下文
      * @param page      分页
      * @return {@code ClassroomPracticeBo }
+     * @throws
+     * @see ClassroomPracticeContext
+     * @see Page<PracticePaperEvaluateBo>
+     * @see ClassroomPracticeBo
      */
     @Override
     public ClassroomPracticeBo practiceStatistic(ClassroomPracticeContext cpContext, Page<PracticePaperEvaluateBo> page) {
@@ -1098,6 +1233,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param classroomId 课堂id
      * @param authContext auth 上下文
      * @return {@code Integer }
+     * @throws
+     * @see String
+     * @see AuthContext
+     * @see Integer
      */
     @Override
     public Integer deleteClassroom(String classroomId, AuthContext authContext) {
@@ -1119,6 +1258,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param roomId      房间id
      * @param userContext 用户上下文
      * @return {@code DashboardInfo }
+     * @throws
+     * @see String
+     * @see UserInfo
+     * @see DashboardInfo
      */
     @Override
     public DashboardInfo getChatUsers(String roomId, UserInfo userContext) {
@@ -1203,6 +1346,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param roomId  房间id
      * @param groupId 组id
      * @return {@code List<DashboardUser> }
+     * @throws
+     * @see String
+     * @see String
+     * @see List<DashboardUser>
      */
     @Override
     public List<DashboardUser> getChatGroupUsers(String roomId, String groupId) {
@@ -1245,6 +1392,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * 删除教室
      *
      * @param orgIds 组织id列表
+     * @throws
+     * @see List<String>
      */
     @Override
     public void removeClassrooms(List<String> orgIds) {
@@ -1259,6 +1408,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param roomListQuery 房间列表查询
      * @param authContext   auth 上下文
      * @return {@code IPage<ClassroomBo> }
+     * @throws
+     * @see ClassRoomPageQuery
+     * @see AuthContext
+     * @see IPage<ClassroomBo>
      */
     @Override
     public IPage<ClassroomBo> selectPage(ClassRoomPageQuery roomListQuery,
@@ -1277,6 +1430,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param ids id列表
      * @return {@code List<String> }
+     * @throws
+     * @see List<String>
+     * @see List<String>
      */
     @Override
     public List<String> selectIdsByPlanIds(List<String> ids) {
@@ -1290,6 +1446,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param userInfo 用户信息
      * @param cover    盖
      * @return {@code List<Classroom> }
+     * @throws
+     * @see String
+     * @see UserInfo
+     * @see boolean
+     * @see List<Classroom>
      */
     @Override
     public List<Classroom> importTrainPlan(String realPath, UserInfo userInfo, boolean cover) {
@@ -1372,6 +1533,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param classroomId 课堂id
      * @return {@code String }
+     * @throws
+     * @see String
+     * @see String
      */
     @Override
     public String exportReport(String classroomId) {
@@ -1515,6 +1679,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param userContext 用户上下文
      * @return {@code List<String> }
+     * @throws
+     * @see UserInfo
+     * @see List<String>
      */
     @Override
     public List<String> selectTempTaskIdsByUser(UserInfo userContext) {
@@ -1526,6 +1693,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * 判断起止时间是否相同或起始时间大于结束时间
      *
      * @param classrooms 起止时间
+     * @throws
+     * @see List<Classroom>
      */
     private void validateTime(List<Classroom> classrooms) {
         for (Classroom cls : classrooms) {
@@ -1541,6 +1710,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * 验证课堂时间
      *
      * @param classrooms 教室
+     * @throws
+     * @see List<Classroom>
      */
     private void validateClassroomTime(List<Classroom> classrooms) {
         if (CollectionUtils.isEmpty(classrooms)) {
@@ -1558,6 +1729,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * 校验时间重合
      *
      * @param classrooms 教室
+     * @throws
+     * @see List<Classroom>
      */
     private void timeIntersection(List<Classroom> classrooms) {
         List<Classroom> sort = StreamApiUtils.sortByColumn(classrooms, Classroom::getEndTime);
@@ -1580,6 +1753,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * 校验数据长度
      *
      * @param sheetData 工作表数据
+     * @throws
+     * @see List<List<String>>
      */
     private void validateDataLength(List<List<String>> sheetData) {
 
@@ -1613,6 +1788,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param planName 计划名称
      * @param cover    盖
      * @param rowIndex 排编号
+     * @throws
+     * @see String
+     * @see String
+     * @see boolean
+     * @see int
      */
     private void validatePlanStartAndExist(String planId, String planName, boolean cover,
                                            int rowIndex) {
@@ -1637,6 +1817,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param userInfo 用户信息
      * @param filePath 文件路径
+     * @throws
+     * @see UserInfo
+     * @see String
      */
     @Override
     public void exportTrainPlan(UserInfo userInfo, String filePath) {
@@ -1659,6 +1842,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param userId    用户id
      * @param trainPlan 训练计划
      * @return {@code List<TrainPlanExportBo> }
+     * @throws
+     * @see String
+     * @see TrainPlan
+     * @see List<TrainPlanExportBo>
      */
     private List<TrainPlanExportBo> planToExportBo(String userId, TrainPlan trainPlan) {
         List<Classroom> classroomList = classroomMapper.selectByUserPlan(userId, trainPlan.getResourceId());
@@ -1672,6 +1859,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param planName  计划名称
      * @param classroom 课堂
      * @return {@code TrainPlanExportBo }
+     * @throws
+     * @see String
+     * @see Classroom
+     * @see TrainPlanExportBo
      */
     private TrainPlanExportBo classRoomToExportBo(String planName, Classroom classroom) {
         TrainPlanExportBo planExportBo = new TrainPlanExportBo();
@@ -1714,6 +1905,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param userId
      * @param cover
      * @return
+     * @throws
+     * @see String
+     * @see String
+     * @see boolean
+     * @see List<Classroom>
      */
     private List<Classroom> getCoverRoomByPlan(String planName, String userId, boolean cover) {
         TrainPlan trainPlan = trainPlanMapper.selectByName(planName, userId);
@@ -1738,6 +1934,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param rowData
      * @param rowIndex 排编号
      * @return
+     * @throws
+     * @see List<String>
+     * @see int
+     * @see boolean
      */
     private boolean validateEmptyData(List<String> rowData, int rowIndex) {
         if (CollectionUtils.isEmpty(rowData)
@@ -1757,6 +1957,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param rowIndex 排编号
      * @param orgMap   组织映射
      * @return
+     * @throws
+     * @see List<String>
+     * @see UserInfo
+     * @see int
+     * @see Map<String, String>
+     * @see Classroom
      */
     private Classroom parseClassroom(List<String> roomData, UserInfo userInfo, int rowIndex,
                                      Map<String, String> orgMap) {
@@ -1865,6 +2071,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param startTime
      * @param endTime
      * @param rowIndex  排编号
+     * @throws
+     * @see String
+     * @see String
+     * @see Date
+     * @see Date
+     * @see int
      */
     private void validateOrgUnderClassroomTime(String planId, String orgId, Date startTime, Date endTime, int rowIndex) {
         List<Classroom> classrooms = classroomMapper.selectByOrgId(orgId);
@@ -1895,6 +2107,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param rowIndex     排编号
      * @param trainPlanMap 训练计划映射
      * @return
+     * @throws
+     * @see List<String>
+     * @see String
+     * @see int
+     * @see Map<String, TrainPlan>
+     * @see TrainPlan
      */
     private TrainPlan parseTrainPlan(List<String> rowData, String userId,
                                      int rowIndex, Map<String, TrainPlan> trainPlanMap) {
@@ -1932,6 +2150,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param userInfo
      * @param roleName
      * @return
+     * @throws
+     * @see UserInfo
+     * @see String
+     * @see DashboardUser
      */
     private DashboardUser userToDashUser(UserInfo userInfo, String roleName) {
         DashboardUser dashboardUser = new DashboardUser();
@@ -1952,6 +2174,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param notes     笔记
      * @param num       数量
      * @return
+     * @throws
+     * @see List<NoteEvaluate>
+     * @see List<Note>
+     * @see int
+     * @see List<UserNoteScoreBo>
      */
     private List<UserNoteScoreBo> statisticTopNum(List<NoteEvaluate> evaluates, List<Note> notes,
                                                   int num) {
@@ -1994,6 +2221,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param evaluates  评估
      * @param signIns    登录
      * @return
+     * @throws
+     * @see Classroom
+     * @see List<String>
+     * @see List<NoteEvaluate>
+     * @see List<ClassroomSign>
+     * @see SignInfoBo
      */
     private SignInfoBo statisticSignInfo(Classroom classroom, List<String> orgUserIds,
                                          List<NoteEvaluate> evaluates, List<ClassroomSign> signIns) {
@@ -2020,6 +2253,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param evaluates
      * @return
+     * @throws
+     * @see List<NoteEvaluate>
+     * @see GradeDistributionBo
      */
     private GradeDistributionBo statisticGrade(List<NoteEvaluate> evaluates) {
 
@@ -2096,6 +2332,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param orgMap
      * @param evaluatorMap 计算器映射
      * @return
+     * @throws
+     * @see UserInfo
+     * @see CourseLesson
+     * @see Map<String, String>
+     * @see Map<String, UserInfo>
+     * @see ClassroomReportBo
      */
     private ClassroomReportBo userToReportBo(UserInfo userInfo, CourseLesson courseLesson,
                                              Map<String, String> orgMap, Map<String, UserInfo> evaluatorMap) {
@@ -2149,6 +2391,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param userInfo
      * @param userSignMap 用户标志映射
      * @return
+     * @throws
+     * @see UserInfo
+     * @see Map<String, ClassroomSign>
+     * @see ClassroomMonitorBo
      */
     private ClassroomMonitorBo userToMonitorBo(UserInfo userInfo,
                                                Map<String, ClassroomSign> userSignMap) {
@@ -2170,6 +2416,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param classroomList 教室列表
      * @return {@code ClassroomInfo }
+     * @throws
+     * @see List<Classroom>
+     * @see ClassroomInfo
      */
     private ClassroomInfo getInfo(List<Classroom> classroomList) {
 		ClassroomInfo info = new ClassroomInfo();
@@ -2206,6 +2455,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      *
      * @param info          信息
      * @param classroomList 教室列表
+     * @throws
+     * @see ClassroomInfo
+     * @see List<Classroom>
      */
     private void setOrgInfo(ClassroomInfo info, List<Classroom> classroomList) {
 		// org
@@ -2245,6 +2497,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
      * @param classroom
      * @param info      信息
      * @return
+     * @throws
+     * @see Classroom
+     * @see ClassroomInfo
+     * @see ClassroomBo
      */
     private ClassroomBo entityToBo(Classroom classroom, ClassroomInfo info) {
 
@@ -2295,37 +2551,51 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
  * 教室信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 class ClassroomInfo {
 
     /**
      * 课程映射
+     *
+     * @see Map<String, Course>
      */
     Map<String, Course> courseMap = Maps.newHashMap();
 
     /**
      * 课时映射
+     *
+     * @see Map<String, CourseLesson>
      */
     Map<String, CourseLesson> lessonMap = Maps.newHashMap();
 
     /**
      * 训练计划映射
+     *
+     * @see Map<String, TrainPlan>
      */
     Map<String, TrainPlan> trainPlanMap = Maps.newHashMap();
 
     /**
      * 组织名称映射
+     *
+     * @see Map<String, String>
      */
     Map<String, String> orgNameMap = Maps.newHashMap();
 
     /**
      * 组织路径映射
+     *
+     * @see Map<String, String>
      */
     Map<String, String> orgPathMap = Maps.newHashMap();
 
     /**
      * 组织父母映射
+     *
+     * @see Map<String, String>
      */
     Map<String, String> orgParentMap = Maps.newHashMap();
 
@@ -2334,6 +2604,9 @@ class ClassroomInfo {
      *
      * @param orgId 组织id
      * @return {@code List<String> }
+     * @throws
+     * @see String
+     * @see List<String>
      */
     public List<String> getOrgParents(String orgId) {
 		List<String> res = Lists.newArrayList();

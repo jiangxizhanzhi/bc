@@ -6,6 +6,14 @@ import java.util.regex.Pattern;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 显示
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Data
 public class Display {
 
@@ -84,24 +92,32 @@ public class Display {
 
 	/**
 	 * 区域文本属性
+	 *
+	 * @see Label
 	 */
 	@ApiModelProperty("区域文本属性")
 	private Label label;
 
 	/**
 	 * 区域填充图片
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("区域填充图片")
 	private String fillPic;
 
 	/**
 	 * 区域区块配置
+	 *
+	 * @see Body
 	 */
 	@ApiModelProperty("区域区块配置")
 	private Body body;
 
 	/**
 	 * 节点文本属性
+	 *
+	 * @see Label
 	 */
 	@ApiModelProperty("节点文本属性")
 	private Label text;

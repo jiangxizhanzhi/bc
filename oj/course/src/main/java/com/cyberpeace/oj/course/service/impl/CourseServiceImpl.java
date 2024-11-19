@@ -61,7 +61,11 @@ import lombok.extern.slf4j.Slf4j;
  * 课程Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see ServiceImpl
+ * @see CourseService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -69,150 +73,200 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
 	/**
 	 * 课程类别Mapper
+	 *
+	 * @see CourseCategoryMapper
 	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
 	/**
 	 * 课时配置Mapper
+	 *
+	 * @see LessonConfigMapper
 	 */
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
 
 	/**
 	 * 课程课时Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 资源收集Service
+	 *
+	 * @see ResourceCollectionService
 	 */
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
 	/**
 	 * 资源收集Mapper
+	 *
+	 * @see ResourceCollectionMapper
 	 */
 	@Autowired
 	private ResourceCollectionMapper resourceCollectionMapper;
 
 	/**
 	 * 课程类别Service
+	 *
+	 * @see CourseCategoryService
 	 */
 	@Autowired
 	private CourseCategoryService courseCategoryService;
 
 	/**
 	 * 课时配置Service
+	 *
+	 * @see LessonConfigService
 	 */
 	@Autowired
 	private LessonConfigService lessonConfigService;
 
 	/**
 	 * 事务模板
+	 *
+	 * @see TransactionTemplate
 	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 课程验证处理器
+	 *
+	 * @see CourseValidateHandler
 	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
 
 	/**
 	 * 课程课时Service
+	 *
+	 * @see CourseLessonService
 	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
 	/**
 	 * 笔记Mapper
+	 *
+	 * @see NoteMapper
 	 */
 	@Autowired
 	private NoteMapper noteMapper;
 
 	/**
 	 * 评论Mapper
+	 *
+	 * @see CommentMapper
 	 */
 	@Autowired
 	private CommentMapper commentMapper;
 
 	/**
 	 * 练习理论Service
+	 *
+	 * @see PracticeTheoryService
 	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
 	/**
 	 * 练习实操Service
+	 *
+	 * @see PracticeOperationService
 	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
 
 	/**
 	 * 试卷Mapper
+	 *
+	 * @see PaperMapper
 	 */
 	@Autowired
 	private PaperMapper paperMapper;
 
 	/**
 	 * 试卷Service
+	 *
+	 * @see PaperService
 	 */
 	@Autowired
 	private PaperService paperService;
 
 	/**
 	 * 练习理论裁判Mapper
+	 *
+	 * @see PracticeTheoryRefMapper
 	 */
 	@Autowired
 	private PracticeTheoryRefMapper practiceTheoryRefMapper;
 
 	/**
 	 * 练习实操裁判Mapper
+	 *
+	 * @see PracticeOperationRefMapper
 	 */
 	@Autowired
 	private PracticeOperationRefMapper practiceOperationRefMapper;
 
 	/**
 	 * 练习理论裁判Service
+	 *
+	 * @see PracticeTheoryRefService
 	 */
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
 
 	/**
 	 * 练习实操裁判Service
+	 *
+	 * @see PracticeOperationRefService
 	 */
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
 	/**
 	 * 课程研究历史Mapper
+	 *
+	 * @see CourseStudyHistoryMapper
 	 */
 	@Autowired
 	private CourseStudyHistoryMapper courseStudyHistoryMapper;
 
 	/**
 	 * 系统配置Service
+	 *
+	 * @see SystemPropertyService
 	 */
 	@Autowired
 	private SystemPropertyService systemPropertyService;
@@ -223,6 +277,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param courseId    课程id
 	 * @param authContext auth 上下文
 	 * @return {@code CourseInfoBo }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see CourseInfoBo
 	 */
 	@Override
 	public CourseInfoBo selectById(String courseId, AuthContext authContext) {
@@ -264,6 +322,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param course
 	 * @param isWeb  前台查询 仅查询公开
 	 * @return
+	 * @throws
+	 * @see Course
+	 * @see Boolean
+	 * @see CourseInfoBo
 	 */
 	private CourseInfoBo courseToBo(Course course, Boolean isWeb) {
 
@@ -302,6 +364,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 *
 	 * @param ids id列表
 	 * @return {@code List<CourseInfoBo> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<CourseInfoBo>
 	 */
 	@Override
 	public List<CourseInfoBo> selectByIds(List<String> ids) {
@@ -332,6 +397,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param authContext   auth 上下文
 	 * @param isWeb         是否Web
 	 * @return {@code ListRsp<CourseWebBo> }
+	 * @throws
+	 * @see Page<Course>
+	 * @see CourseQueryBo
+	 * @see AuthContext
+	 * @see boolean
+	 * @see ListRsp<CourseWebBo>
 	 */
 	@Override
 	public ListRsp<CourseWebBo> selectPage(Page<Course> page, CourseQueryBo courseContext,
@@ -419,6 +490,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param authContext
 	 * @param userNameMap 用户名称映射
 	 * @return
+	 * @throws
+	 * @see Course
+	 * @see AuthContext
+	 * @see Map<String, String>
+	 * @see CourseWebBo
 	 */
 	private CourseWebBo transferToBo(Course course, AuthContext authContext,
 			Map<String, String> userNameMap) {
@@ -459,6 +535,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 *
 	 * @param courseIds 课程id列表
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> idsByNotDeleteIds(List<String> courseIds) {
@@ -474,6 +553,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param userId 用户id
 	 * @param course 课程
 	 * @return {@code Course }
+	 * @throws
+	 * @see String
+	 * @see Course
+	 * @see Course
 	 */
 	@Override
 	public Course addCourse(String userId, Course course) {
@@ -514,6 +597,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param userId 用户id
 	 * @param course 课程
 	 * @return {@code Course }
+	 * @throws
+	 * @see String
+	 * @see Course
+	 * @see Course
 	 */
 	@Override
 	public Course updateCourse(String userId, Course course) {
@@ -555,6 +642,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param category    类别
 	 * @param authContext auth 上下文
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> selectIdsByCategory(String category, AuthContext authContext) {
@@ -576,6 +667,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param courseIds   课程id列表
 	 * @param authContext auth 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean batchDelete(List<String> courseIds, AuthContext authContext) {
@@ -634,6 +729,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param courseIds   课程id列表
 	 * @param authContext auth 上下文
 	 * @return {@code String }
+	 * @throws
+	 * @see List<String>
+	 * @see AuthContext
+	 * @see String
 	 */
 	@Override
 	public String dumpCourse(List<String> courseIds, AuthContext authContext) {
@@ -693,6 +792,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param realPath    真实路径
 	 * @param authContext auth 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean loadCourse(String realPath, AuthContext authContext) {
@@ -785,6 +888,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 *
 	 * @param courseNames 课程名字
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> duplicateCourseInspect(List<String> courseNames) {
@@ -806,6 +912,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * 清除用户认证
 	 *
 	 * @param userId 用户id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void clearUserAuth(String userId) {
@@ -823,6 +931,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * 清除组织认证
 	 *
 	 * @param orgId 组织id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void clearOrgAuth(String orgId) {
@@ -841,6 +951,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param paperId    试卷id
 	 * @param operations 操作
 	 * @param refList    参考列表
+	 * @throws
+	 * @see String
+	 * @see List<PracticeOperation>
+	 * @see List<PracticeOperationRef>
 	 */
 	private void operationBindPaper(String paperId, List<PracticeOperation> operations,
 			List<PracticeOperationRef> refList) {
@@ -854,6 +968,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param paperId  试卷id
 	 * @param theories 理论
 	 * @param refList  参考列表
+	 * @throws
+	 * @see String
+	 * @see List<PracticeTheory>
+	 * @see List<PracticeTheoryRef>
 	 */
 	private void theoryBindPaper(String paperId, List<PracticeTheory> theories,
 			List<PracticeTheoryRef> refList) {
@@ -868,6 +986,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param lesson    课时
 	 * @param paper     试卷
 	 * @param paperList 试卷列表
+	 * @throws
+	 * @see CourseLesson
+	 * @see Paper
+	 * @see List<Paper>
 	 */
 	private void paperBindLesson(CourseLesson lesson, Paper paper, List<Paper> paperList) {
 		lesson.setPaperId(paper.getResourceId());
@@ -882,6 +1004,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param filePath   文件路径
 	 * @param fileMap    文件映射
 	 * @return {@code List<PracticeOperation> }
+	 * @throws
+	 * @see LessonDumpLoadBo
+	 * @see String
+	 * @see String
+	 * @see Map<String, String>
+	 * @see List<PracticeOperation>
 	 */
 	private List<PracticeOperation> loadPracticeOperation(LessonDumpLoadBo dumpLoadBo,
 			String userId, String filePath, Map<String, String> fileMap) {
@@ -898,6 +1026,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param dumpLoadBo 导出加载Bo
 	 * @param userId     用户id
 	 * @return {@code List<PracticeTheory> }
+	 * @throws
+	 * @see LessonDumpLoadBo
+	 * @see String
+	 * @see List<PracticeTheory>
 	 */
 	private List<PracticeTheory> loadPracticeTheory(LessonDumpLoadBo dumpLoadBo, String userId) {
 		return StreamApiUtils.map(dumpLoadBo.getTheoryPractice(),
@@ -911,6 +1043,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param paperId
 	 * @param practiceTheoryList
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<PracticeTheory>
+	 * @see List<PracticeTheoryRef>
 	 */
 	private List<PracticeTheoryRef> theoryEntityToRef(String paperId,
 			List<PracticeTheory> practiceTheoryList) {
@@ -933,6 +1069,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param paperId
 	 * @param practiceOperationList
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<PracticeOperation>
+	 * @see List<PracticeOperationRef>
 	 */
 	private List<PracticeOperationRef> operationEntityToRef(String paperId,
 			List<PracticeOperation> practiceOperationList) {
@@ -956,6 +1096,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param practiceTheorys    练习理论
 	 * @param practiceOperations 练习操作
 	 * @return
+	 * @throws
+	 * @see CourseLesson
+	 * @see List<PracticeTheory>
+	 * @see List<PracticeOperation>
+	 * @see Paper
 	 */
 	private Paper initPaper(CourseLesson lesson, List<PracticeTheory> practiceTheorys,
 			List<PracticeOperation> practiceOperations) {
@@ -988,6 +1133,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param userId           用户id
 	 * @param filePath         文件路径
 	 * @return
+	 * @throws
+	 * @see CourseDumpLoadBo
+	 * @see String
+	 * @see String
+	 * @see Course
 	 */
 	private Course loadCourse(CourseDumpLoadBo courseDumpLoadBo, String userId, String filePath) {
 
@@ -1066,6 +1216,11 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param filePathMap
 	 * @param fileStorePath 文件存储路径
 	 * @return
+	 * @throws
+	 * @see Course
+	 * @see Map<String, String>
+	 * @see String
+	 * @see CourseDumpLoadBo
 	 */
 	private CourseDumpLoadBo dumCourse(Course course, Map<String, String> filePathMap,
 			String fileStorePath) {
@@ -1116,6 +1271,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 *
 	 * @param length 长度
 	 * @return {@code String }
+	 * @throws
+	 * @see int
+	 * @see String
 	 */
 	@Override
 	public String getRandomCourseNum(int length) {

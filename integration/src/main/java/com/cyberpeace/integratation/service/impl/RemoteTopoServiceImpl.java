@@ -29,7 +29,10 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 远程拓扑Service实现
  *
- * @author chenzhuo@date 2024/11/14
+ * @author chenzhuo@date 2024/11/14@see RemoteTopoService
+ * @version 1.0.0
+ * @date 2024/11/18
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -37,66 +40,92 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	/**
 	 * 复制拓扑网址
+	 *
+	 * @see String
 	 */
 	private String COPY_TOPO_URL;
 
 	/**
 	 * 拓扑计数网址
+	 *
+	 * @see String
 	 */
 	private String TOPO_DIGEST_URL;
 
 	/**
 	 * 拓扑同步
+	 *
+	 * @see String
 	 */
 	private String TOPO_SYNC;
 
 	/**
 	 * 拓扑同步无限制
+	 *
+	 * @see String
 	 */
 	private String TOPO_SYNC_UNLIMITED;
 
 	/**
 	 * 拓扑取回
+	 *
+	 * @see String
 	 */
 	private String TOPO_RETRIEVE;
 	/**
 	 * 拓扑取回由面积为三维
+	 *
+	 * @see String
 	 */
 	private String TOPO_RETRIEVE_BY_AREA_FOR_3D;
 
 	/**
 	 * 拓扑删除
+	 *
+	 * @see String
 	 */
 	private String TOPO_DELETE;
 
 	/**
 	 * 拓扑导出
+	 *
+	 * @see String
 	 */
 	private String TOPO_EXPORT;
 
 	/**
 	 * 批量删除拓扑
+	 *
+	 * @see String
 	 */
 	private String BATCH_DELETE_TOPO;
 
 	/**
 	 * 拓扑节点列表
+	 *
+	 * @see String
 	 */
 	private String TOPO_NODE_LIST;
 
 	/**
 	 * 拓扑节点统计学
+	 *
+	 * @see String
 	 */
 	private String TOPO_NODE_STATISTICS;
 
 	/**
 	 * 中台环境Service
+	 *
+	 * @see MpEnvService
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -126,6 +155,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param sceneConfig 场景配置
 	 * @return {@code String }
+	 * @throws
+	 * @see SceneConfig
+	 * @see String
 	 */
 	@Override
 	public String create(SceneConfig sceneConfig) {
@@ -138,6 +170,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param topoId 拓扑id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getTopoById(String topoId) {
@@ -151,6 +186,10 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 * @param topoId 拓扑id
 	 * @param areaId 面积id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getTopoByIdAndAreaIdFor3D(String topoId, String areaId) {
@@ -168,6 +207,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param originTopoId 起源拓扑id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String copyTopo(String originTopoId) {
@@ -187,6 +229,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param topoId 拓扑id
 	 * @return {@code TopoDigest }
+	 * @throws
+	 * @see String
+	 * @see TopoDigest
 	 */
 	@Override
 	public TopoDigest getTopoDigest(String topoId) {
@@ -216,6 +261,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param topoIds 拓扑id列表
 	 * @return {@code Map<String, TopoDigest> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, TopoDigest>
 	 */
 	@Override
 	public Map<String, TopoDigest> batchGetTopoDigest(List<String> topoIds) {
@@ -244,6 +292,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param json JSON 格式
 	 * @return {@code String }
+	 * @throws
+	 * @see JSONObject
+	 * @see String
 	 */
 	@Override
 	public String save(JSONObject json) {
@@ -260,6 +311,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param json JSON 格式
 	 * @return {@code String }
+	 * @throws
+	 * @see JSONObject
+	 * @see String
 	 */
 	@Override
 	public String saveUnlimited(JSONObject json) {
@@ -274,6 +328,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param topoId          拓扑id
 	 * @param enableRecording 启用录制
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public void setSupportPartialStart(String topoId, Boolean enableRecording) {
@@ -287,6 +344,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param req 请求体
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see TopoNodeListReq
+	 * @see JSONArray
 	 */
 	@Override
 	public JSONArray getAllNodes(TopoNodeListReq req) {
@@ -299,6 +359,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param topoId 拓扑id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getNodeStatistics(String topoId) {
@@ -312,6 +375,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param json JSON 格式
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see JSONObject
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject sync(JSONObject json) {
@@ -324,6 +390,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param topoId 拓扑id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean deleteById(String topoId) {
@@ -340,6 +409,9 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 *
 	 * @param topoId 拓扑id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject exportTopo(String topoId) {
@@ -353,6 +425,10 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 * @param topo   拓扑
 	 * @param topoId 拓扑id
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean equalTopo(JSONObject topo, String topoId) {
@@ -370,6 +446,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 * 批量删除拓扑
 	 *
 	 * @param topoIds 拓扑id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	@Override
 	public void batchDeleteTopo(List<String> topoIds) {
@@ -387,6 +465,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	 * 审计需求：sync、copy、delete topo的接口，增加context.accessUserId
 	 *
 	 * @param json JSON 格式
+	 * @throws
+	 * @see JSONObject
 	 */
 	private void setUserContext(JSONObject json) {
 		String currentUserId;

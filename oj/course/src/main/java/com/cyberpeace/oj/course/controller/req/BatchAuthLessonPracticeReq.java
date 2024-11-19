@@ -13,7 +13,10 @@ import lombok.Data;
  * 批量认证课时练习请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -21,6 +24,8 @@ public class BatchAuthLessonPracticeReq implements Serializable {
 
 	/**
 	 * 课时编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时编号")
     @NotBlank
@@ -28,6 +33,8 @@ public class BatchAuthLessonPracticeReq implements Serializable {
 
 	/**
 	 * 组织id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("组织id")
     @NotBlank
@@ -35,12 +42,16 @@ public class BatchAuthLessonPracticeReq implements Serializable {
 
 	/**
 	 * 是否下发
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否下发")
     private Boolean isPublic;
 
 	/**
 	 * 课堂id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课堂id")
     @NotBlank

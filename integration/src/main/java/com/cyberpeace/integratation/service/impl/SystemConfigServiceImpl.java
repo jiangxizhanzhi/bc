@@ -15,18 +15,25 @@ import com.cyberpeace.integratation.service.SystemConfigService;
  * 系统配置Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see SystemConfigService
+ * @since 1.0.0
  */
 @Service
 public class SystemConfigServiceImpl implements SystemConfigService {
 
 	/**
 	 * 系统配置 URL
+	 *
+	 * @see String
 	 */
 	private String SYS_CONFIG_URL;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -35,6 +42,8 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
 	/**
 	 * 中台环境Service
+	 *
+	 * @see MpEnvService
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
@@ -44,6 +53,9 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 	 *
 	 * @param name 名称
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getSystemConfig(String name) {

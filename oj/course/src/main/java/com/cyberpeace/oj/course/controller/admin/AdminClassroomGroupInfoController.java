@@ -26,7 +26,9 @@ import lombok.extern.slf4j.Slf4j;
  * 管理课堂组信息Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Slf4j
 @Api(tags = "oj-后台课堂组操作相关api")
@@ -37,6 +39,8 @@ public class AdminClassroomGroupInfoController {
 
 	/**
 	 * 课堂组信息Service
+	 *
+	 * @see ClassroomGroupInfoService
 	 */
 	@Autowired
 	private ClassroomGroupInfoService classroomGroupInfoService;
@@ -46,6 +50,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param roomId 房间id
 	 * @return {@code BaseRsp<List<GroupInfoBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<GroupInfoBo>>
 	 */
 	@ApiOperation("查询课堂信息/进入课堂")
 	@GetMapping("/get")
@@ -66,6 +73,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param groupReq 组请求体
 	 * @return {@code BaseRsp<List<GroupInfoBo>> }
+	 * @throws
+	 * @see ClassroomGroupReq
+	 * @see BaseRsp<List<GroupInfoBo>>
 	 */
 	@ApiOperation("课堂组信息更新")
 	@PostMapping("/update")
@@ -84,6 +94,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param saveGroupInfoReq 保存组信息请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see SaveGroupInfoReq
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("保存当前分组模板信息")
 	@PostMapping("/save")
@@ -101,6 +114,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param deleteReq 删除请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see ClassroomArchiveReq
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("删除课堂分组模板")
 	@DeleteMapping("/delete")
@@ -117,6 +133,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param archiveReq 档案请求体
 	 * @return {@code BaseRsp<List<GroupInfoBo>> }
+	 * @throws
+	 * @see ClassroomArchiveReq
+	 * @see BaseRsp<List<GroupInfoBo>>
 	 */
 	@ApiOperation("使用课堂分组模板")
 	@PostMapping("/use")
@@ -133,6 +152,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param classroomId 课堂id
 	 * @return {@code BaseRsp<List<ClassroomGroupArchiveBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<ClassroomGroupArchiveBo>>
 	 */
 	@ApiOperation("查询课堂分组模板列表")
 	@GetMapping("/archive")
@@ -149,6 +171,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param moveGroupUserReq 移动组用户请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see MoveGroupUserReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("分组用户移动")
 	@PatchMapping("/move")
@@ -166,6 +191,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param delayReq 延迟请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see GroupSceneDelayReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("设置场景延时")
 	@PatchMapping("/set_scene_destroy_delay")
@@ -182,6 +210,9 @@ public class AdminClassroomGroupInfoController {
 	 *
 	 * @param classroomId 课堂id
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("获取场景延时状态")
 	@GetMapping("/get_destroy_delay_status")

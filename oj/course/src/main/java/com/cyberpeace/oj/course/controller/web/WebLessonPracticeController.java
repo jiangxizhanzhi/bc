@@ -27,7 +27,9 @@ import io.swagger.annotations.ApiParam;
  * Web课时练习Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "oj-前台课后练习相关api")
 @RestController
@@ -37,6 +39,8 @@ public class WebLessonPracticeController {
 
 	/**
 	 * 课时练习场景Service
+	 *
+	 * @see LessonPracticeSceneService
 	 */
 	@Autowired
 	private LessonPracticeSceneService lessonPracticeSceneService;
@@ -47,6 +51,10 @@ public class WebLessonPracticeController {
 	 * @param lessonId   课时id
 	 * @param practiceId 练习id
 	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<TopoSceneDataBo>
 	 */
 	@ApiOperation("前台课后练习获取拓扑信息")
 	@GetMapping("/scene_topo")
@@ -68,6 +76,9 @@ public class WebLessonPracticeController {
 	 *
 	 * @param sceneReq 场景请求体
 	 * @return {@code BaseRsp<JSONObject> }
+	 * @throws
+	 * @see LessonPracticeSceneReq
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("前台课后练习场景启动")
 	@PostMapping("/start_scene")
@@ -86,6 +97,9 @@ public class WebLessonPracticeController {
 	 *
 	 * @param sceneReq 场景请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see LessonPracticeSceneReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("前台课后练习场景删除")
 	@DeleteMapping("/delete_scene")
@@ -103,6 +117,9 @@ public class WebLessonPracticeController {
 	 *
 	 * @param sceneNodeReq 场景节点请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see LessonPracticeSceneNodeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("前台课后练习场景节点重启")
 	@PostMapping("/node_restart")
@@ -122,6 +139,9 @@ public class WebLessonPracticeController {
 	 *
 	 * @param sceneNodeReq 场景节点请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see LessonPracticeSceneNodeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("前台课后练习场景节点重建")
 	@PostMapping("/node_recreate")
@@ -141,6 +161,9 @@ public class WebLessonPracticeController {
 	 *
 	 * @param sceneStatusReq 场景状态请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see LessonPracticeSceneStatusReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("前台课后练习场景暂停与恢复")
 	@PatchMapping("/update_status")

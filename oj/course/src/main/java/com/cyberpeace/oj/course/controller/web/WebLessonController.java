@@ -40,7 +40,9 @@ import lombok.extern.slf4j.Slf4j;
  * Web课时Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "oj-前台课时相关api")
 @RestController
@@ -51,12 +53,16 @@ public class WebLessonController {
 
 	/**
 	 * 课程课时Service
+	 *
+	 * @see CourseLessonService
 	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
 	/**
 	 * 课时场景Service
+	 *
+	 * @see LessonSceneService
 	 */
 	@Autowired
 	private LessonSceneService lessonSceneService;
@@ -69,6 +75,12 @@ public class WebLessonController {
 	 * @param lessonId    课时id
 	 * @param roomId      房间id
 	 * @return {@code BaseRsp<LessonInfoBo> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<LessonInfoBo>
 	 */
 	@ApiOperation("课时详情查询")
 	@GetMapping("")
@@ -94,6 +106,10 @@ public class WebLessonController {
 	 * @param resourceId 资源id
 	 * @param courseId   课程id
 	 * @return {@code BaseRsp<LessonPracticeBo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<LessonPracticeBo>
 	 */
 	@ApiOperation("课后练习数据查询")
 	@GetMapping("/practice_after_class")
@@ -117,6 +133,9 @@ public class WebLessonController {
 	 *
 	 * @param submitReq 提交请求体
 	 * @return {@code BaseRsp<EvaluateResult> }
+	 * @throws
+	 * @see LessonPracticeSubmitReq
+	 * @see BaseRsp<EvaluateResult>
 	 */
 	@ApiOperation("课后练习解答")
 	@PostMapping("/submit_answer")
@@ -143,6 +162,10 @@ public class WebLessonController {
 	 * @param lessonId 课时id
 	 * @param roomId   房间id
 	 * @return {@code BaseRsp<TopoSceneDataBo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<TopoSceneDataBo>
 	 */
 	@ApiOperation("前台课时获取拓扑信息")
     @GetMapping("/scene_topo")
@@ -160,6 +183,9 @@ public class WebLessonController {
 	 *
 	 * @param lessonSceneReq 课时场景请求体
 	 * @return {@code BaseRsp<JSONObject> }
+	 * @throws
+	 * @see SceneOperationReq
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("前台课程场景启动")
 	@PostMapping("/start_scene")
@@ -179,6 +205,9 @@ public class WebLessonController {
 	 *
 	 * @param lessonSceneReq 课时场景请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneOperationReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("前台场景删除")
 	@DeleteMapping("/delete_scene")
@@ -196,6 +225,9 @@ public class WebLessonController {
 	 *
 	 * @param sceneNodeReq 场景节点请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneNodeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("前台课时场景节点重启")
 	@PostMapping("/node_restart")
@@ -214,6 +246,9 @@ public class WebLessonController {
 	 *
 	 * @param sceneNodeReq 场景节点请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneNodeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("前台课时场景节点重建")
 	@PostMapping("/node_recreate")
@@ -232,6 +267,9 @@ public class WebLessonController {
 	 *
 	 * @param sceneStatusReq 场景状态请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneStatusReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("前台课时场景暂停与恢复")
 	@PatchMapping("/update_status")

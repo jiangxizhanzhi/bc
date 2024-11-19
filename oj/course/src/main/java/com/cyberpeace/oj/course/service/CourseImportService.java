@@ -13,7 +13,9 @@ import java.util.Map;
  * 课程导入Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 public interface CourseImportService {
 
@@ -22,6 +24,9 @@ public interface CourseImportService {
 	 *
 	 * @param path
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Course
 	 */
 	Course parseRmCourse(String path);
 
@@ -33,6 +38,12 @@ public interface CourseImportService {
 	 * @param envReqs
 	 * @param nameMap 名称映射
 	 * @return
+	 * @throws
+	 * @see Course
+	 * @see String
+	 * @see Map<String, String>
+	 * @see Map<String, String>
+	 * @see List<CourseLesson>
 	 */
 	List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
 			Map<String, String> nameMap);
@@ -44,6 +55,11 @@ public interface CourseImportService {
 	 * @param path    课程文件地址
 	 * @param nameMap key=名称 value=课时编号
 	 * @return
+	 * @throws
+	 * @see Course
+	 * @see String
+	 * @see Map<String, String>
+	 * @see List<LessonConfig>
 	 */
 	List<LessonConfig> parseRmLessonConfig(Course course, String path, Map<String, String> nameMap);
 
@@ -55,6 +71,12 @@ public interface CourseImportService {
 	 * @param operationEnvReqs
 	 * @param authContext      auth 上下文
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Map<String, String>
+	 * @see Map<String, Map<String, String>>
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean rMCourseImport(String path, Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs, AuthContext authContext);
 
@@ -64,6 +86,10 @@ public interface CourseImportService {
 	 * @param courseInfos 课时资源所在地址
 	 * @param authContext auth 上下文
 	 * @return
+	 * @throws
+	 * @see List<CombinedCourseImportContext>
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos, AuthContext authContext);
 
@@ -72,6 +98,9 @@ public interface CourseImportService {
 	 *
 	 * @param envReqs
 	 * @param operationEnvReqs 实操环境要求
+	 * @throws
+	 * @see Map<String, String>
+	 * @see Map<String, Map<String, String>>
 	 */
 	void destroyFailedTopo(Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs);
 }

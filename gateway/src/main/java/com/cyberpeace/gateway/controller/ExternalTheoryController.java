@@ -51,7 +51,9 @@ import lombok.extern.slf4j.Slf4j;
  * 外部理论Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "外部接口-理论习题相关api")
 @Slf4j
@@ -62,30 +64,40 @@ public class ExternalTheoryController {
 
 	/**
 	 * 练习理论Mapper
+	 *
+	 * @see PracticeTheoryMapper
 	 */
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
 
 	/**
 	 * 练习设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * 练习类别Mapper
+	 *
+	 * @see PracticeCategoryMapper
 	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	/**
 	 * 练习设置Service
+	 *
+	 * @see PracticeSetService
 	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
 	/**
 	 * 练习理论Service
+	 *
+	 * @see PracticeTheoryService
 	 */
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
@@ -94,6 +106,8 @@ public class ExternalTheoryController {
 	 * 获取练习设置列表
 	 *
 	 * @return {@code BaseRsp<List<ExternalPracticeSetBo>> }
+	 * @throws
+	 * @see BaseRsp<List<ExternalPracticeSetBo>>
 	 */
 	@ApiOperation("理论基础习题集")
 	@GetMapping("/practice-set/list")
@@ -123,6 +137,9 @@ public class ExternalTheoryController {
 	 *
 	 * @param practiceSetId 练习设置id
 	 * @return {@code BaseRsp<List<ExternalPracticeCategoryBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<ExternalPracticeCategoryBo>>
 	 */
 	@AuthOjKey
 	@ApiOperation("理论基础分类-全量获取")
@@ -159,6 +176,9 @@ public class ExternalTheoryController {
 	 *
 	 * @param queryParams 查询参数
 	 * @return {@code BaseRsp<ListRsp<PracticeTheory>> }
+	 * @throws
+	 * @see PracticeTheoryListReq
+	 * @see BaseRsp<ListRsp<PracticeTheory>>
 	 */
 	@ApiOperation("理论基础题库-分页查询")
 	@GetMapping("/list")
@@ -191,6 +211,9 @@ public class ExternalTheoryController {
 	 *
 	 * @param resourceIds 资源id列表
 	 * @return {@code BaseRsp<List<PracticeTheory>> }
+	 * @throws
+	 * @see List<String>
+	 * @see BaseRsp<List<PracticeTheory>>
 	 */
 	@ApiOperation("理论基础题库-批量查询")
 	@GetMapping("/batch-get")
@@ -209,6 +232,9 @@ public class ExternalTheoryController {
 	 *
 	 * @param queryParams 查询参数
 	 * @return {@code BaseRsp<List<PracticeTheory>> }
+	 * @throws
+	 * @see PracticeRandomChoiceReq
+	 * @see BaseRsp<List<PracticeTheory>>
 	 */
 	@ApiOperation("理论基础题库-随机获取数条")
 	@GetMapping("/random-choice")
@@ -243,6 +269,9 @@ public class ExternalTheoryController {
 	 *
 	 * @param listReq 列表请求体
 	 * @return {@code BaseRsp<ExternalTheoryCountBo> }
+	 * @throws
+	 * @see PracticeTheoryListReq
+	 * @see BaseRsp<ExternalTheoryCountBo>
 	 */
 	@ApiOperation("查询各类型理论习题数量")
 	@GetMapping("/type/count")

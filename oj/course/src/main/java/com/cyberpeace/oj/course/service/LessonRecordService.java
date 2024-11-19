@@ -10,7 +10,9 @@ import java.util.List;
  * 课时记录Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 public interface LessonRecordService {
 
@@ -21,6 +23,11 @@ public interface LessonRecordService {
      * @param startTime
      * @param endTime
      * @return
+     * @throws
+     * @see String
+     * @see Date
+     * @see Date
+     * @see List<LessonRecord>
      */
     List<LessonRecord> selectByTime(String userId, Date startTime, Date endTime);
 
@@ -30,6 +37,10 @@ public interface LessonRecordService {
      * @param recordLesson
      * @param lessons
      * @return
+     * @throws
+     * @see List<String>
+     * @see List<CourseLesson>
+     * @see List<String>
      */
     List<String> recordBelongCourse(List<String> recordLesson, List<CourseLesson> lessons);
 

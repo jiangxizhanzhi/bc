@@ -12,7 +12,10 @@ import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
  * 课堂组信息Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo> {
@@ -23,6 +26,10 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 * @param roomId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ClassroomGroupInfo
 	 */
 	ClassroomGroupInfo selectByRoomAndUser(@Param("roomId") String roomId,
 			@Param("userId") String userId);
@@ -32,6 +39,9 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 *
 	 * @param roomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<ClassroomGroupInfo>
 	 */
 	List<ClassroomGroupInfo> selectByRoom(@Param("roomId") String roomId);
 
@@ -40,6 +50,9 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 *
 	 * @param roomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
 	 */
 	Integer selectLastGroupByRoom(@Param("roomId") String roomId);
 
@@ -47,6 +60,8 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 * 删除组信息
 	 *
 	 * @param classroomId 课堂id
+	 * @throws
+	 * @see String
 	 */
 	void deleteByRoom(@Param("roomId") String classroomId);
 
@@ -55,6 +70,9 @@ public interface ClassroomGroupInfoMapper extends BaseMapper<ClassroomGroupInfo>
 	 *
 	 * @param resourceIdList 资源id列表
 	 * @param destroyDelay   摧毁延迟
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	void updateBatchDestroyDelayByIds(@Param("resourceIdList") List<String> resourceIdList,
 			@Param("destroyDelay") Integer destroyDelay);

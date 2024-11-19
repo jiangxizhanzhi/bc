@@ -8,18 +8,25 @@ import lombok.Data;
  * 流量信息
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class FlowInfo implements Serializable {
 
 	/**
 	 * 流量id
+	 *
+	 * @see String
 	 */
 	private String flow_id;
 
 	/**
 	 * 源ip地址
+	 *
+	 * @see String
 	 */
 	private String source_ip;
 

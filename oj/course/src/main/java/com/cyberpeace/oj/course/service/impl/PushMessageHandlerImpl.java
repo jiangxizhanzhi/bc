@@ -27,7 +27,10 @@ import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
  * 推送消息处理器实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see PushMessageHandler
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -35,12 +38,16 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 
 	/**
 	 * 我的WebSocket处理器
+	 *
+	 * @see MyWebSocketHandler
 	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
 	/**
 	 * 课堂组信息Mapper
+	 *
+	 * @see ClassroomGroupInfoMapper
 	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
@@ -50,6 +57,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 *
 	 * @param data         数据
 	 * @param ojLocalScene OJ当地场景
+	 * @throws
+	 * @see JSONObject
+	 * @see OjLocalScene
 	 */
 	@Override
 	public void pushLessonPracticeMessage(JSONObject data, OjLocalScene ojLocalScene) {
@@ -79,6 +89,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 *
 	 * @param data         数据
 	 * @param ojLocalScene OJ当地场景
+	 * @throws
+	 * @see JSONObject
+	 * @see OjLocalScene
 	 */
 	@Override
 	public void pushLessonMessage(JSONObject data, OjLocalScene ojLocalScene) {
@@ -103,6 +116,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 *
 	 * @param data         数据
 	 * @param ojLocalScene OJ当地场景
+	 * @throws
+	 * @see JSONObject
+	 * @see OjLocalScene
 	 */
 	@Override
 	public void pushOperationMessage(JSONObject data, OjLocalScene ojLocalScene) {
@@ -128,6 +144,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 *
 	 * @param data         数据
 	 * @param ojLocalScene OJ当地场景
+	 * @throws
+	 * @see JSONObject
+	 * @see OjLocalScene
 	 */
 	@Override
 	public void pushClassroomMessage(JSONObject data, OjLocalScene ojLocalScene) {
@@ -152,6 +171,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 *
 	 * @param data    数据
 	 * @param groupId 组id
+	 * @throws
+	 * @see JSONObject
+	 * @see String
 	 */
 	@Override
 	public void pushMessageToNoSceneClassroom(JSONObject data, String groupId) {
@@ -182,6 +204,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 *
 	 * @param data
 	 * @param ojLocalScene OJ当地场景
+	 * @throws
+	 * @see JSONObject
+	 * @see OjLocalScene
 	 */
 	private void pushMessageToUser(JSONObject data, OjLocalScene ojLocalScene) {
 		if (null == ojLocalScene) {
@@ -204,7 +229,10 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 * 推送消息给后台批量启动场景用户
 	 *
 	 * @param data
-	 * @param ojLocalScene
+	 * @param ojLocalScene OJ当地场景
+	 * @throws
+	 * @see JSONObject
+	 * @see OjLocalScene
 	 */
 	private void pushMessageToClassroom(JSONObject data, OjLocalScene ojLocalScene) {
 
@@ -235,6 +263,8 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 * 获取删除消息
 	 *
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getDeleteMessage() {
@@ -250,6 +280,10 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 * @param data        数据
 	 * @param classroomId 课堂id
 	 * @param userId      用户id
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public void pushHelpMessage(JSONObject data, String classroomId, String userId) {
@@ -270,6 +304,9 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 	 *
 	 * @param data   数据
 	 * @param userId 用户id
+	 * @throws
+	 * @see JSONObject
+	 * @see String
 	 */
 	@Override
 	public void pushRoomTipsMessage(JSONObject data, String userId) {

@@ -27,25 +27,34 @@ import com.google.common.collect.Lists;
  * 课程统计学Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see CourseStatisticsService
+ * @since 1.0.0
  */
 @Service
 public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 
 	/**
 	 * 课程Mapper
+	 *
+	 * @see CourseMapper
 	 */
 	@Autowired
 	private CourseMapper courseMapper;
 
 	/**
 	 * 课程课时Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * 课时记录Mapper
+	 *
+	 * @see LessonRecordMapper
 	 */
 	@Autowired
 	private LessonRecordMapper lessonRecordMapper;
@@ -56,6 +65,10 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 	 * @param courseIds 课程id列表
 	 * @param userId    用户id
 	 * @return {@code List<CourseStudyProcessBo> }
+	 * @throws
+	 * @see List<String>
+	 * @see String
+	 * @see List<CourseStudyProcessBo>
 	 */
 	@Override
 	public List<CourseStudyProcessBo> statisticByIds(List<String> courseIds, String userId) {

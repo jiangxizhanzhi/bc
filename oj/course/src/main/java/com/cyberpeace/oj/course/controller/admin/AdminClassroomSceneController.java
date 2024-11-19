@@ -31,7 +31,9 @@ import java.util.List;
  * 管理课堂场景Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台课堂场景相关api")
 @RestController
@@ -41,12 +43,16 @@ public class AdminClassroomSceneController {
 
 	/**
 	 * 课堂场景Service
+	 *
+	 * @see ClassroomSceneService
 	 */
 	@Autowired
 	private ClassroomSceneService classroomSceneService;
 
 	/**
 	 * 推送消息处理器
+	 *
+	 * @see PushMessageHandler
 	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
@@ -56,6 +62,9 @@ public class AdminClassroomSceneController {
 	 *
 	 * @param groupSceneReq 组场景请求体
 	 * @return {@code BaseRsp<JSONObject> }
+	 * @throws
+	 * @see GroupSceneReq
+	 * @see BaseRsp<JSONObject>
 	 */
 	@ApiOperation("课堂组场景启动")
 	@PostMapping("")
@@ -74,6 +83,9 @@ public class AdminClassroomSceneController {
 	 *
 	 * @param groupSceneReq 组场景请求体
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see GroupSceneReq
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("课堂场景删除")
 	@DeleteMapping("")
@@ -96,7 +108,9 @@ public class AdminClassroomSceneController {
 	 *
 	 * @param classroomSceneReq 课堂场景请求体
 	 * @return {@code BaseRsp<List<GroupInfoBo>> }
-	 * @throws InterruptedException 中断异常
+	 * @throws @throws InterruptedException 中断异常
+	 * @see ClassroomSceneReq
+	 * @see BaseRsp<List<GroupInfoBo>>
 	 */
 	@ApiOperation("课堂课堂场景一键启动")
 	@PostMapping("/batch")
@@ -117,6 +131,9 @@ public class AdminClassroomSceneController {
 	 *
 	 * @param classroomSceneReq 课堂场景请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ClassroomSceneReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课堂场景一键清除")
 	@DeleteMapping("/batch")
@@ -135,6 +152,9 @@ public class AdminClassroomSceneController {
 	 *
 	 * @param classroomId 课堂id
 	 * @return {@code BaseRsp<List<SceneMonitorBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<SceneMonitorBo>>
 	 */
 	@ApiOperation("课堂场景监控")
 	@GetMapping("/classroom_monitor")
@@ -151,6 +171,9 @@ public class AdminClassroomSceneController {
 	 *
 	 * @param groupSceneReq 组场景请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see GroupSceneReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课堂场景暂停与恢复")
 	@PatchMapping("/pause")

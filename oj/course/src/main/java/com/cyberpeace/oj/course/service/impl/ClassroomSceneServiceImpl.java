@@ -65,7 +65,10 @@ import lombok.extern.slf4j.Slf4j;
  * 课堂场景Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see ClassroomSceneService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -73,90 +76,120 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
     /**
      * 课堂Mapper
+     *
+     * @see ClassroomMapper
      */
     @Autowired
 	private ClassroomMapper classroomMapper;
 
     /**
      * 课堂组信息Mapper
+     *
+     * @see ClassroomGroupInfoMapper
      */
     @Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
     /**
      * OJ当地场景Service
+     *
+     * @see OjLocalSceneService
      */
     @Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
     /**
      * OJ当地场景Mapper
+     *
+     * @see OjLocalSceneMapper
      */
     @Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
     /**
      * 当地场景Service
+     *
+     * @see LocalSceneService
      */
     @Autowired
 	private LocalSceneService localSceneService;
 
     /**
      * 当地场景Mapper
+     *
+     * @see LocalSceneMapper
      */
     @Autowired
 	private LocalSceneMapper localSceneMapper;
 
     /**
      * 事务模板
+     *
+     * @see TransactionTemplate
      */
     @Autowired
 	private TransactionTemplate transactionTemplate;
 
     /**
      * 远程拓扑Service
+     *
+     * @see RemoteTopoService
      */
     @Autowired
 	private RemoteTopoService remoteTopoService;
 
     /**
      * 课程课时Mapper
+     *
+     * @see CourseLessonMapper
      */
     @Autowired
 	private CourseLessonMapper courseLessonMapper;
 
     /**
      * 我的WebSocket处理器
+     *
+     * @see MyWebSocketHandler
      */
     @Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
     /**
      * 课堂标志Mapper
+     *
+     * @see ClassroomSignMapper
      */
     @Autowired
 	private ClassroomSignMapper classroomSignMapper;
 
     /**
      * 课堂标志Service
+     *
+     * @see ClassroomSignService
      */
     @Autowired
 	private ClassroomSignService classroomSignService;
 
     /**
      * 推送消息处理器
+     *
+     * @see PushMessageHandler
      */
     @Autowired
 	private PushMessageHandler pushMessageHandler;
 
     /**
      * 课程验证处理器
+     *
+     * @see CourseValidateHandler
      */
     @Autowired
 	private CourseValidateHandler courseValidateHandler;
 
     /**
      * 批量场景映射
+     *
+     * @see Map<String, BatchStartSceneHandler>
      */
     private Map<String, BatchStartSceneHandler> batchSceneMap = Maps.newConcurrentMap();
 
@@ -166,6 +199,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param groupId     组id
      * @param authContext auth 上下文
      * @return {@code JSONObject }
+     * @throws
+     * @see String
+     * @see AuthContext
+     * @see JSONObject
      */
     @Override
 	public JSONObject startScene(String groupId, AuthContext authContext) {
@@ -225,6 +262,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param groupId     组id
      * @param authContext auth 上下文
      * @return {@code String }
+     * @throws
+     * @see String
+     * @see AuthContext
+     * @see String
      */
     @Override
 	public String deleteScene(String groupId, AuthContext authContext) {
@@ -262,6 +303,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param localScene 当地场景
      * @param groupInfo  组信息
+     * @throws
+     * @see LocalScene
+     * @see ClassroomGroupInfo
      */
     @Override
 	public void deleteLocalScene(LocalScene localScene, ClassroomGroupInfo groupInfo) {
@@ -286,6 +330,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param groupInfo 组信息
      * @return {@code List<ClassroomSign> }
+     * @throws
+     * @see ClassroomGroupInfo
+     * @see List<ClassroomSign>
      */
     private List<ClassroomSign> resetNeedHelp(ClassroomGroupInfo groupInfo) {
 		// 查询签到的用户
@@ -301,6 +348,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param classroomId 课堂id
      * @param userId      用户id
      * @return {@code ClassroomSign }
+     * @throws
+     * @see String
+     * @see String
+     * @see ClassroomSign
      */
     private ClassroomSign resetNeedHelp(String classroomId, String userId) {
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
@@ -318,6 +369,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param groupId
      * @param ojEvent OJ 活动
+     * @throws
+     * @see String
+     * @see OjEvent
      */
     private void toGroupSocketMessage(String groupId, OjEvent ojEvent) {
 		toGroupSocketMessage(groupId, ojEvent, CommonConstant.EMPTY_STRING);
@@ -329,6 +383,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param classroomId 课堂id
      * @param authContext auth 上下文
      * @return {@code List<GroupInfoBo> }
+     * @throws
+     * @see String
+     * @see AuthContext
+     * @see List<GroupInfoBo>
      */
     @Override
 	public List<GroupInfoBo> batchStartScene(String classroomId, AuthContext authContext) {
@@ -365,6 +423,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param classroomId 课堂id
      * @param groupId     组id
+     * @throws
+     * @see String
+     * @see String
      */
     @Override
 	public void finishStart(String classroomId, String groupId) {
@@ -387,6 +448,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param groupId 组id
      * @param ojEvent OJ 活动
      * @param message 消息
+     * @throws
+     * @see String
+     * @see OjEvent
+     * @see String
      */
     @Override
 	public void toGroupSocketMessage(String groupId, OjEvent ojEvent, String message) {
@@ -416,6 +481,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * 清除批量启动场景
      *
      * @param classroomId 课堂id
+     * @throws
+     * @see String
      */
     @Override
 	public void clearBatchStartScene(String classroomId) {
@@ -428,6 +495,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param sceneBo 场景Bo
      * @param ojEvent OJ 活动
      * @param message 消息
+     * @throws
+     * @see StartSceneBo
+     * @see OjEvent
+     * @see String
      */
     @Override
 	public void toClassroomMessage(StartSceneBo sceneBo, OjEvent ojEvent, String message) {
@@ -456,6 +527,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param classroomId 课堂id
      * @param authContext auth 上下文
+     * @throws
+     * @see String
+     * @see AuthContext
      */
     @Override
 	public void batchDeleteScene(String classroomId, AuthContext authContext) {
@@ -481,6 +555,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param classroomId 课堂id
      * @return {@code List<SceneMonitorBo> }
+     * @throws
+     * @see String
+     * @see List<SceneMonitorBo>
      */
     @Override
 	public List<SceneMonitorBo> selectMonitorList(String classroomId) {
@@ -504,6 +581,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param groupId 组id
      * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see Boolean
      */
     @Override
 	public Boolean updateSceneStatus(String groupId) {
@@ -537,6 +617,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param ojLocalScene
      * @param authContext
      * @return
+     * @throws
+     * @see ClassroomGroupInfo
+     * @see CourseLesson
+     * @see OjLocalScene
+     * @see AuthContext
+     * @see LocalScene
      */
     private LocalScene initLocalScene(ClassroomGroupInfo groupInfo, CourseLesson lesson,
 			OjLocalScene ojLocalScene, AuthContext authContext) {
@@ -580,6 +666,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param groupInfo
      * @param authContext
      * @return
+     * @throws
+     * @see ClassroomGroupInfo
+     * @see AuthContext
+     * @see OjLocalScene
      */
     private OjLocalScene initOjLocalScene(ClassroomGroupInfo groupInfo, AuthContext authContext) {
 		OjLocalScene ojLocalScene = new OjLocalScene();
@@ -606,6 +696,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param groupUserIds
      * @param courseLesson 课程课时
      * @param ojEvent      OJ 活动
+     * @throws
+     * @see String
+     * @see CourseLesson
+     * @see OjEvent
      */
     private void toLessonSocketMessage(String groupUserIds, CourseLesson courseLesson,
 			OjEvent ojEvent) {
@@ -628,6 +722,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      * @param sceneShare
      * @param ojEvent
      * @return
+     * @throws
+     * @see List<String>
+     * @see CourseLesson
+     * @see Boolean
+     * @see OjEvent
+     * @see List<WebSocketMessageContext<WsMessageIdentifier,Object>>
      */
     private List<WebSocketMessageContext<WsMessageIdentifier,Object>> getMessageContext(List<String> userIds,
 			CourseLesson lesson, Boolean sceneShare, OjEvent ojEvent) {
@@ -668,6 +768,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param classroomId
      * @return
+     * @throws
+     * @see String
+     * @see Classroom
      */
     private Classroom validateClassroom(String classroomId) {
 		Classroom classroom = classroomMapper.selectById(classroomId);
@@ -685,6 +788,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param groupId
      * @return
+     * @throws
+     * @see String
+     * @see ClassroomGroupInfo
      */
     private ClassroomGroupInfo validateGroup(String groupId) {
 		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectById(groupId);
@@ -702,6 +808,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
      *
      * @param lessonId
      * @return
+     * @throws
+     * @see String
+     * @see CourseLesson
      */
     private CourseLesson validateLesson(String lessonId) {
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);

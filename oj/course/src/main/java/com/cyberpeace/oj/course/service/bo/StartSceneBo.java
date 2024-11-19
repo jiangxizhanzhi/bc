@@ -10,34 +10,47 @@ import java.io.Serializable;
  * 启动场景Bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class StartSceneBo implements Serializable {
 
-	/**
-	 * 课堂id
-	 */
-	private String classroomId;
+    /**
+     * 课堂id
+     *
+     * @see String
+     */
+    private String classroomId;
 
-	/**
-	 * 组id
-	 */
-	private String groupId;
+    /**
+     * 组id
+     *
+     * @see String
+     */
+    private String groupId;
 
-	/**
-	 * 语言
-	 */
-	private String language;
+    /**
+     * 语言
+     *
+     * @see String
+     */
+    private String language;
 
-	/**
-	 * auth 上下文
-	 */
-	private AuthContext authContext;
+    /**
+     * auth 上下文
+     *
+     * @see AuthContext
+     */
+    private AuthContext authContext;
 
-	/**
-	 * 用户信息
-	 */
-	private UserInfo userInfo;
+    /**
+     * 用户信息
+     *
+     * @see UserInfo
+     */
+    private UserInfo userInfo;
 
 }

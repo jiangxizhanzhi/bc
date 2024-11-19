@@ -19,7 +19,10 @@ import java.util.List;
  * 课程学习统计学Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
@@ -29,6 +32,9 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 *
 	 * @param courseIds 课程id列表
 	 * @return {@code List<Course> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<Course>
 	 */
 	List<Course> selectByHeat(List<String> courseIds);
 
@@ -37,6 +43,9 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 *
 	 * @param courseIds 课程id列表
 	 * @return {@code List<Course> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<Course>
 	 */
 	List<Course> sumHeatByDirection(List<String> courseIds);
 
@@ -48,6 +57,12 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 * @param courseIds     课程id列表
 	 * @param isPublic      是否公开
 	 * @return {@code IPage<AdminCourseStatisticsRes> }
+	 * @throws
+	 * @see Page<AdminCourseStatisticsRes>
+	 * @see CourseContext
+	 * @see List<String>
+	 * @see Boolean
+	 * @see IPage<AdminCourseStatisticsRes>
 	 */
 	IPage<AdminCourseStatisticsRes> listCourseByPage(Page<AdminCourseStatisticsRes> page,
 			@Param("courseContext") CourseContext courseContext,
@@ -62,6 +77,13 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 * @param type     类型
 	 * @param search   搜索
 	 * @return {@code IPage<AdminLessonStatisticsRes> }
+	 * @throws
+	 * @see Page<AdminLessonStatisticsRes>
+	 * @see String
+	 * @see Boolean
+	 * @see Integer
+	 * @see String
+	 * @see IPage<AdminLessonStatisticsRes>
 	 */
 	IPage<AdminLessonStatisticsRes> listLessonByPage(Page<AdminLessonStatisticsRes> page, @Param("courseId") String courseId,
 			@Param("isPublic") Boolean isPublic, Integer type, String search);
@@ -71,6 +93,9 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 *
 	 * @param lessonIds 课时id列表
 	 * @return {@code List<LessonPaperEvaluate> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<LessonPaperEvaluate>
 	 */
 	List<LessonPaperEvaluate> listLessonPractice(@Param("lessonIds") List<String> lessonIds);
 
@@ -81,6 +106,11 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 * @param userIds  用户id列表
 	 * @param lessonId 课时id
 	 * @return {@code IPage<AdminLessonStatisticsDetailRes> }
+	 * @throws
+	 * @see Page<AdminLessonStatisticsDetailRes>
+	 * @see List<String>
+	 * @see String
+	 * @see IPage<AdminLessonStatisticsDetailRes>
 	 */
 	IPage<AdminLessonStatisticsDetailRes> listLessonLearnedRecord(Page<AdminLessonStatisticsDetailRes> page,
 			@Param("userIds") List<String> userIds, @Param("lessonId") String lessonId);
@@ -91,6 +121,10 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 * @param lessonId 课时id
 	 * @param userIds  用户id列表
 	 * @return {@code List<AdminLessonStatisticsDetailRes> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<AdminLessonStatisticsDetailRes>
 	 */
 	List<AdminLessonStatisticsDetailRes> detailLessonByPage(@Param("lessonId") String lessonId,
 			@Param("userIds") List<String> userIds);
@@ -101,6 +135,10 @@ public interface CourseLearnStatisticsMapper extends BaseMapper<LessonRecord> {
 	 * @param lessonId 课时id
 	 * @param userIds  用户id列表
 	 * @return {@code List<AdminLessonStatisticsDetailRes> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
+	 * @see List<AdminLessonStatisticsDetailRes>
 	 */
 	List<AdminLessonStatisticsDetailRes> detailExpLessonByPage(@Param("lessonId") String lessonId,
 			@Param("userIds") List<String> userIds);

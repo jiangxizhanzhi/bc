@@ -16,40 +16,105 @@ import lombok.Getter;
 /**
  * 态势导调方案表
  *
- * @author YaoyaoMei
+ * @author YaoyaoMei@see BaseTable
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
  */
 @Data
 @TableName("situation_guide_scheme")
 public class SituationGuideScheme extends BaseTable {
 
+    /**
+     * 资源id
+     *
+     * @see String
+     */
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
+    /**
+     * 房间id
+     *
+     * @see String
+     */
     private String roomId;
 
+    /**
+     * 业务类型
+     *
+     * @see Integer
+     */
     private Integer businessType;
 
+    /**
+     * 事件名称
+     *
+     * @see String
+     */
     private String eventName;
 
     /**
      * 1:任务导调 2:手动导调
+     *
+     * @see Integer
      */
     private Integer type;
 
+    /**
+     * 事件类型
+     *
+     * @see Integer
+     */
     private Integer eventType;
 
+    /**
+     * 类别
+     *
+     * @see Integer
+     */
     private Integer category;
 
+    /**
+     * 源
+     *
+     * @see String
+     */
     private String source;
 
+    /**
+     * 目标
+     *
+     * @see String
+     */
     private String target;
 
+    /**
+     * 结果
+     *
+     * @see Integer
+     */
     private Integer result;
 
+    /**
+     * 岗位
+     *
+     * @see Integer
+     */
     private Integer role;
 
+    /**
+     * 任务id
+     *
+     * @see String
+     */
     private String missionId;
 
+    /**
+     * 触发条件
+     *
+     * @see Integer
+     */
     private Integer triggerCondition;
 
     public enum Type implements GenericEnum, BaseI18n {

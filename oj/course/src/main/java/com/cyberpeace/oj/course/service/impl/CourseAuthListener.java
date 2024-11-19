@@ -16,7 +16,10 @@ import lombok.extern.slf4j.Slf4j;
  * 课程认证监听器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see AuthMessageListener
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -24,12 +27,16 @@ public class CourseAuthListener extends AuthMessageListener {
 
 	/**
 	 * 课程Service
+	 *
+	 * @see CourseService
 	 */
 	@Autowired
 	private CourseService courseService;
 
 	/**
 	 * 课堂Service
+	 *
+	 * @see ClassroomService
 	 */
 	@Autowired
 	private ClassroomService classroomService;
@@ -38,6 +45,8 @@ public class CourseAuthListener extends AuthMessageListener {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer declareMessageType() {
@@ -49,6 +58,9 @@ public class CourseAuthListener extends AuthMessageListener {
 	 *
 	 * @param users 用户
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onUserDelete(List<String> users) {
@@ -67,6 +79,9 @@ public class CourseAuthListener extends AuthMessageListener {
 	 *
 	 * @param orgs 组织
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see List<String>
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onOrgDelete(List<String> orgs) {

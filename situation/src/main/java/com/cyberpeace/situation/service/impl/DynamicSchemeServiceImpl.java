@@ -50,58 +50,177 @@ import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 动态方案Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see ServiceImpl
+ * @see DynamicSchemeService
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, DynamicScheme> implements DynamicSchemeService {
 
+	/**
+	 * 攻击消息Mapper
+	 *
+	 * @see AttackMessageMapper
+	 */
 	@Autowired
 	private AttackMessageMapper attackMessageMapper;
 
+	/**
+	 * 动态方案Mapper
+	 *
+	 * @see DynamicSchemeMapper
+	 */
 	@Autowired
 	private DynamicSchemeMapper dynamicSchemeMapper;
 
+	/**
+	 * 态势处理器Service
+	 *
+	 * @see SituationHandlerService
+	 */
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
+	/**
+	 * 事务模板
+	 *
+	 * @see TransactionTemplate
+	 */
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 拓扑处理器Service
+	 *
+	 * @see TopoHandlerService
+	 */
 	@Autowired
 	private TopoHandlerService topoHandlerService;
 
+	/**
+	 * 攻击消息Service
+	 *
+	 * @see AttackMessageService
+	 */
 	@Autowired
 	private AttackMessageService attackMessageService;
 
+	/**
+	 * 场景配置Mapper
+	 *
+	 * @see SceneConfigMapper
+	 */
 	@Autowired
 	private SceneConfigMapper sceneConfigMapper;
 
+	/**
+	 * 场景配置Service
+	 *
+	 * @see SceneConfigService
+	 */
 	@Autowired
 	private SceneConfigService sceneConfigService;
 
+	/**
+	 * 图片类型
+	 *
+	 * @see String
+	 */
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
 
+	/**
+	 * 视频类型
+	 *
+	 * @see String
+	 */
 	public static String VIDEO_TYPE = "MP4";
 
+	/**
+	 * 资源文件名称
+	 *
+	 * @see String
+	 */
 	public static final String RESOURCE_FILE_NAME = "data.json";
 
+	/**
+	 * 最小str长度
+	 *
+	 * @see Integer
+	 */
 	public Integer MIN_STR_LEN = 1;
 
+	/**
+	 * 最大名称str长度
+	 *
+	 * @see Integer
+	 */
 	public Integer MAX_NAME_STR_LEN = 255;
 
+	/**
+	 * stage 已运行
+	 *
+	 * @see Integer
+	 */
 	public Integer STAGE_HAS_BEEN_RUN = 0;
 
+	/**
+	 * 阶段是否运行
+	 *
+	 * @see Integer
+	 */
 	public Integer STAGE_IS_RUNNING = 1;
 
+	/**
+	 * 动态已运行
+	 *
+	 * @see Integer
+	 */
 	public Integer DYNAMIC_HAS_BEEN_RUN = 2;
 
+	/**
+	 * 动态是否运行
+	 *
+	 * @see Integer
+	 */
 	public Integer DYNAMIC_IS_RUNNING = 3;
 
+	/**
+	 * 图片代号
+	 *
+	 * @see Integer
+	 */
 	public Integer PICTURE_CODE = 1;
 
+	/**
+	 * 视频代号
+	 *
+	 * @see Integer
+	 */
 	public Integer VIDEO_CODE = 2;
 
+	/**
+	 * 攻击
+	 *
+	 * @see String
+	 */
 	public final String ATTACK = "attack";
 
+	/**
+	 * 新增动态方案
+	 *
+	 * @param addDynamicSchemeReq 新增动态方案请求体
+	 * @return {@code String }
+	 * @throws
+	 * @see AddDynamicSchemeReq
+	 * @see String
+	 */
 	@Override
 	public String addDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
 		DynamicScheme dynamicScheme = addDynamicSchemeReqToDynamicScheme(addDynamicSchemeReq);
@@ -110,6 +229,15 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		return dynamicScheme.getResourceId();
 	}
 
+	/**
+	 * 获取动态方案由id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code DynamicSchemeRes }
+	 * @throws
+	 * @see String
+	 * @see DynamicSchemeRes
+	 */
 	@Override
 	public DynamicSchemeRes getDynamicSchemeById(String resourceId) {
 		DynamicScheme dynamicScheme = dynamicSchemeMapper.selectById(resourceId);
@@ -165,6 +293,15 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		return dynamicSchemeRes;
 	}
 
+	/**
+	 * 更新动态方案
+	 *
+	 * @param dynamicSchemeReq 动态方案请求体
+	 * @return {@code DynamicSchemeReq }
+	 * @throws
+	 * @see DynamicSchemeReq
+	 * @see DynamicSchemeReq
+	 */
 	@Override
 	public DynamicSchemeReq updateDynamicScheme(DynamicSchemeReq dynamicSchemeReq) {
 		DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeReq, DynamicScheme.class);
@@ -228,6 +365,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		return dynamicSchemeReq;
 	}
 
+	/**
+	 * 删除动态方案
+	 *
+	 * @param resourceId 资源id
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void deleteDynamicScheme(String resourceId) {
 		List<String> attackMessageIds = new ArrayList<>();
@@ -250,11 +394,27 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		});
 	}
 
+	/**
+	 * 获取全部动态名称
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code List<DynamicSchemeNameRes> }
+	 * @throws
+	 * @see String
+	 * @see List<DynamicSchemeNameRes>
+	 */
 	@Override
 	public List<DynamicSchemeNameRes> getAllDynamicName(String sceneId) {
 		return dynamicSchemeMapper.getAllNamesBySceneId(sceneId);
 	}
 
+	/**
+	 * 获取当地选项
+	 *
+	 * @param optionsRes 选项结果
+	 * @throws
+	 * @see OptionsRes
+	 */
 	@Override
 	public void getLocalOption(OptionsRes optionsRes) {
 		optionsRes.setAttackTypeList(StreamApiUtils.map(Lists.newArrayList(AttackType.values()),
@@ -267,6 +427,17 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				color -> new LocalType(color.getCode(), color.getMsg())));
 	}
 
+	/**
+	 * 获取远程选项
+	 *
+	 * @param optionsRes 选项结果
+	 * @param sceneId    场景id
+	 * @param isInstance 是否实例
+	 * @throws
+	 * @see OptionsRes
+	 * @see String
+	 * @see Boolean
+	 */
 	@Override
 	public void getRemoteOption(OptionsRes optionsRes, String sceneId, Boolean isInstance) {
 
@@ -292,6 +463,15 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				elementInfo -> new ElementType(elementInfo.getElementId(), elementInfo.getName())));
 	}
 
+	/**
+	 * 新增动态方案请求体自动态方案
+	 *
+	 * @param addDynamicSchemeReq 新增动态方案请求体
+	 * @return {@code DynamicScheme }
+	 * @throws
+	 * @see AddDynamicSchemeReq
+	 * @see DynamicScheme
+	 */
 	public DynamicScheme
 			addDynamicSchemeReqToDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
 		DynamicScheme dynamicScheme = BeanUtils.copy(addDynamicSchemeReq, DynamicScheme.class);
@@ -302,6 +482,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	/**
 	 * 推送多媒体动效消息
+	 *
+	 * @param attackMessageBo 攻击消息Bo
+	 * @param code            代号
+	 * @throws
+	 * @see AttackMessageReq
+	 * @see String
 	 */
 	@Override
 	public void pushMediaToRoom(AttackMessageReq attackMessageBo, String code) {
@@ -360,6 +546,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	/**
 	 * 推送其他消息
+	 *
+	 * @param attackMessageBo 攻击消息Bo
+	 * @param elementIds      元素id列表
+	 * @throws
+	 * @see AttackMessageReq
+	 * @see List<String>
 	 */
 	@Override
 	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds) {
@@ -396,6 +588,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeDynamic.getSceneId());
 	}
 
+	/**
+	 * 推送动态方案自房间
+	 *
+	 * @param dynamicSchemeReq 动态方案请求体
+	 * @throws
+	 * @see DynamicSchemeReq
+	 */
 	@Override
 	public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq) {
 
@@ -474,6 +673,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	/**
 	 * 校验动效方案是否重名
+	 *
+	 * @param addDynamicSchemeReq 新增动态方案请求体
+	 * @throws
+	 * @see AddDynamicSchemeReq
 	 */
 	@Override
 	public void validDynamicSchemeName(AddDynamicSchemeReq addDynamicSchemeReq) {
@@ -488,6 +691,15 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 	}
 
+	/**
+	 * 获取附表
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code List<WsAttackSchedule> }
+	 * @throws
+	 * @see String
+	 * @see List<WsAttackSchedule>
+	 */
 	@Override
 	public List<WsAttackSchedule> getSchedule(String sceneId) {
 
@@ -503,6 +715,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		return JsonUtil.toJsonObjectArray(schedule, WsAttackSchedule.class);
 	}
 
+	/**
+	 * 清除场景数据
+	 *
+	 * @param sceneId 场景id
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public void clearSceneData(String sceneId) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -519,6 +738,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	/**
 	 * 清除之前的多媒体动效
+	 *
+	 * @param sceneId 场景id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void clearMedia(String sceneId) {
@@ -534,6 +757,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	/**
 	 * 校验阶段
+	 *
+	 * @param dynamicSchemeReq 动态方案请求体
+	 * @throws
+	 * @see DynamicSchemeReq
 	 */
 	@Override
 	public void validStage(DynamicSchemeReq dynamicSchemeReq) {
@@ -570,7 +797,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	/**
 	 * 清除场景进程信息
 	 *
-	 * @param sceneId
+	 * @param sceneId 场景id
+	 * @throws
+	 * @see String
 	 */
 	@Override
 	public void clearRoomSchedule(String sceneId) {
@@ -578,6 +807,17 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
 	}
 
+	/**
+	 * 做导出文件
+	 *
+	 * @param resourceId 资源id
+	 * @param tempDir    临时目录
+	 * @return {@code String }
+	 * @throws @throws IOException io异常
+	 * @see String
+	 * @see String
+	 * @see String
+	 */
 	@Override
 	public String makeExportFile(String resourceId, String tempDir) throws IOException {
 		// 1. make temp dir
@@ -598,6 +838,19 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		return ZipUtil.toZip(tempDir);
 	}
 
+	/**
+	 * 导入动态方案
+	 *
+	 * @param unZipPath  un zip 路径
+	 * @param sceneId    场景id
+	 * @param isInstance 是否实例
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Boolean
+	 * @see String
+	 */
 	@Override
 	public String importDynamicScheme(String unZipPath, String sceneId, Boolean isInstance) {
 		String dataJson = FileUtil
@@ -700,7 +953,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	/**
 	 * 验证多媒体动效存在时间是否重叠
 	 *
-	 * @param dynamicSchemeReq
+	 * @param dynamicSchemeReq 动态方案请求体
+	 * @throws
+	 * @see DynamicSchemeReq
 	 */
 	@Override
 	public void validMedia(DynamicSchemeReq dynamicSchemeReq) {
@@ -722,6 +977,17 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 	}
 
+	/**
+	 * 获取元素id列表
+	 *
+	 * @param sceneId    场景id
+	 * @param isInstance 是否实例
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> getElementIds(String sceneId, Boolean isInstance) {
 
@@ -739,6 +1005,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	/**
 	 * 推送进程消息
+	 *
+	 * @param wsAttackScheduleList WS 攻击计划列表
+	 * @param sceneId              场景id
+	 * @throws
+	 * @see List<WsAttackSchedule>
+	 * @see String
 	 */
 	public void pushAttackScheduleToRoom(List<WsAttackSchedule> wsAttackScheduleList,
 			String sceneId) {
@@ -747,6 +1019,19 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 	}
 
+	/**
+	 * 验证长度
+	 *
+	 * @param target    目标
+	 * @param minLen    最小长度
+	 * @param maxLen    最大长度
+	 * @param errorCode 错误代号
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see Integer
+	 * @see String
+	 */
 	public void validateLength(String target, Integer minLen, Integer maxLen, String errorCode) {
 		if (target == null) {
 			if (minLen == 0) {
@@ -768,6 +1053,15 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 	}
 
+	/**
+	 * 验证名称长度
+	 *
+	 * @param target    目标
+	 * @param errorCode 错误代号
+	 * @throws
+	 * @see String
+	 * @see String
+	 */
 	public void validateNameLen(String target, String errorCode) {
 		validateLength(target, MIN_STR_LEN, MAX_NAME_STR_LEN, errorCode);
 	}

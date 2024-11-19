@@ -26,23 +26,32 @@ import com.google.common.collect.Maps;
  * 远程组织Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see RemoteOrganizationService
+ * @since 1.0.0
  */
 @Service
 public class RemoteOrganizationServiceImpl implements RemoteOrganizationService {
 
 	/**
 	 * 中台组织树网址
+	 *
+	 * @see String
 	 */
 	private String MP_ORG_TREE_URL;
 
 	/**
 	 * 中台组织信息
+	 *
+	 * @see String
 	 */
 	private String MP_ORG_INFO;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -53,6 +62,8 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 	/**
 	 * 中台环境Service
+	 *
+	 * @see MpEnvService
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
@@ -63,6 +74,10 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 * @param orgId 组织id
 	 * @param self  自我
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> childrenList(String orgId, boolean self) {
@@ -94,6 +109,9 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 *
 	 * @param orgId 组织id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getOrgPath(String orgId) {
@@ -111,6 +129,9 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 *
 	 * @param orgId 组织id
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String orgNameById(String orgId) {
@@ -124,6 +145,10 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 * @param orgId 组织id
 	 * @param self  自我
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see Map<String, String>
 	 */
 	@Override
 	public Map<String, String> childrenMap(String orgId, boolean self) {
@@ -159,6 +184,9 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 *
 	 * @param orgTree 组织树
 	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public String getOrgIdByTree(String orgTree) {
@@ -179,6 +207,10 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 * @param orgStr
 	 * @param orgTree
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see JSONArray
+	 * @see JSONObject
 	 */
 	private JSONObject getOrgIdByTree(List<String> orgStr, JSONArray orgTree) {
 
@@ -221,6 +253,9 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 *
 	 * @param orgTree
 	 * @return
+	 * @throws
+	 * @see JSONObject
+	 * @see List<JSONObject>
 	 */
 	private List<JSONObject> getChildrenIds(JSONObject orgTree) {
 
@@ -249,6 +284,9 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 *
 	 * @param orgId 指定组织id
 	 * @return 子级对象的集合JSONArray
+	 * @throws
+	 * @see String
+	 * @see JSONArray
 	 */
 	@Override
 	public JSONArray classList(String orgId) {
@@ -278,6 +316,9 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 *
 	 * @param orgId 组织id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getParentIds(String orgId) {
@@ -303,6 +344,9 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	 *
 	 * @param orgId 组织id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getById(String orgId) {

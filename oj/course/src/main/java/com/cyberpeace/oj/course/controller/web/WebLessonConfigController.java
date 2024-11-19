@@ -26,7 +26,9 @@ import io.swagger.annotations.ApiParam;
  * Web课时配置Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "oj-前台课程目录相关api")
 @RestController
@@ -36,6 +38,8 @@ public class WebLessonConfigController {
 
 	/**
 	 * 课时配置Service
+	 *
+	 * @see LessonConfigService
 	 */
 	@Autowired
 	private LessonConfigService lessonConfigService;
@@ -45,6 +49,9 @@ public class WebLessonConfigController {
 	 *
 	 * @param courseId 课程id
 	 * @return {@code BaseRsp<LessonConfigBo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<LessonConfigBo>
 	 */
 	@GetMapping("")
 	@ApiOperation("课程目录查询")

@@ -13,7 +13,10 @@ import java.util.List;
  * 课堂组信息Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see IService
+ * @since 1.0.0
  */
 public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> {
 
@@ -24,6 +27,11 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param roomId      房间id
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see ClassroomGroupInfo
 	 */
 	ClassroomGroupInfo selectByLessonAndUser(String lessonId, String roomId, AuthContext authContext);
 
@@ -33,6 +41,10 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param classroomId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see List<GroupInfoBo>
 	 */
 	List<GroupInfoBo> getGroupInfoByRoom(String classroomId, AuthContext authContext);
 
@@ -42,6 +54,10 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param classroomId
 	 * @param groupCount
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see List<GroupInfoBo>
 	 */
 	List<GroupInfoBo> updateGroupInfo(String classroomId, Integer groupCount);
 
@@ -52,6 +68,11 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param name
 	 * @param data
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<GroupInfoBo>
+	 * @see Integer
 	 */
 	Integer saveGroupInfo(String classroomId, String name, List<GroupInfoBo> data);
 
@@ -61,6 +82,10 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param classroomId
 	 * @param groupArchiveId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
 	 */
 	Integer deleteClassroomArchive(String classroomId, String groupArchiveId);
 
@@ -70,6 +95,10 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param classroomId
 	 * @param groupArchiveId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<GroupInfoBo>
 	 */
 	List<GroupInfoBo> userGroupInfo(String classroomId, String groupArchiveId);
 
@@ -79,6 +108,10 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param classroomId
 	 * @param end
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see Boolean
 	 */
 	Boolean setGroupSceneDelay(String classroomId, Boolean end);
 
@@ -87,6 +120,9 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 *
 	 * @param classroomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean getGroupSceneDelayStatus(String classroomId);
 
@@ -95,6 +131,9 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 *
 	 * @param classroomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<ClassroomGroupArchiveBo>
 	 */
 	List<ClassroomGroupArchiveBo> selectGroupArchive(String classroomId);
 
@@ -106,6 +145,12 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param toGroupId
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean moveGroupUser(String classroomId, String fromGroupId, String toGroupId, String userId);
 
@@ -117,6 +162,12 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param userIds
 	 * @param groupNo
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see CourseLesson
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<ClassroomGroupInfo>
 	 */
 	List<ClassroomGroupInfo> initClassroomGroupInfo(String classroomId, CourseLesson courseLesson,
 			List<String> userIds, Integer groupNo);

@@ -53,7 +53,9 @@ import lombok.extern.slf4j.Slf4j;
  * 管理课堂Controller
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "oj-后台课程表api")
 @RestController
@@ -64,42 +66,56 @@ public class AdminClassroomController {
 
 	/**
 	 * 课堂Service
+	 *
+	 * @see ClassroomService
 	 */
 	@Autowired
 	private ClassroomService classroomService;
 
 	/**
 	 * 远程组织Service
+	 *
+	 * @see RemoteOrganizationService
 	 */
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
 	/**
 	 * 课堂标志Service
+	 *
+	 * @see ClassroomSignService
 	 */
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
 	/**
 	 * 课堂验证处理器
+	 *
+	 * @see ClassroomValidateHandler
 	 */
 	@Autowired
 	private ClassroomValidateHandler classroomValidateHandler;
 
 	/**
 	 * 课程课时Service
+	 *
+	 * @see CourseLessonService
 	 */
 	@Autowired
 	private CourseLessonService courseLessonService;
 
 	/**
 	 * 附件Service
+	 *
+	 * @see AttachmentService
 	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
@@ -109,6 +125,9 @@ public class AdminClassroomController {
 	 *
 	 * @param classroomListReq 课堂列表请求体
 	 * @return {@code BaseRsp<List<ClassroomBo>> }
+	 * @throws
+	 * @see ClassroomListReq
+	 * @see BaseRsp<List<ClassroomBo>>
 	 */
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
@@ -147,6 +166,9 @@ public class AdminClassroomController {
 	 *
 	 * @param delReq 戴尔请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see DeleteReq
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("后台课程表信息批量删除")
 	@DeleteMapping("delete_batch")
@@ -167,6 +189,9 @@ public class AdminClassroomController {
 	 *
 	 * @param classroomPageReq 课堂分页请求体
 	 * @return {@code BaseRsp<ListRsp<ClassroomBo>> }
+	 * @throws
+	 * @see ClassroomPageReq
+	 * @see BaseRsp<ListRsp<ClassroomBo>>
 	 */
 	@ApiOperation("后台课程表分页查询")
 	@GetMapping("/list/page")
@@ -206,6 +231,9 @@ public class AdminClassroomController {
 	 *
 	 * @param classroomReq 课堂请求体
 	 * @return {@code BaseRsp<Classroom> }
+	 * @throws
+	 * @see ClassroomReq
+	 * @see BaseRsp<Classroom>
 	 */
 	@ApiOperation("后台课程表创建")
 	@PostMapping("")
@@ -234,6 +262,9 @@ public class AdminClassroomController {
 	 *
 	 * @param classroomReq 课堂请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see ClassroomReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("后台课程表信息修改")
 	@PatchMapping("")
@@ -254,6 +285,9 @@ public class AdminClassroomController {
 	 *
 	 * @param delReq 戴尔请求体
 	 * @return {@code BaseRsp<Integer> }
+	 * @throws
+	 * @see ClassroomDeleteReq
+	 * @see BaseRsp<Integer>
 	 */
 	@ApiOperation("后台课程表信息删除")
 	@DeleteMapping("")
@@ -271,6 +305,9 @@ public class AdminClassroomController {
 	 *
 	 * @param monitorReq 监控请求体
 	 * @return {@code BaseRsp<ListRsp<ClassroomMonitorBo>> }
+	 * @throws
+	 * @see ClassroomMonitorReq
+	 * @see BaseRsp<ListRsp<ClassroomMonitorBo>>
 	 */
 	@ApiOperation("课堂监控获取用户签到列表")
 	@GetMapping("/classroom_monitor")
@@ -290,6 +327,10 @@ public class AdminClassroomController {
 	 * @param classroomId 课堂id
 	 * @param userId      用户id
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("进行远程协助")
 	@GetMapping("/to_help")
@@ -310,6 +351,10 @@ public class AdminClassroomController {
 	 * @param classroomId 课堂id
 	 * @param userId      用户id
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("结束远程协助")
 	@GetMapping("/end_help")
@@ -330,6 +375,10 @@ public class AdminClassroomController {
 	 * @param classroomId 课堂id
 	 * @param userId      用户id
 	 * @return {@code BaseRsp<String> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<String>
 	 */
 	@ApiOperation("获取远程协助地址")
 	@GetMapping("/get_help")
@@ -348,6 +397,9 @@ public class AdminClassroomController {
 	 *
 	 * @param reportReq 报告请求体
 	 * @return {@code BaseRsp<ListRsp<ClassroomReportBo>> }
+	 * @throws
+	 * @see ClassroomMonitorReq
+	 * @see BaseRsp<ListRsp<ClassroomReportBo>>
 	 */
 	@ApiOperation("查询课堂实验报告列表")
 	@GetMapping("/classroom_report")
@@ -366,6 +418,9 @@ public class AdminClassroomController {
 	 *
 	 * @param classroomId 课堂id
 	 * @return {@code BaseRsp<ClassroomStatisticBo> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<ClassroomStatisticBo>
 	 */
 	@ApiOperation("课堂学习统计")
 	@GetMapping("/classroom_statistic")
@@ -386,6 +441,9 @@ public class AdminClassroomController {
 	 *
 	 * @param classroomPracticeReq 课堂练习请求体
 	 * @return {@code BaseRsp<ClassroomPracticeBo> }
+	 * @throws
+	 * @see ClassroomPracticeReq
+	 * @see BaseRsp<ClassroomPracticeBo>
 	 */
 	@ApiOperation("课堂练习统计")
 	@GetMapping("/practice-statistic")
@@ -417,6 +475,11 @@ public class AdminClassroomController {
 	 * @param lessonId    课时id
 	 * @param userId      用户id
 	 * @return {@code BaseRsp<ClassroomPracticeDetailBo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<ClassroomPracticeDetailBo>
 	 */
 	@ApiOperation("课堂练习详情")
 	@GetMapping("/practice-detail")
@@ -442,6 +505,9 @@ public class AdminClassroomController {
 	 *
 	 * @param practiceReq 练习请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see MarkLessonPracticeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课后练习评分")
 	@PostMapping("/practice/mark")
@@ -465,6 +531,9 @@ public class AdminClassroomController {
 	 *
 	 * @param practiceReq 练习请求体
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see BatchAuthLessonPracticeReq
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("课后练习下发")
 	@PatchMapping("/practice/batch-auth")
@@ -489,6 +558,10 @@ public class AdminClassroomController {
 	 * @param excelFile Excel 文件
 	 * @param cover     盖
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see MultipartFile
+	 * @see Boolean
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("训练计划导入")
 	@PostMapping("/train_plan/import")
@@ -524,6 +597,9 @@ public class AdminClassroomController {
 	 *
 	 * @param response 响应
 	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see BaseRsp<Boolean>
 	 */
 	@ApiOperation("训练计划导出")
 	@GetMapping("/train_plan/export")
@@ -543,6 +619,9 @@ public class AdminClassroomController {
 	 *
 	 * @param httpServletResponse HTTP Servlet 响应
 	 * @param classroomId         课堂id
+	 * @throws
+	 * @see HttpServletResponse
+	 * @see String
 	 */
 	@ApiOperation("实验报告导出")
 	@GetMapping("/report/export")

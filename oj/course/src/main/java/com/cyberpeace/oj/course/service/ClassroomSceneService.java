@@ -15,7 +15,9 @@ import java.util.List;
  * 课堂场景Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 public interface ClassroomSceneService {
 
@@ -25,6 +27,10 @@ public interface ClassroomSceneService {
 	 * @param groupId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see JSONObject
 	 */
 	JSONObject startScene(String groupId, AuthContext authContext);
 
@@ -34,6 +40,10 @@ public interface ClassroomSceneService {
 	 * @param groupId
 	 * @param authContext
 	 * @return 存在场景删除完成后为空字符串 不存在场景则返回组编号
+	 * @throws
+	 * @see String
+	 * @see AuthContext
+	 * @see String
 	 */
 	String deleteScene(String groupId, AuthContext authContext);
 
@@ -42,6 +52,9 @@ public interface ClassroomSceneService {
 	 *
 	 * @param localScene 当地场景
 	 * @param groupInfo  组信息
+	 * @throws
+	 * @see LocalScene
+	 * @see ClassroomGroupInfo
 	 */
 	void deleteLocalScene(LocalScene localScene, ClassroomGroupInfo groupInfo);
 
@@ -51,7 +64,10 @@ public interface ClassroomSceneService {
 	 * @param classroomId
 	 * @param authContext
 	 * @return
-	 * @throws InterruptedException 中断异常
+	 * @throws @throws InterruptedException 中断异常
+	 * @see String
+	 * @see AuthContext
+	 * @see List<GroupInfoBo>
 	 */
 	List<GroupInfoBo> batchStartScene(String classroomId, AuthContext authContext)
 			throws InterruptedException;
@@ -61,6 +77,9 @@ public interface ClassroomSceneService {
 	 *
 	 * @param classroomId
 	 * @param authContext auth 上下文
+	 * @throws
+	 * @see String
+	 * @see AuthContext
 	 */
 	void batchDeleteScene(String classroomId, AuthContext authContext);
 
@@ -69,6 +88,9 @@ public interface ClassroomSceneService {
 	 *
 	 * @param classroomId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see List<SceneMonitorBo>
 	 */
 	List<SceneMonitorBo> selectMonitorList(String classroomId);
 
@@ -77,6 +99,9 @@ public interface ClassroomSceneService {
 	 *
 	 * @param classroomId
 	 * @param groupId     组id
+	 * @throws
+	 * @see String
+	 * @see String
 	 */
 	void finishStart(String classroomId, String groupId);
 
@@ -86,6 +111,10 @@ public interface ClassroomSceneService {
 	 * @param groupId 组id
 	 * @param ojEvent OJ 活动
 	 * @param message 消息
+	 * @throws
+	 * @see String
+	 * @see OjEvent
+	 * @see String
 	 */
 	void toGroupSocketMessage(String groupId, OjEvent ojEvent, String message);
 
@@ -93,6 +122,8 @@ public interface ClassroomSceneService {
 	 * 清除批量启动场景
 	 *
 	 * @param classroomId 课堂id
+	 * @throws
+	 * @see String
 	 */
 	void clearBatchStartScene(String classroomId);
 
@@ -102,6 +133,10 @@ public interface ClassroomSceneService {
 	 * @param sceneBo 场景Bo
 	 * @param ojEvent OJ 活动
 	 * @param message 消息
+	 * @throws
+	 * @see StartSceneBo
+	 * @see OjEvent
+	 * @see String
 	 */
 	void toClassroomMessage(StartSceneBo sceneBo, OjEvent ojEvent, String message);
 
@@ -110,6 +145,9 @@ public interface ClassroomSceneService {
 	 *
 	 * @param groupId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Boolean
 	 */
 	Boolean updateSceneStatus(String groupId);
 }

@@ -11,7 +11,10 @@ import java.util.List;
  * 直方图结果
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel("进度数据")
@@ -19,12 +22,16 @@ public class HistogramRes implements Serializable {
 
 	/**
 	 * x轴，统计项
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty("x轴，统计项")
     private List<String> xNames;
 
 	/**
 	 * y轴，柱形值
+	 *
+	 * @see List<Integer>
 	 */
 	@ApiModelProperty("y轴，柱形值")
     private List<Integer> yValues;

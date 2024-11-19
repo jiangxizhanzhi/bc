@@ -43,7 +43,10 @@ import lombok.extern.slf4j.Slf4j;
  * 远程用户Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see RemoteUserService
+ * @since 1.0.0
  */
 @CacheConfig(cacheNames = { CacheConstant.REMOTE_USER })
 @Slf4j
@@ -52,41 +55,57 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 令牌身份验证 URL
+	 *
+	 * @see String
 	 */
 	private String TOKEN_AUTHENTICATE_URL;
 
 	/**
 	 * 用户信息由id网址
+	 *
+	 * @see String
 	 */
 	private String USERINFO_BY_ID_URL;
 
 	/**
 	 * userinfo 列表 URL
+	 *
+	 * @see String
 	 */
 	private String USERINFO_LIST_URL;
 
 	/**
 	 * 组织信息列表 URL
+	 *
+	 * @see String
 	 */
 	private String ORG_INFO_LIST_URL;
 
 	/**
 	 * 身份验证权限菜单 URL
+	 *
+	 * @see String
 	 */
 	private String AUTH_PERMISSION_MENUS_URL;
 
 	/**
 	 * 用户信息id列表网址
+	 *
+	 * @see String
 	 */
 	private String USERINFO_IDS_URL;
 
 	/**
 	 * 启用 URL
+	 *
+	 * @see String
 	 */
 	private String BLACK_ENABLE_URL;
 
 	/**
 	 * 全部用户缓存
+	 *
+	 * @see LoadingCache<String, List<UserInfo>>
 	 */
 	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(15, TimeUnit.MINUTES)
@@ -101,18 +120,24 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 中台环境Service
+	 *
+	 * @see MpEnvService
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
 
 	/**
 	 * 远程组织Service
+	 *
+	 * @see RemoteOrganizationService
 	 */
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -134,6 +159,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param token 令 牌
 	 * @return {@code UserInfo }
+	 * @throws
+	 * @see String
+	 * @see UserInfo
 	 */
 	@Override
 	@Cacheable(key = "#p0")
@@ -153,6 +181,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param userId 用户id
 	 * @return {@code UserInfo }
+	 * @throws
+	 * @see String
+	 * @see UserInfo
 	 */
 	@Override
 	public UserInfo getById(String userId) {
@@ -173,6 +204,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * @param pattern      模式
 	 * @param organization 组织
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see Long
+	 * @see Long
+	 * @see String
+	 * @see String
+	 * @see JSONObject
 	 */
 	@Override
 	public JSONObject getList(Long page, Long perPage, String pattern, String organization) {
@@ -222,6 +259,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param userPageContext
 	 * @return
+	 * @throws
+	 * @see UserPageContext
+	 * @see List<UserInfo>
 	 */
 	@Override
 	@Cacheable(cacheNames = "getFuzzyQueryuser", key = "#p0.ids+#p0.username+#p0.page+#p0.perPage")
@@ -243,6 +283,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param ids id列表
 	 * @return {@code List<UserInfo> }
+	 * @throws
+	 * @see List<String>
+	 * @see List<UserInfo>
 	 */
 	@Override
 	public List<UserInfo> getByIdList(List<String> ids) {
@@ -266,6 +309,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param ids id列表
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, String>
 	 */
 	@Override
 	public Map<String, String> getIdNameMap(List<String> ids) {
@@ -286,6 +332,10 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * @param entities     实体
 	 * @param userIdGetter 用户id吸气剂
 	 * @return {@code Map<String, String> }
+	 * @throws
+	 * @see List<T>
+	 * @see Function<T, String>
+	 * @see Map<String, String>
 	 */
 	@Override
 	public <T> Map<String, String> getIdNameMap(List<T> entities, Function<T, String> userIdGetter) {
@@ -307,6 +357,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param ids id列表
 	 * @return {@code Map<String, UserInfo> }
+	 * @throws
+	 * @see List<String>
+	 * @see Map<String, UserInfo>
 	 */
 	@Override
 	public Map<String, UserInfo> getIdUserInfoMap(List<String> ids) {
@@ -327,6 +380,10 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * @param organizationId 组织id
 	 * @param children       子级
 	 * @return {@code List<UserInfo> }
+	 * @throws
+	 * @see String
+	 * @see boolean
+	 * @see List<UserInfo>
 	 */
 	@Override
 	public List<UserInfo> ListByOrgId(String organizationId, boolean children) {
@@ -357,6 +414,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param orgId 组织id
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> idsByOrgId(String orgId) {
@@ -366,6 +426,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 编辑角色以后清空缓存
+	 *
+	 * @throws
 	 */
 	@Override
 	@CacheEvict(allEntries = true)
@@ -379,6 +441,10 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * @param userId    用户id
 	 * @param userInfos 用户信息
 	 * @return {@code UserInfo }
+	 * @throws
+	 * @see String
+	 * @see List<UserInfo>
+	 * @see UserInfo
 	 */
 	@Override
 	public UserInfo searchUserByUserIdInUserList(String userId, List<UserInfo> userInfos) {
@@ -398,6 +464,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * 是否演示开启
 	 *
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean isDemoOpen() {
@@ -409,6 +477,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param userId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Set<String>
 	 */
 	@Override
 	@Cacheable(key = "#p0")
@@ -426,6 +497,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * 获取全部用户
 	 *
 	 * @return {@code List<UserInfo> }
+	 * @throws
+	 * @see List<UserInfo>
 	 */
 	@Override
 	public List<UserInfo> getAllUsers() {
@@ -443,6 +516,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * 全部用户
 	 *
 	 * @return {@code Map<String, UserInfo> }
+	 * @throws
+	 * @see Map<String, UserInfo>
 	 */
 	@Override
 	public Map<String, UserInfo> allUsers() {
@@ -458,6 +533,10 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * @param jsonObject
 	 * @param orgId      组织id
 	 * @return
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 * @see UserInfo
 	 */
 	private UserInfo userToOrgUserInfo(JSONObject jsonObject, String orgId) {
 		if (null == jsonObject) {
@@ -479,6 +558,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param jsonObject
 	 * @return
+	 * @throws
+	 * @see JSONObject
+	 * @see UserInfo
 	 */
 	private UserInfo userInfoFromJsonObject(JSONObject jsonObject) {
 
@@ -515,6 +597,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 *
 	 * @param mpAuthenticatedUser
 	 * @return
+	 * @throws
+	 * @see MpAuthenticatedUser
+	 * @see UserInfo
 	 */
 	private UserInfo convertToLocal(MpAuthenticatedUser mpAuthenticatedUser) {
 		UserInfo userInfo = new UserInfo();

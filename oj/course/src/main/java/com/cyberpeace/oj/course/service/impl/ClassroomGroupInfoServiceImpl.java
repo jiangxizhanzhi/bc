@@ -50,7 +50,11 @@ import java.util.stream.Collectors;
  * 课堂组信息Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see ServiceImpl
+ * @see ClassroomGroupInfoService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -58,66 +62,88 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
     /**
      * 课堂Mapper
+     *
+     * @see ClassroomMapper
      */
     @Autowired
     private ClassroomMapper classroomMapper;
 
     /**
      * 课堂组信息Mapper
+     *
+     * @see ClassroomGroupInfoMapper
      */
     @Autowired
     private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
     /**
      * 课程课时Mapper
+     *
+     * @see CourseLessonMapper
      */
     @Autowired
     private CourseLessonMapper courseLessonMapper;
 
     /**
      * 远程用户Service
+     *
+     * @see RemoteUserService
      */
     @Autowired
     private RemoteUserService remoteUserService;
 
     /**
      * 事务模板
+     *
+     * @see TransactionTemplate
      */
     @Autowired
     private TransactionTemplate transactionTemplate;
 
     /**
      * OJ当地场景Mapper
+     *
+     * @see OjLocalSceneMapper
      */
     @Autowired
     private OjLocalSceneMapper ojLocalSceneMapper;
 
     /**
      * 课堂组档案Mapper
+     *
+     * @see ClassroomGroupArchiveMapper
      */
     @Autowired
     private ClassroomGroupArchiveMapper classroomGroupArchiveMapper;
 
     /**
      * OJ当地场景Service
+     *
+     * @see OjLocalSceneService
      */
     @Autowired
     private OjLocalSceneService ojLocalSceneService;
 
     /**
      * 当地场景Mapper
+     *
+     * @see LocalSceneMapper
      */
     @Autowired
     private LocalSceneMapper localSceneMapper;
 
     /**
      * 我的WebSocket处理器
+     *
+     * @see MyWebSocketHandler
      */
     @Autowired
     private MyWebSocketHandler myWebSocketHandler;
 
     /**
      * 课堂验证处理器
+     *
+     * @see ClassroomValidateHandler
      */
     @Autowired
     private ClassroomValidateHandler classroomValidateHandler;
@@ -129,6 +155,11 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param roomId      房间id
      * @param authContext auth 上下文
      * @return {@code ClassroomGroupInfo }
+     * @throws
+     * @see String
+     * @see String
+     * @see AuthContext
+     * @see ClassroomGroupInfo
      */
     @Override
     public ClassroomGroupInfo selectByLessonAndUser(String lessonId, String roomId, AuthContext authContext) {
@@ -159,6 +190,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param classroomId 课堂id
      * @param authContext auth 上下文
      * @return {@code List<GroupInfoBo> }
+     * @throws
+     * @see String
+     * @see AuthContext
+     * @see List<GroupInfoBo>
      */
     @Override
     public List<GroupInfoBo> getGroupInfoByRoom(String classroomId, AuthContext authContext) {
@@ -236,6 +271,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param classroomId 课堂id
      * @param groupCount  组计数
      * @return {@code List<GroupInfoBo> }
+     * @throws
+     * @see String
+     * @see Integer
+     * @see List<GroupInfoBo>
      */
     @Override
     public List<GroupInfoBo> updateGroupInfo(String classroomId, Integer groupCount) {
@@ -308,6 +347,11 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param name        名称
      * @param data        数据
      * @return {@code Integer }
+     * @throws
+     * @see String
+     * @see String
+     * @see List<GroupInfoBo>
+     * @see Integer
      */
     @Override
     public Integer saveGroupInfo(String classroomId, String name, List<GroupInfoBo> data) {
@@ -337,6 +381,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param classroomId    课堂id
      * @param groupArchiveId 组档案id
      * @return {@code Integer }
+     * @throws
+     * @see String
+     * @see String
+     * @see Integer
      */
     @Override
     public Integer deleteClassroomArchive(String classroomId, String groupArchiveId) {
@@ -352,6 +400,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param classroomId    课堂id
      * @param groupArchiveId 组档案id
      * @return {@code List<GroupInfoBo> }
+     * @throws
+     * @see String
+     * @see String
+     * @see List<GroupInfoBo>
      */
     @Override
     public List<GroupInfoBo> userGroupInfo(String classroomId, String groupArchiveId) {
@@ -404,6 +456,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param groupInfos
      * @param courseLesson
      * @param classroom    课堂
+     * @throws
+     * @see List<ClassroomGroupInfo>
+     * @see CourseLesson
+     * @see Classroom
      */
     private void resetEntity(List<ClassroomGroupInfo> groupInfos, CourseLesson courseLesson,
                              Classroom classroom) {
@@ -424,6 +480,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param classroomId 课堂id
      * @param end         结束
      * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see Boolean
+     * @see Boolean
      */
     @Override
     public Boolean setGroupSceneDelay(String classroomId, Boolean end) {
@@ -499,6 +559,8 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * 推送数据延时消息
      *
      * @param ojLocalScene OJ当地场景
+     * @throws
+     * @see OjLocalScene
      */
     private void pushGroupSyncMessage(OjLocalScene ojLocalScene) {
         GroupWsMessageIdentifier identifier = new GroupWsMessageIdentifier();
@@ -520,6 +582,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      *
      * @param classroomId 课堂id
      * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see Boolean
      */
     @Override
     public Boolean getGroupSceneDelayStatus(String classroomId) {
@@ -540,6 +605,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      *
      * @param classroomId 课堂id
      * @return {@code List<ClassroomGroupArchiveBo> }
+     * @throws
+     * @see String
+     * @see List<ClassroomGroupArchiveBo>
      */
     @Override
     public List<ClassroomGroupArchiveBo> selectGroupArchive(String classroomId) {
@@ -563,6 +631,12 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param toGroupId   自组id
      * @param userId      用户id
      * @return {@code Boolean }
+     * @throws
+     * @see String
+     * @see String
+     * @see String
+     * @see String
+     * @see Boolean
      */
     @Override
     public Boolean moveGroupUser(String classroomId, String fromGroupId, String toGroupId,
@@ -604,6 +678,12 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param userIds
      * @param groupNo
      * @return
+     * @throws
+     * @see String
+     * @see CourseLesson
+     * @see List<String>
+     * @see Integer
+     * @see List<ClassroomGroupInfo>
      */
     @Override
     public List<ClassroomGroupInfo> initClassroomGroupInfo(String classroomId,
@@ -632,6 +712,8 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * 校验场景是否存在
      *
      * @param groupInfos 组信息
+     * @throws
+     * @see List<ClassroomGroupInfo>
      */
     public void enableUpdateGroup(List<ClassroomGroupInfo> groupInfos) {
         List<String> groupIds = groupInfos.stream().map(ClassroomGroupInfo::getResourceId).collect(Collectors.toList());
@@ -652,6 +734,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param groupInfo
      * @param userInfoMap 用户信息映射
      * @return
+     * @throws
+     * @see ClassroomGroupInfo
+     * @see Map<String, UserInfo>
+     * @see GroupInfoBo
      */
     private GroupInfoBo entityTBo(ClassroomGroupInfo groupInfo, Map<String, UserInfo> userInfoMap) {
 
@@ -688,6 +774,11 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param userInfoMap   用户信息映射
      * @param localSceneMap 当地场景映射
      * @return
+     * @throws
+     * @see ClassroomGroupInfo
+     * @see Map<String, UserInfo>
+     * @see Map<String, OjLocalScene>
+     * @see GroupInfoBo
      */
     private GroupInfoBo entityTBoNew(ClassroomGroupInfo groupInfo, Map<String, UserInfo> userInfoMap, Map<String, OjLocalScene> localSceneMap) {
 
@@ -723,6 +814,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      * @param classroomId   课堂id
      * @param deleteUserIds 删除用户id列表
      * @return
+     * @throws
+     * @see String
+     * @see List<String>
+     * @see List<ClassroomGroupInfo>
      */
     private List<ClassroomGroupInfo> getUpdateAndDeleteNoneGroup(String classroomId,
                                                                  List<String> deleteUserIds) {
@@ -780,6 +875,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      *
      * @param classroomId
      * @return
+     * @throws
+     * @see String
+     * @see Classroom
      */
     private Classroom validateRoom(String classroomId) {
 
@@ -797,6 +895,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      *
      * @param classroom
      * @return
+     * @throws
+     * @see Classroom
+     * @see CourseLesson
      */
     private CourseLesson validateLesson(Classroom classroom) {
         CourseLesson courseLesson = courseLessonMapper.selectById(classroom.getLessonId());
@@ -813,6 +914,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
      *
      * @param groupId
      * @return
+     * @throws
+     * @see String
+     * @see ClassroomGroupInfo
      */
     private ClassroomGroupInfo validateGroup(String groupId) {
         ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectById(groupId);

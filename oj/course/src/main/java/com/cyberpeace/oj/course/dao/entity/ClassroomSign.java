@@ -14,7 +14,10 @@ import lombok.*;
  * 教室标志
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @Builder
@@ -25,37 +28,51 @@ public class ClassroomSign extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 课堂id
+	 *
+	 * @see String
 	 */
 	private String classroomId;
 
 	/**
 	 * 用户id
+	 *
+	 * @see String
 	 */
 	private String userId;
 
 	/**
 	 * 登录
+	 *
+	 * @see Boolean
 	 */
 	private Boolean signIn;
 
 	/**
 	 * 需要帮助
+	 *
+	 * @see Integer
 	 */
 	private Integer needHelp;
 
 	/**
 	 * 签到时间
+	 *
+	 * @see Date
 	 */
 	private Date signInTime;
 
 	/**
 	 * 节点id
+	 *
+	 * @see String
 	 */
 	private String nodeId;
 

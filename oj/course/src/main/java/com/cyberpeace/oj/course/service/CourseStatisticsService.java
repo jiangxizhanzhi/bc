@@ -8,7 +8,9 @@ import java.util.List;
  * 课程统计学Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 public interface CourseStatisticsService {
 
@@ -18,6 +20,10 @@ public interface CourseStatisticsService {
      * @param courseIds
      * @param userId
      * @return
+     * @throws
+     * @see List<String>
+     * @see String
+     * @see List<CourseStudyProcessBo>
      */
     List<CourseStudyProcessBo> statisticByIds(List<String> courseIds, String userId);
 

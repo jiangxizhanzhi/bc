@@ -13,7 +13,10 @@ import lombok.Data;
  * 外部批量请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -30,6 +33,8 @@ public class ExternalBatchReq implements Serializable {
 	 * 设置资源id列表
 	 *
 	 * @param resourceIds 资源id列表
+	 * @throws
+	 * @see List<String>
 	 */
 	public void setResource_ids(List<String> resourceIds) {
 		this.resourceIds = resourceIds;

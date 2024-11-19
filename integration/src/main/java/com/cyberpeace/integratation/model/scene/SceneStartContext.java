@@ -9,22 +9,31 @@ import lombok.Getter;
  * 场景启动上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see SceneOpsContext
+ * @since 1.0.0
  */
 public class SceneStartContext extends SceneOpsContext {
 
 	/**
 	 * 引用元数据
+	 *
+	 * @see String
 	 */
 	private String reference_meta_data;
 
 	/**
 	 * 场景属性
+	 *
+	 * @see Integer
 	 */
 	private Integer scene_attr;
 
 	/**
 	 * 场景存活时间
+	 *
+	 * @see Integer
 	 */
 	private Integer scene_ttl;
 
@@ -63,6 +72,8 @@ public class SceneStartContext extends SceneOpsContext {
 	/**
 	 * 场景大json。
 	 * 该字段传入的情况下，url中拓扑id不起作用。
+	 *
+	 * @see Object
 	 */
 	private Object cscene;
 

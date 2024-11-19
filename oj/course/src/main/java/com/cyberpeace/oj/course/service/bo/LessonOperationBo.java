@@ -10,7 +10,10 @@ import lombok.Data;
  * 课时实操Bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see OperationLessonBo
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -18,6 +21,8 @@ public class LessonOperationBo extends OperationLessonBo {
 
 	/**
 	 * 实操练习解题详情
+	 *
+	 * @see PracticeSolvedBo
 	 */
 	@ApiModelProperty("实操练习解题详情")
 	private PracticeSolvedBo resolvedDetail;

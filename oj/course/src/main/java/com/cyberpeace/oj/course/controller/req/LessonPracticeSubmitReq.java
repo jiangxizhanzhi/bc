@@ -12,7 +12,10 @@ import java.util.List;
  * 课时练习提交请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -20,6 +23,8 @@ public class LessonPracticeSubmitReq implements Serializable {
 
 	/**
 	 * 课程编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程编号")
 	@NotBlank
@@ -27,6 +32,8 @@ public class LessonPracticeSubmitReq implements Serializable {
 
 	/**
 	 * 课时编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时编号")
 	@NotBlank
@@ -34,6 +41,8 @@ public class LessonPracticeSubmitReq implements Serializable {
 
 	/**
 	 * 答案提交
+	 *
+	 * @see List<PracticeSubmitReq>
 	 */
 	@ApiModelProperty("答案提交")
 	private List<PracticeSubmitReq> answers;

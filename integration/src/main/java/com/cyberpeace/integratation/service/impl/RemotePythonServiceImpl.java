@@ -30,7 +30,9 @@ import lombok.extern.slf4j.Slf4j;
  * 远程蟒Service实现
  *
  * @author SN
- * @date 2024/11/14
+ * @version 1.0.0
+ * @see RemotePythonService
+ * @since 1.0.0@date 2024/11/14
  */
 @Slf4j
 @Service
@@ -38,11 +40,15 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 
 	/**
 	 * python 网址
+	 *
+	 * @see String
 	 */
 	private String PY_URL;
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {
@@ -54,7 +60,8 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	/**
 	 * 获取python主机
 	 *
-	 * @return {@code String }
+	 * @throws
+	 * @see String@return {@code String }
 	 */
 	@Override
 	public String getPyHost() {
@@ -68,6 +75,11 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	 * @param algorithmCode  算法代号
 	 * @param otherArguments 其他参数
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	private JSONObject buildRequestData(String algorithmId, String algorithmCode,
 			List<Serializable> otherArguments) {
@@ -85,6 +97,9 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	 *
 	 * @param requestData 请求数据
 	 * @return {@code String }
+	 * @throws
+	 * @see JSONObject
+	 * @see JSONObject
 	 */
 	private String invoke(JSONObject requestData) {
 		String resp = HttpClientUtil.post(getPyHost() + "/algorithm/run/", requestData,
@@ -104,6 +119,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	 * @param formatData     设置数据格式
 	 * @param otherArguments 其他参数
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public List<String> formatPerform(String algorithmId, String algorithmCode,
@@ -133,6 +154,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	 * @param matchData      匹配数据
 	 * @param otherArguments 其他参数
 	 * @return {@code List<Integer> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public List<Integer> matchPerform(String algorithmId, String algorithmCode, MatchData matchData,
@@ -157,6 +184,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	 * @param markData       标记数据
 	 * @param otherArguments 其他参数
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public Integer markPerform(String algorithmId, String algorithmCode, MarkData markData,
@@ -181,6 +214,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	 * @param data           数据
 	 * @param otherArguments 其他参数
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public Integer indexPerform(String algorithmId, String algorithmCode, List<Integer> data,
@@ -206,6 +245,13 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	 * @param data           数据
 	 * @param otherArguments 其他参数
 	 * @return {@code Integer }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	@Override
 	public Integer indexAhpPerform(String algorithmId, String matrixData, String algorithmCode, List<Integer> data,
@@ -229,6 +275,10 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	 * @param matrixData 矩阵数据
 	 * @param scores     分数
 	 * @return {@code List<List<String>> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
 	 */
 	public List<List<String>> getFormatMatrixData(String matrixData, List<Integer> scores){
 		JSONArray objects = JSON.parseArray(matrixData);

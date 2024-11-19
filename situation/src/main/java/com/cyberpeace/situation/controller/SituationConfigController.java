@@ -17,14 +17,36 @@ import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 态势配置Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "态势自定义配置")
 @RestController
 @RequestMapping("/situation/config")
 public class SituationConfigController {
 
+	/**
+	 * 态势配置Mapper
+	 *
+	 * @see SituationConfigMapper
+	 */
 	@Autowired
 	private SituationConfigMapper situationConfigMapper;
 
+	/**
+	 * 设置配置
+	 *
+	 * @param situationConfigAddReq 态势配置新增请求体
+	 * @return {@code BaseRsp<SituationConfig> }
+	 * @throws
+	 * @see SituationConfigAddReq
+	 * @see BaseRsp<SituationConfig>
+	 */
 	@ApiOperation("新增配置")
 	@PostMapping("")
 	public BaseRsp<SituationConfig>
@@ -37,6 +59,15 @@ public class SituationConfigController {
 		return new BaseRsp<>(situationConfig);
 	}
 
+	/**
+	 * 获取配置
+	 *
+	 * @param situationConfigFilterReq 态势配置过滤器请求体
+	 * @return {@code BaseRsp<List<SituationConfig>> }
+	 * @throws
+	 * @see SituationConfigFilterReq
+	 * @see BaseRsp<List<SituationConfig>>
+	 */
 	@ApiOperation("查询配置")
 	@GetMapping("")
 	public BaseRsp<List<SituationConfig>>
@@ -50,6 +81,15 @@ public class SituationConfigController {
 		return new BaseRsp<>(situationConfigList);
 	}
 
+	/**
+	 * 删除配置
+	 *
+	 * @param situationConfigFilterReq 态势配置过滤器请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SituationConfigFilterReq
+	 * @see BaseRsp<Boolean>
+	 */
 	@ApiOperation("删除配置")
 	@DeleteMapping("")
 	public BaseRsp<Boolean> deleteConfig(SituationConfigFilterReq situationConfigFilterReq) {

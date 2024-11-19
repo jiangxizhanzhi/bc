@@ -11,7 +11,10 @@ import javax.validation.constraints.NotBlank;
  * 课时更新请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see LessonAddReq
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -19,6 +22,8 @@ public class LessonUpdateReq extends LessonAddReq {
 
 	/**
 	 * 资源编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "resource_id", value = "资源编号")
 	@NotBlank(groups = { Update.class })
@@ -26,12 +31,16 @@ public class LessonUpdateReq extends LessonAddReq {
 
 	/**
 	 * 讲义类型
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "handout_url", value = "讲义类型")
 	private String handoutUrl;
 
 	/**
 	 * 视频地址
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "video_url", value = "视频地址")
 	private String videoUrl;

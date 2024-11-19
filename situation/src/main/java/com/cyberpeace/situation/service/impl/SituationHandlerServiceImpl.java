@@ -44,32 +44,74 @@ import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 态势处理器Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see SituationHandlerService
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 public class SituationHandlerServiceImpl implements SituationHandlerService {
+	/**
+	 * 图层元素类型
+	 *
+	 * @see Integer
+	 */
 	private static final Integer LAYER_ELEMENT_TYPE = 8;
 
+	/**
+	 * 拓扑处理器Service
+	 *
+	 * @see TopoHandlerService
+	 */
 	@Autowired
 	private TopoHandlerService topoHandlerService;
 
+	/**
+	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 我的WebSocket处理器
+	 *
+	 * @see MyWebSocketHandler
+	 */
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
 	/**
 	 * 记录流量事件最后时间
+	 *
+	 * @see Cache<String, Date>
 	 */
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
 	/**
 	 * 记录主机采集事件最后时间
+	 *
+	 * @see Cache<String, Date>
 	 */
 	Cache<String, Date> lastTimeCacheHostEvent = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
+	/**
+	 * 获取态势拓扑
+	 *
+	 * @param sceneData 场景数据
+	 * @return {@code SituationTopo }
+	 * @throws
+	 * @see SceneData
+	 * @see SituationTopo
+	 */
 	@Override
 	public SituationTopo getSituationTopo(SceneData sceneData) {
 
@@ -90,6 +132,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return situationTopo;
 	}
 
+	/**
+	 * 获取件
+	 *
+	 * @param sceneData 场景数据
+	 * @return {@code Map<String, PieceInfo> }
+	 * @throws
+	 * @see SceneData
+	 * @see Map<String, PieceInfo>
+	 */
 	private Map<String, PieceInfo> getPieces(SceneData sceneData) {
 
 		List<PieceInfo> pieces = JsonUtil.toJsonObjectArray(sceneData.getPieces().toString(),
@@ -104,6 +155,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return piecesInfo;
 	}
 
+	/**
+	 * 获取地区
+	 *
+	 * @param sceneData 场景数据
+	 * @return {@code Map<String, AreaInfo> }
+	 * @throws
+	 * @see SceneData
+	 * @see Map<String, AreaInfo>
+	 */
 	private Map<String, AreaInfo> getAreas(SceneData sceneData) {
 
 		JSONArray areas = sceneData.getAreas();
@@ -184,6 +244,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 获取元素
+	 *
+	 * @param sceneData 场景数据
+	 * @return {@code Map<String, ElementInfo> }
+	 * @throws
+	 * @see SceneData
+	 * @see Map<String, ElementInfo>
+	 */
 	private Map<String, ElementInfo> getElements(SceneData sceneData) {
 
 		JSONArray elements = sceneData.getElements();
@@ -315,6 +384,19 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return elementsInfo;
 	}
 
+	/**
+	 * 获取节点配置
+	 *
+	 * @param situationConfigMap 态势配置映射
+	 * @param nodeId             节点id
+	 * @param nodeName           节点名称
+	 * @return {@code Map<Integer, String> }
+	 * @throws
+	 * @see Map<String, List<SituationConfig>>
+	 * @see String
+	 * @see String
+	 * @see Map<Integer, String>
+	 */
 	private Map<Integer, String> getNodeConfig(
 			Map<String, List<SituationConfig>> situationConfigMap, String nodeId, String nodeName) {
 
@@ -336,6 +418,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return nodeConfig;
 	}
 
+	/**
+	 * 获取连接
+	 *
+	 * @param sceneData 场景数据
+	 * @return {@code List<ConnectionInfo> }
+	 * @throws
+	 * @see SceneData
+	 * @see List<ConnectionInfo>
+	 */
 	private List<ConnectionInfo> getConnections(SceneData sceneData) {
 
 		JSONArray connections = sceneData.getConnections();
@@ -362,6 +453,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 获取场景信息
+	 *
+	 * @param sceneData 场景数据
+	 * @return {@code SceneInfo }
+	 * @throws
+	 * @see SceneData
+	 * @see SceneInfo
+	 */
 	private SceneInfo getSceneInfo(SceneData sceneData) {
 
 		// 构造场景基础信息
@@ -375,6 +475,13 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 获取线颜色
+	 *
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public String getLineColor() {
 
@@ -382,6 +489,13 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 获取线宽度
+	 *
+	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
+	 */
 	@Override
 	public Integer getLineWidth() {
 
@@ -389,6 +503,13 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 获取线类型
+	 *
+	 * @return {@code String }
+	 * @throws
+	 * @see String
+	 */
 	@Override
 	public String getLineType() {
 
@@ -396,6 +517,13 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 获取线风格
+	 *
+	 * @return {@code LineStyle }
+	 * @throws
+	 * @see LineStyle
+	 */
 	@Override
 	public LineStyle getLineStyle() {
 		LineStyle lineStyle = new LineStyle();
@@ -406,12 +534,30 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return lineStyle;
 	}
 
+	/**
+	 * 获取线动效
+	 *
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> getLineEffect() {
 
 		return LineEffect.getRandomEffect(LineEffect.values());
 	}
 
+	/**
+	 * 获取场景范围
+	 *
+	 * @param xList X 列表
+	 * @param yList Y 列表
+	 * @return {@code List<PlaneCoordinate> }
+	 * @throws
+	 * @see List<Float>
+	 * @see List<Float>
+	 * @see List<PlaneCoordinate>
+	 */
 	@Override
 	public List<PlaneCoordinate> getSceneScope(List<Float> xList, List<Float> yList) {
 
@@ -439,16 +585,43 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 获取面积形状
+	 *
+	 * @param area 面积
+	 * @return {@code String }
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 */
 	@Override
 	public String getAreaShape(JSONObject area) {
 		return AreaShape.RECTANGLE.getCode();
 	}
 
+	/**
+	 * 获取面积状态
+	 *
+	 * @param area 面积
+	 * @return {@code String }
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 */
 	@Override
 	public String getAreaStatus(JSONObject area) {
 		return AreaStatus.NORMAL.getCode();
 	}
 
+	/**
+	 * 获取元素状态
+	 *
+	 * @param element 元素
+	 * @return {@code String }
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 */
 	@Override
 	public String getElementStatus(JSONObject element) {
 
@@ -485,11 +658,33 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return elementStatus;
 	}
 
+	/**
+	 * 获取元素行动状态
+	 *
+	 * @param element 元素
+	 * @return {@code String }
+	 * @throws
+	 * @see JSONObject
+	 * @see String
+	 */
 	@Override
 	public String getElementActionStatus(JSONObject element) {
 		return ElementActionStatus.NORMAL.getCode();
 	}
 
+	/**
+	 * 获取元素地区
+	 *
+	 * @param x         x
+	 * @param y         y
+	 * @param areasInfo 区域信息
+	 * @return {@code List<String> }
+	 * @throws
+	 * @see Float
+	 * @see Float
+	 * @see Map<String, AreaInfo>
+	 * @see List<String>
+	 */
 	@Override
 	public List<String> getElementAreas(Float x, Float y, Map<String, AreaInfo> areasInfo) {
 
@@ -510,6 +705,17 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return elementAreas;
 	}
 
+	/**
+	 * 获取攻击事件列表
+	 *
+	 * @param flowLogs 流量日志
+	 * @param sceneId  场景id
+	 * @return {@code List<WsMessage> }
+	 * @throws
+	 * @see List<JSONObject>
+	 * @see String
+	 * @see List<WsMessage>
+	 */
 	@SneakyThrows
 	@Override
 	public List<WsMessage> getAttackEventList(List<JSONObject> flowLogs, String sceneId) {
@@ -578,6 +784,17 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return arrayObjects;
 	}
 
+	/**
+	 * 获取随机WS多节点动态
+	 *
+	 * @param sceneId    场景id
+	 * @param actionCode 行动代号
+	 * @return {@code WsMultiNodeDynamic }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see WsMultiNodeDynamic
+	 */
 	@Override
 	public WsMultiNodeDynamic getRandomWsMultNodeDynamic(String sceneId, Integer actionCode) {
 
@@ -624,6 +841,17 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return wsEvent;
 	}
 
+	/**
+	 * 获取随机WS多面积动态
+	 *
+	 * @param elements 元素
+	 * @param areas    地区
+	 * @return {@code WsMultiAreaDynamic }
+	 * @throws
+	 * @see JSONArray
+	 * @see JSONArray
+	 * @see WsMultiAreaDynamic
+	 */
 	private WsMultiAreaDynamic getRandomWsMultiAreaDynamic(JSONArray elements, JSONArray areas) {
 
 		JSONObject sourceNode = topoHandlerService.getRandomNodes(elements, 1).get(0);
@@ -639,6 +867,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return wsMultiAreaDynamic;
 	}
 
+	/**
+	 * 获取随机WS多元素动态
+	 *
+	 * @param elements 元素
+	 * @return {@code WsMultiElementDynamic }
+	 * @throws
+	 * @see JSONArray
+	 * @see WsMultiElementDynamic
+	 */
 	private WsMultiElementDynamic getRandomWsMultiElementDynamic(JSONArray elements) {
 		List<JSONObject> nodes = topoHandlerService.getRandomNodes(elements, 2);
 		WsMultiElementDynamic wsMultiElementDynamic = new WsMultiElementDynamic();
@@ -653,6 +890,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return wsMultiElementDynamic;
 	}
 
+	/**
+	 * 推送数据自房间
+	 *
+	 * @param data    数据
+	 * @param sceneId 场景id
+	 * @throws
+	 * @see T
+	 * @see String
+	 */
 	@Override
 	public <T> void pushDataToRoom(T data, String sceneId) {
 
@@ -667,6 +913,19 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
+	/**
+	 * 批量推送数据自房间
+	 *
+	 * @param sceneId  场景id
+	 * @param datas    数据
+	 * @param number   数
+	 * @param interval 间隔
+	 * @throws
+	 * @see String
+	 * @see List<WsMessage>
+	 * @see Integer
+	 * @see Integer
+	 */
 	@SneakyThrows
 	@Async
 	@Override
@@ -697,6 +956,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 推送链接状态
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code WsMessage<WsNodeStatus> }
+	 * @throws
+	 * @see String
+	 * @see WsMessage<WsNodeStatus>
+	 */
 	@Override
 	public WsMessage<WsNodeStatus> pushLinkStatus(String sceneId) {
 		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
@@ -709,6 +977,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return wsMessage;
 	}
 
+	/**
+	 * 推送流量事件
+	 *
+	 * @param flowLogReq 流量日志请求体
+	 * @return {@code List<WsMessage> }
+	 * @throws
+	 * @see FlowLogReq
+	 * @see List<WsMessage>
+	 */
 	@Override
 	public List<WsMessage> pushFlowEvents(FlowLogReq flowLogReq) {
 
@@ -725,6 +1002,17 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 获取态势拓扑由场景id
+	 *
+	 * @param sceneId    场景id
+	 * @param isInstance 是否实例
+	 * @return {@code SituationTopo }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see SituationTopo
+	 */
 	@Override
 	public SituationTopo getSituationTopoBySceneId(String sceneId, Boolean isInstance) {
 		SceneData sceneData;
@@ -736,6 +1024,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return getSituationTopo(sceneData);
 	}
 
+	/**
+	 * 推送主机事件
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code List<WsMessage> }
+	 * @throws
+	 * @see String
+	 * @see List<WsMessage>
+	 */
 	@Override
 	public List<WsMessage> pushHostEvents(String sceneId) {
 		// 获取主机事件日志
@@ -751,6 +1048,17 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return wsSingleNodeDynamics;
 	}
 
+	/**
+	 * 获取主机事件列表
+	 *
+	 * @param hostEventList 主机事件列表
+	 * @param sceneId       场景id
+	 * @return {@code List<WsMessage> }
+	 * @throws
+	 * @see List<MpHostEvent>
+	 * @see String
+	 * @see List<WsMessage>
+	 */
 	private List<WsMessage> getHostEventList(List<MpHostEvent> hostEventList, String sceneId) {
 		List<WsMessage> messageList = Lists.newArrayList();
 

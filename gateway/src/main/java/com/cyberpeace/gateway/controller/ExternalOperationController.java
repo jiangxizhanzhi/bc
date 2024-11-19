@@ -58,7 +58,9 @@ import lombok.extern.slf4j.Slf4j;
  * 外部接口-实操习题相关api
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Api(tags = "外部接口-实操习题相关api")
 @Slf4j
@@ -69,42 +71,56 @@ public class ExternalOperationController {
 
 	/**
 	 * 练习实操Mapper
+	 *
+	 * @see PracticeOperationMapper
 	 */
 	@Autowired
 	private PracticeOperationMapper practiceOperationMapper;
 
 	/**
 	 * 练习类别Mapper
+	 *
+	 * @see PracticeCategoryMapper
 	 */
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
 
 	/**
 	 * 练习设置Mapper
+	 *
+	 * @see PracticeSetMapper
 	 */
 	@Autowired
 	private PracticeSetMapper practiceSetMapper;
 
 	/**
 	 * 附件Mapper
+	 *
+	 * @see AttachmentMapper
 	 */
 	@Autowired
 	private AttachmentMapper attachmentMapper;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 练习设置Service
+	 *
+	 * @see PracticeSetService
 	 */
 	@Autowired
 	private PracticeSetService practiceSetService;
 
 	/**
 	 * 练习实操Service
+	 *
+	 * @see PracticeOperationService
 	 */
 	@Autowired
 	private PracticeOperationService practiceOperationService;
@@ -113,6 +129,8 @@ public class ExternalOperationController {
 	 * 练习设置列表
 	 *
 	 * @return {@code BaseRsp<List<ExternalPracticeSetBo>> }
+	 * @throws
+	 * @see BaseRsp<List<ExternalPracticeSetBo>>
 	 */
 	@ApiOperation("习题集查询")
 	@GetMapping("/practice-set/list")
@@ -142,6 +160,9 @@ public class ExternalOperationController {
 	 *
 	 * @param practiceSetId 练习设置id
 	 * @return {@code BaseRsp<List<ExternalPracticeCategoryBo>> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<List<ExternalPracticeCategoryBo>>
 	 */
 	@AuthOjKey
 	@ApiOperation("实操习题分类查询")
@@ -176,6 +197,9 @@ public class ExternalOperationController {
 	 *
 	 * @param batchReq 批量请求体
 	 * @return {@code BaseRsp<List<ExternalOperationBo>> }
+	 * @throws
+	 * @see ExternalBatchReq
+	 * @see BaseRsp<List<ExternalOperationBo>>
 	 */
 	@AuthOjKey
 	@ApiOperation("实操习题批量查询")
@@ -195,6 +219,9 @@ public class ExternalOperationController {
 	 *
 	 * @param operation
 	 * @return
+	 * @throws
+	 * @see PracticeOperation
+	 * @see ExternalOperationBo
 	 */
 	private ExternalOperationBo entityToExternal(PracticeOperation operation) {
 		ExternalOperationBo externalOperationBo = BeanUtils.copy(operation,
@@ -237,6 +264,9 @@ public class ExternalOperationController {
 	 *
 	 * @param pattern
 	 * @return {@code BaseRsp<List<String>> }
+	 * @throws
+	 * @see PatternReq
+	 * @see BaseRsp<List<String>>
 	 */
 	@GetMapping("/knowledge/list")
 	@ApiOperation("获取知识点列表，按频次排序")
@@ -251,6 +281,9 @@ public class ExternalOperationController {
 	 *
 	 * @param req 请求体
 	 * @return {@code BaseRsp<ListRsp<ExternalOperationBo>> }
+	 * @throws
+	 * @see OperationPageReq
+	 * @see BaseRsp<ListRsp<ExternalOperationBo>>
 	 */
 	@ApiOperation("实操习题分页查询")
 	@GetMapping("/list")
@@ -294,6 +327,9 @@ public class ExternalOperationController {
 	 *
 	 * @param choiceReq 选择请求体
 	 * @return {@code BaseRsp<List<ExternalOperationBo>> }
+	 * @throws
+	 * @see PracticeRandomChoiceReq
+	 * @see BaseRsp<List<ExternalOperationBo>>
 	 */
 	@ApiOperation("实操习题随机获取数条")
 	@GetMapping("/random-choice")
@@ -335,6 +371,9 @@ public class ExternalOperationController {
 	 *
 	 * @param pageReq 分页请求体
 	 * @return {@code BaseRsp<ExternalOperationCountBo> }
+	 * @throws
+	 * @see OperationPageReq
+	 * @see BaseRsp<ExternalOperationCountBo>
 	 */
 	@ApiOperation("获取各类型习题数量")
 	@GetMapping("/type/count")

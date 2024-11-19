@@ -22,7 +22,10 @@ import java.io.File;
  * OfficeService实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see OfficeViewService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -30,18 +33,24 @@ public class OfficeServiceImpl implements OfficeViewService {
 
 	/**
 	 * 课程课时Mapper
+	 *
+	 * @see CourseLessonMapper
 	 */
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
 
 	/**
 	 * utilService
+	 *
+	 * @see UtilService
 	 */
 	@Autowired
 	private UtilService utilService;
 
 	/**
 	 * 课程验证处理器
+	 *
+	 * @see CourseValidateHandler
 	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
@@ -51,6 +60,9 @@ public class OfficeServiceImpl implements OfficeViewService {
 	 *
 	 * @param lessonId 课时id
 	 * @return {@code OfficeFileInfoBo }
+	 * @throws
+	 * @see String
+	 * @see OfficeFileInfoBo
 	 */
 	@Override
 	public OfficeFileInfoBo lessonHandoutInfo(String lessonId) {

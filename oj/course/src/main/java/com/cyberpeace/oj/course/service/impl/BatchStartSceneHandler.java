@@ -30,33 +30,45 @@ import lombok.extern.slf4j.Slf4j;
  * 批量启动场景处理器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Slf4j
 public class BatchStartSceneHandler {
 
 	/**
 	 * 需要启动的总场景
+	 *
+	 * @see List<StartSceneBo>
 	 */
 	private List<StartSceneBo> groupList;
 
 	/**
 	 * 已分配的场景
+	 *
+	 * @see Map<String, StartSceneBo>
 	 */
 	private Map<String, StartSceneBo> tasks = Maps.newHashMap();
 
 	/**
 	 * 要启动的场景
+	 *
+	 * @see List<StartSceneBo>
 	 */
 	private List<StartSceneBo> startGroupList = Lists.newArrayList();
 
 	/**
 	 * 当前锁定
+	 *
+	 * @see Lock
 	 */
 	private Lock currentLock = new ReentrantLock();
 
 	/**
 	 * 批量启动数量
+	 *
+	 * @see Integer
 	 */
 	private Integer batchNumber = StringUtils.isNotBlank(SystemPropUtil.getProp("BATCH_NUMBER"))
 			? Integer.parseInt(SystemPropUtil.getProp("BATCH_NUMBER"))
@@ -64,6 +76,8 @@ public class BatchStartSceneHandler {
 
 	/**
 	 * 课堂场景Service
+	 *
+	 * @see ClassroomSceneService
 	 */
 	private ClassroomSceneService classroomSceneService;
 
@@ -73,6 +87,10 @@ public class BatchStartSceneHandler {
 	 * @param userInfo     用户信息
 	 * @param groupInfos   组信息
 	 * @param sceneService 场景Service
+	 * @throws
+	 * @see UserInfo
+	 * @see List<ClassroomGroupInfo>
+	 * @see ClassroomSceneService
 	 */
 	public BatchStartSceneHandler(UserInfo userInfo, List<ClassroomGroupInfo> groupInfos,
 			ClassroomSceneService sceneService) {
@@ -84,6 +102,8 @@ public class BatchStartSceneHandler {
 	 * 场景启动完成
 	 *
 	 * @param groupId 组id
+	 * @throws
+	 * @see String
 	 */
 	public void finish(String groupId) {
 		currentLock.lock();
@@ -105,6 +125,8 @@ public class BatchStartSceneHandler {
 
 	/**
 	 * 重新分配数据
+	 *
+	 * @throws
 	 */
 	private void distribution() {
 		currentLock.lock();
@@ -133,6 +155,8 @@ public class BatchStartSceneHandler {
 
 	/**
 	 * 执行批量启动
+	 *
+	 * @throws
 	 */
 	public void batchStart() {
 		distribution();
@@ -144,6 +168,10 @@ public class BatchStartSceneHandler {
 	 * @param userInfo   用户信息
 	 * @param groupInfos 组信息
 	 * @return {@code List<StartSceneBo> }
+	 * @throws
+	 * @see UserInfo
+	 * @see List<ClassroomGroupInfo>
+	 * @see List<StartSceneBo>
 	 */
 	private List<StartSceneBo> initStartBo(UserInfo userInfo, List<ClassroomGroupInfo> groupInfos) {
 		return StreamApiUtils.map(groupInfos, groupInfo -> {
@@ -162,6 +190,9 @@ public class BatchStartSceneHandler {
 	 *
 	 * @param userInfo
 	 * @param groupInfos 组信息
+	 * @throws
+	 * @see UserInfo
+	 * @see List<ClassroomGroupInfo>
 	 */
 	public void addStartScene(UserInfo userInfo, List<ClassroomGroupInfo> groupInfos) {
 		currentLock.lock();
@@ -213,6 +244,8 @@ public class BatchStartSceneHandler {
 	 * 是否完成全部
 	 *
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see Boolean
 	 */
 	public Boolean isFinishAll() {
 		return groupList.isEmpty() && tasks.isEmpty();

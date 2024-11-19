@@ -14,22 +14,37 @@ import java.util.List;
  * 保存组信息请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
 public class SaveGroupInfoReq implements Serializable {
 
-	/** 课堂编号 */
+	/**
+	 * 课堂编号
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("课堂编号")
 	private String classroomId;
 
-	/** 分组模板名称 */
+	/**
+	 * 分组模板名称
+	 *
+	 * @see String
+	 */
 	@ApiModelProperty("分组模板名称")
 	@NotBlank
 	private String name;
 
-	/** 分组信息 */
+	/**
+	 * 分组信息
+	 *
+	 * @see List<GroupInfoBo>
+	 */
 	@ApiModelProperty("分组信息")
 	@NotEmpty
 	private List<GroupInfoBo> data;

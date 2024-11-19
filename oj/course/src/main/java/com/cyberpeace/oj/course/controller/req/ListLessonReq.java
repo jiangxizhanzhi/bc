@@ -10,7 +10,10 @@ import lombok.Data;
  * 列表课时请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 @ApiModel("课时列表查询")
@@ -18,24 +21,32 @@ public class ListLessonReq extends PageReqBase {
 
 	/**
 	 * 课时类型 0=理论课 1=实验课 用于课程下课时列表筛选
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时类型 0=理论课 1=实验课 用于课程下课时列表筛选")
 	private Integer type;
 
 	/**
 	 * 课程编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "course_id", value = "课程编号")
 	private String courseId;
 
 	/**
 	 * 要排除的课程编号 用于课时导入筛选
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "except_course", value = "要排除的课程编号 用于课时导入筛选")
 	private String exceptCourse;
 
 	/**
 	 * 课程方向筛选条件 用于课时导入筛选
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(name = "category_id", value = "课程方向筛选条件 用于课时导入筛选")
 	private String categoryId;

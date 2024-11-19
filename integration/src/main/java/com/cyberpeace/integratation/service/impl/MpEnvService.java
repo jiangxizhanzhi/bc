@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
  * 中台环境Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -20,6 +22,8 @@ public class MpEnvService {
 
 	/**
 	 * 中台网址
+	 *
+	 * @see String
 	 */
 	private String MP_URL;
 
@@ -27,6 +31,8 @@ public class MpEnvService {
 	 * 获取中台主机
 	 *
 	 * @return {@code String }
+	 * @throws
+	 * @see String
 	 */
 	public String getMpHost() {
 		return MP_URL;
@@ -34,6 +40,8 @@ public class MpEnvService {
 
 	/**
 	 * 初始化
+	 *
+	 * @throws
 	 */
 	@PostConstruct
 	public void init() {

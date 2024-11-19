@@ -8,7 +8,9 @@ import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
  * 课时练习场景Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 public interface LessonPracticeSceneService {
 
@@ -19,6 +21,11 @@ public interface LessonPracticeSceneService {
 	 * @param practiceId  练习id
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see JSONObject
 	 */
 	JSONObject startScene(String lessonId, String practiceId, AuthContext authContext);
 
@@ -29,6 +36,11 @@ public interface LessonPracticeSceneService {
 	 * @param practiceId  练习id
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean deleteScene(String lessonId, String practiceId, AuthContext authContext);
 
@@ -40,6 +52,12 @@ public interface LessonPracticeSceneService {
 	 * @param nodeId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean restartNode(String lessonId, String practiceId, String nodeId, AuthContext authContext);
 
@@ -51,6 +69,12 @@ public interface LessonPracticeSceneService {
 	 * @param nodeId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean recreateNode(String lessonId, String practiceId, String nodeId,
 			AuthContext authContext);
@@ -63,6 +87,12 @@ public interface LessonPracticeSceneService {
 	 * @param status
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see Integer
+	 * @see AuthContext
+	 * @see Boolean
 	 */
 	Boolean updateSceneStatus(String lessonId, String practiceId, Integer status, AuthContext authContext);
 
@@ -73,6 +103,11 @@ public interface LessonPracticeSceneService {
 	 * @param practiceId
 	 * @param authContext
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see AuthContext
+	 * @see TopoSceneDataBo
 	 */
 	TopoSceneDataBo getTopoScene(String lessonId, String practiceId, AuthContext authContext);
 

@@ -13,14 +13,38 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 态势事件Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "推送态势事件")
 @RestController
 @RequestMapping("/situation/simulation")
 public class SituationEventController {
 
+	/**
+	 * 态势处理器Service
+	 *
+	 * @see SituationHandlerService
+	 */
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
+	/**
+	 * 随机事件
+	 *
+	 * @param sceneId    场景id
+	 * @param actionCode 行动代号
+	 * @return {@code BaseRsp<WsMessage<WsMultiNodeDynamic>> }
+	 * @throws
+	 * @see String
+	 * @see Integer
+	 * @see BaseRsp<WsMessage<WsMultiNodeDynamic>>
+	 */
 	@ApiOperation("获取随机普通动效")
 	@GetMapping("attack_event")
 	public BaseRsp<WsMessage<WsMultiNodeDynamic>> randomEvent(
@@ -51,6 +75,15 @@ public class SituationEventController {
 		return rsp;
 	}
 
+	/**
+	 * 多事件
+	 *
+	 * @param eventMessageReq 事件消息请求体
+	 * @return {@code BaseRsp<WsMessage<WsMultiNodeDynamic>> }
+	 * @throws
+	 * @see EventMessageReq
+	 * @see BaseRsp<WsMessage<WsMultiNodeDynamic>>
+	 */
 	@ApiOperation("推送多节点动效")
 	@PostMapping("multi_event")
 	public BaseRsp<WsMessage<WsMultiNodeDynamic>>
@@ -62,6 +95,15 @@ public class SituationEventController {
 		return new BaseRsp<>(wsMessage);
 	}
 
+	/**
+	 * 单个事件
+	 *
+	 * @param eventMessageReq 事件消息请求体
+	 * @return {@code BaseRsp<WsMessage<WsSingleNodeDynamic>> }
+	 * @throws
+	 * @see WsSingleNodeDynamic
+	 * @see BaseRsp<WsMessage<WsSingleNodeDynamic>>
+	 */
 	@ApiOperation("推送单节点动效")
 	@PostMapping("single_event")
 	public BaseRsp<WsMessage<WsSingleNodeDynamic>>
@@ -73,6 +115,15 @@ public class SituationEventController {
 		return new BaseRsp<>(wsMessage);
 	}
 
+	/**
+	 * 媒体事件
+	 *
+	 * @param wsAttackEffectDynamic WS攻击动效动态
+	 * @return {@code BaseRsp<WsMessage<WsAttackEffectDynamic>> }
+	 * @throws
+	 * @see WsAttackEffectDynamic
+	 * @see BaseRsp<WsMessage<WsAttackEffectDynamic>>
+	 */
 	@ApiOperation("推送多媒体动效")
 	@PostMapping("media_event")
 	public BaseRsp<WsMessage<WsAttackEffectDynamic>>

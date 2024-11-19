@@ -13,7 +13,10 @@ import java.util.List;
  * rm组合课程导入请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -21,6 +24,8 @@ public class RMCombinedCourseImportReq implements Serializable {
 
 	/**
 	 * 组合课程导入参数
+	 *
+	 * @see List<CombinedCourseImportContext>
 	 */
 	@ApiModelProperty("组合课程导入参数")
 	@NotNull

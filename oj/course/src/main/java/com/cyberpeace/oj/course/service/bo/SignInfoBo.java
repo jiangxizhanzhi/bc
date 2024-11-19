@@ -10,7 +10,10 @@ import java.io.Serializable;
  * 标志信息Bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -18,24 +21,32 @@ public class SignInfoBo implements Serializable {
 
 	/**
 	 * 完成人数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("完成人数")
 	private Integer finishCount = 0;
 
 	/**
 	 * 签到人数据
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("签到人数据")
 	private Integer isSign = 0;
 
 	/**
 	 * 未签到人数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("未签到人数")
 	private Integer notSign = 0;
 
 	/**
 	 * 组织信息
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("组织信息")
 	private String organizationInfo;

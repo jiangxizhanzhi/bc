@@ -16,7 +16,10 @@ import lombok.extern.slf4j.Slf4j;
  * 拓扑节点列表请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2023/05/30
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @Slf4j
@@ -24,21 +27,29 @@ public class TopoNodeListReq implements Serializable {
 
 	/**
 	 * id
+	 *
+	 * @see String
 	 */
 	private String id;
 
 	/**
 	 * 类别
+	 *
+	 * @see Integer
 	 */
 	private Integer category;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 是否展示简易型
+	 *
+	 * @see Boolean
 	 */
 	private Boolean isAll;
 

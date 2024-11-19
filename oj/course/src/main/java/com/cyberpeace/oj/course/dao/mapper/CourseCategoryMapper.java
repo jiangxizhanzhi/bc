@@ -15,7 +15,10 @@ import java.util.List;
  * 课程类别Mapper
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see BaseMapper
+ * @since 1.0.0
  */
 @Mapper
 @Repository
@@ -26,6 +29,9 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
      *
      * @param code 代号
      * @return {@code List<CourseCategory> }
+     * @throws
+     * @see String
+     * @see List<CourseCategory>
      */
     List<CourseCategory> selectChildrenByCode(@Param("code") String code);
 
@@ -33,6 +39,8 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
      * 查询第一水平
      *
      * @return {@code List<CourseCategory> }
+     * @throws
+     * @see List<CourseCategory>
      */
     List<CourseCategory> selectFirstLevel();
 
@@ -40,6 +48,8 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
      * 查询全部
      *
      * @return {@code List<CourseCategory> }
+     * @throws
+     * @see List<CourseCategory>
      */
     List<CourseCategory> selectAll();
 
@@ -49,6 +59,10 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
      * @param page    分页
      * @param pattern 模式
      * @return {@code IPage<CourseCategory> }
+     * @throws
+     * @see Page<CourseCategory>
+     * @see String
+     * @see IPage<CourseCategory>
      */
     IPage<CourseCategory> pageBySearch(Page<CourseCategory> page, @Param("pattern") String pattern);
 
@@ -57,6 +71,9 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
      *
      * @param name 名称
      * @return {@code CourseCategory }
+     * @throws
+     * @see String
+     * @see CourseCategory
      */
     CourseCategory selectByName(@Param("name") String name);
 }

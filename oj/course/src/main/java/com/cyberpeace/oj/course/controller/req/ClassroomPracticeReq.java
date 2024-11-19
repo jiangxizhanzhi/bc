@@ -13,7 +13,10 @@ import lombok.Data;
  * 课堂练习请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -21,6 +24,8 @@ public class ClassroomPracticeReq extends PageReqBase {
 
 	/**
 	 * 课堂编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课堂编号")
 	@NotBlank
@@ -28,6 +33,8 @@ public class ClassroomPracticeReq extends PageReqBase {
 
 	/**
 	 * 课时编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时编号")
 	@NotBlank(message = OjBusinessErrorCode.LESSON_INFORMATION_NOT_NULL)
@@ -35,6 +42,8 @@ public class ClassroomPracticeReq extends PageReqBase {
 
 	/**
 	 * 组织编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("组织编号")
 	@NotBlank(message = OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL)
@@ -42,18 +51,24 @@ public class ClassroomPracticeReq extends PageReqBase {
 
 	/**
 	 * 是否提交
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否提交")
 	private Boolean isCommit=null;
 
 	/**
 	 * 是否批改
+	 *
+	 * @see Boolean
 	 */
 	@ApiModelProperty("是否批改")
 	private Boolean isMark=null;
 
 	/**
 	 * 姓名
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("姓名")
 	private String username;

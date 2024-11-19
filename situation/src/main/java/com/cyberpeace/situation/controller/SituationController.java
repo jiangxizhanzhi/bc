@@ -39,6 +39,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 态势Controller
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Api(tags = "态势拓扑")
 @Slf4j
 @RestController
@@ -46,22 +54,60 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/situation")
 public class SituationController {
 
+	/**
+	 * 态势处理器Service
+	 *
+	 * @see SituationHandlerService
+	 */
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
+	/**
+	 * 拓扑处理器Service
+	 *
+	 * @see TopoHandlerService
+	 */
 	@Autowired
 	private TopoHandlerService topoHandlerService;
 
+	/**
+	 * 场景配置Mapper
+	 *
+	 * @see SceneConfigMapper
+	 */
 	@Autowired
 	private SceneConfigMapper sceneConfigMapper;
 
+	/**
+	 * 动态方案Service
+	 *
+	 * @see DynamicSchemeService
+	 */
 	@Autowired
 	private DynamicSchemeService dynamicSchemeService;
 
+	/**
+	 * 执行者
+	 *
+	 * @see Executor
+	 */
 	@Autowired
 	@Qualifier("taskExecutor")
 	private Executor executor;
 
+	/**
+	 * 拓扑
+	 *
+	 * @param sceneId 场景id
+	 * @param topoId  拓扑id
+	 * @param areaId  面积id
+	 * @return {@code BaseRsp<SituationTopo> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<SituationTopo>
+	 */
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
 	@GetMapping("topology")
@@ -83,6 +129,15 @@ public class SituationController {
 		return new BaseRsp<>(situationTopo);
 	}
 
+	/**
+	 * 攻击动态
+	 *
+	 * @param flowLogReq 流量日志请求体
+	 * @return {@code BaseRsp<List<WsMessage>> }
+	 * @throws
+	 * @see FlowLogReq
+	 * @see BaseRsp<List<WsMessage>>
+	 */
 	@ApiOperation("获取流量攻击事件")
 	@GetMapping("/dynamic/attack")
 	public BaseRsp<List<WsMessage>> attackDynamic(FlowLogReq flowLogReq) {
@@ -92,6 +147,17 @@ public class SituationController {
 		return new BaseRsp<>(wsMultiNodeDynamics);
 	}
 
+	/**
+	 * 元素
+	 *
+	 * @param sceneId   场景id
+	 * @param elementId 元素id
+	 * @return {@code BaseRsp<ElementStateRes> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see BaseRsp<ElementStateRes>
+	 */
 	@ApiOperation("获取节点监控信息")
 	@GetMapping("element")
 	public BaseRsp<ElementStateRes>
@@ -105,6 +171,15 @@ public class SituationController {
 		return new BaseRsp<>(elementStateRes);
 	}
 
+	/**
+	 * 链接状态
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code BaseRsp<WsMessage> }
+	 * @throws
+	 * @see String
+	 * @see BaseRsp<WsMessage>
+	 */
 	@ApiOperation("获取节点链路状态")
 	@GetMapping("link_status")
 	public BaseRsp<WsMessage> linkStatus(@ApiParam(name = "scene_id",
@@ -114,6 +189,15 @@ public class SituationController {
 		return new BaseRsp<>(wsMessage);
 	}
 
+	/**
+	 * 流量自动跑
+	 *
+	 * @param flowAutoRunReq 流量自动跑请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see FlowAutoRunReq
+	 * @see BaseRsp<Boolean>
+	 */
 	@ApiOperation("随机运行流量")
 	@PostMapping("flow/auto_run")
 	public BaseRsp<Boolean> flowAutoRun(@RequestBody @Validated FlowAutoRunReq flowAutoRunReq) {
@@ -132,6 +216,17 @@ public class SituationController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 获取场景配置
+	 *
+	 * @param sceneId    场景id
+	 * @param isInstance 是否实例
+	 * @return {@code BaseRsp<SceneConfigRes> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see BaseRsp<SceneConfigRes>
+	 */
 	@ApiOperation("获取态势场景配置")
 	@GetMapping("scene_config")
 	public BaseRsp<SceneConfigRes> getSceneConfig(
@@ -175,6 +270,15 @@ public class SituationController {
 		return new BaseRsp<>(sceneConfigRes);
 	}
 
+	/**
+	 * 设置场景配置
+	 *
+	 * @param sceneConfigReq 场景配置请求体
+	 * @return {@code BaseRsp<SceneConfigRes> }
+	 * @throws
+	 * @see SceneConfigReq
+	 * @see BaseRsp<SceneConfigRes>
+	 */
 	@ApiOperation("修改态势场景配置")
 	@PatchMapping("scene_config")
 	public BaseRsp<SceneConfigRes>
@@ -233,6 +337,21 @@ public class SituationController {
 		return new BaseRsp<>(sceneConfigRes);
 	}
 
+	/**
+	 * 刷新场景数据
+	 *
+	 * @param sceneId      场景id
+	 * @param flowAnalysis 流量分析
+	 * @param flowAutoRun  流量自动跑
+	 * @param linkStatus   链接状态
+	 * @return {@code BaseRsp<RefreshDataRes> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see Boolean
+	 * @see Boolean
+	 * @see BaseRsp<RefreshDataRes>
+	 */
 	@ApiOperation("刷新态势场景数据")
 	@GetMapping("refresh_data")
 	public BaseRsp<RefreshDataRes> refreshSceneData(
@@ -276,6 +395,15 @@ public class SituationController {
 		return new BaseRsp<>(refreshDataRes);
 	}
 
+	/**
+	 * 清除场景配置
+	 *
+	 * @param sceneIdListReq 场景id列表请求体
+	 * @return {@code BaseRsp<Boolean> }
+	 * @throws
+	 * @see SceneIdListReq
+	 * @see BaseRsp<Boolean>
+	 */
 	@ApiOperation("清除态势场景数据")
 	@DeleteMapping("scene_data")
 	public BaseRsp<Boolean>

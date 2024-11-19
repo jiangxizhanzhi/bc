@@ -7,18 +7,25 @@ import org.apache.commons.lang3.StringUtils;
  * 流量操作上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see NodeOpsContext
+ * @since 1.0.0
  */
 @Data
 public class FlowOpsContext extends NodeOpsContext {
 
     /**
      * 流量id
+     *
+     * @see String
      */
     private String flow_id;
 
     /**
      * 源ip地址
+     *
+     * @see String
      */
     private String source_ip;
 

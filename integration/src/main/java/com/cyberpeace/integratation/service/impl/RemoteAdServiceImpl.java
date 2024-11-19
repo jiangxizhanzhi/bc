@@ -29,26 +29,42 @@ import lombok.extern.slf4j.Slf4j;
  * 远程竞赛Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see RemoteAdService
+ * @since 1.0.0
  */
 @Slf4j
 @Service
 public class RemoteAdServiceImpl implements RemoteAdService {
 
-	/** 竞赛环境Service */
+	/**
+	 * 竞赛环境Service
+	 *
+	 * @see AdEnvService
+	 */
 	@Autowired
 	private AdEnvService adEnvService;
 
-	/** 考试用户完成计数网址 */
+	/**
+	 * 考试用户完成计数网址
+	 *
+	 * @see String
+	 */
 	private String EXAM_USER_FINISH_COUNT_URL;
 
-	/** 比赛列表网址 */
+	/**
+	 * 比赛列表网址
+	 *
+	 * @see String
+	 */
 	private String COMPETITION_LIST_URL;
 
 	/**
-	* 初始化
-	*
-	*/
+	 * 初始化
+	 *
+	 * @throws
+	 */
 	@PostConstruct
 	public void init() {
 		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
@@ -58,13 +74,18 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	}
 
 	/**
-	* 比赛列表
-	*
-	* @param startTime 启动时间
-	* @param endTime 结束时间
-	* @param userId 用户id
-	* @return {@code List<CalendarCompetitionBo> }
-	*/
+	 * 比赛列表
+	 *
+	 * @param startTime 启动时间
+	 * @param endTime   结束时间
+	 * @param userId    用户id
+	 * @return {@code List<CalendarCompetitionBo> }
+	 * @throws
+	 * @see Date
+	 * @see Date
+	 * @see String
+	 * @see List<CalendarCompetitionBo>
+	 */
 	@Override
 	public List<CalendarCompetitionBo> competitionList(Date startTime, Date endTime,
 			String userId) {
@@ -84,11 +105,14 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	}
 
 	/**
-     * 数据转换使用
-     *
-     * @param json JSON 格式
-     * @return {@code CalendarCompetitionBo }
-     */
+	 * 数据转换使用
+	 *
+	 * @param json JSON 格式
+	 * @return {@code CalendarCompetitionBo }
+	 * @throws
+	 * @see JSONObject
+	 * @see CalendarCompetitionBo
+	 */
 	private CalendarCompetitionBo jsonToBo(JSONObject json) {
 		CalendarCompetitionBo bo = new CalendarCompetitionBo();
 		bo.setResourceId(json.getString(JsonKeyConstant.RESOURCE_ID));
@@ -103,14 +127,20 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 	}
 
 	/**
-	* 比赛列表跟最小得分
-	*
-	* @param startTime 启动时间
-	* @param endTime 结束时间
-	* @param userIds 用户id列表
-	* @param minScore 最小得分
-	* @return {@code List<JSONObject> }
-	*/
+	 * 比赛列表跟最小得分
+	 *
+	 * @param startTime 启动时间
+	 * @param endTime   结束时间
+	 * @param userIds   用户id列表
+	 * @param minScore  最小得分
+	 * @return {@code List<JSONObject> }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see List<String>
+	 * @see Integer
+	 * @see List<JSONObject>
+	 */
 	@Override
 	public List<JSONObject> competitionListWithMinScore(String startTime, String endTime,
 			List<String> userIds, Integer minScore) {

@@ -9,28 +9,39 @@ import java.util.List;
  * 课时配置导出Bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class LessonConfigDumpBo implements Serializable {
 
 	/**
 	 * 编号
+	 *
+	 * @see Integer
 	 */
 	private Integer index;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 节点类型
+	 *
+	 * @see Integer
 	 */
 	private Integer nodeType;
 
 	/**
 	 * 子级
+	 *
+	 * @see List<LessonConfigDumpBo>
 	 */
 	private List<LessonConfigDumpBo> children;
 

@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
  * 学习统计Service
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 public interface LearnStatsService {
 
@@ -25,6 +27,14 @@ public interface LearnStatsService {
      * @param startTime
      * @param endTime
      * @return 用户学习统计
+     * @throws
+     * @see Page<UserStatsBo>
+     * @see String
+     * @see String
+     * @see boolean
+     * @see String
+     * @see String
+     * @see ListRsp<UserStatsBo>
      */
     ListRsp<UserStatsBo> getUserStats(Page<UserStatsBo> page, String pattern, String organization, boolean isPage, String startTime, String endTime);
 
@@ -32,6 +42,8 @@ public interface LearnStatsService {
      * 用户学习排行
      *
      * @return 统计信息
+     * @throws
+     * @see UserStatsRankBo
      */
     UserStatsRankBo getUserLearnRank();
 
@@ -40,6 +52,9 @@ public interface LearnStatsService {
      *
      * @param resourceId 用户resource_id
      * @return 统计信息
+     * @throws
+     * @see String
+     * @see PersonalStatsDetail4CountBo
      */
     PersonalStatsDetail4CountBo getPersonalStatsDetail4Count(String resourceId);
 
@@ -49,6 +64,10 @@ public interface LearnStatsService {
      * @param page       分页
      * @param resourceId 用户resource_id
      * @return 统计信息
+     * @throws
+     * @see Page<PersonalStatsDetail4CourseBo>
+     * @see String
+     * @see ListRsp<PersonalStatsDetail4CourseBo>
      */
     ListRsp<PersonalStatsDetail4CourseBo> getPersonalStatsDetail4Course(Page<PersonalStatsDetail4CourseBo> page, String resourceId);
 
@@ -58,6 +77,10 @@ public interface LearnStatsService {
      * @param ranking_type 排名类型
      * @param orgId        组织id
      * @return 统计信息
+     * @throws
+     * @see String
+     * @see String
+     * @see HistogramRes
      */
     HistogramRes getClassIntegralTopTen(String ranking_type, String orgId);
 
@@ -66,6 +89,9 @@ public interface LearnStatsService {
      *
      * @param request 请求
      * @return 统计信息
+     * @throws
+     * @see HttpServletRequest
+     * @see UserStatsRankBo
      */
     UserStatsRankBo getOrgLearnRank(HttpServletRequest request);
 
@@ -79,6 +105,14 @@ public interface LearnStatsService {
      * @param endTime      截止时间
      * @param isPage       是否分页
      * @return 用户学习统计
+     * @throws
+     * @see Page<OrgStatsBo>
+     * @see String
+     * @see String
+     * @see String
+     * @see String
+     * @see boolean
+     * @see ListRsp<OrgStatsBo>
      */
     ListRsp<OrgStatsBo> getOrgStatsData(Page<OrgStatsBo> page, String pattern, String organization, String startTime, String endTime, boolean isPage);
 }

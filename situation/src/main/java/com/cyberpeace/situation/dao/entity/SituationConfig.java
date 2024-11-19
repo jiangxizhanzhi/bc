@@ -8,18 +8,30 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 态势配置
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Data
 @TableName("situation_config")
 public class SituationConfig {
 
 	/**
 	 * 自增主键
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("自增主键")
 	private Integer id;
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("资源id")
 	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
@@ -27,36 +39,48 @@ public class SituationConfig {
 
 	/**
 	 * 作用域
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("作用域")
 	private String scope;
 
 	/**
 	 * 节点id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("节点id")
 	private String nodeId;
 
 	/**
 	 * 节点名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("节点名称")
 	private String nodeName;
 
 	/**
 	 * 节点类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("节点类型")
 	private Integer nodeType;
 
 	/**
 	 * 参数类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("参数类型")
 	private Integer attribute;
 
 	/**
 	 * 参数值
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("参数值")
 	private String attributeValue;

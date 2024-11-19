@@ -11,7 +11,10 @@ import java.io.Serializable;
  * 重复课程检查请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -19,6 +22,8 @@ public class DuplicateCourseInspectReq implements Serializable {
 
 	/**
 	 * 待检查课程名称
+	 *
+	 * @see List<String>
 	 */
 	@ApiModelProperty("待检查课程名称")
 	@NotEmpty

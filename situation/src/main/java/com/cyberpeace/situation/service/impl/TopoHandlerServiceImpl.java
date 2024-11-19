@@ -43,31 +43,93 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * 拓扑处理器Service实现
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @see TopoHandlerService
+ * @since 1.0.0
+ */
 @Log4j2
 @Service
 public class TopoHandlerServiceImpl implements TopoHandlerService {
 
+	/**
+	 * 远程场景Service
+	 *
+	 * @see RemoteSceneService
+	 */
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 远程拓扑Service
+	 *
+	 * @see RemoteTopoService
+	 */
 	@Autowired
 	private RemoteTopoService remoteTopoService;
 
+	/**
+	 * 远程终端Service
+	 *
+	 * @see RemoteTerminalService
+	 */
 	@Autowired
 	private RemoteTerminalService remoteTerminalService;
 
+	/**
+	 * 当地场景Service
+	 *
+	 * @see LocalSceneService
+	 */
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 态势配置Mapper
+	 *
+	 * @see SituationConfigMapper
+	 */
 	@Autowired
 	private SituationConfigMapper situationConfigMapper;
 
+	/**
+	 * 中台场景删除事件代号
+	 *
+	 * @see Integer
+	 */
 	private static final Integer MP_SCENE_DELETE_EVENT_CODE = 9;
 
+	/**
+	 * 中台场景进展完成代号
+	 *
+	 * @see Integer
+	 */
 	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
 
+	/**
+	 * 场景
+	 *
+	 * @see String
+	 */
 	private static final String SCENE = "scene";
 
+	/**
+	 * 获取场景数据由CSenseid和面积id
+	 *
+	 * @param csceneInstanceId CSense实例id
+	 * @param csceneId         CSenseid
+	 * @param areaId           面积id
+	 * @return {@code SceneData }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see String
+	 * @see SceneData
+	 */
 	@Override
 	public SceneData getSceneDataByCsceneIdAndAreaId(String csceneInstanceId, String csceneId, String areaId) {
 		// 获取中台场景数据，优先获取场景拓扑
@@ -92,6 +154,17 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return constructSceneData(csceneInstanceId, topology, plugins, situationConfigMap);
 	}
 
+	/**
+	 * 获取场景数据
+	 *
+	 * @param sceneId 场景id
+	 * @param topoId  拓扑id
+	 * @return {@code SceneData }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see SceneData
+	 */
 	@Override
 	public SceneData getSceneData(String sceneId, String topoId) {
 
@@ -116,6 +189,21 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return constructSceneData(sceneId, topology, plugins, situationConfigMap);
 	}
 
+	/**
+	 * 构建场景数据
+	 *
+	 * @param sceneId            场景id
+	 * @param topology           拓扑
+	 * @param plugins            插件
+	 * @param situationConfigMap 态势配置映射
+	 * @return {@code SceneData }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
+	 * @see JSONObject
+	 * @see Map<Integer, Map<String, List<SituationConfig>>>
+	 * @see SceneData
+	 */
 	private SceneData constructSceneData(String sceneId, JSONObject topology, JSONObject plugins, Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap) {
 		JSONObject extendElementInfo = (JSONObject) ((JSONObject) plugins.getOrDefault("cpcloud",
 				new JSONObject())).getOrDefault("elements", new JSONObject());
@@ -150,6 +238,15 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return sceneData;
 	}
 
+	/**
+	 * 获取态势配置映射
+	 *
+	 * @param scope 范围
+	 * @return {@code Map<Integer, Map<String, List<SituationConfig>>> }
+	 * @throws
+	 * @see String
+	 * @see Map<Integer, Map<String, List<SituationConfig>>>
+	 */
 	private Map<Integer, Map<String, List<SituationConfig>>> getSituationConfigMap(String scope) {
 
 		Map<Integer, Map<String, List<SituationConfig>>> situationConfigMap = Maps.newHashMap();
@@ -198,6 +295,15 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return situationConfigMap;
 	}
 
+	/**
+	 * 获取场景拓扑由场景id
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
+	 */
 	@Override
 	public JSONObject getSceneTopoBySceneId(String sceneId) {
 		if (DEMO_SCENE_ID.equals(sceneId)) {
@@ -207,11 +313,27 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		}
 	}
 
+	/**
+	 * 获取演示场景拓扑
+	 *
+	 * @return {@code JSONObject }
+	 * @throws
+	 * @see JSONObject
+	 */
 	private JSONObject getDemoSceneTopo() {
 		InputStream inputStream = getClass().getResourceAsStream("/demo.json");
 		return JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
 	}
 
+	/**
+	 * 获取分类映射
+	 *
+	 * @param deviceCategorie 设备分类
+	 * @return {@code CategorieMap }
+	 * @throws
+	 * @see JSONObject
+	 * @see CategorieMap
+	 */
 	@Override
 	public CategorieMap getCategorieMap(JSONObject deviceCategorie) {
 
@@ -255,6 +377,17 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return categorieMap;
 	}
 
+	/**
+	 * 获取随机节点
+	 *
+	 * @param nodes 节点
+	 * @param num   数量
+	 * @return {@code List<JSONObject> }
+	 * @throws
+	 * @see JSONArray
+	 * @see Integer
+	 * @see List<JSONObject>
+	 */
 	@Override
 	public List<JSONObject> getRandomNodes(JSONArray nodes, Integer num) {
 		List<Integer> indexs = Lists.newArrayList();
@@ -273,6 +406,15 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return randomNodes;
 	}
 
+	/**
+	 * 获取流量日志
+	 *
+	 * @param flowLogReq 流量日志请求体
+	 * @return {@code List<JSONObject> }
+	 * @throws
+	 * @see FlowLogReq
+	 * @see List<JSONObject>
+	 */
 	@Override
 	public List<JSONObject> getFlowLogs(FlowLogReq flowLogReq) {
 
@@ -288,6 +430,17 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 				JSONObject.class);
 	}
 
+	/**
+	 * 获取元素状态
+	 *
+	 * @param sceneId   场景id
+	 * @param elementId 元素id
+	 * @return {@code ElementStateRes }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see ElementStateRes
+	 */
 	@Override
 	public ElementStateRes getElementState(String sceneId, String elementId) {
 		ElementCommonContext elementCommonContext = new ElementCommonContext();
@@ -306,6 +459,15 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return elementStateRes;
 	}
 
+	/**
+	 * 获取节点状态消息
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code WsNodeStatus }
+	 * @throws
+	 * @see String
+	 * @see WsNodeStatus
+	 */
 	@Override
 	public WsNodeStatus getNodeStatusMessage(String sceneId) {
 
@@ -329,6 +491,15 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	}
 
+	/**
+	 * 获取中台场景数据
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code MpSceneData }
+	 * @throws
+	 * @see String
+	 * @see MpSceneData
+	 */
 	@Override
 	public MpSceneData getMpSceneData(String sceneId) {
 		JSONObject sceneData = localSceneService.getSceneData(sceneId, null);
@@ -338,6 +509,15 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return sceneData.toJavaObject(MpSceneData.class);
 	}
 
+	/**
+	 * 检查场景状态
+	 *
+	 * @param mpSceneData 中台场景数据
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see MpSceneData
+	 * @see Boolean
+	 */
 	@Override
 	public Boolean checkSceneStatus(MpSceneData mpSceneData) {
 
@@ -352,11 +532,29 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 				|| !eventStatus.equals(MP_SCENE_PROGRESS_FINISH_CODE);
 	}
 
+	/**
+	 * 使流量自动跑
+	 *
+	 * @param mpSceneData 中台场景数据
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see MpSceneData
+	 * @see Boolean
+	 */
 	@Override
 	public Boolean enableFlowAutoRun(MpSceneData mpSceneData) {
 		return !localSceneService.getSceneFlowList(mpSceneData, null).isEmpty();
 	}
 
+	/**
+	 * 使流量收集
+	 *
+	 * @param mpSceneData 中台场景数据
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see MpSceneData
+	 * @see Boolean
+	 */
 	@Override
 	public Boolean enableFlowCollect(MpSceneData mpSceneData) {
 
@@ -375,6 +573,19 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	}
 
+	/**
+	 * 流量自动跑
+	 *
+	 * @param sceneId         场景id
+	 * @param mpSceneData     中台场景数据
+	 * @param interactiveType 交互式类型
+	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see MpSceneData
+	 * @see Integer
+	 * @see Boolean
+	 */
 	@Override
 	public Boolean flowAutoRun(String sceneId, MpSceneData mpSceneData, Integer interactiveType) {
 		Map<String, SceneFlowContext> sceneFlowContextMap = localSceneService

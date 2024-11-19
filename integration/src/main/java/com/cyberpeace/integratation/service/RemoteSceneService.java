@@ -12,7 +12,9 @@ import com.cyberpeace.integratation.model.scene.*;
  * 场景事件状态代号： http://10.10.10.11/download/attachments/2461959/222.png?version=1&modificationDate=1607060293000&api=v2
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @since 1.0.0
  */
 public interface RemoteSceneService {
 
@@ -21,6 +23,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneStartContext 场景启动上下文
 	 * @return {@code String }
+	 * @throws
+	 * @see SceneStartContext
+	 * @see String
 	 */
 	String startScene(SceneStartContext sceneStartContext);
 
@@ -29,6 +34,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneStartContext 场景启动上下文
 	 * @return {@code String }
+	 * @throws
+	 * @see SceneStartContext
+	 * @see String
 	 */
 	String testScene(SceneStartContext sceneStartContext);
 
@@ -37,6 +45,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneOpsContext 场景操作上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see SceneOpsContext
+	 * @see Boolean
 	 */
 	Boolean stopScene(SceneOpsContext sceneOpsContext);
 
@@ -45,6 +56,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneOpsContext 场景操作上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see SceneOpsContext
+	 * @see Boolean
 	 */
 	Boolean pauseScene(SceneOpsContext sceneOpsContext);
 
@@ -54,6 +68,10 @@ public interface RemoteSceneService {
 	 * @param sceneId 场景id
 	 * @param userId  用户id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getById(String sceneId, String userId);
 
@@ -63,6 +81,10 @@ public interface RemoteSceneService {
 	 * @param sceneId 场景id
 	 * @param areaId  面积id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getByIdAndAreaIdFor3D(String sceneId, String areaId);
 
@@ -71,6 +93,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneOpContext 场景OP上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see SceneOpsContext
+	 * @see Boolean
 	 */
 	Boolean unpauseScene(SceneOpsContext sceneOpContext);
 
@@ -79,6 +104,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param nodeOpsContext 节点操作上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see NodeOpsContext
+	 * @see Boolean
 	 */
 	Boolean restartNode(NodeOpsContext nodeOpsContext);
 
@@ -87,6 +115,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param nodeOpsContext 节点操作上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see NodeOpsContext
+	 * @see Boolean
 	 */
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 
@@ -95,6 +126,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneDumpContext 场景导出上下文
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see SceneDumpContext
+	 * @see JSONObject
 	 */
 	JSONObject sceneDump(SceneDumpContext sceneDumpContext);
 
@@ -103,6 +137,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param flowId
 	 * @return MpFlow
+	 * @throws
+	 * @see String
+	 * @see MpFlow
 	 */
 	MpFlow getFlowById(String flowId);
 
@@ -111,6 +148,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param flowOpsContext
 	 * @return Boolean
+	 * @throws
+	 * @see FlowOpsContext
+	 * @see Boolean
 	 */
 	Boolean updateFlowParam(FlowOpsContext flowOpsContext);
 
@@ -119,6 +159,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param flowOpsContext 流量操作上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see FlowOpsContext
+	 * @see Boolean
 	 */
 	Boolean startFlow(FlowOpsContext flowOpsContext);
 
@@ -127,6 +170,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param context
 	 * @return
+	 * @throws
+	 * @see FlowOpsContext
+	 * @see Boolean
 	 */
 	Boolean stopFlow(FlowOpsContext context);
 
@@ -135,6 +181,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param flowBatchOpsContext
 	 * @return Boolean
+	 * @throws
+	 * @see FlowBatchOpsContext
+	 * @see Boolean
 	 */
 	Boolean batchStartFlow(FlowBatchOpsContext flowBatchOpsContext);
 
@@ -143,6 +192,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param flowBatchOpsContext
 	 * @return Boolean
+	 * @throws
+	 * @see FlowBatchOpsContext
+	 * @see Boolean
 	 */
 	Boolean batchStopFlow(FlowBatchOpsContext flowBatchOpsContext);
 
@@ -151,6 +203,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param flowRecordContext
 	 * @return JSONObject
+	 * @throws
+	 * @see FlowRecordContext
+	 * @see JSONObject
 	 */
 	JSONObject getFlowRecords(FlowRecordContext flowRecordContext);
 
@@ -159,6 +214,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneIds
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see JSONArray
 	 */
 	JSONArray getNodeSessions(List<String> sceneIds);
 
@@ -170,6 +228,12 @@ public interface RemoteSceneService {
 	 * @param userIds  用户编号
 	 * @param type     类型 all=监控和远程协助都获取 assistance=远程协助地址
 	 * @return
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 * @see List<String>
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray getNodeSessions(List<String> sceneIds, List<String> nodeIds, List<String> userIds,
 			String type);
@@ -181,6 +245,11 @@ public interface RemoteSceneService {
 	 * @param nodeIds
 	 * @param userIds  用户id列表
 	 * @return key=userId value=地址
+	 * @throws
+	 * @see List<String>
+	 * @see List<String>
+	 * @see List<String>
+	 * @see Map<String, String>
 	 */
 	Map<String, String> getAssistanceMap(List<String> sceneIds, List<String> nodeIds,
 			List<String> userIds);
@@ -191,6 +260,10 @@ public interface RemoteSceneService {
 	 * @param mpSceneId
 	 * @param studentId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray getMonitorSessions(String mpSceneId, String studentId);
 
@@ -199,6 +272,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param flowLogsPageContext
 	 * @return JSONObject
+	 * @throws
+	 * @see FlowLogsPageContext
+	 * @see JSONObject
 	 */
 	JSONObject getFlowLogs(FlowLogsPageContext flowLogsPageContext);
 
@@ -207,6 +283,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param elementCommonContext
 	 * @return List<MpHostState>
+	 * @throws
+	 * @see ElementCommonContext
+	 * @see List<MpHostState>
 	 */
 	List<MpHostState> getHostState(ElementCommonContext elementCommonContext);
 
@@ -215,6 +294,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param elementCommonContext
 	 * @return List<MpFlowTrend>
+	 * @throws
+	 * @see ElementCommonContext
+	 * @see List<MpFlowTrend>
 	 */
 	List<MpFlowTrend> getFlowTrend(ElementCommonContext elementCommonContext);
 
@@ -223,6 +305,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param elementCommonContext
 	 * @return MpEventAggr
+	 * @throws
+	 * @see ElementCommonContext
+	 * @see MpEventAggr
 	 */
 	MpEventAggr getEventAggr(ElementCommonContext elementCommonContext);
 
@@ -231,6 +316,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param elementCommonContext
 	 * @return MpRiskCount
+	 * @throws
+	 * @see ElementCommonContext
+	 * @see MpRiskCount
 	 */
 	MpRiskCount getRiskCount(ElementCommonContext elementCommonContext);
 
@@ -239,6 +327,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param collectionEventPageContext
 	 * @return MpCollectionEvent
+	 * @throws
+	 * @see CollectionEventPageContext
+	 * @see List<MpCollectionEvent>
 	 */
 	List<MpCollectionEvent>
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
@@ -248,6 +339,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param snapshotContext
 	 * @return
+	 * @throws
+	 * @see NodeSnapshotContext
+	 * @see Boolean
 	 */
 	Boolean nodeSnapshot(NodeSnapshotContext snapshotContext);
 
@@ -256,6 +350,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param imageId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray snapshotHistory(String imageId);
 
@@ -264,6 +361,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param mergeSnapshotContext
 	 * @return
+	 * @throws
+	 * @see MergeSnapshotContext
+	 * @see JSONObject
 	 */
 	JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext);
 
@@ -272,6 +372,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param deleteContext
 	 * @return
+	 * @throws
+	 * @see SnapshotDeleteContext
+	 * @see Boolean
 	 */
 	Boolean deleteSnapshot(SnapshotDeleteContext deleteContext);
 
@@ -280,6 +383,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param mpSceneId
 	 * @return JSONObject
+	 * @throws
+	 * @see String
+	 * @see List<MpNodeStatus>
 	 */
 	List<MpNodeStatus> getConnectionStatus(String mpSceneId);
 
@@ -287,6 +393,8 @@ public interface RemoteSceneService {
 	 * 取代访问ip地址exe
 	 *
 	 * @param elementPorts Element 端口
+	 * @throws
+	 * @see JSONObject
 	 */
 	void replaceAccessIpExe(JSONObject elementPorts);
 
@@ -295,6 +403,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param nodeOpsContext 节点操作上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see NodeOpsContext
+	 * @see Boolean
 	 */
 	Boolean createNode(NodeOpsContext nodeOpsContext);
 
@@ -303,6 +414,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param context
 	 * @return
+	 * @throws
+	 * @see NodeUpdateContext
+	 * @see JSONObject
 	 */
 	JSONObject updateNode(NodeUpdateContext context);
 
@@ -311,6 +425,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param context 上下文
 	 * @return {@code JSONObject}
+	 * @throws
+	 * @see NodeOpsContext
+	 * @see JSONObject
 	 */
 	JSONObject deleteNode(NodeOpsContext context);
 
@@ -319,6 +436,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param context 上下文
 	 * @return {@code JSONObject}
+	 * @throws
+	 * @see SceneUpdateContext
+	 * @see JSONObject
 	 */
 	JSONObject updateScene(SceneUpdateContext context);
 
@@ -327,6 +447,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param context 上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see NodeOpsContext
+	 * @see Boolean
 	 */
 	Boolean startNode(NodeOpsContext context);
 
@@ -335,6 +458,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param context 上下文
 	 * @return {@code Boolean}
+	 * @throws
+	 * @see NodeOpsContext
+	 * @see Boolean
 	 */
 	Boolean stopNode(NodeOpsContext context);
 
@@ -343,6 +469,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param req 请求体
 	 * @return {@code JSONArray}
+	 * @throws
+	 * @see SceneNodeListReq
+	 * @see JSONArray
 	 */
 	JSONArray getAssetList(SceneNodeListReq req);
 
@@ -351,6 +480,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneId 场景id
 	 * @return {@code JSONObject}
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getAssetsStatisticsBySceneId(String sceneId);
 
@@ -361,6 +493,10 @@ public interface RemoteSceneService {
 	 * @param sceneId 场景id
 	 * @param nodeId  节点id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject screenrecord(String sceneId,String nodeId);
 
@@ -369,6 +505,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param mpSceneId 中台场景id
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray attackTypeCount(String mpSceneId);
 
@@ -377,6 +516,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param mpSceneId 中台场景id
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray sceneTrend(String mpSceneId);
 
@@ -385,6 +527,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneId 场景id
 	 * @return {@code JSONObject }
+	 * @throws
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getEventTotalCount(String sceneId);
 
@@ -393,6 +538,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneId 场景id
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray getAttackTypeCountGroup(String sceneId);
 
@@ -401,6 +549,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneId 场景id
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see String
+	 * @see JSONArray
 	 */
 	JSONArray getEventTrentCount(String sceneId);
 
@@ -409,6 +560,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneEventContext 场景事件上下文
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see SceneEventContext
+	 * @see JSONArray
 	 */
 	JSONArray getEventTimeList(SceneEventContext sceneEventContext);
 
@@ -417,6 +571,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param sceneEventContext 场景事件上下文
 	 * @return {@code JSONArray }
+	 * @throws
+	 * @see SceneEventContext
+	 * @see JSONArray
 	 */
 	JSONArray getEventList(SceneEventContext sceneEventContext);
 
@@ -425,6 +582,9 @@ public interface RemoteSceneService {
 	 *
 	 * @param req 请求体
 	 * @return {@code List<MpHostEvent> }
+	 * @throws
+	 * @see SceneEventHostListReq
+	 * @see List<MpHostEvent>
 	 */
 	List<MpHostEvent> getHostEventList(SceneEventHostListReq req);
 
@@ -434,6 +594,10 @@ public interface RemoteSceneService {
 	 * @param sceneId 场景id
 	 * @param areaId
 	 * @return {@code JSONObject}
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see JSONObject
 	 */
 	JSONObject getByArea(String sceneId, String areaId);
 }

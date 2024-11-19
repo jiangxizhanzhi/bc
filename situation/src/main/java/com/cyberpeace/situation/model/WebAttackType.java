@@ -3,23 +3,37 @@ package com.cyberpeace.situation.model;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * Web攻击类型
+ *
+ * @author SN
+ * @version 1.0.0
+ * @date 2024/11/19
+ * @since 1.0.0
+ */
 @Data
 public class WebAttackType {
 
 	/**
 	 * 动效编码
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("动效编码")
 	private String code;
 
 	/**
 	 * 动效名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("动效名称")
 	private String msg;
 
 	/**
 	 * 目标节点支持类型：compound: 同时支持节点和区域、element: 只支持节点、area: 只支持区域
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("目标节点支持类型：compound: 同时支持节点和区域、element: 只支持节点、area: 只支持区域")
 	private String type;

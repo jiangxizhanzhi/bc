@@ -33,7 +33,11 @@ import lombok.extern.slf4j.Slf4j;
  * 课程类别Service实现
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see ServiceImpl
+ * @see CourseCategoryService
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -41,12 +45,16 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 
 	/**
 	 * 课程类别Mapper
+	 *
+	 * @see CourseCategoryMapper
 	 */
 	@Autowired
 	private CourseCategoryMapper courseCategoryMapper;
 
 	/**
 	 * 课程验证处理器
+	 *
+	 * @see CourseValidateHandler
 	 */
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
@@ -57,6 +65,10 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 * @param directionId 方向id
 	 * @param self        自我
 	 * @return {@code List<String> }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see List<String>
 	 */
 	@Override
 	public List<String> getChildrenIds(String directionId, Boolean self) {
@@ -76,6 +88,9 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 *
 	 * @param children 子级
 	 * @return {@code List<CourseCategoryBo> }
+	 * @throws
+	 * @see Boolean
+	 * @see List<CourseCategoryBo>
 	 */
 	@Override
 	public List<CourseCategoryBo> selectAll(Boolean children) {
@@ -98,6 +113,11 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 * @param pattern  模式
 	 * @param children 子级
 	 * @return {@code IPage<CourseCategoryBo> }
+	 * @throws
+	 * @see Page<CourseCategory>
+	 * @see String
+	 * @see Boolean
+	 * @see IPage<CourseCategoryBo>
 	 */
 	@Override
 	public IPage<CourseCategoryBo> pageBySearch(Page<CourseCategory> page, String pattern, Boolean children) {
@@ -117,6 +137,9 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 *
 	 * @param categoryAddBo 类别新增Bo
 	 * @return {@code CourseCategory }
+	 * @throws
+	 * @see CategoryAddBo
+	 * @see CourseCategory
 	 */
 	@Override
 	public CourseCategory saveOrUpdate(CategoryAddBo categoryAddBo) {
@@ -153,6 +176,9 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 *
 	 * @param resourceIds 资源id列表
 	 * @return {@code Integer }
+	 * @throws
+	 * @see List<String>
+	 * @see Integer
 	 */
 	@Override
 	public Integer batchDeleteByIds(List<String> resourceIds) {
@@ -179,6 +205,10 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 * @param resourceId 资源id
 	 * @param children   子级
 	 * @return {@code CourseCategoryBo }
+	 * @throws
+	 * @see String
+	 * @see Boolean
+	 * @see CourseCategoryBo
 	 */
 	@Override
 	public CourseCategoryBo selectById(String resourceId, Boolean children) {
@@ -201,6 +231,9 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 *
 	 * @param categoryName 类别名称
 	 * @return {@code CourseCategory }
+	 * @throws
+	 * @see String
+	 * @see CourseCategory
 	 */
 	@Override
 	public CourseCategory getOrCreate(String categoryName) {
@@ -222,6 +255,9 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 *
 	 * @param code 为空则为全部数据，非空则为当前节点下的数据（除一级分类，父节点为空）
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see Map<String, List<CourseCategory>>
 	 */
 	private Map<String, List<CourseCategory>> getParentMap(String code) {
 
@@ -243,6 +279,10 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 * @param categories
 	 * @param categoryMap
 	 * @return
+	 * @throws
+	 * @see List<CourseCategory>
+	 * @see Map<String, List<CourseCategory>>
+	 * @see List<CourseCategoryBo>
 	 */
 	private List<CourseCategoryBo> packageCategoryList(List<CourseCategory> categories,
 			Map<String, List<CourseCategory>> categoryMap) {
@@ -260,6 +300,10 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 	 * @param courseCategory
 	 * @param categoryMap
 	 * @return
+	 * @throws
+	 * @see CourseCategory
+	 * @see Map<String, List<CourseCategory>>
+	 * @see CourseCategoryBo
 	 */
 	private CourseCategoryBo packageCategoryBo(CourseCategory courseCategory,
 			Map<String, List<CourseCategory>> categoryMap) {

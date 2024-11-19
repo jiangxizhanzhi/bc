@@ -32,7 +32,10 @@ import lombok.extern.slf4j.Slf4j;
  * 课堂事件监听器
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see MessageListener
+ * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -40,36 +43,48 @@ public class ClassroomEventListener extends MessageListener {
 
 	/**
 	 * 课堂场景Service
+	 *
+	 * @see ClassroomSceneService
 	 */
 	@Autowired
 	private ClassroomSceneService classroomSceneService;
 
 	/**
 	 * OJ当地场景Service
+	 *
+	 * @see OjLocalSceneService
 	 */
 	@Autowired
 	private OjLocalSceneService ojLocalSceneService;
 
 	/**
 	 * 课堂组信息Mapper
+	 *
+	 * @see ClassroomGroupInfoMapper
 	 */
 	@Autowired
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
 	/**
 	 * OJ当地场景Mapper
+	 *
+	 * @see OjLocalSceneMapper
 	 */
 	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	/**
 	 * 推送消息处理器
+	 *
+	 * @see PushMessageHandler
 	 */
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
 	/**
 	 * 远程用户Service
+	 *
+	 * @see RemoteUserService
 	 */
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -78,6 +93,8 @@ public class ClassroomEventListener extends MessageListener {
 	 * 声明消息类型
 	 *
 	 * @return {@code Integer }
+	 * @throws
+	 * @see Integer
 	 */
 	@Override
 	public Integer declareMessageType() {
@@ -91,6 +108,11 @@ public class ClassroomEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneDelete(String data, String businessId, MqContext context) {
@@ -125,6 +147,11 @@ public class ClassroomEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
@@ -156,6 +183,11 @@ public class ClassroomEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
@@ -177,6 +209,11 @@ public class ClassroomEventListener extends MessageListener {
 	 * @param businessId 业务id
 	 * @param context    上下文
 	 * @return {@code Boolean }
+	 * @throws
+	 * @see String
+	 * @see String
+	 * @see MqContext
+	 * @see Boolean
 	 */
 	@Override
 	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
@@ -224,6 +261,9 @@ public class ClassroomEventListener extends MessageListener {
 	 *
 	 * @param ojLocalSceneId
 	 * @return
+	 * @throws
+	 * @see String
+	 * @see OjLocalScene
 	 */
 	private OjLocalScene validateOjLocalScene(String ojLocalSceneId) {
 

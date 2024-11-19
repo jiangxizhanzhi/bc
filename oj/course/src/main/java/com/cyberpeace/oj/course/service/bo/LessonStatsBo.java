@@ -9,54 +9,73 @@ import java.io.Serializable;
  * 课时统计Bo
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see Serializable
+ * @since 1.0.0
  */
 @Data
 public class LessonStatsBo implements Serializable {
 	/**
 	 * 课时resource_id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时resource_id")
     private String resourceId;
 
 	/**
 	 * 课程resource_id
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课程resource_id")
     private String courseId;
 
 	/**
 	 * 课时名称
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课时名称")
     private String name;
 
 	/**
 	 * 课时类型
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时类型")
     private Integer type;
 
 	/**
 	 * 课时难度
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("课时难度")
     private Integer difficulty;
 
 	/**
 	 * 学习人数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("学习人数")
     private Integer learningCount;
 
 	/**
 	 * 提交报告数量
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("提交报告数量")
     private Integer reportCount;
 
 	/**
 	 * 完成练习数
+	 *
+	 * @see Integer
 	 */
 	@ApiModelProperty("完成练习数")
     private Integer finishPracticeCount;

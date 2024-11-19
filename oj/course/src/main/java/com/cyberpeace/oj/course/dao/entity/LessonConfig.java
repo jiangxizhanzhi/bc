@@ -13,7 +13,10 @@ import lombok.*;
  * 课时配置
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see BaseTable
+ * @since 1.0.0
  */
 @Data
 @Builder
@@ -24,38 +27,52 @@ public class LessonConfig extends BaseTable {
 
 	/**
 	 * 资源id
+	 *
+	 * @see String
 	 */
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
 	/**
 	 * 课程id
+	 *
+	 * @see String
 	 */
 	private String courseId;
 
 	/**
 	 * 课时id
+	 *
+	 * @see String
 	 */
 	private String lessonId;
 
 	/**
 	 * 编号
+	 *
+	 * @see Integer
 	 */
 	@TableField("`index`")
 	private Integer index;
 
 	/**
 	 * 父母id
+	 *
+	 * @see String
 	 */
 	private String parentId;
 
 	/**
 	 * 名称
+	 *
+	 * @see String
 	 */
 	private String name;
 
 	/**
 	 * 节点类型
+	 *
+	 * @see Integer
 	 */
 	private Integer nodeType;
 

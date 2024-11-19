@@ -9,7 +9,10 @@ import lombok.Data;
  * 课堂监控请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 @ApiModel
@@ -17,12 +20,16 @@ public class ClassroomMonitorReq extends PageReqBase {
 
 	/**
 	 * 课堂表编号
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty("课堂表编号")
 	private String classroomId;
 
 	/**
 	 * 模糊查询筛选参数(不会转义)
+	 *
+	 * @see String
 	 */
 	@ApiModelProperty(value = "模糊查询筛选参数(不会转义)")
 	private String pattern;

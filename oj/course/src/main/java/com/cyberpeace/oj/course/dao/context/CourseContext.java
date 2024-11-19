@@ -10,23 +10,32 @@ import lombok.Data;
  * 课程上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see PatternBase
+ * @since 1.0.0
  */
 @Data
 public class CourseContext extends PatternBase {
 
 	/**
 	 * 电子书
+	 *
+	 * @see Integer
 	 */
 	private Integer eBook;
 
 	/**
 	 * 方向
+	 *
+	 * @see List<String>
 	 */
 	private List<String> directions;
 
 	/**
 	 * 难度
+	 *
+	 * @see Integer
 	 */
 	private Integer difficulty;
 

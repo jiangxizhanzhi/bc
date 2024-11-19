@@ -12,37 +12,50 @@ import java.util.List;
  * 实操分页请求体
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see PageReqBase
+ * @since 1.0.0
  */
 @Data
 public class OperationPageReq extends PageReqBase {
 
     /**
      * 类别
+     *
+     * @see String
      */
     @ApiModelProperty("所属分类查询")
     private String category;
 
     /**
      * 所属习题集查询
+     *
+     * @see String
      */
     @ApiModelProperty("所属习题集查询")
     private String practiceSet;
 
     /**
      * 难度
+     *
+     * @see Integer
      */
     @ApiModelProperty("难度查询(0-初级, 1-中级, 2-高级)")
     private Integer difficulty;
 
     /**
      * 知识点
+     *
+     * @see List<String>
      */
     @ApiModelProperty("知识点，用逗号隔开多个知识点")
     private List<String> knowledge;
 
     /**
      * 用户id
+     *
+     * @see String
      */
     @ApiModelProperty("用户编号")
     @NotBlank(message = ErrorCode.USER_INFO_MISSING)

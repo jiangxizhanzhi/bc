@@ -6,18 +6,25 @@ import lombok.Data;
  * 流量记录上下文
  *
  * @author SN
+ * @version 1.0.0
  * @date 2024/11/14
+ * @see NodeOpsContext
+ * @since 1.0.0
  */
 @Data
 public class FlowRecordContext extends NodeOpsContext {
 
 	/**
 	 * 流量id
+	 *
+	 * @see String
 	 */
 	private String flow_id;
 
 	/**
 	 * 是否批量
+	 *
+	 * @see Boolean
 	 */
 	private Boolean is_batch = true;
 

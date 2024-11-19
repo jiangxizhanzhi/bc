@@ -24,6 +24,10 @@ public class CommonContext {
 	 * 授权上下文
 	 */
 	private static final ThreadLocal<String> authorizationContext = new ThreadLocal();
+	/**
+	 * 30所接口token
+	 */
+	private static final ThreadLocal<String> cyberTokenContext = new ThreadLocal();
 
 	private CommonContext() {
 	}
@@ -70,5 +74,17 @@ public class CommonContext {
 
 	public static boolean isChinese() {
 		return StringUtils.equals(CommonContext.getLanguage(), WebConstant.LANGUAGE_ZH);
+	}
+
+	public static void setCyberToken(String cyberToken) {
+		cyberTokenContext.set(cyberToken);
+	}
+
+	public static String getCyberToken() {
+		return cyberTokenContext.get();
+	}
+
+	public static void removeCyberToken() {
+		cyberTokenContext.remove();
 	}
 }

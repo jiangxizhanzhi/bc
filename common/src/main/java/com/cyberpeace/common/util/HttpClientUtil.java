@@ -78,11 +78,32 @@ public class HttpClientUtil {
 		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
 		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		if (CommonContext.getCyberToken() != null) {
+			post.setHeader(WebConstant.AUTHORIZATION_HEADER, "Bearer " + CommonContext.getCyberToken());
+		}
 		post.setEntity(entity);
 
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(post, resultType);
 	}
+
+	public static String post(String url, Object body) {
+		// 1、设置请求线程数据
+		setContext(url);
+
+		// 2、设置请求参数
+		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
+
+		HttpPost post = new HttpPost(url);
+		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		post.setEntity(entity);
+
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(post);
+	}
+
 
 	/**
 	 * 删除
@@ -160,9 +181,8 @@ public class HttpClientUtil {
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		String authorization = CommonContext.getAuthorization();
-		if (null != authorization) { // 调用竞赛接口需要
-			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
+		if (CommonContext.getCyberToken() != null) {
+			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "Bearer " + CommonContext.getCyberToken());
 		}
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(httpGet, resultType);
@@ -220,6 +240,46 @@ public class HttpClientUtil {
 	}
 
 	/**
+	 * 执行 HTTP
+	 *
+	 * @param httpRequest HTTP 请求
+	 * @return {@code T }
+	 */
+	private static String doHttp(HttpUriRequest httpRequest) {
+		HttpResponse response = null;
+		String httpResponse = null;
+		HttpclientContext.getContext().setMethod(httpRequest.getMethod());
+		try {
+			// 1、调用远程服务
+			response = getClient().execute(httpRequest);
+
+			// 2、解析远程服务的返回值
+			httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
+
+			// 3、记录调用日志
+			HttpclientContext.getContext().addLog(httpResponse);
+		} catch (Exception e) {
+			try {
+				HttpclientContext.getContext().doRemoteException(e);
+			} catch (Exception e1) {
+				LOG.error("remote error logging Exception", e1);
+			} finally {
+				HttpclientContext.removeContext();
+				throw new RemoteServiceException();
+			}
+		}
+
+		if (StringUtils.isBlank(httpResponse)) {
+			HttpclientContext.getContext().addLog("httpResponse is null");
+			HttpclientContext.removeContext();
+			throw new RemoteServiceException();
+		}
+
+		// 4、解析结果并返回
+		return parseHttpResponse(httpResponse);
+	}
+
+	/**
 	 * 序列化http返回结果
 	 *
 	 * @param httpResponse http返回
@@ -247,6 +307,39 @@ public class HttpClientUtil {
 			// 遇到不能解析的返回结果，直接报错
 			LOG.error("parse httpResponse error, url=[{}], result=[{}], resultType=[{}]",
 					HttpclientContext.getContext().getUrl(), httpResponse, resultType);
+			throw new RemoteServiceException();
+		} finally {
+			HttpclientContext.removeContext();
+		}
+	}
+
+	/**
+	 * 序列化http返回结果
+	 *
+	 * @param httpResponse http返回
+	 * @return
+	 */
+	private static String parseHttpResponse(String httpResponse) {
+
+		try {
+			BaseRsp baseRsp = JSON.parseObject(httpResponse, BaseRsp.class);
+
+			if (!isSuccess(baseRsp)) {
+				// 只要中台的错误码不是000000，都认为是有问题的
+				LOG.error("url=[{}], result=[{}] error, code=[{}]",
+						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode());
+				throw new RemoteServiceException(baseRsp.getMessage());
+			}
+			if (null == baseRsp.getData()) {
+				return null;
+			}
+			return baseRsp.getData().toString();
+		} catch (RemoteServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			// 遇到不能解析的返回结果，直接报错
+			LOG.error("parse httpResponse error, url=[{}], result=[{}]",
+					HttpclientContext.getContext().getUrl(), httpResponse);
 			throw new RemoteServiceException();
 		} finally {
 			HttpclientContext.removeContext();
@@ -299,7 +392,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static boolean isSuccess(BaseRsp baseRsp) {
-		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
+		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX) || StringUtils.endsWith(baseRsp.getCode(), "200");
 	}
 
 	/**

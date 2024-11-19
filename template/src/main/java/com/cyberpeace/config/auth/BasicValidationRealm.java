@@ -63,6 +63,10 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
 
             UserInfoContext.setUserContext(userInfo);
+
+            String cyberToken = remoteUserService.getCyberToken();
+            CommonContext.setCyberToken(cyberToken);
+
         } catch (Exception e) {
             log.error("RemoteUserService.doAuthentication error", e);
             throw new AuthenticationException();

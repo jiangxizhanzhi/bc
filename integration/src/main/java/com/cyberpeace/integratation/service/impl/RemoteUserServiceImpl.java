@@ -1,22 +1,5 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CacheConstant;
@@ -36,8 +19,22 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 远程用户Service实现
@@ -86,6 +83,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private String BLACK_ENABLE_URL;
 
 	/**
+	 * 数字中心登陆地址
+	 */
+	private String CYBER_LOGIN_URL;
+
+	/**
 	 * 所有用户缓存
 	 */
 	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
@@ -104,6 +106,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 */
 	@Autowired
 	private MpEnvService mpEnvService;
+
+	/**
+	 * 数字中心环境
+	 */
+	@Autowired
+	private CyberSpaceMpEnvService cyberSpaceMpEnvService;
 
 	/**
 	 * 远程组织Service
@@ -127,6 +135,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
 		USERINFO_IDS_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("userinfo.ids");
 		BLACK_ENABLE_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.auth.blacklist.enabled");
+		CYBER_LOGIN_URL = cyberSpaceMpEnvService.getMpHost() + ConfigUtil.getContextProperty("cyber.login");
 	}
 
 	/**
@@ -450,6 +459,14 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				.toJavaList(UserInfo.class);
 
 		return StreamApiUtils.toMap(userInfos, UserInfo::getUserId, userInfo -> userInfo);
+	}
+
+	@Override
+	public String getCyberToken() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("account", "super");
+		jsonObject.put("password", "123456");
+        return HttpClientUtil.post(CYBER_LOGIN_URL, jsonObject);
 	}
 
 	/**

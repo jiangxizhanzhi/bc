@@ -1,13 +1,13 @@
 package com.cyberpeace.integratation.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.integratation.model.UserPageContext;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.integratation.model.UserPageContext;
 
 /**
  * 远程用户Service
@@ -144,4 +144,10 @@ public interface RemoteUserService {
 	 * @return {@code Boolean }
 	 */
 	Boolean isDemoOpen();
+
+	/**
+	 * 获取数字空间token
+	 * @return
+	 */
+	String getCyberToken();
 }
